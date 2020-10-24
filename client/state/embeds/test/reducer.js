@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { siteItems, urlItems } from '../reducer';
-import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'state/action-types';
+import { EMBED_RECEIVE, EMBEDS_RECEIVE } from 'calypso/state/action-types';
 
 jest.mock( 'state/embeds/utils', () => ( {
 	normalizeEmbeds: ( embeds ) => embeds,

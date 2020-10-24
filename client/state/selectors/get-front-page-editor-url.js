@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import getEditorUrl from 'state/selectors/get-editor-url';
-import getSiteFrontPage from 'state/sites/selectors/get-site-front-page';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getSiteFrontPage from 'calypso/state/sites/selectors/get-site-front-page';
 
 /**
  * Gets the editor URL for the current site's home page

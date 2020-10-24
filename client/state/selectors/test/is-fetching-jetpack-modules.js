@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isFetchingJetpackModules from 'state/selectors/is-fetching-jetpack-modules';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
 import { requests as REQUESTS_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'isFetchingJetpackModules()', () => {

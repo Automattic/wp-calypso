@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import InfoPopover from 'components/info-popover';
+import InfoPopover from 'calypso/components/info-popover';
 
 /**
  * Style dependencies
@@ -31,7 +31,7 @@ class ListHeader extends React.PureComponent {
 			<CompactCard className={ listHeaderClasses }>
 				<div className="list__domain-link" />
 				<div className="list__domain-transfer-lock">
-					{ translate( 'Transfer lock' ) }
+					<span>{ translate( 'Transfer lock' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'When enabled, a transfer lock prevents your domain from being transferred to another ' +
@@ -41,7 +41,7 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-privacy">
-					{ translate( 'Privacy' ) }
+					<span>{ translate( 'Privacy' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'Enabling domain privacy protection hides your contact information from public view. ' +
@@ -51,7 +51,7 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-auto-renew">
-					{ translate( 'Auto-renew' ) }
+					<span>{ translate( 'Auto-renew' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'When auto-renew is enabled, we will automatically attempt to renew your domain 30 days ' +
@@ -60,7 +60,7 @@ class ListHeader extends React.PureComponent {
 					</InfoPopover>
 				</div>
 				<div className="list__domain-email">
-					{ translate( 'Email' ) }
+					<span>{ translate( 'Email' ) }</span>
 					<InfoPopover iconSize={ 18 }>
 						{ translate(
 							'You can receive email using your custom domain by using email forwarding or by ' +

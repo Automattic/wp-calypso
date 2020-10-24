@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getTermDuration } from 'lib/plans/constants';
+import { getTermDuration } from 'calypso/lib/plans/constants';
 import { getProductsList } from './get-products-list';
 import { planSlugToPlanProduct } from './plan-slug-to-plan-product';
 import { computeFullAndMonthlyPricesForPlan } from './compute-full-and-monthly-prices-for-plan';

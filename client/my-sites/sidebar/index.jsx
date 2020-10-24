@@ -1,78 +1,75 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { memoize } from 'lodash';
 import { ProgressBar } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'config';
-import CurrentSite from 'my-sites/current-site';
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
-import ExternalLink from 'components/external-link';
-import JetpackLogo from 'components/jetpack-logo';
-import Sidebar from 'layout/sidebar';
-import SidebarFooter from 'layout/sidebar/footer';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarRegion from 'layout/sidebar/region';
+import config, { isEnabled } from 'calypso/config';
+import CurrentSite from 'calypso/my-sites/current-site';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
+import ExternalLink from 'calypso/components/external-link';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarFooter from 'calypso/layout/sidebar/footer';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarRegion from 'calypso/layout/sidebar/region';
 import SiteMenu from './site-menu';
-import StatsSparkline from 'blocks/stats-sparkline';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QuerySiteChecklist from 'components/data/query-site-checklist';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QueryScanState from 'components/data/query-jetpack-scan';
+import StatsSparkline from 'calypso/blocks/stats-sparkline';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import isCurrentPlanPaid from 'state/sites/selectors/is-current-plan-paid';
-import { siteHasJetpackProductPurchase } from 'state/purchases/selectors';
-import { isEcommerce } from 'lib/products-values';
-import { isWpMobileApp } from 'lib/mobile-app';
-import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isSidebarSectionOpen } from 'state/my-sites/sidebar/selectors';
-import { setNextLayoutFocus, setLayoutFocus } from 'state/ui/layout-focus/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isEligibleForDotcomChecklist from 'state/selectors/is-eligible-for-dotcom-checklist';
-import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
-import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getScanState from 'state/selectors/get-site-scan-state';
-import isJetpackCloudEligible from 'state/selectors/is-jetpack-cloud-eligible';
+import { isEcommerce } from 'calypso/lib/products-values';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isSidebarSectionOpen } from 'calypso/state/my-sites/sidebar/selectors';
+import { setNextLayoutFocus, setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isEligibleForDotcomChecklist from 'calypso/state/selectors/is-eligible-for-dotcom-checklist';
+import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getScanState from 'calypso/state/selectors/get-site-scan-state';
+import isJetpackCloudEligible from 'calypso/state/selectors/is-jetpack-cloud-eligible';
 import {
 	getCustomizerUrl,
 	getSite,
 	isJetpackSite,
 	canCurrentUserUseEarn,
 	canCurrentUserUseStore,
-} from 'state/sites/selectors';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import getSiteTaskList from 'state/selectors/get-site-task-list';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
-import { getStatsPathForTab } from 'lib/route';
+} from 'calypso/state/sites/selectors';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import { getStatsPathForTab } from 'calypso/lib/route';
 import { itemLinkMatches } from './utils';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	expandMySitesSidebarSection as expandSection,
 	toggleMySitesSidebarSection as toggleSection,
-} from 'state/my-sites/sidebar/actions';
-import isVipSite from 'state/selectors/is-vip-site';
-import isSiteUsingFullSiteEditing from 'state/selectors/is-site-using-full-site-editing';
-import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
+} from 'calypso/state/my-sites/sidebar/actions';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isSiteUsingFullSiteEditing from 'calypso/state/selectors/is-site-using-full-site-editing';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import {
 	SIDEBAR_SECTION_DESIGN,
 	SIDEBAR_SECTION_JETPACK,
@@ -81,18 +78,20 @@ import {
 	SIDEBAR_SECTION_PLAN,
 	SIDEBAR_SECTION_TOOLS,
 } from './constants';
-import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { isUnderDomainManagementAll } from 'my-sites/domains/paths';
-import { isUnderEmailManagementAll } from 'my-sites/email/paths';
-import JetpackSidebarMenuItems from 'components/jetpack/sidebar/menu-items/calypso';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
+import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
+import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { getUrlParts, getUrlFromParts } from 'lib/url';
 
 export class MySitesSidebar extends Component {
 	static propTypes = {
@@ -103,6 +102,7 @@ export class MySitesSidebar extends Component {
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
+		sitePlanSlug: PropTypes.string,
 	};
 
 	expandPlanSection = () => this.props.expandSection( SIDEBAR_SECTION_PLAN );
@@ -407,9 +407,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { canUserManageOptions, isJetpackSectionOpen, path } = this.props;
+		const { canUserManageOptions, isJetpackSectionOpen, path, sitePlanSlug } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			this.props.isSiteWPForTeams &&
+			( ! isEnabled( 'p2/p2-plus' ) ||
+				( isEnabled( 'p2/p2-plus' ) && ! isP2PlusPlan( sitePlanSlug ) ) )
+		) {
 			return null;
 		}
 
@@ -556,7 +560,11 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			isEnabled( 'signup/wpforteams' ) &&
+			this.props.isSiteWPForTeams &&
+			! isEnabled( 'p2/p2-plus' )
+		) {
 			return null;
 		}
 
@@ -610,20 +618,17 @@ export class MySitesSidebar extends Component {
 	}
 
 	plans() {
-		const {
-			canUserManageOptions,
-			hasPaidJetpackPlan,
-			hasPurchasedJetpackProduct,
-			path,
-			site,
-			translate,
-		} = this.props;
+		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			isEnabled( 'signup/wpforteams' ) &&
+			this.props.isSiteWPForTeams &&
+			! isEnabled( 'p2/p2-plus' )
+		) {
 			return null;
 		}
 
@@ -631,30 +636,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let planLink = '/plans' + this.props.siteSuffix;
-
-		// Show plan details for upgraded sites
-		if ( hasPaidJetpackPlan || hasPurchasedJetpackProduct ) {
-			planLink = '/plans/my-plan' + this.props.siteSuffix;
-		}
-
-		const linkClass = classNames( {
-			selected: itemLinkMatches( [ '/plans' ], path ),
-		} );
-
-		const tipTarget = 'plan';
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<span className="menu-link-text" data-e2e-sidebar="Plan">
-						{ translate( 'Plans', { context: 'noun' } ) }
-					</span>
-				</a>
-			</li>
+			<SidebarItem
+				label={ translate( 'Plans', { context: 'noun' } ) }
+				tipTarget="plans"
+				selected={ itemLinkMatches( '/plans', path ) }
+				link={ '/plans' + siteSuffix }
+				onNavigate={ this.trackPlanClick }
+				preloadSectionName="plans"
+				forceInternalLink
+				expandSection={ this.expandPlanSection }
+			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
@@ -1072,8 +1065,6 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
-		hasPaidJetpackPlan: isCurrentPlanPaid( state, siteId ),
-		hasPurchasedJetpackProduct: siteHasJetpackProductPurchase( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
@@ -1109,6 +1100,7 @@ function mapStateToProps( state ) {
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
+		sitePlanSlug: getSitePlanSlug( state, siteId ),
 	};
 }
 

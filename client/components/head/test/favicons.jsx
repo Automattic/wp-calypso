@@ -12,7 +12,7 @@ import React from 'react';
  * Internal dependencies
  */
 jest.mock( 'lib/jetpack/is-jetpack-cloud' );
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 describe( 'Favicons', () => {
 	let Favicons;

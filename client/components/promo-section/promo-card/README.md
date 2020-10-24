@@ -5,8 +5,8 @@ A [`Card` component](../../components/card) based on [`ActionPanel'](../../compo
 ## Usage
 
 ```jsx
-import PromoCard from 'my-sites/promo-section/promo-card';
-import referralImage from 'assets/images/earn/referral.svg';
+import PromoCard from 'calypso/my-sites/promo-section/promo-card';
+import referralImage from 'calypso/assets/images/earn/referral.svg';
 
 const PromoCardExample = () => {
 	const img = {

@@ -15,7 +15,6 @@
 	padding-right: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		flex: 1;
 		padding-right: 20px;
 		margin-bottom: 0;
 	}
@@ -68,14 +67,8 @@
 	flex: 2;
 }
 
-.security-account-recovery-contact__header-title {
-	font-size: 1em;
-	line-height: 1em;
-}
-
 .security-account-recovery-contact__header-subtitle {
 	display: block;
-	font-size: 1em;
 	font-style: italic;
 	color: var( --color-text-subtle );
 }

@@ -37,6 +37,19 @@
 	position: relative;
 }
 
+// Override WordPress.com primary colors with Jetpack Cloud primary colors.
+// This only affects the Plans grid and the Filter bar.
+.selector-alt__main {
+	.plans-filter-bar,
+	.products-grid-alt {
+		--color-accent: var( --studio-jetpack-green-40 );
+		--color-primary: var( --studio-jetpack-green-40 );
+		--color-accent-60: var( --studio-jetpack-green-60 );
+		--color-primary-light: var( --studio-jetpack-green-60 );
+		--color-primary-dark: var( --studio-jetpack-green-40 );
+	}
+}
+
 .selector__divider,
 .selector-alt__divider {
 	margin: 40px 0;
@@ -143,15 +156,13 @@
  * Record slider
  */
 
-.records-details,
-.records-details-alt {
+.records-details {
 	background-color: var( --studio-gray-0 );
 	border: solid 1px var( --studio-wordpress-blue-30 );
 	color: var( --color-text-subtle );
 }
 
-.records-details__records,
-.records-details-alt__records {
+.records-details__records {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -168,29 +179,36 @@
 	}
 }
 
-.records-details-alt__records {
-	padding: 14px 14px 0;
-
-	border-bottom: none;
-}
-
-.records-details__details,
-.records-details-alt__details {
+.records-details__details {
 	padding: 16px;
 
 	text-align: center;
 }
 
-.records-details-alt__details {
-	padding: 10px 14px 14px;
-}
-
-.records-details__tier,
-.records-details-alt__tier {
+.records-details__tier {
 	margin-bottom: 8px;
 
 	color: var( --color-text );
 	font-weight: 600;
+}
+
+.records-details-alt {
+	text-align: center;
+
+	color: var( --color-text );
+}
+
+.records-details-alt__records {
+	font-size: $font-body;
+	font-weight: 600;
+}
+
+.records-details-alt__tier {
+	margin: 8px 0 0;
+
+	font-size: $font-body-small;
+
+	color: var( --color-text-subtle );
 }
 
 .records-details__price {

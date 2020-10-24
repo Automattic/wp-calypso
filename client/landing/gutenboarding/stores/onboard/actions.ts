@@ -89,7 +89,7 @@ export function* createSite(
 			selected_features: selectedFeatures,
 			...( isEnabled( 'coming-soon-v2' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
-					public_coming_soon: true,
+					wpcom_public_coming_soon: true,
 				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),

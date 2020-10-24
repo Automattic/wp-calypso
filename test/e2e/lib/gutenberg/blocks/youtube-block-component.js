@@ -6,6 +6,7 @@ import { By } from 'selenium-webdriver';
 /**
  * Internal dependencies
  */
+import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
 class YoutubeBlockComponent extends GutenbergBlockComponent {
@@ -16,17 +17,11 @@ class YoutubeBlockComponent extends GutenbergBlockComponent {
 	);
 
 	async embed( videoURL ) {
-		const blockDivSelector = `div[id='${ this.blockID.slice( 1 ) }']`;
+		const embedInputSelector = By.css( `${ this.blockID } input[type='url']` );
+		const embedButtonSelector = By.css( `${ this.blockID } button[type='submit']` );
 
-		const embedInput = await this.driver.findElement(
-			By.css( `${ blockDivSelector } input[type='url']` )
-		);
-		const embedButton = await this.driver.findElement(
-			By.css( `${ blockDivSelector } button[type='submit']` )
-		);
-
-		await embedInput.sendKeys( videoURL );
-		await embedButton.click();
+		await driverHelper.setWhenSettable( this.driver, embedInputSelector, videoURL );
+		await driverHelper.clickWhenClickable( this.driver, embedButtonSelector );
 	}
 }
 

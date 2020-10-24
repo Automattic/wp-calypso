@@ -129,6 +129,25 @@ export const getDailyBackupDeltas = ( logs, date ) => {
 	};
 };
 
+export const getRawDailyBackupDeltas = ( logs, date ) => {
+	return getEventsInDailyBackup( logs, date ).filter( ( { activityName } ) =>
+		[
+			'attachment__uploaded',
+			// 'attachment__updated',
+			'attachment__deleted',
+			'post__published',
+			'post__trashed',
+			'post__published',
+			// 'post__updated',
+			'post__trashed',
+			'plugin__installed',
+			'plugin__deleted',
+			'theme__installed',
+			'theme__deleted',
+		].includes( activityName )
+	);
+};
+
 /**
  * Check if the activity is the type of backup
  *

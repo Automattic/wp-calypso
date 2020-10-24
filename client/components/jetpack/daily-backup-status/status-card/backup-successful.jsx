@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { get, isArray } from 'lodash';
 import React from 'react';
@@ -10,14 +9,13 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { applySiteOffset } from 'lib/site/timezone';
-import { useLocalizedMoment } from 'components/localized-moment';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import ActivityCard from 'components/activity-card';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import ActivityCard from 'calypso/components/activity-card';
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
@@ -75,11 +73,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 			<div className="status-card__meta">{ meta }</div>
 			<ActionButtons rewindId={ backup.rewindId } />
 			{ showBackupDetails && (
-				<div
-					className={ classNames( 'status-card__realtime-details', {
-						'is-simplified': isEnabled( 'jetpack/backup-simplified-screens' ),
-					} ) }
-				>
+				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">
 						<ActivityCard activity={ backup } summarize />
 					</div>

@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	PAGE_TEMPLATES_RECEIVE,
 	PAGE_TEMPLATES_REQUEST,
 	PAGE_TEMPLATES_REQUEST_FAILURE,
 	PAGE_TEMPLATES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requesting state after an action has been dispatched.

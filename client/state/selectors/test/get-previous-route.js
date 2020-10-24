@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPreviousRoute from 'state/selectors/get-previous-route';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 describe( 'getPreviousRoute()', () => {
 	test( 'should return empty if the previous Route is not set', () => {

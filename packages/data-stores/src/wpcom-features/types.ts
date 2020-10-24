@@ -15,7 +15,5 @@ export type FeatureId =
 
 export interface Feature {
 	id: FeatureId;
-	name: string;
-	description: string;
 	minSupportedPlan: PlanSlug;
 }

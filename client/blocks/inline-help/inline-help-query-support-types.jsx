@@ -7,22 +7,22 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import HappychatConnection from 'components/happychat/connection-connected';
-import QueryTicketSupportConfiguration from 'components/data/query-ticket-support-configuration';
-import QueryLanguageNames from 'components/data/query-language-names';
-import QuerySupportHistory from 'components/data/query-support-history';
-import { openChat as openHappychat } from 'state/happychat/ui/actions';
-import { initialize as initializeDirectly } from 'state/help/directly/actions';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import { getHelpSelectedSiteId } from 'state/help/selectors';
+import config from 'calypso/config';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import QueryTicketSupportConfiguration from 'calypso/components/data/query-ticket-support-configuration';
+import QueryLanguageNames from 'calypso/components/data/query-language-names';
+import QuerySupportHistory from 'calypso/components/data/query-support-history';
+import { openChat as openHappychat } from 'calypso/state/happychat/ui/actions';
+import { initialize as initializeDirectly } from 'calypso/state/help/directly/actions';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import { getHelpSelectedSiteId } from 'calypso/state/help/selectors';
 import {
 	isTicketSupportConfigurationReady,
 	getTicketSupportRequestError,
-} from 'state/help/ticket/selectors';
-import isHappychatUserEligible from 'state/happychat/selectors/is-happychat-user-eligible';
-import isDirectlyUninitialized from 'state/selectors/is-directly-uninitialized';
+} from 'calypso/state/help/ticket/selectors';
+import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
+import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
 
 class QueryInlineHelpSupportTypes extends Component {
 	componentDidMount() {

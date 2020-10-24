@@ -10,8 +10,8 @@ import { flow } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import { localize } from 'i18n-calypso';
 
 const DomainPrimaryFlag = ( { isDomainOnly, domain, translate } ) => {

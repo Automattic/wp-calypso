@@ -8,7 +8,7 @@ Beyond combining Popover and PostSchedule, this component connects with the stat
 
 ```jsx
 import { Button } from '@automattic/components';
-import CalendarPopover from 'blocks/calendar-popover';
+import CalendarPopover from 'calypso/blocks/calendar-popover';
 
 const toggle = () => this.setState( { show: ! this.state.show } );
 const buttonRef = React.createRef();

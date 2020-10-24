@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingPlans } from 'state/plans/selectors';
-import { requestPlans } from 'state/plans/actions';
+import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import { requestPlans } from 'calypso/state/plans/actions';
 
 class QueryPlans extends Component {
 	UNSAFE_componentWillMount() {

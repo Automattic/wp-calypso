@@ -192,7 +192,7 @@ class PurchaseItem extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
-			return translate( 'This plan is managed by %(partnerName)s', {
+			return translate( 'This plan is managed by %(partnerName)s.', {
 				args: {
 					partnerName: getPartnerName( purchase ),
 				},

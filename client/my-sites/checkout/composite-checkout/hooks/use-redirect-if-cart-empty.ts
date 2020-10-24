@@ -8,7 +8,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { clearSignupDestinationCookie } from 'signup/storageUtils';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 

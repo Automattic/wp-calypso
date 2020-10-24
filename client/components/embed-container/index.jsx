@@ -10,7 +10,7 @@ import { assign, filter, forEach, forOwn, noop } from 'lodash';
  * Internal Dependencies
  */
 import { loadScript } from '@automattic/load-script';
-import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:components:embed-container' );

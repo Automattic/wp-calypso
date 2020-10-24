@@ -18,9 +18,9 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let sandbox, spy;

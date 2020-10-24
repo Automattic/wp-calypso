@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
 	extendAction,
 	keyedReducer,
@@ -16,8 +16,8 @@ import {
 	withoutPersistence,
 	withEnhancers,
 	withStorageKey,
-} from 'state/utils';
-import warn from 'lib/warn';
+} from 'calypso/state/utils';
+import warn from 'calypso/lib/warn';
 
 jest.mock( 'lib/warn', () => jest.fn() );
 

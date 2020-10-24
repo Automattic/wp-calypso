@@ -15,7 +15,7 @@ import { spy } from 'sinon';
  */
 import fixtures from './fixtures';
 import mockedActions from './mocks/actions';
-import { PluginActivateToggle } from 'my-sites/plugins/plugin-activate-toggle';
+import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-toggle';
 
 jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )

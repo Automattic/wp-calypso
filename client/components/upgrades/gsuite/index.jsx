@@ -9,12 +9,12 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/cart/actions';
-import { hasDomainInCart } from 'lib/cart-values/cart-items';
-import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
+import { addItems } from 'calypso/lib/cart/actions';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
+import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 import GSuiteUpsellCard from './gsuite-upsell-card';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const GSuiteUpgrade = ( { cart, domain, selectedSiteSlug } ) => {
 	const handleAddEmailClick = ( cartItems ) => {

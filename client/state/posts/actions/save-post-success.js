@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { POST_SAVE_SUCCESS } from 'state/action-types';
+import { POST_SAVE_SUCCESS } from 'calypso/state/action-types';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an action object to be used in signalling that a post has been saved

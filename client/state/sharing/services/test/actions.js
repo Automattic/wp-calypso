@@ -13,9 +13,9 @@ import {
 	KEYRING_SERVICES_REQUEST,
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

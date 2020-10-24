@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { MediaListData } from 'components/data/media-list-data';
+import { MediaListData } from 'calypso/components/data/media-list-data';
 
 jest.mock( 'lib/media/actions', () => ( { setQuery: () => {}, fetchNextPage: () => {} } ) );
 

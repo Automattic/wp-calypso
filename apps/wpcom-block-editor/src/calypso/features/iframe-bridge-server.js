@@ -754,11 +754,18 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl, isNewLaunch, isExperimental } = data;
+		const {
+			isGutenboarding,
+			frankenflowUrl,
+			isNewLaunchMobile,
+			isExperimental,
+			isPersistentLaunchButton,
+		} = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
 		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
-		calypsoifyGutenberg.isNewLaunch = isNewLaunch;
+		calypsoifyGutenberg.isNewLaunchMobile = isNewLaunchMobile;
 		calypsoifyGutenberg.isExperimental = isExperimental;
+		calypsoifyGutenberg.isPersistentLaunchButton = isPersistentLaunchButton;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
@@ -924,6 +931,7 @@ function handleCheckoutModal( calypsoPort ) {
 	port1.onmessage = ( message ) => {
 		const { isCheckoutOverlayEnabled } = message.data;
 
+		// Conditionally add the hook if the feature flag is enabled.
 		if ( isCheckoutOverlayEnabled ) {
 			addAction(
 				'a8c.wpcom-block-editor.openCheckoutModal',

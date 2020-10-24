@@ -8,8 +8,8 @@ It also provides the components `UserMentionsSuggestionList` and `UserMentionsSu
 ## How to use
 
 ```js
-import FormTextarea from 'components/forms/form-textarea';
-import withUserMentions from 'blocks/user-mentions';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import withUserMentions from 'calypso/blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
 	<FormTextarea forwardedRef={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />

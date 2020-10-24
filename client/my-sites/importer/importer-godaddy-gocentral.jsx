@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import SiteImporter from './site-importer';
-import importerConfig from 'lib/importer/importer-config';
+import importerConfig from 'calypso/lib/importer/importer-config';
 
 class ImporterGoDaddyGoCentral extends React.PureComponent {
 	static displayName = 'ImporterGoDaddyGoCentral';

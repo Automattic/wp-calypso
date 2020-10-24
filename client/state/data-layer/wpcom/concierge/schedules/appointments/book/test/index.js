@@ -1,18 +1,18 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { bookConciergeAppointment, onSuccess, onError } from '../';
 import toApi from '../to-api';
-import { errorNotice } from 'state/notices/actions';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_CREATE } from 'state/action-types';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
+import { CONCIERGE_APPOINTMENT_CREATE } from 'calypso/state/action-types';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
-} from 'me/concierge/constants';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
+} from 'calypso/me/concierge/constants';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests
 jest.mock( 'lib/impure-lodash', () => ( {

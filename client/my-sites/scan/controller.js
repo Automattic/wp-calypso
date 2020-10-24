@@ -6,21 +6,21 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import UpsellSwitch from 'components/jetpack/upsell-switch';
-import HasVaultPressSwitch from 'components/jetpack/has-vaultpress-switch';
+import UpsellSwitch from 'calypso/components/jetpack/upsell-switch';
+import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import ScanPage from './main';
 import ScanHistoryPage from './history';
-import ScanUpsellPage from './upsell';
+import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
-import getSiteScanRequestStatus from 'state/selectors/get-site-scan-request-status';
-import getSiteScanState from 'state/selectors/get-site-scan-state';
-import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import ScanPlaceholder from 'components/jetpack/scan-placeholder';
-import ScanHistoryPlaceholder from 'components/jetpack/scan-history-placeholder';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { isJetpackScanSlug } from 'lib/products-values';
+import getSiteScanRequestStatus from 'calypso/state/selectors/get-site-scan-request-status';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
+import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isJetpackScanSlug } from 'calypso/lib/products-values';
 
 export function showUpsellIfNoScan( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanPlaceholder />, context.primary );

@@ -38,11 +38,15 @@ import {
 	isThemePremium,
 	isThemePurchased,
 	isPremiumThemeAvailable,
-	isThemeAvailableOnJetpackSite,
 	getWpcomParentThemeId,
 } from '../selectors';
-import { PLAN_FREE, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
-import ThemeQueryManager from 'lib/query-manager/theme';
+import {
+	PLAN_FREE,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+} from 'calypso/lib/plans/constants';
+import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -1009,62 +1013,6 @@ describe( 'themes selectors', () => {
 				2916284
 			);
 			expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.wordpress.com' );
-		} );
-
-		describe( 'given a theme and a Jetpack site ID', () => {
-			describe( 'with JP version < 4.7', () => {
-				test( "should return the site's wp-admin theme details URL", () => {
-					const detailsUrl = getThemeDetailsUrl(
-						{
-							sites: {
-								items: {
-									77203074: {
-										ID: 77203074,
-										URL: 'https://example.net',
-										jetpack: true,
-										options: {
-											admin_url: 'https://example.net/wp-admin/',
-											jetpack_version: '4.4.1',
-										},
-									},
-								},
-							},
-						},
-						'twentysixteen',
-						77203074
-					);
-					expect( detailsUrl ).to.equal(
-						'https://example.net/wp-admin/themes.php?theme=twentysixteen'
-					);
-				} );
-			} );
-
-			describe( 'with JP version >= 4.7', () => {
-				describe( 'with Jetpack Manage not explicitly turned off', () => {
-					test( 'should return the Calypso theme sheet URL', () => {
-						const detailsUrl = getThemeDetailsUrl(
-							{
-								sites: {
-									items: {
-										77203074: {
-											ID: 77203074,
-											URL: 'https://example.net',
-											jetpack: true,
-											options: {
-												admin_url: 'https://example.net/wp-admin/',
-												jetpack_version: '4.7',
-											},
-										},
-									},
-								},
-							},
-							'twentysixteen',
-							77203074
-						);
-						expect( detailsUrl ).to.equal( '/theme/twentysixteen/example.net' );
-					} );
-				} );
-			} );
 		} );
 	} );
 
@@ -2470,92 +2418,6 @@ describe( 'themes selectors', () => {
 
 				expect( isAvailable ).to.be.true;
 			} );
-		} );
-	} );
-
-	describe( '#isThemeAvailableOnJetpackSite', () => {
-		test( 'should return true if theme is already installed on Jetpack site', () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-							},
-						},
-					},
-					themes: {
-						queries: {
-							77203074: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.true;
-		} );
-
-		test( "should return false if theme is a WP.com theme but Jetpack site doesn't support WP.com theme installation", () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									jetpack_version: '4.0',
-								},
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.false;
-		} );
-
-		test( 'should return true if theme is a WP.com theme and Jetpack site supports WP.com theme installation', () => {
-			const isAvailable = isThemeAvailableOnJetpackSite(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									jetpack_version: '4.8',
-								},
-							},
-						},
-					},
-					themes: {
-						queries: {
-							wpcom: new ThemeQueryManager( {
-								items: { twentyfifteen },
-							} ),
-						},
-					},
-				},
-				'twentyfifteen',
-				77203074
-			);
-			expect( isAvailable ).to.be.true;
 		} );
 	} );
 

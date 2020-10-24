@@ -8,7 +8,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies

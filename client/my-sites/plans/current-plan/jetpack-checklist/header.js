@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
+import CardHeading from 'calypso/components/card-heading';
 
 const JetpackChecklistHeader = ( { isPaidPlan, translate } ) => (
 	<Fragment>

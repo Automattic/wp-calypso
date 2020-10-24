@@ -7,9 +7,9 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import TooltipComponent from 'components/tooltip';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import TooltipComponent from 'calypso/components/tooltip';
 
 class Tooltip extends PureComponent {
 	constructor( props ) {

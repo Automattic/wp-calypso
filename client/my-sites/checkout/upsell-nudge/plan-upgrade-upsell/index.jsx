@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { CompactCard, Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -20,7 +20,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import premiumThemesImage from 'assets/images/illustrations/themes.svg';
+import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
 
 export class PlanUpgradeUpsell extends PureComponent {
 	render() {

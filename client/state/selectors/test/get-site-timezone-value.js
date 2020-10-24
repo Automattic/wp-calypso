@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
 describe( 'getSiteTimezoneValue()', () => {
 	test( 'should return null if the site has never been fetched', () => {

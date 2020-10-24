@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import page from 'page';
@@ -24,10 +24,38 @@ import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { createCardToken } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
+import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import config from 'calypso/config';
+
+function useLogPaymentMethodsError( message: string ) {
+	const reduxDispatch = useDispatch();
+
+	return useCallback(
+		( error ) => {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message,
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'site_level_payment_methods',
+						message: String( error ),
+					},
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+}
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 	const translate = useTranslate();
+	const logPaymentMethodsError = useLogPaymentMethodsError(
+		'site level payment methods load error'
+	);
 
 	return (
 		<Main className="purchases is-wide-layout">
@@ -42,7 +70,12 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />
 
-			<CreditCards addPaymentMethodUrl={ getAddNewPaymentMethod( siteSlug ) } />
+			<SiteLevelPurchasesErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPaymentMethodsError }
+			>
+				<CreditCards addPaymentMethodUrl={ getAddNewPaymentMethod( siteSlug ) } />
+			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
 }
@@ -54,6 +87,9 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 	const reduxDispatch = useDispatch();
 	const saveStoredCard = ( ...args: unknown[] ) => reduxDispatch( addStoredCard( ...args ) );
+	const logPaymentMethodsError = useLogPaymentMethodsError(
+		'site level add new payment method load error'
+	);
 
 	return (
 		<Main className="purchases is-wide-layout">
@@ -67,16 +103,21 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 				align="left"
 			/>
 
-			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
-				<CreditCardForm
-					createCardToken={ createAddCardToken }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					saveStoredCard={ saveStoredCard }
-					successCallback={ goToBillingHistory }
-					showUsedForExistingPurchasesInfo={ true }
-				/>
-			</StripeHookProvider>
+			<SiteLevelPurchasesErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logPaymentMethodsError }
+			>
+				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+				<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+					<CreditCardForm
+						createCardToken={ createAddCardToken }
+						recordFormSubmitEvent={ recordFormSubmitEvent }
+						saveStoredCard={ saveStoredCard }
+						successCallback={ goToBillingHistory }
+						showUsedForExistingPurchasesInfo={ true }
+					/>
+				</StripeHookProvider>
+			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
 }

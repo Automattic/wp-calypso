@@ -8,21 +8,21 @@ import { connect, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { savePreference } from 'state/preferences/actions';
-import getSiteTaskList from 'state/selectors/get-site-task-list';
-import isSiteChecklistComplete from 'state/selectors/is-site-checklist-complete';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import CelebrateNotice from 'my-sites/customer-home/cards/notices/celebrate-notice';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
+import isSiteChecklistComplete from 'calypso/state/selectors/is-site-checklist-complete';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import CelebrateNotice from 'calypso/my-sites/customer-home/cards/notices/celebrate-notice';
 import {
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
-} from 'my-sites/customer-home/cards/constants';
+} from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
-import launchedIllustration from 'assets/images/customer-home/illustration--rocket.svg';
+import launchedIllustration from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 
 const CelebrateSiteLaunch = ( { isSiteSetupComplete, pendingSiteSetupTasks, siteId } ) => {
 	const translate = useTranslate();

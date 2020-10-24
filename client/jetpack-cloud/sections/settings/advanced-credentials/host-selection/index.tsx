@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import React, { FunctionComponent, useEffect, useMemo } from 'react';
 import type { AnyAction } from 'redux';
@@ -9,14 +9,16 @@ import type { AnyAction } from 'redux';
 /**
  * Internal dependencies
  */
-import type { SiteId } from 'types';
-import { getHttpData, requestHttpData, DataState } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { getHttpData, requestHttpData, DataState } from 'calypso/state/data-layer/http-data';
 import { getProviderNameFromId, topHosts, otherHosts } from '../host-info';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { settingsPath } from 'lib/jetpack/paths';
-import Badge from 'components/badge';
-import Gridicon from 'components/gridicon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { useMobileBreakpoint } from '@automattic/viewport-react';
+import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
+import type { SiteId } from 'calypso/types';
 
 /**
  * Style dependencies
@@ -43,16 +45,17 @@ function requestHostingProviderGuess( siteId: SiteId ) {
 }
 
 const HostSelection: FunctionComponent = () => {
-	const translate = useTranslate();
-
-	const siteId = useSelector( getSelectedSiteId );
+	const isMobile = useMobileBreakpoint();
+	const siteId = useSelector( getSelectedSiteId ) as SiteId;
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	const {
 		state: providerGuessState,
 		data: guess = null,
 		// error: providerGuessError,
-	} = useSelector( () => getHttpData( getRequestHostingProviderGuessId( siteId as SiteId ) ) );
+	} = useSelector( () => getHttpData( getRequestHostingProviderGuessId( siteId ) ) );
 
 	const loadingProviderGuess = ! [ DataState.Success, DataState.Failure ].includes(
 		providerGuessState
@@ -61,14 +64,21 @@ const HostSelection: FunctionComponent = () => {
 	const providerGuessName = getProviderNameFromId( guess );
 
 	const hostsToShow = useMemo( () => {
-		const list = [ ...topHosts ];
 		for ( const host of otherHosts ) {
 			if ( guess === host.id ) {
-				list.push( host );
+				return [ host, ...topHosts ];
 			}
 		}
-		return list;
+		return topHosts;
 	}, [ guess ] );
+
+	const recordHostSelectionEvent = ( host: string ) => {
+		dispatch(
+			recordTracksEvent( 'jetpack_advanced_credentials_flow_host_select', {
+				host,
+			} )
+		);
+	};
 
 	useEffect( () => {
 		requestHostingProviderGuess( siteId as SiteId );
@@ -110,11 +120,16 @@ const HostSelection: FunctionComponent = () => {
 						}
 						key={ id }
 						href={ `${ settingsPath( siteSlug ) }?host=${ id }` }
+						onClick={ () => recordHostSelectionEvent( id ) }
 					>
 						<span>{ name }</span>
 						<div className="host-selection__list-item-badge-and-icon">
 							{ guess === id && (
-								<Badge>{ translate( 'If we had to guess your host, this would be it' ) }</Badge>
+								<Badge>
+									{ isMobile
+										? translate( 'Our guess' )
+										: translate( 'If we had to guess your host, this would be it' ) }
+								</Badge>
 							) }
 							<Gridicon icon="chevron-right" />
 						</div>
@@ -128,10 +143,13 @@ const HostSelection: FunctionComponent = () => {
 					}
 					key={ 'generic' }
 					href={ `${ settingsPath( siteSlug ) }?host=generic` }
+					onClick={ () => recordHostSelectionEvent( 'generic' ) }
 				>
-					{ translate(
-						'I don’t know / my host is not listed here / I have my server credentials'
-					) }
+					{ isMobile
+						? translate( 'My host is not listed here' )
+						: translate(
+								'I don’t know / my host is not listed here / I have my server credentials'
+						  ) }
 					<Gridicon icon="chevron-right" />
 				</a>
 			</div>

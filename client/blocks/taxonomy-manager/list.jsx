@@ -13,17 +13,17 @@ import { WindowScroller } from '@automattic/react-virtualized';
 /**
  * Internal dependencies
  */
-import VirtualList from 'components/virtual-list';
+import VirtualList from 'calypso/components/virtual-list';
 import ListItem from './list-item';
 import { CompactCard } from '@automattic/components';
-import QueryTerms from 'components/data/query-terms';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QueryTerms from 'calypso/components/data/query-terms';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import {
 	isRequestingTermsForQueryIgnoringPage,
 	getTermsLastPageForQuery,
 	getTermsForQueryIgnoringPage,
-} from 'state/terms/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/terms/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Constants

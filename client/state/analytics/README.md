@@ -27,7 +27,7 @@ import {
 	recordGoogleEvent,
 	recordTracksEvent,
 	recordPageView,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 
 // track a page-view
 dispatch( recordPageView( '/path/to/page', 'Page Title' ) );

@@ -74,9 +74,15 @@ import {
 import { useFormStatus } from './lib/form-status';
 import { CheckIcon as CheckoutCheckIcon } from './components/shared-icons';
 import { useTransactionStatus } from './lib/transaction-status';
-import { usePaymentProcessor } from './lib/payment-processors';
+import {
+	usePaymentProcessor,
+	usePaymentProcessors,
+	makeManualResponse,
+	makeSuccessResponse,
+	makeRedirectResponse,
+} from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus } from './types';
+import { FormStatus, TransactionStatus, PaymentProcessorResponseType } from './types';
 
 // Re-export the public API
 export {
@@ -102,6 +108,7 @@ export {
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	PaymentProcessorResponseType,
 	SubmitButtonWrapper,
 	TransactionStatus,
 	checkoutTheme,
@@ -132,6 +139,9 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
+	makeManualResponse,
+	makeRedirectResponse,
+	makeSuccessResponse,
 	registerStore,
 	useAllPaymentMethods,
 	useDispatch,
@@ -145,6 +155,7 @@ export {
 	usePaymentMethod,
 	usePaymentMethodId,
 	usePaymentProcessor,
+	usePaymentProcessors,
 	useRegisterStore,
 	useRegistry,
 	useSelect,

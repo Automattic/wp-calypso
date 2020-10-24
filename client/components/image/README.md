@@ -7,7 +7,7 @@ to the image element if the image fails to load.
 
 ```jsx
 import React from 'react';
-import Image from 'components/image';
+import Image from 'calypso/components/image';
 
 const MyComponent = () => <Image src="http://example.com/fails" className="my-image" />;
 ```

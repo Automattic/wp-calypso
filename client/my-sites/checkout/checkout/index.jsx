@@ -13,8 +13,12 @@ import { format as formatUrl, parse as parseUrl } from 'url';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { shouldShowTax, hasPendingPayment, getEnabledPaymentMethods } from 'lib/cart-values';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import {
+	shouldShowTax,
+	hasPendingPayment,
+	getEnabledPaymentMethods,
+} from 'calypso/lib/cart-values';
 import {
 	conciergeSessionItem,
 	domainMapping,
@@ -38,14 +42,14 @@ import {
 	hasOnlyRenewalItems,
 	hasTransferProduct,
 	jetpackProductItem,
-} from 'lib/cart-values/cart-items';
+} from 'calypso/lib/cart-values/cart-items';
 import {
 	isJetpackProductSlug,
 	isJetpackScanSlug,
 	isJetpackBackupSlug,
 	isJetpackCloudProductSlug,
 	isJetpackAntiSpamSlug,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 import {
 	JETPACK_PRODUCTS_LIST,
 	JETPACK_SEARCH_PRODUCTS,
@@ -53,63 +57,67 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 import PendingPaymentBlocker from './pending-payment-blocker';
-import { clearSitePlans } from 'state/sites/plans/actions';
-import { clearPurchases } from 'state/purchases/actions';
+import { clearSitePlans } from 'calypso/state/sites/plans/actions';
+import { clearPurchases } from 'calypso/state/purchases/actions';
 import DomainDetailsForm from './domain-details-form';
-import { fetchReceiptCompleted } from 'state/receipts/actions';
-import { getExitCheckoutUrl } from 'lib/checkout';
-import { hasDomainDetails } from 'lib/transaction/selectors';
-import notices from 'notices';
-import { managePurchase } from 'me/purchases/paths';
-import SubscriptionLengthPicker from 'blocks/subscription-length-picker';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryStoredCards from 'components/data/query-stored-cards';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryPlans from 'components/data/query-plans';
+import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import { getExitCheckoutUrl } from 'calypso/lib/checkout';
+import { hasDomainDetails } from 'calypso/lib/transaction/selectors';
+import notices from 'calypso/notices';
+import { managePurchase } from 'calypso/me/purchases/paths';
+import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryPlans from 'calypso/components/data/query-plans';
 import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
-import { AUTO_RENEWAL } from 'lib/url/support';
+import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import {
 	RECEIVED_WPCOM_RESPONSE,
 	SUBMITTING_WPCOM_REQUEST,
-} from 'lib/store-transactions/step-types';
-import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'lib/cart/actions';
-import { resetTransaction, setDomainDetails } from 'lib/transaction/actions';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isEligibleForSignupDestination from 'state/selectors/is-eligible-for-signup-destination';
-import { getStoredCards, isFetchingStoredCards } from 'state/stored-cards/selectors';
-import { isValidFeatureKey } from 'lib/plans/features-list';
-import { getPlan, findPlansKeys } from 'lib/plans';
-import { GROUP_WPCOM } from 'lib/plans/constants';
-import { recordViewCheckout } from 'lib/analytics/ad-tracking';
-import { requestSite } from 'state/sites/actions';
-import { isJetpackSite, isNewSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
-import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
-import { getProductsList, isProductsListFetching } from 'state/products-list/selectors';
-import QueryProducts from 'components/data/query-products-list';
-import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { isRequestingPlans } from 'state/plans/selectors';
-import { isApplePayAvailable } from 'lib/web-payment';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import config from 'config';
-import { loadTrackingTool } from 'state/analytics/actions';
+} from 'calypso/lib/store-transactions/step-types';
+import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'calypso/lib/cart/actions';
+import { resetTransaction, setDomainDetails } from 'calypso/lib/transaction/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import { getStoredCards, isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import { getPlan, findPlansKeys } from 'calypso/lib/plans';
+import { GROUP_WPCOM } from 'calypso/lib/plans/constants';
+import { recordViewCheckout } from 'calypso/lib/analytics/ad-tracking';
+import { requestSite } from 'calypso/state/sites/actions';
+import { isJetpackSite, isNewSite } from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
+import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import { isApplePayAvailable } from 'calypso/lib/web-payment';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import config from 'calypso/config';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
 import {
 	persistSignupDestination,
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
-} from 'signup/storageUtils';
-import { isExternal, addQueryArgs } from 'lib/url';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { abtest } from 'lib/abtest';
-import isPrivateSite from 'state/selectors/is-private-site';
+} from 'calypso/signup/storageUtils';
+import { isExternal, addQueryArgs } from 'calypso/lib/url';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { abtest } from 'calypso/lib/abtest';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -1002,11 +1010,7 @@ export default connect(
 			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
 			contactDetails: getContactDetailsCache( state ),
 			userCountryCode: getCurrentUserCountryCode( state ),
-			isEligibleForSignupDestination: isEligibleForSignupDestination(
-				state,
-				selectedSiteId,
-				props.cart
-			),
+			isEligibleForSignupDestination: isEligibleForSignupDestination( props.cart ),
 			productsList: getProductsList( state ),
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/home/init';
+import 'calypso/state/home/init';
 
 /**
  * Returns true if the Home's Quick Links are expanded.

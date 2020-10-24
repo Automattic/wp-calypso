@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSelectedOrPrimarySiteId from 'state/selectors/get-selected-or-primary-site-id';
-import { getSite } from 'state/sites/selectors';
+import getSelectedOrPrimarySiteId from 'calypso/state/selectors/get-selected-or-primary-site-id';
+import { getSite } from 'calypso/state/sites/selectors';
 
-import 'state/help/init';
+import 'calypso/state/help/init';
 
 export const getHelpSiteId = ( state ) => state.help?.selectedSiteId;
 

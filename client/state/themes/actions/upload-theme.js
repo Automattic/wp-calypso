@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	THEME_UPLOAD_FAILURE,
 	THEME_UPLOAD_PROGRESS,
 	THEME_UPLOAD_START,
 	THEME_UPLOAD_SUCCESS,
-} from 'state/themes/action-types';
-import { receiveTheme } from 'state/themes/actions/receive-theme';
+} from 'calypso/state/themes/action-types';
+import { receiveTheme } from 'calypso/state/themes/actions/receive-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a theme upload to the given site.

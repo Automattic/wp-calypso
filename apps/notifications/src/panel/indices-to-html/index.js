@@ -79,11 +79,13 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'br':
 		case 'div':
 		case 'code':
+		case 'pre':
 		case 'span':
 		case 'strong':
 		case 'em':
 		case 'sub':
 		case 'sup':
+		case 'del':
 		case 's':
 		case 'ol':
 		case 'ul':
@@ -122,17 +124,23 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			new_classes.push( 'is-primary' );
 		default:
 			// Most range types fall here
-			if ( options.links && range_info.url ) {
+			if ( ( options.links && range_info.url ) || range_info_type === 'a' ) {
 				// We are a link of some sort...
 				new_container = document.createElement( 'a' );
-
 				new_container.setAttribute( 'href', range_info.url );
+				if ( range_info.hasOwnProperty( 'class' ) ) {
+					new_classes.push( range_info.class );
+				}
+				if ( range_info.hasOwnProperty( 'style' ) ) {
+					new_container.setAttribute( 'style', range_info.style );
+				}
 				if ( range_info_type === 'stat' ) {
 					// Stat links should change the whole window/tab
 					new_container.setAttribute( 'target', '_parent' );
 				} else {
 					// Other links should link into a new window/tab
 					new_container.setAttribute( 'target', '_blank' );
+					new_container.setAttribute( 'rel', 'noopener noreferrer' );
 				}
 
 				if ( 'post' === range_info.type ) {
@@ -321,17 +329,9 @@ function recurse_convert( text, ranges, options ) {
 	// to smallest gives us the proper order for descending recursively.
 	for ( i = 0; i < ranges_copy.length; i++ ) {
 		id = find_largest_range( ranges_copy );
-		if ( ranges[ id ].indices[ 1 ] === 0 && ranges[ id ].indices[ 1 ] === 0 ) {
-			// Indices covering 0,0 are special cases only. They always go at the very
-			// beginning of the document, are never nested, and are always "empty"
-			// If there are multiple zero-length ranges, they will return in the order
-			// they appear.
-			container.appendChild( render_range( '', [], ranges[ id ], ranges, options ) );
-		} else {
-			range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
-			for ( n = ranges[ id ].indices[ 0 ]; n <= ranges[ id ].indices[ 1 ]; n++ ) {
-				t[ n ].index.push( { id: id, len: range_len } );
-			}
+		range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
+		for ( n = ranges[ id ].indices[ 0 ]; n <= ranges[ id ].indices[ 1 ]; n++ ) {
+			t[ n ].index.push( { id: id, len: range_len } );
 		}
 		// Clear out the currently-selected range so that it won't
 		// return as the largest range in the next loop iteration

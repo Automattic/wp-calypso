@@ -3,6 +3,9 @@
 @import '~@automattic/typography/styles/fonts';
 
 .is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
 	background-color: var( --color-surface );
 
 	font-family: 'Noto Sans', $sans;
@@ -89,9 +92,15 @@
 	}
 
 	.jetpack-product-card-alt {
+		background: var( --studio-gray-0 );
+
 		.foldable-card {
 			font-size: $font-body;
 		}
+	}
+
+	.jetpack-free-card-alt {
+		background: var( --studio-gray-0 );
 	}
 
 	.foldable-card {

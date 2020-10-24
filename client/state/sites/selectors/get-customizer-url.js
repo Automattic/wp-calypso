@@ -6,8 +6,8 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCustomizerFocus } from 'my-sites/customize/panels';
-import { addQueryArgs } from 'lib/url';
+import { getCustomizerFocus } from 'calypso/my-sites/customize/panels';
+import { addQueryArgs } from 'calypso/lib/url';
 import getSiteAdminUrl from './get-site-admin-url';
 import getSiteSlug from './get-site-slug';
 import isJetpackSite from './is-jetpack-site';

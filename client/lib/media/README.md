@@ -15,7 +15,7 @@ This is the single source of truth for media data. As data flows through the Flu
 The stores are singleton objects, which offer `get` and `getAll` methods to retrieve data.
 
 ```js
-import MediaStoreFactory from 'lib/media/store';
+import MediaStoreFactory from 'calypso/lib/media/store';
 const MediaStore = MediaStoreFactory();
 
 const allMedia = MediaStore.getAll( siteId );
@@ -25,7 +25,7 @@ const singleMedia = MediaStore.get( siteId, postId );
 To interact with the store, use the actions made available in `actions.js`.
 
 ```js
-import MediaActions from 'lib/media/actions';
+import MediaActions from 'calypso/lib/media/actions';
 
 MediaActions.fetchNextPage( siteId );
 ```
@@ -33,7 +33,7 @@ MediaActions.fetchNextPage( siteId );
 You should monitor the store for changes in case another module interacts with the store:
 
 ```js
-import MediaStore from 'lib/media/store';
+import MediaStore from 'calypso/lib/media/store';
 let mediaScale = MediaStore.get( 'media-scale' );
 
 MediaStore.on( 'change', function () {

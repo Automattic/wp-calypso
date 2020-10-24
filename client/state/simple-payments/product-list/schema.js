@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 /**
  * These are the parameters kept in metadata (custom fields)
  */

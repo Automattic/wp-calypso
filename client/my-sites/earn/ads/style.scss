@@ -1,4 +1,5 @@
-.earnings_breakdown, .earnings_history {
+.earnings_breakdown,
+.earnings_history {
 	.module-content {
 		display: block;
 	}
@@ -120,7 +121,8 @@
 	text-align: center;
 
 	@include breakpoint-deprecated( '<480px' ) {
-		&:first-child, &:last-child {
+		&:first-child,
+		&:last-child {
 			font-size: $font-body-extra-small;
 		}
 	}
@@ -143,7 +145,8 @@
 	margin: 0;
 }
 
-.ads__activate-header-toggle, .ads__activate-header-title {
+.ads__activate-header-toggle,
+.ads__activate-header-title {
 	margin: auto 0;
 }
 .ads__activate-wrapper {

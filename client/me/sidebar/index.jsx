@@ -15,10 +15,9 @@ import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,
 	billingHistory,
-	upcomingCharges,
 	pendingPayments,
-	myMemberships,
 	purchasesRoot,
+	deprecated as deprecatedPaths,
 } from 'calypso/me/purchases/paths';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -90,9 +89,9 @@ class MeSidebar extends React.Component {
 			[ purchasesRoot ]: 'purchases',
 			[ billingHistory ]: 'purchases',
 			[ addCreditCard ]: 'purchases',
-			[ upcomingCharges ]: 'purchases',
+			[ deprecatedPaths.upcomingCharges ]: 'purchases',
 			[ pendingPayments ]: 'purchases',
-			[ myMemberships ]: 'purchases',
+			[ deprecatedPaths.otherPurchases ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};

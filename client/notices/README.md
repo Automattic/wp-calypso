@@ -7,7 +7,7 @@ Provides some helper functions to render a notice on the UI. Types of notices ar
 Once you require the component you have access to .
 
 ```javascript
-import notices from 'notices';
+import notices from 'calypso/notices';
 
 // Success notice when saving settings
 notices.success( 'Settings saved successfully!', { overlay: true } );

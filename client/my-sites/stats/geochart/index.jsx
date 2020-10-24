@@ -12,13 +12,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import config from 'config';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import config from 'calypso/config';
 import StatsModulePlaceholder from '../stats-module/placeholder';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies

@@ -6,40 +6,40 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
-} from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
-} from 'components/domains/domain-registration-suggestion/utility';
+} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { ProgressBar } from '@automattic/components';
-import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import Badge from 'components/badge';
+import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import Badge from 'calypso/components/badge';
 import PremiumBadge from '../premium-badge';
-import InfoPopover from 'components/info-popover';
-import { HTTPS_SSL } from 'lib/url/support';
+import InfoPopover from 'calypso/components/info-popover';
+import { HTTPS_SSL } from 'calypso/lib/url/support';
 
 const NOTICE_GREEN = '#4ab866';
 
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
-		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		buttonStyles: PropTypes.object,
 		cart: PropTypes.object,
@@ -123,7 +123,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			cart,
 			domainsWithPlansOnly,
-			isSignupStep,
+			showStrikedOutPrice,
 			selectedSite,
 			suggestion,
 			translate,
@@ -145,7 +145,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonStyles = { ...buttonStyles, primary: false };
 		} else {
 			buttonContent =
-				! isSignupStep &&
+				! showStrikedOutPrice &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 					? translate( 'Upgrade', {
 							context: 'Domain mapping suggestion button with plan upgrade',
@@ -239,9 +239,10 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
-			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
+			'domain-registration-suggestion__title-domain':
+				this.props.showStrikedOutPrice && ! this.props.isFeatured,
 		} );
 
 		return (
@@ -291,6 +292,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
 			translate,
 			isFeatured,
+			showStrikedOutPrice,
 		} = this.props;
 
 		if ( ! isFeatured ) {
@@ -299,9 +301,7 @@ class DomainRegistrationSuggestion extends React.Component {
 
 		let title, progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.isEligibleVariantForDomainTest
-				? translate( 'Our Recommendation' )
-				: translate( 'Best Match' );
+			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -318,7 +318,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.isEligibleVariantForDomainTest ) {
+			if ( showStrikedOutPrice ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -341,7 +341,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.isEligibleVariantForDomainTest ) {
+		if ( this.props.showStrikedOutPrice ) {
 			return null;
 		}
 
@@ -376,6 +376,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			productCost,
 			productSaleCost,
 			premiumDomain,
+			showStrikedOutPrice,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -396,8 +397,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
+				showStrikedOutPrice={ showStrikedOutPrice }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -411,7 +412,7 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const stripZeros = props.showStrikedOutPrice ? true : false;
 	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
 	let productCost;

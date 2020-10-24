@@ -7,8 +7,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { listMembershipsConnectedAccounts } from 'state/memberships/actions';
-import { isFetching } from 'state/memberships/connected-accounts/selectors';
+import { listMembershipsConnectedAccounts } from 'calypso/state/memberships/actions';
+import { isFetching } from 'calypso/state/memberships/connected-accounts/selectors';
 
 class QueryMembershipsConnectedAccounts extends Component {
 	componentDidMount() {

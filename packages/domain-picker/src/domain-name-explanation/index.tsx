@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent } from 'react';
+import { __ } from '@wordpress/i18n';
 
 export const DomainNameExplanationImage: FunctionComponent = () => {
 	return (
@@ -23,7 +24,10 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 				https://
 			</text>
 			<text x="133" y="26" fill="#515151">
-				example.com
+				{
+					/* translators: An example domain name. Used to describe what a domain name is. */
+					__( 'example.com', __i18n_text_domain__ )
+				}
 			</text>
 		</svg>
 	);

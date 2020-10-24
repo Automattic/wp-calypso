@@ -11,7 +11,7 @@ import '../style.scss';
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 export class ReaderSidebarTagsListItem extends Component {
 	static propTypes = {

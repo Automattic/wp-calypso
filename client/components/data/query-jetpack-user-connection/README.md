@@ -9,9 +9,9 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryJetpackUserConnection from 'components/data/query-jetpack-user-connection';
+import QueryJetpackUserConnection from 'calypso/components/data/query-jetpack-user-connection';
 import MyJetpackConnectionDataBlock from './data-block';
-import getJetpackUserConnection from 'state/selectors/get-jetpack-user-connection';
+import getJetpackUserConnection from 'calypso/state/selectors/get-jetpack-user-connection';
 
 function MyJetpackConnectionData( { jetpackConnection } ) {
 	return (

@@ -11,12 +11,12 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import QueryPostFormats from 'components/data/query-post-formats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostFormats } from 'state/post-formats/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import QueryPostFormats from 'calypso/components/data/query-post-formats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostFormats } from 'calypso/state/post-formats/selectors';
 
 const DefaultPostFormat = ( {
 	fields,

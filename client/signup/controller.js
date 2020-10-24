@@ -132,7 +132,7 @@ export default {
 
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
 				.then( ( { geo } ) => {
-					const countryCode = geo.data.body.country_short;
+					const countryCode = geo.data;
 					if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&

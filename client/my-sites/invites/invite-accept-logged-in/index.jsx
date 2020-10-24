@@ -13,12 +13,12 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import Gravatar from 'components/gravatar';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { acceptInvite } from 'lib/invites/actions';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import Gravatar from 'calypso/components/gravatar';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import { acceptInvite } from 'calypso/lib/invites/actions';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies

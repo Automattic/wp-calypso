@@ -11,21 +11,21 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deserialize } from 'lib/media-serialization';
-import { url as mediaUrl } from 'lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
+import { url as mediaUrl } from 'calypso/lib/media/utils';
 import { Dialog } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import PostSelector from 'my-sites/post-selector';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSitePosts } from 'state/posts/selectors';
-import { decodeEntities } from 'lib/formatting';
-import { recordEditorEvent, recordEditorStat } from 'state/posts/stats';
-import Gridicon from 'components/gridicon';
-import { getMediaItem } from 'state/media/thunks';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import PostSelector from 'calypso/my-sites/post-selector';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSitePosts } from 'calypso/state/posts/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { recordEditorEvent, recordEditorStat } from 'calypso/state/posts/stats';
+import Gridicon from 'calypso/components/gridicon';
+import { getMediaItem } from 'calypso/state/media/thunks';
 
 /**
  * Module variables

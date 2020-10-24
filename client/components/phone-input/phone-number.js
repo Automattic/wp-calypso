@@ -3,7 +3,7 @@
  */
 import { find, flatten, includes, map, startsWith } from 'lodash';
 import debugFactory from 'debug';
-import { countries, dialCodeMap } from 'components/phone-input/data';
+import { countries, dialCodeMap } from 'calypso/components/phone-input/data';
 
 /**
  * Internal Dependencies

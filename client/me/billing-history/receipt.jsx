@@ -10,6 +10,7 @@ import { localize, useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
 import TextareaAutosize from 'calypso/components/textarea-autosize';
 import DocumentHead from 'calypso/components/data/document-head';
 import HeaderCake from 'calypso/components/header-cake';
@@ -28,6 +29,8 @@ import {
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getPlanTermLabel } from 'calypso/lib/plans';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -62,12 +65,14 @@ class BillingReceipt extends React.Component {
 		const { transaction, transactionId, translate } = this.props;
 
 		return (
-			<Main>
+			<Main className="receipt is-wide-layout">
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<PageViewTracker
 					path="/me/purchases/billing/:receipt"
 					title="Me > Billing History > Receipt"
 				/>
+
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<QueryBillingTransaction transactionId={ transactionId } />
 
 				<ReceiptTitle backHref={ billingHistory } />
@@ -290,9 +295,9 @@ function ReceiptLabels() {
 	const translate = useTranslate();
 	return (
 		<div>
-			<label htmlFor="billing-history__billing-details-textarea">
-				<strong>{ translate( 'Billing Details' ) }</strong>
-			</label>
+			<FormLabel htmlFor="billing-history__billing-details-textarea">
+				{ translate( 'Billing Details' ) }
+			</FormLabel>
 			<div
 				className="billing-history__billing-details-description"
 				id="billing-history__billing-details-description"
@@ -307,7 +312,7 @@ function ReceiptLabels() {
 
 export function ReceiptTitle( { backHref } ) {
 	const translate = useTranslate();
-	return <HeaderCake backHref={ backHref }>{ translate( 'Billing History' ) }</HeaderCake>;
+	return <HeaderCake backHref={ backHref }>{ translate( 'Receipt' ) }</HeaderCake>;
 }
 
 export default connect(

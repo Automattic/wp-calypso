@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
-import { USER_DEVICES_ADD } from 'state/action-types';
+import { withoutPersistence } from 'calypso/state/utils';
+import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 
 export default withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

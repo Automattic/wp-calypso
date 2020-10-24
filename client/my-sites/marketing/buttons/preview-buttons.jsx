@@ -12,10 +12,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import ButtonsPreviewButton from 'my-sites/marketing/buttons/preview-button';
-import ResizableIframe from 'components/resizable-iframe';
+import ButtonsPreviewButton from 'calypso/my-sites/marketing/buttons/preview-button';
+import ResizableIframe from 'calypso/components/resizable-iframe';
 import previewWidget from './preview-widget';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
 class SharingButtonsPreviewButtons extends React.Component {
 	static displayName = 'SharingButtonsPreviewButtons';

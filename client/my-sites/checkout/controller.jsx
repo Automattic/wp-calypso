@@ -9,23 +9,26 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import { setSection } from 'state/ui/actions';
-import { getSiteBySlug } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import { setSection } from 'calypso/state/ui/actions';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
-import { canUserPurchaseGSuite } from 'lib/gsuite';
-import { getRememberedCoupon } from 'lib/cart/actions';
-import { sites } from 'my-sites/controller';
-import CartData from 'components/data/cart';
-import userFactory from 'lib/user';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { retrieveSignupDestination, setSignupCheckoutPageUnloaded } from 'signup/storageUtils';
+import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
+import { getRememberedCoupon } from 'calypso/lib/cart/actions';
+import { sites } from 'calypso/my-sites/controller';
+import CartData from 'calypso/components/data/cart';
+import userFactory from 'calypso/lib/user';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import {
+	retrieveSignupDestination,
+	setSignupCheckoutPageUnloaded,
+} from 'calypso/signup/storageUtils';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;

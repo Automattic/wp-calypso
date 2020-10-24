@@ -12,27 +12,27 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import StateSelector from 'components/forms/us-state-selector';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import isSavingWordadsSettings from 'state/selectors/is-saving-wordads-settings';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QueryWordadsSettings from 'components/data/query-wordads-settings';
-import SectionHeader from 'components/section-header';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getWordadsSettings } from 'state/selectors/get-wordads-settings';
-import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
-import { dismissWordAdsSuccess } from 'state/wordads/approve/actions';
-import { protectForm } from 'lib/protect-form';
-import { saveWordadsSettings } from 'state/wordads/settings/actions';
-import SupportInfo from 'components/support-info';
+import StateSelector from 'calypso/components/forms/us-state-selector';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import isSavingWordadsSettings from 'calypso/state/selectors/is-saving-wordads-settings';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getWordadsSettings } from 'calypso/state/selectors/get-wordads-settings';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { dismissWordAdsSuccess } from 'calypso/state/wordads/approve/actions';
+import { protectForm } from 'calypso/lib/protect-form';
+import { saveWordadsSettings } from 'calypso/state/wordads/settings/actions';
+import SupportInfo from 'calypso/components/support-info';
 
 class AdsFormSettings extends Component {
 	static propTypes = {
@@ -225,58 +225,58 @@ class AdsFormSettings extends Component {
 			<div>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Display ads below posts on' ) }</FormLegend>
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! this.state.display_options?.display_front_page }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_front_page' ) }
 					>
 						{ translate( 'Front page' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
+					</FormToggle>
+					<FormToggle
 						checked={ !! this.state.display_options?.display_post }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_post' ) }
 					>
 						{ translate( 'Posts' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
+					</FormToggle>
+					<FormToggle
 						checked={ !! this.state.display_options?.display_page }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_page' ) }
 					>
 						{ translate( 'Pages' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
+					</FormToggle>
+					<FormToggle
 						checked={ !! this.state.display_options?.display_archive }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'display_archive' ) }
 					>
 						{ translate( 'Archives' ) }
-					</CompactFormToggle>
+					</FormToggle>
 				</FormFieldset>
 				<FormFieldset className="ads__settings-display-toggles">
 					<FormLegend>{ translate( 'Additional ad placements' ) }</FormLegend>
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! this.state.display_options?.enable_header_ad }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'enable_header_ad' ) }
 					>
 						{ translate( 'Top of each page' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
+					</FormToggle>
+					<FormToggle
 						checked={ !! this.state.display_options?.second_belowpost }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'second_belowpost' ) }
 					>
 						{ translate( 'Second ad below post' ) }
-					</CompactFormToggle>
-					<CompactFormToggle
+					</FormToggle>
+					<FormToggle
 						checked={ !! this.state.display_options?.sidebar }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleDisplayToggle( 'sidebar' ) }
 					>
 						{ translate( 'Sidebar' ) }
-					</CompactFormToggle>
+					</FormToggle>
 				</FormFieldset>
 			</div>
 		);
@@ -480,13 +480,13 @@ class AdsFormSettings extends Component {
 						) }
 						link="https://wordpress.com/support/your-wordpress-com-site-and-the-ccpa/"
 					/>
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! this.state.ccpa_enabled }
 						disabled={ this.props.isLoading }
 						onChange={ this.handleCompactToggle( 'ccpa_enabled' ) }
 					>
 						{ translate( 'Enable targeted advertising to California site visitors (CCPA)' ) }
-					</CompactFormToggle>
+					</FormToggle>
 
 					<div className="ads__child-settings">
 						<FormSettingExplanation>

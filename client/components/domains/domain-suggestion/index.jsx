@@ -5,12 +5,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import DomainProductPrice from 'components/domains/domain-product-price';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
 import { Button } from '@automattic/components';
 
 /**
@@ -44,7 +44,8 @@ class DomainSuggestion extends React.Component {
 			price,
 			priceRule,
 			salePrice,
-			isEligibleVariantForDomainTest,
+			isSignupStep,
+			showStrikedOutPrice,
 		} = this.props;
 
 		if ( hidePrice ) {
@@ -60,19 +61,14 @@ class DomainSuggestion extends React.Component {
 				price={ price }
 				salePrice={ salePrice }
 				rule={ priceRule }
-				isEligibleVariantForDomainTest={ isEligibleVariantForDomainTest }
+				isSignupStep={ isSignupStep }
+				showStrikedOutPrice={ showStrikedOutPrice }
 			/>
 		);
 	}
 
 	render() {
-		const {
-			children,
-			extraClasses,
-			isAdded,
-			isEligibleVariantForDomainTest,
-			isFeatured,
-		} = this.props;
+		const { children, extraClasses, isAdded, isFeatured, showStrikedOutPrice } = this.props;
 		const classes = classNames(
 			'domain-suggestion',
 			'card',
@@ -85,7 +81,7 @@ class DomainSuggestion extends React.Component {
 		);
 
 		const contentClassName = classNames( 'domain-suggestion__content', {
-			'domain-suggestion__content-domain-copy-test': isEligibleVariantForDomainTest && ! isFeatured,
+			'domain-suggestion__content-domain': showStrikedOutPrice && ! isFeatured,
 		} );
 
 		/* eslint-disable jsx-a11y/click-events-have-key-events */

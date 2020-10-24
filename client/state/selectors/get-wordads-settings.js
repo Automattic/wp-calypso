@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { isJetpackSite } from 'state/sites/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-import 'state/wordads/init';
+import 'calypso/state/wordads/init';
 
 /**
  * Returns the WordAds settings on a certain site.

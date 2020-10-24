@@ -6,12 +6,12 @@ import { get, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { SITE_FRONT_PAGE_UPDATE } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { updateSiteFrontPage } from 'state/sites/actions';
+import { SITE_FRONT_PAGE_UPDATE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 
 const getIsPageOnFront = ( show_on_front ) => {
 	if ( 'page' === show_on_front ) {

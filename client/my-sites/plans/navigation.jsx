@@ -10,15 +10,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import config from 'calypso/config';
+import { sectionify } from 'calypso/lib/route';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
@@ -63,14 +63,6 @@ class PlansNavigation extends React.Component {
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
-							</NavItem>
-						) }
 						<NavItem
 							path={ `/plans/${ site.slug }` }
 							selected={
@@ -79,6 +71,14 @@ class PlansNavigation extends React.Component {
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
+						{ shouldShowMyPlan && (
+							<NavItem
+								path={ `/plans/my-plan/${ site.slug }` }
+								selected={ path === '/plans/my-plan' }
+							>
+								{ translate( 'My Plan' ) }
+							</NavItem>
+						) }
 					</NavTabs>
 					{ cartToggleButton }
 				</SectionNav>

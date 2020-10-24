@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/themes/action-types';
+import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 // Open "More Themes" search area.
 export function openThemesShowcase() {

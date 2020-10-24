@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Main from 'components/main';
-import Notice from 'components/notice';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import DomainConnectAuthorizeDescription from './domain-connect-authorize-description';
 import DomainConnectAuthorizeRecords from './domain-connect-authorize-records';
 import DomainConnectAuthorizeFooter from './domain-connect-authorize-footer';
 import { actionType, noticeType } from './constants';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies

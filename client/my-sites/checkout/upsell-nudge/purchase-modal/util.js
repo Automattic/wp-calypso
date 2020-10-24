@@ -7,11 +7,11 @@ import { find, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import { RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
-import { preprocessCartForServer } from 'lib/cart-values';
-import { submit } from 'lib/store-transactions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import notices from 'notices';
+import { RECEIVED_WPCOM_RESPONSE } from 'calypso/lib/store-transactions/step-types';
+import { preprocessCartForServer } from 'calypso/lib/cart-values';
+import { submit } from 'calypso/lib/store-transactions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import notices from 'calypso/notices';
 
 function extractStoredCardMetaValue( card, key ) {
 	return find( card.meta, [ 'meta_key', key ] )?.meta_value;

@@ -11,7 +11,6 @@ import formatCurrency from '@automattic/format-currency';
  */
 import { Card, CompactCard } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
@@ -26,6 +25,8 @@ import {
 	getSubscription,
 	getStoppingStatus,
 } from 'calypso/state/memberships/subscriptions/selectors';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -39,12 +40,12 @@ class Subscription extends React.Component {
 		const { translate, subscription, moment, stoppingStatus } = this.props;
 
 		return (
-			<Main className="memberships__subscription">
-				<DocumentHead title={ translate( 'Other Sites' ) } />
+			<Main className="memberships__subscription is-wide-layout">
+				<DocumentHead title={ translate( 'Subscription Details' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
-				<PurchasesHeader section={ 'memberships' } />
-				<HeaderCake backHref={ purchasesRoot + '/other' }>
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+				<HeaderCake backHref={ purchasesRoot }>
 					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
 				</HeaderCake>
 				{ stoppingStatus === 'start' && (

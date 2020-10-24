@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getGSuiteUsers from 'state/selectors/get-gsuite-users';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
 
 /**
  * Determines whether the list of G Suite users for the specified site has loaded.

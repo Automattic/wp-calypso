@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_DELETE,
-} from 'state/themes/action-types';
+} from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Deletes a theme from the given Jetpack site.

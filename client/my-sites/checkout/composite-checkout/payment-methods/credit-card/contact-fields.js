@@ -7,8 +7,8 @@ import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
 import CountrySpecificPaymentFields from '../../components/country-specific-payment-fields';
 
 export default function ContactFields( {

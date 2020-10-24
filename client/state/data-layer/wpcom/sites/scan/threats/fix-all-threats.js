@@ -6,13 +6,13 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_SCAN_THREATS_FIX_ALL } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestScanStatus } from 'state/jetpack-scan/actions';
-import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { JETPACK_SCAN_THREATS_FIX_ALL } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
+import { updateThreat, updateThreatCompleted } from 'calypso/state/jetpack-scan/threats/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 // This approach is not optimal. Some of the request could fail silently and we
 // wouldn't know. The API could provide an endpoint to fix multiple threats at

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
 
 describe( 'getAtomicTransfer()', () => {
 	const testState = {

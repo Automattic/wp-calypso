@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
 
 export default class extends React.Component {
 	static displayName = 'FAQ';

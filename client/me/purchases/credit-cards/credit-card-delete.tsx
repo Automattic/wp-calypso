@@ -21,6 +21,7 @@ import {
 } from 'calypso/lib/checkout/payment-methods';
 import StoredCard from 'calypso/components/credit-card/stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -49,6 +50,8 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 				} else {
 					reduxDispatch( successNotice( translate( 'Card deleted successfully' ) ) );
 				}
+
+				recordTracksEvent( 'calypso_purchases_delete_payment_method' );
 			} )
 			.catch( ( error: Error ) => {
 				reduxDispatch( errorNotice( error.message ) );

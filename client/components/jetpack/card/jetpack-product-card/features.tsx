@@ -7,9 +7,9 @@ import React, { useState, useCallback, FunctionComponent } from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import FoldableCard from 'components/foldable-card';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
+import ExternalLink from 'calypso/components/external-link';
+import FoldableCard from 'calypso/components/foldable-card';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import FeaturesItem from './features-item';
 
 /**

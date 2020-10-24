@@ -6,8 +6,8 @@ import {
 	KEYRING_SERVICES_REQUEST,
 	KEYRING_SERVICES_REQUEST_FAILURE,
 	KEYRING_SERVICES_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { itemSchema } from './schema';
 
 // Stores the list of available keyring services

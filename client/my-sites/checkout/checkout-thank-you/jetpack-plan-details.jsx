@@ -8,12 +8,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import config from 'config';
-import { localizeUrl } from 'lib/i18n-utils';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import config from 'calypso/config';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 
 const BasicDetails = ( { translate } ) => {
 	const email = useSelector( getCurrentUserEmail );

@@ -14,14 +14,14 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import StatsTabs from '../stats-tabs';
 import StatsTab from '../stats-tabs/tab';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'calypso/state/stats/lists/selectors';
 
 /**
  * Style dependencies

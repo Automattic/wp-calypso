@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import InlineHelpCompactResult from 'blocks/inline-help/inline-help-compact-result';
+import InlineHelpCompactResult from 'calypso/blocks/inline-help/inline-help-compact-result';
 
 class InlineHelpCompactResults extends Component {
 	static propTypes = {

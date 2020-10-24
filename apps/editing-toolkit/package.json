@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.6.1",
+	"version": "2.7.2",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -59,7 +59,6 @@
 		"dev:premium-content": "yarn run premium-content",
 		"build:premium-content": "NODE_ENV=production yarn run premium-content",
 		"block-inserter-modifications": "npm-run-all --parallel block-inserter-modifications-*",
-		"block-inserter-modifications-new-blocks-showcase": "calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
 		"block-inserter-modifications-contextual-tips": "calypso-build --source='block-inserter-modifications/contextual-tips'",
 		"dev:block-inserter-modifications": "yarn run block-inserter-modifications",
 		"build:block-inserter-modifications": "NODE_ENV=production yarn run block-inserter-modifications",
@@ -92,6 +91,7 @@
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.11.1",
 		"@testing-library/jest-dom": "^5.9.0",
@@ -146,6 +146,7 @@
 		"@types/wordpress__plugins": "^2.3.6",
 		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
-		"babel-jest": "^26.3.0"
+		"babel-jest": "^26.3.0",
+		"webpack": "^4.44.2"
 	}
 }

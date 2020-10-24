@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { getTheme } from 'state/themes/selectors/get-theme';
-import { isPremium } from 'state/themes/utils';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { isPremium } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Whether a WPCOM theme given by its ID is premium.

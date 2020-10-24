@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import { stringify } from 'qs';
 import { defer, every, get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { toApi, fromApi } from 'lib/importer/common';
-import wpcom from 'lib/wp';
-import user from 'lib/user';
+import { toApi, fromApi } from 'calypso/lib/importer/common';
+import wpcom from 'calypso/lib/wp';
+import user from 'calypso/lib/user';
 import {
 	mapAuthor,
 	startMappingAuthors,
 	startImporting,
 	createFinishUploadAction,
-} from 'lib/importer/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { setSelectedEditor } from 'state/selected-editor/actions';
+} from 'calypso/lib/importer/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { setSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -28,11 +28,11 @@ import {
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
-} from 'state/action-types';
-import { getState as getImporterState } from 'lib/importer/store';
-import { prefetchmShotsPreview } from 'lib/mshots';
+} from 'calypso/state/action-types';
+import { getState as getImporterState } from 'calypso/lib/importer/store';
+import { prefetchmShotsPreview } from 'calypso/lib/mshots';
 
-import 'state/imports/init';
+import 'calypso/state/imports/init';
 
 const sortAndStringify = ( items ) => items.slice( 0 ).sort().join( ', ' );
 

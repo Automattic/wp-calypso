@@ -5,7 +5,7 @@ This component is used to display a update indicator which can be turned into a 
 ## How to use
 
 ```js
-import PluginSiteUpdateIndicator from 'my-sites/plugins/plugin-site-update-indicator';
+import PluginSiteUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 
 function render() {
 	return (

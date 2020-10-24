@@ -5,29 +5,32 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
-import Notice from 'components/notice';
 import formatCurrency from '@automattic/format-currency';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import CountedTextArea from 'components/forms/counted-textarea';
+import CountedTextArea from 'calypso/components/forms/counted-textarea';
 import { Dialog } from '@automattic/components';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSelect from 'components/forms/form-select';
-import FormCurrencyInput from 'components/forms/form-currency-input';
-import FormLabel from 'components/forms/form-label';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import InlineSupportLink from 'components/inline-support-link';
-import { requestAddProduct, requestUpdateProduct } from 'state/memberships/product-list/actions';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import {
+	requestAddProduct,
+	requestUpdateProduct,
+} from 'calypso/state/memberships/product-list/actions';
+import Notice from 'calypso/components/notice';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
 
 /**
  * @typedef {[string, number] CurrencyMinimum

@@ -24,6 +24,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import SocialLoginService from './service';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -83,10 +84,12 @@ class SocialLogin extends Component {
 		const title = useCheckupMenu ? translate( 'Social Logins' ) : translate( 'Social Login' );
 
 		return (
-			<Main className="security social-login">
+			<Main className="security social-login is-wide-layout">
 				<PageViewTracker path="/me/security/social-login" title="Me > Social Login" />
 				<DocumentHead title={ title } />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

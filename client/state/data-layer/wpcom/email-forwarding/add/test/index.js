@@ -11,10 +11,10 @@ import {
 	EMAIL_FORWARDING_ADD_REQUEST,
 	EMAIL_FORWARDING_ADD_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_ADD_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { isSuccessNotice, isErrorNotice, noticeHasText } from '../../test-utils';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding add forward request', () => {

@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import TokenField from 'components/token-field';
+import TokenField from 'calypso/components/token-field';
 import { Card } from '@automattic/components';
 
 /**

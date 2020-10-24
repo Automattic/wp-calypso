@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 export function getAllPlugins( state ) {
 	return state?.plugins.wporg.items;

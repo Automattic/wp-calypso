@@ -6,13 +6,13 @@ import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 
 /**
  * Internal dependencies
  */
-import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * Types
  */
-import { Lazy, TimestampMS, TimerHandle } from 'types';
+import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
 
 export enum DataState {
 	Failure = 'failure',
@@ -61,7 +61,7 @@ export const subscribe = ( f: () => void ): ( () => void ) => {
 	return () => void listeners.delete( f );
 };
 
-export const updateData = ( id: DataId, state: DataState, data: unknown ): typeof httpData => {
+export const updateData = ( id: DataId, state: DataState, data?: unknown ): typeof httpData => {
 	const lastUpdated: TimestampMS = Date.now();
 	const item = httpData.get( id ) || empty;
 
@@ -105,16 +105,14 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ): typeo
 
 export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
 
-export const update = ( id: DataId, state: DataState, data?: unknown ) => {
-	const updated = updateData( id, state, data );
-
+function fireChangeEvents() {
 	listeners.forEach( ( f ) => f() );
-
-	return updated;
-};
+	return { type: HTTP_DATA_TICK };
+}
 
 const fetch = ( action: HttpDataAction ) => {
-	update( action.id, DataState.Pending );
+	updateData( action.id, DataState.Pending );
+	const tickAction = fireChangeEvents();
 
 	return [
 		{
@@ -123,60 +121,25 @@ const fetch = ( action: HttpDataAction ) => {
 			onFailure: action,
 			onProgress: action,
 		},
-		{ type: HTTP_DATA_TICK },
+		tickAction,
 	];
 };
 
 const onError = ( action: HttpDataAction, error: unknown ) => {
-	update( action.id, DataState.Failure, error );
-
-	return { type: HTTP_DATA_TICK };
-};
-
-type SuccessfulParse = [ undefined, ReturnType< ResponseParser > ];
-type FailedParse = [ unknown, undefined ];
-type ParseResult = SuccessfulParse | FailedParse;
-
-/**
- * Transforms API response data into storable data
- * Returns pairs of data ids and data plus an error indicator
- *
- * [ error?, [ [ id, data ], [ id, data ], … ] ]
- *
- * @example
- *   --input--
- *   { data: { sites: {
- *     14: { is_active: true, name: 'foo' },
- *     19: { is_active: false, name: 'bar' }
- *   } } }
- *
- *   --output--
- *   [ [ 'site-names-14', 'foo' ] ]
- *
- * @param data - input data from API response
- * @param fromApi - transforms API response data
- * @returns output data to store
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
-	try {
-		return [ undefined, fromApi( data ) ];
-	} catch ( error ) {
-		return [ error, undefined ];
-	}
+	updateData( action.id, DataState.Failure, error );
+	return fireChangeEvents();
 };
 
 const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
-	const [ error, data ] = parseResponse( apiData, action.fromApi() );
-
-	if ( undefined === data ) {
+	try {
+		const data = action.fromApi()( apiData );
+		for ( const [ id, resource ] of data ) {
+			updateData( id, DataState.Success, resource );
+		}
+		return fireChangeEvents();
+	} catch ( error ) {
 		return onError( action, error );
 	}
-
-	update( action.id, DataState.Success, apiData );
-	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
-
-	return { type: HTTP_DATA_TICK };
 };
 
 export default {

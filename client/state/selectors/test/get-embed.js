@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getEmbed from 'state/selectors/get-embed';
+import getEmbed from 'calypso/state/selectors/get-embed';
 
 describe( 'getEmbed()', () => {
 	const siteId = 12345678;

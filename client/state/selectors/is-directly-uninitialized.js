@@ -11,9 +11,9 @@
 /**
  * Internal dependencies
  */
-import { STATUS_UNINITIALIZED } from 'state/help/directly/constants';
+import { STATUS_UNINITIALIZED } from 'calypso/state/help/directly/constants';
 
-import 'state/help/init';
+import 'calypso/state/help/init';
 
 export default function isDirectlyUninitialized( state ) {
 	return state.help?.directly.status === STATUS_UNINITIALIZED;

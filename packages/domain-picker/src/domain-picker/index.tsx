@@ -10,6 +10,7 @@ import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-an
 import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -105,8 +106,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 } ) => {
-	const { __ } = useI18n();
-	const label = __( 'Search for a domain' );
+	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -197,8 +197,6 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<Icon icon={ search } />
 				</div>
 				<TextControl
-					// Unable to remove this instance due to it being a HotJar term: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
-					data-hj-whitelist
 					hideLabelFromVision
 					label={ label }
 					placeholder={ label }
@@ -210,7 +208,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			{ showErrorMessage && (
 				<div className="domain-picker__error">
 					<p className="domain-picker__error-message">
-						{ __( 'An error has occurred, please check your connection and retry.' ) }
+						{ __(
+							'An error has occurred, please check your connection and retry.',
+							__i18n_text_domain__
+						) }
 						{ domainSuggestionErrorMessage && ` ${ domainSuggestionErrorMessage }` }
 					</p>
 					<Button
@@ -232,7 +233,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-sections">
 						<>
 							{ segregateFreeAndPaid && (
-								<p className="domain-picker__suggestion-group-label">{ __( 'Keep sub-domain' ) }</p>
+								<p className="domain-picker__suggestion-group-label">
+									{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
+								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ existingSubdomain && (
@@ -255,7 +258,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							</ItemGrouper>
 							{ segregateFreeAndPaid && (
 								<p className="domain-picker__suggestion-group-label">
-									{ __( 'Professional domains' ) }
+									{ __( 'Professional domains', __i18n_text_domain__ ) }
 								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
@@ -304,7 +307,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
 									<Button onClick={ () => setIsExpanded( true ) } isLink>
-										{ __( 'View more results' ) }
+										{ __( 'View more results', __i18n_text_domain__ ) }
 									</Button>
 								</div>
 							) }
@@ -315,7 +318,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				<div className="domain-picker__empty-state">
 					<p className="domain-picker__empty-state--text">
 						{ __(
-							'A domain name is the site address people type in their browser to visit your site.'
+							'A domain name is the site address people type in their browser to visit your site.',
+							__i18n_text_domain__
 						) }
 					</p>
 					<div>

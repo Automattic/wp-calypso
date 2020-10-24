@@ -10,7 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/form-range';
+import FormRange from 'calypso/components/forms/form-range';
 
 /**
  * Style dependencies

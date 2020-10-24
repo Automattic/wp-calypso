@@ -11,8 +11,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import EmptyContent from 'components/empty-content';
+import notices from 'calypso/notices';
+import EmptyContent from 'calypso/components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
@@ -21,36 +21,39 @@ import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
-import { submit } from 'lib/store-transactions';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { setPayment, setTransactionStep } from 'lib/transaction/actions';
+import { submit } from 'calypso/lib/store-transactions';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { setPayment, setTransactionStep } from 'calypso/lib/transaction/actions';
 import {
 	fullCreditsPayment,
 	newStripeCardPayment,
 	storedCardPayment,
-} from 'lib/transaction/payments';
-import { getCheckoutIncompatibleProducts } from 'state/sites/products/conflicts';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { isJetpackSite } from 'state/sites/selectors';
+} from 'calypso/lib/transaction/payments';
+import { getCheckoutIncompatibleProducts } from 'calypso/state/sites/products/conflicts';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	isPaidForFullyInCredits,
 	isFree,
 	getLocationOrigin,
 	isPaymentMethodEnabled,
-} from 'lib/cart-values';
-import { hasFreeTrial } from 'lib/cart-values/cart-items';
+} from 'calypso/lib/cart-values';
+import { hasFreeTrial } from 'calypso/lib/cart-values/cart-items';
 import PaymentBox from './payment-box';
-import isPresalesChatAvailable from 'state/happychat/selectors/is-presales-chat-available';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
-import { INPUT_VALIDATION, RECEIVED_WPCOM_RESPONSE } from 'lib/store-transactions/step-types';
+import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import {
+	INPUT_VALIDATION,
+	RECEIVED_WPCOM_RESPONSE,
+} from 'calypso/lib/store-transactions/step-types';
 import { displayError, clear } from './notices';
-import { isEbanxCreditCardProcessingEnabledForCountry } from 'lib/checkout/processor-specific';
-import { isWpComEcommercePlan } from 'lib/plans';
-import { recordTransactionAnalytics } from 'lib/analytics/store-transactions';
-import { isExternal } from 'lib/url';
+import { isEbanxCreditCardProcessingEnabledForCountry } from 'calypso/lib/checkout/processor-specific';
+import { isWpComEcommercePlan } from 'calypso/lib/plans';
+import { recordTransactionAnalytics } from 'calypso/lib/analytics/store-transactions';
+import { isExternal } from 'calypso/lib/url';
 
 /**
  * Module variables

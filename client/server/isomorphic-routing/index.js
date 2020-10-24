@@ -7,41 +7,41 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { serverRender, setShouldServerSideRender } from 'server/render';
-import { setSectionMiddleware } from 'controller';
-import { setRoute } from 'state/route/actions';
+import { serverRender, setShouldServerSideRender } from 'calypso/server/render';
+import { setSectionMiddleware } from 'calypso/controller';
+import { setRoute } from 'calypso/state/route/actions';
 
 export function serverRouter( expressApp, setUpRoute, section ) {
 	return function ( route, ...middlewares ) {
-		if ( middlewares.length === 0 && typeof route === 'function' && route.length === 3 ) {
-			// No route def -- the route arg is really an error-handling middleware
-			// `page( someMw )` would be a shorthand for `page( '*', someMw )`, even tho the same isn't true
-			// for Express, we want things to be isomorphic, so that should be handled by the `else` branch.
-			// OTOH, if `someMw` takes 3 args `( err, context, next )` instead of the usual 2 `( context, next )`,
-			// it's an error-handling middleware and needs to be handled by this branch.
-			expressApp.use(
-				( err, req, res, next ) => {
-					route( err, req.context, next );
-				},
-				( err, req, res, next ) => {
-					req.error = err;
-					res.status( err.status || 404 );
-					serverRender( req, res, next );
+		expressApp.get(
+			route,
+			setUpRoute,
+			combineMiddlewares(
+				setSectionMiddleware( section ),
+				setRouteMiddleware,
+				setShouldServerSideRender,
+				...middlewares
+			),
+			// Regular serverRender when there are no errors.
+			serverRender,
+
+			// Capture the error. This assumes that any of the previous middlewares
+			// have changed req.context to include info about the error, and serverRender
+			// will render it.
+			( err, req, res, next ) => {
+				req.error = err;
+				res.status( err.status || 404 );
+				if ( err.status >= 500 ) {
+					req.logger.error( err );
+				} else {
+					req.logger.warn( err );
 				}
-			);
-		} else {
-			expressApp.get(
-				route,
-				setUpRoute,
-				combineMiddlewares(
-					setSectionMiddleware( section ),
-					setRouteMiddleware,
-					setShouldServerSideRender,
-					...middlewares
-				),
-				serverRender
-			);
-		}
+				serverRender( req, res, next );
+				// Keep propagating the error to ensure regular middleware doesn't get executed.
+				// In particular, without this we'll try to render a 404 page.
+				next( err );
+			}
+		);
 	};
 }
 
@@ -52,11 +52,20 @@ function setRouteMiddleware( context, next ) {
 }
 
 function combineMiddlewares( ...middlewares ) {
-	return function ( req, res, next ) {
+	return function ( req, res, expressNext ) {
 		req.context = getEnhancedContext( req, res );
-		applyMiddlewares( req.context, next, ...middlewares, () => {
-			next();
-		} );
+		applyMiddlewares(
+			req.context,
+			...middlewares,
+
+			// These two middlewares transfer the control back to Express. We need two, one
+			// to end the chain of middlewares when there is no error, and another one
+			// for when there is an error.
+			// eslint-disable-next-line no-unused-vars
+			( context, next ) => expressNext(),
+			// eslint-disable-next-line no-unused-vars
+			( err, context, next ) => expressNext( err )
+		);
 	};
 }
 
@@ -74,23 +83,39 @@ function getEnhancedContext( req, res ) {
 	} );
 }
 
-function applyMiddlewares( context, expressNext, ...middlewares ) {
-	const liftedMiddlewares = middlewares.map( middleware => next =>
-		middleware( context, err => {
-			if ( err ) {
-				expressNext( err ); // Call express' next( err ) for error handling (and bail early from this route)
-			} else {
-				next();
+function applyMiddlewares( context, ...middlewares ) {
+	// This method will run all middlewares chained. Every time a middlware calls
+	// `next`, it will pass the control to the next middleware and so on. But if
+	// at any point a middleware calls `next(error)`, only middlewares that declare
+	// 3 arguments (aka error handlers) will be called from that point.
+	const liftedMiddlewares = middlewares.map( ( middleware ) => ( next, err ) => {
+		try {
+			if ( ! err && middleware.length !== 3 ) {
+				// No errors so far, call next middleware
+				return middleware( context, next );
 			}
-		} )
-	); // prettier-ignore
+			if ( err && middleware.length === 3 ) {
+				// There is an error and this middleware can handle errors
+				return middleware( err, context, next );
+			}
+			// At this point we are in either of these scenarios:
+			// * There is an error but this middlware is not an error handler
+			// * There is not an error but this middleware is an error handler
+			// In both cases this middleware shouldn't run, so we just skip to the next one.
+			next( err );
+		} catch ( error ) {
+			// The middleware throw an error, capture it and pass it to the next
+			// middleware in the chain.
+			next( error );
+		}
+	} );
 
 	compose( ...liftedMiddlewares )();
 }
 
 function compose( ...functions ) {
 	return functions.reduceRight(
-		( composed, f ) => () => f( composed ),
+		( composed, f ) => ( err ) => f( composed, err ),
 		() => {}
 	);
 }

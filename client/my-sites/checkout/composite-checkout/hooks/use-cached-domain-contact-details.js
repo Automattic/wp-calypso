@@ -9,8 +9,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { requestContactDetailsCache } from 'state/domains/management/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
 
 const { dispatch } = defaultRegistry;
 

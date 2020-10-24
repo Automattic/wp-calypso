@@ -10,13 +10,13 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaActions from 'lib/media/actions';
-import passToChildren from 'lib/react-pass-to-children';
+import MediaActions from 'calypso/lib/media/actions';
+import passToChildren from 'calypso/lib/react-pass-to-children';
 import utils from './utils';
-import { setQuery } from 'state/media/actions';
-import { fetchNextMediaPage } from 'state/media/thunks';
-import getMediaSortedByDate from 'state/selectors/get-media-sorted-by-date';
-import hasNextMediaPage from 'state/selectors/has-next-media-page';
+import { setQuery } from 'calypso/state/media/actions';
+import { fetchNextMediaPage } from 'calypso/state/media/thunks';
+import getMediaSortedByDate from 'calypso/state/selectors/get-media-sorted-by-date';
+import hasNextMediaPage from 'calypso/state/selectors/has-next-media-page';
 
 export class MediaListData extends React.Component {
 	static displayName = 'MediaListData';

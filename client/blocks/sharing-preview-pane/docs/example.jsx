@@ -9,14 +9,14 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import SharingPreviewPane from 'blocks/sharing-preview-pane';
-import { getCurrentUser } from 'state/current-user/selectors';
-import QueryPosts from 'components/data/query-posts';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getSitePosts } from 'state/posts/selectors';
-import { getSite } from 'state/sites/selectors';
+import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import { getSitePosts } from 'calypso/state/posts/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { Card } from '@automattic/components';
-import QuerySites from 'components/data/query-sites';
+import QuerySites from 'calypso/components/data/query-sites';
 
 const SharingPreviewPaneExample = ( { postId, site, siteId } ) => (
 	<div>

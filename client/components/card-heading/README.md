@@ -5,7 +5,7 @@ This component displays a heading for a `<Card>`
 ## How to use
 
 ```js
-import CardHeading from 'components/card-heading';
+import CardHeading from 'calypso/components/card-heading';
 
 function render() {
 	return (

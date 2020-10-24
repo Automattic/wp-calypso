@@ -2,17 +2,22 @@
  * Internal dependencies
  */
 
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	EMAIL_VERIFY_REQUEST,
 	EMAIL_VERIFY_REQUEST_SUCCESS,
 	EMAIL_VERIFY_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { translate } from 'i18n-calypso';
-import { infoNotice, errorNotice, successNotice, removeNotice } from 'state/notices/actions';
+import {
+	infoNotice,
+	errorNotice,
+	successNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
 
 const infoNoticeId = 'email-verification-info-notice';
 

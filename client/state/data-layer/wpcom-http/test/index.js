@@ -7,8 +7,8 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { failureMeta, queueRequest, successMeta } from '../';
-import { extendAction } from 'state/utils';
-import useNock, { nock } from 'test-helpers/use-nock';
+import { extendAction } from 'calypso/state/utils';
+import useNock, { nock } from 'calypso/test-helpers/use-nock';
 
 const processInbound = ( action ) => action;
 const processOutbound = ( action, store, data, error ) => ( {

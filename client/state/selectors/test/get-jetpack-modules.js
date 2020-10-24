@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getJetpackModules from 'state/selectors/get-jetpack-modules';
+import getJetpackModules from 'calypso/state/selectors/get-jetpack-modules';
 import { moduleData as MODULE_DATA_FIXTURE } from './fixtures/jetpack-modules';
 
 describe( 'getJetpackModules()', () => {

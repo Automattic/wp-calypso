@@ -9,8 +9,8 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryActiveTheme from 'components/data/query-active-theme';
-import { getActiveTheme } from 'state/themes/selectors';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
 
 function MyActiveTheme( { activeTheme } ) {
 	return (

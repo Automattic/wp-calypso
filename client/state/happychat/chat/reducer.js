@@ -14,12 +14,12 @@ import {
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_RECEIVE,
 	HAPPYCHAT_IO_REQUEST_TRANSCRIPT_TIMEOUT,
 	HAPPYCHAT_IO_SEND_MESSAGE_MESSAGE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_MAX_STORED_MESSAGES,
-} from 'state/happychat/constants';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/happychat/constants';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { timelineSchema } from './schema';
 
 // We compare incoming timestamps against a known future Unix time in seconds date

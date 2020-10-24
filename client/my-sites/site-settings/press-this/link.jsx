@@ -8,7 +8,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { newPost } from 'lib/paths';
+import { newPost } from 'calypso/lib/paths';
 
 /**
  * Retrieves selection, title, and URL from current page and pops

@@ -6,10 +6,10 @@ import { get, range } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 import { getSerializedTermsQuery, getSerializedTermsQueryWithoutPage } from './utils';
 
-import 'state/terms/init';
+import 'calypso/state/terms/init';
 
 /**
  * Returns true if currently requesting terms for the taxonomies query, or false

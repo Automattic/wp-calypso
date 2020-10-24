@@ -10,12 +10,12 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { Card } from '@automattic/components';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 
 /**
  * Style dependencies

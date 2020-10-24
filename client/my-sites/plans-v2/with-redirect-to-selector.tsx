@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { getPathToSelector } from './utils';
 import { WithRedirectToSelectorProps } from './types';
 

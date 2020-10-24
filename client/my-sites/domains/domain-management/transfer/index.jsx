@@ -8,23 +8,23 @@ import React from 'react';
  * Internal Dependencies
  */
 import { get } from 'lodash';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Header from 'my-sites/domains/domain-management/components/header';
-import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isPrimaryDomainBySiteId from 'state/selectors/is-primary-domain-by-site-id';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isPrimaryDomainBySiteId from 'calypso/state/selectors/is-primary-domain-by-site-id';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { localize } from 'i18n-calypso';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import {
 	domainManagementEdit,
 	domainManagementTransferOut,
 	domainManagementTransferToAnotherUser,
 	domainManagementTransferToOtherSite,
-} from 'my-sites/domains/paths';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import getCurrentRoute from 'state/selectors/get-current-route';
+} from 'calypso/my-sites/domains/paths';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 function Transfer( props ) {
 	const {

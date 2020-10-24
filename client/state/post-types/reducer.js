@@ -6,10 +6,15 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import { items as itemsSchema } from './schema';
 import taxonomies from './taxonomies/reducer';
-import { POST_TYPES_RECEIVE } from 'state/action-types';
+import { POST_TYPES_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Returns the updated items state after an action has been dispatched. The

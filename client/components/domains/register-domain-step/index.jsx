@@ -7,7 +7,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
 	compact,
-	endsWith,
 	find,
 	flatten,
 	get,
@@ -31,40 +30,40 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
+import config from 'calypso/config';
+import wpcom from 'calypso/lib/wp';
 import { CompactCard, Button } from '@automattic/components';
-import Notice from 'components/notice';
-import StickyPanel from 'components/sticky-panel';
+import Notice from 'calypso/components/notice';
+import StickyPanel from 'calypso/components/sticky-panel';
 import {
 	checkDomainAvailability,
 	getFixedDomainSearch,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
-} from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import Search from 'components/search';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainTransferSuggestion from 'components/domains/domain-transfer-suggestion';
-import DomainSkipSuggestion from 'components/domains/domain-skip-suggestion';
-import DomainSuggestion from 'components/domains/domain-suggestion';
-import DomainSearchResults from 'components/domains/domain-search-results';
-import ExampleDomainSuggestions from 'components/domains/example-domain-suggestions';
-import FreeDomainExplainer from 'components/domains/free-domain-explainer';
+} from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import Search from 'calypso/components/search';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import DomainTransferSuggestion from 'calypso/components/domains/domain-transfer-suggestion';
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
+import DomainSearchResults from 'calypso/components/domains/domain-search-results';
+import ExampleDomainSuggestions from 'calypso/components/domains/example-domain-suggestions';
+import FreeDomainExplainer from 'calypso/components/domains/free-domain-explainer';
 import {
 	DropdownFilters,
 	FilterResetNotice,
 	TldFilterBar,
-} from 'components/domains/search-filters';
-import { getCurrentUser } from 'state/current-user/selectors';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
-import { hasDomainInCart } from 'lib/cart-values/cart-items';
+} from 'calypso/components/domains/search-filters';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
+import { hasDomainInCart } from 'calypso/lib/cart-values/cart-items';
 import {
 	getDomainsSuggestions,
 	getDomainsSuggestionsError,
-} from 'state/domains/suggestions/selectors';
+} from 'calypso/state/domains/suggestions/selectors';
 import {
 	getStrippedDomainBase,
 	getTldWeightOverrides,
@@ -72,7 +71,7 @@ import {
 	isUnknownSuggestion,
 	isMissingVendor,
 	markFeaturedSuggestions,
-} from 'components/domains/register-domain-step/utility';
+} from 'calypso/components/domains/register-domain-step/utility';
 import {
 	recordDomainAvailabilityReceive,
 	recordDomainAddAvailabilityPreCheck,
@@ -87,12 +86,12 @@ import {
 	recordUseYourDomainButtonClick,
 	resetSearchCount,
 	enqueueSearchStatReport,
-} from 'components/domains/register-domain-step/analytics';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
-import { isBlogger } from 'lib/products-values';
-import TrademarkClaimsNotice from 'components/domains/trademark-claims-notice';
-import { isSitePreviewVisible } from 'state/signup/preview/selectors';
-import { hideSitePreview, showSitePreview } from 'state/signup/preview/actions';
+} from 'calypso/components/domains/register-domain-step/analytics';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { isBlogger } from 'calypso/lib/products-values';
+import TrademarkClaimsNotice from 'calypso/components/domains/trademark-claims-notice';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
 
 /**
  * Style dependencies
@@ -141,7 +140,6 @@ class RegisterDomainStep extends React.Component {
 		includeWordPressDotCom: PropTypes.bool,
 		includeDotBlogSubdomain: PropTypes.bool,
 		showExampleSuggestions: PropTypes.bool,
-		isEligibleVariantForDomainTest: PropTypes.bool,
 		onSave: PropTypes.func,
 		onAddMapping: PropTypes.func,
 		onAddDomain: PropTypes.func,
@@ -398,9 +396,8 @@ class RegisterDomainStep extends React.Component {
 	}
 
 	getPlaceholderText() {
-		const { isEligibleVariantForDomainTest, translate } = this.props;
-
-		return isEligibleVariantForDomainTest
+		const { isSignupStep, translate } = this.props;
+		return isSignupStep
 			? translate( 'Type the domain you want here' )
 			: translate( 'Enter a name or keyword' );
 	}
@@ -431,7 +428,7 @@ class RegisterDomainStep extends React.Component {
 			: {};
 
 		const searchBoxClassName = classNames( 'register-domain-step__search', {
-			'register-domain-step__search-domain-step-test': this.props.isEligibleVariantForDomainTest,
+			'register-domain-step__search-domain-step': this.props.isSignupStep,
 		} );
 
 		return (
@@ -600,7 +597,7 @@ class RegisterDomainStep extends React.Component {
 			return this.renderExampleSuggestions();
 		}
 
-		return this.renderInitialSuggestions();
+		return this.renderInitialSuggestions( false );
 	}
 
 	save = () => {
@@ -726,7 +723,7 @@ class RegisterDomainStep extends React.Component {
 		const loadingResults = Boolean( cleanedQuery );
 		const isInitialQueryActive = searchQuery === this.props.suggestion;
 
-		if ( isEmpty( cleanedQuery ) && ! this.props.isSignupStep ) {
+		if ( isEmpty( cleanedQuery ) ) {
 			return;
 		}
 
@@ -1022,7 +1019,7 @@ class RegisterDomainStep extends React.Component {
 
 	handleSubdomainSuggestions = ( domain, vendor, timestamp ) => ( subdomainSuggestions ) => {
 		subdomainSuggestions = subdomainSuggestions.map( ( suggestion ) => {
-			suggestion.fetch_algo = endsWith( suggestion.domain_name, '.wordpress.com' )
+			suggestion.fetch_algo = suggestion.domain_name.endsWith( '.wordpress.com' )
 				? '/domains/search/wpcom'
 				: '/domains/search/dotblogsub';
 			suggestion.vendor = vendor;
@@ -1164,7 +1161,6 @@ class RegisterDomainStep extends React.Component {
 						onButtonClick={ this.onAddDomain }
 						pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 						unavailableDomains={ this.state.unavailableDomains }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						isReskinned={ this.props.isReskinned }
 					/>
 				);
@@ -1307,6 +1303,10 @@ class RegisterDomainStep extends React.Component {
 				? this.goToTransferDomainStep
 				: this.goToUseYourDomainStep;
 
+		const isFreeDomainExplainerVisible =
+			! this.props.forceHideFreeDomainExplainerAndStrikeoutUi &&
+			this.props.isPlanSelectionAvailableInFlow;
+
 		return (
 			<DomainSearchResults
 				key="domain-search-results" // key is required for CSS transition of content/
@@ -1331,16 +1331,16 @@ class RegisterDomainStep extends React.Component {
 				offerUnavailableOption={ this.props.offerUnavailableOption }
 				placeholderQuantity={ PAGE_SIZE }
 				isSignupStep={ this.props.isSignupStep }
+				showStrikedOutPrice={
+					this.props.isSignupStep && ! this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+				}
 				railcarId={ this.state.railcarId }
 				fetchAlgo={ this.getFetchAlgo() }
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 			>
-				{ this.props.isEligibleVariantForDomainTest &&
-					hasResults &&
-					this.renderFreeDomainExplainer() }
+				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
 
 				{ showTldFilterBar && (
 					<TldFilterBar

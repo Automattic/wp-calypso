@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items } from '../reducer';
-import { POST_TYPES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { POST_TYPES_RECEIVE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

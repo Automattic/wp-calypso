@@ -16,7 +16,7 @@ import {
 	isDomainTransfer,
 	isGoogleApps,
 	isGuidedTransfer,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 
 const FeaturesHeader = ( { isDataLoaded, isGenericReceipt, purchases, hasFailedPurchases } ) => {
 	const classes = classNames( 'checkout-thank-you__features-header', {

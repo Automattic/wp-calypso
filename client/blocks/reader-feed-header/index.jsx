@@ -6,25 +6,25 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import ReaderFollowButton from 'reader/follow-button';
-import { isAuthorNameBlocked } from 'reader/lib/author-name-blocklist';
-import HeaderBack from 'reader/header-back';
-import { getSiteDescription, getSiteName, getSiteUrl } from 'reader/get-helpers';
-import SiteIcon from 'blocks/site-icon';
-import BlogStickers from 'blocks/blog-stickers';
+import ReaderFollowButton from 'calypso/reader/follow-button';
+import { isAuthorNameBlocked } from 'calypso/reader/lib/author-name-blocklist';
+import HeaderBack from 'calypso/reader/header-back';
+import { getSiteDescription, getSiteName, getSiteUrl } from 'calypso/reader/get-helpers';
+import SiteIcon from 'calypso/blocks/site-icon';
+import BlogStickers from 'calypso/blocks/blog-stickers';
 import ReaderFeedHeaderSiteBadge from './badge';
-import ReaderSiteNotificationSettings from 'blocks/reader-site-notification-settings';
-import getUserSetting from 'state/selectors/get-user-setting';
-import { isFollowing } from 'state/reader/follows/selectors';
-import QueryUserSettings from 'components/data/query-user-settings';
-import Gridicon from 'components/gridicon';
-import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
+import ReaderSiteNotificationSettings from 'calypso/blocks/reader-site-notification-settings';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { isFollowing } from 'calypso/state/reader/follows/selectors';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import Gridicon from 'calypso/components/gridicon';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
 
 /**
  * Style dependencies

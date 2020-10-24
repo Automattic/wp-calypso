@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestTeams } from 'state/reader/teams/actions';
+import { requestTeams } from 'calypso/state/reader/teams/actions';
 
 class QueryReaderTeams extends Component {
 	UNSAFE_componentWillMount() {

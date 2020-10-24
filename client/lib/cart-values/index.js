@@ -5,7 +5,6 @@ import url from 'url'; // eslint-disable-line no-restricted-imports
 import { extend, get, isArray, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
-import config from 'config';
 
 /**
  * Internal dependencies
@@ -17,8 +16,13 @@ import {
 	hasDomainRegistration,
 	hasPlan,
 } from './cart-items';
-import { isCredits, isDomainRedemption, allowedProductAttributes } from 'lib/products-values';
-import { detectWebPaymentMethod } from 'lib/web-payment';
+import {
+	isCredits,
+	isDomainRedemption,
+	allowedProductAttributes,
+} from 'calypso/lib/products-values';
+import { detectWebPaymentMethod } from 'calypso/lib/web-payment';
+import config from 'calypso/config';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
@@ -47,8 +51,8 @@ const PAYMENT_METHODS = {
 /**
  * Preprocesses cart for server.
  *
- * @param {object} cart Cart object.
- * @returns {object} A new cart object.
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart Cart object.
+ * @returns {import('@automattic/shopping-cart').RequestCart} A new cart object.
  */
 export function preprocessCartForServer( {
 	coupon,
@@ -217,9 +221,9 @@ export function canRemoveFromCart( cart, cartItem ) {
  * own timestamp) as well as the ResponseCart object returned by the
  * shopping-cart endpoint directly.
  *
- * @param {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCart|null} previousCartValue - the previously loaded cart
- * @param {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCart} nextCartValue - the new cart value
- * @returns {import('my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types').ResponseCartMessages} nextCartMessages - messages about the state of the cart
+ * @param {import('@automattic/shopping-cart').ResponseCart|null} previousCartValue - the previously loaded cart
+ * @param {import('@automattic/shopping-cart').ResponseCart} nextCartValue - the new cart value
+ * @returns {import('@automattic/shopping-cart').ResponseCartMessages} nextCartMessages - messages about the state of the cart
  */
 export function getNewMessages( previousCartValue, nextCartValue ) {
 	const nextCartMessages = nextCartValue.messages || [];

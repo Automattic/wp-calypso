@@ -6,30 +6,30 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import Notice from 'components/notice';
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormattedHeader from 'components/formatted-header';
+import Notice from 'calypso/components/notice';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_AUTH_CODE_INVALID,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_AUTH_CODE,
 	INCOMING_DOMAIN_TRANSFER_PREPARE_UNLOCK,
-} from 'lib/url/support';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { isSupportSession as hasEnteredSupportSession } from 'state/support/selectors';
+} from 'calypso/lib/url/support';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { isSupportSession as hasEnteredSupportSession } from 'calypso/state/support/selectors';
 
 /**
  * Image dependencies
  */
-import migratingHostImage from 'assets/images/illustrations/migrating-host-diy.svg';
+import migratingHostImage from 'calypso/assets/images/illustrations/migrating-host-diy.svg';
 
 class TransferDomainPrecheck extends React.Component {
 	static propTypes = {

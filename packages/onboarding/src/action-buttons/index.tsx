@@ -13,12 +13,25 @@ import './style.scss';
 
 interface ActionButtonsProps {
 	className?: string;
+	sticky?: boolean | null;
 }
 
 const ActionButtons: React.FunctionComponent< ActionButtonsProps > = ( {
 	className,
 	children,
-} ) => <div className={ classnames( 'action-buttons', className ) }>{ children }</div>;
+	sticky = null,
+} ) => {
+	// if null, auto-stick (stick when small).
+	// if true, always stick.
+	// if false, never stick.
+	let stickyClass = '';
+	if ( sticky === true ) stickyClass = 'is-sticky';
+	if ( sticky === false ) stickyClass = 'no-sticky';
+
+	return (
+		<div className={ classnames( 'action-buttons', className, stickyClass ) }>{ children }</div>
+	);
+};
 
 export default ActionButtons;
 

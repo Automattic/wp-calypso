@@ -8,6 +8,7 @@ import persistenceConfigFactory from './persistence-config-factory';
 import * as Plans from './plans';
 import * as Site from './site';
 import * as Verticals from './verticals';
+import * as Launch from './launch';
 import * as WPCOMFeatures from './wpcom-features';
 import * as VerticalsTemplates from './verticals-templates';
 
@@ -19,6 +20,7 @@ export {
 	Verticals,
 	VerticalsTemplates,
 	Plans,
+	Launch,
 	WPCOMFeatures,
 	persistenceConfigFactory,
 };

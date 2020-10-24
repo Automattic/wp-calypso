@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	SUPPORT_ARTICLE_ALTERNATES_RECEIVE,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_SUCCESS,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const requests = ( state = {}, action ) => {
 	switch ( action.type ) {

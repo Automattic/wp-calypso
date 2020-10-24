@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { startsWith, get } from 'lodash';
+import { startsWith, flowRight as compose } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -22,21 +22,13 @@ import QueryPreferences from 'components/data/query-preferences';
 import QuerySites from 'components/data/query-sites';
 import QuerySiteSelectedEditor from 'components/data/query-site-selected-editor';
 import { isOffline } from 'state/application/selectors';
-import {
-	getSelectedSiteId,
-	masterbarIsVisible,
-	getSectionGroup,
-	getSectionName,
-	getSelectedSite,
-} from 'state/ui/selectors';
+import { getSelectedSiteId, masterbarIsVisible, getSelectedSite } from 'state/ui/selectors';
 import isAtomicSite from 'state/selectors/is-site-automated-transfer';
 import isHappychatOpen from 'state/happychat/selectors/is-happychat-open';
 import { isJetpackSite } from 'state/sites/selectors';
 import { isSupportSession } from 'state/support/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
 import DocumentHead from 'components/data/document-head';
 import { getPreference } from 'state/preferences/selectors';
 import KeyboardShortcutsMenu from 'lib/keyboard-shortcuts/menu';
@@ -50,6 +42,7 @@ import { isWooOAuth2Client } from 'lib/oauth2-clients';
 import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
 import LayoutLoader from './loader';
 import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+import { withCurrentRoute } from 'components/route';
 
 /**
  * Style dependencies
@@ -249,62 +242,64 @@ class Layout extends Component {
 	}
 }
 
-export default connect( ( state ) => {
-	const sectionGroup = getSectionGroup( state );
-	const sectionName = getSectionName( state );
-	const currentRoute = getCurrentRoute( state );
-	const siteId = getSelectedSiteId( state );
-	const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
-	const sectionJitmPath = getMessagePathForJITM( currentRoute );
-	const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
-	const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	const isCheckoutFromGutenboarding =
-		'checkout' === sectionName && '1' === getCurrentQueryArguments( state )?.preLaunch;
-	const noMasterbarForRoute =
-		isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
-	const noMasterbarForSection = 'signup' === sectionName || 'jetpack-connect' === sectionName;
-	const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
-	const isJetpackWooCommerceFlow =
-		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' );
-	const isJetpackWooDnaFlow =
-		( 'jetpack-connect' === sectionName || 'login' === sectionName ) &&
-		wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow();
-	const oauth2Client = getCurrentOAuth2Client( state );
-	const wccomFrom = get( getCurrentQueryArguments( state ), 'wccom-from' );
-	const isEligibleForJITM =
-		[ 'stats', 'plans', 'themes', 'plugins', 'comments' ].indexOf( sectionName ) >= 0;
-	const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
+export default compose(
+	withCurrentRoute,
+	connect( ( state, { currentSection, currentRoute, currentQuery } ) => {
+		const sectionGroup = currentSection?.group;
+		const sectionName = currentSection?.name;
+		const siteId = getSelectedSiteId( state );
+		const shouldShowAppBanner = getShouldShowAppBanner( getSelectedSite( state ) );
+		const sectionJitmPath = getMessagePathForJITM( currentRoute );
+		const isJetpackLogin = startsWith( currentRoute, '/log-in/jetpack' );
+		const isJetpack = isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
+		const isCheckoutFromGutenboarding =
+			'checkout' === sectionName && '1' === currentQuery?.preLaunch;
+		const noMasterbarForRoute =
+			isJetpackLogin || isCheckoutFromGutenboarding || currentRoute === '/me/account/closed';
+		const noMasterbarForSection = [ 'signup', 'jetpack-connect' ].includes( sectionName );
+		const isJetpackMobileFlow = 'jetpack-connect' === sectionName && !! retrieveMobileRedirect();
+		const isJetpackWooCommerceFlow =
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+			'woocommerce-onboarding' === currentQuery?.from;
+		const isJetpackWooDnaFlow =
+			[ 'jetpack-connect', 'login' ].includes( sectionName ) &&
+			wooDnaConfig( currentQuery ).isWooDnaFlow();
+		const oauth2Client = getCurrentOAuth2Client( state );
+		const wccomFrom = currentQuery?.[ 'wccom-from' ];
+		const isEligibleForJITM = [ 'stats', 'plans', 'themes', 'plugins', 'comments' ].includes(
+			sectionName
+		);
+		const isNewLaunchFlow = startsWith( currentRoute, '/start/new-launch' );
 
-	return {
-		masterbarIsHidden:
-			! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
-		isJetpack,
-		isJetpackLogin,
-		isJetpackWooCommerceFlow,
-		isJetpackWooDnaFlow,
-		isJetpackMobileFlow,
-		isEligibleForJITM,
-		oauth2Client,
-		wccomFrom,
-		isSupportSession: isSupportSession( state ),
-		sectionGroup,
-		sectionName,
-		sectionJitmPath,
-		shouldShowAppBanner,
-		isOffline: isOffline( state ),
-		currentLayoutFocus: getCurrentLayoutFocus( state ),
-		chatIsOpen: isHappychatOpen( state ),
-		colorSchemePreference: getPreference( state, 'colorScheme' ),
-		currentRoute,
-		siteId,
-		/* We avoid requesting sites in the Jetpack Connect authorization step, because this would
-		request all sites before authorization has finished. That would cause the "all sites"
-		request to lack the newly authorized site, and when the request finishes after
-		authorization, it would remove the newly connected site that has been fetched separately.
-		See https://github.com/Automattic/wp-calypso/pull/31277 for more details. */
-		shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
-		isNewLaunchFlow,
-		isCheckoutFromGutenboarding,
-	};
-} )( Layout );
+		return {
+			masterbarIsHidden:
+				! masterbarIsVisible( state ) || noMasterbarForSection || noMasterbarForRoute,
+			isJetpack,
+			isJetpackLogin,
+			isJetpackWooCommerceFlow,
+			isJetpackWooDnaFlow,
+			isJetpackMobileFlow,
+			isEligibleForJITM,
+			oauth2Client,
+			wccomFrom,
+			isSupportSession: isSupportSession( state ),
+			sectionGroup,
+			sectionName,
+			sectionJitmPath,
+			shouldShowAppBanner,
+			isOffline: isOffline( state ),
+			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			chatIsOpen: isHappychatOpen( state ),
+			colorSchemePreference: getPreference( state, 'colorScheme' ),
+			siteId,
+			// We avoid requesting sites in the Jetpack Connect authorization step, because this would
+			// request all sites before authorization has finished. That would cause the "all sites"
+			// request to lack the newly authorized site, and when the request finishes after
+			// authorization, it would remove the newly connected site that has been fetched separately.
+			// See https://github.com/Automattic/wp-calypso/pull/31277 for more details.
+			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
+			isNewLaunchFlow,
+			isCheckoutFromGutenboarding,
+		};
+	} )
+)( Layout );

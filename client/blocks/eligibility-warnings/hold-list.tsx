@@ -10,11 +10,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import Gridicon from 'components/gridicon';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { localizeUrl } from 'lib/i18n-utils';
+import CardHeading from 'calypso/components/card-heading';
+import Gridicon from 'calypso/components/gridicon';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 // Mapping eligibility holds to messages that will be shown to the user
 function getHoldMessages( context: string | null, translate: LocalizeProps[ 'translate' ] ) {

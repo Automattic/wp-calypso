@@ -7,9 +7,9 @@ import { trim } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { decodeEntities } from 'lib/formatting';
-import { isSiteDescriptionBlocked } from 'reader/lib/site-description-blocklist';
-import { getUrlParts } from 'lib/url';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { isSiteDescriptionBlocked } from 'calypso/reader/lib/site-description-blocklist';
+import { getUrlParts } from 'calypso/lib/url';
 
 /**
  * Given a feed, site, or post: return the site url. return false if one could not be found.

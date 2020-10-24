@@ -9,8 +9,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import ValidationErrorList from 'notices/validation-error-list';
+import notices from 'calypso/notices';
+import ValidationErrorList from 'calypso/notices/validation-error-list';
 
 function getErrorFromApi( errorMessage ) {
 	if ( errorMessage ) {

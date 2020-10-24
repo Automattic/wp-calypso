@@ -5,7 +5,7 @@ This component is used to display a plugin autupdate toggle.
 ## How to use
 
 ```js
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 
 function render() {
 	return (

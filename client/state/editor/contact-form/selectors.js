@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/editor/init';
+import 'calypso/state/editor/init';
 
 export function getEditorContactForm( state ) {
 	return state.editor.contactForm;

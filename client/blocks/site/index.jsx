@@ -6,18 +6,18 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
-import SiteIndicator from 'my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import SiteIcon from 'calypso/blocks/site-icon';
+import SiteIndicator from 'calypso/my-sites/site-indicator';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

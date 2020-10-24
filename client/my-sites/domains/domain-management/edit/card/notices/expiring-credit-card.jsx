@@ -8,9 +8,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'lib/purchases';
-import { getEditCardDetailsPath } from 'me/purchases/utils';
-import { type as domainTypes } from 'lib/domains/constants';
+import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
+import { getEditCardDetailsPath } from 'calypso/me/purchases/utils';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function ExpiringCreditCard( props ) {
 	const { selectedSite, purchase, domain } = props;

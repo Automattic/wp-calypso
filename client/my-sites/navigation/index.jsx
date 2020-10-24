@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SitePicker from 'my-sites/picker';
-import AsyncLoad from 'components/async-load';
+import config from 'calypso/config';
+import SitePicker from 'calypso/my-sites/picker';
+import AsyncLoad from 'calypso/components/async-load';
 
 class MySitesNavigation extends React.Component {
 	static displayName = 'MySitesNavigation';
@@ -28,11 +28,11 @@ class MySitesNavigation extends React.Component {
 
 		let asyncSidebar = null;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
-			asyncSidebar = <AsyncLoad require="components/jetpack/sidebar" { ...asyncProps } />;
+			asyncSidebar = <AsyncLoad require="calypso/components/jetpack/sidebar" { ...asyncProps } />;
 		} else if ( config.isEnabled( 'nav-unification' ) ) {
-			asyncSidebar = <AsyncLoad require="my-sites/sidebar-unified/switcher" { ...asyncProps } />;
+			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar-unified" { ...asyncProps } />;
 		} else {
-			asyncSidebar = <AsyncLoad require="my-sites/sidebar" { ...asyncProps } />;
+			asyncSidebar = <AsyncLoad require="calypso/my-sites/sidebar" { ...asyncProps } />;
 		}
 
 		return (

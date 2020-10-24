@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getConciergeNextAppointment from 'state/selectors/get-concierge-next-appointment';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 
 describe( 'getConciergeNextAppointment()', () => {
 	test( 'should default to null', () => {

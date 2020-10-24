@@ -14,29 +14,30 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Notice from 'components/notice';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
-import SpinnerLine from 'components/spinner-line';
-import QueryActivePromotions from 'components/data/query-active-promotions';
-import { abtest } from 'lib/abtest';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import SpinnerLine from 'calypso/components/spinner-line';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import { abtest } from 'calypso/lib/abtest';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import {
 	getPlan,
 	getPlanBySlug,
 	getPlanRawPrice,
 	getPlanSlug,
 	getDiscountedRawPrice,
-} from 'state/plans/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
-import { getDiscountByName } from 'lib/discounts';
-import { addQueryArgs } from 'lib/url';
+} from 'calypso/state/plans/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import { getDiscountByName } from 'calypso/lib/discounts';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
@@ -46,22 +47,22 @@ import {
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	getPlanClass,
-} from 'lib/plans';
+} from 'calypso/lib/plans';
 import {
 	getPlanDiscountedRawPrice,
 	getSitePlanRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
-} from 'state/sites/plans/selectors';
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSitePlan,
 	getSiteSlug,
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
 	isJetpackSite,
-} from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
+} from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
@@ -73,9 +74,10 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 	FEATURE_BUSINESS_ONBOARDING,
-} from 'lib/plans/constants';
-import { getPlanFeaturesObject } from 'lib/plans/features-list';
+} from 'calypso/lib/plans/constants';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 /**
  * Style dependencies
@@ -529,6 +531,7 @@ export class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			purchaseId,
 			translate,
 		} = this.props;
 
@@ -575,7 +578,11 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
@@ -666,6 +673,7 @@ export class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			purchaseId,
 		} = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -703,7 +711,11 @@ export class PlanFeatures extends Component {
 						isLaunchPage={ isLaunchPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
@@ -737,6 +749,7 @@ PlanFeatures.propTypes = {
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
+	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 };
@@ -927,11 +940,14 @@ export default connect(
 
 		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
 
+		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
+
 		return {
 			canPurchase,
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			purchaseId,
 			siteIsPrivate,
 			sitePlan,
 			siteType,

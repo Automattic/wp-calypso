@@ -8,8 +8,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { next } from 'lib/shortcode';
-import GalleryShortcode from 'components/gallery-shortcode';
+import { next } from 'calypso/lib/shortcode';
+import GalleryShortcode from 'calypso/components/gallery-shortcode';
 
 class GalleryView extends Component {
 	static match( content ) {

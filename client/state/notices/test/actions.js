@@ -10,7 +10,7 @@ import {
 	successNotice,
 	warningNotice,
 } from '../actions';
-import { NOTICE_CREATE, NOTICE_REMOVE } from 'state/action-types';
+import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( 'removeNotice()', () => {

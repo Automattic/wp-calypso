@@ -36,8 +36,8 @@ import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import { isCompleteAndValid } from '../types/wpcom-store-state';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItem } from './wp-order-review-line-items';
-import MaterialIcon from 'components/material-icon';
-import Gridicon from 'components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
+import Gridicon from 'calypso/components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import {
 	handleContactValidationResult,
@@ -45,11 +45,11 @@ import {
 	getDomainValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
-} from 'my-sites/checkout/composite-checkout/contact-validation';
-import { isGSuiteProductSlug } from 'lib/gsuite';
-import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
-import { login } from 'lib/paths';
-import config from 'config';
+} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
+import { login } from 'calypso/lib/paths';
+import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 

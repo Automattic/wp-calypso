@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `postType`. It does not accept any ch
 
 ```jsx
 import React from 'react';
-import QueryTaxonomies from 'components/data/query-taxonomies';
+import QueryTaxonomies from 'calypso/components/data/query-taxonomies';
 
 export default function MyTaxonomiesList( { taxonomies } ) {
 	return (

@@ -9,20 +9,20 @@ import { registerStore, useSelect } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/components/summary-details';
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import {
 	VisaLogo,
 	MastercardLogo,
 	AmexLogo,
-} from 'my-sites/checkout/composite-checkout/components/payment-logos';
-import PaymentLogo from 'my-sites/checkout/composite-checkout/components/payment-logo';
+} from 'calypso/my-sites/checkout/composite-checkout/components/payment-logos';
+import PaymentLogo from 'calypso/my-sites/checkout/composite-checkout/components/payment-logo';
 import CreditCardFields from './credit-card-fields';
 import CreditCardPayButton from './credit-card-pay-button';
-import { maskField } from 'lib/checkout';
+import { maskField } from 'calypso/lib/checkout';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 

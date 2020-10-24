@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
@@ -9,28 +9,27 @@ import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
 	FormStatus,
-	usePaymentProcessor,
-	useTransactionStatus,
 	useLineItems,
 	useEvents,
 	useFormStatus,
+	useTransactionStatus,
 	registerStore,
 	useSelect,
 	useDispatch,
+	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/components/summary-details';
-import WeChatPaymentQRcodeUnstyled from 'my-sites/checkout/checkout/wechat-payment-qrcode';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import userAgent from 'lib/user-agent';
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import WeChatPaymentQRcodeUnstyled from 'calypso/my-sites/checkout/checkout/wechat-payment-qrcode';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
@@ -140,34 +139,28 @@ const WeChatField = styled( Field )`
 	}
 `;
 
-function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSlug } ) {
-	const { __ } = useI18n();
+function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguration, siteSlug } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionAuthorizing,
-		setTransactionError,
-		setTransactionPending,
-		transactionStatus,
-		transactionLastResponse,
-		resetTransaction,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'wechat' );
+	const { resetTransaction } = useTransactionStatus();
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
+	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
 
-	useScrollQRCodeIntoView( transactionStatus === 'authorizing' );
+	useScrollQRCodeIntoView( !! stripeResponseWithCode );
 
-	if ( transactionStatus === 'authorizing' ) {
+	if ( stripeResponseWithCode ) {
 		return (
 			<WeChatPaymentQRcode
-				orderId={ transactionLastResponse.order_id }
+				orderId={ stripeResponseWithCode.order_id }
 				cart={ cart }
-				redirectUrl={ transactionLastResponse.redirect_url }
+				redirectUrl={ stripeResponseWithCode.redirect_url }
 				slug={ siteSlug }
-				reset={ resetTransaction }
+				reset={ () => {
+					resetTransaction();
+					setStripeResponseWithCode( null );
+				} }
 			/>
 		);
 	}
@@ -178,38 +171,18 @@ function WeChatPayButton( { disabled, store, stripe, stripeConfiguration, siteSl
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting wechat payment' );
-					setTransactionPending();
 					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'wechat' } } );
-					submitTransaction( {
+					onClick( 'wechat', {
 						stripe,
 						name: customerName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'wechat transaction requires redirect', stripeResponse.redirect_url );
-							// The WeChat payment type should only redirect when on mobile as redirect urls
-							// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-							if ( userAgent.isMobile ) {
-								setTransactionRedirecting( stripeResponse.redirect_url );
-								return;
-							}
-
-							// For desktop, display the QR code
-							setTransactionAuthorizing( stripeResponse );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} ).then( ( processorResponse ) => {
+						if ( processorResponse?.type === PaymentProcessorResponseType.MANUAL ) {
+							setStripeResponseWithCode( processorResponse.payload );
+						}
+					} );
 				}
 			} }
 			buttonType="primary"

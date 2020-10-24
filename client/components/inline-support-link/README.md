@@ -7,7 +7,7 @@ The component's `children` prop will be used for the link text; if none is suppl
 ## Example Usage
 
 ```js
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function render() {
 	const inlineSupportProps = {

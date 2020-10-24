@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { find, get } from 'lodash';
-import config from 'config';
+import config from 'calypso/config';
 import Debug from 'debug';
 
 const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
  * Internal Dependencies
  */
-import userUtils from 'lib/user/utils';
-import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
-import { getUrlParts } from 'lib/url';
+import userUtils from 'calypso/lib/user/utils';
+import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
+import { getUrlParts } from 'calypso/lib/url';
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );

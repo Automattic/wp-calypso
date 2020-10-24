@@ -12,34 +12,38 @@ import LazyRender from 'react-lazily-render';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { Button } from '@automattic/components';
-import canCurrentUserForSites from 'state/selectors/can-current-user-for-sites';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import DocumentHead from 'components/data/document-head';
+import canCurrentUserForSites from 'calypso/state/selectors/can-current-user-for-sites';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import DocumentHead from 'calypso/components/data/document-head';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'calypso/components/formatted-header';
 import {
 	getAllDomains,
 	getFlatDomainsList,
 	getAllRequestingSiteDomains,
-} from 'state/sites/domains/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
+} from 'calypso/state/sites/domains/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
-import getSites from 'state/selectors/get-sites';
-import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
+import getSites from 'calypso/state/selectors/get-sites';
+import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 import ListItemPlaceholder from './item-placeholder';
-import Main from 'components/main';
-import { type as domainTypes } from 'lib/domains/constants';
-import QueryAllDomains from 'components/data/query-all-domains';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { getUserPurchases } from 'state/purchases/selectors';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { hasAllSitesList } from 'state/sites/selectors';
-import EmptyContent from 'components/empty-content';
+import Main from 'calypso/components/main';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import QueryAllDomains from 'calypso/components/data/query-all-domains';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { getUserPurchases } from 'calypso/state/purchases/selectors';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { hasAllSitesList } from 'calypso/state/sites/selectors';
+import EmptyContent from 'calypso/components/empty-content';
 
 /**
  * Style dependencies

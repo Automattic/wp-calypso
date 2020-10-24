@@ -8,9 +8,9 @@ import deepfreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, isRequesting } from '../reducer';
-import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'state/reader/action-types';
-import { DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { READER_TEAMS_REQUEST, READER_TEAMS_RECEIVE } from 'calypso/state/reader/action-types';
+import { DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const TEAM1 = { slug: 'team one slug', title: 'team one title' };
 const TEAM2 = { slug: 'team two slug', title: 'team two title' };

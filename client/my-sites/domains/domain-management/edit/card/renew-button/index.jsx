@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
-import { handleRenewNowClick, getRenewalPrice } from 'lib/purchases';
+import { handleRenewNowClick, getRenewalPrice } from 'calypso/lib/purchases';
 
 /**
  * Style dependencies

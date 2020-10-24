@@ -11,10 +11,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import { localizeUrl } from 'lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class BusinessATStep extends Component {
 	static propTypes = {

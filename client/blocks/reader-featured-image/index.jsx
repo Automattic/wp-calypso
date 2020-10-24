@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -7,10 +7,10 @@ import { noop } from 'lodash';
 import classnames from 'classnames';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import cssSafeUrl from 'lib/css-safe-url';
-import resizeImageUrl from 'lib/resize-image-url';
+import cssSafeUrl from 'calypso/lib/css-safe-url';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 
 /**
  * Style dependencies
@@ -32,6 +32,10 @@ const ReaderFeaturedImage = ( {
 
 	// Don't resize image if it was already fetched.
 	const resizedUrl = fetched ? imageUrl : resizeImageUrl( imageUrl, { w: imageWidth } );
+
+	if ( ! resizedUrl ) {
+		return null;
+	}
 
 	const featuredImageStyle = {
 		backgroundImage: 'url(' + cssSafeUrl( resizedUrl ) + ')',

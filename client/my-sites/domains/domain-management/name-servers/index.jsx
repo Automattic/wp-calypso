@@ -12,31 +12,35 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import Header from 'my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import CustomNameserversForm from './custom-nameservers-form';
 import WpcomNameserversToggle from './wpcom-nameservers-toggle';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
+import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
 import DnsTemplates from './dns-templates';
-import { domainManagementEdit, domainManagementDns } from 'my-sites/domains/paths';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import { updateNameservers } from 'lib/domains/nameservers/actions';
-import { WPCOM_DEFAULTS, isWpcomDefaults } from 'lib/domains/nameservers';
-import { getSelectedDomain } from 'lib/domains';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import { domainManagementEdit, domainManagementDns } from 'calypso/my-sites/domains/paths';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import { updateNameservers } from 'calypso/lib/domains/nameservers/actions';
+import { WPCOM_DEFAULTS, isWpcomDefaults } from 'calypso/lib/domains/nameservers';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import FetchError from './fetch-error';
-import Notice from 'components/notice';
-import { CHANGE_NAME_SERVERS } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import Notice from 'calypso/components/notice';
+import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import NonPrimaryDomainPlanUpsell from 'my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
+import NonPrimaryDomainPlanUpsell from 'calypso/my-sites/domains/domain-management/components/domain/non-primary-domain-plan-upsell';
 
 class NameServers extends React.Component {
 	static propTypes = {

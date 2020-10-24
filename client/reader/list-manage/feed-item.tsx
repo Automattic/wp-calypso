@@ -8,12 +8,12 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
-import SitePlaceholder from 'blocks/site/placeholder';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { Item, Feed, FeedError } from './types';
-import { getFeed } from 'state/reader/feeds/selectors';
-import QueryReaderFeed from 'components/data/query-reader-feed';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;

@@ -8,7 +8,7 @@ import { omit, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class TokenInput extends React.PureComponent {
 	static propTypes = {

@@ -10,19 +10,19 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
-import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import earnIllustration from 'assets/images/customer-home/illustration--task-earn.svg';
+import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
 /**
  * Types
  */
-import * as T from 'types';
+import * as T from 'calypso/types';
 
 /**
  * Style dependencies

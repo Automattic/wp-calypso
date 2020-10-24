@@ -3,7 +3,7 @@
 `products-list` is a collection of all the products users can have on WordPress.com, as returned from the `/products` REST API endpoint. It can be required into a file like:
 
 ```js
-import productsListFactory from 'lib/products-list';
+import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
 ```
 

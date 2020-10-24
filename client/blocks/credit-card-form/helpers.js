@@ -7,13 +7,13 @@ import { camelCase, kebabCase, debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
+import notices from 'calypso/notices';
 import {
 	handleRenewNowClick,
 	isRenewable,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'lib/purchases';
-import wpcomFactory from 'lib/wp';
+} from 'calypso/lib/purchases';
+import wpcomFactory from 'calypso/lib/wp';
 
 const wpcom = wpcomFactory.undocumented();
 

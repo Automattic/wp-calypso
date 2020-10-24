@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getCurrentUserMarketingPriceGroup from 'state/selectors/get-current-user-marketing-price-group';
+import getCurrentUserMarketingPriceGroup from 'calypso/state/selectors/get-current-user-marketing-price-group';
 
 describe( 'getCurrentUserMarketingPriceGroup()', () => {
 	test( 'should return null as default', () => {

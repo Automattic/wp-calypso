@@ -89,7 +89,8 @@ module.exports = {
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
-
+				// test/e2e doesn't support package-relative imports
+				'wpcalypso/no-package-relative-imports': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
 					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
@@ -331,10 +332,6 @@ module.exports = {
 					// The next two are stored in a site's meta so would require a data migration of all sites to fix
 					'comment_whitelist',
 					'blacklist_keys',
-
-					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
-					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
-					'data-hj-whitelist',
 
 					// Depends on https://github.com/Automattic/jetpack/blob/3dae8f80e5020338e84bfc20bb41786f056a2eec/json-endpoints/jetpack/class.wpcom-json-api-get-option-endpoint.php#L38
 					'option_name_not_in_whitelist',

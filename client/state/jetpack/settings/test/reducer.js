@@ -15,8 +15,8 @@ import {
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

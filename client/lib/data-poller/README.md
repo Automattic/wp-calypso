@@ -29,8 +29,8 @@ Add a new poller that fetches updates
 ## Example
 
 ```js
-import PollerPool from 'lib/data-poller';
-import SitesList from 'lib/sites-list/list';
+import PollerPool from 'calypso/lib/data-poller';
+import SitesList from 'calypso/lib/sites-list/list';
 
 const sites = new SitesList();
 

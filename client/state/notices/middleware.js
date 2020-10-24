@@ -7,11 +7,11 @@ import { get, truncate, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { successNotice, errorNotice, removeNotice } from 'state/notices/actions';
-import { getSitePost } from 'state/posts/selectors';
-import { getSiteDomain } from 'state/sites/selectors';
-import { getInviteForSite } from 'state/invites/selectors';
-import { restorePost } from 'state/posts/actions';
+import { successNotice, errorNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getSitePost } from 'calypso/state/posts/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
+import { getInviteForSite } from 'calypso/state/invites/selectors';
+import { restorePost } from 'calypso/state/posts/actions';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,
@@ -54,13 +54,13 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	THEME_DELETE_FAILURE,
 	THEME_DELETE_SUCCESS,
 	THEME_ACTIVATE_FAILURE,
-} from 'state/themes/action-types';
-import { purchasesRoot, billingHistoryReceipt } from 'me/purchases/paths';
+} from 'calypso/state/themes/action-types';
+import { purchasesRoot, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 
 import {
 	onAccountRecoverySettingsFetchFailed,

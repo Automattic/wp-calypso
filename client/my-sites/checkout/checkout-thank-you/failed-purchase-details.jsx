@@ -8,8 +8,8 @@ import React from 'react';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import PurchaseDetail from 'components/purchase-detail';
-import { CALYPSO_CONTACT } from 'lib/url/support';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 const FailedPurchaseDetails = ( { failedPurchases, purchases, translate } ) => {
 	const successfulPurchases = purchases.length > 0 && (

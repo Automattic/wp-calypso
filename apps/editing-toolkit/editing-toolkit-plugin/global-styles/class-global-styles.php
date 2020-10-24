@@ -338,6 +338,7 @@ class Global_Styles {
 			$version,
 			true
 		);
+		wp_set_script_translations( 'jetpack-global-styles-editor-script', 'full-site-editing' );
 		wp_localize_script(
 			'jetpack-global-styles-editor-script',
 			'JETPACK_GLOBAL_STYLES_EDITOR_CONSTANTS',

@@ -7,8 +7,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { isExpiring, shouldRenderExpiringCreditCard } from 'lib/purchases';
-import { type as domainTypes } from 'lib/domains/constants';
+import { isExpiring, shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function WrapDomainStatusButtons( props ) {
 	const wrapperClassNames = classNames( 'domain-types__wrap-me', props.className );

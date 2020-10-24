@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CreditCardFormFields from 'components/credit-card-form-fields';
-import { setNewCreditCardDetails } from 'lib/transaction/actions';
-import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
+import { setNewCreditCardDetails } from 'calypso/lib/transaction/actions';
+import { INPUT_VALIDATION } from 'calypso/lib/store-transactions/step-types';
 
 class NewCardForm extends Component {
 	static displayName = 'NewCardForm';

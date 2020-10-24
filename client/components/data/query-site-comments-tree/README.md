@@ -12,7 +12,7 @@ There is planned support for additional features not yet implemented:
 - Pinghub connection
 
 ```js
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
 
 const CommentList = ( { comments, siteId } ) => (
 	<div>

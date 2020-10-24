@@ -8,10 +8,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { getSelectedDomain } from 'lib/domains';
-import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import {
+	fetchWapiDomainInfo,
+	requestTransferCode,
+} from 'calypso/lib/domains/wapi-domain-info/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 
 class Locked extends React.Component {
 	state = {

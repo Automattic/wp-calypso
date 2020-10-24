@@ -25,19 +25,19 @@ import {
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
-import { getSitePurchases } from 'state/purchases/selectors';
-import getSitePlan from 'state/sites/selectors/get-site-plan';
-import getSiteProducts from 'state/sites/selectors/get-site-products';
-import { useLocalizedMoment } from 'components/localized-moment';
-import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
-import JetpackBundleCard from 'components/jetpack/card/jetpack-bundle-card';
-import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
-import JetpackProductCardUpgradeNudge from 'components/jetpack/card/jetpack-product-card/upgrade-nudge';
-import { planHasFeature } from 'lib/plans';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'lib/plans/constants';
-import { JETPACK_SEARCH_PRODUCTS } from 'lib/products-values/constants';
-import { isCloseToExpiration } from 'lib/purchases';
-import { getPurchaseByProductSlug } from 'lib/purchases/utils';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card';
+import JetpackBundleCard from 'calypso/components/jetpack/card/jetpack-bundle-card';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
+import JetpackProductCardUpgradeNudge from 'calypso/components/jetpack/card/jetpack-product-card/upgrade-nudge';
+import { planHasFeature } from 'calypso/lib/plans';
+import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
+import { isCloseToExpiration } from 'calypso/lib/purchases';
+import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 
 /**
  * Type dependencies

@@ -5,7 +5,7 @@ This component is used to display a box that can be clicked to expand a hidden s
 ## Usage
 
 ```js
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 
 function render() {
 	return (

@@ -13,7 +13,7 @@ import { identity } from 'lodash';
  * Internal dependencies
  */
 import { PayButton } from '../pay-button';
-import { BEFORE_SUBMIT } from 'lib/store-transactions/step-types';
+import { BEFORE_SUBMIT } from 'calypso/lib/store-transactions/step-types';
 
 jest.mock( 'lib/cart-values', () => ( {
 	cartItems: {

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { createTransientMedia, validateMediaItem } from 'lib/media/utils';
-import { getTransientDate, getBaseTime } from 'state/media/utils/transient-date';
-import { dispatchFluxCreateMediaItem } from 'state/media/utils/flux-adapter';
-import { createMediaItem, setMediaItemErrors } from 'state/media/actions';
+import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
+import { getTransientDate, getBaseTime } from 'calypso/state/media/utils/transient-date';
+import { dispatchFluxCreateMediaItem } from 'calypso/state/media/utils/flux-adapter';
+import { createMediaItem, setMediaItemErrors } from 'calypso/state/media/actions';
 
 /**
  * Create transient media items for all files and dispatch pre-upload

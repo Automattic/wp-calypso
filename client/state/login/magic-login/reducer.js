@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	CHECK_YOUR_EMAIL_PAGE,
 	INTERSTITIAL_PAGE,
@@ -23,7 +23,7 @@ import {
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_FETCH,
 	MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS,
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const currentView = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

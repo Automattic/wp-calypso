@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Local dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import HeaderControl from './header-controls';
 
 /**

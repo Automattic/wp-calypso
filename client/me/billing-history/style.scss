@@ -244,7 +244,8 @@ textarea.billing-history__billing-details-editable {
 			margin: 0;
 		}
 
-		strong {
+		strong,
+		.form-label {
 			color: var( --color-neutral-50 );
 			display: block;
 			font-size: $font-body-extra-small;
@@ -357,8 +358,7 @@ textarea.billing-history__billing-details-editable {
 	padding: 16px 0;
 }
 
-.billing-history__receipts.card,
-.billing-history__upcoming-charges.card {
+.billing-history__receipts.card {
 	padding: 0;
 }
 
@@ -366,8 +366,7 @@ textarea.billing-history__billing-details-editable {
 	min-height: 500px;
 }
 
-.billing-history .search-card.card,
-.billing-history__upcoming-charges .search-card.card {
+.billing-history .search-card.card {
 	margin: 0;
 }
 

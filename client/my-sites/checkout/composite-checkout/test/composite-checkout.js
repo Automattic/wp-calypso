@@ -11,20 +11,21 @@ import thunk from 'redux-thunk';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { render, act, fireEvent } from '@testing-library/react';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import CompositeCheckout from '../composite-checkout';
-import { StripeHookProvider } from 'lib/stripe';
+import { StripeHookProvider } from 'calypso/lib/stripe';
 
 /**
  * Mocked dependencies
  */
 jest.mock( 'state/sites/selectors' );
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 jest.mock( 'state/selectors/is-site-automated-transfer' );
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
@@ -233,20 +234,25 @@ describe( 'CompositeCheckout', () => {
 			};
 		} );
 
-		MyCheckout = ( { cartChanges, additionalProps } ) => (
+		MyCheckout = ( { cartChanges, additionalProps, additionalCartProps } ) => (
 			<ReduxProvider store={ store }>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
-					<CompositeCheckout
-						siteSlug={ 'foo.com' }
-						setCart={ mockSetCartEndpoint }
-						getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
-						getStoredCards={ async () => [] }
-						allowedPaymentMethods={ [ 'paypal' ] }
-						onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
-						overrideCountryList={ countryList }
-						{ ...additionalProps }
-					/>
-				</StripeHookProvider>
+				<ShoppingCartProvider
+					cartKey={ 'foo.com' }
+					setCart={ mockSetCartEndpoint }
+					getCart={ mockGetCartEndpointWith( { ...initialCart, ...( cartChanges ?? {} ) } ) }
+					{ ...additionalCartProps }
+				>
+					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfiguration }>
+						<CompositeCheckout
+							siteSlug={ 'foo.com' }
+							getStoredCards={ async () => [] }
+							allowedPaymentMethods={ [ 'paypal' ] }
+							onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
+							overrideCountryList={ countryList }
+							{ ...additionalProps }
+						/>
+					</StripeHookProvider>
+				</ShoppingCartProvider>
 			</ReduxProvider>
 		);
 	} );
@@ -747,23 +753,14 @@ describe( 'CompositeCheckout', () => {
 		);
 	} );
 
-	it( 'displays loading while old cart store is loading', async () => {
+	it( 'displays loading while cart key is undefined (eg: when cart store has pending updates)', async () => {
 		let renderResult;
-		const additionalProps = {
-			cart: { hasLoadedFromServer: false, hasPendingServerUpdates: false },
-		};
+		const additionalCartProps = { cartKey: undefined };
 		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
-		} );
-		const { getByText } = renderResult;
-		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();
-	} );
-
-	it( 'displays loading while old cart store has pending updates', async () => {
-		let renderResult;
-		const additionalProps = { cart: { hasLoadedFromServer: true, hasPendingServerUpdates: true } };
-		await act( async () => {
-			renderResult = render( <MyCheckout additionalProps={ additionalProps } />, container );
+			renderResult = render(
+				<MyCheckout additionalCartProps={ additionalCartProps } />,
+				container
+			);
 		} );
 		const { getByText } = renderResult;
 		expect( getByText( 'Loading checkout' ) ).toBeInTheDocument();

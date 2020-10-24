@@ -6,15 +6,15 @@ import { find } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isSubscription } from 'lib/purchases';
+import { isSubscription } from 'calypso/lib/purchases';
 import {
 	getIncludedDomainPurchaseAmount,
 	isDomainRegistration,
 	isDomainMapping,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 import { getSitePurchases } from './get-site-purchases';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Returns a purchase object that corresponds to that subscription's included domain

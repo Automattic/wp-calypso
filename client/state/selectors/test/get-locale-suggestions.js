@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getLocaleSuggestions from 'state/selectors/get-locale-suggestions';
+import getLocaleSuggestions from 'calypso/state/selectors/get-locale-suggestions';
 
 describe( 'getLocaleSuggestions()', () => {
 	test( 'should return null if no items found', () => {

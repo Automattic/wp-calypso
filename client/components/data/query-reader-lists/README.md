@@ -8,7 +8,7 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderLists from 'components/data/query-reader-lists';
+import QueryReaderLists from 'calypso/components/data/query-reader-lists';
 import MyListItem from './list-item';
 
 export default function MyReaderLists( { subscribedLists } ) {

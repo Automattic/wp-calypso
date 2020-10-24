@@ -6,10 +6,10 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
+import createSelector from 'calypso/lib/create-selector';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if a theme filter term belongs to more

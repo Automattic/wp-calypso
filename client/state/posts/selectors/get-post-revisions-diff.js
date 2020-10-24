@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 export function getPostRevisionsDiff( state, siteId, postId, fromRevisionId, toRevisionId ) {
 	const key = `${ fromRevisionId || 0 }:${ toRevisionId || 0 }`;

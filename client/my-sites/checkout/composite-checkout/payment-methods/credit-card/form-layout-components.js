@@ -6,7 +6,7 @@ import styled from '@emotion/styled';
 /**
  * Internal dependencies
  */
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 
 export const GridRow = styled.div`
 	display: -ms-grid;

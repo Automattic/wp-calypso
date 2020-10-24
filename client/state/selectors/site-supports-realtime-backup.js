@@ -6,13 +6,13 @@ import { some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getSitePurchases } from 'state/purchases/selectors';
-import { planHasFeature } from 'lib/plans';
+import { getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { planHasFeature } from 'calypso/lib/plans';
 import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 
 /**
  * Module variables

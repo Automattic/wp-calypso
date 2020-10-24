@@ -4,19 +4,19 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { flowRight as compose, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsStore from 'lib/plugins/store';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginsStore from 'calypso/lib/plugins/store';
 import { Button } from '@automattic/components';
-import Rating from 'components/rating';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import Rating from 'calypso/components/rating';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies

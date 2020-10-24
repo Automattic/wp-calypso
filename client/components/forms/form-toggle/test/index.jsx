@@ -14,27 +14,12 @@ import React from 'react';
  * Internal dependencies
  */
 import FormToggle from '../';
-import CompactFormToggle from '../compact';
-
-describe( 'index', () => {
-	describe( 'rendering', () => {
-		test( 'should have is-compact class', () => {
-			const toggle = shallow( <CompactFormToggle /> );
-			assert( toggle.hasClass( 'is-compact' ) );
-		} );
-	} );
-} );
 
 describe( 'FormToggle', () => {
 	describe( 'rendering', () => {
 		test( 'should have form-toggle class', () => {
 			const toggle = shallow( <FormToggle /> );
 			assert( toggle.find( '.form-toggle' ).length === 1 );
-		} );
-
-		test( 'should not have is-compact class', () => {
-			const toggle = shallow( <FormToggle /> );
-			assert( toggle.find( '.is-compact' ).length === 0 );
 		} );
 
 		test( 'should be checked when checked is true', () => {

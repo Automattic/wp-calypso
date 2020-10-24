@@ -2,34 +2,35 @@
  * External dependencies
  */
 import page from 'page';
-import wp from 'lib/wp';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { getProductsList } from 'state/products-list/selectors';
+import wp from 'calypso/lib/wp';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import notices from 'notices';
-import { isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { StateSelect } from 'my-sites/domains/components/form';
-import { getPlan } from 'lib/plans';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { useStripe } from 'lib/stripe';
+import notices from 'calypso/notices';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { StateSelect } from 'calypso/my-sites/domains/components/form';
+import { getPlan } from 'calypso/lib/plans';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { useStripe } from 'calypso/lib/stripe';
 import CheckoutTerms from '../checkout/checkout-terms.jsx';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
@@ -40,50 +41,52 @@ import {
 	existingCardProcessor,
 	payPalProcessor,
 	genericRedirectProcessor,
+	weChatProcessor,
 } from './payment-method-processors';
-import { useGetThankYouUrl } from './use-get-thank-you-url';
+import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
-import { fillInSingleCartItemAttributes } from 'lib/cart-values';
-import { hasRenewalItem, getRenewalItems, hasPlan } from 'lib/cart-values/cart-items';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryPlans from 'components/data/query-plans';
-import QueryProducts from 'components/data/query-products-list';
-import { clearPurchases } from 'state/purchases/actions';
-import { fetchReceiptCompleted } from 'state/receipts/actions';
-import { requestSite } from 'state/sites/actions';
-import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
-import { getDomainNameFromReceiptOrCart } from 'lib/domains/cart-utils';
-import { AUTO_RENEWAL } from 'lib/url/support';
-import { useLocalizedMoment } from 'components/localized-moment';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { retrieveSignupDestination, clearSignupDestinationCookie } from 'signup/storageUtils';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
+import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import { clearPurchases } from 'calypso/state/purchases/actions';
+import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
+import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
+import { AUTO_RENEWAL } from 'calypso/lib/url/support';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import {
+	retrieveSignupDestination,
+	clearSignupDestinationCookie,
+} from 'calypso/signup/storageUtils';
 import { useProductVariants } from './hooks/product-variants';
-import { CartProvider } from './cart-provider';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useShoppingCartManager from './hooks/use-shopping-cart-manager';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
 import { colors } from '@automattic/color-studio';
-import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import CartMessages from 'my-sites/checkout/cart/cart-messages';
+import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
-import WPCheckout from 'my-sites/checkout/composite-checkout/components/wp-checkout';
-import { useWpcomStore } from 'my-sites/checkout/composite-checkout/hooks/wpcom-store';
-import { areDomainsInLineItems } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
+import WPCheckout from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout';
+import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
+import { areDomainsInLineItems } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-domains';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
-} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
+} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -93,30 +96,26 @@ const wpcom = wp.undocumented();
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
-const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
-const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 const wpcomGetStoredCards = ( ...args ) => wpcom.getStoredCards( ...args );
 
 export default function CompositeCheckout( {
-	siteSlug,
-	siteId,
-	productAliasFromUrl,
-	getCart,
-	setCart,
+	siteSlug = null,
+	siteId = null,
+	productAliasFromUrl = null,
 	getStoredCards,
-	allowedPaymentMethods,
-	onlyLoadPaymentMethods,
-	overrideCountryList,
-	redirectTo,
-	feature,
-	plan,
-	purchaseId,
-	cart,
-	couponCode: couponCodeFromUrl,
+	allowedPaymentMethods = null,
+	onlyLoadPaymentMethods = null,
+	overrideCountryList = null,
+	redirectTo = null,
+	feature = null,
+	plan = null,
+	purchaseId = null,
+	couponCode: couponCodeFromUrl = null,
 	isComingFromUpsell,
 	isLoggedOutCart,
 	isNoSiteCart,
 	infoMessage,
+	isInEditor,
 } ) {
 	const translate = useTranslate();
 	const isJetpackNotAtomic = useSelector(
@@ -124,8 +123,6 @@ export default function CompositeCheckout( {
 	);
 	const isPrivate = useSelector( ( state ) => isPrivateSite( state, siteId ) );
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const isLoadingCartSynchronizer =
-		cart && ( ! cart.hasLoadedFromServer || cart.hasPendingServerUpdates );
 	const hideNudge = isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
@@ -199,12 +196,7 @@ export default function CompositeCheckout( {
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
 		replaceProductsInCart,
-	} = useShoppingCartManager( {
-		cartKey: isLoggedOutCart || isNoSiteCart ? siteSlug : siteId,
-		canInitializeCart: ! isLoadingCartSynchronizer,
-		setCart: setCart || wpcomSetCart,
-		getCart: getCart || wpcomGetCart,
-	} );
+	} = useShoppingCart();
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
@@ -241,7 +233,7 @@ export default function CompositeCheckout( {
 		showAddCouponSuccessMessage
 	);
 
-	const getThankYouUrl = useGetThankYouUrl( {
+	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
 		redirectTo,
 		purchaseId,
@@ -249,10 +241,20 @@ export default function CompositeCheckout( {
 		cart: responseCart,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
-		siteId,
 		hideNudge,
-		recordEvent,
+		isInEditor,
 	} );
+	const getThankYouUrl = useCallback(
+		( ...getThankYouPageUrlArguments ) => {
+			const url = getThankYouUrlBase( ...getThankYouPageUrlArguments );
+			recordEvent( {
+				type: 'THANK_YOU_URL_GENERATED',
+				payload: { arguments: getThankYouPageUrlArguments, url },
+			} );
+			return url;
+		},
+		[ getThankYouUrlBase, recordEvent ]
+	);
 
 	const moment = useLocalizedMoment();
 	const isDomainOnly = useSelector( ( state ) => isDomainOnlySite( state, siteId ) );
@@ -406,7 +408,7 @@ export default function CompositeCheckout( {
 	useRedirectIfCartEmpty(
 		items,
 		cartEmptyRedirectUrl,
-		isInitialCartLoading,
+		isInitialCartLoading || isCartPendingUpdate,
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( Boolean ),
 		createUserAndSiteBeforeTransaction
 	);
@@ -510,8 +512,9 @@ export default function CompositeCheckout( {
 		() => ( {
 			includeDomainDetails,
 			includeGSuiteDetails,
+			recordEvent,
 		} ),
-		[ includeDomainDetails, includeGSuiteDetails ]
+		[ includeDomainDetails, includeGSuiteDetails, recordEvent ]
 	);
 	const dataForRedirectProcessor = useMemo(
 		() => ( {
@@ -538,8 +541,7 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'bancontact', transactionData, dataForRedirectProcessor ),
 			giropay: ( transactionData ) =>
 				genericRedirectProcessor( 'giropay', transactionData, dataForRedirectProcessor ),
-			wechat: ( transactionData ) =>
-				genericRedirectProcessor( 'wechat', transactionData, dataForRedirectProcessor ),
+			wechat: ( transactionData ) => weChatProcessor( transactionData, dataForRedirectProcessor ),
 			netbanking: ( transactionData ) =>
 				genericRedirectProcessor( 'netbanking', transactionData, dataForRedirectProcessor ),
 			id_wallet: ( transactionData ) =>
@@ -616,46 +618,44 @@ export default function CompositeCheckout( {
 				selectedSite={ { slug: siteSlug } }
 				isLoadingCart={ isInitialCartLoading }
 			/>
-			<CartProvider cart={ responseCart }>
-				<CheckoutProvider
-					items={ itemsForCheckout }
-					total={ total }
-					onPaymentComplete={ onPaymentComplete }
-					showErrorMessage={ showErrorMessage }
-					showInfoMessage={ showInfoMessage }
-					showSuccessMessage={ showSuccessMessage }
-					onEvent={ recordEvent }
-					paymentMethods={ paymentMethods }
-					paymentProcessors={ paymentProcessors }
-					registry={ defaultRegistry }
-					isLoading={ isLoading }
-					isValidating={ isCartPendingUpdate }
-					theme={ theme }
-				>
-					<WPCheckout
-						removeProductFromCart={ removeProductFromCart }
-						updateLocation={ updateLocation }
-						applyCoupon={ applyCoupon }
-						removeCoupon={ removeCoupon }
-						couponStatus={ couponStatus }
-						changePlanLength={ changePlanLength }
-						siteId={ siteId }
-						siteUrl={ siteSlug }
-						countriesList={ countriesList }
-						StateSelect={ StateSelect }
-						getItemVariants={ getItemVariants }
-						responseCart={ responseCart }
-						addItemToCart={ addItemWithEssentialProperties }
-						subtotal={ subtotal }
-						isCartPendingUpdate={ isCartPendingUpdate }
-						CheckoutTerms={ CheckoutTerms }
-						showErrorMessageBriefly={ showErrorMessageBriefly }
-						isLoggedOutCart={ isLoggedOutCart }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-						infoMessage={ infoMessage }
-					/>
-				</CheckoutProvider>
-			</CartProvider>
+			<CheckoutProvider
+				items={ itemsForCheckout }
+				total={ total }
+				onPaymentComplete={ onPaymentComplete }
+				showErrorMessage={ showErrorMessage }
+				showInfoMessage={ showInfoMessage }
+				showSuccessMessage={ showSuccessMessage }
+				onEvent={ recordEvent }
+				paymentMethods={ paymentMethods }
+				paymentProcessors={ paymentProcessors }
+				registry={ defaultRegistry }
+				isLoading={ isLoading }
+				isValidating={ isCartPendingUpdate }
+				theme={ theme }
+			>
+				<WPCheckout
+					removeProductFromCart={ removeProductFromCart }
+					updateLocation={ updateLocation }
+					applyCoupon={ applyCoupon }
+					removeCoupon={ removeCoupon }
+					couponStatus={ couponStatus }
+					changePlanLength={ changePlanLength }
+					siteId={ siteId }
+					siteUrl={ siteSlug }
+					countriesList={ countriesList }
+					StateSelect={ StateSelect }
+					getItemVariants={ getItemVariants }
+					responseCart={ responseCart }
+					addItemToCart={ addItemWithEssentialProperties }
+					subtotal={ subtotal }
+					isCartPendingUpdate={ isCartPendingUpdate }
+					CheckoutTerms={ CheckoutTerms }
+					showErrorMessageBriefly={ showErrorMessageBriefly }
+					isLoggedOutCart={ isLoggedOutCart }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					infoMessage={ infoMessage }
+				/>
+			</CheckoutProvider>
 		</React.Fragment>
 	);
 }
@@ -673,6 +673,7 @@ CompositeCheckout.propTypes = {
 	plan: PropTypes.string,
 	cart: PropTypes.object,
 	transaction: PropTypes.object,
+	isInEditor: PropTypes.bool,
 };
 
 function getPlanProductSlugs(

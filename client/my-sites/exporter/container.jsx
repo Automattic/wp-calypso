@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { isGuidedTransferInProgress } from 'state/sites/guided-transfer/selectors';
+import config from 'calypso/config';
+import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { isGuidedTransferInProgress } from 'calypso/state/sites/guided-transfer/selectors';
 import Notices from './notices';
 import ExportCard from './export-card';
 import ExportMediaCard from './export-media-card';

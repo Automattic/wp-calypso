@@ -8,7 +8,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React from 'react';
 import TestUtils from 'react-dom/test-utils';
 import ReactDom from 'react-dom';

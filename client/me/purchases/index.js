@@ -7,6 +7,7 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
+import * as paymentMethodsController from 'calypso/me/payment-methods/controller';
 import * as billingController from 'calypso/me/billing-history/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
@@ -18,6 +19,13 @@ import { siteSelection } from 'calypso/my-sites/controller';
 
 export default ( router ) => {
 	if ( config.isEnabled( 'manage/payment-methods' ) ) {
+		router(
+			paths.paymentMethods,
+			sidebar,
+			paymentMethodsController.paymentMethods,
+			makeLayout,
+			clientRender
+		);
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
 		// redirect legacy urls
@@ -28,14 +36,6 @@ export default ( router ) => {
 		paths.billingHistory,
 		sidebar,
 		billingController.billingHistory,
-		makeLayout,
-		clientRender
-	);
-
-	router(
-		paths.upcomingCharges,
-		sidebar,
-		billingController.upcomingCharges,
 		makeLayout,
 		clientRender
 	);
@@ -51,29 +51,26 @@ export default ( router ) => {
 	}
 
 	router(
-		paths.purchasesRoot + '/other',
-		sidebar,
-		membershipsController.myMemberships,
-		makeLayout,
-		clientRender
-	);
-	router(
 		paths.purchasesRoot + '/other/:subscriptionId',
 		sidebar,
 		membershipsController.subscription,
 		makeLayout,
 		clientRender
 	);
+
 	// Legacy:
+
+	router( paths.deprecated.upcomingCharges, () => page.redirect( paths.purchasesRoot ) );
+	router( paths.deprecated.otherPurchases, () => page.redirect( paths.purchasesRoot ) );
+
 	router(
 		paths.purchasesRoot + '/memberships/:subscriptionId',
 		( { params: { subscriptionId } } ) => {
 			page.redirect( paths.purchasesRoot + '/other/' + subscriptionId );
 		}
 	);
-	router( paths.purchasesRoot + '/memberships', () =>
-		page.redirect( paths.purchasesRoot + '/other' )
-	);
+
+	router( paths.purchasesRoot + '/memberships', () => page.redirect( paths.purchasesRoot ) );
 
 	router(
 		paths.billingHistoryReceipt( ':receiptId' ),

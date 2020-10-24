@@ -19,11 +19,24 @@
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+
+	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
+	}
 }
 
 // Local Vars
 $sidebar-item-padding: 8px 0;
 $font-size: rem( 14px );
+
+.clear-secondary-layout-transitions {
+	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
+	.layout__secondary .site-selector {
+		transition: none;
+		overflow: hidden;
+	}
+}
 
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
@@ -33,6 +46,15 @@ $font-size: rem( 14px );
 
 		.sidebar__separator {
 			margin: 0 0 11px;
+		}
+
+		.site__content {
+			padding: 10px 0 10px 8px;
+		}
+
+		.site__home {
+			left: 8px;
+			top: 10px;
 		}
 
 		.sidebar__heading,
@@ -55,6 +77,8 @@ $font-size: rem( 14px );
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
+			max-height: 34px;
+			box-sizing: border-box;
 		}
 
 		.sidebar__expandable-arrow,
@@ -112,7 +136,8 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu,
-		.sidebar__menu-item-parent {
+		.sidebar__menu-item-parent,
+		.sidebar__menu-link {
 			&:hover {
 				.sidebar__menu-icon {
 					color: var( --color-sidebar-menu-hover );
@@ -160,7 +185,6 @@ $font-size: rem( 14px );
 				.sidebar__menu-icon {
 					color: #fff;
 				}
-
 			}
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
@@ -187,12 +211,162 @@ $font-size: rem( 14px );
 	.site__badge {
 		background: var( --color-sidebar-text );
 	}
+
+	// client/blocks/upsell-nudge/style.scss
+	.upsell-nudge.banner.card.is-compact {
+		background-color: #fff;
+		color: #000;
+		padding: 7px 12px 7px 4px;
+		line-height: 26px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__content {
+		padding-left: 3px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
+		color: #000;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__action {
+		margin-left: 0;
+	}
+
+	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites .button.is-borderless {
+		color: var( --color-sidebar-text-alternative );
+		padding: 6px 8px 6px 38px;
+	}
+
+	.current-site__switch-sites .button.is-borderless .gridicon {
+		height: 20px;
+		width: 20px;
+		top: 9px;
+		left: 9px;
+	}
+
+	.is-sidebar-collapsed & {
+		.dashicons-admin-collapse::before {
+			transform: rotate( 180deg );
+		}
+
+		// client/my-sites/current-site/style.scss
+		.current-site__switch-sites .button.is-borderless {
+			height: 34px;
+			padding: 0;
+		}
+
+		.site-selector .search .search__open-icon {
+			width: auto;
+		}
+
+		.current-site__switch-sites-label {
+			display: none;
+		}
+
+		.current-site .site .site__info {
+			display: none;
+		}
+
+		.site__content {
+			padding: 10px 2px;
+		}
+
+		.site__home {
+			left: 2px;
+		}
+
+		.site .site-icon {
+			margin-bottom: 4px;
+		}
+
+		// client/blocks/upsell-nudge/style.scss
+		.current-site__notices > a::before {
+			content: '\f534';
+			font-family: 'dashicons';
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: 20px;
+			line-height: 20px;
+			background-color: #a7aaad;
+			color: white;
+			border-radius: 50%;
+			margin: 3px 0 3px 1px;
+		}
+
+		.upsell-nudge.banner.card.is-compact .banner__content {
+			display: none;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			overflow: hidden;
+		}
+
+		// Is toggled open
+		.sidebar__menu {
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: white;
+
+				.sidebar__menu-icon {
+					color: #fff;
+				}
+
+				&::after {
+					display: block;
+					border-width: 4px;
+					margin-top: -4px;
+				}
+			}
+
+			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
+		}
+	}
+
+	.collapse-sidebar__toggle .sidebar__menu-link {
+		cursor: pointer;
+
+		&:hover,
+		&:focus {
+			background-color: transparent;
+		}
+	}
+
+	.sidebar-unified__menu-loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+	}
+
+	.sidebar-unified__sparkline {
+		width: 80px;
+		height: 24px;
+	}
+
+	/*
+	 * Because the sparkline is an image, there's an exception here
+	 * where specific color schemes are targeted instead of using
+	 * CSS variables. This ensures that the sparkline can still be
+	 * seen (as white) on some of the darker color schemes.
+	 */
+	.is-classic-blue .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+	.is-powder-snow .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+	.is-nightfall .sidebar__menu li.stats.selected .sidebar-unified__sparkline {
+		filter: brightness( 100 );
+		-webkit-filter: brightness( 100 );
+	}
 }
 
 // Flyout menu (showing from >782px)
 @media screen and ( min-width: 783px ) {
 	.is-nav-unification {
-
 		// client/layout/style.scss
 		// layout/sidebar/style.scss
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
@@ -245,6 +419,19 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar {
+			// client/my-sites/current-site/style.scss
+			.site__content {
+				padding: 18px 0 18px 12px;
+			}
+
+			.current-site__switch-sites .button.is-borderless {
+				padding: 11px 8px 11px 38px;
+			}
+
+			.current-site__switch-sites .button.is-borderless .gridicon {
+				top: 14px;
+			}
+
 			.sidebar__separator {
 				margin: 0 0 11px;
 			}
@@ -269,6 +456,7 @@ $font-size: rem( 14px );
 			.sidebar__expandable-title,
 			.sidebar__menu-link-text {
 				padding: 13px 0;
+				max-height: inherit;
 			}
 
 			.sidebar__expandable-content {
@@ -279,6 +467,10 @@ $font-size: rem( 14px );
 			}
 
 			.sidebar__menu.is-toggle-open .sidebar__heading::after {
+				display: none;
+			}
+
+			.collapse-sidebar__toggle {
 				display: none;
 			}
 		}

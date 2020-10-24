@@ -94,15 +94,6 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	domainStepCopyUpdates: {
-		datestamp: '20191121',
-		variations: {
-			variantShowUpdates: 100,
-			control: 0,
-		},
-		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {
@@ -172,15 +163,6 @@ export default {
 			'ZA',
 		],
 	},
-	offerResetFlow: {
-		datestamp: '20200916',
-		variations: {
-			showOfferResetFlow: 100,
-			control: 0,
-		},
-		defaultVariation: 'showOfferResetFlow',
-		allowExistingUsers: true,
-	},
 	userlessCheckout: {
 		datestamp: '20210806',
 		variations: {
@@ -192,7 +174,7 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200928',
+		datestamp: '20300928',
 		variations: {
 			reskinned: 50,
 			control: 50,
@@ -201,31 +183,23 @@ export default {
 		allowExistingUsers: false,
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200911',
+		datestamp: '20201015',
 		variations: {
-			gutenberg: 50,
-			control: 50,
+			gutenberg: 100,
+			control: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
 	},
-	removeUsernameInSignup: {
-		datestamp: '20201002',
+	jetpackConversionRateOptimization: {
+		datestamp: '20201020',
 		variations: {
-			variantRemoveUsername: 50,
-			control: 50,
+			'v0 - Offer Reset': 0, // Offer Reset
+			'v1 - 3 cols layout': 100, // first Offer Reset iteration (3 layout columns + simpler cards)
+			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
 		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
-	oneClickUpsell: {
-		datestamp: '20200922',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
+		defaultVariation: 'v1 - 3 cols layout',
 		allowExistingUsers: true,
 	},
 };

@@ -7,7 +7,7 @@ import React from 'react';
  * Internal dependencies
  */
 import addUserMentions from '../add';
-import FormTextarea from 'components/forms/form-textarea';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 
 const UserMentionsExampleInput = React.forwardRef( ( props, ref ) => (
 	<FormTextarea forwardedRef={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />

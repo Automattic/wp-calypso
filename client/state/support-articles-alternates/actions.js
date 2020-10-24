@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { keyToString } from 'reader/post-key';
+import wpcom from 'calypso/lib/wp';
+import { keyToString } from 'calypso/reader/post-key';
 import {
 	SUPPORT_ARTICLE_ALTERNATES_RECEIVE,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_SUCCESS,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/support-articles-alternates/init';
+import 'calypso/state/support-articles-alternates/init';
 
 export const fetchAlternatesReceive = ( postKey, payload ) => ( {
 	type: SUPPORT_ARTICLE_ALTERNATES_RECEIVE,

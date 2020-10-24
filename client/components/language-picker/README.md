@@ -9,9 +9,9 @@ React component used to display a Language Picker.
 ```js
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import LanguagePicker from 'components/language-picker';
-import getUserSetting from 'state/selectors/get-user-setting';
-import { saveUserSettings } from 'state/user-settings/actions';
+import LanguagePicker from 'calypso/components/language-picker';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
 
 const languages = [
 	{

@@ -11,18 +11,18 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import { localizeUrl } from 'lib/i18n-utils';
-import InlineSupportLink from 'components/inline-support-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 /**
  * Style dependencies
@@ -79,13 +79,13 @@ class CustomContentTypes extends Component {
 		return (
 			<div className="custom-content-types__module-settings">
 				{ hasToggle ? (
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! fields[ name ] }
 						disabled={ this.isFormPending() || activatingCustomContentTypesModule }
 						onChange={ handleAutosavingToggle( name ) }
 					>
 						<span className="custom-content-types__label">{ label }</span>
-					</CompactFormToggle>
+					</FormToggle>
 				) : (
 					<div
 						id={ numberFieldIdentifier }

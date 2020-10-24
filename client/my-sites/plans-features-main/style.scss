@@ -17,7 +17,6 @@
 			flex-flow: row wrap;
 
 			.product-card {
-
 				@include breakpoint-deprecated( '>480px' ) {
 					flex-basis: calc( 50% - 1em );
 				}
@@ -117,13 +116,13 @@ body.is-section-signup.is-white-signup {
 		.plans-features-main__group.is-wpcom {
 			padding-top: 0;
 		}
-	
+
 		.plans-features-main__banner-content {
 			box-shadow: none;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-	
+
 			.is-free-plan {
 				padding: 12px 32px;
 				margin-left: 12px;
@@ -131,22 +130,22 @@ body.is-section-signup.is-white-signup {
 				font-weight: 400;
 			}
 		}
-	
+
 		.plan-features__header {
 			border-top: 1px solid #e2e4e7;
 			border-bottom: none;
 			border-radius: 0;
 			padding: 20px;
-	
+
 			.plan-features__header-title {
 				font-size: 18px;
 			}
-	
+
 			.plan-features__audience {
 				color: #646970;
 				font-weight: normal;
 			}
-	
+
 			.plan-pill {
 				text-transform: none;
 				background: var( --color-text );
@@ -156,7 +155,7 @@ body.is-section-signup.is-white-signup {
 				padding: 2px 8px 3px;
 			}
 		}
-	
+
 		.plan-features__scroller-container {
 			.plan-features__scroll-button {
 				background: var( --color-text );
@@ -171,46 +170,46 @@ body.is-section-signup.is-white-signup {
 					background: var( --color-neutral-100 );
 				}
 			}
-	
+
 			.plan-features__table {
 				@include break-mobile {
 					border-spacing: 0;
 					border-collapse: collapse;
 				}
-		
+
 				tbody:first-child tr {
 					border-top-left-radius: 2px;
 					border-top-right-radius: 2px;
 				}
-		
+
 				.plan-features__table-item {
 					border-left: 1px solid #e2e4e7;
 					border-right: 1px solid #e2e4e7;
 					background-clip: padding-box;
-					
+
 					.plan-features__description {
 						color: var( --color-neutral-60-rgb );
 						padding-bottom: 42px;
 					}
 				}
-			
+
 				.plan-features__pricing {
 					border-color: #e2e4e7;
 					text-align: left;
-		
+
 					.plan-price {
 						text-align: left;
 						font-size: 32px;
 						color: var( --color-neutral-100 );
 						margin-top: 15px;
-						
+
 						.plan-price__currency-symbol {
 							vertical-align: initial;
 							font-size: 32px;
 							color: var( --color-neutral-100 );
 						}
 					}
-		
+
 					.plan-features__header-billing-info {
 						text-align: left;
 						font-size: 10px;
@@ -218,16 +217,16 @@ body.is-section-signup.is-white-signup {
 						font-weight: 400;
 					}
 				}
-			
+
 				.plan-features__row {
 					border-top: none;
 					border-bottom: none;
 				}
-			
+
 				.plan-features__item-checkmark {
 					fill: #00a32a;
 				}
-		
+
 				.plan-features__item-tip-info {
 					.gridicon {
 						fill: #ccced0;
@@ -236,5 +235,4 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 	}
-
 }

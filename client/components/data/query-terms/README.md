@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `taxonomy`. It does not accept any ch
 
 ```jsx
 import React from 'react';
-import QueryTerms from 'components/data/query-terms';
+import QueryTerms from 'calypso/components/data/query-terms';
 
 export default function AmazingListOfTerms( { terms } ) {
 	return (

@@ -13,7 +13,8 @@
 		}
 
 		@include breakpoint-deprecated( '<1040px' ) {
-			&, &.no-gsuite {
+			&,
+			&.no-gsuite {
 				width: 100%;
 			}
 		}

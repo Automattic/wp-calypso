@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/signup/init';
+import 'calypso/state/signup/init';
 
 /**
  * Whether the signup site preview is visible

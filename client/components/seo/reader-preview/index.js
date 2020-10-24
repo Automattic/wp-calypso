@@ -8,8 +8,8 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import DisplayTypes from 'state/reader/posts/display-types';
-import ReaderPostCard from 'blocks/reader-post-card';
+import DisplayTypes from 'calypso/state/reader/posts/display-types';
+import ReaderPostCard from 'calypso/blocks/reader-post-card';
 
 export class ReaderPreview extends PureComponent {
 	render() {

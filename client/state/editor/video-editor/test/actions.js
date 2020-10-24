@@ -12,7 +12,7 @@ import {
 	VIDEO_EDITOR_SHOW_ERROR,
 	VIDEO_EDITOR_SHOW_UPLOAD_PROGRESS,
 	VIDEO_EDITOR_UPDATE_POSTER,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#updatePoster()', () => {

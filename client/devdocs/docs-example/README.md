@@ -5,7 +5,7 @@ This component is used to implement a skeleton for components examples which are
 ## How to use
 
 ```jsx
-import DocsExample from 'devdocs/design/docs-example';
+import DocsExample from 'calypso/devdocs/design/docs-example';
 
 function render() {
 	return (

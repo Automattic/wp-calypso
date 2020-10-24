@@ -16,7 +16,7 @@ import {
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

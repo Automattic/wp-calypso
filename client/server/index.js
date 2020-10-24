@@ -73,8 +73,11 @@ function createServer() {
 
 const server = createServer();
 
-// The desktop app runs Calypso in a fork. Let non-forks listen on any host.
+process.on( 'uncaughtExceptionMonitor', ( err ) => {
+	logger.error( err );
+} );
 
+// The desktop app runs Calypso in a fork. Let non-forks listen on any host.
 server.listen( { port, host: process.env.CALYPSO_IS_FORK ? host : null }, function () {
 	// Tell the parent process that Calypso has booted.
 	sendBootStatus( 'ready' );

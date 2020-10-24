@@ -13,24 +13,24 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
+import notices from 'calypso/notices';
 import page from 'page';
-import CustomizerLoadingPanel from 'my-sites/customize/loading-panel';
-import EmptyContent from 'components/empty-content';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { requestSite } from 'state/sites/actions';
-import { themeActivated } from 'state/themes/actions';
+import CustomizerLoadingPanel from 'calypso/my-sites/customize/loading-panel';
+import EmptyContent from 'calypso/components/empty-content';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { requestSite } from 'calypso/state/sites/actions';
+import { themeActivated } from 'calypso/state/themes/actions';
 import { getCustomizerFocus } from './panels';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import wpcom from 'lib/wp';
-import { addItem } from 'lib/cart/actions';
-import { trackClick } from 'my-sites/themes/helpers';
-import { themeItem } from 'lib/cart-values/cart-items';
-import { getUrlParts } from 'lib/url';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import wpcom from 'calypso/lib/wp';
+import { addItem } from 'calypso/lib/cart/actions';
+import { trackClick } from 'calypso/my-sites/themes/helpers';
+import { themeItem } from 'calypso/lib/cart-values/cart-items';
+import { getUrlParts } from 'calypso/lib/url';
 
 /**
  * Style dependencies

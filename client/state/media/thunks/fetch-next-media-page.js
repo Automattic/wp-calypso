@@ -6,10 +6,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
-import { dispatchFluxFetchMediaItems } from 'state/media/utils/flux-adapter';
-import { requestMedia } from 'state/media/actions';
-import getNextPageQuery from 'state/selectors/get-next-page-query';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
+import { dispatchFluxFetchMediaItems } from 'calypso/state/media/utils/flux-adapter';
+import { requestMedia } from 'calypso/state/media/actions';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 const debug = debugFactory( 'calypso:media' );
 

@@ -6,9 +6,9 @@ import { Action, Reducer } from 'redux';
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
-import { ExperimentState, ExperimentAssign } from 'state/experiments/types';
-import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
+import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
+import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
+import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
 
 /**
  * Attempt to get the anon id for the user, if set

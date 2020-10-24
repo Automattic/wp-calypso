@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -41,6 +41,8 @@ export const JETPACK_SEARCH_PRODUCTS = [
 ];
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
+
+export const JETPACK_CRM_PRODUCTS = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 
 export const JETPACK_ANTI_SPAM_PRODUCTS = [
 	PRODUCT_JETPACK_ANTI_SPAM,

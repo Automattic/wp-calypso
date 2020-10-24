@@ -1,4 +1,9 @@
-export function hasTitanMailWithUs() {
-	// TODO: make the actual check
-	return false;
+/**
+ * External dependencies
+ */
+import { get } from 'lodash';
+
+export function hasTitanMailWithUs( domain ) {
+	const domainStatus = get( domain, 'titanMailSubscription.status', '' );
+	return domainStatus === 'active';
 }

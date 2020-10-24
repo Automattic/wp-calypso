@@ -5,27 +5,31 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import AppleLoginButton from 'components/social-buttons/apple';
-import GoogleLoginButton from 'components/social-buttons/google';
+import AppleLoginButton from 'calypso/components/social-buttons/apple';
+import GoogleLoginButton from 'calypso/components/social-buttons/google';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { Card } from '@automattic/components';
-import { loginSocialUser, createSocialUser, createSocialUserFailed } from 'state/login/actions';
+import {
+	loginSocialUser,
+	createSocialUser,
+	createSocialUserFailed,
+} from 'calypso/state/login/actions';
 import {
 	getCreatedSocialAccountUsername,
 	getCreatedSocialAccountBearerToken,
 	getRedirectToOriginal,
 	isSocialAccountCreating,
-} from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import { InfoNotice } from 'blocks/global-notice';
-import { localizeUrl } from 'lib/i18n-utils';
-import { login } from 'lib/paths';
+} from 'calypso/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { InfoNotice } from 'calypso/blocks/global-notice';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { login } from 'calypso/lib/paths';
 
 /**
  * Style dependencies
@@ -90,16 +94,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'unknown_user' ) {
-					return this.props.createSocialUser( socialInfo, 'login' ).then(
-						() => this.recordEvent( 'calypso_login_social_signup_success', 'google' ),
-						( createAccountError ) =>
-							this.recordEvent( 'calypso_login_social_signup_failure', 'google', {
-								error_code: createAccountError.code,
-								error_message: createAccountError.message,
-							} )
-					);
-				} else if ( error.code === 'user_exists' ) {
+				if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
 				}
 
@@ -142,16 +137,7 @@ class SocialLoginForm extends Component {
 				onSuccess();
 			},
 			( error ) => {
-				if ( error.code === 'unknown_user' ) {
-					return this.props.createSocialUser( socialInfo, 'login' ).then(
-						() => this.recordEvent( 'calypso_login_social_signup_success', 'apple' ),
-						( createAccountError ) =>
-							this.recordEvent( 'calypso_login_social_signup_failure', 'apple', {
-								error_code: createAccountError.code,
-								error_message: createAccountError.message,
-							} )
-					);
-				} else if ( error.code === 'user_exists' ) {
+				if ( error.code === 'user_exists' ) {
 					this.props.createSocialUserFailed( socialInfo, error );
 				}
 

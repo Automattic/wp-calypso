@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getEditedPostValue } from 'state/posts/selectors/get-edited-post-value';
+import { getEditedPostValue } from 'calypso/state/posts/selectors/get-edited-post-value';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns true if the edited post is password protected and has a valid password set

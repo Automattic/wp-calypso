@@ -14,11 +14,11 @@ import {
 	upsellNudge,
 	redirectToSupportSession,
 } from './controller';
-import SiftScience from 'lib/siftscience';
-import { makeLayout, redirectLoggedOut, render as clientRender } from 'controller';
-import { noSite, siteSelection } from 'my-sites/controller';
-import config from 'config';
-import userFactory from 'lib/user';
+import SiftScience from 'calypso/lib/siftscience';
+import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/controller';
+import { noSite, siteSelection } from 'calypso/my-sites/controller';
+import config from 'calypso/config';
+import userFactory from 'calypso/lib/user';
 
 export default function () {
 	SiftScience.recordUser();

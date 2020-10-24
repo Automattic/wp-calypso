@@ -8,14 +8,14 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { filter, find, identity, isEqual } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 /**
  * Internal dependencies
  */
 import AccountDialogAccount from './account-dialog-account';
 import { Dialog } from '@automattic/components';
-import { warningNotice } from 'state/notices/actions';
+import { warningNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies

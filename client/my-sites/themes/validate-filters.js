@@ -11,7 +11,7 @@ import {
 	getThemeFilterTerm,
 	getThemeFilterTermFromString,
 	isValidThemeFilterTerm,
-} from 'state/themes/selectors';
+} from 'calypso/state/themes/selectors';
 
 // Reorder and remove invalid filters to redirect to canonical URL
 export function validateFilters( context, next ) {

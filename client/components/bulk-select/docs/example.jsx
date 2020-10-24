@@ -8,9 +8,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import BulkSelect from 'components/bulk-select';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import BulkSelect from 'calypso/components/bulk-select';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 export default class extends React.Component {
 	static displayName = 'BulkSelects';

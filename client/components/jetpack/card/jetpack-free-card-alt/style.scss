@@ -1,0 +1,83 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.jetpack-free-card-alt {
+	position: relative;
+
+	box-sizing: border-box;
+
+	background: var( --color-surface );
+	border: 1px solid var( --color-border-subtle );
+	padding: 24px;
+
+	@include break-small {
+		border-left: 1px solid var( --color-border-subtle );
+		border-right: 1px solid var( --color-border-subtle );
+	}
+}
+
+.jetpack-free-card-alt__main {
+	position: relative;
+
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+
+	@include break-small {
+		flex-direction: row;
+		text-align: left;
+	}
+
+	margin-bottom: 40px;
+
+	header {
+		width: 100%;
+	}
+
+	h2 {
+		font-size: $font-title-medium;
+		font-weight: 600;
+		line-height: rem( 30px ) / $font-title-medium;
+
+		margin-bottom: 6px;
+	}
+
+	.jetpack-free-card-alt__subheadline {
+		color: var( --color-neutral-50 );
+
+		font-size: $font-body-extra-small;
+		line-height: rem( 16px ) / $font-body-extra-small;
+
+		@include break-small {
+			font-size: $font-body-small;
+		}
+	}
+
+	.button {
+		width: 100%;
+		height: 40px;
+		margin-top: 40px;
+
+		font-size: $font-body;
+
+		@include break-small {
+			margin-top: 7px;
+		}
+	}
+}
+
+.jetpack-free-card-alt__features {
+	display: flex;
+	flex-direction: column;
+
+	@include break-small {
+		flex-direction: row;
+	}
+}
+
+.jetpack-free-card-alt__features-list {
+	margin: 0;
+	width: 100%;
+
+	list-style-type: none;
+}

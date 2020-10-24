@@ -97,8 +97,8 @@
 	display: flex;
 	align-items: center;
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 	color: var( --color-success );
 	font-size: $font-body-extra-small;
 	font-weight: 600;
@@ -111,6 +111,6 @@
 
 .button.plugins-browser-item__upgrade-button {
 	position: absolute;
-		bottom: 16px;
-		right: 16px;
+	bottom: 16px;
+	right: 16px;
 }

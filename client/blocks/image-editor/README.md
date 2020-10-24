@@ -126,7 +126,7 @@ Already-translated string which will be used on the 'Done' button. If not used, 
 ## Example
 
 ```js
-import ImageEditor from 'blocks/image-editor';
+import ImageEditor from 'calypso/blocks/image-editor';
 
 function render() {
 	return <ImageEditor siteId={ siteId } media={ { URL: 'http://example.com/image.jpg' } } />;

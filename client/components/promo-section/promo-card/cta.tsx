@@ -11,11 +11,11 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ActionPanelCta from 'components/action-panel/cta';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { URL } from 'types';
-import { localizeUrl } from 'lib/i18n-utils';
+import ActionPanelCta from 'calypso/components/action-panel/cta';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { URL } from 'calypso/types';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 type ClickCallback = () => void;
 

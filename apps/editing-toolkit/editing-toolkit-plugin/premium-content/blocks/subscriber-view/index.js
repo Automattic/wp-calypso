@@ -4,6 +4,7 @@
 import edit from './edit';
 import save from './save';
 import { getCategoryWithFallbacks } from '../../../block-helpers';
+import icon from '../icon.js';
 
 /**
  * WordPress dependencies
@@ -28,6 +29,7 @@ const settings = {
 		html: false,
 	},
 	edit,
+	icon,
 	save,
 };
 

@@ -84,7 +84,6 @@ import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
 import {
@@ -105,21 +104,21 @@ import './style.scss';
 
 class ManagePurchase extends Component {
 	static propTypes = {
-		showHeader: PropTypes.bool,
-		purchaseListUrl: PropTypes.string,
-		getCancelPurchaseUrlFor: PropTypes.func,
+		cardTitle: PropTypes.string,
 		getAddPaymentMethodUrlFor: PropTypes.func,
+		getCancelPurchaseUrlFor: PropTypes.func,
 		getEditPaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
-		cardTitle: PropTypes.string,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
 		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
+		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
-		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
+		purchaseListUrl: PropTypes.string,
+		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
 		siteSlug: PropTypes.string.isRequired,
@@ -650,17 +649,14 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<PageViewTracker
-					path="/me/purchases/:site/:purchaseId"
-					title="Purchases > Manage Purchase"
-				/>
 				<QueryUserPurchases userId={ this.props.userId } />
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
+
 				<HeaderCake backHref={ this.props.purchaseListUrl }>{ this.props.cardTitle }</HeaderCake>
 				{ showExpiryNotice ? (
 					<Notice status="is-info" text={ <PlanRenewalMessage /> } showDismiss={ false }>
-						<NoticeAction href={ `/plans/${ site.slug || '' }` }>
+						<NoticeAction href={ `/plans/${ siteSlug || '' }` }>
 							{ translate( 'View plans' ) }
 						</NoticeAction>
 					</Notice>

@@ -13,53 +13,53 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ContractorSelect from 'my-sites/people/contractor-select';
-import RoleSelect from 'my-sites/people/role-select';
-import TokenField from 'components/token-field';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ContractorSelect from 'calypso/my-sites/people/contractor-select';
+import RoleSelect from 'calypso/my-sites/people/role-select';
+import TokenField from 'calypso/components/token-field';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import {
 	sendInvites,
 	createInviteValidation,
 	generateInviteLinks,
 	disableInviteLinks,
-} from 'lib/invites/actions';
+} from 'calypso/lib/invites/actions';
 import { Card, Button } from '@automattic/components';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import CountedTextarea from 'components/forms/counted-textarea';
-import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
-import InvitesSentStore from 'lib/invites/stores/invites-sent';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import EmptyContent from 'components/empty-content';
-import { userCan } from 'lib/site/utils';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FeatureExample from 'components/feature-example';
-import versionCompare from 'lib/version-compare';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isJetpackSite } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import QuerySiteInvites from 'components/data/query-site-invites';
-import { getInviteLinksForSite } from 'state/invites/selectors';
-import { getSiteRoles, getWpcomFollowerRole } from 'state/site-roles/selectors';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import ClipboardButton from 'components/forms/clipboard-button';
-import SectionHeader from 'components/section-header';
-import accept from 'lib/accept';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
+import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
+import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import EmptyContent from 'calypso/components/empty-content';
+import { userCan } from 'calypso/lib/site/utils';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FeatureExample from 'calypso/components/feature-example';
+import versionCompare from 'calypso/lib/version-compare';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
+import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import SectionHeader from 'calypso/components/section-header';
+import accept from 'calypso/lib/accept';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 
 /**
  * Style dependencies

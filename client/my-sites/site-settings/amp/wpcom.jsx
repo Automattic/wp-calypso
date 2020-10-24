@@ -12,12 +12,12 @@ import page from 'page';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -78,13 +78,13 @@ class AmpWpcom extends Component {
 				<SettingsSectionHeader title={ translate( 'Accelerated Mobile Pages (AMP)' ) } />
 
 				<CompactCard className="amp__explanation site-settings__amp-explanation">
-					<CompactFormToggle
+					<FormToggle
 						checked={ !! ampIsEnabled }
 						disabled={ isDisabled }
 						onChange={ this.handleToggle }
 					>
 						{ translate( 'Improve the loading speed of your site on phones and tablets' ) }
-					</CompactFormToggle>
+					</FormToggle>
 					<FormSettingExplanation isIndented>
 						{ translate(
 							'Your WordPress.com site supports the use of {{a}}Accelerated Mobile Pages{{/a}}, ' +

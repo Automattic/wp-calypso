@@ -10,14 +10,17 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
  */
 import {
 	durationToText,
+	getProductWithOptionDisplayName,
 	productBadgeLabelAlt,
 	productButtonLabel,
+	productButtonLabelAlt,
 	slugIsFeaturedProduct,
 } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -74,6 +77,8 @@ const ProductCardAltWrapper = ( {
 		item?.monthlyProductSlug || ''
 	);
 
+	const isFree = originalPrice === -1 && discountedPrice === -1;
+
 	// Handles expiry.
 	const moment = useLocalizedMoment();
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
@@ -97,38 +102,52 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
+	// In v1, we use the name of the option instead of the name of the product. In v2 we
+	// honor the name of the product.
+	// E.g. In v1, Jetpack Security Daily is featured as Jetpack Security.
+	const currentCROvariant = getJetpackCROActiveVersion();
+	const productName =
+		currentCROvariant === 'v1'
+			? getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature )
+			: item.displayName;
+
+	const buttonLabel =
+		currentCROvariant === 'v1'
+			? productButtonLabelAlt( item, isOwned, isItemPlanFeature, isUpgradeableToYearly, sitePlan )
+			: productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan );
+
 	return (
 		<JetpackProductCardAlt
 			headingLevel={ 3 }
 			iconSlug={ item.iconSlug }
-			productName={ item.displayName }
+			productName={ productName }
 			subheadline={ item.tagline }
-			description={ ! showRecordsDetails ? description : null }
+			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
-			children={ item.children }
+			searchRecordsDetails={
+				showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } />
+			}
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			withStartingPrice={
 				// Search has several pricing tiers
 				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
 			}
+			isFree={ isFree }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isHighlighted={ isHighlighted }
 			isExpanded={ isHighlighted && ! isMobile }
-			hidePrice={ false }
 			productSlug={ item.productSlug }
-		>
-			{ showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } /> }
-		</JetpackProductCardAlt>
+		/>
 	);
 };
 

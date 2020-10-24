@@ -9,11 +9,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
-import { getSitePurchases } from 'state/purchases/selectors';
+import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import PrePurchaseNotice from './prepurchase-notice';
-import type { Plan } from 'state/plans/types';
-import type { Product } from 'lib/products-values/products-list';
+import type { Plan } from 'calypso/state/plans/types';
+import type { Product } from 'calypso/lib/products-values/products-list';
 
 type Site = {
 	ID: number;

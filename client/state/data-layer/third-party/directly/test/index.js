@@ -7,14 +7,14 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { askQuestion, initialize } from '..';
-import * as directly from 'lib/directly';
+import * as directly from 'calypso/lib/directly';
 import {
 	DIRECTLY_ASK_QUESTION,
 	DIRECTLY_INITIALIZATION_SUCCESS,
 	DIRECTLY_INITIALIZATION_ERROR,
-} from 'state/action-types';
-import * as analytics from 'state/analytics/actions/record';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import * as analytics from 'calypso/state/analytics/actions/record';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'Directly data layer', () => {
 	let store;

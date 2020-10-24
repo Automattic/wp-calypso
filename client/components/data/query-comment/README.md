@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import QueryComment from 'components/query-comment';
+import QueryComment from 'calypso/components/query-comment';
 
 const CommentDetail = ( { comment, commentId, siteId } ) => (
 	<div>

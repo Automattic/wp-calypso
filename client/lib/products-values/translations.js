@@ -7,8 +7,9 @@ import { numberFormat, translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import { isEnabled } from 'calypso/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -93,6 +94,7 @@ export const getJetpackProductsDisplayNames = () => {
 };
 
 export const getJetpackProductsCallToAction = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
 			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
@@ -111,9 +113,14 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-	const search = translate( 'Get Search' );
-	const scan = translate( 'Get Scan' );
-	const antiSpam = <>{ translate( 'Get Anti-spam' ) }</>;
+	const search =
+		currentCROvariant === 'v1' ? translate( 'Get Jetpack Search' ) : translate( 'Get Search' );
+	const scan =
+		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
+	const antiSpam =
+		currentCROvariant === 'v1'
+			? translate( 'Get Jetpack Anti-spam' )
+			: translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -130,10 +137,17 @@ export const getJetpackProductsCallToAction = () => {
 };
 
 export const getJetpackProductsTaglines = () => {
-	const backupDailyTagline = translate( 'Best for sites with occasional updates' );
+	const currentCROvariant = getJetpackCROActiveVersion();
+	const backupDailyTagline =
+		currentCROvariant === 'v1'
+			? translate( 'Automated backups with one-click restores' )
+			: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
-	const searchTagline = translate( 'Recommended for sites with lots of products or content' );
+
+	const searchTagline = [ 'v1', 'v2' ].includes( currentCROvariant )
+		? translate( 'Great for sites with a lot of content' )
+		: translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
 	const antiSpamTagline = translate( 'Block spam automatically' );

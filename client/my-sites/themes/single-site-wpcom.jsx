@@ -8,21 +8,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import CurrentTheme from 'my-sites/themes/current-theme';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
+import Main from 'calypso/components/main';
+import CurrentTheme from 'calypso/my-sites/themes/current-theme';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 import { connectOptions } from './theme-options';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { hasFeature, isRequestingSitePlans } from 'state/sites/plans/selectors';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
+import { hasFeature, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import ThemeShowcase from './theme-showcase';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 const ConnectedSingleSiteWpcom = connectOptions( ( props ) => {
 	const {

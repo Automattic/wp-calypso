@@ -189,6 +189,7 @@ class CancelPurchase extends React.Component {
 					eventName="calypso_cancel_purchase_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
+
 				<HeaderCake
 					backHref={ this.props.getManagePurchaseUrlFor(
 						this.props.siteSlug,

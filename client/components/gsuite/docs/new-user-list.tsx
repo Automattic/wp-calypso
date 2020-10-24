@@ -6,21 +6,21 @@ import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormToggle from 'components/forms/form-toggle';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { CompactCard as Card } from '@automattic/components';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import {
 	areAllUsersValid,
 	GSuiteNewUser,
 	GSuiteNewUserField,
 	newUsers,
-} from 'lib/gsuite/new-users';
+} from 'calypso/lib/gsuite/new-users';
 
 const domainOne = { name: 'example.blog' };
 const domainTwo = { name: 'test.blog' };
 
-const GSuiteNewUserListExample = () => {
+const GSuiteNewUserListExample = (): React.FunctionComponent => {
 	const [ users, setUsers ] = useState( newUsers( domainOne.name ) );
 	const [ domains, setDomains ] = useState( [ domainOne ] );
 	const [ useMultipleDomains, setUseMultipleDomains ] = useState( false );
@@ -85,15 +85,17 @@ const GSuiteNewUserListExample = () => {
 			</GSuiteNewUserList>
 			<hr />
 			<FormLabel key="mulitple-domains">
-				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains } />{ ' ' }
-				<span>{ 'Use multiple domains' }</span>
+				<FormToggle checked={ useMultipleDomains } onChange={ toggleUseMultipleDomains }>
+					Use multiple domains
+				</FormToggle>
 			</FormLabel>
 			<FormLabel key="extra-validation">
 				<FormToggle
 					checked={ useExtraValidation }
 					onChange={ () => setUseExtraValidation( ! useExtraValidation ) }
-				/>{ ' ' }
-				<span>{ "Use extra validation ( no a's in name )" }</span>
+				>
+					Use extra validation ( no a's in name )
+				</FormToggle>
 			</FormLabel>
 		</Card>
 	);

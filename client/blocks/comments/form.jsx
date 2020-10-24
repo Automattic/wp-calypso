@@ -12,15 +12,15 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import AutoDirection from 'components/auto-direction';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
-import { ProtectFormGuard } from 'lib/protect-form';
+import AutoDirection from 'calypso/components/auto-direction';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gravatar from 'calypso/components/gravatar';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import PostCommentFormTextarea from './form-textarea';
 
 /**

@@ -10,25 +10,26 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isFreePlan } from 'lib/plans';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getHttpData } from 'state/data-layer/http-data';
-import { requestActivityLogs, getRequestActivityLogsId } from 'state/data-getters';
-import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import ActivityCardList from 'components/activity-card-list';
-import DocumentHead from 'components/data/document-head';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import FormattedHeader from 'components/formatted-header';
-import Upsell from 'components/jetpack/upsell';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import isVipSite from 'state/selectors/is-vip-site';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import { isFreePlan } from 'calypso/lib/plans';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getHttpData } from 'calypso/state/data-layer/http-data';
+import { requestActivityLogs, getRequestActivityLogsId } from 'calypso/state/data-getters';
+import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import ActivityCardList from 'calypso/components/activity-card-list';
+import DocumentHead from 'calypso/components/data/document-head';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Upsell from 'calypso/components/jetpack/upsell';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -95,6 +96,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
+			<TimeMismatchWarning siteId={ siteId } />
 			{ isJetpackCloud() ? (
 				jetpackCloudHeader
 			) : (

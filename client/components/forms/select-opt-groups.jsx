@@ -7,7 +7,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 
 const SelectOptGroups = ( props ) => {
 	const { optGroups, ...selectProps } = props;

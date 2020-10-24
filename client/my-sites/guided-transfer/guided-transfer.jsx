@@ -10,12 +10,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import HostCredentialsPage from './host-credentials-page';
 import HostSelect from './host-select';
 import IssuesNotices from './issues-notices';
-import Main from 'components/main';
-import QuerySiteGuidedTransfer from 'components/data/query-site-guided-transfer';
+import Main from 'calypso/components/main';
+import QuerySiteGuidedTransfer from 'calypso/components/data/query-site-guided-transfer';
 import TransferUnavailableCard from './transfer-unavailable-card';
 
 /**

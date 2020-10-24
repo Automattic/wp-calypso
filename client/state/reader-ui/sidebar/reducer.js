@@ -11,9 +11,9 @@ import {
 	READER_SIDEBAR_TAGS_TOGGLE,
 	READER_SIDEBAR_ORGANIZATIONS_TOGGLE,
 	READER_SIDEBAR_FOLLOWING_TOGGLE,
-} from 'state/reader/action-types';
-import { combineReducers } from 'state/utils';
-import { DESERIALIZE, SERIALIZE } from 'state/action-types';
+} from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
+import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 export const isListsOpen = ( state = false, action ) => {
 	switch ( action.type ) {

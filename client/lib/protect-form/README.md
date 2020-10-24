@@ -12,7 +12,7 @@ has an API that is more suitable for integration with Redux state.
 ## Usage (HOC)
 
 ```js
-import { protectForm } from 'lib/protect-form';
+import { protectForm } from 'calypso/lib/protect-form';
 ```
 
 ... and then later in your component definition like so:
@@ -41,7 +41,7 @@ handleSubmit = ( event ) => {
 ## Usage (declarative)
 
 ```js
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 ```
 
 ... and then render the `ProtectFormGuard` inside your form to protect it, while changing

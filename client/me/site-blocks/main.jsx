@@ -12,7 +12,6 @@ import { times } from 'lodash';
 import { Card } from '@automattic/components';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
-import SectionHeader from 'calypso/components/section-header';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QuerySiteBlocks from 'calypso/components/data/query-site-blocks';
@@ -27,6 +26,7 @@ import InfiniteList from 'calypso/components/infinite-list';
 import { requestSiteBlocks } from 'calypso/state/reader/site-blocks/actions';
 import SiteBlockListItemPlaceholder from './list-item-placeholder';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -63,12 +63,13 @@ class SiteBlockList extends Component {
 		const hasNoBlocks = blockedSites.length === 0 && currentPage === lastPage;
 
 		return (
-			<Main className="site-blocks">
+			<Main className="site-blocks is-wide-layout">
 				<QuerySiteBlocks />
 				<PageViewTracker path="/me/site-blocks" title="Me > Blocked Sites" />
 				<DocumentHead title={ translate( 'Blocked Sites' ) } />
 				<MeSidebarNavigation />
-				<SectionHeader label={ translate( 'Blocked sites' ) } />
+				<FormattedHeader brandFont headerText={ translate( 'Blocked Sites' ) } align="left" />
+
 				<Card className="site-blocks__intro">
 					<p>
 						{ translate(
@@ -79,7 +80,11 @@ class SiteBlockList extends Component {
 						</a>
 					</p>
 
-					{ hasNoBlocks && <p>{ translate( "You haven't blocked any sites yet." ) }</p> }
+					{ hasNoBlocks && (
+						<p className="site-blocks__no-sites">
+							{ translate( "You haven't blocked any sites yet." ) }
+						</p>
+					) }
 
 					{ ! hasNoBlocks && (
 						<InfiniteList

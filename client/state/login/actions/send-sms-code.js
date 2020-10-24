@@ -7,20 +7,20 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
+} from 'calypso/state/action-types';
+import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
 	postLoginRequest,
-} from 'state/login/utils';
+} from 'calypso/state/login/utils';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Sends a two factor authentication recovery code to a user.

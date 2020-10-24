@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 /**
  * Returns a list of recommended plugins for the given site.

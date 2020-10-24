@@ -6,13 +6,13 @@ import { intersection } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSiteProducts } from 'state/sites/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
 
 /**
  * Type dependencies
  */
-import type { AppState } from 'types';
+import type { AppState } from 'calypso/types';
 
 export default createSelector(
 	( state: AppState, siteId: number | null, productSlug: string | string[] ): boolean | null => {

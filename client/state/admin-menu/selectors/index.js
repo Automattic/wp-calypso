@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/admin-menu/init';
+import 'calypso/state/admin-menu/init';
 
 export function getAdminMenu( state, siteId ) {
 	const stateSlice = state?.adminMenu?.menus;

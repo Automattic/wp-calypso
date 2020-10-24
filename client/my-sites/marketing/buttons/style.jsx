@@ -9,11 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormRadio from 'calypso/components/forms/form-radio';
 

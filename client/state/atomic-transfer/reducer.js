@@ -6,14 +6,14 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import { atomicTransfer as schema } from './schema';
 import {
 	ATOMIC_TRANSFER_REQUEST,
 	ATOMIC_TRANSFER_REQUEST_FAILURE,
 	ATOMIC_TRANSFER_SET,
 	ATOMIC_TRANSFER_COMPLETE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const atomicTransfer = withSchemaValidation( schema, ( state = {}, action ) => {
 	switch ( action.type ) {

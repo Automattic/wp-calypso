@@ -6,20 +6,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { makeLayout } from 'controller';
-import { navigation, sites, siteSelection } from 'my-sites/controller';
+import config from 'calypso/config';
+import { makeLayout } from 'calypso/controller';
+import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
 import { newAccount, selectBusinessType, selectLocation, stats } from './controller';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import isGoogleMyBusinessLocationConnected from 'state/selectors/is-google-my-business-location-connected';
-import isSiteGoogleMyBusinessEligible from 'state/selectors/is-site-google-my-business-eligible';
-import { getSiteHomeUrl } from 'state/sites/selectors';
-import { requestKeyringServices } from 'state/sharing/services/actions';
-import { requestSiteKeyrings } from 'state/site-keyrings/actions';
-import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { requestKeyringConnections } from 'state/sharing/keyring/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import isGoogleMyBusinessLocationConnected from 'calypso/state/selectors/is-google-my-business-location-connected';
+import isSiteGoogleMyBusinessEligible from 'calypso/state/selectors/is-site-google-my-business-eligible';
+import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
+import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
+import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { requestKeyringConnections } from 'calypso/state/sharing/keyring/actions';
 
 /**
  * Style dependencies

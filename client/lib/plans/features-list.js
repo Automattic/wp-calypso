@@ -9,10 +9,10 @@ import { invoke } from 'lodash';
  * Internal dependencies
  */
 import * as constants from './constants';
-import MaterialIcon from 'components/material-icon';
-import ExternalLink from 'components/external-link';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
-import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'lib/url/support';
+import MaterialIcon from 'calypso/components/material-icon';
+import ExternalLink from 'calypso/components/external-link';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {
@@ -205,11 +205,9 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ]: {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-		getTitle: () => i18n.translate( 'Email support' ),
+		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
-			i18n.translate(
-				'High quality email support to help you get your website up and running and working how you want it.'
-			),
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 
 	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP ]: {
@@ -633,11 +631,9 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_EMAIL_SUPPORT ]: {
 		getSlug: () => constants.FEATURE_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Email support' ),
+		getTitle: () => i18n.translate( 'Unlimited email support' ),
 		getDescription: () =>
-			i18n.translate(
-				'High quality email support to help you get your website up and running and working how you want it.'
-			),
+			i18n.translate( 'Email us any time, any day of the week for personalized, expert support.' ),
 	},
 
 	[ constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT ]: {

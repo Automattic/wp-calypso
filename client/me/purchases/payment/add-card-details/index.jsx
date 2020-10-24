@@ -72,6 +72,7 @@ function AddCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/add"
 				title="Purchases > Add Card Details"
 			/>
+
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.addCardDetails }
 			</HeaderCake>

@@ -15,7 +15,7 @@ import React from 'react';
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
 import PaymentChatButton from '../payment-chat-button';
 import CheckoutTerms from '../checkout-terms';
-import { INPUT_VALIDATION } from 'lib/store-transactions/step-types';
+import { INPUT_VALIDATION } from 'calypso/lib/store-transactions/step-types';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
@@ -36,7 +36,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 jest.mock( 'lib/cart-values', () => ( {
 	isPaymentMethodEnabled: jest.fn( false ),

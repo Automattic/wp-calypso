@@ -9,13 +9,13 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'calypso/components/formatted-header';
 import Checkout from '../checkout';
-import CartData from 'components/data/cart';
-import CheckoutData from 'components/data/checkout';
+import CartData from 'calypso/components/data/cart';
+import CheckoutData from 'calypso/components/data/checkout';
 import SecondaryCart from '../cart/secondary-cart';
-import SignupSiteCreatedNotice from 'my-sites/checkout/checkout/signup-site-created-notice';
-import Gridicon from 'components/gridicon';
+import SignupSiteCreatedNotice from 'calypso/my-sites/checkout/checkout/signup-site-created-notice';
+import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
 
 /**

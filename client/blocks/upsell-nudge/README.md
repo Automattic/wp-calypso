@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 
 function myUpsell() {
 	return (

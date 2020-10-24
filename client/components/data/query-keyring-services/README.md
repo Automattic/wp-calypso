@@ -8,7 +8,7 @@ Render the component without props. It does not accept any children, nor does it
 
 ```jsx
 import React from 'react';
-import QueryKeyringServices from 'components/data/query-keyring-services';
+import QueryKeyringServices from 'calypso/components/data/query-keyring-services';
 
 export default function MyServicesList( { services } ) {
 	return (

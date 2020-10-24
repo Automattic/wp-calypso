@@ -6,10 +6,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JETPACK_PRODUCT_INSTALL_REQUEST } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JETPACK_PRODUCT_INSTALL_REQUEST } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Start the Jetpack product install process.

@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySiteProducts from 'components/data/query-site-products';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteProducts from 'calypso/components/data/query-site-products';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const QueryProducts: FunctionComponent< {} > = () => {
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );

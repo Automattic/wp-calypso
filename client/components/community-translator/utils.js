@@ -7,15 +7,15 @@ import { head, find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { postRequest } from 'lib/i18n-utils/glotpress';
+import userSettings from 'calypso/lib/user-settings';
+import { postRequest } from 'calypso/lib/i18n-utils/glotpress';
 import {
 	GP_PROJECT,
 	GP_BASE_URL,
 	GP_PROJECT_TRANSLATION_SET_SLUGS,
 	ENABLE_TRANSLATOR_KEY,
-} from 'lib/i18n-utils/constants';
-import { canBeTranslated } from 'lib/i18n-utils';
+} from 'calypso/lib/i18n-utils/constants';
+import { canBeTranslated } from 'calypso/lib/i18n-utils';
 
 /**
  * Checks whether the CT can be displayed, that is, if the chosen locale and device allow it

@@ -9,16 +9,16 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import FormSelect from 'components/forms/form-select';
-import FormLabel from 'components/forms/form-label';
-import MaterialIcon from 'components/material-icon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Spinner from 'components/spinner';
-import { updateAtomicPhpVersion } from 'state/hosting/actions';
-import { getAtomicHostingPhpVersion } from 'state/selectors/get-atomic-hosting-php-version';
-import QuerySitePhpVersion from 'components/data/query-site-php-version';
-import getRequest from 'state/selectors/get-request';
+import CardHeading from 'calypso/components/card-heading';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import MaterialIcon from 'calypso/components/material-icon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Spinner from 'calypso/components/spinner';
+import { updateAtomicPhpVersion } from 'calypso/state/hosting/actions';
+import { getAtomicHostingPhpVersion } from 'calypso/state/selectors/get-atomic-hosting-php-version';
+import QuerySitePhpVersion from 'calypso/components/data/query-site-php-version';
+import getRequest from 'calypso/state/selectors/get-request';
 
 /**
  * Style dependencies
@@ -36,7 +36,7 @@ const PhpVersionCard = ( {
 } ) => {
 	const [ selectedPhpVersion, setSelectedPhpVersion ] = useState( '' );
 
-	const recommendedValue = '7.3';
+	const recommendedValue = '7.4';
 
 	const changePhpVersion = ( event ) => {
 		const newVersion = event.target.value;
@@ -58,16 +58,16 @@ const PhpVersionCard = ( {
 				disabled: true, // EOL 30th November, 2020
 			},
 			{
-				label: translate( '7.3 (recommended)', {
+				label: translate( '7.3', {
+					comment: 'PHP Version for a version switcher',
+				} ),
+				value: '7.3',
+			},
+			{
+				label: translate( '7.4 (recommended)', {
 					comment: 'PHP Version for a version switcher',
 				} ),
 				value: recommendedValue,
-			},
-			{
-				label: translate( '7.4', {
-					comment: 'PHP Version for a version switcher',
-				} ),
-				value: '7.4',
 			},
 		];
 	};

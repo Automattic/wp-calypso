@@ -41,13 +41,12 @@
 
 .activity-log-tasklist__update-text {
 	margin-bottom: 8px;
-	a, span {
+	a,
+	span {
 		font-weight: 600;
 	}
 }
-.activity-log-tasklist__update-text
-
-.activity-log-tasklist__update-version {
+.activity-log-tasklist__update-text .activity-log-tasklist__update-version {
 	color: var( --color-text-subtle );
 }
 

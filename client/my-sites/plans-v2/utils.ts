@@ -64,6 +64,7 @@ import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpac
 import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -117,6 +118,22 @@ export function durationToText( duration: Duration ): TranslateResult {
 		: translate( 'per month, billed yearly' );
 }
 
+// In the case of products that have options (daily and real-time), we want to display
+// the name of the option, not the name of one of the variants.
+export function getProductWithOptionDisplayName(
+	item: SelectorProduct,
+	isOwned: boolean,
+	isItemPlanFeature: boolean
+): TranslateResult {
+	const optionSlug = getOptionFromSlug( item.productSlug );
+
+	if ( ! optionSlug || isOwned || isItemPlanFeature ) {
+		return item.displayName;
+	}
+
+	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
+}
+
 /**
  * Product UI utils.
  */
@@ -141,6 +158,51 @@ export function productButtonLabel(
 	}
 
 	const { buttonLabel, displayName } = product;
+
+	return (
+		buttonLabel ??
+		translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
+		} )
+	);
+}
+
+export function productButtonLabelAlt(
+	product: SelectorProduct,
+	isOwned: boolean,
+	isItemPlanFeature: boolean,
+	isUpgradeableToYearly: boolean,
+	currentPlan?: SitePlan | null
+): TranslateResult {
+	if ( isUpgradeableToYearly ) {
+		return translate( 'Upgrade to Yearly' );
+	}
+
+	if (
+		isOwned ||
+		( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) )
+	) {
+		return product.type !== ITEM_TYPE_PRODUCT
+			? translate( 'Manage Plan' )
+			: translate( 'Manage Subscription' );
+	}
+
+	const { buttonLabel } = product;
+
+	// If it's a product with options, we want to use the name of the option
+	// to label the button.
+	const displayName = getProductWithOptionDisplayName( product, isOwned, isItemPlanFeature );
+	if ( getOptionFromSlug( product.productSlug ) ) {
+		return translate( 'Get {{name/}}', {
+			components: {
+				name: createElement( Fragment, {}, displayName ),
+			},
+			comment: '{{name/}} is the name of a product',
+		} );
+	}
 
 	return (
 		buttonLabel ??
@@ -276,10 +338,16 @@ export function itemToSelectorProduct(
 		} else if ( item.term === TERM_MONTHLY ) {
 			yearlyProductSlug = PRODUCTS_LIST[ item.product_slug as JetpackProductSlug ].type;
 		}
+
+		const currentCROvariant = getJetpackCROActiveVersion();
+		const iconSlug = [ 'v1', 'v2' ].includes( currentCROvariant )
+			? `${ yearlyProductSlug || item.product_slug }_v2_dark`
+			: `${ yearlyProductSlug || item.product_slug }_v2`;
+
 		return {
 			productSlug: item.product_slug,
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
-			iconSlug: `${ yearlyProductSlug || item.product_slug }_v2`,
+			iconSlug,
 			displayName: getJetpackProductDisplayName( item ),
 			type: ITEM_TYPE_PRODUCT,
 			subtypes: [],

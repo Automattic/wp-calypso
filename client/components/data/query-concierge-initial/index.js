@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestConciergeInitial } from 'state/concierge/actions';
+import { requestConciergeInitial } from 'calypso/state/concierge/actions';
 
 class QueryConciergeInitial extends Component {
 	componentDidMount() {

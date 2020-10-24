@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `statType`. It does not accept any ch
 
 ```jsx
 import React from 'react';
-import QuerySiteStats from 'components/data/query-site-stats';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 
 export default function AmazingVisualizationOfStats( { stats } ) {
 	return (

@@ -8,10 +8,10 @@ import {
 	WORDADS_SETTINGS_SAVE_FAILURE,
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/wordads/settings';
-import 'state/wordads/init';
+import 'calypso/state/data-layer/wpcom/wordads/settings';
+import 'calypso/state/wordads/init';
 
 /**
  * Returns an action object, signalling that WordAds settings for a site have been requested.

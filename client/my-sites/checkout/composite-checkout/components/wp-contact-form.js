@@ -13,6 +13,7 @@ import {
 	useLineItems,
 } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -25,7 +26,7 @@ import {
 	prepareDomainContactDetailsErrors,
 	isValid,
 } from '../types/wpcom-store-state';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import CountrySelectMenu from './country-select-menu';
@@ -33,11 +34,10 @@ import {
 	hasGoogleApps,
 	hasDomainRegistration,
 	hasTransferProduct,
-} from 'lib/cart-values/cart-items';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import { getTopLevelOfTld } from 'lib/domains';
-import ManagedContactDetailsFormFields from 'components/domains/contact-details-form-fields/managed-contact-details-form-fields';
-import RegistrantExtraInfoForm from 'components/domains/registrant-extra-info';
+} from 'calypso/lib/cart-values/cart-items';
+import { getTopLevelOfTld } from 'calypso/lib/domains';
+import ManagedContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields/managed-contact-details-form-fields';
+import RegistrantExtraInfoForm from 'calypso/components/domains/registrant-extra-info';
 
 export default function WPContactForm( {
 	countriesList,
@@ -262,7 +262,7 @@ function DomainContactDetails( {
 	isLoggedOutCart,
 } ) {
 	const translate = useTranslate();
-	const responseCart = useCart();
+	const { responseCart } = useShoppingCart();
 	const needsOnlyGoogleAppsDetails =
 		hasGoogleApps( responseCart ) &&
 		! hasDomainRegistration( responseCart ) &&

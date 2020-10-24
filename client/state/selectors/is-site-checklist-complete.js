@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import getSiteTaskList from 'state/selectors/get-site-task-list';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isSiteChecklistLoading from 'state/selectors/is-site-checklist-loading';
-import { getSiteFrontPage } from 'state/sites/selectors';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import getSiteTaskList from 'calypso/state/selectors/get-site-task-list';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isSiteChecklistLoading from 'calypso/state/selectors/is-site-checklist-loading';
+import { getSiteFrontPage } from 'calypso/state/sites/selectors';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
 /**
  * Checks whether the tasklist has been completed.

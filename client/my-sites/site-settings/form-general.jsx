@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { flowRight, get, has } from 'lodash';
 
 /**
@@ -12,38 +12,42 @@ import { flowRight, get, has } from 'lodash';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import { Card, CompactCard, Button } from '@automattic/components';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import LanguagePicker from 'components/language-picker';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import config from 'config';
-import { languages } from 'languages';
-import FormInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Timezone from 'components/timezone';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import LanguagePicker from 'calypso/components/language-picker';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import config from 'calypso/config';
+import { languages } from 'calypso/languages';
+import FormInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Timezone from 'calypso/components/timezone';
 import SiteIconSetting from './site-icon-setting';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import guessTimezone from 'lib/i18n-utils/guess-timezone';
-import { preventWidows } from 'lib/formatting';
-import scrollTo from 'lib/scroll-to';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import isVipSite from 'state/selectors/is-vip-site';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { launchSite } from 'state/sites/launch/actions';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { isBusiness } from 'calypso/lib/products-values';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { preventWidows } from 'calypso/lib/formatting';
+import scrollTo from 'calypso/lib/scroll-to';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {

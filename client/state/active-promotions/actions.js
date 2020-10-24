@@ -6,10 +6,10 @@ import {
 	ACTIVE_PROMOTIONS_REQUEST,
 	ACTIVE_PROMOTIONS_REQUEST_SUCCESS,
 	ACTIVE_PROMOTIONS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/active-promotions';
-import 'state/active-promotions/init';
+import 'calypso/state/data-layer/wpcom/active-promotions';
+import 'calypso/state/active-promotions/init';
 
 /**
  * Action creator function: RECEIVE
