@@ -294,21 +294,6 @@ function useAddProductFromSlug( {
 			debug( 'waiting on products fetch' );
 			return;
 		}
-		if ( validProducts.length < 1 ) {
-			debug(
-				'there is a request to add one or more products but no product was found',
-				productAliasFromUrl
-			);
-			dispatch( {
-				type: 'PRODUCTS_ADD_ERROR',
-				message: String(
-					translate( "Could not find any products matching '%(productAliasFromUrl)s'", {
-						args: { productAliasFromUrl },
-					} )
-				),
-			} );
-			return;
-		}
 
 		const cartProducts = validProducts.map( ( product ) =>
 			// Transform the product data into a RequestCartProduct
