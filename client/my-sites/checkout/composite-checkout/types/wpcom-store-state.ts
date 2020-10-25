@@ -902,13 +902,39 @@ export type WpcomStoreState = {
 	contactDetails: ManagedContactDetails;
 };
 
+type PurchaseSiteId = number;
+
 export interface TransactionResponse {
-	failed_purchases?: FailedPurchase[];
+	failed_purchases?: Record< PurchaseSiteId, Purchase >;
+	purchases?: Record< PurchaseSiteId, Purchase >;
 	receipt_id?: number;
 	order_id?: number;
 }
 
-type FailedPurchase = unknown;
+export interface FailedPurchase {
+	product_meta: string;
+	product_id: string | number;
+	product_slug: string;
+	product_cost: string | number;
+	product_name: string;
+}
+
+export interface Purchase {
+	meta: string;
+	product_id: string | number;
+	product_slug: string;
+	product_cost: string | number;
+	product_name: string;
+	product_name_short: string;
+	delayed_provisioning?: boolean;
+	is_domain_registration?: boolean;
+	registrar_support_url?: string;
+	is_email_verified?: boolean;
+	is_root_domain_with_us?: boolean;
+	will_auto_renew?: boolean;
+	expiry: string;
+	user_email: string;
+}
 
 export const emptyManagedContactDetails: ManagedContactDetails = {
 	firstName: getInitialManagedValue(),
