@@ -175,7 +175,6 @@ export default function CompositeCheckout( {
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
 	} = usePrepareProductsForCart( {
-		siteId,
 		productAliasFromUrl,
 		purchaseId,
 		isJetpackNotAtomic,
