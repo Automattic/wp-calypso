@@ -653,35 +653,16 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 	}
 
-	disablePrivacySettings = ( e ) => {
-		e.target.blur();
-	};
-
 	privacySettingsWrapper() {
 		if ( this.props.isUnlaunchedSite ) {
-			if ( this.props.needsVerification ) {
-				return (
-					<EmailVerificationGate>
-						{ this.renderLaunchSite() }
-						{ this.privacySettings() }
-					</EmailVerificationGate>
-				);
-			}
-
-			return (
-				<>
-					{ this.renderLaunchSite() }
-					<div
-						className="site-settings__disable-privacy-settings"
-						onFocus={ this.disablePrivacySettings }
-					>
-						{ this.privacySettings() }
-					</div>
-				</>
+			return this.props.needsVerification ? (
+				<EmailVerificationGate>{ this.renderLaunchSite() }</EmailVerificationGate>
+			) : (
+				this.renderLaunchSite()
 			);
 		}
 
-		return <>{ this.privacySettings() }</>;
+		return this.privacySettings();
 	}
 
 	render() {
