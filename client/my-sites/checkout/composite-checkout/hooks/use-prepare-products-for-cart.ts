@@ -44,7 +44,7 @@ function doesValueExist< T >( value: T ): value is Exclude< T, null | undefined 
 }
 
 export default function usePrepareProductsForCart( {
-	productAliasFromUrl: productAlias,
+	productAliasFromUrl,
 	purchaseId: originalPurchaseId,
 	isJetpackNotAtomic,
 	isPrivate,
@@ -58,7 +58,7 @@ export default function usePrepareProductsForCart( {
 		initialState: PreparedProductsForCart
 	): PreparedProductsForCart => ( {
 		...initialState,
-		isLoading: !! productAlias,
+		isLoading: !! productAliasFromUrl,
 	} );
 	const [ state, dispatch ] = useReducer(
 		preparedProductsReducer,
@@ -67,7 +67,7 @@ export default function usePrepareProductsForCart( {
 	);
 	debug(
 		'preparing products for cart from url string',
-		productAlias,
+		productAliasFromUrl,
 		'and purchase id',
 		originalPurchaseId
 	);
@@ -77,13 +77,13 @@ export default function usePrepareProductsForCart( {
 	const addHandler = chooseAddHandler( {
 		isLoading: state.isLoading,
 		originalPurchaseId,
-		productAliasFromUrl: productAlias,
+		productAliasFromUrl,
 	} );
 
 	// Only one of these should ever operate. The others should bail if they
 	// think another hook will handle the data.
 	useAddProductFromSlug( {
-		productAlias,
+		productAliasFromUrl,
 		dispatch,
 		isJetpackNotAtomic,
 		isPrivate,
@@ -91,7 +91,7 @@ export default function usePrepareProductsForCart( {
 	} );
 	useAddRenewalItems( {
 		originalPurchaseId,
-		productAlias,
+		productAlias: productAliasFromUrl,
 		dispatch,
 		addHandler,
 	} );
@@ -246,13 +246,13 @@ function useAddRenewalItems( {
 }
 
 function useAddProductFromSlug( {
-	productAlias: productAliasFromUrl,
+	productAliasFromUrl,
 	dispatch,
 	isJetpackNotAtomic,
 	isPrivate,
 	addHandler,
 }: {
-	productAlias: string | undefined | null;
+	productAliasFromUrl: string | undefined | null;
 	dispatch: ( action: PreparedProductsAction ) => void;
 	isJetpackNotAtomic: boolean;
 	isPrivate: boolean;
