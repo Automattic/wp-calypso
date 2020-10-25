@@ -542,7 +542,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__general-settings-launch-site {
 	display: flex;
 	justify-content: space-between;
-	margin-bottom: 1px;
 }
 
 .site-settings__general-settings-launch-site-text {
@@ -552,11 +551,6 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 .site-settings__general-settings-launch-site-button {
 	margin-left: 20px;
 	white-space: nowrap;
-}
-
-.site-settings__disable-privacy-settings {
-	opacity: 0.33;
-	pointer-events: none;
 }
 
 .site-settings__writing-settings {
