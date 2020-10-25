@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isEmpty } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -649,9 +644,9 @@ export function getSignupValidationErrorResponse(
 	email: string,
 	emailTakenLoginRedirect: ( arg0: string ) => string
 ): ManagedContactDetailsErrors {
-	const emailResponse = response.messages?.email || {};
+	const emailResponse: Record< string, string > = response.messages?.email ?? {};
 
-	if ( isEmpty( emailResponse ) ) {
+	if ( Object.keys( emailResponse ).length === 0 ) {
 		return emailResponse;
 	}
 
