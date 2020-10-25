@@ -277,8 +277,9 @@ function useAddProductFromSlug( {
 					const validProduct = products[ getProductSlugFromAlias( productAlias ) ];
 					return validProduct
 						? { ...validProduct, internal_product_alias: productAlias }
-						: validProduct;
-				} ) ?? [],
+						: undefined;
+				} )
+				.filter( doesValueExist ) ?? [],
 		[ isJetpackNotAtomic, productAliasFromUrl, products ]
 	);
 
