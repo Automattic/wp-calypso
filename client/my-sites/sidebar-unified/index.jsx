@@ -10,7 +10,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -29,38 +29,21 @@ import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
+import { handleScroll } from './utils';
 import './style.scss';
-
-const masterbarHeight = 32;
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-	const [ sidebarStyles, setSidebarStyles ] = useState( { top: 0 } );
-	const sidebar = React.createRef();
 
 	useEffect( () => {
-		if (
-			typeof window !== 'undefined' &&
-			sidebar.current !== 'undefined' &&
-			sidebar.current !== null &&
-			sidebar.current.scrollHeight + masterbarHeight > window.innerHeight
-		) {
-			window.onscroll = () => {
-				const currentScrollPos = window.pageYOffset;
-				const maxScroll = sidebar.current.scrollHeight + masterbarHeight - window.innerHeight;
-				if ( currentScrollPos >= 0 && currentScrollPos < maxScroll ) {
-					setSidebarStyles( { top: -currentScrollPos } );
-				} else {
-					setSidebarStyles( { top: 'inherit' } );
-				}
-			};
-		}
-
-		// Need to cleanup
-	}, [ sidebar ] );
+		window.addEventListener( 'scroll', () => handleScroll() );
+		return () => {
+			window.removeEventListener( 'scroll', () => handleScroll() );
+		};
+	} );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,
@@ -73,7 +56,7 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	}
 
 	return (
-		<Sidebar ref={ sidebar } style={ sidebarStyles }>
+		<Sidebar id="sidebar">
 			<CurrentSite forceAllSitesView={ isAllDomainsView } />
 			{ menuItems.map( ( item, i ) => {
 				const isSelected = item?.url && itemLinkMatches( item.url, path );
