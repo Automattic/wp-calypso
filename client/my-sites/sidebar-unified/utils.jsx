@@ -1,49 +1,110 @@
-const masterbarHeight = document.getElementById( 'header' ).scrollHeight;
 const secondaryEl = document.getElementById( 'secondary' );
-let last_known_scroll_position = 0;
+let lastScrollPosition = 0; // Used for calculating scroll direction.
+let sidebarTop = 0; // Current sidebar top position.
+let pinnedSidebarTop = true;
+let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
 export const handleScroll = () => {
 	const windowHeight = window?.innerHeight;
-	const sidebarEl = document.getElementById( 'sidebar' );
-	const sidebarElHeight = sidebarEl?.scrollHeight;
-	const sidebarOffset = -sidebarEl.getBoundingClientRect().top;
+	const secondaryElHeight = secondaryEl?.scrollHeight;
+	const masterbarHeight = document.getElementById( 'header' ).getBoundingClientRect().height;
 
 	if (
 		! ticking &&
 		typeof window !== 'undefined' &&
-		sidebarEl !== 'undefined' &&
-		sidebarEl !== null &&
-		sidebarElHeight + masterbarHeight > windowHeight // Only run when sidebar & masterbar are taller than window height.
+		window.innerWidth > 660 &&
+		secondaryEl !== 'undefined' &&
+		secondaryEl !== null &&
+		secondaryElHeight + masterbarHeight > windowHeight // Only run when sidebar & masterbar are taller than window height.
 	) {
 		// Throttle scroll event
 		window.requestAnimationFrame( function () {
-			const maxScroll = sidebarElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
+			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
 			const scrollY = -document.body.getBoundingClientRect().top; // Get current scroll position.
-			const amountScrolled = scrollY - last_known_scroll_position;
 
-			console.log( `Window Height ${ windowHeight }` );
-			console.log( `Sidebar Height ${ sidebarElHeight }` );
-			console.log( `Current Scroll ${ scrollY }` );
-			console.log( `Max Scroll ${ maxScroll }` );
-			console.log( sidebarOffset );
-			console.log( `Sidebar Top ${ sidebarOffset + scrollY }` );
-			console.log( '------------------------------------' );
+			// Check for overscrolling, this happens when swiping up at the top of the document in modern browsers.
+			if ( scrollY < 0 ) {
+				// Stick the sidebar to the top.
+				if ( ! pinnedSidebarTop ) {
+					pinnedSidebarTop = true;
+					pinnedSidebarBottom = false;
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = 0;
+					secondaryEl.style.bottom = 0;
+				}
 
-			if ( scrollY >= 0 && scrollY <= maxScroll ) {
-				// We are moving DOWN. Scroll down the sidebar to current scroll position.
-				sidebarEl.style.top = `-${ scrollY }px`;
-			} else if ( scrollY > maxScroll && scrollY < last_known_scroll_position ) {
-				// We are moving UP. Scroll up the sidebar for the amount scrolled.
-				sidebarEl.style.top = 'inherit';
-				sidebarEl.style.bottom = `${ amountScrolled }px`;
-			} else {
-				// Stick to sidebar bottom and don't overscroll.
-				sidebarEl.style.top = 'inherit'; // Default style has bottom: 0.
+				ticking = false;
+				return;
+			} else if ( scrollY + windowHeight > document.body.scrollHeight - 1 ) {
+				// When overscrolling at the bottom, stick the sidebar to the bottom.
+				if ( ! pinnedSidebarBottom ) {
+					pinnedSidebarBottom = true;
+					pinnedSidebarTop = false;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = 'inherit';
+					secondaryEl.style.bottom = 0;
+				}
+
+				ticking = false;
+				return;
 			}
-			last_known_scroll_position = scrollY;
+
+			if ( scrollY > lastScrollPosition ) {
+				// When a down scroll has been detected.
+
+				if ( pinnedSidebarTop ) {
+					pinnedSidebarTop = false;
+					sidebarTop = masterbarHeight;
+
+					if ( scrollY > maxScroll ) {
+						//In case we have already passed the available scroll of the sidebar, add the current scroll
+						sidebarTop += scrollY;
+					}
+
+					secondaryEl.style.position = 'absolute';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				} else if (
+					! pinnedSidebarBottom &&
+					scrollY + masterbarHeight > maxScroll + secondaryEl.offsetTop
+				) {
+					// Pin it to the bottom.
+					pinnedSidebarBottom = true;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = 'inherit';
+					secondaryEl.style.bottom = 0;
+				}
+			} else if ( scrollY < lastScrollPosition ) {
+				// When a scroll up is detected.
+
+				// If it was pinned to the bottom, unpin and calculate relative scroll.
+				if ( pinnedSidebarBottom ) {
+					pinnedSidebarBottom = false;
+
+					// Calculate new offset position.
+					sidebarTop = scrollY + masterbarHeight - maxScroll;
+
+					secondaryEl.style.position = 'absolute';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				} else if ( ! pinnedSidebarTop && scrollY + masterbarHeight < sidebarTop ) {
+					// Pin it to the top.
+					pinnedSidebarTop = true;
+					sidebarTop = masterbarHeight;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				}
+			}
+
+			lastScrollPosition = scrollY;
+
 			ticking = false;
 		} );
+		ticking = true;
 	}
-	ticking = true;
 };

@@ -41,6 +41,7 @@ $font-size: rem( 14px );
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		position: relative;
 		background-color: var( --color-sidebar-background );
 		padding-bottom: 12px;
 
@@ -494,6 +495,15 @@ $font-size: rem( 14px );
 			.collapse-sidebar__toggle {
 				display: none;
 			}
+		}
+	}
+}
+
+@media screen and ( max-width: 660px ) {
+	// client/layout/sidebar/style.scss
+	.is-nav-unification {
+		.sidebar {
+			position: absolute;
 		}
 	}
 }
