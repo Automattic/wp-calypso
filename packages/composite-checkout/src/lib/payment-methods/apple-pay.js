@@ -173,7 +173,7 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 
 	useEffect( () => {
 		let isSubscribed = true;
-		if ( ! stripe ) {
+		if ( ! stripe || ! paymentRequestOptions ) {
 			return;
 		}
 		const request = stripe.paymentRequest( paymentRequestOptions );
