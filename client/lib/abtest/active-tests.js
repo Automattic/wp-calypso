@@ -203,7 +203,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	secureYourBrand: {
-		datestamp: '20201008',
+		datestamp: '20201026',
 		variations: {
 			test: 50,
 			control: 50,
