@@ -366,11 +366,13 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	renderContactDetailsFields() {
-		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
+		const { translate, needsFax, hasCountryStates, labelTexts, children } = this.props;
 		const countryCode = this.getCountryCode();
-
+		const classes = ! children
+			? 'contact-details-form-fields__contact-extra-details'
+			: 'contact-details-form-fields__contact-details';
 		return (
-			<div className="contact-details-form-fields__contact-details">
+			<div className={ classes }>
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'organization',
@@ -536,7 +538,7 @@ export class ContactDetailsFormFields extends Component {
 					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
 
-				{ ! React.Children.count( this.props.children ) && (
+				{ this.props.children && (
 					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
 				) }
 

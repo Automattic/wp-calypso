@@ -15,7 +15,6 @@ import { trim, trimEnd } from 'lodash';
 import Header from 'calypso/my-sites/domains/domain-management/components/header';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import div from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import Main from 'calypso/components/main';
