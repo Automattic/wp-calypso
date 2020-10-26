@@ -42,8 +42,8 @@ const useSiteMenuItems = () => {
 	);
 	const shouldShowWooCommerce = true;
 	const shouldShowApperanceHeaderAndBackground = true;
-	const shouldShowAdControl = true;
-	const shouldShowAMP = true;
+	const shouldShowAdControl = false;
+	const shouldShowAMP = false;
 	const shouldShowThemeOptions = true;
 	const fallbackOptions = {
 		siteDomain,
