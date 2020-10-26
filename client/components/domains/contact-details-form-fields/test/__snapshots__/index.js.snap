@@ -148,9 +148,6 @@ exports[`ContactDetailsFormFields default fields should render 1`] = `
       translate={[Function]}
     />
   </div>
-  <div
-    className="contact-details-form-fields__extra-fields"
-  />
   <div>
     <FormButton
       className="contact-details-form-fields__submit-button"
