@@ -1,0 +1,11 @@
+.docs__jetpack-product-slide-out-card {
+	// Override accent variables with Jetpack colors
+	--color-primary: var( --studio-jetpack-green-40 );
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-accent-light: var( --studio-jetpack-green-20 );
+	--color-accent-dark: var( --studio-jetpack-green-50 );
+	--color-accent-60: var( --studio-jetpack-green-60 );
+
+	max-width: 400px;
+	margin: 20px auto;
+}
