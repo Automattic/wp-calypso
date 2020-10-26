@@ -4,6 +4,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import buildFallbackResponse from './fallback-data.js';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -33,8 +34,12 @@ const useSiteMenuItems = () => {
 	 * empty menu.
 	 */
 	const shouldShowLinks = true;
-	const shouldShowTestimonials = true;
-	const shouldShowPortfolio = true;
+	const shouldShowTestimonials = useSelector( ( state ) =>
+		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_testimonial' ], false )
+	);
+	const shouldShowPortfolio = useSelector( ( state ) =>
+		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_portfolio' ], false )
+	);
 	const shouldShowWooCommerce = true;
 	const shouldShowApperanceHeaderAndBackground = true;
 	const shouldShowAdControl = true;
