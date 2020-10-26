@@ -947,6 +947,20 @@ function handleCheckoutModal( calypsoPort ) {
 	};
 }
 
+function handleInlineHelpButton( calypsoPort ) {
+	addAction(
+		'a8c.wpcom-block-editor.toggleInlineHelpButton',
+		'a8c/wpcom-block-editor/toggleInlineHelpButton',
+		/** @type {({ hidden: boolean }) => void} */
+		( data ) => {
+			calypsoPort.postMessage( {
+				action: 'toggleInlineHelpButton',
+				payload: data,
+			} );
+		}
+	);
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1051,6 +1065,8 @@ function initPort( message ) {
 		handleEditorLoaded( calypsoPort );
 
 		handleCheckoutModal( calypsoPort );
+
+		handleInlineHelpButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

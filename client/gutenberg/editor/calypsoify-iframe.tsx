@@ -121,7 +121,7 @@ enum EditorActions {
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
-	ToggleInlineHelp = 'toggleInlineHelp',
+	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
@@ -385,10 +385,12 @@ class CalypsoifyIframe extends Component<
 			} );
 		}
 
-		if ( EditorActions.ToggleInlineHelp === action ) {
+		if ( EditorActions.ToggleInlineHelpButton === action ) {
 			const inlineHelp = window.top.document.querySelector( '#wpcom > .layout > .inline-help' );
-			const { hidden } = payload;
-			inlineHelp.hidden = hidden;
+
+			if ( inlineHelp ) {
+				inlineHelp.hidden = payload.hidden;
+			}
 		}
 
 		if ( EditorActions.GetNavSidebarLabels === action ) {
