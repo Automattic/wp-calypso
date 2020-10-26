@@ -17,7 +17,7 @@ import FormClickToEditInput from 'woocommerce/components/form-click-to-edit-inpu
 import FormFieldSet from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import getKeyboardHandler from 'woocommerce/lib/get-keyboard-handler';
 
 class ProductFormVariationsModal extends React.Component {

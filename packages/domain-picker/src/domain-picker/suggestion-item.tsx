@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -47,7 +47,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onRender,
 	selected,
 } ) => {
-	const { __ } = useI18n();
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const dotPos = domain.indexOf( '.' );
@@ -119,7 +118,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						>
 							{ createInterpolateElement(
 								__(
-									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>'
+									'All domains ending with <tld /> require an SSL certificate to host a website. When you host this domain at WordPress.com an SSL certificate is included. <learn_more_link>Learn more</learn_more_link>',
+									__i18n_text_domain__
 								),
 								{
 									tld: <b>{ domainTld }</b>,
@@ -135,12 +135,17 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</InfoTooltip>
 					) }
 					{ isRecommended && ! isUnavailable && (
-						<div className="domain-picker__badge is-recommended">{ __( 'Recommended' ) }</div>
+						<div className="domain-picker__badge is-recommended">
+							{ __( 'Recommended', __i18n_text_domain__ ) }
+						</div>
 					) }
 				</div>
 				{ isExistingSubdomain && (
 					<div className="domain-picker__change-subdomain-tip">
-						{ __( 'You can change your free subdomain later under Domain Settings.' ) }
+						{ __(
+							'You can change your free subdomain later under Domain Settings.',
+							__i18n_text_domain__
+						) }
 					</div>
 				) }
 			</div>
@@ -149,15 +154,18 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-paid': ! isFree,
 				} ) }
 			>
-				{ isUnavailable && __( 'Unavailable' ) }
-				{ isFree && ! isUnavailable && __( 'Free' ) }
+				{ isUnavailable && __( 'Unavailable', __i18n_text_domain__ ) }
+				{ isFree && ! isUnavailable && __( 'Free', __i18n_text_domain__ ) }
 				{ ! isFree && ! isUnavailable && (
 					<>
-						<span className="domain-picker__price-inclusive"> { __( 'Included in plans' ) } </span>
+						<span className="domain-picker__price-inclusive">
+							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
+							{ __( 'Included in plans', __i18n_text_domain__ ) }{ ' ' }
+						</span>
 						<span className="domain-picker__price-cost">
 							{
 								/* translators: %s is the price with currency. Eg: $15/year. */
-								sprintf( __( '%s/year' ), cost )
+								sprintf( __( '%s/year', __i18n_text_domain__ ), cost )
 							}
 						</span>
 					</>

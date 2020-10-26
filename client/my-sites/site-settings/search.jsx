@@ -16,7 +16,7 @@ import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import SupportInfo from 'calypso/components/support-info';
@@ -160,17 +160,17 @@ class Search extends Component {
 								disabled={ isRequestingSettings || isSavingSettings }
 							/>
 						) : (
-							<CompactFormToggle
+							<FormToggle
 								checked={ !! fields.jetpack_search_enabled }
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
 							>
 								{ translate( 'Improve built-in WordPress search performance.' ) }
-							</CompactFormToggle>
+							</FormToggle>
 						) }
 
 						<div className="site-settings__jetpack-instant-search-toggle">
-							<CompactFormToggle
+							<FormToggle
 								checked={ !! fields.instant_search_enabled }
 								disabled={
 									isRequestingSettings ||
@@ -181,7 +181,7 @@ class Search extends Component {
 								onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
 							>
 								{ translate( 'Enable instant search experience (recommended)' ) }
-							</CompactFormToggle>
+							</FormToggle>
 							{ isLoading || activatingSearchModule || isSavingSettings
 								? this.renderSettingsUpdating()
 								: this.renderInstantSearchExplanation() }

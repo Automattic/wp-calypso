@@ -15,13 +15,16 @@ import { isTranslatedIncompletely } from 'lib/i18n-utils/utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary } = context;
+		const { store, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }
+					currentSection={ section }
+					currentRoute={ pathname }
+					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }

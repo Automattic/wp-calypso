@@ -13,8 +13,8 @@ import {
 	EXPORT_STARTED,
 	EXPORT_FAILURE,
 	SET_MEDIA_EXPORT_DATA,
-} from 'state/action-types';
-import { combineReducers, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import { States } from './constants';
 
 export function selectedPostType( state = null, action ) {

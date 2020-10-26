@@ -14,7 +14,7 @@ import { Card } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import SupportInfo from 'calypso/components/support-info';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -220,13 +220,13 @@ export class GoogleAnalyticsForm extends Component {
 						</FormFieldset>
 						{ siteIsJetpack && (
 							<FormFieldset>
-								<CompactFormToggle
+								<FormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ this.handleAnonymizeChange }
 								>
 									{ translate( 'Anonymize IP addresses' ) }
-								</CompactFormToggle>
+								</FormToggle>
 								<FormSettingExplanation>
 									{ translate(
 										'Enabling this option is mandatory in certain countries due to national ' +

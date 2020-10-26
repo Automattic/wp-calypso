@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getUserSettings from 'state/selectors/get-user-settings';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import {
 	USER_SETTINGS_REQUEST,
 	USER_SETTINGS_SAVE,
@@ -16,9 +16,9 @@ import {
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/settings';
+import 'calypso/state/data-layer/wpcom/me/settings';
 
 const debug = debugFactory( 'calypso:user:settings' );
 

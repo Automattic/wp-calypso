@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { Card } from '@automattic/components';
 import ContactDisplay from './contact-display';
 import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import Gridicon from 'calypso/components/gridicon';
 import {
 	enableDomainPrivacy,

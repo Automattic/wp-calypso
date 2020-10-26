@@ -15,9 +15,9 @@ import {
 	TERMS_REQUEST_FAILURE,
 	TERMS_REQUEST_SUCCESS,
 	SERIALIZE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
-import TermQueryManager from 'lib/query-manager/term';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import TermQueryManager from 'calypso/lib/query-manager/term';
 import { getSerializedTermsQuery } from './utils';
 import { queriesSchema } from './schema';
 

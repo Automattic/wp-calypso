@@ -12,22 +12,27 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import ReaderImportButton from 'blocks/reader-import-button';
-import ReaderExportButton from 'blocks/reader-export-button';
-import InfiniteStream from 'reader/components/reader-infinite-stream';
-import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import ReaderImportButton from 'calypso/blocks/reader-import-button';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
+import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
+import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollows, getReaderFollowsCount } from 'state/reader/follows/selectors';
-import UrlSearch from 'lib/url-search';
-import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
-import { addQueryArgs } from 'lib/url';
-import { READER_SUBSCRIPTIONS } from 'reader/follow-sources';
-import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'blocks/reader-export-button/constants';
+import { getReaderFollows, getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
+import UrlSearch from 'calypso/lib/url-search';
+import {
+	getSiteName,
+	getSiteUrl,
+	getSiteDescription,
+	getSiteAuthorName,
+} from 'calypso/reader/get-helpers';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { formatUrlForDisplay, getFeedTitle } from 'calypso/reader/lib/feed-display-helper';
+import { addQueryArgs } from 'calypso/lib/url';
+import { READER_SUBSCRIPTIONS } from 'calypso/reader/follow-sources';
+import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {

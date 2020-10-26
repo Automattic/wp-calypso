@@ -7,7 +7,7 @@ This component is used to display a Jetpack product card.
 ## How to use
 
 ```js
-import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
+import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 
 export default function JetpackProductCardExample() {
 	return (

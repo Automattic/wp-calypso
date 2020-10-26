@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPluginUploadError from 'state/selectors/get-plugin-upload-error';
+import getPluginUploadError from 'calypso/state/selectors/get-plugin-upload-error';
 
 const siteId = 77203074;
 const error = {

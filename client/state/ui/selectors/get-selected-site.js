@@ -5,21 +5,7 @@ import getSite from 'calypso/state/sites/selectors/get-site';
 import getSelectedSiteId from './get-selected-site-id';
 
 /**
- * @typedef {object} SiteData
- * @property {number} ID
- * @property {string} name
- * @property {string} URL
- * @property {string} slug
- * @property {string} domain
- * @property {string} locale
- * @property {SiteDataOptions} [options]
- * TODO: fill this out and/or move it to a TS file
- */
-
-/**
- * @typedef {object} SiteDataOptions
- * @property {string|undefined} admin_url
- * TODO: fill this out and/or move it to a TS file
+ * @typedef { import("./site-data").SiteData } SiteData
  */
 
 /**

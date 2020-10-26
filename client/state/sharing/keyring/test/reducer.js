@@ -18,8 +18,8 @@ import {
 	PUBLICIZE_CONNECTION_DELETE,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducers', () => {
 	describe( 'isFetching()', () => {

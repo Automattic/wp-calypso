@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isJetpackUserConnectionOwner from 'state/selectors/is-jetpack-user-connection-owner';
+import isJetpackUserConnectionOwner from 'calypso/state/selectors/is-jetpack-user-connection-owner';
 import { dataItems } from './fixtures/jetpack-connection';
 
 describe( 'isJetpackUserConnectionOwner()', () => {

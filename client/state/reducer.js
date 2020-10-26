@@ -8,8 +8,8 @@
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import { reducer as httpData } from 'state/data-layer/http-data';
+import { combineReducers } from 'calypso/state/utils';
+import { reducer as httpData } from 'calypso/state/data-layer/http-data';
 
 /**
  * Reducers

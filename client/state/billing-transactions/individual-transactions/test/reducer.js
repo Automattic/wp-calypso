@@ -8,7 +8,7 @@ import {
 	BILLING_TRANSACTION_REQUEST,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'individualTransactions reducer', () => {
 	const transactionId = 345;

@@ -9,18 +9,22 @@ import nock from 'nock';
 /**
  * Internal dependencies
  */
-import posts from 'state/posts/reducer';
-import preferences from 'state/preferences/reducer';
-import sites from 'state/sites/reducer';
-import siteSettings from 'state/site-settings/reducer';
-import { selectedSiteId } from 'state/ui/reducer';
-import editor from 'state/editor/reducer';
-import { setSelectedSiteId } from 'state/ui/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { editPost, saveEdited } from 'state/posts/actions';
-import { startEditingNewPost } from 'state/editor/actions';
-import { getEditedPost, getEditedPostValue, isEditedPostDirty } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
+import posts from 'calypso/state/posts/reducer';
+import preferences from 'calypso/state/preferences/reducer';
+import sites from 'calypso/state/sites/reducer';
+import siteSettings from 'calypso/state/site-settings/reducer';
+import { selectedSiteId } from 'calypso/state/ui/reducer';
+import editor from 'calypso/state/editor/reducer';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { editPost, saveEdited } from 'calypso/state/posts/actions';
+import { startEditingNewPost } from 'calypso/state/editor/actions';
+import {
+	getEditedPost,
+	getEditedPostValue,
+	isEditedPostDirty,
+} from 'calypso/state/posts/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
 
 const SITE_ID = 123;
 const POST_ID = 456;

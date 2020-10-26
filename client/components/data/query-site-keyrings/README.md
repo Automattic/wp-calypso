@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 
 export default function MyKeyringsPage( { keyrings } ) {
 	return (

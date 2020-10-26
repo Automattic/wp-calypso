@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_SETTINGS_RECEIVE,
 	SITE_SETTINGS_REQUEST,
@@ -11,11 +11,11 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { normalizeSettings } from './utils';
 
-import 'state/data-layer/wpcom/sites/homepage';
-import 'state/site-settings/init';
+import 'calypso/state/data-layer/wpcom/sites/homepage';
+import 'calypso/state/site-settings/init';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.

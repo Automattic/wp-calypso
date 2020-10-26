@@ -3,7 +3,7 @@
  */
 import React, { useState } from 'react';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions, Plans, WPCOMFeatures } from '@automattic/data-stores';
 import { Button, SVG, Path } from '@wordpress/components';
 import { Icon } from '@wordpress/icons';
@@ -44,8 +44,6 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 } ) => {
-	const { __ } = useI18n();
-
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
 
@@ -59,7 +57,9 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 		select( PLANS_STORE ).getPlanBySlug( recommendedPlanSlug )
 	);
 	const primaryPlan = recommendedPlan || popularPlan;
-	const badge = recommendedPlan ? __( 'Recommended for you' ) : __( 'Popular' );
+	const badge = recommendedPlan
+		? __( 'Recommended for you', __i18n_text_domain__ )
+		: __( 'Popular', __i18n_text_domain__ );
 
 	// Other plans
 	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan.storeSlug );
@@ -87,7 +87,12 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 						{ recommendedPlan && (
 							<div className="plans-accordion__recommend-hint">
 								<Icon icon={ tip } size={ 16 } />
-								<span>{ __( 'Based on the features you selected.' ) }</span>
+								<span>
+									{
+										// translators: tooltip explaining why a particular plan has been recommended
+										__( 'Based on the features you selected.', __i18n_text_domain__ )
+									}
+								</span>
 							</div>
 						) }
 						<PlanItem
@@ -112,7 +117,9 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-accordion__actions">
 				<Button className="plans-accordion__toggle-all-button" onClick={ handleToggleAll } isLink>
-					{ allPlansOpened ? __( 'Collapse all plans' ) : __( 'Show all plans' ) }
+					{ allPlansOpened
+						? __( 'Collapse all plans', __i18n_text_domain__ )
+						: __( 'Show all plans', __i18n_text_domain__ ) }
 				</Button>
 			</div>
 

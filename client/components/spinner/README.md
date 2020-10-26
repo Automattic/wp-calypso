@@ -8,7 +8,7 @@ Spinner is a React component for rendering a loading indicator.
 
 ```jsx
 import React from 'react';
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 export default class extends React.Component {
 	render() {

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getRawOffsets from 'state/selectors/get-raw-offsets';
+import getRawOffsets from 'calypso/state/selectors/get-raw-offsets';
 
 describe( 'getRawOffsets()', () => {
 	test( "should return null if `timezones` aren't synced", () => {

@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import productListSchema from './schema';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	SIMPLE_PAYMENTS_PRODUCT_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_UPDATE,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST_RECEIVE_DELETE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Edits existing product if one with matching ID found.

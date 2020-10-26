@@ -20,7 +20,7 @@ import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import { createNotice } from 'calypso/state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getEditCardDetailsPath } from '../../utils';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';

@@ -6,10 +6,10 @@ import { isNumber, toArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { editPost } from 'state/posts/actions/edit-post';
-import { getEditedPost } from 'state/posts/selectors';
+import { editPost } from 'calypso/state/posts/actions/edit-post';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an action thunk which, when dispatched, adds a term to the current edited post

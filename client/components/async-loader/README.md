@@ -16,7 +16,7 @@ We're going to use the dynamic `import()` syntax to load our components and then
 In the absence of the loading component the async loader will render `null`.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
 export default ( { siteId, currentSearch } ) =>
 	React.createElement(
@@ -49,7 +49,7 @@ Usually it looks like `if ( null == someData ) { return null; }`.
 We can use the `asyncLoader` to separate the concern of waiting for data from the concern of rendering that data.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
 export default ( props ) =>
 	React.createElement(
@@ -79,7 +79,7 @@ We don't use the data returned by the promise in this case because the framework
 Thus we're not passing any data to the success component.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
 const getTranslations = ( slug ) =>
 	waitForHttpData( () => ( {

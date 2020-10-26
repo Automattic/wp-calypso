@@ -18,7 +18,6 @@ import { requestKeyringConnections as requestStub } from 'calypso/state/sharing/
 jest.mock( 'components/data/query-preferences', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'lib/media/actions', () => () => null );
 jest.mock( 'my-sites/media-library/content', () =>
 	require( 'calypso/components/empty-component' )
 );

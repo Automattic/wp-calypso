@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns true if an error should be shown in the video editor.

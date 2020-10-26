@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	SITE_IMPORTER_IMPORT_FAILURE,
 	SITE_IMPORTER_IMPORT_RESET,
@@ -16,7 +16,7 @@ import {
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_START,
 	SITE_IMPORTER_IS_SITE_IMPORTABLE_SUCCESS,
 	SITE_IMPORTER_VALIDATION_ERROR_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const DEFAULT_ERROR_STATE = {
 	error: false,

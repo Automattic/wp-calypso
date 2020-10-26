@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { localize } from 'i18n-calypso';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { activateModule, deactivateModule } from 'calypso/state/jetpack/modules/actions';
@@ -69,7 +69,7 @@ class JetpackModuleToggle extends Component {
 		return (
 			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 			<span className="jetpack-module-toggle">
-				<CompactFormToggle
+				<FormToggle
 					id={ `${ this.props.siteId }-${ this.props.moduleSlug }-toggle` }
 					checked={ this.props.checked || false }
 					toggling={ this.props.toggling }
@@ -77,7 +77,7 @@ class JetpackModuleToggle extends Component {
 					disabled={ this.props.disabled || this.props.toggleDisabled }
 				>
 					{ this.props.label }
-				</CompactFormToggle>
+				</FormToggle>
 				{ this.props.description && (
 					<FormSettingExplanation isIndented>{ this.props.description }</FormSettingExplanation>
 				) }

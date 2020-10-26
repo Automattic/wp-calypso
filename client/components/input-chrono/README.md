@@ -5,7 +5,7 @@ React component that creates a Date object from a user-entered textual date desc
 ## Example Usage
 
 ```js
-import InputChrono from 'components/input-chrono';
+import InputChrono from 'calypso/components/input-chrono';
 
 export default class extends React.Component {
 	// ...

@@ -2,13 +2,13 @@
  * External dependencies
  */
 import { once, defer } from 'lodash';
-import notices from 'notices';
+import notices from 'calypso/notices';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	JETPACK_DISCONNECT_RECEIVE,
 	NOTIFICATIONS_PANEL_TOGGLE,
@@ -17,21 +17,21 @@ import {
 	SITE_DELETE_RECEIVE,
 	SITE_RECEIVE,
 	SITES_RECEIVE,
-} from 'state/action-types';
-import user from 'lib/user';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
-import keyboardShortcuts from 'lib/keyboard-shortcuts';
-import getGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+} from 'calypso/state/action-types';
+import user from 'calypso/lib/user';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import keyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import getGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 import {
 	createImmediateLoginMessage,
 	createPathWithoutImmediateLoginInformation,
-} from 'state/immediate-login/utils';
-import { saveImmediateLoginInformation } from 'state/immediate-login/actions';
+} from 'calypso/state/immediate-login/utils';
+import { saveImmediateLoginInformation } from 'calypso/state/immediate-login/actions';
 
 /**
  * Module variables
@@ -43,7 +43,7 @@ if ( globalKeyBoardShortcutsEnabled ) {
 	globalKeyboardShortcuts = getGlobalKeyboardShortcuts();
 }
 
-const desktop = config.isEnabled( 'desktop' ) ? require( 'lib/desktop' ).default : null;
+const desktop = config.isEnabled( 'desktop' ) ? require( 'calypso/lib/desktop' ).default : null;
 
 /**
  * Notifies user about the fact that they were automatically logged in

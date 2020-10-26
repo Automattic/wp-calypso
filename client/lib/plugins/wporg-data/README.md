@@ -58,7 +58,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import PluginsDataStore from 'lib/plugins/wporg-data/store';
+import PluginsDataStore from 'calypso/lib/plugins/wporg-data/store';
 
 export class YourComponent extends Component {
 	constructor( props ) {
@@ -113,7 +113,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import PluginsDataActions from 'lib/plugins/wporg-data/actions';
+import PluginsDataActions from 'calypso/lib/plugins/wporg-data/actions';
 
 export class YourComponent extends Component {
 	updatePlugin() {

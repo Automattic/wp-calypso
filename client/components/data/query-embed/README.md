@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `url`. It does not accept any childre
 
 ```jsx
 import React from 'react';
-import QueryEmbed from 'components/data/query-embed';
+import QueryEmbed from 'calypso/components/data/query-embed';
 
 export default function MyEmbed( { embed } ) {
 	return (

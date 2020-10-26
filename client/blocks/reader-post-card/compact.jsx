@@ -31,11 +31,11 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 					position="bottom"
 				/>
 				<AutoDirection>
-					<h1 className="reader-post-card__title">
+					<h2 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>
 							<Emojify>{ post.title }</Emojify>
 						</a>
-					</h1>
+					</h2>
 				</AutoDirection>
 				<ReaderExcerpt post={ post } isDiscover={ isDiscover } />
 				{ children }

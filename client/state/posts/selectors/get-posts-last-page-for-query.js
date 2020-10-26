@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getQueryManager } from 'state/posts/selectors/get-query-manager';
+import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns the last queryable page of posts for the given query, or null if the

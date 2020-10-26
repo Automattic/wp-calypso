@@ -16,7 +16,7 @@ import { debounce, noop, get, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksRailcarRender } from 'reader/stats';
+import { recordTracksRailcarRender } from 'calypso/reader/stats';
 
 /**
  * Style dependencies

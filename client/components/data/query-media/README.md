@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `query` or a `siteId` and `mediaId`. 
 
 ```jsx
 import React from 'react';
-import QueryMedia from 'components/data/query-media';
+import QueryMedia from 'calypso/components/data/query-media';
 import MyMediaListItem from './list-item';
 
 export default function MyMediaList( { media } ) {

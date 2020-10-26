@@ -9,11 +9,11 @@ import {
 	POST_REVISIONS_RECEIVE,
 	POST_REVISIONS_REQUEST,
 	POST_REVISIONS_SELECT,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/posts/revisions';
+import 'calypso/state/data-layer/wpcom/posts/revisions';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Action creator function: POST_REVISIONS_REQUEST

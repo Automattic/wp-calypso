@@ -5,7 +5,7 @@ This component is used to display the icon for a plugin. It takes a plugin image
 ## How to use
 
 ```js
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
 
 function render() {
 	return (

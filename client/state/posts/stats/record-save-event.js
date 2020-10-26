@@ -7,15 +7,15 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import { getVisibility, isPublished } from 'state/posts/utils';
-import { getEditedPost, getSitePost } from 'state/posts/selectors';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
-import { isJetpackSite } from 'state/sites/selectors';
-import { recordEditorEvent } from 'state/posts/stats/record-editor-event';
-import { recordEditorStat } from 'state/posts/stats/record-editor-stat';
-import { getEditorPostId, isConfirmationSidebarEnabled } from 'state/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getVisibility, isPublished } from 'calypso/state/posts/utils';
+import { getEditedPost, getSitePost } from 'calypso/state/posts/selectors';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { recordEditorEvent } from 'calypso/state/posts/stats/record-editor-event';
+import { recordEditorStat } from 'calypso/state/posts/stats/record-editor-stat';
+import { getEditorPostId, isConfirmationSidebarEnabled } from 'calypso/state/editor/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Module variables

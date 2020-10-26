@@ -8,7 +8,7 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
 import 'calypso/state/form/init';
 

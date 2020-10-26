@@ -18,6 +18,7 @@ import {
 	useDispatch,
 	PaymentProcessorResponseType,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -29,7 +30,6 @@ import {
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
 import WeChatPaymentQRcodeUnstyled from 'calypso/my-sites/checkout/checkout/wechat-payment-qrcode';
-import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 
@@ -145,7 +145,7 @@ function WeChatPayButton( { disabled, onClick, store, stripe, stripeConfiguratio
 	const { resetTransaction } = useTransactionStatus();
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'wechat' ).getCustomerName() );
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const [ stripeResponseWithCode, setStripeResponseWithCode ] = useState( null );
 
 	useScrollQRCodeIntoView( !! stripeResponseWithCode );

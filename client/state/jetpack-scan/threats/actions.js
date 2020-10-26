@@ -7,11 +7,11 @@ import {
 	JETPACK_SCAN_THREAT_IGNORE,
 	JETPACK_SCAN_UPDATE_THREAT,
 	JETPACK_SCAN_UPDATE_THREAT_COMPLETED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/scan/threats/fix-all-threats';
-import 'state/data-layer/wpcom/sites/scan/threats/fix';
-import 'state/data-layer/wpcom/sites/scan/threats/ignore';
+import 'calypso/state/data-layer/wpcom/sites/scan/threats/fix-all-threats';
+import 'calypso/state/data-layer/wpcom/sites/scan/threats/fix';
+import 'calypso/state/data-layer/wpcom/sites/scan/threats/ignore';
 
 export const fixThreat = ( siteId, threatId ) => ( {
 	type: JETPACK_SCAN_THREAT_FIX,

@@ -9,8 +9,8 @@ import { reject } from 'lodash';
 import {
 	CONNECTED_APPLICATION_DELETE_SUCCESS,
 	CONNECTED_APPLICATIONS_RECEIVE,
-} from 'state/action-types';
-import { withSchemaValidation, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 import schema from './schema';
 
 const reducer = ( state = null, action ) => {

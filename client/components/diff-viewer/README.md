@@ -6,7 +6,7 @@ visual format recognizable by someone who works with `diff` and comparing files.
 ## Usage
 
 ```jsx
-import DiffViewer from 'components/diff-viewer';
+import DiffViewer from 'calypso/components/diff-viewer';
 
 export const CommitView = ( { commitHash, description, diff } ) => (
 	<div>

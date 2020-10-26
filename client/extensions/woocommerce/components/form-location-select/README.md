@@ -43,7 +43,7 @@ The source site for the countries list request. Defaults to the currently-select
 ### How to use
 
 ```jsx
-import FormFieldSet from 'components/forms/form-fieldset';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
 import FormCountrySelectFromApi from 'woocommerce/components/form-location-select/countries';
 import FormStateSelectFromApi from 'woocommerce/components/form-location-select/states';
 

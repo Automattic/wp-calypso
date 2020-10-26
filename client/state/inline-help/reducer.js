@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import {
 	INLINE_HELP_SEARCH_REQUEST,
 	INLINE_HELP_SEARCH_REQUEST_FAILURE,
@@ -16,7 +16,7 @@ import {
 	INLINE_HELP_SHOW,
 	INLINE_HELP_HIDE,
 	INLINE_HELP_SEARCH_RESET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const ui = withoutPersistence( ( state = { isVisible: true }, action ) => {
 	switch ( action.type ) {

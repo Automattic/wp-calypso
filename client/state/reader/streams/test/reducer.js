@@ -15,7 +15,7 @@ import {
 	selectPrevItem,
 	requestPage,
 } from '../actions';
-import { dismissPost } from 'state/reader/site-dismissals/actions';
+import { dismissPost } from 'calypso/state/reader/site-dismissals/actions';
 import {
 	items,
 	selected,

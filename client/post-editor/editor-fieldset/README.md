@@ -8,9 +8,9 @@ The `<EditorFieldset />` component accepts a single `legend` prop to specify the
 
 ```jsx
 import React from 'react';
-import EditorFieldset from 'post-editor/editor-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import EditorFieldset from 'calypso/post-editor/editor-fieldset';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 class MyComponent extends React.Component {
 	render() {

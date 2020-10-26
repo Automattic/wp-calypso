@@ -6,10 +6,10 @@ import { DefaultRootState } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { Preference } from 'my-sites/site-settings/jetpack-credentials-banner/types';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { Preference } from 'calypso/my-sites/site-settings/jetpack-credentials-banner/types';
 
-import 'state/site-settings/init';
+import 'calypso/state/site-settings/init';
 
 const MAX_BANNER_VIEWS = 10;
 const NINETY_DAYS_IN_MILLISECONDS = 90 * 24 * 60 * 60 * 1000;

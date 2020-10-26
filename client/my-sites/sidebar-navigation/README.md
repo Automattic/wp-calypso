@@ -7,7 +7,7 @@ This component is used to display the mobile sidebar navigation header at the to
 Put the component in your `Main` component. It handles detecting the selected site.
 
 ```js
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 function render() {
 	return (

@@ -6,18 +6,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { take, times } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import ReaderSubscriptionListItemPlaceholder from 'blocks/reader-subscription-list-item/placeholder';
-import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'reader/follow-sources';
-import InfiniteStream from 'reader/components/reader-infinite-stream';
-import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
-import { requestFeedSearch } from 'state/reader/feed-searches/actions';
+import ReaderSubscriptionListItemPlaceholder from 'calypso/blocks/reader-subscription-list-item/placeholder';
+import { READER_FOLLOWING_MANAGE_SEARCH_RESULT } from 'calypso/reader/follow-sources';
+import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
+import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
+import { requestFeedSearch } from 'calypso/state/reader/feed-searches/actions';
 
 class FollowingManageSearchFeedsResults extends React.Component {
 	static propTypes = {

@@ -9,7 +9,7 @@ import {
 	SIGNUP_PROGRESS_PROCESS_STEP,
 	SIGNUP_PROGRESS_SAVE_STEP,
 	SIGNUP_PROGRESS_SUBMIT_STEP,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 // Mock necessary for testing certain utils
 jest.mock( 'signup/config/flows-pure', () => ( {

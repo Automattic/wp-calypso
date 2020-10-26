@@ -1,12 +1,16 @@
 /**
  * Internal dependencies
  */
-import { getReaderFollows } from 'state/reader/follows/selectors';
-import getReaderStream from 'state/reader/streams/selectors/get-reader-stream';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';
 import treeSelect from '@automattic/tree-select';
-import { injectRecommendations, getDistanceBetweenRecs, combineCards } from 'reader/stream/utils';
+import {
+	injectRecommendations,
+	getDistanceBetweenRecs,
+	combineCards,
+} from 'calypso/reader/stream/utils';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * getTransformedStreamItems performs the transformations from raw state to data suitable for

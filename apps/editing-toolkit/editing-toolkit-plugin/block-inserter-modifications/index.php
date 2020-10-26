@@ -61,13 +61,6 @@ function enqueue_style( $filename ) {
  * Enqueue script for the Block Inserter modifications.
  */
 function enqueue_block_inserter_modifications() {
-	/**
-	 * We're enqueuing the script in the head because we need it to run before any
-	 * blocks are registered, so they're all available for filter that sets the
-	 * "New" category.
-	 */
-	enqueue_script( 'new-blocks-showcase', false );
-
 	enqueue_script( 'contextual-tips', true );
 	enqueue_style( 'contextual-tips', false );
 }

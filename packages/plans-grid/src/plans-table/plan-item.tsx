@@ -5,7 +5,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -67,8 +67,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	allPlansExpanded,
 	disabledLabel,
 } ) => {
-	const { __ } = useI18n();
-
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
@@ -84,7 +82,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
-			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
+			{ isPopular && (
+				<span className="plan-item__badge">{ __( 'Popular', __i18n_text_domain__ ) }</span>
+			) }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__details">
 					<div
@@ -108,7 +108,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div hidden={ ! isOpen }>
 						<div className="plan-item__price-note">
-							{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
+							{ isFree
+								? __( 'free forever', __i18n_text_domain__ )
+								: __( 'per month, billed yearly', __i18n_text_domain__ ) }
 						</div>
 
 						<div className="plan-item__actions">
@@ -120,7 +122,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								isPrimary
 								disabled={ !! disabledLabel }
 							>
-								<span>{ __( 'Choose' ) }</span>
+								<span>{ __( 'Choose', __i18n_text_domain__ ) }</span>
 							</Button>
 						</div>
 						<PlansFeatureList
@@ -137,7 +139,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 			{ isPopular && ! isDesktop && (
 				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
+					{ allPlansExpanded
+						? __( 'Collapse all plans', __i18n_text_domain__ )
+						: __( 'Expand all plans', __i18n_text_domain__ ) }
 				</Button>
 			) }
 		</div>

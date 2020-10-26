@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { rescheduleConciergeAppointment } from '../';
-import { updateConciergeBookingStatus } from 'state/concierge/actions';
-import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'state/action-types';
-import { CONCIERGE_STATUS_BOOKING } from 'me/concierge/constants';
+import { updateConciergeBookingStatus } from 'calypso/state/concierge/actions';
+import { CONCIERGE_APPOINTMENT_RESCHEDULE } from 'calypso/state/action-types';
+import { CONCIERGE_STATUS_BOOKING } from 'calypso/me/concierge/constants';
 import toApi from '../to-api';
 
 // we are mocking impure-lodash here, so that conciergeShiftsFetchError() will contain the expected id in the tests

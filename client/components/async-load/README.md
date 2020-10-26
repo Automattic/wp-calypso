@@ -7,7 +7,7 @@
 Pass with a `require` string for the module path to be loaded:
 
 ```jsx
-<AsyncLoad require="components/async-load" />;
+<AsyncLoad require="calypso/components/async-load" />;
 ```
 
 Depending on the environment configuration, this will be transformed automatically into either a `require` or `require.ensure` call.

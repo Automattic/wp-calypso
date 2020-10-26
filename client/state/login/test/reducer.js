@@ -41,7 +41,7 @@ import {
 	SOCIAL_CREATE_ACCOUNT_REQUEST_SUCCESS,
 	ROUTE_SET,
 	CURRENT_USER_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

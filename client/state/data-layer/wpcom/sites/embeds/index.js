@@ -7,12 +7,12 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import renderEmbed from './render';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { EMBEDS_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { mergeHandlers } from 'state/action-watchers/utils';
-import { receiveEmbeds } from 'state/embeds/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { EMBEDS_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
+import { receiveEmbeds } from 'calypso/state/embeds/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Picks the embeds from the API endpoint response.

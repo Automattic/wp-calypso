@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING } from 'state/themes/action-types';
+import { THEME_SHOW_AUTO_LOADING_HOMEPAGE_WARNING } from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 export function showAutoLoadingHomepageWarning( themeId ) {
 	return {

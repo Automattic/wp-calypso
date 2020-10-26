@@ -3,7 +3,7 @@
  */
 import { getProductBySlug } from './get-product-by-slug';
 
-import 'state/products-list/init';
+import 'calypso/state/products-list/init';
 
 /**
  * Returns the price of the specified product.

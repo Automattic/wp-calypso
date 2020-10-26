@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import getRequest from 'state/selectors/get-request';
-import { requestSiteChecklist } from 'state/checklist/actions';
+import getRequest from 'calypso/state/selectors/get-request';
+import { requestSiteChecklist } from 'calypso/state/checklist/actions';
 
 /**
  * Returns the loading state for the checklist API call

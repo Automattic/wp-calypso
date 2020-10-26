@@ -10,12 +10,12 @@ import userAgent from 'express-useragent';
 /**
  * Internal dependencies
  */
-import analytics from 'server/lib/analytics';
-import config from 'server/config';
-import api from 'server/api';
-import pages from 'server/pages';
-import pwa from 'server/pwa';
-import loggerMiddleware from 'server/middleware/logger';
+import analytics from 'calypso/server/lib/analytics';
+import config from 'calypso/server/config';
+import api from 'calypso/server/api';
+import pages from 'calypso/server/pages';
+import pwa from 'calypso/server/pwa';
+import loggerMiddleware from 'calypso/server/middleware/logger';
 
 /**
  * Returns the server HTTP request handler "app".
@@ -33,7 +33,7 @@ export default function setup() {
 	app.use( loggerMiddleware() );
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'server/bundler' )( app );
+		require( 'calypso/server/bundler' )( app );
 
 		if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
 			if ( config( 'wordpress_logged_in_cookie' ) ) {
@@ -71,7 +71,9 @@ export default function setup() {
 		}
 	}
 
-	app.use( pwa() );
+	if ( ! config.isEnabled( 'desktop' ) ) {
+		app.use( pwa() );
+	}
 
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
@@ -90,7 +92,7 @@ export default function setup() {
 	} );
 
 	if ( config.isEnabled( 'devdocs' ) ) {
-		app.use( require( 'server/devdocs' ).default() );
+		app.use( require( 'calypso/server/devdocs' ).default() );
 	}
 
 	if ( config.isEnabled( 'desktop' ) ) {

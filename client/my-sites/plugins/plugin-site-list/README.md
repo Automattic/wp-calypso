@@ -5,7 +5,7 @@ This component is used to represent a list of `Plugin-Site`, with a `Section-Hea
 ## How to use
 
 ```jsx
-import PluginSiteList from 'my-sites/plugins/plugin-site-list';
+import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
 
 return (
 	<PluginSiteList

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { NAVIGATE } from 'state/action-types';
+import { NAVIGATE } from 'calypso/state/action-types';
 
 /**
  * Returns an action object signalling navigation to the given path.

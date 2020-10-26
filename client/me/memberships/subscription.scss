@@ -91,14 +91,29 @@
 	}
 }
 
+.memberships__subscription-header {
+	padding: 16px 24px;
+}
+
 .memberships__subscription-title {
-	color: var( --color-primary );
-	display: block;
-	font-size: $font-title-small;
-	line-height: 1.2em;
-	padding: 20px;
-	white-space: nowrap;
-	text-align: center;
+	color: var( --color-text );
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 400;
+	clear: none;
+}
+
+.memberships__subscription-price {
+	margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.5;
+	color: var( --color-neutral-70 );
+
+	&::first-letter {
+		color: var( --color-text-subtle );
+		vertical-align: super;
+		font-size: 0.75rem;
+	}
 }
 
 .memberships__subscription-remove {

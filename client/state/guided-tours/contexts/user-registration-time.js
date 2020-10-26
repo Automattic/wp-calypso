@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns milliseconds since registration date of the current user

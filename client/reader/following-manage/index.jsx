@@ -13,38 +13,38 @@ import { stringify } from 'qs';
  * Internal Dependencies
  */
 import { CompactCard } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import HeaderCake from 'components/header-cake';
-import ReaderMain from 'reader/components/reader-main';
-import { getBlockedSites } from 'state/reader/site-blocks/selectors';
-import { getDismissedSites } from 'state/reader/site-dismissals/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import SearchInput from 'calypso/components/search';
+import HeaderCake from 'calypso/components/header-cake';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { getBlockedSites } from 'calypso/state/reader/site-blocks/selectors';
+import { getDismissedSites } from 'calypso/state/reader/site-dismissals/selectors';
 import {
 	getReaderFeedsCountForQuery,
 	getReaderFeedsForQuery,
-} from 'state/reader/feed-searches/selectors';
+} from 'calypso/state/reader/feed-searches/selectors';
 import {
 	getReaderAliasedFollowFeedUrl,
 	getReaderFollowsCount,
-} from 'state/reader/follows/selectors';
+} from 'calypso/state/reader/follows/selectors';
 import {
 	getReaderRecommendedSites,
 	getReaderRecommendedSitesPagingOffset,
-} from 'state/reader/recommended-sites/selectors';
-import QueryReaderFeedsSearch from 'components/data/query-reader-feeds-search';
-import QueryReaderRecommendedSites from 'components/data/query-reader-recommended-sites';
-import RecommendedSites from 'blocks/reader-recommended-sites';
+} from 'calypso/state/reader/recommended-sites/selectors';
+import QueryReaderFeedsSearch from 'calypso/components/data/query-reader-feeds-search';
+import QueryReaderRecommendedSites from 'calypso/components/data/query-reader-recommended-sites';
+import RecommendedSites from 'calypso/blocks/reader-recommended-sites';
 import FollowingManageSubscriptions from './subscriptions';
 import FollowingManageSearchFeedsResults from './feed-search-results';
 import FollowingManageEmptyContent from './empty';
-import FollowButton from 'reader/follow-button';
+import FollowButton from 'calypso/reader/follow-button';
 import {
 	READER_FOLLOWING_MANAGE_URL_INPUT,
 	READER_FOLLOWING_MANAGE_RECOMMENDATION,
-} from 'reader/follow-sources';
-import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'lib/url';
-import { recordTrack, recordAction } from 'reader/stats';
-import { SORT_BY_RELEVANCE } from 'state/reader/feed-searches/actions';
+} from 'calypso/reader/follow-sources';
+import { resemblesUrl, withoutHttp, addSchemeIfMissing, addQueryArgs } from 'calypso/lib/url';
+import { recordTrack, recordAction } from 'calypso/reader/stats';
+import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 
 /**
  * Style dependencies

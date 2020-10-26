@@ -1,13 +1,13 @@
 /**
  * Internal Dependencies
  */
-import { READER_SEEN_MARK_AS_SEEN_BLOG_REQUEST } from 'state/reader/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { receiveMarkAsSeen } from 'state/reader/seen-posts/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
-import { requestFollows } from 'state/reader/follows/actions';
+import { READER_SEEN_MARK_AS_SEEN_BLOG_REQUEST } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { receiveMarkAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
 const toApi = ( action ) => {
 	return {

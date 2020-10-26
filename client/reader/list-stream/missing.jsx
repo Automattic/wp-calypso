@@ -8,10 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import QueryReaderList from 'components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import EmptyContent from 'calypso/components/empty-content';
+import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 class ListMissing extends React.Component {
 	static propTypes = {

@@ -94,15 +94,6 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	domainStepCopyUpdates: {
-		datestamp: '20191121',
-		variations: {
-			variantShowUpdates: 100,
-			control: 0,
-		},
-		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {
@@ -201,15 +192,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
 	},
-	oneClickUpsell: {
-		datestamp: '20200922',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	jetpackConversionRateOptimization: {
 		datestamp: '20201020',
 		variations: {
@@ -219,5 +201,15 @@ export default {
 		},
 		defaultVariation: 'v1 - 3 cols layout',
 		allowExistingUsers: true,
+	},
+	secureYourBrand: {
+		datestamp: '20201026',
+		variations: {
+			test: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
 	},
 };

@@ -7,10 +7,10 @@ import {
 	BILLING_TRANSACTION_RECEIVE,
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	BILLING_TRANSACTION_REQUEST_SUCCESS,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'calypso/state/action-types';
+import wp from 'calypso/lib/wp';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 export const requestBillingTransaction = ( transactionId ) => ( dispatch ) => {
 	dispatch( {

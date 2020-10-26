@@ -8,8 +8,6 @@ export const paymentMethods = purchasesRoot + '/payment-methods';
 
 export const pendingPayments = purchasesRoot + '/pending';
 
-export const myMemberships = purchasesRoot + '/other';
-
 export function billingHistoryReceipt( receiptId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if ( 'undefined' === typeof receiptId ) {
@@ -70,4 +68,5 @@ export function editCardDetails( siteName, purchaseId, cardId ) {
 
 export const deprecated = {
 	upcomingCharges: purchasesRoot + '/upcoming',
+	otherPurchases: purchasesRoot + '/other',
 };

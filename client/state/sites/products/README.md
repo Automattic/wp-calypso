@@ -15,7 +15,10 @@ Fetches products for the site with the given site ID.
 Adds the products fetched from the API to the set of products for the given site ID.
 
 ```js
-import { fetchSiteProducts, fetchSiteProductsCompleted } from 'state/sites/products/actions';
+import {
+	fetchSiteProducts,
+	fetchSiteProductsCompleted,
+} from 'calypso/state/sites/products/actions';
 
 dispatch( fetchSiteProducts( 555555555 ) );
 dispatch(

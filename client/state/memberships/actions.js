@@ -4,10 +4,10 @@
 import {
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE,
-} from 'state/action-types';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import wpcom from 'calypso/lib/wp';
 
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
 
 export function listMembershipsConnectedAccounts() {
 	return ( dispatch ) => {

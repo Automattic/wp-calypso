@@ -52,7 +52,6 @@
 		"i18n/empathy-mode": true,
 		"ive/use-external-assignment": true,
 		"jetpack/api-cache": true,
-		"jetpack/backup-simplified-screens": true,
 		"jetpack/blocks/beta": true,
 		"jetpack/concierge-sessions": false,
 		"jetpack/connect-redirect-pressable-credential-approval": true,

@@ -11,8 +11,8 @@ import {
 	HAPPYCHAT_CHAT_STATUS_CLOSED,
 	HAPPYCHAT_CHAT_STATUS_DEFAULT,
 	HAPPYCHAT_CHAT_STATUS_NEW,
-} from 'state/happychat/constants';
-import createSelector from 'lib/create-selector';
+} from 'calypso/state/happychat/constants';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Returns true if there's an active chat session in-progress. Chat sessions with

@@ -57,7 +57,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/search-product": true,
 		"jetpack/backups-restore": true,
-		"jetpack/backup-simplified-screens": true,
 		"jetpack/anti-spam-product": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/personal-plan": false,

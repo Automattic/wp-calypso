@@ -209,6 +209,13 @@ class PurchaseMeta extends Component {
 				return translate( 'Credits' );
 			}
 
+			if (
+				( isExpired( purchase ) || isExpiring( purchase ) ) &&
+				! isPaidWithCredits( purchase )
+			) {
+				return translate( 'None' );
+			}
+
 			if ( isPaidWithCreditCard( purchase ) ) {
 				paymentInfo = payment.creditCard.number;
 			} else if ( isPaidWithPayPalDirect( purchase ) ) {

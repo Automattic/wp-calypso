@@ -10,17 +10,32 @@ import { Provider as ReduxProvider } from 'react-redux';
 import { makeLayoutMiddleware } from './shared.js';
 import LayoutLoggedOut from 'layout/logged-out';
 import CalypsoI18nProvider from 'components/calypso-i18n-provider';
+import { RouteProvider } from 'components/route';
 
 /**
  * Re-export
  */
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
-const ProviderWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
+const ProviderWrappedLoggedOutLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => (
 	<CalypsoI18nProvider>
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		</ReduxProvider>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<ReduxProvider store={ store }>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</ReduxProvider>
+		</RouteProvider>
 	</CalypsoI18nProvider>
 );
 

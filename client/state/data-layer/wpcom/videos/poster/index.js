@@ -1,15 +1,19 @@
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { VIDEO_EDITOR_UPDATE_POSTER } from 'state/action-types';
-import { setPosterUrl, showError, showUploadProgress } from 'state/editor/video-editor/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { VIDEO_EDITOR_UPDATE_POSTER } from 'calypso/state/action-types';
+import {
+	setPosterUrl,
+	showError,
+	showUploadProgress,
+} from 'calypso/state/editor/video-editor/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getMediaItem from 'state/selectors/get-media-item';
-import { dispatchFluxUpdateMediaItem } from 'state/media/utils/flux-adapter';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { dispatchFluxUpdateMediaItem } from 'calypso/state/media/utils/flux-adapter';
 import { assign } from 'lodash';
 
 const fetch = ( action ) => {

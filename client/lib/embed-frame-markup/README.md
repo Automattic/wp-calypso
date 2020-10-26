@@ -7,7 +7,7 @@ Exports a single default function which, when invoked with an object containing 
 ## Usage
 
 ```js
-import generateEmbedFrameMarkup from 'lib/embed-frame-markup';
+import generateEmbedFrameMarkup from 'calypso/lib/embed-frame-markup';
 
 const markup = generateEmbedFrameMarkup( {
 	body: 'Hello World',

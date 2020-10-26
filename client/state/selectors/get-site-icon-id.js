@@ -7,8 +7,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**
  * Returns a ID to the media associated with a site's current site icon, or

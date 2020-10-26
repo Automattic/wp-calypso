@@ -6,10 +6,10 @@ import { getPurchases } from './get-purchases';
 /**
  * Type dependencies
  */
-import type { Purchase } from 'lib/purchases/types';
-import type { AppState } from 'types';
+import type { Purchase } from 'calypso/lib/purchases/types';
+import type { AppState } from 'calypso/types';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Returns a list of Purchases associated with a Site from the state using its siteId

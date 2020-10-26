@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isPrivateSite from 'state/selectors/is-private-site';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 describe( 'isPrivateSite()', () => {
 	test( 'should return null if neither the site nor settings are known', () => {

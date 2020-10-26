@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import { uploadMedia as uploadMediaThunk } from 'state/media/thunks/upload-media';
+import { uploadMedia as uploadMediaThunk } from 'calypso/state/media/thunks/upload-media';
 import {
 	dispatchFluxReceiveMediaItemError,
 	dispatchFluxReceiveMediaItemSuccess,
-} from 'state/media/utils/flux-adapter';
-import * as syncActions from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
-import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
+} from 'calypso/state/media/utils/flux-adapter';
+import * as syncActions from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 
 jest.mock( 'state/media/utils/is-file-list', () => ( {
 	isFileList: jest.fn(),

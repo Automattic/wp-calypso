@@ -7,7 +7,7 @@ This class, `PaymentGatewayLoader`, takes care of the details of loading the rem
 You can access the `Paygate` class from within the callback of `PaygateLoader.ready` like so:
 
 ```js
-import paymentGatewayLoader from 'lib/payment-gateway-loader';
+import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
 
 function onSuccess( token ) {
 	// Do something with the Paygate token

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 function Favicon( props ) {
 	const { site, className, size } = props;

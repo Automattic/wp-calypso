@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSimplePayments from 'state/selectors/get-simple-payments';
+import getSimplePayments from 'calypso/state/selectors/get-simple-payments';
 
 const simplePayment1 = {
 	ID: 1,

@@ -18,8 +18,10 @@ import ExternalLink from 'calypso/components/external-link';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
-import ReduxFormFieldset, { FieldsetRenderer } from 'calypso/components/redux-forms/redux-form-fieldset';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import ReduxFormFieldset, {
+	FieldsetRenderer,
+} from 'calypso/components/redux-forms/redux-form-fieldset';
 import ProductImagePicker from './product-image-picker';
 import { SUPPORTED_CURRENCY_LIST } from 'calypso/lib/simple-payments/constants';
 
@@ -146,7 +148,7 @@ class ProductForm extends Component {
 						component={ renderPriceField }
 					/>
 					<div>
-						<ReduxFormFieldset name="multiple" type="checkbox" component={ CompactFormToggle }>
+						<ReduxFormFieldset name="multiple" type="checkbox" component={ FormToggle }>
 							{ translate( 'Allow people to buy more than one item at a time.' ) }
 						</ReduxFormFieldset>
 						<ReduxFormFieldset

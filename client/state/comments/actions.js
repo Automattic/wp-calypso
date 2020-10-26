@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 import {
 	COMMENT_COUNTS_REQUEST,
 	COMMENT_REQUEST,
@@ -18,18 +18,18 @@ import {
 	COMMENTS_TREE_SITE_REQUEST,
 	COMMENTS_UNLIKE,
 	COMMENTS_WRITE,
-} from 'state/action-types';
-import { READER_EXPAND_COMMENTS } from 'state/reader/action-types';
+} from 'calypso/state/action-types';
+import { READER_EXPAND_COMMENTS } from 'calypso/state/reader/action-types';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from './constants';
-import { getSiteComment } from 'state/comments/selectors';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 
-import 'state/data-layer/wpcom/comments';
-import 'state/data-layer/wpcom/sites/comment-counts';
-import 'state/data-layer/wpcom/sites/comments-tree';
-import 'state/data-layer/wpcom/sites/comments';
-import 'state/data-layer/wpcom/sites/posts/replies';
+import 'calypso/state/data-layer/wpcom/comments';
+import 'calypso/state/data-layer/wpcom/sites/comment-counts';
+import 'calypso/state/data-layer/wpcom/sites/comments-tree';
+import 'calypso/state/data-layer/wpcom/sites/comments';
+import 'calypso/state/data-layer/wpcom/sites/posts/replies';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Creates an action that requests a single comment for a given site.

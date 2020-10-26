@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import { reducer as connection } from './connection/reducer';
 import { reducer as credentials } from './credentials/reducer';
 import { reducer as modules } from './modules/reducer';

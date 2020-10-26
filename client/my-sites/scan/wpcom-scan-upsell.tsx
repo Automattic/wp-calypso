@@ -28,6 +28,7 @@ import SecurityIcon from 'calypso/components/jetpack/security-icon';
  * Asset dependencies
  */
 import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 const ScanMultisiteBody: FunctionComponent = () => (
@@ -51,7 +52,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your site has VaultPress' ) ) }
-			image={ <SecurityIcon icon="info" /> }
+			image={ { path: VaultPressLogo } }
 			isPrimary
 		>
 			<p>
@@ -63,7 +64,7 @@ const ScanVPActiveBody: FunctionComponent = () => {
 			</p>
 			<div className="scan__wpcom-ctas">
 				<Button
-					className="scan__wpcom-cta backup__wpcom-realtime-cta"
+					className="scan__wpcom-cta"
 					href="https://dashboard.vaultpress.com"
 					onClick={ onUpgradeClick }
 					selfTarget={ true }

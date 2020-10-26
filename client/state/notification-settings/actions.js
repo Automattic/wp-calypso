@@ -6,7 +6,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	NOTIFICATION_SETTINGS_FETCH,
 	NOTIFICATION_SETTINGS_FETCH_COMPLETE,
@@ -17,11 +17,11 @@ import {
 	NOTIFICATION_SETTINGS_SAVE_FAILED,
 	NOTIFICATION_SETTINGS_UPDATE,
 	NOTIFICATION_SETTINGS_TOGGLE_SETTING,
-} from 'state/action-types';
-import { successNotice, errorNotice } from 'state/notices/actions';
+} from 'calypso/state/action-types';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
-import 'state/data-layer/wpcom/me/notification/settings';
-import 'state/notification-settings/init';
+import 'calypso/state/data-layer/wpcom/me/notification/settings';
+import 'calypso/state/notification-settings/init';
 
 /**
  * Returns an action object to signal the request of the current user notification settings.

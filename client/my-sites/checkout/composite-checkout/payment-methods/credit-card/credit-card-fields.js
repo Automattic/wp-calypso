@@ -12,6 +12,7 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
 import { paymentMethodClassName } from 'calypso/lib/cart-values';
-import { useCart } from 'calypso/my-sites/checkout/composite-checkout/cart-provider';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
@@ -48,7 +48,7 @@ export default function CreditCardFields() {
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];

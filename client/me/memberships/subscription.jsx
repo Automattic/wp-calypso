@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
@@ -16,7 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
 import HeaderCake from 'calypso/components/header-cake';
 import { purchasesRoot } from '../purchases/paths';
-import Site from 'calypso/blocks/site';
+import MembershipSiteHeader from '../purchases/membership-site/header';
 import Gridicon from 'calypso/components/gridicon';
 import { requestSubscriptionStop } from 'calypso/state/memberships/subscriptions/actions';
 import Notice from 'calypso/components/notice';
@@ -41,14 +41,11 @@ class Subscription extends React.Component {
 
 		return (
 			<Main className="memberships__subscription is-wide-layout">
-				<DocumentHead title={ translate( 'Other Sites' ) } />
+				<DocumentHead title={ translate( 'Subscription Details' ) } />
 				<MeSidebarNavigation />
 				<QueryMembershipsSubscriptions />
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-
-				<HeaderCake backHref={ purchasesRoot + '/other' }>
-					{ subscription ? subscription.title : translate( 'All subscriptions' ) }
-				</HeaderCake>
+				<HeaderCake backHref={ purchasesRoot }>{ translate( 'Subscription Details' ) }</HeaderCake>
 				{ stoppingStatus === 'start' && (
 					<Notice
 						status="is-info"
@@ -70,48 +67,46 @@ class Subscription extends React.Component {
 				) }
 
 				{ subscription && (
-					<div>
+					<>
 						<Card className="memberships__subscription-meta">
-							<Site siteId={ parseInt( subscription.site_id ) } href={ subscription.site_url } />
-							<div className="memberships__subscription-title">{ subscription.title }</div>
-							<Fragment>
-								<ul className="memberships__subscription-inner-meta">
-									<li>
-										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Price' ) }
-										</em>
-										<span className="memberships__subscription-inner-detail">
-											{ formatCurrency( subscription.renewal_price, subscription.currency ) }
-										</span>
-									</li>
-									<li>
-										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Renew interval' ) }
-										</em>
-										<span className="memberships__subscription-inner-detail">
-											{ subscription.renew_interval || '-' }
-										</span>
-									</li>
-									<li>
-										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Subscribed On' ) }
-										</em>
-										<span className="memberships__subscription-inner-detail">
-											{ moment( subscription.start_date ).format( 'll' ) }
-										</span>
-									</li>
-									<li>
-										<em className="memberships__subscription-inner-detail-label">
-											{ translate( 'Renews on' ) }
-										</em>
-										<span className="memberships__subscription-inner-detail">
-											{ subscription.end_date
-												? moment( subscription.end_date ).format( 'll' )
-												: translate( 'Never Expires' ) }
-										</span>
-									</li>
-								</ul>
-							</Fragment>
+							<MembershipSiteHeader
+								name={ subscription.site_title }
+								domain={ subscription.site_url }
+							/>
+							<div className="memberships__subscription-header">
+								<div className="memberships__subscription-title">{ subscription.title }</div>
+								<div className="memberships__subscription-price">
+									{ formatCurrency( subscription.renewal_price, subscription.currency ) }
+								</div>
+							</div>
+							<ul className="memberships__subscription-inner-meta">
+								<li>
+									<em className="memberships__subscription-inner-detail-label">
+										{ translate( 'Renew interval' ) }
+									</em>
+									<span className="memberships__subscription-inner-detail">
+										{ subscription.renew_interval || '-' }
+									</span>
+								</li>
+								<li>
+									<em className="memberships__subscription-inner-detail-label">
+										{ translate( 'Subscribed On' ) }
+									</em>
+									<span className="memberships__subscription-inner-detail">
+										{ moment( subscription.start_date ).format( 'll' ) }
+									</span>
+								</li>
+								<li>
+									<em className="memberships__subscription-inner-detail-label">
+										{ translate( 'Renews on' ) }
+									</em>
+									<span className="memberships__subscription-inner-detail">
+										{ subscription.end_date
+											? moment( subscription.end_date ).format( 'll' )
+											: translate( 'Never Expires' ) }
+									</span>
+								</li>
+							</ul>
 						</Card>
 						<CompactCard
 							tagName="button"
@@ -121,7 +116,7 @@ class Subscription extends React.Component {
 							<Gridicon icon="trash" />
 							{ translate( 'Stop %s subscription.', { args: subscription.title } ) }
 						</CompactCard>
-					</div>
+					</>
 				) }
 			</Main>
 		);

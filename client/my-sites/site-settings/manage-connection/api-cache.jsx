@@ -11,7 +11,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import config from 'calypso/config';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -31,14 +31,14 @@ const ApiCache = ( {
 
 	return (
 		<CompactCard>
-			<CompactFormToggle
+			<FormToggle
 				checked={ !! fields.api_cache }
 				disabled={ isRequestingSettings || isSavingSettings }
 				onChange={ handleAutosavingToggle( 'api_cache' ) }
 			>
 				{ translate( 'Use synchronized data to boost performance' ) } (a8c-only experimental
 				feature)
-			</CompactFormToggle>
+			</FormToggle>
 		</CompactCard>
 	);
 };

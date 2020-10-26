@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -70,13 +70,13 @@ class MediaSettingsWriting extends Component {
 							disabled={ isRequestingOrSaving }
 						/>
 						<div className="site-settings__child-settings">
-							<CompactFormToggle
+							<FormToggle
 								checked={ fields.carousel_display_exif || false }
 								disabled={ isRequestingOrSaving || ! carouselActive }
 								onChange={ handleAutosavingToggle( 'carousel_display_exif' ) }
 							>
 								{ translate( 'Show photo metadata in carousel, when available' ) }
-							</CompactFormToggle>
+							</FormToggle>
 							<FormLabel className={ labelClassName } htmlFor="carousel_background_color">
 								{ translate( 'Background Color' ) }
 							</FormLabel>

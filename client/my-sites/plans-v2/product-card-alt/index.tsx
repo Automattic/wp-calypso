@@ -12,6 +12,7 @@ import {
 	durationToText,
 	getProductWithOptionDisplayName,
 	productBadgeLabelAlt,
+	productButtonLabel,
 	productButtonLabelAlt,
 	slugIsFeaturedProduct,
 } from '../utils';
@@ -19,6 +20,7 @@ import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -100,9 +102,19 @@ const ProductCardAltWrapper = ( {
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
 
-	// In the case of products that have options (daily and real-time), we want to display
-	// the name of the option, not the name of one of the variants.
-	const productName = getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature );
+	// In v1, we use the name of the option instead of the name of the product. In v2 we
+	// honor the name of the product.
+	// E.g. In v1, Jetpack Security Daily is featured as Jetpack Security.
+	const currentCROvariant = getJetpackCROActiveVersion();
+	const productName =
+		currentCROvariant === 'v1'
+			? getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature )
+			: item.displayName;
+
+	const buttonLabel =
+		currentCROvariant === 'v1'
+			? productButtonLabelAlt( item, isOwned, isItemPlanFeature, isUpgradeableToYearly, sitePlan )
+			: productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan );
 
 	return (
 		<JetpackProductCardAlt
@@ -113,13 +125,7 @@ const ProductCardAltWrapper = ( {
 			description={ description }
 			currencyCode={ currencyCode }
 			billingTimeFrame={ durationToText( item.term ) }
-			buttonLabel={ productButtonLabelAlt(
-				item,
-				isOwned,
-				isItemPlanFeature,
-				isUpgradeableToYearly,
-				sitePlan
-			) }
+			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }

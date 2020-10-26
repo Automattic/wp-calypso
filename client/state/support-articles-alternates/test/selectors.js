@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { keyToString } from 'reader/post-key';
+import { keyToString } from 'calypso/reader/post-key';
 import {
 	isRequestingSupportArticleAlternates,
 	isRequestingSupportArticleAlternatesCompleted,

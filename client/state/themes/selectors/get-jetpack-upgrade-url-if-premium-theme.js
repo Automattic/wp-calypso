@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
-} from 'lib/plans/constants';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
+} from 'calypso/lib/plans/constants';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for purchasing a Jetpack Professional plan if the theme is a premium theme and site doesn't have access to them.

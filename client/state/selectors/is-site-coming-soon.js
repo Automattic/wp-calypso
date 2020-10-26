@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import isPrivateSite from 'state/selectors/is-private-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Returns true if the site is coming_soon

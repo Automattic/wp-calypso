@@ -10,11 +10,11 @@ import {
 	SOCIAL_CONNECT_ACCOUNT_REQUEST,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_FAILURE,
 	SOCIAL_CONNECT_ACCOUNT_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { getErrorFromWPCOMError } from 'state/login/utils';
-import wpcom from 'lib/wp';
+} from 'calypso/state/action-types';
+import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
+import wpcom from 'calypso/lib/wp';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Connects the current WordPress.com account with a third-party social account (Google ...).

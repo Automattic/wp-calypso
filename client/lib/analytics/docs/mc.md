@@ -9,7 +9,7 @@ Automatticians may refer to internal documentation for more information about MC
 Bump a single WP.com stat:
 
 ```js
-import { bumpStat } from 'lib/analytics/mc';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
 bumpStat( 'newdash_visits', 'sites' );
 ```
@@ -19,7 +19,7 @@ bumpStat( 'newdash_visits', 'sites' );
 Bump multiple WP.com stats:
 
 ```js
-import { bumpStat } from 'lib/analytics/mc';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
 bumpStat( {
 	stat_name1: 'stat_value1',

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getSiteFrontPageType from 'state/sites/selectors/get-site-front-page-type';
+import getSiteFrontPageType from 'calypso/state/sites/selectors/get-site-front-page-type';
 import { getActiveTheme, isThemeGutenbergFirst } from '../themes/selectors';
 
 /**

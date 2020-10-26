@@ -7,10 +7,10 @@ import {
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/plugins/new';
-import 'state/plugins/init';
+import 'calypso/state/data-layer/wpcom/sites/plugins/new';
+import 'calypso/state/plugins/init';
 
 /**
  * Upload a plugin to a site.

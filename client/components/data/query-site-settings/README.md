@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySiteSettings from 'components/data/query-site-settings';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 
 export default function MySettingsPage( { settings } ) {
 	return (

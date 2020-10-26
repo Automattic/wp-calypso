@@ -720,7 +720,7 @@ export default function pages() {
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
+				// default export of it. See build-tools/webpack/sections-loader.js
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.

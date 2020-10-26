@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { MAILCHIMP_LISTS_LIST, MAILCHIMP_LISTS_RECEIVE } from 'state/action-types';
+import { MAILCHIMP_LISTS_LIST, MAILCHIMP_LISTS_RECEIVE } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/mailchimp';
-import 'state/mailchimp/init';
+import 'calypso/state/data-layer/wpcom/sites/mailchimp';
+import 'calypso/state/mailchimp/init';
 
 export const requestList = ( siteId ) => ( {
 	siteId,

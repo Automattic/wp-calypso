@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
 
 export class ReaderSidebarLists extends Component {

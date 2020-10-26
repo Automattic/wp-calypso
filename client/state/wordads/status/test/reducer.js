@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items } from '../reducer';
-import { WORDADS_STATUS_RECEIVE } from 'state/action-types';
+import { WORDADS_STATUS_RECEIVE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

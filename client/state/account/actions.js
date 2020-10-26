@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
-import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
+import user from 'calypso/lib/user';
+import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/account/close';
-import 'state/account/init';
+import 'calypso/state/data-layer/wpcom/me/account/close';
+import 'calypso/state/account/init';
 
 export function closeAccount() {
 	return {

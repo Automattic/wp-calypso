@@ -6,10 +6,10 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { EMBED_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveEmbed } from 'state/embeds/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { EMBED_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveEmbed } from 'calypso/state/embeds/actions';
 
 /**
  * Dispatches a request to fetch a particular embed for a given site.

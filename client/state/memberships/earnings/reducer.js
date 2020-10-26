@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { MEMBERSHIPS_EARNINGS_RECEIVE } from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 const summary = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

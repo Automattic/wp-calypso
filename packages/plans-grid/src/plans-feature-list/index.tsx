@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -30,7 +30,7 @@ const ChevronDown = (
 function domainMessageStateMachine(
 	isFreePlan: boolean,
 	domain: DomainSuggestions.DomainSuggestion | undefined,
-	__: Function
+	__: typeof import('@wordpress/i18n').__
 ) {
 	const states = {
 		NO_DOMAIN: {
@@ -41,7 +41,7 @@ function domainMessageStateMachine(
 				// translators: %s is a domain name eg: example.com is included
 				domainMessage: (
 					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
+						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
 					</>
 				),
 			},
@@ -54,7 +54,7 @@ function domainMessageStateMachine(
 				// translators: %s is a domain name eg: example.com is included
 				domainMessage: (
 					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
+						{ __( 'Pick a free domain (1 year)', __i18n_text_domain__ ) } { ChevronDown }
 					</>
 				),
 			},
@@ -66,7 +66,7 @@ function domainMessageStateMachine(
 				// translators: <url /> is a domain name eg: example.com is not included
 				domainMessage: (
 					<span>
-						{ createInterpolateElement( __( '<url /> is not included' ), {
+						{ createInterpolateElement( __( '<url /> is not included', __i18n_text_domain__ ), {
 							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
 						} ) }
 					</span>
@@ -78,7 +78,7 @@ function domainMessageStateMachine(
 				// translators: <url /> is a domain name eg: example.com is included
 				domainMessage: (
 					<span>
-						{ createInterpolateElement( __( '<url /> is included' ), {
+						{ createInterpolateElement( __( '<url /> is included', __i18n_text_domain__ ), {
 							url: <span className="plans-feature-list__item-url">{ domain?.domain_name }</span>,
 						} ) }
 					</span>
@@ -111,8 +111,6 @@ const PlansFeatureList: React.FunctionComponent< Props > = ( {
 	disabledLabel,
 	multiColumn = false,
 } ) => {
-	const { __ } = useI18n();
-
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
 	return (

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
+import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my-business-stats-error';
 
 describe( 'getGoogleMyBusinessStatsError', () => {
 	test( 'should return null if no error available', () => {

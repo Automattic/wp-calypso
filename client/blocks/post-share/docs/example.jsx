@@ -8,7 +8,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import Notice from 'calypso/components/notice';
 import PostShare from 'calypso/blocks/post-share';
 import QueryPosts from 'calypso/components/data/query-posts';

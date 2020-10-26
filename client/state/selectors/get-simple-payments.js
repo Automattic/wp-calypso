@@ -7,7 +7,7 @@ import { get, find, orderBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Get all Simple Payment or the one specified by `simplePaymentId`. They will be returned ordered by

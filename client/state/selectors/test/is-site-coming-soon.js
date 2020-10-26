@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 describe( 'isSiteComingSoon()', () => {
 	test( 'should return false if neither the site nor settings are known', () => {

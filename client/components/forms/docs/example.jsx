@@ -35,7 +35,7 @@ import FormTextarea from 'calypso/components/forms/form-textarea';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import getCountries from 'calypso/state/selectors/get-countries';
 import PhoneInput from 'calypso/components/phone-input';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';

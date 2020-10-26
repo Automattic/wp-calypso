@@ -7,8 +7,8 @@ A React component for displaying a toggle menu. By default, only an ellipsis but
 Render `<EllipsisMenu />` in a similar fashion as you would [the `<PopoverMenu />` component](../popover-menu), as it is effectively a convenience wrapper for this component with a few additional options. Specifically, you'll still need to render `<PopoverMenuItem />` as children of the `<EllipsisMenu />`.
 
 ```jsx
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (

@@ -26,7 +26,7 @@ import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
  * Asset dependencies
  */
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
-import VaultPressLogo from './vaultpress-logo.svg';
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
@@ -52,7 +52,7 @@ const BackupVPActiveBody: FunctionComponent = () => {
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Your backups are powered by VaultPress' ) ) }
-			image={ <img src={ VaultPressLogo } width="155" alt="VaultPress logo" /> }
+			image={ { path: VaultPressLogo } }
 			isPrimary
 		>
 			<p>{ preventWidows( translate( 'You can access them on your VaultPress Dashboard.' ) ) }</p>

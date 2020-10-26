@@ -1,8 +1,11 @@
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
-import { SUPPORT_ARTICLE_DIALOG_OPEN, SUPPORT_ARTICLE_DIALOG_CLOSE } from 'state/action-types';
+import { withoutPersistence } from 'calypso/state/utils';
+import {
+	SUPPORT_ARTICLE_DIALOG_OPEN,
+	SUPPORT_ARTICLE_DIALOG_CLOSE,
+} from 'calypso/state/action-types';
 
 export default withoutPersistence(
 	(

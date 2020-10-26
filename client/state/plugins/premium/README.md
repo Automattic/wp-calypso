@@ -11,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Get a list of plugins to auto-install for a given site. Plugin information returned includes the registration keys.
 
 ```js
-import { fetchInstallInstructions } from 'state/plugins/premium/actions';
+import { fetchInstallInstructions } from 'calypso/state/plugins/premium/actions';
 
 fetchInstallInstructions( 106093271 );
 ```
@@ -21,7 +21,7 @@ fetchInstallInstructions( 106093271 );
 Start the install process for a plugin. Plugin object should be pulled from the [PluginsStore](https://github.com/Automattic/wp-calypso/tree/HEAD/client/lib/plugins).
 
 ```js
-import { installPlugin } from 'state/plugins/premium/actions';
+import { installPlugin } from 'calypso/state/plugins/premium/actions';
 
 const plugin = PluginsStore.getSitePlugin( site, 'vaultpress' );
 installPlugin( plugin, site );

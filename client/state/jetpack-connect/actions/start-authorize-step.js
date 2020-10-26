@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_CONNECT_QUERY_SET } from 'state/jetpack-connect/action-types';
+import { JETPACK_CONNECT_QUERY_SET } from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 export function startAuthorizeStep( clientId ) {
 	return {
