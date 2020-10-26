@@ -443,6 +443,7 @@ export function buildCardFeatureItemFromFeatureKey(
 						subFeaturesKeys.map( ( f ) => buildCardFeatureItemFromFeatureKey( f, options ) )
 				  )
 				: undefined,
+			isHighlighted: feature.isProduct || feature.isPlan,
 		};
 	}
 }

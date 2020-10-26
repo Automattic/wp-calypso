@@ -78,6 +78,7 @@ export type SelectorProductFeaturesItem = {
 	text: TranslateResult;
 	description?: TranslateResult;
 	subitems?: SelectorProductFeaturesItem[];
+	isHighlighted?: boolean;
 };
 
 export type SelectorProductFeaturesSection = {

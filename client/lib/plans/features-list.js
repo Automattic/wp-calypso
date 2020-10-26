@@ -13,6 +13,7 @@ import MaterialIcon from 'calypso/components/material-icon';
 import ExternalLink from 'calypso/components/external-link';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 import { DOMAIN_PRICING_AND_AVAILABLE_TLDS } from 'calypso/lib/url/support';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 
 export const FEATURE_CATEGORIES = {
 	[ constants.FEATURE_CATEGORY_SECURITY ]: {
@@ -1010,6 +1011,34 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Limit content to paying subscribers.' ),
 	},
 
+	[ constants.FEATURE_PLAN_SECURITY_DAILY ]: {
+		getSlug: () => constants.FEATURE_PLAN_SECURITY_DAILY,
+		getIcon: () => 'lock',
+		getTitle: () =>
+			i18n.translate( '{{strong}}All Security {{em}}Daily{{/em}}{{/strong}} features', {
+				components: {
+					em: <em />,
+					strong: <strong />,
+				},
+			} ),
+		isPlan: true,
+	},
+
+	[ constants.FEATURE_PLAN_SECURITY_REALTIME ]: {
+		getSlug: () => constants.FEATURE_PLAN_SECURITY_REALTIME,
+		getIcon: () => 'lock',
+		getTitle: () =>
+			i18n.translate( '{{strong}}All Security {{em}}Real{{nbh/}}time{{/em}}{{/strong}} features', {
+				components: {
+					em: <em />,
+					strong: <strong />,
+					nbh: <>&#8209;</>,
+				},
+				comment: '{{nbh}} represents a non breakable hyphen',
+			} ),
+		isPlan: true,
+	},
+
 	[ constants.FEATURE_SECURITY_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_SECURITY_REALTIME_V2,
 		getIcon: () => 'lock',
@@ -1058,17 +1087,25 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
-			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ),
+			getJetpackCROActiveVersion() === 'v2'
+				? i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
+						components: {
+							em: <em />,
+							strong: <strong />,
+						},
+				  } )
+				: i18n.translate( 'Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1078,17 +1115,27 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
-			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ),
+			getJetpackCROActiveVersion() === 'v2'
+				? i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
+						components: {
+							em: <em />,
+							strong: <strong />,
+							nbh: <>&#8209;</>,
+						},
+						comment: '{{nbh}} represents a non breakable hyphen',
+				  } )
+				: i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1098,6 +1145,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_SCAN_V2 ]: {
@@ -1118,6 +1166,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	// * Scan Daily *
@@ -1142,6 +1191,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	// * Scan Real-time *
@@ -1166,6 +1216,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
@@ -1186,6 +1237,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_ACTIVITY_LOG_V2 ]: {
@@ -1240,7 +1292,16 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_PRODUCT_SEARCH_V2 ]: {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
-		getTitle: () => i18n.translate( 'Search: up to 100k records' ),
+		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'search' : null ),
+		getTitle: () =>
+			getJetpackCROActiveVersion() === 'v2'
+				? i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
+						components: {
+							em: <em />,
+							strong: <strong />,
+						},
+				  } )
+				: i18n.translate( 'Search: up to 100k records' ),
 		getDescription: () =>
 			i18n.translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Powerful filtering and customization options. {{link}}Learn more.{{/link}}',
@@ -1250,6 +1311,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_VIDEO_HOSTING_V2 ]: {
@@ -1268,7 +1330,16 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_CRM_V2 ]: {
 		getSlug: () => constants.FEATURE_CRM_V2,
-		getTitle: () => i18n.translate( 'CRM: Entrepreneur bundle' ),
+		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'multiple-users' : null ),
+		getTitle: () =>
+			getJetpackCROActiveVersion() === 'v2'
+				? i18n.translate( 'Jetpack CRM {{strong}}{{em}}Entrepreneur{{/em}}{{/strong}}', {
+						components: {
+							em: <em />,
+							strong: <strong />,
+						},
+				  } )
+				: i18n.translate( 'CRM: Entrepreneur bundle' ),
 		getDescription: () =>
 			i18n.translate(
 				'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits. {{link}}Learn more{{/link}}.',
@@ -1278,6 +1349,7 @@ export const FEATURES_LIST = {
 					},
 				}
 			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
 	[ constants.FEATURE_CRM_LEADS_AND_FUNNEL ]: {

@@ -291,6 +291,17 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	list-style-type: none;
 }
 
+.jetpack-product-card-alt-2__features-item.is-highlighted {
+	margin-bottom: 12px;
+	padding-bottom: 12px;
+
+	border-bottom: solid 1px var( --color-border-subtle );
+
+	&:last-of-type {
+		border-bottom: none;
+	}
+}
+
 .jetpack-product-card-alt-2__features-main {
 	display: flex;
 	justify-content: space-between;
@@ -318,6 +329,8 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	margin-right: 14px;
 	fill: var( --studio-gray-50 );
 	&.gridicons-lock,
+	&.gridicons-search,
+	&.gridicons-multiple-users,
 	&.gridicons-cloud-upload,
 	&.material-icon-security,
 	&.gridicons-bug {

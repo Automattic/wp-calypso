@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { isObject } from 'lodash';
 import React, { FunctionComponent } from 'react';
 
@@ -25,12 +26,16 @@ type IconComponent = FunctionComponent< { icon: string; className?: string } >;
 const DEFAULT_ICON = 'checkmark';
 
 const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( { item } ) => {
-	const { icon, text, description, subitems } = item;
+	const { icon, text, description, subitems, isHighlighted } = item;
 	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
 
 	return (
-		<li className="jetpack-product-card-alt-2__features-item">
+		<li
+			className={ classNames( 'jetpack-product-card-alt-2__features-item', {
+				'is-highlighted': isHighlighted,
+			} ) }
+		>
 			<div className="jetpack-product-card-alt-2__features-main">
 				<div className="jetpack-product-card-alt-2__features-summary">
 					<Icon className="jetpack-product-card-alt-2__features-icon" icon={ iconName } />
