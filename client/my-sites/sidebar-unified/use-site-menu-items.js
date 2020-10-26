@@ -13,6 +13,7 @@ import { requestAdminMenu } from '../../state/admin-menu/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { getSiteDomain } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const useSiteMenuItems = () => {
 	 * avoids a situation where the user might be left with an
 	 * empty menu.
 	 */
+
 	const shouldShowLinks = true;
 	const shouldShowTestimonials = useSelector( ( state ) =>
 		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_testimonial' ], false )
@@ -41,20 +43,29 @@ const useSiteMenuItems = () => {
 		get( state.siteSettings.items, [ selectedSiteId, 'jetpack_portfolio' ], false )
 	);
 	const shouldShowWooCommerce = true;
+	/*
+	 * Header controlled by: current_theme_supports( 'custom-header' ) && current_user_can( 'customize' )
+	 * Background controlled by: current_theme_supports( 'custom-background' ) && current_user_can( 'customize' )
+	 * "What the theme supports" doesn't seem to be available in calypso most of the time?
+	 * Example theme w/ these options: "Dara"
+	 */
+	const shouldShowThemes = useSelector( ( state ) =>
+		canCurrentUser( state, selectedSiteId, 'edit_theme_options' )
+	);
 	const shouldShowApperanceHeaderAndBackground = true;
+
 	const shouldShowAdControl = false;
 	const shouldShowAMP = false;
-	const shouldShowThemeOptions = true;
 	const fallbackOptions = {
 		siteDomain,
 		shouldShowLinks,
 		shouldShowTestimonials,
 		shouldShowPortfolio,
 		shouldShowWooCommerce,
+		shouldShowThemes,
 		shouldShowApperanceHeaderAndBackground,
 		shouldShowAdControl,
 		shouldShowAMP,
-		shouldShowThemeOptions,
 	};
 
 	return menuItems ?? buildFallbackResponse( fallbackOptions );

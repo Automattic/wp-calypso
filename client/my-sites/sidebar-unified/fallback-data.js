@@ -9,10 +9,10 @@ export default function buildFallbackResponse( {
 	shouldShowTestimonials = false,
 	shouldShowPortfolio = false,
 	shouldShowWooCommerce = false,
+	shouldShowThemes = false,
 	shouldShowApperanceHeaderAndBackground = false,
 	shouldShowAdControl = false,
 	shouldShowAMP = false,
-	shouldShowThemeOptions = false,
 } = {} ) {
 	const fallbackResponse = [
 		{
@@ -283,47 +283,47 @@ export default function buildFallbackResponse( {
 		{
 			type: 'separator',
 		},
-		{
-			icon: 'dashicons-admin-appearance',
-			slug: 'themes-php',
-			title: translate( 'Appearance' ),
-			type: 'menu-item',
-			url: `/themes/${ siteDomain }`,
-			children: [
-				{
-					parent: 'themes.php',
-					slug: 'themes-php',
-					title: translate( 'Themes' ),
-					type: 'submenu-item',
-					url: `/themes/${ siteDomain }`,
-				},
-				{
-					parent: 'themes.php',
-					slug: 'themes-customize',
-					title: translate( 'Customize' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }`,
-				},
-				...( shouldShowApperanceHeaderAndBackground
-					? [
+		...( shouldShowThemes
+			? [
+					{
+						icon: 'dashicons-admin-appearance',
+						slug: 'themes-php',
+						title: translate( 'Appearance' ),
+						type: 'menu-item',
+						url: `/themes/${ siteDomain }`,
+						children: [
 							{
 								parent: 'themes.php',
-								slug: 'themes-header',
-								title: translate( 'Header' ),
+								slug: 'themes-php',
+								title: translate( 'Themes' ),
 								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
+								url: `/themes/${ siteDomain }`,
 							},
 							{
 								parent: 'themes.php',
-								slug: 'themes-background',
-								title: translate( 'Background' ),
+								slug: 'themes-customize',
+								title: translate( 'Customize' ),
 								type: 'submenu-item',
-								url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
+								url: `/customize/${ siteDomain }`,
 							},
-					  ]
-					: [] ),
-				...( shouldShowThemeOptions
-					? [
+							...( shouldShowApperanceHeaderAndBackground
+								? [
+										{
+											parent: 'themes.php',
+											slug: 'themes-header',
+											title: translate( 'Header' ),
+											type: 'submenu-item',
+											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=header_image`,
+										},
+										{
+											parent: 'themes.php',
+											slug: 'themes-background',
+											title: translate( 'Background' ),
+											type: 'submenu-item',
+											url: `https://${ siteDomain }/wp-admin/customize.php?return=%2Fwp-admin%2F&autofocus%5Bcontrol%5D=background_image`,
+										},
+								  ]
+								: [] ),
 							{
 								parent: 'themes.php',
 								slug: 'themes-options',
@@ -331,24 +331,24 @@ export default function buildFallbackResponse( {
 								type: 'submenu-item',
 								url: `https://${ siteDomain }/wp-admin/`,
 							},
-					  ]
-					: [] ),
-				{
-					parent: 'themes.php',
-					slug: 'themes-widgets',
-					title: translate( 'Widgets' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }?autofocus[panel]=widgets`,
-				},
-				{
-					parent: 'themes.php',
-					slug: 'themes-menus',
-					title: translate( 'Menus' ),
-					type: 'submenu-item',
-					url: `/customize/${ siteDomain }?autofocus[panel]=nav_menus`,
-				},
-			],
-		},
+							{
+								parent: 'themes.php',
+								slug: 'themes-widgets',
+								title: translate( 'Widgets' ),
+								type: 'submenu-item',
+								url: `/customize/${ siteDomain }?autofocus[panel]=widgets`,
+							},
+							{
+								parent: 'themes.php',
+								slug: 'themes-menus',
+								title: translate( 'Menus' ),
+								type: 'submenu-item',
+								url: `/customize/${ siteDomain }?autofocus[panel]=nav_menus`,
+							},
+						],
+					},
+			  ]
+			: [] ),
 		{
 			icon: 'dashicons-admin-plugins',
 			slug: 'plugins',
