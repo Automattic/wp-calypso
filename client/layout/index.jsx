@@ -188,7 +188,6 @@ class Layout extends Component {
 							require="calypso/blocks/jitm"
 							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
-							sectionName={ this.props.sectionName }
 						/>
 					) }
 					<AsyncLoad
