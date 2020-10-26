@@ -52,7 +52,23 @@ import Experiment, {
 	LoadingVariations,
 } from 'calypso/components/experiment';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummaryWithMonthlyPricingTest() {
+	return (
+		<Experiment name="monthly_pricing_test_phase_1">
+			<DefaultVariation name="control">
+				<WPCheckoutOrderSummary isMonthlyPricingTest={ false } />
+			</DefaultVariation>
+			<Variation name="treatment">
+				<WPCheckoutOrderSummary isMonthlyPricingTest={ true } />
+			</Variation>
+			<LoadingVariations>
+				<WPCheckoutOrderSummary isExperimentLoading={ true } />
+			</LoadingVariations>
+		</Experiment>
+	);
+}
+
+function WPCheckoutOrderSummary( { isExperimentLoading = false, isMonthlyPricingTest = false } ) {
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
@@ -60,6 +76,9 @@ export default function WPCheckoutOrderSummary() {
 	const { formStatus } = useFormStatus();
 
 	const isCartUpdating = FormStatus.VALIDATING === formStatus;
+
+	const plan = usePlanInCart();
+	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
 
 	return (
 		<CheckoutSummaryCard
@@ -70,12 +89,16 @@ export default function WPCheckoutOrderSummary() {
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
+				{ isCartUpdating || isExperimentLoading ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
-					<CheckoutSummaryFeaturesListWithMonthlyPricingTest />
+					<CheckoutSummaryFeaturesList
+						isMonthlyPricingTest={ isMonthlyPricingTest }
+						hasMonthlyPlan={ hasMonthlyPlan }
+					/>
 				) }
-				<CheckoutSummaryHelp />
+				{ ! isMonthlyPricingTest && <CheckoutSummaryHelp /> }
+				{ isMonthlyPricingTest && hasMonthlyPlan && <SwitchToAnnualPlan /> }
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
 				{ coupons.map( ( coupon ) => (
@@ -97,6 +120,9 @@ export default function WPCheckoutOrderSummary() {
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
+			{ isMonthlyPricingTest && (
+				<CheckoutSummaryHelp isMonthlyPricingTest={ isMonthlyPricingTest } />
+			) }
 		</CheckoutSummaryCard>
 	);
 }
@@ -111,25 +137,11 @@ function LoadingCheckoutSummaryFeaturesList() {
 	);
 }
 
-function CheckoutSummaryFeaturesListWithMonthlyPricingTest() {
-	const plan = usePlanInCart();
-	const hasMonthlyPlan = isMonthly( plan?.wpcom_meta?.product_slug );
+function SwitchToAnnualPlan() {
+	const translate = useTranslate();
 
 	return (
-		<Experiment name="monthly_pricing_test_phase_1">
-			<DefaultVariation name="control">
-				<CheckoutSummaryFeaturesList isMonthlyPricingTest={ false } />
-			</DefaultVariation>
-			<Variation name="treatment">
-				<CheckoutSummaryFeaturesList
-					isMonthlyPricingTest={ true }
-					hasMonthlyPlan={ hasMonthlyPlan }
-				/>
-			</Variation>
-			<LoadingVariations>
-				<LoadingCheckoutSummaryFeaturesList />
-			</LoadingVariations>
-		</Experiment>
+		<SwitchToAnnualPlanButton>{ translate( 'Switch to annual plan' ) }</SwitchToAnnualPlanButton>
 	);
 }
 
@@ -352,7 +364,7 @@ function getHighestWpComPlanLabel( plans ) {
 	}
 }
 
-function CheckoutSummaryHelp() {
+export function CheckoutSummaryHelp( { isMonthlyPricingTest = false } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const plans = useLineItemsOfType( 'plan' );
@@ -380,14 +392,17 @@ function CheckoutSummaryHelp() {
 
 	// If chat isn't available, use the inline help button instead.
 	return (
-		<>
+		<CheckoutSummaryHelpWrapper isMonthlyPricingTest={ isMonthlyPricingTest }>
 			<QuerySupportTypes />
 			{ ! shouldRenderPaymentChatButton && ! supportVariationDetermined && <LoadingButton /> }
 			{ shouldRenderPaymentChatButton ? (
 				<PaymentChatButton plan={ presalesEligiblePlanLabel } />
 			) : (
 				supportVariationDetermined && (
-					<CheckoutSummaryHelpButton onClick={ handleHelpButtonClicked }>
+					<CheckoutSummaryHelpButton
+						onClick={ handleHelpButtonClicked }
+						isMonthlyPricingTest={ isMonthlyPricingTest }
+					>
 						{ hasDirectSupport
 							? translate( 'Questions? {{underline}}Ask a Happiness Engineer{{/underline}}', {
 									components: {
@@ -405,7 +420,7 @@ function CheckoutSummaryHelp() {
 					</CheckoutSummaryHelpButton>
 				)
 			) }
-		</>
+		</CheckoutSummaryHelpWrapper>
 	);
 }
 
@@ -467,11 +482,17 @@ const CheckoutSummaryHelpButton = styled.button`
 	span {
 		cursor: pointer;
 		text-decoration: underline;
+		color: ${ ( { isMonthlyPricingTest } ) =>
+			isMonthlyPricingTest ? 'var( --color-link )' : 'inherit' };
 
 		&:hover {
 			text-decoration: none;
 		}
 	}
+`;
+
+const CheckoutSummaryHelpWrapper = styled.div`
+	position: ${ ( { isMonthlyPricingTest } ) => ( isMonthlyPricingTest ? 'absolute' : 'static' ) };
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`
@@ -583,5 +604,21 @@ const LoadingButton = styled( LoadingCopy )`
 
 	::before {
 		display: none;
+	}
+`;
+
+const SwitchToAnnualPlanButton = styled.button`
+	margin-top: 16px;
+	text-align: left;
+	text-decoration: underline;
+	color: var( --color-link );
+	cursor: pointer;
+
+	.rtl & {
+		text-align: right;
+	}
+
+	&:hover {
+		text-decoration: none;
 	}
 `;
