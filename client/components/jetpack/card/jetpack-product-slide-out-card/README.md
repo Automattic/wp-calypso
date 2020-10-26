@@ -39,5 +39,5 @@ export default function JetpackProductCardExample() {
 | `billingTimeFrame`\* | `string`     | none    | Use for the pricing details and timeframe, e.g. 'per month, billed yearly' |
 | `badgeLabel`         | `string`     | none    | Label shown in the card badge                                              |
 | `buttonLabel`\*      | `string`     | none    | Call-to-action of the button                                               |
-| `buttonPrimary`\*    | `boolean`    | none    | Whether the button should be highlighted                                   |
+| `buttonPrimary`\*    | `boolean`    | true    | Whether the button should be highlighted                                   |
 | `onButtonClick`\*    | `function`   | none    | Callback called when the button is clicked                                 |

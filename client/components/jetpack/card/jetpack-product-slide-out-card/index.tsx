@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
-import React, { ReactNode } from 'react';
+import React, { FC, ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -26,12 +26,12 @@ type Props = {
 	price: number;
 	billingTimeFrame: TranslateResult;
 	buttonLabel: TranslateResult;
-	buttonPrimary: boolean;
+	buttonPrimary?: boolean;
 	badgeLabel?: TranslateResult;
 	onButtonClick: () => void;
 };
 
-const JetpackProductSlideOutCard = ( {
+const JetpackProductSlideOutCard: FC< Props > = ( {
 	className,
 	iconSlug,
 	productName,
@@ -40,10 +40,10 @@ const JetpackProductSlideOutCard = ( {
 	price,
 	billingTimeFrame,
 	buttonLabel,
-	buttonPrimary,
+	buttonPrimary = true,
 	badgeLabel,
 	onButtonClick,
-}: Props ) => {
+} ) => {
 	const translate = useTranslate();
 
 	return (

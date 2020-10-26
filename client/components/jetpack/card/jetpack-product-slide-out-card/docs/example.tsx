@@ -25,8 +25,7 @@ export default function JetpackProductSlideOutCardExample() {
 				currencyCode={ 'USD' }
 				billingTimeFrame={ 'per month, billed yearly' }
 				buttonLabel={ 'Get Backup Daily $8' }
-				buttonPrimary={ true }
-				badgeLabel={ null }
+				badgeLabel={ '' }
 				onButtonClick={ () => alert( 'Hey!' ) }
 				price={ 10 }
 			/>
