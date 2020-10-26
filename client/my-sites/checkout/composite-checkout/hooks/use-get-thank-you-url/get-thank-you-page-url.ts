@@ -171,6 +171,8 @@ export default function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge,
+		didPurchaseFail,
+		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -335,6 +337,8 @@ function getRedirectUrlForConciergeNudge( {
 			cart,
 			orderId,
 			siteSlug,
+			didPurchaseFail,
+			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
 			return upgradePath;
