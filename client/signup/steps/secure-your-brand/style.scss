@@ -1,0 +1,96 @@
+.secure-your-brand {
+	font-size: $font-body;
+	margin: 0 auto;
+	max-width: 560px;
+	.card {
+		padding: 0;
+	}
+	h3, h4 {
+		margin: 23px 33px 13px 23px;
+	}
+	h4 {
+		font-weight: 600;
+	}
+}
+.secure-your-brand__domain {
+	background: var( --color-surface );
+	display: flex;
+	line-height: 20px;
+	margin-bottom: 9px;
+	.secure-your-brand__domain-name {
+		flex: 2;
+		max-width: 75%;
+		overflow-wrap: break-word;
+		span {
+			color: var( --color-primary-60 );
+			font-weight: 600;
+		}
+	}
+	.secure-your-brand__cost {
+		flex: 1;
+		text-align: right;
+	}
+}
+.secure-your-brand__available {
+	border-bottom: 1px solid var( --color-border-subtle );
+	padding: 20px 33px 20px 23px;
+	text-align: center;
+	overflow-wrap: break-word;
+	span {
+		font-size: $font-body;
+		padding: 0 7px;
+		vertical-align: middle;
+	}
+	.gridicon {
+		color: var( --color-success );
+		vertical-align: middle;
+	}
+}
+.secure-your-brand__domains {
+	padding: 0 33px 11px 23px;
+}
+.secure-your-brand__total {
+	border-bottom: 1px solid var( --color-border-subtle );
+	display: flex;
+	margin: 0 33px 20px 23px;
+	padding-bottom: 23px;
+	.secure-your-brand__total-label {
+		flex: 1;
+	}
+	.secure-your-brand__total-description {
+		flex: 2;
+		text-align: right;
+		.secure-your-brand__discount-label {
+			color: var( --color-success );
+			padding-right: 10px;
+		}
+		.secure-your-brand__total-cost {
+			text-decoration: line-through;
+		}
+	}
+}
+.secure-your-brand__benefits {
+	margin: 0 33px 0 23px;
+	ul {
+		margin: 0 0 0 23px;
+		padding: 0;
+	}
+	li {
+		line-height: 20px;
+		margin: 0;
+		padding: 0;
+	}
+}
+.secure-your-brand__buttons {
+	float: right;
+	margin: 38px 24px 22px 23px;
+	.button {
+		margin-left: 13px;
+	}
+	@media screen and ( max-width: 660px ) {
+		.button {
+			width: 100%;
+			margin: 0 12px 20px 0;
+		}
+	}
+}
