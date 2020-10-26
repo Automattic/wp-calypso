@@ -48,8 +48,9 @@ function WpcomNux() {
 	useEffect( () => {
 		// Hide editor sidebar first time users sees the editor
 		isWpcomNuxEnabled && closeGeneralSidebar();
+		// Track opening of Guide
 		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
-			recordTracksEvent( 'calypso_editor_wpcom_nux_show', {
+			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
 				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 			} );
 		}
@@ -61,7 +62,7 @@ function WpcomNux() {
 
 	const dismissWpcomNux = () => {
 		setWpcomNuxStatus( { isNuxEnabled: false } );
-		recordTracksEvent( 'calypso_editor_wpcom_nux_dismiss', {
+		recordTracksEvent( 'calypso_editor_wpcom_nux_close', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 	};
