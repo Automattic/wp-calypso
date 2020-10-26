@@ -14,10 +14,6 @@ import sinon from 'sinon';
 import { DUMMY_API_RESPONSE, DUMMY_QUERY, DUMMY_SITE_ID } from './fixtures';
 import { stubs } from './mocks/lib/wp';
 
-jest.mock( 'lib/media/store', () => ( {
-	dispatchToken: require( 'calypso/dispatcher' ).register( () => {} ),
-	get: () => require( './fixtures' ).DUMMY_ITEM,
-} ) );
 jest.mock( 'lib/user', () => () => {} );
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 jest.mock( 'lib/impure-lodash', () => ( {
