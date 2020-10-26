@@ -170,11 +170,13 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 											<InfoPopover
 												className="jetpack-product-card-alt-2__search-price-popover"
 												position="right"
+												iconSize={ 24 }
 											>
 												{ searchRecordsDetails }
 											</InfoPopover>
 										) }
 									</span>
+
 									{ renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame ) }
 								</>
 							) : (
