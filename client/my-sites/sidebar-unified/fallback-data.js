@@ -3,16 +3,17 @@
  */
 import { translate } from 'i18n-calypso';
 
-const shouldShowLinks = true;
-const shouldShowTestimonials = true;
-const shouldShowPortfolio = true;
-const shouldShowWooCommerce = true;
-const shouldShowApperanceHeaderAndBackground = true;
-const shouldShowAdControl = true;
-const shouldShowAMP = true;
-const shouldShowThemeOptions = true;
-
-export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
+export default function buildFallbackResponse( {
+	siteDomain = '',
+	shouldShowLinks = false,
+	shouldShowTestimonials = false,
+	shouldShowPortfolio = false,
+	shouldShowWooCommerce = false,
+	shouldShowApperanceHeaderAndBackground = false,
+	shouldShowAdControl = false,
+	shouldShowAMP = false,
+	shouldShowThemeOptions = false,
+} = {} ) {
 	const fallbackResponse = [
 		{
 			icon: 'dashicons-admin-home',

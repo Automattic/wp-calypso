@@ -32,12 +32,27 @@ const useSiteMenuItems = () => {
 	 * avoids a situation where the user might be left with an
 	 * empty menu.
 	 */
-	return (
-		menuItems ??
-		buildFallbackResponse( {
-			siteDomain,
-		} )
-	);
+	const shouldShowLinks = true;
+	const shouldShowTestimonials = true;
+	const shouldShowPortfolio = true;
+	const shouldShowWooCommerce = true;
+	const shouldShowApperanceHeaderAndBackground = true;
+	const shouldShowAdControl = true;
+	const shouldShowAMP = true;
+	const shouldShowThemeOptions = true;
+	const fallbackOptions = {
+		siteDomain,
+		shouldShowLinks,
+		shouldShowTestimonials,
+		shouldShowPortfolio,
+		shouldShowWooCommerce,
+		shouldShowApperanceHeaderAndBackground,
+		shouldShowAdControl,
+		shouldShowAMP,
+		shouldShowThemeOptions,
+	};
+
+	return menuItems ?? buildFallbackResponse( fallbackOptions );
 };
 
 export default useSiteMenuItems;
