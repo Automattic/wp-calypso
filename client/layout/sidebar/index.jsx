@@ -10,13 +10,12 @@ import SidebarRegion from './region';
  */
 import './style.scss';
 
-const Sidebar = ( { children, onClick, className, ...props }, ref ) => {
+const Sidebar = ( { children, onClick, className, ...props } ) => {
 	const hasRegions = React.Children.toArray( children ).some( ( el ) => el.type === SidebarRegion );
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
 	return (
 		<div
-			ref={ ref }
 			role="presentation"
 			className={ finalClassName }
 			onClick={ onClick }
