@@ -25,7 +25,7 @@
 	},
 	"peerDependencies": {
 		"eslint": "^7.0.0",
-		"eslint-plugin-inclusive-language": "^1.2.0",
+		"eslint-plugin-inclusive-language": "^1.2.1",
 		"eslint-plugin-jsdoc": "^30.7.3",
 		"eslint-plugin-wpcalypso": "^3.4.1 || ^4.0.0 || ^5.0.0"
 	},
