@@ -90,3 +90,7 @@ const rule = ( module.exports = function ( context ) {
 rule.ERROR_MESSAGE = 'Use ellipsis character (…) in place of three dots';
 
 rule.schema = [];
+
+rule.meta = {
+	fixable: true,
+};
