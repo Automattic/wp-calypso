@@ -366,13 +366,11 @@ export class ContactDetailsFormFields extends Component {
 	}
 
 	renderContactDetailsFields() {
-		const { translate, needsFax, hasCountryStates, labelTexts, children } = this.props;
+		const { translate, needsFax, hasCountryStates, labelTexts } = this.props;
 		const countryCode = this.getCountryCode();
-		const classes = ! children
-			? 'contact-details-form-fields__contact-extra-details'
-			: 'contact-details-form-fields__contact-details';
+
 		return (
-			<div className={ classes }>
+			<div className="contact-details-form-fields__contact-details">
 				<div className="contact-details-form-fields__row">
 					{ this.createField(
 						'organization',
