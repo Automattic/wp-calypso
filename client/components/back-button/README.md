@@ -5,7 +5,7 @@ Simple back button, usually used in a HeaderCake to go back to the previous scre
 ## Usage
 
 ```jsx
-import BackButton from 'components/back-button';
+import BackButton from 'calypso/components/back-button';
 
 function render() {
 	return <BackButton onClick={ myClickHandler } />;

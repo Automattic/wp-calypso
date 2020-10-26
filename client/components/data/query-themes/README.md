@@ -9,9 +9,9 @@ Render the component, passing `siteId` and `query`. It does not accept any child
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryThemes from 'components/data/query-themes';
-import Theme from 'components/theme';
-import { getThemesForQueryIgnoringPage } from 'state/themes/selectors';
+import QueryThemes from 'calypso/components/data/query-themes';
+import Theme from 'calypso/components/theme';
+import { getThemesForQueryIgnoringPage } from 'calypso/state/themes/selectors';
 
 function MyThemesList( { themes } ) {
 	return (

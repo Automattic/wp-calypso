@@ -9,7 +9,7 @@
 ## Usage
 
 ```jsx
-import SpinnerLine from 'components/spinner-line';
+import SpinnerLine from 'calypso/components/spinner-line';
 
 export default function MyComponent() {
 	return <SpinnerLine />;

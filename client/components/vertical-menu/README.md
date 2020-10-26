@@ -11,8 +11,8 @@ The following predefined item types exist:
 ## Usage
 
 ```js
-import VerticalMenu from 'components/vertical-menu';
-import { SocialItem } from 'components/vertical-menu/items';
+import VerticalMenu from 'calypso/components/vertical-menu';
+import { SocialItem } from 'calypso/components/vertical-menu/items';
 
 const announceIt = ( service ) => console.log( `Clicked on ${ service }` );
 

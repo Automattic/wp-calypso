@@ -7,7 +7,7 @@ ShareButton is a component which allows you to open a popup window to share cont
 ## How to use
 
 ```js
-import ShareButton from 'components/share-button';
+import ShareButton from 'calypso/components/share-button';
 
 function MyButton() {
 	const service = {

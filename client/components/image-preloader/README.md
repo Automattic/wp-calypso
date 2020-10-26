@@ -8,7 +8,7 @@ Image Preloader is a React component to display a placeholder element until the 
 
 ```jsx
 import React from 'react';
-import ImagePreloader from 'components/image-preloader';
+import ImagePreloader from 'calypso/components/image-preloader';
 
 export default class extends React.Component {
 	render() {

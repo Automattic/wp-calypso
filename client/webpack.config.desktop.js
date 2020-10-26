@@ -10,7 +10,7 @@ const webpack = require( 'webpack' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
@@ -30,7 +30,7 @@ module.exports = {
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},

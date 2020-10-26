@@ -11,8 +11,8 @@ The FAQ component is made of two parts:
 - FAQItem child component(s) which has a `question` and an `answer` props
 
 ```jsx
-import FAQ from 'components/faq';
-import FAQItem from 'components/faq/faq-item';
+import FAQ from 'calypso/components/faq';
+import FAQItem from 'calypso/components/faq/faq-item';
 import i18n from 'i18n-calypso';
 
 export default class MyFaq extends React.Component {

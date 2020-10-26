@@ -7,7 +7,7 @@ This React component implements a small calendar (shown by month) which allows u
 ## Example Usage
 
 ```js
-import PostSchedule from 'components/post-schedule';
+import PostSchedule from 'calypso/components/post-schedule';
 
 export default class extends React.Component {
 	// ...

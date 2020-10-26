@@ -18,7 +18,7 @@ in-progress features without launching them to production.
 Is a feature enabled?
 
 ```js
-import config from 'config';
+import config from 'calypso/config';
 
 if ( config.isEnabled( 'myFeature' ) ) {
 	// do something only when myFeature is enabled
@@ -57,7 +57,7 @@ testing environment. The `config` module exports a helper function `isCalypsoLiv
 `true` if Calypso is running on the `*.calypso.live` origin.
 
 ```js
-import { isCalypsoLive } from 'config';
+import { isCalypsoLive } from 'calypso/config';
 
 if ( isCalypsoLive() ) {
 	/* ... */

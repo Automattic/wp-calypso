@@ -18,7 +18,7 @@ import {
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { setSelectedSiteId, setSection, setAllSitesSelected } from 'calypso/state/ui/actions';
+import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -57,7 +57,7 @@ import {
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
 import { warningNotice } from 'calypso/state/notices/actions';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
@@ -99,7 +99,7 @@ function createNavigation( context ) {
 }
 
 function renderEmptySites( context ) {
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( NoSitesMessage );
 
@@ -113,7 +113,7 @@ function renderNoVisibleSites( context ) {
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( EmptyContentComponent, {
 		title: i18n.translate(
@@ -485,7 +485,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = createSitesComponent( context );
 	next();

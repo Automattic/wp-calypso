@@ -13,5 +13,5 @@ localStorage.length;
 Just require and call this once into the page (prior to any calls to these methods) and it will either create or augment the `window.localStorage` object as necessary.
 
 ```js
-import localStorePolyfill from 'lib/local-storage-polyfill';
+import localStorePolyfill from 'calypso/lib/local-storage-polyfill';
 ```

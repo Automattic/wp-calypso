@@ -7,7 +7,7 @@ This method will return a formatted variation name based on the attribute option
 ## Example (1 Attribute)
 
 ```javascript
-import formattedVariationName from 'lib/formatted-variation-name';
+import formattedVariationName from 'calypso/lib/formatted-variation-name';
 
 // Provide a WooCommerce Variation Object (from state or server)
 const variation = {
@@ -29,7 +29,7 @@ Returns `Red`.
 ## Example (Multiple Attributes)
 
 ```javascript
-import formattedVariationName from 'lib/formatted-variation-name';
+import formattedVariationName from 'calypso/lib/formatted-variation-name';
 
 // Provide a WooCommerce Variation Object (from state or server)
 const variation = {
@@ -55,7 +55,7 @@ Returns `Red - Small`.
 ## Example (Fallback)
 
 ```javascript
-import formattedVariationName from 'lib/formatted-variation-name';
+import formattedVariationName from 'calypso/lib/formatted-variation-name';
 
 // Provide a WooCommerce Variation Object (from state or server)
 // This is a variation that provides fallback settings for the other variations.

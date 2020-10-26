@@ -7,7 +7,7 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	login,
 	magicLogin,
@@ -16,10 +16,15 @@ import {
 	redirectDefaultLocale,
 } from './controller';
 import { setShouldServerSideRenderLogin } from './ssr';
-import { setLocaleMiddleware, setSectionMiddleware, makeLayoutMiddleware } from 'controller/shared';
-import { redirectLoggedIn } from 'controller/web-util';
-import LayoutLoggedOut from 'layout/logged-out';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
+import {
+	setLocaleMiddleware,
+	setSectionMiddleware,
+	makeLayoutMiddleware,
+} from 'calypso/controller/shared';
+import { redirectLoggedIn } from 'calypso/controller/web-util';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import { RouteProvider } from 'calypso/components/route';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -29,11 +34,25 @@ export const LOGIN_SECTION_DEFINITION = {
 	isomorphic: true,
 };
 
-const ReduxWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+const ReduxWrappedLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => {
 	return (
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		</ReduxProvider>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<ReduxProvider store={ store }>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</ReduxProvider>
+		</RouteProvider>
 	);
 };
 

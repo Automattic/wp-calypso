@@ -7,16 +7,20 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import steps from 'signup/config/steps-pure';
-import flows from 'signup/config/flows';
-import user from 'lib/user';
+import steps from 'calypso/signup/config/steps-pure';
+import flows from 'calypso/signup/config/flows';
+import user from 'calypso/lib/user';
 
 const { defaultFlowName } = flows;
+
+function getDefaultFlowName() {
+	return defaultFlowName;
+}
 
 export function getFlowName( parameters ) {
 	return parameters.flowName && isFlowName( parameters.flowName )
 		? parameters.flowName
-		: defaultFlowName;
+		: getDefaultFlowName();
 }
 
 function isFlowName( pathFragment ) {

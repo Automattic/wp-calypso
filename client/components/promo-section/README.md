@@ -5,7 +5,7 @@ A compontent to layout [`PromoCard` components](../../components/promo-section/p
 ## Usage
 
 ```jsx
-import PromoCard from 'my-sites/promo-section/promo-card';
+import PromoCard from 'calypso/my-sites/promo-section/promo-card';
 
 const PromoCardExample = () => {
 	return (

@@ -5,7 +5,7 @@ This component is used to display a plugin activation toggle.
 ## How to use
 
 ```js
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 
 function render() {
 	return (

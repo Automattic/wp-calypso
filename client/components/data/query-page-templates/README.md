@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryPageTemplates from 'components/data/query-page-templates';
+import QueryPageTemplates from 'calypso/components/data/query-page-templates';
 
 export default function MyPostTypesList( { pageTemplates } ) {
 	return (

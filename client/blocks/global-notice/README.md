@@ -6,7 +6,7 @@ They allow you to use a component for your notice instead of calling the notices
 ## How to use the container
 
 ```js
-import { InfoNotice } from 'blocks/global-notice';
+import { InfoNotice } from 'calypso/blocks/global-notice';
 
 function render() {
 	return (

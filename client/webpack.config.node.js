@@ -7,13 +7,15 @@
 /**
  * External dependencies
  */
+const fs = require( 'fs' );
+const globby = require( 'globby' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
@@ -22,6 +24,7 @@ const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const nodeExternals = require( 'webpack-node-externals' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const ExternalModulesWriter = require( './server/bundler/external-modules' );
 
 /**
  * Internal variables
@@ -40,6 +43,16 @@ const fileLoader = FileConfig.loader( {
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
+function getMonorepoPackages() {
+	// find package.json files in all 1st level subdirectories of packages/
+	return globby.sync( 'packages/*/package.json' ).map( ( pkgJsonPath ) => {
+		// read the package.json file
+		const pkgJson = JSON.parse( fs.readFileSync( pkgJsonPath ) );
+		// create a package name regexp that matches all requests that start with it
+		return new RegExp( `^${ pkgJson.name }(/|$)` );
+	} );
+}
+
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -52,13 +65,14 @@ function getExternals() {
 		// with modules that are incompatible with webpack bundling.
 		nodeExternals( {
 			allowlist: [
-				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
-				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/components',
+				// Force all monorepo packages to be bundled. We can guarantee that they are safe
+				// to bundle, and can avoid shipping the entire contents of the `packages/` folder
+				// (there are symlinks into `packages/` from the `node_modules` folder)
+				...getMonorepoPackages(),
 
-				// The polyfills module is transpiled by Babel and only the `core-js` modules that are
-				// needed by current Node.js are included instead of the whole package.
-				'@automattic/calypso-polyfills',
+				// bundle the core-js polyfills. We pick only a very small subset of the library
+				// to polyfill a few things that are not supported by the latest LTS Node.js,
+				// and this avoids shipping the entire library which is fairly big.
 				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
@@ -103,7 +117,7 @@ const webpackConfig = {
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
@@ -171,6 +185,7 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };
 

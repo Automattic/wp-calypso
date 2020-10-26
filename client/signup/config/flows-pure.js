@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
+import { isEnabled } from 'calypso/config';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -122,6 +122,13 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-secure-your-brand': {
+			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Onboarding flow with an additional step to upsell domains',
+			lastModified: '2020-10-08',
+			showRecaptcha: true,
+		},
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,

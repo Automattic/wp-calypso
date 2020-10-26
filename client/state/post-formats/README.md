@@ -11,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Get a list of supported post formats for a given site.
 
 ```js
-import { requestPostFormats } from 'state/post-formats/actions';
+import { requestPostFormats } from 'calypso/state/post-formats/actions';
 
 requestPostFormats( 12345678 );
 ```
@@ -45,7 +45,7 @@ state.postFormats = {
 Returns true if post formats are currently fetching for the given site ID.
 
 ```js
-import { isRequestingPostFormats } from 'state/post-formats/selectors';
+import { isRequestingPostFormats } from 'calypso/state/post-formats/selectors';
 
 const isRequesting = isRequestingPostFormats( state, 12345678 );
 ```
@@ -55,7 +55,7 @@ const isRequesting = isRequestingPostFormats( state, 12345678 );
 Returns an array of all supported site formats for the given site ID.
 
 ```js
-import { getPostFormats } from 'state/post-formats/selectors';
+import { getPostFormats } from 'calypso/state/post-formats/selectors';
 
 const postFormats = getPostFormats( state, 12345678 );
 ```

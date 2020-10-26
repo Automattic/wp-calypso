@@ -23,7 +23,7 @@ See p1HpG7-7ET-p2 for more details.
 
 ```jsx
 import React, { Fragment } from 'react';
-import ProductCard from 'components/product-card';
+import ProductCard from 'calypso/components/product-card';
 
 export default class extends React.Component {
 	render() {
@@ -80,8 +80,8 @@ Product Card Promo Nudge is a Product Card's sub-component for rendering a promo
 
 ```jsx
 import React, { Fragment } from 'react';
-import ProductCard from 'components/product-card';
-import ProductCardPromoNudge from 'components/product-card/promo-nudge';
+import ProductCard from 'calypso/components/product-card';
+import ProductCardPromoNudge from 'calypso/components/product-card/promo-nudge';
 
 export default class extends React.Component {
 	render() {
@@ -122,8 +122,8 @@ be passed to the Product Card as a child component.
 
 ```jsx
 import React, { useState } from 'react';
-import ProductCard from 'components/product-card';
-import ProductCardOptions from 'components/product-card/options';
+import ProductCard from 'calypso/components/product-card';
+import ProductCardOptions from 'calypso/components/product-card/options';
 
 export default function () {
 	const [ selectedProductOption, selectProductOption ] = useState(
@@ -194,8 +194,8 @@ text (optional) and a button.
 
 ```jsx
 import React from 'react';
-import ProductCard from 'components/product-card';
-import ProductCardAction from 'components/product-card/action';
+import ProductCard from 'calypso/components/product-card';
+import ProductCardAction from 'calypso/components/product-card/action';
 
 export default class extends React.Component {
 	render() {

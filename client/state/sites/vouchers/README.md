@@ -40,7 +40,7 @@ import {
 	vouchersRequestAction,
 	vouchersRequestSuccessAction,
 	vouchersRequestFailureAction,
-} from 'state/sites/vouchers/actions';
+} from 'calypso/state/sites/vouchers/actions';
 
 const siteId = 2916284;
 

@@ -292,6 +292,29 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
+			name = "Run unit tests for build tools"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				set -e
+				export JEST_JUNIT_OUTPUT_NAME="results.xml"
+				export HOME="/calypso"
+
+				unset NODE_ENV
+				unset CALYPSO_ENV
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Run build-tools tests
+				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
 			name = "Run unit tests for Editing Toolkit"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """

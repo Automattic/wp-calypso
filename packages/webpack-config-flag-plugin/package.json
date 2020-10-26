@@ -4,7 +4,7 @@
 	"description": "A webpack plugin to replace `config.isEnabled` flag checks with literals",
 	"main": "index.js",
 	"peerDependencies": {
-		"webpack": "^4.44.1"
+		"webpack": "^4.44.2"
 	},
 	"author": "Automattic Inc.",
 	"private": true,

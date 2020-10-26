@@ -16,7 +16,6 @@ import {
 	addCreditCard,
 	billingHistory,
 	pendingPayments,
-	myMemberships,
 	purchasesRoot,
 	deprecated as deprecatedPaths,
 } from 'calypso/me/purchases/paths';
@@ -92,7 +91,7 @@ class MeSidebar extends React.Component {
 			[ addCreditCard ]: 'purchases',
 			[ deprecatedPaths.upcomingCharges ]: 'purchases',
 			[ pendingPayments ]: 'purchases',
-			[ myMemberships ]: 'purchases',
+			[ deprecatedPaths.otherPurchases ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};

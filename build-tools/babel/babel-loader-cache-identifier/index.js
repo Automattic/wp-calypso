@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' ); // eslint-disable-line
+const fs = require( 'fs' );
 const path = require( 'path' );
 
 /**
@@ -28,6 +28,6 @@ module.exports = JSON.stringify( {
 	'babel-plugin-transform-wpcalypso-async': getModuleVersion(
 		'@automattic/babel-plugin-transform-wpcalypso-async'
 	),
-	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../../../babel.config.js' ), 'utf8' ),
+	babelrc: fs.readFileSync( path.resolve( __dirname, '../../../babel.config.js' ), 'utf8' ),
 	env: process.env.BABEL_ENV || process.env.NODE_ENV,
 } );

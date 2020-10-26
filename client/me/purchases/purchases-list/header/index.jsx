@@ -12,13 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
-import {
-	billingHistory,
-	paymentMethods,
-	pendingPayments,
-	myMemberships,
-	purchasesRoot,
-} from '../../paths.js';
+import { billingHistory, paymentMethods, pendingPayments, purchasesRoot } from '../../paths.js';
 import SectionNav from 'calypso/components/section-nav';
 import config from 'calypso/config';
 import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
@@ -30,8 +24,6 @@ const PurchasesHeader = ( { section, translate } ) => {
 		text = translate( 'Purchases' );
 	} else if ( section === 'pending' ) {
 		text = translate( 'Pending Payments' );
-	} else if ( section === 'memberships' ) {
-		text = translate( 'Other Sites' );
 	} else if ( section === 'payment-methods' ) {
 		text = translate( 'Payment Methods' );
 	}
@@ -56,10 +48,6 @@ const PurchasesHeader = ( { section, translate } ) => {
 						{ translate( 'Pending Payments' ) }
 					</NavItem>
 				) }
-
-				<NavItem path={ myMemberships } selected={ section === 'memberships' }>
-					{ translate( 'Other Sites' ) }
-				</NavItem>
 			</NavTabs>
 		</SectionNav>
 	);

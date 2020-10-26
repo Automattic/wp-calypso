@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -52,7 +53,7 @@ import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { getABTestVariation } from 'calypso/lib/abtest';
+import { abtest, getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -164,6 +165,25 @@ class DomainsStep extends React.Component {
 				this.props.showSitePreview();
 			}
 		}
+	}
+
+	isEligibleVariantForDomainTest() {
+		return this.showTestCopy;
+	}
+
+	getGeoLocationFromCookie() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.country_code;
+	}
+
+	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
+		return (
+			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
+			isPurchasingItem &&
+			! this.props.skipSecureYourBrand &&
+			'test' === abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
+		);
 	}
 
 	getMapDomainUrl = () => {
@@ -310,7 +330,12 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-		this.props.goToNextStep();
+
+		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
+			this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		} else {
+			this.props.goToNextStep();
+		}
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );

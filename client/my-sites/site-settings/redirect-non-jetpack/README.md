@@ -24,7 +24,7 @@ The following code redirects to the `Plans` site for non-Jetpack and Atomic
 sites:
 
 ```js
-import redirectNonJetpack from 'my-sites/site-settings/redirect-non-jetpack';
+import redirectNonJetpack from 'calypso/my-sites/site-settings/redirect-non-jetpack';
 
 export default flowRight( localize, redirectNonJetpack( '/plans/' ) )( WrappedComponent );
 ```
