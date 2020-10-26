@@ -381,6 +381,19 @@ $font-size: rem( 14px );
 			}
 		}
 
+		.sidebar__menu.is-togglable:not( .is-toggle-open ) {
+			position: relative;
+			.sidebar__expandable-content {
+				display: block;
+				transition: all 0s ease 0.3s;
+				visibility: hidden;
+				position: absolute;
+				top: 0;
+				left: var( --sidebar-width-max );
+				width: 160px;
+			}
+		}
+
 		.sidebar__menu.is-togglable:not( .is-toggle-open ):hover {
 			position: relative;
 
@@ -397,6 +410,8 @@ $font-size: rem( 14px );
 
 			// flyout content
 			.sidebar__expandable-content {
+				// transition-delay: 0s;
+				visibility: visible;
 				display: block;
 				position: absolute;
 				top: 0;
