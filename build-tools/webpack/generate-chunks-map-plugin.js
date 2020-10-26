@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-const fs = require( 'fs' ); //eslint-disable-line import/no-nodejs-modules
+const fs = require( 'fs' );
 const path = require( 'path' );
 
 /**
