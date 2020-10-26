@@ -10,7 +10,7 @@ const shouldShowWooCommerce = true;
 const shouldShowApperanceHeaderAndBackground = true;
 const shouldShowAdControl = true;
 const shouldShowAMP = true;
-const showShowThemeOptions = true;
+const shouldShowThemeOptions = true;
 
 export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 	const fallbackResponse = [
@@ -321,7 +321,7 @@ export default function buildFallbackResponse( { siteDomain = '' } = {} ) {
 							},
 					  ]
 					: [] ),
-				...( showShowThemeOptions
+				...( shouldShowThemeOptions
 					? [
 							{
 								parent: 'themes.php',
