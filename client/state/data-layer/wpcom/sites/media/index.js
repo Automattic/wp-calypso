@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { toPairs, isEqual, omit } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,13 +30,12 @@ import {
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
 import {
 	dispatchFluxUpdateMediaItemSuccess,
-	dispatchFluxUpdateMediaItemError,
 	dispatchFluxRemoveMediaItemSuccess,
-	dispatchFluxRemoveMediaItemError,
 	dispatchFluxRequestMediaItemSuccess,
 	dispatchFluxRequestMediaItemError,
 	dispatchFluxRequestMediaItemsSuccess,
 } from 'calypso/state/media/utils/flux-adapter';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
@@ -69,9 +69,13 @@ export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
 };
 
-export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState */) => {
-	dispatchFluxUpdateMediaItemError( siteId, error );
-};
+export const updateMediaError = ( { siteId, originalMediaItem } ) => [
+	receiveMedia( siteId, originalMediaItem ),
+	removeNotice( `update-media-notice-${ originalMediaItem.ID }` ),
+	errorNotice( translate( "We weren't able to process this media item." ), {
+		id: `update-media-notice-${ originalMediaItem.ID }`,
+	} ),
+];
 
 export const editMedia = ( action ) => {
 	const { siteId, data } = action;
@@ -184,9 +188,12 @@ export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
 };
 
-export const deleteMediaError = ( { siteId }, error ) => () => {
-	dispatchFluxRemoveMediaItemError( siteId, error );
-};
+export const deleteMediaError = ( { mediaId } ) => [
+	removeNotice( `delete-media-notice-${ mediaId }` ),
+	errorNotice( translate( "We weren't able to delete this media item." ), {
+		id: `delete-media-notice-${ mediaId }`,
+	} ),
+];
 
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [
