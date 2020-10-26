@@ -249,7 +249,7 @@
 		"eslint-plugin-jsdoc": "^30.7.3",
 		"eslint-plugin-jsx-a11y": "^6.2.3",
 		"eslint-plugin-md": "^1.0.19",
-		"eslint-plugin-prettier": "^3.1.2",
+		"eslint-plugin-prettier": "^3.1.4",
 		"eslint-plugin-react": "^7.20.0",
 		"eslint-plugin-wpcalypso": "^5.0.0",
 		"exports-loader": "^0.7.0",
