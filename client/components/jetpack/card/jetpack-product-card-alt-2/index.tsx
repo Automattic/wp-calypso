@@ -108,6 +108,16 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 		);
 	};
 
+	const buttonElt = (
+		<Button
+			primary={ buttonPrimary }
+			className="jetpack-product-card-alt-2__button"
+			onClick={ onButtonClick }
+		>
+			{ buttonLabel }
+		</Button>
+	);
+
 	return (
 		<div
 			className={ classNames( className, 'jetpack-product-card-alt-2', {
@@ -177,13 +187,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 					) }
 				</header>
 				<div className="jetpack-product-card-alt-2__body">
-					<Button
-						primary={ buttonPrimary }
-						className="jetpack-product-card-alt-2__button"
-						onClick={ onButtonClick }
-					>
-						{ buttonLabel }
-					</Button>
+					{ buttonElt }
 					{ description && (
 						<p className="jetpack-product-card-alt-2__description">{ description }</p>
 					) }
@@ -194,6 +198,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 					features={ features }
 					productSlug={ productSlug }
 					isExpanded={ isExpanded }
+					ctaElt={ buttonElt }
 				/>
 			) }
 		</div>

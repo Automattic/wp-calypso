@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
 
@@ -11,7 +11,6 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import {
 	durationToText,
 	getProductWithOptionDisplayName,
-	productBadgeLabelAlt,
 	productButtonLabel,
 	productButtonLabelAlt,
 	slugIsFeaturedProduct,
@@ -46,7 +45,7 @@ interface ProductCardProps {
 	selectedTerm?: Duration;
 }
 
-const ProductCardAltWrapper = ( {
+const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 	item,
 	onClick,
 	siteId,
@@ -84,7 +83,9 @@ const ProductCardAltWrapper = ( {
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 
 	// If item is a plan feature, use the plan purchase object.
-	const isItemPlanFeature = sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug );
+	const isItemPlanFeature = !! (
+		sitePlan && planHasFeature( sitePlan.product_slug, item.productSlug )
+	);
 	const purchase = isItemPlanFeature
 		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 		: getPurchaseByProductSlug( purchases, item.productSlug );
@@ -127,7 +128,6 @@ const ProductCardAltWrapper = ( {
 			billingTimeFrame={ durationToText( item.term ) }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
-			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			searchRecordsDetails={
@@ -135,10 +135,6 @@ const ProductCardAltWrapper = ( {
 			}
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
-			withStartingPrice={
-				// Search has several pricing tiers
-				item.subtypes.length > 0 || JETPACK_SEARCH_PRODUCTS.includes( item.productSlug )
-			}
 			isFree={ isFree }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback, FunctionComponent } from 'react';
+import React, { useState, useCallback, FunctionComponent, ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ export type Props = {
 	features: ProductCardFeatures;
 	isExpanded?: boolean;
 	productSlug?: string;
+	ctaElt: ReactNode;
 };
 
 const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
@@ -33,6 +34,7 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 	features,
 	isExpanded: isExpandedByDefault,
 	productSlug,
+	ctaElt,
 } ) => {
 	const trackProps = productSlug ? { product_slug: productSlug } : {};
 	const trackShowFeatures = useTrackCallback(
@@ -94,6 +96,7 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 					</ExternalLink>
 				</div>
 			) }
+			<div className="jetpack-product-card-alt-2__feature-cta">{ ctaElt }</div>
 		</FoldableCard>
 	);
 };

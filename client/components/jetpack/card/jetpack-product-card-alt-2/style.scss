@@ -52,14 +52,16 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 
 	.foldable-card {
 		margin-bottom: 0;
+		padding: 0 10px;
 
-		font-size: $font-body;
+		font-size: 1rem;
 
 		background: var( --color-gray-0 );
-
 		box-shadow: none;
+
 		&.card.is-expanded {
 			margin-top: 0;
+			margin-bottom: 0;
 		}
 	}
 
@@ -165,7 +167,6 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	margin-bottom: 12px;
 }
 
-.jetpack-product-card-alt-2__from,
 .jetpack-product-card-alt-2__billing-time-frame,
 .jetpack-product-card-alt-2__expiration-date {
 	display: block;
@@ -234,17 +235,17 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 }
 
 .jetpack-product-card-alt-2__body {
-	padding: 0 16px;
+	padding: 0 24px;
 }
 
 .jetpack-product-card-alt-2 .button {
 	width: 100%;
-	margin-bottom: 30px;
 
 	font-size: $font-body;
 }
 
 .jetpack-product-card-alt-2__description {
+	margin-top: 30px;
 	margin-bottom: 0;
 	padding: 0 4px;
 
@@ -260,12 +261,8 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	}
 }
 
-.jetpack-product-card-alt-2 .foldable-card.is-expanded {
-	margin-bottom: 0;
-}
-
 .jetpack-product-card-alt-2 .foldable-card.is-expanded .foldable-card__content {
-	padding: 0 16px 16px;
+	padding: 0 16px;
 
 	border-top: none;
 }
@@ -341,6 +338,17 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 
 .jetpack-product-card-alt-2__feature-more {
 	padding-top: 16px;
+
+	a {
+		color: var( --studio-jetpack-green-40 );
+	}
+}
+
+.jetpack-product-card-alt-2__feature-cta {
+	margin: 32px -24px 0;
+	padding: 24px 28px;
+
+	border-top: solid 1px var( --color-border-subtle );
 }
 
 /* Prices Loading state */
@@ -358,4 +366,11 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 
 	width: 100px;
 	height: 12px;
+}
+
+/* Jetpack.com-only changes */
+.is-section-jetpack-cloud-pricing {
+	.jetpack-product-card-alt-2 {
+		background-color: #f6f7f7;
+	}
 }
