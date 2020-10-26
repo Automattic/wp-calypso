@@ -96,7 +96,7 @@ function setSessionCookies( window, authorizeResponse ) {
 }
 
 function auth( window, onAuthorized ) {
-	ipc.handleOnce( 'user-auth', async function ( event, user, token ) {
+	ipc.handle( 'user-auth', async function ( _, user, token ) {
 		log.info( `Handling 'user-auth' IPC event, setting session cookies...` );
 
 		if ( user && user.data ) {

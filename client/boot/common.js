@@ -427,13 +427,27 @@ const boot = ( currentUser, registerRoutes ) => {
 			registerRoutes();
 		}
 
+		const isDesktop = config.isEnabled( 'desktop' );
+
 		// Render initial `<Layout>` for non-isomorphic sections.
 		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
-		if ( ! document.getElementById( 'primary' ) ) {
+		if ( ! isDesktop && ! document.getElementById( 'primary' ) ) {
 			renderLayout( reduxStore );
+
+			page.start( { decodeURLComponents: false } );
 		}
 
-		page.start( { decodeURLComponents: false } );
+		if ( isDesktop ) {
+			const ipc = require( 'electron' ).ipcRenderer;
+
+			ipc.on( 'cookie-auth-complete', function () {
+				debug( 'Cookies set, rendering layout...' );
+
+				renderLayout( reduxStore );
+
+				page.start( { decodeURLComponents: false } );
+			} );
+		}
 	} );
 };
 
