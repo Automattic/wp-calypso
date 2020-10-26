@@ -342,8 +342,8 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 					onChange={ handleFormChange }
 					disabled={ disabled }
 				>
-					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
 					<option value="ftp">{ translate( 'FTP' ) }</option>
+					<option value="ssh">{ translate( 'SSH/SFTP' ) }</option>
 				</FormSelect>
 			</FormFieldset>
 
