@@ -122,6 +122,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-monthly-pricing-test': isMonthlyPricingTest,
+		'is-monthly-selected': intervalType === 'monthly',
 	} );
 	const popupIsVisible = Boolean( isMonthlyPricingTest && intervalType === 'monthly' );
 

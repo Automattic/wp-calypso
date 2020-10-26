@@ -1091,10 +1091,6 @@ button.plan-features__scroll-button {
 }
 
 .plans-wrapper.is-monthly-pricing {
-	@media screen and ( max-width: 960px ) {
-		padding-top: 85px;
-	}
-
 	.plan-pill {
 		top: 10px;
 		bottom: unset;
