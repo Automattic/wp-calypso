@@ -597,13 +597,19 @@ export function checkout(
 	urlQueryArgs: QueryArgs
 ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
+	const productsString = productsArray.join( ',' );
 
-	// There is not siteSlug, we need to redirect the user to the site selection
+	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
-	const path = siteSlug
-		? `/checkout/${ siteSlug }/${ isJetpackCloud() ? productsArray.join( ',' ) : '' }`
-		: `/jetpack/connect/${ productsArray.join( ',' ) }`;
+	let path;
+	if ( ! siteSlug ) {
+		path = `/jetpack/connect/${ productsString }`;
+	} else {
+		path = isJetpackCloud()
+			? `/checkout/${ siteSlug }/${ productsString }`
+			: `/checkout/${ siteSlug }`;
+	}
 
 	if ( isJetpackCloud() ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
