@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite, isNumber } from 'lodash';
-import React, { createElement, ReactNode } from 'react';
+import React, { createElement, ReactNode, FunctionComponent } from 'react';
 
 /**
  * Internal dependencies
@@ -26,6 +26,7 @@ import type { Moment } from 'moment';
  * Style dependencies
  */
 import './style.scss';
+import ribbonSvg from './assets/ribbon.svg';
 
 type OwnProps = {
 	className?: string;
@@ -38,14 +39,10 @@ type OwnProps = {
 	currencyCode: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	withStartingPrice?: boolean;
 	billingTimeFrame: TranslateResult;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	badgeLabel?: TranslateResult;
 	onButtonClick: () => void;
-	cancelLabel?: TranslateResult;
-	onCancelClick?: () => void;
 	searchRecordsDetails?: ReactNode;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
@@ -56,7 +53,7 @@ type OwnProps = {
 
 export type Props = OwnProps & Partial< FeaturesProps >;
 
-const JetpackProductCardAlt2 = ( {
+const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	className,
 	iconSlug,
 	productName,
@@ -67,14 +64,10 @@ const JetpackProductCardAlt2 = ( {
 	currencyCode,
 	originalPrice,
 	discountedPrice,
-	withStartingPrice,
 	billingTimeFrame,
 	buttonLabel,
 	buttonPrimary,
-	badgeLabel,
 	onButtonClick,
-	cancelLabel,
-	onCancelClick,
 	searchRecordsDetails,
 	isHighlighted,
 	isOwned,
@@ -124,6 +117,10 @@ const JetpackProductCardAlt2 = ( {
 			} ) }
 			data-e2e-product-slug={ productSlug }
 		>
+			<div className="jetpack-product-card-alt-2__ribbon">
+				<span className="jetpack-product-card-alt-2__ribbon-text">{ translate( 'Bundle' ) }</span>
+				<img className="jetpack-product-card-alt-2__ribbon-img" src={ ribbonSvg } alt="" />
+			</div>
 			<div className="jetpack-product-card-alt-2__summary">
 				<header className="jetpack-product-card-alt-2__header">
 					<ProductIcon className="jetpack-product-card-alt-2__icon" slug={ iconSlug } />
@@ -154,18 +151,11 @@ const JetpackProductCardAlt2 = ( {
 							{ currencyCode && originalPrice ? (
 								<>
 									<span className="jetpack-product-card-alt-2__raw-price">
-										{ withStartingPrice && (
-											<span className="jetpack-product-card-alt-2__from">
-												{ translate( 'from' ) }
-											</span>
-										) }
-
 										<PlanPrice
 											rawPrice={ isDiscounted ? discountedPrice : originalPrice }
 											discounted
 											currencyCode={ currencyCode }
 										/>
-
 										{ searchRecordsDetails && (
 											<InfoPopover
 												className="jetpack-product-card-alt-2__search-price-popover"
@@ -187,7 +177,6 @@ const JetpackProductCardAlt2 = ( {
 					) }
 				</header>
 				<div className="jetpack-product-card-alt-2__body">
-					<span className="jetpack-product-card-alt-2__badge">{ badgeLabel }</span>
 					<Button
 						primary={ buttonPrimary }
 						className="jetpack-product-card-alt-2__button"
@@ -195,11 +184,6 @@ const JetpackProductCardAlt2 = ( {
 					>
 						{ buttonLabel }
 					</Button>
-					{ cancelLabel && (
-						<Button className="jetpack-product-card-alt-2__cancel" onClick={ onCancelClick }>
-							{ cancelLabel }
-						</Button>
-					) }
 					{ description && (
 						<p className="jetpack-product-card-alt-2__description">{ description }</p>
 					) }
