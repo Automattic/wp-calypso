@@ -93,7 +93,7 @@ import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug'
 import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
-import doesValueExist from './lib/does-values-exist';
+import doesValueExist from './lib/does-value-exist';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 

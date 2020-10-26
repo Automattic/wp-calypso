@@ -22,7 +22,7 @@ import {
 import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
 import useFetchProductsIfNotLoaded from './use-fetch-products-if-not-loaded';
-import doesValueExist from '../lib/does-values-exist';
+import doesValueExist from '../lib/does-value-exist';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for-cart' );
 
