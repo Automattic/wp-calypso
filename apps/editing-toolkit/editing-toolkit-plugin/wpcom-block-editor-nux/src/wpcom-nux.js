@@ -11,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -44,16 +45,26 @@ function WpcomNux() {
 		fetchWpcomNuxStatus();
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
-	// Hide editor sidebar first time users sees the editor
 	useEffect( () => {
+		// Hide editor sidebar first time users sees the editor
 		isWpcomNuxEnabled && closeGeneralSidebar();
-	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
+		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
+			recordTracksEvent( 'calypso_editor_wpcom_nux_show', {
+				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			} );
+		}
+	}, [ closeGeneralSidebar, isWpcomNuxEnabled, isSPTOpen ] );
 
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
-	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
+	const dismissWpcomNux = () => {
+		setWpcomNuxStatus( { isNuxEnabled: false } );
+		recordTracksEvent( 'calypso_editor_wpcom_nux_dismiss', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+	};
 
 	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
