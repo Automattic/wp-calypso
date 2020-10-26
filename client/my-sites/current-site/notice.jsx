@@ -254,7 +254,7 @@ export class SiteNotice extends React.Component {
 	}
 
 	render() {
-		const { site, isMigrationInProgress, messagePath, hasJITM } = this.props;
+		const { site, isMigrationInProgress, hasJITM } = this.props;
 		if ( ! site || isMigrationInProgress ) {
 			return <div className="current-site__notices" />;
 		}
@@ -275,9 +275,8 @@ export class SiteNotice extends React.Component {
 				{ showJitms && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
-						messagePath={ messagePath }
+						messagePathSuffix="sidebar_notice"
 						template="sidebar-banner"
-						placeholder={ null }
 					/>
 				) }
 				<QuerySitePlans siteId={ site.ID } />
@@ -292,10 +291,12 @@ export default connect(
 	( state, ownProps ) => {
 		const siteId = ownProps.site && ownProps.site.ID ? ownProps.site.ID : null;
 		const sectionName = getSectionName( state );
-		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
-
 		const isMigrationInProgress =
 			isSiteMigrationInProgress( state, siteId ) || isSiteMigrationActiveRoute( state );
+
+		// Avoid passing `messagePath` as a prop to `SiteNotice` as it changes frequently and
+		// thus will cause a lot of re-renders.
+		const messagePath = `calypso:${ sectionName }:sidebar_notice`;
 
 		return {
 			isDomainOnly: isDomainOnlySite( state, siteId ),
@@ -312,7 +313,6 @@ export default connect(
 			isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 			isMigrationInProgress,
 			hasJITM: getTopJITM( state, messagePath ),
-			messagePath,
 		};
 	},
 	( dispatch ) => {

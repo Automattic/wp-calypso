@@ -184,11 +184,7 @@ class Layout extends Component {
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="layout__content">
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
-						<AsyncLoad
-							require="calypso/blocks/jitm"
-							placeholder={ null }
-							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
-						/>
+						<AsyncLoad require="calypso/blocks/jitm" messagePathSuffix="admin_notices" />
 					) }
 					<AsyncLoad
 						require="calypso/components/global-notices"
