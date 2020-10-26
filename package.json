@@ -75,7 +75,7 @@
 		"build-desktop:app": "cd desktop && yarn run build",
 		"test-desktop:e2e": "node desktop/e2e/run.js",
 		"build-docker": "node bin/build-docker.js",
-		"build-static": "npx ncp static public",
+		"build-static": "npx ncp static public && npx ncp client/lib/service-worker public --filter=\"service-worker(/service-worker\\.js)?$\"",
 		"prebuild-server": "mkdirp build",
 		"build-server": "BROWSERSLIST_ENV=server webpack --config client/webpack.config.node.js --display errors-only",
 		"build-server:copy-modules": "node bin/copy-production-modules.js",
