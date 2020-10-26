@@ -71,7 +71,9 @@ export default function setup() {
 		}
 	}
 
-	app.use( pwa() );
+	if ( ! config.isEnabled( 'desktop' ) ) {
+		app.use( pwa() );
+	}
 
 	// attach the static file server to serve the `public` dir
 	app.use( '/calypso', express.static( path.resolve( __dirname, '..', '..', '..', 'public' ) ) );
