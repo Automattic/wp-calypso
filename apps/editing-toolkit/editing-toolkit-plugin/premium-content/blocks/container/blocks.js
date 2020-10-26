@@ -14,6 +14,7 @@ export default function Blocks() {
 					[ 'premium-content/logged-out-view' ],
 				] }
 				__experimentalCaptureToolbars={ true }
+				templateInsertUpdatesSelection={ false }
 			/>
 		</div>
 	);
