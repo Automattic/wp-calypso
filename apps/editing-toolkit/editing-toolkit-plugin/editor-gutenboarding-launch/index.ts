@@ -71,11 +71,6 @@ function updateEditor() {
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
 		const launchHref = window?.calypsoifyGutenberg?.launchUrl as string;
 
-		// On mobile there is not enough space to display "Complete setup" label.
-		const launchLabel = isMobileViewport
-			? __( 'Launch', 'full-site-editing' )
-			: __( 'Complete setup', 'full-site-editing' );
-
 		const saveAndNavigate = async () => {
 			await dispatch( 'core/editor' ).savePost();
 			// Using window.top to escape from the editor iframe on WordPress.com
@@ -138,7 +133,7 @@ function updateEditor() {
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
 
-		const textContent = document.createTextNode( launchLabel );
+		const textContent = document.createTextNode( __( 'Launch', 'full-site-editing' ) );
 		launchLink.appendChild( textContent );
 
 		launchLink.addEventListener( 'click', handleLaunch );
