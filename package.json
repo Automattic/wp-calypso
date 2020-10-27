@@ -50,7 +50,7 @@
 	},
 	"engines": {
 		"node": "^v12.18.4",
-		"yarn": "^1.22.4"
+		"yarn": "^1.22.10"
 	},
 	"scripts": {
 		"analyze-bundles": "yarn run build-client-stats && webpack-bundle-analyzer client/stats.json public/evergreen -h 127.0.0.1 -p 9898 -s gzip",
