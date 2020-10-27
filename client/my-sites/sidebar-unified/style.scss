@@ -196,6 +196,46 @@ $font-size: rem( 14px );
 				}
 			}
 		}
+
+		.notice {
+			background-color: #3c434a;
+			/* stylelint-disable-next-line scales/font-weight */
+			font-weight: 300;
+
+			&.is-compact {
+				margin: 0;
+				height: 56px;
+				align-items: center;
+			}
+
+			.notice__icon-wrapper {
+				background-color: transparent;
+				width: 35px;
+
+				.notice__icon-wrapper-drop {
+					top: calc( 50% - 9px );
+					left: calc( 50% - 9px );
+					width: 18px;
+					height: 18px;
+					border-radius: 50%;
+					background: #a7aaad;
+				}
+			}
+
+			.gridicon {
+				fill: #3c434a;
+			}
+
+			.notice__content {
+				padding-left: 4px;
+				overflow-wrap: anywhere;
+			}
+
+			.notice__action {
+				color: #fff;
+				font-weight: 600;
+			}
+		}
 	}
 
 	//client/components/site-selector/style.scss
@@ -301,6 +341,13 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			overflow: hidden;
+		}
+
+		.sidebar .notice {
+			.notice__content,
+			.notice__action {
+				display: none;
+			}
 		}
 
 		// Is toggled open
