@@ -11,14 +11,13 @@ import debugFactory from 'debug';
  */
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
 import 'calypso/state/data-layer/wpcom/marketing';
-import withSectionMessagePath from './with-section-message-path';
 
 /**
  * Style dependencies
@@ -120,12 +119,22 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = ( state, { messagePath, messagePathSuffix } ) => {
 	const currentSite = getSelectedSite( state );
+
+	/*
+	 * User may specify their own "messagePath" prop, which we will use directly.
+	 * They can also choose to pass "messagePathSuffix" instead, which we will use to
+	 * build a path with `calypso:${sectionName}:` prepended.
+	 */
+	if ( messagePath === undefined ) {
+		messagePath = `calypso:${ getSectionName( state ) }:${ messagePathSuffix }`;
+	}
 
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
+		messagePath,
+		jitm: getTopJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
 };
@@ -134,8 +143,4 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-// Export the unwrapped component to allow for providing a custom `messagePath`.
-export const JITMConnected = connect( mapStateToProps, mapDispatchToProps )( JITM );
-
-// Export a wrapped component which automatically provides the `messagePath`
-export default withSectionMessagePath( JITMConnected );
+export default connect( mapStateToProps, mapDispatchToProps )( JITM );
