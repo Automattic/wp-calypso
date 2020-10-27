@@ -10,7 +10,7 @@ import { stringify as stringifyQs } from 'qs';
  * Internal dependencies
  */
 import jsonp from './jsonp';
-import { languages } from 'languages';
+import { languages } from 'calypso/languages';
 
 const debug = debugFactory( 'wporg' );
 

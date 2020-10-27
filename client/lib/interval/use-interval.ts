@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 /**
  * Internal dependencies
  */
-import type { TimeoutMS } from 'types';
+import type { TimeoutMS } from 'calypso/types';
 
 /**
  * useInterval implementation from @see https://overreacted.io/making-setinterval-declarative-with-react-hooks/

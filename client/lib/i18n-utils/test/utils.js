@@ -18,7 +18,7 @@ import {
 	filterLanguageRevisions,
 	translationExists,
 	isMagnificentLocale,
-} from 'lib/i18n-utils';
+} from 'calypso/lib/i18n-utils';
 
 jest.mock( 'config', () => ( key ) => {
 	if ( 'i18n_default_locale_slug' === key ) {

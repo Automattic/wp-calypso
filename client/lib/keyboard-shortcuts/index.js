@@ -11,7 +11,7 @@ const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaste
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'calypso/lib/mixins/emitter';
 import KEY_BINDINGS from './key-bindings';
 
 // Flatten the key-bindings object to create an array of key-bindings. `_.flatMap` converts

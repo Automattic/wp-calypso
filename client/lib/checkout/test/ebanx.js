@@ -15,7 +15,7 @@ import {
 	isValidCNPJ,
 	shouldRenderAdditionalCountryFields,
 } from '../processor-specific';
-import { isPaymentMethodEnabled } from 'lib/cart-values';
+import { isPaymentMethodEnabled } from 'calypso/lib/cart-values';
 
 jest.mock( 'lib/cart-values', () => {
 	const cartValues = {};

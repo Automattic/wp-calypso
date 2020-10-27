@@ -22,8 +22,8 @@ describe( 'WPCOM Followers Store', () => {
 	let Dispatcher, FollowersStore;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		FollowersStore = require( 'lib/followers/store' );
+		Dispatcher = require( 'calypso/dispatcher' );
+		FollowersStore = require( 'calypso/lib/followers/store' );
 	} );
 
 	test( 'Store should be an object', () => {

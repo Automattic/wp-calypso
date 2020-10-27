@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import { actions, errors as errorTypes } from './constants';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
 async function makeRequest( username, password, authCode = '' ) {
 	try {

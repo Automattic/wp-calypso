@@ -6,8 +6,8 @@ import { parse, stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 
 /**
  * Module variables

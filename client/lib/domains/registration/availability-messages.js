@@ -10,19 +10,19 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getTld } from 'lib/domains';
+import { getTld } from 'calypso/lib/domains';
 import {
 	CALYPSO_CONTACT,
 	INCOMING_DOMAIN_TRANSFER_STATUSES_IN_PROGRESS,
 	MAP_EXISTING_DOMAIN,
-} from 'lib/url/support';
-import { domainAvailability } from 'lib/domains/constants';
+} from 'calypso/lib/url/support';
+import { domainAvailability } from 'calypso/lib/domains/constants';
 import {
 	domainManagementTransferToOtherSite,
 	domainManagementTransferIn,
 	domainMapping,
 	domainTransferIn,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 
 function getAvailabilityNotice( domain, error, errorData ) {
 	const tld = domain ? getTld( domain ) : null;

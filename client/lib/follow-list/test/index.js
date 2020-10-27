@@ -14,8 +14,8 @@ describe( 'index', () => {
 	let FollowList, FollowListSite, followList, site;
 
 	beforeAll( () => {
-		FollowList = require( 'lib/follow-list' );
-		FollowListSite = require( 'lib/follow-list/site' );
+		FollowList = require( 'calypso/lib/follow-list' );
+		FollowListSite = require( 'calypso/lib/follow-list/site' );
 		followList = new FollowList();
 		site = new FollowListSite( { site_id: 95327318, is_following: false } );
 	} );

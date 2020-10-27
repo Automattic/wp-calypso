@@ -9,9 +9,9 @@ import { CPF, CNPJ } from 'cpf_cnpj';
 /**
  * Internal dependencies
  */
-import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import { isPaymentMethodEnabled } from 'lib/cart-values';
-import CartStore from 'lib/cart/store';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
+import { isPaymentMethodEnabled } from 'calypso/lib/cart-values';
+import CartStore from 'calypso/lib/cart/store';
 
 /**
  * Returns whether we should Ebanx credit card processing for a particular country

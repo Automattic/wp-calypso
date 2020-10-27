@@ -18,7 +18,7 @@ describe( 'Viewers Store', () => {
 	let Dispatcher, ViewersStore;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
+		Dispatcher = require( 'calypso/dispatcher' );
 		ViewersStore = require( '../store' );
 	} );
 

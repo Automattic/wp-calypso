@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { isUrlLikelyAnImage } from 'lib/post-normalizer/utils/is-url-likely-an-image';
+import { isUrlLikelyAnImage } from 'calypso/lib/post-normalizer/utils/is-url-likely-an-image';
 
 /**
  * Determine if a post thumbnail is likely an image

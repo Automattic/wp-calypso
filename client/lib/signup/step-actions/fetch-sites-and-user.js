@@ -6,12 +6,12 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import user from 'lib/user';
+import user from 'calypso/lib/user';
 
 // State actions and selectors
-import getSiteId from 'state/selectors/get-site-id';
-import { requestSites } from 'state/sites/actions';
-import { promisify } from 'utils';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { requestSites } from 'calypso/state/sites/actions';
+import { promisify } from 'calypso/utils';
 
 /**
  * Constants

@@ -4,7 +4,7 @@
 import { entries, isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -14,14 +14,14 @@ import {
 	isSupportNextSession,
 	supportUserBoot,
 	supportNextBoot,
-} from 'lib/user/support-user-interop';
-import wpcom from 'lib/wp';
-import Emitter from 'lib/mixins/emitter';
-import { isE2ETest } from 'lib/e2e';
+} from 'calypso/lib/user/support-user-interop';
+import wpcom from 'calypso/lib/wp';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { isE2ETest } from 'calypso/lib/e2e';
 import { getComputedAttributes, filterUserObject } from './shared-utils';
-import { getLanguage } from 'lib/i18n-utils/utils';
-import { clearStorage } from 'lib/browser-storage';
-import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'lib/abtest/utility';
+import { getLanguage } from 'calypso/lib/i18n-utils/utils';
+import { clearStorage } from 'calypso/lib/browser-storage';
+import { getActiveTestNames, ABTEST_LOCALSTORAGE_KEY } from 'calypso/lib/abtest/utility';
 
 const debug = debugFactory( 'calypso:user' );
 

@@ -7,8 +7,8 @@ import { clone } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 import PluginsDataActions from './actions';
 
 let _shortLists = {},

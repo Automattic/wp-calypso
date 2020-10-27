@@ -3,7 +3,7 @@
  */
 
 import { find } from 'lodash';
-import { getThemeIdFromStylesheet } from 'state/themes/utils';
+import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 
 /**
  * Module variables

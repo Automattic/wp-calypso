@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
 import {
 	NAMESERVERS_FETCH,
 	NAMESERVERS_FETCH_COMPLETED,

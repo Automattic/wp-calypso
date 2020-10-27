@@ -7,7 +7,7 @@ describe( 'Plugins Log Store', () => {
 	let Dispatcher, LogStore;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
+		Dispatcher = require( 'calypso/dispatcher' );
 		LogStore = require( '../log-store' );
 	} );
 

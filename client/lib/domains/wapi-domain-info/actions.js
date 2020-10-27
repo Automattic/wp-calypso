@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,

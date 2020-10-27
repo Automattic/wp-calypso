@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import formatNumberCompact, { formatNumberMetric } from 'lib/format-number-compact';
+import formatNumberCompact, { formatNumberMetric } from 'calypso/lib/format-number-compact';
 
 describe( 'formatNumberCompact', () => {
 	test( 'does nothing if number is < 1000', () => {
