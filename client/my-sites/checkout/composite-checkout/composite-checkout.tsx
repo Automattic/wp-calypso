@@ -87,7 +87,6 @@ import {
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
 } from './types/wpcom-store-state';
-import { WPCOMPaymentMethod } from './types/backend/payment-method';
 import { StoredCard } from './types/stored-cards';
 import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
 import { CountryListItem } from './types/country-list-item';
@@ -128,7 +127,7 @@ export default function CompositeCheckout( {
 	siteId: number | undefined;
 	productAliasFromUrl: string | undefined;
 	getStoredCards?: () => StoredCard[];
-	allowedPaymentMethods?: WPCOMPaymentMethod[];
+	allowedPaymentMethods?: CheckoutPaymentMethodSlug[];
 	onlyLoadPaymentMethods?: CheckoutPaymentMethodSlug[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo: string | undefined;
