@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useReducer, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import debugFactory from 'debug';
 import styled from '@emotion/styled';
 import i18n, { useTranslate } from 'i18n-calypso';
@@ -29,52 +29,6 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
-
-export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
-	const [ state, dispatch ] = useReducer( storedCardsReducer, {
-		storedCards: [],
-		isLoading: true,
-	} );
-
-	useEffect( () => {
-		if ( isLoggedOutCart ) {
-			return;
-		}
-		let isSubscribed = true;
-		async function fetchStoredCards() {
-			debug( 'fetching stored cards' );
-			return getStoredCards();
-		}
-
-		fetchStoredCards()
-			.then( ( cards ) => {
-				debug( 'stored cards fetched', cards );
-				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-			} )
-			.catch( ( error ) => {
-				debug( 'stored cards failed to load', error );
-				onEvent( { type: 'STORED_CARD_ERROR', payload: error.message } );
-				isSubscribed && dispatch( { type: 'FETCH_END', payload: [] } );
-			} );
-
-		return () => ( isSubscribed = false );
-	}, [ getStoredCards, onEvent, isLoggedOutCart ] );
-
-	if ( isLoggedOutCart ) {
-		return { ...state, isLoading: false };
-	}
-
-	return state;
-}
-
-function storedCardsReducer( state, action ) {
-	switch ( action.type ) {
-		case 'FETCH_END':
-			return { ...state, storedCards: action.payload, isLoading: false };
-		default:
-			return state;
-	}
-}
 
 export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting existing card transaction', transactionData );
