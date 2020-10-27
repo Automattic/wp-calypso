@@ -37,3 +37,24 @@ export function useAnonId(): string | null {
 export function useNextRefresh(): number {
 	return useSelector( nextRefresh );
 }
+
+type ExperimentInfo = {
+	variation: string | null;
+	anonId: string | null;
+	nextRefresh: number;
+	isLoading: boolean;
+};
+
+/**
+ * Get the information for a given experiment
+ *
+ * @param experiment The name of the experiment
+ */
+export function useExperiment( experiment: string ): ExperimentInfo {
+	return useSelector( ( state ) => ( {
+		variation: getVariationForUser( state, experiment ),
+		anonId: getAnonId( state ),
+		nextRefresh: nextRefresh( state ),
+		isLoading: isLoading( state ),
+	} ) );
+}

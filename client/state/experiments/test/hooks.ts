@@ -1,7 +1,13 @@
 /**
  * Internal Dependencies
  */
-import { useIsLoading, useVariationForUser, useAnonId, useNextRefresh } from '../hooks';
+import {
+	useIsLoading,
+	useVariationForUser,
+	useAnonId,
+	useNextRefresh,
+	useExperiment,
+} from '../hooks';
 
 jest.mock( 'react-redux', () => {
 	const state = { experiments: {} as any };
@@ -91,6 +97,33 @@ describe( 'Experiemnt Hooks', () => {
 
 			updateState( {} );
 			expect( useNextRefresh() ).toBe( mockNow );
+		} );
+	} );
+
+	describe( 'useExperiment()', () => {
+		test( 'should return a unified object with all related data', () => {
+			updateState( {} );
+			expect( useExperiment( 'mock_test' ) ).toEqual( {
+				variation: useVariationForUser( 'mock_test' ),
+				anonId: useAnonId(),
+				nextRefresh: useNextRefresh(),
+				isLoading: useIsLoading(),
+			} );
+
+			updateState( {
+				variations: {
+					mock_test: 'treatment',
+				},
+				anonId: 'random-anon-id',
+				nextRefresh: 1603814562240,
+				isLoading: true,
+			} );
+			expect( useExperiment( 'mock_test' ) ).toEqual( {
+				variation: useVariationForUser( 'mock_test' ),
+				anonId: useAnonId(),
+				nextRefresh: useNextRefresh(),
+				isLoading: useIsLoading(),
+			} );
 		} );
 	} );
 } );
