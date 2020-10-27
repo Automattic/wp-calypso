@@ -756,13 +756,15 @@ function getGutenboardingStatus( calypsoPort ) {
 	port1.onmessage = ( { data } ) => {
 		const {
 			isGutenboarding,
-			frankenflowUrl,
+			isSiteUnlaunched,
+			launchUrl,
 			isNewLaunchMobile,
 			isExperimental,
 			isPersistentLaunchButton,
 		} = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
+		calypsoifyGutenberg.isSiteUnlaunched = isSiteUnlaunched;
+		calypsoifyGutenberg.launchUrl = launchUrl;
 		calypsoifyGutenberg.isNewLaunchMobile = isNewLaunchMobile;
 		calypsoifyGutenberg.isExperimental = isExperimental;
 		calypsoifyGutenberg.isPersistentLaunchButton = isPersistentLaunchButton;
@@ -947,6 +949,20 @@ function handleCheckoutModal( calypsoPort ) {
 	};
 }
 
+function handleInlineHelpButton( calypsoPort ) {
+	addAction(
+		'a8c.wpcom-block-editor.toggleInlineHelpButton',
+		'a8c/wpcom-block-editor/toggleInlineHelpButton',
+		/** @type {({ hidden: boolean }) => void} */
+		( data ) => {
+			calypsoPort.postMessage( {
+				action: 'toggleInlineHelpButton',
+				payload: data,
+			} );
+		}
+	);
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -1051,6 +1067,8 @@ function initPort( message ) {
 		handleEditorLoaded( calypsoPort );
 
 		handleCheckoutModal( calypsoPort );
+
+		handleInlineHelpButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );
