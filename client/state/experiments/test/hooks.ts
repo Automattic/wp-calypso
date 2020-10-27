@@ -102,6 +102,12 @@ describe( 'Experiemnt Hooks', () => {
 
 	describe( 'useExperiment()', () => {
 		test( 'should return a unified object with all related data', () => {
+			const mockNow = new Date( '2020-10-20T11:00:00.135Z' ).valueOf();
+			jest
+				.spyOn( global.Date, 'now' )
+				.mockImplementationOnce( () => mockNow )
+				.mockImplementationOnce( () => mockNow );
+
 			updateState( {} );
 			expect( useExperiment( 'mock_test' ) ).toEqual( {
 				variation: useVariationForUser( 'mock_test' ),
