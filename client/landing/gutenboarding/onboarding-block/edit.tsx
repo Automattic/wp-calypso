@@ -6,6 +6,7 @@ import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
 import { isEnabled } from 'calypso/config';
+import FocusedLaunchModal from '@automattic/launch';
 
 /**
  * Internal dependencies
@@ -128,6 +129,14 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>
+
+				<Route path={ makePath( Step.FocusedLaunchFlowModal ) }>
+					<FocusedLaunchModal
+						onClose={ () => {
+							/* TODO */
+						} }
+					/>
+				</Route>
 			</Switch>
 		</div>
 	);
