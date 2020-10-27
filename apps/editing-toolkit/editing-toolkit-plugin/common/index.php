@@ -140,7 +140,13 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_
  * @return array Gutenberg editor settings with line-height setting always enabled.
  **/
 function wpcom_gutenberg_enable_custom_line_height( $settings ) {
-	$settings['enableCustomLineHeight'] = true;
+	if ( isset( $settings['__experimentalFeatures']['global']['typography'] ) ) {
+		// Update the global styles settings to always enable line height.
+		$settings['__experimentalFeatures']['global']['typography']['customLineHeight'] = true;
+	} else {
+		// This approach is deprecated, but we should still support it as a fallback just in case.
+		$settings['enableCustomLineHeight'] = true;
+	}
 	return $settings;
 }
 add_filter( 'block_editor_settings', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom_line_height', 11 );
