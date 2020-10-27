@@ -91,6 +91,7 @@ import {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
+	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
 import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
@@ -485,10 +486,14 @@ export default function CompositeCheckout( {
 			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
 			: isApplePayLoading );
 
+	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const countryCode: string = contactInfo?.countryCode?.value ?? '';
+
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
+				countryCode,
 				total,
 				credits,
 				subtotal,
