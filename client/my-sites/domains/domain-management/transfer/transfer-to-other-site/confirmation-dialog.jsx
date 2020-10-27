@@ -34,7 +34,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 
 	getMessage() {
 		const { domainName, isMapping, targetSite, translate } = this.props;
-		const targetSiteTitle = get( targetSite, 'title', '' );
+		const targetSiteTitle = get( targetSite, 'title', translate( 'Site Title' ) );
 		if ( isMapping ) {
 			return translate(
 				'Do you want to transfer mapping of {{strong}}%(domainName)s{{/strong}} ' +
