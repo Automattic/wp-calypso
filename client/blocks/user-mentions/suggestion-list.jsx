@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bind } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +41,7 @@ const UserMentionsSuggestionList = ( {
 				className="user-mentions__suggestion"
 				key={ suggestion.ID }
 				isSelected={ suggestion.ID === selectedSuggestionId }
-				onClick={ bind( onClick, null, suggestion ) }
+				onClick={ () => onClick( suggestion ) }
 			>
 				<UserMentionsSuggestion
 					avatarUrl={ suggestion.image_URL }
