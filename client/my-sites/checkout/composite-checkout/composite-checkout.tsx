@@ -9,18 +9,12 @@ import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
 import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
+import { colors } from '@automattic/color-studio';
 
 /**
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { getProductsList } from 'calypso/state/products-list/selectors';
-import {
-	useStoredCards,
-	useIsApplePayAvailable,
-	filterAppropriatePaymentMethods,
-} from './payment-method-helpers';
-import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import notices from 'calypso/notices';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
@@ -31,20 +25,7 @@ import { StateSelect } from 'calypso/my-sites/domains/components/form';
 import { getPlan } from 'calypso/lib/plans';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { useStripe } from 'calypso/lib/stripe';
-import CheckoutTerms from '../checkout/checkout-terms.jsx';
-import useCreatePaymentMethods from './use-create-payment-methods';
-import {
-	applePayProcessor,
-	freePurchaseProcessor,
-	multiPartnerCardProcessor,
-	fullCreditsProcessor,
-	existingCardProcessor,
-	payPalProcessor,
-	genericRedirectProcessor,
-	weChatProcessor,
-} from './payment-method-processors';
-import useGetThankYouUrl from './hooks/use-get-thank-you-url';
-import createAnalyticsEventHandler from './record-analytics';
+import { getProductsList } from 'calypso/state/products-list/selectors';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { hasRenewalItem, getRenewalItems, hasPlan } from 'calypso/lib/cart-values/cart-items';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
@@ -59,34 +40,53 @@ import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
+import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
+import {
+	useStoredCards,
+	useIsApplePayAvailable,
+	filterAppropriatePaymentMethods,
+} from './payment-method-helpers';
+import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
+import CheckoutTerms from '../checkout/checkout-terms.jsx';
+import useCreatePaymentMethods from './use-create-payment-methods';
+import {
+	applePayProcessor,
+	freePurchaseProcessor,
+	multiPartnerCardProcessor,
+	fullCreditsProcessor,
+	existingCardProcessor,
+	payPalProcessor,
+	genericRedirectProcessor,
+	weChatProcessor,
+} from './payment-method-processors';
+import useGetThankYouUrl from './hooks/use-get-thank-you-url';
+import createAnalyticsEventHandler from './record-analytics';
 import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
-import { colors } from '@automattic/color-studio';
-import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { needsDomainDetails } from './payment-method-helpers';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
-import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
 import useRecordCheckoutLoaded from './hooks/use-record-checkout-loaded';
 import useRecordCartLoaded from './hooks/use-record-cart-loaded';
 import useAddProductsFromUrl from './hooks/use-add-products-from-url';
 import useDetectedCountryCode from './hooks/use-detected-country-code';
-import WPCheckout from 'calypso/my-sites/checkout/composite-checkout/components/wp-checkout';
-import { useWpcomStore } from 'calypso/my-sites/checkout/composite-checkout/hooks/wpcom-store';
-import { areDomainsInLineItems } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-domains';
+import WPCheckout from './components/wp-checkout';
+import { useWpcomStore } from './hooks/wpcom-store';
+import { areDomainsInLineItems } from './hooks/has-domains';
 import {
 	emptyManagedContactDetails,
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
-} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+} from './types/wpcom-store-state';
 import { WPCOMPaymentMethod } from './types/backend/payment-method';
 import { StoredCard } from './types/stored-cards';
 import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
