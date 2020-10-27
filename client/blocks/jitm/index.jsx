@@ -11,7 +11,7 @@ import debugFactory from 'debug';
  */
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getSelectedSite, getSectionName } from 'calypso/state/ui/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getTopJITM } from 'calypso/state/jitm/selectors';
 import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
@@ -119,18 +119,8 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, { messagePath, messagePathSuffix } ) => {
+const mapStateToProps = ( state, { messagePath } ) => {
 	const currentSite = getSelectedSite( state );
-
-	/*
-	 * User may specify their own "messagePath" prop, which we will use directly.
-	 * They can also choose to pass "messagePathSuffix" instead, which we will use to
-	 * build a path with `calypso:${sectionName}:` prepended.
-	 */
-	if ( messagePath === undefined ) {
-		messagePath = `calypso:${ getSectionName( state ) }:${ messagePathSuffix }`;
-	}
-
 	return {
 		currentSite,
 		messagePath,
