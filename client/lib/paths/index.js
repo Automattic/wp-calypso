@@ -1,5 +1,5 @@
 /**
- * Internal dependencies
+ * Export login function.
  */
 export { login } from './login';
 

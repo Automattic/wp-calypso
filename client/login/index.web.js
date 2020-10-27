@@ -61,6 +61,9 @@ const makeLoggedOutLayout = makeLayoutMiddleware( ReduxWrappedLayout );
 export default ( router ) => {
 	const lang = getLanguageRouteParam();
 
+	const isMagicLoginEnabled = config.isEnabled( 'login/magic-login' );
+	console.log( { isMagicLoginEnabled } );
+
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
@@ -70,6 +73,8 @@ export default ( router ) => {
 			magicLoginUse,
 			makeLoggedOutLayout
 		);
+
+		console.log( { lang } );
 
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],

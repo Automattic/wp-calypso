@@ -11,6 +11,7 @@ import { isUserLoggedIn } from 'state/current-user/selectors';
 
 export function redirectLoggedIn( context, next ) {
 	const userLoggedIn = isUserLoggedIn( context.store.getState() );
+	console.log( { userLoggedIn } );
 
 	if ( userLoggedIn ) {
 		page.redirect( '/' );

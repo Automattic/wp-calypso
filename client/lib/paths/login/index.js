@@ -22,6 +22,7 @@ export function login( {
 	from,
 } = {} ) {
 	let url = config( 'login_url' );
+	console.log( { useMagicLink } );
 
 	if ( isNative && isEnabled( 'login/wp-login' ) ) {
 		url = '/log-in';
@@ -76,6 +77,8 @@ export function login( {
 	if ( from ) {
 		url = addQueryArgs( { from }, url );
 	}
+
+	console.log( { url } );
 
 	return url;
 }

@@ -49,6 +49,8 @@ export function setSectionMiddleware( section ) {
 export function setLocaleMiddleware( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
+	console.log( { context } );
+
 	if ( context.params.lang ) {
 		context.lang = context.params.lang;
 	} else if ( currentUser ) {
