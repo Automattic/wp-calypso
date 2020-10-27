@@ -29,7 +29,6 @@ ENV BUILD_TRANSLATION_CHUNKS true
 ENV CHROMEDRIVER_SKIP_DOWNLOAD true
 ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV NODE_OPTIONS --max-old-space-size=$node_memory
-ENV SOURCEMAP=source-map
 WORKDIR /calypso
 
 # Build a "base" layer
@@ -78,5 +77,6 @@ COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
 
+USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["node", "build/server.js"]
