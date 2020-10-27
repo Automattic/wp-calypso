@@ -9,13 +9,13 @@ import getSiteSuggestions from '../state/selectors/get-site-suggestions';
 /**
  * Internal dependencies
  */
-import { disableKeyboardShortcuts, enableKeyboardShortcuts } from '../flux/input-actions';
 import Spinner from './spinner';
 import Suggestions from '../suggestions';
 import repliesCache from '../comment-replies-cache';
 import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
 import { formatString, validURL } from './functions';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
 
 var debug = require( 'debug' )( 'notifications:reply' );
 var { recordTracksEvent } = require( '../helpers/stats' );
@@ -61,11 +61,11 @@ const CommentReplyInput = createReactClass( {
 		window.removeEventListener( 'keydown', this.handleKeyDown, false );
 		window.removeEventListener( 'keydown', this.handleCtrlEnter, false );
 
-		enableKeyboardShortcuts();
+		this.props.enableKeyboardShortcuts();
 	},
 
 	handleKeyDown: function ( event ) {
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -105,7 +105,7 @@ const CommentReplyInput = createReactClass( {
 	handleChange: function ( event ) {
 		var textarea = this.replyInput;
 
-		disableKeyboardShortcuts();
+		this.props.disableKeyboardShortcuts();
 
 		this.setState( {
 			value: event.target.value,
@@ -122,7 +122,7 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleClick: function ( event ) {
-		disableKeyboardShortcuts();
+		this.props.disableKeyboardShortcuts();
 
 		if ( ! this.state.hasClicked ) {
 			this.setState( {
@@ -132,11 +132,11 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleFocus: function () {
-		disableKeyboardShortcuts();
+		this.props.disableKeyboardShortcuts();
 	},
 
 	handleBlur: function () {
-		enableKeyboardShortcuts();
+		this.props.enableKeyboardShortcuts();
 
 		// Reset the field if there's no valid user input
 		// The regex strips whitespace
@@ -224,7 +224,7 @@ const CommentReplyInput = createReactClass( {
 					/* Flag submission failure */
 					component.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
 
-					enableKeyboardShortcuts();
+					component.props.enableKeyboardShortcuts();
 					component.props.global.toggleNavigation( true );
 
 					debug( 'Failed to submit comment reply: %s', error.message );
@@ -256,7 +256,7 @@ const CommentReplyInput = createReactClass( {
 
 			component.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
-			enableKeyboardShortcuts();
+			component.props.enableKeyboardShortcuts();
 			component.props.global.toggleNavigation( true );
 
 			component.setState( {
@@ -333,6 +333,7 @@ const CommentReplyInput = createReactClass( {
 
 const mapStateToProps = ( state, { note } ) => ( {
 	suggestions: getSiteSuggestions( state, note.meta.ids.site ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
@@ -340,6 +341,8 @@ const mapDispatchToProps = {
 	fetchSuggestions: actions.suggestions.fetchSuggestions,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
+	disableKeyboardShortcuts: actions.ui.disableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps, null, { pure: false } )(

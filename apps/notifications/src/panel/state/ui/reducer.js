@@ -12,6 +12,8 @@ import {
 	SELECT_NOTE,
 	SET_IS_SHOWING,
 	SET_FILTER,
+	ENABLE_KEYBOARD_SHORTCUTS,
+	DISABLE_KEYBOARD_SHORTCUTS,
 } from '../action-types';
 
 export const isLoading = ( state = true, { type } ) => {
@@ -41,6 +43,18 @@ export const selectedNoteId = ( state = null, { type, noteId } ) => {
 	return state;
 };
 
+export const keyboardShortcutsAreEnabled = ( state = false, action ) => {
+	switch ( action.type ) {
+		case ENABLE_KEYBOARD_SHORTCUTS: {
+			return true;
+		}
+		case DISABLE_KEYBOARD_SHORTCUTS: {
+			return false;
+		}
+	}
+	return state;
+};
+
 export const filterName = ( state = 'all', { type, filterName } ) =>
 	SET_FILTER === type ? filterName : state;
 
@@ -49,4 +63,5 @@ export default combineReducers( {
 	isPanelOpen,
 	selectedNoteId,
 	filterName,
+	keyboardShortcutsAreEnabled,
 } );
