@@ -293,7 +293,7 @@ export default function CompositeCheckout( {
 			} );
 
 			const transactionResult: TransactionResponse = select( 'wpcom' ).getTransactionResult();
-			const receiptId = transactionResult?.receipt_id;
+			const receiptId = transactionResult.receipt_id;
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
@@ -306,12 +306,12 @@ export default function CompositeCheckout( {
 				clearSignupDestinationCookie();
 			}
 
-			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
+			if ( hasRenewalItem( responseCart ) && transactionResult.purchases ) {
 				debug( 'purchase had a renewal' );
 				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
 			}
 
-			if ( receiptId && transactionResult?.purchases ) {
+			if ( receiptId && transactionResult.purchases ) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
 			}
@@ -322,8 +322,8 @@ export default function CompositeCheckout( {
 
 			if (
 				( responseCart.create_new_blog &&
-					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
-					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
+					Object.keys( transactionResult.purchases ?? {} ).length > 0 &&
+					Object.keys( transactionResult.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
 			) {
 				notices.info( translate( 'Almost done…' ) );
