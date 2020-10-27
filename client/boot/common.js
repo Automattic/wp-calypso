@@ -438,20 +438,24 @@ const boot = ( currentUser, registerRoutes ) => {
 
 		// Render initial `<Layout>` for non-isomorphic sections.
 		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
-		if ( ! isDesktop && ! document.getElementById( 'primary' ) ) {
-			render();
-		}
-
-		if ( isDesktop && loggedIn ) {
-			const ipc = require( 'electron' ).ipcRenderer;
-
-			ipc.on( 'cookie-auth-complete', function () {
-				debug( 'Desktop cookies set, rendering main layout...' );
+		if ( ! document.getElementById( 'primary' ) ) {
+			if ( ! isDesktop ) {
+				// If we're not in a WP-Desktop context, render.
 				render();
-			} );
-		} else {
-			debug( 'Desktop user logged out, rendering main layout...' );
-			render();
+			} else if ( loggedIn ) {
+				// WP-Desktop: logged in
+				// Wait on cookie-authentication
+				const ipc = require( 'electron' ).ipcRenderer;
+
+				ipc.on( 'cookie-auth-complete', function () {
+					debug( 'Desktop cookies set, rendering main layout...' );
+					render();
+				} );
+			} else {
+				// WP-Desktop: logged out
+				debug( 'Desktop user logged out, rendering main layout...' );
+				render();
+			}
 		}
 	} );
 };
