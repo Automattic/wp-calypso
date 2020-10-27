@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
+import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 
 /**
@@ -11,12 +12,15 @@ import debugFactory from 'debug';
  */
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
+import type { PossiblyCompleteDomainContactDetails } from '../types/backend/domain-contact-details-components';
 
 const { dispatch } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-export default function useCachedDomainContactDetails( updateCartLocation ) {
+export default function useCachedDomainContactDetails(
+	updateCartLocation: UpdateTaxLocationInCart
+): void {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
 
@@ -28,7 +32,9 @@ export default function useCachedDomainContactDetails( updateCartLocation ) {
 		}
 	}, [ reduxDispatch ] );
 
-	const cachedContactDetails = useSelector( getContactDetailsCache );
+	const cachedContactDetails: PossiblyCompleteDomainContactDetails | null = useSelector(
+		getContactDetailsCache
+	);
 	useEffect( () => {
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
