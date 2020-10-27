@@ -388,21 +388,33 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 			? translate( 'Backup, Scan, and Anti-spam in one package' )
 			: translate( 'Best for sites with occasional updates' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
-			constants.FEATURE_PRODUCT_SCAN_V2,
-			constants.FEATURE_PRODUCT_ANTISPAM_V2,
-			constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
-		],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [
-			constants.FEATURE_VIDEO_HOSTING_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-			constants.FEATURE_PRIORITY_SUPPORT_V2,
-		],
-	} ),
+	getPlanCardFeatures: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? [
+					constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+					constants.FEATURE_PRODUCT_SCAN_V2,
+					constants.FEATURE_PRODUCT_ANTISPAM_V2,
+					constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+					constants.FEATURE_VIDEO_HOSTING_V2,
+					constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+					constants.FEATURE_SITE_MONETIZATION_V2,
+					constants.FEATURE_GOOGLE_ANALYTICS,
+			  ]
+			: {
+					[ constants.FEATURE_CATEGORY_SECURITY ]: [
+						constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+						constants.FEATURE_PRODUCT_SCAN_V2,
+						constants.FEATURE_PRODUCT_ANTISPAM_V2,
+						constants.FEATURE_ACTIVITY_LOG_30_DAYS_V2,
+					],
+					[ constants.FEATURE_CATEGORY_OTHER ]: [
+						constants.FEATURE_VIDEO_HOSTING_V2,
+						constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+						constants.FEATURE_COLLECT_PAYMENTS_V2,
+						constants.FEATURE_SITE_MONETIZATION_V2,
+						constants.FEATURE_PRIORITY_SUPPORT_V2,
+					],
+			  },
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_DAILY,
@@ -442,22 +454,31 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 		),
 	getTagline: () => translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-			constants.FEATURE_PRODUCT_SCAN_V2,
-			constants.FEATURE_PRODUCT_ANTISPAM_V2,
-			constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-		],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [
-			constants.FEATURE_PREMIUM_THEMES_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-			constants.FEATURE_PRIORITY_SUPPORT_V2,
-		],
-	} ),
+	getPlanCardFeatures: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? [
+					constants.FEATURE_PLAN_SECURITY_DAILY,
+					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+					constants.FEATURE_PRODUCT_SCAN_V2,
+					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+					constants.FEATURE_PREMIUM_THEMES_V2,
+			  ]
+			: {
+					[ constants.FEATURE_CATEGORY_SECURITY ]: [
+						constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+						constants.FEATURE_PRODUCT_SCAN_V2,
+						constants.FEATURE_PRODUCT_ANTISPAM_V2,
+						constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+					],
+					[ constants.FEATURE_CATEGORY_OTHER ]: [
+						constants.FEATURE_PREMIUM_THEMES_V2,
+						constants.FEATURE_VIDEO_HOSTING_V2,
+						constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+						constants.FEATURE_COLLECT_PAYMENTS_V2,
+						constants.FEATURE_SITE_MONETIZATION_V2,
+						constants.FEATURE_PRIORITY_SUPPORT_V2,
+					],
+			  },
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
@@ -500,31 +521,38 @@ const getPlanJetpackCompleteDetails = () => ( {
 		),
 	getTagline: () => translate( 'For best-in-class WordPress sites' ),
 	getPlanCompareFeatures: () => [],
-	getPlanCardFeatures: () => ( {
-		[ constants.FEATURE_CATEGORY_SECURITY ]: [
-			[
-				constants.FEATURE_SECURITY_REALTIME_V2,
-				[
-					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-					constants.FEATURE_PRODUCT_SCAN_V2,
-					constants.FEATURE_PRODUCT_ANTISPAM_V2,
-					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
-				],
-			],
-		],
-		[ constants.FEATURE_CATEGORY_PERFORMANCE ]: [
-			constants.FEATURE_PRODUCT_SEARCH_V2,
-			constants.FEATURE_VIDEO_HOSTING_V2,
-		],
-		[ constants.FEATURE_CATEGORY_GROWTH ]: [
-			constants.FEATURE_CRM_V2,
-			constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
-			constants.FEATURE_COLLECT_PAYMENTS_V2,
-			constants.FEATURE_SITE_MONETIZATION_V2,
-		],
-		[ constants.FEATURE_CATEGORY_DESIGN ]: [ constants.FEATURE_PREMIUM_THEMES_V2 ],
-		[ constants.FEATURE_CATEGORY_OTHER ]: [ constants.FEATURE_PRIORITY_SUPPORT_V2 ],
-	} ),
+	getPlanCardFeatures: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? [
+					constants.FEATURE_PLAN_SECURITY_REALTIME,
+					constants.FEATURE_CRM_V2,
+					constants.FEATURE_PRODUCT_SEARCH_V2,
+			  ]
+			: {
+					[ constants.FEATURE_CATEGORY_SECURITY ]: [
+						[
+							constants.FEATURE_SECURITY_REALTIME_V2,
+							[
+								constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+								constants.FEATURE_PRODUCT_SCAN_V2,
+								constants.FEATURE_PRODUCT_ANTISPAM_V2,
+								constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
+							],
+						],
+					],
+					[ constants.FEATURE_CATEGORY_PERFORMANCE ]: [
+						constants.FEATURE_PRODUCT_SEARCH_V2,
+						constants.FEATURE_VIDEO_HOSTING_V2,
+					],
+					[ constants.FEATURE_CATEGORY_GROWTH ]: [
+						constants.FEATURE_CRM_V2,
+						constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
+						constants.FEATURE_COLLECT_PAYMENTS_V2,
+						constants.FEATURE_SITE_MONETIZATION_V2,
+					],
+					[ constants.FEATURE_CATEGORY_DESIGN ]: [ constants.FEATURE_PREMIUM_THEMES_V2 ],
+					[ constants.FEATURE_CATEGORY_OTHER ]: [ constants.FEATURE_PRIORITY_SUPPORT_V2 ],
+			  },
 	getSignupFeatures: () => [],
 	getHiddenFeatures: () => [
 		constants.FEATURE_JETPACK_BACKUP_REALTIME,
