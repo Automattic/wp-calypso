@@ -55,11 +55,8 @@ import {
 } from 'calypso/signup/storageUtils';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms.jsx';
-import {
-	useStoredCards,
-	useIsApplePayAvailable,
-	filterAppropriatePaymentMethods,
-} from './payment-method-helpers';
+import { useIsApplePayAvailable, filterAppropriatePaymentMethods } from './payment-method-helpers';
+import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
@@ -447,11 +444,16 @@ export default function CompositeCheckout( {
 		createUserAndSiteBeforeTransaction
 	);
 
-	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
-		recordEvent,
 		isLoggedOutCart
 	);
+
+	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
+		);
+	} );
 
 	const {
 		canMakePayment: isApplePayAvailable,
