@@ -48,6 +48,7 @@ import {
 	isPersonal,
 	isPremium,
 	isBusiness,
+	isMonthly,
 	isSiteRedirect,
 	isSpaceUpgrade,
 	isUnlimitedSpace,
@@ -365,6 +366,9 @@ export function hasDomainCredit( cart ) {
 	return cart.has_bundle_credit || hasPlan( cart );
 }
 
+export function hasMonthlyCartItem( cart ) {
+	return some( getAllCartItems( cart ), isMonthly );
+}
 /**
  * Whether the cart has a registration with a specific TLD
  *
