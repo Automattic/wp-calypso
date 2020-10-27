@@ -90,27 +90,27 @@ function updateEditor() {
 			// modal on top of the edittor (no redirect needed)
 			const shouldOpenNewFlowModal =
 				isGutenboarding && ( ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile ) );
+			// This currently comes from a feature flag, but should eventually be
+			// replaced with A/B testing logic
+			const shouldOpenFocusedLaunch = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
 				is_new_flow: shouldOpenNewFlowModal,
 				is_experimental: isExperimental,
 			} );
 
-			// TODO: this flag should come from A/B testing
-			const shouldOpenFocusedLaunch = true;
-
-			if ( shouldOpenFocusedLaunch ) {
-				dispatch( 'automattic/launch' ).openFocusedLaunch();
-				setTimeout( () => {
-					dispatch( 'core/editor' ).savePost();
-				}, 1000 );
-			} else if ( shouldOpenNewFlowModal ) {
+			if ( shouldOpenNewFlowModal ) {
 				// If we want to load experimental features, for now '?latest' query param should be added in URL.
 				// TODO: update this in calypsoify-iframe.tsx depending on abtest or other conditions.
 				isExperimental && dispatch( 'automattic/launch' ).enableExperimental();
 
 				// Open editor-site-launch sidebar
 				dispatch( 'automattic/launch' ).openSidebar();
+				setTimeout( () => {
+					dispatch( 'core/editor' ).savePost();
+				}, 1000 );
+			} else if ( shouldOpenFocusedLaunch ) {
+				dispatch( 'automattic/launch' ).openFocusedLaunch();
 				setTimeout( () => {
 					dispatch( 'core/editor' ).savePost();
 				}, 1000 );

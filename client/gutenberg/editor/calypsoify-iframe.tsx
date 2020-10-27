@@ -377,6 +377,7 @@ class CalypsoifyIframe extends Component<
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
+			const isFocusedLaunchFlow = config.isEnabled( 'gutenboarding/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
@@ -385,6 +386,7 @@ class CalypsoifyIframe extends Component<
 				isNewLaunchMobile,
 				isExperimental,
 				isPersistentLaunchButton,
+				isFocusedLaunchFlow,
 			} );
 		}
 
