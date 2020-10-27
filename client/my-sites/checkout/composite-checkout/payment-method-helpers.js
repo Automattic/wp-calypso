@@ -125,14 +125,6 @@ export function submitFreePurchaseTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export function isPaymentMethodEnabled( method, allowedPaymentMethods ) {
-	// By default, allow all payment methods
-	if ( ! allowedPaymentMethods?.length ) {
-		return true;
-	}
-	return allowedPaymentMethods.includes( method );
-}
-
 export function WordPressFreePurchaseLabel() {
 	const translate = useTranslate();
 
@@ -431,78 +423,6 @@ export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeErr
 	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
 }
 
-export function filterAppropriatePaymentMethods( {
-	paymentMethodObjects,
-	total,
-	credits,
-	subtotal,
-	allowedPaymentMethods,
-	serverAllowedPaymentMethods,
-} ) {
-	const isPurchaseFree = total.amount.value === 0;
-	const isFullCredits =
-		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
-	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
-	debug( 'filtering payment methods with this input', {
-		total,
-		credits,
-		subtotal,
-		allowedPaymentMethods,
-		serverAllowedPaymentMethods,
-		isPurchaseFree,
-		isFullCredits,
-		countryCode,
-	} );
-
-	return paymentMethodObjects
-		.filter( ( methodObject ) => {
-			// If the purchase is free, only display the free-purchase method
-			if ( methodObject.id === 'free-purchase' ) {
-				return isPurchaseFree ? true : false;
-			}
-			return isPurchaseFree ? false : true;
-		} )
-		.filter( ( methodObject ) => {
-			// If the purchase is full-credits, only display the full-credits method
-			if ( methodObject.id === 'full-credits' ) {
-				return isFullCredits ? true : false;
-			}
-			return isFullCredits ? false : true;
-		} )
-		.filter( ( methodObject ) => {
-			// Some country-specific payment methods should only be available if that
-			// country is selected in the contact information.
-			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
-				return false;
-			}
-			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
-				return false;
-			}
-			return true;
-		} )
-		.filter( ( methodObject ) => {
-			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
-				return isPaymentMethodEnabled(
-					'card',
-					allowedPaymentMethods || serverAllowedPaymentMethods
-				);
-			}
-			if ( methodObject.id === 'full-credits' ) {
-				// If the full-credits payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			if ( methodObject.id === 'free-purchase' ) {
-				// If the free payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			return isPaymentMethodEnabled(
-				methodObject.id,
-				allowedPaymentMethods || serverAllowedPaymentMethods
-			);
-		} )
-		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
-}
-
 export function needsDomainDetails( cart ) {
 	if ( cart && hasOnlyRenewalItems( cart ) ) {
 		return false;
@@ -530,11 +450,4 @@ export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
-}
-
-function isPaymentMethodLegallyRestricted( paymentMethodId ) {
-	// Add the names of any legally-restricted payment methods to this list.
-	const restrictedPaymentMethods = [];
-
-	return restrictedPaymentMethods.includes( paymentMethodId );
 }
