@@ -123,7 +123,6 @@ const mapStateToProps = ( state, { messagePath } ) => {
 	const currentSite = getSelectedSite( state );
 	return {
 		currentSite,
-		messagePath,
 		jitm: getTopJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
