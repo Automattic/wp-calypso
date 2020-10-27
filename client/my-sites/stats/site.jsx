@@ -29,6 +29,8 @@ import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner
 import JetpackColophon from 'calypso/components/jetpack-colophon';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { FEATURE_WORDADS_INSTANT } from 'calypso/lib/plans/constants';
 import {
 	recordGoogleEvent,
 	recordTracksEvent,
@@ -46,7 +48,6 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 import Banner from 'calypso/components/banner';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
-
 
 function updateQueryString( query = {} ) {
 	return {
@@ -206,10 +207,15 @@ class StatsSite extends Component {
 								'Accept payments for just about anything and turn your website into a reliable source of income with payments and ads.'
 							) }
 							href={ `/earn/${ slug }` }
-							dismissPreferenceName={ hasInstantWordAds ? `stats-earn-nudge-${ siteId }` : null }
+							disableHref={ hasInstantWordAds }
+							dismissPreferenceName={
+								hasInstantWordAds ? `stats-earn-nudge-wordads-${ siteId }` : null
+							}
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
+							callToAction={ hasInstantWordAds ? translate( 'Try it!' ) : null }
+							horizontal
 							showIcon={ true }
 							jetpack={ false }
 						/>
@@ -358,11 +364,11 @@ export default connect(
 			isAdmin: canCurrentUser( state, siteId, 'manage_options' ),
 			isJetpack,
 			hasWordAds: getSiteOption( state, siteId, 'wordads' ),
-			hasInstantWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			siteId,
 			isVip,
 			slug: getSelectedSiteSlug( state ),
 			planSlug: getSitePlanSlug( state, siteId ),
+			hasInstantWordAds: hasFeature( state, siteId, FEATURE_WORDADS_INSTANT ),
 			showEnableStatsModule,
 			path: getCurrentRouteParameterized( state, siteId ),
 		};
