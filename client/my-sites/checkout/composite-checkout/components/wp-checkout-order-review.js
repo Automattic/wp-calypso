@@ -15,7 +15,7 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
 import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
-import { useIsLoading, useVariationForUser } from 'calypso/state/experiments/hooks';
+import { useVariationForUser } from 'calypso/state/experiments/hooks';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -127,13 +127,8 @@ function CouponFieldArea( {
 
 function MonthlyPricingTestWrapper( { children, items } ) {
 	const translate = useTranslate();
-	const isLoading = useIsLoading();
 	const isMonthlyPricingTest =
 		'treatment' === useVariationForUser( 'monthly_pricing_test_phase_1' );
-
-	if ( isLoading ) {
-		return null;
-	}
 
 	return (
 		<>
