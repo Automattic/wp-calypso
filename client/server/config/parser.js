@@ -73,6 +73,8 @@ module.exports = function ( configPath, defaultOpts ) {
 		const oauthTokenEndpoint = secrets.desktop_oauth_token_endpoint;
 
 		data.oauth_client_id = oauthClientId !== undefined ? oauthClientId : false;
+
+		data.desktop_oauth_client_id = oauthClientId !== undefined ? oauthClientId : false;
 		data.desktop_oauth_client_secret = oauthSecret !== undefined ? oauthSecret : false;
 		data.desktop_oauth_token_endpoint =
 			oauthTokenEndpoint !== undefined ? oauthTokenEndpoint : false;
