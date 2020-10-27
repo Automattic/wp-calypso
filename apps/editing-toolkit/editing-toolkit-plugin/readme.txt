@@ -40,7 +40,16 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 = 2.8 =
-* Added new block patterns to the block editor.
+* Editing Toolkit: Load patterns from the rest API endpoint v3 (https://github.com/Automattic/wp-calypso/pull/46463)
+* Contextual-tips: remove /block-editor from URL (https://github.com/Automattic/wp-calypso/pull/46592)
+* Premium Content: Fix margins on child blocks in Varia based themes (https://github.com/Automattic/wp-calypso/pull/46579)
+* Premium Content Block: Remove the intermediate block UI. (https://github.com/Automattic/wp-calypso/pull/46619)
+* ET/FSE: Remove the "Showcase New Blocks" module (https://github.com/Automattic/wp-calypso/pull/46663)
+* Add text domain to copy in domain-picker and plans-grid packages (https://github.com/Automattic/wp-calypso/pull/46557)
+* Gutenboarding: stop HotJar capturing input fields in gutenboarding (https://github.com/Automattic/wp-calypso/pull/46620)
+* Launch: Move launch store to package/data-stores. (https://github.com/Automattic/wp-calypso/pull/46570)
+* Launch: Hide inline help button when launch modal opens. (https://github.com/Automattic/wp-calypso/pull/46768)
+* Localise the launch sidebar and final launch step (https://github.com/Automattic/wp-calypso/pull/46555)
 
 = 2.7.2 =
 * Enable Coming Soon v2 for a12s
