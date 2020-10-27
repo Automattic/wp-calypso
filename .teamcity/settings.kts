@@ -149,10 +149,6 @@ object BuildDockerImage : BuildType({
 		cleanCheckout = true
 	}
 
-	params {
-		param("env.DOCKER_BUILDKIT", "1")
-	}
-
 	steps {
 		dockerCommand {
 			name = "Build docker image"
@@ -179,14 +175,15 @@ object BuildDockerImage : BuildType({
 	}
 
 	features {
+		perfmon {
+		}
 		pullRequests {
 			vcsRootExtId = "${WpCalypso.id}"
 			provider = github {
-				serverUrl = ""
 				authType = token {
 					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
 				}
-				filterAuthorRole = PullRequests.GitHubRoleFilter.MEMBER_OR_COLLABORATOR
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
 			}
 		}
 	}
