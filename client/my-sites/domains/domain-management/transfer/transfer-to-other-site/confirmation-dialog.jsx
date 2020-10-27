@@ -56,6 +56,22 @@ class TransferConfirmationDialog extends React.PureComponent {
 		);
 	}
 
+	renderPwpoMessage() {
+		if ( ! this.props.primaryWithPlansOnly || this.props.isTargetSiteOnPaidPlan ) {
+			return null;
+		}
+
+		return (
+			<p>
+				{ this.props.translate(
+					"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
+						'domain mapping subscription when the domain mapping next renews. You will not be able to set it as primary either. ' +
+						'Consider upgrading the target site to a paid plan to get these features for free.'
+				) }
+			</p>
+		);
+	}
+
 	render() {
 		const { isMapping, translate } = this.props;
 		const actionLabel = ! isMapping
@@ -80,14 +96,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 			<Dialog isVisible={ this.props.isVisible } buttons={ buttons } onClose={ this.props.onClose }>
 				<h1>{ translate( 'Confirm Transfer' ) }</h1>
 				<p>{ this.getMessage() }</p>
-				<p>
-					{ this.props.primaryWithPlansOnly &&
-						! this.props.isTargetSiteOnPaidPlan &&
-						translate(
-							"The target site is not a paid plan, so you'll have to pay the full price for the domain mapping subscription on renewal. " +
-								'Consider upgrading the site to a paid plan to have the mapping for free.'
-						) }
-				</p>
+				{ this.renderPwpoMessage() }
 			</Dialog>
 		);
 	}
