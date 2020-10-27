@@ -1,6 +1,6 @@
 export const schema = {
 	type: 'object',
-	additionalProperties: true,
+	additionalProperties: false,
 	properties: {
 		anonId: {
 			oneOf: [
@@ -12,12 +12,27 @@ export const schema = {
 				},
 			],
 		},
+		isLoading: {
+			type: 'boolean',
+		},
 		nextRefresh: {
 			type: 'number',
 		},
 		variations: {
 			type: 'object',
-			additionalProperties: true,
+			additionalProperties: false,
+			patternProperties: {
+				'^[a-z0-9_]+$': {
+					oneOf: [
+						{
+							type: 'string',
+						},
+						{
+							type: 'null',
+						},
+					],
+				},
+			},
 		},
 	},
 };
