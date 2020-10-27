@@ -29,7 +29,9 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
+import QueryExperiments from 'calypso/components/data/query-experiments';
+import { useIsLoading, useVariationForUser } from 'calypso/state/experiments/hooks';
+import { isIgnoredAdSource } from 'calypso/lib/analytics/sem';
 
 /**
  * Style dependencies
@@ -250,17 +252,18 @@ PlansStep.propTypes = {
 };
 
 const PlansStepWithMonthlyPricingTest = ( props ) => {
-	const isEligibleForMonthlyPricing = 'onboarding' === props.flowName;
+	const isLoading = useIsLoading();
+	const variation = useVariationForUser( 'monthly_pricing_test_phase_1' );
+	const isEligibleForMonthlyPricing =
+		'onboarding' === props.flowName && 'treatment' === variation && ! isIgnoredAdSource();
 
 	return (
-		<Experiment name="monthly_pricing_test_phase_1">
-			<DefaultVariation name="control">
-				<PlansStep { ...props } isMonthlyPricingTest={ false } />
-			</DefaultVariation>
-			<Variation name="treatment">
+		<>
+			<QueryExperiments />
+			{ ! isLoading && (
 				<PlansStep { ...props } isMonthlyPricingTest={ isEligibleForMonthlyPricing } />
-			</Variation>
-		</Experiment>
+			) }
+		</>
 	);
 };
 
