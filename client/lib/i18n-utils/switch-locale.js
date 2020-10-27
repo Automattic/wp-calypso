@@ -8,9 +8,9 @@ import { forEach, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts, getUrlParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from 'calypso/lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 

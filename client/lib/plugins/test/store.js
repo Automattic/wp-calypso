@@ -15,9 +15,9 @@ import multiSite from './fixtures/multi-site';
 import plugins from './fixtures/plugins';
 import site from './fixtures/site';
 import updatePluginData from './fixtures/updated-plugin';
-import Dispatcher from 'dispatcher';
-import PluginsStore from 'lib/plugins/store';
-import { useFakeTimers } from 'test-helpers/use-sinon';
+import Dispatcher from 'calypso/dispatcher';
+import PluginsStore from 'calypso/lib/plugins/store';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
 

@@ -6,12 +6,12 @@
 /**
  * External dependencies
  */
-import { URL as URLString } from 'types';
+import { URL as URLString } from 'calypso/types';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 interface LegacyRoute {
 	match: RegExp;

@@ -8,7 +8,7 @@ import { filter, head, orderBy, values } from 'lodash';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 function getConfig( { siteTitle = '' } = {} ) {
 	const importerConfig = {};

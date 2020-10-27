@@ -9,7 +9,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import createSelector from '../';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'index', () => {
 	let selector, getSitePosts;

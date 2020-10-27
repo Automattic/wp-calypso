@@ -7,7 +7,7 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
 function ValidationError( code ) {
 	this.code = code;

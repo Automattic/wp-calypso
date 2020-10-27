@@ -3,7 +3,7 @@
  */
 import moment from 'moment';
 import page from 'page';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Internal dependencies

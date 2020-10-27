@@ -10,9 +10,9 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import config from 'config';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import KEY_BINDINGS from 'lib/keyboard-shortcuts/key-bindings';
+import config from 'calypso/config';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import KEY_BINDINGS from 'calypso/lib/keyboard-shortcuts/key-bindings';
 
 /**
  * Style dependencies

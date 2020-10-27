@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { isAdTrackingAllowed } from 'lib/analytics/utils';
+import { isAdTrackingAllowed } from 'calypso/lib/analytics/utils';
 
 import { getTracksAnonymousUserId, getCurrentUser } from '@automattic/calypso-analytics';
 import {

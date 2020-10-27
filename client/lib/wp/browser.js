@@ -6,16 +6,16 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import wpcomUndocumented from 'lib/wpcom-undocumented';
-import config from 'config';
-import wpcomSupport from 'lib/wp/support';
+import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
+import config from 'calypso/config';
+import wpcomSupport from 'calypso/lib/wp/support';
 import { injectLocalization } from './localization';
 import { injectGuestSandboxTicketHandler } from './handlers/guest-sandbox-ticket';
-import * as oauthToken from 'lib/oauth-token';
-import wpcomXhrWrapper from 'lib/wpcom-xhr-wrapper';
+import * as oauthToken from 'calypso/lib/oauth-token';
+import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 import wpcomProxyRequest from 'wpcom-proxy-request';
-import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const debug = debugFactory( 'calypso:wp' );
 

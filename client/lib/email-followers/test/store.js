@@ -22,8 +22,8 @@ describe( 'Email Followers Store', () => {
 	let Dispatcher, EmailFollowersStore;
 
 	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		EmailFollowersStore = require( 'lib/email-followers/store' );
+		Dispatcher = require( 'calypso/dispatcher' );
+		EmailFollowersStore = require( 'calypso/lib/email-followers/store' );
 	} );
 
 	test( 'Store should be an object', () => {

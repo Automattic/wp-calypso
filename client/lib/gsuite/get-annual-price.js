@@ -6,7 +6,7 @@ import { isNumber, isString } from 'lodash';
 /**
  * Internal dependencies
  */
-import { formatPrice } from 'lib/gsuite/utils/format-price';
+import { formatPrice } from 'calypso/lib/gsuite/utils/format-price';
 
 /**
  * Formats the specified yearly price.

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 const PeopleActions = {
 	removePeopleNotices: ( logs ) => {

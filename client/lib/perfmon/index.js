@@ -7,8 +7,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { recordTiming } from 'lib/analytics/timing';
-import { isEnabled } from 'config';
+import { recordTiming } from 'calypso/lib/analytics/timing';
+import { isEnabled } from 'calypso/config';
 import debugFactory from 'debug';
 
 const debug = debugFactory( 'calypso:perfmon' );

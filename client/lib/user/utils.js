@@ -7,8 +7,8 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import user from 'lib/user';
+import config from 'calypso/config';
+import user from 'calypso/lib/user';
 
 /**
  * Module Variables

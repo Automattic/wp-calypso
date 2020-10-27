@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 describe( 'KeyboardShortcuts', () => {
 	test( 'should emit events to subscribers', () => {

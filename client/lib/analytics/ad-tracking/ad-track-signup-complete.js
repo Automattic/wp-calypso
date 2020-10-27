@@ -6,7 +6,11 @@ import { v4 as uuid } from 'uuid';
 /**
  * Internal dependencies
  */
-import { costToUSD, isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
+import {
+	costToUSD,
+	isAdTrackingAllowed,
+	refreshCountryCodeCookieGdpr,
+} from 'calypso/lib/analytics/utils';
 
 import { getCurrentUser } from '@automattic/calypso-analytics';
 import {

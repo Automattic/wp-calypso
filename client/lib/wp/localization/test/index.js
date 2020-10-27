@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { addLocaleQueryParam, bindState, getLocale, injectLocalization, setLocale } from '../';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 
 jest.mock( 'state/selectors/get-current-locale-slug' );
 jest.mock( 'state/selectors/get-current-locale-variant' );

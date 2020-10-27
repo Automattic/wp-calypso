@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Web Payment method identifiers.

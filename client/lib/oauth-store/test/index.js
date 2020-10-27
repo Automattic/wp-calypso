@@ -10,7 +10,7 @@ import { actions } from '../constants';
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -18,8 +18,8 @@ describe( 'oAuthStore', () => {
 	let oAuthStore, oAuthToken, originalDocumentProperties;
 
 	beforeEach( () => {
-		oAuthToken = require( 'lib/oauth-token' );
-		oAuthStore = require( 'lib/oauth-store' );
+		oAuthToken = require( 'calypso/lib/oauth-token' );
+		oAuthStore = require( 'calypso/lib/oauth-store' );
 
 		// global.document.location is not configurable and global.document has an empty setter
 		// so the only way to mock global.document.location.replace is do a full replacement

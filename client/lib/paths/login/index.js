@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import { addLocaleToPath, localizeUrl } from 'lib/i18n-utils';
-import config, { isEnabled } from 'config';
+import { addQueryArgs } from 'calypso/lib/url';
+import { addLocaleToPath, localizeUrl } from 'calypso/lib/i18n-utils';
+import config, { isEnabled } from 'calypso/config';
 
 export function login( {
 	isJetpack,

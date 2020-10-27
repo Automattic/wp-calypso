@@ -9,8 +9,8 @@ const debug = debugFactory( 'calypso:email-followers-store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
 const _fetchingFollowersByNamespace = {}; // store fetching state (boolean)
 const _followersBySite = {}; // store user objects

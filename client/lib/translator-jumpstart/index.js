@@ -10,11 +10,11 @@ import { find, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { languages } from 'languages';
-import { loadjQueryDependentScriptDesktopWrapper } from 'lib/load-jquery-dependent-script-desktop-wrapper';
-import user from 'lib/user';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { canBeTranslated } from 'lib/i18n-utils';
+import { languages } from 'calypso/languages';
+import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
+import user from 'calypso/lib/user';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { canBeTranslated } from 'calypso/lib/i18n-utils';
 
 const debug = debugModule( 'calypso:community-translator' );
 

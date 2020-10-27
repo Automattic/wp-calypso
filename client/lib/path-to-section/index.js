@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { filter, get, max, maxBy, startsWith } from 'lodash';
-import { getSections } from 'sections-helper';
+import { getSections } from 'calypso/sections-helper';
 
 export default function pathToSection( path ) {
 	// rank matches by the number of characters that match so e.g. /media won't map to /me

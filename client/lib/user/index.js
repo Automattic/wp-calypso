@@ -2,12 +2,12 @@
  * External dependencies
  */
 
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 /**
  * Internal Dependencies
  */
-import { action as InvitesActionTypes } from 'lib/invites/constants';
+import { action as InvitesActionTypes } from 'calypso/lib/invites/constants';
 import User from './user';
 let _user = false;
 

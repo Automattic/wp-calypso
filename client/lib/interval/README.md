@@ -30,7 +30,7 @@ function Counter() {
 This is a Component wrapping `useInterval`, intended for use in classic React Components where hooks are unavailable.
 
 ```tsx
-import { Interval, EVERY_FIVE_SECONDS } from 'lib/interval';
+import { Interval, EVERY_FIVE_SECONDS } from 'calypso/lib/interval';
 
 <Interval onTick={ doSomething } period={ EVERY_FIVE_SECONDS } />;
 ```

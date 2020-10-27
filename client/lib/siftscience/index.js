@@ -10,8 +10,8 @@ const debug = debugFactory( 'calypso:siftscience' );
  * Internal dependencies
  */
 import { loadScript } from '@automattic/load-script';
-import user from 'lib/user';
-import config from 'config';
+import user from 'calypso/lib/user';
+import config from 'calypso/config';
 
 const SIFTSCIENCE_URL = 'https://cdn.siftscience.com/s.js';
 let hasLoaded = false;

@@ -8,7 +8,7 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { createReducerStore } from './../index';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 describe( 'index', () => {
 	const reducer = ( state ) => {
