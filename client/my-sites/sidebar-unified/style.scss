@@ -234,6 +234,10 @@ $font-size: rem( 14px );
 	}
 
 	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites:hover .button.is-borderless:hover {
+		background-color: var( --color-sidebar-menu-hover-heading-background );
+	}
+
 	.current-site__switch-sites .button.is-borderless {
 		color: var( --color-sidebar-text-alternative );
 		padding: 6px 8px 6px 36px;
@@ -244,6 +248,12 @@ $font-size: rem( 14px );
 		width: 20px;
 		top: 9px;
 		left: 8px;
+	}
+
+	// client/blocks/site/style.scss
+	.site__content,
+	.all-sites .all-sites__content {
+		padding: 10px 0 10px 8px;
 	}
 
 	.is-sidebar-collapsed & {
