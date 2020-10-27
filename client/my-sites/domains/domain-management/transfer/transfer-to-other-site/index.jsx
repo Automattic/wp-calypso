@@ -24,7 +24,6 @@ import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/co
 import TransferConfirmationDialog from './confirmation-dialog';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import wp from 'calypso/lib/wp';
-import { isWpComFreePlan } from 'calypso/lib/plans';
 import { requestSites } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
@@ -115,11 +114,7 @@ export class TransferToOtherSite extends React.Component {
 	};
 
 	getMessage() {
-		const {
-			selectedDomainName: domainName,
-			isMapping,
-			translate,
-		} = this.props;
+		const { selectedDomainName: domainName, isMapping, translate } = this.props;
 		const translateArgs = { args: { domainName }, components: { strong: <strong /> } };
 
 		if ( isMapping ) {
