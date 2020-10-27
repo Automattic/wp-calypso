@@ -46,29 +46,9 @@ import { isEnabled } from 'calypso/config';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
-import Experiment, {
-	DefaultVariation,
-	Variation,
-	LoadingVariations,
-} from 'calypso/components/experiment';
+import { useVariationForUser } from 'calypso/state/experiments/hooks';
 
-export default function WPCheckoutOrderSummaryWithMonthlyPricingTest() {
-	return (
-		<Experiment name="monthly_pricing_test_phase_1">
-			<DefaultVariation name="control">
-				<WPCheckoutOrderSummary isMonthlyPricingTest={ false } />
-			</DefaultVariation>
-			<Variation name="treatment">
-				<WPCheckoutOrderSummary isMonthlyPricingTest={ true } />
-			</Variation>
-			<LoadingVariations>
-				<WPCheckoutOrderSummary isExperimentLoading={ true } />
-			</LoadingVariations>
-		</Experiment>
-	);
-}
-
-function WPCheckoutOrderSummary( { isExperimentLoading = false, isMonthlyPricingTest = false } ) {
+export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
@@ -79,6 +59,8 @@ function WPCheckoutOrderSummary( { isExperimentLoading = false, isMonthlyPricing
 
 	const plan = usePlanInCart();
 	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
+	const isMonthlyPricingTest =
+		'treatment' === useVariationForUser( 'monthly_pricing_test_phase_1' );
 
 	return (
 		<CheckoutSummaryCard
@@ -89,7 +71,7 @@ function WPCheckoutOrderSummary( { isExperimentLoading = false, isMonthlyPricing
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating || isExperimentLoading ? (
+				{ isCartUpdating ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
 					<CheckoutSummaryFeaturesList
@@ -120,9 +102,7 @@ function WPCheckoutOrderSummary( { isExperimentLoading = false, isMonthlyPricing
 					</span>
 				</CheckoutSummaryTotal>
 			</CheckoutSummaryAmountWrapper>
-			{ isMonthlyPricingTest && (
-				<CheckoutSummaryHelp isMonthlyPricingTest={ isMonthlyPricingTest } />
-			) }
+			{ isMonthlyPricingTest && <CheckoutSummaryHelp isMonthlyPricingTest={ true } /> }
 		</CheckoutSummaryCard>
 	);
 }
@@ -170,7 +150,13 @@ function CheckoutSummaryFeaturesList( props ) {
 		<CheckoutSummaryFeaturesListWrapper>
 			{ hasDomainsInCart &&
 				domains.map( ( domain ) => {
-					return <CheckoutSummaryFeaturesListDomainItem domain={ domain } key={ domain.id } />;
+					return (
+						<CheckoutSummaryFeaturesListDomainItem
+							domain={ domain }
+							key={ domain.id }
+							{ ...props }
+						/>
+					);
 				} ) }
 			{ hasPlanInCart && <CheckoutSummaryPlanFeatures { ...props } /> }
 			<CheckoutSummaryFeaturesListItem>
@@ -210,25 +196,37 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic, isMonthlyPricingTest 
 	return <span>{ translate( 'Email support' ) }</span>;
 }
 
-function CheckoutSummaryFeaturesListDomainItem( { domain } ) {
+function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, hasMonthlyPlan } ) {
 	const translate = useTranslate();
+	const bundledText = isMonthlyPricingTest
+		? translate( 'free for one year' )
+		: translate( 'free for a year with your plan' );
+	const bundledDomain = translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
+		components: {
+			strong: <strong />,
+		},
+		args: {
+			domain: domain.wpcom_meta.meta,
+			bundled: bundledText,
+		},
+		comment: 'domain name and bundling message, separated by a dash',
+	} );
+	const annualPlansOnly = translate( '(annual plans only)', {
+		comment: 'Label attached to a feature',
+	} );
+
+	let label = <strong>{ domain.wpcom_meta.meta }</strong>;
+
+	if ( domain.wpcom_meta.is_bundled ) {
+		label = bundledDomain;
+	} else if ( isMonthlyPricingTest && hasMonthlyPlan ) {
+		label = `${ bundledDomain } ${ annualPlansOnly }`;
+	}
+
 	return (
 		<CheckoutSummaryFeaturesListItem>
 			<WPCheckoutCheckIcon />
-			{ domain.wpcom_meta.is_bundled ? (
-				translate( '{{strong}}%(domain)s{{/strong}} - %(bundled)s', {
-					components: {
-						strong: <strong />,
-					},
-					args: {
-						domain: domain.wpcom_meta.meta,
-						bundled: translate( 'free for a year with your plan' ),
-					},
-					comment: 'domain name and bundling message, separated by a dash',
-				} )
-			) : (
-				<strong>{ domain.wpcom_meta.meta }</strong>
-			) }
+			{ label }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -280,6 +278,7 @@ function getPlanFeatures(
 	}
 
 	const isMonthlyPlan = isMonthly( productSlug );
+	const liveChatSupport = translate( 'Live chat support' );
 	const freeOneYearDomain = showFreeDomainFeature && translate( 'Free domain for one year' );
 	const googleAnalytics = translate( 'Track your stats with Google Analytics' );
 	const annualPlanOnly = ( feature ) => {
@@ -295,27 +294,36 @@ function getPlanFeatures(
 	};
 
 	if ( isWpComPersonalPlan( productSlug ) ) {
-		if ( isMonthlyPlan ) {
+		if ( isMonthlyPricingTest ) {
 			return [
-				annualPlanOnly( translate( 'Live chat support' ) ),
-				annualPlanOnly( freeOneYearDomain ),
+				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
 				translate( 'Email support' ),
 				translate( 'Dozens of Free Themes' ),
 			];
 		}
 
 		return [
-			isMonthlyPricingTest && translate( 'Live chat and email support' ),
 			freeOneYearDomain,
-			translate( 'Dozens of Free Themes' ),
 			translate( 'Remove WordPress.com ads' ),
 			translate( 'Limit your content to paying subscribers.' ),
 		];
 	}
 
 	if ( isWpComPremiumPlan( productSlug ) ) {
+		if ( isMonthlyPricingTest ) {
+			return [
+				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+				translate( 'Unlimited access to our library of Premium Themes' ),
+				isEnabled( 'earn/pay-with-paypal' )
+					? translate( 'Subscriber-only content and Pay with PayPal buttons' )
+					: translate( 'Subscriber-only content and payment buttons' ),
+				googleAnalytics,
+			];
+		}
+
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+			freeOneYearDomain,
 			translate( 'Unlimited access to our library of Premium Themes' ),
 			isEnabled( 'earn/pay-with-paypal' )
 				? translate( 'Subscriber-only content and Pay with PayPal buttons' )
@@ -325,8 +333,19 @@ function getPlanFeatures(
 	}
 
 	if ( isWpComBusinessPlan( productSlug ) ) {
+		if ( isMonthlyPricingTest ) {
+			return [
+				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+				translate( 'Install custom plugins and themes' ),
+				translate( 'Drive traffic to your site with our advanced SEO tools' ),
+				translate( 'Track your stats with Google Analytics' ),
+				translate( 'Real-time backups and activity logs' ),
+			];
+		}
+
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+			freeOneYearDomain,
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Drive traffic to your site with our advanced SEO tools' ),
 			translate( 'Track your stats with Google Analytics' ),
@@ -335,8 +354,20 @@ function getPlanFeatures(
 	}
 
 	if ( isWpComEcommercePlan( productSlug ) ) {
+		if ( isMonthlyPricingTest ) {
+			return [
+				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
+				translate( 'Install custom plugins and themes' ),
+				translate( 'Accept payments in 60+ countries' ),
+				translate( 'Integrations with top shipping carriers' ),
+				translate( 'Unlimited products or services for your online store' ),
+				translate( 'eCommerce marketing tools for emails and social networks' ),
+			];
+		}
+
 		return [
-			isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
+			freeOneYearDomain,
 			translate( 'Install custom plugins and themes' ),
 			translate( 'Accept payments in 60+ countries' ),
 			translate( 'Integrations with top shipping carriers' ),
@@ -493,6 +524,15 @@ const CheckoutSummaryHelpButton = styled.button`
 
 const CheckoutSummaryHelpWrapper = styled.div`
 	position: ${ ( { isMonthlyPricingTest } ) => ( isMonthlyPricingTest ? 'absolute' : 'static' ) };
+
+	@media screen and ( max-width: 960px ) {
+		position: static;
+		padding: 0 20px 20px;
+
+		> button {
+			margin-top: 0;
+		}
+	}
 `;
 
 const WPCheckoutCheckIcon = styled( CheckoutCheckIcon )`

@@ -88,17 +88,14 @@ function WPLineItem( {
 				{ item.label }
 			</LineItemTitle>
 			<span aria-labelledby={ itemSpanId } className="checkout-line-item__price">
-				<LineItemPriceWithMonthlyPricingTest
-					item={ item }
-					isSummary={ isSummary }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
-				/>
+				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
 				<>
 					<LineItemMeta>
 						<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
 						<DomainDiscountCallout item={ item } />
+						{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
 					</LineItemMeta>
 					<LineItemMeta>
 						<DiscountForFirstYearOnly item={ item } />
@@ -177,42 +174,6 @@ WPLineItem.propTypes = {
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
 };
-
-function LineItemPriceWithMonthlyPricingTest( { isMonthlyPricingTest, ...props } ) {
-	const translate = useTranslate();
-	const planSlug = props.item?.wpcom_meta?.product_slug;
-	let discountLabel = null;
-
-	if ( isMonthlyPricingTest && isWpComPlan( planSlug ) && ! isMonthlyPlan( planSlug ) ) {
-		if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
-			discountLabel = translate( 'Annual discount' );
-		} else if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
-			discountLabel = translate( 'Biennial discount' );
-		}
-	}
-
-	return (
-		<>
-			<LineItemPrice { ...props } />
-			{ discountLabel && <DiscountDescription>{ discountLabel }</DiscountDescription> }
-		</>
-	);
-}
-
-const DiscountDescription = styled.span`
-	position: absolute;
-	top: 23px;
-	right: 0;
-	white-space: nowrap;
-	font-size: 0.875rem;
-	color: var( --color-success );
-
-	.rtl & {
-		right: auto;
-		left: 0;
-		top: 1.5em;
-	}
-`;
 
 function LineItemPrice( { item, isSummary } ) {
 	const originalAmountDisplay =
@@ -586,6 +547,25 @@ function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 		} );
 	}
 	return item.sublabel || null;
+}
+
+function AnnualDiscountCallout( { item } ) {
+	const translate = useTranslate();
+	const planSlug = item?.wpcom_meta?.product_slug;
+
+	if ( ! isWpComPlan( planSlug ) || isMonthlyPlan( planSlug ) ) {
+		return null;
+	}
+
+	if ( planMatches( planSlug, { term: TERM_ANNUALLY } ) ) {
+		return <DiscountCallout>{ translate( 'Annual discount' ) }</DiscountCallout>;
+	}
+
+	if ( planMatches( planSlug, { term: TERM_BIENNIALLY } ) ) {
+		return <DiscountCallout>{ translate( 'Biennial discount' ) }</DiscountCallout>;
+	}
+
+	return null;
 }
 
 function DomainDiscountCallout( { item } ) {

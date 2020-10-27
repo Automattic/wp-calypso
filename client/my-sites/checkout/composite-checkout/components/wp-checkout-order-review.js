@@ -14,8 +14,8 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
-import Experiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
+import { useIsLoading, useVariationForUser } from 'calypso/state/experiments/hooks';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -127,23 +127,25 @@ function CouponFieldArea( {
 
 function MonthlyPricingTestWrapper( { children, items } ) {
 	const translate = useTranslate();
+	const isLoading = useIsLoading();
+	const isMonthlyPricingTest =
+		'treatment' === useVariationForUser( 'monthly_pricing_test_phase_1' );
+
+	if ( isLoading ) {
+		return null;
+	}
 
 	return (
-		<Experiment name="monthly_pricing_test_phase_1">
-			<DefaultVariation name="control">
-				{ React.Children.map( children, ( child ) =>
-					React.cloneElement( child, { isMonthlyPricingTest: false } )
-				) }
-			</DefaultVariation>
-			<Variation name="treatment">
-				{ React.Children.map( children, ( child ) =>
-					React.cloneElement( child, {
-						isMonthlyPricingTest: true,
-						items: items.map( ( item ) => overrideItemSublabel( item, translate ) ),
-					} )
-				) }
-			</Variation>
-		</Experiment>
+		<>
+			{ React.Children.map( children, ( child ) =>
+				React.cloneElement( child, {
+					isMonthlyPricingTest,
+					items: isMonthlyPricingTest
+						? items.map( ( item ) => overrideItemSublabel( item, translate ) )
+						: items,
+				} )
+			) }
+		</>
 	);
 }
 

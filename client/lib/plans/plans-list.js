@@ -138,10 +138,7 @@ const getPlanPersonalDetails = () => ( {
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
 	// Features only available for annual plans
-	getAnnualPlansOnlyFeatures: () => [
-		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_SIGNUP,
-	],
+	getAnnualPlansOnlyFeatures: () => [ constants.FEATURE_FREE_DOMAIN ],
 } );
 
 const getPlanEcommerceDetails = () => ( {
@@ -230,6 +227,11 @@ const getPlanEcommerceDetails = () => ( {
 		constants.FEATURE_SEO_PREVIEW_TOOLS,
 	],
 	getInferiorHiddenFeatures: () => [],
+	// Features only available for annual plans
+	getAnnualPlansOnlyFeatures: () => [
+		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+	],
 } );
 
 const getPlanPremiumDetails = () => ( {
@@ -279,8 +281,8 @@ const getPlanPremiumDetails = () => ( {
 	],
 	getSignupFeatures: () =>
 		compact( [
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_ADVANCED_CUSTOMIZATION,
-			constants.FEATURE_PREMIUM_THEMES,
 			constants.FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 	getBlogSignupFeatures: () => [
@@ -296,6 +298,11 @@ const getPlanPremiumDetails = () => ( {
 	// Features not displayed but used for checking plan abilities
 	getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 	getInferiorHiddenFeatures: () => [],
+	// Features only available for annual plans
+	getAnnualPlansOnlyFeatures: () => [
+		constants.FEATURE_FREE_DOMAIN,
+		constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+	],
 } );
 
 const getPlanBusinessDetails = () => ( {
