@@ -428,6 +428,7 @@ const boot = ( currentUser, registerRoutes ) => {
 		}
 
 		const isDesktop = config.isEnabled( 'desktop' );
+		const loggedIn = currentUser.get() !== false;
 
 		// Render initial `<Layout>` for non-isomorphic sections.
 		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
@@ -437,7 +438,7 @@ const boot = ( currentUser, registerRoutes ) => {
 			page.start( { decodeURLComponents: false } );
 		}
 
-		if ( isDesktop ) {
+		if ( isDesktop && loggedIn ) {
 			const ipc = require( 'electron' ).ipcRenderer;
 
 			ipc.on( 'cookie-auth-complete', function () {
@@ -447,6 +448,10 @@ const boot = ( currentUser, registerRoutes ) => {
 
 				page.start( { decodeURLComponents: false } );
 			} );
+		} else {
+			renderLayout( reduxStore );
+
+			page.start( { decodeURLComponents: false } );
 		}
 	} );
 };

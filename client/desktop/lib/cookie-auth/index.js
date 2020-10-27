@@ -103,11 +103,17 @@ function auth( window, onAuthorized ) {
 			const userData = user.data;
 			const response = await authorize( userData.username, token );
 			if ( response ) {
-				await setSessionCookies( window, response );
+				try {
+					await setSessionCookies( window, response );
 
-				onAuthorized();
+					onAuthorized();
 
-				return 'session-cookies-set';
+					return 'session-cookies-set';
+				} catch ( e ) {
+					log.error( 'Failed to set session cookies: ', e );
+
+					return 'session-cookies-error';
+				}
 			}
 		} else {
 			log.info( 'No user data, clearing session cookies...' );
