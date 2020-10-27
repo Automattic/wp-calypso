@@ -2,6 +2,8 @@
 /**
  * External dependencies
  */
+
+import { withI18n, I18nReact } from '@automattic/react-i18n';
 import classNames from 'classnames';
 import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
 import { debounce } from 'lodash';
@@ -10,7 +12,6 @@ import { debounce } from 'lodash';
  * WordPress dependencies
  */
 import { Button, Spinner } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { close, search, Icon } from '@wordpress/icons';
 
 /**
@@ -41,6 +42,7 @@ const keyListener = (
 };
 
 type Props = {
+	__: I18nReact[ '__' ];
 	autoFocus: boolean;
 	className?: string;
 	compact: boolean;
@@ -321,7 +323,7 @@ class Search extends React.Component< Props, State > {
 
 	render(): JSX.Element {
 		const searchValue = this.state.keyword;
-		const placeholder = this.props.placeholder || __( 'Search…' );
+		const placeholder = this.props.placeholder || this.props.__( 'Search…', __i18n_text_domain__ );
 		const inputLabel = this.props.inputLabel;
 		const isOpenUnpinnedOrQueried = this.state.isOpen || ! this.props.pinned || searchValue;
 
@@ -355,7 +357,7 @@ class Search extends React.Component< Props, State > {
 						id={ 'search-component-' + this.instanceId }
 						autoFocus={ this.props.autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 						aria-describedby={ this.props.describedBy }
-						aria-label={ inputLabel ? inputLabel : __( 'Search' ) }
+						aria-label={ inputLabel ? inputLabel : this.props.__( 'Search', __i18n_text_domain__ ) }
 						aria-hidden={ ! isOpenUnpinnedOrQueried }
 						className={ inputClass }
 						placeholder={ placeholder }
@@ -393,7 +395,7 @@ class Search extends React.Component< Props, State > {
 				tabIndex={ enableOpenIcon ? 0 : undefined }
 				onKeyDown={ enableOpenIcon ? this.openListener : undefined }
 				aria-controls={ 'search-component-' + this.instanceId }
-				aria-label={ __( 'Open Search' ) }
+				aria-label={ this.props.__( 'Open Search', __i18n_text_domain__ ) }
 			>
 				{ ! this.props.hideOpenIcon && (
 					/* @ts-ignore */
@@ -423,7 +425,7 @@ class Search extends React.Component< Props, State > {
 					tabIndex={ 0 }
 					onKeyDown={ this.closeListener }
 					aria-controls={ 'search-component-' + this.instanceId }
-					aria-label={ __( 'Close Search' ) }
+					aria-label={ this.props.__( 'Close Search', __i18n_text_domain__ ) }
 				>
 					{ /* @ts-ignore */ }
 					<Icon icon={ close } className="search-component__close-icon" />
@@ -435,4 +437,4 @@ class Search extends React.Component< Props, State > {
 	}
 }
 
-export default Search;
+export default withI18n( Search );
