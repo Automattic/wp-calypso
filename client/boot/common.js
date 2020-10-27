@@ -430,28 +430,28 @@ const boot = ( currentUser, registerRoutes ) => {
 		const isDesktop = config.isEnabled( 'desktop' );
 		const loggedIn = currentUser.get() !== false;
 
-		// Render initial `<Layout>` for non-isomorphic sections.
-		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
-		if ( ! isDesktop && ! document.getElementById( 'primary' ) ) {
+		const render = () => {
 			renderLayout( reduxStore );
 
 			page.start( { decodeURLComponents: false } );
+		};
+
+		// Render initial `<Layout>` for non-isomorphic sections.
+		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
+		if ( ! isDesktop && ! document.getElementById( 'primary' ) ) {
+			render();
 		}
 
 		if ( isDesktop && loggedIn ) {
 			const ipc = require( 'electron' ).ipcRenderer;
 
 			ipc.on( 'cookie-auth-complete', function () {
-				debug( 'Cookies set, rendering layout...' );
-
-				renderLayout( reduxStore );
-
-				page.start( { decodeURLComponents: false } );
+				debug( 'Desktop cookies set, rendering main layout...' );
+				render();
 			} );
 		} else {
-			renderLayout( reduxStore );
-
-			page.start( { decodeURLComponents: false } );
+			debug( 'Desktop user logged out, rendering main layout...' );
+			render();
 		}
 	} );
 };
