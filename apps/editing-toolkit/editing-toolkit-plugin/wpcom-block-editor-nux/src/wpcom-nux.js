@@ -11,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -52,6 +53,9 @@ function WpcomNux() {
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
+	recordTracksEvent( 'calypso_newsite_wpcomnux_view', {
+		is_new_flow: isGutenboarding,
+	} );
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
