@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
@@ -12,30 +12,25 @@ import React, { FunctionComponent, useState, useEffect } from 'react';
  */
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
-import {
-	Credentials,
-	FormMode,
-	FormState,
-	INITIAL_FORM_ERRORS,
-	INITIAL_FORM_STATE,
-	validate,
-} from './form';
+import { Credentials, FormMode, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import CredentialsForm from './credentials-form';
 import DocumentHead from 'calypso/components/data/document-head';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
+import getIsRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import getHasRequestedSiteCredentials from 'calypso/state/selectors/has-requested-site-credentials';
 
 /**
  * Style dependencies
@@ -80,6 +75,12 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const [ formErrors, setFormErrors ] = useState( INITIAL_FORM_ERRORS );
 	const [ formMode, setFormMode ] = useState( FormMode.Password );
 	const [ startedWithoutConnection, setStartedWithoutConnection ] = useState( false );
+	const isRequestingSiteCredentials = useSelector( ( state ) =>
+		siteId ? getIsRequestingSiteCredentials( state, siteId ) : false
+	);
+	const hasRequestedSiteCredentials = useSelector( ( state ) =>
+		siteId ? getHasRequestedSiteCredentials( state, siteId ) : false
+	);
 
 	const formSubmissionStatus = useSelector(
 		( state ) =>
@@ -94,31 +95,25 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const { state: backupState, credentials } = useSelector( ( state ) =>
-		getRewindState( state, siteId )
-	) as {
-		state?: string;
-		credentials: FormState[] | undefined;
-	};
+	const credentials = useSelector( ( state ) =>
+		getJetpackCredentials( state, siteId, role )
+	) as Credentials;
 
 	const statusState = ( (): StatusState => {
-		switch ( backupState ) {
-			case 'uninitialized':
-			case undefined:
-				return StatusState.Loading;
-			case 'provisioning':
-			case 'active':
-				return StatusState.Connected;
-			case 'inactive':
-			case 'awaiting_credentials':
-			case 'unavailable':
-			default:
-				return StatusState.Disconnected;
+		if ( 'pending' === formSubmissionStatus ) {
+			return StatusState.Connecting;
+		} else if ( 'failed' === formSubmissionStatus ) {
+			return StatusState.Failed;
+		} else if ( isRequestingSiteCredentials ) {
+			return StatusState.Loading;
+		} else if ( isEmpty( credentials ) ) {
+			return StatusState.Disconnected;
 		}
+		return StatusState.Connected;
 	} )();
 
 	const currentStep = ( (): Step => {
-		if ( statusState === StatusState.Connected ) {
+		if ( ! isEmpty( credentials ) ) {
 			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
 			// Verification pushed to future
 		} /* else if ( 'pending' === formSubmissionStatus ) {
@@ -135,20 +130,18 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	// suppress the step progress until we are disconnected
 	useEffect( () => {
-		if ( statusState === StatusState.Disconnected ) {
+		if ( statusState === StatusState.Disconnected && hasRequestedSiteCredentials ) {
 			setStartedWithoutConnection( true );
 		}
-	}, [ setStartedWithoutConnection, statusState ] );
+	}, [ hasRequestedSiteCredentials, setStartedWithoutConnection, statusState ] );
 
 	// when credentials load, merge w/ the form state
 	useEffect( () => {
-		// TODO: update form state logic
-		const foundCredentials = !! credentials && ( find( credentials, { role } ) as Credentials );
-		if ( foundCredentials ) {
-			const { type, ...otherProperties } = foundCredentials;
-			setFormState( { ...otherProperties, protocol: type, pass: '', kpri: '' } );
+		if ( ! isEmpty( credentials ) ) {
+			const { abspath, ...otherProperties } = credentials;
+			setFormState( { ...otherProperties, path: abspath, pass: '', kpri: '' } );
 		}
-	}, [ credentials, role ] );
+	}, [ credentials, setFormState ] );
 
 	// validate changes to the credentials form
 	useEffect( () => {
@@ -287,8 +280,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	);
 
 	const render = () => {
-		if ( statusState === StatusState.Loading ) {
-			// TODO:, placeholder
+		if ( isRequestingSiteCredentials ) {
 			return <div></div>;
 		}
 
@@ -325,7 +317,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	return (
 		<Main className="advanced-credentials">
-			<QueryRewindState siteId={ siteId } poll />
+			<QuerySiteCredentials siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<PageViewTracker

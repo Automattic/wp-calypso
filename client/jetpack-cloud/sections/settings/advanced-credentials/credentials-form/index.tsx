@@ -319,7 +319,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	return (
 		<div className="credentials-form">
 			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-			<p class="credentials-form__intro-text">{ getSubHeaderText() }</p>
+			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
 			{ renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">

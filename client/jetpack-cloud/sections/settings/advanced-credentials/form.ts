@@ -10,11 +10,11 @@ export enum FormMode {
 }
 
 export interface Credentials {
-	type: 'ssh' | 'ftp';
+	protocol: 'ssh' | 'ftp';
 	host: string;
 	port: number | '';
 	user: string;
-	path: string;
+	abspath: string;
 }
 
 export interface FormState {
