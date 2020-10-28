@@ -108,9 +108,9 @@ function getWpcomNuxPages( isGutenboarding ) {
 			alignBottom: true,
 		},
 		{
-			heading: __( 'Coming Soon', 'full-site-editing' ),
+			heading: __( 'Hidden until you’re ready', 'full-site-editing' ),
 			description: __(
-				'Your site will remain visible only to you until you’re ready to launch and share it with the world.',
+				'Your site will remain hidden until launched. Click “Launch” in the toolbar to share it with the world.',
 				'full-site-editing'
 			),
 			imgSrc: privateImage,
