@@ -226,17 +226,15 @@ function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, 
 		},
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
-	const annualPlansOnly = translate( '(annual plans only)', {
-		comment: 'Label attached to a feature',
-	} );
 
-	const isSupported = ! domain.wpcom_meta.is_bundled || ! isMonthlyPricingTest || ! hasMonthlyPlan;
+	if ( domain.wpcom_meta.is_bundled && isMonthlyPricingTest && hasMonthlyPlan ) {
+		return null;
+	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
-			{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
+		<CheckoutSummaryFeaturesListItem>
+			<WPCheckoutCheckIcon />
 			{ domain.wpcom_meta.is_bundled ? bundledDomain : <strong>{ domain.wpcom_meta.meta }</strong> }
-			{ ! isSupported && ` ${ annualPlansOnly }` }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -280,7 +278,8 @@ function getPlanFeatures(
 	hasRenewalInCart,
 	isMonthlyPricingTest
 ) {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
+	const showFreeDomainFeature =
+		( isMonthlyPricingTest || ! hasDomainsInCart ) && ! hasRenewalInCart;
 	const productSlug = plan.wpcom_meta?.product_slug;
 
 	if ( ! productSlug ) {
