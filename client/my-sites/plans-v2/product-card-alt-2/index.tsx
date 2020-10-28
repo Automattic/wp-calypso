@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import {
-	durationToText,
 	getProductWithOptionDisplayName,
 	productButtonLabel,
 	productButtonLabelAlt,
@@ -109,7 +108,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			subheadline={ item.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( item.term ) }
+			billingTerm={ item.term }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }

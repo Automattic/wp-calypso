@@ -435,6 +435,7 @@ export function buildCardFeatureItemFromFeatureKey(
 
 	if ( feature ) {
 		return {
+			slug: feature.getSlug(),
 			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
 			text: feature.getTitle(),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),

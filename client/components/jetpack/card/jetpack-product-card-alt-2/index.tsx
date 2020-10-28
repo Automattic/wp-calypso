@@ -10,6 +10,7 @@ import React, { createElement, ReactNode, FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { durationToText } from 'calypso/my-sites/plans-v2/utils';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -21,6 +22,7 @@ import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
  * Type dependencies
  */
 import type { Moment } from 'moment';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
 
 /**
  * Style dependencies
@@ -39,10 +41,10 @@ type OwnProps = {
 	currencyCode: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	billingTimeFrame: TranslateResult;
+	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: () => void;
+	onButtonClick: PurchaseCallback;
 	searchRecordsDetails?: ReactNode;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
@@ -66,7 +68,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	currencyCode,
 	originalPrice,
 	discountedPrice,
-	billingTimeFrame,
+	billingTerm,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
@@ -92,10 +94,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	const parsedExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
-	const renderBillingTimeFrame = (
-		productExpiryDate: Moment | null,
-		billingTerm: TranslateResult
-	) => {
+	const renderBillingTimeFrame = ( productExpiryDate: Moment | null, billingTerm: Duration ) => {
 		return productExpiryDate ? (
 			<time
 				className="jetpack-product-card-alt-2__expiration-date"
@@ -108,7 +107,9 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 				} ) }
 			</time>
 		) : (
-			<span className="jetpack-product-card-alt-2__billing-time-frame">{ billingTerm }</span>
+			<span className="jetpack-product-card-alt-2__billing-time-frame">
+				{ durationToText( billingTerm ) }
+			</span>
 		);
 	};
 
@@ -183,8 +184,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 											</InfoPopover>
 										) }
 									</span>
-
-									{ renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame ) }
+									{ renderBillingTimeFrame( parsedExpiryDate, billingTerm ) }
 								</>
 							) : (
 								<>
@@ -207,9 +207,11 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 					className="jetpack-product-card-alt-2__features"
 					features={ features }
 					productSlug={ productSlug }
+					billingTerm={ billingTerm }
 					isExpanded={ isExpanded }
 					onFeaturesToggle={ onFeaturesToggle }
 					ctaElt={ buttonElt }
+					onButtonClick={ onButtonClick }
 				/>
 			) }
 		</div>

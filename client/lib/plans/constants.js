@@ -236,6 +236,7 @@ export const FEATURE_PRODUCT_BACKUP_DAILY_V2 = Symbol();
 export const FEATURE_PRODUCT_BACKUP_REALTIME_V2 = Symbol();
 export const FEATURE_SCAN_V2 = Symbol();
 export const FEATURE_PRODUCT_SCAN_V2 = Symbol();
+export const FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT = Symbol();
 export const FEATURE_PRODUCT_SCAN_DAILY_V2 = Symbol();
 export const FEATURE_PRODUCT_SCAN_REALTIME_V2 = Symbol();
 export const FEATURE_ANTISPAM_V2 = Symbol();
