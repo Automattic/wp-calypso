@@ -7,17 +7,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import {
-	getProductWithOptionDisplayName,
-	productButtonLabel,
-	productButtonLabelAlt,
-} from '../utils';
+import { productButtonLabel } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { SELECTOR_PLANS_ALT_V2 } from 'calypso/my-sites/plans-v2/constants';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';

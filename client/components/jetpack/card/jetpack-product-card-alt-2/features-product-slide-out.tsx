@@ -64,7 +64,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			billingTimeFrame={ billingTimeFrame }
 			description={ product?.description }
 			buttonLabel={ slideOutButtonLabel }
-			onButtonClick={ () => onProductClick( product, false, true ) }
+			onButtonClick={ () => onProductClick( product, false ) }
 		/>
 	) : null;
 };
