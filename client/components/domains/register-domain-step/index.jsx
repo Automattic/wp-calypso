@@ -40,6 +40,7 @@ import {
 	getFixedDomainSearch,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
+	getTld,
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
@@ -153,6 +154,7 @@ class RegisterDomainStep extends React.Component {
 		isReskinned: PropTypes.bool,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
+		trueNamePromoTlds: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -760,9 +762,16 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
+		const { trueNamePromoTlds } = this.props;
 		return getAvailableTlds( { vendor, search: domain } )
 			.then( ( availableTlds ) => {
-				this.setState( { availableTlds } );
+				let filteredAvailableTlds = availableTlds;
+				if ( trueNamePromoTlds ) {
+					filteredAvailableTlds = availableTlds.filter( ( tld ) =>
+						trueNamePromoTlds.includes( tld )
+					);
+				}
+				this.setState( { availableTlds: filteredAvailableTlds } );
 			} )
 			.catch( noop );
 	};
@@ -823,6 +832,15 @@ class RegisterDomainStep extends React.Component {
 		}
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
+			return;
+		}
+
+		if (
+			this.props.trueNamePromoTlds &&
+			! this.props.trueNamePromoTlds.includes( getTld( domain ) )
+		) {
+			// We don't want to run an availability check if trueNamePromoTlds are set
+			// and the searched domain is not one of those TLDs
 			return;
 		}
 

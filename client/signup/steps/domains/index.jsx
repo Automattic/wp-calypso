@@ -40,7 +40,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getDomainProductSlug } from 'calypso/lib/domains';
+import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -479,6 +479,11 @@ class DomainsStep extends React.Component {
 		}
 
 		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
+
+		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
+			? TRUENAME_TLDS
+			: null;
+
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -487,6 +492,7 @@ class DomainsStep extends React.Component {
 				onAddDomain={ this.handleAddDomain }
 				products={ this.props.productsList }
 				basePath={ this.props.path }
+				trueNamePromoTlds={ trueNamePromoTlds }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
 				useYourDomainUrl={ this.getUseYourDomainUrl() }
