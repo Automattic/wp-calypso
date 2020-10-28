@@ -20,6 +20,7 @@ export type { Plan, PlanSlug } from './types';
 // used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
 export { plansPaths } from './plans-data';
 export { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
+export { STORE_KEY };
 
 let isRegistered = false;
 
