@@ -73,13 +73,11 @@ function WpcomNux() {
 }
 
 /**
- * This function returns a filtered collection of NUX slide data
- * Function arguments can be extended to customize the slides for specific environments, e.g., Gutenboarding
+ * This function returns a collection of NUX slide data
  *
- * @param   { boolean } isGutenboarding Whether the flow is Gutenboarding or not
- * @returns { Array }                   a collection of <NuxPage /> props filtered by whether the flow is Gutenboarding or not
+ * @returns { Array } a collection of <NuxPage /> props
  */
-function getWpcomNuxPages( isGutenboarding ) {
+function getWpcomNuxPages() {
 	return [
 		{
 			heading: __( 'Welcome to your website', 'full-site-editing' ),
@@ -114,11 +112,9 @@ function getWpcomNuxPages( isGutenboarding ) {
 				'full-site-editing'
 			),
 			imgSrc: privateImage,
-			// @TODO: hide for sites that are already public
-			shouldHide: ! isGutenboarding,
 			alignBottom: true,
 		},
-	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
+	];
 }
 
 function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
