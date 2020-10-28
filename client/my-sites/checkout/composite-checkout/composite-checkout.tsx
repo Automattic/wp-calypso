@@ -4,7 +4,6 @@
 import page from 'page';
 import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import PropTypes from 'prop-types';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
@@ -685,22 +684,6 @@ export default function CompositeCheckout( {
 		</React.Fragment>
 	);
 }
-
-CompositeCheckout.propTypes = {
-	siteSlug: PropTypes.string,
-	siteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ),
-	productAliasFromUrl: PropTypes.string,
-	getCart: PropTypes.func,
-	setCart: PropTypes.func,
-	getStoredCards: PropTypes.func,
-	allowedPaymentMethods: PropTypes.array,
-	redirectTo: PropTypes.string,
-	feature: PropTypes.string,
-	plan: PropTypes.string,
-	cart: PropTypes.object,
-	transaction: PropTypes.object,
-	isInEditor: PropTypes.bool,
-};
 
 function getPlanProductSlugs( items: WPCOMCartItem[] ): string[] {
 	return items
