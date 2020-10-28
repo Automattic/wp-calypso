@@ -28,3 +28,8 @@ export function* getSite( siteId: number ) {
 		yield dispatch( STORE_KEY ).receiveSiteFailed( siteId, undefined );
 	}
 }
+
+export function* getSiteTitle( siteId: number = window._currentSiteId ) {
+	const site = yield getSite( siteId );
+	return site?.name;
+}
