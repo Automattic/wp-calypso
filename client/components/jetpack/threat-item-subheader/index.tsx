@@ -11,7 +11,10 @@ import moment from 'moment';
  */
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatType, getThreatVulnerability } from 'calypso/components/jetpack/threat-item/utils';
+import {
+	getThreatType,
+	getThreatVulnerability,
+} from 'calypso/components/jetpack/threat-item/utils';
 
 /**
  * Style dependencies
