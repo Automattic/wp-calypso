@@ -3,13 +3,14 @@
  */
 import React from 'react';
 
-import Search from '.';
+import { Search } from './search';
 
 export default { title: 'Search', component: Search };
 
 const BoxedSearch = ( props: any ) => (
 	<div style={ { position: 'relative', width: '270px', height: '50px' } }>
 		<Search
+			__={ ( str: string ) => str }
 			placeholder="Search..."
 			fitsContainer
 			onSearch={ ( search ) => console.log( 'Searched: ', search ) } // eslint-disable-line no-console
