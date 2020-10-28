@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
-import { Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -173,16 +173,15 @@ export function CreditCardForm( {
 					translate={ translate }
 					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
 				/>
-			</Card>
-			<CompactCard className="credit-card-form__footer">
-				<em>{ translate( 'All fields required' ) }</em>
+
+				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
+
 				{ onCancel && (
 					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</FormButton>
 				) }
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
-			</CompactCard>
+			</Card>
 		</form>
 	);
 }
