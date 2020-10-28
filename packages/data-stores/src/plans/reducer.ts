@@ -7,10 +7,16 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { PLAN_FREE, PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE } from './constants';
+import {
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+	plansProductSlugs,
+} from './constants';
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
-import { PLANS_LIST } from './plans-data';
 
 type PricesMap = {
 	[ slug in PlanSlug ]: string;
@@ -70,7 +76,7 @@ export const prices: Reducer< PricesMap, PlanAction > = (
 };
 
 export const supportedPlanSlugs: Reducer< string[], PlanAction > = (
-	state = Object.keys( PLANS_LIST ),
+	state = plansProductSlugs,
 	action: PlanAction
 ) => {
 	switch ( action.type ) {

@@ -16,8 +16,8 @@ import {
 	PLAN_PREMIUM,
 	PLAN_BUSINESS,
 	PLAN_ECOMMERCE,
+	plansProductSlugs,
 } from './constants';
-import { PLANS_LIST } from './plans-data';
 
 /**
  * Calculates the monthly price of a plan
@@ -56,7 +56,7 @@ export function* getPrices() {
 
 	// filter for supported plans
 	const WPCOMPlans: APIPlan[] = plans.filter(
-		( plan: APIPlan ) => -1 !== Object.keys( PLANS_LIST ).indexOf( plan.product_slug as PlanSlug )
+		( plan: APIPlan ) => -1 !== plansProductSlugs.indexOf( plan.product_slug as PlanSlug )
 	);
 
 	// create a [slug => price] map

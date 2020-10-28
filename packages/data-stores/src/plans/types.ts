@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import type { PLANS_LIST } from './plans-data';
+import type { plansProductSlugs } from './constants';
 
-export type PlanSlug = keyof typeof PLANS_LIST;
+export type PlanSlug = typeof plansProductSlugs[ number ];
 
 export type PlanAction = {
 	type: string;
