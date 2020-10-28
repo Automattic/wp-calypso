@@ -93,7 +93,7 @@ class LineChart extends Component {
 			.filter( ( e ) => e !== null );
 		const meanTickRefs = matchingTicks.length
 			? matchingTicks.reduce( ( total, current ) => total + current, 0 ) / matchingTicks.length
-			: 0;
+			: NaN;
 		// this can only be figured out here, because D3 will decide how many ticks there should be
 		const isFirstMonthTick = index === Math.round( meanTickRefs );
 
