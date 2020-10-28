@@ -871,7 +871,7 @@ export const PLANS_LIST = {
 				plan
 			),
 		getProductId: () => 1021,
-		getStoreSlug: () => constants.PLAN_ECOMMERCE,
+		getStoreSlug: () => constants.PLAN_ECOMMERCE_MONTHLY,
 		getPathSlug: () => 'ecommerce-monthly',
 	},
 
