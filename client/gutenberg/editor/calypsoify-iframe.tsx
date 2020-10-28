@@ -44,6 +44,8 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import config from 'calypso/config';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
@@ -446,8 +448,14 @@ class CalypsoifyIframe extends Component<
 	};
 
 	handlePostStatusChange = ( status: string ) => {
-		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+		const { creatingNewHomepage, editedPostId, isSiteWPForTeams, siteUrl } = this.props;
+
+		if ( creatingNewHomepage && 'publish' === status ) {
 			this.setFrontPage();
+		}
+
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
 
@@ -825,11 +833,13 @@ const mapStateToProps = (
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
+		siteUrl: getSiteUrl( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
