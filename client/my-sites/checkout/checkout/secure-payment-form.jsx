@@ -18,7 +18,6 @@ import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
-import WechatPaymentBox from './wechat-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
 import WebPaymentBox from './web-payment-box';
 import { submit } from 'calypso/lib/store-transactions';
@@ -406,32 +405,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderWechatPaymentBox() {
-		return (
-			<PaymentBox
-				classSet="wechat-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod={ 'wechat' }
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.props.incompatibleProducts }
-			>
-				<QueryPaymentCountries />
-				<WechatPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					selectedSite={ this.props.selectedSite }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-					incompatibleProducts={ this.props.incompatibleProducts }
-				>
-					{ this.props.children }
-				</WechatPaymentBox>
-			</PaymentBox>
-		);
-	}
-
 	renderWebPaymentBox() {
 		return (
 			<PaymentBox
@@ -481,13 +454,6 @@ export class SecurePaymentForm extends Component {
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderPayPalPaymentBox() }
-					</div>
-				);
-			case 'wechat':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderWechatPaymentBox() }
 					</div>
 				);
 			case 'alipay':
