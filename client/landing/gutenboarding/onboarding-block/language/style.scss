@@ -1,49 +1,5 @@
-@import '../../mixins';
-
 .language__heading {
 	margin: 64px 0 80px;
 	display: flex;
 	justify-content: space-between;
-}
-
-.language__language-group {
-	width: 100%;
-}
-
-.language__language-group > span {
-	padding-bottom: 4px;
-	&.is-selected {
-		padding-bottom: 2px;
-		border-bottom: 2px solid var( --mainColor );
-	}
-}
-
-.language__regions-label {
-	margin: 6px 12px;
-	color: var( --studio-gray-50 );
-	font-size: 13px;
-	text-transform: uppercase;
-}
-
-.language__page-content {
-	display: flex;
-}
-
-.language__category-filters {
-	min-width: 170px;
-
-	@include break-small {
-		min-width: 220px;
-		margin-right: 60px;
-	}
-}
-
-.language__language-buttons {
-	display: flex;
-	flex-wrap: wrap;
-	align-content: flex-start;
-}
-
-.language__language-item {
-	width: 165px;
 }

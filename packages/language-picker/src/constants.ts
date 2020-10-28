@@ -1,30 +1,10 @@
 /**
- * @jest-environment jsdom
+ * Internal dependencies
  */
-/**
- * WordPress dependencies
- */
-import { __ } from '@wordpress/i18n';
+import { LanguageGroup } from './language-picker';
+import { I18nReact } from '@automattic/react-i18n';
 
-/*
- * List of territories that languages are grouped into (displayed as tabs in the UI).
- * Source of this data is the CLDR database, namely the `node-cldr` NPM package.
- *
- * `subTerritories` properties map the territory names into numerical geographic region
- * codes according to the UN M49 (https://unstats.un.org/unsd/methodology/m49/) standard
- * that is used in the CLDR database data.
- *
- * To move languages between territories or to include a language in multiple territories
- * change the 'territories' arrays in language data in 'config/_shared.json'.
- *
- * Some languages, e.g., Esperanto are not included in any territory -- these are
- * discoverable only with search.
- *
- * `countries` is a list of countries in each region. It's used to map country code
- * retrieved from geolocation service into the name of the tab selected by default.
- */
-export const DEFAULT_LANGUAGE_GROUP = 'popular';
-export const LANGUAGE_GROUPS = [
+export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] => [
 	{
 		id: 'popular',
 		name: () => __( 'Popular languages' ),
