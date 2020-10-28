@@ -21,6 +21,7 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackBackupSlug } from 'calypso/lib/products-values';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
+import HasJetpackConnectionFailedSwitch from 'calypso/components/jetpack/has-jetpack-connection-failed-switch';
 
 export function showUpsellIfNoBackup( context, next ) {
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
@@ -43,6 +44,17 @@ export function showUpsellIfNoBackup( context, next ) {
 				<BackupPlaceholder />
 			</UpsellSwitch>
 		</>
+	);
+	next();
+}
+
+export function showJetpackConnectionFailed( context, next ) {
+	const JetpackConnectionFailed = <WPCOMBackupUpsell reason="no_connected_jetpack" />;
+	context.primary = (
+		<HasJetpackConnectionFailedSwitch
+			trueComponent={ JetpackConnectionFailed }
+			falseComponent={ context.primary }
+		/>
 	);
 	next();
 }
