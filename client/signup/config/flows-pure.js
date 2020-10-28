@@ -259,6 +259,7 @@ export function generateFlows( {
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+			showRecaptcha: true,
 		};
 	}
 
@@ -368,6 +369,7 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+		showRecaptcha: true,
 	};
 
 	flows[ 'plan-no-domain' ] = {
