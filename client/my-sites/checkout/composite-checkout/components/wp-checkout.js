@@ -291,7 +291,7 @@ export default function WPCheckout( {
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
-					<WPCheckoutOrderSummary />
+					<WPCheckoutOrderSummary onChangePlanLength={ changePlanLength } />
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>

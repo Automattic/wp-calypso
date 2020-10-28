@@ -36,6 +36,8 @@ import {
 	isWpComEcommercePlan,
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
+	getYearlyPlanByMonthly,
+	getPlan,
 } from 'calypso/lib/plans';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
@@ -48,7 +50,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import { getABTestVariation } from 'calypso/lib/abtest';
 
-export default function WPCheckoutOrderSummary() {
+export default function WPCheckoutOrderSummary( { onChangePlanLength } ) {
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
@@ -79,7 +81,9 @@ export default function WPCheckoutOrderSummary() {
 					/>
 				) }
 				{ ! isMonthlyPricingTest && <CheckoutSummaryHelp /> }
-				{ isMonthlyPricingTest && hasMonthlyPlan && <SwitchToAnnualPlan /> }
+				{ isMonthlyPricingTest && hasMonthlyPlan && (
+					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
+				) }
 			</CheckoutSummaryFeatures>
 			<CheckoutSummaryAmountWrapper>
 				{ coupons.map( ( coupon ) => (
@@ -116,11 +120,23 @@ function LoadingCheckoutSummaryFeaturesList() {
 	);
 }
 
-function SwitchToAnnualPlan() {
+function SwitchToAnnualPlan( { plan, onChangePlanLength } ) {
 	const translate = useTranslate();
+	const handleClick = () => {
+		const annualPlan = getPlan( getYearlyPlanByMonthly( plan.wpcom_meta.product_slug ) );
+		if ( annualPlan ) {
+			onChangePlanLength?.(
+				plan.wpcom_meta.uuid,
+				annualPlan.getStoreSlug(),
+				annualPlan.getProductId()
+			);
+		}
+	};
 
 	return (
-		<SwitchToAnnualPlanButton>{ translate( 'Switch to annual plan' ) }</SwitchToAnnualPlanButton>
+		<SwitchToAnnualPlanButton onClick={ handleClick }>
+			{ translate( 'Switch to annual plan' ) }
+		</SwitchToAnnualPlanButton>
 	);
 }
 
@@ -214,23 +230,13 @@ function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, 
 		comment: 'Label attached to a feature',
 	} );
 
-	let label = <strong>{ domain.wpcom_meta.meta }</strong>;
-
-	if ( domain.wpcom_meta.is_bundled ) {
-		label = bundledDomain;
-	} else if ( isMonthlyPricingTest && hasMonthlyPlan ) {
-		label = (
-			<>
-				{ bundledDomain }
-				{ annualPlansOnly }
-			</>
-		);
-	}
+	const isSupported = ! domain.wpcom_meta.is_bundled || ! isMonthlyPricingTest || ! hasMonthlyPlan;
 
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon />
-			{ label }
+		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
+			{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
+			{ domain.wpcom_meta.is_bundled ? bundledDomain : <strong>{ domain.wpcom_meta.meta }</strong> }
+			{ ! isSupported && ` ${ annualPlansOnly }` }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
