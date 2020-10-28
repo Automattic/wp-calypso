@@ -22,12 +22,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 			bodyOpenClassName="has-focused-launch-modal"
 			onRequestClose={ onClose }
 			title={ __( 'Complete setup' ) }
-			// remove the wrong type when https://github.com/DefinitelyTyped/DefinitelyTyped/pull/49156 is merged
-			icon={
-				( ( <Icon icon={ wordpress } size={ 36 } /> ) as unknown ) as React.FunctionComponent<
-					unknown
-				>
-			}
+			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
 			<>
 				<div className="launch__focused-modal-wrapper ">
