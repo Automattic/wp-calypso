@@ -5,12 +5,12 @@
  */
 import request from 'superagent';
 import supertest from 'supertest';
-import unmodifiedConfig from 'config';
+import unmodifiedConfig from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'api', () => {
 	let app, config, localRequest, sandbox;
@@ -18,7 +18,7 @@ describe( 'api', () => {
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
-		config = require( 'config' );
+		config = require( 'calypso/config' );
 		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
 		app = require( '../' )();
 		localRequest = supertest( app );

@@ -1,6 +1,6 @@
 module.exports = {
 	moduleNameMapper: {
-		'^config$': '<rootDir>/client/server/config/index.js',
+		'^calypso/config$': '<rootDir>/client/server/config/index.js',
 	},
 	modulePaths: [ '<rootDir>/test', '<rootDir>/client', '<rootDir>/client/extensions' ],
 	rootDir: '../..',
