@@ -66,21 +66,7 @@ module.exports = function ( configPath, defaultOpts ) {
 		data.features[ 'wpcom-user-bootstrap' ] = false;
 	}
 
-	const secrets = getDataFromFile( secretsPath );
-	if ( opts.env === 'desktop' && secretsPath === realSecretsPath ) {
-		const oauthClientId = secrets.desktop_oauth_client_id;
-		const oauthSecret = secrets.desktop_oauth_client_secret;
-		const oauthTokenEndpoint = secrets.desktop_oauth_token_endpoint;
-
-		data.oauth_client_id = oauthClientId !== undefined ? oauthClientId : false;
-
-		data.desktop_oauth_client_id = oauthClientId !== undefined ? oauthClientId : false;
-		data.desktop_oauth_client_secret = oauthSecret !== undefined ? oauthSecret : false;
-		data.desktop_oauth_token_endpoint =
-			oauthTokenEndpoint !== undefined ? oauthTokenEndpoint : false;
-	}
-
-	const serverData = assign( {}, data, secrets );
+	const serverData = assign( {}, data, getDataFromFile( secretsPath ) );
 	const clientData = assign( {}, data );
 
 	return { serverData, clientData };
