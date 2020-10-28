@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { ReactElement, FunctionComponent } from 'react';
-import { translate } from 'i18n-calypso';
+import { translate, useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { addQueryArgs } from '@wordpress/url';
 import { Button } from '@automattic/components';
@@ -10,10 +10,15 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
 import DocumentHead from 'calypso/components/data/document-head';
+import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -27,9 +32,61 @@ import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
  */
 import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
+import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected.svg';
 import './style.scss';
 
 const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backup-error.svg';
+
+const BackupNoJetpackConnected: FunctionComponent = () => {
+	const translate = useTranslate();
+	const { URL: siteUrl, name: siteName } = useSelector( getSelectedSite );
+	// const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_vaultpress_click' );
+	const onUpgradeClick = () => 0;
+	return (
+		<PromoCard
+			title={ preventWidows( translate( 'Jetpack connection has failed' ) ) }
+			image={ { path: JetpackDisconnected } }
+			isPrimary
+		>
+			<p>
+				{ preventWidows(
+					translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
+						components: { siteName: <strong>{ siteName }</strong> },
+					} )
+				) }
+			</p>
+			<p>
+				{ preventWidows(
+					translate(
+						'Please visit {{siteUrl/}} to ensure your site loading correctly and reconnect Jetpack if necessary.',
+						{
+							components: {
+								siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
+							},
+						}
+					)
+				) }
+			</p>
+			<div className="backup__wpcom-ctas">
+				<Button
+					className="backup__wpcom-cta backup__wpcom-realtime-cta"
+					href="https://dashboard.vaultpress.com"
+					onClick={ onUpgradeClick }
+					primary
+				>
+					{ translate( 'Reconnect Jetpack' ) }
+				</Button>
+				<Button
+					className="backup__wpcom-cta backup__wpcom-realtime-cta"
+					href="https://dashboard.vaultpress.com"
+					onClick={ onUpgradeClick }
+				>
+					{ translate( 'I need help' ) }
+				</Button>
+			</div>
+		</PromoCard>
+	);
+};
 
 const BackupMultisiteBody: FunctionComponent = () => (
 	<PromoCard
@@ -134,6 +191,9 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ): React
 			break;
 		case 'vp_active_on_site':
 			body = <BackupVPActiveBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <BackupNoJetpackConnected />;
 			break;
 		default:
 			body = <BackupUpsellBody />;
