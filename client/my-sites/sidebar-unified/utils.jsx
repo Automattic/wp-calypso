@@ -11,7 +11,7 @@ export const handleScroll = () => {
 	const masterbarHeight = document.getElementById( 'header' ).getBoundingClientRect().height;
 
 	if (
-		! ticking &&
+		! ticking && // Do not run until next requestAnimationFrame
 		typeof window !== 'undefined' &&
 		window.innerWidth > 660 &&
 		secondaryEl !== 'undefined' &&

@@ -32,6 +32,8 @@ import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import { handleScroll } from './utils';
 import './style.scss';
 
+const scrollCallback = () => handleScroll();
+
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
@@ -39,9 +41,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
 
 	useEffect( () => {
-		window.addEventListener( 'scroll', () => handleScroll() );
+		window.addEventListener( 'scroll', scrollCallback );
 		return () => {
-			window.removeEventListener( 'scroll', () => handleScroll() );
+			window.removeEventListener( 'scroll', scrollCallback );
 		};
 	} );
 
