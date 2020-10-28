@@ -46,7 +46,7 @@ import { isEnabled } from 'calypso/config';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
-import { useVariationForUser } from 'calypso/state/experiments/hooks';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 export default function WPCheckoutOrderSummary() {
 	const translate = useTranslate();
@@ -59,8 +59,7 @@ export default function WPCheckoutOrderSummary() {
 
 	const plan = usePlanInCart();
 	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
-	const isMonthlyPricingTest =
-		'treatment' === useVariationForUser( 'monthly_pricing_test_phase_1' );
+	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
 
 	return (
 		<CheckoutSummaryCard

@@ -22,7 +22,7 @@ import {
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
-import { useVariationForUser } from 'calypso/state/experiments/hooks';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -31,8 +31,7 @@ export function useProductVariants( { siteId, productSlug } ) {
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
-	const monthlyPricingVariant = useVariationForUser( 'monthly_pricing_test_phase_1' );
-	const isMonthlyPricingTest = monthlyPricingVariant === 'treatment';
+	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(

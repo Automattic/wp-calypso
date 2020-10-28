@@ -129,7 +129,7 @@ export class PlansFeaturesMain extends Component {
 		}
 	}
 
-	getPlanFeatures( { isMonthlyPricingTest } = {} ) {
+	getPlanFeatures() {
 		const {
 			basePlansPath,
 			customerType,
@@ -140,6 +140,7 @@ export class PlansFeaturesMain extends Component {
 			isJetpack,
 			isLandingPage,
 			isLaunchPage,
+			isMonthlyPricingTest,
 			onUpgradeClick,
 			selectedFeature,
 			selectedPlan,
@@ -207,7 +208,7 @@ export class PlansFeaturesMain extends Component {
 					} ) }
 					siteId={ siteId }
 					isReskinned={ isReskinned }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
+					isMonthlyPricingTest={ isMonthlyPricingTest && isInSignup }
 				/>
 			</div>
 		);
@@ -446,7 +447,11 @@ export class PlansFeaturesMain extends Component {
 				<HappychatConnection />
 				<div className="plans-features-main__notice" />
 
-				<PlanTypeSelector { ...this.props } basePlansPath={ basePlansPath } />
+				<PlanTypeSelector
+					{ ...this.props }
+					basePlansPath={ basePlansPath }
+					isMonthlyPricingTest={ isMonthlyPricingTest && isInSignup }
+				/>
 				<FreePlanBanner
 					{ ...this.props }
 					hidden={ isMonthlyPricingTest || shouldHideFreePlanBanner }

@@ -925,7 +925,7 @@ export default connect(
 						default:
 							if ( planConstantObj.getSignupFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
+									planConstantObj.getSignupFeatures( currentPlan, { isMonthlyPricingTest } )
 								);
 							}
 					}
@@ -955,18 +955,26 @@ export default connect(
 					}
 				}
 
-				if ( isMonthlyPricingTest ) {
-					const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				if ( annualPlansOnlyFeatures.length > 0 ) {
 					planFeatures = planFeatures.map( ( feature ) => {
 						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
 							feature.getSlug()
 						);
+
 						return {
 							...feature,
 							availableOnlyForAnnualPlans,
-							availableForCurrentPlan: ! isMonthlyPlan && availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
 						};
 					} );
+				}
+
+				// Strip annual-only features out for the site's /plans page
+				if ( ! isInSignup || isPlaceholder ) {
+					planFeatures = planFeatures.filter(
+						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+					);
 				}
 
 				return {
