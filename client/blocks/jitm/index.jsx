@@ -28,15 +28,32 @@ import './style.scss';
 const debug = debugFactory( 'calypso:jitm' );
 
 function renderTemplate( template, props ) {
-	if ( template === 'notice' ) {
-		return <AsyncLoad { ...props } require="calypso/blocks/jitm/templates/notice" />;
+	switch ( template ) {
+		case 'notice':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/notice"
+					placeholder={ null }
+				/>
+			);
+		case 'sidebar-banner':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/sidebar-banner"
+					placeholder={ null }
+				/>
+			);
+		default:
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/default"
+					placeholder={ null }
+				/>
+			);
 	}
-
-	if ( template === 'sidebar-banner' ) {
-		return <AsyncLoad { ...props } require="calypso/blocks/jitm/templates/sidebar-banner" />;
-	}
-
-	return <AsyncLoad { ...props } require="calypso/blocks/jitm/templates/default" />;
 }
 
 function getEventHandlers( props, dispatch ) {
