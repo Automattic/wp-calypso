@@ -49,6 +49,8 @@ type OwnProps = {
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
 	isFree?: boolean;
+	withBundleRibbon: boolean;
+	onFeaturesToggle?: () => void;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -77,6 +79,8 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	isExpanded,
 	isFree,
 	productSlug,
+	withBundleRibbon,
+	onFeaturesToggle,
 }: Props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -124,13 +128,16 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'is-featured': isHighlighted,
+				'is-expanded': isExpanded,
 			} ) }
 			data-e2e-product-slug={ productSlug }
 		>
-			<div className="jetpack-product-card-alt-2__ribbon">
-				<span className="jetpack-product-card-alt-2__ribbon-text">{ translate( 'Bundle' ) }</span>
-				<img className="jetpack-product-card-alt-2__ribbon-img" src={ ribbonSvg } alt="" />
-			</div>
+			{ withBundleRibbon && (
+				<div className="jetpack-product-card-alt-2__ribbon">
+					<span className="jetpack-product-card-alt-2__ribbon-text">{ translate( 'Bundle' ) }</span>
+					<img className="jetpack-product-card-alt-2__ribbon-img" src={ ribbonSvg } alt="" />
+				</div>
+			) }
 			<div className="jetpack-product-card-alt-2__summary">
 				<header className="jetpack-product-card-alt-2__header">
 					<ProductIcon className="jetpack-product-card-alt-2__icon" slug={ iconSlug } />
@@ -197,9 +204,11 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 			</div>
 			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures
+					className="jetpack-product-card-alt-2__features"
 					features={ features }
 					productSlug={ productSlug }
 					isExpanded={ isExpanded }
+					onFeaturesToggle={ onFeaturesToggle }
 					ctaElt={ buttonElt }
 				/>
 			) }
