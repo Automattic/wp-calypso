@@ -220,7 +220,12 @@ function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, 
 	if ( domain.wpcom_meta.is_bundled ) {
 		label = bundledDomain;
 	} else if ( isMonthlyPricingTest && hasMonthlyPlan ) {
-		label = `${ bundledDomain } ${ annualPlansOnly }`;
+		label = (
+			<>
+				{ bundledDomain }
+				{ annualPlansOnly }
+			</>
+		);
 	}
 
 	return (
