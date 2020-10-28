@@ -18,7 +18,6 @@ import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
 import AsyncLoad from 'calypso/components/async-load';
 import QueryJITM from 'calypso/components/data/query-jitm';
 import 'calypso/state/data-layer/wpcom/marketing';
-import withSectionMessagePath from './with-section-message-path';
 
 /**
  * Style dependencies
@@ -137,12 +136,11 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = ( state, { messagePath } ) => {
 	const currentSite = getSelectedSite( state );
-
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
+		jitm: getTopJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
 };
@@ -151,8 +149,4 @@ const mapDispatchToProps = {
 	recordTracksEvent,
 };
 
-// Export the unwrapped component to allow for providing a custom `messagePath`.
-export const JITMConnected = connect( mapStateToProps, mapDispatchToProps )( JITM );
-
-// Export a wrapped component which automatically provides the `messagePath`
-export default withSectionMessagePath( JITMConnected );
+export default connect( mapStateToProps, mapDispatchToProps )( JITM );

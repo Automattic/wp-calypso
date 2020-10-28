@@ -348,7 +348,7 @@ class ThemeSheet extends React.Component {
 					<AsyncLoad
 						require="calypso/blocks/jitm"
 						placeholder={ null }
-						messagePathSuffix="admin_notices"
+						messagePath="calypso:theme:admin_notices"
 					/>
 				) }
 				{ this.renderSectionNav( section ) }
