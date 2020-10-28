@@ -83,7 +83,7 @@ function setSessionCookies( window, authorizeResponse ) {
 
 		cookieHeaders.map( parseCookie ).forEach( function ( cookie ) {
 			cookie.url = 'https://wordpress.com/';
-			if ( cookie.HttpOnly ) {
+			if ( cookie.HttpOnly || cookie.httpOnly || cookie.httponly ) {
 				cookie.session = true;
 			}
 			window.webContents.session.cookies.set( cookie );
