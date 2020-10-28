@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { isObject } from 'lodash';
-import React, { FunctionComponent, useState } from 'react';
+import React, { FunctionComponent, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -55,9 +55,9 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 
 	const slideOutProduct = slugToSelectorProduct( slideOutProductSlug );
 
-	const toggleSlideOut = () => {
+	const toggleSlideOut = useCallback( () => {
 		setSlideOutExpanded( ( state ) => ! state );
-	};
+	}, [ slideOutExpanded ] );
 
 	const renderFeatureAction = () => {
 		if ( isHighlighted ) {
