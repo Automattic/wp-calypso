@@ -193,7 +193,7 @@ export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 };
 
 export const deleteMediaError = ( { mediaId } ) => [
-	errorNotice( translate( "We weren't able to delete this media item." ), {
+	errorNotice( translate( "We were unable to delete this media item." ), {
 		id: `delete-media-notice-${ mediaId }`,
 	} ),
 ];
