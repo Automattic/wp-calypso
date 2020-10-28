@@ -23,10 +23,18 @@ const log = require( 'desktop/lib/logger' )( 'desktop:runapp' );
  */
 let mainWindow = null;
 
-function createAppWindow() {
+function showAppWindow() {
 	const preloadFile = path.resolve(
 		path.join( __dirname, '..', '..', '..', 'public_desktop', 'preload.js' )
 	);
+	let appUrl = Config.server_url + ':' + Config.server_port;
+	const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
+
+	if ( lastLocation && isValidLastLocation( lastLocation ) ) {
+		appUrl += lastLocation;
+	}
+
+	log.info( 'Loading app (' + appUrl + ') in mainWindow' );
 
 	const config = Settings.getSettingGroup( Config.mainWindow, 'window', [
 		'x',
@@ -36,7 +44,6 @@ function createAppWindow() {
 	] );
 	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	config.webPreferences.preload = preloadFile;
-	config.show = false;
 
 	mainWindow = new BrowserWindow( config );
 
@@ -46,7 +53,6 @@ function createAppWindow() {
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
 		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
-		mainWindow.show();
 
 		ipc.on( 'mce-contextmenu', function ( ev ) {
 			mainWindow.send( 'mce-contextmenu', ev );
@@ -86,6 +92,9 @@ function createAppWindow() {
 		callback( { cancel: false } );
 	} );
 
+	mainWindow.loadURL( appUrl );
+	// mainWindow.openDevTools();
+
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
 		const parsedURL = url.parse( currentURL );
@@ -107,28 +116,8 @@ function createAppWindow() {
 function startServer( started_cb ) {
 	log.info( 'App is ready, starting server' );
 
-	// Create the main window to set up IPC user-auth handler.
-	// Window is hidden by default and unhidden on did-finish-load.
-	//
-	// The 'user-auth' IPC event will set cookies to the window's webContent's session,
-	// so the window needs to exist prior to Calypso being booted!
-	createAppWindow();
-
 	start( app, function () {
-		// mainWindow exists and server has been started.
-		// Now set the window's URL.
-		let appUrl = Config.server_url + ':' + Config.server_port;
-		const lastLocation = Settings.getSetting( settingConstants.LAST_LOCATION );
-
-		if ( lastLocation && isValidLastLocation( lastLocation ) ) {
-			appUrl += lastLocation;
-		}
-
-		log.info( 'Loading app (' + appUrl + ') in mainWindow' );
-
-		mainWindow.loadURL( appUrl );
-
-		started_cb( mainWindow );
+		started_cb( showAppWindow() );
 	} );
 }
 
@@ -159,7 +148,7 @@ module.exports = function ( started_cb ) {
 		if ( 'development' === process.env.NODE_ENV ) {
 			log.debug( 'Dev mode: skipping server initialization' );
 
-			boot = () => started_cb( createAppWindow() );
+			boot = () => started_cb( showAppWindow() );
 		} else {
 			boot = () => startServer( started_cb );
 		}
