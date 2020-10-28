@@ -19,6 +19,7 @@
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-notice-background: #3c434a;
 
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
@@ -198,7 +199,7 @@ $font-size: rem( 14px );
 		}
 
 		.notice {
-			background-color: #3c434a;
+			background-color: var( --color-sidebar-notice-background );
 			/* stylelint-disable-next-line scales/font-weight */
 			font-weight: 300;
 
@@ -217,12 +218,12 @@ $font-size: rem( 14px );
 					width: 18px;
 					height: 18px;
 					border-radius: 50%;
-					background: #a7aaad;
+					background: var( --color-sidebar-gridicon-fill );
 				}
 			}
 
 			.gridicon {
-				fill: #3c434a;
+				fill: var( --color-sidebar-notice-background );
 			}
 
 			.notice__content {
