@@ -13,7 +13,6 @@ import EmailForwardingLimit from './email-forwarding-limit';
 import { validateAllFields } from 'calypso/lib/domains/email-forwarding';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
@@ -145,10 +144,10 @@ class EmailForwardingAddNew extends React.Component {
 
 	formFooter() {
 		return (
-			<FormFooter>
+			<div>
 				{ this.addButton() }
 				{ this.cancelButton() }
-			</FormFooter>
+			</div>
 		);
 	}
 
