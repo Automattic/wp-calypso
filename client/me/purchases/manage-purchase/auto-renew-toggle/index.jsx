@@ -223,7 +223,6 @@ class AutoRenewToggle extends Component {
 				<FormToggle
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
-					toggling={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
 				>
 					{ withTextStatus && this.renderTextStatus() }
