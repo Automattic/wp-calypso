@@ -93,6 +93,7 @@ export function* getPlansDetails( locale = 'en' ) {
 				id: feature.id,
 				name: feature.name,
 				description: feature.description,
+				type: feature.type ?? 'checkbox',
 			};
 		} );
 
@@ -108,6 +109,7 @@ export function* getPlansDetails( locale = 'en' ) {
 					( acc: Record< string, boolean >, cur: string ) => ( { ...acc, [ cur ]: true } ),
 					{}
 				),
+				storage: rawPlan.storage,
 			};
 
 			if ( 'Free' === rawPlan.nonlocalized_short_name ) {

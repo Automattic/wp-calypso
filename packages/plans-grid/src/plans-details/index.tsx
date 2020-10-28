@@ -79,26 +79,30 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 							{ featureType.features?.map( ( feature: string, i ) => (
 								<tr className="plans-details__feature-row" key={ i }>
 									<th>{ features[ feature ].name }</th>
-									{ supportedPlans.map( ( plan, j ) => (
-										<td key={ j }>
-											{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
-												<>
-													{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-													<span className="hidden">
-														{ __( 'Available', __i18n_text_domain__ ) }
-													</span>
-													{ TickIcon }
-												</>
-											) : (
-												<>
-													{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
-													<span className="hidden">
-														{ __( 'Unavailable', __i18n_text_domain__ ) }
-													</span>
-												</>
-											) }
-										</td>
-									) ) }
+									{ supportedPlans.map( ( plan, j ) =>
+										feature === 'storage' ? (
+											<td key={ j }>{ plans[ plan.storeSlug ][ feature ] }</td>
+										) : (
+											<td key={ j }>
+												{ plans[ plan.storeSlug ].featuresSlugs?.[ feature ] ? (
+													<>
+														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+														<span className="hidden">
+															{ __( 'Available', __i18n_text_domain__ ) }
+														</span>
+														{ TickIcon }
+													</>
+												) : (
+													<>
+														{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+														<span className="hidden">
+															{ __( 'Unavailable', __i18n_text_domain__ ) }
+														</span>
+													</>
+												) }
+											</td>
+										)
+									) }
 								</tr>
 							) ) }
 						</tbody>

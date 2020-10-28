@@ -20,6 +20,7 @@ export interface Plan {
 	isPopular?: boolean;
 	isFree?: boolean;
 	featuresSlugs?: Record< string, boolean >;
+	storage?: string;
 }
 
 /**
@@ -100,6 +101,7 @@ export type APIPlanDetail = {
 	nonlocalized_short_name: string;
 	highlighted_features: Array< string >;
 	features: Array< string >;
+	storage?: string;
 };
 
 export type PlanFeature = {
