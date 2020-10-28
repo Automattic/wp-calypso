@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import { isObject } from 'lodash';
 import React, { FunctionComponent, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -43,6 +44,7 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	const { icon, text, description, isHighlighted, slug } = item;
 	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
+	const translate = useTranslate();
 
 	const [ slideOutExpanded, setSlideOutExpanded ] = useState( false );
 
@@ -66,7 +68,7 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 						onClick={ toggleSlideOut }
 					>
 						<>
-							<span>Close</span> <Gridicon icon="cross" size={ 18 } />
+							<span>{ translate( 'Close' ) }</span> <Gridicon icon="cross" size={ 18 } />
 						</>
 					</Button>
 				) : (
@@ -75,7 +77,8 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 						onClick={ toggleSlideOut }
 					>
 						<>
-							<span>Learn more</span> <Gridicon icon="chevron-down" size={ 18 } />
+							<span>{ preventWidows( translate( 'Learn more' ) ) }</span>{ ' ' }
+							<Gridicon icon="chevron-down" size={ 18 } />
 						</>
 					</Button>
 				);
