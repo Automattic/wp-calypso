@@ -9,9 +9,9 @@ import { get, some, dropRight } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { recordPageView } from 'lib/analytics/page-view';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import config from 'config';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import config from 'calypso/config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
@@ -24,11 +24,11 @@ import PlansLanding from './plans-landing';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
 import StoreFooter from './store-footer';
-import { addQueryArgs, sectionify } from 'lib/route';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
-import switchLocale from 'lib/i18n-utils/switch-locale';
-import { hideMasterbar, showMasterbar } from 'state/ui/actions';
+import { addQueryArgs, sectionify } from 'calypso/lib/route';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'calypso/lib/i18n-utils';
+import switchLocale from 'calypso/lib/i18n-utils/switch-locale';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import {
 	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
@@ -37,7 +37,7 @@ import {
 	JETPACK_ADMIN_PATH,
 	JPC_PATH_PLANS,
 } from './constants';
-import { login } from 'lib/paths';
+import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import {
 	isCalypsoStartedConnection,
@@ -45,11 +45,11 @@ import {
 	retrieveMobileRedirect,
 	storePlan,
 } from './persistence-utils';
-import { startAuthorizeStep } from 'state/jetpack-connect/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -57,7 +57,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 import {
 	JETPACK_SEARCH_PRODUCTS,
@@ -71,10 +71,10 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'lib/products-values/constants';
-import { getProductFromSlug } from 'lib/products-values/get-product-from-slug';
-import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
-import { externalRedirect } from 'lib/route/path';
+} from 'calypso/lib/products-values/constants';
+import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
+import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { externalRedirect } from 'calypso/lib/route/path';
 
 /**
  * Module variables
@@ -273,6 +273,7 @@ export function connect( context, next ) {
 				path={ path }
 				type={ type }
 				url={ query.url }
+				queryArgs={ query }
 				forceRemoteInstall={ query.forceInstall }
 			/>
 		);
