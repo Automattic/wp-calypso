@@ -11,11 +11,11 @@ export const handleScroll = () => {
 	const masterbarHeight = document.getElementById( 'header' ).getBoundingClientRect().height;
 
 	if (
-		! ticking && // Do not run until next requestAnimationFrame
 		typeof window !== 'undefined' &&
-		window.innerWidth > 660 &&
 		secondaryEl !== 'undefined' &&
 		secondaryEl !== null &&
+		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
+		! ticking && // Do not run until next requestAnimationFrame
 		secondaryElHeight + masterbarHeight > windowHeight // Only run when sidebar & masterbar are taller than window height.
 	) {
 		// Throttle scroll event
