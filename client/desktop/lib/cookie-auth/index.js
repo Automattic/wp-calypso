@@ -96,31 +96,28 @@ function setSessionCookies( window, authorizeResponse ) {
 }
 
 function auth( window, onAuthorized ) {
-	ipc.handle( 'user-auth', async function ( _, user, token ) {
+	ipc.on( 'user-auth', async function ( _, user, token ) {
 		log.info( `Handling 'user-auth' IPC event, setting session cookies...` );
 
 		if ( user && user.data ) {
 			const userData = user.data;
-			const response = await authorize( userData.username, token );
-			if ( response ) {
-				try {
-					await setSessionCookies( window, response );
 
-					onAuthorized();
+			try {
+				const response = await authorize( userData.username, token );
+				await setSessionCookies( window, response );
+				onAuthorized();
 
-					return 'session-cookies-set';
-				} catch ( e ) {
-					log.error( 'Failed to set session cookies: ', e );
-
-					return 'session-cookies-error';
-				}
+				log.info( 'Session cookies set.' );
+			} catch ( e ) {
+				log.error( 'Failed to set session cookies: ', e );
 			}
 		} else {
 			log.info( 'No user data, clearing session cookies...' );
 
 			window.webContents.session.cookies.get( {}, function ( e, cookies ) {
 				if ( e ) {
-					return 'session-cookies-none';
+					log.error( 'Failed to clear session cookies: ', e );
+					return;
 				}
 
 				cookies.forEach( function ( cookie ) {
@@ -130,8 +127,6 @@ function auth( window, onAuthorized ) {
 
 					window.webContents.session.cookies.remove( cookieUrl, cookie.name, noop );
 				} );
-
-				return 'session-cookies-cleared';
 			} );
 		}
 	} );

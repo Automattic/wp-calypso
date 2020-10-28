@@ -83,8 +83,7 @@ const Desktop = {
 
 		// Send some events immediately - this sets the app state
 		this.sendNotificationUnseenCount();
-		const userAuthorized = await this.sendUserLoginStatus();
-		debug( 'Cookies set: ', userAuthorized );
+		this.sendUserLoginStatus();
 	},
 
 	selectedSite: null,
@@ -205,7 +204,7 @@ const Desktop = {
 		debug( 'Sending logged-in = ' + status );
 
 		ipc.send( 'user-login-status', status );
-		return ipc.invoke( 'user-auth', user(), oAuthToken.getToken() );
+		ipc.send( 'user-auth', user(), oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function () {
