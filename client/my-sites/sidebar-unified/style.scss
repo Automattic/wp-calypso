@@ -120,6 +120,7 @@ $font-size: rem( 14px );
 
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
+			margin-right: 8px;
 		}
 
 		.sidebar__menu-item-parent {
@@ -233,16 +234,26 @@ $font-size: rem( 14px );
 	}
 
 	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites:hover .button.is-borderless:hover {
+		background-color: var( --color-sidebar-menu-hover-heading-background );
+	}
+
 	.current-site__switch-sites .button.is-borderless {
 		color: var( --color-sidebar-text-alternative );
-		padding: 6px 8px 6px 38px;
+		padding: 6px 8px 6px 36px;
 	}
 
 	.current-site__switch-sites .button.is-borderless .gridicon {
 		height: 20px;
 		width: 20px;
 		top: 9px;
-		left: 9px;
+		left: 8px;
+	}
+
+	// client/blocks/site/style.scss
+	.site__content,
+	.all-sites .all-sites__content {
+		padding: 10px 0 10px 8px;
 	}
 
 	.is-sidebar-collapsed & {
@@ -328,12 +339,21 @@ $font-size: rem( 14px );
 		}
 	}
 
-	.collapse-sidebar__toggle .sidebar__menu-link {
-		cursor: pointer;
+	.collapse-sidebar__toggle {
+		.sidebar__menu-link {
+			cursor: pointer;
+			color: var( --color-sidebar-text-alternative );
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: rem( 13px );
 
-		&:hover,
-		&:focus {
-			background-color: transparent;
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
+		.sidebar__menu-icon {
+			margin-top: 1px;
 		}
 	}
 
@@ -347,7 +367,8 @@ $font-size: rem( 14px );
 
 	.sidebar-unified__sparkline {
 		width: 80px;
-		height: 24px;
+		height: 21px;
+		margin-right: 8px;
 	}
 
 	/*
