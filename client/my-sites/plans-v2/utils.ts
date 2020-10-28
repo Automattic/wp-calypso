@@ -41,6 +41,8 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -67,10 +69,12 @@ import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetp
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 
 /**
  * Type dependencies
  */
+import type { AppState } from 'calypso/types';
 import type {
 	Duration,
 	SelectorProduct,
@@ -133,6 +137,36 @@ export function getProductWithOptionDisplayName(
 
 	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
+
+/**
+ * A selector that calculates the discount for billing purchases yearly instead of monthly.
+ *
+ * @param {AppState} state The application state.
+ * @returns {string|null} A formatted discount amount or percentage, if a discount exists; otherwise, null.
+ */
+export const getAnnualBillingDiscount = ( state: AppState ): string | null => {
+	// We use Jetpack Security as a reference to calculate the annual billing discount;
+	// we're assuming that this discount is the same across all our products
+	const securityMonthlyCost = getProductCost( state, PLAN_JETPACK_SECURITY_DAILY_MONTHLY );
+	const securityYearlyCost = getProductCost( state, PLAN_JETPACK_SECURITY_DAILY );
+
+	// Can't calculate a discount if we don't have price info
+	if ( ! securityMonthlyCost || ! securityYearlyCost ) {
+		return null;
+	}
+
+	const securityMonthlyCostPerYear = securityMonthlyCost * 12;
+	const savingsPerYear = securityMonthlyCostPerYear - securityYearlyCost;
+
+	const discountPercentage = Math.round( 100 * ( savingsPerYear / securityMonthlyCostPerYear ) );
+
+	// If the rate is less than 1%, it's not a discount, so return null
+	if ( discountPercentage < 1 ) {
+		return null;
+	}
+
+	return `${ discountPercentage }%`;
+};
 
 /**
  * Product UI utils.

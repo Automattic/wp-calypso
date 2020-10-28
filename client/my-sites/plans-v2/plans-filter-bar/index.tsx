@@ -16,6 +16,7 @@ import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import { PRODUCT_TYPE_OPTIONS } from '../constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
+import { getAnnualBillingDiscount } from '../utils';
 
 /**
  * Type dependencies
@@ -39,6 +40,23 @@ interface Props {
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 94;
+
+const DiscountMessage = () => {
+	const translate = useTranslate();
+	const annualBillingDiscount = useSelector( getAnnualBillingDiscount );
+
+	if ( ! annualBillingDiscount ) {
+		return null;
+	}
+
+	return (
+		<span className="plans-filter-bar__discount-message">
+			{ translate( 'You save %(discount)s by paying yearly', {
+				args: { discount: annualBillingDiscount },
+			} ) }
+		</span>
+	);
+};
 
 const PlansFilterBar = ( {
 	showDiscountMessage,
@@ -94,13 +112,7 @@ const PlansFilterBar = ( {
 					</SegmentedControl.Item>
 				</SegmentedControl>
 			) }
-			{ showDiscountMessage && (
-				<span className="plans-filter-bar__discount-message">
-					{ translate( 'Save %(discount)s by paying yearly', {
-						args: { discount: '20%' },
-					} ) }
-				</span>
-			) }
+			{ showDiscountMessage && <DiscountMessage /> }
 		</div>
 	);
 };
