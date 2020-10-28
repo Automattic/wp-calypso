@@ -59,6 +59,17 @@ import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
+const promiseTimeout = function ( ms, promise ) {
+	const timeout = new Promise( ( _, reject ) => {
+		const id = setTimeout( () => {
+			clearTimeout( id );
+			reject( `Request timed out in ${ ms } ms` );
+		}, ms );
+	} );
+
+	return Promise.race( [ promise, timeout ] );
+};
+
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
@@ -432,8 +443,19 @@ const boot = ( currentUser, registerRoutes ) => {
 
 		const render = () => {
 			renderLayout( reduxStore );
-
 			page.start( { decodeURLComponents: false } );
+		};
+
+		const renderDesktopPromise = () => {
+			return new Promise( function ( resolve ) {
+				const ipc = require( 'electron' ).ipcRenderer;
+
+				ipc.on( 'cookie-auth-complete', function () {
+					debug( 'Desktop cookies set, rendering main layout...' );
+					render();
+					resolve();
+				} );
+			} );
 		};
 
 		// Render initial `<Layout>` for non-isomorphic sections.
@@ -445,12 +467,7 @@ const boot = ( currentUser, registerRoutes ) => {
 			} else if ( loggedIn ) {
 				// WP-Desktop: logged in
 				// Wait on cookie-authentication
-				const ipc = require( 'electron' ).ipcRenderer;
-
-				ipc.on( 'cookie-auth-complete', function () {
-					debug( 'Desktop cookies set, rendering main layout...' );
-					render();
-				} );
+				promiseTimeout( 1500, renderDesktopPromise() );
 			} else {
 				// WP-Desktop: logged out
 				debug( 'Desktop user logged out, rendering main layout...' );
