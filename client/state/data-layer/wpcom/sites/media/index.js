@@ -72,7 +72,7 @@ export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 
 export const updateMediaError = ( { siteId, originalMediaItem } ) => [
 	receiveMedia( siteId, originalMediaItem ),
-	errorNotice( translate( "We were unable to process this media item." ), {
+	errorNotice( translate( 'We were unable to process this media item.' ), {
 		id: `update-media-notice-${ originalMediaItem.ID }`,
 	} ),
 ];
@@ -193,7 +193,7 @@ export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 };
 
 export const deleteMediaError = ( { mediaId } ) => [
-	errorNotice( translate( "We were unable to delete this media item." ), {
+	errorNotice( translate( 'We were unable to delete this media item.' ), {
 		id: `delete-media-notice-${ mediaId }`,
 	} ),
 ];
