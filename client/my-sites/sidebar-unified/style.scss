@@ -72,6 +72,20 @@ $font-size: rem( 14px );
 				background-color: var( --color-sidebar-menu-hover-heading-background );
 				color: var( --color-sidebar-menu-hover );
 			}
+
+			&::after {
+				display: none;
+				right: 0;
+				border: solid 8px transparent;
+				content: ' ';
+				height: 0;
+				width: 0;
+				position: absolute;
+				pointer-events: none;
+				border-right-color: #f1f1f1;
+				top: 50%;
+				margin-top: -8px;
+			}
 		}
 
 		.sidebar__expandable-title,
@@ -132,6 +146,10 @@ $font-size: rem( 14px );
 					.sidebar__menu-icon {
 						color: white;
 					}
+
+					&::after {
+						display: block;
+					}
 				}
 			}
 		}
@@ -151,20 +169,6 @@ $font-size: rem( 14px );
 			.sidebar__heading {
 				padding: 0 0 0 8px;
 				font-weight: 400;
-
-				&::after {
-					display: none;
-					right: 0;
-					border: solid 8px transparent;
-					content: ' ';
-					height: 0;
-					width: 0;
-					position: absolute;
-					pointer-events: none;
-					border-right-color: #f1f1f1;
-					top: 50%;
-					margin-top: -8px;
-				}
 			}
 		}
 
