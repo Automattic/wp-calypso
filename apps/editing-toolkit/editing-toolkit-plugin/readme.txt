@@ -41,6 +41,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.8.2 =
+* Gutenberg: Support new line height setting (https://github.com/Automattic/wp-calypso/pull/46792)
 * Gutenberg: Make line-height setting more robust. (https://github.com/Automattic/wp-calypso/pull/46873)
 
 = 2.8.1 =
