@@ -50,6 +50,7 @@ export function updateMedia( action ) {
 	const { siteId, item } = action;
 
 	return [
+		removeNotice( `update-media-notice-${ item.ID }` ),
 		http(
 			{
 				method: 'POST',
@@ -71,7 +72,6 @@ export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 
 export const updateMediaError = ( { siteId, originalMediaItem } ) => [
 	receiveMedia( siteId, originalMediaItem ),
-	removeNotice( `update-media-notice-${ originalMediaItem.ID }` ),
 	errorNotice( translate( "We weren't able to process this media item." ), {
 		id: `update-media-notice-${ originalMediaItem.ID }`,
 	} ),
@@ -82,6 +82,7 @@ export const editMedia = ( action ) => {
 	const { ID: mediaId, ...rest } = data;
 
 	return [
+		removeNotice( `update-media-notice-${ mediaId }` ),
 		http(
 			{
 				method: 'POST',
@@ -168,12 +169,15 @@ export const receiveMediaItemError = ( { mediaId, siteId }, error ) => ( dispatc
 };
 
 export const requestDeleteMedia = ( action ) => {
+	const { siteId, mediaId } = action;
+
 	return [
+		removeNotice( `delete-media-notice-${ mediaId }` ),
 		http(
 			{
 				apiVersion: '1.1',
 				method: 'POST',
-				path: `/sites/${ action.siteId }/media/${ action.mediaId }/delete`,
+				path: `/sites/${ siteId }/media/${ mediaId }/delete`,
 			},
 			action
 		),
@@ -189,7 +193,6 @@ export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
 };
 
 export const deleteMediaError = ( { mediaId } ) => [
-	removeNotice( `delete-media-notice-${ mediaId }` ),
 	errorNotice( translate( "We weren't able to delete this media item." ), {
 		id: `delete-media-notice-${ mediaId }`,
 	} ),
