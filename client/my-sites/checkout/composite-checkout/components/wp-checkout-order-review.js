@@ -15,7 +15,7 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
 import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
-import { useVariationForUser } from 'calypso/state/experiments/hooks';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -42,6 +42,10 @@ export default function WPCheckoutOrderReview( {
 		setCouponFieldVisible( false );
 	};
 
+	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
+	const itemsForMonthlyPricing =
+		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
@@ -51,17 +55,15 @@ export default function WPCheckoutOrderReview( {
 			) }
 
 			<WPOrderReviewSection>
-				<MonthlyPricingTestWrapper items={ items }>
-					<WPOrderReviewLineItems
-						items={ items }
-						removeProductFromCart={ removeProductFromCart }
-						removeCoupon={ removeCouponAndClearField }
-						getItemVariants={ getItemVariants }
-						onChangePlanLength={ onChangePlanLength }
-						isSummary={ isSummary }
-						createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
-					/>
-				</MonthlyPricingTestWrapper>
+				<WPOrderReviewLineItems
+					items={ itemsForMonthlyPricing || items }
+					removeProductFromCart={ removeProductFromCart }
+					removeCoupon={ removeCouponAndClearField }
+					getItemVariants={ getItemVariants }
+					onChangePlanLength={ onChangePlanLength }
+					isSummary={ isSummary }
+					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+				/>
 			</WPOrderReviewSection>
 
 			<CouponFieldArea
@@ -122,25 +124,6 @@ function CouponFieldArea( {
 				{ translate( 'Add a coupon code' ) }
 			</CouponEnableButton>
 		</CouponLinkWrapper>
-	);
-}
-
-function MonthlyPricingTestWrapper( { children, items } ) {
-	const translate = useTranslate();
-	const isMonthlyPricingTest =
-		'treatment' === useVariationForUser( 'monthly_pricing_test_phase_1' );
-
-	return (
-		<>
-			{ React.Children.map( children, ( child ) =>
-				React.cloneElement( child, {
-					isMonthlyPricingTest,
-					items: isMonthlyPricingTest
-						? items.map( ( item ) => overrideItemSublabel( item, translate ) )
-						: items,
-				} )
-			) }
-		</>
 	);
 }
 

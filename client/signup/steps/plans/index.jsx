@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import { Button } from '@automattic/components';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -29,9 +30,8 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import { useIsLoading, useVariationForUser } from 'calypso/state/experiments/hooks';
 import { isIgnoredAdSource } from 'calypso/lib/analytics/sem';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -251,22 +251,6 @@ PlansStep.propTypes = {
 	isMonthlyPricingTest: PropTypes.bool,
 };
 
-const PlansStepWithMonthlyPricingTest = ( props ) => {
-	const isLoading = useIsLoading();
-	const variation = useVariationForUser( 'monthly_pricing_test_phase_1' );
-	const isEligibleForMonthlyPricing =
-		'onboarding' === props.flowName && 'treatment' === variation && ! isIgnoredAdSource();
-
-	return (
-		<>
-			<QueryExperiments />
-			{ ! isLoading && (
-				<PlansStep { ...props } isMonthlyPricingTest={ isEligibleForMonthlyPricing } />
-			) }
-		</>
-	);
-};
-
 /**
  * Checks if the domainItem picked in the domain step is a top level .blog domain -
  * we only want to make Blogger plan available if it is.
@@ -283,8 +267,23 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
+function isEligibleForMonthlyPricingTest( flowName ) {
+	if ( 'onboarding' !== flowName ) {
+		return false;
+	}
+
+	if ( isIgnoredAdSource() ) {
+		return false;
+	}
+
+	const countryCode = cookie.parse( document.cookie )?.country_code;
+	const variation = abtest( 'monthlyPricing', countryCode || '' );
+
+	return 'treatment' === variation;
+}
+
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem }, flowName } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -296,6 +295,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		isMonthlyPricingTest: isEligibleForMonthlyPricingTest( flowName ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
-)( localize( PlansStepWithMonthlyPricingTest ) );
+)( localize( PlansStep ) );

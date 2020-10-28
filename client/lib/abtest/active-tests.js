@@ -212,4 +212,15 @@ export default {
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US' ],
 	},
+	monthlyPricing: {
+		datestamp: '20201030',
+		variations: {
+			control: 90,
+			treatment: 10,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
+		localeTargets: [ 'en' ],
+	},
 };
