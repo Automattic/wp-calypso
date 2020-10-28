@@ -172,6 +172,13 @@ $font-size: rem( 14px );
 			}
 		}
 
+		// Is togglable but selected
+		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
+			&::after {
+				display: block;
+			}
+		}
+
 		// Is toggled open
 		.sidebar__menu.is-toggle-open {
 			.sidebar__heading {
@@ -181,10 +188,6 @@ $font-size: rem( 14px );
 					.sidebar__menu-icon {
 						color: var( --color-sidebar-menu-hover );
 					}
-				}
-
-				&::after {
-					display: block;
 				}
 
 				.sidebar__menu-icon {
@@ -316,6 +319,11 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			overflow: hidden;
+
+			&::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
 		}
 
 		// Is toggled open
@@ -327,12 +335,6 @@ $font-size: rem( 14px );
 
 				.sidebar__menu-icon {
 					color: #fff;
-				}
-
-				&::after {
-					display: block;
-					border-width: 4px;
-					margin-top: -4px;
 				}
 			}
 
