@@ -73,7 +73,7 @@
 	}
 
 	.segmented-control {
-		margin-left: 8px;
+		margin-left: 15px;
 		margin-right: 16px;
 		flex: 0 0 200px;
 
@@ -89,6 +89,7 @@
 
 .plans-filter-bar__discount-message {
 	display: none;
+	padding-right: 15px;
 
 	color: var( --color-primary );
 
