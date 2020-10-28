@@ -3,7 +3,6 @@
  */
 import { getSiteSlug, getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 
 /**
  * Type dependencies
@@ -22,15 +21,12 @@ function getSettingsUrl(
 	}
 	const siteSlug = getSiteSlug( state, siteId );
 	const siteAdminUrl = getSiteAdminUrl( state, siteId );
-	const siteIsWPCOM = isSiteWPCOM( state, siteId );
-	if ( isJetpackCloud() && ! siteIsWPCOM ) {
+	if ( isJetpackCloud() ) {
 		if ( section === 'general' ) {
 			return `${ siteAdminUrl }options-general.php`;
 		}
-	} else if ( siteIsWPCOM ) {
-		if ( section === 'general' ) {
-			return `/settings/general/${ siteSlug }`;
-		}
+	} else if ( section === 'general' ) {
+		return `/settings/general/${ siteSlug }`;
 	}
 
 	return null;
