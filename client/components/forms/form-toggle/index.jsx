@@ -28,8 +28,7 @@ export default class FormToggle extends PureComponent {
 		checked: PropTypes.bool,
 		disabled: PropTypes.bool,
 		id: PropTypes.string,
-		className: PropTypes.string,
-		toggling: PropTypes.bool,
+		wrapperClassName: PropTypes.string,
 		'aria-label': PropTypes.string,
 	};
 
