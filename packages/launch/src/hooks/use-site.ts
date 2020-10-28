@@ -2,7 +2,11 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-import { Site } from '@automattic/data-stores';
+
+/**
+ * Internal dependencies
+ */
+import { SITE_STORE } from '../stores';
 
 declare global {
 	interface Window {
@@ -11,9 +15,9 @@ declare global {
 }
 
 export function useSite() {
-	const site = useSelect( ( select ) => select( Site.STORE_KEY ).getSite( window._currentSiteId ) );
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
 	const launchStatus = useSelect( ( select ) =>
-		select( Site.STORE_KEY ).isLaunched( window._currentSiteId )
+		select( SITE_STORE ).isLaunched( window._currentSiteId )
 	);
 
 	return {
