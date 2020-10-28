@@ -67,19 +67,15 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 						className="jetpack-product-card-alt-2__slideout-button is-borderless"
 						onClick={ toggleSlideOut }
 					>
-						<>
-							<span>{ translate( 'Close' ) }</span> <Gridicon icon="cross" size={ 18 } />
-						</>
+						<span>{ translate( 'Close' ) }</span> <Gridicon icon="cross" size={ 18 } />
 					</Button>
 				) : (
 					<Button
 						className="jetpack-product-card-alt-2__slideout-button is-borderless is-open"
 						onClick={ toggleSlideOut }
 					>
-						<>
-							<span>{ preventWidows( translate( 'Learn more' ) ) }</span>{ ' ' }
-							<Gridicon icon="chevron-down" size={ 18 } />
-						</>
+						<span>{ preventWidows( translate( 'Learn more' ) ) }</span>{ ' ' }
+						<Gridicon icon="chevron-down" size={ 18 } />
 					</Button>
 				);
 			}
@@ -107,13 +103,11 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 					} ) }
 				>
 					{ slideOutExpanded && (
-						<>
-							<FeaturesProductSlideOut
-								product={ slideOutProduct }
-								productBillingTerm={ billingTerm }
-								onProductClick={ onProductClick }
-							/>
-						</>
+						<FeaturesProductSlideOut
+							product={ slideOutProduct }
+							productBillingTerm={ billingTerm }
+							onProductClick={ onProductClick }
+						/>
 					) }
 				</div>
 			) }
