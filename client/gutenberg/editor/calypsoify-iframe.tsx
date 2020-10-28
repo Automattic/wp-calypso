@@ -696,6 +696,9 @@ class CalypsoifyIframe extends Component<
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
+		const isFocusedLaunchCalypsoEnabled = config.isEnabled(
+			'gutenboarding/focused-launch-flow-calypso'
+		);
 
 		return (
 			<Fragment>
@@ -741,6 +744,9 @@ class CalypsoifyIframe extends Component<
 						placeholder={ null }
 						isOpen
 					/>
+				) }
+				{ isFocusedLaunchCalypsoEnabled && (
+					<AsyncLoad require="calypso/blocks/editor-launch-modal" />
 				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
@@ -809,7 +815,10 @@ const mapStateToProps = (
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe =
+		! isRequestingSite( state, siteId ) ||
+		// Temporarily disable iframe loading for faster dev
+		config.isEnabled( 'gutenboarding/focused-launch-flow-calypso' );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
