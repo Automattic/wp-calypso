@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import request from 'woocommerce/state/sites/request';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'request', () => {
 	describe( '#get', () => {

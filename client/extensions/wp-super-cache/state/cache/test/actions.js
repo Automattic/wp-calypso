@@ -18,8 +18,8 @@ import {
 	WP_SUPER_CACHE_TEST_CACHE_SUCCESS,
 } from '../../action-types';
 import { cancelPreloadCache, deleteCache, preloadCache, testCache } from '../actions';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

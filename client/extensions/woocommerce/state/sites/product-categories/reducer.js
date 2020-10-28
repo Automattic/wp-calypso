@@ -7,7 +7,7 @@ import { keyBy, omit, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedProductCategoriesQuery } from './utils';
 import {
 	WOOCOMMERCE_PRODUCT_CATEGORY_UPDATED,

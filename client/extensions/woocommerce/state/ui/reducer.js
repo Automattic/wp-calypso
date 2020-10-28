@@ -10,7 +10,7 @@ import promotions from './promotions/reducer';
 import reviews from './reviews/reducer';
 import reviewReplies from './review-replies/reducer';
 import shipping from './shipping/reducer';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 export default combineReducers( {
 	orders,

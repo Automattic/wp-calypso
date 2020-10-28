@@ -9,8 +9,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import ExternalLink from 'components/external-link';
+import EmptyContent from 'calypso/components/empty-content';
+import ExternalLink from 'calypso/components/external-link';
 import { recordTrack } from 'woocommerce/lib/analytics';
 
 class ManageExternalView extends Component {

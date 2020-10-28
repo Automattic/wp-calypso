@@ -10,12 +10,12 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import StatsPagePlaceholder from 'my-sites/stats/stats-page-placeholder';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import StatsPagePlaceholder from 'calypso/my-sites/stats/stats-page-placeholder';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import { getQueryDate, getQueries } from './utils';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import config from 'config';
+import config from 'calypso/config';
 
 function isValidParameters( context ) {
 	const validParameters = {
@@ -85,7 +85,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats"
+					require="calypso/extensions/woocommerce/app/store-stats"
 					{ ...props }
 				/>
 			);
@@ -95,7 +95,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats/referrers"
+					require="calypso/extensions/woocommerce/app/store-stats/referrers"
 					query={ referrerQuery }
 					{ ...props }
 				/>
@@ -106,7 +106,7 @@ export default function StatsController( context, next ) {
 			asyncComponent = (
 				<AsyncLoad
 					placeholder={ placeholder }
-					require="extensions/woocommerce/app/store-stats/listview"
+					require="calypso/extensions/woocommerce/app/store-stats/listview"
 					{ ...props }
 				/>
 			);

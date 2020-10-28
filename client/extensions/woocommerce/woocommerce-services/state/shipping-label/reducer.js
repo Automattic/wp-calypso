@@ -19,7 +19,7 @@ import {
 /**
  * Internal dependencies
  */
-import { keyedReducer } from 'state/utils';
+import { keyedReducer } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_INIT,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_SET_IS_FETCHING,

@@ -11,11 +11,11 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Delta from 'woocommerce/components/delta';
 import { formatValue, getDelta } from '../utils';
-import { getPeriodFormat } from 'state/stats/lists/utils';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getPeriodFormat } from 'calypso/state/stats/lists/utils';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/d3/sparkline';
 import Table from 'woocommerce/components/table';
 import TableItem from 'woocommerce/components/table/table-item';

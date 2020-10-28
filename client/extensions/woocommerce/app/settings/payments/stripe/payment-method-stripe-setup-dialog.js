@@ -21,7 +21,7 @@ import {
 	oauthInit,
 } from 'woocommerce/state/sites/settings/stripe-connect-account/actions';
 import { Dialog } from '@automattic/components';
-import { getCurrentUserEmail } from 'state/current-user/selectors';
+import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import {
 	getError,
 	getIsCreating,
@@ -30,7 +30,7 @@ import {
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getLink, getOrigin } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import StripeConnectPrompt from './payment-method-stripe-connect-prompt';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 

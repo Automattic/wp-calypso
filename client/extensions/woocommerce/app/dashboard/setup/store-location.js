@@ -17,24 +17,24 @@ import {
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { bumpStat } from 'woocommerce/lib/analytics';
-import { errorNotice } from 'state/notices/actions';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
+import { errorNotice } from 'calypso/state/notices/actions';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import {
 	areLocationsLoaded,
 	getAllCountries,
 	getCountriesWithStates,
 } from 'woocommerce/state/sites/data/locations/selectors';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 import { setSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/actions';
 import SetupFooter from './footer';
 import SetupHeader from './header';
 import SetupNotices from './notices';
 import { doInitialSetup } from 'woocommerce/state/sites/settings/actions';
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryLocations from 'woocommerce/components/query-locations';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import user from 'lib/user';
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import user from 'calypso/lib/user';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 
 class StoreLocationSetupView extends Component {
 	constructor( props ) {

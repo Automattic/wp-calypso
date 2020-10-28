@@ -3,13 +3,13 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 
 export default class InfoTooltip extends Component {
 	static propTypes = {

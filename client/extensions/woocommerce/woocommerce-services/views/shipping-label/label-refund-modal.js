@@ -12,8 +12,8 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import { withLocalizedMoment } from 'components/localized-moment';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	closeRefundDialog,
 	confirmRefund,

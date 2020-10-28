@@ -8,9 +8,9 @@ import { filter, omit, isEmpty, setWith, get, forEach } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { LOADING } from 'woocommerce/state/constants';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST,
 	WOOCOMMERCE_EMAIL_SETTINGS_REQUEST_SUCCESS,

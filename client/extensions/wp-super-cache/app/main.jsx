@@ -11,23 +11,23 @@ import { find, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import ExtensionRedirect from 'blocks/extension-redirect';
+import ExtensionRedirect from 'calypso/blocks/extension-redirect';
 import AdvancedTab from '../components/advanced';
 import CdnTab from '../components/cdn';
 import ContentsTab from '../components/contents';
 import DebugTab from '../components/debug';
 import EasyTab from '../components/easy';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import Navigation from '../components/navigation';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import PluginsTab from '../components/plugins';
 import PreloadTab from '../components/preload';
 import QueryStatus from '../components/data/query-status';
 import { Tabs, WPSC_MIN_VERSION } from './constants';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getStatus } from '../state/status/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 
 class WPSuperCache extends Component {

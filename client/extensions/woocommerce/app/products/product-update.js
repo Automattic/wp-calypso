@@ -12,11 +12,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import accept from 'lib/accept';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import accept from 'calypso/lib/accept';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getActionList } from 'woocommerce/state/action-list/selectors';
 import {
 	fetchProduct,
@@ -49,7 +49,7 @@ import { getSaveErrorMessage } from './save-error-message';
 import page from 'page';
 import ProductForm from './product-form';
 import ProductHeader from './product-header';
-import { withAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { withAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class ProductUpdate extends React.Component {
 	static propTypes = {

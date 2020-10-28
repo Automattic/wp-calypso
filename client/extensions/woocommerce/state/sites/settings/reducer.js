@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import general from './general/reducer';
 import products from './products/reducer';
 import stripeConnectAccount from './stripe-connect-account/reducer';

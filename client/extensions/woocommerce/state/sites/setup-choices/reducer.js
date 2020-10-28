@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,

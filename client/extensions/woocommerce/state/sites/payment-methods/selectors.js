@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 /**

@@ -10,7 +10,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ShippingServiceGroup from './group';
-import FormLegend from 'components/forms/form-legend';
+import FormLegend from 'calypso/components/forms/form-legend';
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';

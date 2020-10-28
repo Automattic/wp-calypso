@@ -19,7 +19,7 @@ import {
 	setCreatedDefaultShippingZone,
 	setUpStorePages,
 } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST,
 	WOOCOMMERCE_SETUP_CHOICE_UPDATE_REQUEST_SUCCESS,

@@ -7,7 +7,7 @@ import { keyBy, omit, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import { getSerializedReviewsQuery } from './utils';
 import {
 	WOOCOMMERCE_REVIEWS_RECEIVE,

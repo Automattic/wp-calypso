@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { fetchShippingClasses } from 'woocommerce/state/sites/shipping-classes/actions';
 import { fetch } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const siteId = 123;
 

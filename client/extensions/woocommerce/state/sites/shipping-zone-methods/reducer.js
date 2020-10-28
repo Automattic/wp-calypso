@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_METHODS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
 import { WOOCOMMERCE_SERVICES_SHIPPING_ZONE_METHOD_SETTINGS_REQUEST_SUCCESS } from 'woocommerce/woocommerce-services/state/action-types';
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 
 function handleRequestSuccess( state, { data } ) {
 	const newState = { ...state };

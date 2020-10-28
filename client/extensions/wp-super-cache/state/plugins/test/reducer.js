@@ -17,8 +17,8 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { items, requesting, toggling } from '../reducer';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

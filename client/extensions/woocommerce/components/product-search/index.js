@@ -14,9 +14,9 @@ import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/prod
 import { fetchProducts } from 'woocommerce/state/sites/products/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import NoResults from 'my-sites/no-results';
-import Search from 'components/search';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import NoResults from 'calypso/my-sites/no-results';
+import Search from 'calypso/components/search';
 import ProductSearchRow from './row';
 import {
 	addProductId,

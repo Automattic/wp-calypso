@@ -7,7 +7,7 @@ import { compact, get, find, isNumber, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getVariationsForProduct } from 'woocommerce/state/sites/product-variations/selectors';
 
 export function getAllVariationEdits( state, siteId = getSelectedSiteId( state ) ) {

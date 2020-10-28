@@ -7,7 +7,7 @@ import { get, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const getRawSettings = ( state, siteId ) => {
 	return get(

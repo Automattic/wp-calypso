@@ -12,7 +12,7 @@ import { find } from 'lodash';
  */
 import { Dialog } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormWeightInput from 'woocommerce/components/form-weight-input';
 import PriceInput from 'woocommerce/components/price-input';
 import ProductFormVariationsModal from './product-form-variations-modal';

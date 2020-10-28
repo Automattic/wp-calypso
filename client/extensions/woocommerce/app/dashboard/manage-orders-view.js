@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from 'calypso/config';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
@@ -21,7 +21,7 @@ import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import DashboardWidgetRow from 'woocommerce/components/dashboard-widget/row';
 import LabelsSetupNotice from 'woocommerce/woocommerce-services/components/labels-setup-notice';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import InventoryWidget from './widgets/inventory-widget';

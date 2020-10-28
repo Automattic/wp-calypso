@@ -19,8 +19,8 @@ import {
 } from 'woocommerce/state/sites/settings/general/selectors';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 
 class FormStateSelectFromApi extends Component {

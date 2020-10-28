@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { customersFailure, customersReceive } from 'woocommerce/state/sites/customers/actions';
 import request from 'woocommerce/state/sites/http-request';
 import { WOOCOMMERCE_CUSTOMERS_REQUEST } from 'woocommerce/state/action-types';

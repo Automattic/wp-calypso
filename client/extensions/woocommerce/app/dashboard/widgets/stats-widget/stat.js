@@ -12,9 +12,9 @@ import { connect } from 'react-redux';
  */
 import Delta from 'woocommerce/components/delta';
 import { formatValue } from 'woocommerce/app/store-stats/utils';
-import { isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
+import { isRequestingSiteStatsForQuery } from 'calypso/state/stats/lists/selectors';
 import Sparkline from 'woocommerce/components/d3/sparkline';
-import StatsModulePlaceholder from 'my-sites/stats/stats-module/placeholder';
+import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 
 class StatsWidgetStat extends Component {
 	static propTypes = {

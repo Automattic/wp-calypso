@@ -7,7 +7,7 @@ import { every, get, isArray, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	areShippingZoneMethodsLoaded,

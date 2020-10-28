@@ -8,7 +8,7 @@ import wrapWithClickOutside from 'react-click-outside';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 
 /*
  * This component is temporary until we can pull in `@wordpress/components` and merge https://github.com/Automattic/wp-calypso/pull/34277.
