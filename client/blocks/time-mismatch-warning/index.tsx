@@ -14,7 +14,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 
 interface ExternalProps {
 	status?: string;
-	siteId?: number;
+	siteId: number | null;
 	settingsUrl?: string;
 }
 
