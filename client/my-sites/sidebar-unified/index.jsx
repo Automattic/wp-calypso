@@ -10,7 +10,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 /**
@@ -29,23 +29,13 @@ import 'calypso/state/admin-menu/init';
 import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
-import { handleScroll } from './utils';
 import './style.scss';
-
-const scrollCallback = () => handleScroll();
 
 export const MySitesSidebarUnified = ( { path } ) => {
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
 	const sidebarIsCollapsed = useSelector( getSidebarIsCollapsed );
-
-	useEffect( () => {
-		window.addEventListener( 'scroll', scrollCallback );
-		return () => {
-			window.removeEventListener( 'scroll', scrollCallback );
-		};
-	} );
 
 	/**
 	 * If there are no menu items and we are currently requesting some,

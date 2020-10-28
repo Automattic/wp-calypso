@@ -50,7 +50,9 @@ import { withCurrentRoute } from 'calypso/components/route';
 // goofy import for environment badge, which is SSR'd
 import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
-import { getShouldShowAppBanner } from './utils';
+import { getShouldShowAppBanner, handleScroll } from './utils';
+
+const scrollCallback = () => handleScroll();
 
 class Layout extends Component {
 	static propTypes = {
@@ -77,6 +79,15 @@ class Layout extends Component {
 					.querySelector( 'body' )
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
+		}
+		if ( config.isEnabled( 'nav-unification' ) ) {
+			window.addEventListener( 'scroll', scrollCallback );
+		}
+	}
+
+	componentWillUnmount() {
+		if ( config.isEnabled( 'nav-unification' ) ) {
+			window.removeEventListener( 'scroll', scrollCallback );
 		}
 	}
 
@@ -155,7 +166,6 @@ class Layout extends Component {
 		};
 
 		const { shouldShowAppBanner } = this.props;
-
 		return (
 			<div className={ sectionClass }>
 				<BodySectionCssClass
