@@ -186,6 +186,7 @@ class Layout extends Component {
 					{ config.isEnabled( 'jitms' ) && this.props.isEligibleForJITM && (
 						<AsyncLoad
 							require="calypso/blocks/jitm"
+							placeholder={ null }
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
