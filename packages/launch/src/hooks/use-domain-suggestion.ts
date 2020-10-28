@@ -2,11 +2,11 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * External dependencies
  */
-import { DOMAINS_STORE } from '../stores';
 import { useDomainSearch } from './';
 
 export function useDomainSuggestion() {
@@ -17,7 +17,7 @@ export function useDomainSuggestion() {
 			if ( ! domainSearch || domainSearch.length < 2 ) {
 				return;
 			}
-			return select( DOMAINS_STORE ).getDomainSuggestions( domainSearch, {
+			return select( DomainSuggestions.STORE_KEY ).getDomainSuggestions( domainSearch, {
 				// Avoid `only_wordpressdotcom` — it seems to fail to find results sometimes
 				include_wordpressdotcom: false,
 				include_dotblogsubdomain: false,

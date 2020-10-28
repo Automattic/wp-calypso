@@ -4,12 +4,12 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
+import { Site, Launch, Plans } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
 import { useSite } from './';
-import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 
 declare global {
 	interface Window {
@@ -19,12 +19,12 @@ declare global {
 
 export const useOnLaunch = () => {
 	const { launchStatus } = useSite();
-	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { plan, domain } = useSelect( ( select ) => select( Launch.STORE_KEY ).getState() );
 	const isEcommercePlan = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanEcommerce( plan?.storeSlug )
+		select( Plans.STORE_KEY ).isPlanEcommerce( plan?.storeSlug )
 	);
 
-	const { getCart, setCart } = useDispatch( SITE_STORE );
+	const { getCart, setCart } = useDispatch( Site.STORE_KEY );
 
 	React.useEffect( () => {
 		if ( launchStatus ) {

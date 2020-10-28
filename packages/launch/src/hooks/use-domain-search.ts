@@ -6,15 +6,15 @@ import { useSelect } from '@wordpress/data';
 // @ts-ignore
 import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
+import { Launch } from '@automattic/data-stores';
 
 /**
  * External dependencies
  */
-import { LAUNCH_STORE } from '../stores';
 import { useSite } from './';
 
 export function useDomainSearch() {
-	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { domainSearch } = useSelect( ( select ) => select( Launch.STORE_KEY ).getState() );
 	const [ title ] = useEntityProp( 'root', 'site', 'title' );
 	const { currentDomainName } = useSite();
 
