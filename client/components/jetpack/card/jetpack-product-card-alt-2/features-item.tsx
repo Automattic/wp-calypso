@@ -57,7 +57,7 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 
 	const toggleSlideOut = useCallback( () => {
 		setSlideOutExpanded( ( state ) => ! state );
-	}, [] );
+	}, [ setSlideOutExpanded ] );
 
 	const renderFeatureAction = () => {
 		if ( isHighlighted ) {
