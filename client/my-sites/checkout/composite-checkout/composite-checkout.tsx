@@ -125,21 +125,21 @@ export default function CompositeCheckout( {
 }: {
 	siteSlug: string | undefined;
 	siteId: number | undefined;
-	productAliasFromUrl: string | undefined;
+	productAliasFromUrl?: string | undefined;
 	getStoredCards?: () => StoredCard[];
 	allowedPaymentMethods?: CheckoutPaymentMethodSlug[];
 	onlyLoadPaymentMethods?: CheckoutPaymentMethodSlug[];
 	overrideCountryList?: CountryListItem[];
-	redirectTo: string | undefined;
-	feature: string | undefined;
-	plan: string | undefined;
-	purchaseId: number | undefined;
-	couponCode: string | undefined;
-	isComingFromUpsell: boolean;
-	isLoggedOutCart: boolean;
-	isNoSiteCart: boolean;
-	infoMessage: JSX.Element;
-	isInEditor: boolean;
+	redirectTo?: string | undefined;
+	feature?: string | undefined;
+	plan?: string | undefined;
+	purchaseId?: number | undefined;
+	couponCode?: string | undefined;
+	isComingFromUpsell?: boolean;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
+	isInEditor?: boolean;
+	infoMessage?: JSX.Element;
 } ): JSX.Element {
 	const translate = useTranslate();
 	const isJetpackNotAtomic =
@@ -148,8 +148,8 @@ export default function CompositeCheckout( {
 		) || false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const hideNudge = isComingFromUpsell;
-	const createUserAndSiteBeforeTransaction = isLoggedOutCart || isNoSiteCart;
+	const hideNudge = !! isComingFromUpsell;
+	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
