@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { durationToText, productButtonLabel } from '../utils';
+import { productButtonLabel } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
@@ -102,7 +102,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			subheadline={ item.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( item.term ) }
+			billingTerm={ item.term }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }

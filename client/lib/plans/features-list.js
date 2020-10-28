@@ -1169,6 +1169,26 @@ export const FEATURES_LIST = {
 		isProduct: getJetpackCROActiveVersion() === 'v2',
 	},
 
+	/**
+	 * This is a special feature that is defined in order to be able to specifically exclude it from rendering the product slide-out
+	 * in Jetpack Security real-time plan only (in the alt-v2 plans grid page)
+	 */
+	[ constants.FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT ]: {
+		getSlug: () => constants.FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT,
+		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
+		getTitle: () => i18n.translate( 'Scan' ),
+		getDescription: () =>
+			i18n.translate(
+				'Automated scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
+				{
+					components: {
+						link: <ExternalLink icon href="https://jetpack.com/upgrade/scan/" />,
+					},
+				}
+			),
+		isProduct: getJetpackCROActiveVersion() === 'v2',
+	},
+
 	// * Scan Daily *
 	// Currently we're not distinguishing between Scan 'Daily' or 'Real-time',
 	// but leaving this here because we may be implementing Scan 'Daily' and 'Real-time'

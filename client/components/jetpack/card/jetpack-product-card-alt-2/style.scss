@@ -384,6 +384,26 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	}
 }
 
+button.components-button.jetpack-product-card-alt-2__slideout-button {
+	color: var( --studio-gray-50 );
+	height: auto;
+	padding: 5px;
+
+	&.is-borderless {
+		border: none;
+		background: none;
+
+		&:focus:not( :disabled ) {
+			background: none;
+			border: none;
+			box-shadow: none;
+		}
+	}
+	&.is-open {
+		color: var( --studio-blue-50 );
+	}
+}
+
 .jetpack-product-card-alt-2__feature-cta {
 	margin: 32px -24px 0;
 	padding: 24px 28px;

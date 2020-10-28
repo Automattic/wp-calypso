@@ -459,7 +459,7 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 			? [
 					constants.FEATURE_PLAN_SECURITY_DAILY,
 					constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
-					constants.FEATURE_PRODUCT_SCAN_V2,
+					constants.FEATURE_PRODUCT_SCAN_V2_NO_SLIDEOUT,
 					constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 					constants.FEATURE_PREMIUM_THEMES_V2,
 			  ]

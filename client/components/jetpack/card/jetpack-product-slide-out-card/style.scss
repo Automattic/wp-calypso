@@ -16,7 +16,9 @@ $jetpack-product-slide-out-card-color: var( --studio-wordpress-blue-30 );
 	text-align: center;
 }
 
-.jetpack-product-slide-out-card .product-icon {
+.jetpack-product-slide-out-card img.product-icon {
+	position: static;
+
 	width: 32px;
 
 	margin-right: 16px;
