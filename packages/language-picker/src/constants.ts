@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { LanguageGroup } from './language-picker';
+import { LanguageGroup } from './Language';
 import { I18nReact } from '@automattic/react-i18n';
 
 export const createLanguageGroups = ( __: I18nReact[ '__' ] ): LanguageGroup[] => [
