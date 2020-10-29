@@ -51,6 +51,10 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		couponCode?: string;
 		product_cost_integer?: number;
 		product_cost_display?: string;
+
+		// Temporary optional properties for the monthly pricing test
+		related_monthly_plan_cost_display?: string;
+		related_monthly_plan_cost_integer?: number;
 	};
 };
 

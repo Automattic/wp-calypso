@@ -15,6 +15,7 @@ import {
 	isNextDomainFree,
 } from 'calypso/lib/cart-values/cart-items';
 import { getPlan, getBillingMonthsForTerm } from 'calypso/lib/plans';
+import { isMonthly } from 'calypso/lib/plans/constants';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 import { translationExists } from 'calypso/lib/i18n-utils';
 
@@ -31,9 +32,13 @@ function hasBiennialPlan( cart ) {
 	}
 }
 
+function hasMonthlyPlan( cart ) {
+	return cart.products.some( ( { product_slug } ) => isMonthly( product_slug ) );
+}
+
 export default function BundledDomainNotice( { cart } ) {
 	// A dotcom plan should exist.
-	if ( ! hasPlan( cart ) || hasJetpackPlan( cart ) ) {
+	if ( ! hasPlan( cart ) || hasJetpackPlan( cart ) || hasMonthlyPlan( cart ) ) {
 		return null;
 	}
 

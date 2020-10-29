@@ -157,6 +157,10 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
+
+	// Temporary optional properties for the monthly pricing test
+	related_monthly_plan_cost_display?: string;
+	related_monthly_plan_cost_integer?: number;
 }
 
 /**
@@ -191,6 +195,10 @@ export interface TempResponseCartProduct {
 	included_domain_purchase_amount: null;
 	is_renewal: undefined;
 	subscription_id: undefined;
+
+	// Temporary optional properties for the monthly pricing test
+	related_monthly_plan_cost_display?: string;
+	related_monthly_plan_cost_integer?: number;
 }
 
 export interface CartLocation {

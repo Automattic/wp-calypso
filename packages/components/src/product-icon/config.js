@@ -64,7 +64,12 @@ export const iconToProductSlugMap = {
 	'wpcom-free': [ 'free_plan' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
 	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
-	'wpcom-premium': [ 'value_bundle', 'value_bundle-2y', 'value_bundle-monthly' ],
+	'wpcom-premium': [
+		'value_bundle',
+		'value_bundle-2y',
+		'value_bundle-monthly',
+		'value_bundle_monthly',
+	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
 	'jetpack-free': [ 'jetpack_free' ],

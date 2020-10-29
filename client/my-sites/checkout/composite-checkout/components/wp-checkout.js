@@ -291,7 +291,10 @@ export default function WPCheckout( {
 					</CheckoutSummaryTitlePrice>
 				</CheckoutSummaryTitleLink>
 				<CheckoutSummaryBody>
-					<WPCheckoutOrderSummary />
+					<WPCheckoutOrderSummary
+						onChangePlanLength={ changePlanLength }
+						nextDomainIsFree={ responseCart?.next_domain_is_free }
+					/>
 					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
 				</CheckoutSummaryBody>
 			</CheckoutSummaryArea>

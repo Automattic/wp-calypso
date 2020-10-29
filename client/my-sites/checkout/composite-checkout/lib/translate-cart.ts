@@ -174,6 +174,8 @@ function translateReponseCartProductToWPCOMCartItem(
 		item_subtotal_monthly_cost_integer,
 		item_original_subtotal_display,
 		item_original_subtotal_integer,
+		related_monthly_plan_cost_display,
+		related_monthly_plan_cost_integer,
 		is_sale_coupon_applied,
 		months_per_bill_period,
 		item_subtotal_display,
@@ -254,6 +256,8 @@ function translateReponseCartProductToWPCOMCartItem(
 			months_per_bill_period,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',
+			related_monthly_plan_cost_integer: related_monthly_plan_cost_integer || 0,
+			related_monthly_plan_cost_display: related_monthly_plan_cost_display || '',
 		},
 	};
 }

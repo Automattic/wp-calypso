@@ -9,24 +9,29 @@ import { intersection } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
+import { Button } from '@automattic/components';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
-import { getTld, isSubdomain } from 'lib/domains';
-import { getSiteBySlug } from 'state/sites/selectors';
-import StepWrapper from 'signup/step-wrapper';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import GutenboardingHeader from 'my-sites/plans-features-main/gutenboarding-header';
-import QueryPlans from 'components/data/query-plans';
+import { getTld, isSubdomain } from 'calypso/lib/domains';
+import { getSiteBySlug } from 'calypso/state/sites/selectors';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import GutenboardingHeader from 'calypso/my-sites/plans-features-main/gutenboarding-header';
+import QueryPlans from 'calypso/components/data/query-plans';
 import { FEATURE_UPLOAD_THEMES_PLUGINS } from '../../../lib/plans/constants';
 import { planHasFeature } from '../../../lib/plans';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { isIgnoredAdSource } from 'calypso/lib/analytics/sem';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -118,6 +123,18 @@ export class PlansStep extends Component {
 		return null;
 	}
 
+	getIntervalType() {
+		const urlParts = getUrlParts( typeof window !== 'undefined' ? window.location?.href : '' );
+		const intervalType = urlParts?.searchParams.get( 'intervalType' );
+
+		if ( [ 'yearly', 'monthly' ].includes( intervalType ) ) {
+			return intervalType;
+		}
+
+		// Default value
+		return 'yearly';
+	}
+
 	plansFeaturesList() {
 		const {
 			disableBloggerPlanWithNonBlogDomain,
@@ -126,6 +143,7 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
+			isMonthlyPricingTest,
 		} = this.props;
 
 		return (
@@ -137,6 +155,7 @@ export class PlansStep extends Component {
 					hideFreePlan={ hideFreePlan }
 					isInSignup={ true }
 					isLaunchPage={ isLaunchPage }
+					intervalType={ this.getIntervalType() }
 					onUpgradeClick={ this.onSelectPlan }
 					showFAQ={ false }
 					displayJetpackPlans={ false }
@@ -147,9 +166,24 @@ export class PlansStep extends Component {
 					planTypes={ planTypes }
 					flowName={ flowName }
 					customHeader={ this.getGutenboardingHeader() }
+					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			</div>
 		);
+	}
+
+	getSubHeaderText() {
+		const { hideFreePlan, isMonthlyPricingTest, subHeaderText, translate } = this.props;
+
+		if ( isMonthlyPricingTest && ! hideFreePlan ) {
+			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
+				components: {
+					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
+				},
+			} );
+		}
+
+		return subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
 	}
 
 	plansFeaturesSelection() {
@@ -163,8 +197,7 @@ export class PlansStep extends Component {
 
 		const headerText = this.props.headerText || translate( "Pick a plan that's right for you." );
 		const fallbackHeaderText = this.props.fallbackHeaderText || headerText;
-		const subHeaderText =
-			this.props.subHeaderText || translate( 'Choose a plan. Upgrade as you grow.' );
+		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
 		let backUrl, backLabelText;
@@ -215,6 +248,7 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
+	isMonthlyPricingTest: PropTypes.bool,
 };
 
 /**
@@ -233,8 +267,23 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
+function isEligibleForMonthlyPricingTest( flowName ) {
+	if ( 'onboarding' !== flowName ) {
+		return false;
+	}
+
+	if ( isIgnoredAdSource() ) {
+		return false;
+	}
+
+	const countryCode = cookie.parse( document.cookie )?.country_code;
+	const variation = abtest( 'monthlyPricing', countryCode || '' );
+
+	return 'treatment' === variation;
+}
+
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem }, flowName } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -246,6 +295,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
+		isMonthlyPricingTest: isEligibleForMonthlyPricingTest( flowName ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

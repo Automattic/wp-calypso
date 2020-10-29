@@ -297,6 +297,10 @@ export function isCompletePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_ALL } );
 }
 
+export function isWpComPlan( planSlug ) {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
+}
+
 export function isWpComBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 }

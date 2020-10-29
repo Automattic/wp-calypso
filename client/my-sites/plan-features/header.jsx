@@ -163,7 +163,26 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	getPerMonthDescription() {
-		const { discountPrice, rawPrice, translate, planType, currentSitePlan } = this.props;
+		const {
+			discountPrice,
+			rawPrice,
+			translate,
+			planType,
+			currentSitePlan,
+			annualPricePerMonth,
+			isMonthlyPricingTest,
+			isMonthlyPlan,
+		} = this.props;
+
+		if ( isMonthlyPricingTest && isMonthlyPlan && annualPricePerMonth < rawPrice ) {
+			const discountRate = Math.round( ( 100 * ( rawPrice - annualPricePerMonth ) ) / rawPrice );
+			return translate( `Save %(discountRate)s%% by paying annually`, { args: { discountRate } } );
+		}
+
+		if ( isMonthlyPricingTest && ! isMonthlyPlan ) {
+			return translate( 'billed annually' );
+		}
+
 		if ( typeof discountPrice !== 'number' || typeof rawPrice !== 'number' ) {
 			return null;
 		}
@@ -173,10 +192,12 @@ export class PlanFeaturesHeader extends Component {
 		if ( ! currentSitePlan || ! isFreePlan( currentSitePlan.productSlug ) ) {
 			return null;
 		}
+
 		const discountPercent = Math.round( ( 100 * ( rawPrice - discountPrice ) ) / rawPrice );
 		if ( discountPercent <= 0 ) {
 			return null;
 		}
+
 		return translate(
 			'Save %(discountPercent)s%% for 12 months!{{br/}} Per month, billed yearly.',
 			{
@@ -283,7 +304,7 @@ export class PlanFeaturesHeader extends Component {
 	}
 
 	renderPriceGroup( fullPrice, discountedPrice = null ) {
-		const { currencyCode, isInSignup, plansWithScroll } = this.props;
+		const { currencyCode, isInSignup, isMonthlyPricingTest, plansWithScroll } = this.props;
 		const displayFlatPrice = isInSignup && ! plansWithScroll;
 
 		if ( fullPrice && discountedPrice ) {
@@ -313,6 +334,7 @@ export class PlanFeaturesHeader extends Component {
 				currencyCode={ currencyCode }
 				rawPrice={ fullPrice }
 				isInSignup={ displayFlatPrice }
+				isMonthlyPricingTest={ isMonthlyPricingTest }
 			/>
 		);
 	}
@@ -409,6 +431,10 @@ PlanFeaturesHeader.propTypes = {
 	currentSitePlan: PropTypes.object,
 	isSiteAT: PropTypes.bool,
 	relatedYearlyPlan: PropTypes.object,
+
+	// For Monthly Pricing test
+	annualPricePerMonth: PropTypes.number,
+	isMonthlyPricingTest: PropTypes.bool,
 };
 
 PlanFeaturesHeader.defaultProps = {
@@ -425,6 +451,7 @@ PlanFeaturesHeader.defaultProps = {
 	popular: false,
 	showPlanCreditsApplied: false,
 	siteSlug: '',
+	isMonthlyPricingTest: false,
 };
 
 export default connect( ( state, { planType, relatedMonthlyPlan } ) => {

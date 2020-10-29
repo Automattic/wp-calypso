@@ -14,6 +14,8 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
+import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -40,6 +42,17 @@ export default function WPCheckoutOrderReview( {
 		setCouponFieldVisible( false );
 	};
 
+	const hasDotcomPlan = Boolean(
+		items.find( ( { wpcom_meta } ) => isWpComPlan( wpcom_meta?.product_slug ) )
+	);
+	const hasRenewal = Boolean(
+		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
+	);
+	const isMonthlyPricingTest =
+		hasDotcomPlan && ! hasRenewal && 'treatment' === getABTestVariation( 'monthlyPricing' );
+	const itemsForMonthlyPricing =
+		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
+
 	return (
 		<div
 			className={ joinClasses( [ className, 'checkout-review-order', isSummary && 'is-summary' ] ) }
@@ -50,13 +63,14 @@ export default function WPCheckoutOrderReview( {
 
 			<WPOrderReviewSection>
 				<WPOrderReviewLineItems
-					items={ items }
+					items={ itemsForMonthlyPricing || items }
 					removeProductFromCart={ removeProductFromCart }
 					removeCoupon={ removeCouponAndClearField }
 					getItemVariants={ getItemVariants }
 					onChangePlanLength={ onChangePlanLength }
 					isSummary={ isSummary }
 					createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			</WPOrderReviewSection>
 
@@ -119,6 +133,31 @@ function CouponFieldArea( {
 			</CouponEnableButton>
 		</CouponLinkWrapper>
 	);
+}
+
+/*
+ * WARNING:
+ * Please update item's sublabel in the `translateReponseCartProductToWPCOMCartItem` function
+ * when the treatment is rolled out as a winner.
+ */
+function overrideItemSublabel( item, translate ) {
+	if ( item?.type !== 'plan' || ! isWpComPlan( item?.wpcom_meta?.product_slug ) ) {
+		return item;
+	}
+
+	const billingMonths = getBillingMonthsForPlan( item?.wpcom_meta?.product_slug );
+
+	let sublabel = translate( 'Monthly subscription' );
+	if ( billingMonths === 12 ) {
+		sublabel = translate( 'One year subscription' );
+	} else if ( billingMonths === 24 ) {
+		sublabel = translate( 'Two year subscription' );
+	}
+
+	return {
+		...item,
+		sublabel,
+	};
 }
 
 const DomainURL = styled.div`

@@ -54,6 +54,7 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
+	isMonthly,
 } from 'calypso/lib/products-values';
 import sortProducts from 'calypso/lib/products-values/sort';
 import { getTld } from 'calypso/lib/domains';
@@ -363,6 +364,10 @@ export function hasBusinessPlan( cart ) {
 
 export function hasDomainCredit( cart ) {
 	return cart.has_bundle_credit || hasPlan( cart );
+}
+
+export function hasMonthlyCartItem( cart ) {
+	return some( getAllCartItems( cart ), isMonthly );
 }
 
 /**

@@ -72,17 +72,6 @@ const props = {
 	translate: ( x ) => x,
 };
 
-describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test( 'Should return null when called with hideFreePlan props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			hideFreePlan: true,
-		} );
-		const freePlanBanner = instance.renderFreePlanBanner();
-		expect( freePlanBanner ).toBeNull();
-	} );
-} );
-
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
 		const instance = new PlansFeaturesMain( {
@@ -275,21 +264,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
 		const instance = new PlansFeaturesMain( { ...myProps } );
 		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-	} );
-
-	test( "Should select personal tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'personal' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( false );
+		expect( comp.find( 'PlanTypeSelector' ).length ).toBe( 1 );
 	} );
 
 	test( 'Should display proper plans in personal tab', () => {
@@ -312,33 +287,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 		] );
-	} );
-
-	test( "Should select business tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( false );
-	} );
-
-	test( 'Should add existing query arguments to personal and business tab links', () => {
-		global.document = { location: { search: '?fake=item' } };
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=personal"]' ).length
-		).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=business"]' ).length
-		).toBe( 1 );
 	} );
 
 	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {

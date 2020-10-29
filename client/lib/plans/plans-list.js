@@ -27,6 +27,17 @@ const getMonthlyTimeframe = () => ( {
 	getSignupBillingTimeFrame: () => translate( 'per month' ),
 } );
 
+const getDotcomPlanDetails = () => ( {
+	// Features only available for annual plans
+	getAnnualPlansOnlyFeatures: () =>
+		compact( [
+			constants.FEATURE_FREE_DOMAIN,
+			constants.FEATURE_CUSTOM_DOMAIN,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+		] ),
+} );
+
 const plansDescriptionHeadingComponent = {
 	components: {
 		strong: <strong className="plans__features plan-features__targeted-description-heading" />,
@@ -34,6 +45,7 @@ const plansDescriptionHeadingComponent = {
 };
 
 const getPlanBloggerDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BLOGGER,
 	getTitle: () => i18n.translate( 'Blogger' ),
@@ -85,6 +97,7 @@ const getPlanBloggerDetails = () => ( {
 } );
 
 const getPlanPersonalDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PERSONAL,
 	getTitle: () => i18n.translate( 'Personal' ),
@@ -116,11 +129,13 @@ const getPlanPersonalDetails = () => ( {
 		constants.FEATURE_MEMBERSHIPS,
 		constants.FEATURE_PREMIUM_CONTENT_BLOCK,
 	],
-	getSignupFeatures: () => [
-		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-		constants.FEATURE_FREE_DOMAIN,
-		constants.FEATURE_FREE_THEMES,
-	],
+	getSignupFeatures: ( _, { isMonthlyPricingTest = false } = {} ) =>
+		compact( [
+			! isMonthlyPricingTest && constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_FREE_DOMAIN,
+			isMonthlyPricingTest && constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
+			constants.FEATURE_FREE_THEMES,
+		] ),
 	getBlogSignupFeatures: () => [
 		constants.FEATURE_FREE_DOMAIN,
 		constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
@@ -137,6 +152,7 @@ const getPlanPersonalDetails = () => ( {
 } );
 
 const getPlanEcommerceDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_ECOMMERCE,
 	getTitle: () => i18n.translate( 'eCommerce' ),
@@ -225,6 +241,7 @@ const getPlanEcommerceDetails = () => ( {
 } );
 
 const getPlanPremiumDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_PREMIUM,
 	getTitle: () => i18n.translate( 'Premium' ),
@@ -269,10 +286,11 @@ const getPlanPremiumDetails = () => ( {
 		constants.FEATURE_ADVANCED_DESIGN,
 		constants.FEATURE_13GB_STORAGE,
 	],
-	getSignupFeatures: () =>
+	getSignupFeatures: ( _, { isMonthlyPricingTest = false } = {} ) =>
 		compact( [
+			isMonthlyPricingTest && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_ADVANCED_CUSTOMIZATION,
-			constants.FEATURE_PREMIUM_THEMES,
+			! isMonthlyPricingTest && constants.FEATURE_PREMIUM_THEMES,
 			constants.FEATURE_ALL_PERSONAL_FEATURES,
 		] ),
 	getBlogSignupFeatures: () => [
@@ -291,6 +309,7 @@ const getPlanPremiumDetails = () => ( {
 } );
 
 const getPlanBusinessDetails = () => ( {
+	...getDotcomPlanDetails(),
 	group: constants.GROUP_WPCOM,
 	type: constants.TYPE_BUSINESS,
 	getTitle: () => i18n.translate( 'Business' ),
@@ -682,13 +701,31 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'blogger-2-years',
 	},
 
+	[ constants.PLAN_PERSONAL_MONTHLY ]: {
+		...getPlanPersonalDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
+				plan
+			),
+		getProductId: () => 1019,
+		getStoreSlug: () => constants.PLAN_PERSONAL_MONTHLY,
+		getPathSlug: () => 'personal-monthly',
+	},
+
 	[ constants.PLAN_PERSONAL ]: {
 		...getPlanPersonalDetails(),
 		term: constants.TERM_ANNUALLY,
 		getBillingTimeFrame: WPComGetBillingTimeframe,
 		availableFor: ( plan ) =>
 			includes(
-				[ constants.PLAN_FREE, constants.PLAN_BLOGGER, constants.PLAN_BLOGGER_2_YEARS ],
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+				],
 				plan
 			),
 		getProductId: () => 1009,
@@ -706,6 +743,7 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 				],
 				plan
@@ -713,6 +751,26 @@ export const PLANS_LIST = {
 		getProductId: () => 1029,
 		getStoreSlug: () => constants.PLAN_PERSONAL_2_YEARS,
 		getPathSlug: () => 'personal-2-years',
+	},
+
+	[ constants.PLAN_PREMIUM_MONTHLY ]: {
+		...getPlanPremiumDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+					constants.PLAN_PERSONAL,
+					constants.PLAN_PERSONAL_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1013,
+		getStoreSlug: () => constants.PLAN_PREMIUM_MONTHLY,
+		getPathSlug: () => 'premium-monthly',
 	},
 
 	[ constants.PLAN_PREMIUM ]: {
@@ -725,8 +783,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 				],
 				plan
 			),
@@ -745,8 +805,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 				],
 				plan
@@ -758,8 +820,7 @@ export const PLANS_LIST = {
 
 	[ constants.PLAN_BUSINESS_MONTHLY ]: {
 		...getPlanBusinessDetails(),
-		term: constants.TERM_MONTHLY,
-		getBillingTimeFrame: () => i18n.translate( 'per month, billed monthly' ),
+		...getMonthlyTimeframe(),
 		availableFor: ( plan ) =>
 			isEnabled( 'upgrades/wpcom-monthly-plans' ) &&
 			includes(
@@ -767,8 +828,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 				],
@@ -789,8 +852,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 					constants.PLAN_BUSINESS_MONTHLY,
@@ -812,8 +877,10 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
 					constants.PLAN_BUSINESS,
@@ -826,6 +893,32 @@ export const PLANS_LIST = {
 		getPathSlug: () => 'business-2-years',
 	},
 
+	[ constants.PLAN_ECOMMERCE_MONTHLY ]: {
+		...getPlanEcommerceDetails(),
+		...getMonthlyTimeframe(),
+		availableFor: ( plan ) =>
+			includes(
+				[
+					constants.PLAN_FREE,
+					constants.PLAN_BLOGGER,
+					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
+					constants.PLAN_PERSONAL,
+					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
+					constants.PLAN_PREMIUM,
+					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_BUSINESS,
+					constants.PLAN_BUSINESS_2_YEARS,
+				],
+				plan
+			),
+		getProductId: () => 1021,
+		getStoreSlug: () => constants.PLAN_ECOMMERCE_MONTHLY,
+		getPathSlug: () => 'ecommerce-monthly',
+	},
+
 	[ constants.PLAN_ECOMMERCE ]: {
 		...getPlanEcommerceDetails(),
 		term: constants.TERM_ANNUALLY,
@@ -836,13 +929,16 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
 					constants.PLAN_BUSINESS,
 					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_ECOMMERCE_MONTHLY,
 				],
 				plan
 			),
@@ -861,13 +957,16 @@ export const PLANS_LIST = {
 					constants.PLAN_FREE,
 					constants.PLAN_BLOGGER,
 					constants.PLAN_BLOGGER_2_YEARS,
+					constants.PLAN_PERSONAL_MONTHLY,
 					constants.PLAN_PERSONAL,
 					constants.PLAN_PERSONAL_2_YEARS,
+					constants.PLAN_PREMIUM_MONTHLY,
 					constants.PLAN_PREMIUM,
 					constants.PLAN_PREMIUM_2_YEARS,
+					constants.PLAN_BUSINESS_MONTHLY,
 					constants.PLAN_BUSINESS,
 					constants.PLAN_BUSINESS_2_YEARS,
-					constants.PLAN_BUSINESS_MONTHLY,
+					constants.PLAN_ECOMMERCE_MONTHLY,
 					constants.PLAN_ECOMMERCE,
 				],
 				plan
