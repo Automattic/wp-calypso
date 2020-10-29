@@ -77,6 +77,15 @@ function WPLineItem( {
 
 	const productSlug = item.wpcom_meta?.product_slug;
 
+	// Unless a user in the monthly pricing test, reset the related monthly plan costs
+	if ( ! isMonthlyPricingTest && item.wpcom_meta ) {
+		item.wpcom_meta = {
+			...item.wpcom_meta,
+			related_monthly_plan_cost_display: '',
+			related_monthly_plan_cost_integer: 0,
+		};
+	}
+
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<div
