@@ -243,17 +243,17 @@
 		"enzyme": "^3.11.0",
 		"enzyme-adapter-react-16": "^1.15.1",
 		"enzyme-to-json": "^3.4.3",
-		"eslint": "^7.1.0",
-		"eslint-config-prettier": "^6.11.0",
+		"eslint": "^7.12.0",
+		"eslint-config-prettier": "^6.14.0",
 		"eslint-config-wpcalypso": "^6.1.0",
-		"eslint-plugin-import": "^2.20.0",
-		"eslint-plugin-inclusive-language": "^1.2.0",
-		"eslint-plugin-jest": "^23.6.0",
-		"eslint-plugin-jsdoc": "^30.6.3",
-		"eslint-plugin-jsx-a11y": "^6.2.3",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-inclusive-language": "^1.2.1",
+		"eslint-plugin-jest": "^23.20.0",
+		"eslint-plugin-jsdoc": "^30.7.3",
+		"eslint-plugin-jsx-a11y": "^6.3.1",
 		"eslint-plugin-md": "^1.0.19",
-		"eslint-plugin-prettier": "^3.1.2",
-		"eslint-plugin-react": "^7.20.0",
+		"eslint-plugin-prettier": "^3.1.4",
+		"eslint-plugin-react": "^7.21.5",
 		"eslint-plugin-wpcalypso": "^5.0.0",
 		"exports-loader": "^0.7.0",
 		"fake-indexeddb": "^3.1.0",
@@ -323,6 +323,6 @@
 	"devDependencies": {
 		"bunyan": "^1.8.14",
 		"chokidar": "^2.1.8",
-		"eslint-nibble": "^5.1.0"
+		"eslint-nibble": "^6.0.0"
 	}
 }
