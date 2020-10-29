@@ -49,6 +49,7 @@ import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filte
 import ActivityCardList from 'calypso/components/activity-card-list';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -364,7 +365,10 @@ class BackupsPage extends Component {
 					} ) }
 				>
 					<SidebarNavigation />
-					<TimeMismatchWarning siteId={ this.props.siteId } />
+					<TimeMismatchWarning
+						siteId={ this.props.siteId }
+						settingsUrl={ this.props.settingsUrl }
+					/>
 					{ ! isJetpackCloud() && (
 						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 					) }
@@ -479,6 +483,7 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteUrl: getSiteUrl( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		settingsUrl: getSettingsUrl( state, siteId, 'general' ),
 		timezone,
 		gmtOffset,
 		indexedLog,

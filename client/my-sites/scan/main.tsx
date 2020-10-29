@@ -30,6 +30,7 @@ import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
 import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
@@ -68,6 +69,7 @@ interface Props {
 	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
 	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
+	siteSettingsUrl: string;
 }
 
 class ScanPage extends Component< Props > {
@@ -150,7 +152,11 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button primary className="scan__button" onClick={ () => dispatchScanRun( siteId ) }>
+					<Button
+						primary
+						className="scan__button"
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
+					>
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
@@ -205,7 +211,7 @@ class ScanPage extends Component< Props > {
 				{ isEnabled( 'jetpack/on-demand-scan' ) && (
 					<Button
 						className="scan__button scan__retry-bottom"
-						onClick={ () => dispatchScanRun( siteId ) }
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
 					>
 						{ translate( 'Retry scan' ) }
 					</Button>
@@ -265,7 +271,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	render() {
-		const { isAdmin, siteId } = this.props;
+		const { isAdmin, siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
@@ -281,7 +287,7 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
-				<TimeMismatchWarning siteId={ siteId } />
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }
@@ -316,6 +322,7 @@ export default connect(
 			};
 		}
 		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
+		const siteSettingsUrl = getSettingsUrl( state, siteId, 'general' );
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
@@ -329,6 +336,7 @@ export default connect(
 			scanState,
 			scanProgress,
 			isInitialScan,
+			siteSettingsUrl,
 			isRequestingScan,
 			isAdmin,
 		};
