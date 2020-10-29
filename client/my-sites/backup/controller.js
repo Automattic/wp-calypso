@@ -49,7 +49,11 @@ export function showUpsellIfNoBackup( context, next ) {
 }
 
 export function showJetpackConnectionFailed( context, next ) {
-	const JetpackConnectionFailed = <WPCOMBackupUpsell reason="no_connected_jetpack" />;
+	const JetpackConnectionFailed = isJetpackCloud() ? (
+		<BackupUpsell reason="no_connected_jetpack" />
+	) : (
+		<WPCOMBackupUpsell reason="no_connected_jetpack" />
+	);
 	context.primary = (
 		<HasJetpackConnectionFailedSwitch
 			trueComponent={ JetpackConnectionFailed }

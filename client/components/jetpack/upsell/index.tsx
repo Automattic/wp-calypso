@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, ReactChild } from 'react';
+import React, { FunctionComponent, isValidElement, ReactNode } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
@@ -15,11 +15,11 @@ import { Button } from '@automattic/components';
 import './style.scss';
 
 interface Props {
-	bodyText: TranslateResult;
+	bodyText: TranslateResult | ReactNode;
 	buttonLink?: TranslateResult;
 	buttonText?: TranslateResult;
 	headerText: TranslateResult;
-	iconComponent?: ReactChild;
+	iconComponent?: ReactNode;
 	onClick?: () => void;
 }
 
@@ -37,7 +37,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 		<div className="upsell">
 			{ iconComponent }
 			<h2>{ headerText }</h2>
-			<p>{ bodyText }</p>
+			{ isValidElement( bodyText ) ? { bodyText } : <p>{ bodyText }</p> }
 			{ buttonLink && (
 				<Button
 					className="upsell__button"
