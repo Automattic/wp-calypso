@@ -214,6 +214,7 @@ $font-size: rem( 14px );
 			&.is-compact {
 				margin: 0;
 				align-items: center;
+				min-height: 34px;
 			}
 
 			.notice__icon-wrapper {
