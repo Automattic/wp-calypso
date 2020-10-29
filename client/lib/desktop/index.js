@@ -14,7 +14,6 @@ import * as oAuthToken from 'calypso/lib/oauth-token';
 import userUtilities from 'calypso/lib/user/utils';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import { getReduxStore } from 'calypso/lib/redux-bridge';
-import { isEditorIframeLoaded } from 'calypso/state/editor/selectors';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
@@ -78,8 +77,6 @@ const Desktop = {
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = await getReduxStore();
-
-		this.editorLoadedStatus();
 
 		// Send some events immediately - this sets the app state
 		this.sendNotificationUnseenCount();
@@ -255,34 +252,6 @@ const Desktop = {
 		debug( 'Showing help' );
 
 		this.navigate( '/help' );
-	},
-
-	editorLoadedStatus: function () {
-		const sendLoadedEvt = () => {
-			debug( 'Editor iframe loaded' );
-
-			const evt = new window.Event( 'editor-iframe-loaded' );
-			window.dispatchEvent( evt );
-		};
-
-		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
-
-		if ( previousLoaded ) {
-			sendLoadedEvt();
-		}
-
-		this.store.subscribe( () => {
-			const state = this.store.getState();
-			const loaded = isEditorIframeLoaded( state );
-
-			if ( loaded !== previousLoaded ) {
-				if ( loaded ) {
-					sendLoadedEvt();
-				}
-
-				previousLoaded = loaded;
-			}
-		} );
 	},
 
 	onCannotOpenEditor: function ( event ) {
