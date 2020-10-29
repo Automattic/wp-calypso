@@ -153,6 +153,7 @@ function WPLineItem( {
 					getItemVariants={ getItemVariants }
 					onChangeItemVariant={ onChangePlanLength }
 					isDisabled={ isDisabled }
+					isMonthlyPricingTest={ isMonthlyPricingTest }
 				/>
 			) }
 		</div>
