@@ -16,7 +16,20 @@ body.has-focused-launch-modal {
 	}
 
 	.components-modal__header {
-		display: none;
+		margin: 0 0 20px;
+
+		.components-modal__icon-container {
+			margin-right: 12px;
+		}
+
+		@include break-medium {
+			border-bottom: none;
+
+			.components-modal__icon-container,
+			.components-modal__header-heading {
+				display: none;
+			}
+		}
 	}
 
 	.components-modal__content {

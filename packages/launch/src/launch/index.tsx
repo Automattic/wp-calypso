@@ -3,8 +3,8 @@
  */
 import * as React from 'react';
 import { __ } from '@wordpress/i18n';
-import { Modal, Button } from '@wordpress/components';
-import { Icon, wordpress, close } from '@wordpress/icons';
+import { Modal } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
 import FocusedLaunch from '../focused-launch';
 
 import './styles.scss';
@@ -21,26 +21,11 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
 			onRequestClose={ onClose }
-			title=""
+			title={ __( 'Complete setup' ) }
+			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
 			<>
 				<div className="launch__focused-modal-wrapper ">
-					<div className="launch__focused-modal-header">
-						<div className="launch__focused-modal-header-wp-logo">
-							<Icon icon={ wordpress } size={ 36 } />
-						</div>
-						<Button
-							isLink
-							className="launch__focused-modal-close-button"
-							onClick={ onClose }
-							aria-label={ __( 'Close dialog', 'launch' ) }
-							disabled={ ! onClose }
-						>
-							<span>
-								<Icon icon={ close } size={ 24 } />
-							</span>
-						</Button>
-					</div>
 					<div className="launch__focused-modal-body">
 						<FocusedLaunch />
 					</div>
