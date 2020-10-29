@@ -41,8 +41,7 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	JETPACK_PLANS_BY_TERM,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -54,6 +53,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_BY_TERM,
 } from 'calypso/lib/products-values/constants';
 import {
 	Product,
@@ -138,34 +138,63 @@ export function getProductWithOptionDisplayName(
 	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
 
+// Takes any annual Jetpack product or plan slug and returns its corresponding monthly equivalent
+function getMonthlySlugFromYearly( yearlySlug: string | null ) {
+	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
+		( product ) => product.yearly === yearlySlug
+	);
+	if ( matchingProduct ) {
+		return matchingProduct.monthly;
+	}
+
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan.yearly === yearlySlug );
+	if ( matchingPlan ) {
+		return matchingPlan.monthly;
+	}
+
+	return null;
+}
+
 /**
- * A selector that calculates the discount for billing purchases yearly instead of monthly.
+ * A selector that calculates the highest possible discount for annual billing purchases over monthly.
  *
  * @param {AppState} state The application state.
- * @returns {string|null} A formatted discount amount or percentage, if a discount exists; otherwise, null.
+ * @param {string[]} annualProductSlugs A list of annually-billed product slugs to check for discounts
+ * @returns {string|null} A formatted percentage representing the highest possible discount rounded to the nearest whole number, if one exists; otherwise, null.
  */
-export const getAnnualBillingDiscount = ( state: AppState ): string | null => {
-	// We use Jetpack Security as a reference to calculate the annual billing discount;
-	// we're assuming that this discount is the same across all our products
-	const securityMonthlyCost = getProductCost( state, PLAN_JETPACK_SECURITY_DAILY_MONTHLY );
-	const securityYearlyCost = getProductCost( state, PLAN_JETPACK_SECURITY_DAILY );
-
-	// Can't calculate a discount if we don't have price info
-	if ( ! securityMonthlyCost || ! securityYearlyCost ) {
+export const getHighestAnnualDiscount = (
+	state: AppState,
+	annualProductSlugs: string[]
+): string | null => {
+	// Can't get discount info if we don't have any product slugs
+	if ( ! annualProductSlugs?.length ) {
 		return null;
 	}
 
-	const securityMonthlyCostPerYear = securityMonthlyCost * 12;
-	const savingsPerYear = securityMonthlyCostPerYear - securityYearlyCost;
+	// Get all the annual discounts as decimal percentages (between 0 and 1), removing any null results
+	const discounts: number[] = annualProductSlugs
+		.map( ( yearlySlug ) => {
+			const yearly = getProductCost( state, yearlySlug );
 
-	const discountPercentage = Math.round( 100 * ( savingsPerYear / securityMonthlyCostPerYear ) );
+			const monthlySlug = getMonthlySlugFromYearly( yearlySlug );
+			const monthly = monthlySlug && getProductCost( state, monthlySlug );
 
-	// If the rate is less than 1%, it's not a discount, so return null
-	if ( discountPercentage < 1 ) {
-		return null;
-	}
+			// Protect against null values and division by zero
+			if ( ! yearly || ! monthly ) {
+				return null;
+			}
 
-	return `${ discountPercentage }%`;
+			const monthlyCostPerYear = monthly * 12;
+			const yearlySavings = monthlyCostPerYear - yearly;
+
+			return yearlySavings / monthlyCostPerYear;
+		} )
+		.filter( ( discount ): discount is number => Number.isFinite( discount ) );
+
+	const highestDiscount = discounts.sort( ( a, b ) => ( a > b ? -1 : 1 ) )[ 0 ];
+	const rounded = Math.round( 100 * highestDiscount );
+
+	return rounded > 0 ? `${ rounded }%` : null;
 };
 
 /**

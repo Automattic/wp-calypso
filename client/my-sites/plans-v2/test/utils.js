@@ -9,9 +9,11 @@ jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
-import { getAnnualBillingDiscount } from 'calypso/my-sites/plans-v2/utils';
+import { getHighestAnnualDiscount } from 'calypso/my-sites/plans-v2/utils';
 
 let mockProductPrices;
 
@@ -25,12 +27,28 @@ function getPricesWithDiscountPercent( discountPercent ) {
 	};
 }
 
-describe( 'getAnnualBillingDiscount', () => {
+describe( 'getHighestAnnualDiscount', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 
 		mockProductPrices = {};
 		getProductCost.mockImplementation( ( state, productSlug ) => mockProductPrices[ productSlug ] );
+	} );
+
+	test( 'returns the highest available discount', () => {
+		const securityDailyPrices = getPricesWithDiscountPercent( 5 );
+		const securityRealtimePrices = getPricesWithDiscountPercent( 10 );
+
+		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = securityDailyPrices.yearly;
+		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = securityDailyPrices.monthly;
+		mockProductPrices[ PLAN_JETPACK_SECURITY_REALTIME ] = securityRealtimePrices.yearly;
+		mockProductPrices[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ] = securityRealtimePrices.monthly;
+
+		const highestDiscount = getHighestAnnualDiscount( null, [
+			PLAN_JETPACK_SECURITY_DAILY,
+			PLAN_JETPACK_SECURITY_REALTIME,
+		] );
+		expect( highestDiscount ).toEqual( '10%' );
 	} );
 
 	test( 'returns rounded-down discount string when appropriate', () => {
@@ -39,7 +57,7 @@ describe( 'getAnnualBillingDiscount', () => {
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = yearly;
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = monthly;
 
-		const discount = getAnnualBillingDiscount();
+		const discount = getHighestAnnualDiscount( null, [ PLAN_JETPACK_SECURITY_DAILY ] );
 		expect( discount ).toEqual( '10%' );
 	} );
 
@@ -49,57 +67,40 @@ describe( 'getAnnualBillingDiscount', () => {
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = yearly;
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = monthly;
 
-		const discount = getAnnualBillingDiscount();
+		const discount = getHighestAnnualDiscount( null, [ PLAN_JETPACK_SECURITY_DAILY ] );
 		expect( discount ).toEqual( '11%' );
 	} );
 
-	test( 'returns null if monthly product cost is not found', () => {
+	test( 'returns null if no slugs are provided', () => {
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = 10;
+		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = 1;
 
-		const discount = getAnnualBillingDiscount();
+		const discount = getHighestAnnualDiscount( null, [] );
 		expect( discount ).toEqual( null );
 	} );
 
-	test( 'returns null if yearly product cost is not found', () => {
-		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = 10;
-
-		const discount = getAnnualBillingDiscount();
+	test( 'returns null if no pricing info is found', () => {
+		const discount = getHighestAnnualDiscount( null, [ PLAN_JETPACK_SECURITY_DAILY ] );
 		expect( discount ).toEqual( null );
 	} );
 
-	test( 'returns null if monthly product cost is zero', () => {
-		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = 10;
-		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = 0;
-
-		const discount = getAnnualBillingDiscount();
-		expect( discount ).toEqual( null );
-	} );
-
-	test( 'returns null if yearly product cost is zero', () => {
-		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = 0;
-		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = 10;
-
-		const discount = getAnnualBillingDiscount();
-		expect( discount ).toEqual( null );
-	} );
-
-	test( 'returns null if discount would round to 0%', () => {
+	test( 'returns null if highest discount would round to 0%', () => {
 		const { monthly, yearly } = getPricesWithDiscountPercent( 0.4 );
 
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = yearly;
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = monthly;
 
-		const discount = getAnnualBillingDiscount();
+		const discount = getHighestAnnualDiscount( null, [ PLAN_JETPACK_SECURITY_DAILY ] );
 		expect( discount ).toEqual( null );
 	} );
 
-	test( 'returns null if discount is negative', () => {
+	test( 'returns null if highest discount is negative', () => {
 		const { monthly, yearly } = getPricesWithDiscountPercent( -5 );
 
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY ] = yearly;
 		mockProductPrices[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ] = monthly;
 
-		const discount = getAnnualBillingDiscount();
+		const discount = getHighestAnnualDiscount( null, [ PLAN_JETPACK_SECURITY_DAILY ] );
 		expect( discount ).toEqual( null );
 	} );
 } );
