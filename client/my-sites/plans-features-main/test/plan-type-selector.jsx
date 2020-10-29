@@ -8,10 +8,10 @@ jest.mock( 'i18n-calypso', () => ( {
 /**
  * External dependencies
  */
-import { shallow } from 'enzyme';
 import React from 'react';
+import { shallow } from 'enzyme';
 import { PLAN_FREE } from 'calypso/lib/plans/constants';
-import PlanTypeSelector, { CustomerTypeToggle, getGeneratePath } from '../plan-type-selector';
+import PlanTypeSelector, { CustomerTypeToggle } from '../plan-type-selector';
 
 describe( '<PlanTypeSelector />', () => {
 	const myProps = {
@@ -48,11 +48,17 @@ describe( '<CustomerTypeToggle />', () => {
 		withWPPlanTabs: true,
 	};
 
+	beforeEach( () => {
+		global.document = {
+			location: {
+				search: '',
+			},
+		};
+	} );
+
 	test( "Should select personal tab when it's requested", () => {
 		const props = { ...myProps, customerType: 'personal' };
-		const comp = shallow(
-			<CustomerTypeToggle { ...props } generatePath={ getGeneratePath( props ) } />
-		);
+		const comp = shallow( <CustomerTypeToggle { ...props } /> );
 		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
 		expect(
 			comp.find( 'SegmentedControlItem[path="?customerType=personal&plan=free_plan"]' ).length
@@ -72,9 +78,7 @@ describe( '<CustomerTypeToggle />', () => {
 
 	test( "Should select business tab when it's requested", () => {
 		const props = { ...myProps, customerType: 'business' };
-		const comp = shallow(
-			<CustomerTypeToggle { ...props } generatePath={ getGeneratePath( props ) } />
-		);
+		const comp = shallow( <CustomerTypeToggle { ...props } /> );
 		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
 		expect(
 			comp.find( 'SegmentedControlItem[path="?customerType=personal&plan=free_plan"]' ).length
@@ -92,21 +96,19 @@ describe( '<CustomerTypeToggle />', () => {
 		).toBe( true );
 	} );
 
-	test( 'Should generate tabs links based on the current pathname', () => {
-		global.location = { pathname: '/fake/path' };
+	test( 'Should generate tabs links based on the current search parameters', () => {
+		global.document.location.search = '?fake=1';
 
 		const props = { ...myProps, customerType: 'business' };
-		const comp = shallow(
-			<CustomerTypeToggle { ...props } generatePath={ getGeneratePath( props ) } />
-		);
+		const comp = shallow( <CustomerTypeToggle { ...props } /> );
 
 		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
 		expect(
-			comp.find( 'SegmentedControlItem[path="/fake/path?customerType=personal&plan=free_plan"]' )
+			comp.find( 'SegmentedControlItem[path="?fake=1&customerType=personal&plan=free_plan"]' )
 				.length
 		).toBe( 1 );
 		expect(
-			comp.find( 'SegmentedControlItem[path="/fake/path?customerType=business&plan=free_plan"]' )
+			comp.find( 'SegmentedControlItem[path="?fake=1&customerType=business&plan=free_plan"]' )
 				.length
 		).toBe( 1 );
 	} );
