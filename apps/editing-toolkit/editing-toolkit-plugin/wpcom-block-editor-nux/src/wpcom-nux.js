@@ -72,7 +72,7 @@ function WpcomNux() {
 
 	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-
+	const pages = getWpcomNuxPages( isGutenboarding );
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -80,8 +80,13 @@ function WpcomNux() {
 			finishButtonText={ __( 'Get started', 'full-site-editing' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
-				<NuxPage key={ nuxPage.heading } { ...nuxPage } />
+			{ pages.map( ( nuxPage, index ) => (
+				<NuxPage
+					key={ nuxPage.heading }
+					pageNumber={ index + 1 }
+					isLastPage={ index === pages.length - 1 }
+					{ ...nuxPage }
+				/>
 			) ) }
 		</Guide>
 	);
@@ -136,7 +141,13 @@ function getWpcomNuxPages( isGutenboarding ) {
 	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
 }
 
-function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
+function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, description, imgSrc } ) {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_newsite_wpcomnux_slide_view', {
+			slide_number: pageNumber,
+			is_last_slide: isLastPage,
+		} );
+	}, [] );
 	return (
 		<GuidePage className="wpcom-block-editor-nux__page">
 			<div className="wpcom-block-editor-nux__text">
