@@ -7,13 +7,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { isUserLoggedIn } from 'state/current-user/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 export function redirectLoggedIn( context, next ) {
 	const userLoggedIn = isUserLoggedIn( context.store.getState() );
 
 	if ( userLoggedIn ) {
-		page.redirect( '/' );
+		page( '/' );
 		return;
 	}
 
