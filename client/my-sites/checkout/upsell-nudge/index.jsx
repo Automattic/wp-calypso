@@ -40,6 +40,7 @@ import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan
 import { PurchaseModal } from './purchase-modal';
 import { replaceCartWithItems } from 'calypso/lib/cart/actions';
 import Gridicon from 'calypso/components/gridicon';
+import { isMonthly } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -129,6 +130,7 @@ export class UpsellNudge extends React.Component {
 			upsellType,
 			translate,
 			siteSlug,
+			hasSevenDayRefundPeriod,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -172,6 +174,7 @@ export class UpsellNudge extends React.Component {
 						translate={ translate }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 		}
@@ -292,6 +295,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
+			hasSevenDayRefundPeriod: isMonthly( planSlug ),
 		};
 	},
 	{
