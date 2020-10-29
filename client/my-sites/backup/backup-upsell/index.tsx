@@ -79,6 +79,11 @@ const BackupsJetpackDisconnectedBody: FunctionComponent = () => {
 			buttonText={ translate( 'Reconnect Jetpack' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
+			secondaryButtonLink="https://dashboard.vaultpress.com/"
+			secondaryButtonText={ translate( 'I need help' ) }
+			secondaryOnClick={ () =>
+				dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) )
+			}
 		/>
 	);
 };

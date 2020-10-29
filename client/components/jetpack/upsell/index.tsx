@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, isValidElement, ReactNode } from 'react';
+import React, { FunctionComponent, ReactNode } from 'react';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 
 /**
@@ -21,6 +21,9 @@ interface Props {
 	headerText: TranslateResult;
 	iconComponent?: ReactNode;
 	onClick?: () => void;
+	secondaryButtonLink?: TranslateResult;
+	secondaryButtonText?: TranslateResult;
+	secondaryOnClick?: () => void;
 }
 
 const JetpackCloudUpsell: FunctionComponent< Props > = ( {
@@ -30,6 +33,9 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 	headerText,
 	iconComponent,
 	onClick,
+	secondaryButtonLink,
+	secondaryButtonText,
+	secondaryOnClick,
 } ) => {
 	const translate = useTranslate();
 
@@ -37,7 +43,7 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 		<div className="upsell">
 			{ iconComponent }
 			<h2>{ headerText }</h2>
-			{ isValidElement( bodyText ) ? { bodyText } : <p>{ bodyText }</p> }
+			<p>{ bodyText }</p>
 			{ buttonLink && (
 				<Button
 					className="upsell__button"
@@ -47,6 +53,16 @@ const JetpackCloudUpsell: FunctionComponent< Props > = ( {
 					target="_blank"
 				>
 					{ buttonText || translate( 'Upgrade now' ) }
+				</Button>
+			) }
+			{ secondaryButtonLink && (
+				<Button
+					className="upsell__button"
+					href={ secondaryButtonLink }
+					onClick={ secondaryOnClick }
+					target="_blank"
+				>
+					{ secondaryButtonText }
 				</Button>
 			) }
 		</div>
