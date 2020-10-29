@@ -88,23 +88,25 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 			onOpen={ onOpen }
 			onClose={ onClose }
 		>
-			<ul className="jetpack-product-card-alt-2__features-list">
-				{ ( items as ProductCardFeaturesItem[] ).map( ( item, i ) => (
-					<FeaturesItem
-						key={ i }
-						item={ item }
-						billingTerm={ billingTerm }
-						onProductClick={ onButtonClick }
-					/>
-				) ) }
-			</ul>
-			{ more && (
-				<div className="jetpack-product-card-alt-2__feature-more">
-					<ExternalLink icon={ true } href={ more.url }>
-						{ more.label }
-					</ExternalLink>
-				</div>
-			) }
+			<div>
+				<ul className="jetpack-product-card-alt-2__features-list">
+					{ ( items as ProductCardFeaturesItem[] ).map( ( item, i ) => (
+						<FeaturesItem
+							key={ i }
+							item={ item }
+							billingTerm={ billingTerm }
+							onProductClick={ onButtonClick }
+						/>
+					) ) }
+				</ul>
+				{ more && (
+					<div className="jetpack-product-card-alt-2__feature-more">
+						<ExternalLink icon={ true } href={ more.url }>
+							{ more.label }
+						</ExternalLink>
+					</div>
+				) }
+			</div>
 			<div className="jetpack-product-card-alt-2__feature-cta">{ ctaElt }</div>
 		</FoldableCard>
 	);

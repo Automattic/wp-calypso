@@ -325,6 +325,9 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	border-bottom: solid 1px var( --color-border-subtle );
 
 	&:last-of-type {
+		margin-bottom: 0;
+		padding-bottom: 0;
+
 		border-bottom: none;
 	}
 }
