@@ -15,7 +15,7 @@ type Props = {
 	isReskinned: boolean;
 	flowName: string;
 	customHeader: React.Component | null;
-	onClick: () => void;
+	onUpgradeClick: ( plan: any ) => void;
 };
 
 const FreePlanBanner: React.FunctionComponent< Props > = ( props ) => {
@@ -35,7 +35,7 @@ const FreePlanBanner: React.FunctionComponent< Props > = ( props ) => {
 				<span>{ translate( 'Not sure yet?' ) }</span>
 				<Button
 					className={ className }
-					onClick={ () => props.onClick?.() }
+					onClick={ () => props.onUpgradeClick?.( null ) }
 					borderless={ ! props.isReskinned }
 				>
 					{ isSignedUserInLaunchSite ? continueSite : startSite }
