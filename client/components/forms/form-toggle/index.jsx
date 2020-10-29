@@ -85,13 +85,12 @@ export default class FormToggle extends PureComponent {
 		const wrapperClasses = classNames( 'form-toggle__wrapper', {
 			'is-disabled': this.props.disabled,
 		} );
-		const toggleClasses = classNames( 'form-toggle', this.props.className );
 
 		return (
 			<span className={ wrapperClasses }>
 				<FormInputCheckbox
 					id={ id }
-					className={ toggleClasses }
+					className="form-toggle"
 					checked={ this.props.checked }
 					readOnly={ true }
 					disabled={ this.props.disabled }
