@@ -40,6 +40,15 @@ export default {
 	isEligible: ( { buttonClasses } ) => !! buttonClasses,
 
 	migrate: ( attributes, innerBlocks ) => {
+		// Don't migrate if buttons already exist as an innerBlock.
+		if ( Array.isArray( innerBlocks ) ) {
+			for ( let i = 0; i < innerBlocks.length; i++ ) {
+				if ( innerBlocks[ i ].name && innerBlocks[ i ].name === 'premium-content/buttons' ) {
+					return [ attributes, [ ...innerBlocks ] ];
+				}
+			}
+		}
+
 		const buttons = createBlock( 'premium-content/buttons', {}, [
 			createBlock( 'jetpack/recurring-payments', {
 				submitButtonText: attributes.subscribeButtonText,
@@ -60,6 +69,7 @@ export default {
 				},
 			} ),
 		] );
+
 		return [ attributes, [ ...innerBlocks, buttons ] ];
 	},
 
