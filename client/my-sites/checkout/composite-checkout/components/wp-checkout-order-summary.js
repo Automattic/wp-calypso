@@ -50,7 +50,10 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import { getABTestVariation } from 'calypso/lib/abtest';
 
-export default function WPCheckoutOrderSummary( { onChangePlanLength } ) {
+export default function WPCheckoutOrderSummary( {
+	onChangePlanLength,
+	nextDomainIsFree = false,
+} = {} ) {
 	const translate = useTranslate();
 	const taxes = useLineItemsOfType( 'tax' );
 	const coupons = useLineItemsOfType( 'coupon' );
@@ -78,6 +81,7 @@ export default function WPCheckoutOrderSummary( { onChangePlanLength } ) {
 					<CheckoutSummaryFeaturesList
 						isMonthlyPricingTest={ isMonthlyPricingTest }
 						hasMonthlyPlan={ hasMonthlyPlan }
+						nextDomainIsFree={ nextDomainIsFree }
 					/>
 				) }
 				{ ! isMonthlyPricingTest && <CheckoutSummaryHelp /> }
@@ -211,7 +215,12 @@ function SupportText( { hasPlanInCart, isJetpackNotAtomic, isMonthlyPricingTest 
 	return <span>{ translate( 'Email support' ) }</span>;
 }
 
-function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, hasMonthlyPlan } ) {
+function CheckoutSummaryFeaturesListDomainItem( {
+	domain,
+	isMonthlyPricingTest,
+	hasMonthlyPlan,
+	nextDomainIsFree,
+} ) {
 	const translate = useTranslate();
 	const bundledText = isMonthlyPricingTest
 		? translate( 'free for one year' )
@@ -226,15 +235,29 @@ function CheckoutSummaryFeaturesListDomainItem( { domain, isMonthlyPricingTest, 
 		},
 		comment: 'domain name and bundling message, separated by a dash',
 	} );
+	const annualPlanOnly = translate( '(annual plans only)', {
+		comment: 'Label attached to a feature',
+	} );
 
-	if ( domain.wpcom_meta.is_bundled && isMonthlyPricingTest && hasMonthlyPlan ) {
-		return null;
+	const isSupported = ! ( isMonthlyPricingTest && hasMonthlyPlan && nextDomainIsFree );
+	let label = <strong>{ domain.wpcom_meta.meta }</strong>;
+
+	if ( domain.wpcom_meta.is_bundled ) {
+		label = bundledDomain;
+	} else if ( isMonthlyPricingTest && hasMonthlyPlan && nextDomainIsFree ) {
+		label = (
+			<>
+				{ bundledDomain }
+				{ ` ` }
+				{ annualPlanOnly }
+			</>
+		);
 	}
 
 	return (
-		<CheckoutSummaryFeaturesListItem>
-			<WPCheckoutCheckIcon />
-			{ domain.wpcom_meta.is_bundled ? bundledDomain : <strong>{ domain.wpcom_meta.meta }</strong> }
+		<CheckoutSummaryFeaturesListItem isSupported={ isSupported }>
+			{ isSupported ? <WPCheckoutCheckIcon /> : <WPCheckoutCrossIcon /> }
+			{ label }
 		</CheckoutSummaryFeaturesListItem>
 	);
 }
@@ -278,8 +301,7 @@ function getPlanFeatures(
 	hasRenewalInCart,
 	isMonthlyPricingTest
 ) {
-	const showFreeDomainFeature =
-		( isMonthlyPricingTest || ! hasDomainsInCart ) && ! hasRenewalInCart;
+	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
 	const productSlug = plan.wpcom_meta?.product_slug;
 
 	if ( ! productSlug ) {
