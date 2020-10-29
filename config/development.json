@@ -65,7 +65,7 @@
 		"google-drive": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
-		"gutenboarding/focused-launch-flow": true,
+		"gutenboarding/focused-launch-flow": false,
 		"gutenboarding/focused-launch-flow-calypso": false,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/persistent-launch-button": true,
