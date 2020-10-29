@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
 import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Internal dependencies

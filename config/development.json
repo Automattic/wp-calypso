@@ -66,6 +66,7 @@
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/focused-launch-flow": true,
+		"gutenboarding/focused-launch-flow-calypso": false,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/persistent-launch-button": true,
 		"gutenboarding/show-vertical-input": false,

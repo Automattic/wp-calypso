@@ -24,6 +24,7 @@
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/lasagna": "^0.6.1",
+		"@automattic/launch": "^1.0.0",
 		"@automattic/language-picker": "^1.0.0",
 		"@automattic/load-script": "^1.0.0",
 		"@automattic/material-design-icons": "^1.0.0",
