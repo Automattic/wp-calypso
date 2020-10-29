@@ -9,8 +9,6 @@ export const getNewSite = ( state: State ) => state.newSite.data;
 export const getNewSiteError = ( state: State ) => state.newSite.error;
 export const isFetchingSite = ( state: State ) => state.newSite.isFetching;
 export const isNewSite = ( state: State ) => !! state.newSite.data;
-export const getSiteTitle = ( state: State, siteId = window._currentSiteId ) =>
-	state.sites[ siteId ]?.name;
 
 /**
  * Get a site matched by id. This selector has a matching
@@ -23,6 +21,8 @@ export const getSiteTitle = ( state: State, siteId = window._currentSiteId ) =>
 export const getSite = ( state: State, siteId: number ) => {
 	return state.sites[ siteId ];
 };
+
+export const getSiteTitle = ( state: State, siteId: number ) => getSite( state, siteId )?.name;
 
 export const isLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ];
