@@ -281,7 +281,7 @@ function maybeShowPlanBumpOffer( {
 	if ( orderId ) {
 		return;
 	}
-	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
+	if ( hasPremiumPlan( cart ) ) {
 		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
