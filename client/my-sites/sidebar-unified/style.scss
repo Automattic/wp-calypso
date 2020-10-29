@@ -73,6 +73,20 @@ $font-size: rem( 14px );
 				background-color: var( --color-sidebar-menu-hover-heading-background );
 				color: var( --color-sidebar-menu-hover );
 			}
+
+			&::after {
+				content: ' ';
+				display: none;
+				position: absolute;
+				top: 50%;
+				right: 0;
+				width: 0;
+				height: 0;
+				margin-top: -8px;
+				border: solid 8px transparent;
+				border-right-color: #f1f1f1;
+				pointer-events: none;
+			}
 		}
 
 		.sidebar__expandable-title,
@@ -133,6 +147,10 @@ $font-size: rem( 14px );
 					.sidebar__menu-icon {
 						color: white;
 					}
+
+					&::after {
+						display: block;
+					}
 				}
 			}
 		}
@@ -152,20 +170,13 @@ $font-size: rem( 14px );
 			.sidebar__heading {
 				padding: 0 0 0 8px;
 				font-weight: 400;
+			}
+		}
 
-				&::after {
-					display: none;
-					right: 0;
-					border: solid 8px transparent;
-					content: ' ';
-					height: 0;
-					width: 0;
-					position: absolute;
-					pointer-events: none;
-					border-right-color: #f1f1f1;
-					top: 50%;
-					margin-top: -8px;
-				}
+		// Is togglable but selected
+		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
+			&::after {
+				display: block;
 			}
 		}
 
@@ -178,10 +189,6 @@ $font-size: rem( 14px );
 					.sidebar__menu-icon {
 						color: var( --color-sidebar-menu-hover );
 					}
-				}
-
-				&::after {
-					display: block;
 				}
 
 				.sidebar__menu-icon {
@@ -353,6 +360,11 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			overflow: hidden;
+
+			&::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
 		}
 
 		.sidebar .notice {
@@ -371,12 +383,6 @@ $font-size: rem( 14px );
 
 				.sidebar__menu-icon {
 					color: #fff;
-				}
-
-				&::after {
-					display: block;
-					border-width: 4px;
-					margin-top: -4px;
 				}
 			}
 
