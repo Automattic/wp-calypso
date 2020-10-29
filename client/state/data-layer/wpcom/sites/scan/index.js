@@ -28,10 +28,8 @@ export const formatScanThreat = ( threat ) => ( {
 	signature: threat.signature,
 	description: threat.description,
 	status: threat.status,
-	firstDetected: Number.isFinite( threat.first_detected )
-		? new Date( threat.first_detected )
-		: undefined,
-	fixedOn: Number.isFinite( threat.fixed_on ) ? new Date( threat.fixed_on ) : undefined,
+	firstDetected: threat.first_detected ? new Date( threat.first_detected ) : undefined,
+	fixedOn: threat.fixed_on ? new Date( threat.fixed_on ) : undefined,
 	fixable: threat.fixable,
 	fixerStatus: threat.fixer_status,
 	filename: threat.filename,
@@ -46,6 +44,10 @@ export const formatScanThreat = ( threat ) => ( {
  * dates represented as string to Date object.
  *
  * @param {object} scanState Raw Scan state object from Scan endpoint
+ * @param {string} scanState.state State of the scan. E.g. "idle"
+ * @param {object[]} scanState.threats Array of active threats
+ * @param {object} scanState.most_recent Info about the most recent scan
+ * @param {object} scanState.current Info about the current scan
  * @returns {object} Processed Scan state
  */
 const formatScanStateRawResponse = ( {

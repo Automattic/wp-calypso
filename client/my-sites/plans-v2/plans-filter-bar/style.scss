@@ -73,19 +73,23 @@
 	}
 
 	.segmented-control {
-		width: 100%;
-		max-width: 180px;
-		margin-left: 8px;
+		margin-left: 15px;
 		margin-right: 16px;
+		flex: 0 0 200px;
 
 		.segmented-control__item {
 			flex: 1 1 50%;
+		}
+
+		.segmented-control__link {
+			padding: 8px 20px;
 		}
 	}
 }
 
 .plans-filter-bar__discount-message {
 	display: none;
+	padding-right: 15px;
 
 	color: var( --color-primary );
 

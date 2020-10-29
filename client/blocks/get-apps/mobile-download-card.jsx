@@ -225,8 +225,6 @@ class MobileDownloadCard extends React.Component {
 							) }
 						</div>
 						<div className="get-apps__sms-button-wrapper">
-							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
-
 							<Button
 								className="get-apps__sms-button"
 								onClick={ this.onSubmit }
@@ -234,6 +232,8 @@ class MobileDownloadCard extends React.Component {
 							>
 								{ translate( 'Text me a link' ) }
 							</Button>
+
+							<p>{ translate( 'Standard SMS rates may apply' ) }</p>
 						</div>
 					</div>
 				) }
@@ -248,7 +248,7 @@ class MobileDownloadCard extends React.Component {
 							) }
 						</p>
 					</div>
-					<div className="get-apps__link-button-wrapper">
+					<div>
 						<Button className="get-apps__magic-link-button" onClick={ this.onSubmitLink }>
 							{ translate( 'Email me a log in link' ) }
 						</Button>

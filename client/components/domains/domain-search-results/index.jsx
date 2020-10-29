@@ -262,6 +262,7 @@ class DomainSearchResults extends React.Component {
 					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
+					isSignupStep={ this.props.isSignupStep }
 					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
@@ -287,6 +288,7 @@ class DomainSearchResults extends React.Component {
 						suggestion={ suggestion }
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
+						isSignupStep={ this.props.isSignupStep }
 						showStrikedOutPrice={ this.props.showStrikedOutPrice }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }

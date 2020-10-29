@@ -2,7 +2,7 @@
  * External dependencies
  */
 import url from 'url'; // eslint-disable-line no-restricted-imports
-import { extend, get, isArray, invert } from 'lodash';
+import { get, isArray, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 
@@ -276,7 +276,7 @@ export function fillInSingleCartItemAttributes( cartItem, products ) {
 	const product = products[ cartItem.product_slug ];
 	const attributes = allowedProductAttributes( product );
 
-	return extend( {}, cartItem, attributes );
+	return { ...cartItem, ...attributes };
 }
 
 /**

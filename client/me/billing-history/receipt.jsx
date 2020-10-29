@@ -136,12 +136,12 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 					) }
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
-			</Card>
 
-			<Card compact className="billing-history__receipt-links">
-				<Button primary onClick={ handlePrintLinkClick }>
-					{ translate( 'Print Receipt' ) }
-				</Button>
+				<div className="billing-history__receipt-links">
+					<Button primary onClick={ handlePrintLinkClick }>
+						{ translate( 'Print Receipt' ) }
+					</Button>
+				</div>
 			</Card>
 		</div>
 	);

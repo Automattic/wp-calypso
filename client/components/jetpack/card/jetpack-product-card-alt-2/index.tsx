@@ -10,6 +10,7 @@ import React, { createElement, ReactNode, FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { durationToText } from 'calypso/my-sites/plans-v2/utils';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -21,6 +22,7 @@ import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
  * Type dependencies
  */
 import type { Moment } from 'moment';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
 
 /**
  * Style dependencies
@@ -39,16 +41,18 @@ type OwnProps = {
 	currencyCode: string | null;
 	originalPrice: number;
 	discountedPrice?: number;
-	billingTimeFrame: TranslateResult;
+	billingTerm: Duration;
 	buttonLabel: TranslateResult;
 	buttonPrimary: boolean;
-	onButtonClick: () => void;
+	onButtonClick: PurchaseCallback;
 	searchRecordsDetails?: ReactNode;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
 	isDeprecated?: boolean;
 	expiryDate?: Moment;
 	isFree?: boolean;
+	withBundleRibbon: boolean;
+	onFeaturesToggle?: () => void;
 };
 
 export type Props = OwnProps & Partial< FeaturesProps >;
@@ -64,7 +68,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	currencyCode,
 	originalPrice,
 	discountedPrice,
-	billingTimeFrame,
+	billingTerm,
 	buttonLabel,
 	buttonPrimary,
 	onButtonClick,
@@ -77,6 +81,8 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	isExpanded,
 	isFree,
 	productSlug,
+	withBundleRibbon,
+	onFeaturesToggle,
 }: Props ) => {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -88,10 +94,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 	const parsedExpiryDate =
 		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
-	const renderBillingTimeFrame = (
-		productExpiryDate: Moment | null,
-		billingTerm: TranslateResult
-	) => {
+	const renderBillingTimeFrame = ( productExpiryDate: Moment | null, billingTerm: Duration ) => {
 		return productExpiryDate ? (
 			<time
 				className="jetpack-product-card-alt-2__expiration-date"
@@ -104,7 +107,9 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 				} ) }
 			</time>
 		) : (
-			<span className="jetpack-product-card-alt-2__billing-time-frame">{ billingTerm }</span>
+			<span className="jetpack-product-card-alt-2__billing-time-frame">
+				{ durationToText( billingTerm ) }
+			</span>
 		);
 	};
 
@@ -124,13 +129,16 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 				'is-owned': isOwned,
 				'is-deprecated': isDeprecated,
 				'is-featured': isHighlighted,
+				'is-expanded': isExpanded,
 			} ) }
 			data-e2e-product-slug={ productSlug }
 		>
-			<div className="jetpack-product-card-alt-2__ribbon">
-				<span className="jetpack-product-card-alt-2__ribbon-text">{ translate( 'Bundle' ) }</span>
-				<img className="jetpack-product-card-alt-2__ribbon-img" src={ ribbonSvg } alt="" />
-			</div>
+			{ withBundleRibbon && (
+				<div className="jetpack-product-card-alt-2__ribbon">
+					<span className="jetpack-product-card-alt-2__ribbon-text">{ translate( 'Bundle' ) }</span>
+					<img className="jetpack-product-card-alt-2__ribbon-img" src={ ribbonSvg } alt="" />
+				</div>
+			) }
 			<div className="jetpack-product-card-alt-2__summary">
 				<header className="jetpack-product-card-alt-2__header">
 					<ProductIcon className="jetpack-product-card-alt-2__icon" slug={ iconSlug } />
@@ -162,7 +170,9 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 								<>
 									<span className="jetpack-product-card-alt-2__raw-price">
 										<PlanPrice
-											rawPrice={ isDiscounted ? discountedPrice : originalPrice }
+											rawPrice={ Math.floor(
+												( isDiscounted ? discountedPrice : originalPrice ) as number
+											) }
 											discounted
 											currencyCode={ currencyCode }
 										/>
@@ -170,12 +180,13 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 											<InfoPopover
 												className="jetpack-product-card-alt-2__search-price-popover"
 												position="right"
+												iconSize={ 24 }
 											>
 												{ searchRecordsDetails }
 											</InfoPopover>
 										) }
 									</span>
-									{ renderBillingTimeFrame( parsedExpiryDate, billingTimeFrame ) }
+									{ renderBillingTimeFrame( parsedExpiryDate, billingTerm ) }
 								</>
 							) : (
 								<>
@@ -195,10 +206,14 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 			</div>
 			{ features && features.items.length > 0 && (
 				<JetpackProductCardFeatures
+					className="jetpack-product-card-alt-2__features"
 					features={ features }
 					productSlug={ productSlug }
+					billingTerm={ billingTerm }
 					isExpanded={ isExpanded }
+					onFeaturesToggle={ onFeaturesToggle }
 					ctaElt={ buttonElt }
+					onButtonClick={ onButtonClick }
 				/>
 			) }
 		</div>

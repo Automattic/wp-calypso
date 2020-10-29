@@ -13,7 +13,6 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
-import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import CustomNameserversRow from './custom-nameservers-row';
 import { change, remove } from 'calypso/lib/domains/nameservers';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
@@ -118,7 +117,7 @@ class CustomNameserversForm extends React.PureComponent {
 					{ this.rows() }
 					{ this.popularHostsMessage() }
 
-					<FormFooter>
+					<div>
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
@@ -130,7 +129,7 @@ class CustomNameserversForm extends React.PureComponent {
 						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
 							{ translate( 'Reset to defaults' ) }
 						</FormButton>
-					</FormFooter>
+					</div>
 				</form>
 			</Card>
 		);

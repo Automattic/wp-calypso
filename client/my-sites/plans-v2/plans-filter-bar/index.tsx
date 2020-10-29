@@ -3,7 +3,7 @@
  */
 import React, { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { translate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
 
 /**
@@ -49,6 +49,7 @@ const PlansFilterBar = ( {
 	onDurationChange,
 	onProductTypeChange,
 }: Props ) => {
+	const translate = useTranslate();
 	const isCloud = isJetpackCloud();
 	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
 	const masterbarDefaultHeight = isCloud ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
@@ -95,7 +96,7 @@ const PlansFilterBar = ( {
 			) }
 			{ showDiscountMessage && (
 				<span className="plans-filter-bar__discount-message">
-					{ translate( 'You save %(discount)s by paying yearly', {
+					{ translate( 'Save %(discount)s by paying yearly', {
 						args: { discount: '20%' },
 					} ) }
 				</span>

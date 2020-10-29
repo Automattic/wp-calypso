@@ -22,6 +22,8 @@ export const getSite = ( state: State, siteId: number ) => {
 	return state.sites[ siteId ];
 };
 
+export const getSiteTitle = ( state: State, siteId: number ) => getSite( state, siteId )?.name;
+
 export const isLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ];
 };

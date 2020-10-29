@@ -2,12 +2,22 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Placeholder, Button, ExternalLink, withNotices, Spinner } from '@wordpress/components';
+import {
+	Placeholder,
+	Button,
+	ExternalLink,
+	withNotices,
+	Spinner,
+	ToolbarGroup,
+	ToolbarButton,
+} from '@wordpress/components';
+import { BlockControls } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import formatCurrency from '@automattic/format-currency';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
@@ -16,9 +26,8 @@ import Tabs from './tabs';
 import Blocks from './blocks';
 import Controls from './controls';
 import Inspector from './inspector';
-import StripeNudge from './stripe-nudge';
 import Context from './context';
-import apiFetch from '@wordpress/api-fetch';
+import { flashIcon } from './icons';
 import { isPriceValid, minimumTransactionAmountForCurrency } from '.';
 
 /**
@@ -330,41 +339,77 @@ function Edit( props ) {
 		);
 	}
 
-	let stripeNudge = null;
+	const shouldShowConnectButton = () => {
+		if ( ! shouldUpgrade && apiState !== API_STATE_CONNECTED && connectURL ) {
+			return true;
+		}
 
-	if ( ! shouldUpgrade && apiState !== API_STATE_CONNECTED && connectURL ) {
-		const stripeConnectUrl = getConnectUrl( props, connectURL );
-
-		stripeNudge = <StripeNudge { ...props } stripeConnectUrl={ stripeConnectUrl } />;
-	}
+		return false;
+	};
 
 	return (
-		<div className={ className } ref={ wrapperRef }>
-			{ props.noticeUI }
-			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
-				<Controls
-					{ ...props }
-					plans={ products }
-					selectedPlanId={ props.attributes.selectedPlanId }
-					onSelected={ selectPlan }
-					getPlanDescription={ getPlanDescription }
-				/>
-			) }
-			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
-				<Inspector { ...props } savePlan={ savePlan } siteSlug={ siteSlug } />
-			) }
-			{ ( isSelected || selectedInnerBlock ) && (
-				<Tabs { ...props } tabs={ tabs } selectedTab={ selectedTab } onSelected={ selectTab } />
-			) }
-			<Context.Provider
-				value={ {
-					selectedTab,
-					stripeNudge,
-				} }
-			>
-				<Blocks />
-			</Context.Provider>
-		</div>
+		<>
+			<BlockControls>
+				{ shouldShowConnectButton() && (
+					<ToolbarGroup>
+						<ToolbarButton
+							icon={ flashIcon }
+							onClick={ ( e ) => {
+								props.autosaveAndRedirect( e, getConnectUrl( props, connectURL ) );
+							} }
+							className="connect-stripe components-tab-button"
+						>
+							{ __( 'Connect Stripe', 'full-site-editing' ) }
+						</ToolbarButton>
+					</ToolbarGroup>
+				) }
+
+				<ToolbarGroup>
+					<ToolbarButton
+						onClick={ () => {
+							selectTab( tabs[ 1 ] );
+						} }
+						className="components-tab-button"
+						isPressed={ selectedTab.className === 'wp-premium-content-logged-out-view' }
+					>
+						<span>{ __( 'Visitor View', 'full-site-editing' ) }</span>
+					</ToolbarButton>
+					<ToolbarButton
+						onClick={ () => {
+							selectTab( tabs[ 0 ] );
+						} }
+						className="components-tab-button"
+						isPressed={ selectedTab.className !== 'wp-premium-content-logged-out-view' }
+					>
+						<span>{ __( 'Subscriber View', 'full-site-editing' ) }</span>
+					</ToolbarButton>
+				</ToolbarGroup>
+			</BlockControls>
+
+			<div className={ className } ref={ wrapperRef }>
+				{ props.noticeUI }
+
+				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
+					<Controls
+						{ ...props }
+						plans={ products }
+						selectedPlanId={ props.attributes.selectedPlanId }
+						onSelected={ selectPlan }
+						getPlanDescription={ getPlanDescription }
+					/>
+				) }
+				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
+					<Inspector { ...props } savePlan={ savePlan } siteSlug={ siteSlug } />
+				) }
+				<Context.Provider
+					value={ {
+						selectedTab,
+					} }
+				>
+					<Blocks />
+				</Context.Provider>
+			</div>
+		</>
 	);
 }
 
@@ -473,6 +518,12 @@ export default compose( [
 			selectBlock() {
 				// @ts-ignore difficult to type via JSDoc
 				blockEditor.selectBlock( ownProps.clientId );
+			},
+			autosaveAndRedirect: async ( event, stripeConnectUrl ) => {
+				event.preventDefault(); // Don't follow the href before autosaving
+				await dispatch( 'core/editor' ).savePost();
+				// Using window.top to escape from the editor iframe on WordPress.com
+				window.top.location.href = stripeConnectUrl;
 			},
 		};
 	} ),

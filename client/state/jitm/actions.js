@@ -35,7 +35,6 @@ export const dismissJITM = ( siteId, id, featureClass ) => ( {
 export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 	type: JITM_SET,
 	keyedPath: messagePath + siteId,
-	siteId,
 	jitms: jitms.map( ( jitm ) => ( { ...jitm, lastUpdated: Date.now() } ) ),
 } );
 
@@ -49,8 +48,7 @@ export const insertJITM = ( siteId, messagePath, jitms ) => ( {
 export const clearJITM = ( siteId, messagePath ) => ( {
 	type: JITM_SET,
 	keyedPath: messagePath + siteId,
-	siteId,
-	jitms: null,
+	jitms: [],
 } );
 
 /**

@@ -387,6 +387,7 @@ export function itemToSelectorProduct(
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: item.getTitle(),
+			buttonLabel: item.getButtonLabel?.(),
 			type,
 			subtypes: [],
 			shortName: item.getTitle(),
@@ -435,6 +436,7 @@ export function buildCardFeatureItemFromFeatureKey(
 
 	if ( feature ) {
 		return {
+			slug: feature.getSlug(),
 			icon: options?.withoutIcon ? undefined : feature.getIcon?.(),
 			text: feature.getTitle(),
 			description: options?.withoutDescription ? undefined : feature.getDescription?.(),

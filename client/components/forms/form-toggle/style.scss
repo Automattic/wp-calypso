@@ -98,27 +98,4 @@
 			cursor: default;
 		}
 	}
-
-	&.is-toggling {
-		+ .form-toggle__label.form-label {
-			color: var( --color-neutral );
-			animation: loading-fade 1.6s ease-in-out infinite;
-		}
-		+ .form-toggle__label.form-label .form-toggle__switch {
-			background: var( --color-primary );
-			animation: loading-fade 1.6s ease-in-out infinite;
-			&::after {
-				left: 8px;
-			}
-		}
-		&:checked {
-			+ .form-toggle__label.form-label .form-toggle__switch {
-				background: var( --color-neutral-10 );
-				animation: loading-fade 1.6s ease-in-out infinite;
-				&::after {
-					left: 0;
-				}
-			}
-		}
-	}
 }

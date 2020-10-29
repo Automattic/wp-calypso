@@ -19,6 +19,7 @@
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-notice-background: #3c434a;
 
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
@@ -41,8 +42,11 @@ $font-size: rem( 14px );
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		position: relative;
 		background-color: var( --color-sidebar-background );
 		padding-bottom: 12px;
+		min-height: calc( 100vh - var( --masterbar-height ) );
+		box-sizing: border-box;
 
 		.sidebar__separator {
 			margin: 0 0 11px;
@@ -71,6 +75,20 @@ $font-size: rem( 14px );
 			&:focus {
 				background-color: var( --color-sidebar-menu-hover-heading-background );
 				color: var( --color-sidebar-menu-hover );
+			}
+
+			&::after {
+				content: ' ';
+				display: none;
+				position: absolute;
+				top: 50%;
+				right: 0;
+				width: 0;
+				height: 0;
+				margin-top: -8px;
+				border: solid 8px transparent;
+				border-right-color: #f1f1f1;
+				pointer-events: none;
 			}
 		}
 
@@ -120,6 +138,7 @@ $font-size: rem( 14px );
 
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
+			margin-right: 8px;
 		}
 
 		.sidebar__menu-item-parent {
@@ -130,6 +149,10 @@ $font-size: rem( 14px );
 
 					.sidebar__menu-icon {
 						color: white;
+					}
+
+					&::after {
+						display: block;
 					}
 				}
 			}
@@ -150,20 +173,13 @@ $font-size: rem( 14px );
 			.sidebar__heading {
 				padding: 0 0 0 8px;
 				font-weight: 400;
+			}
+		}
 
-				&::after {
-					display: none;
-					right: 0;
-					border: solid 8px transparent;
-					content: ' ';
-					height: 0;
-					width: 0;
-					position: absolute;
-					pointer-events: none;
-					border-right-color: #f1f1f1;
-					top: 50%;
-					margin-top: -8px;
-				}
+		// Is togglable but selected
+		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
+			&::after {
+				display: block;
 			}
 		}
 
@@ -178,10 +194,6 @@ $font-size: rem( 14px );
 					}
 				}
 
-				&::after {
-					display: block;
-				}
-
 				.sidebar__menu-icon {
 					color: #fff;
 				}
@@ -194,6 +206,47 @@ $font-size: rem( 14px );
 				.sidebar__menu-icon {
 					color: #fff;
 				}
+			}
+		}
+
+		.notice {
+			background-color: var( --color-sidebar-notice-background );
+			/* stylelint-disable-next-line scales/font-weight */
+			font-weight: 300;
+
+			&.is-compact {
+				margin: 0;
+				align-items: center;
+				min-height: 34px;
+			}
+
+			.notice__icon-wrapper {
+				background-color: transparent;
+				width: 35px;
+
+				.notice__icon-wrapper-drop {
+					top: calc( 50% - 9px );
+					left: calc( 50% - 9px );
+					width: 18px;
+					height: 18px;
+					border-radius: 50%;
+					background: var( --color-sidebar-gridicon-fill );
+				}
+			}
+
+			.gridicon {
+				fill: var( --color-sidebar-notice-background );
+			}
+
+			.notice__content {
+				padding: 10px 10px 10px 4px;
+				overflow-wrap: anywhere;
+			}
+
+			.notice__action {
+				color: #fff;
+				font-weight: 600;
+				padding-right: 12px;
 			}
 		}
 	}
@@ -233,16 +286,26 @@ $font-size: rem( 14px );
 	}
 
 	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites:hover .button.is-borderless:hover {
+		background-color: var( --color-sidebar-menu-hover-heading-background );
+	}
+
 	.current-site__switch-sites .button.is-borderless {
 		color: var( --color-sidebar-text-alternative );
-		padding: 6px 8px 6px 38px;
+		padding: 6px 8px 6px 36px;
 	}
 
 	.current-site__switch-sites .button.is-borderless .gridicon {
 		height: 20px;
 		width: 20px;
 		top: 9px;
-		left: 9px;
+		left: 8px;
+	}
+
+	// client/blocks/site/style.scss
+	.site__content,
+	.all-sites .all-sites__content {
+		padding: 10px 0 10px 8px;
 	}
 
 	.is-sidebar-collapsed & {
@@ -301,6 +364,18 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			overflow: hidden;
+
+			&::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
+		}
+
+		.sidebar .notice {
+			.notice__content,
+			.notice__action {
+				display: none;
+			}
 		}
 
 		// Is toggled open
@@ -313,12 +388,6 @@ $font-size: rem( 14px );
 				.sidebar__menu-icon {
 					color: #fff;
 				}
-
-				&::after {
-					display: block;
-					border-width: 4px;
-					margin-top: -4px;
-				}
 			}
 
 			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
@@ -328,12 +397,21 @@ $font-size: rem( 14px );
 		}
 	}
 
-	.collapse-sidebar__toggle .sidebar__menu-link {
-		cursor: pointer;
+	.collapse-sidebar__toggle {
+		.sidebar__menu-link {
+			cursor: pointer;
+			color: var( --color-sidebar-text-alternative );
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: rem( 13px );
 
-		&:hover,
-		&:focus {
-			background-color: transparent;
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
+		.sidebar__menu-icon {
+			margin-top: 1px;
 		}
 	}
 
@@ -347,7 +425,8 @@ $font-size: rem( 14px );
 
 	.sidebar-unified__sparkline {
 		width: 80px;
-		height: 24px;
+		height: 21px;
+		margin-right: 8px;
 	}
 
 	/*
@@ -416,6 +495,7 @@ $font-size: rem( 14px );
 	.is-nav-unification {
 		&.focus-content .layout__content {
 			padding: 71px 24px 24px;
+			transition: padding 0.15s ease-in-out;
 		}
 
 		.sidebar {
@@ -473,6 +553,15 @@ $font-size: rem( 14px );
 			.collapse-sidebar__toggle {
 				display: none;
 			}
+		}
+	}
+}
+
+@media screen and ( max-width: 660px ) {
+	// client/layout/sidebar/style.scss
+	.is-nav-unification {
+		.sidebar {
+			position: absolute;
 		}
 	}
 }

@@ -90,6 +90,7 @@ function ButtonsEdit( {
 					allowedBlocks={ ALLOWED_BLOCKS }
 					template={ template }
 					__experimentalMoverDirection="horizontal"
+					templateInsertUpdatesSelection={ false }
 				/>
 			</AlignmentHookSettingsProvider>
 		</Block.div>
