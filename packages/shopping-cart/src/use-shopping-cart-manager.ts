@@ -98,7 +98,7 @@ export default function useShoppingCartManager( {
 		hookDispatch( { type: 'CART_RELOAD' } );
 	}, [ hookDispatch ] );
 
-	const isLoading = cacheStatus === 'fresh' || ! cartKey;
+	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
 
