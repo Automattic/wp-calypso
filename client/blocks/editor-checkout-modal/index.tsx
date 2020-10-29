@@ -7,7 +7,7 @@ import wp from 'calypso/lib/wp';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
 import { Icon, close, wordpress } from '@wordpress/icons';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
-import type { CartData, Props } from './types';
 
 /**
  * Style dependencies
@@ -28,13 +27,9 @@ import './style.scss';
 
 const wpcom = wp.undocumented();
 
-async function getCart( site: SiteData, cartData: CartData ) {
-	try {
-		return await wpcom.setCart( site.ID, cartData );
-	} catch {
-		return;
-	}
-}
+const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
+const wpcomSetCart = ( cartKey: string, requestCart: RequestCart ) =>
+	wpcom.setCart( cartKey, requestCart );
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
 	return fetchStripeConfiguration( args, wpcom );
@@ -61,6 +56,14 @@ const EditorCheckoutModal = ( props: Props ) => {
 		[ waitForOtherCartUpdates, site, isLoggedOutCart, isNoSiteCart ]
 	);
 
+	// We need to pass in a comma separated list of product
+	// slugs to be set in the cart otherwise we will be
+	// redirected to the plans page due to an empty cart
+	const productSlugs = hasEmptyCart
+		? null
+		: cartData.products.map( ( product ) => product.product_slug );
+	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
+
 	return hasEmptyCart ? null : (
 		<div className={ classnames( 'editor-checkout-modal', isOpen ? 'is-open' : '' ) }>
 			<div className="editor-checkout-modal__header">
@@ -71,22 +74,25 @@ const EditorCheckoutModal = ( props: Props ) => {
 					<Icon icon={ close } size={ 24 } />
 				</Button>
 			</div>
-			<ShoppingCartProvider
-				cartKey={ cartKey }
-				getCart={ () => getCart( site, cartData ) }
-				setCart={ () => getCart( site, cartData ) }
-			>
+			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 					<CompositeCheckout
 						isInEditor
 						siteId={ site.ID }
 						siteSlug={ site.slug }
-						getCart={ () => getCart( site, cartData ) }
+						productAliasFromUrl={ commaSeparatedProductSlugs }
 					/>
 				</StripeHookProvider>
 			</ShoppingCartProvider>
 		</div>
 	);
+};
+
+type Props = {
+	site: SiteData;
+	cartData: RequestCart;
+	onClose: () => void;
+	isOpen: boolean;
 };
 
 EditorCheckoutModal.defaultProps = {
