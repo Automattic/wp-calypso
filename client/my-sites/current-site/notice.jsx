@@ -275,6 +275,7 @@ export class SiteNotice extends React.Component {
 				{ showJitms && (
 					<AsyncLoad
 						require="calypso/blocks/jitm"
+						placeholder={ null }
 						messagePath="calypso:sites:sidebar_notice"
 						template="sidebar-banner"
 					/>
