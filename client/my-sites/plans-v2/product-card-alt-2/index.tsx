@@ -3,29 +3,22 @@
  */
 import React, { useMemo, FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import { useMobileBreakpoint } from '@automattic/viewport-react';
 
 /**
  * Internal dependencies
  */
-import {
-	durationToText,
-	getProductWithOptionDisplayName,
-	productButtonLabel,
-	productButtonLabelAlt,
-	slugIsFeaturedProduct,
-} from '../utils';
+import { productButtonLabel } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import JetpackProductCardAlt2 from 'calypso/components/jetpack/card/jetpack-product-card-alt-2';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { isJetpackPlanSlug } from 'calypso/lib/products-values';
 import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
@@ -41,8 +34,9 @@ interface ProductCardProps {
 	siteId: number | null;
 	currencyCode: string | null;
 	className?: string;
-	highlight?: boolean;
 	selectedTerm?: Duration;
+	shouldExpand?: boolean;
+	onFeaturesToggle?: () => void;
 }
 
 const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
@@ -51,8 +45,9 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 	siteId,
 	currencyCode,
 	className,
-	highlight = false,
 	selectedTerm,
+	shouldExpand,
+	onFeaturesToggle,
 }: ProductCardProps ) => {
 	// Determine whether product is owned.
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
@@ -89,33 +84,15 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 	const purchase = isItemPlanFeature
 		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 		: getPurchaseByProductSlug( purchases, item.productSlug );
-
 	const isExpiring = purchase && isCloseToExpiration( purchase );
 	const showExpiryNotice = item.legacy && isExpiring;
-
-	// Is highlighted?
-	const isMobile: boolean = useMobileBreakpoint();
-	const isHighlighted = highlight && ! isOwned && slugIsFeaturedProduct( item.productSlug );
-
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
-
 	const description = showExpiryNotice && purchase ? <PlanRenewalMessage /> : item.description;
 	const showRecordsDetails = JETPACK_SEARCH_PRODUCTS.includes( item.productSlug ) && siteId;
-
-	// In v1, we use the name of the option instead of the name of the product. In v2 we
-	// honor the name of the product.
-	// E.g. In v1, Jetpack Security Daily is featured as Jetpack Security.
-	const currentCROvariant = getJetpackCROActiveVersion();
-	const productName =
-		currentCROvariant === 'v1'
-			? getProductWithOptionDisplayName( item, isOwned, isItemPlanFeature )
-			: item.displayName;
-
-	const buttonLabel =
-		currentCROvariant === 'v1'
-			? productButtonLabelAlt( item, isOwned, isItemPlanFeature, isUpgradeableToYearly, sitePlan )
-			: productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan );
+	const productName = item.displayName;
+	const buttonLabel = productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan );
+	const isPlan = isJetpackPlanSlug( item.productSlug );
 
 	return (
 		<JetpackProductCardAlt2
@@ -125,7 +102,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			subheadline={ item.tagline }
 			description={ description }
 			currencyCode={ currencyCode }
-			billingTimeFrame={ durationToText( item.term ) }
+			billingTerm={ item.term }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
@@ -140,9 +117,10 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
-			isHighlighted={ isHighlighted }
-			isExpanded={ isHighlighted && ! isMobile }
+			isExpanded={ isPlan && shouldExpand }
+			withBundleRibbon={ isPlan }
 			productSlug={ item.productSlug }
+			onFeaturesToggle={ isPlan ? onFeaturesToggle : undefined }
 		/>
 	);
 };

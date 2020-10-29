@@ -55,25 +55,39 @@ export const getJetpackProductsShortNames = () => {
 };
 
 export const getJetpackProductsDisplayNames = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
-			{ translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'v2'
+				? translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'v2'
+				? translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Backup {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
-	const search = translate( 'Jetpack Search' );
+	const search =
+		currentCROvariant === 'v2' ? translate( 'Jetpack Site Search' ) : translate( 'Jetpack Search' );
 	const scan = translate( 'Jetpack Scan' );
 	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
 
@@ -144,13 +158,17 @@ export const getJetpackProductsTaglines = () => {
 			: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
-
-	const searchTagline = [ 'v1', 'v2' ].includes( currentCROvariant )
-		? translate( 'Great for sites with a lot of content' )
-		: translate( 'Recommended for sites with lots of products or content' );
+	const searchTagline =
+		{
+			v1: translate( 'Great for sites with a lot of content' ),
+			v2: translate( 'Recommended for sites with lots of content' ),
+		}[ currentCROvariant ] || translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
-	const antiSpamTagline = translate( 'Block spam automatically' );
+	const antiSpamTagline =
+		currentCROvariant === 'v2'
+			? translate( 'Powered By Akismet' )
+			: translate( 'Block spam automatically' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: {

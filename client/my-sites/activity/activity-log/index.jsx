@@ -67,6 +67,7 @@ import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 import { requestActivityLogs } from 'calypso/state/data-getters';
@@ -537,7 +538,7 @@ class ActivityLog extends Component {
 			);
 		}
 
-		const { context, rewindState } = this.props;
+		const { context, rewindState, siteSettingsUrl } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -551,7 +552,7 @@ class ActivityLog extends Component {
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
-				{ siteId && <TimeMismatchWarning siteId={ siteId } /> }
+				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
@@ -602,6 +603,7 @@ export default connect(
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
+			siteSettingsUrl: getSettingsUrl( state, siteId, 'general' ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteHasNoLog,

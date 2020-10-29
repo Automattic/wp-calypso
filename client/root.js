@@ -27,7 +27,7 @@ function setupLoggedOut() {
 	if ( config.isEnabled( 'desktop' ) ) {
 		page( '/', () => {
 			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/authorize' );
+				page.redirect( '/oauth-login' );
 			} else {
 				page.redirect( '/log-in' );
 			}

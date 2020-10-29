@@ -78,6 +78,33 @@ const Profile = createReactClass( {
 
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
+					<p>
+						{ this.props.translate(
+							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
+								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
+							{
+								components: {
+									profilelink: (
+										<a
+											onClick={ this.getClickHandler( 'My Profile Link' ) }
+											href={ gravatarProfileLink }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									hovercardslink: (
+										<a
+											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+
 					<EditGravatar />
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
@@ -131,7 +158,7 @@ const Profile = createReactClass( {
 							/>
 						</FormFieldset>
 
-						<p>
+						<p className="profile__submit-button-wrapper">
 							<FormButton
 								disabled={
 									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
@@ -144,32 +171,6 @@ const Profile = createReactClass( {
 							</FormButton>
 						</p>
 					</form>
-					<p className="profile__info-text">
-						{ this.props.translate(
-							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
-								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
-							{
-								components: {
-									profilelink: (
-										<a
-											onClick={ this.getClickHandler( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									hovercardslink: (
-										<a
-											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
 				</Card>
 
 				<ProfileLinks />

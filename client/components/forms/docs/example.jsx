@@ -211,6 +211,7 @@ class FormFields extends React.PureComponent {
 					<FormToggle checked={ false } disabled />
 					<br />
 					<FormToggle checked={ true } disabled />
+					<br />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>

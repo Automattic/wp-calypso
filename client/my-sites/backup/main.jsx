@@ -23,6 +23,7 @@ import {
 	// getMetaDiffForDailyBackup,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
+	isSuccessfulDailyBackup,
 	INDEX_FORMAT,
 } from 'calypso/lib/jetpack/backup-utils';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -48,6 +49,7 @@ import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filte
 import ActivityCardList from 'calypso/components/activity-card-list';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials.js';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
@@ -193,7 +195,7 @@ class BackupsPage extends Component {
 			logs,
 			moment,
 			siteSlug,
-			lastDateAvailable,
+			lastSuccessDateAvailable,
 			timezone,
 			gmtOffset,
 		} = this.props;
@@ -215,7 +217,7 @@ class BackupsPage extends Component {
 					<DailyBackupStatus
 						{ ...{
 							selectedDate: this.getSelectedDate(),
-							lastBackupDate: lastDateAvailable,
+							lastBackupDate: lastSuccessDateAvailable,
 							backup: lastBackup,
 							deltas,
 							// metaDiff, todo: commented because the non-english account issue
@@ -245,7 +247,7 @@ class BackupsPage extends Component {
 			siteCapabilities,
 			logs,
 			moment,
-			lastDateAvailable,
+			lastSuccessDateAvailable,
 			doesRewindNeedCredentials,
 		} = this.props;
 
@@ -265,7 +267,7 @@ class BackupsPage extends Component {
 						<DailyBackupStatusAlternate
 							{ ...{
 								selectedDate: this.getSelectedDate(),
-								lastBackupDate: lastDateAvailable,
+								lastBackupDate: lastSuccessDateAvailable,
 								backup,
 								isLatestBackup:
 									latestBackup && backup && latestBackup.activityId === backup.activityId,
@@ -363,7 +365,10 @@ class BackupsPage extends Component {
 					} ) }
 				>
 					<SidebarNavigation />
-					<TimeMismatchWarning siteId={ this.props.siteId } />
+					<TimeMismatchWarning
+						siteId={ this.props.siteId }
+						settingsUrl={ this.props.settingsUrl }
+					/>
 					{ ! isJetpackCloud() && (
 						<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 					) }
@@ -388,6 +393,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 		gmtOffset,
 	} );
 	let lastDateAvailable = null;
+	let lastSuccessDateAvailable = null;
 
 	if ( 'success' === logs.state ) {
 		logs.data.forEach( ( log ) => {
@@ -413,6 +419,9 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 				if ( backupDate > lastDateAvailable ) {
 					lastDateAvailable = backupDate;
 				}
+				if ( backupDate > lastSuccessDateAvailable && isSuccessfulDailyBackup( log ) ) {
+					lastSuccessDateAvailable = backupDate;
+				}
 			}
 
 			indexedLog[ index ].push( log );
@@ -423,6 +432,7 @@ const createIndexedLog = ( logs, timezone, gmtOffset ) => {
 		indexedLog,
 		oldestDateAvailable,
 		lastDateAvailable,
+		lastSuccessDateAvailable,
 	};
 };
 
@@ -453,7 +463,7 @@ const mapStateToProps = ( state ) => {
 	const allowRestore =
 		'active' === rewind.state && ! ( 'queued' === restoreStatus || 'running' === restoreStatus );
 
-	const { indexedLog, oldestDateAvailable, lastDateAvailable } = createIndexedLog(
+	const { indexedLog, oldestDateAvailable, lastSuccessDateAvailable } = createIndexedLog(
 		logs,
 		timezone,
 		gmtOffset
@@ -473,11 +483,12 @@ const mapStateToProps = ( state ) => {
 		siteId,
 		siteUrl: getSiteUrl( state, siteId ),
 		siteSlug: getSelectedSiteSlug( state ),
+		settingsUrl: getSettingsUrl( state, siteId, 'general' ),
 		timezone,
 		gmtOffset,
 		indexedLog,
 		oldestDateAvailable,
-		lastDateAvailable,
+		lastSuccessDateAvailable,
 		isLoadingBackups,
 	};
 };

@@ -7,34 +7,68 @@
 @import '~@automattic/onboarding/styles/mixins';
 
 .focused-launch__input {
-	.components-base-control__label {
-		font-weight: bold;
+	.components-text-control__input {
+		font-size: 1rem;
+		padding: 10px 16px;
+
+		.components-base-control__label {
+			margin: 0;
+		}
+	}
+}
+
+.focused-launch__mobile-only {
+	@include break-medium {
+		display: none;
+	}
+}
+
+.focused-launch__mobile-commentary {
+	font-size: 0.875rem;
+	color: var( --studio-gray-60 );
+	svg {
+		vertical-align: bottom;
 	}
 }
 
 .focused-launch__label {
-	font-weight: bold;
 	margin-bottom: 8px;
 	display: block;
+	font-size: 1.25rem;
+	color: var( --studio-gray-90 );
+	line-height: 24px;
 }
 
 .focused-launch__section {
-	margin: 20px 0;
+	// maybe use @include onboarding-block-margin;
+	margin: 0 20px 40px;
+
+	@include break-medium {
+		margin: 0 10px 40px;
+	}
 }
 
 .focused-launch__caption {
-	margin: 0;
+	margin: 12px 0;
+	font-size: 1rem;
+	color: #50575e;
 }
 
 .focused-launch__step {
 	display: flex;
-	justify-content: center;
-	gap: 10%;
 	opacity: 0.5;
 	transition: opacity 0.5s ease-in-out;
+
+	@include break-medium {
+		gap: 50px;
+	}
+
+	@include break-large {
+		gap: 100px;
+	}
 }
 
-// default highlighting the all steps when nothing is in focus
+// by default: highlight all steps when nothing is in focus
 .focused-launch__container:not( :focus-within ) {
 	.focused-launch__step {
 		opacity: 1;
@@ -46,15 +80,62 @@
 	opacity: 1;
 }
 
-.focused-launch__commentary {
-	margin-left: 10px;
-	border-left: 1px solid #eee;
-	display: flex;
-	align-items: center;
-	flex: 0.4;
-	padding: 0 5%;
+.focused-launch__side-commentary {
+	display: none;
+
+	@include break-medium {
+		// add a vertical gap before plan commentary to align
+		// with the input (not the step title).
+		&::before {
+			content: '';
+			display: block;
+			height: 18px;
+		}
+		margin-left: 10px;
+		border-left: 1px solid #eee;
+		display: flex;
+		flex-direction: column;
+		flex: 0.4;
+		padding: 0 42.5px;
+		max-width: 350px;
+
+		&-title {
+			font-size: 1.25rem;
+			line-height: 26px;
+			margin: 12px 0;
+		}
+
+		&-list {
+			list-style: none;
+		}
+
+		&-list-item {
+			font-size: 0.875rem;
+			margin: 4px 0;
+			display: flex;
+		}
+
+		&-list-item svg {
+			vertical-align: bottom;
+			width: 18px;
+			height: 18px;
+			margin-right: 12px;
+		}
+	}
 }
 
 .focused-launch__data-input {
-	flex: 0.6;
+	flex: 1;
+
+	@include break-medium {
+		flex: 0.6;
+	}
+}
+
+.onboarding-title {
+	@include onboarding-font-recoleta;
+
+	font-size: 2.25rem;
+	line-height: 40px;
+	color: #101517;
 }

@@ -7,15 +7,19 @@ import EventEmitter from 'events';
  * Internal dependencies
  */
 import loggerMiddleware from '../logger';
-import config from 'config';
+import config from 'calypso/config';
 
 const mockLogger = {
 	info: jest.fn(),
+	child: jest.fn( () => mockLogger ),
 };
 jest.mock( 'server/lib/logger', () => ( {
 	getLogger: () => mockLogger,
 } ) );
 jest.mock( 'config', () => jest.fn() );
+jest.mock( 'uuid', () => ( {
+	v4: jest.fn( () => '00000000-0000-0000-0000-000000000000' ),
+} ) );
 
 const fakeRequest = ( { method, url, ip, httpVersion, headers = {} } = {} ) => {
 	const req = new EventEmitter();
@@ -66,10 +70,10 @@ beforeEach( () => {
 
 afterEach( () => {
 	jest.useRealTimers();
-	jest.resetAllMocks();
+	jest.clearAllMocks();
 } );
 
-it( 'Adds a `logger` property to the request', () => {
+it( 'Adds a `logger` property to the request with the request id', () => {
 	const req = fakeRequest();
 
 	simulateRequest( {
@@ -78,6 +82,9 @@ it( 'Adds a `logger` property to the request', () => {
 	} );
 
 	expect( req.logger ).toBe( mockLogger );
+	expect( req.logger.child ).toHaveBeenCalledWith( {
+		reqId: '00000000-0000-0000-0000-000000000000',
+	} );
 } );
 
 it( 'It logs info about the request', () => {

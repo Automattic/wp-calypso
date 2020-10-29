@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { shallow } from 'enzyme';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -44,12 +45,14 @@ describe( 'TimeMismatchWarning', () => {
 	test( 'to render if GMT offsets do not match', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
-		expect( wrapper ).toMatchInlineSnapshot( `
-		<Localized(Notice)
-		  status="is-warning"
-		>
-		  This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
-		</Localized(Notice)>
-	` );
+		expect( wrapper ).toMatchSnapshot();
+	} );
+
+	test( 'to render the passed site settings URL', () => {
+		const translate = jest.fn( ( text ) => text );
+		getSiteGmtOffset.mockReturnValueOnce( 10 );
+		useTranslate.mockImplementationOnce( () => translate );
+		shallow( <TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" /> );
+		expect( translate ).toMatchSnapshot();
 	} );
 } );
