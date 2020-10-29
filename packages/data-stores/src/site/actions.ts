@@ -125,24 +125,15 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
-	/**
-	 * Updates site settings by posting to /sites/:site-id/settings
-	 *
-	 * @param siteId the site id
-	 * @param settings an object of {key: value} settings
-	 */
-	function* updateSiteSettings( siteId: number, settings: Record< string, unknown > ) {
-		return yield wpcomRequest( {
-			path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
-			apiVersion: '1.4',
-			body: settings,
-			method: 'POST',
-		} );
-	}
-
 	function* setSiteTitle( siteId: number, title: string ) {
 		try {
-			yield updateSiteSettings( siteId, { blogname: title } );
+			// extract this into its own function as a generic settings setter
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
+				apiVersion: '1.4',
+				body: { blogname: title },
+				method: 'POST',
+			} );
 			yield receiveSiteTitle( siteId, title );
 		} catch ( e ) {}
 	}
