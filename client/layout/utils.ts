@@ -22,8 +22,6 @@ let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
 export const handleScroll = ( event: any ): void => {
-	console.log( event );
-
 	const secondaryEl = document.getElementById( 'secondary' );
 	const windowHeight = window?.innerHeight;
 	const secondaryElHeight = secondaryEl?.scrollHeight;
