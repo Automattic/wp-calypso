@@ -51,6 +51,16 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		const wpGlobalName = _.camelCase( packageName.substr( '@wordpress/'.length ) );
 
 		describe( packageName, () => {
+			step(
+				`"${ wpGlobalName }" package should be available in the global window object`,
+				async () => {
+					const typeofPackage = await driver.executeScript(
+						`typeof window.wp['${ wpGlobalName }']`
+					);
+					assert.notStrictEqual( typeofPackage, 'undefined'`${ wpGlobalName } is undefined` );
+				}
+			);
+
 			for ( const feature of features ) {
 				step( `${ feature } should be available in ${ packageName }`, async () => {
 					const typeofExperimentalFeature = await driver.executeScript(
