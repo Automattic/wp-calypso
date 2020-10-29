@@ -387,6 +387,7 @@ export function itemToSelectorProduct(
 			// Using the same slug for any duration helps prevent unnecessary DOM updates
 			iconSlug: ( yearlyProductSlug || productSlug ) + iconAppend,
 			displayName: item.getTitle(),
+			buttonLabel: item.getButtonLabel?.(),
 			type,
 			subtypes: [],
 			shortName: item.getTitle(),

@@ -374,19 +374,37 @@ const getPlanBusinessDetails = () => ( {
 const getPlanJetpackSecurityDailyDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_DAILY,
-	getTitle: () => translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? translate( 'Jetpack Security {{em}}Daily{{/em}}', { components: { em: <em /> } } )
+			: translate( 'Security {{em}}Daily{{/em}}', { components: { em: <em /> } } ),
+	getButtonLabel: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? translate( 'Get Security {{em}}Daily{{/em}}', { components: { em: <em /> } } )
+			: undefined,
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[ constants.PLAN_JETPACK_FREE, ...constants.JETPACK_LEGACY_PLANS ].includes( plan ),
 	getDescription: () =>
-		translate(
-			'Enjoy the peace of mind of complete site protection. ' +
-				'Great for brochure sites, restaurants, blogs, and resume sites.'
-		),
-	getTagline: () =>
-		getJetpackCROActiveVersion() === 'v1'
-			? translate( 'Backup, Scan, and Anti-spam in one package' )
-			: translate( 'Best for sites with occasional updates' ),
+		getJetpackCROActiveVersion() === 'v2'
+			? translate(
+					'All of the essential Jetpack Security features in one package including Backup, Scan, Anti-spam and more.'
+			  )
+			: translate(
+					'Enjoy the peace of mind of complete site protection. ' +
+						'Great for brochure sites, restaurants, blogs, and resume sites.'
+			  ),
+	getTagline: () => {
+		if ( getJetpackCROActiveVersion() === 'v1' ) {
+			return translate( 'Backup, Scan, and Anti-spam in one package' );
+		}
+
+		if ( getJetpackCROActiveVersion() === 'v2' ) {
+			return translate( 'Essential WordPress protection' );
+		}
+
+		return translate( 'Best for sites with occasional updates' );
+	},
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () =>
 		getJetpackCROActiveVersion() === 'v2'
@@ -438,7 +456,14 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 const getPlanJetpackSecurityRealtimeDetails = () => ( {
 	group: constants.GROUP_JETPACK,
 	type: constants.TYPE_SECURITY_REALTIME,
-	getTitle: () => translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getTitle: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? translate( 'Jetpack Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } )
+			: translate( 'Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } ),
+	getButtonLabel: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? translate( 'Get Security {{em}}Real-time{{/em}}', { components: { em: <em /> } } )
+			: undefined,
 	getAudience: () => translate(),
 	availableFor: ( plan ) =>
 		[
@@ -448,11 +473,18 @@ const getPlanJetpackSecurityRealtimeDetails = () => ( {
 			...constants.JETPACK_LEGACY_PLANS,
 		].includes( plan ),
 	getDescription: () =>
-		translate(
-			'Additional security for sites with 24/7 activity. ' +
-				'Recommended for eCommerce stores, news organizations, and online forums.'
-		),
-	getTagline: () => translate( 'Best for sites with frequent updates' ),
+		getJetpackCROActiveVersion() === 'v2'
+			? translate(
+					'Get next level protection. Includes all essential security tools, but with on-demand scan, real time backup & more.'
+			  )
+			: translate(
+					'Additional security for sites with 24/7 activity. ' +
+						'Recommended for eCommerce stores, news organizations, and online forums.'
+			  ),
+	getTagline: () =>
+		getJetpackCROActiveVersion() === 'v2'
+			? translate( 'Always on protection, backs up as you edit' )
+			: translate( 'Best for sites with frequent updates' ),
 	getPlanCompareFeatures: () => [],
 	getPlanCardFeatures: () =>
 		getJetpackCROActiveVersion() === 'v2'
