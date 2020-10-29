@@ -21,12 +21,11 @@ let pinnedSidebarTop = true;
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
-export const handleScroll = ( event: any ): void => {
+export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	// Do not run until next requestAnimationFrame
 	if ( ticking ) {
 		return;
 	}
-
 	const secondaryEl = document.getElementById( 'secondary' );
 	const windowHeight = window?.innerHeight;
 	const secondaryElHeight = secondaryEl?.scrollHeight;
