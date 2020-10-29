@@ -21,10 +21,10 @@ import {
 	setSectionMiddleware,
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
-import { redirectLoggedIn } from 'calypso/controller';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { RouteProvider } from 'calypso/components/route';
+import redirectLoggedIn from './redirect-logged-in';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
