@@ -562,6 +562,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [
 				{
 					product_slug: 'value_bundle',
+					bill_period: 365,
 				},
 			],
 		};
@@ -572,6 +573,25 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+	} );
+
+	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle_monthly',
+					bill_period: 31,
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
