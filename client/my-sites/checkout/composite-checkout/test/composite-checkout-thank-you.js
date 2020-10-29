@@ -105,6 +105,25 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/offer-quickstart-session/:receiptId/foo.bar' );
 	} );
 
+	// Note: This just verifies the existing behavior; this URL is invalid unless
+	// placed after a `redirectTo` query string; see the redirect payment
+	// processor
+	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
+	} );
+
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
 		const cart = { products: [ { id: 'something' } ] };
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );

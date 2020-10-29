@@ -1,24 +1,24 @@
 /**
  * External dependencies
  */
-import config, { isCalypsoLive } from 'config';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
 import PropTypes from 'prop-types';
-import { authorizeQueryDataSchema } from './schema';
 import { head, includes, isEmpty, split } from 'lodash';
 import page from 'page';
-import { urlToSlug } from 'lib/url';
 
 /**
  * Internal dependencies
  */
-import { addQueryArgs, externalRedirect, untrailingslashit } from 'lib/route';
+import config, { isCalypsoLive } from 'calypso/config';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
+import { addQueryArgs, externalRedirect, untrailingslashit } from 'calypso/lib/route';
+import { urlToSlug } from 'calypso/lib/url';
 import {
 	JPC_PATH_PLANS,
 	JPC_PATH_REMOTE_INSTALL,
 	REMOTE_PATH_AUTH,
 	JPC_PATH_CHECKOUT,
 } from './constants';
+import { authorizeQueryDataSchema } from './schema';
 
 export function authQueryTransformer( queryObject ) {
 	return {
@@ -141,9 +141,10 @@ export function parseAuthorizationQuery( query ) {
  * @param  {string}     type Redirect type
  * @param  {string}     url Site url
  * @param  {?string}    product Product slug
+ * @param  {?object}    queryArgs Query parameters
  * @returns {string}        Redirect url
  */
-export function redirect( type, url, product = null ) {
+export function redirect( type, url, product = null, queryArgs = {} ) {
 	let urlRedirect = '';
 	const instr = '/jetpack/connect/instructions';
 
@@ -169,7 +170,7 @@ export function redirect( type, url, product = null ) {
 
 	if ( type === 'checkout' ) {
 		urlRedirect = `${ JPC_PATH_CHECKOUT }/${ urlToSlug( url ) }/${ product }`;
-		page.redirect( urlRedirect );
+		page.redirect( addQueryArgs( queryArgs, urlRedirect ) );
 	}
 
 	return urlRedirect;

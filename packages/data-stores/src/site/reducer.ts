@@ -68,6 +68,11 @@ export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Actio
 		return { ...remainingState };
 	} else if ( action.type === 'RESET_SITE_STORE' ) {
 		return {};
+	} else if ( action.type === 'RECEIVE_SITE_TITLE' ) {
+		return {
+			...state,
+			[ action.siteId ]: { ...( state[ action.siteId ] as SiteDetails ), name: action.title },
+		};
 	}
 	return state;
 };

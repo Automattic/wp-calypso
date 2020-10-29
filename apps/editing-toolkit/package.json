@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.7.2",
+	"version": "2.8.2",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -130,7 +130,7 @@
 		"classnames": "^2.2.6",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
-		"eslint": "^6.8.0",
+		"eslint": "^7.12.0",
 		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",

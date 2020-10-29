@@ -2,6 +2,14 @@
 
 ## master
 
+## 6.4.0
+
+- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for '*.md.jsx' and '*.md.js' files
+- Upgraded dependencies
+  - typescript to ^4.0.3
+  - terser-webpack-plugin to "4.2.2
+- Adds option to customize the [`output.jsonpFunction` setting for webpack](https://v4.webpack.js.org/configuration/output/#outputjsonpfunction)
+
 ## 6.3.0
 
 - Add new `postCssOptions` option for the SASS loader, allowing more powerful customization of the

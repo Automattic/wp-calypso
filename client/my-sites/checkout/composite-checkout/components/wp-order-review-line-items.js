@@ -583,7 +583,7 @@ function DomainDiscountCallout( { item } ) {
 
 	const isFreeBundledDomainRegistration = item.wpcom_meta?.is_bundled && item.amount.value === 0;
 	if ( isFreeBundledDomainRegistration ) {
-		return <DiscountCallout>{ translate( 'First year free' ) }</DiscountCallout>;
+		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 
 	const isFreeDomainMapping =

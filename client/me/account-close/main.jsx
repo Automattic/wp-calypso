@@ -14,7 +14,6 @@ import { map } from 'lodash';
  */
 import HeaderCake from 'calypso/components/header-cake';
 import ActionPanel from 'calypso/components/action-panel';
-import ActionPanelTitle from 'calypso/components/action-panel/title';
 import ActionPanelBody from 'calypso/components/action-panel/body';
 import ActionPanelFigure from 'calypso/components/action-panel/figure';
 import ActionPanelFigureHeader from 'calypso/components/action-panel/figure-header';
@@ -34,6 +33,7 @@ import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/select
 import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
 import userUtils from 'calypso/lib/user/utils';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -88,7 +88,7 @@ class AccountSettingsClose extends Component {
 			purchasedPremiumThemes,
 		} = this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
-		const containerClasses = classnames( 'account-close', 'main', {
+		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
@@ -96,13 +96,12 @@ class AccountSettingsClose extends Component {
 		return (
 			<div className={ containerClasses } role="main">
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
 				<ActionPanel>
-					<ActionPanelTitle className="account-close__heading">
-						{ translate( 'Close account' ) }
-					</ActionPanelTitle>
 					<ActionPanelBody>
 						{ isDeletePossible && (
 							<ActionPanelFigure>

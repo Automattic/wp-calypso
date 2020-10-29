@@ -12,7 +12,6 @@ export default function MyComponent() {
 		<div className="you-rock">
 			<FormToggle
 				checked={ this.props.checked }
-				toggling={ this.props.toggling }
 				disabled={ this.props.disabled }
 				onChange={ this.props.onChange }
 				onKeyDown={ this.props.onKeyDown }
@@ -31,7 +30,6 @@ export default function MyComponent() {
 ## Props
 
 - `checked`: (bool) the current status of the toggle.
-- `toggling`: (bool) whether the toggle is in the middle of being performed.
 - `disabled`: (bool) whether the toggle should be in the disabled state.
 - `onChange`: (callback) what should be executed once the user clicks the toggle.
 - `onKeyDown`: (callback) what should be executed once the user presses a key while the toggle is selected.

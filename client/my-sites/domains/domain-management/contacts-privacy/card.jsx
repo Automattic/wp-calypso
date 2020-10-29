@@ -73,7 +73,6 @@ class ContactsPrivacyCard extends React.Component {
 					<FormToggle
 						wrapperClassName="edit__privacy-protection-toggle"
 						checked={ privateDomain }
-						toggling={ isUpdatingPrivacy }
 						disabled={ isUpdatingPrivacy || ! privacyAvailable }
 						onChange={ this.togglePrivacy }
 					>
@@ -117,7 +116,6 @@ class ContactsPrivacyCard extends React.Component {
 					<FormToggle
 						wrapperClassName="edit__disclose-contact-information"
 						checked={ contactInfoDisclosed }
-						toggling={ isUpdatingPrivacy }
 						disabled={ isUpdatingPrivacy || isPendingIcannVerification }
 						onChange={ this.toggleContactInfo }
 					>

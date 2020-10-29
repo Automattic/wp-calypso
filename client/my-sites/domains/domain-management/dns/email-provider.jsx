@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
  */
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -92,7 +91,7 @@ class EmailProvider extends Component {
 						<FormInputValidation text={ translate( 'Invalid Token' ) } isError />
 					) }
 				</FormFieldset>
-				<FormFooter>
+				<div>
 					<FormButton disabled={ ! isDataValid || submitting } onClick={ this.onAddDnsRecords }>
 						{ translate( 'Set up %(providerName)s', {
 							args: { providerName: name },
@@ -101,7 +100,7 @@ class EmailProvider extends Component {
 								'provider that this template is used for, for example G Suite or Office 365',
 						} ) }
 					</FormButton>
-				</FormFooter>
+				</div>
 			</form>
 		);
 	}

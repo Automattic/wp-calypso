@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { includes, isEmpty, noop, flowRight, has, trim, sortBy, reverse } from 'lodash';
-import url from 'url';
+import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
 /**
@@ -270,11 +270,6 @@ class SiteImporterInputPane extends React.Component {
 				) }
 				{ importStage === 'idle' && (
 					<ImporterActionButtonContainer>
-						<ImporterCloseButton
-							importerStatus={ importerStatus }
-							site={ site }
-							isEnabled={ isEnabled }
-						/>
 						<ImporterActionButton
 							primary
 							disabled={ isLoading || isEmpty( this.state.siteURLInput ) }
@@ -283,6 +278,11 @@ class SiteImporterInputPane extends React.Component {
 						>
 							{ this.props.translate( 'Continue' ) }
 						</ImporterActionButton>
+						<ImporterCloseButton
+							importerStatus={ importerStatus }
+							site={ site }
+							isEnabled={ isEnabled }
+						/>
 					</ImporterActionButtonContainer>
 				) }
 			</div>

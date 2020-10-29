@@ -50,8 +50,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 	isInEditor,
 }: {
 	siteSlug: string | undefined;
@@ -68,8 +66,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult: boolean;
 	hideNudge: boolean;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 	isInEditor?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
@@ -172,8 +168,6 @@ export default function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge,
-		didPurchaseFail,
-		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -278,15 +272,11 @@ function maybeShowPlanBumpOffer( {
 	cart,
 	siteSlug,
 	orderId,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 } ): string | undefined {
 	if ( orderId ) {
 		return;
@@ -304,16 +294,12 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -339,8 +325,6 @@ function getRedirectUrlForConciergeNudge( {
 			cart,
 			orderId,
 			siteSlug,
-			didPurchaseFail,
-			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
 			return upgradePath;

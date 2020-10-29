@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { useTranslate } from 'i18n-calypso';
-import React, { useState, useCallback, FunctionComponent, ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, FunctionComponent, ReactNode } from 'react';
 
 /**
  * Internal dependencies
@@ -15,18 +15,18 @@ import FeaturesItem from './features-item';
 /**
  * Type dependencies
  */
-import type {
-	ProductCardFeatures,
-	ProductCardFeaturesSection,
-	ProductCardFeaturesItem,
-} from './types';
+import type { ProductCardFeatures, ProductCardFeaturesItem } from './types';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
 
 export type Props = {
 	className?: string;
 	features: ProductCardFeatures;
+	billingTerm: Duration;
 	isExpanded?: boolean;
 	productSlug?: string;
 	ctaElt: ReactNode;
+	onFeaturesToggle?: () => void;
+	onButtonClick: PurchaseCallback;
 };
 
 const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
@@ -34,9 +34,15 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 	features,
 	isExpanded: isExpandedByDefault,
 	productSlug,
+	billingTerm,
 	ctaElt,
+	onFeaturesToggle,
+	onButtonClick,
 } ) => {
 	const trackProps = productSlug ? { product_slug: productSlug } : {};
+
+	const [ isExpanded, setExpanded ] = useState( !! isExpandedByDefault );
+
 	const trackShowFeatures = useTrackCallback(
 		undefined,
 		'calypso_product_features_open',
@@ -47,18 +53,31 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 		'calypso_product_features_close',
 		trackProps
 	);
-	const [ isExpanded, setExpanded ] = useState( !! isExpandedByDefault );
+
 	const onOpen = useCallback( () => {
-		setExpanded( true );
 		trackShowFeatures();
-	}, [ setExpanded, trackShowFeatures ] );
+
+		if ( onFeaturesToggle ) {
+			onFeaturesToggle();
+		} else {
+			setExpanded( true );
+		}
+	}, [ setExpanded, trackShowFeatures, onFeaturesToggle ] );
 	const onClose = useCallback( () => {
-		setExpanded( false );
 		trackHideFeatures();
-	}, [ setExpanded, trackHideFeatures ] );
+
+		if ( onFeaturesToggle ) {
+			onFeaturesToggle();
+		} else {
+			setExpanded( false );
+		}
+	}, [ setExpanded, trackHideFeatures, onFeaturesToggle ] );
+
 	const translate = useTranslate();
 
 	const { items, more } = features;
+
+	useEffect( () => setExpanded( !! isExpandedByDefault ), [ isExpandedByDefault ] );
 
 	return (
 		<FoldableCard
@@ -69,33 +88,25 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 			onOpen={ onOpen }
 			onClose={ onClose }
 		>
-			<ul className="jetpack-product-card-alt-2__features-list">
-				{ ( items as ( ProductCardFeaturesItem | ProductCardFeaturesSection )[] ).map(
-					( item, i ) => {
-						if ( 'heading' in item && 'list' in item ) {
-							return (
-								<li key={ i }>
-									<p className="jetpack-product-card-alt-2__features-category">{ item.heading }</p>
-									<ul className="jetpack-product-card-alt-2__features-list">
-										{ item.list.map( ( subitem, j ) => (
-											<FeaturesItem key={ j } item={ subitem } />
-										) ) }
-									</ul>
-								</li>
-							);
-						}
-
-						return <FeaturesItem key={ i } item={ item } />;
-					}
+			<div>
+				<ul className="jetpack-product-card-alt-2__features-list">
+					{ ( items as ProductCardFeaturesItem[] ).map( ( item, i ) => (
+						<FeaturesItem
+							key={ i }
+							item={ item }
+							billingTerm={ billingTerm }
+							onProductClick={ onButtonClick }
+						/>
+					) ) }
+				</ul>
+				{ more && (
+					<div className="jetpack-product-card-alt-2__feature-more">
+						<ExternalLink icon={ true } href={ more.url }>
+							{ more.label }
+						</ExternalLink>
+					</div>
 				) }
-			</ul>
-			{ more && (
-				<div className="jetpack-product-card-alt-2__feature-more">
-					<ExternalLink icon={ true } href={ more.url }>
-						{ more.label }
-					</ExternalLink>
-				</div>
-			) }
+			</div>
 			<div className="jetpack-product-card-alt-2__feature-cta">{ ctaElt }</div>
 		</FoldableCard>
 	);

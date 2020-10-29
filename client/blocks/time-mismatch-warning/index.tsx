@@ -10,21 +10,20 @@ import { useTranslate } from 'i18n-calypso';
  */
 import Notice from 'calypso/components/notice';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteSlug from 'calypso/state/sites/selectors/get-site-slug';
 import { preventWidows } from 'calypso/lib/formatting';
 
 interface ExternalProps {
 	status?: string;
-	siteId?: number;
+	siteId: number | null;
+	settingsUrl?: string;
 }
 
 export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	status = 'is-warning',
 	siteId,
+	settingsUrl = '#',
 }: ExternalProps ) => {
 	const translate = useTranslate();
-	const siteSlug = useSelector( ( state ) => siteId && getSiteSlug( state, siteId ) );
-	const settingsUrl = siteSlug ? `/settings/general/${ siteSlug }` : '#';
 	const userOffset = new Date().getTimezoneOffset() / -60; // Negative as function returns minutes *behind* UTC.
 	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
 

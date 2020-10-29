@@ -14,7 +14,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
  * @returns {Array} An array of jitms
  */
 export const getJITM = ( state, messagePath ) =>
-	get( state, [ 'jitm', 'sitePathJITM', messagePath + getSelectedSiteId( state ) ], null );
+	get( state, [ 'jitm', 'sitePathJITM', messagePath + getSelectedSiteId( state ) ], [] );
 
 /**
  * Get the top jitm available for the current site/section
@@ -26,18 +26,9 @@ export const getJITM = ( state, messagePath ) =>
 export const getTopJITM = ( state, messagePath ) => {
 	const jitms = getJITM( state, messagePath );
 
-	// If JITMs haven't been populated from network for given messagePath + siteId
-	// then fallback to the most recent JITM for the given siteId.
-	if ( null === jitms ) {
-		return state?.jitm?.sitePathJITMCache[ getSelectedSiteId( state ) ] || null;
-	}
-
-	// If JITMs have been populated for the given messagePath + siteId and they are
-	// genuinely empty (ie: no messages) then legitimately return null to signify this.
-	if ( ! jitms.length ) {
+	if ( jitms.length === 0 ) {
 		return null;
 	}
 
-	// Otherwise default to returning the top JITM
 	return jitms[ 0 ];
 };

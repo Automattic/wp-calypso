@@ -182,7 +182,7 @@
 
 	.connections__sharing-service-accounts-detail {
 		h2 {
-			font-size: 1.2em;
+			font-size: 1rem;
 		}
 
 		.new-account {
@@ -190,7 +190,7 @@
 			background: var( --color-surface );
 			// stylelint-disable-next-line selector-max-id
 			#content & {
-				font-size: 0.9em;
+				font-size: 0.875rem;
 			}
 		}
 	}
@@ -480,10 +480,6 @@
 			opacity: 0.3;
 		}
 	}
-}
-
-.sharing-buttons__submit {
-	float: right;
 }
 
 .sharing-buttons-tray__buttons {

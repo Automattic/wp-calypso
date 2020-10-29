@@ -31,6 +31,7 @@ function Edit( { hasInnerBlocks, parentClientId, isSelected } ) {
 					<InnerBlocks
 						renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
 						templateLock={ false }
+						templateInsertUpdatesSelection={ false }
 						template={ [
 							[
 								'core/paragraph',

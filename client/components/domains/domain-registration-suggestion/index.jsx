@@ -39,6 +39,7 @@ const NOTICE_GREEN = '#4ab866';
 class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
+		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		buttonStyles: PropTypes.object,
@@ -123,7 +124,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		const {
 			cart,
 			domainsWithPlansOnly,
-			showStrikedOutPrice,
+			isSignupStep,
 			selectedSite,
 			suggestion,
 			translate,
@@ -145,7 +146,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			buttonStyles = { ...buttonStyles, primary: false };
 		} else {
 			buttonContent =
-				! showStrikedOutPrice &&
+				! isSignupStep &&
 				shouldBundleDomainWithPlan( domainsWithPlansOnly, selectedSite, cart, suggestion )
 					? translate( 'Upgrade', {
 							context: 'Domain mapping suggestion button with plan upgrade',

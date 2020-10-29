@@ -44,6 +44,8 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import config from 'calypso/config';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
@@ -56,7 +58,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { CartData } from 'calypso/client/blocks/editor-checkout-modal';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Types
@@ -94,7 +96,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: CartData;
+	cartData?: RequestCart;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -369,16 +371,17 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			const isGutenboarding =
-				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
-			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
+			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
+			const isSiteUnlaunched = this.props.isSiteUnlaunched;
+			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl,
+				isSiteUnlaunched,
+				launchUrl,
 				isNewLaunchMobile,
 				isExperimental,
 				isPersistentLaunchButton,
@@ -445,8 +448,14 @@ class CalypsoifyIframe extends Component<
 	};
 
 	handlePostStatusChange = ( status: string ) => {
-		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+		const { creatingNewHomepage, editedPostId, isSiteWPForTeams, siteUrl } = this.props;
+
+		if ( creatingNewHomepage && 'publish' === status ) {
 			this.setFrontPage();
+		}
+
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
 
@@ -824,11 +833,13 @@ const mapStateToProps = (
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
+		siteUrl: getSiteUrl( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(

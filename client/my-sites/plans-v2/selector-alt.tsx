@@ -16,6 +16,7 @@ import QueryProducts from './query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import Main from 'calypso/components/main';
@@ -23,6 +24,7 @@ import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import ProductsGridAlt from './products-grid-alt';
+import ProductsGridAlt2 from './products-grid-alt-2';
 
 /**
  * Type dependencies
@@ -132,6 +134,7 @@ const SelectorPageAlt = ( {
 
 	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
+	const Grid = getJetpackCROActiveVersion() === 'v2' ? ProductsGridAlt2 : ProductsGridAlt;
 
 	return (
 		<Main className="selector-alt__main" wideLayout>
@@ -146,7 +149,7 @@ const SelectorPageAlt = ( {
 				duration={ currentDuration }
 			/>
 
-			<ProductsGridAlt
+			<Grid
 				duration={ currentDuration }
 				onSelectProduct={ selectProduct }
 				urlQueryArgs={ urlQueryArgs }
