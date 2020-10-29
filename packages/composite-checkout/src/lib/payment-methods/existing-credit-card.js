@@ -90,7 +90,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
-			<div>
+			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
 		</React.Fragment>
