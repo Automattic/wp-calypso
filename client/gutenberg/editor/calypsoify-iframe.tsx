@@ -56,7 +56,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import { RequestCart } from '@automattic/shopping-cart';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Types
