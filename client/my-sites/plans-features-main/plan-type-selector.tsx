@@ -37,10 +37,10 @@ interface PathArgs {
 	[ key: string ]: Primitive;
 }
 
-type GeneratePathFunction = ( args: PathArgs ) => string;
-type GeneratePathProps = { generatePath: GeneratePathFunction };
+type GeneratePathFunction = ( props: Partial< Props >, args: PathArgs ) => string;
 
-export const getGeneratePath = ( props: Props ): GeneratePathFunction => {
+export const generatePath: GeneratePathFunction = ( props, additionalArgs = {} ) => {
+	const { intervalType = '' } = additionalArgs;
 	const plansUrl = props.basePlansPath || '/plans';
 	const defaultArgs = {
 		customerType: null,
@@ -49,28 +49,23 @@ export const getGeneratePath = ( props: Props ): GeneratePathFunction => {
 		plan: props.selectedPlan,
 	};
 
-	return ( additionalArgs = {} ) => {
-		const { intervalType = '' } = additionalArgs;
-
-		if ( props.isInSignup || 'customerType' in additionalArgs ) {
-			const pathname = typeof location !== 'undefined' ? location.pathname : '';
-			return addQueryArgs(
-				{
-					...defaultArgs,
-					...additionalArgs,
-				},
-				pathname
-			);
-		}
-
+	if ( props.isInSignup || 'customerType' in additionalArgs ) {
 		return addQueryArgs(
 			{
 				...defaultArgs,
-				...omit( additionalArgs, 'intervalType' ),
+				...additionalArgs,
 			},
-			plansLink( plansUrl, props.siteSlug, intervalType, true )
+			document.location.search
 		);
-	};
+	}
+
+	return addQueryArgs(
+		{
+			...defaultArgs,
+			...omit( additionalArgs, 'intervalType' ),
+		},
+		plansLink( plansUrl, props.siteSlug, intervalType, true )
+	);
 };
 
 type PopupMessageProps = {
@@ -111,14 +106,11 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 };
 
 type MonthlyPricingProps = { isMonthlyPricingTest?: boolean };
-type IntervalTypeProps = Pick< Props, 'intervalType' > & GeneratePathProps & MonthlyPricingProps;
+type IntervalTypeProps = Pick< Props, 'intervalType' > & MonthlyPricingProps;
 
-export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( {
-	intervalType,
-	generatePath,
-	isMonthlyPricingTest,
-} ) => {
+export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
+	const { intervalType, isMonthlyPricingTest } = props;
 	const [ spanRef, setSpanRef ] = useState< HTMLSpanElement >();
 	const segmentClasses = classNames( 'plan-features__interval-type', 'price-toggle', {
 		'is-monthly-pricing-test': isMonthlyPricingTest,
@@ -130,7 +122,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 		<SegmentedControl compact className={ segmentClasses } primary={ true }>
 			<SegmentedControl.Item
 				selected={ intervalType === 'monthly' }
-				path={ generatePath( { intervalType: 'monthly' } ) }
+				path={ generatePath( props, { intervalType: 'monthly' } ) }
 			>
 				<span>
 					{ isMonthlyPricingTest ? translate( 'Pay monthly' ) : translate( 'Monthly billing' ) }
@@ -139,7 +131,7 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 
 			<SegmentedControl.Item
 				selected={ intervalType === 'yearly' }
-				path={ generatePath( { intervalType: 'yearly' } ) }
+				path={ generatePath( props, { intervalType: 'yearly' } ) }
 			>
 				<span ref={ ( ref ) => ref && setSpanRef( ref ) }>
 					{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
@@ -152,27 +144,25 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	);
 };
 
-type CustomerTypeProps = Pick< Props, 'customerType' > & GeneratePathProps;
+type CustomerTypeProps = Pick< Props, 'customerType' >;
 
-export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( {
-	customerType,
-	generatePath,
-} ) => {
+export const CustomerTypeToggle: React.FunctionComponent< CustomerTypeProps > = ( props ) => {
 	const translate = useTranslate();
+	const { customerType } = props;
 	const segmentClasses = classNames( 'plan-features__interval-type', 'is-customer-type-toggle' );
 
 	return (
 		<SegmentedControl className={ segmentClasses } primary={ true }>
 			<SegmentedControl.Item
 				selected={ customerType === 'personal' }
-				path={ generatePath( { customerType: 'personal' } ) }
+				path={ generatePath( props, { customerType: 'personal' } ) }
 			>
 				{ translate( 'Blogs and personal sites' ) }
 			</SegmentedControl.Item>
 
 			<SegmentedControl.Item
 				selected={ customerType === 'business' }
-				path={ generatePath( { customerType: 'business' } ) }
+				path={ generatePath( props, { customerType: 'business' } ) }
 			>
 				{ translate( 'Business sites and online stores' ) }
 			</SegmentedControl.Item>
@@ -185,20 +175,12 @@ const PlanTypeSelector: React.FunctionComponent< Props > = ( props ) => {
 		return null;
 	}
 
-	const generatePath = getGeneratePath( props );
-
 	if ( props.displayJetpackPlans || props.isMonthlyPricingTest ) {
-		return (
-			<IntervalTypeToggle
-				{ ...props }
-				generatePath={ generatePath }
-				isMonthlyPricingTest={ props.isMonthlyPricingTest }
-			/>
-		);
+		return <IntervalTypeToggle { ...props } isMonthlyPricingTest={ props.isMonthlyPricingTest } />;
 	}
 
 	if ( props.withWPPlanTabs && ! props.hidePersonalPlan ) {
-		return <CustomerTypeToggle { ...props } generatePath={ generatePath } />;
+		return <CustomerTypeToggle { ...props } />;
 	}
 
 	return null;
