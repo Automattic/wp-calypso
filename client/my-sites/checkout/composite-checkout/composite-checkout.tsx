@@ -45,13 +45,13 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
+import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms.jsx';
 import {
 	useStoredCards,
 	useIsApplePayAvailable,
 	filterAppropriatePaymentMethods,
 } from './payment-method-helpers';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import CheckoutTerms from '../checkout/checkout-terms.jsx';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
