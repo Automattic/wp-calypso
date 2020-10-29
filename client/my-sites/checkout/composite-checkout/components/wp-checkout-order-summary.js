@@ -64,8 +64,9 @@ export default function WPCheckoutOrderSummary( {
 
 	const plan = usePlanInCart();
 	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
-	const isMonthlyPricingTest = plan && 'treatment' === getABTestVariation( 'monthlyPricing' );
 	const hasRenewalInCart = useHasRenewalInCart();
+	const isMonthlyPricingTest =
+		plan && ! hasRenewalInCart && 'treatment' === getABTestVariation( 'monthlyPricing' );
 
 	return (
 		<CheckoutSummaryCard
@@ -86,7 +87,7 @@ export default function WPCheckoutOrderSummary( {
 					/>
 				) }
 				{ ! isMonthlyPricingTest && <CheckoutSummaryHelp /> }
-				{ isMonthlyPricingTest && hasMonthlyPlan && ! hasRenewalInCart && (
+				{ isMonthlyPricingTest && hasMonthlyPlan && (
 					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
 				) }
 			</CheckoutSummaryFeatures>

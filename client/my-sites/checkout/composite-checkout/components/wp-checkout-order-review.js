@@ -45,8 +45,11 @@ export default function WPCheckoutOrderReview( {
 	const hasDotcomPlan = Boolean(
 		items.find( ( { wpcom_meta } ) => isWpComPlan( wpcom_meta?.product_slug ) )
 	);
+	const hasRenewal = Boolean(
+		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
+	);
 	const isMonthlyPricingTest =
-		hasDotcomPlan && 'treatment' === getABTestVariation( 'monthlyPricing' );
+		hasDotcomPlan && ! hasRenewal && 'treatment' === getABTestVariation( 'monthlyPricing' );
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 
