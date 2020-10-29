@@ -12,7 +12,7 @@ import debugFactory from 'debug';
  */
 import { requestPlans } from 'calypso/state/plans/actions';
 import { computeProductsWithPrices } from 'calypso/state/products-list/selectors';
-import { getPlan, findPlansKeys } from 'calypso/lib/plans';
+import { getPlan, findPlansKeys, isWpComFreePlan } from 'calypso/lib/plans';
 import {
 	GROUP_WPCOM,
 	GROUP_JETPACK,
@@ -23,6 +23,7 @@ import {
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
 import { getABTestVariation } from 'calypso/lib/abtest';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -31,7 +32,11 @@ export function useProductVariants( { siteId, productSlug } ) {
 	const reduxDispatch = useDispatch();
 
 	const variantProductSlugs = useVariantPlanProductSlugs( productSlug );
-	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
+
+	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
+	const shouldOverride =
+		isWpComFreePlan( currentPlan?.productSlug ) &&
+		'treatment' === getABTestVariation( 'monthlyPricing' );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(
@@ -73,7 +78,7 @@ export function useProductVariants( { siteId, productSlug } ) {
 					productSlug: variant.planSlug,
 					productId: variant.product.product_id,
 				} ),
-				isMonthlyPricingTest
+				shouldOverride
 			)
 		);
 	};
