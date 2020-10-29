@@ -115,6 +115,9 @@ export interface SelectorProduct extends SelectorProductCost {
 	legacy?: boolean;
 	hidePrice?: boolean;
 	externalUrl?: string;
+	displayTerm?: Duration;
+	displayPrice?: number;
+	displayCurrency?: string;
 }
 
 export interface AvailableProductData {

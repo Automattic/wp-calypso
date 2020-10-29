@@ -65,13 +65,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 
 	// Calculate the product price.
-	const { originalPrice, discountedPrice } = useItemPrice(
-		siteId,
-		item,
-		item?.monthlyProductSlug || ''
-	);
-
-	const isFree = originalPrice === -1 && discountedPrice === -1;
+	const { originalPrice } = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
 
 	// Handles expiry.
 	const moment = useLocalizedMoment();
@@ -101,8 +95,8 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			productName={ productName }
 			subheadline={ item.tagline }
 			description={ description }
-			currencyCode={ currencyCode }
-			billingTerm={ item.term }
+			currencyCode={ item.displayCurrency || currencyCode }
+			billingTerm={ item.displayTerm || item.term }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
@@ -111,8 +105,6 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 				showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } />
 			}
 			originalPrice={ originalPrice }
-			discountedPrice={ discountedPrice }
-			isFree={ isFree }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
