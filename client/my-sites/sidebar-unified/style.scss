@@ -440,6 +440,7 @@ $font-size: rem( 14px );
 	.is-nav-unification {
 		&.focus-content .layout__content {
 			padding: 71px 24px 24px;
+			transition: padding 0.15s ease-in-out;
 		}
 
 		.sidebar {

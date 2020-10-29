@@ -52,7 +52,7 @@ import 'calypso/components/environment-badge/style.scss';
 import './style.scss';
 import { getShouldShowAppBanner, handleScroll } from './utils';
 
-const scrollCallback = () => handleScroll();
+const scrollCallback = ( e ) => handleScroll( e );
 
 class Layout extends Component {
 	static propTypes = {
@@ -82,12 +82,14 @@ class Layout extends Component {
 		}
 		if ( config.isEnabled( 'nav-unification' ) ) {
 			window.addEventListener( 'scroll', scrollCallback );
+			window.addEventListener( 'resize', scrollCallback );
 		}
 	}
 
 	componentWillUnmount() {
 		if ( config.isEnabled( 'nav-unification' ) ) {
 			window.removeEventListener( 'scroll', scrollCallback );
+			window.removeEventListener( 'resize', scrollCallback );
 		}
 	}
 

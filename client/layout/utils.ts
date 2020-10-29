@@ -21,12 +21,13 @@ let pinnedSidebarTop = true;
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
-export const handleScroll = (): void => {
+export const handleScroll = ( event: any ): void => {
+	console.log( event );
+
 	const secondaryEl = document.getElementById( 'secondary' );
 	const windowHeight = window?.innerHeight;
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
-
 
 	if (
 		typeof window !== undefined &&
@@ -36,7 +37,7 @@ export const handleScroll = (): void => {
 		masterbarHeight !== undefined &&
 		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
 		! ticking && // Do not run until next requestAnimationFrame
-		secondaryElHeight + masterbarHeight > windowHeight // Only run when sidebar & masterbar are taller than window height.
+		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
 	) {
 		// Throttle scroll event
 		window.requestAnimationFrame( function () {
@@ -71,7 +72,7 @@ export const handleScroll = (): void => {
 				return;
 			}
 
-			if ( scrollY > lastScrollPosition ) {
+			if ( scrollY >= lastScrollPosition ) {
 				// When a down scroll has been detected.
 
 				if ( pinnedSidebarTop ) {
