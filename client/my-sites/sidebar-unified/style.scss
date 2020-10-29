@@ -74,17 +74,17 @@ $font-size: rem( 14px );
 			}
 
 			&::after {
-				display: none;
-				right: 0;
-				border: solid 8px transparent;
 				content: ' ';
-				height: 0;
-				width: 0;
+				display: none;
 				position: absolute;
-				pointer-events: none;
-				border-right-color: #f1f1f1;
 				top: 50%;
+				right: 0;
+				width: 0;
+				height: 0;
 				margin-top: -8px;
+				border: solid 8px transparent;
+				border-right-color: #f1f1f1;
+				pointer-events: none;
 			}
 		}
 
