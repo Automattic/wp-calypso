@@ -96,6 +96,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'h4':
 		case 'h5':
 		case 'h6':
+		case 'figure':
 			switch ( range_info_type ) {
 				case 'list':
 					range_info_type = 'span';
@@ -224,6 +225,12 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 			// [ { id: [index of range in range_data], len: [span of range indices] }, { id: x, len: y }, ..., { id: n, len: m } ]
 			remove_r_id = null;
 			for ( r_id in sub_ranges[ i ].index ) {
+				// Give priority to empty ranges so they are not rendered inside sibling ranges sharing the same
+				// start position.
+				if ( sub_ranges[ i ].index[ r_id ].len === 0 ) {
+					remove_r_id = r_id;
+					break;
+				}
 				if (
 					null === remove_r_id ||
 					sub_ranges[ i ].index[ r_id ].len > sub_ranges[ i ].index[ remove_r_id ].len
