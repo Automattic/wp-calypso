@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -56,18 +56,22 @@ const DiscountMessage = () => {
 	const translate = useTranslate();
 
 	const croVersion = getJetpackCROActiveVersion();
-	const slugsToCheck = [
-		...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
-		...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
-	].filter( ( slug ) => {
-		// Don't factor in real-time products for CRO v1 --
-		// they're not visible in the product grid
-		if ( croVersion === 'v1' && REALTIME_PRODUCTS.includes( slug ) ) {
-			return false;
-		}
+	const slugsToCheck = useMemo(
+		() =>
+			[
+				...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
+				...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
+			].filter( ( slug ) => {
+				// Don't factor in real-time products for CRO v1 --
+				// they're not visible in the product grid
+				if ( croVersion === 'v1' && REALTIME_PRODUCTS.includes( slug ) ) {
+					return false;
+				}
 
-		return true;
-	} );
+				return true;
+			} ),
+		[ croVersion ]
+	);
 	const highestAnnualDiscount = useSelector( ( state ) =>
 		getHighestAnnualDiscount( state, slugsToCheck )
 	);
