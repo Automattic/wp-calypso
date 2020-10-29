@@ -42,7 +42,11 @@ export default function WPCheckoutOrderReview( {
 		setCouponFieldVisible( false );
 	};
 
-	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
+	const hasDotcomPlan = Boolean(
+		items.find( ( { wpcom_meta } ) => isWpComPlan( wpcom_meta?.product_slug ) )
+	);
+	const isMonthlyPricingTest =
+		hasDotcomPlan && 'treatment' === getABTestVariation( 'monthlyPricing' );
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 

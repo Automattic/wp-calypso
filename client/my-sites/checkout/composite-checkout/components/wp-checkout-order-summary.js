@@ -64,7 +64,7 @@ export default function WPCheckoutOrderSummary( {
 
 	const plan = usePlanInCart();
 	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
-	const isMonthlyPricingTest = 'treatment' === getABTestVariation( 'monthlyPricing' );
+	const isMonthlyPricingTest = plan && 'treatment' === getABTestVariation( 'monthlyPricing' );
 
 	return (
 		<CheckoutSummaryCard
