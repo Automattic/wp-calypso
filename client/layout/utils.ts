@@ -21,16 +21,19 @@ let pinnedSidebarTop = true;
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
-export const handleScroll = (): null => {
+export const handleScroll = (): void => {
 	const secondaryEl = document.getElementById( 'secondary' );
 	const windowHeight = window?.innerHeight;
 	const secondaryElHeight = secondaryEl?.scrollHeight;
-	const masterbarHeight = document.getElementById( 'header' ).getBoundingClientRect().height;
+	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+
 
 	if (
-		typeof window !== 'undefined' &&
-		secondaryEl !== 'undefined' &&
+		typeof window !== undefined &&
+		secondaryEl !== undefined &&
 		secondaryEl !== null &&
+		secondaryElHeight !== undefined &&
+		masterbarHeight !== undefined &&
 		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
 		! ticking && // Do not run until next requestAnimationFrame
 		secondaryElHeight + masterbarHeight > windowHeight // Only run when sidebar & masterbar are taller than window height.
@@ -47,8 +50,8 @@ export const handleScroll = (): null => {
 					pinnedSidebarTop = true;
 					pinnedSidebarBottom = false;
 					secondaryEl.style.position = 'fixed';
-					secondaryEl.style.top = 0;
-					secondaryEl.style.bottom = 0;
+					secondaryEl.style.top = '0';
+					secondaryEl.style.bottom = '0';
 				}
 
 				ticking = false;
@@ -61,7 +64,7 @@ export const handleScroll = (): null => {
 
 					secondaryEl.style.position = 'fixed';
 					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = 0;
+					secondaryEl.style.bottom = '0';
 				}
 
 				ticking = false;
@@ -92,7 +95,7 @@ export const handleScroll = (): null => {
 
 					secondaryEl.style.position = 'fixed';
 					secondaryEl.style.top = 'inherit';
-					secondaryEl.style.bottom = 0;
+					secondaryEl.style.bottom = '0';
 				}
 			} else if ( scrollY < lastScrollPosition ) {
 				// When a scroll up is detected.
