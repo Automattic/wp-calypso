@@ -19,6 +19,7 @@
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-notice-background: #3c434a;
 
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
@@ -197,6 +198,46 @@ $font-size: rem( 14px );
 				}
 			}
 		}
+
+		.notice {
+			background-color: var( --color-sidebar-notice-background );
+			/* stylelint-disable-next-line scales/font-weight */
+			font-weight: 300;
+
+			&.is-compact {
+				margin: 0;
+				align-items: center;
+			}
+
+			.notice__icon-wrapper {
+				background-color: transparent;
+				width: 35px;
+
+				.notice__icon-wrapper-drop {
+					top: calc( 50% - 9px );
+					left: calc( 50% - 9px );
+					width: 18px;
+					height: 18px;
+					border-radius: 50%;
+					background: var( --color-sidebar-gridicon-fill );
+				}
+			}
+
+			.gridicon {
+				fill: var( --color-sidebar-notice-background );
+			}
+
+			.notice__content {
+				padding: 10px 10px 10px 4px;
+				overflow-wrap: anywhere;
+			}
+
+			.notice__action {
+				color: #fff;
+				font-weight: 600;
+				padding-right: 12px;
+			}
+		}
 	}
 
 	//client/components/site-selector/style.scss
@@ -312,6 +353,13 @@ $font-size: rem( 14px );
 		.sidebar__menu-link,
 		.sidebar__menu.is-togglable .sidebar__heading {
 			overflow: hidden;
+		}
+
+		.sidebar .notice {
+			.notice__content,
+			.notice__action {
+				display: none;
+			}
 		}
 
 		// Is toggled open
