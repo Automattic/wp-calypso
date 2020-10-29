@@ -34,7 +34,7 @@ import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import CartData from 'calypso/components/data/cart';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import { getPlan } from 'calypso/lib/plans';
+import { getPlan, isWpComPlan } from 'calypso/lib/plans';
 import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
 import { isMonthly } from 'calypso/lib/plans/constants';
 
@@ -189,6 +189,7 @@ export default connect( ( state ) => {
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
-		hasWpcomMonthlyPlan: ! jetpackSite && isMonthly( currentPlan?.productSlug ),
+		hasWpcomMonthlyPlan:
+			isWpComPlan( currentPlan?.productSlug ) && isMonthly( currentPlan?.productSlug ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
