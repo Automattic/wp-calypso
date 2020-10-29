@@ -43,6 +43,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 					) }
 				</p>
 			</div>
+
 			<div className="focused-launch__step">
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
@@ -59,6 +60,12 @@ const FocusedLaunch: React.FunctionComponent = () => {
 							autoFocus={ true }
 						/>
 					</div>
+				</div>
+				<div className="focused-launch__side-commentary"></div>
+			</div>
+
+			<div className="focused-launch__step">
+				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
 						<DomainPicker
 							header={

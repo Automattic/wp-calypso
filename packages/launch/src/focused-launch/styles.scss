@@ -84,10 +84,16 @@
 	display: none;
 
 	@include break-medium {
+		// add a vertical gap before plan commentary to align
+		// with the input (not the step title).
+		&::before {
+			content: '';
+			display: block;
+			height: 18px;
+		}
 		margin-left: 10px;
 		border-left: 1px solid #eee;
 		display: flex;
-		justify-content: center;
 		flex-direction: column;
 		flex: 0.4;
 		padding: 0 42.5px;
