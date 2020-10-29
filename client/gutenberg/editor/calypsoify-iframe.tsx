@@ -56,7 +56,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { CartData } from 'calypso/client/blocks/editor-checkout-modal/types';
+import { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Types
@@ -94,7 +94,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: CartData;
+	cartData?: RequestCart;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
