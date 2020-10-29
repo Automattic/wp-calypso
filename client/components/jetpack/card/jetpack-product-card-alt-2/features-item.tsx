@@ -102,7 +102,7 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 						expanded: slideOutExpanded,
 					} ) }
 				>
-					{ slideOutExpanded && (
+					{ slideOutExpanded && slideOutProduct && (
 						<FeaturesProductSlideOut
 							product={ slideOutProduct }
 							productBillingTerm={ billingTerm }
