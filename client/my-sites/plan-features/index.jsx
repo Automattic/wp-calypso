@@ -640,9 +640,9 @@ export class PlanFeatures extends Component {
 	}
 
 	renderAnnualPlansFeatureNotice( feature ) {
-		const { translate } = this.props;
+		const { translate, isMonthlyPricingTest } = this.props;
 
-		if ( ! feature.availableOnlyForAnnualPlans ) {
+		if ( ! feature.availableOnlyForAnnualPlans || ! isMonthlyPricingTest ) {
 			return null;
 		}
 
