@@ -15,6 +15,7 @@ import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail
 import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
 import midnightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
 import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
+import modernImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-modern.svg';
 
 /**
  * !! Note !!
@@ -95,6 +96,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-contrast',
 				imageUrl: contrastImg,
+			},
+		},
+		{
+			label: translate( 'Modern' ),
+			value: 'modern',
+			thumbnail: {
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
 			},
 		},
 	] );
