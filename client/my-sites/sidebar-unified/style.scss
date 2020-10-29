@@ -42,8 +42,11 @@ $font-size: rem( 14px );
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		position: relative;
 		background-color: var( --color-sidebar-background );
 		padding-bottom: 12px;
+		min-height: calc( 100vh - var( --masterbar-height ) );
+		box-sizing: border-box;
 
 		.sidebar__separator {
 			margin: 0 0 11px;
@@ -492,6 +495,7 @@ $font-size: rem( 14px );
 	.is-nav-unification {
 		&.focus-content .layout__content {
 			padding: 71px 24px 24px;
+			transition: padding 0.15s ease-in-out;
 		}
 
 		.sidebar {
@@ -549,6 +553,15 @@ $font-size: rem( 14px );
 			.collapse-sidebar__toggle {
 				display: none;
 			}
+		}
+	}
+}
+
+@media screen and ( max-width: 660px ) {
+	// client/layout/sidebar/style.scss
+	.is-nav-unification {
+		.sidebar {
+			position: absolute;
 		}
 	}
 }
