@@ -46,11 +46,12 @@ const ActivityLogV2: FunctionComponent = () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteIsOnFreePlan = useSelector(
 		( state ) =>
+			siteId &&
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId )
 	);
-	const siteHasBackupPurchase = useSelector( ( state ) =>
-		siteHasBackupProductPurchase( state, siteId )
+	const siteHasBackupPurchase = useSelector(
+		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
 	);
 
 	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase;
