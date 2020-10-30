@@ -143,10 +143,11 @@ function getWpcomNuxPages( isGutenboarding ) {
 
 function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, description, imgSrc } ) {
 	useEffect( () => {
-		recordTracksEvent( 'calypso_newsite_wpcomnux_slide_view', {
+		recordTracksEvent( 'calypso_editor_wpcom_nux_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
 		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
 	return (
 		<GuidePage className="wpcom-block-editor-nux__page">
