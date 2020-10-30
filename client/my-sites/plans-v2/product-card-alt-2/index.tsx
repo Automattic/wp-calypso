@@ -65,7 +65,11 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 	}, [ item.productSlug, sitePlan, siteProducts ] );
 
 	// Calculate the product price.
-	const { originalPrice } = useItemPrice( siteId, item, item?.monthlyProductSlug || '' );
+	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
+		item,
+		item?.monthlyProductSlug || ''
+	);
 
 	// Handles expiry.
 	const moment = useLocalizedMoment();
@@ -106,6 +110,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 				showRecordsDetails && <RecordsDetailsAlt productSlug={ item.productSlug } />
 			}
 			originalPrice={ originalPrice }
+			discountedPrice={ discountedPrice }
 			isOwned={ isOwned }
 			isDeprecated={ item.legacy }
 			className={ className }
