@@ -24,7 +24,7 @@ interface ApplePaySessionInterface {
 
 interface CanMakePaymentState {
 	isLoading: boolean;
-	value: boolean;
+	canMakePayment: boolean;
 }
 
 export default function useIsApplePayAvailable(
@@ -35,7 +35,7 @@ export default function useIsApplePayAvailable(
 ): CanMakePaymentState {
 	const [ canMakePayment, setCanMakePayment ] = useState< CanMakePaymentState >( {
 		isLoading: true,
-		value: false,
+		canMakePayment: false,
 	} );
 
 	useEffect( () => {
@@ -52,7 +52,7 @@ export default function useIsApplePayAvailable(
 		// If stripe did not load, we will never load
 		if ( isStripeError ) {
 			debug( 'isApplePayAvailable giving up due to stripe error' );
-			setCanMakePayment( { isLoading: false, value: false } );
+			setCanMakePayment( { isLoading: false, canMakePayment: false } );
 			return unsubscribe;
 		}
 
@@ -66,7 +66,7 @@ export default function useIsApplePayAvailable(
 		// check that first.
 		if ( ! window.PaymentRequest ) {
 			debug( 'isApplePayAvailable giving up because there is no paymentRequest API' );
-			setCanMakePayment( { isLoading: false, value: false } );
+			setCanMakePayment( { isLoading: false, canMakePayment: false } );
 			return unsubscribe;
 		}
 
@@ -77,12 +77,12 @@ export default function useIsApplePayAvailable(
 			const browserResponse = !! window.ApplePaySession?.canMakePayments();
 			if ( ! browserResponse ) {
 				debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-				setCanMakePayment( { isLoading: false, value: false } );
+				setCanMakePayment( { isLoading: false, canMakePayment: false } );
 				return unsubscribe;
 			}
 		} catch ( error ) {
 			debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-			setCanMakePayment( { isLoading: false, value: false } );
+			setCanMakePayment( { isLoading: false, canMakePayment: false } );
 			return unsubscribe;
 		}
 
@@ -115,7 +115,7 @@ export default function useIsApplePayAvailable(
 				return;
 			}
 			debug( 'isApplePayAvailable setting result from Stripe', !! result?.applePay );
-			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
+			setCanMakePayment( { isLoading: false, canMakePayment: !! result?.applePay } );
 		} );
 
 		return unsubscribe;
