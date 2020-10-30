@@ -189,7 +189,7 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
  * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.buildTarget The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
  *
  * @returns {string} A translation chunk file URL.
@@ -244,6 +244,12 @@ export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'eve
 	return getFile( url );
 }
 
+/**
+ * Get the ids of all loaded chunks via either script tag on the page
+ * or loaded asynchronously with dynamic imports.
+ *
+ * @returns {Array} Chunk ids
+ */
 function getInstalledChunks() {
 	const installedChunksFromContext = window.installedChunks ?? [];
 	const installedChunksAsync = window?.__requireChunkCallback__?.getInstalledChunks?.() ?? [];
@@ -254,10 +260,18 @@ function getInstalledChunks() {
 	return Array.from( installedChunksSet );
 }
 
-async function getTranslationChunksLocale( localeSlug, buildTarget = 'evergreen' ) {
+/**
+ * Get the translation chunk locale data which consists of locale manifest
+ * and all available translations for currently loaded chunks.
+ *
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @returns {Promise} Translation chunks locale data
+ */
+async function getTranslationChunksLocale( localeSlug, targetBuild = 'evergreen' ) {
 	try {
 		const { translatedChunks, locale } =
-			( await getLanguageManifestFile( localeSlug, buildTarget ) ) ?? {};
+			( await getLanguageManifestFile( localeSlug, targetBuild ) ) ?? {};
 
 		if ( ! locale || ! translatedChunks ) {
 			return;
@@ -268,7 +282,7 @@ async function getTranslationChunksLocale( localeSlug, buildTarget = 'evergreen'
 		);
 		const chunksLocaleData = await Promise.all(
 			translatedInstalledChunks.map( ( chunkId ) =>
-				getTranslationChunkFile( chunkId, localeSlug, buildTarget )
+				getTranslationChunkFile( chunkId, localeSlug, targetBuild )
 			)
 		);
 
@@ -283,13 +297,26 @@ async function getTranslationChunksLocale( localeSlug, buildTarget = 'evergreen'
 	}
 }
 
+/**
+ * Used to keep the reference to the require chunk translations handler.
+ */
 let lastRequireChunkTranslationsHandler = null;
 
+/**
+ * Adds require chunk handler for fetching translations.
+ *
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {Object} options Handler additional options
+ * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
+ * @param {Object} options.userTranslations User translations data that will override chunk translations
+ */
 function addRequireChunkTranslationsHandler(
 	localeSlug = i18n.getLocaleSlug(),
-	buildTarget = 'evergreen',
-	{ translatedChunks = [], userTranslations = {} }
+	targetBuild = 'evergreen',
+	options = {}
 ) {
+	const { translatedChunks = [], userTranslations = {} } = options;
 	const loadedTranslationChunks = {};
 
 	const handler = ( { scriptSrc, publicPath }, promises ) => {
@@ -302,7 +329,7 @@ function addRequireChunkTranslationsHandler(
 		const translationChunkPromise = getTranslationChunkFile(
 			chunkId,
 			localeSlug,
-			buildTarget
+			targetBuild
 		).then( ( translations ) => {
 			i18n.addTranslations( { ...translations, ...userTranslations } );
 			loadedTranslationChunks[ chunkId ] = true;
@@ -315,6 +342,9 @@ function addRequireChunkTranslationsHandler(
 	lastRequireChunkTranslationsHandler = handler;
 }
 
+/**
+ * Removes require chunk translations handler.
+ */
 function removeRequireChunkTranslationsHandler() {
 	window?.__requireChunkCallback__?.remove?.( lastRequireChunkTranslationsHandler );
 }
