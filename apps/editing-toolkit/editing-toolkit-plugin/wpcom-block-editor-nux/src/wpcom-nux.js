@@ -63,7 +63,12 @@ function WpcomNux() {
 		return null;
 	}
 
-	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
+	const dismissWpcomNux = () => {
+		recordTracksEvent( 'calypso_editor_wpcom_nux_dismiss', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+		setWpcomNuxStatus( { isNuxEnabled: false } );
+	};
 
 	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
