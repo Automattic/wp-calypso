@@ -24,11 +24,11 @@ import {
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-} from 'state/desktop/window-events';
-import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { requestSite } from 'state/sites/actions';
-import { setForceRefresh as forceNotificationsRefresh } from 'state/notifications-panel/actions';
+} from 'calypso/state/desktop/window-events';
+import { canCurrentUserManageSiteOptions } from 'calypso/state/sites/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
  * Module variables
