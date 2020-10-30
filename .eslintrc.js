@@ -202,6 +202,8 @@ module.exports = {
 		// REST API objects include underscores
 		camelcase: 'off',
 
+		'no-path-concat': 'error',
+
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
 
