@@ -1,3 +1,31 @@
+/**
+ * @jest-environment jsdom
+ */
+
+/**
+ * External dependencies
+ */
+import { shallow } from 'enzyme';
+import React from 'react';
+
+/**
+ * Internal dependencies
+ */
+import { PluginMeta } from '../';
+import {
+	PLAN_FREE,
+	PLAN_BUSINESS_MONTHLY,
+	PLAN_BUSINESS,
+	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE,
+	PLAN_PREMIUM,
+	PLAN_PREMIUM_2_YEARS,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_BLOGGER,
+	PLAN_BLOGGER_2_YEARS,
+} from 'calypso/lib/plans/constants';
+
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
@@ -37,30 +65,6 @@ jest.mock( 'i18n-calypso', () => ( {
 	numberFormat: ( x ) => x,
 	translate: ( x ) => x,
 } ) );
-
-/**
- * External dependencies
- */
-import { shallow } from 'enzyme';
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import { PluginMeta } from '../';
-import {
-	PLAN_FREE,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_BUSINESS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_ECOMMERCE,
-	PLAN_PREMIUM,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_PERSONAL,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_BLOGGER,
-	PLAN_BLOGGER_2_YEARS,
-} from 'calypso/lib/plans/constants';
 
 const selectedSite = {
 	plan: {
