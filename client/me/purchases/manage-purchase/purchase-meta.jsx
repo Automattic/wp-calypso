@@ -55,6 +55,7 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails, isDataLoading } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 class PurchaseMeta extends Component {
 	static propTypes = {
@@ -237,6 +238,10 @@ class PurchaseMeta extends Component {
 		return translate( 'None' );
 	}
 
+	handleEditPaymentMethodClick = () => {
+		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
+	};
+
 	renderPaymentDetails() {
 		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug } = this.props;
 
@@ -262,7 +267,12 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<a href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }>{ paymentDetails }</a>
+				<a
+					href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
+					onClick={ this.handleEditPaymentMethodClick }
+				>
+					{ paymentDetails }
+				</a>
 			</li>
 		);
 	}
