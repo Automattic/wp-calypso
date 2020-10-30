@@ -7,7 +7,7 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const WPNotificationsAPI = require( 'desktop/lib/notifications/api' );
+const WPNotificationsAPI = require( 'calypso/desktop/lib/notifications/api' );
 
 // Parses raw note data from the API into a notification for display,
 // and exposes handlers for actions performed by the user.
@@ -15,11 +15,9 @@ class WPNotificationsViewModel extends EventEmitter {
 	constructor() {
 		super();
 
-		const self = this;
-
-		WPNotificationsAPI.on( 'note', function ( note ) {
+		WPNotificationsAPI.on( 'note', ( note ) => {
 			const notification = parseNote( note );
-			self.emit( 'notification', notification );
+			this.emit( 'notification', notification );
 		} );
 	}
 
