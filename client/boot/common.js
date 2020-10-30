@@ -13,49 +13,49 @@ import store from 'store';
  * Internal dependencies
  */
 import { setupLocale } from './locale';
-import config from 'config';
-import { ProviderWrappedLayout } from 'controller';
-import notices from 'notices';
-import { getToken } from 'lib/oauth-token';
-import emailVerification from 'components/email-verification';
-import { getSavedVariations } from 'lib/abtest'; // used by error logger
-import accessibleFocus from 'lib/accessible-focus';
-import Logger from 'lib/catch-js-errors';
-import { bindState as bindWpLocaleState } from 'lib/wp/localization';
-import { hasTouch } from 'lib/touch-detect';
-import { installPerfmonPageHandlers } from 'lib/perfmon';
-import { setupRoutes } from 'sections-middleware';
-import { checkFormHandler } from 'lib/protect-form';
-import { setReduxStore as setReduxBridgeReduxStore } from 'lib/redux-bridge';
-import { init as pushNotificationsInit } from 'state/push-notifications/actions';
-import { setSupportSessionReduxStore } from 'lib/user/support-user-interop';
-import { tracksEvents } from 'lib/analytics/tracks';
-import { initializeAnalytics } from 'lib/analytics/init';
-import { bumpStat } from 'lib/analytics/mc';
-import getSuperProps from 'lib/analytics/super-props';
-import { getSiteFragment, normalize } from 'lib/route';
-import { isLegacyRoute } from 'lib/route/legacy-routes';
-import { setCurrentUser } from 'state/current-user/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { initConnection as initHappychatConnection } from 'state/happychat/connection/actions';
-import { requestHappychatEligibility } from 'state/happychat/user/actions';
-import { getHappychatAuth } from 'state/happychat/utils';
-import wasHappychatRecentlyActive from 'state/happychat/selectors/was-happychat-recently-active';
-import { setRoute } from 'state/route/actions';
-import { getSelectedSiteId, getSectionName } from 'state/ui/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import setupGlobalKeyboardShortcuts from 'lib/keyboard-shortcuts/global';
-import { createReduxStore } from 'state';
-import initialReducer from 'state/reducer';
-import { getInitialState, persistOnChange, loadAllState } from 'state/initial-state';
-import detectHistoryNavigation from 'lib/detect-history-navigation';
-import userFactory from 'lib/user';
-import { getUrlParts, isOutsideCalypso } from 'lib/url';
-import { setStore } from 'state/redux-store';
-import { requestUnseenStatus } from 'state/reader-ui/seen-posts/actions';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { inJetpackCloudOAuthOverride } from 'lib/jetpack/oauth-override';
-import { getLanguageSlugs } from 'lib/i18n-utils/utils';
+import config from 'calypso/config';
+import { ProviderWrappedLayout } from 'calypso/controller';
+import notices from 'calypso/notices';
+import { getToken } from 'calypso/lib/oauth-token';
+import emailVerification from 'calypso/components/email-verification';
+import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
+import accessibleFocus from 'calypso/lib/accessible-focus';
+import Logger from 'calypso/lib/catch-js-errors';
+import { bindState as bindWpLocaleState } from 'calypso/lib/wp/localization';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
+import { setupRoutes } from 'calypso/sections-middleware';
+import { checkFormHandler } from 'calypso/lib/protect-form';
+import { setReduxStore as setReduxBridgeReduxStore } from 'calypso/lib/redux-bridge';
+import { init as pushNotificationsInit } from 'calypso/state/push-notifications/actions';
+import { setSupportSessionReduxStore } from 'calypso/lib/user/support-user-interop';
+import { tracksEvents } from 'calypso/lib/analytics/tracks';
+import { initializeAnalytics } from 'calypso/lib/analytics/init';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import getSuperProps from 'calypso/lib/analytics/super-props';
+import { getSiteFragment, normalize } from 'calypso/lib/route';
+import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { initConnection as initHappychatConnection } from 'calypso/state/happychat/connection/actions';
+import { requestHappychatEligibility } from 'calypso/state/happychat/user/actions';
+import { getHappychatAuth } from 'calypso/state/happychat/utils';
+import wasHappychatRecentlyActive from 'calypso/state/happychat/selectors/was-happychat-recently-active';
+import { setRoute } from 'calypso/state/route/actions';
+import { getSelectedSiteId, getSectionName } from 'calypso/state/ui/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import setupGlobalKeyboardShortcuts from 'calypso/lib/keyboard-shortcuts/global';
+import { createReduxStore } from 'calypso/state';
+import initialReducer from 'calypso/state/reducer';
+import { getInitialState, persistOnChange, loadAllState } from 'calypso/state/initial-state';
+import detectHistoryNavigation from 'calypso/lib/detect-history-navigation';
+import userFactory from 'calypso/lib/user';
+import { getUrlParts, isOutsideCalypso } from 'calypso/lib/url';
+import { setStore } from 'calypso/state/redux-store';
+import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
+import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
@@ -245,7 +245,7 @@ function setupErrorLogger( reduxStore ) {
 	const errorLogger = new Logger();
 
 	// Save errorLogger to a singleton for use in arbitrary logging.
-	require( 'lib/catch-js-errors/log' ).registerLogger( errorLogger );
+	require( 'calypso/lib/catch-js-errors/log' ).registerLogger( errorLogger );
 
 	// Save data to JS error logger
 	errorLogger.saveDiagnosticData( {
@@ -380,10 +380,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).default.init();
-	}
-
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
@@ -437,10 +433,55 @@ const boot = ( currentUser, registerRoutes ) => {
 	} );
 };
 
-export const bootApp = ( appName, registerRoutes ) => {
+function waitForCookieAuth( user ) {
+	const timeoutMs = 1500;
+	const loggedIn = user.get() !== false;
+	const ipc = require( 'electron' ).ipcRenderer;
+
+	const promiseTimeout = ( ms, promise ) => {
+		const timeout = new Promise( ( _, reject ) => {
+			const id = setTimeout( () => {
+				clearTimeout( id );
+				reject( `Request timed out in ${ ms } ms` );
+			}, ms );
+		} );
+
+		return Promise.race( [ promise, timeout ] );
+	};
+
+	const renderPromise = () => {
+		return new Promise( function ( resolve ) {
+			const sendUserAuth = () => {
+				debug( 'Sending user info to desktop...' );
+				ipc.send( 'user-auth', user, getToken() );
+			};
+
+			if ( loggedIn ) {
+				debug( 'Desktop user logged in, waiting on cookie authentication...' );
+				ipc.on( 'cookie-auth-complete', function () {
+					debug( 'Desktop cookies set, rendering main layout...' );
+					resolve();
+				} );
+				// Send user auth and wait on cookie-auth-complete
+				sendUserAuth();
+			} else {
+				debug( 'Desktop user logged out, rendering main layout...' );
+				// Send user auth and resolve immediately
+				sendUserAuth();
+				resolve();
+			}
+		} );
+	};
+
+	return promiseTimeout( timeoutMs, renderPromise() );
+}
+
+export const bootApp = async ( appName, registerRoutes ) => {
 	const user = userFactory();
-	user.initialize().then( () => {
-		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user, registerRoutes );
-	} );
+	await user.initialize();
+	if ( config.isEnabled( 'desktop' ) ) {
+		await waitForCookieAuth( user );
+	}
+	debug( `Starting ${ appName }. Let's do this.` );
+	boot( user, registerRoutes );
 };
