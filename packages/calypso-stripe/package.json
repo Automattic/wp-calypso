@@ -36,8 +36,10 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
 	"dependencies": {
+		"@automattic/load-script": "^1.0.0",
 		"debug": "^4.1.1",
-		"react": "^16.12.0"
+		"react": "^16.12.0",
+		"react-stripe-elements": "^4.0.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-polyfills": "^1.0.0",
