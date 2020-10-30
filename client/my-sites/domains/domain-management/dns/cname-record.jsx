@@ -33,7 +33,7 @@ class CnameRecord extends React.Component {
 		return (
 			<div className={ classes }>
 				<FormFieldset>
-					<FormLabel>{ translate( 'Name', { context: 'Dns Record' } ) }</FormLabel>
+					<FormLabel>{ translate( 'Name (Host)', { context: 'Dns Record' } ) }</FormLabel>
 					<FormTextInputWithAffixes
 						name="name"
 						placeholder={ translate( 'Enter subdomain (required)', {
@@ -49,7 +49,7 @@ class CnameRecord extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of' ) }</FormLabel>
+					<FormLabel>{ translate( 'Alias Of (Points to)' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
