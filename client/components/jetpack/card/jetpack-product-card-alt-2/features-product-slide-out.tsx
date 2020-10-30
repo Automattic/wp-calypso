@@ -12,9 +12,10 @@ import formatCurrency from '@automattic/format-currency';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-product-slide-out-card';
 import { planHasFeature } from 'calypso/lib/plans';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import useItemPrice from 'calypso/my-sites/plans-v2/use-item-price';
-import { durationToText } from 'calypso/my-sites/plans-v2/utils';
+import { durationToText, productBadgeLabelAlt } from 'calypso/my-sites/plans-v2/utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -22,6 +23,7 @@ import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 /**
  * Type dependencies
  */
+import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
 import type { Duration, PurchaseCallback, SelectorProduct } from 'calypso/my-sites/plans-v2/types';
 
 type Props = {
@@ -67,11 +69,20 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			precision: 0,
 		}
 	);
+	const isItemPurchased = purchases.some(
+		( { productSlug: slug } ) =>
+			slug === productSlug ||
+			JETPACK_PRODUCTS_LIST[ slug as JetpackProductSlug ]?.type === productSlug
+	);
 	const isItemPlanFeature = !! ( sitePlan && planHasFeature( sitePlan.product_slug, productSlug ) );
+	const isOwned = isItemPlanFeature || isItemPurchased;
 	const purchase = isItemPlanFeature
 		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
-		: getPurchaseByProductSlug( purchases, productSlug );
-	const slideOutButtonLabel = isItemPlanFeature
+		: getPurchaseByProductSlug( purchases, productSlug ) ||
+		  ( monthlyProductSlug
+				? getPurchaseByProductSlug( purchases, monthlyProductSlug )
+				: undefined );
+	const slideOutButtonLabel = isOwned
 		? translate( 'Manage Subscription' )
 		: translate( 'Get {{name/}} %(price)s', {
 				args: {
@@ -92,7 +103,9 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			description={ description }
 			buttonLabel={ slideOutButtonLabel }
 			onButtonClick={ () => onProductClick( product, false, purchase ) }
-			buttonPrimary={ ! isItemPlanFeature }
+			buttonPrimary={ ! isOwned }
+			isOwned={ isOwned }
+			badgeLabel={ productBadgeLabelAlt( product, isItemPurchased, sitePlan ) }
 		/>
 	) : null;
 };

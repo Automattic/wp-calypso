@@ -29,6 +29,7 @@ type Props = {
 	buttonPrimary?: boolean;
 	badgeLabel?: TranslateResult;
 	onButtonClick: () => void;
+	isOwned?: boolean;
 };
 
 const JetpackProductSlideOutCard: FC< Props > = ( {
@@ -43,11 +44,16 @@ const JetpackProductSlideOutCard: FC< Props > = ( {
 	buttonPrimary = true,
 	badgeLabel,
 	onButtonClick,
+	isOwned,
 } ) => {
 	const translate = useTranslate();
 
 	return (
-		<div className={ classNames( className, 'jetpack-product-slide-out-card' ) }>
+		<div
+			className={ classNames( className, 'jetpack-product-slide-out-card', {
+				'is-owned': isOwned,
+			} ) }
+		>
 			<header className="jetpack-product-slide-out-card__header">
 				<h3 className="jetpack-product-slide-out-card__product-name">
 					<ProductIcon className="jetpack-product-slide-out-card__icon" slug={ iconSlug } />
