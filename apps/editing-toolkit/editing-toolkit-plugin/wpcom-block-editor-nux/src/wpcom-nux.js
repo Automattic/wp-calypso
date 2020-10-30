@@ -146,6 +146,7 @@ function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, descri
 		recordTracksEvent( 'calypso_editor_wpcom_nux_slide_view', {
 			slide_number: pageNumber,
 			is_last_slide: isLastPage,
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
 		} );
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [] );
