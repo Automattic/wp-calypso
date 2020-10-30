@@ -57,6 +57,7 @@ const Desktop = {
 		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
 		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
 		ipc.on( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		ipc.on( 'request-user-login-status', this.sendUserLoginStatus );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,

@@ -59,7 +59,7 @@ module.exports = function ( mainWindow ) {
 				mainWindow.webContents.send( 'notifications-panel-refresh' );
 			},
 			100,
-			{ leading: true }
+			{ leading: true, trailing: false }
 		)
 	);
 
