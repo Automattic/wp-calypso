@@ -7,7 +7,7 @@ import { spy } from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	clearCompletedNotification,
 	clearError,

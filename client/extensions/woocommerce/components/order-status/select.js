@@ -8,7 +8,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { getOrderStatusList } from 'woocommerce/lib/order-status';
-import FormSelect from 'components/forms/form-select';
+import FormSelect from 'calypso/components/forms/form-select';
 
 function OrderStatusSelect( { onChange, value } ) {
 	const statuses = getOrderStatusList();

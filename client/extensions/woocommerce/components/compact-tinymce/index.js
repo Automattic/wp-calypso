@@ -15,13 +15,13 @@ import 'tinymce/plugins/lists/plugin.js';
 /**
  * Internal dependencies
  */
-import FormTextarea from 'components/forms/form-textarea';
-import i18n from 'components/tinymce/i18n';
-import { wpautop } from 'lib/formatting';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import i18n from 'calypso/components/tinymce/i18n';
+import { wpautop } from 'calypso/lib/formatting';
 // TinyMCE plugins & dependencies
-import wplinkPlugin from 'components/tinymce/plugins/wplink/plugin';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { isLocaleRtl } from 'lib/i18n-utils';
+import wplinkPlugin from 'calypso/components/tinymce/plugins/wplink/plugin';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { isLocaleRtl } from 'calypso/lib/i18n-utils';
 
 class CompactTinyMCE extends Component {
 	static propTypes = {

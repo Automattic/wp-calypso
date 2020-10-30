@@ -13,7 +13,7 @@ import {
 	changeSettingsProductsSetting,
 	saveWeightAndDimensionsUnits,
 } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_SETTINGS_PRODUCTS_CHANGE_SETTING,
 	WOOCOMMERCE_SETTINGS_PRODUCTS_UPDATE_REQUEST,

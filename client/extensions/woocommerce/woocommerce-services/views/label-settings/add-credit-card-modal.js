@@ -13,11 +13,11 @@ import { localize } from 'i18n-calypso';
 import { Dialog } from '@automattic/components';
 import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import CreditCardForm from 'blocks/credit-card-form';
-import { addStoredCard } from 'state/stored-cards/actions';
-import { createCardToken } from 'lib/store-transactions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { StripeHookProvider } from 'lib/stripe';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
+import { addStoredCard } from 'calypso/state/stored-cards/actions';
+import { createCardToken } from 'calypso/lib/store-transactions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCardDialog( {
 	siteId,

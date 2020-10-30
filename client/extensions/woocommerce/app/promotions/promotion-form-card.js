@@ -9,7 +9,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 
 function renderField(
 	fieldName,

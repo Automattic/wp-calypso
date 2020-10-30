@@ -28,7 +28,7 @@ import {
 	onOrderSaveSuccess,
 	sendOrder,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_ORDER_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDER_REQUEST_SUCCESS,
@@ -37,7 +37,7 @@ import {
 	WOOCOMMERCE_ORDERS_REQUEST_FAILURE,
 	WOOCOMMERCE_ORDERS_REQUEST_SUCCESS,
 } from 'woocommerce/state/action-types';
-import { NOTICE_CREATE } from 'state/action-types';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
 
 describe( 'handlers', () => {
 	describe( '#requestOrders', () => {

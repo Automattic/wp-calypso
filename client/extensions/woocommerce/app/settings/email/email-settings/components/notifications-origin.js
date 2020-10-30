@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextValidation from 'components/forms/form-input-validation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 const NotificationsOrigin = ( {
 	item,
 	recipient,

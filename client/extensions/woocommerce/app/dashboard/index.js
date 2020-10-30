@@ -32,7 +32,7 @@ import {
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ManageExternalView from './manage-external-view';
 import ManageNoOrdersView from './manage-no-orders-view';
 import ManageOrdersView from './manage-orders-view';
@@ -42,7 +42,7 @@ import RequiredPluginsInstallView from './required-plugins-install-view';
 import SetupTasksView from './setup';
 import StoreLocationSetupView from './setup/store-location';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
-import warn from 'lib/warn';
+import warn from 'calypso/lib/warn';
 
 class Dashboard extends Component {
 	static propTypes = {

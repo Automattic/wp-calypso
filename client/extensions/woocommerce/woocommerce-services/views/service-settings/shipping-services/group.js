@@ -11,7 +11,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import ShippingServiceEntry from './entry';
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import Checkbox from 'woocommerce/woocommerce-services/components/checkbox';
 import InfoTooltip from 'woocommerce/woocommerce-services/components/info-tooltip';
 

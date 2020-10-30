@@ -6,10 +6,10 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import * as tracks from 'lib/analytics/tracks';
+import * as tracks from 'calypso/lib/analytics/tracks';
 import * as tracksUtils from './tracks-utils';
 import { isTestSite } from 'woocommerce/state/sites/setup-choices/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 const debug = debugFactory( 'woocommerce:analytics' );
 
 export const tracksStore = {

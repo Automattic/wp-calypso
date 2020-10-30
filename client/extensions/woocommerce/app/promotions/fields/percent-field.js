@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FormField from './form-field';
 
 const PercentField = ( props ) => {

@@ -12,9 +12,9 @@ import { localize } from 'i18n-calypso';
  */
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SectionNav from 'calypso/components/section-nav';
 
 export const SettingsNavigation = ( { site, activeSection, translate } ) => {
 	const items = [

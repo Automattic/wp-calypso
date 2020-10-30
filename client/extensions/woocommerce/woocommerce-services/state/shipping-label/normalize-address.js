@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_IN_PROGRESS,
 	WOOCOMMERCE_SERVICES_SHIPPING_LABEL_ADDRESS_NORMALIZATION_COMPLETED,
 } from '../action-types';
-import * as NoticeActions from 'state/notices/actions';
+import * as NoticeActions from 'calypso/state/notices/actions';
 
 export default ( orderId, siteId, dispatch, address, group ) => {
 	dispatch( {

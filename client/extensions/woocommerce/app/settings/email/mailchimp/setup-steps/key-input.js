@@ -7,11 +7,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { localize } from 'i18n-calypso';
 
 const KeyInputStep = localize( ( { translate, onChange, apiKey, isKeyCorrect } ) => (

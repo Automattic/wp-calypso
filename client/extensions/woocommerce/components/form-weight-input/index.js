@@ -12,7 +12,7 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getWeightUnitSetting } from 'woocommerce/state/sites/settings/products/selectors';
 import { fetchSettingsProducts } from 'woocommerce/state/sites/settings/products/actions';

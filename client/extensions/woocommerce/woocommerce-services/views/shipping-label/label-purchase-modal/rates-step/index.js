@@ -29,7 +29,7 @@ import { getAllPackageDefinitions } from 'woocommerce/woocommerce-services/state
 import { getOrderShippingTotal } from 'woocommerce/lib/order-values/totals';
 import { getOrderShippingMethod } from 'woocommerce/lib/order-values';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 const ratesSummary = ( selectedRates, availableRates, total, packagesSaved, translate ) => {
 	if ( ! packagesSaved ) {

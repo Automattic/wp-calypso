@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component, Fragment } from 'react';
-import config from 'config';
+import config from 'calypso/config';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -14,13 +14,13 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { dashboardListLimit } from 'woocommerce/app/store-stats/constants';
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
 import { getLink } from 'woocommerce/lib/nav-utils';
-import { getPreference } from 'state/preferences/selectors';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import { getSiteStatsNormalizedData } from 'state/stats/lists/selectors';
+import { getSiteStatsNormalizedData } from 'calypso/state/stats/lists/selectors';
 import {
 	getUnitPeriod,
 	getStartPeriod,
@@ -31,14 +31,14 @@ import {
 	getQueries,
 } from 'woocommerce/app/store-stats/utils';
 import List from './list';
-import QueryPreferences from 'components/data/query-preferences';
-import QuerySiteStats from 'components/data/query-site-stats';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { savePreference } from 'state/preferences/actions';
-import SelectDropdown from 'components/select-dropdown';
+import { savePreference } from 'calypso/state/preferences/actions';
+import SelectDropdown from 'calypso/components/select-dropdown';
 import { sortBySales } from 'woocommerce/app/store-stats/referrers/helpers';
 import Stat from './stat';
-import { withAnalytics } from 'state/analytics/actions';
+import { withAnalytics } from 'calypso/state/analytics/actions';
 
 class StatsWidget extends Component {
 	static propTypes = {

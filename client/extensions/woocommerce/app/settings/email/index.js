@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
+import config from 'calypso/config';
 import PropTypes from 'prop-types';
 
 /**
@@ -24,8 +24,8 @@ import ActionHeader from 'woocommerce/components/action-header';
 import { Button } from '@automattic/components';
 import EmailSettings from './email-settings';
 import MailChimp from './mailchimp';
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import SettingsNavigation from '../navigation';
 
 class SettingsEmail extends Component {

@@ -7,7 +7,7 @@ import { get, isEmpty, isObject } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { LOADING } from 'woocommerce/state/constants';
 
 export const getRawShippingZoneLocations = ( state, siteId = getSelectedSiteId( state ) ) => {

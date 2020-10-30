@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormCurrencyInput from 'components/forms/form-currency-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCurrencyInput from 'calypso/components/forms/form-currency-input';
 import FieldError from '../field-error';
 
 const PriceField = ( { id, title, value, placeholder, updateValue, error, className } ) => {

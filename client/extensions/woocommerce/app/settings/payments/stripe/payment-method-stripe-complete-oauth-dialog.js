@@ -26,7 +26,7 @@ import {
 } from 'woocommerce/state/sites/settings/stripe-connect-account/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 
 class PaymentMethodStripeCompleteOAuthDialog extends Component {
 	static propTypes = {
