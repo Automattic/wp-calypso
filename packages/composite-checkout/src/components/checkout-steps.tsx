@@ -152,7 +152,7 @@ export const CheckoutSummaryCard = styled.div`
 export const CheckoutSteps = ( {
 	children,
 	areStepsActive = true,
-}: CheckoutStepsProps ): JSX.Element[] => {
+}: CheckoutStepsProps ): JSX.Element => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
@@ -175,26 +175,30 @@ export const CheckoutSteps = ( {
 		totalSteps
 	);
 
-	return steps.map( ( child ) => {
-		stepNumber = nextStepNumber || 0;
-		nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
-		const isStepActive = areStepsActive && activeStepNumber === stepNumber;
-		const isStepComplete = !! stepCompleteStatus[ stepNumber ];
-		return (
-			<CheckoutSingleStepDataContext.Provider
-				key={ 'checkout-step-' + stepNumber }
-				value={ {
-					stepNumber,
-					nextStepNumber,
-					isStepActive,
-					isStepComplete,
-					areStepsActive,
-				} }
-			>
-				{ child }
-			</CheckoutSingleStepDataContext.Provider>
-		);
-	} );
+	return (
+		<>
+			{ steps.map( ( child ) => {
+				stepNumber = nextStepNumber || 0;
+				nextStepNumber = stepNumber === totalSteps ? null : stepNumber + 1;
+				const isStepActive = areStepsActive && activeStepNumber === stepNumber;
+				const isStepComplete = !! stepCompleteStatus[ stepNumber ];
+				return (
+					<CheckoutSingleStepDataContext.Provider
+						key={ 'checkout-step-' + stepNumber }
+						value={ {
+							stepNumber,
+							nextStepNumber,
+							isStepActive,
+							isStepComplete,
+							areStepsActive,
+						} }
+					>
+						{ child }
+					</CheckoutSingleStepDataContext.Provider>
+				);
+			} ) }
+		</>
+	);
 };
 
 interface CheckoutStepsProps {
