@@ -3,8 +3,8 @@
  */
 import classNames from 'classnames';
 import { isObject } from 'lodash';
-import React, { FunctionComponent, useState, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { FunctionComponent, useState, useCallback, useEffect, useRef } from 'react';
+
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@wordpress/components';
 
@@ -22,6 +22,7 @@ import {
 	FEATURE_TO_PRODUCT_ALT_V2,
 	FEATURE_TO_MONTHLY_PRODUCT_ALT_V2,
 } from 'calypso/my-sites/plans-v2/constants';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
  * Type dependencies
@@ -44,10 +45,11 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	billingTerm,
 	onProductClick,
 } ) => {
+	const translate = useTranslate();
+
 	const { icon, text, description, isHighlighted, slug } = item;
 	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
-	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
@@ -63,6 +65,7 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	);
 
 	const [ slideOutExpanded, setSlideOutExpanded ] = useState( false );
+	const isFirstRender = useRef( true );
 
 	const slideOutProductSlug =
 		billingTerm === 'TERM_ANNUALLY'
@@ -71,9 +74,36 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 
 	const slideOutProduct = slugToSelectorProduct( slideOutProductSlug );
 
+	const trackingProps = slideOutProductSlug ? { product_slug: slideOutProductSlug } : {};
+
+	const trackSlideOutOpen = useTrackCallback(
+		undefined,
+		'calypso_product_slideout_open',
+		trackingProps
+	);
+	const trackSlideOutClosed = useTrackCallback(
+		undefined,
+		'calypso_product_slideout_close',
+		trackingProps
+	);
+
 	const toggleSlideOut = useCallback( () => {
 		setSlideOutExpanded( ( state ) => ! state );
 	}, [ setSlideOutExpanded ] );
+
+	useEffect( () => {
+		if ( ! isFirstRender.current ) {
+			if ( slideOutExpanded ) {
+				trackSlideOutOpen();
+			} else {
+				trackSlideOutClosed();
+			}
+		}
+	}, [ slideOutExpanded ] );
+
+	useEffect( () => {
+		isFirstRender.current = false;
+	}, [] );
 
 	const renderFeatureAction = () => {
 		if ( isHighlighted ) {
