@@ -127,7 +127,7 @@ export const CheckoutSummaryArea = ( {
 }: {
 	children: React.ReactNode;
 	className?: string;
-} ) => {
+} ): JSX.Element => {
 	return (
 		<CheckoutSummary className={ joinClasses( [ className, 'checkout__summary-area' ] ) }>
 			{ children }
@@ -212,7 +212,7 @@ export function Checkout( {
 }: {
 	children: React.ReactChildren;
 	className?: string;
-} ) {
+} ): JSX.Element {
 	const { isRTL } = useI18n();
 	const { formStatus } = useFormStatus();
 	const [ activeStepNumber, setActiveStepNumber ] = useState< number >( 1 );
@@ -288,7 +288,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
-} ) => {
+} ): JSX.Element => {
 	const { __ } = useI18n();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
@@ -488,7 +488,7 @@ export function CheckoutStepArea( {
 	className?: string;
 	submitButtonHeader?: React.ReactNode;
 	disableSubmitButton?: boolean;
-} ) {
+} ): JSX.Element {
 	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
@@ -599,7 +599,7 @@ export function CheckoutStepBody( {
 	formStatus,
 	completeStepContent,
 	onError,
-}: CheckoutStepBodyProps ) {
+}: CheckoutStepBodyProps ): JSX.Element {
 	const { __ } = useI18n();
 	return (
 		<CheckoutErrorBoundary
@@ -699,19 +699,19 @@ CheckoutStepBody.propTypes = {
 	validatingButtonAriaLabel: PropTypes.string,
 };
 
-export function useIsStepActive() {
+export function useIsStepActive(): boolean {
 	const { activeStepNumber } = useContext( CheckoutStepDataContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
 	return activeStepNumber === stepNumber;
 }
 
-export function useIsStepComplete() {
+export function useIsStepComplete(): boolean {
 	const { stepCompleteStatus } = useContext( CheckoutStepDataContext );
 	const { stepNumber } = useContext( CheckoutSingleStepDataContext );
 	return !! stepCompleteStatus[ stepNumber ];
 }
 
-export function useSetStepComplete() {
+export function useSetStepComplete(): ( stepNumber: number, newStatus: boolean ) => void {
 	const { setStepCompleteStatus } = useContext( CheckoutStepDataContext );
 	const setTargetStepCompleteStatus = useCallback(
 		( stepNumber: number, newStatus: boolean ) =>
