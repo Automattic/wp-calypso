@@ -250,8 +250,8 @@ class ManagePurchase extends Component {
 	renderUpgradeNavItem() {
 		const { purchase, translate, siteId } = this.props;
 		const buttonText = isExpired( purchase )
-			? translate( 'Pick another plan' )
-			: translate( 'Upgrade plan' );
+			? translate( 'Pick Another Plan' )
+			: translate( 'Upgrade Plan' );
 
 		if ( ! isPlan( purchase ) || isEcommerce( purchase ) ) {
 			return null;
