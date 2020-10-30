@@ -3,6 +3,7 @@
 This component renders a two column layout and works together with the `column` component.
 
 ## How to use
+
 ```js
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
@@ -11,22 +12,21 @@ import { Card } from '@automattic/components';
 function render() {
 	return(
 		<Layout>
-			<Column type='main'>
+			<Column type="main">
 				<Card>
-					This is the main column
+					<p>This is the main column</p>
 				</Card>
 			</Column>
 
-			<Column type='sidebar'>
+			<Column type="sidebar">
 				<Card>
-					This is the sidebar
+					<p>This is the sidebar</p>
 				</Card>
 			</Column>
 		</Layout>
-	)
+	);
 }
 ```
-
 
 ## Layout Props
 
