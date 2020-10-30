@@ -21,10 +21,10 @@ import {
 	setSectionMiddleware,
 	makeLayoutMiddleware,
 } from 'calypso/controller/shared';
-import { redirectLoggedIn } from 'calypso/controller/web-util';
 import LayoutLoggedOut from 'calypso/layout/logged-out';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import { RouteProvider } from 'calypso/components/route';
+import redirectLoggedIn from './redirect-logged-in';
 
 export const LOGIN_SECTION_DEFINITION = {
 	name: 'login',
@@ -64,18 +64,18 @@ export default ( router ) => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
+			redirectLoggedIn,
 			setLocaleMiddleware,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			redirectLoggedIn,
 			magicLoginUse,
 			makeLoggedOutLayout
 		);
 
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
+			redirectLoggedIn,
 			setLocaleMiddleware,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			redirectLoggedIn,
 			magicLogin,
 			makeLoggedOutLayout
 		);

@@ -47,13 +47,3 @@ const ProviderWrappedLoggedOutLayout = ( {
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout );
-
-export function redirectLoggedIn( { isLoggedIn, res }, next ) {
-	// TODO: Make it work also for development env
-	if ( isLoggedIn ) {
-		res.redirect( '/' );
-		return;
-	}
-
-	next();
-}
