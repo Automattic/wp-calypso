@@ -28,8 +28,7 @@ export default class FormToggle extends PureComponent {
 		checked: PropTypes.bool,
 		disabled: PropTypes.bool,
 		id: PropTypes.string,
-		className: PropTypes.string,
-		toggling: PropTypes.bool,
+		wrapperClassName: PropTypes.string,
 		'aria-label': PropTypes.string,
 	};
 
@@ -86,13 +85,12 @@ export default class FormToggle extends PureComponent {
 		const wrapperClasses = classNames( 'form-toggle__wrapper', {
 			'is-disabled': this.props.disabled,
 		} );
-		const toggleClasses = classNames( 'form-toggle', this.props.className );
 
 		return (
 			<span className={ wrapperClasses }>
 				<FormInputCheckbox
 					id={ id }
-					className={ toggleClasses }
+					className="form-toggle"
 					checked={ this.props.checked }
 					readOnly={ true }
 					disabled={ this.props.disabled }
