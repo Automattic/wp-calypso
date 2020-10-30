@@ -2,8 +2,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-$editor-checkout-modal-header-height: 60px;
-
 .editor-checkout-modal {
 	.components-modal__frame {
 		top: auto;
