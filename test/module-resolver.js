@@ -1,14 +1,3 @@
-/* eslint-disable import/no-nodejs-modules */
-const fs = require( 'fs' );
-const path = require( 'path' );
-
-const packages = fs
-	.readdirSync( path.join( __dirname, '../packages' ), { withFileTypes: true } )
-	.filter( ( file ) => file.isDirectory() )
-	.map( ( file ) => require( path.join( __dirname, '../packages', file.name, 'package.json' ) ) )
-	.filter( ( pkg ) => pkg.module )
-	.map( ( pkg ) => pkg.name );
-
 /**
  * Implements a custom resolver that uses `pkg['calypso:src']` isntead of `pkg.main` for packages from the monorepo.
  *
@@ -31,7 +20,7 @@ module.exports = ( request, options ) => {
 		packageFilter: ( pkg ) => {
 			//TODO: when Jest moves to resolver v2, this method will receive a second argument that points to the real package file (ie: no symlink)
 			//We can use it to determine if the package file is within the repo
-			if ( packages.includes( pkg.name ) ) {
+			if ( 'calypso:src' in pkg ) {
 				return {
 					...pkg,
 					main: pkg[ 'calypso:src' ] || pkg.module,
