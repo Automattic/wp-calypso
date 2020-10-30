@@ -26,6 +26,8 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'calypso/state/notifications';
+import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
+import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
  * Internal dependencies
@@ -271,9 +273,11 @@ export class Notifications extends Component {
 export default connect(
 	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
+		forceRefresh: shouldForceRefresh( state ),
 	} ),
 	{
 		recordTracksEventAction,
 		setUnseenCount,
+		didForceRefresh,
 	}
 )( Notifications );
