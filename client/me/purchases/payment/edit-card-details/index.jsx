@@ -24,7 +24,7 @@ import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCardById,
@@ -86,6 +86,7 @@ function EditCardDetails( props ) {
 			</HeaderCake>
 
 			<StripeHookProvider
+				locale={ props.locale }
 				configurationArgs={ { needs_intent: true } }
 				fetchStripeConfiguration={ getStripeConfiguration }
 			>
@@ -114,6 +115,7 @@ EditCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
+	locale: PropTypes.string,
 	purchaseListUrl: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 	isFullWidth: PropTypes.bool.isRequired,
@@ -127,6 +129,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	purchase: getByPurchaseId( state, purchaseId ),
 	selectedSite: getSelectedSite( state ),
 	userId: getCurrentUserId( state ),
+	locale: getCurrentUserLocale( state ),
 } );
 
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );

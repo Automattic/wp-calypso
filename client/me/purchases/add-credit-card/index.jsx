@@ -22,6 +22,7 @@ import Main from 'calypso/components/main';
 import titles from 'calypso/me/purchases/titles';
 import { paymentMethods } from 'calypso/me/purchases/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
@@ -37,6 +38,7 @@ function AddCreditCard( props ) {
 			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
 			<StripeHookProvider
 				configurationArgs={ { needs_intent: true } }
+				locale={ props.locale }
 				fetchStripeConfiguration={ getStripeConfiguration }
 			>
 				<CreditCardForm
@@ -53,10 +55,16 @@ function AddCreditCard( props ) {
 
 AddCreditCard.propTypes = {
 	addStoredCard: PropTypes.func.isRequired,
+	locale: PropTypes.string,
 };
 
 const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(
+	( state ) => ( {
+		locale: getCurrentUserLocale( state ),
+	} ),
+	mapDispatchToProps
+)( AddCreditCard );

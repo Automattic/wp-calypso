@@ -18,6 +18,7 @@ import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function AddCardDialog( {
 	siteId,
@@ -25,6 +26,7 @@ function AddCardDialog( {
 	translate,
 	closeAddCardDialog: closeDialog,
 	addStoredCard: saveStoredCard,
+	locale,
 } ) {
 	const createCardAddToken = ( ...args ) => createCardToken( 'card_add', ...args );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
@@ -37,6 +39,7 @@ function AddCardDialog( {
 			onClose={ onClose }
 		>
 			<StripeHookProvider
+				locale={ locale }
 				configurationArgs={ { needs_intent: true } }
 				fetchStripeConfiguration={ getStripeConfiguration }
 			>
@@ -60,12 +63,14 @@ AddCardDialog.propTypes = {
 	translate: PropTypes.func.isRequired,
 	addStoredCard: PropTypes.func.isRequired,
 	closeAddCardDialog: PropTypes.func.isRequired,
+	locale: PropTypes.string,
 };
 
 const mapStateToProps = ( state, { siteId } ) => {
 	const form = getLabelSettingsForm( state, siteId );
 	return {
 		isVisible: Boolean( form && form.addCardDialog ),
+		locale: getCurrentUserLocale( state ),
 	};
 };
 

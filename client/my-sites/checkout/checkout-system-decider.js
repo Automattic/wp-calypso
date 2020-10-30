@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { useEffect, useCallback, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +20,7 @@ import config from 'calypso/config';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
 
@@ -44,6 +45,7 @@ export default function CheckoutSystemDecider( {
 } ) {
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
+	const locale = useSelector( getCurrentUserLocale );
 
 	const prepurchaseNotices = <PrePurchaseNotices />;
 
@@ -115,7 +117,10 @@ export default function CheckoutSystemDecider( {
 				onError={ logCheckoutError }
 			>
 				<ShoppingCartProvider cartKey={ cartKey } getCart={ getCart } setCart={ wpcomSetCart }>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ locale }
+					>
 						<CompositeCheckout
 							siteSlug={ siteSlug }
 							siteId={ selectedSite?.ID }
