@@ -72,7 +72,9 @@ function createServer() {
 }
 
 const server = createServer();
-server.timeout = 50 * 1000; //50 seconds, in ms
+if ( process.env.NODE_ENV !== 'development' ) {
+	server.timeout = 50 * 1000; //50 seconds, in ms;
+}
 
 process.on( 'uncaughtExceptionMonitor', ( err ) => {
 	logger.error( err );
