@@ -70,7 +70,7 @@ const findBestDefaultLanguageGroupId = (
 	);
 };
 
-const LanguagePicker = ( {
+const LanguagePicker: React.FC< Props > = ( {
 	onSelectLanguage,
 	languages,
 	languageGroups,
@@ -78,7 +78,7 @@ const LanguagePicker = ( {
 	localizedLanguageNames,
 	headingTitle,
 	headingButtons,
-}: Props ) => {
+} ) => {
 	const { __ } = useI18n();
 	const [ filter, setFilter ] = useState(
 		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, languageGroups[ 0 ].id )
