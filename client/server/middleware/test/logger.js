@@ -58,10 +58,11 @@ const withEnv = ( env ) => {
 	} );
 };
 
-const simulateRequest = ( { req, res, delay } ) => {
+const simulateRequest = ( { req, res, delay, finished = true } ) => {
 	loggerMiddleware()( req, res, () => {} );
 	jest.advanceTimersByTime( delay );
-	res.emit( 'finish' );
+	res.finished = finished;
+	res.emit( 'close' );
 };
 
 beforeEach( () => {
@@ -87,7 +88,7 @@ it( 'Adds a `logger` property to the request with the request id', () => {
 	} );
 } );
 
-it( 'It logs info about the request', () => {
+it( 'Logs info about the request', () => {
 	withEnv( 'production' );
 
 	simulateRequest( {
@@ -111,20 +112,33 @@ it( 'It logs info about the request', () => {
 		delay: 100,
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith( {
-		length: 123,
-		duration: 100,
-		status: '200',
-		method: 'GET',
-		env: 'production',
-		url: '/example.html',
-		httpVersion: '2.0',
-		userAgent: 'Chrome 85',
-		rawUserAgent:
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
-		remoteAddr: '127.0.0.1',
-		referrer: 'https://wordpress.com',
+	expect( mockLogger.info ).toHaveBeenCalledWith(
+		{
+			length: 123,
+			duration: 100,
+			status: '200',
+			method: 'GET',
+			env: 'production',
+			url: '/example.html',
+			httpVersion: '2.0',
+			userAgent: 'Chrome 85',
+			rawUserAgent:
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+			remoteAddr: '127.0.0.1',
+			referrer: 'https://wordpress.com',
+		},
+		'request finished'
+	);
+} );
+
+it( 'Logs closed requests', () => {
+	simulateRequest( {
+		req: fakeRequest(),
+		res: fakeResponse(),
+		finished: false,
 	} );
+
+	expect( mockLogger.info ).toHaveBeenCalledWith( expect.anything(), 'request closed' );
 } );
 
 it( "Logs raw UserAgent if it can't be parsed", () => {
@@ -140,7 +154,8 @@ it( "Logs raw UserAgent if it can't be parsed", () => {
 	expect( mockLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			userAgent: 'A random browser',
-		} )
+		} ),
+		expect.anything()
 	);
 } );
 
@@ -155,6 +170,7 @@ it( 'Adds the COMMIT_SHA as version', () => {
 	expect( mockLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			appVersion: 'abcd1234',
-		} )
+		} ),
+		expect.anything()
 	);
 } );
