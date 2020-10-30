@@ -65,6 +65,7 @@ function updateEditor() {
 
 		const BREAK_MEDIUM = 782;
 		const isMobileViewport = window.innerWidth < BREAK_MEDIUM;
+		// Enables the "step by step" flow also for mobile viewports
 		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
@@ -86,20 +87,20 @@ function updateEditor() {
 			// page to `launchUrl`.
 			// But if the site was created via Gutenboarding (/new),
 			// and potentially depending on the browser's viewport, the control
-			// launch flow replaced by a new "Complete setup" flow, appering in a
-			// modal on top of the edittor (no redirect needed)
-			const shouldOpenNewFlowModal =
+			// launch flow gets replaced by the "Step by Step" launch flow,
+			// appering in a modal on top of the editor (no redirect needed)
+			const shouldOpenStepByStepLaunch =
 				isGutenboarding && ( ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile ) );
 			// This currently comes from a feature flag, but should eventually be
 			// replaced with A/B testing logic
 			const shouldOpenFocusedLaunch = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
 
 			recordTracksEvent( 'calypso_newsite_editor_launch_click', {
-				is_new_flow: shouldOpenNewFlowModal,
+				is_new_flow: shouldOpenStepByStepLaunch,
 				is_experimental: isExperimental,
 			} );
 
-			if ( shouldOpenNewFlowModal ) {
+			if ( shouldOpenStepByStepLaunch ) {
 				// If we want to load experimental features, for now '?latest' query param should be added in URL.
 				// TODO: update this in calypsoify-iframe.tsx depending on abtest or other conditions.
 				isExperimental && dispatch( 'automattic/launch' ).enableExperimental();
