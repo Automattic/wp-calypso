@@ -5,12 +5,6 @@ import debugFactory from 'debug';
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
-import { useSelector } from 'react-redux';
-
-/**
- * Internal dependencies
- */
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso-stripe' );
 
@@ -323,13 +317,16 @@ function getValidationErrorsFromStripeError(
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {object} { stripeJs, isStripeLoading }
  */
-function useStripeJs( stripeConfiguration: StripeConfiguration | undefined ): UseStripeJs {
+function useStripeJs(
+	stripeConfiguration: StripeConfiguration | undefined,
+	locale: string | undefined = undefined
+): UseStripeJs {
 	const [ stripeJs, setStripeJs ] = useState< null | Stripe >( null );
 	const [ isStripeLoading, setStripeLoading ] = useState< boolean >( true );
 	const [ stripeLoadingError, setStripeLoadingError ] = useState< string | undefined >();
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
 	const stripeLocale = getStripeLocaleForLocale( locale );
 	useEffect( () => {
 		let isSubscribed = true;
@@ -439,17 +436,22 @@ export function StripeHookProvider( {
 	children,
 	fetchStripeConfiguration,
 	configurationArgs = null,
+	locale = undefined,
 }: {
 	children: JSX.Element;
 	fetchStripeConfiguration: GetStripeConfiguration;
 	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
+	locale?: undefined | string;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
 	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
 		fetchStripeConfiguration,
 		configurationArgs
 	);
-	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
+		stripeConfiguration,
+		locale
+	);
 
 	const stripeData = {
 		stripe: null, // This must be set inside the injected component
