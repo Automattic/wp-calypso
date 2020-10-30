@@ -81,12 +81,12 @@ function setSessionCookies( window, authorizeResponse ) {
 			return resolve( true );
 		}
 
-		cookieHeaders.map( parseCookie ).forEach( async function ( cookie ) {
+		cookieHeaders.map( parseCookie ).forEach( function ( cookie ) {
 			cookie.url = 'https://wordpress.com/';
 			if ( cookie.HttpOnly || cookie.httpOnly || cookie.httponly ) {
 				cookie.session = true;
 			}
-			await window.webContents.session.cookies.set( cookie );
+			window.webContents.session.cookies.set( cookie );
 			count--;
 			if ( count === 0 ) {
 				return resolve( true );
