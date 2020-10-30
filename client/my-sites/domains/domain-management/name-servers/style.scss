@@ -8,6 +8,10 @@
 	.name-servers__toggle {
 		display: inline-block;
 		float: right;
+
+		.components-toggle-control .components-base-control__field .components-form-toggle {
+			margin-right: 0;
+		}
 	}
 
 	.name-servers__explanation {
