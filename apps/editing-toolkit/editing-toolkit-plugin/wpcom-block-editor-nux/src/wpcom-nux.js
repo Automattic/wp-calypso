@@ -50,12 +50,18 @@ function WpcomNux() {
 		isWpcomNuxEnabled && closeGeneralSidebar();
 	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
 
+	// Track opening of the NUX Guide
+	useEffect( () => {
+		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
+			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
+				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			} );
+		}
+	}, [ isWpcomNuxEnabled, isSPTOpen ] );
+
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
-	recordTracksEvent( 'calypso_newsite_wpcomnux_view', {
-		is_new_flow: isGutenboarding,
-	} );
 
 	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
 
