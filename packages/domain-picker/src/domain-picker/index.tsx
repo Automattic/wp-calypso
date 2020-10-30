@@ -27,6 +27,8 @@ import {
 	domainIsAvailableStatus,
 } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
+import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
+import { ITEM_TYPE_RADIO } from './suggestion-item';
 
 /**
  * Style dependencies
@@ -90,6 +92,9 @@ export interface Props {
 
 	/** Whether to show search field or not. Defaults to true */
 	showSearchField?: boolean;
+
+	/** Whether to show radio button or select button. Defaults to radio button */
+	itemType?: SUGGESTION_ITEM_TYPE;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -109,6 +114,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 	showSearchField = true,
+	itemType = ITEM_TYPE_RADIO,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -259,6 +265,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onSelect={ () => {
 											onExistingSubdomainSelect?.( existingSubdomain );
 										} }
+										type={ itemType }
 									/>
 								) }
 							</ItemGrouper>
@@ -302,6 +309,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												onDomainSelect( suggestion );
 											} }
 											selected={ currentDomain === suggestion.domain_name }
+											type={ itemType }
 										/>
 									);
 								} ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
