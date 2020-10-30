@@ -61,6 +61,25 @@ function is_homepage_title_hidden() {
 }
 
 /**
+ * Detects if the site is using Gutenberg 9.2 or above, which contains a bug in the
+ * interface package, causing some "slider" blocks (such as Jetpack's Slideshow) to
+ * incorrectly calculate their width as 33554400px when set at full width.
+ *
+ * @see https://github.com/WordPress/gutenberg/pull/26552
+ *
+ * @return bool True if the site needs a temporary fix for the incorrect slider width.
+ */
+function needs_slider_width_workaround() {
+	if (
+		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
+		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
+	) {
+		return true;
+	}
+	return false;
+}
+
+/**
  * Detects if assets for the common module should be loaded.
  *
  * It should return true if any of the features added to the common module need
@@ -72,7 +91,7 @@ function is_homepage_title_hidden() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden();
+	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround();
 }
 
 /**
