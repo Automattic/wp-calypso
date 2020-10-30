@@ -55,7 +55,7 @@ import {
 } from 'calypso/signup/storageUtils';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms.jsx';
-import { useIsApplePayAvailable } from './payment-method-helpers';
+import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
