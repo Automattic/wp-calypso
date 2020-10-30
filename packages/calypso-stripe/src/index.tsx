@@ -10,10 +10,9 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
-const debug = debugFactory( 'calypso:stripe' );
+const debug = debugFactory( 'calypso-stripe' );
 
 declare global {
 	interface Window {
@@ -396,20 +395,20 @@ function useStripeJs( stripeConfiguration: StripeConfiguration | undefined ): Us
  * the configuration to reload by setting a value by calling `setStripeError()`
  * with a value for that error.
  *
+ * @param {Function} fetchStripeConfiguration A function that will fetch the stripe configuration from the HTTP API
  * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
- * @param {Function} fetchStripeConfiguration (optional) If provided, will call instead of getStripeConfiguration
  * @returns {object} See above
  */
 function useStripeConfiguration(
-	requestArgs: undefined | null | GetStripeConfigurationArgs = null,
-	fetchStripeConfiguration: undefined | null | GetStripeConfiguration = null
+	fetchStripeConfiguration: GetStripeConfiguration,
+	requestArgs: undefined | null | GetStripeConfigurationArgs = null
 ): { stripeConfiguration: StripeConfiguration | undefined; setStripeError: SetStripeError } {
 	const [ stripeError, setStripeError ] = useState< undefined | string >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
 		undefined | StripeConfiguration
 	>();
 	useEffect( () => {
-		const getConfig = fetchStripeConfiguration || getStripeConfiguration;
+		const getConfig = fetchStripeConfiguration;
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
 		getConfig( requestArgs || {} ).then(
@@ -438,17 +437,17 @@ const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
 export function StripeHookProvider( {
 	children,
+	fetchStripeConfiguration,
 	configurationArgs = null,
-	fetchStripeConfiguration = null,
 }: {
 	children: JSX.Element;
-	configurationArgs: undefined | null | GetStripeConfigurationArgs;
-	fetchStripeConfiguration: undefined | null | GetStripeConfiguration;
+	fetchStripeConfiguration: GetStripeConfiguration;
+	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
 	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
-		configurationArgs,
-		fetchStripeConfiguration
+		fetchStripeConfiguration,
+		configurationArgs
 	);
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
 
