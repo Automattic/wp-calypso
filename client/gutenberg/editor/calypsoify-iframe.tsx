@@ -377,7 +377,7 @@ class CalypsoifyIframe extends Component<
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
-			const isFocusedLaunchFlow = config.isEnabled( 'gutenboarding/focused-launch-flow' );
+			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
@@ -704,9 +704,7 @@ class CalypsoifyIframe extends Component<
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
-		const isFocusedLaunchCalypsoEnabled = config.isEnabled(
-			'gutenboarding/focused-launch-flow-calypso'
-		);
+		const isFocusedLaunchCalypsoEnabled = config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 		return (
 			<Fragment>
@@ -826,7 +824,7 @@ const mapStateToProps = (
 	const shouldLoadIframe =
 		! isRequestingSite( state, siteId ) ||
 		// Temporarily disable iframe loading for faster dev
-		config.isEnabled( 'gutenboarding/focused-launch-flow-calypso' );
+		config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
