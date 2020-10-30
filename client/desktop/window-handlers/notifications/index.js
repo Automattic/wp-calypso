@@ -8,10 +8,10 @@ const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs
 /**
  * Internal dependencies
  */
-const Settings = require( 'desktop/lib/settings' );
-const Platform = require( 'desktop/lib/platform' );
-const ViewModel = require( 'desktop/lib/notifications/viewmodel' );
-const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
+const Settings = require( 'calypso/desktop/lib/settings' );
+const Platform = require( 'calypso/desktop/lib/platform' );
+const ViewModel = require( 'calypso/desktop/lib/notifications/viewmodel' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:notifications' );
 
 /**
  *
@@ -93,7 +93,7 @@ module.exports = function ( mainWindow ) {
 
 				if ( ! mainWindow.isVisible() ) {
 					mainWindow.show();
-					delay( 300 );
+					await delay( 300 );
 				}
 
 				mainWindow.focus();
