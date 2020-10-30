@@ -9,6 +9,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import CreditCardPaymentBox from './credit-card-payment-box';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 
 export function StripeElementsPaymentBox( {
 	translate,
@@ -24,7 +25,7 @@ export function StripeElementsPaymentBox( {
 	incompatibleProducts,
 } ) {
 	return (
-		<StripeHookProvider>
+		<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 			<CreditCardPaymentBox
 				translate={ translate }
 				cards={ cards }

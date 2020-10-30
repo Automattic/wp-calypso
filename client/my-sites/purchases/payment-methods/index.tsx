@@ -21,7 +21,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
@@ -108,7 +108,10 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 				onError={ logPaymentMethodsError }
 			>
 				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-				<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+				<StripeHookProvider
+					configurationArgs={ { needs_intent: true } }
+					fetchStripeConfiguration={ getStripeConfiguration }
+				>
 					<CreditCardForm
 						createCardToken={ createAddCardToken }
 						recordFormSubmitEvent={ recordFormSubmitEvent }

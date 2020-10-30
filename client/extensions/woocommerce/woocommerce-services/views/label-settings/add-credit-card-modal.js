@@ -16,7 +16,7 @@ import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 function AddCardDialog( {
@@ -36,7 +36,10 @@ function AddCardDialog( {
 			isVisible={ isVisible }
 			onClose={ onClose }
 		>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider
+				configurationArgs={ { needs_intent: true } }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					createCardToken={ createCardAddToken }
 					recordFormSubmitEvent={ recordFormSubmitEvent }

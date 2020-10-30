@@ -13,7 +13,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { concatTitle } from 'calypso/lib/react-helpers';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -35,7 +35,10 @@ function AddCreditCard( props ) {
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider
+				configurationArgs={ { needs_intent: true } }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					createCardToken={ createAddCardToken }
 					recordFormSubmitEvent={ recordFormSubmitEvent }

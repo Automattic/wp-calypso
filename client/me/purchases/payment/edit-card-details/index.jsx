@@ -19,7 +19,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -85,7 +85,10 @@ function EditCardDetails( props ) {
 				{ titles.editCardDetails }
 			</HeaderCake>
 
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider
+				configurationArgs={ { needs_intent: true } }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					apiParams={ { purchaseId: props.purchase.id } }
 					createCardToken={ createCardUpdateToken }
