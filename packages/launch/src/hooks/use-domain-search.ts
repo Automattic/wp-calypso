@@ -20,7 +20,7 @@ export function useDomainSearch() {
 
 	let search = domainSearch.trim() || title;
 
-	if ( ! search || search === __( 'Site Title', 'full-site-editing' ) ) {
+	if ( ! search || search === __( 'Site Title', __i18n_text_domain__ ) ) {
 		search = currentDomainName?.split( '.' )[ 0 ] ?? '';
 	}
 
