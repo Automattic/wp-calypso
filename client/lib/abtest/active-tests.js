@@ -213,7 +213,7 @@ export default {
 		countryCodeTargets: [ 'US' ],
 	},
 	monthlyPricing: {
-		datestamp: '20501030',
+		datestamp: '20201031',
 		variations: {
 			control: 90,
 			treatment: 10,
