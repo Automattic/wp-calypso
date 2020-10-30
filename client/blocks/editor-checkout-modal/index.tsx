@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
 import { Icon, wordpress } from '@wordpress/icons';
@@ -34,6 +34,24 @@ function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
 	return fetchStripeConfiguration( args, wpcom );
 }
 
+function removeHashFromUrl(): void {
+	try {
+		const newUrl = window.location.hash
+			? window.location.href.replace( window.location.hash, '' )
+			: window.location.href + '';
+
+		window.history.replaceState( null, '', newUrl );
+	} catch {}
+
+	try {
+		// Modifying history does not trigger a hashchange event
+		// so we manually create one and use try/catch because
+		// IE11 does not include HashChange
+		const event = new HashChangeEvent( 'hashchange' );
+		window.dispatchEvent( event );
+	} catch {}
+}
+
 const EditorCheckoutModal = ( props: Props ) => {
 	const { site, isOpen, onClose, cartData } = props;
 	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
@@ -54,6 +72,14 @@ const EditorCheckoutModal = ( props: Props ) => {
 			} ),
 		[ waitForOtherCartUpdates, site, isLoggedOutCart, isNoSiteCart ]
 	);
+
+	useEffect( () => {
+		return () => {
+			// Remove the hash e.g. #step2 from the url
+			// when the component is going to unmount.
+			removeHashFromUrl();
+		};
+	}, [] );
 
 	// We need to pass in a comma separated list of product
 	// slugs to be set in the cart otherwise we will be
