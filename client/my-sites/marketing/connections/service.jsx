@@ -120,7 +120,7 @@ export class SharingService extends Component {
 				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
-		} else if ( 'reconnect' === connectionStatus ) {
+		} else if ( 'reconnect' === connectionStatus || 'refresh-failed' === connectionStatus ) {
 			this.refresh();
 			this.props.recordTracksEvent( 'calypso_connections_reconnect_button_click', {
 				service: this.props.service.ID,
@@ -403,6 +403,9 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
+		} else if ( some( this.getConnections(), { status: 'refresh-failed' } ) ) {
+			// We need to manually refresh a token
+			status = 'refresh-failed';
 		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
@@ -412,6 +415,12 @@ export class SharingService extends Component {
 		}
 
 		return status;
+	}
+
+	getConnectionExpiry() {
+		const expiringConnections = this.getConnections().filter( ( conn ) => conn.expires );
+		const oldestConnection = expiringConnections.sort( ( a, b ) => a.expires - b.expires ).shift();
+		return oldestConnection?.expires;
 	}
 
 	/**
@@ -501,6 +510,7 @@ export class SharingService extends Component {
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const earliestExpiry = this.getConnectionExpiry();
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
@@ -516,6 +526,7 @@ export class SharingService extends Component {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
+						expires={ earliestExpiry }
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>

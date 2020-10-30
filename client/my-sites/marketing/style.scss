@@ -1,6 +1,10 @@
 .foldable-card.sharing-service {
+	.foldable-card__main > div {
+		display: flex;
+	}
+
 	.sharing-service__logo {
-		float: left;
+		flex: 0 0 auto;
 		margin-right: 8px;
 	}
 
