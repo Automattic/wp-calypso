@@ -10,7 +10,7 @@ import Column from 'calypso/components/layout/column';
 import { Card } from '@automattic/components';
 
 function render() {
-	return(
+	return( 
 		<Layout>
 			<Column type="main">
 				<Card>
