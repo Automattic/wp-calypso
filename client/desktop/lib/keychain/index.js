@@ -32,8 +32,8 @@ async function getUserInfo() {
 async function clear() {
 	const credentials = await keytar.findCredentials( keychainService );
 	if ( credentials && Array.isArray( credentials ) && credentials.length > 0 ) {
-		credentials.forEach(
-			async ( { account: key } ) => await keytar.deletePassword( keychainService, key )
+		await Promise.all(
+			credentials.map( ( { account: key } ) => keytar.deletePassword( keychainService, key ) )
 		);
 	}
 }
