@@ -259,9 +259,12 @@ const mapDispatchToProps = ( dispatch ) => ( {
 	selectPage: ( siteId, pageNumber ) => dispatch( updateFilter( siteId, { page: pageNumber } ) ),
 } );
 
-export default connect(
+/** @type {typeof ActivityCardList} */
+const connectedComponent = connect(
 	mapStateToProps,
 	mapDispatchToProps
 )(
 	withMobileBreakpoint( withApplySiteOffset( withLocalizedMoment( localize( ActivityCardList ) ) ) )
 );
+
+export default connectedComponent;
