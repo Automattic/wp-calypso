@@ -28,8 +28,8 @@ interface CanMakePaymentState {
 }
 
 export default function useIsApplePayAvailable(
-	stripe: Stripe,
-	stripeConfiguration: StripeConfiguration,
+	stripe: Stripe | null,
+	stripeConfiguration: StripeConfiguration | null,
 	isStripeError: boolean,
 	items: LineItem[]
 ): CanMakePaymentState {
