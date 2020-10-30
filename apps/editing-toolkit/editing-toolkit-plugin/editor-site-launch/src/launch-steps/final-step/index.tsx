@@ -27,7 +27,7 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { hooks as launchHooks } from '@automattic/launch';
+import { useSite, useDomainSuggestion, useDomainSearch } from '@automattic/launch';
 
 import './styles.scss';
 
@@ -42,9 +42,9 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
 
 	const [ title ] = useEntityProp( 'root', 'site', 'title' );
-	const { currentDomainName } = launchHooks.useSite();
-	const domainSuggestion = launchHooks.useDomainSuggestion();
-	const domainSearch = launchHooks.useDomainSearch();
+	const { currentDomainName } = useSite();
+	const domainSuggestion = useDomainSuggestion();
+	const domainSearch = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 

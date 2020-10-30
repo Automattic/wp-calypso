@@ -10,7 +10,7 @@ import { doAction, hasAction } from '@wordpress/hooks';
  * Internal dependencies
  */
 import LaunchModal from './launch-modal';
-import { hooks as launchHooks } from '@automattic/launch';
+import { useOnLaunch } from '@automattic/launch';
 
 import { LAUNCH_STORE } from './stores';
 
@@ -26,7 +26,7 @@ registerPlugin( 'a8c-editor-site-launch', {
 		);
 
 		// handle redirects to checkout / my home after launch
-		launchHooks.useOnLaunch();
+		useOnLaunch();
 
 		React.useEffect( () => {
 			// @automattic/viewport doesn't have a breakpoint for medium (782px)

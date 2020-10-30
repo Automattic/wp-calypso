@@ -10,11 +10,11 @@ import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automat
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { hooks as launchHooks } from '@automattic/launch';
+import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { title, updateTitle, saveTitle } = launchHooks.useTitle();
+	const { title, updateTitle, saveTitle } = useTitle();
 
 	const handleNext = () => {
 		saveTitle();

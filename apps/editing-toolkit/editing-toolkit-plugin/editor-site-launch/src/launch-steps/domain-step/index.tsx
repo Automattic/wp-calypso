@@ -14,15 +14,15 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { hooks as launchHooks } from '@automattic/launch';
+import { useSite, useDomainSearch } from '@automattic/launch';
 
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { currentDomainName } = launchHooks.useSite();
-	const domainSearch = launchHooks.useDomainSearch();
+	const { currentDomainName } = useSite();
+	const domainSearch = useDomainSearch();
 
 	const {
 		setDomain,

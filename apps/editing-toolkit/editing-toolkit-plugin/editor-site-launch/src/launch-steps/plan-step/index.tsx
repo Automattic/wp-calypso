@@ -7,7 +7,7 @@ import { __ } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
-import { hooks as launchHooks } from '@automattic/launch';
+import { useSite } from '@automattic/launch';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 
 	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
 
-	const { selectedFeatures } = launchHooks.useSite();
+	const { selectedFeatures } = useSite();
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
