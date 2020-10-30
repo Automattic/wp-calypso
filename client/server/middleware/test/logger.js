@@ -9,12 +9,14 @@ import EventEmitter from 'events';
 import loggerMiddleware from '../logger';
 import config from 'calypso/config';
 
-const mockLogger = {
+const requestLogger = {
 	info: jest.fn(),
-	child: jest.fn( () => mockLogger ),
+};
+const mockRootLogger = {
+	child: jest.fn( () => requestLogger ),
 };
 jest.mock( 'server/lib/logger', () => ( {
-	getLogger: () => mockLogger,
+	getLogger: () => mockRootLogger,
 } ) );
 jest.mock( 'config', () => jest.fn() );
 jest.mock( 'uuid', () => ( {
@@ -82,8 +84,8 @@ it( 'Adds a `logger` property to the request with the request id', () => {
 		res: fakeResponse(),
 	} );
 
-	expect( req.logger ).toBe( mockLogger );
-	expect( req.logger.child ).toHaveBeenCalledWith( {
+	expect( req.logger ).toBe( requestLogger );
+	expect( mockRootLogger.child ).toHaveBeenCalledWith( {
 		reqId: '00000000-0000-0000-0000-000000000000',
 	} );
 } );
@@ -112,7 +114,7 @@ it( 'Logs info about the request', () => {
 		delay: 100,
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith(
+	expect( requestLogger.info ).toHaveBeenCalledWith(
 		{
 			length: 123,
 			duration: 100,
@@ -138,7 +140,7 @@ it( 'Logs closed requests', () => {
 		finished: false,
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith( expect.anything(), 'request closed' );
+	expect( requestLogger.info ).toHaveBeenCalledWith( expect.anything(), 'request closed' );
 } );
 
 it( "Logs raw UserAgent if it can't be parsed", () => {
@@ -151,7 +153,7 @@ it( "Logs raw UserAgent if it can't be parsed", () => {
 		res: fakeResponse(),
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith(
+	expect( requestLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			userAgent: 'A random browser',
 		} ),
@@ -167,7 +169,7 @@ it( 'Adds the COMMIT_SHA as version', () => {
 		res: fakeResponse(),
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith(
+	expect( requestLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			appVersion: 'abcd1234',
 		} ),
