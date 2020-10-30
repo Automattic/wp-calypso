@@ -1005,20 +1005,12 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 		} );
 
 		it( 'saves the user in the context', async () => {
-			const theUser = { id: 123 };
+			const theUser = {};
 			app.withBootstrapUser( theUser );
 
 			const { request } = await app.run();
 
-			expect( request.context.user ).toMatchObject( theUser );
-		} );
-
-		it( 'marks the user as bootstrapped', async () => {
-			app.withBootstrapUser( {} );
-
-			const { request } = await app.run();
-
-			expect( request.context.user.bootstrapped ).toEqual( true );
+			expect( request.context.user ).toEqual( theUser );
 		} );
 
 		it( 'sets the locale in the store', async () => {

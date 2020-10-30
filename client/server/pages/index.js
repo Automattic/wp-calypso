@@ -322,10 +322,10 @@ function setUpLoggedInRoute( req, res, next ) {
 				const end = new Date().getTime() - start;
 
 				debug( 'Rendering with bootstrapped user object. Fetched in %d ms', end );
-				req.context.user = { ...data, bootstrapped: true };
+				req.context.user = data;
 
 				// Setting user in the state is safe as long as we don't cache it
-				req.context.store.dispatch( setCurrentUser( req.context.user ) );
+				req.context.store.dispatch( setCurrentUser( data ) );
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
