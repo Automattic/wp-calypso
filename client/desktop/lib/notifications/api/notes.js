@@ -51,7 +51,7 @@ async function markReadStatus( noteId, isRead ) {
 				authToken: state.getUser().token,
 				body: {
 					counts: {
-						[ noteId ]: isRead ? 9999 : -1, // magic values required by the API \_(ツ)_/¯
+						[ noteId ]: isRead ? 9999 : -1, // magic values required by the API ¯\_(ツ)_/¯
 					},
 				},
 			},
@@ -66,6 +66,7 @@ async function markReadStatus( noteId, isRead ) {
 }
 
 module.exports = {
-	fetchNote: ( noteId ) => promiseTimeout( 300, fetchNote( noteId ) ),
-	markReadStatus: ( noteId, isRead ) => promiseTimeout( 1000, markReadStatus( noteId, isRead ) ), // response time of this endpoint is very slow!
+	// use more forgiving timeouts for users on slower connections
+	fetchNote: ( noteId ) => promiseTimeout( 2000, fetchNote( noteId ) ),
+	markReadStatus: ( noteId, isRead ) => promiseTimeout( 2000, markReadStatus( noteId, isRead ) ), // response time of this endpoint is very slow!
 };
