@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { productButtonLabel } from '../utils';
+import { productButtonLabel, productBadgeLabelAlt } from '../utils';
 import PlanRenewalMessage from '../plan-renewal-message';
 import RecordsDetailsAlt from '../records-details-alt';
 import useItemPrice from '../use-item-price';
@@ -17,7 +17,7 @@ import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import JetpackProductCardAlt2 from 'calypso/components/jetpack/card/jetpack-product-card-alt-2';
 import { planHasFeature } from 'calypso/lib/plans';
-import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { JETPACK_LEGACY_PLANS, TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { isJetpackPlanSlug } from 'calypso/lib/products-values';
 import { JETPACK_SEARCH_PRODUCTS } from 'calypso/lib/products-values/constants';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
@@ -99,6 +99,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			billingTerm={ item.displayTerm || item.term }
 			buttonLabel={ buttonLabel }
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
+			badgeLabel={ productBadgeLabelAlt( item, isOwned, sitePlan ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			features={ item.features }
 			searchRecordsDetails={
@@ -110,7 +111,7 @@ const ProductCardAltWrapper: FunctionComponent< ProductCardProps > = ( {
 			className={ className }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
 			isExpanded={ isPlan && shouldExpand }
-			withBundleRibbon={ isPlan }
+			withBundleRibbon={ isPlan && ! JETPACK_LEGACY_PLANS.includes( item.productSlug ) }
 			productSlug={ item.productSlug }
 			onFeaturesToggle={ isPlan ? onFeaturesToggle : undefined }
 		/>

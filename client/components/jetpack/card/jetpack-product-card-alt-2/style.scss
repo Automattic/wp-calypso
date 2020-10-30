@@ -174,7 +174,7 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	justify-content: center;
 	align-items: center;
 
-	margin-bottom: 12px;
+	margin-bottom: 24px;
 }
 
 .jetpack-product-card-alt-2__billing-time-frame,
@@ -246,7 +246,24 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 }
 
 .jetpack-product-card-alt-2__body {
+	position: relative;
+
 	padding: 0 24px;
+}
+
+.jetpack-product-card-alt-2__owned {
+	position: absolute;
+	left: 0;
+	bottom: 100%;
+
+	width: 100%;
+	margin-bottom: 4px;
+
+	color: var( --studio-green-40 );
+
+	font-size: 0.75rem;
+	font-style: italic;
+	text-align: center;
 }
 
 .jetpack-product-card-alt-2 .button {
@@ -264,6 +281,10 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 
 	@media ( min-width: 660px ) {
 		min-height: 100px;
+	}
+
+	.is-owned & {
+		margin-bottom: 32px;
 	}
 }
 
