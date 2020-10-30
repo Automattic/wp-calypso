@@ -51,7 +51,7 @@ const JetpackProductSlideOutCard: FC< Props > = ( {
 			<header className="jetpack-product-slide-out-card__header">
 				<h3 className="jetpack-product-slide-out-card__product-name">
 					<ProductIcon className="jetpack-product-slide-out-card__icon" slug={ iconSlug } />
-					{ preventWidows( productName ) }
+					<div>{ preventWidows( productName ) }</div>
 				</h3>
 
 				<div className="jetpack-product-slide-out-card__price">

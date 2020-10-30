@@ -408,6 +408,11 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 	}
 }
 
+.jetpack-product-card-alt-2__slide-out-product.expanded {
+	margin-left: -26px;
+	margin-right: -26px;
+}
+
 button.components-button.jetpack-product-card-alt-2__slideout-button {
 	color: var( --studio-gray-50 );
 	height: auto;
@@ -456,5 +461,10 @@ button.components-button.jetpack-product-card-alt-2__slideout-button {
 .is-section-jetpack-cloud-pricing {
 	.jetpack-product-card-alt-2 {
 		background-color: #f6f7f7;
+	}
+
+	.jetpack-product-card-alt-2__slide-out-product.expanded {
+		margin-left: -16px;
+		margin-right: -16px;
 	}
 }
