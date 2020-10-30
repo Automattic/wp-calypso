@@ -44,13 +44,18 @@
 		font-weight: 600;
 	}
 
+	.components-toggle-control__label {
+		margin-bottom: 1px;
+	}
+
 	legend + label,
 	label + label,
 	li label,
 	input[type='checkbox'] + label,
 	input[type='radio'] + label,
 	label input[type='checkbox'],
-	label input[type='radio'] {
+	label input[type='radio'],
+	.components-toggle-control__label {
 		font-weight: normal;
 	}
 
