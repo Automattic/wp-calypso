@@ -22,22 +22,10 @@
 			color: var( --color-neutral-70 );
 		}
 	}
-}
 
-.plugin-action .form-toggle__label {
-	display: inline-flex;
-	flex-direction: row-reverse;
-	align-items: center;
-}
-
-.plugin-action .form-toggle__switch {
-	flex: none;
-	align-self: center;
-}
-
-.plugin-action .form-toggle__label-content {
-	flex: none;
-	margin-right: auto;
+	.components-toggle-control .components-base-control__field {
+		margin-bottom: 5px;
+	}
 }
 
 .plugin-action__label {
@@ -57,10 +45,6 @@
 	.has-disabled-info & {
 		cursor: default;
 	}
-}
-
-.plugin-action .form-toggle__label .form-toggle__switch {
-	float: right;
 }
 
 .plugin-action__disabled-info.info-popover {
