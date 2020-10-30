@@ -70,12 +70,10 @@ function is_homepage_title_hidden() {
  * @return bool True if the site needs a temporary fix for the incorrect slider width.
  */
 function needs_slider_width_workaround() {
-	$gutenberg_path = ABSPATH . 'wp-content/plugins/gutenberg/gutenberg.php';
-	if ( ! file_exists( $gutenberg_path ) ) {
-		return false;
-	}
-	$gutenberg_data = get_plugin_data( $gutenberg_path );
-	if ( version_compare( $gutenberg_data['Version'], '9.2', '>=' ) ) {
+	if (
+		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
+		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
+	) {
 		return true;
 	}
 	return false;
