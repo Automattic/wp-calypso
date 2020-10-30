@@ -5,6 +5,7 @@ import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { isFinite } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
+import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
@@ -43,15 +44,23 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 	);
 	const isDiscounted = isFinite( discountedPrice );
 	const productPrice = isDiscounted ? discountedPrice : originalPrice;
+	const formattedPrice = formatCurrency(
+		( ( product && product.displayPrice ) || productPrice ) as number,
+		( ( product && product.displayCurrency ) || currencyCode ) as string,
+		{
+			precision: 0,
+		}
+	);
+	const billingTimeFrame = durationToText(
+		( product && product.displayTerm ) || productBillingTerm
+	);
 
-	const billingTimeFrame = durationToText( productBillingTerm );
-
-	const slideOutButtonLabel = translate( 'Get {{name/}} $%(price)s', {
+	const slideOutButtonLabel = translate( 'Get {{name/}} %(price)s', {
 		args: {
-			price: productPrice,
+			price: formattedPrice,
 		},
 		components: {
-			name: <>{ product?.displayName }</>,
+			name: <>{ product?.shortName }</>,
 		},
 	} );
 
@@ -60,7 +69,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			iconSlug={ product.iconSlug }
 			productName={ product.displayName }
 			currencyCode={ currencyCode }
-			price={ productPrice }
+			price={ Math.floor( ( ( product && product.displayPrice ) || productPrice ) as number ) }
 			billingTimeFrame={ billingTimeFrame }
 			description={ product?.description }
 			buttonLabel={ slideOutButtonLabel }
