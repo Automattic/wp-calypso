@@ -4,6 +4,14 @@
 import debugFactory from 'debug';
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
+// We are several versions old for react-stripe-elements, and probably should
+// actually upgrade to the new Stripe.js anyway. Trying to use the actual types
+// for this package causes all sorts of errors because, I think, they assume
+// we're using the newer version of Stripe.js. However, all of this code
+// currently works and we're just moving it around, so I'm disabling the
+// linting and compiler errors for now.
+// eslint-disable-next-line
+// @ts-ignore
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
 
 const debug = debugFactory( 'calypso-stripe' );
