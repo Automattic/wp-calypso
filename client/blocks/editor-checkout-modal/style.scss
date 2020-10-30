@@ -1,4 +1,3 @@
-
 @import '~@automattic/typography/styles/variables';
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
@@ -6,61 +5,23 @@
 $editor-checkout-modal-header-height: 60px;
 
 .editor-checkout-modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: -100%;
-	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
-	height: 100%;
-	overflow: auto;
-	padding: $editor-checkout-modal-header-height 0 0;
-	background: var( --studio-white );
-	transition: right 0.5s ease-in-out;
-	box-sizing: border-box;
-
-	@include break-medium {
-		padding: $editor-checkout-modal-header-height 30px 30px;
+	.components-modal__frame {
+		top: auto;
+		right: auto;
+		bottom: auto;
+		left: auto;
+		min-width: auto;
+		min-height: auto;
+		max-height: none;
+		max-width: none;
+		transform: none;
+		width: 100%;
+		height: 100%;
 	}
-
-	&.is-open {
-		right: 0;
-	}
-}
-
-.editor-checkout-modal__header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
-	width: 100%;
-	overflow: hidden;
-	background: var( --studio-white );
-	
-	@include break-medium {
-		overflow: visible;
-		background: transparent;
-	}
-}
-
-.editor-checkout-modal__wp-logo {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: $editor-checkout-modal-header-height;
-	height: $editor-checkout-modal-header-height;
-}
-
-.editor-checkout-modal__close-button.components-button.is-link {
-	position: absolute;
-	top: 0;
-	right: 0;
-	z-index: 9999;
-	width: $editor-checkout-modal-header-height;
-	height: $editor-checkout-modal-header-height;
-	justify-content: center;
-	color: var( --studio-gray-50 );
-
-	&:hover {
-		color: var( --studio-gray-40 );
+	.components-modal__header {
+		// hide border on desktop
+		@include break-medium {
+			border: none;
+		}
 	}
 }

@@ -4,10 +4,9 @@
 import React, { useMemo } from 'react';
 import { connect } from 'react-redux';
 import wp from 'calypso/lib/wp';
-import classnames from 'classnames';
-import { Button } from '@wordpress/components';
-import { Icon, close, wordpress } from '@wordpress/icons';
+import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
+import { Modal } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -65,15 +64,13 @@ const EditorCheckoutModal = ( props: Props ) => {
 	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
 
 	return hasEmptyCart ? null : (
-		<div className={ classnames( 'editor-checkout-modal', isOpen ? 'is-open' : '' ) }>
-			<div className="editor-checkout-modal__header">
-				<div className="editor-checkout-modal__wp-logo">
-					<Icon icon={ wordpress } size={ 36 } />
-				</div>
-				<Button isLink className="editor-checkout-modal__close-button" onClick={ onClose }>
-					<Icon icon={ close } size={ 24 } />
-				</Button>
-			</div>
+		<Modal
+			open={ isOpen }
+			overlayClassName="editor-checkout-modal"
+			onRequestClose={ onClose }
+			title=""
+			icon={ <Icon icon={ wordpress } size={ 36 } /> }
+		>
 			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
 				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
 					<CompositeCheckout
@@ -84,7 +81,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 					/>
 				</StripeHookProvider>
 			</ShoppingCartProvider>
-		</div>
+		</Modal>
 	);
 };
 
