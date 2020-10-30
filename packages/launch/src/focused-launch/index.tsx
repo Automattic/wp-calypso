@@ -35,11 +35,11 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch__container">
 			<div className="focused-launch__section">
-				<Title>{ __( "You're almost there", 'launch' ) }</Title>
+				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
 				<p className="focused-launch__caption">
 					{ __(
 						'Prepare for launch! Confirm a few final things before you take it live.',
-						'launch'
+						__i18n_text_domain__
 					) }
 				</p>
 			</div>
@@ -51,7 +51,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 							className="focused-launch__input"
 							label={
 								<label className="focused-launch__label">
-									{ __( '1. Name your site', 'launch' ) }
+									{ __( '1. Name your site', __i18n_text_domain__ ) }
 								</label>
 							}
 							value={ siteTitle }
