@@ -4,12 +4,15 @@
 import classNames from 'classnames';
 import { isObject } from 'lodash';
 import React, { FunctionComponent, useState, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@wordpress/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Gridicon from 'calypso/components/gridicon';
 import FeaturesProductSlideOut from './features-product-slide-out';
 import InfoPopover from 'calypso/components/info-popover';
@@ -46,6 +49,19 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+	const onOpenPopover = useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_plans_infopopover_open', {
+					site_id: siteId || undefined,
+					item_slug: item.slug || undefined,
+				} )
+			),
+		[ dispatch, siteId, item ]
+	);
+
 	const [ slideOutExpanded, setSlideOutExpanded ] = useState( false );
 
 	const slideOutProductSlug =
@@ -79,7 +95,11 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 					</Button>
 				);
 			}
-			return description && <InfoPopover>{ preventWidows( description ) }</InfoPopover>;
+			return (
+				description && (
+					<InfoPopover onOpen={ onOpenPopover }>{ preventWidows( description ) }</InfoPopover>
+				)
+			);
 		}
 	};
 
