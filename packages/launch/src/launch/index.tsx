@@ -21,7 +21,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => 
 			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
 			onRequestClose={ onClose }
-			title={ __( 'Complete setup' ) }
+			title={ __( 'Complete setup', __i18n_text_domain__ ) }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
 			<>

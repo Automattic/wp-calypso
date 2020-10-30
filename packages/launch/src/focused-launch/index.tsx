@@ -71,7 +71,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 							header={
 								<>
 									<label className="focused-launch__label">
-										{ __( '2. Confirm your domain', 'launch' ) }
+										{ __( '2. Confirm your domain', __i18n_text_domain__ ) }
 									</label>
 									<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
 										<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
@@ -112,7 +112,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
 						<label className="focused-launch__label">
-							{ __( '3. Confirm your plan', 'launch' ) }
+							{ __( '3. Confirm your plan', __i18n_text_domain__ ) }
 						</label>
 						<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
 							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
