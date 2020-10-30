@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import { isObject } from 'lodash';
 import React, { FunctionComponent, useState, useCallback, useEffect, useRef } from 'react';
-
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@wordpress/components';
 
@@ -45,11 +44,10 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	billingTerm,
 	onProductClick,
 } ) => {
-	const translate = useTranslate();
-
 	const { icon, text, description, isHighlighted, slug } = item;
 	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
+	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const dispatch = useDispatch();
