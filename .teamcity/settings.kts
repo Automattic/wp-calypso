@@ -57,6 +57,7 @@ project {
 		param("teamcity.git.fetchAllHeads", "true")
 		text("env.CHILD_CONCURRENCY", "15", label = "Yarn child concurrency", description = "How many packages yarn builds in parallel", allowEmpty = true)
 		text("docker_image", "registry.a8c.com/calypso/ci:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		text("calypso.run_full_eslint", "false", label = "Run full eslint", description = "True will lint all files, empty/false will lint only changed files", allowEmpty = true)
 	}
 
 	features {
@@ -601,3 +602,4 @@ object WpCalypso : GitVcsRoot({
 		uploadedKey = "Sergio TeamCity"
 	}
 })
+
