@@ -15,6 +15,7 @@ import {
 	getCurrentUserCountryCode,
 	getCurrentUserSiteCount,
 	getCurrentUserVisibleSiteCount,
+	isCurrentUserBootstrapped,
 } from 'calypso/state/current-user/selectors';
 
 jest.mock( 'calypso/config', () => ( {
@@ -35,6 +36,7 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 	getCurrentUserCountryCode: jest.fn(),
 	getCurrentUserSiteCount: jest.fn(),
 	getCurrentUserVisibleSiteCount: jest.fn(),
+	isCurrentUserBootstrapped: jest.fn(),
 } ) );
 jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => jest.fn() );
 
@@ -141,6 +143,7 @@ describe( 'stopPerformanceTracking', () => {
 		getCurrentUserSiteCount.mockImplementation( () => 2 );
 		getCurrentUserVisibleSiteCount.mockImplementation( () => 1 );
 		getCurrentUserCountryCode.mockImplementation( () => 'es' );
+		isCurrentUserBootstrapped.mockImplementation( () => true );
 
 		// Run the default collector
 		stopPerformanceTracking( 'pageName', { state } );
@@ -156,6 +159,7 @@ describe( 'stopPerformanceTracking', () => {
 		expect( report.data.get( 'sitesCount' ) ).toBe( 2 );
 		expect( report.data.get( 'sitesVisibleCount' ) ).toBe( 1 );
 		expect( report.data.get( 'userCountryCode' ) ).toBe( 'es' );
+		expect( report.data.get( 'userBootstrapped' ) ).toBe( true );
 	} );
 
 	it( 'uses metdata to generate a collector', () => {

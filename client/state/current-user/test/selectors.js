@@ -16,6 +16,7 @@ import {
 	isValidCapability,
 	getCurrentUserCurrencyCode,
 	getCurrentUserEmail,
+	isCurrentUserBootstrapped,
 } from '../selectors';
 
 describe( 'selectors', () => {
@@ -330,6 +331,57 @@ describe( 'selectors', () => {
 			} );
 
 			expect( selected ).to.equal( testEmail );
+		} );
+	} );
+
+	describe( 'isCurrentUserBootstrapped', () => {
+		test( 'should return false it the current user is not there for whatever reasons', () => {
+			const selected = isCurrentUserBootstrapped( {
+				users: {
+					items: {},
+				},
+				currentUser: {
+					id: 123456,
+				},
+			} );
+
+			expect( selected ).to.equal( false );
+		} );
+
+		test( 'should return false if the user was not bootstrapped', () => {
+			const selected = isCurrentUserBootstrapped( {
+				users: {
+					items: {
+						123456: {
+							ID: 123456,
+							bootstrapped: false,
+						},
+					},
+				},
+				currentUser: {
+					id: 123456,
+				},
+			} );
+
+			expect( selected ).to.equal( false );
+		} );
+
+		test( 'should return true if the user was bootstrapped', () => {
+			const selected = isCurrentUserBootstrapped( {
+				users: {
+					items: {
+						123456: {
+							ID: 123456,
+							bootstrapped: true,
+						},
+					},
+				},
+				currentUser: {
+					id: 123456,
+				},
+			} );
+
+			expect( selected ).to.equal( true );
 		} );
 	} );
 } );
