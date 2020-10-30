@@ -2,7 +2,7 @@ const path = require( 'path' );
 const cachePath = path.resolve( '.cache', 'calypso-stripe' );
 
 module.exports = {
-	entry: './src/public-api.js',
+	entry: './index.ts',
 	mode: 'development',
 	module: {
 		rules: [
