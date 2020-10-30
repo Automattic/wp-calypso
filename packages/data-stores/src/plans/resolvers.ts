@@ -80,7 +80,9 @@ export function* getPlansDetails( locale = 'en' ) {
 	try {
 		const rawPlansDetails = yield apiFetch( {
 			global: true,
-			url: `https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ locale }`,
+			url: `https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
+				locale
+			) }`,
 			mode: 'cors',
 			credentials: 'omit',
 		} as APIFetchOptions );
