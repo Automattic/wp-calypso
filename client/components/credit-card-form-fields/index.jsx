@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { isEmpty, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { useStripe } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import PaymentCountrySelect from 'calypso/components/payment-country-select';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { maskField, unmaskField, getCreditCardType } from 'calypso/lib/checkout';
 import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
-import { useStripe } from 'calypso/lib/stripe';
 
 const CardNumberElementWithValidation = withStripeElementValidation( CardNumberElement );
 const CardExpiryElementWithValidation = withStripeElementValidation( CardExpiryElement );

@@ -8,6 +8,12 @@ import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
 import { Card } from '@automattic/components';
+import {
+	createStripeSetupIntent,
+	StripeSetupIntentError,
+	StripeValidationError,
+	useStripe,
+} from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -22,12 +28,6 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	createStripeSetupIntent,
-	StripeSetupIntentError,
-	StripeValidationError,
-	useStripe,
-} from 'calypso/lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,

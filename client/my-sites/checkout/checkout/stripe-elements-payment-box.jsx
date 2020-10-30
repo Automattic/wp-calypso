@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import CreditCardPaymentBox from './credit-card-payment-box';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 export function StripeElementsPaymentBox( {
 	translate,

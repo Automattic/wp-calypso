@@ -5,6 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal Dependencies
@@ -26,7 +27,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCardDetails( props ) {
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );

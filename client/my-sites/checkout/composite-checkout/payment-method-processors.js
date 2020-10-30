@@ -8,6 +8,7 @@ import {
 	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
+import { showStripeModalAuth } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -28,7 +29,6 @@ import {
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
-import { showStripeModalAuth } from 'calypso/lib/stripe';
 import userAgent from 'calypso/lib/user-agent';
 
 const { select, dispatch } = defaultRegistry;

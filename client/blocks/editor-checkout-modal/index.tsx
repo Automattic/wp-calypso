@@ -7,11 +7,11 @@ import wp from 'calypso/lib/wp';
 import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
-import { StripeHookProvider } from 'calypso/lib/stripe';
 import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';

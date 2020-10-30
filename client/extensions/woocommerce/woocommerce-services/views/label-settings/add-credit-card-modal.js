@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { createCardToken } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCardDialog( {
 	siteId,

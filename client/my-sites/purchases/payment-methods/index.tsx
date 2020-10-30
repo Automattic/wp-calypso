@@ -5,6 +5,7 @@ import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useDispatch } from 'react-redux';
 import page from 'page';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -19,7 +20,6 @@ import CreditCards from 'calypso/me/purchases/credit-cards';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { createCardToken } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';

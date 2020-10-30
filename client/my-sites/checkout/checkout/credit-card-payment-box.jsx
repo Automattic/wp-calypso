@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop, overSome, some } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
+import { withStripeProps } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -30,7 +31,6 @@ import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
 import CheckoutTerms from './checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';
-import { withStripeProps } from 'calypso/lib/stripe';
 import { setStripeObject } from 'calypso/lib/transaction/actions';
 
 function isFormSubmitting( transactionStep ) {

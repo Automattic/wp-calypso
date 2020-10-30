@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -21,7 +22,6 @@ import Main from 'calypso/components/main';
 import titles from 'calypso/me/purchases/titles';
 import { paymentMethods } from 'calypso/me/purchases/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
