@@ -51,11 +51,17 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
-	const { originalPrice } = useItemPrice( siteId, product, monthlyProductSlug || '' );
+	const { originalPrice, discountedPrice } = useItemPrice(
+		siteId,
+		product,
+		monthlyProductSlug || ''
+	);
+	const isDiscounted = isFinite( discountedPrice as number );
+	const price = isDiscounted ? discountedPrice : originalPrice;
 	const translate = useTranslate();
 
 	const formattedPrice = formatCurrency(
-		( displayPrice || originalPrice ) as number,
+		( displayPrice || price ) as number,
 		( displayCurrency || currencyCode ) as string,
 		{
 			precision: 0,
@@ -81,7 +87,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			iconSlug={ iconSlug }
 			productName={ displayName }
 			currencyCode={ currencyCode }
-			price={ Math.floor( ( displayPrice || originalPrice ) as number ) }
+			price={ Math.floor( ( displayPrice || price ) as number ) }
 			billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
 			description={ description }
 			buttonLabel={ slideOutButtonLabel }
