@@ -49,6 +49,7 @@ export { default as JetpackColophonExample } from 'components/jetpack-colophon/d
 export { default as JetpackHeaderExample } from 'components/jetpack-header/docs/example';
 export { default as JetpackLogoExample } from 'components/jetpack-logo/docs/example';
 export { default as LanguagePicker } from 'components/language-picker/docs/example';
+export { default as LayoutExample } from 'calypso/components/layout/docs/example';
 export { default as LineChart } from 'components/line-chart/docs/example';
 export { default as ListEnd } from 'components/list-end/docs/example';
 export { default as MarkedLinesExample } from 'components/marked-lines/docs/example';
