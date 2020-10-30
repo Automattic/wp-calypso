@@ -2,6 +2,7 @@
  * Mocks
  */
 jest.mock( 'calypso/state/products-list/selectors/get-product-cost' );
+jest.mock( 'calypso/state/current-user/selectors' );
 
 /**
  * Internal dependencies
