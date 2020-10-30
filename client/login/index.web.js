@@ -64,18 +64,18 @@ export default ( router ) => {
 	if ( config.isEnabled( 'login/magic-login' ) ) {
 		router(
 			`/log-in/link/use/${ lang }`,
+			redirectLoggedIn,
 			setLocaleMiddleware,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			redirectLoggedIn,
 			magicLoginUse,
 			makeLoggedOutLayout
 		);
 
 		router(
 			[ `/log-in/link/${ lang }`, `/log-in/jetpack/link/${ lang }`, `/log-in/new/link/${ lang }` ],
+			redirectLoggedIn,
 			setLocaleMiddleware,
 			setSectionMiddleware( LOGIN_SECTION_DEFINITION ),
-			redirectLoggedIn,
 			magicLogin,
 			makeLoggedOutLayout
 		);
