@@ -34,7 +34,7 @@ import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home
 /**
  * Image dependencies
  */
-import logoIcon from 'calypso/assets/images/customer-home/looka-logo-60.svg';
+import logoIcon from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 
 /**
  * Style dependencies
@@ -142,7 +142,7 @@ export const QuickLinks = ( {
 				href="https://wp.me/logo-maker"
 				onClick={ trackDesignLogoAction }
 				target="_blank"
-				label={ translate( 'Create a logo with Looka' ) }
+				label={ translate( 'Create a logo with Fiverr' ) }
 				external
 				iconSrc={ logoIcon }
 			/>
