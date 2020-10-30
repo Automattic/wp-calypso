@@ -1,7 +1,7 @@
 /*
  * Internal dependencies
  */
-const state = require( 'desktop/lib/state' );
+const state = require( 'calypso/desktop/lib/state' );
 const handler = require( 'wpcom-xhr-request' );
 
 const promiseTimeout = function ( ms, promise ) {
@@ -28,7 +28,7 @@ async function fetchNote( noteId ) {
 			},
 			( error, body ) => {
 				if ( error ) {
-					reject( error );
+					return reject( error );
 				}
 
 				if ( body.notes && Array.isArray( body.notes ) && body.notes.length > 0 ) {
