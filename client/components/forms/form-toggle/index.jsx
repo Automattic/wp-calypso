@@ -24,7 +24,6 @@ import './style.scss';
 export default class FormToggle extends PureComponent {
 	static propTypes = {
 		onChange: PropTypes.func,
-		onKeyDown: PropTypes.func,
 		checked: PropTypes.bool,
 		disabled: PropTypes.bool,
 		id: PropTypes.string,
@@ -35,7 +34,6 @@ export default class FormToggle extends PureComponent {
 	static defaultProps = {
 		checked: false,
 		disabled: false,
-		onKeyDown: noop,
 		onChange: noop,
 	};
 
@@ -54,8 +52,6 @@ export default class FormToggle extends PureComponent {
 			event.preventDefault();
 			this.props.onChange( ! this.props.checked );
 		}
-
-		this.props.onKeyDown( event );
 	};
 
 	onClick = ( event ) => {
