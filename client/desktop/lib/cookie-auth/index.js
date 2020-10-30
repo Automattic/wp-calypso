@@ -81,12 +81,18 @@ function setSessionCookies( window, authorizeResponse ) {
 			return resolve( true );
 		}
 
-		cookieHeaders.map( parseCookie ).forEach( function ( cookie ) {
+		cookieHeaders.forEach( async function ( cookieStr ) {
+			const cookie = parseCookie( cookieStr );
 			cookie.url = 'https://wordpress.com/';
 			if ( cookie.HttpOnly || cookie.httpOnly || cookie.httponly ) {
 				cookie.session = true;
 			}
-			window.webContents.session.cookies.set( cookie );
+			try {
+				await window.webContents.session.cookies.set( cookie );
+			} catch ( e ) {
+				const { value, ...logCookie } = cookie; // don't log sensitive "value" field
+				log.error( `Failed to set session cookie (${ e.message }): `, logCookie );
+			}
 			count--;
 			if ( count === 0 ) {
 				return resolve( true );
