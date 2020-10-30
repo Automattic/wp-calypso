@@ -59,17 +59,6 @@ import { getLanguageSlugs } from 'lib/i18n-utils/utils';
 
 const debug = debugFactory( 'calypso' );
 
-const promiseTimeout = function ( ms, promise ) {
-	const timeout = new Promise( ( _, reject ) => {
-		const id = setTimeout( () => {
-			clearTimeout( id );
-			reject( `Request timed out in ${ ms } ms` );
-		}, ms );
-	} );
-
-	return Promise.race( [ promise, timeout ] );
-};
-
 const setupContextMiddleware = ( reduxStore ) => {
 	page( '*', ( context, next ) => {
 		// page.js url parsing is broken so we had to disable it with `decodeURLComponents: false`
@@ -391,10 +380,6 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		setupGlobalKeyboardShortcuts();
 	}
 
-	if ( config.isEnabled( 'desktop' ) ) {
-		require( 'lib/desktop' ).default.init();
-	}
-
 	if (
 		config.isEnabled( 'dev/test-helper' ) &&
 		document.querySelector( '.environment.is-tests' )
@@ -438,49 +423,65 @@ const boot = ( currentUser, registerRoutes ) => {
 			registerRoutes();
 		}
 
-		const isDesktop = config.isEnabled( 'desktop' );
-		const loggedIn = currentUser.get() !== false;
-
-		const render = () => {
-			renderLayout( reduxStore );
-			page.start( { decodeURLComponents: false } );
-		};
-
-		const renderDesktopPromise = () => {
-			return new Promise( function ( resolve ) {
-				const ipc = require( 'electron' ).ipcRenderer;
-
-				ipc.on( 'cookie-auth-complete', function () {
-					debug( 'Desktop cookies set, rendering main layout...' );
-					render();
-					resolve();
-				} );
-			} );
-		};
-
 		// Render initial `<Layout>` for non-isomorphic sections.
 		// Isomorphic sections will take care of rendering their `<Layout>` themselves.
 		if ( ! document.getElementById( 'primary' ) ) {
-			if ( ! isDesktop ) {
-				// If we're not in a WP-Desktop context, render.
-				render();
-			} else if ( loggedIn ) {
-				// WP-Desktop: logged in
-				// Wait on cookie-authentication
-				promiseTimeout( 1500, renderDesktopPromise() );
-			} else {
-				// WP-Desktop: logged out
-				debug( 'Desktop user logged out, rendering main layout...' );
-				render();
-			}
+			renderLayout( reduxStore );
 		}
+
+		page.start( { decodeURLComponents: false } );
 	} );
 };
 
-export const bootApp = ( appName, registerRoutes ) => {
+function waitForCookieAuth( user ) {
+	const timeoutMs = 1500;
+	const loggedIn = user.get() !== false;
+	const ipc = require( 'electron' ).ipcRenderer;
+
+	const promiseTimeout = ( ms, promise ) => {
+		const timeout = new Promise( ( _, reject ) => {
+			const id = setTimeout( () => {
+				clearTimeout( id );
+				reject( `Request timed out in ${ ms } ms` );
+			}, ms );
+		} );
+
+		return Promise.race( [ promise, timeout ] );
+	};
+
+	const renderPromise = () => {
+		return new Promise( function ( resolve ) {
+			const sendUserAuth = () => {
+				debug( 'Sending user info to desktop...' );
+				ipc.send( 'user-auth', user, getToken() );
+			};
+
+			if ( loggedIn ) {
+				debug( 'Desktop user logged in, waiting on cookie authentication...' );
+				ipc.on( 'cookie-auth-complete', function () {
+					debug( 'Desktop cookies set, rendering main layout...' );
+					resolve();
+				} );
+				// Send user auth and wait on cookie-auth-complete
+				sendUserAuth();
+			} else {
+				debug( 'Desktop user logged out, rendering main layout...' );
+				// Send user auth and resolve immediately
+				sendUserAuth();
+				resolve();
+			}
+		} );
+	};
+
+	return promiseTimeout( timeoutMs, renderPromise() );
+}
+
+export const bootApp = async ( appName, registerRoutes ) => {
 	const user = userFactory();
-	user.initialize().then( () => {
-		debug( `Starting ${ appName }. Let's do this.` );
-		boot( user, registerRoutes );
-	} );
+	await user.initialize();
+	if ( config.isEnabled( 'desktop' ) ) {
+		await waitForCookieAuth( user );
+	}
+	debug( `Starting ${ appName }. Let's do this.` );
+	boot( user, registerRoutes );
 };

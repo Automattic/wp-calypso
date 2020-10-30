@@ -10,7 +10,6 @@ import { newPost } from 'calypso/lib/paths';
 import store from 'store';
 import user from 'calypso/lib/user';
 import { ipcRenderer as ipc } from 'electron';
-import * as oAuthToken from 'calypso/lib/oauth-token';
 import userUtilities from 'calypso/lib/user/utils';
 import { getStatsPathForTab } from 'calypso/lib/route';
 import { getReduxStore } from 'calypso/lib/redux-bridge';
@@ -204,7 +203,6 @@ const Desktop = {
 		debug( 'Sending logged-in = ' + status );
 
 		ipc.send( 'user-login-status', status );
-		ipc.send( 'user-auth', user(), oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function () {
