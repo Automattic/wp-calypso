@@ -6,6 +6,12 @@ import { useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import { ActionButtons, BackButton } from '@automattic/onboarding';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
+import { I18N_STORE } from '../../stores/i18n';
+
+/**
+ * WordPress dependencies
+ */
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -20,6 +26,10 @@ import './style.scss';
 
 const LanguageStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
+
+	const localizedLanguageNames = useSelect( ( select ) =>
+		select( I18N_STORE ).getLocalizedLanguageNames()
+	);
 
 	const history = useHistory();
 
@@ -44,6 +54,7 @@ const LanguageStep: React.FunctionComponent = () => {
 							changeLocale( language.langSlug );
 							goBack();
 						} }
+						localizedLanguageNames={ localizedLanguageNames }
 					/>
 				</div>
 			) }

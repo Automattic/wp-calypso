@@ -1,15 +1,23 @@
 /**
  * External dependencies
  */
-import React, { ReactNode, useState } from 'react';
 import { Dialog } from '@automattic/components';
 import { useI18n } from '@automattic/react-i18n';
-import LanguagePicker, { Language, createLanguageGroups } from '@automattic/language-picker';
+import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
+import type { Language, LocalizedLanguageNames } from '@automattic/language-picker';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * WordPress dependencies
  */
 import { Button } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import QueryLanguageNames from 'calypso/components/data/query-language-names';
+import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
 
 /**
  * Style dependencies
@@ -27,14 +35,16 @@ type Props = {
 	 */
 	onSelectLanguage: ( l: Language ) => void;
 	selectedLanguageSlug?: string;
+	localizedLanguageNames: LocalizedLanguageNames;
 };
 
-const LanguagePickerModal = ( {
+const LanguagePickerModal: React.FC< Props > = ( {
 	languages,
 	onClose,
 	onSelectLanguage,
 	selectedLanguageSlug,
-}: Props ): ReactNode => {
+	localizedLanguageNames,
+} ) => {
 	const { __ } = useI18n();
 	const [ selectedLanguage, setSelectedLanguage ] = useState< Language | undefined >(
 		languages.find( ( l ) => l.langSlug === selectedLanguageSlug )
@@ -65,15 +75,19 @@ const LanguagePickerModal = ( {
 			buttons={ buttons }
 			additionalClassNames="language-picker__dialog"
 		>
+			<QueryLanguageNames />
 			<LanguagePicker
-				title={ __( 'Select a language' ) }
+				headingTitle={ __( 'Select a language' ) }
 				languages={ languages }
 				languageGroups={ createLanguageGroups( __ ) }
 				onSelectLanguage={ setSelectedLanguage }
 				selectedLanguage={ selectedLanguage }
+				localizedLanguageNames={ localizedLanguageNames }
 			/>
 		</Dialog>
 	);
 };
 
-export default LanguagePickerModal;
+export default connect( ( state ) => ( {
+	localizedLanguageNames: getLocalizedLanguageNames( state ) as LocalizedLanguageNames,
+} ) )( LanguagePickerModal );
