@@ -129,6 +129,10 @@ $jetpack-product-slide-out-card-color: var( --studio-wordpress-blue-30 );
 	&.is-primary {
 		color: var( --color-primary );
 	}
+
+	.is-owned & {
+		color: var( --studio-green-40 );
+	}
 }
 
 /* Prices Loading state */
