@@ -176,7 +176,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				) }
 				<br />
 				{ translate(
-					'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
+					'Please review them below and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
 					{
 						components: {
 							a: (
