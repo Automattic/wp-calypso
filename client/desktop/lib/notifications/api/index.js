@@ -7,9 +7,9 @@ const EventEmitter = require( 'events' ).EventEmitter;
 /*
  * Internal dependencies
  */
-const state = require( 'desktop/lib/state' );
+const state = require( 'calypso/desktop/lib/state' );
 const { fetchNote, markReadStatus } = require( './notes' );
-const log = require( 'desktop/lib/logger' )( 'desktop:notifications:api' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:notifications:api' );
 
 /*
  * Module constants
@@ -82,6 +82,7 @@ class WPNotificationsAPI extends EventEmitter {
 
 			try {
 				const note = await fetchNote( noteId );
+				log.debug( 'Parsed note: ', note );
 				this.emit( 'note', note );
 			} catch ( e ) {
 				log.error( `Failed to fetch note with id: ${ noteId }: `, e );

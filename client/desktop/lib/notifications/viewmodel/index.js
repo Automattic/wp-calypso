@@ -83,7 +83,7 @@ function getApprovedStatus( note ) {
 		return false;
 	}
 
-	if ( note.body.length > 0 ) {
+	if ( note.body.length < 1 ) {
 		return false;
 	}
 
@@ -92,7 +92,12 @@ function getApprovedStatus( note ) {
 		return false;
 	}
 
-	return actions[ 'approve-comment' ] === false;
+	const approveComment = actions[ 'approve-comment' ];
+	if ( approveComment === undefined ) {
+		return false;
+	}
+
+	return approveComment === true;
 }
 
 module.exports = new WPNotificationsViewModel();
