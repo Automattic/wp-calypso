@@ -91,14 +91,14 @@
 		color: var( --color-text-subtle );
 
 		&.is-indented {
-			margin-left: 24px;
+			margin-left: 48px;
 		}
 	}
 
 	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	p.settings-alert {
@@ -224,7 +224,7 @@
 }
 
 .site-settings__child-settings {
-	margin: 16px 36px 0;
+	margin: 16px 48px 0;
 }
 
 .site-settings__card + .site-settings__card,
