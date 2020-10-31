@@ -818,6 +818,11 @@ jobs:
       - attach_workspace:
           at: ~/wp-calypso
       - run: *update-node
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
       - run: *desktop-install-app-deps
       - run:
           name: Build Desktop Linux

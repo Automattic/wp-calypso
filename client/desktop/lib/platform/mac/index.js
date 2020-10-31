@@ -39,7 +39,7 @@ function MacPlatform( mainWindow ) {
 			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
 			mainWindow.hide();
-			mainWindow.webContents.send( 'close-notifications-panel' );
+			mainWindow.webContents.send( 'notifications-panel-show', false );
 		}
 	} );
 }

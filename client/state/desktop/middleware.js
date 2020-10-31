@@ -14,7 +14,6 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
 	NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFICATIONS_PANEL_NEW_NOTE,
 	SEND_TO_PRINTER,
 } from '../../state/action-types';
 
@@ -23,7 +22,6 @@ import {
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
-	NOTIFY_DESKTOP_NEW_NOTIFICATION,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from '../../state/desktop/window-events';
@@ -103,20 +101,6 @@ export const desktopMiddleware = () => {
 					new window.CustomEvent( NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET, {
 						detail: {
 							unseenCount,
-						},
-					} )
-				);
-				return next( action );
-			}
-
-			case NOTIFICATIONS_PANEL_NEW_NOTE: {
-				debug( 'Dispatching window event for action type: ', action.type );
-				const { note, isApproved } = action;
-				window.dispatchEvent(
-					new window.CustomEvent( NOTIFY_DESKTOP_NEW_NOTIFICATION, {
-						detail: {
-							note,
-							isApproved,
 						},
 					} )
 				);

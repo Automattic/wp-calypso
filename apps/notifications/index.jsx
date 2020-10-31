@@ -14,6 +14,7 @@
 /**
  * External dependencies
  */
+import debugFactory from 'debug';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
@@ -25,12 +26,13 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { setUnseenCount } from 'calypso/state/notifications';
-import { notifyDesktopNewNote } from 'calypso/state/desktop/actions';
+import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
+import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
  * Internal dependencies
  */
-import NotificationsPanel, { refreshNotes, markNoteAsRead } from './src/panel/Notifications';
+import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 
 /**
  * Style dependencies
@@ -57,6 +59,8 @@ const getIsVisible = () => {
 
 const isDesktop = config.isEnabled( 'desktop' );
 
+const debug = debugFactory( 'notifications:panel' );
+
 export class Notifications extends Component {
 	state = {
 		// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
@@ -82,12 +86,6 @@ export class Notifications extends Component {
 			);
 			this.postServiceWorkerMessage( { action: 'sendQueuedMessages' } );
 		}
-
-		window.addEventListener(
-			'desktop-notification-mark-as-read',
-			this.handleDesktopNotificationMarkAsRead,
-			false
-		);
 	}
 
 	componentWillUnmount() {
@@ -137,11 +135,6 @@ export class Notifications extends Component {
 	// Desktop: override isVisible to maintain active polling for native UI elements (e.g. notification badge)
 	handleVisibilityChange = () => this.setState( { isVisible: isDesktop ? true : getIsVisible() } );
 
-	handleDesktopNotificationMarkAsRead = ( event ) => {
-		const { noteId } = event.detail;
-		markNoteAsRead( noteId, true, refreshNotes );
-	};
-
 	receiveServiceWorkerMessage = ( event ) => {
 		// Receives messages from the service worker
 		// Older Firefox versions (pre v48) set event.origin to "" for service worker messages
@@ -184,6 +177,12 @@ export class Notifications extends Component {
 
 	render() {
 		const localeSlug = this.props.currentLocaleSlug || config( 'i18n_default_locale_slug' );
+
+		if ( this.props.forceRefresh ) {
+			debug( 'Refreshing notes panel...' );
+			refreshNotes();
+			this.props.didForceRefresh();
+		}
 
 		const customMiddleware = {
 			APP_RENDER_NOTES: [
@@ -249,11 +248,6 @@ export class Notifications extends Component {
 					page( `/comment/${ siteId }/${ commentId }?action=edit` );
 				},
 			],
-			NOTIFY_DESKTOP_NEW_NOTE: [
-				( store, { note, isApproved } ) => {
-					this.props.notifyDesktopNewNote( note, isApproved );
-				},
-			],
 		};
 
 		return (
@@ -279,10 +273,11 @@ export class Notifications extends Component {
 export default connect(
 	( state ) => ( {
 		currentLocaleSlug: getCurrentLocaleVariant( state ) || getCurrentLocaleSlug( state ),
+		forceRefresh: shouldForceRefresh( state ),
 	} ),
 	{
 		recordTracksEventAction,
 		setUnseenCount,
-		notifyDesktopNewNote,
+		didForceRefresh,
 	}
 )( Notifications );
