@@ -29,22 +29,15 @@ const wpcom = wp.undocumented();
 const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
 const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 
-// Decide if we should use new or old checkout
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
-	isComingFromSignup,
-	isComingFromGutenboarding,
-	isGutenboardingCreate,
 	isComingFromUpsell,
 	plan,
 	selectedSite,
-	reduxStore,
 	redirectTo,
-	upgradeIntent,
-	clearTransaction,
 	isLoggedOutCart,
 	isNoSiteCart,
 	cart: otherCart,
