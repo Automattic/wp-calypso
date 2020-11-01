@@ -44,11 +44,11 @@ import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presal
 import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 import QuerySupportTypes from 'calypso/blocks/inline-help/inline-help-query-support-types';
 import isSupportVariationDetermined from 'calypso/state/selectors/is-support-variation-determined';
-import { isEnabled } from 'calypso/config';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import { getABTestVariation } from 'calypso/lib/abtest';
+import getPlanFeatures from '../lib/get-plan-features';
 
 export default function WPCheckoutOrderSummary( {
 	onChangePlanLength,
@@ -279,7 +279,7 @@ function CheckoutSummaryPlanFeatures( { isMonthlyPricingTest } ) {
 
 	return (
 		<>
-			{ planFeatures.filter( Boolean ).map( ( feature ) => {
+			{ planFeatures.map( ( feature ) => {
 				const isSupported = ! feature.startsWith( '~~' );
 				if ( ! isSupported ) {
 					feature = feature.substr( 2 );
@@ -294,122 +294,6 @@ function CheckoutSummaryPlanFeatures( { isMonthlyPricingTest } ) {
 			} ) }
 		</>
 	);
-}
-
-function getPlanFeatures(
-	plan,
-	translate,
-	hasDomainsInCart,
-	hasRenewalInCart,
-	isMonthlyPricingTest
-) {
-	const showFreeDomainFeature = ! hasDomainsInCart && ! hasRenewalInCart;
-	const productSlug = plan.wpcom_meta?.product_slug;
-
-	if ( ! productSlug ) {
-		return [];
-	}
-
-	const isMonthlyPlan = isMonthly( productSlug );
-	const liveChatSupport = translate( 'Live chat support' );
-	const freeOneYearDomain = showFreeDomainFeature && translate( 'Free domain for one year' );
-	const googleAnalytics = translate( 'Track your stats with Google Analytics' );
-	const annualPlanOnly = ( feature ) => {
-		if ( ! feature ) {
-			return null;
-		}
-
-		const label = translate( '(annual plans only)', {
-			comment: 'Label attached to a feature',
-		} );
-
-		return `~~${ feature } ${ label }`;
-	};
-
-	if ( isWpComPersonalPlan( productSlug ) ) {
-		if ( isMonthlyPricingTest ) {
-			return [
-				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-				translate( 'Email support' ),
-				translate( 'Dozens of Free Themes' ),
-			];
-		}
-
-		return [
-			freeOneYearDomain,
-			translate( 'Remove WordPress.com ads' ),
-			translate( 'Limit your content to paying subscribers.' ),
-		];
-	}
-
-	if ( isWpComPremiumPlan( productSlug ) ) {
-		if ( isMonthlyPricingTest ) {
-			return [
-				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
-				translate( 'Unlimited access to our library of Premium Themes' ),
-				isEnabled( 'earn/pay-with-paypal' )
-					? translate( 'Subscriber-only content and Pay with PayPal buttons' )
-					: translate( 'Subscriber-only content and payment buttons' ),
-				googleAnalytics,
-			];
-		}
-
-		return [
-			freeOneYearDomain,
-			translate( 'Unlimited access to our library of Premium Themes' ),
-			isEnabled( 'earn/pay-with-paypal' )
-				? translate( 'Subscriber-only content and Pay with PayPal buttons' )
-				: translate( 'Subscriber-only content and payment buttons' ),
-			googleAnalytics,
-		];
-	}
-
-	if ( isWpComBusinessPlan( productSlug ) ) {
-		if ( isMonthlyPricingTest ) {
-			return [
-				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
-				translate( 'Install custom plugins and themes' ),
-				translate( 'Drive traffic to your site with our advanced SEO tools' ),
-				translate( 'Track your stats with Google Analytics' ),
-				translate( 'Real-time backups and activity logs' ),
-			];
-		}
-
-		return [
-			freeOneYearDomain,
-			translate( 'Install custom plugins and themes' ),
-			translate( 'Drive traffic to your site with our advanced SEO tools' ),
-			translate( 'Track your stats with Google Analytics' ),
-			translate( 'Real-time backups and activity logs' ),
-		];
-	}
-
-	if ( isWpComEcommercePlan( productSlug ) ) {
-		if ( isMonthlyPricingTest ) {
-			return [
-				isMonthlyPlan ? annualPlanOnly( freeOneYearDomain ) : freeOneYearDomain,
-				isMonthlyPlan ? annualPlanOnly( liveChatSupport ) : liveChatSupport,
-				translate( 'Install custom plugins and themes' ),
-				translate( 'Accept payments in 60+ countries' ),
-				translate( 'Integrations with top shipping carriers' ),
-				translate( 'Unlimited products or services for your online store' ),
-				translate( 'eCommerce marketing tools for emails and social networks' ),
-			];
-		}
-
-		return [
-			freeOneYearDomain,
-			translate( 'Install custom plugins and themes' ),
-			translate( 'Accept payments in 60+ countries' ),
-			translate( 'Integrations with top shipping carriers' ),
-			translate( 'Unlimited products or services for your online store' ),
-			translate( 'eCommerce marketing tools for emails and social networks' ),
-		];
-	}
-
-	return [];
 }
 
 function getHighestWpComPlanLabel( plans ) {
