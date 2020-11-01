@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import { isObject } from 'lodash';
-import React, { FunctionComponent, useState, useCallback, useEffect, useRef } from 'react';
+import React, { FunctionComponent, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { Button } from '@wordpress/components';
 
@@ -44,26 +44,24 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 	billingTerm,
 	onProductClick,
 } ) => {
-	const { icon, text, description, isHighlighted, slug } = item;
+	const { icon, text, description, isHighlighted: hasProductSlideout, slug } = item;
 	const iconName = ( isObject( icon ) ? icon?.icon : icon ) || DEFAULT_ICON;
 	const Icon = ( ( isObject( icon ) && icon?.component ) || Gridicon ) as IconComponent;
 	const translate = useTranslate();
 
-	const siteId = useSelector( getSelectedSiteId );
-	const dispatch = useDispatch();
-	const onOpenPopover = useCallback(
-		() =>
-			dispatch(
-				recordTracksEvent( 'calypso_plans_infopopover_open', {
-					site_id: siteId || undefined,
-					item_slug: item.slug || undefined,
-				} )
-			),
-		[ dispatch, siteId, item ]
-	);
+	const useOpenClose = () => {
+		const [ isOpen, setIsOpen ] = useState( false );
 
-	const [ slideOutExpanded, setSlideOutExpanded ] = useState( false );
-	const isFirstRender = useRef( true );
+		const close = useCallback( () => {
+			setIsOpen( false );
+		}, [ setIsOpen ] );
+
+		const open = useCallback( () => {
+			setIsOpen( true );
+		}, [ setIsOpen ] );
+
+		return { isOpen, open, close };
+	};
 
 	const slideOutProductSlug =
 		billingTerm === 'TERM_ANNUALLY'
@@ -72,69 +70,46 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 
 	const slideOutProduct = slugToSelectorProduct( slideOutProductSlug );
 
+	const { isOpen, open, close } = useOpenClose();
 	const trackingProps = slideOutProductSlug ? { product_slug: slideOutProductSlug } : {};
 
 	const trackSlideOutOpen = useTrackCallback(
-		undefined,
+		open,
 		'calypso_product_slideout_open',
 		trackingProps
 	);
 	const trackSlideOutClosed = useTrackCallback(
-		undefined,
+		close,
 		'calypso_product_slideout_close',
 		trackingProps
 	);
 
-	const toggleSlideOut = useCallback( () => {
-		setSlideOutExpanded( ( state ) => ! state );
-	}, [ setSlideOutExpanded ] );
-
-	useEffect( () => {
-		if ( ! isFirstRender.current ) {
-			if ( slideOutExpanded ) {
-				trackSlideOutOpen();
-			} else {
-				trackSlideOutClosed();
-			}
-		}
-	}, [ slideOutExpanded ] );
-
-	useEffect( () => {
-		isFirstRender.current = false;
-	}, [] );
-
 	const renderFeatureAction = () => {
-		if ( isHighlighted ) {
-			if ( slideOutProductSlug ) {
-				return slideOutExpanded ? (
-					<Button
-						className="jetpack-product-card-alt-2__slideout-button is-borderless"
-						onClick={ toggleSlideOut }
-					>
-						<span>{ translate( 'Close' ) }</span> <Gridicon icon="cross" size={ 18 } />
-					</Button>
-				) : (
-					<Button
-						className="jetpack-product-card-alt-2__slideout-button is-borderless is-open"
-						onClick={ toggleSlideOut }
-					>
-						<span>{ preventWidows( translate( 'Learn more' ) ) }</span>{ ' ' }
-						<Gridicon icon="chevron-down" size={ 18 } />
-					</Button>
-				);
-			}
-			return (
-				description && (
-					<InfoPopover onOpen={ onOpenPopover }>{ preventWidows( description ) }</InfoPopover>
-				)
+		if ( hasProductSlideout && slideOutProductSlug ) {
+			return isOpen ? (
+				<Button
+					className="jetpack-product-card-alt-2__slideout-button is-borderless"
+					onClick={ trackSlideOutClosed }
+				>
+					<span>{ translate( 'Close' ) }</span> <Gridicon icon="cross" size={ 18 } />
+				</Button>
+			) : (
+				<Button
+					className="jetpack-product-card-alt-2__slideout-button is-borderless is-open"
+					onClick={ trackSlideOutOpen }
+				>
+					<span>{ preventWidows( translate( 'Learn more' ) ) }</span>{ ' ' }
+					<Gridicon icon="chevron-down" size={ 18 } />
+				</Button>
 			);
 		}
+		return description && <InfoPopover>{ preventWidows( description ) }</InfoPopover>;
 	};
 
 	return (
 		<li
 			className={ classNames( 'jetpack-product-card-alt-2__features-item', {
-				'is-highlighted': isHighlighted,
+				'is-highlighted': hasProductSlideout,
 			} ) }
 		>
 			<div className="jetpack-product-card-alt-2__features-main">
@@ -144,20 +119,13 @@ const JetpackProductCardFeaturesItem: FunctionComponent< Props > = ( {
 				</div>
 				{ renderFeatureAction() }
 			</div>
-			{ slideOutProductSlug && (
-				<div
-					className={ classNames( 'jetpack-product-card-alt-2__slide-out-product', {
-						expanded: slideOutExpanded,
-					} ) }
-				>
-					{ slideOutExpanded && slideOutProduct && (
-						<FeaturesProductSlideOut
-							product={ slideOutProduct }
-							productBillingTerm={ billingTerm }
-							onProductClick={ onProductClick }
-						/>
-					) }
-				</div>
+			{ slideOutProduct && (
+				<FeaturesProductSlideOut
+					product={ slideOutProduct }
+					productBillingTerm={ billingTerm }
+					isOpen={ isOpen }
+					onProductClick={ onProductClick }
+				/>
 			) }
 		</li>
 	);

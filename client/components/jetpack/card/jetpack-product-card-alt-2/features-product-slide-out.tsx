@@ -4,6 +4,7 @@
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
+import classNames from 'classnames';
 import formatCurrency from '@automattic/format-currency';
 
 /**
@@ -29,12 +30,14 @@ import type { Duration, PurchaseCallback, SelectorProduct } from 'calypso/my-sit
 type Props = {
 	product: SelectorProduct;
 	productBillingTerm: Duration;
+	isOpen: boolean;
 	onProductClick: PurchaseCallback;
 };
 
 const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 	product,
 	productBillingTerm,
+	isOpen,
 	onProductClick,
 } ) => {
 	const {
@@ -93,21 +96,29 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 				},
 		  } );
 
-	return product ? (
-		<JetpackProductSlideOutCard
-			iconSlug={ iconSlug }
-			productName={ displayName }
-			currencyCode={ currencyCode }
-			price={ Math.floor( ( displayPrice || price ) as number ) }
-			billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
-			description={ description }
-			buttonLabel={ slideOutButtonLabel }
-			onButtonClick={ () => onProductClick( product, false, purchase ) }
-			buttonPrimary={ ! isOwned }
-			isOwned={ isOwned }
-			badgeLabel={ productBadgeLabelAlt( product, isItemPurchased, sitePlan ) }
-		/>
-	) : null;
+	return (
+		<div
+			className={ classNames( 'jetpack-product-card-alt-2__slide-out-product', {
+				expanded: isOpen,
+			} ) }
+		>
+			{ isOpen && (
+				<JetpackProductSlideOutCard
+					iconSlug={ iconSlug }
+					productName={ displayName }
+					currencyCode={ currencyCode }
+					price={ Math.floor( ( displayPrice || price ) as number ) }
+					billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
+					description={ description }
+					buttonLabel={ slideOutButtonLabel }
+					onButtonClick={ () => onProductClick( product, false, purchase ) }
+					buttonPrimary={ ! isOwned }
+					isOwned={ isOwned }
+					badgeLabel={ productBadgeLabelAlt( product, isItemPurchased, sitePlan ) }
+				/>
+			) }
+		</div>
+	);
 };
 
 export default FeaturesProductSlideOut;
