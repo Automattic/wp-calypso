@@ -123,6 +123,12 @@ describe( 'safeImageUrl()', () => {
 			);
 		} );
 
+		test( 'should ignore authuser=0 param in an image URL', () => {
+			expect( safeImageUrl( 'https://example.com/foo.jpg?authuser=0' ) ).toEqual(
+				'https://i0.wp.com/example.com/foo.jpg?ssl=1'
+			);
+		} );
+
 		test( 'should return null for SVG images', () => {
 			expect( safeImageUrl( 'https://example.com/foo.svg' ) ).toBeNull();
 			expect( safeImageUrl( 'https://example.com/foo.svg?ssl=1' ) ).toBeNull();

@@ -75,6 +75,11 @@ export default function safeImageUrl( url ) {
 		// If it's just size parameters, let's remove them
 		SIZE_PARAMS.forEach( ( param ) => parsedUrl.searchParams.delete( param ) );
 
+		// Ditch authuser=0 if we find it - we see this on googleusercontent.com URLs and it doesn't affect the image output
+		if ( parsedUrl.searchParams.get( 'authuser' ) === '0' ) {
+			parsedUrl.searchParams.delete( 'authuser' );
+		}
+
 		// There are still parameters left, since they might be needed to retrieve the image, bail out
 		if ( parsedUrl.searchParams.length ) {
 			return null;
