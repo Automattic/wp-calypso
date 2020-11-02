@@ -211,7 +211,7 @@ function CreditCardLabel() {
 
 function CreditCardLogos() {
 	return (
-		<PaymentMethodLogos>
+		<PaymentMethodLogos className="credit-card__logo payment-logos">
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
