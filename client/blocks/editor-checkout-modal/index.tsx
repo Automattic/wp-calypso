@@ -38,17 +38,9 @@ function removeHashFromUrl(): void {
 	try {
 		const newUrl = window.location.hash
 			? window.location.href.replace( window.location.hash, '' )
-			: window.location.href + '';
+			: window.location.href;
 
 		window.history.replaceState( null, '', newUrl );
-	} catch {}
-
-	try {
-		// Modifying history does not trigger a hashchange event
-		// so we manually create one and use try/catch because
-		// IE11 does not include HashChange
-		const event = new HashChangeEvent( 'hashchange' );
-		window.dispatchEvent( event );
 	} catch {}
 }
 
