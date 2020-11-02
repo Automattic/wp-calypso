@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import Gridicon from 'calypso/components/gridicon';
 import React, { Fragment } from 'react';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
 import PluginsStore from 'calypso/lib/plugins/store';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -20,7 +20,7 @@ import {
 	Tour,
 } from 'calypso/layout/guided-tours/config-elements';
 
-const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .form-toggle__switch';
+const JETPACK_TOGGLE_SELECTOR = '.plugin-item-jetpack .components-form-toggle';
 
 // Wait until the desired DOM element appears. Check every 125ms.
 // This function is a Redux action creator, hence the two arrows.
@@ -63,7 +63,7 @@ export const JetpackPluginUpdatesTour = makeTour(
 					</p>
 					<ButtonRow>
 						<Continue
-							target=".plugin-item-jetpack .form-toggle__switch"
+							target=".plugin-item-jetpack .components-form-toggle"
 							step="finish"
 							click
 							hidden
