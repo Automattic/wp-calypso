@@ -128,6 +128,11 @@ export const subscribedLists = withSchemaValidation(
 				return filter( state, ( listId ) => {
 					return listId !== action.listId;
 				} );
+			case READER_LIST_REQUEST_SUCCESS:
+				if ( ! state.includes( action.data.list.ID ) ) {
+					return [ ...state, action.data.list.ID ];
+				}
+				return state;
 		}
 		return state;
 	}
