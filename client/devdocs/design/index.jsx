@@ -81,6 +81,7 @@ import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card/d
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card/docs/example';
 import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-product-slide-out-card/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
+import LayoutExample from 'calypso/components/layout/docs/example';
 import LineChart from 'calypso/components/line-chart/docs/example';
 import ListEnd from 'calypso/components/list-end/docs/example';
 import MarkedLinesExample from 'calypso/components/marked-lines/docs/example';
@@ -244,6 +245,7 @@ export default class DesignAssets extends React.Component {
 					<JetpackProductCard readmeFilePath="jetpack-product-card" />
 					<JetpackProductSlideOutCard readmeFilePath="jetpack-product-slide-out-card" />
 					<LanguagePicker readmeFilePath="language-picker" />
+					<LayoutExample readmeFilePath="layout" />
 					<LineChart readmeFilePath="line-chart" />
 					<ListEnd readmeFilePath="list-end" />
 					<MarkedLinesExample readmeFilePath="marked-lines" />
