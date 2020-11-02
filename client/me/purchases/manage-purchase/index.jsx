@@ -56,6 +56,7 @@ import {
 	isPersonal,
 	isPremium,
 	isBusiness,
+	isEcommerce,
 	isPlan,
 	isDomainProduct,
 	isDomainRegistration,
@@ -237,6 +238,37 @@ class ManagePurchase extends Component {
 		);
 	}
 
+	handleUpgradeClick = () => {
+		const { purchase } = this.props;
+
+		recordTracksEvent( 'calypso_purchases_upgrade_plan', {
+			status: isExpired( purchase ) ? 'expired' : 'active',
+			plan: purchase.productName,
+		} );
+	};
+
+	renderUpgradeNavItem() {
+		const { purchase, translate, siteId } = this.props;
+		const buttonText = isExpired( purchase )
+			? translate( 'Pick Another Plan' )
+			: translate( 'Upgrade Plan' );
+
+		if ( ! isPlan( purchase ) || isEcommerce( purchase ) ) {
+			return null;
+		}
+
+		return (
+			<CompactCard
+				tagName="button"
+				displayAsLink
+				href={ `/plans/${ siteId }/` }
+				onClick={ this.handleUpgradeClick }
+			>
+				{ buttonText }
+			</CompactCard>
+		);
+	}
+
 	renderSelectNewNavItem() {
 		const { translate, siteId } = this.props;
 
@@ -246,6 +278,10 @@ class ManagePurchase extends Component {
 			</CompactCard>
 		);
 	}
+
+	handleEditPaymentMethodNavItem = () => {
+		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
+	};
 
 	renderEditPaymentMethodNavItem() {
 		const { purchase, translate, siteSlug, getEditPaymentMethodUrlFor } = this.props;
@@ -267,7 +303,7 @@ class ManagePurchase extends Component {
 			}
 
 			return (
-				<CompactCard href={ path }>
+				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
 					{ hasPaymentMethod( purchase )
 						? translate( 'Change Payment Method' )
 						: translate( 'Add Credit Card' ) }
@@ -600,6 +636,7 @@ class ManagePurchase extends Component {
 
 				{ isProductOwner && preventRenewal && this.renderSelectNewNavItem() }
 				{ isProductOwner && ! preventRenewal && this.renderRenewNowNavItem() }
+				{ isProductOwner && ! preventRenewal && this.renderUpgradeNavItem() }
 				{ isProductOwner && this.renderEditPaymentMethodNavItem() }
 				{ isProductOwner && this.renderCancelPurchaseNavItem() }
 				{ isProductOwner && this.renderRemovePurchaseNavItem() }
