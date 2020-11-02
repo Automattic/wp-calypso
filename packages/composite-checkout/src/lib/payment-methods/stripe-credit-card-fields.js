@@ -463,9 +463,8 @@ function CreditCardLabel() {
 }
 
 function CreditCardLogos() {
-	//TODO: Determine which logos to show
 	return (
-		<PaymentMethodLogos>
+		<PaymentMethodLogos className="credit-card__logo payment-logos">
 			<VisaLogo />
 			<MastercardLogo />
 			<AmexLogo />
