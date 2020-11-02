@@ -258,7 +258,13 @@ function useAddProductFromSlug( {
 	isPrivate: boolean;
 	addHandler: AddHandler;
 } ) {
-	const products = useSelector( getProductsList );
+	const products: Record<
+		string,
+		{
+			product_id: number;
+			product_slug: string;
+		}
+	> = useSelector( getProductsList );
 	const translate = useTranslate();
 
 	// If `productAliasFromUrl` has a comma ',' in it, we will assume it's because it's
