@@ -1,13 +1,8 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-import sinon from 'sinon';
-
-/**
  * Internal dependencies
  */
 import {
+	deleteReaderList,
 	receiveLists,
 	requestList,
 	requestSubscribedLists,
@@ -16,6 +11,7 @@ import {
 	dismissListNotice,
 } from '../actions';
 import {
+	READER_LIST_DELETE,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
@@ -26,10 +22,10 @@ import {
 import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
-	const spy = sinon.spy();
+	const spy = jest.fn();
 
-	beforeEach( () => {
-		spy.resetHistory();
+	afterEach( () => {
+		jest.clearAllMocks();
 	} );
 
 	describe( '#receiveLists()', () => {
@@ -37,7 +33,7 @@ describe( 'actions', () => {
 			const lists = [ { ID: 841, title: 'Hello World', slug: 'hello-world' } ];
 			const action = receiveLists( lists );
 
-			expect( action ).to.eql( {
+			expect( action ).toEqual( {
 				type: READER_LISTS_RECEIVE,
 				lists,
 			} );
@@ -59,7 +55,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestList()( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: READER_LIST_REQUEST,
 			} );
 		} );
@@ -82,14 +78,14 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			requestSubscribedLists()( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: READER_LISTS_REQUEST,
 			} );
 		} );
 
 		test( 'should dispatch lists receive action when request completes', () => {
 			return requestSubscribedLists()( spy ).then( () => {
-				expect( spy ).to.have.been.calledWith( {
+				expect( spy ).toHaveBeenCalledWith( {
 					type: READER_LISTS_RECEIVE,
 					lists: [
 						{ ID: 841, title: 'Hello World' },
@@ -112,7 +108,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			followList( 'restapitests', 'testlist' )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: READER_LISTS_FOLLOW,
 				owner: 'restapitests',
 				slug: 'testlist',
@@ -132,7 +128,7 @@ describe( 'actions', () => {
 		test( 'should dispatch fetch action when thunk triggered', () => {
 			unfollowList( 'restapitests', 'testlist' )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: READER_LISTS_UNFOLLOW,
 				owner: 'restapitests',
 				slug: 'testlist',
@@ -145,9 +141,21 @@ describe( 'actions', () => {
 			const listId = 123;
 			dismissListNotice( listId )( spy );
 
-			expect( spy ).to.have.been.calledWith( {
+			expect( spy ).toHaveBeenCalledWith( {
 				type: READER_LIST_DISMISS_NOTICE,
 				listId: 123,
+			} );
+		} );
+	} );
+
+	describe( '#deleteReaderList', () => {
+		test( 'should return the correct action', () => {
+			const action = deleteReaderList( 123, 'restapitests', 'testlist' );
+			expect( action ).toEqual( {
+				type: READER_LIST_DELETE,
+				listId: 123,
+				listOwner: 'restapitests',
+				listSlug: 'testlist',
 			} );
 		} );
 	} );

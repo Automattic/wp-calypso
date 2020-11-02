@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/delete/index.js', {
 					},
 					action
 				),
+			onSuccess: noop,
 			onError: () => errorNotice( translate( 'Unable to remove list' ) ),
 		} ),
 	],
