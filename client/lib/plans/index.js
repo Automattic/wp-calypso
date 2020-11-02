@@ -41,10 +41,7 @@ import {
 import { PLANS_LIST } from './plans-list';
 
 /**
- * @typedef Plan
- * @property {() => number} getProductId the product id
- * @property {() => string} getStoreSlug the product slug
- * @property {() => string} [getPathSlug] the product alias used in URLs
+ * @typedef { import('./types').Plan } Plan
  */
 
 export function getPlans() {
@@ -72,9 +69,10 @@ export function getPlan( planKey ) {
  * @returns {Plan|undefined} The plan
  */
 export function getPlanByPathSlug( pathSlug, group ) {
-	return Object.values( PLANS_LIST )
-		.filter( ( p ) => ( group ? p.group === group : true ) )
-		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
+	/** @type {Plan[]} */
+	let plans = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
