@@ -9,7 +9,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured"],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true
 		},
@@ -22,7 +22,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "blog"],
+			"categories": [ "featured", "blog" ],
 			"is_premium": false
 		},
 		{
@@ -34,7 +34,7 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": ["featured", "blog"],
+			"categories": [ "featured", "blog" ],
 			"is_premium": true
 		},
 		{
@@ -46,7 +46,7 @@
 				"headings": "Cabin",
 				"base": "Raleway"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -58,7 +58,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "business"],
+			"categories": [ "featured", "business" ],
 			"is_premium": true
 		},
 		{
@@ -70,7 +70,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "blog"],
+			"categories": [ "featured", "blog" ],
 			"is_premium": false
 		},
 		{
@@ -82,7 +82,7 @@
 				"headings": "Space Mono",
 				"base": "Roboto"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -94,7 +94,7 @@
 				"headings": "Space Mono",
 				"base": "Roboto"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -106,7 +106,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -118,7 +118,7 @@
 				"headings": "Cabin",
 				"base": "Raleway"
 			},
-			"categories": ["featured", "business"],
+			"categories": [ "featured", "business" ],
 			"is_premium": false
 		},
 		{
@@ -130,7 +130,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "charity", "non-profit"],
+			"categories": [ "featured", "charity", "non-profit" ],
 			"is_premium": false
 		},
 		{
@@ -142,7 +142,7 @@
 				"headings": "Open Sans",
 				"base": "Chivo"
 			},
-			"categories": ["featured", "business"],
+			"categories": [ "featured", "business" ],
 			"is_premium": false
 		},
 		{
@@ -154,7 +154,7 @@
 				"headings": "Arvo",
 				"base": "Montserrat"
 			},
-			"categories": ["featured", "non-profit", "charity"],
+			"categories": [ "featured", "non-profit", "charity" ],
 			"is_premium": false
 		},
 		{
@@ -166,7 +166,7 @@
 				"headings": "Raleway",
 				"base": "Cabin"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -178,7 +178,7 @@
 				"headings": "Arvo",
 				"base": "Montserrat"
 			},
-			"categories": ["featured", "real estate listing"],
+			"categories": [ "featured", "real estate listing" ],
 			"is_premium": false
 		},
 		{
@@ -190,7 +190,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "restaurant, small business"],
+			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false
 		},
 		{
@@ -202,7 +202,7 @@
 				"headings": "Open Sans",
 				"base": "Chivo"
 			},
-			"categories": ["featured", "restaurant, small business"],
+			"categories": [ "featured", "restaurant, small business" ],
 			"is_premium": false
 		},
 		{
@@ -214,7 +214,7 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": ["featured", "school"],
+			"categories": [ "featured", "school" ],
 			"is_premium": false
 		},
 		{
@@ -226,7 +226,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "restaurant", "small business"],
+			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false
 		},
 		{
@@ -238,7 +238,7 @@
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "portfolio"],
+			"categories": [ "featured", "portfolio" ],
 			"is_premium": false
 		},
 		{
@@ -250,7 +250,7 @@
 				"headings": "Chivo",
 				"base": "Open Sans"
 			},
-			"categories": ["featured", "portfolio", "small business"],
+			"categories": [ "featured", "portfolio", "small business" ],
 			"is_premium": false
 		},
 		{
@@ -262,7 +262,7 @@
 				"headings": "Fira Sans",
 				"base": "Fira Sans"
 			},
-			"categories": ["featured", "restaurant", "small business"],
+			"categories": [ "featured", "restaurant", "small business" ],
 			"is_premium": false
 		}
 	]
