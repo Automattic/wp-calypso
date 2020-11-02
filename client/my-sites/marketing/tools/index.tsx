@@ -18,6 +18,7 @@ import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketi
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 
 /**
  * Types
@@ -76,9 +77,9 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
+						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
 					) }
-					imagePath="/calypso/images/marketing/looka-logo.svg"
+					imagePath={ fiverrLogo }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
