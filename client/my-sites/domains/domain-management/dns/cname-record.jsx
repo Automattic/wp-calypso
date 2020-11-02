@@ -49,7 +49,7 @@ class CnameRecord extends React.Component {
 				</FormFieldset>
 
 				<FormFieldset>
-					<FormLabel>{ translate( 'Alias Of (Points to)' ) }</FormLabel>
+					<FormLabel>{ translate( 'Alias Of (Points To)' ) }</FormLabel>
 					<FormTextInput
 						name="data"
 						isError={ ! isDataValid }
