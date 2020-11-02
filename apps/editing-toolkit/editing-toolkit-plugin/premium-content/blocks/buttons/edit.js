@@ -24,20 +24,23 @@ const alignmentHooksSetting = {
 	isEmbedButton: true,
 };
 
-function ButtonsEdit( {
-	context,
-	subscribeButton,
-	setSubscribeButtonPlan,
-} ) {
+function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
 
 	const template = [
 		[
 			'jetpack/recurring-payments',
-			{
-				planId,
-				submitButtonText: __( 'Subscribe', 'full-site-editing' ),
-			},
+			{ planId },
+			[
+				[
+					'jetpack/button',
+					{
+						element: 'a',
+						uniqueId: 'recurring-payments-id',
+						text: __( 'Subscribe', 'full-site-editing' ),
+					},
+				],
+			],
 		],
 		[ 'premium-content/login-button' ],
 	];
@@ -52,7 +55,7 @@ function ButtonsEdit( {
 		if ( subscribeButton.attributes.planId !== planId ) {
 			setSubscribeButtonPlan( planId );
 		}
-	}, [ planId, subscribeButton ] );
+	}, [ planId, subscribeButton, setSubscribeButtonPlan ] );
 
 	// Hides the inspector controls of the Recurring Payments inner block acting as a subscribe button so users can only
 	// switch plans using the plan selector of the Premium Content block.
