@@ -7,13 +7,13 @@ import { __ } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { useSite } from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite } from '../../hooks';
 import './styles.scss';
 
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {

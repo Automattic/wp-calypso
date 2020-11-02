@@ -2,6 +2,8 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { useEntityProp } from '@wordpress/core-data';
 
 /**
@@ -13,6 +15,8 @@ export function useTitle() {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 	const [ title, setTitle ] = useEntityProp( 'root', 'site', 'title' );
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
 	const { saveEditedEntityRecord } = useDispatch( 'core' );
 
 	const handleSave = ( newTitle = title ) => {

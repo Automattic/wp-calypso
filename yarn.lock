@@ -4237,16 +4237,17 @@
     "@types/wordpress__rich-text" "*"
     re-resizable "^4.7.1"
 
-"@types/wordpress__components@^9.8.0":
-  version "9.8.0"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.8.0.tgz#25b9799178b777910304aec35e6453b6faec3fb2"
-  integrity sha512-pt0FxWz9Spbqk7xF7YVDUosW5YMTHkfCzkG7lWESm6OuEXc6HmHN3JSmC82FS+NQjht3qTGjbdULYLxXrxzTvQ==
+"@types/wordpress__components@^9.8.4":
+  version "9.8.4"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__components/-/wordpress__components-9.8.4.tgz#f6155df7223199667fff0aee0e3e8b6bd6704af2"
+  integrity sha512-8K+WlCPh30XCjkCN9WIlfDMYTrPxcxwmtG1vLhDW7Nonjisr3e4Bfajtx0pWmtNsE6Cb4s06KOXAXFj5rxyglQ==
   dependencies:
     "@types/react" "*"
     "@types/wordpress__components" "*"
     "@types/wordpress__notices" "*"
     "@types/wordpress__rich-text" "*"
     "@wordpress/element" "^2.14.0"
+    downshift "^4.0.5"
     re-resizable "^4.7.1"
 
 "@types/wordpress__compose@^3.4.2":

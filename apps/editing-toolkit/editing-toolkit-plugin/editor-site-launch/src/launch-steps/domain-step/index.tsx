@@ -14,7 +14,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite, useDomainSearch } from '../../hooks';
+import { useSite, useDomainSearch } from '@automattic/launch';
+
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 

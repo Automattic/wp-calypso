@@ -10,7 +10,8 @@ import { doAction, hasAction } from '@wordpress/hooks';
  * Internal dependencies
  */
 import LaunchModal from './launch-modal';
-import { useOnLaunch } from './hooks';
+import { useOnLaunch } from '@automattic/launch';
+
 import { LAUNCH_STORE } from './stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>

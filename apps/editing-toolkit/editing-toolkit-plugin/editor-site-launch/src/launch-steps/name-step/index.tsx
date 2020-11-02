@@ -10,7 +10,7 @@ import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automat
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { useTitle } from '../../hooks';
+import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {

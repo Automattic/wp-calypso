@@ -90,6 +90,7 @@
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
+		"@automattic/launch": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",

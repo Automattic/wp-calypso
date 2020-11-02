@@ -377,6 +377,7 @@ class CalypsoifyIframe extends Component<
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
 			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
+			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
@@ -385,6 +386,7 @@ class CalypsoifyIframe extends Component<
 				isNewLaunchMobile,
 				isExperimental,
 				isPersistentLaunchButton,
+				isFocusedLaunchFlow,
 			} );
 		}
 
@@ -702,7 +704,7 @@ class CalypsoifyIframe extends Component<
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
-		const isLaunchOverlayEnabled = config.isEnabled( 'post-editor/launch-overlay' );
+		const isFocusedLaunchCalypsoEnabled = config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 		return (
 			<Fragment>
@@ -749,7 +751,9 @@ class CalypsoifyIframe extends Component<
 						isOpen
 					/>
 				) }
-				{ isLaunchOverlayEnabled && <AsyncLoad require="calypso/blocks/editor-launch-modal" /> }
+				{ isFocusedLaunchCalypsoEnabled && (
+					<AsyncLoad require="calypso/blocks/editor-launch-modal" />
+				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }
@@ -817,7 +821,10 @@ const mapStateToProps = (
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe =
+		! isRequestingSite( state, siteId ) ||
+		// Temporarily disable iframe loading for faster dev
+		config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
