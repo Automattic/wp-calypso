@@ -123,7 +123,7 @@ export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, ge
 	dispatch( setNextPageHandle( siteId, data.meta ) );
 };
 
-export const requestMediaError = ( { siteId, query } ) => [ failMediaRequest( siteId, query ) ];
+export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
 export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;
@@ -148,9 +148,8 @@ export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
 	successMediaItemRequest( siteId, mediaId ),
 ];
 
-export const receiveMediaItemError = ( { mediaId, siteId } ) => [
-	failMediaItemRequest( siteId, mediaId ),
-];
+export const receiveMediaItemError = ( { mediaId, siteId } ) =>
+	failMediaItemRequest( siteId, mediaId );
 
 export const requestDeleteMedia = ( action ) => {
 	const { siteId, mediaId } = action;

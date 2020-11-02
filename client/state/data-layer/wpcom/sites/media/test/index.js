@@ -54,7 +54,7 @@ describe( 'media request', () => {
 	test( 'should dispatch FAILURE action when request fails', () => {
 		const result = requestMediaError( { siteId: 2916284, query: 'a=b' } );
 
-		expect( result ).toEqual( [ failMediaRequest( 2916284, 'a=b' ) ] );
+		expect( result ).toEqual( failMediaRequest( 2916284, 'a=b' ) );
 	} );
 
 	test( 'should dispatch http request', () => {
@@ -130,6 +130,6 @@ describe( 'receiveMediaItemError', () => {
 
 		const result = receiveMediaItemError( action );
 
-		expect( result ).toEqual( [ failMediaItemRequest( siteId, mediaId ) ] );
+		expect( result ).toEqual( failMediaItemRequest( siteId, mediaId ) );
 	} );
 } );
