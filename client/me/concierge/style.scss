@@ -12,9 +12,11 @@
 
 	& .shared__time-group {
 		margin-right: 10px;
+		font-weight: normal;
 
 		&.is-selected {
 			border-color: var( --studio-blue-60 );
+			border-width: 2px;
 		}
 	}
 }

@@ -99,6 +99,18 @@ class CalendarCard extends Component {
 		return moment( dateTime ).tz( timezone );
 	}
 
+	formatTimeDisplay( time ) {
+		const timeWithoutTz = this.withTimezone( time ).format( 'LT' );
+		const timeWithTz = this.withTimezone( time ).format( 'LT z' );
+		const timezone = this.withTimezone( time ).format( 'z' );
+
+		if ( [ '12:00 AM', '000:00' ].includes( timeWithoutTz ) ) {
+			return `midnight ${ timezone }`;
+		}
+
+		return timeWithTz;
+	}
+
 	/**
 	 * Returns a string representing the day of the week, with certain dates using natural
 	 * language like "Today" or "Tomorrow" instead of the name of the day.
@@ -212,14 +224,14 @@ class CalendarCard extends Component {
 						onClick={ () => this.handleFilterClick( 'morning' ) }
 						disabled={ morningTimes.length === 0 }
 					>
-						Morning
+						{ translate( 'Morning' ) }
 					</Button>
 					<Button
 						className={ btnEveningTimeGroup }
 						onClick={ () => this.handleFilterClick( 'evening' ) }
 						disabled={ eveningTimes.length === 0 }
 					>
-						Evening
+						{ translate( 'Afternoon' ) }
 					</Button>
 					<br />
 					<br />
@@ -240,7 +252,7 @@ class CalendarCard extends Component {
 							>
 								{ timesForTimeGroup.map( ( time ) => (
 									<option value={ time } key={ time }>
-										{ this.withTimezone( time ).format( 'LT z' ) }
+										{ this.formatTimeDisplay( time ) }
 									</option>
 								) ) }
 							</FormSelect>
