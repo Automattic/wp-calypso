@@ -37,6 +37,7 @@ import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import ListItem from './list-item';
 import Missing from 'calypso/reader/list-stream/missing';
+import ListDelete from './list-delete';
 
 /**
  * Style dependencies
@@ -255,11 +256,18 @@ function ReaderListEdit( props ) {
 								>
 									{ translate( 'Export' ) }
 								</NavItem>
+								<NavItem
+									selected={ selectedSection === 'delete' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/delete` }
+								>
+									{ translate( 'Delete' ) }
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
 						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
 						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
 						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
+						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
 					</>
 				) }
 			</Main>
