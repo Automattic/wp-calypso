@@ -27,6 +27,7 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getLanguage } from 'calypso/lib/i18n-utils';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -46,7 +47,7 @@ class CalendarCard extends Component {
 
 		let closestTimestamp;
 
-		const { moment, times, date } = this.props;
+		const { moment, times, morningTimes, date } = this.props;
 
 		// If there are times passed in, pick a sensible default.
 		if ( Array.isArray( times ) && ! isEmpty( times ) ) {
@@ -75,8 +76,11 @@ class CalendarCard extends Component {
 			} );
 		}
 
+		const selectedTimeGroup = morningTimes.includes( closestTimestamp ) ? 'morning' : 'evening';
+
 		this.state = {
 			selectedTime: closestTimestamp,
+			selectedTimeGroup,
 		};
 	}
 
@@ -161,6 +165,17 @@ class CalendarCard extends Component {
 				header={ this.renderHeader() }
 			>
 				<FormFieldset>
+					<FormLabel htmlFor="concierge-start-time-group">
+						{ translate( 'Choose time of day' ) }
+					</FormLabel>
+					<SegmentedControl>
+						<SegmentedControl.Item selected={ this.state.selectedTimeGroup === 'morning' }>
+							Morning
+						</SegmentedControl.Item>
+						<SegmentedControl.Item selected={ this.state.selectedTimeGroup === 'evening' }>
+							Afternoon
+						</SegmentedControl.Item>
+					</SegmentedControl>
 					<FormLabel htmlFor="concierge-start-time">
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>

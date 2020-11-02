@@ -17,10 +17,28 @@ const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	// Go through all available times and bundle them into each date object
 	availableTimes.forEach( ( beginTimestamp ) => {
 		const startOfDay = moment( beginTimestamp ).tz( timezone ).startOf( 'day' ).valueOf();
+		const hour = moment.tz( beginTimestamp, timezone ).format( 'HH' );
+		let morningTimes, eveningTimes;
+
+		if ( hour < 12 ) {
+			morningTimes = [ beginTimestamp ];
+			eveningTimes = [];
+		} else {
+			morningTimes = [];
+			eveningTimes = [ beginTimestamp ];
+		}
+
 		if ( dates.hasOwnProperty( startOfDay ) ) {
 			dates[ startOfDay ].times.push( beginTimestamp );
+			morningTimes.length && dates[ startOfDay ].morningTimes.push( beginTimestamp );
+			eveningTimes.length && dates[ startOfDay ].eveningTimes.push( beginTimestamp );
 		} else {
-			dates[ startOfDay ] = { date: startOfDay, times: [ beginTimestamp ] };
+			dates[ startOfDay ] = {
+				date: startOfDay,
+				times: [ beginTimestamp ],
+				morningTimes,
+				eveningTimes,
+			};
 		}
 	} );
 
@@ -54,7 +72,7 @@ class AvailableTimePicker extends Component {
 
 		return (
 			<div>
-				{ availability.map( ( { date, times } ) => (
+				{ availability.map( ( { date, times, morningTimes, eveningTimes } ) => (
 					<AvailableTimeCard
 						actionText={ actionText }
 						appointmentTimespan={ appointmentTimespan }
@@ -64,6 +82,8 @@ class AvailableTimePicker extends Component {
 						key={ date }
 						onSubmit={ onSubmit }
 						times={ times }
+						morningTimes={ morningTimes }
+						eveningTimes={ eveningTimes }
 						timezone={ timezone }
 					/>
 				) ) }
