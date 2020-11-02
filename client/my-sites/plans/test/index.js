@@ -52,28 +52,78 @@ import plansV2 from 'calypso/my-sites/plans-v2';
 import router from '../index';
 
 const routes = {
-	'/plans': [ siteSelection, sites, makeLayout, clientRender ],
-	'/plans/compare': [ siteSelection, navigation, redirectToPlans, makeLayout, clientRender ],
-	'/plans/compare/:domain': [
+	'/plans': [
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		sites,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/compare': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
-	'/plans/features': [ siteSelection, navigation, redirectToPlans, makeLayout, clientRender ],
+	'/plans/compare/:domain': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/features': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans,
+		makeLayout,
+		clientRender,
+	],
 	'/plans/features/:domain': [
 		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans,
 		makeLayout,
 		clientRender,
 	],
 	'/plans/features/:feature/:domain': [ features, makeLayout, clientRender ],
-	'/plans/my-plan': [ siteSelection, sites, navigation, currentPlan, makeLayout, clientRender ],
-	'/plans/my-plan/:site': [ siteSelection, navigation, currentPlan, makeLayout, clientRender ],
-	'/plans/select/:plan/:domain': [ siteSelection, redirectToCheckout, makeLayout, clientRender ],
-	'/plans/:intervalType?/:site': [ siteSelection, navigation, plans, makeLayout, clientRender ],
+	'/plans/my-plan': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		sites,
+		navigation,
+		currentPlan,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/my-plan/:site': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		currentPlan,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/select/:plan/:domain': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToCheckout,
+		makeLayout,
+		clientRender,
+	],
+	'/plans/:intervalType?/:site': [
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		plans,
+		makeLayout,
+		clientRender,
+	],
 };
 
 describe( 'Sets all routes', () => {
