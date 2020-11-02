@@ -10,7 +10,6 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import NoSupport from './no-support';
-import { getFontTitle } from '../../../../../client/landing/gutenboarding/constants';
 
 export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 	return (
@@ -36,11 +35,9 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 									key={ label }
 								>
 									<span className="style-preview__font-option-contents">
-										<span style={ { fontFamily: headings, fontWeight: 700 } }>
-											{ getFontTitle( headings ) }
-										</span>
+										<span style={ { fontFamily: headings, fontWeight: 700 } }>{ headings }</span>
 										&nbsp;/&nbsp;
-										<span style={ { fontFamily: base } }>{ getFontTitle( base ) }</span>
+										<span style={ { fontFamily: base } }>{ base }</span>
 									</span>
 								</Button>
 							);
