@@ -28,13 +28,6 @@ import {
 	successMediaRequest,
 } from 'calypso/state/media/actions';
 import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
-import {
-	dispatchFluxUpdateMediaItemSuccess,
-	dispatchFluxRemoveMediaItemSuccess,
-	dispatchFluxRequestMediaItemSuccess,
-	dispatchFluxRequestMediaItemError,
-	dispatchFluxRequestMediaItemsSuccess,
-} from 'calypso/state/media/utils/flux-adapter';
 import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
@@ -63,12 +56,10 @@ export function updateMedia( action ) {
 	];
 }
 
-export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
-	dispatch( receiveMedia( siteId, mediaItem ) );
-	dispatch( gutenframeUpdateImageBlocks( mediaItem, 'updated' ) );
-
-	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
-};
+export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
+	receiveMedia( siteId, mediaItem ),
+	gutenframeUpdateImageBlocks( mediaItem, 'updated' ),
+];
 
 export const updateMediaError = ( { siteId, originalMediaItem } ) => [
 	receiveMedia( siteId, originalMediaItem ),
@@ -130,13 +121,9 @@ export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, ge
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 	dispatch( setNextPageHandle( siteId, data.meta ) );
-
-	dispatchFluxRequestMediaItemsSuccess( siteId, data, query );
 };
 
-export const requestMediaError = ( { siteId, query } ) => ( dispatch ) => {
-	dispatch( failMediaRequest( siteId, query ) );
-};
+export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
 export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;
@@ -156,17 +143,13 @@ export function requestMediaItem( action ) {
 	];
 }
 
-export const receiveMediaItem = ( { mediaId, siteId }, media ) => ( dispatch ) => {
-	dispatch( receiveMedia( siteId, media ) );
-	dispatch( successMediaItemRequest( siteId, mediaId ) );
+export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
+	receiveMedia( siteId, media ),
+	successMediaItemRequest( siteId, mediaId ),
+];
 
-	dispatchFluxRequestMediaItemSuccess( siteId, media );
-};
-
-export const receiveMediaItemError = ( { mediaId, siteId }, error ) => ( dispatch ) => {
-	dispatch( failMediaItemRequest( siteId, mediaId ) );
-	dispatchFluxRequestMediaItemError( siteId, error );
-};
+export const receiveMediaItemError = ( { mediaId, siteId } ) =>
+	failMediaItemRequest( siteId, mediaId );
 
 export const requestDeleteMedia = ( action ) => {
 	const { siteId, mediaId } = action;
@@ -184,13 +167,11 @@ export const requestDeleteMedia = ( action ) => {
 	];
 };
 
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
-	dispatch( deleteMedia( siteId, mediaItem.ID ) );
-	dispatch( requestMediaStorage( siteId ) );
-	dispatch( gutenframeUpdateImageBlocks( mediaItem, 'deleted' ) );
-
-	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
-};
+export const deleteMediaSuccess = ( { siteId }, mediaItem ) => [
+	deleteMedia( siteId, mediaItem.ID ),
+	requestMediaStorage( siteId ),
+	gutenframeUpdateImageBlocks( mediaItem, 'deleted' ),
+];
 
 export const deleteMediaError = ( { mediaId } ) => [
 	errorNotice( translate( 'We were unable to delete this media item.' ), {
