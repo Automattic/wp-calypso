@@ -132,6 +132,10 @@ class CalendarCard extends Component {
 		this.props.onSubmit( this.state.selectedTime );
 	};
 
+	handleFilterClick = ( timeGroup ) => {
+		this.setState( { selectedTimeGroup: timeGroup } );
+	};
+
 	render() {
 		const {
 			actionText,
@@ -139,6 +143,8 @@ class CalendarCard extends Component {
 			isDefaultLocale,
 			times,
 			translate,
+			morningTimes,
+			eveningTimes,
 			// Temporarily harcoding durationInMinutes
 			// appointmentTimespan,
 			// moment,
@@ -155,6 +161,9 @@ class CalendarCard extends Component {
 					args: { defaultLanguage, durationInMinutes },
 			  } );
 
+		const timesForTimeGroup =
+			this.state.selectedTimeGroup === 'morning' ? morningTimes : eveningTimes;
+
 		return (
 			<FoldableCard
 				className="shared__available-time-card"
@@ -169,36 +178,48 @@ class CalendarCard extends Component {
 						{ translate( 'Choose time of day' ) }
 					</FormLabel>
 					<SegmentedControl>
-						<SegmentedControl.Item selected={ this.state.selectedTimeGroup === 'morning' }>
+						<SegmentedControl.Item
+							selected={ this.state.selectedTimeGroup === 'morning' }
+							onClick={ () => this.handleFilterClick( 'morning' ) }
+						>
 							Morning
 						</SegmentedControl.Item>
-						<SegmentedControl.Item selected={ this.state.selectedTimeGroup === 'evening' }>
+						<SegmentedControl.Item
+							selected={ this.state.selectedTimeGroup === 'evening' }
+							onClick={ () => this.handleFilterClick( 'evening' ) }
+						>
 							Afternoon
 						</SegmentedControl.Item>
 					</SegmentedControl>
-					<FormLabel htmlFor="concierge-start-time">
-						{ translate( 'Choose a starting time' ) }
-					</FormLabel>
-					<FormSelect
-						id="concierge-start-time"
-						disabled={ disabled }
-						onChange={ this.onChange }
-						value={ this.state.selectedTime }
-					>
-						{ times.map( ( time ) => (
-							<option value={ time } key={ time }>
-								{ this.withTimezone( time ).format( 'LT z' ) }
-							</option>
-						) ) }
-					</FormSelect>
-					<FormSettingExplanation>{ description }</FormSettingExplanation>
+					{ timesForTimeGroup.length > 0 && (
+						<>
+							<FormLabel htmlFor="concierge-start-time">
+								{ translate( 'Choose a starting time' ) }
+							</FormLabel>
+							<FormSelect
+								id="concierge-start-time"
+								disabled={ disabled }
+								onChange={ this.onChange }
+								value={ this.state.selectedTime }
+							>
+								{ timesForTimeGroup.map( ( time ) => (
+									<option value={ time } key={ time }>
+										{ this.withTimezone( time ).format( 'LT z' ) }
+									</option>
+								) ) }
+							</FormSelect>
+							<FormSettingExplanation>{ description }</FormSettingExplanation>
+						</>
+					) }
 				</FormFieldset>
 
-				<FormFieldset>
-					<Button disabled={ disabled } primary onClick={ this.submitForm }>
-						{ actionText }
-					</Button>
-				</FormFieldset>
+				{ timesForTimeGroup.length > 0 && (
+					<FormFieldset>
+						<Button disabled={ disabled } primary onClick={ this.submitForm }>
+							{ actionText }
+						</Button>
+					</FormFieldset>
+				) }
 			</FoldableCard>
 		);
 	}
