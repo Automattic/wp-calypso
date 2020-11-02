@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import {
-	ResponseCart,
+	TempResponseCart,
 	RequestCartProduct,
 	CartLocation,
 	ShoppingCartManager,
@@ -18,6 +18,7 @@ import {
 	ShoppingCartError,
 	ReplaceProductInCart,
 } from './types';
+import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
 import useInitializeCartFromServer from './use-initialize-cart-from-server';
 import useCartUpdateAndRevalidate from './use-cart-update-and-revalidate';
@@ -37,7 +38,7 @@ export default function useShoppingCartManager( {
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
 
-	const responseCart: ResponseCart = hookState.responseCart;
+	const responseCart: TempResponseCart = hookState.responseCart;
 	const couponStatus: CouponStatus = hookState.couponStatus;
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
@@ -101,6 +102,10 @@ export default function useShoppingCartManager( {
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+	const responseCartWithoutTempProducts = useMemo(
+		() => convertTempResponseCartToResponseCart( responseCart ),
+		[ responseCart ]
+	);
 
 	const shoppingCartManager = useMemo(
 		() => ( {
@@ -117,9 +122,10 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart,
+			responseCart: responseCartWithoutTempProducts,
 		} ),
 		[
+			responseCartWithoutTempProducts,
 			isLoading,
 			isPendingUpdate,
 			loadingErrorForManager,
@@ -133,7 +139,6 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart,
 		]
 	);
 

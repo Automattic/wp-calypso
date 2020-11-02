@@ -49,11 +49,11 @@ export interface RequestCartProduct {
 /**
  * Response schema for the shopping cart endpoint
  */
-export interface ResponseCart {
+export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
 	create_new_blog: boolean;
 	cart_key: string;
-	products: ( TempResponseCartProduct | ResponseCartProduct )[];
+	products: P[];
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_cost: number; // Please try not to use this
@@ -86,6 +86,13 @@ export interface ResponseCart {
 	};
 }
 
+/**
+ * Local schema for response cart that can contain incomplete products. This
+ * schema is only used inside the reducer and will only differ from a
+ * ResponseCart if the cacheStatus is invalid.
+ */
+export type TempResponseCart = ResponseCart< RequestCartProduct >;
+
 export interface ResponseCartMessages {
 	errors?: ResponseCartMessage[];
 	success?: ResponseCartMessage[];
@@ -95,35 +102,6 @@ export interface ResponseCartMessage {
 	code: string;
 	message: string;
 }
-
-export const emptyResponseCart: ResponseCart = {
-	blog_id: '',
-	create_new_blog: false,
-	cart_generated_at_timestamp: 0,
-	cart_key: '',
-	products: [],
-	total_tax_integer: 0,
-	total_tax_display: '0',
-	total_cost: 0,
-	total_cost_integer: 0,
-	total_cost_display: '0',
-	coupon_savings_total_integer: 0,
-	coupon_savings_total_display: '0',
-	savings_total_integer: 0,
-	savings_total_display: '0',
-	sub_total_integer: 0,
-	sub_total_display: '0',
-	currency: 'USD',
-	credits_integer: 0,
-	credits_display: '0',
-	allowed_payment_methods: [],
-	coupon: '',
-	is_coupon_applied: false,
-	coupon_discounts_integer: [],
-	locale: 'en-us',
-	tax: { location: {}, display_taxes: false },
-	is_signup: false,
-};
 
 /**
  * Product item schema for the shopping cart endpoint (response)
@@ -157,44 +135,6 @@ export interface ResponseCartProduct {
 	included_domain_purchase_amount: number;
 	is_renewal?: boolean;
 	subscription_id?: string;
-
-	// Temporary optional properties for the monthly pricing test
-	related_monthly_plan_cost_display?: string;
-	related_monthly_plan_cost_integer?: number;
-}
-
-/**
- * A way to add an item to the response cart with incomplete data while the data is loading.
- */
-export interface TempResponseCartProduct {
-	product_name: string | null;
-	product_slug: string;
-	product_id: number;
-	currency: string | null;
-	product_cost_integer: null;
-	product_cost_display: null;
-	item_subtotal_integer: null;
-	item_subtotal_display: null;
-	item_subtotal_monthly_cost_display: null;
-	item_subtotal_monthly_cost_integer: null;
-	item_original_cost_display: null;
-	item_original_cost_integer: null;
-	item_original_subtotal_display: null;
-	item_original_subtotal_integer: null;
-	is_domain_registration: boolean | null;
-	is_bundled: boolean | null;
-	is_sale_coupon_applied: boolean | null;
-	months_per_bill_period: number | null;
-	meta: string;
-	volume: number;
-	extra: ResponseCartProductExtra;
-	uuid: string;
-	cost: null;
-	price: null;
-	product_type: null;
-	included_domain_purchase_amount: null;
-	is_renewal: undefined;
-	subscription_id: undefined;
 
 	// Temporary optional properties for the monthly pricing test
 	related_monthly_plan_cost_display?: string;

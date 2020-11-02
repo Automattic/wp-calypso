@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import {
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-} from '@automattic/shopping-cart';
+import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -151,7 +147,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 
 type ExcludesNull = < T >( x: T | null ) => x is T;
 
-function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
 	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
 		return false;
@@ -161,7 +157,7 @@ function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartPr
 
 // Convert a backend cart item to a checkout cart item
 function translateReponseCartProductToWPCOMCartItem(
-	serverCartItem: ResponseCartProduct | TempResponseCartProduct
+	serverCartItem: ResponseCartProduct
 ): WPCOMCartItem {
 	const {
 		product_id,
