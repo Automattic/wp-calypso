@@ -4,6 +4,7 @@
 import wpcom from 'calypso/lib/wp';
 import {
 	READER_LIST_CREATE,
+	READER_LIST_DELETE,
 	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
@@ -31,8 +32,8 @@ import {
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_FAILURE,
 } from 'calypso/state/reader/action-types';
-
 import 'calypso/state/data-layer/wpcom/read/lists';
+import 'calypso/state/data-layer/wpcom/read/lists/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
@@ -356,6 +357,13 @@ export const receiveAddReaderListTag = ( listId, listOwner, listSlug, tagSlug, t
 	listSlug,
 	tagSlug,
 	tagId,
+} );
+
+export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
+	type: READER_LIST_DELETE,
+	listId,
+	listOwner,
+	listSlug,
 } );
 
 function createQuery( owner, slug ) {
