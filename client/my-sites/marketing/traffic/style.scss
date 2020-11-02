@@ -78,10 +78,6 @@
 		}
 	}
 
-	.form-toggle__switch {
-		margin-top: 3px;
-	}
-
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
@@ -95,7 +91,6 @@
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
 		margin-left: 48px;
@@ -217,10 +212,6 @@
 	.site.is-compact .site__content {
 		padding: 0;
 	}
-
-	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 600;
-	}
 }
 
 .site-settings__child-settings {
@@ -283,15 +274,6 @@
 .site-settings__traffic-settings,
 .seo-settings__site-verification,
 .seo-settings__help {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}

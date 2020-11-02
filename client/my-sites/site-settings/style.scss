@@ -78,10 +78,6 @@
 		}
 	}
 
-	.form-toggle__switch {
-		margin-top: 3px;
-	}
-
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
@@ -95,7 +91,6 @@
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
 		margin-left: 48px;
@@ -229,10 +224,6 @@
 		padding: 0;
 	}
 
-	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 700;
-	}
-
 	.eligibility-warnings {
 		margin-top: 0;
 		margin-bottom: 16px;
@@ -252,15 +243,6 @@
 .manage-connection,
 .seo-settings__site-verification,
 .seo-settings__help {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
@@ -270,37 +252,11 @@
 }
 
 .site-settings__discussion-settings {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
-	.form-toggle__switch + span {
-		flex: 0 1 100%;
-		margin-left: 12px;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
 
 	.site-settings__other-comment-settings {
-		.form-toggle__label {
-			align-items: flex-start;
-		}
-
-		.form-toggle__switch {
-			margin-top: 5px;
-		}
-
-		.form-toggle__switch + span {
-			line-height: 26px;
-		}
-
 		.form-select {
 			margin: -3px 4px;
 		}
@@ -569,7 +525,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		.form-fieldset.minileven {
 			&.inactive {
 				p,
-				.form-toggle__label,
+				.components-toggle-control__label,
 				.support-info {
 					opacity: 0.3;
 					transition: all 0.75s;
