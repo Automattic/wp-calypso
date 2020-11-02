@@ -40,7 +40,12 @@ import {
 } from '../controller';
 import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	wpForTeamsP2PlusNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
 import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import plansV2 from 'calypso/my-sites/plans-v2';
 
@@ -92,6 +97,7 @@ describe( 'Loads Jetpack plan page', () => {
 		expect( plansV2 ).toHaveBeenCalledWith(
 			'/plans',
 			siteSelection,
+			wpForTeamsP2PlusNotSupportedRedirect,
 			redirectToPlansIfNotJetpack,
 			navigation
 		);
