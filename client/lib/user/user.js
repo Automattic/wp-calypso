@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { entries, isEqual } from 'lodash';
+import { isEqual } from 'lodash';
 import store from 'store';
 import debugFactory from 'debug';
 import config from 'calypso/config';
@@ -250,7 +250,7 @@ User.prototype.sendVerificationEmail = function ( fn ) {
 User.prototype.set = function ( attributes ) {
 	let changed = false;
 
-	for ( const [ attrName, attrValue ] of entries( attributes ) ) {
+	for ( const [ attrName, attrValue ] of Object.entries( attributes ) ) {
 		if ( ! isEqual( attrValue, this.data[ attrName ] ) ) {
 			this.data[ attrName ] = attrValue;
 			changed = true;

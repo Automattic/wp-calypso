@@ -5,7 +5,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { entries } from 'lodash';
 import { CURRENCIES } from '@automattic/format-currency';
 
 /**
@@ -40,8 +39,8 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import PhoneInput from 'calypso/components/phone-input';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 
-const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
-const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
+const currencyList = Object.entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
+const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,
 	label: `${ code } ${ symbol }`,
 } ) );
