@@ -34,7 +34,7 @@ import { expandHomeQuickLinks, collapseHomeQuickLinks } from 'calypso/state/home
 /**
  * Image dependencies
  */
-import logoIcon from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import logoIcon from 'calypso/assets/images/customer-home/fiverr-logo-grey.svg';
 
 /**
  * Style dependencies
