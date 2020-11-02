@@ -16,6 +16,11 @@
 	margin: auto;
 }
 
+// de-center UI in two-column gutenboarding
+.onboarding-block.is-experimental .gutenboarding-page {
+	max-width: unset;
+}
+
 @keyframes gutenboarding-page-appear {
 	from {
 		opacity: 0;

@@ -29,7 +29,6 @@
 		font-family: inherit;
 		float: left;
 		width: 100%;
-		margin: 32px; // only applies in IE
 
 		&:hover,
 		&:focus {
@@ -83,6 +82,45 @@
 
 			@include onboarding-break-gigantic {
 				width: auto;
+			}
+		}
+	}
+
+	.design-selector__design-grid.is-experimental {
+		.design-selector__design-option {
+			position: absolute;
+			transition: all 0.5s ease-in-out;
+
+			width: 20%;
+
+			&-exit-active {
+				opacity: 0;
+			}
+		}
+	}
+	.design-selector__categories {
+		margin-top: 20px;
+
+		.components-button.is-link {
+			display: block;
+			padding: 6px 0;
+			text-decoration: none;
+
+			&.is-selected {
+				font-weight: bold;
+			}
+		}
+	}
+
+	.design-selector__design-grid.is-experimental {
+		.design-selector__design-option {
+			position: absolute;
+			transition: all 0.5s ease-in-out;
+
+			width: 20%;
+
+			&-exit-active {
+				opacity: 0;
 			}
 		}
 	}
