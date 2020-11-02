@@ -35,7 +35,7 @@ const EVENT_NAME_EXCEPTIONS = [
 	'wcadmin_storeprofiler_connect_store',
 	'wcadmin_storeprofiler_login_jetpack_account',
 	'wcadmin_storeprofiler_payment_login',
-	'wcadmin_storeprofiler_payment_create_account'
+	'wcadmin_storeprofiler_payment_create_account',
 ];
 let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
@@ -238,7 +238,7 @@ export function recordTracksPageView( urlPath: string, params: any ) {
 
 	let eventProperties = {
 		do_not_track: getDoNotTrack() ? 1 : 0,
-		path: urlPath
+		path: urlPath,
 	};
 
 	// Add calypso build timestamp if set
