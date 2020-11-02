@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
-		"target": "es2018",
-		"module": "esnext",
+		"target": "ES5",
+		"lib": [ "DOM", "ES2020" ],
+		"module": "ESNext",
 		"allowJs": true,
 		"checkJs": false,
 		"jsx": "react",
@@ -24,6 +25,8 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 		"rootDir": "src",
+
+		"importHelpers": true,
 
 		"composite": true
 	},
