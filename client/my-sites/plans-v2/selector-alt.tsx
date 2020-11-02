@@ -15,6 +15,7 @@ import { getPathToDetails, checkout } from './utils';
 import QueryProducts from './query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -30,6 +31,7 @@ import ProductsGridAlt2 from './products-grid-alt-2';
  * Type dependencies
  */
 import type { Duration, SelectorPageProps, SelectorProduct, PurchaseCallback } from './types';
+import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
@@ -78,7 +80,15 @@ const SelectorPageAlt = ( {
 					duration: currentDuration,
 				} )
 			);
-			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ), urlQueryArgs );
+
+			const { productSlug: slug } = product;
+			const yearlyItem = isJetpackPlan( slug )
+				? getYearlyPlanByMonthly( slug )
+				: getProductYearlyVariant( slug as ProductSlug );
+
+			if ( yearlyItem ) {
+				checkout( siteSlug, yearlyItem, urlQueryArgs );
+			}
 			return;
 		}
 
