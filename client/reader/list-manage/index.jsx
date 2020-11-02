@@ -162,11 +162,16 @@ function Export( { list, listItems } ) {
 	const translate = useTranslate();
 	return (
 		<Card>
-			<p>You can export this list to use on other services. The file will be in OPML format.</p>
-			{ ! listItems && <span>{ translate( 'Loading…' ) }</span> }
-			{ listItems && (
-				<ReaderExportButton exportType={ READER_EXPORT_TYPE_LIST } listId={ list.ID } />
-			) }
+			<p>
+				{ translate(
+					'You can export this list to use on other services. The file will be in OPML format.'
+				) }
+			</p>
+			<ReaderExportButton
+				exportType={ READER_EXPORT_TYPE_LIST }
+				listId={ list.ID }
+				disabled={ ! listItems || listItems.length === 0 }
+			/>
 		</Card>
 	);
 }
