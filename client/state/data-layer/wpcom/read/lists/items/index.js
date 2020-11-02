@@ -16,7 +16,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 					{
 						method: 'GET',
 						path: `/read/lists/${ action.listOwner }/${ action.listSlug }/items`,
-						query: { meta: 'site,feed,tag' },
+						query: { meta: 'site,feed,tag', number: 2000 },
 						apiVersion: '1.2',
 					},
 					action

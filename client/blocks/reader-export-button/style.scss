@@ -1,7 +1,7 @@
 .reader-export-button {
 	cursor: pointer;
 
-	&:hover {
+	&:hover:not( .is-disabled ) {
 		.reader-export-button__icon {
 			fill: var( --color-accent );
 		}
@@ -9,6 +9,10 @@
 		.reader-export-button__label {
 			color: var( --color-accent );
 		}
+	}
+
+	&.is-disabled {
+		cursor: default;
 	}
 }
 

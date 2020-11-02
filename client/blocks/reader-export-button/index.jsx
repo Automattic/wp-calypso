@@ -6,6 +6,7 @@ import React from 'react';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -25,6 +26,7 @@ import './style.scss';
 
 class ReaderExportButton extends React.Component {
 	static propTypes = {
+		disabled: PropTypes.bool,
 		exportType: PropTypes.oneOf( [ READER_EXPORT_TYPE_SUBSCRIPTIONS, READER_EXPORT_TYPE_LIST ] ),
 		filename: PropTypes.string,
 		listId: PropTypes.number, // only when exporting a list
@@ -33,13 +35,14 @@ class ReaderExportButton extends React.Component {
 	static defaultProps = {
 		filename: 'reader-export.opml',
 		exportType: READER_EXPORT_TYPE_SUBSCRIPTIONS,
+		disabled: false,
 	};
 
 	state = { disabled: false };
 
 	onClick = () => {
 		// Don't kick off a new export request if there's one in progress
-		if ( this.state.disabled ) {
+		if ( this.props.disabled || this.state.disabled ) {
 			return;
 		}
 
@@ -72,7 +75,14 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<button className="reader-export-button" onClick={ this.onClick }>
+			<button
+				className={ classnames( {
+					'reader-export-button': true,
+					'is-disabled': this.props.disabled || this.state.disabled,
+				} ) }
+				onClick={ this.onClick }
+				disabled={ this.props.disabled || this.state.disabled }
+			>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
 			</button>
