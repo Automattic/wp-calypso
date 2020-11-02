@@ -14,7 +14,7 @@ import {
 	isWpComPersonalPlan,
 	isWpComPremiumPlan,
 } from 'calypso/lib/plans';
-import { WPCOMCartItem } from '../types/checkout-cart';
+import type { WPCOMCartItem } from '../types/checkout-cart';
 
 export default function getPlanFeatures(
 	plan: WPCOMCartItem | undefined,
