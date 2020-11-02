@@ -49,11 +49,11 @@ export interface RequestCartProduct {
 /**
  * Response schema for the shopping cart endpoint
  */
-export interface ResponseCart {
+export interface ResponseCart< P = ResponseCartProduct > {
 	blog_id: number | string;
 	create_new_blog: boolean;
 	cart_key: string;
-	products: ResponseCartProduct[];
+	products: P[];
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_cost: number; // Please try not to use this
@@ -91,42 +91,7 @@ export interface ResponseCart {
  * schema is only used inside the reducer and will only differ from a
  * ResponseCart if the cacheStatus is invalid.
  */
-export interface TempResponseCart {
-	blog_id: number | string;
-	create_new_blog: boolean;
-	cart_key: string;
-	products: ( RequestCartProduct | ResponseCartProduct )[];
-	total_tax_integer: number;
-	total_tax_display: string;
-	total_cost: number; // Please try not to use this
-	total_cost_integer: number;
-	total_cost_display: string;
-	coupon_savings_total_integer: number;
-	coupon_savings_total_display: string;
-	savings_total_integer: number;
-	savings_total_display: string;
-	sub_total_integer: number;
-	sub_total_display: string;
-	currency: string;
-	credits_integer: number;
-	credits_display: string;
-	allowed_payment_methods: string[];
-	coupon: string;
-	is_coupon_applied: boolean;
-	coupon_discounts_integer: number[];
-	locale: string;
-	is_signup: boolean;
-	messages?: ResponseCartMessages;
-	cart_generated_at_timestamp: number;
-	tax: {
-		location: {
-			country_code?: string;
-			postal_code?: string;
-			subdivision_code?: string;
-		};
-		display_taxes: boolean;
-	};
-}
+export type TempResponseCart = ResponseCart< RequestCartProduct >;
 
 export interface ResponseCartMessages {
 	errors?: ResponseCartMessage[];
