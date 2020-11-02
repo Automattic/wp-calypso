@@ -57,7 +57,7 @@ $jetpack-product-card-alt-2-icon-size: 55px;
 		margin-bottom: 0;
 	}
 
-	.foldable-card {
+	.card.foldable-card {
 		width: 100%;
 		margin-bottom: 0;
 		padding: 0 10px;
@@ -461,10 +461,5 @@ button.components-button.jetpack-product-card-alt-2__slideout-button {
 .is-section-jetpack-cloud-pricing {
 	.jetpack-product-card-alt-2 {
 		background-color: #f6f7f7;
-	}
-
-	.jetpack-product-card-alt-2__slide-out-product.expanded {
-		margin-left: -16px;
-		margin-right: -16px;
 	}
 }
