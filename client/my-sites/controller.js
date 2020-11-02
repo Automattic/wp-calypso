@@ -504,7 +504,17 @@ export function redirectWithoutSite( redirectPath ) {
 	};
 }
 
-export function wpForTeamsNotSupportedRedirect( context, next ) {
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
+ * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
+ *
+ * If you need to prevent navigation to pages for the P2 project in general,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
 	const store = context.store;
 	const selectedSite = getSelectedSite( store.getState() );
 
@@ -513,6 +523,28 @@ export function wpForTeamsNotSupportedRedirect( context, next ) {
 		selectedSite &&
 		isSiteWPForTeams( store.getState(), selectedSite.ID )
 	) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
+ *
+ * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWPForTeams( store.getState(), selectedSite.ID ) ) {
 		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
 
 		return page.redirect( `/home/${ siteSlug }` );

@@ -19,7 +19,7 @@ import {
 	navigation,
 	siteSelection,
 	sites,
-	wpForTeamsNotSupportedRedirect,
+	wpForTeamsP2PlusNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
 import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import plansV2 from 'calypso/my-sites/plans-v2';
@@ -29,32 +29,32 @@ const trackedPage = ( url, ...rest ) => {
 };
 
 export default function () {
-	trackedPage( '/plans', siteSelection, wpForTeamsNotSupportedRedirect, sites );
+	trackedPage( '/plans', siteSelection, wpForTeamsP2PlusNotSupportedRedirect, sites );
 	trackedPage(
 		'/plans/compare',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/compare/:domain',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans
 	);
 	trackedPage(
 		'/plans/features/:domain',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		redirectToPlans
 	);
@@ -62,7 +62,7 @@ export default function () {
 	trackedPage(
 		'/plans/my-plan',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		sites,
 		navigation,
 		currentPlan
@@ -70,14 +70,14 @@ export default function () {
 	trackedPage(
 		'/plans/my-plan/:site',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		currentPlan
 	);
 	trackedPage(
 		'/plans/select/:plan/:domain',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		redirectToCheckout
 	);
 
@@ -85,7 +85,7 @@ export default function () {
 	trackedPage(
 		'/plans/:intervalType?/:site',
 		siteSelection,
-		wpForTeamsNotSupportedRedirect,
+		wpForTeamsP2PlusNotSupportedRedirect,
 		navigation,
 		plans
 	);
@@ -93,7 +93,7 @@ export default function () {
 		plansV2(
 			'/plans',
 			siteSelection,
-			wpForTeamsNotSupportedRedirect,
+			wpForTeamsP2PlusNotSupportedRedirect,
 			redirectToPlansIfNotJetpack,
 			navigation
 		);
