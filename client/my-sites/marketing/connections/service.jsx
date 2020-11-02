@@ -27,7 +27,7 @@ import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/s
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getKeyringConnectionsByName,
-	getBrokenKeyringConnectionsByName,
+	getRefreshableKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
@@ -634,10 +634,10 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				service.ID
 			);
-			const brokenKeyringConnections = getBrokenKeyringConnectionsByName( state, service.ID );
+			const refreshableConnections = getRefreshableKeyringConnections( state, service.ID );
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
-				brokenConnections: brokenPublicizeConnections.concat( brokenKeyringConnections ),
+				brokenConnections: brokenPublicizeConnections.concat( refreshableConnections ),
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),
