@@ -60,7 +60,7 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.path
 		);
 
-		const classes = classNames( {
+		const classes = classNames( 'sidebar__menu-item--reader-list', {
 			selected: isCurrentList || isActionButtonSelected,
 		} );
 
@@ -77,7 +77,7 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-listname">{ list.title }</div>
+					<div className="sidebar__menu-item-title">{ list.title }</div>
 				</a>
 			</li>
 		);
