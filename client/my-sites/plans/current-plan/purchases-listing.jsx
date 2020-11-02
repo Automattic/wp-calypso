@@ -116,7 +116,11 @@ class PurchasesListing extends Component {
 		if ( currentPlan ) {
 			const planObject = getPlan( currentPlan.productSlug );
 			if ( planObject.term === TERM_MONTHLY ) {
-				return `${ planObject.getTitle() } ${ translate( 'monthly' ) }`;
+				return (
+					<>
+						{ planObject.getTitle() } { translate( 'monthly' ) }
+					</>
+				);
 			}
 			return planObject.getTitle();
 		}
