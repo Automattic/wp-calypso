@@ -9,6 +9,7 @@ import React, { createElement, Fragment } from 'react';
 /**
  * Internal dependencies
  */
+import createSelector from 'calypso/lib/create-selector';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
 	DAILY_PLAN_TO_REALTIME_PLAN,
@@ -41,6 +42,7 @@ import {
 	JETPACK_LEGACY_PLANS,
 	JETPACK_RESET_PLANS,
 	JETPACK_SECURITY_PLANS,
+	JETPACK_PLANS_BY_TERM,
 } from 'calypso/lib/plans/constants';
 import {
 	getPlan,
@@ -52,6 +54,7 @@ import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
 	JETPACK_BACKUP_PRODUCTS,
+	JETPACK_PRODUCTS_BY_TERM,
 } from 'calypso/lib/products-values/constants';
 import {
 	Product,
@@ -67,10 +70,13 @@ import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetp
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
 import { addQueryArgs } from 'calypso/lib/route';
+import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 
 /**
  * Type dependencies
  */
+import type { AppState } from 'calypso/types';
 import type {
 	Duration,
 	SelectorProduct,
@@ -133,6 +139,73 @@ export function getProductWithOptionDisplayName(
 
 	return slugToSelectorProduct( optionSlug )?.displayName || item.displayName;
 }
+
+// Takes any annual Jetpack product or plan slug and returns its corresponding monthly equivalent
+function getMonthlySlugFromYearly( yearlySlug: string | null ) {
+	const matchingProduct = JETPACK_PRODUCTS_BY_TERM.find(
+		( product ) => product.yearly === yearlySlug
+	);
+	if ( matchingProduct ) {
+		return matchingProduct.monthly;
+	}
+
+	const matchingPlan = JETPACK_PLANS_BY_TERM.find( ( plan ) => plan.yearly === yearlySlug );
+	if ( matchingPlan ) {
+		return matchingPlan.monthly;
+	}
+
+	return null;
+}
+
+/**
+ * A selector that calculates the highest possible discount for annual billing purchases over monthly.
+ *
+ * @param {AppState} state The application state.
+ * @param {string[]|null} annualProductSlugs A list of annually-billed product slugs to check for discounts
+ * @returns {string|null} A formatted percentage representing the highest possible discount rounded to the nearest whole number, if one exists; otherwise, null.
+ */
+export const getHighestAnnualDiscount = createSelector(
+	( state: AppState, annualProductSlugs: string[] | null ): string | null => {
+		// Can't get discount info if we don't have any product slugs
+		if ( ! annualProductSlugs?.length ) {
+			return null;
+		}
+
+		// Get all the annual discounts as decimal percentages (between 0 and 1), removing any null results
+		const discounts: number[] = annualProductSlugs
+			.map( ( yearlySlug ) => {
+				const yearly = getProductCost( state, yearlySlug );
+
+				const monthlySlug = getMonthlySlugFromYearly( yearlySlug );
+				const monthly = monthlySlug && getProductCost( state, monthlySlug );
+
+				// Protect against null values and division by zero
+				if ( ! yearly || ! monthly ) {
+					return null;
+				}
+
+				const monthlyCostPerYear = monthly * 12;
+				const yearlySavings = monthlyCostPerYear - yearly;
+
+				return yearlySavings / monthlyCostPerYear;
+			} )
+			.filter( ( discount ): discount is number => Number.isFinite( discount ) );
+
+		const highestDiscount = discounts.sort( ( a, b ) => ( a > b ? -1 : 1 ) )[ 0 ];
+		const rounded = Math.round( 100 * highestDiscount );
+
+		return rounded > 0 ? `${ rounded }%` : null;
+	},
+	[
+		// HIDDEN DEPENDENCY: Discount rates differ based on the current user's currency code!
+		getCurrentUserCurrencyCode,
+		( state: AppState, annualProductSlugs: string[] | null ) => annualProductSlugs,
+	],
+	( state: AppState, annualProductSlugs: string[] | null ) => {
+		const currencyCode = getCurrentUserCurrencyCode( state );
+		return `${ currencyCode }-${ annualProductSlugs?.join?.() || '' }`;
+	}
+);
 
 /**
  * Product UI utils.

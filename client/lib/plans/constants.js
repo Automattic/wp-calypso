@@ -100,6 +100,37 @@ export const JETPACK_PLANS = [
 	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS : [] ),
 ];
 
+export const JETPACK_RESET_PLANS_BY_TERM = [
+	{
+		yearly: PLAN_JETPACK_COMPLETE,
+		monthly: PLAN_JETPACK_COMPLETE_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY_DAILY,
+		monthly: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_SECURITY_REALTIME,
+		monthly: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	},
+];
+
+export const JETPACK_PLANS_BY_TERM = [
+	{
+		yearly: PLAN_JETPACK_BUSINESS,
+		monthly: PLAN_JETPACK_BUSINESS_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_PERSONAL,
+		monthly: PLAN_JETPACK_PERSONAL_MONTHLY,
+	},
+	{
+		yearly: PLAN_JETPACK_PREMIUM,
+		monthly: PLAN_JETPACK_PREMIUM_MONTHLY,
+	},
+	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS_BY_TERM : [] ),
+];
+
 export const PLAN_MONTHLY_PERIOD = 31;
 export const PLAN_ANNUAL_PERIOD = 365;
 export const PLAN_BIENNIAL_PERIOD = 730;
