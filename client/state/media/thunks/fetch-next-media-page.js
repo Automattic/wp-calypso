@@ -7,7 +7,6 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
-import { dispatchFluxFetchMediaItems } from 'calypso/state/media/utils/flux-adapter';
 import { requestMedia } from 'calypso/state/media/actions';
 import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
@@ -22,13 +21,6 @@ export const fetchNextMediaPage = ( siteId ) => ( dispatch, getState ) => {
 	if ( isFetchingNextPage( getState(), siteId ) ) {
 		return;
 	}
-
-	/*
-	 * @TODO: Temporarily this action will dispatch to the flux store, until
-	 * the flux store is removed. After we completely removed the flux store
-	 * it should be enough to just call the `requestMedia( ... )` action
-	 */
-	dispatchFluxFetchMediaItems( siteId );
 
 	const query = getNextPageQuery( getState(), siteId );
 

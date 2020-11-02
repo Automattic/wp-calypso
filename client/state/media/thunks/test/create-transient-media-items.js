@@ -4,7 +4,6 @@
 import { createTransientMediaItems as createTransientMediaItemsThunk } from 'calypso/state/media/thunks/create-transient-media-items';
 import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
 import * as dateUtils from 'calypso/state/media/utils/transient-date';
-import * as fluxUtils from 'calypso/state/media/utils/flux-adapter';
 import * as syncActions from 'calypso/state/media/actions';
 
 jest.mock( 'lib/media/utils', () => ( {
@@ -52,15 +51,6 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 			createTransientMediaItems( [ file ], site );
 
 			expect( createMediaItem ).toHaveBeenCalledTimes( 1 );
-		} );
-	} );
-
-	describe( 'flux adaptation', () => {
-		it( 'should dispatch flux create media item', () => {
-			const dispatchFluxCreateMediaItem = jest.spyOn( fluxUtils, 'dispatchFluxCreateMediaItem' );
-			createTransientMediaItems( [ file ], site );
-
-			expect( dispatchFluxCreateMediaItem ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 
