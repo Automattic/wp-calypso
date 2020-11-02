@@ -62,7 +62,9 @@ function shoppingCartReducer(
 	// queue any action that comes through during that time except for
 	// 'RECEIVE_INITIAL_RESPONSE_CART' or 'RAISE_ERROR'.
 	if (
-		( state.cacheStatus === 'fresh' || state.cacheStatus === 'pending' ) &&
+		( state.cacheStatus === 'fresh' ||
+			state.cacheStatus === 'pending' ||
+			state.cacheStatus === 'fresh-pending' ) &&
 		action.type !== 'RECEIVE_INITIAL_RESPONSE_CART' &&
 		action.type !== 'RECEIVE_UPDATED_RESPONSE_CART' &&
 		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
@@ -78,7 +80,7 @@ function shoppingCartReducer(
 	debug( 'processing requested action', action );
 	switch ( action.type ) {
 		case 'FETCH_INITIAL_RESPONSE_CART':
-			return { ...state, cacheStatus: 'pending' };
+			return { ...state, cacheStatus: 'fresh-pending' };
 		case 'CART_RELOAD':
 			debug( 'reloading cart from server' );
 			return getInitialShoppingCartState();

@@ -57,12 +57,13 @@ export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
  * cache status.
  *
  *   - 'fresh': Page has loaded and no requests have been sent.
+ *   - 'fresh-pending': Page has loaded and we are waiting for the initial request.
  *   - 'invalid': Local cart data has been edited.
  *   - 'valid': Local cart has been reloaded from the server.
  *   - 'pending': Request has been sent, awaiting response.
  *   - 'error': Something went wrong.
  */
-export type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
+export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pending' | 'error';
 
 /**
  * Possible states re. coupon submission.
