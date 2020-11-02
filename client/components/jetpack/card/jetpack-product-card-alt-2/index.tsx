@@ -4,12 +4,15 @@
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite, isNumber } from 'lodash';
-import React, { createElement, ReactNode, FunctionComponent } from 'react';
+import React, { createElement, ReactNode, FunctionComponent, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button, ProductIcon } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import { Button, ProductIcon } from '@automattic/components';
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import { durationToText } from 'calypso/my-sites/plans-v2/utils';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -127,6 +130,19 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 		</Button>
 	);
 
+	const siteId = useSelector( getSelectedSiteId );
+	const dispatch = useDispatch();
+	const onOpenSearchPopover = useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_plans_infopopover_open', {
+					site_id: siteId || undefined,
+					item_slug: 'jetpack-search-record-count',
+				} )
+			),
+		[ dispatch, siteId ]
+	);
+
 	return (
 		<div
 			className={ classNames( className, 'jetpack-product-card-alt-2', {
@@ -185,6 +201,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 												className="jetpack-product-card-alt-2__search-price-popover"
 												position="right"
 												iconSize={ 24 }
+												onOpen={ onOpenSearchPopover }
 											>
 												{ searchRecordsDetails }
 											</InfoPopover>
