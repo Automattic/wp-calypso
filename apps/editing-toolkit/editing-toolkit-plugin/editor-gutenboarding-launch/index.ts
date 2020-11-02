@@ -132,6 +132,11 @@ function updateEditor() {
 		launchLink.target = '_top';
 		launchLink.className = 'editor-gutenberg-launch__launch-button components-button is-primary';
 
+		/*
+		 * translators: "Launch" here refers to launching a whole site.
+		 * Please translate differently from "Publish", which intstead
+		 * refers to publishing a page.
+		 */
 		const textContent = document.createTextNode( __( 'Launch', 'full-site-editing' ) );
 		launchLink.appendChild( textContent );
 
