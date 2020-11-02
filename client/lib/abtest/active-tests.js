@@ -193,13 +193,13 @@ export default {
 		localeTargets: [ 'en' ],
 	},
 	jetpackConversionRateOptimization: {
-		datestamp: '20201020',
+		datestamp: '20201102',
 		variations: {
 			'v0 - Offer Reset': 0, // Offer Reset
-			'v1 - 3 cols layout': 100, // first Offer Reset iteration (3 layout columns + simpler cards)
-			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
+			'v1 - 3 cols layout': 50, // first Offer Reset iteration (3 layout columns + simpler cards)
+			'v2 - slide outs': 50, // second Offer Reset iteration (reorder & slide outs)
 		},
-		defaultVariation: 'v1 - 3 cols layout',
+		defaultVariation: 'v2 - slide outs',
 		allowExistingUsers: true,
 	},
 	secureYourBrand: {
