@@ -10,8 +10,6 @@ import { Button } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import Gridicon from 'calypso/components/gridicon';
 import FeaturesProductSlideOut from './features-product-slide-out';
 import InfoPopover from 'calypso/components/info-popover';
