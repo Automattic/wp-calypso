@@ -319,7 +319,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 	return (
 		<div className="credentials-form">
 			<h3>{ translate( 'Provide your SSH, SFTP or FTP server credentials' ) }</h3>
-			<p class="credentials-form__intro-text">{ getSubHeaderText() }</p>
+			<p className="credentials-form__intro-text">{ getSubHeaderText() }</p>
 			{ renderCredentialLinks() }
 			<FormFieldset className="credentials-form__protocol-type">
 				<div className="credentials-form__support-info">
@@ -476,7 +476,7 @@ const ServerCredentialsForm: FunctionComponent< Props > = ( {
 			{ formMode === FormMode.Password ? renderPasswordForm() : renderPrivateKeyForm() }
 
 			<FormFieldset className="credentials-form__buttons">
-				<div class="credentials-form__buttons_flex">{ children }</div>
+				<div className="credentials-form__buttons-flex">{ children }</div>
 			</FormFieldset>
 		</div>
 	);
