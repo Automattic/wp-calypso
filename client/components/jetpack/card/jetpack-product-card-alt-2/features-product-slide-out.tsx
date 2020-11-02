@@ -126,7 +126,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 					billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
 					description={ description }
 					buttonLabel={ slideOutButtonLabel() }
-					onButtonClick={ () => onProductClick( product, false, purchase ) }
+					onButtonClick={ () => onProductClick( product, isUpgradeableToYearly, purchase ) }
 					buttonPrimary={ ! isOwned }
 					isOwned={ isOwned }
 					badgeLabel={ productBadgeLabelAlt( product, isItemPurchased, sitePlan ) }
