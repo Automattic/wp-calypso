@@ -18,6 +18,7 @@ import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketi
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 
 /**
  * Types
@@ -78,7 +79,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
 					) }
-					imagePath="/calypso/images/marketing/fiverr-logo.svg"
+					imagePath={ fiverrLogo }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
