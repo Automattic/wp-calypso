@@ -1,9 +1,13 @@
 /**
  * External dependencies
  */
-
 import TraceKit from 'tracekit';
 import debug from 'debug';
+
+/**
+ * Internal dependencies
+ */
+import config from 'calypso/config';
 
 /**
  * Module variables
@@ -120,12 +124,15 @@ export default class ErrorLogger {
 	}
 
 	sendToApi( error ) {
-		const xhr = new XMLHttpRequest();
+		const params = new URLSearchParams( {
+			client_id: config( 'wpcom_signup_id' ),
+			client_secret: config( 'wpcom_signup_key' ),
+			error: JSON.stringify( error ),
+		} );
+
+		const xhr = new window.XMLHttpRequest();
 		xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );
 		xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-		let params =
-			'client_id=39911&client_secret=cOaYKdrkgXz8xY7aysv4fU6wL6sK5J8a6ojReEIAPwggsznj4Cb6mW0nffTxtYT8&error=';
-		params += encodeURIComponent( JSON.stringify( error ) );
-		xhr.send( params );
+		xhr.send( params.toString() );
 	}
 }
