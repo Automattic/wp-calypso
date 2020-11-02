@@ -27,7 +27,7 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite, useDomainSuggestion, useDomainSearch } from '../../hooks';
+import { useSite, useDomainSuggestion, useDomainSearch } from '@automattic/launch';
 
 import './styles.scss';
 

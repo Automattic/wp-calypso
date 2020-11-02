@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.2
+Stable tag: 2.8.3
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,13 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.3 =
+* Focused Launch: added WIP Focused Launch modal behind a flag (https://github.com/Automattic/wp-calypso/pull/46686)
+* Editor close button should deal with situation where experimental GB feature is unavailable (https://github.com/Automattic/wp-calypso/pull/46666)
+* Premium Content: Remove double banners (https://github.com/Automattic/wp-calypso/pull/46659)
+* Premium Content: Add missing migrations for margin fix (https://github.com/Automattic/wp-calypso/pull/46924)
+* Editing Toolkit: Add a workaround to prevent slider blocks breaking the editor at full width (https://github.com/Automattic/wp-calypso/pull/46951)
 
 = 2.8.2 =
 * Gutenberg: Support new line height setting (https://github.com/Automattic/wp-calypso/pull/46792)

@@ -1,32 +1,38 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useI18n } from '@automattic/react-i18n';
-import { Button } from '@wordpress/components';
-import { Icon, close } from '@wordpress/icons';
-import classnames from 'classnames';
+import * as React from 'react';
+import { __ } from '@wordpress/i18n';
+import { Modal } from '@wordpress/components';
+import { Icon, wordpress } from '@wordpress/icons';
+import FocusedLaunch from '../focused-launch';
 
-/**
- * Style dependencies
- */
-import './style.scss';
+import './styles.scss';
 
 interface Props {
-	onClose?: () => void;
+	onClose: () => void;
 }
 
-const Launch: React.FunctionComponent< Props > = ( { onClose } ) => {
-	const { __ } = useI18n();
-
+const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	return (
-		<div className={ classnames( 'nux-launch' ) }>
-			<p>{ __( 'Launch' ) }</p>
-			<Button onClick={ onClose }>
-				<Icon icon={ close } size={ 24 } />
-			</Button>
-		</div>
+		<Modal
+			open={ true }
+			className="launch__focused-modal"
+			overlayClassName="launch__focused-modal-overlay"
+			bodyOpenClassName="has-focused-launch-modal"
+			onRequestClose={ onClose }
+			title={ __( 'Complete setup', __i18n_text_domain__ ) }
+			icon={ <Icon icon={ wordpress } size={ 36 } /> }
+		>
+			<>
+				<div className="launch__focused-modal-wrapper ">
+					<div className="launch__focused-modal-body">
+						<FocusedLaunch />
+					</div>
+				</div>
+			</>
+		</Modal>
 	);
 };
 
-export default Launch;
+export default FocusedLaunchModal;

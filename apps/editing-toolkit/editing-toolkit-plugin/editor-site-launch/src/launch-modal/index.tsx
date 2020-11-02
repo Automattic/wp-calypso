@@ -16,7 +16,7 @@ import { LAUNCH_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
-import { useSite } from '../hooks';
+import { useSite } from '@automattic/launch';
 
 import './styles.scss';
 
