@@ -5,8 +5,18 @@
 	padding: 0;
 }
 
-.shared__available-time-card.is-expanded {
-	background: var( --color-neutral-0 );
+.shared__available-time-card {
+	&.is-expanded {
+		background: var( --color-neutral-0 );
+	}
+
+	& .shared__time-group {
+		margin-right: 10px;
+
+		&.is-selected {
+			border-color: var( --studio-blue-60 );
+		}
+	}
 }
 
 .shared__available-time-card-header {
@@ -113,4 +123,8 @@
 .reschedule__schedule-button,
 .cancel__confirmation-button {
 	margin-bottom: 40px;
+}
+
+.segmented-control {
+	display: inline-flex;
 }

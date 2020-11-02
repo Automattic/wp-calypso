@@ -15,6 +15,7 @@ import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import config from 'calypso/config';
 import 'moment-timezone'; // monkey patches the existing moment.js
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -27,7 +28,6 @@ import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getLanguage } from 'calypso/lib/i18n-utils';
-import SegmentedControl from 'calypso/components/segmented-control';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -47,7 +47,7 @@ class CalendarCard extends Component {
 
 		let closestTimestamp;
 
-		const { moment, times, morningTimes, date } = this.props;
+		const { moment, times, morningTimes, eveningTimes, date } = this.props;
 
 		// If there are times passed in, pick a sensible default.
 		if ( Array.isArray( times ) && ! isEmpty( times ) ) {
@@ -76,11 +76,22 @@ class CalendarCard extends Component {
 			} );
 		}
 
-		const selectedTimeGroup = morningTimes.includes( closestTimestamp ) ? 'morning' : 'evening';
+		// const selectedTimeGroup = morningTimes.includes( closestTimestamp ) ? 'morning' : 'evening';
+		let selectedTimeGroup, selectedMorningTime, selectedEveningTime;
+		if ( morningTimes.includes( closestTimestamp ) ) {
+			selectedTimeGroup = 'morning';
+			selectedMorningTime = closestTimestamp;
+			selectedEveningTime = eveningTimes[ 0 ];
+		} else {
+			selectedTimeGroup = 'evening';
+			selectedEveningTime = closestTimestamp;
+			selectedMorningTime = morningTimes[ morningTimes.length - 1 ];
+		}
 
 		this.state = {
-			selectedTime: closestTimestamp,
 			selectedTimeGroup,
+			selectedMorningTime,
+			selectedEveningTime,
 		};
 	}
 
@@ -125,11 +136,17 @@ class CalendarCard extends Component {
 	}
 
 	onChange = ( { target } ) => {
-		this.setState( { selectedTime: target.value } );
+		const key =
+			this.state.selectedTimeGroup === 'morning' ? 'selectedMorningTime' : 'selectedEveningTime';
+		this.setState( { [ key ]: target.value } );
 	};
 
 	submitForm = () => {
-		this.props.onSubmit( this.state.selectedTime );
+		const selectedTime =
+			this.state.selectedTimeGroup === 'morning'
+				? this.state.selectedMorningTime
+				: this.state.selectedEveningTime;
+		this.props.onSubmit( selectedTime );
 	};
 
 	handleFilterClick = ( timeGroup ) => {
@@ -161,8 +178,22 @@ class CalendarCard extends Component {
 					args: { defaultLanguage, durationInMinutes },
 			  } );
 
-		const timesForTimeGroup =
-			this.state.selectedTimeGroup === 'morning' ? morningTimes : eveningTimes;
+		const isMorningTimeGroupSelected = this.state.selectedTimeGroup === 'morning';
+		let timesForTimeGroup,
+			btnMorningTimeGroup = 'shared__time-group',
+			btnEveningTimeGroup = 'shared__time-group';
+
+		if ( isMorningTimeGroupSelected ) {
+			timesForTimeGroup = morningTimes;
+			btnMorningTimeGroup = classnames( 'shared__time-group', {
+				'is-selected': isMorningTimeGroupSelected,
+			} );
+		} else {
+			timesForTimeGroup = eveningTimes;
+			btnEveningTimeGroup = classnames( 'shared__time-group', {
+				'is-selected': ! isMorningTimeGroupSelected,
+			} );
+		}
 
 		return (
 			<FoldableCard
@@ -177,20 +208,22 @@ class CalendarCard extends Component {
 					<FormLabel htmlFor="concierge-start-time-group">
 						{ translate( 'Choose time of day' ) }
 					</FormLabel>
-					<SegmentedControl>
-						<SegmentedControl.Item
-							selected={ this.state.selectedTimeGroup === 'morning' }
-							onClick={ () => this.handleFilterClick( 'morning' ) }
-						>
-							Morning
-						</SegmentedControl.Item>
-						<SegmentedControl.Item
-							selected={ this.state.selectedTimeGroup === 'evening' }
-							onClick={ () => this.handleFilterClick( 'evening' ) }
-						>
-							Afternoon
-						</SegmentedControl.Item>
-					</SegmentedControl>
+					<Button
+						className={ btnMorningTimeGroup }
+						onClick={ () => this.handleFilterClick( 'morning' ) }
+						disabled={ morningTimes.length === 0 }
+					>
+						Morning
+					</Button>
+					<Button
+						className={ btnEveningTimeGroup }
+						onClick={ () => this.handleFilterClick( 'evening' ) }
+						disabled={ eveningTimes.length === 0 }
+					>
+						Evening
+					</Button>
+					<br />
+					<br />
 					{ timesForTimeGroup.length > 0 && (
 						<>
 							<FormLabel htmlFor="concierge-start-time">
@@ -200,7 +233,11 @@ class CalendarCard extends Component {
 								id="concierge-start-time"
 								disabled={ disabled }
 								onChange={ this.onChange }
-								value={ this.state.selectedTime }
+								value={
+									isMorningTimeGroupSelected
+										? this.state.selectedMorningTime
+										: this.state.selectedEveningTime
+								}
 							>
 								{ timesForTimeGroup.map( ( time ) => (
 									<option value={ time } key={ time }>
