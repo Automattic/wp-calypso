@@ -76,7 +76,6 @@ class CalendarCard extends Component {
 			} );
 		}
 
-		// const selectedTimeGroup = morningTimes.includes( closestTimestamp ) ? 'morning' : 'evening';
 		let selectedTimeGroup, selectedMorningTime, selectedEveningTime;
 		if ( morningTimes.includes( closestTimestamp ) ) {
 			selectedTimeGroup = 'morning';
