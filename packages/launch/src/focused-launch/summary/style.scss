@@ -6,7 +6,7 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
-.focused-launch__input {
+.summary__input {
 	.components-text-control__input {
 		font-size: 1rem;
 		padding: 10px 16px;
@@ -17,13 +17,13 @@
 	}
 }
 
-.focused-launch__mobile-only {
+.summary__mobile-only {
 	@include break-medium {
 		display: none;
 	}
 }
 
-.focused-launch__mobile-commentary {
+.summary__mobile-commentary {
 	font-size: 0.875rem;
 	color: var( --studio-gray-60 );
 	svg {
@@ -31,7 +31,7 @@
 	}
 }
 
-.focused-launch__label {
+.summary__label {
 	margin-bottom: 8px;
 	display: block;
 	font-size: 1.25rem;
@@ -39,7 +39,7 @@
 	line-height: 24px;
 }
 
-.focused-launch__section {
+.summary__section {
 	// maybe use @include onboarding-block-margin;
 	margin: 0 20px 40px;
 
@@ -48,13 +48,13 @@
 	}
 }
 
-.focused-launch__caption {
+.summary__caption {
 	margin: 12px 0;
 	font-size: 1rem;
 	color: #50575e;
 }
 
-.focused-launch__step {
+.summary__step {
 	display: flex;
 	opacity: 0.5;
 	transition: opacity 0.5s ease-in-out;
@@ -69,18 +69,18 @@
 }
 
 // by default: highlight all steps when nothing is in focus
-.focused-launch__container:not( :focus-within ) {
-	.focused-launch__step {
+.summary__container:not( :focus-within ) {
+	.summary__step {
 		opacity: 1;
 	}
 }
 
 // highlight the focused step
-.focused-launch__step:focus-within {
+.summary__step:focus-within {
 	opacity: 1;
 }
 
-.focused-launch__side-commentary {
+.summary__side-commentary {
 	display: none;
 
 	@include break-medium {
@@ -124,7 +124,7 @@
 	}
 }
 
-.focused-launch__data-input {
+.summary__data-input {
 	flex: 1;
 
 	@include break-medium {
