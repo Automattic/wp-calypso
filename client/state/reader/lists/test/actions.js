@@ -62,36 +62,11 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestSubscribedLists()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.persist()
-				.get( '/rest/v1.2/read/lists' )
-				.reply( 200, {
-					found: 2,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' },
-					],
-				} );
-		} );
+		test( 'should return an action object', () => {
+			const action = requestSubscribedLists();
 
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			requestSubscribedLists()( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
+			expect( action ).toEqual( {
 				type: READER_LISTS_REQUEST,
-			} );
-		} );
-
-		test( 'should dispatch lists receive action when request completes', () => {
-			return requestSubscribedLists()( spy ).then( () => {
-				expect( spy ).toHaveBeenCalledWith( {
-					type: READER_LISTS_RECEIVE,
-					lists: [
-						{ ID: 841, title: 'Hello World' },
-						{ ID: 413, title: 'Mango & Feijoa' },
-					],
-				} );
 			} );
 		} );
 	} );
