@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthCodeButton from './auth-code-button';
-import AuthStore from 'calypso/lib/oauth-store';
+import { handleAuthError, handleLogin, makeRequest, bumpStats } from 'calypso/lib/oauth-utils';
 import config from 'calypso/config';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -22,7 +22,6 @@ import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'calypso/components/wordpress-logo';
-import { login } from 'calypso/lib/oauth-store/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 
@@ -31,16 +30,11 @@ export class Auth extends Component {
 		login: '',
 		password: '',
 		auth_code: '',
-		...AuthStore.get(),
+		requires2fa: false,
+		inProgress: false,
+		errorLevel: false,
+		errorMessage: false,
 	};
-
-	componentDidMount() {
-		AuthStore.on( 'change', this.refreshData );
-	}
-
-	componentWillUnmount() {
-		AuthStore.off( 'change', this.refreshData );
-	}
 
 	getClickHandler = ( action ) => () =>
 		this.props.recordGoogleEvent( 'Me', 'Clicked on ' + action );
@@ -48,21 +42,29 @@ export class Auth extends Component {
 	getFocusHandler = ( action ) => () =>
 		this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 
-	refreshData = () => {
-		this.setState( AuthStore.get() );
-	};
-
 	focusInput = ( input ) => {
 		if ( this.state.requires2fa && this.state.inProgress === false ) {
 			input.focus();
 		}
 	};
 
-	submitForm = ( event ) => {
+	submitForm = async ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
 
-		login( this.state.login, this.state.password, this.state.auth_code );
+		this.setState( { inProgress: true, errorLevel: false, errorMessage: false } );
+
+		const [ error, response ] = await makeRequest(
+			this.state.login,
+			this.state.password,
+			this.state.auth_code
+		);
+		bumpStats( error, response );
+		if ( error ) {
+			this.setState( handleAuthError( error, response ) );
+			return;
+		}
+		handleLogin( response );
 	};
 
 	toggleSelfHostedInstructions = () => {
@@ -171,6 +173,4 @@ export class Auth extends Component {
 	}
 }
 
-export default connect( null, {
-	recordGoogleEvent,
-} )( localize( Auth ) );
+export default connect( null, { recordGoogleEvent } )( localize( Auth ) );

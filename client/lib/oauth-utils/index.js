@@ -1,12 +1,20 @@
 /**
+ * External dependencies
+ */
+
+import debugFactory from 'debug';
+
+const debug = debugFactory( 'calypso:auth:store' );
+
+/**
  * Internal dependencies
  */
-import Dispatcher from 'calypso/dispatcher';
-import { actions, errors as errorTypes } from './constants';
+import * as OAuthToken from 'calypso/lib/oauth-token';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
+import { errors as errorTypes } from './constants';
 
-async function makeRequest( username, password, authCode = '' ) {
+export async function makeRequest( username, password, authCode = '' ) {
 	try {
 		const response = await globalThis.fetch( '/oauth', {
 			method: 'POST',
@@ -30,23 +38,7 @@ async function makeRequest( username, password, authCode = '' ) {
 	}
 }
 
-export function login( username, password, authCode ) {
-	Dispatcher.handleViewAction( {
-		type: actions.AUTH_LOGIN,
-	} );
-
-	makeRequest( username, password, authCode ).then( ( [ error, response ] ) => {
-		bumpStats( error, response );
-
-		Dispatcher.handleServerAction( {
-			type: actions.RECEIVE_AUTH_LOGIN,
-			data: response,
-			error,
-		} );
-	} );
-}
-
-function bumpStats( error, data ) {
+export function bumpStats( error, data ) {
 	let errorType;
 
 	if ( error ) {
@@ -73,4 +65,32 @@ function bumpStats( error, data ) {
 		recordTracksEvent( 'calypso_oauth_login_success' );
 		bumpStat( 'calypso_oauth_login', 'success' );
 	}
+}
+
+export function handleAuthError( error, data ) {
+	const stateChanges = { errorLevel: 'is-error', requires2fa: false, inProgress: false };
+
+	stateChanges.errorMessage = data && data.body ? data.body.error_description : error.message;
+
+	debug( 'Error processing login: ' + stateChanges.errorMessage );
+
+	if ( data && data.body ) {
+		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
+			stateChanges.requires2fa = true;
+			stateChanges.errorLevel = 'is-info';
+		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
+			stateChanges.requires2fa = true;
+		}
+	}
+
+	return stateChanges;
+}
+
+export function handleLogin( response ) {
+	debug( 'Access token received' );
+
+	OAuthToken.setToken( response.body.access_token );
+
+	// go to login
+	document.location.replace( '/' );
 }

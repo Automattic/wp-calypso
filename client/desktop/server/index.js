@@ -93,7 +93,7 @@ function showAppWindow() {
 	} );
 
 	mainWindow.loadURL( appUrl );
-	// mainWindow.openDevTools();
+	mainWindow.openDevTools();
 
 	mainWindow.on( 'close', function () {
 		const currentURL = mainWindow.webContents.getURL();
