@@ -118,16 +118,16 @@ export default class ErrorLogger {
 		} catch ( e ) {}
 	}
 
-	async sendToApi( error ) {
+	sendToApi( error ) {
 		const body = new window.FormData();
 		body.append( 'error', JSON.stringify( error ) );
 
-		const response = await window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
-			method: 'POST',
-			body,
-		} );
-
-		if ( ! response.ok ) {
+		try {
+			window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
+				method: 'POST',
+				body,
+			} );
+		} catch {
 			// eslint-disable-next-line no-console
 			console.error( 'Error: Unable to record the error in Logstash.' );
 		}
