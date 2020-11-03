@@ -77,7 +77,7 @@
 	}
 
 	.language-picker-component__language-group {
-		width: 100%;
+		width: 230px;
 	}
 
 	.language-picker-component__language-group > span {
@@ -112,7 +112,7 @@
 	.language-picker-component__labels > div,
 	.language-picker-component__category-filters {
 		@include break-small() {
-			min-width: 220px;
+			width: 230px;
 		}
 	}
 
