@@ -16,6 +16,10 @@
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
 	}
+
+	@include breakpoint-deprecated( '>960px' ) {
+		width: 200px;
+	}
 }
 
 .action-card__button-container {
