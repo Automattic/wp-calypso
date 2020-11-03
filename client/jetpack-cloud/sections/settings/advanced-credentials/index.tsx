@@ -89,7 +89,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	);
 
 	const isRequestingCredentials = useSelector( ( state ) =>
-		isRequestingSiteCredentials( state, siteId )
+		isRequestingSiteCredentials( state, siteId as number )
 	);
 
 	const credentials = useSelector( ( state ) =>
