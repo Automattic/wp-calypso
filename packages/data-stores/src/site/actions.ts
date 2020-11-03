@@ -70,7 +70,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
-	const receiveSiteTitle = ( siteId: number, title: string ) => ( {
+	const receiveSiteTitle = ( siteId: number, title: string | undefined ) => ( {
 		type: 'RECEIVE_SITE_TITLE' as const,
 		siteId,
 		title,
@@ -125,7 +125,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
-	function* setSiteTitle( siteId: number, title: string ) {
+	function* saveSiteTitle( siteId: number, title: string | undefined ) {
 		try {
 			// extract this into its own function as a generic settings setter
 			yield wpcomRequest( {
@@ -139,7 +139,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	return {
-		setSiteTitle,
+		saveSiteTitle,
 		receiveSiteTitle,
 		fetchNewSite,
 		receiveNewSite,
