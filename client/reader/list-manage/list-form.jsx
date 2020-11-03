@@ -62,21 +62,17 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {
 
 			{ ! isCreateForm && (
 				<FormFieldset>
-					<FormLabel htmlFor="list-slug">{ translate( 'Slug (Required)' ) }</FormLabel>
+					<FormLabel htmlFor="list-slug">{ translate( 'Slug' ) }</FormLabel>
 					<FormTextInput
 						data-key="slug"
 						// NOTE: Slug modification currently doesn't work in the API.
-						// TODO: Enable slug modification in the API and remove the disabled prop here.
 						disabled
 						id="list-slug"
 						name="list-slug"
 						value={ formList.slug }
-						// TODO: Enable the following lines once API supports slug changes.
-						// isValid={ isSlugValid }
-						// onChange={ onChange }
 					/>
 					<FormSettingExplanation>
-						{ translate( 'The slug for the list. This is used to build the URL to the list.' ) }
+						{ translate( 'This is used to build the URL to the list.' ) }
 					</FormSettingExplanation>
 				</FormFieldset>
 			) }
