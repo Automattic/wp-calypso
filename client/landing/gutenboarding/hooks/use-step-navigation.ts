@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';

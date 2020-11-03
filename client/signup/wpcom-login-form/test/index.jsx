@@ -9,7 +9,7 @@ import React from 'react';
  * Internal dependencies
  */
 import WpcomLoginForm from '..';
-import config from 'config';
+import config from 'calypso/config';
 jest.mock( 'config', () => jest.fn().mockReturnValueOnce( 'wordpress.com' ) );
 
 describe( 'WpcomLoginForm', () => {

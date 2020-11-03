@@ -12,7 +12,7 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PREMIUM,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Test fixtures

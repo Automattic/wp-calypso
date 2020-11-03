@@ -11,23 +11,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
+import { login } from 'calypso/lib/paths';
 import { Card } from '@automattic/components';
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import Gridicon from 'components/gridicon';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Image dependencies
  */
-import checkEmailImage from 'assets/images/illustrations/check-email.svg';
+import checkEmailImage from 'calypso/assets/images/illustrations/check-email.svg';
 
 class EmailedLoginLinkSuccessfully extends React.Component {
 	static propTypes = {

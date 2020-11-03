@@ -9,18 +9,18 @@ import path from 'path';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Head from 'components/head';
+import config from 'calypso/config';
+import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from 'components/environment-badge';
+} from 'calypso/components/environment-badge';
 import { chunkCssLinks } from './utils';
-import JetpackLogo from 'components/jetpack-logo';
-import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 class Document extends React.Component {
 	render() {

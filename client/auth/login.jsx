@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
@@ -10,21 +10,21 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthCodeButton from './auth-code-button';
-import AuthStore from 'lib/oauth-store';
-import config from 'config';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormPasswordInput from 'components/forms/form-password-input';
-import FormTextInput from 'components/forms/form-text-input';
+import AuthStore from 'calypso/lib/oauth-store';
+import config from 'calypso/config';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import LostPassword from './lost-password';
-import Main from 'components/main';
-import Notice from 'components/notice';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
 import SelfHostedInstructions from './self-hosted-instructions';
-import WordPressLogo from 'components/wordpress-logo';
-import { login } from 'lib/oauth-store/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { login } from 'calypso/lib/oauth-store/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class Auth extends Component {
 	state = {

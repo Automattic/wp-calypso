@@ -8,7 +8,7 @@ const archiver = require( 'archiver' );
 /**
  * Internal dependencies
  */
-const log = require( 'desktop/lib/logger' )( 'desktop:lib:archiver' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:lib:archiver' );
 
 module.exports = {
 	/**

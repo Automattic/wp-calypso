@@ -4,7 +4,7 @@ describe( 'parser', () => {
 	let parser;
 
 	test( 'should return empty objects for an invalid path', () => {
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 
 		const data = parser( '/invalid-path' );
 
@@ -13,7 +13,7 @@ describe( 'parser', () => {
 
 	test( 'server should have secrets and client should not', () => {
 		require( 'fs' ).__setValidSecrets();
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 
 		const data = parser( '/valid-path' );
 
@@ -23,7 +23,7 @@ describe( 'parser', () => {
 
 	test( 'should cascade configs', () => {
 		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -44,7 +44,7 @@ describe( 'parser', () => {
 
 	test( 'should override enabled feature when disabledFeatures set', () => {
 		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -56,7 +56,7 @@ describe( 'parser', () => {
 
 	test( 'should override disabled feature when enabledFeatures set', () => {
 		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -71,7 +71,7 @@ describe( 'parser', () => {
 		const errorSpy = jest.fn();
 		global.console = { error: errorSpy };
 
-		parser = require( 'config/parser' );
+		parser = require( 'calypso/config/parser' );
 		const { serverData, clientData } = parser( '/valid-path' );
 
 		expect( serverData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );

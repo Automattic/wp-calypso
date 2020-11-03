@@ -7,29 +7,29 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { includes, map } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import PopupMonitor from '@automattic/popup-monitor';
 
 /**
  * Internal dependencies
  */
-import QueryPostTypes from 'components/data/query-post-types';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
 import PublicizeMessage from './publicize-message';
 import PublicizeServices from './publicize-services';
-import { publicizeConnections } from 'lib/paths';
-import PostMetadata from 'lib/post-metadata';
+import { publicizeConnections } from 'calypso/lib/paths';
+import PostMetadata from 'calypso/lib/post-metadata';
 import { Button } from '@automattic/components';
-import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite } from 'state/sites/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import { fetchConnections as requestConnections } from 'state/sharing/publicize/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
-import { updatePostMetadata } from 'state/posts/actions';
+import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPost, getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
+import { fetchConnections as requestConnections } from 'calypso/state/sharing/publicize/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
+import { updatePostMetadata } from 'calypso/state/posts/actions';
 
 /**
  * Style dependencies

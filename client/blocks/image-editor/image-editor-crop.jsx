@@ -19,7 +19,10 @@ import {
 	imageEditorHasChanges,
 } from 'calypso/state/editor/image-editor/selectors';
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
-import { imageEditorCrop, imageEditorComputedCrop } from 'calypso/state/editor/image-editor/actions';
+import {
+	imageEditorCrop,
+	imageEditorComputedCrop,
+} from 'calypso/state/editor/image-editor/actions';
 import { defaultCrop } from 'calypso/state/editor/image-editor/reducer';
 import getImageEditorOriginalAspectRatio from 'calypso/state/selectors/get-image-editor-original-aspect-ratio';
 

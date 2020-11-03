@@ -4,30 +4,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import MediaModal from 'post-editor/media-modal';
-import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
+import MediaModal from 'calypso/post-editor/media-modal';
+import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
 import EditorFeaturedImagePreviewContainer from './preview-container';
 import FeaturedImageDropZone from './dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
+import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
 import { Button } from '@automattic/components';
-import RemoveButton from 'components/remove-button';
-import getMediaItem from 'state/selectors/get-media-item';
-import { getFeaturedImageId } from 'state/posts/utils';
-import QueryMedia from 'components/data/query-media';
+import RemoveButton from 'calypso/components/remove-button';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
+import QueryMedia from 'calypso/components/data/query-media';
 import { localize } from 'i18n-calypso';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
+import { editPost } from 'calypso/state/posts/actions';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies

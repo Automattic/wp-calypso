@@ -15,7 +15,7 @@ import 'prismjs/components/prism-scss';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import searchSelectors from './selectors';
 
 const loadSearchIndex = once( async () => {

@@ -5,17 +5,17 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { isFunction } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { isExternal } from 'lib/url';
-import MaterialIcon from 'components/material-icon';
-import Count from 'components/count';
-import { preload } from 'sections-helper';
-import TranslatableString from 'components/translatable/proptype';
+import { isExternal } from 'calypso/lib/url';
+import MaterialIcon from 'calypso/components/material-icon';
+import Count from 'calypso/components/count';
+import { preload } from 'calypso/sections-helper';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 export default function SidebarItem( props ) {
 	const isExternalLink = isExternal( props.link );

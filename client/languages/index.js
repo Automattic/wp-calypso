@@ -7,6 +7,6 @@ import values from 'lodash/values';
 // `languages-meta.json` during build.
 // Be sure to keep the exact path (`languages/fallback-languages-meta.json`) as
 // is, so that webpack can find and replace it.
-import languagesMeta from 'languages/fallback-languages-meta.json';
+import languagesMeta from 'calypso/languages/fallback-languages-meta.json';
 
 export const languages = values( languagesMeta );

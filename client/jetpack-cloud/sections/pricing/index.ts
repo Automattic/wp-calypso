@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import plansV2 from 'my-sites/plans-v2';
+import plansV2 from 'calypso/my-sites/plans-v2';
 import * as controller from './controller';
 
 /**

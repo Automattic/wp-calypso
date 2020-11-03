@@ -11,7 +11,7 @@ import { FormToggle } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
+import FormLabel from 'calypso/components/forms/form-label';
 
 const FormToggleExample = () => {
 	const [ isChecked, setChecked ] = useState( true );

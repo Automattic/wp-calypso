@@ -27,7 +27,10 @@ import ProductForm, {
 	REDUX_FORM_NAME,
 } from './form';
 import ProductList from './list';
-import { getCurrentUserCurrencyCode, getCurrentUserEmail } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserCurrencyCode,
+	getCurrentUserEmail,
+} from 'calypso/state/current-user/selectors';
 import wpcom from 'calypso/lib/wp';
 import accept from 'calypso/lib/accept';
 import {

@@ -39,7 +39,10 @@ import PostExcerptLink from 'calypso/reader/post-excerpt-link';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'calypso/components/related-posts';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
 import { getStreamUrlFromPost } from 'calypso/reader/route';
 import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
 import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
@@ -63,7 +66,10 @@ import { getPostByKey } from 'calypso/state/reader/posts/selectors';
 import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
-import { setViewingFullPostKey, unsetViewingFullPostKey } from 'calypso/state/reader/viewing/actions';
+import {
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+} from 'calypso/state/reader/viewing/actions';
 import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
 import {
 	requestMarkAsSeen,

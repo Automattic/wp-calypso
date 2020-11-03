@@ -10,9 +10,9 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SortableList from 'components/forms/sortable-list';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SortableList from 'calypso/components/forms/sortable-list';
 import EditorMediaModalGalleryEditItem from './edit-item';
 
 class EditorMediaModalGalleryEdit extends React.Component {

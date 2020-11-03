@@ -6,18 +6,18 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { get, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import TermFormDialog from 'blocks/term-form-dialog';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostTypeTaxonomy } from 'state/post-types/taxonomies/selectors';
-import { getTerms } from 'state/terms/selectors';
+import TermFormDialog from 'calypso/blocks/term-form-dialog';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getPostTypeTaxonomy } from 'calypso/state/post-types/taxonomies/selectors';
+import { getTerms } from 'calypso/state/terms/selectors';
 
 /**
  * Style dependencies

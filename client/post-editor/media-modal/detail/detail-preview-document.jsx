@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 export default class extends React.Component {

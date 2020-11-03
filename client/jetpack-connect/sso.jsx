@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugModule from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { flowRight, get, map } from 'lodash';
@@ -11,31 +11,31 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { addQueryArgs } from 'calypso/lib/route';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, Card, CompactCard, Dialog } from '@automattic/components';
-import config from 'config';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import EmptyContent from 'components/empty-content';
-import FormattedHeader from 'components/formatted-header';
-import Gravatar from 'components/gravatar';
+import config from 'calypso/config';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import EmptyContent from 'calypso/components/empty-content';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Gravatar from 'calypso/components/gravatar';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import Main from 'components/main';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Main from 'calypso/components/main';
 import MainWrapper from './main-wrapper';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import { decodeEntities } from 'lib/formatting';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSSO } from 'state/jetpack-connect/selectors';
-import { login } from 'lib/paths';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSSO } from 'calypso/state/jetpack-connect/selectors';
+import { login } from 'calypso/lib/paths';
 import { persistSsoApproved } from './persistence-utils';
-import { validateSSONonce, authorizeSSO } from 'state/jetpack-connect/actions';
+import { validateSSONonce, authorizeSSO } from 'calypso/state/jetpack-connect/actions';
 
 /*
  * Module variables

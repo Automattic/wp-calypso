@@ -9,30 +9,30 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import QuerySites from 'components/data/query-sites';
-import NpsSurvey from 'blocks/nps-survey';
+import QuerySites from 'calypso/components/data/query-sites';
+import NpsSurvey from 'calypso/blocks/nps-survey';
 import {
 	setNpsSurveyDialogShowing,
 	setupNpsSurveyDevTrigger,
-} from 'state/nps-survey/notice/actions';
-import { isNpsSurveyDialogShowing } from 'state/nps-survey/notice/selectors';
+} from 'calypso/state/nps-survey/notice/actions';
+import { isNpsSurveyDialogShowing } from 'calypso/state/nps-survey/notice/selectors';
 import {
 	submitNpsSurveyWithNoScore,
 	setupNpsSurveyEligibility,
 	markNpsSurveyShownThisSession,
-} from 'state/nps-survey/actions';
+} from 'calypso/state/nps-survey/actions';
 import {
 	getNpsSurveyScore,
 	hasAnsweredNpsSurvey,
 	hasAnsweredNpsSurveyWithNoScore,
 	isSectionAndSessionEligibleForNpsSurvey,
 	wasNpsSurveyShownThisSession,
-} from 'state/nps-survey/selectors';
-import { isSupportSession } from 'state/support/selectors';
-import getSites from 'state/selectors/get-sites';
-import { isBusinessPlan } from 'lib/plans';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
+} from 'calypso/state/nps-survey/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import { isBusinessPlan } from 'calypso/lib/plans';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
 /**
  * Style dependencies

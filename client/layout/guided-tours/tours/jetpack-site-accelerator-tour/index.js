@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -16,7 +16,7 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSiteAcceleratorTour = makeTour(

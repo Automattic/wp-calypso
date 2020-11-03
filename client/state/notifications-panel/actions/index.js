@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import 'state/notifications-panel/init';
-import { NOTIFICATIONS_FORCE_REFRESH } from 'state/action-types';
+import 'calypso/state/notifications-panel/init';
+import { NOTIFICATIONS_FORCE_REFRESH } from 'calypso/state/action-types';
 
 export const setForceRefresh = function setForceRefresh( refresh ) {
 	return {

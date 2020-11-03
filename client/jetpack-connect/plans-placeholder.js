@@ -7,8 +7,8 @@ import { times, random } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
+import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 const placeholderContent = (

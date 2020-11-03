@@ -9,9 +9,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { parse, stringify } from 'lib/shortcode';
-import * as MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
+import { parse, stringify } from 'calypso/lib/shortcode';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
 
 /**
  * Module variables
