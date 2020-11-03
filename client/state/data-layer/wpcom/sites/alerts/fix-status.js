@@ -15,7 +15,7 @@ import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/ac
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
-const POOL_EVERY_MILLISECONDS = 1000;
+const POLL_EVERY_MILLISECONDS = 1000;
 
 export const request = ( action ) => {
 	return [
@@ -41,7 +41,7 @@ export const success = ( action, fixer_state ) => {
 			( dispatch ) =>
 				setTimeout(
 					() => dispatch( getFixThreatsStatus( action.siteId, action.threatIds ) ),
-					POOL_EVERY_MILLISECONDS
+					POLL_EVERY_MILLISECONDS
 				),
 		];
 	}
@@ -50,9 +50,16 @@ export const success = ( action, fixer_state ) => {
 
 	if ( fixedThreats.length === action.threatIds.length ) {
 		return [
-			successNotice( i18n.translate( 'All selected threats were successfully fixed.' ), {
-				duration: 4000,
-			} ),
+			successNotice(
+				i18n.translate(
+					'The threat was successfully fixed.',
+					'All threats were successfully fixed.',
+					{ count: fixedThreats.length }
+				),
+				{
+					duration: 4000,
+				}
+			),
 			requestScanStatus( action.siteId ),
 			// Since we can fix threats from the History section, we need to update that
 			// information as well.
@@ -61,12 +68,9 @@ export const success = ( action, fixer_state ) => {
 	}
 
 	return [
-		errorNotice(
-			i18n.translate( 'Not all selected threats could be fixed. Please contact our support.' ),
-			{
-				duration: 4000,
-			}
-		),
+		errorNotice( i18n.translate( 'Not all threats could be fixed. Please contact our support.' ), {
+			duration: 4000,
+		} ),
 		requestScanStatus( action.siteId ),
 		// Since we can fix threats from the History section, we need to update that
 		// information as well.
