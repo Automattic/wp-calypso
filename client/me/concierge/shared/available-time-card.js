@@ -24,10 +24,10 @@ import { Button } from '@automattic/components';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getLanguage } from 'calypso/lib/i18n-utils';
+import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -109,6 +109,63 @@ class CalendarCard extends Component {
 		}
 
 		return timeWithTz;
+	}
+
+	getSelectOptGroup( times ) {
+		const earlyMorningOptGroup = {
+			label: 'Early Morning',
+			options: [],
+			isEarlyMorningTime: ( hour ) => hour >= 0 && hour < 6,
+		};
+		const morningOptGroup = {
+			label: 'Morning',
+			options: [],
+			isMorningTime: ( hour ) => hour >= 6 && hour < 12,
+		};
+		const afternoonOptGroup = {
+			label: 'Afternoon',
+			options: [],
+			isAfternoonTime: ( hour ) => hour >= 12 && hour < 18,
+		};
+		const eveningOptGroup = {
+			label: 'Evening',
+			options: [],
+		};
+
+		times.map( ( time ) => {
+			const hour = this.withTimezone( time ).format( 'HH' );
+
+			if ( earlyMorningOptGroup.isEarlyMorningTime( hour ) ) {
+				earlyMorningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else if ( morningOptGroup.isMorningTime( hour ) ) {
+				morningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else if ( afternoonOptGroup.isAfternoonTime( hour ) ) {
+				afternoonOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else {
+				eveningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			}
+		} );
+
+		const options = [
+			earlyMorningOptGroup,
+			morningOptGroup,
+			afternoonOptGroup,
+			eveningOptGroup,
+		].filter( ( optGroup ) => optGroup.options.length > 0 );
+
+		return options;
 	}
 
 	/**
@@ -246,7 +303,9 @@ class CalendarCard extends Component {
 							<FormLabel htmlFor="concierge-start-time">
 								{ translate( 'Choose a starting time' ) }
 							</FormLabel>
-							<FormSelect
+							<SelectOptGroups
+								name="example"
+								optGroups={ this.getSelectOptGroup( timesForTimeGroup ) }
 								id="concierge-start-time"
 								disabled={ disabled }
 								onChange={ this.onChange }
@@ -255,13 +314,7 @@ class CalendarCard extends Component {
 										? this.state.selectedMorningTime
 										: this.state.selectedEveningTime
 								}
-							>
-								{ timesForTimeGroup.map( ( time ) => (
-									<option value={ time } key={ time }>
-										{ this.formatTimeDisplay( time ) }
-									</option>
-								) ) }
-							</FormSelect>
+							/>
 							<FormSettingExplanation>{ description }</FormSettingExplanation>
 						</>
 					) }
