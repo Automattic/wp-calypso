@@ -28,10 +28,8 @@ const INITIAL_CREATE_FORM_STATE = {
 	slug: '',
 };
 
-export default function ListForm( { isCreateForm, isSubmissionDisabled, list, onSubmit } ) {
+export default function ListForm( { isCreateForm, isSubmissionDisabled, list = {}, onSubmit } ) {
 	const translate = useTranslate();
-	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
-	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
 	const [ formList, updateFormList ] = React.useState(
 		isCreateForm ? INITIAL_CREATE_FORM_STATE : { ...INITIAL_UPDATE_FORM_STATE, ...list }
 	);
@@ -42,6 +40,10 @@ export default function ListForm( { isCreateForm, isSubmissionDisabled, list, on
 		}
 		updateFormList( { ...formList, ...update } );
 	};
+
+	const isNameValid = typeof formList.title === 'string' && formList.title.length > 0;
+	const isSlugValid =
+		isCreateForm || ( typeof formList.slug === 'string' && formList.slug.length > 0 );
 
 	return (
 		<Card>
