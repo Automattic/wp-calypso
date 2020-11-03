@@ -48,9 +48,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
-
-	const loading = rewindState.state === 'uninitialized';
-
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
@@ -62,11 +59,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
-
-	const onConfirm = () => {
+	const onConfirm = useCallback( () => {
 		setUserHasRequestedRestore( true );
 		requestRestore();
-	};
+	}, [ setUserHasRequestedRestore, requestRestore ] );
+
+	const loading = rewindState.state === 'uninitialized';
 
 	const renderConfirm = () => (
 		<>
