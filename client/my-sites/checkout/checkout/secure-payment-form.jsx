@@ -19,7 +19,6 @@ import FreeCartPaymentBox from './free-cart-payment-box';
 import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import RedirectPaymentBox from './redirect-payment-box';
-import WebPaymentBox from './web-payment-box';
 import { submit } from 'calypso/lib/store-transactions';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'calypso/lib/transaction/actions';
@@ -405,29 +404,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderWebPaymentBox() {
-		return (
-			<PaymentBox
-				classSet="web-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="web-payment"
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ this.props.incompatibleProducts }
-			>
-				<WebPaymentBox
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-				>
-					{ this.props.children }
-				</WebPaymentBox>
-			</PaymentBox>
-		);
-	}
-
 	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -470,13 +446,6 @@ export class SecurePaymentForm extends Component {
 					<div>
 						{ this.renderGreatChoiceHeader() }
 						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
-					</div>
-				);
-			case 'web-payment':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderWebPaymentBox() }
 					</div>
 				);
 			default:
