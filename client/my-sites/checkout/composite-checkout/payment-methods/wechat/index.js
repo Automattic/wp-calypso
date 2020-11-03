@@ -29,7 +29,7 @@ import {
 	SummaryLine,
 	SummaryDetails,
 } from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
-import WeChatPaymentQRcodeUnstyled from 'calypso/my-sites/checkout/checkout/wechat-payment-qrcode';
+import WeChatPaymentQRcodeUnstyled from './wechat-payment-qrcode';
 
 const debug = debugFactory( 'calypso:composite-checkout:wechat-payment-method' );
 

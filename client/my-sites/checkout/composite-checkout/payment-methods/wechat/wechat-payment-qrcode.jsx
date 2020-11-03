@@ -18,6 +18,8 @@ import { ORDER_TRANSACTION_STATUS } from 'calypso/state/order-transactions/const
 import QueryOrderTransaction from 'calypso/components/data/query-order-transaction';
 import Spinner from 'calypso/components/spinner';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 export class WechatPaymentQRCode extends Component {
 	static propTypes = {
 		className: PropTypes.string,
@@ -133,3 +135,5 @@ export default connect(
 		showErrorNotice: errorNotice,
 	}
 )( localize( WechatPaymentQRCode ) );
+
+/* eslint-enable wpcalypso/jsx-classname-namespace */
