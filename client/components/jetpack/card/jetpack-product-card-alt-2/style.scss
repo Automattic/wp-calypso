@@ -462,4 +462,8 @@ button.components-button.jetpack-product-card-alt-2__slideout-button {
 	.jetpack-product-card-alt-2 {
 		background-color: #f6f7f7;
 	}
+
+	.jetpack-product-card-alt-2__product-name {
+		letter-spacing: -0.5px; // Prevent names from falling on 2 lines
+	}
 }
