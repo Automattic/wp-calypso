@@ -5,11 +5,6 @@ import TraceKit from 'tracekit';
 import debug from 'debug';
 
 /**
- * Internal dependencies
- */
-import config from 'calypso/config';
-
-/**
  * Module variables
  */
 
@@ -125,8 +120,6 @@ export default class ErrorLogger {
 
 	sendToApi( error ) {
 		const params = new URLSearchParams( {
-			client_id: config( 'wpcom_signup_id' ),
-			client_secret: config( 'wpcom_signup_key' ),
 			error: JSON.stringify( error ),
 		} );
 
