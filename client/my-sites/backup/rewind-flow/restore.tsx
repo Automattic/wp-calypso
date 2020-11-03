@@ -23,19 +23,16 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 
+/**
+ * Type dependencies
+ */
+import { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+
 interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
 	siteUrl: string;
-}
-
-//todo: move to dedicated types file
-interface RewindState {
-	state: string;
-	rewind?: {
-		status: 'queued' | 'running' | 'finished' | 'fail';
-	};
 }
 
 const BackupRestoreFlow: FunctionComponent< Props > = ( {
