@@ -11,6 +11,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 /**
  * Internal dependencies
@@ -49,15 +50,29 @@ function WpcomNux() {
 		isWpcomNuxEnabled && closeGeneralSidebar();
 	}, [ closeGeneralSidebar, isWpcomNuxEnabled ] );
 
+	// Track opening of the NUX Guide
+	useEffect( () => {
+		if ( isWpcomNuxEnabled && ! isSPTOpen ) {
+			recordTracksEvent( 'calypso_editor_wpcom_nux_open', {
+				is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			} );
+		}
+	}, [ isWpcomNuxEnabled, isSPTOpen ] );
+
 	if ( ! isWpcomNuxEnabled || isSPTOpen ) {
 		return null;
 	}
 
-	const dismissWpcomNux = () => setWpcomNuxStatus( { isNuxEnabled: false } );
+	const dismissWpcomNux = () => {
+		recordTracksEvent( 'calypso_editor_wpcom_nux_dismiss', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+		setWpcomNuxStatus( { isNuxEnabled: false } );
+	};
 
 	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
 	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-
+	const nuxPages = getWpcomNuxPages( isGutenboarding );
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -65,8 +80,13 @@ function WpcomNux() {
 			finishButtonText={ __( 'Get started', 'full-site-editing' ) }
 			onFinish={ dismissWpcomNux }
 		>
-			{ getWpcomNuxPages( isGutenboarding ).map( ( nuxPage ) => (
-				<NuxPage key={ nuxPage.heading } { ...nuxPage } />
+			{ nuxPages.map( ( nuxPage, index ) => (
+				<NuxPage
+					key={ nuxPage.heading }
+					pageNumber={ index + 1 }
+					isLastPage={ index === nuxPages.length - 1 }
+					{ ...nuxPage }
+				/>
 			) ) }
 		</Guide>
 	);
@@ -121,7 +141,15 @@ function getWpcomNuxPages( isGutenboarding ) {
 	].filter( ( nuxPage ) => ! nuxPage.shouldHide );
 }
 
-function NuxPage( { alignBottom = false, heading, description, imgSrc } ) {
+function NuxPage( { pageNumber, isLastPage, alignBottom = false, heading, description, imgSrc } ) {
+	useEffect( () => {
+		recordTracksEvent( 'calypso_editor_wpcom_nux_slide_view', {
+			slide_number: pageNumber,
+			is_last_slide: isLastPage,
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 	return (
 		<GuidePage className="wpcom-block-editor-nux__page">
 			<div className="wpcom-block-editor-nux__text">
