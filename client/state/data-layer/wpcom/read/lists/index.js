@@ -41,10 +41,17 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					},
 					action
 				),
-			onSuccess: ( action, response ) => [
-				receiveReaderList( { list: response } ),
-				navigate( `/read/list/${ response.owner }/${ response.slug }/edit` ),
-			],
+			onSuccess: ( action, { list } ) => {
+				if ( list?.owner && list?.slug ) {
+					return [
+						receiveReaderList( { list } ),
+						navigate( `/read/list/${ list.owner }/${ list.slug }/edit` ),
+						successNotice( translate( 'List created successfully!' ) ),
+					];
+				}
+				// NOTE: Add better handling for unexpected response format here.
+				errorNotice( translate( 'List could not be created, please try again later.' ) );
+			},
 			onError: ( action, error ) => [
 				errorNotice( String( error ) ),
 				handleReaderListRequestFailure( error ),
