@@ -13,122 +13,39 @@ import {
 	getListByOwnerAndSlug,
 	getListItems,
 	isCreatingList as isCreatingListSelector,
+	isUpdatingList as isUpdatingListSelector,
 	isMissingByOwnerAndSlug,
 } from 'calypso/state/reader/lists/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
-import FormButton from 'calypso/components/forms/form-button';
-import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormLabel from 'calypso/components/forms/form-label';
-import FormLegend from 'calypso/components/forms/form-legend';
-import FormRadio from 'calypso/components/forms/form-radio';
-import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import FormTextInput from 'calypso/components/forms/form-text-input';
-import FormTextarea from 'calypso/components/forms/form-textarea';
 import QueryReaderList from 'calypso/components/data/query-reader-list';
 import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import Main from 'calypso/components/main';
-import { createReaderList } from 'calypso/state/reader/lists/actions';
+import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
-import ListItem from './list-item';
 import Missing from 'calypso/reader/list-stream/missing';
 import ListDelete from './list-delete';
+import ListForm from './list-form';
+import ListItem from './list-item';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmit } ) {
-	const translate = useTranslate();
-	const isNameValid = typeof list.title === 'string' && list.title.length > 0;
-	const isSlugValid = isCreateForm || ( typeof list.slug === 'string' && list.slug.length > 0 );
+function Details( { list } ) {
+	const dispatch = useDispatch();
+	const isUpdatingList = useSelector( isUpdatingListSelector );
+
 	return (
-		<Card>
-			<FormFieldset>
-				<FormLabel htmlFor="list-name">{ translate( 'Name (Required)' ) }</FormLabel>
-				<FormTextInput
-					data-key="title"
-					id="list-name"
-					isValid={ isNameValid }
-					name="list-name"
-					onChange={ onChange }
-					value={ list.title }
-				/>
-				<FormSettingExplanation>{ translate( 'The name of the list.' ) }</FormSettingExplanation>
-			</FormFieldset>
-
-			{ ! isCreateForm && (
-				<FormFieldset>
-					<FormLabel htmlFor="list-slug">{ translate( 'Slug (Required)' ) }</FormLabel>
-					<FormTextInput
-						data-key="slug"
-						id="list-slug"
-						isValid={ isSlugValid }
-						name="list-slug"
-						onChange={ onChange }
-						value={ list.slug }
-					/>
-					<FormSettingExplanation>
-						{ translate( 'The slug for the list. This is used to build the URL to the list.' ) }
-					</FormSettingExplanation>
-				</FormFieldset>
-			) }
-
-			<FormFieldset>
-				<FormLegend>{ translate( 'Visibility' ) }</FormLegend>
-				<FormLabel>
-					<FormRadio
-						checked={ list.is_public }
-						data-key="is_public"
-						onChange={ onChange }
-						value="public"
-					/>
-					<span>{ translate( 'Everyone can view this list' ) }</span>
-				</FormLabel>
-
-				<FormLabel>
-					<FormRadio
-						checked={ ! list.is_public }
-						data-key="is_public"
-						onChange={ onChange }
-						value="private"
-					/>
-					<span>{ translate( 'Only I can view this list' ) }</span>
-				</FormLabel>
-				<FormSettingExplanation>
-					{ translate(
-						"Don't worry, posts from private sites will only appear to those with access. " +
-							'Adding a private site to a public list will not make posts from that site accessible to everyone.'
-					) }
-				</FormSettingExplanation>
-			</FormFieldset>
-
-			<FormFieldset>
-				<FormLabel htmlFor="list-description">{ translate( 'Description' ) }</FormLabel>
-				<FormTextarea
-					data-key="description"
-					id="list-description"
-					name="list-description"
-					onChange={ onChange }
-					placeholder={ translate( "What's your list about?" ) }
-					value={ list.description }
-				/>
-			</FormFieldset>
-			<FormButtonsBar>
-				<FormButton
-					primary
-					disabled={ isSubmissionDisabled || ! isNameValid || ! isSlugValid }
-					onClick={ onSubmit }
-				>
-					{ translate( 'Save' ) }
-				</FormButton>
-			</FormButtonsBar>
-		</Card>
+		<ListForm
+			list={ list }
+			isSubmissionDisabled={ isUpdatingList }
+			onSubmit={ ( newList ) => dispatch( updateReaderList( newList ) ) }
+		/>
 	);
 }
 
@@ -164,28 +81,14 @@ function ReaderListCreate() {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const isCreatingList = useSelector( isCreatingListSelector );
-	const [ list, updateList ] = React.useState( {
-		description: '',
-		is_public: true,
-		slug: '',
-		title: '',
-	} );
-	const onChange = ( event ) => {
-		const update = { [ event.target.dataset.key ]: event.target.value };
-		if ( 'is_public' in update ) {
-			update.is_public = update.is_public === 'public';
-		}
-		updateList( { ...list, ...update } );
-	};
+
 	return (
 		<Main>
 			<FormattedHeader headerText={ translate( 'Create List' ) } />
 			<ListForm
 				isCreateForm
 				isSubmissionDisabled={ isCreatingList }
-				list={ list }
-				onChange={ onChange }
-				onSubmit={ () => dispatch( createReaderList( list ) ) }
+				onSubmit={ ( list ) => dispatch( createReaderList( list ) ) }
 			/>
 		</Main>
 	);
@@ -247,7 +150,7 @@ function ReaderListEdit( props ) {
 								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && <ListForm { ...sectionProps } /> }
+						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
 						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
 						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
 						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }

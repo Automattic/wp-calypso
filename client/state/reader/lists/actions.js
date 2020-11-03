@@ -226,12 +226,14 @@ export function receiveUpdatedListDetails( data ) {
  * Handle an error from the list update API.
  *
  * @param   {Error}  error Error during the list update process
+ * @param   {object} list List details to save
  * @returns {object} Action object
  */
-export function handleUpdateListDetailsError( error ) {
+export function handleUpdateListDetailsError( error, list ) {
 	return {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
+		list,
 	};
 }
 
