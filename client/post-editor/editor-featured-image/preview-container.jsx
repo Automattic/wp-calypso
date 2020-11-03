@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import EditorFeaturedImagePreview from './preview';
-import getMediaItem from 'state/selectors/get-media-item';
-import { fetchMediaItem } from 'state/media/thunks';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import { fetchMediaItem } from 'calypso/state/media/thunks';
 
 class EditorFeaturedImagePreviewContainer extends React.Component {
 	static propTypes = {

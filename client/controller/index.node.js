@@ -8,9 +8,9 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { makeLayoutMiddleware } from './shared.js';
-import LayoutLoggedOut from 'layout/logged-out';
-import CalypsoI18nProvider from 'components/calypso-i18n-provider';
-import { RouteProvider } from 'components/route';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { RouteProvider } from 'calypso/components/route';
 
 /**
  * Re-export

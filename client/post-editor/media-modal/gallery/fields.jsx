@@ -11,10 +11,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import EditorMediaModalFieldset from '../fieldset';
-import SelectDropdown from 'components/select-dropdown';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { GalleryColumnedTypes, GallerySizeableTypes } from 'lib/media/constants';
-import { isModuleActive } from 'lib/site/utils';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { GalleryColumnedTypes, GallerySizeableTypes } from 'calypso/lib/media/constants';
+import { isModuleActive } from 'calypso/lib/site/utils';
 
 export class EditorMediaModalGalleryFields extends React.Component {
 	static propTypes = {

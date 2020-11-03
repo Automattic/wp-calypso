@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import SubmitStepButton from 'signup/submit-step-button';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import SubmitStepButton from 'calypso/signup/submit-step-button';
 
 export default class TestStep extends React.Component {
 	render() {

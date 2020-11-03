@@ -8,9 +8,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isFreePlan } from 'lib/plans';
-import { getSite } from 'state/sites/selectors';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { isFreePlan } from 'calypso/lib/plans';
+import { getSite } from 'calypso/state/sites/selectors';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 export const siteHasPaidPlan = ( selectedSite ) =>
 	selectedSite && selectedSite.plan && ! isFreePlan( selectedSite.plan.product_slug );

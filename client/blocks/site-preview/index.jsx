@@ -10,7 +10,11 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { closePreview } from 'calypso/state/ui/preview/actions';
-import { getPreviewSite, getPreviewSiteId, getPreviewUrl } from 'calypso/state/ui/preview/selectors';
+import {
+	getPreviewSite,
+	getPreviewSiteId,
+	getPreviewUrl,
+} from 'calypso/state/ui/preview/selectors';
 import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
 import { addQueryArgs } from 'calypso/lib/route';

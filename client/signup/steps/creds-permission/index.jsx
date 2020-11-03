@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { Card, Button } from '@automattic/components';
-import QuerySites from 'components/data/query-sites';
-import { autoConfigCredentials } from 'state/jetpack/credentials/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import QuerySites from 'calypso/components/data/query-sites';
+import { autoConfigCredentials } from 'calypso/state/jetpack/credentials/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies

@@ -6,29 +6,29 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import { includes } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import PostMetadata from 'lib/post-metadata';
-import { addSiteFragment } from 'lib/route';
-import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import { updatePostMetadata, deletePostMetadata } from 'state/posts/actions';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import PostMetadata from 'calypso/lib/post-metadata';
+import { addSiteFragment } from 'calypso/lib/route';
+import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { updatePostMetadata, deletePostMetadata } from 'calypso/state/posts/actions';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 import {
 	getKeyringConnectionById,
 	isKeyringConnectionsFetching,
-} from 'state/sharing/keyring/selectors';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/sharing/keyring/selectors';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export class EditorSharingPublicizeConnection extends React.Component {
 	static propTypes = {

@@ -11,7 +11,10 @@ import { isArray } from 'lodash';
  */
 import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { Card } from '@automattic/components';
-import { isSuccessfulDailyBackup, isSuccessfulRealtimeBackup } from 'calypso/lib/jetpack/backup-utils';
+import {
+	isSuccessfulDailyBackup,
+	isSuccessfulRealtimeBackup,
+} from 'calypso/lib/jetpack/backup-utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';

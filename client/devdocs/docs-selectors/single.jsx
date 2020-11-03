@@ -10,8 +10,8 @@ import { stringify } from 'qs';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import HeaderCake from 'components/header-cake';
+import { addQueryArgs } from 'calypso/lib/url';
+import HeaderCake from 'calypso/components/header-cake';
 import DocsSelectorsResult from './result';
 
 export default class DocsSelectorsSingle extends Component {

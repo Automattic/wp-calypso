@@ -6,9 +6,9 @@ import { isDesktop } from '@automattic/viewport';
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
-import { isNewUser } from 'state/guided-tours/contexts';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import { and } from 'calypso/layout/guided-tours/utils';
+import { isNewUser } from 'calypso/state/guided-tours/contexts';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
 
 export default {
 	name: 'editorBasicsTour',

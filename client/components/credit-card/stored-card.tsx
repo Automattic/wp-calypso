@@ -8,7 +8,10 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getPaymentMethodImageURL, getPaymentMethodSummary } from 'calypso/lib/checkout/payment-methods';
+import {
+	getPaymentMethodImageURL,
+	getPaymentMethodSummary,
+} from 'calypso/lib/checkout/payment-methods';
 
 /**
  * Style dependencies

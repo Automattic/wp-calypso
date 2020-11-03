@@ -6,17 +6,17 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, some } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { url } from 'lib/media/utils';
-import Spinner from 'components/spinner';
-import SpinnerLine from 'components/spinner-line';
-import ImagePreloader from 'components/image-preloader';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getMediaItem from 'state/media/thunks/get-media-item';
+import { url } from 'calypso/lib/media/utils';
+import Spinner from 'calypso/components/spinner';
+import SpinnerLine from 'calypso/components/spinner-line';
+import ImagePreloader from 'calypso/components/image-preloader';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getMediaItem from 'calypso/state/media/thunks/get-media-item';
 
 class EditorFeaturedImagePreview extends Component {
 	static propTypes = {

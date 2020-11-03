@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 export default function isSectionEnabled( section ) {
 	return isSectionNameEnabled( section.name );

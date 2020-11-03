@@ -7,7 +7,7 @@ const { shell } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const log = require( 'desktop/lib/logger' )( 'desktop:external-links' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links' );
 
 function isValidBrowserUrl( url ) {
 	const parsedUrl = new URL( url );

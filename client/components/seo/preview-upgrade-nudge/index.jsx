@@ -20,7 +20,11 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import FeatureExample from 'calypso/components/feature-example';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
-import { TERM_ANNUALLY, TYPE_BUSINESS, FEATURE_SEO_PREVIEW_TOOLS } from 'calypso/lib/plans/constants';
+import {
+	TERM_ANNUALLY,
+	TYPE_BUSINESS,
+	FEATURE_SEO_PREVIEW_TOOLS,
+} from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies

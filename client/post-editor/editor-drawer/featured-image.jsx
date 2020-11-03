@@ -9,15 +9,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getFeaturedImageId } from 'state/posts/utils';
-import Accordion from 'components/accordion';
-import EditorDrawerWell from 'post-editor/editor-drawer-well';
-import FeaturedImage from 'post-editor/editor-featured-image';
-import FeaturedImageDropZone from 'post-editor/editor-featured-image/dropzone';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPost } from 'state/posts/selectors';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
+import Accordion from 'calypso/components/accordion';
+import EditorDrawerWell from 'calypso/post-editor/editor-drawer-well';
+import FeaturedImage from 'calypso/post-editor/editor-featured-image';
+import FeaturedImageDropZone from 'calypso/post-editor/editor-featured-image/dropzone';
+import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 
 class EditorDrawerFeaturedImage extends Component {
 	static propTypes = {

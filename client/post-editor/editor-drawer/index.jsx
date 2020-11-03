@@ -11,29 +11,29 @@ import { flow } from 'lodash';
  * Internal dependencies
  */
 import { hasSiteSeoFeature } from './utils';
-import Accordion from 'components/accordion';
-import AccordionSection from 'components/accordion/section';
-import CategoriesTagsAccordion from 'post-editor/editor-categories-tags/accordion';
-import AsyncLoad from 'components/async-load';
-import EditorMoreOptionsSlug from 'post-editor/editor-more-options/slug';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QueryPostTypes from 'components/data/query-post-types';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import { getPlugins, isRequesting } from 'state/plugins/installed/selectors';
-import { isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import config from 'config';
-import areSitePermalinksEditable from 'state/selectors/are-site-permalinks-editable';
+import Accordion from 'calypso/components/accordion';
+import AccordionSection from 'calypso/components/accordion/section';
+import CategoriesTagsAccordion from 'calypso/post-editor/editor-categories-tags/accordion';
+import AsyncLoad from 'calypso/components/async-load';
+import EditorMoreOptionsSlug from 'calypso/post-editor/editor-more-options/slug';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getPostType } from 'calypso/state/post-types/selectors';
+import { getPlugins, isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
+import config from 'calypso/config';
+import areSitePermalinksEditable from 'calypso/state/selectors/are-site-permalinks-editable';
 import EditorDrawerTaxonomies from './taxonomies';
 import EditorDrawerPageOptions from './page-options';
 import EditorDrawerLabel from './label';
-import EditorMoreOptionsCopyPost from 'post-editor/editor-more-options/copy-post';
-import EditPostStatus from 'post-editor/edit-post-status';
-import EditorExcerpt from 'post-editor/editor-excerpt';
-import { getFirstConflictingPlugin } from 'lib/seo';
+import EditorMoreOptionsCopyPost from 'calypso/post-editor/editor-more-options/copy-post';
+import EditPostStatus from 'calypso/post-editor/edit-post-status';
+import EditorExcerpt from 'calypso/post-editor/editor-excerpt';
+import { getFirstConflictingPlugin } from 'calypso/lib/seo';
 
 /**
  * Style dependencies
@@ -120,11 +120,11 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return <AsyncLoad require="post-editor/editor-post-formats/accordion" />;
+		return <AsyncLoad require="calypso/post-editor/editor-post-formats/accordion" />;
 	}
 
 	renderSharing() {
-		return <AsyncLoad require="post-editor/editor-sharing/accordion" />;
+		return <AsyncLoad require="calypso/post-editor/editor-sharing/accordion" />;
 	}
 
 	renderFeaturedImage() {
@@ -170,7 +170,7 @@ class EditorDrawer extends Component {
 		return (
 			<AccordionSection>
 				<EditorDrawerLabel labelText={ translate( 'Location' ) } />
-				<AsyncLoad require="post-editor/editor-location" />
+				<AsyncLoad require="calypso/post-editor/editor-location" />
 			</AccordionSection>
 		);
 	}
@@ -182,7 +182,7 @@ class EditorDrawer extends Component {
 
 		return (
 			<AccordionSection>
-				<AsyncLoad require="post-editor/editor-discussion" />
+				<AsyncLoad require="calypso/post-editor/editor-discussion" />
 			</AccordionSection>
 		);
 	}
@@ -215,7 +215,7 @@ class EditorDrawer extends Component {
 			return;
 		}
 
-		return <AsyncLoad require="post-editor/editor-seo-accordion" />;
+		return <AsyncLoad require="calypso/post-editor/editor-seo-accordion" />;
 	}
 
 	renderCopyPost() {

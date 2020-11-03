@@ -6,16 +6,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
+import config from 'calypso/config';
+import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
-import { siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
-import plansV2 from 'my-sites/plans-v2';
-import { OFFER_RESET_FLOW_TYPES } from 'jetpack-connect/flow-types';
+import { login } from 'calypso/lib/paths';
+import { siteSelection } from 'calypso/my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import plansV2 from 'calypso/my-sites/plans-v2';
+import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
 
 /**
  * Style dependencies

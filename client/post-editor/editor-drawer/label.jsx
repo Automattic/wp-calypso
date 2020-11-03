@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import InfoPopover from 'components/info-popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import InfoPopover from 'calypso/components/info-popover';
 
 /**
  * Style dependencies

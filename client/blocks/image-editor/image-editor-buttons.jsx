@@ -11,7 +11,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getImageEditorFileInfo, imageEditorHasChanges } from 'calypso/state/editor/image-editor/selectors';
+import {
+	getImageEditorFileInfo,
+	imageEditorHasChanges,
+} from 'calypso/state/editor/image-editor/selectors';
 
 class ImageEditorButtons extends Component {
 	static propTypes = {

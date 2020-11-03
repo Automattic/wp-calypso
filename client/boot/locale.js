@@ -8,16 +8,20 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getLanguageSlugs, isDefaultLocale, isTranslatedIncompletely } from 'lib/i18n-utils';
+import config from 'calypso/config';
+import {
+	getLanguageSlugs,
+	isDefaultLocale,
+	isTranslatedIncompletely,
+} from 'calypso/lib/i18n-utils';
 import {
 	loadUserUndeployedTranslations,
 	getLanguageManifestFile,
 	getTranslationChunkFile,
-} from 'lib/i18n-utils/switch-locale';
-import { getUrlParts } from 'lib/url/url-parts';
-import { setLocale, setLocaleRawData } from 'state/ui/language/actions';
-import { initLanguageEmpathyMode } from 'lib/i18n-utils/empathy-mode';
+} from 'calypso/lib/i18n-utils/switch-locale';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
+import { setLocale, setLocaleRawData } from 'calypso/state/ui/language/actions';
+import { initLanguageEmpathyMode } from 'calypso/lib/i18n-utils/empathy-mode';
 
 const debug = debugFactory( 'calypso:i18n' );
 

@@ -7,20 +7,20 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import page from 'page';
 import { find, get } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import verticals from './verticals';
 import { Button } from '@automattic/components';
-import { getStepUrl } from 'signup/utils';
-import FormTextInputWithAction from 'components/forms/form-text-input-with-action';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { getStepUrl } from 'calypso/signup/utils';
+import FormTextInputWithAction from 'calypso/components/forms/form-text-input-with-action';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 
 /**
  * Style dependencies

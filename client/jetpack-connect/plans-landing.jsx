@@ -11,18 +11,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/route';
-import DocumentHead from 'components/data/document-head';
+import { addQueryArgs } from 'calypso/lib/route';
+import DocumentHead from 'calypso/components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import QueryPlans from 'components/data/query-plans';
-import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { getSite, isRequestingSites } from 'state/sites/selectors';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
+import QueryPlans from 'calypso/components/data/query-plans';
+import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { storePlan } from './persistence-utils';
 
 const CALYPSO_JETPACK_CONNECT = '/jetpack/connect';

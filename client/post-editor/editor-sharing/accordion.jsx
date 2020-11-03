@@ -12,24 +12,24 @@ import { includes, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import PostMetadata from 'lib/post-metadata';
+import Accordion from 'calypso/components/accordion';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import PostMetadata from 'calypso/lib/post-metadata';
 import Sharing from './';
-import AccordionSection from 'components/accordion/section';
-import * as postUtils from 'state/posts/utils';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getEditedPost, getEditedPostValue } from 'state/posts/selectors';
-import { getSiteSlug, isJetpackModuleActive } from 'state/sites/selectors';
-import { getSiteUserConnections } from 'state/sharing/publicize/selectors';
-import hasBrokenSiteUserConnection from 'state/selectors/has-broken-site-user-connection';
-import hasInvalidSiteUserConnection from 'state/selectors/has-invalid-site-user-connection';
-import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import AccordionSection from 'calypso/components/accordion/section';
+import * as postUtils from 'calypso/state/posts/utils';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getEditedPost, getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getSiteSlug, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { getSiteUserConnections } from 'calypso/state/sharing/publicize/selectors';
+import hasBrokenSiteUserConnection from 'calypso/state/selectors/has-broken-site-user-connection';
+import hasInvalidSiteUserConnection from 'calypso/state/selectors/has-invalid-site-user-connection';
+import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 class EditorSharingAccordion extends React.Component {
 	static propTypes = {

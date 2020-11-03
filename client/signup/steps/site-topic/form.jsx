@@ -11,9 +11,9 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
 import {
 	getSiteVerticalName,
 	getSiteVerticalSlug,
@@ -21,11 +21,11 @@ import {
 	getSiteVerticalId,
 	getSiteVerticalParentId,
 	getSiteVerticalSuggestedTheme,
-} from 'state/signup/steps/site-vertical/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getVerticals } from 'state/signup/verticals/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getVerticals } from 'calypso/state/signup/verticals/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
 /**
  * Style dependencies

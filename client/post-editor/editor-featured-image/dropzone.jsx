@@ -5,21 +5,21 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { head } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import DropZone from 'components/drop-zone';
-import { filterItemsByMimePrefix, createTransientMediaId } from 'lib/media/utils';
+import DropZone from 'calypso/components/drop-zone';
+import { filterItemsByMimePrefix, createTransientMediaId } from 'calypso/lib/media/utils';
 import FeaturedImageDropZoneIcon from './dropzone-icon';
 
-import { addMedia } from 'state/media/thunks';
-import { editPost } from 'state/posts/actions';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { userCan } from 'lib/site/utils';
+import { addMedia } from 'calypso/state/media/thunks';
+import { editPost } from 'calypso/state/posts/actions';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { userCan } from 'calypso/lib/site/utils';
 
 class FeaturedImageDropZone extends Component {
 	onFilesDrop = async ( files ) => {

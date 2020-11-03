@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  */
 import Masterbar from './masterbar';
 import Item from './item';
-import WordPressWordmark from 'components/wordpress-wordmark';
-import { recordTracksEvent } from 'state/analytics/actions';
-import JetpackLogo from 'components/jetpack-logo';
-import { clearSignupDestinationCookie } from 'signup/storageUtils';
+import WordPressWordmark from 'calypso/components/wordpress-wordmark';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 class CheckoutMasterbar extends React.Component {
 	clickClose = () => {

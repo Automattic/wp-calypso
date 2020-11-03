@@ -9,14 +9,14 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getEditedPostValue } from 'state/posts/selectors';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getPostType } from 'state/post-types/selectors';
-import PageParent from 'post-editor/editor-page-parent';
-import PageTemplates from 'post-editor/editor-page-templates';
-import PageOrder from 'post-editor/editor-page-order';
-import Accordion from 'components/accordion';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getEditedPostValue } from 'calypso/state/posts/selectors';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getPostType } from 'calypso/state/post-types/selectors';
+import PageParent from 'calypso/post-editor/editor-page-parent';
+import PageTemplates from 'calypso/post-editor/editor-page-templates';
+import PageOrder from 'calypso/post-editor/editor-page-order';
+import Accordion from 'calypso/components/accordion';
 
 function EditorDrawerPageOptions( { translate, postType, hierarchical } ) {
 	let title;

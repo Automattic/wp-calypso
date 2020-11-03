@@ -9,15 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import EditorFieldset from 'post-editor/editor-fieldset';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import { recordEditorStat, recordEditorEvent } from 'state/posts/stats';
-import { isEditorNewPost, getEditorPostId } from 'state/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isJetpackModuleActive } from 'state/sites/selectors';
-import { getEditedPost } from 'state/posts/selectors';
-import { editPost } from 'state/posts/actions';
+import EditorFieldset from 'calypso/post-editor/editor-fieldset';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
+import { isEditorNewPost, getEditorPostId } from 'calypso/state/editor/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackModuleActive } from 'calypso/state/sites/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
+import { editPost } from 'calypso/state/posts/actions';
 
 class SharingLikeOptions extends React.Component {
 	static propTypes = {

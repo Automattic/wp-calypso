@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import { JETPACK_RESET_PLANS } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { UPSELL_PRODUCT_MATRIX } from 'my-sites/plans-v2/constants';
+import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { UPSELL_PRODUCT_MATRIX } from 'calypso/my-sites/plans-v2/constants';
 
 // Offer Reset allows users to purchase two products at the same time. The allowed
 // combinations are stored in `OFFER_RESET_COMBINED_FLOW_TYPES`. From this matrix,

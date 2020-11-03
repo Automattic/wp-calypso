@@ -9,9 +9,9 @@ import { get, uniqueId } from 'lodash';
 /**
  * Internal dependencies
  */
-import TranslatableString from 'components/translatable/proptype';
+import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
-import SidebarMenu from 'layout/sidebar/menu';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;

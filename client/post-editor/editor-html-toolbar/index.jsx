@@ -8,39 +8,39 @@ import { connect } from 'react-redux';
 import { isEmpty, map, reduce, throttle } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { Env } from 'tinymce/tinymce';
 
 /**
  * Internal dependencies
  */
-import { serialize as serializeContactForm } from 'components/tinymce/plugins/contact-form/shortcode-utils';
-import { serialize as serializeSimplePayment } from 'components/tinymce/plugins/simple-payments/shortcode-utils';
-import { getMimePrefix } from 'lib/media/utils';
-import markup from 'post-editor/media-modal/markup';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import { serialize as serializeContactForm } from 'calypso/components/tinymce/plugins/contact-form/shortcode-utils';
+import { serialize as serializeSimplePayment } from 'calypso/components/tinymce/plugins/simple-payments/shortcode-utils';
+import { getMimePrefix } from 'calypso/lib/media/utils';
+import markup from 'calypso/post-editor/media-modal/markup';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import {
 	fieldAdd,
 	fieldRemove,
 	fieldUpdate,
 	settingsUpdate,
-} from 'state/editor/contact-form/actions';
-import { getEditorContactForm } from 'state/editor/contact-form/selectors';
-import { blockSave } from 'state/editor/save-blockers/actions';
+} from 'calypso/state/editor/contact-form/actions';
+import { getEditorContactForm } from 'calypso/state/editor/contact-form/selectors';
+import { blockSave } from 'calypso/state/editor/save-blockers/actions';
 import AddImageDialog from './add-image-dialog';
 import AddLinkDialog from './add-link-dialog';
 import { Button } from '@automattic/components';
-import ContactFormDialog from 'components/tinymce/plugins/contact-form/dialog';
-import isDropZoneVisible from 'state/selectors/is-drop-zone-visible';
-import EditorMediaModal from 'post-editor/editor-media-modal';
-import MediaLibraryDropZone from 'my-sites/media-library/drop-zone';
-import config from 'config';
-import getMediaErrors from 'state/selectors/get-media-errors';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
+import ContactFormDialog from 'calypso/components/tinymce/plugins/contact-form/dialog';
+import isDropZoneVisible from 'calypso/state/selectors/is-drop-zone-visible';
+import EditorMediaModal from 'calypso/post-editor/editor-media-modal';
+import MediaLibraryDropZone from 'calypso/my-sites/media-library/drop-zone';
+import config from 'calypso/config';
+import getMediaErrors from 'calypso/state/selectors/get-media-errors';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import SimplePaymentsDialog from 'calypso/components/tinymce/plugins/simple-payments/dialog';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies

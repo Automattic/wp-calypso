@@ -11,7 +11,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 export function usePlanFromPath() {
 	const planPath = usePlanRouteParam();

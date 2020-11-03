@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-const keychain = require( 'desktop/lib/keychain' );
+const keychain = require( 'calypso/desktop/lib/keychain' );
 
 /**
  * Module variables
