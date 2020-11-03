@@ -16,10 +16,11 @@ let lastUUID = 100;
 function convertResponseCartProductToRequestCartProduct(
 	product: ResponseCartProduct | RequestCartProduct
 ): RequestCartProduct {
-	const { product_slug, meta, product_id, extra } = product;
+	const { product_slug, meta, product_id, extra, volume } = product;
 	return {
 		product_slug,
 		meta,
+		volume,
 		product_id,
 		extra,
 	};

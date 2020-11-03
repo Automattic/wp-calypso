@@ -9,7 +9,6 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  * Internal dependencies
  */
 import type { StoredCard } from '../types/stored-cards';
-import type { CartValue } from 'calypso/lib/cart-values/types';
 import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 import { ReactStandardAction } from '../types/analytics';
 
@@ -48,7 +47,7 @@ export default function useRecordCheckoutLoaded( {
 				saved_cards: storedCards.length,
 				apple_pay_available: isApplePayAvailable,
 				product_slug: productAliasFromUrl,
-				is_renewal: hasRenewalItem( responseCart as CartValue ),
+				is_renewal: hasRenewalItem( responseCart ),
 			},
 		} );
 		hasRecordedCheckoutLoad.current = true;

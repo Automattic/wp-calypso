@@ -167,18 +167,7 @@ describe( 'CompositeCheckout', () => {
 		const store = applyMiddleware( thunk )( createStore )( () => {
 			return {
 				plans: {
-					items: [
-						{
-							product_id: 1009,
-							product_name: 'Plan',
-							meta: null,
-							prices: {},
-							path_slug: 'personal',
-							product_slug: 'personal-bundle',
-							product_type: 'bundle',
-							currency_code: 'USD',
-						},
-					],
+					items: [],
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
