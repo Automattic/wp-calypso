@@ -99,7 +99,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Ectoplasm' ),
+			label: translate( 'Ectoplasm', { context: 'admin color scheme' } ),
 			value: 'ectoplasm',
 			thumbnail: {
 				cssClass: 'is-ectoplasm',
