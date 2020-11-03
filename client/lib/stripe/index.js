@@ -328,6 +328,31 @@ export function StripeHookProvider( {
 }
 
 /**
+ * @typedef Stripe object
+ */
+
+/**
+ * @typedef StripeConfiguration object
+ */
+
+/**
+ * @typedef StripeError object
+ */
+
+/**
+ * @typedef SetStripeError () => void
+ */
+
+/**
+ * @typedef StripeManager
+ * @property {Stripe | null} stripe The instance of the stripe library
+ * @property {StripeConfiguration | null} stripeConfiguration The object containing the data returned by the stripe configuration endpoint
+ * @property {boolean} isStripeLoading A boolean that is true if stripe is currently being loaded
+ * @property {StripeError | null} stripeLoadingError An optional object that will be set if there is an error loading stripe
+ * @property {SetStripeError} setStripeError A function that can be called with a value to force the stripe configuration to reload
+ */
+
+/**
  * Custom hook to access Stripe.js
  *
  * First you must wrap a parent component in `StripeHookProvider`. Then you can
@@ -342,7 +367,7 @@ export function StripeHookProvider( {
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
  * - setStripeError: a function that can be called with a value to force the stripe configuration to reload
  *
- * @returns {object} See above
+ * @returns {StripeManager} See above
  */
 export function useStripe() {
 	const stripeData = useContext( StripeContext );

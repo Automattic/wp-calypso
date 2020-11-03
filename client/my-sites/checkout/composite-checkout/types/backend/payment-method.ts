@@ -23,84 +23,27 @@ import { CheckoutPaymentMethodSlug } from '../checkout-payment-method-slug';
  *
  * @see https://www.typescriptlang.org/docs/handbook/advanced-types.html#exhaustiveness-checking
  */
-export type WPCOMPaymentMethodClass =
-	| WPCOMBillingEbanx
-	| WPCOMBillingEbanxRedirectBrazilTef
-	| WPCOMBillingDlocalRedirectIndiaNetbanking
-	| WPCOMBillingDlocalRedirectIndonesiaWallet
-	| WPCOMBillingPayPalDirect
-	| WPCOMBillingPayPalExpress
-	| WPCOMBillingStripePaymentMethod
-	| WPCOMBillingStripeSourceAlipay
-	| WPCOMBillingStripeSourceBancontact
-	| WPCOMBillingStripeSourceEps
-	| WPCOMBillingStripeSourceGiropay
-	| WPCOMBillingStripeSourceIdeal
-	| WPCOMBillingStripeSourceP24
-	| WPCOMBillingStripeSourceSofort
-	| WPCOMBillingStripeSourceThreeDSecure
-	| WPCOMBillingStripeSourceWechat
-	| WPCOMBillingFullCredits
-	| WPCOMBillingFree
-	| WPCOMBillingWebPayment;
+export type WPCOMPaymentMethod =
+	| 'WPCOM_Billing_WPCOM'
+	| 'WPCOM_Billing_Ebanx'
+	| 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef'
+	| 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking'
+	| 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet'
+	| 'WPCOM_Billing_PayPal_Direct'
+	| 'WPCOM_Billing_PayPal_Express'
+	| 'WPCOM_Billing_Stripe_Payment_Method'
+	| 'WPCOM_Billing_Stripe_Source_Alipay'
+	| 'WPCOM_Billing_Stripe_Source_Bancontact'
+	| 'WPCOM_Billing_Stripe_Source_Eps'
+	| 'WPCOM_Billing_Stripe_Source_Giropay'
+	| 'WPCOM_Billing_Stripe_Source_Ideal'
+	| 'WPCOM_Billing_Stripe_Source_P24'
+	| 'WPCOM_Billing_Stripe_Source_Sofort'
+	| 'WPCOM_Billing_Stripe_Source_Three_D_Secure'
+	| 'WPCOM_Billing_Stripe_Source_Wechat'
+	| 'WPCOM_Billing_Web_Payment';
 
-export interface WPCOMBillingFullCredits {
-	name: 'WPCOM_Billing_WPCOM';
-}
-export interface WPCOMBillingFree {
-	name: 'WPCOM_Billing_WPCOM';
-}
-export interface WPCOMBillingEbanx {
-	name: 'WPCOM_Billing_Ebanx';
-}
-export interface WPCOMBillingDlocalRedirectIndiaNetbanking {
-	name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
-}
-export interface WPCOMBillingDlocalRedirectIndonesiaWallet {
-	name: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet';
-}
-export interface WPCOMBillingEbanxRedirectBrazilTef {
-	name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
-}
-export interface WPCOMBillingPayPalDirect {
-	name: 'WPCOM_Billing_PayPal_Direct';
-}
-export interface WPCOMBillingPayPalExpress {
-	name: 'WPCOM_Billing_PayPal_Express';
-}
-export interface WPCOMBillingStripePaymentMethod {
-	name: 'WPCOM_Billing_Stripe_Payment_Method';
-}
-export interface WPCOMBillingStripeSourceAlipay {
-	name: 'WPCOM_Billing_Stripe_Source_Alipay';
-}
-export interface WPCOMBillingStripeSourceBancontact {
-	name: 'WPCOM_Billing_Stripe_Source_Bancontact';
-}
-export interface WPCOMBillingStripeSourceEps {
-	name: 'WPCOM_Billing_Stripe_Source_Eps';
-}
-export interface WPCOMBillingStripeSourceGiropay {
-	name: 'WPCOM_Billing_Stripe_Source_Giropay';
-}
-export interface WPCOMBillingStripeSourceIdeal {
-	name: 'WPCOM_Billing_Stripe_Source_Ideal';
-}
-export interface WPCOMBillingStripeSourceP24 {
-	name: 'WPCOM_Billing_Stripe_Source_P24';
-}
-export interface WPCOMBillingStripeSourceSofort {
-	name: 'WPCOM_Billing_Stripe_Source_Sofort';
-}
-export interface WPCOMBillingStripeSourceThreeDSecure {
-	name: 'WPCOM_Billing_Stripe_Source_Three_D_Secure';
-}
-export interface WPCOMBillingStripeSourceWechat {
-	name: 'WPCOM_Billing_Stripe_Source_Wechat';
-}
-export interface WPCOMBillingWebPayment {
-	name: 'WPCOM_Billing_Web_Payment';
-}
+export type WPCOMPaymentMethodClass = { name: WPCOMPaymentMethod };
 
 /**
  * Convert a payment method class name from a string to a
