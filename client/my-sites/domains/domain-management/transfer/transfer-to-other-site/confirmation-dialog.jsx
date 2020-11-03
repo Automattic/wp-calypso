@@ -63,7 +63,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 					{ this.props.translate(
 						"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
 							'domain mapping subscription when the domain mapping next renews. You will not be able to set it as primary either. ' +
-							'Consider upgrading the target site to a paid plan to get these features for free.'
+							'If you upgrade the target site to a paid plan, these features are included in the plan.'
 					) }
 				</p>
 			);
@@ -74,7 +74,7 @@ class TransferConfirmationDialog extends React.PureComponent {
 				{ this.props.translate(
 					"The target site doesn't have a paid plan, so you'll have to pay the full price for a " +
 						'domain mapping subscription when the domain mapping next renews. ' +
-						'Consider upgrading the target site to a paid plan to get domain mappings and many more features for free.'
+						'If you upgrade the target site to a paid plan, domain mappings (and many more features!) are included in our plans.'
 				) }
 			</p>
 		);
