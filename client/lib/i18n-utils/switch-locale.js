@@ -3,7 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import debugFactory from 'debug';
-import { forEach, includes, isEmpty } from 'lodash';
+import { forEach, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -261,43 +261,6 @@ function getInstalledChunks() {
 }
 
 /**
- * Get the translation chunk locale data which consists of locale manifest
- * and all available translations for currently loaded chunks.
- *
- * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
- * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
- * @returns {Promise} Translation chunks locale data
- */
-async function getTranslationChunksLocale( localeSlug, targetBuild = 'evergreen' ) {
-	try {
-		const { translatedChunks, locale } =
-			( await getLanguageManifestFile( localeSlug, targetBuild ) ) ?? {};
-
-		if ( ! locale || ! translatedChunks ) {
-			return;
-		}
-
-		const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
-			translatedChunks.includes( chunkId )
-		);
-		const chunksLocaleData = await Promise.all(
-			translatedInstalledChunks.map( ( chunkId ) =>
-				getTranslationChunkFile( chunkId, localeSlug, targetBuild )
-			)
-		);
-
-		const localeData = Object.assign( {}, locale, ...chunksLocaleData );
-
-		return { localeData, translatedChunks };
-	} catch ( error ) {
-		debug(
-			`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
-		);
-		debug( error );
-	}
-}
-
-/**
  * Used to keep the reference to the require chunk translations handler.
  */
 let lastRequireChunkTranslationsHandler = null;
@@ -384,26 +347,47 @@ export default async function switchLocale( localeSlug ) {
 		// Switching the locale requires fetching the translation chunks
 		// locale data, which consists of the locale manifest data and
 		// translations for currently installed chunks.
-		const { localeData, translatedChunks } =
-			( await getTranslationChunksLocale( localeSlug, window?.BUILD_TARGET ) ) ?? {};
+		try {
+			const { translatedChunks, locale } =
+				( await getLanguageManifestFile( localeSlug, window?.BUILD_TARGET ) ) ?? {};
 
-		if ( isEmpty( localeData ) ) {
-			return;
-		}
+			if ( ! locale || ! translatedChunks ) {
+				return;
+			}
 
-		i18n.setLocale( localeData );
-		setLocaleInDOM();
-		addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, { translatedChunks } );
+			i18n.setLocale( locale );
+			setLocaleInDOM();
+			addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, { translatedChunks } );
 
-		const userTranslations = await loadUserUndeployedTranslations( localeSlug );
+			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
+				translatedChunks.includes( chunkId )
+			);
 
-		// Re-attach require chunk translations handler if user translations are available
-		if ( userTranslations ) {
-			removeRequireChunkTranslationsHandler();
-			addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, {
-				translatedChunks,
-				userTranslations,
-			} );
+			// Load individual translation chunks
+			translatedInstalledChunks.forEach( ( chunkId ) =>
+				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+					.then( ( translations ) => i18n.addTranslations( translations ) )
+					.catch( ( error ) => {
+						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+						debug( error );
+					} )
+			);
+
+			const userTranslations = await loadUserUndeployedTranslations( localeSlug );
+
+			// Re-attach require chunk translations handler if user translations are available
+			if ( userTranslations ) {
+				removeRequireChunkTranslationsHandler();
+				addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, {
+					translatedChunks,
+					userTranslations,
+				} );
+			}
+		} catch ( error ) {
+			debug(
+				`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
+			);
+			debug( error );
 		}
 	} else {
 		getLanguageFile( localeSlug ).then(
