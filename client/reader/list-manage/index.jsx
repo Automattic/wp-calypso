@@ -210,7 +210,7 @@ function ReaderListEdit( props ) {
 			<Main>
 				<FormattedHeader
 					headerText={ translate( 'Manage %(listName)s', {
-						args: { listName: list?.title || props.slug },
+						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>
 				{ ! list && ! isMissing && <Card>{ translate( 'Loading…' ) }</Card> }
