@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useCallback } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -94,7 +94,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 				? getPurchaseByProductSlug( purchases, monthlyProductSlug )
 				: undefined );
 
-	const slideOutButtonLabel = useCallback( () => {
+	const slideOutButtonLabel = useMemo( () => {
 		if ( isOwned ) {
 			if ( isUpgradeableToYearly ) {
 				return translate( 'Upgrade to Yearly' );
@@ -108,6 +108,8 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			components: {
 				name: <>{ shortName }</>,
 			},
+			comment:
+				'{name}: is the jetpack product name, ie- Backup Daily, Backup Real-time, Scan, Anti-spam, Search, Jetpack CRM',
 		} );
 	}, [ isOwned, isUpgradeableToYearly, formattedPrice, shortName ] );
 
@@ -125,7 +127,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 					price={ Math.floor( ( displayPrice || price ) as number ) }
 					billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
 					description={ description }
-					buttonLabel={ slideOutButtonLabel() }
+					buttonLabel={ slideOutButtonLabel }
 					onButtonClick={ () => onProductClick( product, isUpgradeableToYearly, purchase ) }
 					buttonPrimary={ ! isOwned }
 					isOwned={ isOwned }
