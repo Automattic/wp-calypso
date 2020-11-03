@@ -304,7 +304,7 @@ class CalendarCard extends Component {
 								{ translate( 'Choose a starting time' ) }
 							</FormLabel>
 							<SelectOptGroups
-								name="example"
+								name="concierge-time-groups"
 								optGroups={ this.getSelectOptGroup( timesForTimeGroup ) }
 								id="concierge-start-time"
 								disabled={ disabled }
