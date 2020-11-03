@@ -76,6 +76,7 @@ async function saveCreditCard( { token, translate, saveStoredCard, stripeConfigu
 		? { payment_partner: stripeConfiguration.processor_id }
 		: {};
 	await saveStoredCard( { token, additionalData } );
+	recordTracksEvent( 'calypso_purchases_add_new_payment_method' );
 	notices.success( translate( 'Card added successfully' ), {
 		persistent: true,
 	} );
