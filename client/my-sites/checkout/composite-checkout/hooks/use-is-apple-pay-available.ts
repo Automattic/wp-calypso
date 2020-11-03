@@ -2,13 +2,9 @@
  * External dependencies
  */
 import { useEffect, useState } from 'react';
-import { LineItem } from '@automattic/composite-checkout';
+import type { LineItem } from '@automattic/composite-checkout';
+import type { Stripe, StripeConfiguration } from '@automattic/calypso-stripe';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { Stripe, StripeConfiguration } from 'calypso/lib/stripe';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-is-apple-pay-available' );
 
