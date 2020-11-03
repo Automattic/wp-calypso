@@ -84,6 +84,7 @@ module.exports = {
 	],
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
 			config: 'server/config',

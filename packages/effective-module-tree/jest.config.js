@@ -4,4 +4,5 @@ module.exports = {
 	// Node project, no need to transform anything
 	transformIgnorePatterns: [ '<rootDir>/', '/node_modules/' ],
 	cacheDirectory: '<rootDir>/../../.cache/jest',
+	resolver: '<rootDir>/../../test/module-resolver.js',
 };

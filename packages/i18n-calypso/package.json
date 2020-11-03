@@ -4,6 +4,7 @@
 	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"types": "types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
@@ -39,7 +40,7 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

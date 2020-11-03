@@ -59,6 +59,7 @@ function getMonorepoPackages() {
  *
  * @returns {Array} list of externals
  */
+
 function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
@@ -144,6 +145,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
 			'calypso/config': 'server/config',

@@ -4,4 +4,5 @@ module.exports = {
 	testMatch: [ '<rootDir>/tests/*/codemod.spec.js' ],
 	setupFiles: [ '<rootDir>/setup-tests.js' ],
 	cacheDirectory: '<rootDir>/../../.cache/jest',
+	resolver: '<rootDir>/../../test/module-resolver.js',
 };

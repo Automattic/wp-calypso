@@ -6,4 +6,5 @@ module.exports = {
 	globals: {
 		__i18n_text_domain__: 'default',
 	},
+	resolver: '<rootDir>/../../test/module-resolver.js',
 };
