@@ -23,8 +23,6 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_FOLLOW_FAILURE,
@@ -54,34 +52,13 @@ export function receiveLists( lists ) {
 }
 
 /**
- * Triggers a network request to fetch the current user's lists.
+ * Request the current user's subscribed lists.
  *
- * @returns {Function}        Action thunk
+ * @returns {object}       Action object
  */
 export function requestSubscribedLists() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LISTS_REQUEST,
-		} );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readLists( ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveLists( data.lists ) );
-				dispatch( {
-					type: READER_LISTS_REQUEST_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: READER_LISTS_REQUEST_FAILURE,
-					error,
-				} );
-			} );
+	return {
+		type: READER_LISTS_REQUEST,
 	};
 }
 

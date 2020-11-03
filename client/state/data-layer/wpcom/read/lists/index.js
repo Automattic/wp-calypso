@@ -9,10 +9,15 @@ import { translate } from 'i18n-calypso';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { READER_LIST_CREATE, READER_LIST_UPDATE } from 'calypso/state/reader/action-types';
+import {
+	READER_LIST_CREATE,
+	READER_LIST_UPDATE,
+	READER_LISTS_REQUEST,
+} from 'calypso/state/reader/action-types';
 import {
 	handleReaderListRequestFailure,
 	handleUpdateListDetailsError,
+	receiveLists,
 	receiveReaderList,
 	receiveUpdatedListDetails,
 } from 'calypso/state/reader/lists/actions';
@@ -67,6 +72,21 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				errorNotice( String( error ) ),
 				handleUpdateListDetailsError( error ),
 			],
+		} ),
+	],
+	[ READER_LISTS_REQUEST ]: [
+		dispatchRequest( {
+			fetch: ( action ) =>
+				http(
+					{
+						method: 'GET',
+						path: `/read/lists`,
+						apiVersion: '1.2',
+					},
+					action
+				),
+			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
+			onError: ( action, error ) => errorNotice( error ),
 		} ),
 	],
 } );

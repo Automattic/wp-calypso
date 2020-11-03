@@ -19,8 +19,6 @@ import {
 	READER_LIST_UPDATE_FAILURE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LIST_ITEMS_RECEIVE,
@@ -221,8 +219,7 @@ export function isUpdatingList( state = false, action ) {
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LISTS_REQUEST:
-		case READER_LISTS_REQUEST_SUCCESS:
-		case READER_LISTS_REQUEST_FAILURE:
+		case READER_LISTS_RECEIVE:
 			return READER_LISTS_REQUEST === action.type;
 	}
 
