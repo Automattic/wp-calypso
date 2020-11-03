@@ -24,6 +24,7 @@ import {
 } from '../constants';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class CalendarStep extends Component {
 	static propTypes = {
@@ -81,13 +82,19 @@ class CalendarStep extends Component {
 			<div>
 				<HeaderCake onClick={ onBack }>{ translate( 'Choose Session' ) }</HeaderCake>
 				<CompactCard>
-					<p>
-						<strong>{ translate( 'Please select from the available sessions below.' ) }</strong>
-					</p>
+					<FormattedHeader
+						headerText={ translate( 'Select a time that works for you' ) }
+						align="left"
+						isSecondary={ true }
+					/>
 					<p>
 						<em>
 							{ translate(
-								'If you don’t see a day or time that works for you, please check back soon for more options! In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
+								'Our sessions are available 24 hours a day. If you don’t see a day or time that works for you, please check back soon for more options! '
+							) }
+							<br />
+							{ translate(
+								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
 								{
 									components: {
 										externalLink: (

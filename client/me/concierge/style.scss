@@ -40,6 +40,17 @@
 	max-width: 300px;
 }
 
+.shared__time-group-filter {
+	display: flex;
+	align-items: center;
+
+	img {
+		width: 16px;
+		height: 16px;
+		margin-right: 5px;
+	}
+}
+
 .shared__info-link {
 	display: block;
 	margin: 0 auto;

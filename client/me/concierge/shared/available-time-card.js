@@ -28,6 +28,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getLanguage } from 'calypso/lib/i18n-utils';
 import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
+import day from 'calypso/assets/images/quick-start/day.svg';
+import night from 'calypso/assets/images/quick-start/night.svg';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -112,23 +114,25 @@ class CalendarCard extends Component {
 	}
 
 	getSelectOptGroup( times ) {
+		const { translate } = this.props;
+
 		const earlyMorningOptGroup = {
-			label: 'Early Morning',
+			label: translate( 'Early Morning' ),
 			options: [],
 			isEarlyMorningTime: ( hour ) => hour >= 0 && hour < 6,
 		};
 		const morningOptGroup = {
-			label: 'Morning',
+			label: translate( 'Morning' ),
 			options: [],
 			isMorningTime: ( hour ) => hour >= 6 && hour < 12,
 		};
 		const afternoonOptGroup = {
-			label: 'Afternoon',
+			label: translate( 'Afternoon' ),
 			options: [],
 			isAfternoonTime: ( hour ) => hour >= 12 && hour < 18,
 		};
 		const eveningOptGroup = {
-			label: 'Evening',
+			label: translate( 'Evening' ),
 			options: [],
 		};
 
@@ -286,7 +290,10 @@ class CalendarCard extends Component {
 						disabled={ morningTimes.length === 0 }
 						title={ btnMorningTitle }
 					>
-						{ translate( 'Morning' ) }
+						<div className="shared__time-group-filter">
+							<img src={ day } alt="" />
+							{ translate( 'Morning' ) }
+						</div>
 					</Button>
 					<Button
 						className={ btnEveningTimeGroup }
@@ -294,7 +301,10 @@ class CalendarCard extends Component {
 						disabled={ eveningTimes.length === 0 }
 						title={ btnEveningTitle }
 					>
-						{ translate( 'Afternoon' ) }
+						<div className="shared__time-group-filter">
+							<img src={ night } alt="" />
+							<span>{ translate( 'Afternoon' ) }</span>
+						</div>
 					</Button>
 					<br />
 					<br />
