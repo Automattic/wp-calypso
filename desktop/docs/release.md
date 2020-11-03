@@ -33,7 +33,7 @@ In [`desktop-config`](../desktop-config) you can find various configurations for
 To use a specific configuration, run:
 
 ```bash
-make build CONFIG=release
+make build CONFIG_ENV=...
 ```
 
 By default, we fall back to `base` if no configuration is specified.
