@@ -21,4 +21,16 @@
 	.section-header__actions {
 		flex-shrink: 0;
 	}
+
+	.components-toggle-control {
+		margin-top: 5px;
+
+		.components-base-control__field {
+			display: block;
+
+			.components-form-toggle {
+				margin-right: 0;
+			}
+		}
+	}
 }

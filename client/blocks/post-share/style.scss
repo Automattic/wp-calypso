@@ -147,9 +147,13 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 }
 
-.post-share__service .form-toggle__wrapper {
+.post-share__service .components-toggle-control {
 	flex: 0 0 24px;
 	margin-left: auto;
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
 }
 
 .post-share__service-account-social-logo {

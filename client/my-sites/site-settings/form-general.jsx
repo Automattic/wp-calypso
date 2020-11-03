@@ -327,7 +327,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Coming Soon' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 							) }
@@ -353,7 +353,7 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormLabel>
 				) }
-				<FormSettingExplanation isIndented>
+				<FormSettingExplanation>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
@@ -372,7 +372,7 @@ export class SiteSettingsFormGeneral extends Component {
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
 					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-					<FormSettingExplanation isIndented>
+					<FormSettingExplanation>
 						{ translate(
 							'This option does not block access to your site — it is up to search engines to honor your request.'
 						) }
@@ -397,7 +397,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Private' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
 							) }
@@ -449,7 +449,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Coming Soon' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 							) }
@@ -475,7 +475,7 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormLabel>
 				) }
-				<FormSettingExplanation isIndented>
+				<FormSettingExplanation>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
@@ -494,7 +494,7 @@ export class SiteSettingsFormGeneral extends Component {
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
 					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-					<FormSettingExplanation isIndented>
+					<FormSettingExplanation>
 						{ translate(
 							'This option does not block access to your site — it is up to search engines to honor your request.'
 						) }
@@ -519,7 +519,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Private' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
 							) }

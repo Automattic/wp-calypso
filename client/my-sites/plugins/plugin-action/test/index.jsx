@@ -27,7 +27,7 @@ describe( 'PluginAction', () => {
 		test( 'should render compact form toggle when no children passed', () => {
 			const wrapper = mount( <PluginAction /> );
 
-			expect( wrapper.find( 'input.form-toggle' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( 'input.components-form-toggle__input' ) ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should render a plugin action label', () => {
@@ -49,7 +49,7 @@ describe( 'PluginAction', () => {
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
+			expect( wrapper.find( '.components-form-toggle__input' ) ).to.have.lengthOf( 0 );
 		} );
 
 		test( 'should render child within plugin-action__children container', () => {
