@@ -11,6 +11,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import { Button } from '@automattic/components';
 import wpcom from 'calypso/lib/wp';
 import { errorNotice } from 'calypso/state/notices/actions';
 import Gridicon from 'calypso/components/gridicon';
@@ -75,17 +76,18 @@ class ReaderExportButton extends React.Component {
 
 	render() {
 		return (
-			<button
+			<Button
 				className={ classnames( {
 					'reader-export-button': true,
 					'is-disabled': this.props.disabled || this.state.disabled,
 				} ) }
-				onClick={ this.onClick }
 				disabled={ this.props.disabled || this.state.disabled }
+				onClick={ this.onClick }
+				primary
 			>
 				<Gridicon icon="cloud-download" className="reader-export-button__icon" />
 				<span className="reader-export-button__label">{ this.props.translate( 'Export' ) }</span>
-			</button>
+			</Button>
 		);
 	}
 }
