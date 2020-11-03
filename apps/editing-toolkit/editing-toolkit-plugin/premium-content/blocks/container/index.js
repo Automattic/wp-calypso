@@ -91,6 +91,8 @@ const settings = {
 	 */
 	icon,
 
+	example: {},
+
 	/**
 	 * Optional block extended support features.
 	 */
