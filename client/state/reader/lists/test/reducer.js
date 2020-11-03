@@ -273,6 +273,7 @@ describe( 'reducer', () => {
 					listId: 1,
 				} )
 			).toEqual( [ 2 ] );
+		} );
 		test( 'should add a list on creation', () => {
 			const initial = deepFreeze( [ 1 ] );
 			expect(
