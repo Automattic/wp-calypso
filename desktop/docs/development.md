@@ -31,11 +31,11 @@ For clarity, all file and folder locations are relative to the root of the Calyp
 - *(main)* Once the window has opened the [window handlers](../../client/desktop/window-handlers/README.md) load to provide interaction between Calypso and Electron
 - *(renderer)* Calypso's index page is served by a React renderer in `client/document/desktop.jsx`. In addition:
   - `desktop/public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app (mapped to `desktop` directory mentioned above)
-  - `desktop/public_desktop/desktop-app.js` - desktop app specific JS and also the Calypso boot code (mapped to `desktop` directory mentioned above)
+  - `desktop/public_desktop/desktop-app.js` - desktop-specific JS and also the Calypso boot code (mapped to `desktop` directory mentioned above)
   - The Calypso client bundle for the Desktop app is built to `desktop/public`.
     - The built Calypso bundle has multiple webpack entrypoints (like `entry-main.[hash].min.js`).
     - The various Calypso filenames are written to `desktop/build/assets-evergreen.js` at buildtime. The Express.js server loads this `assets-evergreen.js` file to find out which `<script>` and `link rel="stylesheet">` tags to send to the browser.
-- *(renderer)* The `desktop-app.js` code runs which sets up various app specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
+- *(renderer)* The `desktop-app.js` code runs which sets up various app-specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
 - *(renderer)* The code in `calypso/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
 
 Phew!
