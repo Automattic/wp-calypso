@@ -54,7 +54,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 									{ __( '1. Name your site', __i18n_text_domain__ ) }
 								</label>
 							}
-							value={ title || '' }
+							value={ title }
 							onChange={ updateTitle }
 							onBlur={ saveTitle }
 							// eslint-disable-next-line jsx-a11y/no-autofocus
