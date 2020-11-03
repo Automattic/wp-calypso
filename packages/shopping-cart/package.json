@@ -7,9 +7,10 @@
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__shopping-cart*\"",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
+		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"build:esm": "tsc --project ./tsconfig.json",
+		"build:cjs": "tsc --project ./tsconfig-cjs.json",
+		"prepare": "yarn run build:esm",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"files": [
