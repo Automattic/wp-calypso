@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import {
 	getListByOwnerAndSlug,
 	getListItems,
@@ -22,7 +22,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -37,6 +36,7 @@ import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import ListItem from './list-item';
 import Missing from 'calypso/reader/list-stream/missing';
+import ListDelete from './list-delete';
 
 /**
  * Style dependencies
@@ -132,22 +132,6 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 	);
 }
 
-function Details( { list } ) {
-	const translate = useTranslate();
-	return (
-		<>
-			<ListForm list={ list } />
-
-			<Card>
-				<FormSectionHeading>{ translate( 'DANGER!!' ) }</FormSectionHeading>
-				<Button scary primary>
-					{ translate( 'DELETE LIST FOREVER' ) }
-				</Button>
-			</Card>
-		</>
-	);
-}
-
 function Items( { list, listItems, owner } ) {
 	const translate = useTranslate();
 	if ( ! listItems ) {
@@ -226,7 +210,7 @@ function ReaderListEdit( props ) {
 			<Main>
 				<FormattedHeader
 					headerText={ translate( 'Manage %(listName)s', {
-						args: { listName: list?.title || props.slug },
+						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>
 				{ ! list && ! isMissing && <Card>{ translate( 'Loading…' ) }</Card> }
@@ -255,11 +239,18 @@ function ReaderListEdit( props ) {
 								>
 									{ translate( 'Export' ) }
 								</NavItem>
+								<NavItem
+									selected={ selectedSection === 'delete' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/delete` }
+								>
+									{ translate( 'Delete' ) }
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
+						{ selectedSection === 'details' && <ListForm { ...sectionProps } /> }
 						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
 						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
+						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
 					</>
 				) }
 			</Main>
