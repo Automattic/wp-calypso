@@ -307,6 +307,7 @@ class Search extends React.Component< Props, State > {
 
 	handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
+		event.stopPropagation();
 	};
 
 	render() {
