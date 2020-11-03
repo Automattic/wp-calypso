@@ -1,31 +1,25 @@
 /**
  * External dependencies
  */
-import { find, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useMemo, useState, useEffect } from 'react';
 
 /**
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
-import {
-	Credentials,
-	FormMode,
-	FormState,
-	INITIAL_FORM_ERRORS,
-	INITIAL_FORM_STATE,
-	validate,
-} from './form';
+import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { settingsPath } from 'calypso/lib/jetpack/paths';
 import CredentialsForm from './credentials-form';
 import DocumentHead from 'calypso/components/data/document-head';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
@@ -34,6 +28,7 @@ import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
 
@@ -66,7 +61,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const steps = [
 		{
 			message: translate( 'Host locator' ),
-			onClick: () => page( settingsPath( siteSlug ) ),
+			onClick: () => page( settingsPath( siteSlug as string ) ),
 			show: 'onComplete',
 		},
 		translate( 'Credentials' ),
@@ -94,14 +89,20 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const { state: backupState, credentials } = useSelector( ( state ) =>
-		getRewindState( state, siteId )
-	) as {
+	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) ) as {
 		state?: string;
-		credentials: FormState[] | undefined;
 	};
 
-	const statusState = ( (): StatusState => {
+	const credentials = useSelector( ( state ) =>
+		getJetpackCredentials( state, siteId, role )
+	) as FormState & { abspath: string };
+
+	const hasCredentials = ! isEmpty( credentials );
+
+	const statusState = useMemo( (): StatusState => {
+		if ( hasCredentials ) {
+			return StatusState.Connected;
+		}
 		switch ( backupState ) {
 			case 'uninitialized':
 			case undefined:
@@ -115,9 +116,9 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			default:
 				return StatusState.Disconnected;
 		}
-	} )();
+	}, [ backupState, hasCredentials ] );
 
-	const currentStep = ( (): Step => {
+	const currentStep = useMemo( (): Step => {
 		if ( statusState === StatusState.Connected ) {
 			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
 			// Verification pushed to future
@@ -131,7 +132,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			return Step.Verification;
 		}
 		return Step.Credentials;
-	} )();
+	}, [ action, formSubmissionStatus, host, statusState ] );
 
 	// suppress the step progress until we are disconnected
 	useEffect( () => {
@@ -142,13 +143,11 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	// when credentials load, merge w/ the form state
 	useEffect( () => {
-		// TODO: update form state logic
-		const foundCredentials = !! credentials && ( find( credentials, { role } ) as Credentials );
-		if ( foundCredentials ) {
-			const { type, ...otherProperties } = foundCredentials;
-			setFormState( { ...otherProperties, protocol: type, pass: '', kpri: '' } );
+		if ( hasCredentials ) {
+			const { abspath, path, ...otherProperties } = credentials;
+			setFormState( { ...otherProperties, path: abspath || path, pass: '', kpri: '' } );
 		}
-	}, [ credentials, role ] );
+	}, [ credentials, hasCredentials ] );
 
 	// validate changes to the credentials form
 	useEffect( () => {
@@ -287,7 +286,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	);
 
 	const render = () => {
-		if ( statusState === StatusState.Loading ) {
+		if ( ! siteSlug || statusState === StatusState.Loading ) {
 			// TODO:, placeholder
 			return <div></div>;
 		}
@@ -326,6 +325,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	return (
 		<Main className="advanced-credentials">
 			<QueryRewindState siteId={ siteId } poll />
+			<QuerySiteCredentials siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
 			<PageViewTracker
