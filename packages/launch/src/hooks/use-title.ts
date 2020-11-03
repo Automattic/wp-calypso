@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { SITE_STORE } from '../stores';
 
 export function useTitle( siteId: number ) {
-	const title = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) )?.name;
+	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
 	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
 
 	useEffect( () => {

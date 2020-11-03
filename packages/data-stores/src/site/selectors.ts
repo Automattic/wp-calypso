@@ -1,7 +1,13 @@
 /**
+ * External dependencies
+ */
+import { select } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import type { State } from './reducer';
+import { STORE_KEY } from './constants';
 
 export const getState = ( state: State ) => state;
 
@@ -21,6 +27,9 @@ export const isNewSite = ( state: State ) => !! state.newSite.data;
 export const getSite = ( state: State, siteId: number ) => {
 	return state.sites[ siteId ];
 };
+
+export const getSiteTitle = ( _: State, siteId: number ) =>
+	select( STORE_KEY ).getSite( siteId )?.name;
 
 export const isLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ];
