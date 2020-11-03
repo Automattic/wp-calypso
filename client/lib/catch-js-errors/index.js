@@ -122,7 +122,7 @@ export default class ErrorLogger {
 		const body = new window.FormData();
 		body.append( 'error', JSON.stringify( error ) );
 
-		window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', {
+		window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error', {
 			method: 'POST',
 			body,
 		} );
