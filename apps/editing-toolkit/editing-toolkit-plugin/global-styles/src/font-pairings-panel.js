@@ -18,11 +18,8 @@ export default ( { fontPairings, fontBase, fontHeadings, update } ) => {
 			{ fontPairings && fontHeadings && fontBase ? (
 				<div className="style-preview__font-options">
 					<div className="style-preview__font-options-desktop">
-						{ fontPairings.map( ( { label, headings, base, preview } ) => {
+						{ fontPairings.map( ( { label, headings, base } ) => {
 							const isSelected = headings === fontHeadings && base === fontBase;
-							const classes = classnames( 'font-pairings-panel', {
-								'is-selected': isSelected,
-							} );
 							return (
 								<Button
 									className={ classnames( 'style-preview__font-option', {
