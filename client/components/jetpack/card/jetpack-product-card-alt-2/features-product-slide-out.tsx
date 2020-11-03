@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -20,6 +20,7 @@ import { durationToText, productBadgeLabelAlt } from 'calypso/my-sites/plans-v2/
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
+import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies
@@ -77,24 +78,40 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 			slug === productSlug ||
 			JETPACK_PRODUCTS_LIST[ slug as JetpackProductSlug ]?.type === productSlug
 	);
+
 	const isItemPlanFeature = !! ( sitePlan && planHasFeature( sitePlan.product_slug, productSlug ) );
 	const isOwned = isItemPlanFeature || isItemPurchased;
+	const isUpgradeableToYearly =
+		( isOwned &&
+			productBillingTerm === TERM_ANNUALLY &&
+			monthlyProductSlug &&
+			purchases.some( ( { productSlug } ) => productSlug === monthlyProductSlug ) ) ||
+		false;
 	const purchase = isItemPlanFeature
 		? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
 		: getPurchaseByProductSlug( purchases, productSlug ) ||
 		  ( monthlyProductSlug
 				? getPurchaseByProductSlug( purchases, monthlyProductSlug )
 				: undefined );
-	const slideOutButtonLabel = isOwned
-		? translate( 'Manage Subscription' )
-		: translate( 'Get {{name/}} %(price)s', {
-				args: {
-					price: formattedPrice,
-				},
-				components: {
-					name: <>{ shortName }</>,
-				},
-		  } );
+
+	const slideOutButtonLabel = useMemo( () => {
+		if ( isOwned ) {
+			if ( isUpgradeableToYearly ) {
+				return translate( 'Upgrade to Yearly' );
+			}
+			return translate( 'Manage Subscription' );
+		}
+		return translate( 'Get {{name/}} %(price)s', {
+			args: {
+				price: formattedPrice,
+			},
+			components: {
+				name: <>{ shortName }</>,
+			},
+			comment:
+				'{name}: is the jetpack product name, ie- Backup Daily, Backup Real-time, Scan, Anti-spam, Search, Jetpack CRM',
+		} );
+	}, [ isOwned, isUpgradeableToYearly, formattedPrice, shortName ] );
 
 	return (
 		<div
@@ -111,7 +128,7 @@ const FeaturesProductSlideOut: FunctionComponent< Props > = ( {
 					billingTimeFrame={ durationToText( displayTerm || productBillingTerm ) }
 					description={ description }
 					buttonLabel={ slideOutButtonLabel }
-					onButtonClick={ () => onProductClick( product, false, purchase ) }
+					onButtonClick={ () => onProductClick( product, isUpgradeableToYearly, purchase ) }
 					buttonPrimary={ ! isOwned }
 					isOwned={ isOwned }
 					badgeLabel={ productBadgeLabelAlt( product, isItemPurchased, sitePlan ) }
