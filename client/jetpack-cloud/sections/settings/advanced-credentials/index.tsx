@@ -22,12 +22,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import StepProgress from 'calypso/components/step-progress';
@@ -89,9 +88,9 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 		getJetpackCredentialsUpdateError( state, siteId )
 	);
 
-	const { state: backupState } = useSelector( ( state ) => getRewindState( state, siteId ) ) as {
-		state?: string;
-	};
+	const isRequestingCredentials = useSelector( ( state ) =>
+		isRequestingSiteCredentials( state, siteId )
+	);
 
 	const credentials = useSelector( ( state ) =>
 		getJetpackCredentials( state, siteId, role )
@@ -100,23 +99,16 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const hasCredentials = ! isEmpty( credentials );
 
 	const statusState = useMemo( (): StatusState => {
+		if ( isRequestingCredentials ) {
+			return StatusState.Loading;
+		}
+
 		if ( hasCredentials ) {
 			return StatusState.Connected;
 		}
-		switch ( backupState ) {
-			case 'uninitialized':
-			case undefined:
-				return StatusState.Loading;
-			case 'provisioning':
-			case 'active':
-				return StatusState.Connected;
-			case 'inactive':
-			case 'awaiting_credentials':
-			case 'unavailable':
-			default:
-				return StatusState.Disconnected;
-		}
-	}, [ backupState, hasCredentials ] );
+
+		return StatusState.Disconnected;
+	}, [ hasCredentials, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
 		if ( statusState === StatusState.Connected ) {
@@ -324,7 +316,6 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	return (
 		<Main className="advanced-credentials">
-			<QueryRewindState siteId={ siteId } poll />
 			<QuerySiteCredentials siteId={ siteId } />
 			<DocumentHead title={ translate( 'Settings' ) } />
 			<SidebarNavigation />
