@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 import {
 	getListByOwnerAndSlug,
 	getListItems,
@@ -22,7 +22,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormRadio from 'calypso/components/forms/form-radio';
-import FormSectionHeading from 'calypso/components/forms/form-section-heading';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextarea from 'calypso/components/forms/form-textarea';
@@ -130,22 +129,6 @@ function ListForm( { isCreateForm, isSubmissionDisabled, list, onChange, onSubmi
 				</FormButton>
 			</FormButtonsBar>
 		</Card>
-	);
-}
-
-function Details( { list } ) {
-	const translate = useTranslate();
-	return (
-		<>
-			<ListForm list={ list } />
-
-			<Card>
-				<FormSectionHeading>{ translate( 'DANGER!!' ) }</FormSectionHeading>
-				<Button scary primary>
-					{ translate( 'DELETE LIST FOREVER' ) }
-				</Button>
-			</Card>
-		</>
 	);
 }
 
@@ -264,7 +247,7 @@ function ReaderListEdit( props ) {
 								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
+						{ selectedSection === 'details' && <ListForm { ...sectionProps } /> }
 						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
 						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
 						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
