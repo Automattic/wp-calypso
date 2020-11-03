@@ -8,6 +8,12 @@ import React from 'react';
 import DomainPicker from '@automattic/domain-picker';
 import { useSite, useTitle, useDomainSearch } from '../../hooks';
 import { Icon, check } from '@wordpress/icons';
+import { Link } from 'react-router-dom';
+
+/**
+ * Internal dependencies
+ */
+import { FocusedLaunchRoute } from '../routes';
 
 import './style.scss';
 
@@ -89,6 +95,9 @@ const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) =>
 							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
 							quantity={ 3 }
 						/>
+						<Link to={ FocusedLaunchRoute.DomainDetails }>
+							{ __( 'View all domains', __i18n_text_domain__ ) }
+						</Link>
 					</div>
 				</div>
 				<div className="summary__side-commentary">
@@ -117,6 +126,9 @@ const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) =>
 						<p className="summary__mobile-commentary summary__mobile-only">
 							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
 						</p>
+						<Link to={ FocusedLaunchRoute.PlanDetails }>
+							{ __( 'View all plans', __i18n_text_domain__ ) }
+						</Link>
 					</div>
 				</div>
 				<div className="summary__side-commentary">
