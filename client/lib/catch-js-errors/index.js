@@ -119,13 +119,12 @@ export default class ErrorLogger {
 	}
 
 	sendToApi( error ) {
-		const params = new URLSearchParams( {
-			error: JSON.stringify( error ),
-		} );
+		const body = new window.FormData();
+		body.append( 'error', JSON.stringify( error ) );
 
-		const xhr = new window.XMLHttpRequest();
-		xhr.open( 'POST', 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', true );
-		xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-		xhr.send( params.toString() );
+		window.fetch( 'https://public-api.wordpress.com/rest/v1.1/js-error?http_envelope=1', {
+			method: 'POST',
+			body,
+		} );
 	}
 }
