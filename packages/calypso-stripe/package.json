@@ -8,8 +8,9 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist \"../../.tsc-cache/packages__calypso-stripe*\"",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
+		"build:esm": "tsc --project ./tsconfig.json",
+		"build:cjs": "tsc --project ./tsconfig-cjs.json",
+		"prepare": "yarn run build:esm",
 		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"files": [
