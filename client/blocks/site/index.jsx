@@ -116,7 +116,9 @@ class Site extends React.Component {
 			'is-compact': this.props.compact,
 		} );
 
-		const isPublicComingSoon = isEnabled( 'coming-soon-v2' ) && this.props.site.is_coming_soon;
+		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
+		const isPublicComingSoon =
+			isEnabled( 'coming-soon-v2' ) && ! site.is_private && this.props.site.is_coming_soon;
 
 		return (
 			<div className={ siteClass }>
