@@ -14,6 +14,7 @@ import {
 	shouldAddPaymentSourceInsteadOfRenewingNow,
 } from 'calypso/lib/purchases';
 import wpcomFactory from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -102,6 +103,7 @@ async function updateCreditCard( {
 	}
 
 	const purchaseIsRenewable = purchase && siteSlug && isRenewable( purchase );
+	recordTracksEvent( 'calypso_purchases_save_new_payment_method' );
 
 	let noticeMessage = response.success;
 	let noticeOptions = { persistent: true };
