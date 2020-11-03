@@ -9,6 +9,8 @@ import {
 	addItemsToResponseCart,
 	addLocationToResponseCart,
 	doesCartLocationDifferFromResponseCartLocation,
+	convertResponseCartToRequestCart,
+	convertRawResponseCartToResponseCart,
 } from '../src/cart-functions';
 
 const cart = {
@@ -315,5 +317,112 @@ describe( 'addCouponToResponseCart', function () {
 	} );
 	it( 'does not have the coupon applied', function () {
 		expect( result.is_coupon_applied ).toEqual( false );
+	} );
+} );
+
+describe( 'convertResponseCartToRequestCart', function () {
+	it( 'preserves the tax location', function () {
+		const responseCart = {
+			...cart,
+			products: [
+				{
+					product_name: 'WordPress.com Personal',
+					product_slug: 'wpcom_personal',
+					product_id: 0,
+					currency: 'USD',
+					item_subtotal_integer: 0,
+					item_subtotal_display: '$0',
+					is_domain_registration: false,
+					meta: '',
+					volume: 1,
+					extra: [],
+					uuid: '0',
+				},
+				{
+					product_name: 'DotLive Domain',
+					product_slug: 'dotlive_domain',
+					product_id: 0,
+					currency: 'USD',
+					item_subtotal_integer: 0,
+					item_subtotal_display: '$0',
+					is_domain_registration: true,
+					meta: '',
+					volume: 1,
+					extra: [],
+					uuid: '1',
+				},
+			],
+			tax: {
+				display_taxes: true,
+				location: {
+					country_code: 'US',
+					postal_code: 90210,
+				},
+			},
+		};
+
+		const requestCart = convertResponseCartToRequestCart( responseCart );
+
+		expect( requestCart.tax.location.country_code ).toEqual(
+			responseCart.tax.location.country_code
+		);
+		expect( requestCart.tax.location.postal_code ).toEqual( responseCart.tax.location.postal_code );
+	} );
+} );
+
+describe( 'convertRawResponseCartToResponseCart', function () {
+	const responseCart = {
+		...cart,
+		products: [
+			{
+				product_name: 'WordPress.com Personal',
+				product_slug: 'wpcom_personal',
+				product_id: 0,
+				currency: 'USD',
+				item_subtotal_integer: 0,
+				item_subtotal_display: '$0',
+				is_domain_registration: false,
+				meta: '',
+				volume: 1,
+				extra: [],
+				uuid: '0',
+			},
+			{
+				product_name: 'DotLive Domain',
+				product_slug: 'dotlive_domain',
+				product_id: 0,
+				currency: 'USD',
+				item_subtotal_integer: 0,
+				item_subtotal_display: '$0',
+				is_domain_registration: true,
+				meta: '',
+				volume: 1,
+				extra: [],
+				uuid: '1',
+			},
+		],
+		tax: {
+			display_taxes: true,
+			location: {
+				country_code: 'US',
+				postal_code: 90210,
+			},
+		},
+	};
+
+	it( 'preserves the tax location if set', function () {
+		const result = convertRawResponseCartToResponseCart( responseCart );
+		expect( result.tax.location.country_code ).toEqual( responseCart.tax.location.country_code );
+		expect( result.tax.location.postal_code ).toEqual( responseCart.tax.location.postal_code );
+		expect( result.tax.display_taxes ).toEqual( responseCart.tax.display_taxes );
+	} );
+
+	it( 'converts the tax location if the tax location is an array', function () {
+		const result = convertRawResponseCartToResponseCart( {
+			...responseCart,
+			tax: { location: [] },
+		} );
+		expect( Array.isArray( result.tax.location ) ).toBeFalsy();
+		expect( typeof result.tax.location === 'object' ).toBeTruthy();
 	} );
 } );
