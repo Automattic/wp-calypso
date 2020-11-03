@@ -32,7 +32,7 @@ import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
-import EditorRevisionsDialog from 'calypso/post-editor/editor-revisions/dialog';
+import EditorRevisionsDialog from './editor-revisions/dialog';
 import { openPostRevisionsDialog } from 'calypso/state/posts/revisions/actions';
 import { setEditorIframeLoaded, startEditingPost } from 'calypso/state/editor/actions';
 import {
@@ -48,7 +48,7 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import config from 'calypso/config';
-import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
+import EditorDocumentHead from './editor-document-head';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 import {
 	withStopPerformanceTrackingProp,

@@ -42,7 +42,6 @@ const EditorRevisionsListViewButtons = ( { diffView, viewSplit, viewUnified } ) 
 EditorRevisionsListViewButtons.propTypes = {
 	viewSplit: PropTypes.func.isRequired,
 	viewUnified: PropTypes.func.isRequired,
-	translate: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = ( state ) => ( {
