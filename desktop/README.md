@@ -6,13 +6,25 @@ WordPress.com for Desktop is an [Electron](https://github.com/atom/electron) wra
 
 # Getting Started & Running Locally
 
+The steps marked _Production*_ can be omitted but should be taken when building the production version of the app.
+
 1. Clone the Calypso repository locally
 1. Install all root level dependencies with `yarn` or `yarn install --frozen-lockfile`
-1. Create `./config/secrets.json` file and fill it with [secrets](docs/secrets.md)
+1. Export the environment variables:
+    - `CHROMEDRIVER_SKIP_DOWNLOAD` (set to `true`)
+    - `DETECT_CHROMEDRIVER_VERSION` (set to `false`)
+    - _Production*_: `CONFIG_ENV` (set to `release`)
+    - _Production*_: `CALYPSO_SECRETS_ENCRYPTION_KEY` (it's a secret!)
+1. _Production*_: `yarn run build-desktop:secrets`
 1. Build the app with `yarn run build-desktop`
 1. Find the built apps in the `desktop/release`
 
-Need more detailed instructions? [We have them.](docs/install.md)
+To disable the auto-updater when testing locally, make sure to export the `DEBUG` environment variable and invoke the Electron binary directly. For example on Mac:
+
+```
+export DEBUG='*'
+./desktop/release/mac/WordPress.com.app/Contents/MacOS/WordPress.com
+```
 
 # Development
 
