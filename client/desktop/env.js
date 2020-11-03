@@ -54,6 +54,8 @@ log.info( `App Data: ${ app.getPath( 'userData' ) }` );
 log.info( 'Server: ' + config.server_url + ':' + config.server_port );
 log.info( 'Settings:', Settings._getAll() );
 
+app.commandLine.appendSwitch( 'enable-features=SameSiteByDefaultCookies' ); // can also try CookiesWithoutSameSiteMustBeSecure
+
 if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 	log.info( 'Proxy: none' );
 	app.commandLine.appendSwitch( 'no-proxy-server' );

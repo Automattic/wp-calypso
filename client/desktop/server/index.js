@@ -44,6 +44,7 @@ function showAppWindow() {
 	] );
 	config.webPreferences.spellcheck = Settings.getSetting( 'spellcheck-enabled' );
 	config.webPreferences.preload = preloadFile;
+	config.webPreferences.experimentalFeatures = true;
 
 	mainWindow = new BrowserWindow( config );
 
