@@ -191,6 +191,8 @@ class CalendarCard extends Component {
 
 		const isMorningTimeGroupSelected = this.state.selectedTimeGroup === 'morning';
 		let timesForTimeGroup,
+			btnMorningTitle,
+			btnEveningTitle,
 			btnMorningTimeGroup = 'shared__time-group',
 			btnEveningTimeGroup = 'shared__time-group';
 
@@ -199,11 +201,13 @@ class CalendarCard extends Component {
 			btnMorningTimeGroup = classnames( 'shared__time-group', {
 				'is-selected': isMorningTimeGroupSelected,
 			} );
+			btnEveningTitle = morningTimes.length === 0 ? translate( 'No evening slots available' ) : '';
 		} else {
 			timesForTimeGroup = eveningTimes;
 			btnEveningTimeGroup = classnames( 'shared__time-group', {
 				'is-selected': ! isMorningTimeGroupSelected,
 			} );
+			btnMorningTitle = morningTimes.length === 0 ? translate( 'No morning slots available' ) : '';
 		}
 
 		return (
@@ -223,6 +227,7 @@ class CalendarCard extends Component {
 						className={ btnMorningTimeGroup }
 						onClick={ () => this.handleFilterClick( 'morning' ) }
 						disabled={ morningTimes.length === 0 }
+						title={ btnMorningTitle }
 					>
 						{ translate( 'Morning' ) }
 					</Button>
@@ -230,6 +235,7 @@ class CalendarCard extends Component {
 						className={ btnEveningTimeGroup }
 						onClick={ () => this.handleFilterClick( 'evening' ) }
 						disabled={ eveningTimes.length === 0 }
+						title={ btnEveningTitle }
 					>
 						{ translate( 'Afternoon' ) }
 					</Button>
