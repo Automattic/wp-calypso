@@ -49,6 +49,8 @@ export const rewind = {
 		started_at: { type: 'string' },
 		progress: { type: 'integer' },
 		reason: { type: 'string' },
+		message: { type: 'string' },
+		current_entry: { type: 'string' },
 	},
 	required: [ 'restore_id', 'rewind_id', 'status' ],
 };
