@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { SITE_STORE } from '../stores';
 
 export function useTitle( siteId: number ) {
-	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
+	const title = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) )?.name;
 	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
 
 	useEffect( () => {
@@ -23,7 +23,7 @@ export function useTitle( siteId: number ) {
 		title: localStateTitle,
 		updateTitle: setLocalStateTitle,
 		saveTitle: () => {
-			// if saveTitle is called before the original title is set, it is a noop
+			// if saveTitle is called before the original title is fetched, it is a noop
 			// this is needed to make sure not to overwrite the original title by calling saveTitle too early
 			if ( typeof title === 'undefined' ) {
 				return;
