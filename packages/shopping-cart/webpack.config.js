@@ -2,7 +2,7 @@ const path = require( 'path' );
 const cachePath = path.resolve( '.cache', 'shopping-cart' );
 
 module.exports = {
-	entry: './src/public-api.js',
+	entry: './index.js',
 	mode: 'development',
 	module: {
 		rules: [
