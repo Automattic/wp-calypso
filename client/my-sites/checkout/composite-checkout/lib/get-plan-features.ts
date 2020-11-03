@@ -15,6 +15,7 @@ import {
 	isWpComPremiumPlan,
 } from 'calypso/lib/plans';
 import type { WPCOMCartItem } from '../types/checkout-cart';
+import doesValueExist from './does-value-exist';
 
 export default function getPlanFeatures(
 	plan: WPCOMCartItem | undefined,
@@ -132,8 +133,4 @@ export default function getPlanFeatures(
 	}
 
 	return [];
-}
-
-function doesValueExist< T >( value: T | null | undefined ): value is T {
-	return !! value;
 }
