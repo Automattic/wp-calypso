@@ -77,7 +77,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			],
 			onError: ( action, error ) => [
 				errorNotice( String( error ) ),
-				handleUpdateListDetailsError( error ),
+				handleUpdateListDetailsError( error, action.list ),
 			],
 		} ),
 	],
