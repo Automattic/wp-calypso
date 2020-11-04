@@ -18,6 +18,7 @@ import {
 } from '../types/wpcom-store-state';
 import type { CountryListItem } from '../types/country-list-item';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
+import type { ContactDetailsType } from '../types/contact-details';
 import TaxFields from './tax-fields';
 import DomainContactDetails from './domain-contact-details';
 
@@ -28,16 +29,14 @@ const ContactDetailsFormDescription = styled.p`
 `;
 
 export default function ContactDetailsContainer( {
-	shouldShowDomainContactFields,
-	isGSuiteInCart,
+	contactDetailsType,
 	contactInfo,
 	countriesList,
 	shouldShowContactDetailsValidationErrors,
 	isDisabled,
 	isLoggedOutCart,
 }: {
-	shouldShowDomainContactFields: boolean;
-	isGSuiteInCart: boolean;
+	contactDetailsType: ContactDetailsType;
 	contactInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
@@ -56,14 +55,29 @@ export default function ContactDetailsContainer( {
 	const contactDetailsErrors = prepareDomainContactDetailsErrors( contactInfo );
 	const { email } = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
 
-	if ( shouldShowDomainContactFields ) {
-		return (
-			<React.Fragment>
-				<ContactDetailsFormDescription>
-					{ translate(
-						'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
-					) }
-				</ContactDetailsFormDescription>
+	switch ( contactDetailsType ) {
+		case 'domain':
+			return (
+				<React.Fragment>
+					<ContactDetailsFormDescription>
+						{ translate(
+							'Registering a domain name requires valid contact information. Privacy Protection is included for all eligible domains to protect your personal information.'
+						) }
+					</ContactDetailsFormDescription>
+					<DomainContactDetails
+						domainNames={ domainNames }
+						contactDetails={ contactDetails }
+						contactDetailsErrors={ contactDetailsErrors }
+						updateDomainContactFields={ updateDomainContactFields }
+						shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+						isDisabled={ isDisabled }
+						isLoggedOutCart={ isLoggedOutCart }
+					/>
+				</React.Fragment>
+			);
+
+		case 'gsuite':
+			return (
 				<DomainContactDetails
 					domainNames={ domainNames }
 					contactDetails={ contactDetails }
@@ -73,56 +87,42 @@ export default function ContactDetailsContainer( {
 					isDisabled={ isDisabled }
 					isLoggedOutCart={ isLoggedOutCart }
 				/>
-			</React.Fragment>
-		);
-	}
+			);
 
-	if ( isGSuiteInCart ) {
-		return (
-			<DomainContactDetails
-				domainNames={ domainNames }
-				contactDetails={ contactDetails }
-				contactDetailsErrors={ contactDetailsErrors }
-				updateDomainContactFields={ updateDomainContactFields }
-				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-				isDisabled={ isDisabled }
-				isLoggedOutCart={ isLoggedOutCart }
-			/>
-		);
-	}
+		default:
+			return (
+				<React.Fragment>
+					<ContactDetailsFormDescription>
+						{ translate( 'Entering your billing information helps us prevent fraud.' ) }
+					</ContactDetailsFormDescription>
 
-	return (
-		<React.Fragment>
-			<ContactDetailsFormDescription>
-				{ translate( 'Entering your billing information helps us prevent fraud.' ) }
-			</ContactDetailsFormDescription>
-
-			{ isLoggedOutCart && (
-				<Field
-					id="email"
-					type="email"
-					label={ String( translate( 'Email' ) ) }
-					disabled={ isDisabled }
-					onChange={ ( value ) => {
-						updateEmail( value );
-					} }
-					autoComplete="email"
-					isError={ email.isTouched && ! isValid( email ) }
-					errorMessage={ email.errors[ 0 ] || '' }
-					description={ String(
-						translate( "You'll use this email address to access your account later" )
+					{ isLoggedOutCart && (
+						<Field
+							id="email"
+							type="email"
+							label={ String( translate( 'Email' ) ) }
+							disabled={ isDisabled }
+							onChange={ ( value ) => {
+								updateEmail( value );
+							} }
+							autoComplete="email"
+							isError={ email.isTouched && ! isValid( email ) }
+							errorMessage={ email.errors[ 0 ] || '' }
+							description={ String(
+								translate( "You'll use this email address to access your account later" )
+							) }
+						/>
 					) }
-				/>
-			) }
 
-			<TaxFields
-				section="contact"
-				taxInfo={ contactInfo }
-				updateCountryCode={ updateCountryCode }
-				updatePostalCode={ updatePostalCode }
-				countriesList={ countriesList }
-				isDisabled={ isDisabled }
-			/>
-		</React.Fragment>
-	);
+					<TaxFields
+						section="contact"
+						taxInfo={ contactInfo }
+						updateCountryCode={ updateCountryCode }
+						updatePostalCode={ updatePostalCode }
+						countriesList={ countriesList }
+						isDisabled={ isDisabled }
+					/>
+				</React.Fragment>
+			);
+	}
 }
