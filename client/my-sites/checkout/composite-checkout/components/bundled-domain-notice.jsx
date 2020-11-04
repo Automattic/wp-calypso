@@ -19,6 +19,8 @@ import { isMonthly } from 'calypso/lib/plans/constants';
 import { REGISTER_DOMAIN } from 'calypso/lib/url/support';
 import { translationExists } from 'calypso/lib/i18n-utils';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 function hasBiennialPlan( cart ) {
 	const plans = cart.products
 		.map( ( { product_slug } ) => getPlan( product_slug ) )

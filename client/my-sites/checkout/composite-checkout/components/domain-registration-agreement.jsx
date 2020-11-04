@@ -17,6 +17,8 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class DomainRegistrationAgreement extends React.Component {
 	recordRegistrationAgreementClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Registration Agreement Link' );

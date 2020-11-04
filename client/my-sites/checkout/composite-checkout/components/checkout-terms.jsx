@@ -15,6 +15,8 @@ import DomainRegistrationHsts from './domain-registration-hsts';
 import ConciergeRefundPolicy from './concierge-refund-policy';
 import BundledDomainNotice from './bundled-domain-notice';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class CheckoutTerms extends React.Component {
 	render() {
 		const { cart } = this.props;
