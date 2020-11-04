@@ -12,7 +12,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import EditorDrawerLabel from 'calypso/post-editor/editor-drawer/label';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
 import TrackInputChanges from 'calypso/components/track-input-changes';
@@ -30,7 +29,6 @@ class PublicizeMessage extends Component {
 		preview: PropTypes.string,
 		acceptableLength: PropTypes.number,
 		requireCount: PropTypes.bool,
-		displayMessageHeading: PropTypes.bool,
 		onChange: PropTypes.func,
 		preFilledMessage: PropTypes.string,
 	};
@@ -40,7 +38,6 @@ class PublicizeMessage extends Component {
 		message: '',
 		acceptableLength: 280,
 		requireCount: false,
-		displayMessageHeading: true,
 		onChange: noop,
 		preFilledMessage: '',
 	};
@@ -115,19 +112,9 @@ class PublicizeMessage extends Component {
 	}
 
 	render() {
-		const { displayMessageHeading, translate } = this.props;
+		const { translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
-				{ displayMessageHeading && (
-					<EditorDrawerLabel
-						helpText={ translate(
-							'The following text will be shared along with a link to your post.'
-						) }
-						labelText={ translate( 'Customize the message', {
-							context: 'Post editor sharing message heading',
-						} ) }
-					/>
-				) }
 				<TrackInputChanges onNewValue={ this.recordStats }>
 					{ this.renderTextarea() }
 				</TrackInputChanges>
