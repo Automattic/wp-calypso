@@ -8,7 +8,7 @@ import { MemoryRouter as Router, Switch, Route } from 'react-router-dom';
  * Internal dependencies
  */
 import { FocusedLaunchRoute } from './routes';
-import FocusedLaunchOverview from './summary';
+import FocusedLaunchSummary from './summary';
 import FocusedLaunchDomainDetails from './domain-details';
 import FocusedLaunchPlanDetails from './plan-details';
 
@@ -29,7 +29,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 					<FocusedLaunchPlanDetails />
 				</Route>
 				<Route path={ FocusedLaunchRoute.Summary }>
-					<FocusedLaunchOverview siteId={ siteId } />
+					<FocusedLaunchSummary siteId={ siteId } />
 				</Route>
 			</Switch>
 		</Router>
