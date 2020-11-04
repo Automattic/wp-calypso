@@ -1,1 +1,1 @@
-export type ContactDetailsType = 'gsuite' | 'tax' | 'domain';
+export type ContactDetailsType = 'gsuite' | 'tax' | 'domain' | 'none';
