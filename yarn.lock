@@ -5043,18 +5043,6 @@
   resolved "https://registry.yarnpkg.com/@types/wordpress__api-fetch/-/wordpress__api-fetch-3.2.2.tgz#e1abc00fda2c16c1d95fe5f1db8dbe85bf2ccc10"
   integrity sha512-iOsRyAnUtrWUJT5Feiz1DCaPhaD+TbLPyzYoHdUGf8atJWhWY0r6xSEU+wo6sH8WXKRDV/mYGJPVOjiUvZ/z4g==
 
-"@types/wordpress__block-editor@*":
-  version "2.2.7"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.7.tgz#0dc14c33ce5b28df25778b8db08f022f34123c1d"
-  integrity sha512-PLr927XoG6IyPQ6lUUEItobiLaYKiOkXdaUjPbL1fQer4Jawm1xljEfoiwe8cWki8+x/5DnMPAXbDtAgByE9OQ==
-  dependencies:
-    "@types/react" "*"
-    "@types/wordpress__blocks" "*"
-    "@types/wordpress__components" "*"
-    "@types/wordpress__data" "*"
-    "@types/wordpress__keycodes" "*"
-    react-autosize-textarea "^7.0.0"
-
 "@types/wordpress__block-editor@^2.2.8":
   version "2.2.8"
   resolved "https://registry.yarnpkg.com/@types/wordpress__block-editor/-/wordpress__block-editor-2.2.8.tgz#622d2bac1e56df0721ddf5e70ca65c116d545643"
@@ -5116,44 +5104,21 @@
     "@types/react" "*"
     "@wordpress/element" "^2.14.0"
 
-"@types/wordpress__core-data@*":
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__core-data/-/wordpress__core-data-2.4.2.tgz#c89f47d8212a21c0efbd67dce51b9c03a016731b"
-  integrity sha512-d+bTZkXp/hPjqIv/bfP9V84cBWZawowDdHNb1M9OzRNC9Nlq7F5MrPTGfSA0KZ5bOdouL8bf6VRnpuroXoHEcg==
+"@types/wordpress__data-controls@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/wordpress__data-controls/-/wordpress__data-controls-1.0.4.tgz#d0b7a1f7997691eb42047d301032bae6882b25f3"
+  integrity sha512-PejgPEZNS+tSupgU3mFd3lAdrPJgm8Jvh2uEHjSxTYgDDk7TMjoBOX069sid4kF9ck5nDLqg59UcPUDT0F2PnA==
   dependencies:
     "@types/wordpress__api-fetch" "*"
     "@types/wordpress__data" "*"
 
-"@types/wordpress__data-controls@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__data-controls/-/wordpress__data-controls-1.0.3.tgz#22bae0fa2bf442c3e0c12bbf7de8518844144de9"
-  integrity sha512-PpgY2LEmkc0hvTlyS+jynZ3bEb1HEcUUYKaO5Swd0ez7FOHZbV6kcwT5fvFsmbVWDjs6Iod9VAGAlPULlQzGcg==
-  dependencies:
-    "@types/wordpress__api-fetch" "*"
-    "@types/wordpress__data" "*"
-
-"@types/wordpress__data@*", "@types/wordpress__data@^4.6.7":
+"@types/wordpress__data@*":
   version "4.6.7"
   resolved "https://registry.yarnpkg.com/@types/wordpress__data/-/wordpress__data-4.6.7.tgz#1f030279ebced6fe03698a88efa2354666f9c07a"
   integrity sha512-3qaJ2Q+pFrcvWr493VyEQUjhtVqfUVUv6HRtgT5H3I5k4CEVsexZmPjYLFcH/08na7lP35uTAt+QuSrkNq6mFA==
   dependencies:
     "@types/react" "*"
     redux "^4.0.1"
-
-"@types/wordpress__editor@^9.4.4":
-  version "9.4.4"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__editor/-/wordpress__editor-9.4.4.tgz#babe5b9d7b8c6efef8add105afa3ec39d7a41e20"
-  integrity sha512-Sj2335+TvotMBMG5sR/7oyMLX+AlBYIVaLJj7zpExjnN9px/Rc9+CipOXvGlSIYubKU48xTKyQusL9CvA4XcnA==
-  dependencies:
-    "@types/react" "*"
-    "@types/wordpress__api-fetch" "*"
-    "@types/wordpress__block-editor" "*"
-    "@types/wordpress__blocks" "*"
-    "@types/wordpress__components" "*"
-    "@types/wordpress__core-data" "*"
-    "@types/wordpress__data" "*"
-    "@types/wordpress__media-utils" "*"
-    "@wordpress/element" "^2.14.0"
 
 "@types/wordpress__element@*":
   version "2.4.1"
@@ -5180,14 +5145,6 @@
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/@types/wordpress__keycodes/-/wordpress__keycodes-2.3.0.tgz#022c8f159c5de413f1dadcfd4a3e1dbed0f4682d"
   integrity sha512-307Qlh6bDxrIDWNQwHewBngCalu/MsLmMzTHycWSFKQM6RTR8Nq9K8peFgq5n8jk1tl3VHwGuJBf3SRL8lO7nQ==
-
-"@types/wordpress__media-utils@*":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@types/wordpress__media-utils/-/wordpress__media-utils-0.2.1.tgz#f4d98f1288047cd485555b9b34586db0a953121e"
-  integrity sha512-VNoNa+aOkEesTJltPr+IFpCfEVnT/J21+4RrCRSvpCeXE3lzFdPWeCVPbJQO6VQwVFjFtPExQVpB7+hYFdxvnA==
-  dependencies:
-    "@types/wordpress__api-fetch" "*"
-    "@types/wordpress__block-editor" "*"
 
 "@types/wordpress__notices@*":
   version "1.5.3"
