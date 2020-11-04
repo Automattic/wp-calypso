@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { includes } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -54,7 +53,7 @@ export function activateTheme(
 					error,
 				} );
 
-				if ( includes( error.error, 'theme_not_found' ) ) {
+				if ( error.error === 'theme_not_found' ) {
 					dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
 				} else {
 					dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
