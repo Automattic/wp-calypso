@@ -14,6 +14,7 @@ import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selecto
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -132,6 +133,9 @@ export default function WPCOMScanUpsellPage( { reason }: { reason?: string } ): 
 			break;
 		case 'vp_active_on_site':
 			body = <ScanVPActiveBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnectedWPCOM />;
 			break;
 		default:
 			body = <ScanUpsellBody />;
