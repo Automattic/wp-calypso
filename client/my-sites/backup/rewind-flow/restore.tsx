@@ -20,6 +20,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 
@@ -48,6 +49,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
+
+	const loading = rewindState.state === 'uninitialized';
+	const restoreId = rewindState.rewind?.restoreId;
+
+	// TODO: use selectors
+	const currentEntry = 'wp_options'; // useSelector( ( state ) => ( restoreId ? ... : undefined ) );
+	const message = 'Importing database'; // useSelector( ( state ) => ( restoreId ? ... : undefined ) );
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
@@ -63,8 +71,6 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		setUserHasRequestedRestore( true );
 		requestRestore();
 	}, [ setUserHasRequestedRestore, requestRestore ] );
-
-	const loading = rewindState.state === 'uninitialized';
 
 	const renderConfirm = () => (
 		<>
@@ -109,7 +115,11 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				<Gridicon icon="history" size={ 48 } />
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar percent={ inProgressRewindPercentComplete } />
+			<ProgressBar
+				message={ message }
+				entry={ currentEntry }
+				percent={ inProgressRewindPercentComplete }
+			/>
 			<p className="rewind-flow__info">
 				{ translate(
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
@@ -201,6 +211,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<QueryRewindState siteId={ siteId } />
+			{ restoreId && <QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } /> }
 			{ render() }
 		</>
 	);
