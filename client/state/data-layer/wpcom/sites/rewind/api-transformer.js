@@ -49,9 +49,9 @@ const transformRewind = ( data ) =>
 			rewindId: data.rewind_id,
 			startedAt: new Date( data.started_at ),
 			status: data.status,
-			message: data.message,
-			currentEntry: data.current_entry,
 		},
+		data.message && { message: data.message },
+		data.current_entry && { currentEntry: data.current_entry },
 		data.progress && { progress: data.progress },
 		data.reason && { reason: data.reason },
 		data.links && data.links.dismiss && { dismiss: makeRewindDismisser( data.links.dismiss ) }
