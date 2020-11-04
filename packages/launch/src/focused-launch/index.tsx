@@ -5,9 +5,11 @@ import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { TextControl, SVG, Path } from '@wordpress/components';
 import * as React from 'react';
-import DomainPicker from '@automattic/domain-picker';
-import { useSite, useTitle, useDomainSearch } from '../hooks';
+import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
+import { SITE_STORE } from '../stores';
+import { useTitle, useDomainSearch } from '../hooks';
 import { Icon, check } from '@wordpress/icons';
+import { useSelect } from '@wordpress/data';
 
 import './styles.scss';
 
@@ -27,11 +29,15 @@ interface Props {
 
 const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { title, updateTitle, saveTitle } = useTitle( siteId );
+	const sitePrimaryDomain = useSelect( ( select ) =>
+		select( SITE_STORE ).getPrimarySiteDomain( siteId )
+	);
+	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
+	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
 
-	const site = useSite();
-
-	const [ siteDomainName ] = React.useState( site.currentDomainName );
 	const domainSearch = useDomainSearch();
+
+	let stepNumber = 1;
 
 	return (
 		<div className="focused-launch__container">
@@ -51,7 +57,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 							className="focused-launch__input"
 							label={
 								<label className="focused-launch__label">
-									{ __( '1. Name your site', __i18n_text_domain__ ) }
+									{ stepNumber++ }. { __( 'Name your site', __i18n_text_domain__ ) }
 								</label>
 							}
 							value={ title }
@@ -67,29 +73,39 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 			<div className="focused-launch__step">
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
-						<DomainPicker
-							header={
-								<>
-									<label className="focused-launch__label">
-										{ __( '2. Confirm your domain', __i18n_text_domain__ ) }
-									</label>
-									<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
-										<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
-									</p>
-								</>
-							}
-							existingSubdomain={ siteDomainName }
-							currentDomain={ siteDomainName }
-							onDomainSelect={ noop }
-							initialDomainSearch={ domainSearch }
-							showSearchField={ false }
-							analyticsFlowId="focused-launch"
-							analyticsUiAlgo="focused_launch_domain_picker"
-							onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
-							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
-							quantity={ 1 }
-							quantityExpanded={ 1 }
-						/>
+						{ hasPaidDomain ? (
+							<>
+								<label className="focused-launch__label">
+									{ __( 'Your domain', __i18n_text_domain__ ) }
+								</label>
+								<LockedPurchasedItem domainName={ sitePrimaryDomain?.domain || '' } />
+							</>
+						) : (
+							<DomainPicker
+								header={
+									<>
+										<label className="focused-launch__label">
+											{ stepNumber++ }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
+										</label>
+										<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
+											<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
+										</p>
+									</>
+								}
+								existingSubdomain={ siteSubdomain?.domain }
+								currentDomain={ sitePrimaryDomain?.domain }
+								onDomainSelect={ noop }
+								initialDomainSearch={ domainSearch }
+								showSearchField={ false }
+								analyticsFlowId="focused-launch"
+								analyticsUiAlgo="focused_launch_domain_picker"
+								onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
+								onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
+								quantity={ 1 }
+								quantityExpanded={ 1 }
+								itemType="button"
+							/>
+						) }
 					</div>
 				</div>
 				<div className="focused-launch__side-commentary">
@@ -113,7 +129,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
 						<label className="focused-launch__label">
-							{ __( '3. Confirm your plan', __i18n_text_domain__ ) }
+							{ stepNumber++ }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
 						</label>
 						<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
 							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
