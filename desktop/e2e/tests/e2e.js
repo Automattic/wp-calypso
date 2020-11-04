@@ -6,7 +6,7 @@ const chrome = require( 'selenium-webdriver/chrome' );
 const LoginPage = require( './lib/pages/login-page' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
-const ReaderPage = require( './lib/pages/reader-page' );
+const CustomerHomePage = require( './lib/pages/customer-home-page' );
 const PostPreviewComponent = require( './lib/components/post-preview-component' );
 const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
 
@@ -50,8 +50,8 @@ describe( 'User Can log in', function () {
 		return await loginPage.login( process.env.E2EGUTENBERGUSER, process.env.E2EPASSWORD );
 	} );
 
-	step( 'Can see Reader Page after logging in', async function () {
-		await ReaderPage.Expect( driver );
+	step( 'Can see Customer Home Page after logging in', async function () {
+		await CustomerHomePage.Expect( driver );
 		return ( loggedInUrl = await driver.getCurrentUrl() );
 	} );
 } );
@@ -108,7 +108,7 @@ describe( 'Publish a New Post', function () {
 		);
 	} );
 
-	step( 'Can return to reader', async function () {
+	step( 'Can return to customer home', async function () {
 		return await driver.get( loggedInUrl );
 	} );
 } );
