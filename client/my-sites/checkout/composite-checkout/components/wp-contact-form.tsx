@@ -10,7 +10,6 @@ import {
 	useIsStepActive,
 	useLineItems,
 } from '@automattic/composite-checkout';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -19,42 +18,9 @@ import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-form-complete';
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import ContactDetailsContainer from './contact-details-container';
-
-export default function WPContactForm( {
-	countriesList,
-	shouldShowContactDetailsValidationErrors,
-	shouldShowDomainContactFields,
-	contactValidationCallback,
-	isLoggedOutCart,
-} ) {
-	const translate = useTranslate();
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
-	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const { formStatus } = useFormStatus();
-	const isStepActive = useIsStepActive();
-	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
-	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
-
-	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
-
-	return (
-		<BillingFormFields>
-			<ContactDetailsContainer
-				translate={ translate }
-				shouldShowDomainContactFields={ shouldShowDomainContactFields }
-				isGSuiteInCart={ isGSuiteInCart }
-				contactInfo={ contactInfo }
-				countriesList={ countriesList }
-				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
-				isDisabled={ isDisabled }
-				isLoggedOutCart={ isLoggedOutCart }
-			/>
-		</BillingFormFields>
-	);
-}
+import type { CountryListItem } from '../types/country-list-item';
+import type { WPCOMCartItem } from '../types/checkout-cart';
+import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 const BillingFormFields = styled.div`
 	margin-bottom: 16px;
@@ -71,3 +37,45 @@ const BillingFormFields = styled.div`
 		height: 18px;
 	}
 `;
+
+export default function WPContactForm( {
+	countriesList,
+	shouldShowContactDetailsValidationErrors,
+	shouldShowDomainContactFields,
+	contactValidationCallback,
+	isLoggedOutCart,
+}: {
+	countriesList: CountryListItem[];
+	shouldShowContactDetailsValidationErrors: boolean;
+	shouldShowDomainContactFields: boolean;
+	contactValidationCallback: () => Promise< boolean >;
+	isLoggedOutCart: boolean;
+} ): JSX.Element {
+	const [ items ]: [ WPCOMCartItem[], WPCOMCartItem ] = useLineItems();
+	const isGSuiteInCart = items.some( ( item: WPCOMCartItem ) =>
+		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
+	);
+	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
+		select( 'wpcom' ).getContactInfo()
+	);
+	const { formStatus } = useFormStatus();
+	const isStepActive = useIsStepActive();
+	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;
+	const isCachedContactFormValid = useIsCachedContactFormValid( contactValidationCallback );
+
+	useSkipToLastStepIfFormComplete( isCachedContactFormValid );
+
+	return (
+		<BillingFormFields>
+			<ContactDetailsContainer
+				shouldShowDomainContactFields={ shouldShowDomainContactFields }
+				isGSuiteInCart={ isGSuiteInCart }
+				contactInfo={ contactInfo }
+				countriesList={ countriesList }
+				shouldShowContactDetailsValidationErrors={ shouldShowContactDetailsValidationErrors }
+				isDisabled={ isDisabled }
+				isLoggedOutCart={ isLoggedOutCart }
+			/>
+		</BillingFormFields>
+	);
+}
