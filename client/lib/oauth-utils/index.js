@@ -15,39 +15,31 @@ import { bumpStat } from 'calypso/lib/analytics/mc';
 import { errors as errorTypes } from './constants';
 
 export async function makeRequest( username, password, authCode = '' ) {
-	try {
-		const response = await globalThis.fetch( '/oauth', {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify( {
-				username,
-				password,
-				auth_code: authCode.replace( /\s/g, '' ),
-			} ),
-		} );
+	const response = await globalThis.fetch( '/oauth', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify( {
+			username,
+			password,
+			auth_code: authCode.replace( /\s/g, '' ),
+		} ),
+	} );
 
-		const json = await response.json();
-		const errorMessage = ( json && json.error_description ) || '';
+	const json = await response.json();
+	const errorMessage = json?.error_description ?? '';
 
-		return [
-			response.ok ? null : new Error( errorMessage ),
-			{ ok: response.ok, status: response.status, body: json },
-		];
-	} catch ( error ) {
-		return [ error, null ];
+	if ( errorMessage ) {
+		const error = new Error( errorMessage );
+		error.type = json.error;
+
+		throw error;
 	}
+
+	return { ok: response.ok, status: response.status, body: json };
 }
 
-export function bumpStats( error, data ) {
-	let errorType;
-
-	if ( error ) {
-		if ( data && data.body ) {
-			errorType = data.body.error;
-		} else {
-			errorType = 'status_' + error.status;
-		}
-	}
+export function bumpStats( error ) {
+	const errorType = error.type ? error.type : `status_${ error.status }`;
 
 	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ) {
 		recordTracksEvent( 'calypso_oauth_login_needs2fa' );
@@ -67,20 +59,21 @@ export function bumpStats( error, data ) {
 	}
 }
 
-export function handleAuthError( error, data ) {
-	const stateChanges = { errorLevel: 'is-error', requires2fa: false, inProgress: false };
-
-	stateChanges.errorMessage = data && data.body ? data.body.error_description : error.message;
+export function handleAuthError( error ) {
+	const stateChanges = {
+		errorLevel: 'is-error',
+		requires2fa: false,
+		inProgress: false,
+		errorMessage: error.message,
+	};
 
 	debug( 'Error processing login: ' + stateChanges.errorMessage );
 
-	if ( data && data.body ) {
-		if ( data.body.error === errorTypes.ERROR_REQUIRES_2FA ) {
-			stateChanges.requires2fa = true;
-			stateChanges.errorLevel = 'is-info';
-		} else if ( data.body.error === errorTypes.ERROR_INVALID_OTP ) {
-			stateChanges.requires2fa = true;
-		}
+	if ( error.type === errorTypes.ERROR_REQUIRES_2FA ) {
+		stateChanges.requires2fa = true;
+		stateChanges.errorLevel = 'is-info';
+	} else if ( error.type === errorTypes.ERROR_INVALID_OTP ) {
+		stateChanges.requires2fa = true;
 	}
 
 	return stateChanges;
@@ -91,6 +84,5 @@ export function handleLogin( response ) {
 
 	OAuthToken.setToken( response.body.access_token );
 
-	// go to login
 	document.location.replace( '/' );
 }

@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import AuthCodeButton from './auth-code-button';
-import { handleAuthError, handleLogin, makeRequest, bumpStats } from 'calypso/lib/oauth-utils';
+import { makeRequest, handleLogin, handleAuthError } from 'calypso/lib/oauth-utils';
 import config from 'calypso/config';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -54,17 +54,14 @@ export class Auth extends Component {
 
 		this.setState( { inProgress: true, errorLevel: false, errorMessage: false } );
 
-		const [ error, response ] = await makeRequest(
-			this.state.login,
-			this.state.password,
-			this.state.auth_code
-		);
-		bumpStats( error, response );
-		if ( error ) {
-			this.setState( handleAuthError( error, response ) );
-			return;
+		try {
+			const { login, password, auth_code } = this.state;
+			const response = await makeRequest( login, password, auth_code );
+
+			handleLogin( response );
+		} catch ( error ) {
+			this.setState( handleAuthError( error ) );
 		}
-		handleLogin( response );
 	};
 
 	toggleSelfHostedInstructions = () => {
