@@ -141,6 +141,10 @@ $font-size: rem( 14px );
 			margin-right: 8px;
 		}
 
+		img.sidebar__menu-icon {
+			opacity: 0.6;
+		}
+
 		.sidebar__menu-item-parent {
 			&.selected {
 				.sidebar__menu-link {
@@ -149,6 +153,10 @@ $font-size: rem( 14px );
 
 					.sidebar__menu-icon {
 						color: white;
+					}
+
+					img.sidebar__menu-icon {
+						opacity: 1;
 					}
 
 					&::after {
@@ -164,6 +172,9 @@ $font-size: rem( 14px );
 			&:hover {
 				.sidebar__menu-icon {
 					color: var( --color-sidebar-menu-hover );
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
 				}
 			}
 		}
@@ -192,10 +203,16 @@ $font-size: rem( 14px );
 					.sidebar__menu-icon {
 						color: var( --color-sidebar-menu-hover );
 					}
+					img.sidebar__menu-icon {
+						opacity: 1;
+					}
 				}
 
 				.sidebar__menu-icon {
 					color: #fff;
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
 				}
 			}
 			// Is toggled open and selected
@@ -205,6 +222,9 @@ $font-size: rem( 14px );
 
 				.sidebar__menu-icon {
 					color: #fff;
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
 				}
 			}
 		}
@@ -387,6 +407,9 @@ $font-size: rem( 14px );
 
 				.sidebar__menu-icon {
 					color: #fff;
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
 				}
 			}
 
