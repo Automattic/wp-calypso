@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { get, truncate, includes } from 'lodash';
+import { get, truncate } from 'lodash';
 
 /**
  * Internal dependencies
@@ -55,11 +55,6 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
-import {
-	THEME_DELETE_FAILURE,
-	THEME_DELETE_SUCCESS,
-	THEME_ACTIVATE_FAILURE,
-} from 'calypso/state/themes/action-types';
 import { purchasesRoot, billingHistoryReceipt } from 'calypso/me/purchases/paths';
 
 import {
@@ -235,30 +230,6 @@ export const onPublicizeConnectionUpdateFailure = ( { error } ) =>
 const onGuidedTransferHostDetailsSaveSuccess = () =>
 	successNotice( translate( 'Thanks for confirming those details!' ) );
 
-const onThemeDeleteSuccess = ( { themeName } ) =>
-	successNotice(
-		translate( 'Deleted theme %(themeName)s.', {
-			args: { themeName },
-			context: 'Themes: Theme delete confirmation',
-		} ),
-		{ duration: 5000 }
-	);
-
-const onThemeDeleteFailure = ( { themeId } ) =>
-	errorNotice(
-		translate( 'Problem deleting %(themeId)s. Check theme is not active.', {
-			args: { themeId },
-			context: 'Themes: Theme delete failure',
-		} )
-	);
-
-const onThemeActivateFailure = ( { error } ) => {
-	if ( includes( error.error, 'theme_not_found' ) ) {
-		return errorNotice( translate( 'Theme not yet available for this site' ) );
-	}
-	return errorNotice( translate( 'Unable to activate theme. Contact support.' ) );
-};
-
 const onSiteMonitorSettingsUpdateSuccess = () =>
 	successNotice( translate( 'Settings saved successfully!' ) );
 
@@ -370,9 +341,6 @@ export const handlers = {
 	[ SITE_DELETE_RECEIVE ]: onSiteDeleteReceive,
 	[ SITE_MONITOR_SETTINGS_UPDATE_SUCCESS ]: onSiteMonitorSettingsUpdateSuccess,
 	[ SITE_MONITOR_SETTINGS_UPDATE_FAILURE ]: onSiteMonitorSettingsUpdateFailure,
-	[ THEME_DELETE_FAILURE ]: onThemeDeleteFailure,
-	[ THEME_DELETE_SUCCESS ]: onThemeDeleteSuccess,
-	[ THEME_ACTIVATE_FAILURE ]: onThemeActivateFailure,
 };
 
 /**
