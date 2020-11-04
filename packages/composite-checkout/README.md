@@ -298,6 +298,15 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
+### PaymentLogo
+
+Renders a logo for a credit card.
+
+Takes two props:
+
+  - `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+  - `isSummary: boolean`. If true, will display a more compact version of the logo.
+
 ### PaymentProcessorResponseType
 
 An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).
