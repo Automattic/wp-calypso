@@ -50,7 +50,8 @@ const JetpackDisconnectedIcon = () => (
 const BackupsJetpackDisconnectedBody: FunctionComponent = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { URL: siteUrl, name: siteName } = useSelector( getSelectedSite ) || {};
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const reconnectUrl = `https://wordpress.com/settings/disconnect-site/${ siteSlug }`;
 	const body = [
 		<span className="backup-upsell__paragraph" key="paragraph-1">
 			{ preventWidows(
@@ -76,14 +77,14 @@ const BackupsJetpackDisconnectedBody: FunctionComponent = () => {
 		<Upsell
 			headerText={ translate( 'Jetpack connection has failed' ) }
 			bodyText={ body }
-			buttonLink="https://dashboard.vaultpress.com/"
+			buttonLink={ reconnectUrl }
 			buttonText={ translate( 'Reconnect Jetpack' ) }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) ) }
+			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_reconnect_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
 			secondaryButtonLink={ JETPACK_SUPPORT }
 			secondaryButtonText={ translate( 'I need help' ) }
 			secondaryOnClick={ () =>
-				dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) )
+				dispatch( recordTracksEvent( 'calypso_jetpack_backup_support_click' ) )
 			}
 		/>
 	);

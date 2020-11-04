@@ -40,9 +40,10 @@ const JetpackBackupErrorSVG = '/calypso/images/illustrations/jetpack-cloud-backu
 
 const BackupNoJetpackConnected: FunctionComponent = () => {
 	const translate = useTranslate();
-	const { URL: siteUrl, name: siteName } = useSelector( getSelectedSite );
-	// const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_backup_vaultpress_click' );
-	const onUpgradeClick = () => 0;
+	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
+	const reconnectUrl = `/settings/disconnect-site/${ siteSlug }`;
+	const onReconnectClick = useTrackCallback( undefined, 'calypso_jetpack_backup_reconnect_click' );
+	const onSupportClick = useTrackCallback( undefined, 'calypso_jetpack_backup_support_click' );
 	return (
 		<PromoCard
 			title={ preventWidows( translate( 'Jetpack connection has failed' ) ) }
@@ -71,8 +72,8 @@ const BackupNoJetpackConnected: FunctionComponent = () => {
 			<div className="backup__wpcom-ctas">
 				<Button
 					className="backup__wpcom-cta backup__wpcom-realtime-cta"
-					href="https://dashboard.vaultpress.com"
-					onClick={ onUpgradeClick }
+					href={ reconnectUrl }
+					onClick={ onReconnectClick }
 					primary
 				>
 					{ translate( 'Reconnect Jetpack' ) }
@@ -80,7 +81,7 @@ const BackupNoJetpackConnected: FunctionComponent = () => {
 				<Button
 					className="backup__wpcom-cta backup__wpcom-realtime-cta"
 					href={ JETPACK_SUPPORT }
-					onClick={ onUpgradeClick }
+					onClick={ onSupportClick }
 				>
 					{ translate( 'I need help' ) }
 				</Button>
