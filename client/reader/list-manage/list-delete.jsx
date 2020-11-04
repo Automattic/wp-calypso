@@ -21,7 +21,7 @@ function ListDelete( { list } ) {
 			{ deleteState === '' && (
 				<Card>
 					<p>{ translate( 'Delete the list forever. Be careful - this is not reversible.' ) }</p>
-					<Button scary primary onClick={ () => setDeleteState( 'confirming' ) }>
+					<Button primary onClick={ () => setDeleteState( 'confirming' ) }>
 						{ translate( 'Delete list' ) }
 					</Button>
 				</Card>

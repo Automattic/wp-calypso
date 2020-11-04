@@ -3,6 +3,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -58,6 +59,7 @@ function renderSiteError( err: SiteError ) {
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
 	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
+	const translate = useTranslate();
 
 	if ( ! site ) {
 		// TODO: Add support for removing invalid site list item
@@ -67,8 +69,8 @@ export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent
 	return (
 		<>
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
-			<Button scary primary onClick={ props.onRemove }>
-				Remove from list
+			<Button primary onClick={ props.onRemove }>
+				{ translate( 'Remove' ) }
 			</Button>
 		</>
 	);

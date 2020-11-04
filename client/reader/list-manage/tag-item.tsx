@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -14,6 +15,7 @@ import { Item, Tag } from './types';
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
+	const translate = useTranslate();
 
 	return ! tag ? (
 		// TODO: Add support for removing invalid tag list item
@@ -32,8 +34,8 @@ export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent 
 					</div>
 				</a>
 			</div>
-			<Button scary primary onClick={ props.onRemove }>
-				Remove from list
+			<Button primary onClick={ props.onRemove }>
+				{ translate( 'Remove' ) }
 			</Button>
 		</>
 	);
