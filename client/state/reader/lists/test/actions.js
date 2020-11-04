@@ -16,8 +16,8 @@ import {
 	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_FOLLOW,
-	READER_LISTS_UNFOLLOW,
+	READER_LIST_FOLLOW,
+	READER_LIST_UNFOLLOW,
 } from 'calypso/state/reader/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
 
@@ -63,41 +63,25 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#followList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/follow' )
-				.reply( 200, {
-					following: true,
-				} );
-		} );
+		test( 'should return an action object', () => {
+			const action = followList( 'restapitests', 'testlist' );
 
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			followList( 'restapitests', 'testlist' )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: READER_LISTS_FOLLOW,
-				owner: 'restapitests',
-				slug: 'testlist',
+			expect( action ).toEqual( {
+				type: READER_LIST_FOLLOW,
+				listOwner: 'restapitests',
+				listSlug: 'testlist',
 			} );
 		} );
 	} );
 
 	describe( '#unfollowList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.post( '/rest/v1.2/read/lists/restapitests/testlist/unfollow' )
-				.reply( 200, {
-					following: false,
-				} );
-		} );
+		test( 'should return an action object', () => {
+			const action = unfollowList( 'restapitests', 'testlist' );
 
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			unfollowList( 'restapitests', 'testlist' )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: READER_LISTS_UNFOLLOW,
-				owner: 'restapitests',
-				slug: 'testlist',
+			expect( action ).toEqual( {
+				type: READER_LIST_UNFOLLOW,
+				listOwner: 'restapitests',
+				listSlug: 'testlist',
 			} );
 		} );
 	} );
