@@ -61,6 +61,7 @@ function mapStateToProps( state: AppState, ownProps?: ExperimentProps ): Experim
 		};
 	}
 	const { name: experimentName } = ownProps;
+
 	return {
 		isLoading: isLoading( state ),
 		variation: getVariationForUser( state, experimentName ),

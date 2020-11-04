@@ -32,6 +32,7 @@ import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 import { isIgnoredAdSource } from 'calypso/lib/analytics/sem';
 import { abtest } from 'calypso/lib/abtest';
+import ExplatExperiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -143,31 +144,55 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			isMonthlyPricingTest,
+			// isMonthlyPricingTest,
 		} = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
 
-				<PlansFeaturesMain
-					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
-					hideFreePlan={ hideFreePlan }
-					isInSignup={ true }
-					isLaunchPage={ isLaunchPage }
-					intervalType={ this.getIntervalType() }
-					onUpgradeClick={ this.onSelectPlan }
-					showFAQ={ false }
-					displayJetpackPlans={ false }
-					domainName={ this.getDomainName() }
-					customerType={ this.getCustomerType() }
-					disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
-					plansWithScroll={ true }
-					planTypes={ planTypes }
-					flowName={ flowName }
-					customHeader={ this.getGutenboardingHeader() }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
-				/>
+				<ExplatExperiment name="monthly_pricing_test_phase_1">
+					<DefaultVariation name="control">
+						<PlansFeaturesMain
+							site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+							hideFreePlan={ hideFreePlan }
+							isInSignup={ true }
+							isLaunchPage={ isLaunchPage }
+							intervalType={ this.getIntervalType() }
+							onUpgradeClick={ this.onSelectPlan }
+							showFAQ={ false }
+							displayJetpackPlans={ false }
+							domainName={ this.getDomainName() }
+							customerType={ this.getCustomerType() }
+							disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+							plansWithScroll={ true }
+							planTypes={ planTypes }
+							flowName={ flowName }
+							customHeader={ this.getGutenboardingHeader() }
+							isMonthlyPricingTest={ false }
+						/>
+					</DefaultVariation>
+					<Variation name="treatment">
+						<PlansFeaturesMain
+							site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
+							hideFreePlan={ hideFreePlan }
+							isInSignup={ true }
+							isLaunchPage={ isLaunchPage }
+							intervalType={ this.getIntervalType() }
+							onUpgradeClick={ this.onSelectPlan }
+							showFAQ={ false }
+							displayJetpackPlans={ false }
+							domainName={ this.getDomainName() }
+							customerType={ this.getCustomerType() }
+							disableBloggerPlanWithNonBlogDomain={ disableBloggerPlanWithNonBlogDomain }
+							plansWithScroll={ true }
+							planTypes={ planTypes }
+							flowName={ flowName }
+							customHeader={ this.getGutenboardingHeader() }
+							isMonthlyPricingTest={ true }
+						/>
+					</Variation>
+				</ExplatExperiment>
 			</div>
 		);
 	}

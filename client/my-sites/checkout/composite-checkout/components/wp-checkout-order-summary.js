@@ -49,6 +49,7 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import { getABTestVariation } from 'calypso/lib/abtest';
 import getPlanFeatures from '../lib/get-plan-features';
+import ExplatExperiment, { DefaultVariation, Variation } from 'calypso/components/experiment';
 
 export default function WPCheckoutOrderSummary( {
 	onChangePlanLength,
@@ -73,6 +74,14 @@ export default function WPCheckoutOrderSummary( {
 			className={ isCartUpdating ? 'is-loading' : '' }
 			data-e2e-cart-is-loading={ isCartUpdating }
 		>
+			<ExplatExperiment name="monthly_pricing_test_phase_1">
+				<DefaultVariation name="control">
+					<p>All good!</p>
+				</DefaultVariation>
+				<Variation name="treatment">
+					<p>Profit!</p>
+				</Variation>
+			</ExplatExperiment>
 			<CheckoutSummaryFeatures>
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
