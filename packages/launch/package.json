@@ -38,7 +38,8 @@
 		"@wordpress/core-data": "^2.16.0",
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/url": "^2.17.0",
-		"classnames": "^2.2.6"
+		"classnames": "^2.2.6",
+		"react-router-dom": "^5.1.2"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
