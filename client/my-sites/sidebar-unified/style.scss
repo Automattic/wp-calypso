@@ -7,7 +7,7 @@
 	--sidebar-width-max: 272px;
 	--sidebar-width-min: 272px;
 
-	--color-sidebar-background: #23282d;
+	--color-sidebar-background: #23282D;
 	--color-sidebar-background-rgb: 35, 40, 45;
 	--color-sidebar-menu-hover-background: #32373c;
 	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
@@ -81,6 +81,10 @@ $font-size: rem( 14px );
 			border-radius: 2px;
 		}
 
+		.site-icon {
+			margin-right: 24px;
+		}
+
 		.sidebar__heading,
 		.sidebar__menu-link {
 			position: relative;
@@ -108,7 +112,7 @@ $font-size: rem( 14px );
 				height: 0;
 				margin-top: -8px;
 				border: solid 8px transparent;
-				border-right-color: #f1f1f1;
+				border-right-color: #F1F1F1;
 				pointer-events: none;
 			}
 		}
@@ -388,7 +392,7 @@ $font-size: rem( 14px );
 			/* stylelint-disable-next-line scales/font-size */
 			font-size: 20px;
 			line-height: 20px;
-			background-color: #a7aaad;
+			background-color: #A7AAAD;
 			color: white;
 			border-radius: 50%;
 			margin: 3px 0 3px 1px;
