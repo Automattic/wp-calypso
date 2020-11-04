@@ -1,14 +1,14 @@
 {
 	"compilerOptions": {
-		"target": "es2018",
-		"module": "esnext",
+		"target": "ES5",
+		"lib": [ "DOM", "ESNext" ],
+		"module": "ESNext",
 		"allowJs": true,
 		"checkJs": false,
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "dist/types",
-		"outDir": "dist/types",
-		"emitDeclarationOnly": true,
+		"outDir": "dist/esm",
 		"isolatedModules": true,
 
 		"strict": true,
@@ -25,6 +25,8 @@
 		"typeRoots": [ "../../node_modules/@types" ],
 		"types": [],
 		"rootDir": "src",
+
+		"importHelpers": true,
 
 		"composite": true
 	},
