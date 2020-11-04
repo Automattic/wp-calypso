@@ -8,7 +8,6 @@
 		"declaration": true,
 		"declarationDir": "dist/types",
 		"outDir": "dist/types",
-		"emitDeclarationOnly": true,
 		"isolatedModules": true,
 
 		"strict": true,
