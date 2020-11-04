@@ -45,7 +45,7 @@
 	// client/layout/masterbar/style.scss
 	.masterbar__item-bubble {
 		top: calc( 50% - 14px );
-		left: -7px;
+		left: 7px;
 	}
 
 	// client/layout/masterbar/style.scss
@@ -54,7 +54,7 @@
 		height: 24px;
 		margin: 4px 8px;
 		/* stylelint-disable-next-line scales/radii */
-		border-radius: 5px;
+		border-radius: 2px;
 	}
 
 	.masterbar__item-new {
@@ -162,7 +162,7 @@
 	// client/layout/masterbar/style.scss
 	@include breakpoint-deprecated( '<480px' ) {
 		.masterbar__item-bubble {
-			left: calc( 50% - 14px );
+			left: calc( 50% - 24px );
 		}
 	}
 }
