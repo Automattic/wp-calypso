@@ -16,8 +16,6 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import InfoTooltip from '../info-tooltip';
-// TODO: remove when all needed core types are available
-/*#__PURE__*/ import '../types-patch';
 
 export const ITEM_TYPE_RADIO = 'radio';
 export const ITEM_TYPE_BUTTON = 'button';
