@@ -26,7 +26,7 @@ export default function () {
 function handleLoggedOut() {
 	if ( config.isEnabled( 'desktop' ) ) {
 		if ( config.isEnabled( 'oauth' ) ) {
-			page.redirect( '/oauth-login' );
+			page.redirect( config( 'login_url' ) );
 		} else {
 			page.redirect( '/log-in' );
 		}
