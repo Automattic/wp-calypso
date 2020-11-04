@@ -8,8 +8,8 @@ import {
 	useSelect,
 	useFormStatus,
 	useIsStepActive,
-	useLineItems,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,7 +19,6 @@ import useSkipToLastStepIfFormComplete from '../hooks/use-skip-to-last-step-if-f
 import useIsCachedContactFormValid from '../hooks/use-is-cached-contact-form-valid';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem } from '../types/country-list-item';
-import type { WPCOMCartItem } from '../types/checkout-cart';
 import type { ManagedContactDetails } from '../types/wpcom-store-state';
 
 const BillingFormFields = styled.div`
@@ -51,9 +50,9 @@ export default function WPContactForm( {
 	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
 } ): JSX.Element {
-	const [ items ]: [ WPCOMCartItem[], WPCOMCartItem ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item: WPCOMCartItem ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
+	const { responseCart } = useShoppingCart();
+	const isGSuiteInCart = responseCart.products.some( ( item ) =>
+		isGSuiteProductSlug( item.product_slug )
 	);
 	const contactInfo: ManagedContactDetails = useSelect( ( select ) =>
 		select( 'wpcom' ).getContactInfo()
