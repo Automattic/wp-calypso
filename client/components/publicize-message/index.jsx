@@ -68,7 +68,7 @@ class PublicizeMessage extends Component {
 	renderInfoPopover() {
 		return (
 			<InfoPopover
-				className="editor-sharing__publicize-message-counter-info"
+				className="publicize-message__counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
@@ -94,7 +94,7 @@ class PublicizeMessage extends Component {
 					onChange={ this.onChange }
 					showRemainingCharacters={ true }
 					acceptableLength={ this.props.acceptableLength }
-					className="editor-sharing__message-input"
+					className="publicize-message__input"
 				>
 					{ this.renderInfoPopover() }
 				</CountedTextarea>
@@ -106,14 +106,14 @@ class PublicizeMessage extends Component {
 				value={ this.getMessage() }
 				placeholder={ placeholder }
 				onChange={ this.onChange }
-				className="editor-sharing__message-input"
+				className="publicize-message__input"
 			/>
 		);
 	}
 
 	render() {
 		return (
-			<div className="editor-sharing__publicize-message">
+			<div className="publicize-message">
 				<TrackInputChanges onNewValue={ this.recordStats }>
 					{ this.renderTextarea() }
 				</TrackInputChanges>
