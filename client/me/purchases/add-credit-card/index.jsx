@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -12,7 +13,7 @@ import PropTypes from 'prop-types';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { concatTitle } from 'calypso/lib/react-helpers';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -21,7 +22,7 @@ import Main from 'calypso/components/main';
 import titles from 'calypso/me/purchases/titles';
 import { paymentMethods } from 'calypso/me/purchases/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import { StripeHookProvider } from 'calypso/lib/stripe';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
@@ -35,7 +36,11 @@ function AddCreditCard( props ) {
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider
+				configurationArgs={ { needs_intent: true } }
+				locale={ props.locale }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					createCardToken={ createAddCardToken }
 					recordFormSubmitEvent={ recordFormSubmitEvent }
@@ -50,10 +55,16 @@ function AddCreditCard( props ) {
 
 AddCreditCard.propTypes = {
 	addStoredCard: PropTypes.func.isRequired,
+	locale: PropTypes.string,
 };
 
 const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(
+	( state ) => ( {
+		locale: getCurrentUserLocale( state ),
+	} ),
+	mapDispatchToProps
+)( AddCreditCard );

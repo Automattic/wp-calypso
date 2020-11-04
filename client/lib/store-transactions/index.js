@@ -3,8 +3,12 @@
  */
 import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:store-transactions' );
 import inherits from 'inherits';
+import {
+	createStripePaymentMethod,
+	confirmStripePaymentIntent,
+	StripeValidationError,
+} from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -26,12 +30,8 @@ import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
 } from 'calypso/lib/checkout/processor-specific';
-import {
-	createStripePaymentMethod,
-	confirmStripePaymentIntent,
-	StripeValidationError,
-} from 'calypso/lib/stripe';
 
+const debug = debugFactory( 'calypso:store-transactions' );
 const wpcom = wp.undocumented();
 
 /**

@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { find, defer } from 'lodash';
+import { withStripeProps } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -17,7 +18,6 @@ import {
 	storedCardPayment,
 } from 'calypso/lib/transaction/payments';
 import { setPayment } from 'calypso/lib/transaction/actions';
-import { withStripeProps } from 'calypso/lib/stripe';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {

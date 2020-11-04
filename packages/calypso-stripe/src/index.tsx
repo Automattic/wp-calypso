@@ -4,18 +4,107 @@
 import debugFactory from 'debug';
 import React, { useEffect, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
+// We are several versions old for react-stripe-elements, and probably should
+// actually upgrade to the new Stripe.js anyway. Trying to use the actual types
+// for this package causes all sorts of errors because, I think, they assume
+// we're using the newer version of Stripe.js. However, all of this code
+// currently works and we're just moving it around, so I'm disabling the
+// linting and compiler errors for now.
+// eslint-disable-next-line
+// @ts-ignore
 import { injectStripe, StripeProvider, Elements } from 'react-stripe-elements';
-import { useSelector } from 'react-redux';
 
-/**
- * Internal dependencies
- */
-import { getStripeConfiguration } from 'calypso/lib/store-transactions';
-import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+const debug = debugFactory( 'calypso-stripe' );
 
-const debug = debugFactory( 'calypso:stripe' );
+declare global {
+	interface Window {
+		Stripe: StripeFactory;
+	}
+}
 
-const StripeContext = createContext();
+type StripeFactory = ( key: string, options?: Record< string, string > ) => Stripe;
+
+type PaymentDetails = Record< string, string >;
+
+type HandleCardSetupResponse = { setupIntent: StripeSetupIntent; error: StripeError };
+
+interface PaymentRequestOptionsItem {
+	label: string;
+	amount: number;
+}
+
+interface PaymentRequestOptions {
+	requestPayerName: boolean;
+	requestPayerPhone: boolean;
+	requestPayerEmail: boolean;
+	requestShipping: boolean;
+	country: string;
+	currency: string;
+	displayItems: PaymentRequestOptionsItem[];
+	total: PaymentRequestOptionsItem;
+}
+
+interface StripePaymentRequestResponse {
+	canMakePayment: () => Promise< undefined | { applePay: boolean } >;
+}
+
+export type Stripe = {
+	handleCardSetup: (
+		setup_intent_id: string | undefined | null,
+		{ payment_method_data }: { payment_method_data: { billing_details: PaymentDetails } }
+	) => Promise< HandleCardSetupResponse >;
+	createPaymentMethod: (
+		type: string,
+		{ billing_details }: { billing_details: PaymentDetails }
+	) => Promise< { paymentMethod: { id: string }; error: StripeError } >;
+	handleCardPayment: (
+		secret: string,
+		options: Record< string, string >
+	) => Promise< { paymentIntent: StripeAuthenticationResponse; error: StripeError } >;
+	paymentRequest: ( paymentRequestOptions: PaymentRequestOptions ) => StripePaymentRequestResponse;
+};
+
+export interface StripeConfiguration {
+	js_url: string;
+	public_key: string;
+	processor_id: string;
+	setup_intent_id: null | string;
+}
+
+type SetStripeError = ( error: string ) => void;
+
+export interface StripeData {
+	stripe: null | Stripe;
+	stripeConfiguration: null | StripeConfiguration;
+	isStripeLoading: boolean;
+	stripeLoadingError: undefined | null | Error;
+	setStripeError: SetStripeError;
+}
+
+export type StripeSetupIntent = { payment_method: string };
+
+export type StripeAuthenticationResponse = { status?: string };
+
+const StripeContext = createContext< StripeData | undefined >( undefined );
+
+type StripeError = Error & { code?: string; type?: string };
+
+export interface TransactionResponseWithPaymentIntent {
+	message: { payment_intent_client_secret: string };
+}
+
+type TransactionResponse = unknown;
+
+export interface UseStripeJs {
+	stripeJs: Stripe | null;
+	isStripeLoading: boolean;
+	stripeLoadingError: null | undefined | string;
+}
+
+type GetStripeConfigurationArgs = { country?: string; needs_intent?: boolean };
+type GetStripeConfiguration = (
+	requestArgs: GetStripeConfigurationArgs
+) => Promise< StripeConfiguration >;
 
 /**
  * An error for display by the payment form
@@ -29,15 +118,25 @@ const StripeContext = createContext();
  * @param {string} code - The error code
  * @param {object} messagesByField - An object whose keys are input field names and whose values are arrays of error strings for that field
  */
-function StripeValidationError( code, messagesByField ) {
-	const fields = Object.keys( messagesByField );
-	const firstMessage = fields.length ? messagesByField[ fields[ 0 ] ] : code;
-	this.message = firstMessage;
-	this.code = code;
-	this.messagesByField = messagesByField;
+export class StripeValidationError extends Error {
+	code: string | undefined;
+	messagesByField: Record< string, string[] >;
+
+	constructor( code: string | undefined, messagesByField: Record< string, string[] > ) {
+		let firstMessage = code;
+		if ( Object.keys( messagesByField ).length > 0 ) {
+			const firstKey = Object.keys( messagesByField )[ 0 ];
+			const firstMessages = messagesByField[ firstKey ];
+			if ( firstMessages.length > 0 ) {
+				firstMessage = firstMessages[ 0 ];
+			}
+		}
+		super( firstMessage );
+		this.message = firstMessage || 'Unknown error';
+		this.code = code;
+		this.messagesByField = messagesByField;
+	}
 }
-StripeValidationError.prototype = new Error();
-export { StripeValidationError };
 
 /**
  * An error related to a Setup Intent
@@ -49,12 +148,15 @@ export { StripeValidationError };
  *
  * @param {object} stripeError - The original Stripe error object
  */
-function StripeSetupIntentError( stripeError ) {
-	this.stripeError = stripeError;
-	this.message = stripeError.message;
+export class StripeSetupIntentError extends Error {
+	stripeError: Error;
+
+	constructor( stripeError: Error ) {
+		super( stripeError.message );
+		this.stripeError = stripeError;
+		this.message = stripeError.message;
+	}
 }
-StripeSetupIntentError.prototype = new Error();
-export { StripeSetupIntentError };
 
 /**
  * An error related to a Stripe PaymentMethod
@@ -63,12 +165,15 @@ export { StripeSetupIntentError };
  *
  * @param {object} stripeError - The original Stripe error object
  */
-function StripePaymentMethodError( stripeError ) {
-	this.stripeError = stripeError;
-	this.message = stripeError.message;
+export class StripePaymentMethodError extends Error {
+	stripeError: Error;
+
+	constructor( stripeError: Error ) {
+		super( stripeError.message );
+		this.stripeError = stripeError;
+		this.message = stripeError.message;
+	}
 }
-StripePaymentMethodError.prototype = new Error();
-export { StripePaymentMethodError };
 
 /**
  * Create a Stripe PaymentMethod using Stripe Elements
@@ -90,7 +195,10 @@ export { StripePaymentMethodError };
  * @param {object} paymentDetails The `billing_details` field of the `createPaymentMethod()` request
  * @returns {Promise} Promise that will be resolved or rejected
  */
-export async function createStripePaymentMethod( stripe, paymentDetails ) {
+export async function createStripePaymentMethod(
+	stripe: Stripe,
+	paymentDetails: PaymentDetails
+): Promise< { id: string } > {
 	debug( 'creating payment method...', paymentDetails );
 	const { paymentMethod, error } = await stripe.createPaymentMethod( 'card', {
 		billing_details: paymentDetails,
@@ -109,9 +217,13 @@ export async function createStripePaymentMethod( stripe, paymentDetails ) {
 	return paymentMethod;
 }
 
-export async function createStripeSetupIntent( stripe, stripeConfiguration, paymentDetails ) {
+export async function createStripeSetupIntent(
+	stripe: Stripe,
+	stripeConfiguration: StripeConfiguration,
+	paymentDetails: PaymentDetails
+): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
-	let stripeResponse = {};
+	let stripeResponse: HandleCardSetupResponse | undefined;
 	try {
 		stripeResponse = await stripe.handleCardSetup( stripeConfiguration.setup_intent_id, {
 			payment_method_data: {
@@ -122,19 +234,18 @@ export async function createStripeSetupIntent( stripe, stripeConfiguration, paym
 		// Some errors are thrown by handleCardSetup and not returned as an error
 		throw new StripeSetupIntentError( error );
 	}
-	const { setupIntent, error } = stripeResponse;
-	debug( 'setup intent creation complete', setupIntent, error );
-	if ( error || ! setupIntent ) {
+	debug( 'setup intent creation complete', stripeResponse );
+	if ( stripeResponse?.error || ! stripeResponse?.setupIntent ) {
 		// Note that this is a promise rejection
-		if ( error.type === 'validation_error' ) {
+		if ( stripeResponse?.error?.type === 'validation_error' ) {
 			throw new StripeValidationError(
-				error.code,
-				getValidationErrorsFromStripeError( error ) || {}
+				stripeResponse.error.code,
+				getValidationErrorsFromStripeError( stripeResponse.error ) || {}
 			);
 		}
-		throw new StripeSetupIntentError( error );
+		throw new StripeSetupIntentError( stripeResponse?.error );
 	}
-	return setupIntent;
+	return stripeResponse.setupIntent;
 }
 
 /**
@@ -149,7 +260,10 @@ export async function createStripeSetupIntent( stripe, stripeConfiguration, paym
  * @param {string} paymentIntentClientSecret The client secret of the PaymentIntent
  * @returns {Promise} Promise that will be resolved or rejected
  */
-export async function confirmStripePaymentIntent( stripeConfiguration, paymentIntentClientSecret ) {
+export async function confirmStripePaymentIntent(
+	stripeConfiguration: StripeConfiguration,
+	paymentIntentClientSecret: string
+): Promise< StripeAuthenticationResponse > {
 	debug( 'Confirming paymentIntent...', paymentIntentClientSecret );
 
 	// Setup a stripe instance that is disconnected from our Elements
@@ -177,7 +291,9 @@ export async function confirmStripePaymentIntent( stripeConfiguration, paymentIn
  * @param {object} error An error returned by a Stripe function like createPaymentMethod
  * @returns {object | null} An object keyed by input field name whose values are arrays of error strings for that field
  */
-function getValidationErrorsFromStripeError( error ) {
+function getValidationErrorsFromStripeError(
+	error: StripeError
+): null | Record< string, string[] > {
 	if ( error.type !== 'validation_error' || ! error.code ) {
 		return null;
 	}
@@ -209,16 +325,29 @@ function getValidationErrorsFromStripeError( error ) {
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {object} { stripeJs, isStripeLoading }
  */
-function useStripeJs( stripeConfiguration ) {
-	const [ stripeJs, setStripeJs ] = useState( null );
-	const [ isStripeLoading, setStripeLoading ] = useState( true );
-	const [ stripeLoadingError, setStripeLoadingError ] = useState();
-	const locale = useSelector( ( state ) => getCurrentUserLocale( state ) );
+function useStripeJs(
+	stripeConfiguration: StripeConfiguration | undefined,
+	locale: string | undefined = undefined
+): UseStripeJs {
+	const [ stripeJs, setStripeJs ] = useState< null | Stripe >( null );
+	const [ isStripeLoading, setStripeLoading ] = useState< boolean >( true );
+	const [ stripeLoadingError, setStripeLoadingError ] = useState< string | undefined >();
 	const stripeLocale = getStripeLocaleForLocale( locale );
 	useEffect( () => {
 		let isSubscribed = true;
+
+		async function initStripeAfterLoad( stripeConfiguration: StripeConfiguration ) {
+			if ( ! window.Stripe ) {
+				throw new Error( 'Failed to load Stripe' );
+			}
+			setStripeLoading( false );
+			setStripeLoadingError( undefined );
+			setStripeJs( window.Stripe( stripeConfiguration.public_key, { locale: stripeLocale } ) );
+		}
+
 		async function loadAndInitStripe() {
 			if ( ! stripeConfiguration ) {
 				return;
@@ -227,22 +356,18 @@ function useStripeJs( stripeConfiguration ) {
 				debug( 'stripe.js already loaded' );
 				setStripeLoading( false );
 				if ( ! stripeJs ) {
-					setStripeLoadingError();
-					setStripeJs(
-						window.Stripe( stripeConfiguration.public_key, {
-							locale: stripeLocale,
-						} )
-					);
+					setStripeLoadingError( undefined );
+					setStripeJs( window.Stripe( stripeConfiguration.public_key, { locale: stripeLocale } ) );
 				}
 				return;
 			}
 			debug( 'loading stripe.js...' );
+			// This should add window.Stripe
 			await loadScript( stripeConfiguration.js_url );
 			debug( 'stripe.js loaded!' );
-			isSubscribed && setStripeLoading( false );
-			isSubscribed && setStripeLoadingError();
-			isSubscribed &&
-				setStripeJs( window.Stripe( stripeConfiguration.public_key, { locale: stripeLocale } ) );
+			if ( isSubscribed ) {
+				return initStripeAfterLoad( stripeConfiguration );
+			}
 		}
 
 		loadAndInitStripe().catch( ( error ) => {
@@ -251,7 +376,9 @@ function useStripeJs( stripeConfiguration ) {
 			isSubscribed && setStripeLoadingError( error );
 		} );
 
-		return () => ( isSubscribed = false );
+		return () => {
+			isSubscribed = false;
+		};
 	}, [ stripeConfiguration, stripeJs, stripeLocale ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
@@ -273,26 +400,41 @@ function useStripeJs( stripeConfiguration ) {
  * the configuration to reload by setting a value by calling `setStripeError()`
  * with a value for that error.
  *
+ * @param {Function} fetchStripeConfiguration A function that will fetch the stripe configuration from the HTTP API
  * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
- * @param {Function} fetchStripeConfiguration (optional) If provided, will call instead of getStripeConfiguration
  * @returns {object} See above
  */
-function useStripeConfiguration( requestArgs = null, fetchStripeConfiguration ) {
-	const [ stripeError, setStripeError ] = useState();
-	const [ stripeConfiguration, setStripeConfiguration ] = useState();
+function useStripeConfiguration(
+	fetchStripeConfiguration: GetStripeConfiguration,
+	requestArgs: undefined | null | GetStripeConfigurationArgs = null
+): { stripeConfiguration: StripeConfiguration | undefined; setStripeError: SetStripeError } {
+	const [ stripeError, setStripeError ] = useState< undefined | string >();
+	const [ stripeConfiguration, setStripeConfiguration ] = useState<
+		undefined | StripeConfiguration
+	>();
 	useEffect( () => {
-		const getConfig = fetchStripeConfiguration || getStripeConfiguration;
+		const getConfig = fetchStripeConfiguration;
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
 		getConfig( requestArgs || {} ).then(
 			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
 		);
-		return () => ( isSubscribed = false );
+		return () => {
+			isSubscribed = false;
+		};
 	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
 	return { stripeConfiguration, setStripeError };
 }
 
-function StripeHookProviderInnerWrapper( { stripe, stripeData, children } ) {
+function StripeHookProviderInnerWrapper( {
+	stripe,
+	stripeData,
+	children,
+}: {
+	stripe: Stripe;
+	stripeData: StripeData;
+	children: JSX.Element;
+} ): JSX.Element {
 	const updatedStripeData = { ...stripeData, stripe };
 	return <StripeContext.Provider value={ updatedStripeData }>{ children }</StripeContext.Provider>;
 }
@@ -300,15 +442,24 @@ const StripeInjectedWrapper = injectStripe( StripeHookProviderInnerWrapper );
 
 export function StripeHookProvider( {
 	children,
+	fetchStripeConfiguration,
 	configurationArgs = null,
-	fetchStripeConfiguration = null,
-} ) {
+	locale = undefined,
+}: {
+	children: JSX.Element;
+	fetchStripeConfiguration: GetStripeConfiguration;
+	configurationArgs?: undefined | null | GetStripeConfigurationArgs;
+	locale?: undefined | string;
+} ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
 	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
-		configurationArgs,
-		fetchStripeConfiguration
+		fetchStripeConfiguration,
+		configurationArgs
 	);
-	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs( stripeConfiguration );
+	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
+		stripeConfiguration,
+		locale
+	);
 
 	const stripeData = {
 		stripe: null, // This must be set inside the injected component
@@ -328,31 +479,6 @@ export function StripeHookProvider( {
 }
 
 /**
- * @typedef Stripe object
- */
-
-/**
- * @typedef StripeConfiguration object
- */
-
-/**
- * @typedef StripeError object
- */
-
-/**
- * @typedef SetStripeError () => void
- */
-
-/**
- * @typedef StripeManager
- * @property {Stripe | null} stripe The instance of the stripe library
- * @property {StripeConfiguration | null} stripeConfiguration The object containing the data returned by the stripe configuration endpoint
- * @property {boolean} isStripeLoading A boolean that is true if stripe is currently being loaded
- * @property {StripeError | null} stripeLoadingError An optional object that will be set if there is an error loading stripe
- * @property {SetStripeError} setStripeError A function that can be called with a value to force the stripe configuration to reload
- */
-
-/**
  * Custom hook to access Stripe.js
  *
  * First you must wrap a parent component in `StripeHookProvider`. Then you can
@@ -367,9 +493,9 @@ export function StripeHookProvider( {
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
  * - setStripeError: a function that can be called with a value to force the stripe configuration to reload
  *
- * @returns {StripeManager} See above
+ * @returns {StripeData} See above
  */
-export function useStripe() {
+export function useStripe(): StripeData {
 	const stripeData = useContext( StripeContext );
 	return (
 		stripeData || {
@@ -377,7 +503,12 @@ export function useStripe() {
 			stripeConfiguration: null,
 			isStripeLoading: false,
 			stripeLoadingError: null,
-			setStripeError: () => {},
+			setStripeError: ( error: string ) => {
+				// eslint-disable-next-line no-console
+				console.error(
+					`You cannot use setStripeError until stripe has been initialized. Got "${ error }"`
+				);
+			},
 		}
 	);
 }
@@ -391,8 +522,8 @@ export function useStripe() {
  * @param {object} WrappedComponent The component to wrap
  * @returns {object} WrappedComponent
  */
-export function withStripeProps( WrappedComponent ) {
-	return ( props ) => {
+export function withStripeProps< P >( WrappedComponent: React.ComponentType< P > ): React.FC< P > {
+	return ( props: P ): JSX.Element => {
 		const stripeData = useStripe();
 		const newProps = { ...props, ...stripeData };
 		return <WrappedComponent { ...newProps } />;
@@ -407,7 +538,7 @@ export function withStripeProps( WrappedComponent ) {
  * @param {string} locale A locale string like 'en-us'
  * @returns {string} A stripe-supported locale string like 'en'
  */
-function getStripeLocaleForLocale( locale ) {
+function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 	const stripeSupportedLocales = [
 		'ar',
 		'bg',
@@ -450,7 +581,13 @@ function getStripeLocaleForLocale( locale ) {
 	return stripeLocale;
 }
 
-export async function showStripeModalAuth( { stripeConfiguration, response } ) {
+export async function showStripeModalAuth( {
+	stripeConfiguration,
+	response,
+}: {
+	stripeConfiguration: StripeConfiguration;
+	response: TransactionResponseWithPaymentIntent;
+} ): Promise< null | TransactionResponse > {
 	const authenticationResponse = await confirmStripePaymentIntent(
 		stripeConfiguration,
 		response.message.payment_intent_client_secret
