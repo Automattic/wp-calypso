@@ -21,7 +21,7 @@ import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
 /**
  * Style dependencies
  */
-import './publicize-message.scss';
+import './style.scss';
 
 class PublicizeMessage extends Component {
 	static propTypes = {

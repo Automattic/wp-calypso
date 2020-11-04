@@ -14,7 +14,7 @@ import PopupMonitor from '@automattic/popup-monitor';
  * Internal dependencies
  */
 import QueryPostTypes from 'calypso/components/data/query-post-types';
-import PublicizeMessage from './publicize-message';
+import PublicizeMessage from 'calypso/components/publicize-message';
 import PublicizeServices from './publicize-services';
 import { publicizeConnections } from 'calypso/lib/paths';
 import PostMetadata from 'calypso/lib/post-metadata';
