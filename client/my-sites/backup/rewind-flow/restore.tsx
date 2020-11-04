@@ -14,6 +14,7 @@ import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getInProgressRewindPercentComplete from 'calypso/state/selectors/get-in-progress-rewind-percent-complete';
+import getInProgressRewindEntryDetails from 'calypso/state/selectors/get-in-progress-rewind-entry-details';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
@@ -62,6 +63,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const inProgressRewindPercentComplete = useSelector( ( state ) =>
 		getInProgressRewindPercentComplete( state, siteId, rewindId )
 	);
+
+	const inProgressRewindEntryDetails = useSelector( ( state ) =>
+		getInProgressRewindEntryDetails( state, siteId, rewindId )
+	);
+
+	console.log( inProgressRewindEntryDetails );
 
 	const requestRestore = useCallback(
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
