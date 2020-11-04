@@ -21,7 +21,6 @@ interface Props {
 const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
-			<div>Common FL content</div>
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>
 					<FocusedLaunchDomainDetails />
