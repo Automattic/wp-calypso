@@ -7,12 +7,12 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
-import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import RenderSwitch from 'calypso/components/jetpack/render-switch';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 
 const stateImpliesJetpackIsDisconnected = ( productState?: {
 	state?: string;
@@ -22,13 +22,13 @@ const stateImpliesJetpackIsDisconnected = ( productState?: {
 		return undefined;
 	}
 
-	return productState.code === 'no_connected_jetpack' && productState.status === 412;
+	return productState.state === 'unavailable' && productState.reason === 'unknown';
 };
 
 const isInitialized = ( productState: { state?: string } | null ) =>
 	productState && productState.state !== 'uninitialized';
 
-const HasJetpackConnectionFailedSwitch: React.FC< Props > = ( {
+const IsJetpackDisconnectedSwitch: React.FC< Props > = ( {
 	loadingComponent,
 	trueComponent,
 	falseComponent,
@@ -73,4 +73,4 @@ type Props = {
 	falseComponent?: ReactElement;
 };
 
-export default HasJetpackConnectionFailedSwitch;
+export default IsJetpackDisconnectedSwitch;
