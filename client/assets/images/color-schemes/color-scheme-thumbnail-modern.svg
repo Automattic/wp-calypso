@@ -1,23 +1,16 @@
 <svg width="180" height="120" viewBox="0 0 180 120" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect x="0.5" y="0.5" width="179" height="119" rx="1.5" fill="#F6F7F7" stroke="#C3C4C7"/>
-<rect x="138" y="86" width="22" height="8" rx="0.5" fill="#3858E9"/>
 <rect x="49" y="21" width="120" height="81" fill="white"/>
+<rect x="138" y="86" width="22" height="8" rx="0.5" fill="#3858E9"/>
 <g filter="url(#filter0_i)">
 <rect x="2" y="10" width="36" height="108" fill="#1E1E1E"/>
 </g>
-<rect x="2" y="29" width="36" height="7" fill="#3858E9"/>
-<rect x="6" y="53" width="24" height="1" fill="#FAFBFB"/>
-<rect x="6" y="60" width="16" height="1" fill="#FAFBFB"/>
-<rect x="6" y="67" width="21" height="1" fill="#FAFBFB"/>
-<rect x="6" y="39" width="24" height="1" fill="#FAFBFB"/>
-<rect x="6" y="46" width="16" height="1" fill="#FAFBFB"/>
-<rect x="6" y="32" width="18.5714" height="1" fill="white"/>
-<rect x="6" y="25" width="24.7619" height="1" fill="#FAFBFB"/>
-<rect x="2" y="36" width="36" height="18" fill="#0C0C0C"/>
-<rect x="6" y="50" width="19.8095" height="1" fill="#FAFBFB"/>
-<rect x="6" y="45" width="26" height="1" fill="#FAFBFB"/>
-<rect x="6" y="40" width="22.2857" height="1" fill="#FAFBFB"/>
-<rect x="2" y="2" width="176" height="8" fill="#1E1E1E"/>
+<rect x="2" y="49" width="36" height="7" fill="#3858E9"/>
+<rect x="6" y="59" width="19" height="1" fill="#FAFBFB"/>
+<rect x="6" y="66" width="16" height="1" fill="#FAFBFB"/>
+<rect x="6" y="52" width="24" height="1" fill="white"/>
+<rect x="6" y="45" width="20" height="1" fill="#FAFBFB"/>
+<rect x="2" y="2" width="176" height="10" fill="#1E1E1E"/>
 <defs>
 <filter id="filter0_i" x="2" y="10" width="36" height="108" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>
