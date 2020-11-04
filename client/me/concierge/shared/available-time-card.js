@@ -106,8 +106,11 @@ class CalendarCard extends Component {
 		const timeWithTz = this.withTimezone( time ).format( 'LT z' );
 		const timezone = this.withTimezone( time ).format( 'z' );
 
-		if ( [ '12:00 AM', '000:00' ].includes( timeWithoutTz ) ) {
-			return `midnight ${ timezone }`;
+		if ( [ '12:00 AM', '00:00' ].includes( timeWithoutTz ) ) {
+			return this.props.translate( 'midnight %(timezone)s', {
+				args: { timezone },
+				comment: 'This is a time of day value shown in the dropdown',
+			} );
 		}
 
 		return timeWithTz;
@@ -262,7 +265,8 @@ class CalendarCard extends Component {
 			btnMorningTimeGroup = classnames( 'shared__time-group', {
 				'is-selected': isMorningTimeGroupSelected,
 			} );
-			btnEveningTitle = morningTimes.length === 0 ? translate( 'No evening slots available' ) : '';
+			btnEveningTitle =
+				eveningTimes.length === 0 ? translate( 'No afternoon slots available' ) : '';
 		} else {
 			timesForTimeGroup = eveningTimes;
 			btnEveningTimeGroup = classnames( 'shared__time-group', {
