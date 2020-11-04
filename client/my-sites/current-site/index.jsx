@@ -85,12 +85,7 @@ class CurrentSite extends Component {
 					{ this.props.siteCount > 1 && (
 						<span className="current-site__switch-sites">
 							<Button borderless onClick={ this.switchSites }>
-								{ isEnabled( 'nav-unification' ) ? (
-									// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-									<span className="gridicon dashicons-before dashicons-arrow-left-alt2"></span>
-								) : (
-									<Gridicon icon="chevron-left" />
-								) }
+								<Gridicon icon="arrow-left" />
 								<span className="current-site__switch-sites-label">
 									{ translate( 'Browse Sites' ) }
 								</span>

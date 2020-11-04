@@ -14,7 +14,7 @@
 	--color-sidebar-menu-hover-heading-background: #1a1e23;
 	--color-sidebar-menu-hover: #00b9eb;
 	--color-sidebar-menu-hover-text: #00b9eb;
-	--color-sidebar-menu-selected-background: #0073aa;
+	--color-sidebar-menu-selected-background: #2271B1;
 	--color-sidebar-border: #333333;
 	--color-sidebar-text: #ffffff;
 	--color-sidebar-text-alternative: #a7aaad;
@@ -59,12 +59,18 @@ $font-size: rem( 14px );
 		}
 
 		.site__home {
-			left: 18px;
-			top: 10px;
+			left: 16px;
+			width: 40px !important;
+			height: 40px !important;
+			top: 20px;
 		}
 
 		.site-icon {
-			margin-right: 24px;
+			margin-right: 16px;
+			width: 40px !important;
+			height: 40px !important;
+			background: pink;
+			border-radius: 2px;
 		}
 
 		.sidebar__heading,
@@ -266,6 +272,7 @@ $font-size: rem( 14px );
 	.site-selector .site.is-highlighted .site__domain,
 	.site-selector .site.is-highlighted .site__title {
 		color: var( --color-sidebar-text );
+		font-size: 1rem;
 	}
 
 	.site__badge {
@@ -293,6 +300,10 @@ $font-size: rem( 14px );
 	}
 
 	// client/my-sites/current-site/style.scss
+	.current-site.card {
+		margin-bottom: 8px;
+	}
+
 	.current-site__switch-sites {
 		height: var( --masterbar-height );
 	}
@@ -303,14 +314,14 @@ $font-size: rem( 14px );
 
 	.current-site__switch-sites .button.is-borderless {
 		color: var( --color-sidebar-text-alternative );
-		//padding: 6px 8px 6px 36px;
+		padding: 9px 24px 9px 68px;
 	}
 
 	.current-site__switch-sites .button.is-borderless .gridicon {
 		height: 20px;
 		width: 20px;
-		//top: 9px;
-		//left: 24px;
+		top: 12px;
+		left: 24px;
 	}
 
 
@@ -321,7 +332,7 @@ $font-size: rem( 14px );
 
 		// client/my-sites/current-site/style.scss
 		.current-site__switch-sites .button.is-borderless {
-			height: 34px;
+			height: var( --masterbar-height );
 			padding: 0;
 		}
 
@@ -332,7 +343,6 @@ $font-size: rem( 14px );
 		.current-site__switch-sites-label {
 			display: none;
 		}
-
 		.current-site .site .site__info {
 			display: none;
 		}
@@ -519,7 +529,8 @@ $font-size: rem( 14px );
 			}
 
 			.sidebar__separator {
-				margin: 0 0 11px;
+				//margin: 0 0 11px;
+				border-bottom: 1px solid var(--color-sidebar-border);
 			}
 
 			.sidebar__heading,
