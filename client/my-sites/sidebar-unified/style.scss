@@ -14,7 +14,7 @@
 	--color-sidebar-menu-hover-heading-background: #1a1e23;
 	--color-sidebar-menu-hover: #00b9eb;
 	--color-sidebar-menu-hover-text: #00b9eb;
-	--color-sidebar-menu-selected-background: #2271B1;
+	--color-sidebar-menu-selected-background: #2271b1;
 	--color-sidebar-border: #333333;
 	--color-sidebar-text: #ffffff;
 	--color-sidebar-text-alternative: #a7aaad;
@@ -569,8 +569,7 @@ $font-size: rem( 14px );
 			}
 
 			.sidebar__separator {
-				//margin: 0 0 11px;
-				border-bottom: 1px solid var(--color-sidebar-border);
+				margin: 0 0 11px;
 			}
 
 			.sidebar__heading,
