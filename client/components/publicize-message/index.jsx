@@ -112,7 +112,6 @@ class PublicizeMessage extends Component {
 	}
 
 	render() {
-		const { translate } = this.props;
 		return (
 			<div className="editor-sharing__publicize-message">
 				<TrackInputChanges onNewValue={ this.recordStats }>
