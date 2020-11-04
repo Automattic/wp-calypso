@@ -1,1 +1,0 @@
-declare module '@automattic/viewport';

@@ -4,7 +4,6 @@
  */
 import classNames from 'classnames';
 import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
-import { isMobile } from '@automattic/viewport';
 import { debounce, noop, uniqueId } from 'lodash';
 
 /**
@@ -257,7 +256,7 @@ class Search extends React.Component< Props, State > {
 	};
 
 	keyUp = ( event: KeyboardEvent< HTMLInputElement > ) => {
-		if ( event.key === 'Enter' && isMobile() ) {
+		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			this.blur();
 		}
