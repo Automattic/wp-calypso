@@ -25,7 +25,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import CartToggle from './cart-toggle';
 import wp from 'calypso/lib/wp';
 import RecentRenewals from './recent-renewals';
-import CheckoutTerms from './checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';
 
 const wpcom = wp.undocumented();

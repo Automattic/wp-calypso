@@ -13,7 +13,7 @@ import { Button } from '@automattic/components';
 import { CheckoutCheckIcon } from '@automattic/composite-checkout';
 import PaymentLogo from '@automattic/composite-checkout/src/lib/payment-methods/payment-logo';
 import Gridicon from 'calypso/components/gridicon';
-import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { formatDate } from './util';
 import { BEFORE_SUBMIT } from './constants';
 
