@@ -3,13 +3,13 @@ const path = require( 'path' );
 module.exports = ( { config } ) => {
 	config.module.rules.push( {
 		test: /\.tsx?$/,
-		include: path.resolve( __dirname, '../src' ),
+		include: path.join( __dirname, '../src' ),
 		use: [
-			require.resolve( 'ts-loader' ),
+			'ts-loader',
 			{
-				loader: require.resolve( 'react-docgen-typescript-loader' ),
+				loader: 'react-docgen-typescript-loader',
 				options: {
-					tsconfigPath: path.resolve( __dirname, '../tsconfig.json' ),
+					tsconfigPath: path.join( __dirname, '../tsconfig.json' ),
 				},
 			},
 		],
