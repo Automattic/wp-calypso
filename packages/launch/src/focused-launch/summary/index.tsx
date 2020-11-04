@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { TextControl, SVG, Path } from '@wordpress/components';
 import React from 'react';
 import DomainPicker from '@automattic/domain-picker';
-import { useSite, useTitle, useDomainSearch } from '../../hooks';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 
@@ -14,6 +13,7 @@ import { Link } from 'react-router-dom';
  * Internal dependencies
  */
 import { FocusedLaunchRoute } from '../routes';
+import { useSite, useTitle, useDomainSearch } from '../../hooks';
 
 import './style.scss';
 
