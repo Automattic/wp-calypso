@@ -12,7 +12,7 @@ import React from 'react';
 import { isPlan } from 'calypso/lib/products-values';
 import PayButton from './pay-button';
 import PaymentBox from './payment-box';
-import TermsOfService from 'calypso/my-sites/checkout/composite-checkout/terms-of-service';
+import TermsOfService from 'calypso/my-sites/checkout/composite-checkout/components/terms-of-service';
 
 class FreeTrialConfirmationBox extends React.Component {
 	content = () => {
