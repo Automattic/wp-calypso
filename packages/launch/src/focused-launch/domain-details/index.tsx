@@ -8,17 +8,17 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { FocusedLaunchRoute } from '../routes';
+import { Route } from '../route';
 
 import './style.scss';
 
-const FocusedLaunchOverview: React.FunctionComponent = () => {
+const DomainDetails: React.FunctionComponent = () => {
 	return (
 		<div>
-			<Link to={ FocusedLaunchRoute.Summary }>{ __( 'Go back', __i18n_text_domain__ ) }</Link>
+			<Link to={ Route.Summary }>{ __( 'Go back', __i18n_text_domain__ ) }</Link>
 			<p>{ __( 'Choose a domain', __i18n_text_domain__ ) }</p>
 		</div>
 	);
 };
 
-export default FocusedLaunchOverview;
+export default DomainDetails;

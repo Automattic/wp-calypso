@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 /**
  * Internal dependencies
  */
-import { FocusedLaunchRoute } from '../routes';
+import { Route } from '../route';
 import { useSite, useTitle, useDomainSearch } from '../../hooks';
 
 import './style.scss';
@@ -31,7 +31,7 @@ interface Props {
 	siteId: number;
 }
 
-const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) => {
+const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const { title, updateTitle, saveTitle } = useTitle( siteId );
 
 	const site = useSite();
@@ -95,7 +95,7 @@ const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) =>
 							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
 							quantity={ 3 }
 						/>
-						<Link to={ FocusedLaunchRoute.DomainDetails }>
+						<Link to={ Route.DomainDetails }>
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</div>
@@ -126,9 +126,7 @@ const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) =>
 						<p className="summary__mobile-commentary summary__mobile-only">
 							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
 						</p>
-						<Link to={ FocusedLaunchRoute.PlanDetails }>
-							{ __( 'View all plans', __i18n_text_domain__ ) }
-						</Link>
+						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</div>
 				</div>
 				<div className="summary__side-commentary">
@@ -152,4 +150,4 @@ const FocusedLaunchSummary: React.FunctionComponent< Props > = ( { siteId } ) =>
 	);
 };
 
-export default FocusedLaunchSummary;
+export default Summary;

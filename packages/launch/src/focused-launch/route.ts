@@ -1,4 +1,4 @@
-export enum FocusedLaunchRoute {
+export enum Route {
 	Summary = '/',
 	PlanDetails = '/plan-details',
 	DomainDetails = '/domain-details',
