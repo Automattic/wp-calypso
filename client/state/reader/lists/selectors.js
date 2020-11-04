@@ -6,6 +6,7 @@ import { filter, find, has, includes, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
+import { withoutHttp } from 'calypso/lib/url';
 import createSelector from 'calypso/lib/create-selector';
 import 'calypso/state/reader/init';
 
@@ -121,6 +122,15 @@ export function getListByOwnerAndSlug( state, owner, slug ) {
 
 export function getListItems( state, listId ) {
 	return state.reader?.lists?.listItems?.[ listId ];
+}
+
+export function getMatchingFeed( state, { feedUrl, listId } ) {
+	const list = state.reader?.lists?.listItems?.[ listId ];
+	list?.filter( ( item ) => {
+		const url = item.meta.data.feed?.resolved_feed_url;
+		return url && withoutHttp( url ) === withoutHttp( feedUrl );
+	} );
+	return list?.length > 0 ? list[ 0 ] : false;
 }
 
 /**

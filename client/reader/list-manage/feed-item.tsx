@@ -62,24 +62,32 @@ function renderFeedError( err: FeedError ) {
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 function FeedItem( props: {
 	item: Item;
-	onRemove: ( e: MouseEvent ) => void;
+	onAdd?: ( e: MouseEvent ) => void;
+	onRemove?: ( e: MouseEvent ) => void;
 	feed: Feed | FeedError;
 } ) {
-	const { feed, item, onRemove } = props;
+	const { feed, item } = props;
 	const translate = useTranslate();
 
 	return ! feed ? (
 		// TODO: Add support for removing invalid feed list item
 		<>
 			<SitePlaceholder />
-			<QueryReaderFeed feedId={ item.feed_ID } />
+			<QueryReaderFeed feedId={ +item.feed_ID } />
 		</>
 	) : (
 		<>
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
-			<Button primary onClick={ onRemove }>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ !! props.onAdd && (
+				<Button primary onClick={ props.onAdd }>
+					{ translate( 'Follow' ) }
+				</Button>
+			) }
+			{ !! props.onRemove && (
+				<Button primary onClick={ props.onRemove }>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 		</>
 	);
 }

@@ -60,7 +60,11 @@ function renderSiteError( err: SiteError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
+export default function SiteItem( props: {
+	item: Item;
+	onAdd?: ( e: MouseEvent ) => void;
+	onRemove?: ( e: MouseEvent ) => void;
+} ) {
 	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
 	const translate = useTranslate();
 
@@ -72,9 +76,16 @@ export default function SiteItem( props: { item: Item; onRemove: ( e: MouseEvent
 	return (
 		<>
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
-			<Button primary onClick={ props.onRemove }>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ !! props.onAdd && (
+				<Button primary onClick={ props.onAdd }>
+					{ translate( 'Follow' ) }
+				</Button>
+			) }
+			{ !! props.onRemove && (
+				<Button primary onClick={ props.onRemove }>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 		</>
 	);
 }

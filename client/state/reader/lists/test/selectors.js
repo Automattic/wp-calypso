@@ -12,6 +12,7 @@ import {
 	getSubscribedLists,
 	isUpdatedList,
 	getListByOwnerAndSlug,
+	getMatchingFeed,
 	isSubscribedByOwnerAndSlug,
 	hasError,
 	isMissingByOwnerAndSlug,
@@ -191,6 +192,60 @@ describe( 'selectors', () => {
 				owner: 'lister',
 				slug: 'bananas',
 			} );
+		} );
+	} );
+
+	describe( '#getMatchingFeed()', () => {
+		test( 'should return false if the list does not exist', () => {
+			const list = getMatchingFeed(
+				{ reader: { lists: { listItems: {} } } },
+				{
+					feedUrl: 'www.example.com',
+					listId: 1,
+				}
+			);
+			expect( list ).to.eql( false );
+		} );
+
+		test( 'should return the feed if it exists in the specified list', () => {
+			const matchingFeed = {
+				meta: {
+					data: {
+						feed: {
+							blog_ID: 0,
+							resolved_feed_url: 'https://www.example.com/rss',
+						},
+					},
+				},
+				feed_ID: 1,
+			};
+			const state = {
+				reader: {
+					lists: {
+						listItems: {
+							1: [ matchingFeed ],
+						},
+					},
+				},
+			};
+			expect(
+				getMatchingFeed( state, {
+					feedUrl: 'https://www.example.com/rss',
+					listId: 1,
+				} )
+			).to.eql( matchingFeed );
+			expect(
+				getMatchingFeed( state, {
+					feedUrl: 'http://www.example.com/rss',
+					listId: 1,
+				} )
+			).to.eql( matchingFeed );
+			expect(
+				getMatchingFeed( state, {
+					feedUrl: 'www.example.com/rss',
+					listId: 1,
+				} )
+			).to.eql( matchingFeed );
 		} );
 	} );
 

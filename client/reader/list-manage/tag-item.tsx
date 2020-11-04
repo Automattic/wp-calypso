@@ -14,7 +14,11 @@ import { Item, Tag } from './types';
 import TagTitle from './tag-title';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
+export default function TagItem( props: {
+	item: Item;
+	onAdd?: ( e: MouseEvent ) => void;
+	onRemove?: ( e: MouseEvent ) => void;
+} ) {
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 	const translate = useTranslate();
 
@@ -37,9 +41,16 @@ export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent 
 					</div>
 				</a>
 			</div>
-			<Button primary onClick={ props.onRemove }>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ !! props.onAdd && (
+				<Button primary onClick={ props.onAdd }>
+					{ translate( 'Follow' ) }
+				</Button>
+			) }
+			{ !! props.onRemove && (
+				<Button primary onClick={ props.onRemove }>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 		</>
 	);
 }

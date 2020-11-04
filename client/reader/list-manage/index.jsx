@@ -27,6 +27,7 @@ import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/a
 import ReaderExportButton from 'calypso/blocks/reader-export-button';
 import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
 import Missing from 'calypso/reader/list-stream/missing';
+import ItemAdder from './item-adder';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
 import ListItem from './list-item';
@@ -56,9 +57,25 @@ function Items( { list, listItems, owner } ) {
 	if ( ! listItems ) {
 		return <Card>{ translate( 'Loading…' ) }</Card>;
 	}
-	return listItems.map( ( item ) => (
-		<ListItem key={ item.ID } owner={ owner } list={ list } item={ item } />
-	) );
+	return (
+		<>
+			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
+			{ listItems?.length > 0 && (
+				<>
+					<hr className="list-manage__subscriptions-separator" />
+					<h1 className="list-manage__subscriptions-header">Added sites</h1>
+					{ listItems.map( ( item ) => (
+						<ListItem
+							key={ item.feed_ID || item.site_ID || item.tag_ID }
+							owner={ owner }
+							list={ list }
+							item={ item }
+						/>
+					) ) }
+				</>
+			) }
+		</>
+	);
 }
 
 function Export( { list, listItems } ) {
