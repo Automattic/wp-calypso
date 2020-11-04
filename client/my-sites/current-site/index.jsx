@@ -92,7 +92,7 @@ class CurrentSite extends Component {
 									<Gridicon icon="chevron-left" />
 								) }
 								<span className="current-site__switch-sites-label">
-									{ translate( 'Switch Site' ) }
+									{ translate( 'Browse Sites' ) }
 								</span>
 							</Button>
 						</span>
