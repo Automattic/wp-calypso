@@ -16,6 +16,7 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
 import { preventWidows } from 'calypso/lib/formatting';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -79,7 +80,7 @@ const BackupsJetpackDisconnectedBody: FunctionComponent = () => {
 			buttonText={ translate( 'Reconnect Jetpack' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) ) }
 			iconComponent={ <JetpackDisconnectedIcon /> }
-			secondaryButtonLink="https://dashboard.vaultpress.com/"
+			secondaryButtonLink={ JETPACK_SUPPORT }
 			secondaryButtonText={ translate( 'I need help' ) }
 			secondaryOnClick={ () =>
 				dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) )

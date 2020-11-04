@@ -17,6 +17,7 @@ import {
 } from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
+import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import DocumentHead from 'calypso/components/data/document-head';
 import ExternalLink from 'calypso/components/external-link';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -78,7 +79,7 @@ const BackupNoJetpackConnected: FunctionComponent = () => {
 				</Button>
 				<Button
 					className="backup__wpcom-cta backup__wpcom-realtime-cta"
-					href="https://dashboard.vaultpress.com"
+					href={ JETPACK_SUPPORT }
 					onClick={ onUpgradeClick }
 				>
 					{ translate( 'I need help' ) }
