@@ -50,6 +50,7 @@ import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import { login } from 'calypso/lib/paths';
 import config from 'calypso/config';
+import getContactDetailsType from '../lib/get-contact-details-type';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -119,7 +120,6 @@ export default function WPCheckout( {
 	);
 	const shouldShowContactStep =
 		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
 	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
@@ -364,7 +364,7 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
-									shouldShowDomainContactFields={ shouldShowDomainContactFields }
+									contactDetailsType={ getContactDetailsType( responseCart ) }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}
