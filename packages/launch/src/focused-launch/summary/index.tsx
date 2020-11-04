@@ -1,3 +1,5 @@
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 /**
  * External dependencies
  */
@@ -40,23 +42,23 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 	const domainSearch = useDomainSearch();
 
 	return (
-		<div className="summary__container">
-			<div className="summary__section">
+		<div className="focused-launch-summary__container">
+			<div className="focused-launch-summary__section">
 				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
-				<p className="summary__caption">
+				<p className="focused-launch-summary__caption">
 					{ __(
 						'Prepare for launch! Confirm a few final things before you take it live.',
 						__i18n_text_domain__
 					) }
 				</p>
 			</div>
-			<div className="summary__step">
-				<div className="summary__data-input">
-					<div className="summary__section">
+			<div className="focused-launch-summary__step">
+				<div className="focused-launch-summary__data-input">
+					<div className="focused-launch-summary__section">
 						<TextControl
-							className="summary__input"
+							className="focused-launch-summary__input"
 							label={
-								<label className="summary__label">
+								<label className="focused-launch-summary__label">
 									{ __( '1. Name your site', __i18n_text_domain__ ) }
 								</label>
 							}
@@ -68,18 +70,18 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 						/>
 					</div>
 				</div>
-				<div className="summary__side-commentary"></div>
+				<div className="focused-launch-summary__side-commentary"></div>
 			</div>
-			<div className="summary__step">
-				<div className="summary__data-input">
-					<div className="summary__section">
+			<div className="focused-launch-summary__step">
+				<div className="focused-launch-summary__data-input">
+					<div className="focused-launch-summary__section">
 						<DomainPicker
 							header={
 								<>
-									<label className="summary__label">
+									<label className="focused-launch-summary__label">
 										{ __( '2. Confirm your domain', __i18n_text_domain__ ) }
 									</label>
-									<p className="summary__mobile-commentary summary__mobile-only">
+									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 										<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
 									</p>
 								</>
@@ -100,47 +102,47 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 						</Link>
 					</div>
 				</div>
-				<div className="summary__side-commentary">
-					<p className="summary__side-commentary-title">
+				<div className="focused-launch-summary__side-commentary">
+					<p className="focused-launch-summary__side-commentary-title">
 						<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
 					</p>
-					<ul className="summary__side-commentary-list">
-						<li className="summary__side-commentary-list-item">
+					<ul className="focused-launch-summary__side-commentary-list">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Stand out with a unique domain
 						</li>
-						<li className="summary__side-commentary-list-item">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Easy to remember and easy to share
 						</li>
-						<li className="summary__side-commentary-list-item">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Builds brand recognition and trust
 						</li>
 					</ul>
 				</div>
 			</div>
-			<div className="summary__step">
-				<div className="summary__data-input">
-					<div className="summary__section">
-						<label className="summary__label">
+			<div className="focused-launch-summary__step">
+				<div className="focused-launch-summary__data-input">
+					<div className="focused-launch-summary__section">
+						<label className="focused-launch-summary__label">
 							{ __( '3. Confirm your plan', __i18n_text_domain__ ) }
 						</label>
-						<p className="summary__mobile-commentary summary__mobile-only">
+						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
 						</p>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</div>
 				</div>
-				<div className="summary__side-commentary">
-					<p className="summary__side-commentary-title">
+				<div className="focused-launch-summary__side-commentary">
+					<p className="focused-launch-summary__side-commentary-title">
 						Monetize your site with <strong>WordPress Premium</strong>
 					</p>
-					<ul className="summary__side-commentary-list">
-						<li className="summary__side-commentary-list-item">
+					<ul className="focused-launch-summary__side-commentary-list">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Advanced tools and customization
 						</li>
-						<li className="summary__side-commentary-list-item">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Unlimited premium themes
 						</li>
-						<li className="summary__side-commentary-list-item">
+						<li className="focused-launch-summary__side-commentary-list-item">
 							<Icon icon={ check } /> Accept payments
 						</li>
 					</ul>
