@@ -41,22 +41,13 @@ describe( 'actions', () => {
 	} );
 
 	describe( '#requestList()', () => {
-		useNock( ( nock ) => {
-			nock( 'https://public-api.wordpress.com:443' )
-				.get( '/rest/v1.2/read/lists/listowner/listslug' )
-				.reply( 200, {
-					list: {
-						ID: 123,
-						title: 'My test list',
-					},
-				} );
-		} );
+		test( 'should return an action object', () => {
+			const action = requestList( 'pob', 'things-i-like' );
 
-		test( 'should dispatch fetch action when thunk triggered', () => {
-			requestList()( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
+			expect( action ).toEqual( {
 				type: READER_LIST_REQUEST,
+				listOwner: 'pob',
+				listSlug: 'things-i-like',
 			} );
 		} );
 	} );
