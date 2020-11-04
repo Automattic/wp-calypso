@@ -87,7 +87,8 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 							analyticsUiAlgo="focused_launch_domain_picker"
 							onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
 							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
-							quantity={ 3 }
+							quantity={ 1 }
+							quantityExpanded={ 1 }
 						/>
 					</div>
 				</div>
