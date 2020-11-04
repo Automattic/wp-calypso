@@ -48,7 +48,7 @@ export function showUpsellIfNoBackup( context, next ) {
 	next();
 }
 
-export function showJetpackConnectionFailed( context, next ) {
+export function showJetpackIsDisconnected( context, next ) {
 	const JetpackConnectionFailed = isJetpackCloud() ? (
 		<BackupUpsell reason="no_connected_jetpack" />
 	) : (

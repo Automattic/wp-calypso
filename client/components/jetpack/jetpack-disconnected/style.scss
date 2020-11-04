@@ -1,8 +1,4 @@
-.backup-upsell__content {
-	padding-top: 40px;
-}
-
-.backup-upsell__icon-header {
+.jetpack-disconnected__icon-header {
 	text-align: center;
 
 	img {
@@ -13,4 +9,10 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		text-align: start;
 	}
+}
+
+.jetpack-disconnected__paragraph {
+	display: block;
+
+	margin-bottom: 1.5rem;
 }

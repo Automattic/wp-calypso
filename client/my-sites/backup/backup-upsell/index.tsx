@@ -8,22 +8,19 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
-import ExternalLink from 'calypso/components/external-link';
+import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import Upsell from 'calypso/components/jetpack/upsell';
 import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
-import { preventWidows } from 'calypso/lib/formatting';
-import { JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
 import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
-import JetpackDisconnected from 'calypso/assets/images/jetpack/disconnected-gray.svg';
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (
@@ -40,55 +37,6 @@ const VaultPressIcon = () => (
 		<img src={ VaultPressLogo } alt="VaultPress logo" />
 	</div>
 );
-
-const JetpackDisconnectedIcon = () => (
-	<div className="backup-upsell__icon-header">
-		<img src={ JetpackDisconnected } alt="Jetpack disconnected status" />
-	</div>
-);
-
-const BackupsJetpackDisconnectedBody: FunctionComponent = () => {
-	const translate = useTranslate();
-	const dispatch = useDispatch();
-	const { name: siteName, slug: siteSlug, URL: siteUrl } = useSelector( getSelectedSite );
-	const reconnectUrl = `https://wordpress.com/settings/disconnect-site/${ siteSlug }`;
-	const body = [
-		<span className="backup-upsell__paragraph" key="paragraph-1">
-			{ preventWidows(
-				translate( 'Jetpack is unable to reach your site {{siteName/}} at this moment.', {
-					components: { siteName: <strong>{ siteName }</strong> },
-				} )
-			) }
-		</span>,
-		<span className="backup-upsell__paragraph" key="paragraph-2">
-			{ preventWidows(
-				translate(
-					'Please visit {{siteUrl/}} to ensure your site loading correctly and reconnect Jetpack if necessary.',
-					{
-						components: {
-							siteUrl: <ExternalLink href={ siteUrl }>{ siteUrl }</ExternalLink>,
-						},
-					}
-				)
-			) }
-		</span>,
-	];
-	return (
-		<Upsell
-			headerText={ translate( 'Jetpack connection has failed' ) }
-			bodyText={ body }
-			buttonLink={ reconnectUrl }
-			buttonText={ translate( 'Reconnect Jetpack' ) }
-			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_reconnect_click' ) ) }
-			iconComponent={ <JetpackDisconnectedIcon /> }
-			secondaryButtonLink={ JETPACK_SUPPORT }
-			secondaryButtonText={ translate( 'I need help' ) }
-			secondaryOnClick={ () =>
-				dispatch( recordTracksEvent( 'calypso_jetpack_backup_support_click' ) )
-			}
-		/>
-	);
-};
 
 const BackupsMultisiteBody: FunctionComponent = () => {
 	const translate = useTranslate();
@@ -145,7 +93,7 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 			body = <BackupsMultisiteBody />;
 			break;
 		case 'no_connected_jetpack':
-			body = <BackupsJetpackDisconnectedBody />;
+			body = <JetpackDisconnected />;
 			break;
 		default:
 			body = <BackupsUpsellBody />;
