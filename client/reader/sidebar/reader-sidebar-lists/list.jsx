@@ -9,6 +9,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
+import config from 'calypso/config';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
@@ -54,7 +55,9 @@ export class ReaderSidebarListsList extends React.Component {
 		return (
 			<ul className="sidebar__menu-list">
 				{ this.renderItems() }
-				<ListItemCreateLink key="create-item-link" path={ this.props.path } />
+				{ config.isEnabled( 'reader/list-management' ) && (
+					<ListItemCreateLink key="create-item-link" path={ this.props.path } />
+				) }
 			</ul>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
