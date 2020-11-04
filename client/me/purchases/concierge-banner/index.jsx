@@ -100,10 +100,11 @@ class ConciergeBanner extends Component {
 			case CONCIERGE_SUGGEST_PURCHASE_CONCIERGE:
 				headerText = translate( 'Need an expert by your side?' );
 				mainText = translate(
-					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these 45 minute calls.',
+					'We offer one-on-one Quick Start sessions dedicated to your site’s success. Click the button to learn how we can help you during these %(durationInMinutes)d minute calls.',
 					{
 						comment:
 							'Quick Start Session is a one-on-one video session between the user and our support staff.',
+						args: { durationInMinutes: 30 },
 					}
 				);
 				buttonText = translate( 'Learn more' );
