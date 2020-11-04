@@ -2,33 +2,33 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { useEntityProp } from '@wordpress/core-data';
+import { useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { SITE_STORE } from '../stores';
 
-export function useTitle() {
-	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
-	const [ title, setTitle ] = useEntityProp( 'root', 'site', 'title' );
-	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	const { saveEditedEntityRecord } = useDispatch( 'core' );
+export function useTitle( siteId: number ) {
+	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
+	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
 
-	const handleSave = ( newTitle = title ) => {
-		setTitle( newTitle.trim() );
-		saveEditedEntityRecord( 'root', 'site' );
+	useEffect( () => {
+		setLocalStateTitle( title || '' );
+	}, [ title ] );
 
-		// update domainSearch only if there is no custom Domain selected
-		! domain && setDomainSearch( newTitle );
-	};
+	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
+
 	return {
-		title,
-		updateTitle: setTitle,
-		saveTitle: handleSave,
+		title: localStateTitle,
+		updateTitle: setLocalStateTitle,
+		saveTitle: () => {
+			// if saveTitle is called before the original title is fetched, it is a noop
+			// this is needed to make sure not to overwrite the original title by calling saveTitle too early
+			if ( typeof title === 'undefined' ) {
+				return;
+			}
+			saveSiteTitle( siteId, localStateTitle );
+		},
 	};
 }

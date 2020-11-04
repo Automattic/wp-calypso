@@ -2,12 +2,11 @@
  * External dependencies
  */
 import { Title } from '@automattic/onboarding';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { TextControl, SVG, Path } from '@wordpress/components';
 import * as React from 'react';
 import DomainPicker from '@automattic/domain-picker';
-import { useSite, useDomainSearch } from '../hooks';
+import { useSite, useTitle, useDomainSearch } from '../hooks';
 import { Icon, check } from '@wordpress/icons';
 
 import './styles.scss';
@@ -22,13 +21,15 @@ function noop( ...args: unknown[] ) {
 	return args;
 }
 
-const FocusedLaunch: React.FunctionComponent = () => {
-	const { getSite } = useSelect( ( select ) => select( 'core' ) ) as any;
-	const title = getSite()?.title;
+interface Props {
+	siteId: number;
+}
+
+const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
+	const { title, updateTitle, saveTitle } = useTitle( siteId );
 
 	const site = useSite();
 
-	const [ siteTitle, setSiteTitle ] = React.useState( title );
 	const [ siteDomainName ] = React.useState( site.currentDomainName );
 	const domainSearch = useDomainSearch();
 
@@ -43,7 +44,6 @@ const FocusedLaunch: React.FunctionComponent = () => {
 					) }
 				</p>
 			</div>
-
 			<div className="focused-launch__step">
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
@@ -54,8 +54,9 @@ const FocusedLaunch: React.FunctionComponent = () => {
 									{ __( '1. Name your site', __i18n_text_domain__ ) }
 								</label>
 							}
-							value={ siteTitle }
-							onChange={ ( value ) => setSiteTitle( value ) }
+							value={ title }
+							onChange={ updateTitle }
+							onBlur={ saveTitle }
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
 						/>
@@ -63,7 +64,6 @@ const FocusedLaunch: React.FunctionComponent = () => {
 				</div>
 				<div className="focused-launch__side-commentary"></div>
 			</div>
-
 			<div className="focused-launch__step">
 				<div className="focused-launch__data-input">
 					<div className="focused-launch__section">
@@ -80,7 +80,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 							}
 							existingSubdomain={ siteDomainName }
 							currentDomain={ siteDomainName }
-							onDomainSelect={ setSiteTitle }
+							onDomainSelect={ noop }
 							initialDomainSearch={ domainSearch }
 							showSearchField={ false }
 							analyticsFlowId="focused-launch"
