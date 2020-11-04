@@ -148,6 +148,12 @@ The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
 
+### CheckoutCheckIcon
+
+An icon that is displayed for each complete step.
+
+Requires an `id` prop, which is a string that is used to construct the SVG `id`.
+
 ### CheckoutErrorBoundary
 
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
