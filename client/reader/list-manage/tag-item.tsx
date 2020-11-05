@@ -11,6 +11,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { Item, Tag } from './types';
+import TagTitle from './tag-title';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent ) => void } ) {
@@ -29,7 +30,9 @@ export default function TagItem( props: { item: Item; onRemove: ( e: MouseEvent 
 					</div>
 
 					<div className="list-item__info">
-						<div className="list-item__title">{ tag.display_name || tag.slug }</div>
+						<div className="list-item__title">
+							<TagTitle tag={ tag } />
+						</div>
 						<div className="list-item__domain">{ tag.slug }</div>
 					</div>
 				</a>

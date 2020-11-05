@@ -23,6 +23,9 @@ import {
 	READER_LISTS_DELETE_STATE_CONFIRMING,
 	READER_LISTS_DELETE_STATE_DELETED,
 } from './constants';
+import FeedTitle from './feed-title';
+import SiteTitle from './site-title';
+import TagTitle from './tag-title';
 
 export default function ListItem( props: { item: Item; owner: string; list: any } ) {
 	const { item, owner, list } = props;
@@ -36,13 +39,13 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 		deleteAction = deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID );
 		feed = item.meta?.data?.feed;
 		if ( feed ) {
-			itemTitle = feed.name || feed.URL || feed.feed_URL;
+			itemTitle = <FeedTitle feed={ feed } />;
 		}
 	} else if ( item.site_ID ) {
 		deleteAction = deleteReaderListSite( list.ID, owner, list.slug, item.site_ID );
 		site = item.meta?.data?.site;
 		if ( site ) {
-			itemTitle = site.name || site.URL || site.feed_URL;
+			itemTitle = <SiteTitle site={ site } />;
 		}
 	} else {
 		deleteAction = deleteReaderListTag(
@@ -54,7 +57,7 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 		);
 		tag = item.meta?.data?.tag;
 		if ( tag ) {
-			itemTitle = tag.display_name || tag.slug;
+			itemTitle = <TagTitle tag={ tag } />;
 		}
 	}
 
