@@ -3,6 +3,7 @@
  */
 import { Site } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -19,6 +20,10 @@ export function usePlanFromPath() {
 }
 
 export function useSelectedPlan() {
+	const { i18nLocale } = useI18n();
+	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
+	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( i18nLocale ) );
+
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 
