@@ -5,13 +5,12 @@ import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
+import { LaunchContext } from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
 import LaunchModal from './launch-modal';
-import { useOnLaunch } from '@automattic/launch';
-
 import { LAUNCH_STORE } from './stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
@@ -24,9 +23,6 @@ registerPlugin( 'a8c-editor-site-launch', {
 		const { closeSidebar, setSidebarFullscreen, unsetSidebarFullscreen } = useDispatch(
 			LAUNCH_STORE
 		);
-
-		// handle redirects to checkout / my home after launch
-		useOnLaunch();
 
 		React.useEffect( () => {
 			// @automattic/viewport doesn't have a breakpoint for medium (782px)
@@ -44,6 +40,10 @@ registerPlugin( 'a8c-editor-site-launch', {
 			return null;
 		}
 
-		return <LaunchModal onClose={ closeSidebar } />;
+		return (
+			<LaunchContext.Provider value={ { siteId: window._currentSiteId } }>
+				<LaunchModal onClose={ closeSidebar } />
+			</LaunchContext.Provider>
+		);
 	},
 } );

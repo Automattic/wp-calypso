@@ -102,7 +102,6 @@
 		"@wordpress/base-styles": "2.0.1",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
-		"@wordpress/core-data": "^2.16.0",
 		"@wordpress/components": "*",
 		"@wordpress/compose": "*",
 		"@wordpress/data": "*",
