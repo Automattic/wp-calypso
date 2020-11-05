@@ -6,6 +6,7 @@ import { compact } from 'lodash';
 /**
  * Image dependencies
  */
+import classicDarkImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-dark.svg';
 import classicBrightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
 import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
 import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
@@ -25,6 +26,14 @@ import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbn
 
 export default function ( translate ) {
 	return compact( [
+		{
+			label: translate( 'Classic Dark' ),
+			value: 'classic-dark',
+			thumbnail: {
+				cssClass: 'is-classic-dark',
+				imageUrl: classicDarkImg,
+			},
+		},
 		{
 			label: translate( 'Classic Bright' ),
 			value: 'classic-bright',
