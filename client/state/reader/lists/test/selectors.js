@@ -12,7 +12,7 @@ import {
 	getSubscribedLists,
 	isUpdatedList,
 	getListByOwnerAndSlug,
-	getMatchingFeed,
+	getMatchingItem,
 	isSubscribedByOwnerAndSlug,
 	hasError,
 	isMissingByOwnerAndSlug,
@@ -195,57 +195,57 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#getMatchingFeed()', () => {
+	describe( '#getMatchingItem()', () => {
+		const feed = {
+			meta: { data: { feed: { blog_ID: 0, resolved_feed_url: 'https://www.example.com/rss' } } },
+			feed_ID: 1,
+		};
+		const site = {
+			meta: { data: { site: { blog_ID: 0 } } },
+			site_ID: 1,
+		};
+		const tag = {
+			meta: { data: { tag: { blog_ID: 0 } } },
+			tag_ID: 1,
+		};
+		const state = {
+			reader: {
+				lists: {
+					listItems: {
+						1: [ feed, site, tag ],
+					},
+				},
+			},
+		};
 		test( 'should return false if the list does not exist', () => {
-			const list = getMatchingFeed(
-				{ reader: { lists: { listItems: {} } } },
-				{
-					feedUrl: 'www.example.com',
-					listId: 1,
-				}
-			);
-			expect( list ).to.eql( false );
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com', listId: 2 } ) ).to.eql( false );
 		} );
 
-		test( 'should return the feed if it exists in the specified list', () => {
-			const matchingFeed = {
-				meta: {
-					data: {
-						feed: {
-							blog_ID: 0,
-							resolved_feed_url: 'https://www.example.com/rss',
-						},
-					},
-				},
-				feed_ID: 1,
-			};
-			const state = {
-				reader: {
-					lists: {
-						listItems: {
-							1: [ matchingFeed ],
-						},
-					},
-				},
-			};
+		test( 'should return the matching feed by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { feedId: 1, listId: 1 } ) ).to.eql( feed );
+			expect( getMatchingItem( state, { feedId: 2, listId: 1 } ) ).to.eql( false );
+		} );
+
+		test( 'should return the matching feed by its URL if it exists in the specified list', () => {
 			expect(
-				getMatchingFeed( state, {
-					feedUrl: 'https://www.example.com/rss',
-					listId: 1,
-				} )
-			).to.eql( matchingFeed );
+				getMatchingItem( state, { feedUrl: 'https://www.example.com/rss', listId: 1 } )
+			).to.eql( feed );
 			expect(
-				getMatchingFeed( state, {
-					feedUrl: 'http://www.example.com/rss',
-					listId: 1,
-				} )
-			).to.eql( matchingFeed );
-			expect(
-				getMatchingFeed( state, {
-					feedUrl: 'www.example.com/rss',
-					listId: 1,
-				} )
-			).to.eql( matchingFeed );
+				getMatchingItem( state, { feedUrl: 'http://www.example.com/rss', listId: 1 } )
+			).to.eql( feed );
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com/rss', listId: 1 } ) ).to.eql(
+				feed
+			);
+		} );
+
+		test( 'should return the matching site by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { siteId: 1, listId: 1 } ) ).to.eql( site );
+			expect( getMatchingItem( state, { siteId: 2, listId: 1 } ) ).to.eql( false );
+		} );
+
+		test( 'should return the matching tag by its ID if it exists in the specified list', () => {
+			expect( getMatchingItem( state, { tagId: 1, listId: 1 } ) ).to.eql( tag );
+			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).to.eql( false );
 		} );
 	} );
 

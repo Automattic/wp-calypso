@@ -124,11 +124,19 @@ export function getListItems( state, listId ) {
 	return state.reader?.lists?.listItems?.[ listId ];
 }
 
-export function getMatchingFeed( state, { feedUrl, listId } ) {
-	const list = state.reader?.lists?.listItems?.[ listId ];
-	list?.filter( ( item ) => {
-		const url = item.meta.data.feed?.resolved_feed_url;
-		return url && withoutHttp( url ) === withoutHttp( feedUrl );
+export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId } ) {
+	const list = state.reader?.lists?.listItems?.[ listId ]?.filter( ( item ) => {
+		if ( feedUrl ) {
+			const url = item.meta.data.feed?.resolved_feed_url;
+			return url && withoutHttp( url ) === withoutHttp( feedUrl );
+		} else if ( feedId && item.feed_ID ) {
+			return item.feed_ID === feedId;
+		} else if ( siteId && item.site_ID ) {
+			return item.site_ID === siteId;
+		} else if ( tagId && item.tag_ID ) {
+			return item.tag_ID === tagId;
+		}
+		return false;
 	} );
 	return list?.length > 0 ? list[ 0 ] : false;
 }

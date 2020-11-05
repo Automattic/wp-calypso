@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FollowButton from 'calypso/blocks/follow-button/button';
 import { addSchemeIfMissing, withoutHttp } from 'calypso/lib/url';
 import { addReaderListFeedByUrl, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
-import { getMatchingFeed } from 'calypso/state/reader/lists/selectors';
+import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 
 export default function FeedUrlAdder( { list, query } ) {
 	const translate = useTranslate();
@@ -19,7 +19,7 @@ export default function FeedUrlAdder( { list, query } ) {
 	const dispatch = useDispatch();
 
 	const matchingFeedFromQuery = useSelector( ( state ) =>
-		getMatchingFeed( state, { listId: list.ID, feedUrl: query } )
+		getMatchingItem( state, { listId: list.ID, feedUrl: query } )
 	);
 
 	return (
