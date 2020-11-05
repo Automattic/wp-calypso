@@ -27,7 +27,7 @@ const bulb = (
 
 const info = (
 	<SVG className="focused-launch-summary__info-icon" viewBox="0 0 24 24" width="16">
-		<Circle cx="12" cy="12" stroke="#8C8F94" stroke-width="2" r="10" fill="transparent" />
+		<Circle cx="12" cy="12" stroke="#8C8F94" strokeWidth="2" r="10" fill="transparent" />
 		<Rect x="10.5" y="5" width="3" height="3" fill="#8C8F94" />
 		<Rect x="10.5" y="10" width="3" height="8" fill="#8C8F94" />
 	</SVG>
@@ -213,7 +213,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => 
 
 const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
-	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { sitePrimaryDomain, siteSubdomain } = useSiteDomains();
+	const hasPaidDomain = true;
 
 	const domainSearch = useDomainSearch();
 
