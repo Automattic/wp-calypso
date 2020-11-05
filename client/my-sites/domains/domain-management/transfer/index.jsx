@@ -66,7 +66,7 @@ function Transfer( props ) {
 						{ translate( 'Transfer to another registrar' ) }
 					</VerticalNavItem>
 				) }
-				{ ! isMapping && ! isDomainOnly && (
+				{ ! isDomainOnly && (
 					<VerticalNavItem
 						path={ domainManagementTransferToAnotherUser( slug, selectedDomainName, currentRoute ) }
 					>
