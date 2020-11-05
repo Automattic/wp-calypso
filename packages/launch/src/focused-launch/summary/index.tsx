@@ -131,62 +131,6 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 						</li>
 					</ul>
 				</div>
-				<div className="focused-launch-summary__data-input">
-					<div className="focused-launch-summary__section">
-						{ hasPaidDomain ? (
-							<>
-								<label className="focused-launch__label">
-									{ __( 'Your domain', __i18n_text_domain__ ) }
-								</label>
-								<LockedPurchasedItem domainName={ sitePrimaryDomain?.domain || '' } />
-							</>
-						) : (
-							<DomainPicker
-								header={
-									<>
-										<label className="focused-launch__label">
-											{ stepNumber++ }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
-										</label>
-										<p className="focused-launch__mobile-commentary focused-launch__mobile-only">
-											<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
-										</p>
-									</>
-								}
-								existingSubdomain={ siteSubdomain?.domain }
-								currentDomain={ sitePrimaryDomain?.domain }
-								onDomainSelect={ noop }
-								initialDomainSearch={ domainSearch }
-								showSearchField={ false }
-								analyticsFlowId="focused-launch"
-								analyticsUiAlgo="focused_launch_domain_picker"
-								onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
-								onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
-								quantity={ 3 }
-								quantityExpanded={ 3 }
-								itemType="button"
-							/>
-						) }
-						<Link to={ Route.DomainDetails }>
-							{ __( 'View all domains', __i18n_text_domain__ ) }
-						</Link>
-					</div>
-				</div>
-				<div className="focused-launch-summary__side-commentary">
-					<p className="focused-launch-summary__side-commentary-title">
-						<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
-					</p>
-					<ul className="focused-launch-summary__side-commentary-list">
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Stand out with a unique domain
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Easy to remember and easy to share
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Builds brand recognition and trust
-						</li>
-					</ul>
-				</div>
 			</div>
 			<div className="focused-launch-summary__step">
 				<div className="focused-launch-summary__data-input">
