@@ -7,9 +7,13 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { PanelBody } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import Accordion from 'calypso/components/accordion';
 import { Card, Button } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 import MaterialIcon from 'calypso/components/material-icon';
@@ -91,7 +95,7 @@ const PhpMyAdminCard = ( {
 				) }
 			</p>
 			<div className="phpmyadmin-card__questions">
-				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
+				<PanelBody title={ translate( 'What is phpMyAdmin?' ) } initialOpen={ false }>
 					{ translate(
 						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
@@ -106,7 +110,7 @@ const PhpMyAdminCard = ( {
 							},
 						}
 					) }
-				</Accordion>
+				</PanelBody>
 			</div>
 			<p className="phpmyadmin-card__db-warning">
 				{ translate(
