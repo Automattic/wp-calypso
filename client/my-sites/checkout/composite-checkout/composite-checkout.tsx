@@ -440,7 +440,7 @@ export default function CompositeCheckout( {
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
 	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
-	useRedirectIfCartEmpty(
+	const areWeRedirecting = useRedirectIfCartEmpty(
 		doNotRedirect,
 		items,
 		cartEmptyRedirectUrl,
@@ -640,7 +640,12 @@ export default function CompositeCheckout( {
 		} );
 	}
 
-	if ( responseCart.products.length < 1 && doNotRedirect ) {
+	if (
+		responseCart.products.length < 1 &&
+		! areWeRedirecting &&
+		( areThereErrors || ! isCartPendingUpdate ) &&
+		( areThereErrors || ! isInitialCartLoading )
+	) {
 		const goToPlans = () => {
 			recordEvent( {
 				type: 'EMPTY_CART_CTA_CLICKED',
