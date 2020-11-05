@@ -3,12 +3,15 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import CreditCardPaymentBox from './credit-card-payment-box';
-import { StripeHookProvider } from 'calypso/lib/stripe';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 export function StripeElementsPaymentBox( {
 	translate,
@@ -23,8 +26,9 @@ export function StripeElementsPaymentBox( {
 	cards,
 	incompatibleProducts,
 } ) {
+	const locale = useSelector( getCurrentUserLocale );
 	return (
-		<StripeHookProvider>
+		<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration } locale={ locale }>
 			<CreditCardPaymentBox
 				translate={ translate }
 				cards={ cards }

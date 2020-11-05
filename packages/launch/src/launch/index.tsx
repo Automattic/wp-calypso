@@ -25,13 +25,11 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId
 			title={ __( 'Complete setup', __i18n_text_domain__ ) }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
-			<>
-				<div className="launch__focused-modal-wrapper ">
-					<div className="launch__focused-modal-body">
-						<FocusedLaunch siteId={ siteId } />
-					</div>
+			<div className="launch__focused-modal-wrapper ">
+				<div className="launch__focused-modal-body">
+					<FocusedLaunch siteId={ siteId } />
 				</div>
-			</>
+			</div>
 		</Modal>
 	);
 };

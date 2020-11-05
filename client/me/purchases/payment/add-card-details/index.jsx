@@ -5,6 +5,7 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal Dependencies
@@ -17,16 +18,15 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 function AddCardDetails( props ) {
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
@@ -77,7 +77,11 @@ function AddCardDetails( props ) {
 				{ titles.addCardDetails }
 			</HeaderCake>
 
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<StripeHookProvider
+				locale={ props.locale }
+				configurationArgs={ { needs_intent: true } }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					apiParams={ { purchaseId: props.purchase.id } }
 					createCardToken={ createCardUpdateToken }
@@ -102,6 +106,7 @@ AddCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
+	locale: PropTypes.string,
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
@@ -111,6 +116,7 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	purchase: getByPurchaseId( state, purchaseId ),
 	selectedSite: getSelectedSite( state ),
 	userId: getCurrentUserId( state ),
+	locale: getCurrentUserLocale( state ),
 } );
 
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( AddCardDetails );

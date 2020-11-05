@@ -3,8 +3,9 @@
  */
 import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import page from 'page';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -19,14 +20,14 @@ import CreditCards from 'calypso/me/purchases/credit-cards';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from 'calypso/config';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function useLogPaymentMethodsError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -87,6 +88,7 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 	const reduxDispatch = useDispatch();
 	const saveStoredCard = ( ...args: unknown[] ) => reduxDispatch( addStoredCard( ...args ) );
+	const locale = useSelector( getCurrentUserLocale );
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level add new payment method load error'
 	);
@@ -108,7 +110,11 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 				onError={ logPaymentMethodsError }
 			>
 				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-				<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+				<StripeHookProvider
+					locale={ locale }
+					configurationArgs={ { needs_intent: true } }
+					fetchStripeConfiguration={ getStripeConfiguration }
+				>
 					<CreditCardForm
 						createCardToken={ createAddCardToken }
 						recordFormSubmitEvent={ recordFormSubmitEvent }

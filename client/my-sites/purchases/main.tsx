@@ -111,7 +111,7 @@ export function PurchaseDetails( {
 				onError={ logPurchasesError }
 			>
 				<ManagePurchase
-					cardTitle={ translate( 'Subscription settings' ) }
+					cardTitle={ translate( 'Purchase Settings' ) }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					showHeader={ false }

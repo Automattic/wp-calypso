@@ -34,6 +34,7 @@ import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
 import 'calypso/state/reader/init';
@@ -67,39 +68,14 @@ export function createReaderList( list ) {
 }
 
 /**
- * Triggers a network request to fetch a single Reader list.
+ * Request a single Reader list.
  *
- * @param  {string}  owner List owner
- * @param  {string}  slug List slug
- * @returns {Function}        Action thunk
+ * @param  {string}  listOwner List owner
+ * @param  {string}  listSlug List slug
+ * @returns {object}       Action object
  */
-export function requestList( owner, slug ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_REQUEST,
-		} );
-
-		const query = createQuery( owner, slug );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readList( query, ( error, data ) => {
-				if ( error ) {
-					const errorInfo = {
-						error,
-						owner,
-						slug,
-					};
-					reject( errorInfo );
-				} else {
-					resolve( data );
-				}
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveReaderList( data ) );
-			} )
-			.catch( ( errorInfo ) => dispatch( handleReaderListRequestFailure( errorInfo ) ) );
-	};
+export function requestList( listOwner, listSlug ) {
+	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
 export function receiveReaderList( data ) {
