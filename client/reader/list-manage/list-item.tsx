@@ -18,6 +18,11 @@ import {
 	deleteReaderListSite,
 	deleteReaderListTag,
 } from 'calypso/state/reader/lists/actions';
+import Gridicon from 'calypso/components/gridicon';
+import {
+	READER_LISTS_DELETE_STATE_CONFIRMING,
+	READER_LISTS_DELETE_STATE_DELETED,
+} from './constants';
 
 export default function ListItem( props: { item: Item; owner: string; list: any } ) {
 	const { item, owner, list } = props;
@@ -25,12 +30,20 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 	const dispatch = useDispatch();
 	const [ deleteState, setDeleteState ] = React.useState( '' );
 
-	let deleteAction;
+	let feed, deleteAction, itemTitle, site, tag;
 
 	if ( item.feed_ID ) {
 		deleteAction = deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID );
+		feed = item.meta?.data?.feed;
+		if ( feed ) {
+			itemTitle = feed.name || feed.URL || feed.feed_URL;
+		}
 	} else if ( item.site_ID ) {
 		deleteAction = deleteReaderListSite( list.ID, owner, list.slug, item.site_ID );
+		site = item.meta?.data?.site;
+		if ( site ) {
+			itemTitle = site.name || site.URL || site.feed_URL;
+		}
 	} else {
 		deleteAction = deleteReaderListTag(
 			list.ID,
@@ -39,6 +52,10 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 			item.tag_ID,
 			item.meta?.data?.tag?.tag.slug
 		);
+		tag = item.meta?.data?.tag;
+		if ( tag ) {
+			itemTitle = tag.display_name || tag.slug;
+		}
 	}
 
 	return (
@@ -46,17 +63,26 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 			{ deleteState === '' && (
 				<Card className="list-manage__site-card">
 					{ item.feed_ID && (
-						<FeedItem item={ item } onRemove={ () => setDeleteState( 'confirming' ) } />
+						<FeedItem
+							item={ item }
+							onRemove={ () => setDeleteState( READER_LISTS_DELETE_STATE_CONFIRMING ) }
+						/>
 					) }
 					{ item.site_ID && (
-						<SiteItem item={ item } onRemove={ () => setDeleteState( 'confirming' ) } />
+						<SiteItem
+							item={ item }
+							onRemove={ () => setDeleteState( READER_LISTS_DELETE_STATE_CONFIRMING ) }
+						/>
 					) }
 					{ item.tag_ID && (
-						<TagItem item={ item } onRemove={ () => setDeleteState( 'confirming' ) } />
+						<TagItem
+							item={ item }
+							onRemove={ () => setDeleteState( READER_LISTS_DELETE_STATE_CONFIRMING ) }
+						/>
 					) }
 				</Card>
 			) }
-			{ deleteState === 'confirming' && (
+			{ deleteState === READER_LISTS_DELETE_STATE_CONFIRMING && (
 				<Dialog
 					isVisible={ true }
 					buttons={ [
@@ -65,13 +91,26 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 					] }
 					onClose={ ( action ) => {
 						if ( action === 'delete' ) {
-							return [ dispatch( deleteAction ), setDeleteState( 'deleted' ) ];
+							return [
+								dispatch( deleteAction ),
+								setDeleteState( READER_LISTS_DELETE_STATE_DELETED ),
+							];
 						}
 
 						setDeleteState( '' );
 					} }
 				>
 					<h1>{ translate( 'Are you sure you want to remove this item?' ) }</h1>
+					{ itemTitle && (
+						<p className="list-manage__dialog-item-title">
+							<Gridicon
+								className="list-manage__dialog-item-title-icon"
+								icon={ tag ? 'tag' : 'globe' }
+								size="16"
+							/>
+							<strong>{ itemTitle }</strong>
+						</p>
+					) }
 					<p>{ translate( 'This action cannot be undone.' ) }</p>
 				</Dialog>
 			) }
