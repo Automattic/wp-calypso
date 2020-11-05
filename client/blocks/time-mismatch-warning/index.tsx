@@ -12,7 +12,7 @@ import Notice from 'calypso/components/notice';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import { preventWidows } from 'calypso/lib/formatting';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
-import { setPreference } from 'calypso/state/preferences/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 interface ExternalProps {
 	status?: string;
@@ -46,7 +46,7 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 		return null;
 	}
 
-	const dismissClick = () => dispatch( setPreference( dismissPreference, 1 ) );
+	const dismissClick = () => dispatch( savePreference( dismissPreference, 1 ) );
 
 	return (
 		<Notice status={ status } onDismissClick={ dismissClick }>
