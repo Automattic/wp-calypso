@@ -59,7 +59,7 @@ expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
 
 When a user for example clicks an element does the component react like it should?
 
-Example test from `client/components/token-field`:
+Example test from `calypso/client/components/token-field`:
 
 ```javascript
 test( 'should remove tokens when X icon clicked', () => {
