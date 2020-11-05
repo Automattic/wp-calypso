@@ -32,5 +32,10 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ {} ]
+	"references": [
+		{ "path": "../data-stores" },
+		{ "path": "../domain-picker" },
+		{ "path": "../onboarding" },
+		{ "path": "../react-i18n" }
+	]
 }
