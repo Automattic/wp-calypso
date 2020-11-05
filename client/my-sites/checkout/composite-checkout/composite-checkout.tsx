@@ -641,7 +641,16 @@ export default function CompositeCheckout( {
 	}
 
 	if ( responseCart.products.length < 1 && doNotRedirect ) {
-		const goToPlans = () => ( siteSlug ? page( `/plans/${ siteSlug }` ) : page( '/plans' ) );
+		const goToPlans = () => {
+			recordEvent( {
+				type: 'EMPTY_CART_CTA_CLICKED',
+			} );
+			if ( siteSlug ) {
+				page( `/plans/${ siteSlug }` );
+			} else {
+				page( '/plans' );
+			}
+		};
 		return (
 			<React.Fragment>
 				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
