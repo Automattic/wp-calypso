@@ -404,6 +404,10 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							url: action.payload.url,
 						} )
 					);
+				case 'EMPTY_CART_CTA_CLICKED':
+					return reduxDispatch(
+						recordTracksEvent( 'calypso_checkout_composite_empty_cart_clicked' )
+					);
 				default:
 					debug( 'unknown checkout event', action );
 					return reduxDispatch(

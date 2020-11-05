@@ -17,7 +17,7 @@ export default function useRedirectIfCartEmpty< T >(
 	items: Array< T >,
 	redirectUrl: string,
 	createUserAndSiteBeforeTransaction: boolean
-): void {
+): boolean {
 	const didRedirect = useRef< boolean >( false );
 	useEffect( () => {
 		if ( didRedirect.current || doNotRedirect ) {
@@ -46,4 +46,5 @@ export default function useRedirectIfCartEmpty< T >(
 			return;
 		}
 	}, [ redirectUrl, items, doNotRedirect, createUserAndSiteBeforeTransaction ] );
+	return didRedirect.current;
 }
