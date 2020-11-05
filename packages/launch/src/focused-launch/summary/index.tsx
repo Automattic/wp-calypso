@@ -5,7 +5,7 @@
  */
 import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
-import { TextControl, SVG, Path } from '@wordpress/components';
+import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import React from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
@@ -27,6 +27,14 @@ const bulb = (
 	</SVG>
 );
 
+const info = (
+	<SVG className="focused-launch-summary__info-icon" viewBox="0 0 24 24" width="16">
+		<Circle cx="12" cy="12" stroke="#8C8F94" stroke-width="2" r="10" fill="transparent" />
+		<Rect x="10.5" y="5" width="3" height="3" fill="#8C8F94" />
+		<Rect x="10.5" y="10" width="3" height="8" fill="#8C8F94" />
+	</SVG>
+);
+
 function noop( ...args: unknown[] ) {
 	return args;
 }
@@ -41,7 +49,7 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 		select( SITE_STORE ).getPrimarySiteDomain( siteId )
 	);
 	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
-	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
+	const hasPaidDomain = 1 || ( sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain );
 
 	const domainSearch = useDomainSearch();
 
@@ -84,6 +92,15 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 							<>
 								<label className="focused-launch-summary__label">
 									{ __( 'Your domain', __i18n_text_domain__ ) }
+									<Tooltip
+										position="top center"
+										text={ __(
+											'Changes to your purchased domain can be managed from your Domains page.',
+											__i18n_text_domain__
+										) }
+									>
+										{ info }
+									</Tooltip>
 								</label>
 								<LockedPurchasedItem domainName={ sitePrimaryDomain?.domain || '' } />
 							</>
