@@ -213,8 +213,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => 
 
 const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
-	const { sitePrimaryDomain, siteSubdomain } = useSiteDomains();
-	const hasPaidDomain = true;
+	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 
 	const domainSearch = useDomainSearch();
 
