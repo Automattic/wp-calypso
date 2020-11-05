@@ -37,11 +37,7 @@ function noop( ...args: unknown[] ) {
 	return args;
 }
 
-interface Props {
-	siteId: number;
-}
-
-const Summary: React.FunctionComponent< Props > = () => {
+const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 
