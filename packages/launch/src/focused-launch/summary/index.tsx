@@ -6,7 +6,7 @@
 import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
@@ -37,95 +37,122 @@ function noop( ...args: unknown[] ) {
 	return args;
 }
 
-const Summary: React.FunctionComponent = () => {
-	const { title, updateTitle, saveTitle } = useTitle();
-	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+type SummaryStepProps = {
+	input: ReactNode;
+	commentary?: ReactNode;
+};
 
-	const domainSearch = useDomainSearch();
+const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, commentary } ) => (
+	<div className="focused-launch-summary__step">
+		<div className="focused-launch-summary__data-input">
+			<div className="focused-launch-summary__section">{ input }</div>
+		</div>
+		<div className="focused-launch-summary__side-commentary">{ commentary }</div>
+	</div>
+);
 
-	let stepNumber = 1;
+type CommonStepProps = {
+	stepIndex: number;
+};
+
+// Props in common between all summary steps + a few props from <TextControl>
+type SiteNameStepProps = CommonStepProps &
+	Pick< React.ComponentProps< typeof TextControl >, 'value' | 'onChange' | 'onBlur' >;
+
+const SiteNameStep: React.FunctionComponent< SiteNameStepProps > = ( {
+	stepIndex,
+	value,
+	onChange,
+	onBlur,
+} ) => {
 	return (
-		<div className="focused-launch-summary__container">
-			<div className="focused-launch-summary__section">
-				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
-				<p className="focused-launch-summary__caption">
-					{ __(
-						'Prepare for launch! Confirm a few final things before you take it live.',
-						__i18n_text_domain__
-					) }
-				</p>
-			</div>
-			<div className="focused-launch-summary__step">
-				<div className="focused-launch-summary__data-input">
-					<div className="focused-launch-summary__section">
-						<TextControl
-							className="focused-launch-summary__input"
-							label={
-								<label className="focused-launch-summary__label">
-									{ stepNumber++ }. { __( 'Name your site', __i18n_text_domain__ ) }
-								</label>
+		<SummaryStep
+			input={
+				<TextControl
+					className="focused-launch-summary__input"
+					label={
+						<label className="focused-launch-summary__label">
+							{ stepIndex }. { __( 'Name your site', __i18n_text_domain__ ) }
+						</label>
+					}
+					value={ value }
+					onChange={ onChange }
+					onBlur={ onBlur }
+					// eslint-disable-next-line jsx-a11y/no-autofocus
+					autoFocus={ true }
+				/>
+			}
+		/>
+	);
+};
+
+// Props in common between all summary steps + a few props from <DomainPicker> +
+// the remaining extra props
+type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
+		React.ComponentProps< typeof DomainPicker >,
+		'existingSubdomain' | 'currentDomain' | 'initialDomainSearch'
+	>;
+
+const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
+	stepIndex,
+	existingSubdomain,
+	currentDomain,
+	initialDomainSearch,
+	hasPaidDomain,
+} ) => {
+	return (
+		<SummaryStep
+			input={
+				hasPaidDomain ? (
+					<>
+						<label className="focused-launch-summary__label">
+							{ __( 'Your domain', __i18n_text_domain__ ) }
+							<Tooltip
+								position="top center"
+								text={ __(
+									'Changes to your purchased domain can be managed from your Domains page.',
+									__i18n_text_domain__
+								) }
+							>
+								{ info }
+							</Tooltip>
+						</label>
+						<LockedPurchasedItem domainName={ currentDomain || '' } />
+					</>
+				) : (
+					<>
+						<DomainPicker
+							header={
+								<>
+									<label className="focused-launch-summary__label">
+										{ stepIndex }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
+									</label>
+									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+										<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
+									</p>
+								</>
 							}
-							value={ title }
-							onChange={ updateTitle }
-							onBlur={ saveTitle }
-							// eslint-disable-next-line jsx-a11y/no-autofocus
-							autoFocus={ true }
+							existingSubdomain={ existingSubdomain }
+							currentDomain={ currentDomain }
+							onDomainSelect={ noop }
+							initialDomainSearch={ initialDomainSearch }
+							showSearchField={ false }
+							analyticsFlowId="focused-launch"
+							analyticsUiAlgo="focused_launch_domain_picker"
+							onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
+							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
+							quantity={ 3 }
+							quantityExpanded={ 3 }
+							itemType="button"
 						/>
-					</div>
-				</div>
-				<div className="focused-launch-summary__side-commentary"></div>
-			</div>
-			<div className="focused-launch-summary__step">
-				<div className="focused-launch-summary__data-input">
-					<div className="focused-launch-summary__section">
-						{ hasPaidDomain ? (
-							<>
-								<label className="focused-launch-summary__label">
-									{ __( 'Your domain', __i18n_text_domain__ ) }
-									<Tooltip
-										position="top center"
-										text={ __(
-											'Changes to your purchased domain can be managed from your Domains page.',
-											__i18n_text_domain__
-										) }
-									>
-										{ info }
-									</Tooltip>
-								</label>
-								<LockedPurchasedItem domainName={ sitePrimaryDomain?.domain || '' } />
-							</>
-						) : (
-							<DomainPicker
-								header={
-									<>
-										<label className="focused-launch-summary__label">
-											{ stepNumber++ }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
-										</label>
-										<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
-											<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
-										</p>
-									</>
-								}
-								existingSubdomain={ siteSubdomain?.domain }
-								currentDomain={ sitePrimaryDomain?.domain }
-								onDomainSelect={ noop }
-								initialDomainSearch={ domainSearch }
-								showSearchField={ false }
-								analyticsFlowId="focused-launch"
-								analyticsUiAlgo="focused_launch_domain_picker"
-								onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
-								onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
-								quantity={ 3 }
-								quantityExpanded={ 3 }
-								itemType="button"
-							/>
-						) }
 						<Link to={ Route.DomainDetails }>
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
-					</div>
-				</div>
-				<div className="focused-launch-summary__side-commentary">
+					</>
+				)
+			}
+			commentary={
+				<>
 					<p className="focused-launch-summary__side-commentary-title">
 						<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
 					</p>
@@ -140,21 +167,30 @@ const Summary: React.FunctionComponent = () => {
 							<Icon icon={ check } /> Builds brand recognition and trust
 						</li>
 					</ul>
-				</div>
-			</div>
-			<div className="focused-launch-summary__step">
-				<div className="focused-launch-summary__data-input">
-					<div className="focused-launch-summary__section">
-						<label className="focused-launch-summary__label">
-							{ stepNumber++ }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
-						</label>
-						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
-							<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
-						</p>
-						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
-					</div>
-				</div>
-				<div className="focused-launch-summary__side-commentary">
+				</>
+			}
+		/>
+	);
+};
+
+type PlanStepProps = CommonStepProps;
+
+const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => {
+	return (
+		<SummaryStep
+			input={
+				<>
+					<label className="focused-launch-summary__label">
+						{ stepIndex }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
+					</label>
+					<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+						<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
+					</p>
+					<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+				</>
+			}
+			commentary={
+				<>
 					<p className="focused-launch-summary__side-commentary-title">
 						Monetize your site with <strong>WordPress Premium</strong>
 					</p>
@@ -169,8 +205,62 @@ const Summary: React.FunctionComponent = () => {
 							<Icon icon={ check } /> Accept payments
 						</li>
 					</ul>
-				</div>
+				</>
+			}
+		/>
+	);
+};
+
+const Summary: React.FunctionComponent = () => {
+	const { title, updateTitle, saveTitle } = useTitle();
+	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+
+	const domainSearch = useDomainSearch();
+
+	// Prepare Steps
+	const renderSiteNameStep = ( index: number ) => (
+		<SiteNameStep
+			stepIndex={ index }
+			key={ index }
+			value={ title }
+			onChange={ updateTitle }
+			onBlur={ saveTitle }
+		/>
+	);
+	const renderDomainStep = ( index: number ) => (
+		<DomainStep
+			stepIndex={ index }
+			key={ index }
+			existingSubdomain={ siteSubdomain?.domain }
+			currentDomain={ sitePrimaryDomain?.domain }
+			initialDomainSearch={ domainSearch }
+			hasPaidDomain={ hasPaidDomain }
+		/>
+	);
+	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
+
+	// Steps that are not interactive (e.g. user has already selected domain/plan)
+	// Steps that are not interactive (e.g. user has already selected domain/plan)
+	const disabledSteps = hasPaidDomain ? [ renderDomainStep ] : [];
+
+	// Steps that require the user interaction
+	const activeSteps = hasPaidDomain
+		? [ renderSiteNameStep, renderPlanStep ]
+		: [ renderSiteNameStep, renderDomainStep, renderPlanStep ];
+
+	return (
+		<div className="focused-launch-summary__container">
+			<div className="focused-launch-summary__section">
+				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
+				<p className="focused-launch-summary__caption">
+					{ __(
+						'Prepare for launch! Confirm a few final things before you take it live.',
+						__i18n_text_domain__
+					) }
+				</p>
 			</div>
+			{ disabledSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
+			{ activeSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
 		</div>
 	);
 };

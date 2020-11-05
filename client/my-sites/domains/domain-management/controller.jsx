@@ -283,7 +283,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
