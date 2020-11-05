@@ -640,7 +640,7 @@ export default function CompositeCheckout( {
 		} );
 	}
 
-	if ( responseCart.products.length < 1 ) {
+	if ( responseCart.products.length < 1 && ( areThereErrors || ! isInitialCartLoading ) ) {
 		const goToPlans = () => ( siteSlug ? page( `/plans/${ siteSlug }` ) : page( '/plans' ) );
 		return (
 			<React.Fragment>
