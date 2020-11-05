@@ -12,10 +12,11 @@ import { useTranslate } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
-import { Item, Feed, FeedError } from './types';
+import { Item, Feed, FeedError, List } from './types';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
+import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialogue from './item-remove-dialogue';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
@@ -65,22 +66,26 @@ function renderFeedError( err: FeedError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function FeedItem( props: { item: Item } ) {
-	const { item } = props;
+export default function FeedItem( props: { item: Item; list: List; owner: string } ) {
+	const { list, owner, item } = props;
 	const feed: Feed | FeedError = useSelector( ( state ) => {
-		const feed = props.item.meta?.data?.feed;
+		let feed = props.item.meta?.data?.feed;
 		if ( ! feed && props.item.feed_ID ) {
-			feed = getFeed( state, props.item.feed_ID );
+			feed = getFeed( state, props.item.feed_ID ) as Feed | FeedError;
 		}
 		return feed as Feed | FeedError;
 	} );
+
+	const isInList = useSelector( ( state ) =>
+		getMatchingItem( state, { feedId: props.item.feed_ID, listId: props.list.ID } )
+	);
 
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
 	const addItem = () => dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
-	const deleteItem = ( shouldDelete ) => {
+	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
 		shouldDelete && dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	};
@@ -89,19 +94,21 @@ export default function FeedItem( props: { item: Item } ) {
 		// TODO: Add support for removing invalid feed list item
 		<>
 			<SitePlaceholder />
-			<QueryReaderFeed feedId={ +item.feed_ID } />
+			<QueryReaderFeed feedId={ item.feed_ID } />
 		</>
 	) : (
 		<>
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
 
-			<Button primary onClick={ addItem }>
-				{ translate( 'Add' ) }
-			</Button>
-
-			<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ ! isInList ? (
+				<Button primary onClick={ addItem }>
+					{ translate( 'Add' ) }
+				</Button>
+			) : (
+				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 
 			<ItemRemoveDialogue
 				onClose={ deleteItem }

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -13,6 +13,7 @@ import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
+import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialogue from './item-remove-dialogue';
 import { Item, Site, SiteError } from './types';
 
@@ -66,14 +67,19 @@ function renderSiteError( err: SiteError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function SiteItem( props: { item: Item } ) {
+export default function SiteItem( props: { item: Item; list: List; owner: string } ) {
+	const { list, owner } = props;
 	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
+	const isInList = useSelector( ( state ) =>
+		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
+	);
+
 	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
 	const addItem = () => dispatch( addReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
-	const deleteItem = ( shouldDelete ) => {
+	const deleteItem = ( shouldDelete: boolean ) => {
 		setShowDeleteConfirmation( false );
 		shouldDelete && dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
 	};
@@ -86,13 +92,16 @@ export default function SiteItem( props: { item: Item } ) {
 	return (
 		<>
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
-			<Button primary onClick={ addItem }>
-				{ translate( 'Add' ) }
-			</Button>
 
-			<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
-				{ translate( 'Remove' ) }
-			</Button>
+			{ ! isInList ? (
+				<Button primary onClick={ addItem }>
+					{ translate( 'Add' ) }
+				</Button>
+			) : (
+				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
+					{ translate( 'Remove' ) }
+				</Button>
+			) }
 
 			<ItemRemoveDialogue
 				onClose={ deleteItem }
