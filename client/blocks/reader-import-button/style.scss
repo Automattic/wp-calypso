@@ -1,24 +1,12 @@
 .reader-import-button {
 	cursor: pointer;
-
-	&:hover {
-		.reader-import-button__icon {
-			fill: var( --color-accent );
-		}
-
-		.reader-import-button__label {
-			color: var( --color-accent );
-		}
-	}
 }
 
 .reader-import-button__icon {
-	fill: var( --color-neutral-light );
 	vertical-align: middle;
 }
 
 .reader-import-button__label {
 	font-size: $font-body-small;
-	color: var( --color-text-subtle );
 	padding-left: 4px;
 }

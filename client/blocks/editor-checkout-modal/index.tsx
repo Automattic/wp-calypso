@@ -7,17 +7,18 @@ import wp from 'calypso/lib/wp';
 import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
-import { StripeHookProvider } from 'calypso/lib/stripe';
 import { fetchStripeConfiguration } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import CompositeCheckout from 'calypso/my-sites/checkout/composite-checkout/composite-checkout';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -90,7 +91,10 @@ const EditorCheckoutModal = ( props: Props ) => {
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
 			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
-				<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+				<StripeHookProvider
+					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+					locale={ props.locale }
+				>
 					<CompositeCheckout
 						isInEditor
 						siteId={ site.ID }
@@ -108,6 +112,7 @@ type Props = {
 	cartData: RequestCart;
 	onClose: () => void;
 	isOpen: boolean;
+	locale: string | undefined;
 };
 
 EditorCheckoutModal.defaultProps = {
@@ -118,4 +123,5 @@ EditorCheckoutModal.defaultProps = {
 
 export default connect( ( state ) => ( {
 	site: getSelectedSite( state ),
+	locale: getCurrentUserLocale( state ),
 } ) )( EditorCheckoutModal );

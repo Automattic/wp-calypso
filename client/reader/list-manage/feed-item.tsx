@@ -4,6 +4,7 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -62,6 +63,8 @@ function FeedItem( props: {
 	feed: Feed | FeedError;
 } ) {
 	const { feed, item, onRemove } = props;
+	const translate = useTranslate();
+
 	return ! feed ? (
 		// TODO: Add support for removing invalid feed list item
 		<>
@@ -71,8 +74,8 @@ function FeedItem( props: {
 	) : (
 		<>
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
-			<Button scary primary onClick={ onRemove }>
-				Remove from list
+			<Button primary onClick={ onRemove }>
+				{ translate( 'Remove' ) }
 			</Button>
 		</>
 	);

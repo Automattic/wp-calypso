@@ -402,7 +402,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						logStashEventAction( 'thank you url generated', {
 							url: action.payload.url,
-							arguments: action.payload.arguments,
 						} )
 					);
 				default:

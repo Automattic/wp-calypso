@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useRef } from 'react';
+import { StoreConfig } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -42,16 +43,8 @@ type WpcomStoreAction =
 			payload: PossiblyCompleteDomainContactDetails;
 	  };
 
-type WordPressDataStoreListener = () => void;
-
-type WordPressDataStore = {
-	getState: () => WpcomStoreState;
-	subscribe: ( listener: WordPressDataStoreListener ) => void;
-	dispatch: ( action: WpcomStoreAction ) => void;
-};
-
 export function useWpcomStore(
-	registerStore: ( key: string, storeOptions: unknown ) => WordPressDataStore,
+	registerStore: < T >( key: string, storeOptions: StoreConfig< T > ) => void, // FIXME: this actually returns Store but will fail TS checks until we include https://github.com/DefinitelyTyped/DefinitelyTyped/pull/46969
 	managedContactDetails: ManagedContactDetails,
 	updateContactDetailsCache: ( _: DomainContactDetails ) => void
 ): void {

@@ -71,6 +71,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
+import { getPlanTermLabel } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
@@ -189,12 +190,19 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale, supportVariation } = this.props;
-
+		const { currentUserLocale, supportVariation, translate } = this.props;
+		let plan = 'N/A';
+		if ( site ) {
+			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
+				site.plan.product_slug,
+				translate
+			) })`;
+		}
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
 			'How I feel: ' + howYouFeel,
 			'Site I need help with: ' + ( site ? site.URL : 'N/A' ),
+			'Plan: ' + plan,
 		];
 
 		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );

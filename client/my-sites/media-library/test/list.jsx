@@ -18,7 +18,6 @@ import moment from 'moment';
  */
 import { MediaLibraryList as MediaList } from '../list';
 import fixtures from './fixtures';
-import Dispatcher from 'calypso/dispatcher';
 
 /**
  * Module variables
@@ -56,14 +55,6 @@ describe( 'MediaLibraryList item selection', () => {
 
 	beforeEach( () => {
 		mockSelectedItems.length = 0;
-	} );
-
-	beforeAll( function () {
-		Dispatcher.handleServerAction( {
-			type: 'RECEIVE_MEDIA_ITEMS',
-			siteId: DUMMY_SITE_ID,
-			data: fixtures,
-		} );
 	} );
 
 	describe( 'multiple selection', () => {

@@ -9,7 +9,7 @@ export type SignupValidationResponse = {
 	messages: {
 		first_name?: string[];
 		last_name?: string[];
-		email?: string[];
+		email?: Record< string, string >;
 		username?: string[];
 		password?: string[];
 	};

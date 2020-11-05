@@ -32,5 +32,5 @@
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ {} ]
+	"references": [ { "path": "../data-stores" }, { "path": "../react-i18n" } ]
 }

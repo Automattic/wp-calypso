@@ -242,7 +242,7 @@ describe( 'reducer', () => {
 			).toEqual( expect.arrayContaining( [ 1, 3 ] ) );
 		} );
 
-		test( 'should add an item on follow', () => {
+		test( 'should add a list on follow', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
@@ -254,7 +254,7 @@ describe( 'reducer', () => {
 			).toEqual( expect.arrayContaining( [ 1, 2, 5 ] ) );
 		} );
 
-		test( 'should remove an item on unfollow', () => {
+		test( 'should remove a list on unfollow', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
@@ -265,7 +265,6 @@ describe( 'reducer', () => {
 				} )
 			).toEqual( [ 2 ] );
 		} );
-
 		test( 'should remove a list on delete', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
@@ -274,6 +273,17 @@ describe( 'reducer', () => {
 					listId: 1,
 				} )
 			).toEqual( [ 2 ] );
+		} );
+		test( 'should add a list on creation', () => {
+			const initial = deepFreeze( [ 1 ] );
+			expect(
+				subscribedLists( initial, {
+					type: READER_LIST_REQUEST_SUCCESS,
+					data: {
+						list: { ID: 2 },
+					},
+				} )
+			).toEqual( [ 1, 2 ] );
 		} );
 	} );
 } );

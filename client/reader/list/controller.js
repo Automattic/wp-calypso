@@ -133,3 +133,26 @@ export const exportList = ( context, next ) => {
 	);
 	next();
 };
+
+export const deleteList = ( context, next ) => {
+	const basePath = '/read/list/:owner/:slug/delete';
+	const fullAnalyticsPageTitle = `${ analyticsPageTitle } > List > ${ context.params.user } - ${ context.params.list } > Edit > Delete`;
+	const mcKey = 'list';
+
+	trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+	recordTrack( 'calypso_reader_list_delete_loaded', {
+		list_owner: context.params.user,
+		list_slug: context.params.list,
+	} );
+
+	context.primary = (
+		<AsyncLoad
+			require="calypso/reader/list-manage"
+			key="list-manage"
+			owner={ encodeURIComponent( context.params.user ) }
+			slug={ encodeURIComponent( context.params.list ) }
+			selectedSection={ 'delete' }
+		/>
+	);
+	next();
+};

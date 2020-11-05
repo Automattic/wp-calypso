@@ -14,7 +14,7 @@ import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { title, updateTitle, saveTitle } = useTitle();
+	const { title, updateTitle, saveTitle } = useTitle( window._currentSiteId );
 
 	const handleNext = () => {
 		saveTitle();
@@ -24,8 +24,6 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 	const handlePrev = () => {
 		onPrevStep?.();
 	};
-
-	const handleBlur = () => saveTitle();
 
 	return (
 		<LaunchStepContainer>
@@ -44,7 +42,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						id="nux-launch-step__input"
 						className="nux-launch-step__input"
 						onChange={ updateTitle }
-						onBlur={ handleBlur }
+						onBlur={ saveTitle }
 						value={ title }
 						spellCheck={ false }
 						autoComplete="off"

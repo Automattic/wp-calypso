@@ -1,9 +1,15 @@
 /**
+ * External dependencies
+ */
+import { translate } from 'i18n-calypso';
+
+/**
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
 import { THEME_ACTIVATE, THEME_ACTIVATE_FAILURE } from 'calypso/state/themes/action-types';
 import { themeActivated } from 'calypso/state/themes/actions/theme-activated';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 import 'calypso/state/themes/init';
 
@@ -46,6 +52,12 @@ export function activateTheme(
 					siteId,
 					error,
 				} );
+
+				if ( error.error === 'theme_not_found' ) {
+					dispatch( errorNotice( translate( 'Theme not yet available for this site' ) ) );
+				} else {
+					dispatch( errorNotice( translate( 'Unable to activate theme. Contact support.' ) ) );
+				}
 			} );
 	};
 }

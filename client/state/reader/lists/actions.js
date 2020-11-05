@@ -23,8 +23,6 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
 	READER_LISTS_FOLLOW,
 	READER_LISTS_FOLLOW_SUCCESS,
 	READER_LISTS_FOLLOW_FAILURE,
@@ -36,6 +34,7 @@ import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/items';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/delete';
+import 'calypso/state/data-layer/wpcom/read/lists/sites/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/tags/delete';
 import 'calypso/state/data-layer/wpcom/read/lists/feeds/new';
 import 'calypso/state/reader/init';
@@ -54,34 +53,13 @@ export function receiveLists( lists ) {
 }
 
 /**
- * Triggers a network request to fetch the current user's lists.
+ * Request the current user's subscribed lists.
  *
- * @returns {Function}        Action thunk
+ * @returns {object}       Action object
  */
 export function requestSubscribedLists() {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LISTS_REQUEST,
-		} );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readLists( ( error, data ) => {
-				error ? reject( error ) : resolve( data );
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveLists( data.lists ) );
-				dispatch( {
-					type: READER_LISTS_REQUEST_SUCCESS,
-					data,
-				} );
-			} )
-			.catch( ( error ) => {
-				dispatch( {
-					type: READER_LISTS_REQUEST_FAILURE,
-					error,
-				} );
-			} );
+	return {
+		type: READER_LISTS_REQUEST,
 	};
 }
 
@@ -90,39 +68,14 @@ export function createReaderList( list ) {
 }
 
 /**
- * Triggers a network request to fetch a single Reader list.
+ * Request a single Reader list.
  *
- * @param  {string}  owner List owner
- * @param  {string}  slug List slug
- * @returns {Function}        Action thunk
+ * @param  {string}  listOwner List owner
+ * @param  {string}  listSlug List slug
+ * @returns {object}       Action object
  */
-export function requestList( owner, slug ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_REQUEST,
-		} );
-
-		const query = createQuery( owner, slug );
-
-		return new Promise( ( resolve, reject ) => {
-			wpcom.undocumented().readList( query, ( error, data ) => {
-				if ( error ) {
-					const errorInfo = {
-						error,
-						owner,
-						slug,
-					};
-					reject( errorInfo );
-				} else {
-					resolve( data );
-				}
-			} );
-		} )
-			.then( ( data ) => {
-				dispatch( receiveReaderList( data ) );
-			} )
-			.catch( ( errorInfo ) => dispatch( handleReaderListRequestFailure( errorInfo ) ) );
-	};
+export function requestList( listOwner, listSlug ) {
+	return { type: READER_LIST_REQUEST, listOwner, listSlug };
 }
 
 export function receiveReaderList( data ) {
@@ -249,12 +202,14 @@ export function receiveUpdatedListDetails( data ) {
  * Handle an error from the list update API.
  *
  * @param   {Error}  error Error during the list update process
+ * @param   {object} list List details to save
  * @returns {object} Action object
  */
-export function handleUpdateListDetailsError( error ) {
+export function handleUpdateListDetailsError( error, list ) {
 	return {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
+		list,
 	};
 }
 

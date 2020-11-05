@@ -143,7 +143,6 @@ class Document extends React.Component {
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
-								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
 								</div>

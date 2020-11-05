@@ -12,12 +12,12 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { render, act, fireEvent } from '@testing-library/react';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import CompositeCheckout from '../composite-checkout';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 /**
  * Mocked dependencies

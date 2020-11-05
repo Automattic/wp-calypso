@@ -9,7 +9,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import ReaderSidebarListsListItem from './list-item';
+import config from 'calypso/config';
+import ListItem from './list-item';
+import ListItemCreateLink from './list-item-create-link';
 
 export class ReaderSidebarListsList extends React.Component {
 	static propTypes = {
@@ -28,7 +30,7 @@ export class ReaderSidebarListsList extends React.Component {
 		const { currentListOwner, currentListSlug, path } = this.props;
 		return map( this.props.lists, function ( list ) {
 			return (
-				<ReaderSidebarListsListItem
+				<ListItem
 					key={ list.ID }
 					list={ list }
 					path={ path }
@@ -50,7 +52,14 @@ export class ReaderSidebarListsList extends React.Component {
 			);
 		}
 
-		return <ul className="sidebar__menu-list">{ this.renderItems() }</ul>;
+		return (
+			<ul className="sidebar__menu-list">
+				{ this.renderItems() }
+				{ config.isEnabled( 'reader/list-management' ) && (
+					<ListItemCreateLink key="create-item-link" path={ this.props.path } />
+				) }
+			</ul>
+		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }

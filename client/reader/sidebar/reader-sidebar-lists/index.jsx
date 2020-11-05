@@ -12,6 +12,11 @@ import React, { Component } from 'react';
 import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarListsList from './list';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 export class ReaderSidebarLists extends Component {
 	static propTypes = {
 		lists: PropTypes.array,

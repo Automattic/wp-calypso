@@ -1319,18 +1319,6 @@ Undocumented.prototype.readTagImages = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readLists = function ( fn ) {
-	debug( '/read/lists' );
-	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
-};
-
 Undocumented.prototype.followList = function ( query, fn ) {
 	const params = omit( query, [ 'owner', 'slug' ] );
 	debug( '/read/lists/:owner/:slug/follow' );
