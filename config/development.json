@@ -74,6 +74,7 @@
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/language-picker": true,
 		"gutenboarding/feature-picker": true,
+		"gutenboarding/mshot-preview": true,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
 		"help": true,

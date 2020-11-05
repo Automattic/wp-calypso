@@ -80,6 +80,7 @@ export function prefetchDesignThumbs() {
 			link.rel = 'prefetch';
 			link.as = 'image';
 			link.href = href;
+			link.crossOrigin = 'anonymous';
 			document.head.appendChild( link );
 		} );
 	}
