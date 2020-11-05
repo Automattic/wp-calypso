@@ -1,3 +1,3 @@
 # Reader List Management
 
-Allows creation, editing and deletion of Reader lists.
+Allows creation, editing, export and deletion of Reader lists.
