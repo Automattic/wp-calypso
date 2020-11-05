@@ -57,12 +57,13 @@
 
 	.has-disabled-info & {
 		cursor: default;
+		flex-direction: row;
 	}
 }
 
 .plugin-action__disabled-info.info-popover {
 	flex: none;
-	margin: -1px 4px;
+	margin: 0 4px -1px;
 
 	.gridicon {
 		display: block;
