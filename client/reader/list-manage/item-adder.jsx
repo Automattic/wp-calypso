@@ -18,15 +18,13 @@ import { SORT_BY_RELEVANCE } from 'calypso/state/reader/feed-searches/actions';
 import FeedUrlAdder from './feed-url-adder';
 import ListItem from './list-item';
 
-const readerFeedsSelectorParams = { excludeFollowed: true, sort: SORT_BY_RELEVANCE };
-
 export default function ItemAdder( props ) {
 	const translate = useTranslate();
 
 	const [ query, updateQuery ] = React.useState( '' );
 	const queryIsUrl = resemblesUrl( query );
 	const searchResults = useSelector( ( state ) =>
-		getReaderFeedsForQuery( state, { query, ...readerFeedsSelectorParams } )
+		getReaderFeedsForQuery( state, { query, sort: SORT_BY_RELEVANCE } )
 	);
 
 	return (
@@ -46,9 +44,7 @@ export default function ItemAdder( props ) {
 				{ queryIsUrl && <FeedUrlAdder list={ props.list } query={ query } /> }
 			</Card>
 
-			{ ! searchResults && query && (
-				<QueryReaderFeedsSearch query={ query } excludeFollowed={ true } />
-			) }
+			{ ! searchResults && query && <QueryReaderFeedsSearch query={ query } /> }
 
 			{ ! queryIsUrl &&
 				searchResults?.map( ( item ) => (
