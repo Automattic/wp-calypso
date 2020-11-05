@@ -3,7 +3,7 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -15,10 +15,15 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { Item, Feed, FeedError } from './types';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import FeedTitle from './feed-title';
+import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
+import ItemRemoveDialogue from './item-remove-dialogue';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;
+}
+
+function FeedTitle( { feed: { name, URL, feed_URL } } ) {
+	return <>{ name || URL || feed_URL }</>;
 }
 
 function renderFeed( feed: Feed ) {
@@ -60,14 +65,25 @@ function renderFeedError( err: FeedError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-function FeedItem( props: {
-	item: Item;
-	onAdd?: ( e: MouseEvent ) => void;
-	onRemove?: ( e: MouseEvent ) => void;
-	feed: Feed | FeedError;
-} ) {
-	const { feed, item } = props;
+export default function FeedItem( props: { item: Item } ) {
+	const { item } = props;
+	const feed: Feed | FeedError = useSelector( ( state ) => {
+		const feed = props.item.meta?.data?.feed;
+		if ( ! feed && props.item.feed_ID ) {
+			feed = getFeed( state, props.item.feed_ID );
+		}
+		return feed as Feed | FeedError;
+	} );
+
+	const dispatch = useDispatch();
 	const translate = useTranslate();
+
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
+	const addItem = () => dispatch( addReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+	const deleteItem = ( shouldDelete ) => {
+		setShowDeleteConfirmation( false );
+		shouldDelete && dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
+	};
 
 	return ! feed ? (
 		// TODO: Add support for removing invalid feed list item
@@ -78,29 +94,21 @@ function FeedItem( props: {
 	) : (
 		<>
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
-			{ !! props.onAdd && (
-				<Button primary onClick={ props.onAdd }>
-					{ translate( 'Follow' ) }
-				</Button>
-			) }
-			{ !! props.onRemove && (
-				<Button primary onClick={ props.onRemove }>
-					{ translate( 'Remove' ) }
-				</Button>
-			) }
+
+			<Button primary onClick={ addItem }>
+				{ translate( 'Add' ) }
+			</Button>
+
+			<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
+				{ translate( 'Remove' ) }
+			</Button>
+
+			<ItemRemoveDialogue
+				onClose={ deleteItem }
+				title={ <FeedTitle feed={ feed } /> }
+				type="feed"
+				visibility={ showDeleteConfirmation }
+			/>
 		</>
 	);
 }
-
-export default connect(
-	( state, ownProps: { item: Item; onRemove: ( e: MouseEvent ) => void } ) => {
-		let feed: Feed | FeedError = ownProps.item.meta?.data?.feed as Feed | FeedError;
-
-		if ( ! feed && ownProps.item.feed_ID ) {
-			feed = getFeed( state, ownProps.item.feed_ID ) as Feed | FeedError;
-		}
-		return {
-			feed,
-		};
-	}
-)( FeedItem );

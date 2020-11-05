@@ -57,7 +57,6 @@ export default function ItemAdder( props ) {
 						item={ item }
 						list={ props.list }
 						owner={ props.owner }
-						type="add"
 					/>
 				) ) }
 		</div>
