@@ -23,11 +23,11 @@ import {
 	useTotal,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -46,10 +46,15 @@ import {
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import { login } from 'calypso/lib/paths';
 import config from 'calypso/config';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'calypso/lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -57,12 +62,12 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+	const { responseCart } = useShoppingCart();
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
 
-	if ( areDomainsInLineItems( items ) ) {
+	if ( areThereDomainProductsInCart ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
@@ -113,13 +118,12 @@ export default function WPCheckout( {
 	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
-	const areThereDomainProductsInCart = items.some( isLineItemADomain );
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
-	const shouldShowContactStep =
-		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
+
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const shouldShowContactStep = contactDetailsType !== 'none';
 	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
@@ -364,7 +368,7 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
-									shouldShowDomainContactFields={ shouldShowDomainContactFields }
+									contactDetailsType={ contactDetailsType }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}
