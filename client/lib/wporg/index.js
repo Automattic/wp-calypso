@@ -37,7 +37,6 @@ function getWporgLocaleCode() {
 
 async function pluginRequest( url, body ) {
 	try {
-		// eslint-disable-next-line no-undef -- Probably: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 		const response = await fetch( url, {
 			method: 'POST',
 			headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -54,7 +53,6 @@ async function pluginRequest( url, body ) {
 }
 
 async function themeRequest( url, query ) {
-	// eslint-disable-next-line no-undef -- Probably: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
 	const response = await fetch( `${ url }?${ stringifyQs( query ) }`, {
 		method: 'GET',
 		headers: { Accept: 'application/json' },
