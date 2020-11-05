@@ -178,9 +178,11 @@ export default connect( ( state ) => {
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
-	const currentPlanIntervalType = getIntervalTypeForTerm(
-		getPlan( currentPlan?.productSlug )?.term
-	);
+	let currentPlanIntervalType = getIntervalTypeForTerm( getPlan( currentPlan?.productSlug )?.term );
+
+	if ( 'BRL' === currentPlan?.currencyCode ) {
+		currentPlanIntervalType = 'yearly';
+	}
 
 	return {
 		currentPlanIntervalType,
