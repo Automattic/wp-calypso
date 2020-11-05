@@ -82,11 +82,12 @@ export function preprocessCartForServer( {
 			temporary,
 			extra,
 			products: products.map(
-				( { product_id, meta, free_trial, volume, extra: productExtra } ) => ( {
+				( { product_id, meta, free_trial, volume, quantity, extra: productExtra } ) => ( {
 					product_id,
 					meta,
 					free_trial,
 					volume,
+					quantity,
 					extra: productExtra,
 				} )
 			),

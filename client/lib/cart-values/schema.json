@@ -40,6 +40,7 @@
 				"orig_cost": { "type": [ "number", "null" ] },
 				"currency": { "type": "string" },
 				"volume": { "type": "number" },
+				"quantity": { "type": [ "number", "null" ] },
 				"free_trial": { "type": "boolean" },
 				"is_domain_registration": { "type": "boolean" }
 			}

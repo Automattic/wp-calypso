@@ -44,6 +44,7 @@ export interface RequestCartProduct {
 	product_id: number;
 	meta: string;
 	volume: number;
+	quantity: number | null;
 	extra: ResponseCartProductExtra;
 }
 
@@ -128,6 +129,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	months_per_bill_period: number | null;
 	volume: number;
+	quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;
