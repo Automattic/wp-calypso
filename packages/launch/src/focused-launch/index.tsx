@@ -11,10 +11,14 @@ import { Route as FocusedLaunchRoute } from './route';
 import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
+import { useOnLaunch } from '../hooks';
 
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
+	// handle redirects to checkout / my home after launch
+	useOnLaunch();
+
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
 			<Switch>
