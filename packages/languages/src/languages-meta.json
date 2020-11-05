@@ -8,7 +8,7 @@
 		"calypsoPercentTranslated": 6,
 		"isTranslatedIncompletely": true,
 		"territories": [ "002" ],
-		"revision": 59681
+		"revision": 60516
 	},
 	"als": {
 		"value": 418,
@@ -52,7 +52,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "145", "002" ],
-		"revision": 60475,
+		"revision": 60531,
 		"rtl": true,
 		"popular": 16
 	},
@@ -308,7 +308,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "155" ],
-		"revision": 60476,
+		"revision": 60515,
 		"popular": 4
 	},
 	"de-ch": {
@@ -331,7 +331,7 @@
 		"calypsoPercentTranslated": 0,
 		"isTranslatedIncompletely": true,
 		"territories": [ "155" ],
-		"revision": 60431
+		"revision": 60520
 	},
 	"dv": {
 		"value": 427,
@@ -421,7 +421,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "019", "039" ],
-		"revision": 60486,
+		"revision": 60530,
 		"popular": 2
 	},
 	"es-cl": {
@@ -433,7 +433,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "019" ],
-		"revision": 60487
+		"revision": 60533
 	},
 	"es-mx": {
 		"value": 902,
@@ -444,7 +444,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "019" ],
-		"revision": 60488
+		"revision": 60534
 	},
 	"et": {
 		"value": 20,
@@ -511,7 +511,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "155" ],
-		"revision": 60423,
+		"revision": 60505,
 		"popular": 5
 	},
 	"fr-be": {
@@ -523,7 +523,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "155" ],
-		"revision": 60345
+		"revision": 60524
 	},
 	"fr-ca": {
 		"value": 475,
@@ -534,7 +534,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "019" ],
-		"revision": 60346
+		"revision": 60526
 	},
 	"fr-ch": {
 		"value": 474,
@@ -545,7 +545,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "155" ],
-		"revision": 60347
+		"revision": 60527
 	},
 	"fur": {
 		"value": 25,
@@ -701,7 +701,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "035" ],
-		"revision": 60427,
+		"revision": 60507,
 		"popular": 12
 	},
 	"ii": {
@@ -743,7 +743,7 @@
 		"name": "Italiano",
 		"wpLocale": "it_IT",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 98,
+		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "039" ],
 		"revision": 60479,
@@ -758,7 +758,7 @@
 		"calypsoPercentTranslated": 98,
 		"isTranslatedIncompletely": false,
 		"territories": [ "030" ],
-		"revision": 60440,
+		"revision": 60511,
 		"popular": 7
 	},
 	"ka": {
@@ -836,7 +836,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "030" ],
-		"revision": 60481,
+		"revision": 60502,
 		"popular": 15
 	},
 	"ks": {
@@ -1046,7 +1046,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "155" ],
-		"revision": 60484,
+		"revision": 60509,
 		"popular": 9
 	},
 	"nn": {
@@ -1146,7 +1146,7 @@
 		"calypsoPercentTranslated": 33,
 		"isTranslatedIncompletely": true,
 		"territories": [ "151" ],
-		"revision": 60373
+		"revision": 60518
 	},
 	"ps": {
 		"value": 59,
@@ -1203,7 +1203,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "151" ],
-		"revision": 60418
+		"revision": 60506
 	},
 	"ru": {
 		"value": 62,
@@ -1214,7 +1214,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "151" ],
-		"revision": 60450,
+		"revision": 60529,
 		"popular": 10
 	},
 	"rup": {
@@ -1358,7 +1358,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "154" ],
-		"revision": 60422,
+		"revision": 60501,
 		"popular": 17
 	},
 	"ta": {
@@ -1425,7 +1425,7 @@
 		"calypsoPercentTranslated": 99,
 		"isTranslatedIncompletely": false,
 		"territories": [ "145" ],
-		"revision": 60480,
+		"revision": 60514,
 		"popular": 11
 	},
 	"tt": {
@@ -1612,7 +1612,7 @@
 		"name": "\u7e41\u9ad4\u4e2d\u6587",
 		"wpLocale": "zh_TW",
 		"parentLangSlug": null,
-		"calypsoPercentTranslated": 99,
+		"calypsoPercentTranslated": 98,
 		"isTranslatedIncompletely": false,
 		"territories": [ "030" ],
 		"revision": 60436,
