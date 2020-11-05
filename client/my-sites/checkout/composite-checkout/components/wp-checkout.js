@@ -46,7 +46,6 @@ import {
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import { login } from 'calypso/lib/paths';
 import config from 'calypso/config';
 import getContactDetailsType from '../lib/get-contact-details-type';
@@ -124,7 +123,6 @@ export default function WPCheckout( {
 
 	const contactDetailsType = getContactDetailsType( responseCart );
 	const shouldShowContactStep = contactDetailsType !== 'none';
-	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -176,9 +174,7 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -189,7 +185,7 @@ export default function WPCheckout( {
 				applyDomainContactValidationResults,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -221,13 +217,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
