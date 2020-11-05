@@ -12,7 +12,6 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import EditorDrawerLabel from 'calypso/post-editor/editor-drawer/label';
 import FormTextarea from 'calypso/components/forms/form-textarea';
 import InfoPopover from 'calypso/components/info-popover';
 import TrackInputChanges from 'calypso/components/track-input-changes';
@@ -21,7 +20,7 @@ import { recordEditorStat, recordEditorEvent } from 'calypso/state/posts/stats';
 /**
  * Style dependencies
  */
-import './publicize-message.scss';
+import './style.scss';
 
 class PublicizeMessage extends Component {
 	static propTypes = {
@@ -30,7 +29,6 @@ class PublicizeMessage extends Component {
 		preview: PropTypes.string,
 		acceptableLength: PropTypes.number,
 		requireCount: PropTypes.bool,
-		displayMessageHeading: PropTypes.bool,
 		onChange: PropTypes.func,
 		preFilledMessage: PropTypes.string,
 	};
@@ -40,7 +38,6 @@ class PublicizeMessage extends Component {
 		message: '',
 		acceptableLength: 280,
 		requireCount: false,
-		displayMessageHeading: true,
 		onChange: noop,
 		preFilledMessage: '',
 	};
@@ -71,7 +68,7 @@ class PublicizeMessage extends Component {
 	renderInfoPopover() {
 		return (
 			<InfoPopover
-				className="editor-sharing__publicize-message-counter-info"
+				className="publicize-message__counter-info"
 				position="bottom left"
 				gaEventCategory="Editor"
 				popoverName="SharingMessage"
@@ -97,7 +94,7 @@ class PublicizeMessage extends Component {
 					onChange={ this.onChange }
 					showRemainingCharacters={ true }
 					acceptableLength={ this.props.acceptableLength }
-					className="editor-sharing__message-input"
+					className="publicize-message__input"
 				>
 					{ this.renderInfoPopover() }
 				</CountedTextarea>
@@ -109,25 +106,14 @@ class PublicizeMessage extends Component {
 				value={ this.getMessage() }
 				placeholder={ placeholder }
 				onChange={ this.onChange }
-				className="editor-sharing__message-input"
+				className="publicize-message__input"
 			/>
 		);
 	}
 
 	render() {
-		const { displayMessageHeading, translate } = this.props;
 		return (
-			<div className="editor-sharing__publicize-message">
-				{ displayMessageHeading && (
-					<EditorDrawerLabel
-						helpText={ translate(
-							'The following text will be shared along with a link to your post.'
-						) }
-						labelText={ translate( 'Customize the message', {
-							context: 'Post editor sharing message heading',
-						} ) }
-					/>
-				) }
+			<div className="publicize-message">
 				<TrackInputChanges onNewValue={ this.recordStats }>
 					{ this.renderTextarea() }
 				</TrackInputChanges>
