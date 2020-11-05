@@ -223,7 +223,7 @@ const Summary: React.FunctionComponent< SummaryProps > = ( { siteId } ) => {
 		select( SITE_STORE ).getPrimarySiteDomain( siteId )
 	);
 	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
-	const hasPaidDomain = true; //sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
+	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
 
 	const domainSearch = useDomainSearch();
 
