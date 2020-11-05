@@ -35,3 +35,17 @@
 		top: 2px;
 	}
 }
+
+.plans-accordion__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
+}

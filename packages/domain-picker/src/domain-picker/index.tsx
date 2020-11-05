@@ -317,6 +317,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</>
 
 						{ ! isExpanded &&
+							quantity < quantityExpanded &&
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">

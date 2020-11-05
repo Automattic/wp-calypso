@@ -20,6 +20,16 @@ interface Currency {
 
 export const plansOrder = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
+export const plansPaths = [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ];
+
+export const plansProductSlugs = [
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+];
+
 // salvaged from https://opengrok.a8c.com/source/raw/trunk/wp-content/admin-plugins/wpcom-billing/store-price.php
 // with html entities resolved to symbols
 export const currenciesFormats: Record< string, Currency > = {

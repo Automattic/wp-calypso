@@ -39,6 +39,11 @@
 	line-height: 24px;
 }
 
+.focused-launch-summary__info-icon {
+	margin-left: 10px;
+	vertical-align: middle;
+}
+
 .focused-launch-summary__section {
 	// maybe use @include onboarding-block-margin;
 	margin: 0 20px 40px;

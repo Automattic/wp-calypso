@@ -34,3 +34,17 @@ export const getSiteTitle = ( _: State, siteId: number ) =>
 export const isLaunched = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ];
 };
+
+export const getSiteDomains = ( state: State, siteId: number ) => {
+	return state.sitesDomains[ siteId ];
+};
+
+export const getPrimarySiteDomain = ( _: State, siteId: number ) =>
+	select( STORE_KEY )
+		.getSiteDomains( siteId )
+		?.find( ( domain ) => domain.primary_domain );
+
+export const getSiteSubdomain = ( _: State, siteId: number ) =>
+	select( STORE_KEY )
+		.getSiteDomains( siteId )
+		?.find( ( domain ) => domain.is_subdomain );
