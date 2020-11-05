@@ -10,6 +10,10 @@ import { useDispatch } from 'react-redux';
  */
 import { Button, Card, Dialog } from '@automattic/components';
 import { deleteReaderList } from 'calypso/state/reader/lists/actions';
+import {
+	READER_LISTS_DELETE_STATE_CONFIRMING,
+	READER_LISTS_DELETE_STATE_DELETED,
+} from './constants';
 
 function ListDelete( { list } ) {
 	const translate = useTranslate();
@@ -21,23 +25,23 @@ function ListDelete( { list } ) {
 			{ deleteState === '' && (
 				<Card>
 					<p>{ translate( 'Delete the list forever. Be careful - this is not reversible.' ) }</p>
-					<Button primary onClick={ () => setDeleteState( 'confirming' ) }>
+					<Button primary onClick={ () => setDeleteState( READER_LISTS_DELETE_STATE_CONFIRMING ) }>
 						{ translate( 'Delete list' ) }
 					</Button>
 				</Card>
 			) }
-			{ deleteState === 'confirming' && (
+			{ deleteState === READER_LISTS_DELETE_STATE_CONFIRMING && (
 				<Dialog
 					isVisible={ true }
 					buttons={ [
-						{ action: 'cancel', label: translate( 'Keep it!' ) },
+						{ action: 'cancel', label: translate( 'Cancel' ) },
 						{ action: 'delete', label: translate( 'Delete list' ), isPrimary: true },
 					] }
 					onClose={ ( action ) => {
 						if ( action === 'delete' ) {
 							return [
 								dispatch( deleteReaderList( list.ID, list.owner, list.slug ) ),
-								setDeleteState( 'deleted' ),
+								setDeleteState( READER_LISTS_DELETE_STATE_DELETED ),
 							];
 						}
 
