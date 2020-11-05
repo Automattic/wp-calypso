@@ -113,6 +113,9 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 								itemType="button"
 							/>
 						) }
+						<Link to={ Route.DomainDetails }>
+							{ __( 'View all domains', __i18n_text_domain__ ) }
+						</Link>
 					</div>
 				</div>
 				<div className="focused-launch-summary__side-commentary">
