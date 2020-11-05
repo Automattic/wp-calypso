@@ -11,6 +11,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import JetpackComMasterbar from '../jpcom-masterbar';
+import OlarkChat from 'calypso/components/olark-chat';
 
 /**
  * Style dependencies
@@ -26,6 +27,7 @@ const Header = () => {
 
 	return (
 		<>
+			<OlarkChat identity={ '5581-687-10-4070' } />
 			<JetpackComMasterbar />
 			<div className="header">
 				<FormattedHeader
