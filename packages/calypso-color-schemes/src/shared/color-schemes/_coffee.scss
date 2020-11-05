@@ -105,13 +105,12 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 
 	--color-masterbar-item-hover-background: var( --theme-submenu-background-color );
 	--color-masterbar-item-active-background: var( --theme-submenu-background-color );
-	// --color-masterbar-item-new-editor-background: var( --studio-gray-50 );
-	// --color-masterbar-item-new-editor-hover-background: var( --studio-gray-60 );
+	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
+	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-60 );
 
-	// --color-masterbar-toggle-drafts-editor-background: var( --studio-gray-60 );
-	// --color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
-	// --color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
-
+	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-60 );
+	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
+	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
 	/* Sidebar */
 	--color-sidebar-background: var( --theme-base-color );
