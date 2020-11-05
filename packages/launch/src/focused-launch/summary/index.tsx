@@ -49,7 +49,7 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 		select( SITE_STORE ).getPrimarySiteDomain( siteId )
 	);
 	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
-	const hasPaidDomain = 1 || ( sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain );
+	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
 
 	const domainSearch = useDomainSearch();
 
