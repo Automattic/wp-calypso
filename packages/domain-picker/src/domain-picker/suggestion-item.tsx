@@ -21,7 +21,11 @@ import InfoTooltip from '../info-tooltip';
 
 export const ITEM_TYPE_RADIO = 'radio';
 export const ITEM_TYPE_BUTTON = 'button';
-export type SUGGESTION_ITEM_TYPE = typeof ITEM_TYPE_RADIO | typeof ITEM_TYPE_BUTTON;
+export const ITEM_TYPE_INDIVIDUAL_ITEM = 'individual-item';
+export type SUGGESTION_ITEM_TYPE =
+	| typeof ITEM_TYPE_RADIO
+	| typeof ITEM_TYPE_BUTTON
+	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
 
 interface Props {
 	isUnavailable?: boolean;
@@ -65,6 +69,25 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 
 	const labelId = uuid();
 
+	const freeDomainLabel =
+		type === ITEM_TYPE_INDIVIDUAL_ITEM
+			? __( 'Default', __i18n_text_domain__ )
+			: __( 'Free', __i18n_text_domain__ );
+
+	const firstYearIncludedInPaid = isMobile
+		? __( 'Included in paid plans', __i18n_text_domain__ )
+		: createInterpolateElement(
+				__( '<strong>First year included</strong> in paid plans', __i18n_text_domain__ ),
+				{
+					strong: <strong />,
+				}
+		  );
+
+	const paidIncludedDomainLabel =
+		type === ITEM_TYPE_INDIVIDUAL_ITEM
+			? firstYearIncludedInPaid
+			: __( 'Included in plans', __i18n_text_domain__ );
+
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
 		// This effectively records the render event only once for each set of search results.
@@ -95,7 +118,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					'is-selected': selected,
 					'is-unavailable': isUnavailable,
 				},
-				`type-{ type }`
+				`type-${ type }`
 			) }
 		>
 			{ type === ITEM_TYPE_RADIO &&
@@ -152,7 +175,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</div>
 					) }
 				</div>
-				{ isExistingSubdomain && (
+				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (
 					<div className="domain-picker__change-subdomain-tip">
 						{ __(
 							'You can change your free subdomain later under Domain Settings.',
@@ -167,12 +190,12 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ isUnavailable && __( 'Unavailable', __i18n_text_domain__ ) }
-				{ isFree && ! isUnavailable && __( 'Free', __i18n_text_domain__ ) }
+				{ isFree && ! isUnavailable && freeDomainLabel }
 				{ ! isFree && ! isUnavailable && (
 					<>
 						<span className="domain-picker__price-inclusive">
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
-							{ __( 'Included in plans', __i18n_text_domain__ ) }{ ' ' }
+							{ paidIncludedDomainLabel }{ ' ' }
 						</span>
 						<span className="domain-picker__price-cost">
 							{

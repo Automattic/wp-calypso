@@ -127,7 +127,7 @@ const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
 								onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
 								quantity={ 3 }
 								quantityExpanded={ 3 }
-								itemType="button"
+								itemType="individual-item"
 							/>
 						) }
 						<Link to={ Route.DomainDetails }>
