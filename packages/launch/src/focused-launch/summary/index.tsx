@@ -10,14 +10,12 @@ import React from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
-import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch } from '../../hooks';
-import { SITE_STORE } from '../../stores';
+import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
 
 import './style.scss';
 
@@ -43,13 +41,9 @@ interface Props {
 	siteId: number;
 }
 
-const Summary: React.FunctionComponent< Props > = ( { siteId } ) => {
-	const { title, updateTitle, saveTitle } = useTitle( siteId );
-	const sitePrimaryDomain = useSelect( ( select ) =>
-		select( SITE_STORE ).getPrimarySiteDomain( siteId )
-	);
-	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
-	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
+const Summary: React.FunctionComponent< Props > = () => {
+	const { title, updateTitle, saveTitle } = useTitle();
+	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 
 	const domainSearch = useDomainSearch();
 

@@ -14,11 +14,7 @@ import PlanDetails from './plan-details';
 
 import './style.scss';
 
-interface Props {
-	siteId: number;
-}
-
-const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
+const FocusedLaunch: React.FunctionComponent = () => {
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
 			<Switch>
@@ -29,7 +25,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 					<PlanDetails />
 				</Route>
 				<Route path={ FocusedLaunchRoute.Summary }>
-					<Summary siteId={ siteId } />
+					<Summary />
 				</Route>
 			</Switch>
 		</Router>

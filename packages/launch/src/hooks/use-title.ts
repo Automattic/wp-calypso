@@ -2,14 +2,16 @@
  * External dependencies
  */
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 /**
  * Internal dependencies
  */
 import { SITE_STORE } from '../stores';
+import LaunchContext from '../context';
 
-export function useTitle( siteId: number ) {
+export function useTitle() {
+	const { siteId } = useContext( LaunchContext );
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
 	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
 
