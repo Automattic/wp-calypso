@@ -1,5 +1,3 @@
-/* eslint-disable no-console, no-process-exit, import/no-nodejs-modules */
-
 /**
  * External dependencies
  */
