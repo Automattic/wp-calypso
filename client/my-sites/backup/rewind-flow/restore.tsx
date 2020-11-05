@@ -69,7 +69,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	}, [ setUserHasRequestedRestore, requestRestore ] );
 
 	const loading = rewindState.state === 'uninitialized';
-	const { message, entry } = inProgressRewindEntryDetails;
+	const { message, currentEntry } = inProgressRewindEntryDetails;
 
 	const renderConfirm = () => (
 		<>
@@ -115,8 +115,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
 			<ProgressBar
+				isReady={ 'running' === inProgressRewindStatus }
 				message={ message }
-				entry={ entry }
+				entry={ currentEntry }
 				percent={ inProgressRewindPercentComplete }
 			/>
 			<p className="rewind-flow__info">
