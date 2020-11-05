@@ -62,16 +62,14 @@ const ContactFormTitle = () => {
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
 	const { responseCart } = useShoppingCart();
-	const areThereDomainProductsInCart =
-		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
-	const isGSuiteInCart = hasGoogleApps( responseCart );
+	const contactDetailsType = getContactDetailsType( responseCart );
 
-	if ( areThereDomainProductsInCart ) {
+	if ( contactDetailsType === 'domain' ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
 	}
-	if ( isGSuiteInCart ) {
+	if ( contactDetailsType === 'gsuite' ) {
 		return ! isActive && isComplete
 			? translate( 'G Suite account information' )
 			: translate( 'Enter your G Suite account information' );
