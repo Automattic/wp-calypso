@@ -250,16 +250,13 @@ const Summary: React.FunctionComponent< SummaryProps > = ( { siteId } ) => {
 	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
 
 	// Steps that are not interactive (e.g. user has already selected domain/plan)
-	const disabledSteps = [ hasPaidDomain ? renderDomainStep : null ].filter(
-		( step ) => step !== null
-	) as ( ( index: number ) => JSX.Element )[];
+	// Steps that are not interactive (e.g. user has already selected domain/plan)
+	const disabledSteps = hasPaidDomain ? [ renderDomainStep ] : [];
 
 	// Steps that require the user interaction
-	const activeSteps = [
-		renderSiteNameStep,
-		hasPaidDomain ? null : renderDomainStep,
-		renderPlanStep,
-	].filter( ( step ) => step !== null ) as ( ( index: number ) => JSX.Element )[];
+	const activeSteps = hasPaidDomain
+		? [ renderSiteNameStep, renderPlanStep ]
+		: [ renderSiteNameStep, renderDomainStep, renderPlanStep ];
 
 	return (
 		<div className="focused-launch-summary__container">
