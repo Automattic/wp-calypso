@@ -641,10 +641,13 @@ export default function CompositeCheckout( {
 	}
 
 	if (
-		responseCart.products.length < 1 &&
-		! areWeRedirecting &&
-		( areThereErrors || ! isCartPendingUpdate ) &&
-		( areThereErrors || ! isInitialCartLoading )
+		shouldShowEmptyCartPage( {
+			responseCart,
+			areWeRedirecting,
+			areThereErrors,
+			isCartPendingUpdate,
+			isInitialCartLoading,
+		} )
 	) {
 		const goToPlans = () => {
 			recordEvent( {
@@ -832,4 +835,35 @@ function displayRenewalSuccessNotice(
 		),
 		{ persistent: true }
 	);
+}
+
+function shouldShowEmptyCartPage( {
+	responseCart,
+	areWeRedirecting,
+	areThereErrors,
+	isCartPendingUpdate,
+	isInitialCartLoading,
+}: {
+	responseCart: ResponseCart;
+	areWeRedirecting: boolean;
+	areThereErrors: boolean;
+	isCartPendingUpdate: boolean;
+	isInitialCartLoading: boolean;
+} ): boolean {
+	if ( responseCart.products.length > 0 ) {
+		return false;
+	}
+	if ( areWeRedirecting ) {
+		return false;
+	}
+	if ( areThereErrors ) {
+		return true;
+	}
+	if ( isCartPendingUpdate ) {
+		return false;
+	}
+	if ( isInitialCartLoading ) {
+		return false;
+	}
+	return true;
 }
