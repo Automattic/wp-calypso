@@ -14,6 +14,7 @@ import sakuraImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnai
 import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
 import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
 import midnightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
+import coffeeImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-coffee.svg';
 import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
 
 /**
@@ -87,6 +88,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-midnight',
 				imageUrl: midnightImg,
+			},
+		},
+		{
+			label: translate( 'Coffee' ),
+			value: 'coffee',
+			thumbnail: {
+				cssClass: 'is-coffee',
+				imageUrl: coffeeImg,
 			},
 		},
 		{
