@@ -6,7 +6,16 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	CheckoutStepAreaWrapper,
+	MainContentWrapper,
+	SubmitButtonWrapper,
+	checkoutTheme,
+	defaultRegistry,
+	Button,
+} from '@automattic/composite-checkout';
+import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
 import { colors } from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
@@ -92,6 +101,7 @@ import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
+import EmptyCart from './components/empty-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -628,6 +638,32 @@ export default function CompositeCheckout( {
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: items.length < 1,
 		} );
+	}
+
+	if ( responseCart.products.length < 1 ) {
+		const goToPlans = () => ( siteSlug ? page( `/plans/${ siteSlug }` ) : page( '/plans' ) );
+		return (
+			<React.Fragment>
+				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+				<CartMessages
+					cart={ responseCart }
+					selectedSite={ { slug: siteSlug } }
+					isLoadingCart={ isInitialCartLoading }
+				/>
+				<ThemeProvider theme={ theme }>
+					<MainContentWrapper>
+						<CheckoutStepAreaWrapper>
+							<EmptyCart />
+							<SubmitButtonWrapper>
+								<Button buttonType="primary" fullWidth onClick={ goToPlans }>
+									{ translate( 'Browse our plans' ) }
+								</Button>
+							</SubmitButtonWrapper>
+						</CheckoutStepAreaWrapper>
+					</MainContentWrapper>
+				</ThemeProvider>
+			</React.Fragment>
+		);
 	}
 
 	return (
