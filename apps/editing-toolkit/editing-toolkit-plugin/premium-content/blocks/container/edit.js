@@ -319,17 +319,7 @@ function Edit( props ) {
 					templateLock={ false }
 					templateInsertUpdatesSelection={ false }
 					template={ [
-						[
-							'core/heading',
-							{ content: __( 'Subscribe to get access', 'full-site-editing' ), level: 3 },
-						],
-						[
-							'core/paragraph',
-							{
-								content: __( 'Read more of this content when you subscribe today.', 'full-site-editing' ),
-							},
-						],
-						[ 'premium-content/buttons',
+						[ 'premium-content/logged-out-view',
 							{
 								isPreview: true,
 							},
