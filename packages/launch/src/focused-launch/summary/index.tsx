@@ -10,14 +10,12 @@ import React, { ReactNode } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
-import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch } from '../../hooks';
-import { SITE_STORE } from '../../stores';
+import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
 
 import './style.scss';
 
@@ -29,7 +27,7 @@ const bulb = (
 
 const info = (
 	<SVG className="focused-launch-summary__info-icon" viewBox="0 0 24 24" width="16">
-		<Circle cx="12" cy="12" stroke="#8C8F94" stroke-width="2" r="10" fill="transparent" />
+		<Circle cx="12" cy="12" stroke="#8C8F94" strokeWidth="2" r="10" fill="transparent" />
 		<Rect x="10.5" y="5" width="3" height="3" fill="#8C8F94" />
 		<Rect x="10.5" y="10" width="3" height="8" fill="#8C8F94" />
 	</SVG>
@@ -213,17 +211,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => 
 	);
 };
 
-type SummaryProps = {
-	siteId: number;
-};
-
-const Summary: React.FunctionComponent< SummaryProps > = ( { siteId } ) => {
-	const { title, updateTitle, saveTitle } = useTitle( siteId );
-	const sitePrimaryDomain = useSelect( ( select ) =>
-		select( SITE_STORE ).getPrimarySiteDomain( siteId )
-	);
-	const siteSubdomain = useSelect( ( select ) => select( SITE_STORE ).getSiteSubdomain( siteId ) );
-	const hasPaidDomain = sitePrimaryDomain && ! sitePrimaryDomain?.is_subdomain;
+const Summary: React.FunctionComponent = () => {
+	const { title, updateTitle, saveTitle } = useTitle();
+	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 
 	const domainSearch = useDomainSearch();
 

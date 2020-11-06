@@ -14,7 +14,7 @@ import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { title, updateTitle, saveTitle } = useTitle( window._currentSiteId );
+	const { title, updateTitle, saveTitle } = useTitle();
 
 	const handleNext = () => {
 		saveTitle();
