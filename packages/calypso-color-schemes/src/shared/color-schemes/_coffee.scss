@@ -130,5 +130,9 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
 	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
 	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	.upsell-nudge.banner.card.is-compact {
+		background-color: #302c29; /* 15% Darken on base color, #59524c */
+	}
 }
 
