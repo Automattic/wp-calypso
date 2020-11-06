@@ -125,6 +125,7 @@ function getWpcomNuxPages() {
 			imgSrc: previewImage,
 			alignBottom: true,
 		},
+		// Last step
 		{
 			heading: __( 'Hidden until you’re ready', 'full-site-editing' ),
 			description: __(
