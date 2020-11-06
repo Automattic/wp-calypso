@@ -23,6 +23,12 @@ const settings = {
 		'full-site-editing'
 	),
 	icon,
+	attributes: {
+		isPreview: {
+			type: 'boolean',
+			default: false,
+		},
+	},
 	supports: {
 		align: true,
 		alignWide: false,
