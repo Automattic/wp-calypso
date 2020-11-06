@@ -130,11 +130,11 @@ export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId
 			const url = item.meta.data.feed?.resolved_feed_url;
 			return url && withoutHttp( url ) === withoutHttp( feedUrl );
 		} else if ( feedId && item.feed_ID ) {
-			return item.feed_ID === feedId;
+			return +item.feed_ID === +feedId;
 		} else if ( siteId && item.site_ID ) {
-			return item.site_ID === siteId;
+			return +item.site_ID === +siteId;
 		} else if ( tagId && item.tag_ID ) {
-			return item.tag_ID === tagId;
+			return +item.tag_ID === +tagId;
 		}
 		return false;
 	} );

@@ -223,6 +223,8 @@ describe( 'selectors', () => {
 
 		test( 'should return the matching feed by its ID if it exists in the specified list', () => {
 			expect( getMatchingItem( state, { feedId: 1, listId: 1 } ) ).to.eql( feed );
+			expect( getMatchingItem( state, { feedId: '1', listId: 1 } ) ).to.eql( feed );
+			expect( getMatchingItem( state, { feedId: 1, listId: '1' } ) ).to.eql( feed );
 			expect( getMatchingItem( state, { feedId: 2, listId: 1 } ) ).to.eql( false );
 		} );
 
@@ -240,11 +242,15 @@ describe( 'selectors', () => {
 
 		test( 'should return the matching site by its ID if it exists in the specified list', () => {
 			expect( getMatchingItem( state, { siteId: 1, listId: 1 } ) ).to.eql( site );
+			expect( getMatchingItem( state, { siteId: '1', listId: 1 } ) ).to.eql( site );
+			expect( getMatchingItem( state, { siteId: 1, listId: '1' } ) ).to.eql( site );
 			expect( getMatchingItem( state, { siteId: 2, listId: 1 } ) ).to.eql( false );
 		} );
 
 		test( 'should return the matching tag by its ID if it exists in the specified list', () => {
 			expect( getMatchingItem( state, { tagId: 1, listId: 1 } ) ).to.eql( tag );
+			expect( getMatchingItem( state, { tagId: '1', listId: 1 } ) ).to.eql( tag );
+			expect( getMatchingItem( state, { tagId: 1, listId: '1' } ) ).to.eql( tag );
 			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).to.eql( false );
 		} );
 	} );
