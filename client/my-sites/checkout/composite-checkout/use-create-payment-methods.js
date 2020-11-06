@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -25,7 +25,6 @@ import {
 /**
  * Internal dependencies
  */
-import { WordPressFreePurchaseLabel, WordPressFreePurchaseSummary } from './payment-method-helpers';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 import {
 	createCreditCardPaymentMethodStore,
@@ -251,10 +250,7 @@ function useCreateFullCredits( { credits } ) {
 }
 
 function useCreateFree() {
-	const freePaymentMethod = useMemo( createFreePaymentMethod, [] );
-	freePaymentMethod.label = <WordPressFreePurchaseLabel />;
-	freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
-	return freePaymentMethod;
+	return useMemo( createFreePaymentMethod, [] );
 }
 
 function useCreateApplePay( {

@@ -1,9 +1,8 @@
 /**
  * External dependencies
  */
-import React from 'react';
 import debugFactory from 'debug';
-import i18n, { useTranslate } from 'i18n-calypso';
+import i18n from 'i18n-calypso';
 import { defaultRegistry } from '@automattic/composite-checkout';
 import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 
@@ -115,22 +114,6 @@ export function submitFreePurchaseTransaction( transactionData, submit ) {
 	} );
 	debug( 'submitting free transaction', formattedTransactionData );
 	return submit( formattedTransactionData );
-}
-
-export function WordPressFreePurchaseLabel() {
-	const translate = useTranslate();
-
-	return (
-		<React.Fragment>
-			<div>{ translate( 'Free Purchase' ) }</div>
-			<WordPressLogo />
-		</React.Fragment>
-	);
-}
-
-export function WordPressFreePurchaseSummary() {
-	const translate = useTranslate();
-	return <div>{ translate( 'Free Purchase' ) }</div>;
 }
 
 async function createAccountCallback( response ) {
