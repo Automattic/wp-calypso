@@ -12,6 +12,7 @@ import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { Item, Site, SiteError } from './types';
+import SiteTitle from './site-title';
 
 function isSiteError( site: Site | SiteError ): site is SiteError {
 	return 'errors' in site;
@@ -29,7 +30,9 @@ function renderSite( site: Site ) {
 				</div>
 
 				<div className="list-item__info">
-					<div className="list-item__title">{ site.name || site.URL || site.feed_URL }</div>
+					<div className="list-item__title">
+						<SiteTitle site={ site } />
+					</div>
 					<div className="list-item__domain">{ site.description || site.feed_URL }</div>
 				</div>
 			</a>
