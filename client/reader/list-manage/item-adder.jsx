@@ -24,7 +24,7 @@ export default function ItemAdder( props ) {
 	const [ query, updateQuery ] = React.useState( '' );
 	const queryIsUrl = resemblesUrl( query );
 	const searchResults = useSelector( ( state ) =>
-		getReaderFeedsForQuery( state, { query, sort: SORT_BY_RELEVANCE } )
+		getReaderFeedsForQuery( state, { query, excludeFollowed: false, sort: SORT_BY_RELEVANCE } )
 	);
 
 	return (
@@ -51,6 +51,7 @@ export default function ItemAdder( props ) {
 			{ ! queryIsUrl &&
 				searchResults?.map( ( item ) => (
 					<ListItem
+						hideIfInList
 						key={ item.feed_ID || item.site_ID || item.tag_ID }
 						item={ item }
 						list={ props.list }

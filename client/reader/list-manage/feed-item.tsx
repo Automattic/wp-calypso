@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button, Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { Item, Feed, FeedError, List } from './types';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
@@ -23,7 +23,7 @@ function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;
 }
 
-function FeedTitle( { feed: { name, URL, feed_URL } } ) {
+function FeedTitle( { feed: { name, URL, feed_URL } }: { feed: Feed } ) {
 	return <>{ name || URL || feed_URL }</>;
 }
 
@@ -66,7 +66,12 @@ function renderFeedError( err: FeedError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function FeedItem( props: { item: Item; list: List; owner: string } ) {
+export default function FeedItem( props: {
+	hideIfInList: boolean;
+	item: Item;
+	list: List;
+	owner: string;
+} ) {
 	const { list, owner, item } = props;
 	const feed: Feed | FeedError = useSelector( ( state ) => {
 		let feed = props.item.meta?.data?.feed;
@@ -76,8 +81,8 @@ export default function FeedItem( props: { item: Item; list: List; owner: string
 		return feed as Feed | FeedError;
 	} );
 
-	const isInList = useSelector( ( state ) =>
-		getMatchingItem( state, { feedId: props.item.feed_ID, listId: props.list.ID } )
+	const isInList = !! useSelector( ( state ) =>
+		getMatchingItem( state, { feedId: item.feed_ID, listId: list.ID } )
 	);
 
 	const dispatch = useDispatch();
@@ -90,14 +95,18 @@ export default function FeedItem( props: { item: Item; list: List; owner: string
 		shouldDelete && dispatch( deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID ) );
 	};
 
+	if ( isInList && props.hideIfInList ) {
+		return null;
+	}
+
 	return ! feed ? (
 		// TODO: Add support for removing invalid feed list item
-		<>
+		<Card className="list-manage__site-card">
 			<SitePlaceholder />
 			<QueryReaderFeed feedId={ item.feed_ID } />
-		</>
+		</Card>
 	) : (
-		<>
+		<Card className="list-manage__site-card">
 			{ isFeedError( feed ) ? renderFeedError( feed ) : renderFeed( feed ) }
 
 			{ ! isInList ? (
@@ -116,6 +125,6 @@ export default function FeedItem( props: { item: Item; list: List; owner: string
 				type="feed"
 				visibility={ showDeleteConfirmation }
 			/>
-		</>
+		</Card>
 	);
 }

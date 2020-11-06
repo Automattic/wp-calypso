@@ -8,26 +8,31 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import { Button, Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import { Button } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { addReaderListTag, deleteReaderListTag } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialogue from './item-remove-dialogue';
 import { Item, Tag } from './types';
 
-function TagTitle( { tag: { display_name, slug } } ) {
+function TagTitle( { tag: { display_name, slug } }: { tag: Tag } ) {
 	return <>{ display_name || slug }</>;
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function TagItem( props: { item: Item; list: List; owner: string } ) {
+export default function TagItem( props: {
+	hideIfInList: boolean;
+	item: Item;
+	list: List;
+	owner: string;
+} ) {
 	const { item, list, owner } = props;
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const isInList = useSelector( ( state ) =>
+	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { tagId: props.item.tag_ID, listId: list.ID } )
 	);
 
@@ -48,11 +53,17 @@ export default function TagItem( props: { item: Item; list: List; owner: string 
 			);
 	};
 
+	if ( isInList && props.hideIfInList ) {
+		return null;
+	}
+
 	return ! tag ? (
 		// TODO: Add support for removing invalid tag list item
-		<SitePlaceholder />
+		<Card className="list-manage__site-card">
+			<SitePlaceholder />
+		</Card>
 	) : (
-		<>
+		<Card className="list-manage__site-card">
 			<div className="tag-item list-item">
 				<a className="list-item__content" href={ `/read/tag/${ encodeURIComponent( tag.slug ) }` }>
 					<div className="list-item__icon">
@@ -84,6 +95,6 @@ export default function TagItem( props: { item: Item; list: List; owner: string 
 				type="tag"
 				visibility={ showDeleteConfirmation }
 			/>
-		</>
+		</Card>
 	);
 }

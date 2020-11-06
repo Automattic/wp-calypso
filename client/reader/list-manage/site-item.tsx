@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
@@ -21,7 +21,7 @@ function isSiteError( site: Site | SiteError ): site is SiteError {
 	return 'errors' in site;
 }
 
-function SiteTitle( { site: { name, URL, feed_URL } } ) {
+function SiteTitle( { site: { name, URL, feed_URL } }: { site: Site } ) {
 	return <>{ name || URL || feed_URL }</>;
 }
 
@@ -67,13 +67,18 @@ function renderSiteError( err: SiteError ) {
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export default function SiteItem( props: { item: Item; list: List; owner: string } ) {
+export default function SiteItem( props: {
+	hideIfInList: boolean;
+	item: Item;
+	list: List;
+	owner: string;
+} ) {
 	const { list, owner } = props;
 	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
-	const isInList = useSelector( ( state ) =>
+	const isInList = !! useSelector( ( state ) =>
 		getMatchingItem( state, { siteId: props.item.site_ID, listId: props.list.ID } )
 	);
 
@@ -84,13 +89,21 @@ export default function SiteItem( props: { item: Item; list: List; owner: string
 		shouldDelete && dispatch( deleteReaderListSite( list.ID, owner, list.slug, item.site_ID ) );
 	};
 
+	if ( isInList && props.hideIfInList ) {
+		return null;
+	}
+
 	if ( ! site ) {
 		// TODO: Add support for removing invalid site list item
-		return <SitePlaceholder />;
+		return (
+			<Card className="list-manage__site-card">
+				<SitePlaceholder />
+			</Card>
+		);
 	}
 
 	return (
-		<>
+		<Card className="list-manage__site-card">
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
 
 			{ ! isInList ? (
@@ -109,6 +122,6 @@ export default function SiteItem( props: { item: Item; list: List; owner: string
 				type="site"
 				visibility={ showDeleteConfirmation }
 			/>
-		</>
+		</Card>
 	);
 }
