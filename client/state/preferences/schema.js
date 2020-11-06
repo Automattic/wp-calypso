@@ -54,6 +54,7 @@ export const remoteValuesSchema = {
 				'classic-bright',
 				'contrast',
 				'midnight',
+				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',
