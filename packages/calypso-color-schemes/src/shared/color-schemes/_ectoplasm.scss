@@ -32,13 +32,13 @@ Created this definition in color-studio to generate 0-100 shades:
     }
 */
 
-// Set up variables for Calypso ectoplasm
-:root {
+.color-scheme.is-ectoplasm {
+    /* Variables used in Calypso Ectoplasm */
     --theme-text-color: #ffffff; /* Direct from wp-admin */
     --theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
     --theme-base-color: #523f6d; /* Direct from wp-admin */
     --theme-base-color-rgb: 82, 63, 109; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-submenu-background-color: #413256; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/
+    --theme-submenu-background-color: #413256; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
     --theme-icon-color: #ece6f6; /* Direct from wp-admin */
     --theme-highlight-color: #a3b745; /* Direct from wp-admin */
     --theme-highlight-color-rgb: 163, 183, 69; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
@@ -70,9 +70,7 @@ Created this definition in color-studio to generate 0-100 shades:
     --ectoplasm-green-90-rgb: 41, 51, 0;
     --ectoplasm-green-100-rgb: 22, 28, 0;
     --ectoplasm-green-rgb: 127, 157, 0;
-}
 
-.color-scheme.is-ectoplasm {
 	/* Primary */
 	--color-primary: var( --theme-highlight-color );
 	--color-primary-rgb: var( --theme-highlight-color-rgb );
