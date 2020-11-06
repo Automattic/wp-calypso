@@ -12,25 +12,19 @@ import {
 	useEvents,
 } from '@automattic/composite-checkout';
 
-export function createFullCreditsMethod() {
+/**
+ * Internal dependencies
+ */
+import WordPressLogo from '../components/wordpress-logo';
+
+export function createFullCreditsMethod( { credits } ) {
 	return {
 		id: 'full-credits',
-		label: <FullCreditsLabel />,
+		label: <WordPressCreditsLabel credits={ credits } />,
 		submitButton: <FullCreditsSubmitButton />,
-		inactiveContent: <FullCreditsSummary />,
+		inactiveContent: <WordPressCreditsSummary />,
 		getAriaLabel: ( __ ) => __( 'Credits' ),
 	};
-}
-
-function FullCreditsLabel() {
-	const { __ } = useI18n();
-
-	return (
-		<React.Fragment>
-			<div>{ __( 'Credits' ) }</div>
-			<div>{ __( 'Pay entirely with credits' ) }</div>
-		</React.Fragment>
-	);
 }
 
 function FullCreditsSubmitButton( { disabled, onClick } ) {
@@ -69,7 +63,23 @@ function ButtonContents( { formStatus, total } ) {
 	return __( 'Please wait…' );
 }
 
-function FullCreditsSummary() {
+function WordPressCreditsLabel( { credits } ) {
 	const { __ } = useI18n();
-	return __( 'Pay using Credits' );
+
+	return (
+		<React.Fragment>
+			<div>
+				{ __( 'WordPress.com Credits: %(amount)s available', {
+					args: { amount: credits.wpcom_meta.credits_display },
+					comment: "The total value of credits on the user's account",
+				} ) }
+			</div>
+			<WordPressLogo />
+		</React.Fragment>
+	);
+}
+
+function WordPressCreditsSummary() {
+	const { __ } = useI18n();
+	return <div>{ __( 'WordPress.com Credits' ) }</div>;
 }
