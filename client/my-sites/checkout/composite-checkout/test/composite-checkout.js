@@ -235,8 +235,7 @@ describe( 'CompositeCheckout', () => {
 						<CompositeCheckout
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
-							allowedPaymentMethods={ [ 'paypal' ] }
-							onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
+							allowedPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
 							overrideCountryList={ countryList }
 							{ ...additionalProps }
 						/>
