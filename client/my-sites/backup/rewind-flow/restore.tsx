@@ -14,6 +14,7 @@ import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
 import getInProgressRewindPercentComplete from 'calypso/state/selectors/get-in-progress-rewind-percent-complete';
+import getInProgressRewindEntryDetails from 'calypso/state/selectors/get-in-progress-rewind-entry-details';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
@@ -23,19 +24,16 @@ import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 
+/**
+ * Type dependencies
+ */
+import { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+
 interface Props {
 	backupDisplayDate: string;
 	rewindId: string;
 	siteId: number;
 	siteUrl: string;
-}
-
-//todo: move to dedicated types file
-interface RewindState {
-	state: string;
-	rewind?: {
-		status: 'queued' | 'running' | 'finished' | 'fail';
-	};
 }
 
 const BackupRestoreFlow: FunctionComponent< Props > = ( {
@@ -51,25 +49,27 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ userHasRequestedRestore, setUserHasRequestedRestore ] = useState< boolean >( false );
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
-
-	const loading = rewindState.state === 'uninitialized';
-
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
 	const inProgressRewindPercentComplete = useSelector( ( state ) =>
 		getInProgressRewindPercentComplete( state, siteId, rewindId )
 	);
+	const inProgressRewindEntryDetails = useSelector( ( state ) =>
+		getInProgressRewindEntryDetails( state, siteId, rewindId )
+	);
 
 	const requestRestore = useCallback(
 		() => dispatch( rewindRestore( siteId, rewindId, rewindConfig ) ),
 		[ dispatch, rewindConfig, rewindId, siteId ]
 	);
-
-	const onConfirm = () => {
+	const onConfirm = useCallback( () => {
 		setUserHasRequestedRestore( true );
 		requestRestore();
-	};
+	}, [ setUserHasRequestedRestore, requestRestore ] );
+
+	const loading = rewindState.state === 'uninitialized';
+	const { message, currentEntry } = inProgressRewindEntryDetails;
 
 	const renderConfirm = () => (
 		<>
@@ -114,7 +114,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 				<Gridicon icon="history" size={ 48 } />
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
-			<ProgressBar percent={ inProgressRewindPercentComplete } />
+			<ProgressBar
+				isReady={ 'running' === inProgressRewindStatus }
+				message={ message }
+				entry={ currentEntry }
+				percent={ inProgressRewindPercentComplete }
+			/>
 			<p className="rewind-flow__info">
 				{ translate(
 					'We are restoring your site back to {{strong}}%(backupDisplayDate)s{{/strong}}.',
