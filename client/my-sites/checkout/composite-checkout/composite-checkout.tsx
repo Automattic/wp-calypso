@@ -617,17 +617,6 @@ export default function CompositeCheckout( {
 		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
 	);
 
-	useRecordCheckoutLoaded( {
-		recordEvent,
-		isLoadingCart: isInitialCartLoading,
-		isApplePayAvailable,
-		isApplePayLoading,
-		isLoadingStoredCards,
-		responseCart,
-		storedCards,
-		productAliasFromUrl,
-	} );
-
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -642,17 +631,28 @@ export default function CompositeCheckout( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isLoading =
-		isInitialCartLoading || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
+	const isLoading: boolean =
+		isInitialCartLoading ||
+		arePaymentMethodsLoading ||
+		paymentMethods.length < 1 ||
+		items.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
-			isLoadingStoredCards,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: items.length < 1,
 		} );
 	}
+
+	useRecordCheckoutLoaded( {
+		recordEvent,
+		isLoading,
+		isApplePayAvailable,
+		responseCart,
+		storedCards,
+		productAliasFromUrl,
+	} );
 
 	if (
 		shouldShowEmptyCartPage( {
