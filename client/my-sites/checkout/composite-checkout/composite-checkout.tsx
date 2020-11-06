@@ -486,9 +486,13 @@ export default function CompositeCheckout( {
 	const arePaymentMethodsLoading =
 		items.length < 1 ||
 		isInitialCartLoading ||
-		isLoadingStoredCards ||
-		( onlyLoadPaymentMethods
-			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
+		// Only wait for stored cards to load if we are using cards
+		( allowedPaymentMethods
+			? allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards
+			: isLoadingStoredCards ) ||
+		// Only wait for apple pay to load if we are using apple pay
+		( allowedPaymentMethods
+			? allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
 			: isApplePayLoading );
 
 	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
