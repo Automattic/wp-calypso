@@ -3,6 +3,8 @@
 @import '~@wordpress/base-styles/mixins';
 
 .editor-checkout-modal {
+	z-index: z-index( 'root', '.main.calypsoify.is-iframe' );
+
 	.components-modal__frame {
 		top: auto;
 		right: auto;
