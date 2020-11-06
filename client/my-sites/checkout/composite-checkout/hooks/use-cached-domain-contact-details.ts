@@ -12,7 +12,6 @@ import debugFactory from 'debug';
  */
 import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import { requestContactDetailsCache } from 'calypso/state/domains/management/actions';
-import type { PossiblyCompleteDomainContactDetails } from '../types/backend/domain-contact-details-components';
 
 const { dispatch } = defaultRegistry;
 
@@ -32,9 +31,7 @@ export default function useCachedDomainContactDetails(
 		}
 	}, [ reduxDispatch ] );
 
-	const cachedContactDetails: PossiblyCompleteDomainContactDetails | null = useSelector(
-		getContactDetailsCache
-	);
+	const cachedContactDetails = useSelector( getContactDetailsCache );
 	useEffect( () => {
 		if ( cachedContactDetails ) {
 			debug( 'using fetched cached domain contact details', cachedContactDetails );
