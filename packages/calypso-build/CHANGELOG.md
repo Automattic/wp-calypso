@@ -7,7 +7,7 @@
 
 ## 6.4.0
 
-- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for '_.md.jsx' and '_.md.js' files
+- Removed the exceptions for the `import/no-extraneous-dependencies` eslint rule for `*.md.jsx` and `*.md.js` files
 - Upgraded dependencies
   - typescript to ^4.0.3
   - terser-webpack-plugin to "4.2.2
