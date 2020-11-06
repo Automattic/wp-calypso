@@ -197,7 +197,10 @@ describe( 'selectors', () => {
 
 	describe( '#getMatchingItem()', () => {
 		const feed = {
-			meta: { data: { feed: { blog_ID: 0, resolved_feed_url: 'https://www.example.com/rss' } } },
+			feed_ID: 1,
+		};
+		const feedItem = {
+			feed_URL: 'https://www.example.com/rss',
 			feed_ID: 1,
 		};
 		const site = {
@@ -208,13 +211,11 @@ describe( 'selectors', () => {
 			meta: { data: { tag: { blog_ID: 0 } } },
 			tag_ID: 1,
 		};
+		// state.reader.feeds.items
 		const state = {
 			reader: {
-				lists: {
-					listItems: {
-						1: [ feed, site, tag ],
-					},
-				},
+				feeds: { items: { 1: feedItem } },
+				lists: { listItems: { 1: [ feed, site, tag ] } },
 			},
 		};
 		test( 'should return false if the list does not exist', () => {

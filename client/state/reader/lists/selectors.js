@@ -125,11 +125,20 @@ export function getListItems( state, listId ) {
 }
 
 export function getMatchingItem( state, { feedUrl, feedId, listId, siteId, tagId } ) {
+	// Find associated feed ID if feed URL is provided.
+	if ( feedUrl ) {
+		const feeds = state.reader.feeds.items;
+		const matchingFeeds = Object.keys( feeds ).filter(
+			( key ) =>
+				feeds[ key ].feed_URL && withoutHttp( feeds[ key ].feed_URL ) === withoutHttp( feedUrl )
+		);
+		if ( matchingFeeds.length > 0 ) {
+			feedId = feeds[ matchingFeeds[ 0 ] ].feed_ID;
+		}
+	}
+
 	const list = state.reader?.lists?.listItems?.[ listId ]?.filter( ( item ) => {
-		if ( feedUrl ) {
-			const url = item.meta.data.feed?.resolved_feed_url;
-			return url && withoutHttp( url ) === withoutHttp( feedUrl );
-		} else if ( feedId && item.feed_ID ) {
+		if ( feedId && item.feed_ID ) {
 			return +item.feed_ID === +feedId;
 		} else if ( siteId && item.site_ID ) {
 			return +item.site_ID === +siteId;
