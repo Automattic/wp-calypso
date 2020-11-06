@@ -39,7 +39,6 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
-import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
 import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
@@ -118,7 +117,6 @@ export {
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
 	createFreePaymentMethod,
-	createFullCreditsMethod,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createIdealMethod,
