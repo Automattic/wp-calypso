@@ -32,6 +32,11 @@ Used studio-blue for the primary+accent.
 	--theme-highlight-color-rgb: 56, 88, 233; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
 	--theme-notification-color: #3858e9; /* Direct from wp-admin */
 
+	/* Links */
+	--color-link: var( --theme-highlight-color );
+	--color-link-dark: #183ad6; /* Darken 10% */
+	--color-link-light: #667fee; /* Lighten 10% */
+
 	/* Primary */
 	--color-primary: var( --theme-highlight-color );
 	--color-primary-rgb: var( --theme-highlight-color-rgb );
