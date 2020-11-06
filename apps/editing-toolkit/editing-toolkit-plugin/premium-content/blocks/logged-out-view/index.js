@@ -26,7 +26,12 @@ const category = getCategoryWithFallbacks( 'design', 'common' );
 const settings = {
 	name,
 	category,
-	attributes: {},
+	attributes: {
+		isPreview: {
+			type: 'boolean',
+			default: false,
+		},
+	},
 	/* translators: block name */
 	title: __( 'Logged Out View', 'full-site-editing' ),
 	/* translators: block description */
