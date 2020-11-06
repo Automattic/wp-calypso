@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
 import {
 	READER_LIST_CREATE,
 	READER_LIST_DELETE,
-	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_FOLLOW,
+	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_ITEMS_REQUEST,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
@@ -14,6 +14,8 @@ import {
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UNFOLLOW,
+	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
@@ -23,8 +25,6 @@ import {
 	READER_LIST_ITEM_ADD_TAG_RECEIVE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LIST_FOLLOW,
-	READER_LIST_UNFOLLOW,
 } from 'calypso/state/reader/action-types';
 import 'calypso/state/data-layer/wpcom/read/lists';
 import 'calypso/state/data-layer/wpcom/read/lists/delete';
@@ -106,6 +106,19 @@ export function followList( listOwner, listSlug ) {
 }
 
 /**
+ * Receive a successful list follow.
+ *
+ * @param  {object} list Followed list
+ * @returns {object} Action object
+ */
+export function receiveFollowList( list ) {
+	return {
+		type: READER_LIST_FOLLOW_RECEIVE,
+		list,
+	};
+}
+
+/**
  * Unfollow a list.
  *
  * @param  {string}  listOwner List owner
@@ -117,6 +130,19 @@ export function unfollowList( listOwner, listSlug ) {
 		type: READER_LIST_UNFOLLOW,
 		listOwner,
 		listSlug,
+	};
+}
+
+/**
+ * Receive a successful list unfollow.
+ *
+ * @param  {object} list Unfollowed list
+ * @returns {object}    Action object
+ */
+export function receiveUnfollowList( list ) {
+	return {
+		type: READER_LIST_UNFOLLOW_RECEIVE,
+		list,
 	};
 }
 
@@ -162,21 +188,6 @@ export function handleUpdateListDetailsError( error, list ) {
 		type: READER_LIST_UPDATE_FAILURE,
 		error,
 		list,
-	};
-}
-
-/**
- * Trigger an action to dismiss a list update notice.
- *
- * @param  {number}  listId List ID
- * @returns {Function} Action thunk
- */
-export function dismissListNotice( listId ) {
-	return ( dispatch ) => {
-		dispatch( {
-			type: READER_LIST_DISMISS_NOTICE,
-			listId,
-		} );
 	};
 }
 
@@ -272,9 +283,3 @@ export const deleteReaderList = ( listId, listOwner, listSlug ) => ( {
 	listOwner,
 	listSlug,
 } );
-
-function createQuery( owner, slug ) {
-	const preparedOwner = decodeURIComponent( owner );
-	const preparedSlug = decodeURIComponent( slug );
-	return { owner: preparedOwner, slug: preparedSlug };
-}

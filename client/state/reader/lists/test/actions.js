@@ -8,26 +8,17 @@ import {
 	requestSubscribedLists,
 	followList,
 	unfollowList,
-	dismissListNotice,
 } from '../actions';
 import {
 	READER_LIST_DELETE,
-	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
 	READER_LIST_FOLLOW,
 	READER_LIST_UNFOLLOW,
 } from 'calypso/state/reader/action-types';
-import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
-	const spy = jest.fn();
-
-	afterEach( () => {
-		jest.clearAllMocks();
-	} );
-
 	describe( '#receiveLists()', () => {
 		test( 'should return an action object', () => {
 			const lists = [ { ID: 841, title: 'Hello World', slug: 'hello-world' } ];
@@ -82,18 +73,6 @@ describe( 'actions', () => {
 				type: READER_LIST_UNFOLLOW,
 				listOwner: 'restapitests',
 				listSlug: 'testlist',
-			} );
-		} );
-	} );
-
-	describe( '#dismissListNotice()', () => {
-		test( 'should dispatch the dismiss action', () => {
-			const listId = 123;
-			dismissListNotice( listId )( spy );
-
-			expect( spy ).toHaveBeenCalledWith( {
-				type: READER_LIST_DISMISS_NOTICE,
-				listId: 123,
 			} );
 		} );
 	} );
