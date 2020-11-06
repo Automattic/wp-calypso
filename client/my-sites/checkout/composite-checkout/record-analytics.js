@@ -52,8 +52,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							coupon_code: action.payload.couponItem?.wpcom_meta.couponCode ?? '',
 							currency: action.payload.total.amount.currency,
 							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
-									?.name || '',
+								translateCheckoutPaymentMethodToWpcomPaymentMethod(
+									action.payload.paymentMethodId
+								) || '',
 							total_cost,
 						} )
 					);
@@ -76,8 +77,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 							total: action.payload.total.amount.value,
 							currency: action.payload.total.amount.currency,
 							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
-									?.name || '',
+								translateCheckoutPaymentMethodToWpcomPaymentMethod(
+									action.payload.paymentMethodId
+								) || '',
 						} )
 					);
 				}
@@ -208,7 +210,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 								payment_method:
 									translateCheckoutPaymentMethodToWpcomPaymentMethod(
 										action.payload.paymentMethodId
-									)?.name || '',
+									) || '',
 							} )
 						);
 					}
@@ -262,8 +264,9 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_payment_error', {
 							error_code: null,
 							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
-									?.name || '',
+								translateCheckoutPaymentMethodToWpcomPaymentMethod(
+									action.payload.paymentMethodId
+								) || '',
 							reason: String( action.payload.message ),
 						} )
 					);
@@ -296,16 +299,18 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_form_submit', {
 							credits: null,
 							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
-									?.name || '',
+								translateCheckoutPaymentMethodToWpcomPaymentMethod(
+									action.payload.paymentMethodId
+								) || '',
 						} )
 					);
 					reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
 							credits: null,
 							payment_method:
-								translateCheckoutPaymentMethodToWpcomPaymentMethod( action.payload.paymentMethodId )
-									?.name || '',
+								translateCheckoutPaymentMethodToWpcomPaymentMethod(
+									action.payload.paymentMethodId
+								) || '',
 						} )
 					);
 					const paymentMethodIdForTracks = action.payload.paymentMethodId
