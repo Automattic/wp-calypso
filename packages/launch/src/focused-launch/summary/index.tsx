@@ -143,7 +143,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
 							quantity={ 3 }
 							quantityExpanded={ 3 }
-							itemType="button"
+							itemType="individual-item"
 						/>
 						<Link to={ Route.DomainDetails }>
 							{ __( 'View all domains', __i18n_text_domain__ ) }
