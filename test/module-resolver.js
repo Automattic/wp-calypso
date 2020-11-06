@@ -1,3 +1,6 @@
+const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
+
+const packages = packagesInMonorepo().map( ( pkg ) => pkg.name );
 /**
  * Implements a custom resolver that uses `pkg['calypso:src']` isntead of `pkg.main` for packages from the monorepo.
  *
@@ -20,10 +23,10 @@ module.exports = ( request, options ) => {
 		packageFilter: ( pkg ) => {
 			//TODO: when Jest moves to resolver v2, this method will receive a second argument that points to the real package file (ie: no symlink)
 			//We can use it to determine if the package file is within the repo
-			if ( 'calypso:src' in pkg ) {
+			if ( packages.includes( pkg.name ) ) {
 				return {
 					...pkg,
-					main: pkg[ 'calypso:src' ] || pkg.module,
+					main: pkg[ 'calypso:src' ] || pkg.module || pkg.main,
 				};
 			}
 			return pkg;
