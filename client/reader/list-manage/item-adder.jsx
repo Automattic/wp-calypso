@@ -44,7 +44,9 @@ export default function ItemAdder( props ) {
 				{ queryIsUrl && <FeedUrlAdder list={ props.list } query={ query } /> }
 			</Card>
 
-			{ ! searchResults && query && <QueryReaderFeedsSearch query={ query } /> }
+			{ ! searchResults && query && (
+				<QueryReaderFeedsSearch excludeFollowed={ false } query={ query } />
+			) }
 
 			{ ! queryIsUrl &&
 				searchResults?.map( ( item ) => (
