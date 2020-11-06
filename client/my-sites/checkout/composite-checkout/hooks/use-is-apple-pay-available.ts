@@ -87,7 +87,7 @@ export default function useIsApplePayAvailable(
 			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
 		const currency = items.reduce(
 			( firstCurrency, item ) => firstCurrency || item.amount.currency,
-			'usd'
+			null
 		);
 		const paymentRequestOptions = {
 			requestPayerName: true,
@@ -95,7 +95,7 @@ export default function useIsApplePayAvailable(
 			requestPayerEmail: false,
 			requestShipping: false,
 			country: countryCode,
-			currency: currency.toLowerCase(),
+			currency: currency ? currency.toLowerCase() : 'usd',
 			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
 			displayItems: [],
 			total: {
