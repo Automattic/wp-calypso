@@ -17,7 +17,7 @@ import {
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from '../types/backend/payment-method';
+} from './translate-payment-method-names';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
