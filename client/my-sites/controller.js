@@ -61,6 +61,7 @@ import { makeLayout, render as clientRender, setSectionMiddleware } from 'calyps
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -501,4 +502,53 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
+ * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
+ *
+ * If you need to prevent navigation to pages for the P2 project in general,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		! config.isEnabled( 'p2/p2-plus' ) &&
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID )
+	) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
+ *
+ * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWPForTeams( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }

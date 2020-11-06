@@ -45,6 +45,9 @@ ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
 
+RUN apt update && \
+	apt-get install -y git-restore-mtime libsecret-1-dev
+
 RUN chown $UID /calypso
 # Copy nvm cache so we don't need to download it again
 COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm

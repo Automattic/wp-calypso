@@ -4,8 +4,6 @@
 import { useEffect, useState, useRef } from '@wordpress/element';
 import {
 	Placeholder,
-	Button,
-	ExternalLink,
 	withNotices,
 	Spinner,
 	ToolbarGroup,
@@ -22,7 +20,6 @@ import apiFetch from '@wordpress/api-fetch';
 /**
  * Internal dependencies
  */
-import Tabs from './tabs';
 import Blocks from './blocks';
 import Controls from './controls';
 import Inspector from './inspector';
@@ -97,7 +94,6 @@ function Edit( props ) {
 	const [ connectURL, setConnectURL ] = useState( defaultString );
 	const [ apiState, setApiState ] = useState( API_STATE_LOADING );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
-	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	// @ts-ignore needed in some upgrade flows - depending how we implement this
 	const [ siteSlug, setSiteSlug ] = useState( '' ); // eslint-disable-line
 
@@ -242,7 +238,6 @@ function Edit( props ) {
 
 				setConnectURL( result.connect_url );
 				setShouldUpgrade( result.should_upgrade_to_access_memberships );
-				setUpgradeURL( result.upgrade_url );
 				setSiteSlug( result.site_slug );
 
 				if (
@@ -299,41 +294,6 @@ function Edit( props ) {
 					instructions={ __( 'Loading data…', 'full-site-editing' ) }
 				>
 					<Spinner />
-				</Placeholder>
-			</div>
-		);
-	}
-
-	if ( shouldUpgrade ) {
-		return (
-			<div className={ className } ref={ wrapperRef }>
-				{ props.noticeUI }
-				<Placeholder
-					icon="lock"
-					label={ __( 'Premium Content', 'full-site-editing' ) }
-					instructions={ __(
-						"You'll need to upgrade your plan to use the Premium Content block.",
-						'full-site-editing'
-					) }
-				>
-					<Button
-						/**
-						 * @see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/42883
-						 */
-						// @ts-ignore isSecondary is missing from the type definition
-						isSecondary
-						isLarge
-						href={ upgradeURL }
-						target="_blank"
-						className="premium-content-block-nudge__button plan-nudge__button"
-					>
-						{ __( 'Upgrade Your Plan', 'full-site-editing' ) }
-					</Button>
-					<div className="membership-button__disclaimer">
-						<ExternalLink href="https://wordpress.com/support/premium-content-block/">
-							{ __( 'Read more about Premium Content and related fees.', 'full-site-editing' ) }
-						</ExternalLink>
-					</div>
 				</Placeholder>
 			</div>
 		);

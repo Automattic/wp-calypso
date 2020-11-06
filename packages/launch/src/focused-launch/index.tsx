@@ -11,14 +11,14 @@ import { Route as FocusedLaunchRoute } from './route';
 import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
+import { useOnLaunch } from '../hooks';
 
 import './style.scss';
 
-interface Props {
-	siteId: number;
-}
+const FocusedLaunch: React.FunctionComponent = () => {
+	// handle redirects to checkout / my home after launch
+	useOnLaunch();
 
-const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
 			<Switch>
@@ -29,7 +29,7 @@ const FocusedLaunch: React.FunctionComponent< Props > = ( { siteId } ) => {
 					<PlanDetails />
 				</Route>
 				<Route path={ FocusedLaunchRoute.Summary }>
-					<Summary siteId={ siteId } />
+					<Summary />
 				</Route>
 			</Switch>
 		</Router>

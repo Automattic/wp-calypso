@@ -15,7 +15,12 @@ import {
 } from './controller';
 import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import {
+	navigation,
+	siteSelection,
+	sites,
+	wpForTeamsP2PlusNotSupportedRedirect,
+} from 'calypso/my-sites/controller';
 import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import plansV2 from 'calypso/my-sites/plans-v2';
 
@@ -24,19 +29,73 @@ const trackedPage = ( url, ...rest ) => {
 };
 
 export default function () {
-	trackedPage( '/plans', siteSelection, sites );
-	trackedPage( '/plans/compare', siteSelection, navigation, redirectToPlans );
-	trackedPage( '/plans/compare/:domain', siteSelection, navigation, redirectToPlans );
-	trackedPage( '/plans/features', siteSelection, navigation, redirectToPlans );
-	trackedPage( '/plans/features/:domain', siteSelection, navigation, redirectToPlans );
+	trackedPage( '/plans', siteSelection, wpForTeamsP2PlusNotSupportedRedirect, sites );
+	trackedPage(
+		'/plans/compare',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
+	trackedPage(
+		'/plans/compare/:domain',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
+	trackedPage(
+		'/plans/features',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
+	trackedPage(
+		'/plans/features/:domain',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		redirectToPlans
+	);
 	trackedPage( '/plans/features/:feature/:domain', features );
-	trackedPage( '/plans/my-plan', siteSelection, sites, navigation, currentPlan );
-	trackedPage( '/plans/my-plan/:site', siteSelection, navigation, currentPlan );
-	trackedPage( '/plans/select/:plan/:domain', siteSelection, redirectToCheckout );
+	trackedPage(
+		'/plans/my-plan',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		sites,
+		navigation,
+		currentPlan
+	);
+	trackedPage(
+		'/plans/my-plan/:site',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		currentPlan
+	);
+	trackedPage(
+		'/plans/select/:plan/:domain',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToCheckout
+	);
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
-	trackedPage( '/plans/:intervalType?/:site', siteSelection, navigation, plans );
+	trackedPage(
+		'/plans/:intervalType?/:site',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		navigation,
+		plans
+	);
 	if ( shouldShowOfferResetFlow() ) {
-		plansV2( '/plans', siteSelection, redirectToPlansIfNotJetpack, navigation );
+		plansV2(
+			'/plans',
+			siteSelection,
+			wpForTeamsP2PlusNotSupportedRedirect,
+			redirectToPlansIfNotJetpack,
+			navigation
+		);
 	}
 }

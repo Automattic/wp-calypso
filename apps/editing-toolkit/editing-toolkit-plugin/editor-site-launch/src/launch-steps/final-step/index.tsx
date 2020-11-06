@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
-import { useEntityProp } from '@wordpress/core-data';
+import { useSite, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -27,7 +27,6 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite, useDomainSuggestion, useDomainSearch } from '@automattic/launch';
 
 import './styles.scss';
 
@@ -41,7 +40,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
 
-	const [ title ] = useEntityProp( 'root', 'site', 'title' );
+	const { title } = useTitle();
 	const { currentDomainName } = useSite();
 	const domainSuggestion = useDomainSuggestion();
 	const domainSearch = useDomainSearch();

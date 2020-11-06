@@ -4,6 +4,9 @@ export const remoteValuesSchema = {
 		'^dismissible-card-.+$': {
 			type: [ 'boolean', 'object' ],
 		},
+		'^time-mismatch-warning-\\d+$': {
+			type: [ 'boolean', 'number' ],
+		},
 	},
 	properties: {
 		'editor-mode': {

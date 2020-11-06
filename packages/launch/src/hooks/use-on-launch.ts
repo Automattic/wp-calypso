@@ -10,14 +10,10 @@ import { addQueryArgs } from '@wordpress/url';
  */
 import { useSite } from './';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
-
-declare global {
-	interface Window {
-		_currentSiteId: number;
-	}
-}
+import LaunchContext from '../context';
 
 export const useOnLaunch = () => {
+	const { siteId } = React.useContext( LaunchContext );
 	const { launchStatus } = useSite();
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const isEcommercePlan = useSelect( ( select ) =>
@@ -47,8 +43,8 @@ export const useOnLaunch = () => {
 				};
 
 				const go = async () => {
-					const cart = await getCart( window._currentSiteId );
-					await setCart( window._currentSiteId, {
+					const cart = await getCart( siteId );
+					await setCart( siteId, {
 						...cart,
 						products: [ ...cart.products, planProduct, domainProduct ],
 					} );
@@ -59,16 +55,13 @@ export const useOnLaunch = () => {
 					// const editorUrl = design?.is_fse
 					// 	? `site-editor%2F${ newSite.site_slug }`
 					// 	: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
-					// window.location.href = `https://wordpress.com/checkout/${ window._currentSiteId }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
+					// window.location.href = `https://wordpress.com/checkout/${ siteId }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
 
-					const checkoutUrl = addQueryArgs(
-						`https://wordpress.com/checkout/${ window._currentSiteId }`,
-						{
-							preLaunch: 1,
-							// Redirect to My Home after checkout only if the selected plan is not eCommerce
-							...( ! isEcommercePlan && { redirect_to: `/home/${ window._currentSiteId }` } ),
-						}
-					);
+					const checkoutUrl = addQueryArgs( `https://wordpress.com/checkout/${ siteId }`, {
+						preLaunch: 1,
+						// Redirect to My Home after checkout only if the selected plan is not eCommerce
+						...( ! isEcommercePlan && { redirect_to: `/home/${ siteId }` } ),
+					} );
 
 					window.top.location.href = checkoutUrl;
 				};
@@ -77,7 +70,7 @@ export const useOnLaunch = () => {
 				go();
 				return;
 			}
-			window.top.location.href = `https://wordpress.com/home/${ window._currentSiteId }`;
+			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
 		}
 	}, [ launchStatus ] );
 };

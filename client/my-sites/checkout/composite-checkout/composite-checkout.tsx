@@ -6,7 +6,16 @@ import React, { useCallback, useMemo } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch, useStore } from 'react-redux';
-import { CheckoutProvider, checkoutTheme, defaultRegistry } from '@automattic/composite-checkout';
+import {
+	CheckoutProvider,
+	CheckoutStepAreaWrapper,
+	MainContentWrapper,
+	SubmitButtonWrapper,
+	checkoutTheme,
+	defaultRegistry,
+	Button,
+} from '@automattic/composite-checkout';
+import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
 import { colors } from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
@@ -92,6 +101,7 @@ import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
+import EmptyCart from './components/empty-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -430,7 +440,7 @@ export default function CompositeCheckout( {
 	const areThereErrors =
 		[ ...errors, cartLoadingError, cartProductPrepError ].filter( doesValueExist ).length > 0;
 	const doNotRedirect = isInitialCartLoading || isCartPendingUpdate || areThereErrors;
-	useRedirectIfCartEmpty(
+	const areWeRedirecting = useRedirectIfCartEmpty(
 		doNotRedirect,
 		items,
 		cartEmptyRedirectUrl,
@@ -630,6 +640,49 @@ export default function CompositeCheckout( {
 		} );
 	}
 
+	if (
+		shouldShowEmptyCartPage( {
+			responseCart,
+			areWeRedirecting,
+			areThereErrors,
+			isCartPendingUpdate,
+			isInitialCartLoading,
+		} )
+	) {
+		const goToPlans = () => {
+			recordEvent( {
+				type: 'EMPTY_CART_CTA_CLICKED',
+			} );
+			if ( siteSlug ) {
+				page( `/plans/${ siteSlug }` );
+			} else {
+				page( '/plans' );
+			}
+		};
+		return (
+			<React.Fragment>
+				<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
+				<CartMessages
+					cart={ responseCart }
+					selectedSite={ { slug: siteSlug } }
+					isLoadingCart={ isInitialCartLoading }
+				/>
+				<ThemeProvider theme={ theme }>
+					<MainContentWrapper>
+						<CheckoutStepAreaWrapper>
+							<EmptyCart />
+							<SubmitButtonWrapper>
+								<Button buttonType="primary" fullWidth onClick={ goToPlans }>
+									{ translate( 'Browse our plans' ) }
+								</Button>
+							</SubmitButtonWrapper>
+						</CheckoutStepAreaWrapper>
+					</MainContentWrapper>
+				</ThemeProvider>
+			</React.Fragment>
+		);
+	}
+
 	return (
 		<React.Fragment>
 			<QuerySitePlans siteId={ siteId } />
@@ -782,4 +835,35 @@ function displayRenewalSuccessNotice(
 		),
 		{ persistent: true }
 	);
+}
+
+function shouldShowEmptyCartPage( {
+	responseCart,
+	areWeRedirecting,
+	areThereErrors,
+	isCartPendingUpdate,
+	isInitialCartLoading,
+}: {
+	responseCart: ResponseCart;
+	areWeRedirecting: boolean;
+	areThereErrors: boolean;
+	isCartPendingUpdate: boolean;
+	isInitialCartLoading: boolean;
+} ): boolean {
+	if ( responseCart.products.length > 0 ) {
+		return false;
+	}
+	if ( areWeRedirecting ) {
+		return false;
+	}
+	if ( areThereErrors ) {
+		return true;
+	}
+	if ( isCartPendingUpdate ) {
+		return false;
+	}
+	if ( isInitialCartLoading ) {
+		return false;
+	}
+	return true;
 }
