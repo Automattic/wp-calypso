@@ -33,43 +33,43 @@ Created this definition in color-studio to generate 0-100 shades:
 */
 
 .color-scheme.is-ectoplasm {
-    /* Variables used in Calypso Ectoplasm */
-    --theme-text-color: #ffffff; /* Direct from wp-admin */
-    --theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
-    --theme-base-color: #523f6d; /* Direct from wp-admin */
-    --theme-base-color-rgb: 82, 63, 109; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-submenu-background-color: #413256; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
-    --theme-icon-color: #ece6f6; /* Direct from wp-admin */
-    --theme-highlight-color: #a3b745; /* Direct from wp-admin */
-    --theme-highlight-color-rgb: 163, 183, 69; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-notification-color: #d46f15; /* Direct from wp-admin */
+	/* Variables used in Calypso Ectoplasm */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #523f6d; /* Direct from wp-admin */
+	--theme-base-color-rgb: 82, 63, 109; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-background-color: #413256; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-highlight-color: #a3b745; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 163, 183, 69; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #d46f15; /* Direct from wp-admin */
 
-    --ectoplasm-green-0: #f2f5e1;
-    --ectoplasm-green-5: #e9f5b3;
-    --ectoplasm-green-10: #daf26b;
-    --ectoplasm-green-20: #cdf030;
-    --ectoplasm-green-30: #b5de00;
-    --ectoplasm-green-40: #9bc000;
-    --ectoplasm-green-50: #7f9d00;
-    --ectoplasm-green-60: #647d00;
-    --ectoplasm-green-70: #536700;
-    --ectoplasm-green-80: #3f4f00;
-    --ectoplasm-green-90: #293300;
-    --ectoplasm-green-100: #161c00;
-    --ectoplasm-green: #7f9d00;
-    --ectoplasm-green-0-rgb: 242, 245, 225;
-    --ectoplasm-green-5-rgb: 233, 245, 179;
-    --ectoplasm-green-10-rgb: 218, 242, 107;
-    --ectoplasm-green-20-rgb: 205, 240, 48;
-    --ectoplasm-green-30-rgb: 181, 222, 0;
-    --ectoplasm-green-40-rgb: 155, 192, 0;
-    --ectoplasm-green-50-rgb: 127, 157, 0;
-    --ectoplasm-green-60-rgb: 100, 125, 0;
-    --ectoplasm-green-70-rgb: 83, 103, 0;
-    --ectoplasm-green-80-rgb: 63, 79, 0;
-    --ectoplasm-green-90-rgb: 41, 51, 0;
-    --ectoplasm-green-100-rgb: 22, 28, 0;
-    --ectoplasm-green-rgb: 127, 157, 0;
+	--ectoplasm-green-0: #f2f5e1;
+	--ectoplasm-green-5: #e9f5b3;
+	--ectoplasm-green-10: #daf26b;
+	--ectoplasm-green-20: #cdf030;
+	--ectoplasm-green-30: #b5de00;
+	--ectoplasm-green-40: #9bc000;
+	--ectoplasm-green-50: #7f9d00;
+	--ectoplasm-green-60: #647d00;
+	--ectoplasm-green-70: #536700;
+	--ectoplasm-green-80: #3f4f00;
+	--ectoplasm-green-90: #293300;
+	--ectoplasm-green-100: #161c00;
+	--ectoplasm-green: #7f9d00;
+	--ectoplasm-green-0-rgb: 242, 245, 225;
+	--ectoplasm-green-5-rgb: 233, 245, 179;
+	--ectoplasm-green-10-rgb: 218, 242, 107;
+	--ectoplasm-green-20-rgb: 205, 240, 48;
+	--ectoplasm-green-30-rgb: 181, 222, 0;
+	--ectoplasm-green-40-rgb: 155, 192, 0;
+	--ectoplasm-green-50-rgb: 127, 157, 0;
+	--ectoplasm-green-60-rgb: 100, 125, 0;
+	--ectoplasm-green-70-rgb: 83, 103, 0;
+	--ectoplasm-green-80-rgb: 63, 79, 0;
+	--ectoplasm-green-90-rgb: 41, 51, 0;
+	--ectoplasm-green-100-rgb: 22, 28, 0;
+	--ectoplasm-green-rgb: 127, 157, 0;
 
 	/* Primary */
 	--color-primary: var( --theme-highlight-color );
