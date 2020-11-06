@@ -104,7 +104,7 @@ const HostSelection: FunctionComponent = () => {
 				</h3>
 				{ providerGuessName && (
 					<p>
-						{ translate( 'It looks like your host is %(providerGuessName)s', {
+						{ translate( 'It looks like your host may be %(providerGuessName)s', {
 							args: { providerGuessName },
 						} ) }
 					</p>

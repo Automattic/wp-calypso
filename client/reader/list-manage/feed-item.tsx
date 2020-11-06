@@ -15,6 +15,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import { Item, Feed, FeedError } from './types';
 import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import FeedTitle from './feed-title';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;
@@ -30,7 +31,9 @@ function renderFeed( feed: Feed ) {
 				</div>
 
 				<div className="list-item__info">
-					<div className="list-item__title">{ feed.name || feed.URL || feed.feed_URL }</div>
+					<div className="list-item__title">
+						<FeedTitle feed={ feed } />
+					</div>
 					<div className="list-item__domain">{ feed.feed_URL }</div>
 				</div>
 			</a>

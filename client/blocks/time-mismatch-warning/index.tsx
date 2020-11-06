@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -11,6 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import Notice from 'calypso/components/notice';
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import { preventWidows } from 'calypso/lib/formatting';
+import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 interface ExternalProps {
 	status?: string;
@@ -23,16 +25,31 @@ export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	siteId,
 	settingsUrl = '#',
 }: ExternalProps ) => {
+	const dismissPreference = `time-mismatch-warning-${ siteId }`;
+
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const userOffset = new Date().getTimezoneOffset() / -60; // Negative as function returns minutes *behind* UTC.
 	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
+	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+	const isDismissed = useSelector(
+		( state ) => siteId && getPreference( state, dismissPreference )
+	);
 
-	if ( ! siteId || siteOffset === null || userOffset === siteOffset ) {
+	if (
+		! siteId ||
+		! hasPreferences ||
+		isDismissed ||
+		siteOffset === null ||
+		userOffset === siteOffset
+	) {
 		return null;
 	}
 
+	const dismissClick = () => dispatch( savePreference( dismissPreference, 1 ) );
+
 	return (
-		<Notice status={ status }>
+		<Notice status={ status } onDismissClick={ dismissClick }>
 			{ preventWidows(
 				translate(
 					'This page reflects the time zone set on your site. ' +

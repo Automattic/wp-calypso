@@ -14,6 +14,7 @@ import ActionPanelBody from 'calypso/components/action-panel/body';
 import PromoCardCta from './cta';
 import classNames from 'classnames';
 import Badge from 'calypso/components/badge';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -27,6 +28,7 @@ export interface Image {
 }
 
 export interface Props {
+	icon: string;
 	image?: Image | ReactElement;
 	title: string | TranslateResult;
 	isPrimary?: boolean;
@@ -38,6 +40,7 @@ const isImage = ( image: Image | ReactElement ): image is Image => image.hasOwnP
 
 const PromoCard: FunctionComponent< Props > = ( {
 	title,
+	icon,
 	image,
 	isPrimary,
 	children,
@@ -56,6 +59,11 @@ const PromoCard: FunctionComponent< Props > = ( {
 			{ image && (
 				<ActionPanelFigure inlineBodyText={ false } align={ image?.align || 'left' }>
 					{ isImage( image ) ? <img src={ image.path } alt={ image.alt } /> : image }
+				</ActionPanelFigure>
+			) }
+			{ icon && (
+				<ActionPanelFigure inlineBodyText={ false } align="left">
+					<Gridicon icon={ icon } size="32" />
 				</ActionPanelFigure>
 			) }
 			<ActionPanelBody>

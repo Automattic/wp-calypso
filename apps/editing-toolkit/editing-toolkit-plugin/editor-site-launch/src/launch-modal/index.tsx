@@ -3,11 +3,11 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { EntityProvider } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
 import classnames from 'classnames';
+import { useSite, useOnLaunch } from '@automattic/launch';
 
 /**
  * Internal dependencies
@@ -16,7 +16,6 @@ import { LAUNCH_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
-import { useSite } from '@automattic/launch';
 
 import './styles.scss';
 
@@ -42,6 +41,9 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 	if ( isPaidPlan && ! isLaunching ) {
 		handleLaunch();
 	}
+
+	// handle redirects to checkout / my home after launch
+	useOnLaunch();
 
 	return (
 		<Modal
@@ -69,9 +71,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 							</div>
 							<LaunchProgress />
 						</div>
-						<EntityProvider kind="root" type="site">
-							<Launch onSubmit={ handleLaunch } />
-						</EntityProvider>
+						<Launch onSubmit={ handleLaunch } />
 					</div>
 					<div className="nux-launch-modal-aside">
 						<LaunchSidebar />

@@ -35,6 +35,7 @@ const getDotcomPlanDetails = () => ( {
 			constants.FEATURE_CUSTOM_DOMAIN,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_ALL_DAYS,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			constants.FEATURE_LIVE_CHAT_SUPPORT,
 		] ),
 } );
 
@@ -288,7 +289,7 @@ const getPlanPremiumDetails = () => ( {
 	],
 	getSignupFeatures: ( _, { isMonthlyPricingTest = false } = {} ) =>
 		compact( [
-			isMonthlyPricingTest && constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
+			isMonthlyPricingTest && constants.FEATURE_LIVE_CHAT_SUPPORT,
 			constants.FEATURE_ADVANCED_CUSTOMIZATION,
 			! isMonthlyPricingTest && constants.FEATURE_PREMIUM_THEMES,
 			constants.FEATURE_ALL_PERSONAL_FEATURES,

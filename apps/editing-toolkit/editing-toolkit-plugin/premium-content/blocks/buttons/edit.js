@@ -24,22 +24,23 @@ const alignmentHooksSetting = {
 	isEmbedButton: true,
 };
 
-function ButtonsEdit( {
-	context,
-	jetpackButton,
-	subscribeButton,
-	setSubscribeButtonText,
-	setSubscribeButtonPlan,
-} ) {
+function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
 
 	const template = [
 		[
 			'jetpack/recurring-payments',
-			{
-				planId,
-				submitButtonText: __( 'Subscribe', 'full-site-editing' ),
-			},
+			{ planId },
+			[
+				[
+					'jetpack/button',
+					{
+						element: 'a',
+						uniqueId: 'recurring-payments-id',
+						text: __( 'Subscribe', 'full-site-editing' ),
+					},
+				],
+			],
 		],
 		[ 'premium-content/login-button' ],
 	];
@@ -54,7 +55,7 @@ function ButtonsEdit( {
 		if ( subscribeButton.attributes.planId !== planId ) {
 			setSubscribeButtonPlan( planId );
 		}
-	}, [ planId, subscribeButton ] );
+	}, [ planId, subscribeButton, setSubscribeButtonPlan ] );
 
 	// Hides the inspector controls of the Recurring Payments inner block acting as a subscribe button so users can only
 	// switch plans using the plan selector of the Premium Content block.
@@ -73,14 +74,6 @@ function ButtonsEdit( {
 			}
 		);
 	}, [ subscribeButton ] );
-
-	// Updates the subscribe button text.
-	useEffect( () => {
-		if ( ! jetpackButton ) {
-			return;
-		}
-		setSubscribeButtonText( __( 'Subscribe', 'full-site-editing' ) );
-	}, [ jetpackButton, setSubscribeButtonText ] );
 
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
@@ -105,13 +98,7 @@ export default compose( [
 			.getBlock( props.clientId )
 			.innerBlocks.find( ( block ) => block.name === 'jetpack/recurring-payments' );
 
-		const jetpackButton = select( 'core/block-editor' )
-			.getBlock( subscribeButton.clientId )
-			.innerBlocks.find( ( block ) => block.name === 'jetpack/button' );
-		return {
-			subscribeButton,
-			jetpackButton,
-		};
+		return subscribeButton;
 	} ),
 	withDispatch( ( dispatch, props ) => ( {
 		/**
@@ -122,16 +109,6 @@ export default compose( [
 		setSubscribeButtonPlan( planId ) {
 			dispatch( 'core/block-editor' ).updateBlockAttributes( props.subscribeButton.clientId, {
 				planId,
-			} );
-		},
-		/**
-		 * Updates the button text on the Recurring Payments block acting as a subscribe button.
-		 *
-		 * @param text {string} Button text.
-		 */
-		setSubscribeButtonText( text ) {
-			dispatch( 'core/block-editor' ).updateBlockAttributes( props.jetpackButton.clientId, {
-				text,
 			} );
 		},
 	} ) ),
