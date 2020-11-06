@@ -23,21 +23,18 @@ $menu-submenu-focus-text: lighten( $highlight-color, 35% ) = #f7e3d3
 Well use studio-orange for both the primary and accent colors
 */
 
-// Set up variables for Calypso Sunrise
-:root {
-    --theme-text-color: #ffffff; /* Direct from wp-admin */
-    --theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
-    --theme-base-color: #cf4944; /* Direct from wp-admin */
-    --theme-base-color-rgb: 207, 73, 68; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-submenu-background-color: #be3631; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/
-    --theme-icon-color: #f3f1f1; /* Direct from wp-admin */
-    --theme-highlight-color: #dd823b; /* Direct from wp-admin */
-    --theme-highlight-color-rgb: 221, 130, 59; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-notification-color: #ccaf0b; /* Direct from wp-admin */
-
-}
-
 .color-scheme.is-sunrise {
+	/* Variables used in Calypso Sunrise */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #cf4944; /* Direct from wp-admin */
+	--theme-base-color-rgb: 207, 73, 68; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-background-color: #be3631; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #f3f1f1; /* Direct from wp-admin */
+	--theme-highlight-color: #dd823b; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 221, 130, 59; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #ccaf0b; /* Direct from wp-admin */
+
 	/* Primary */
 	--color-primary: var( --theme-highlight-color );
 	--color-primary-rgb: var( --theme-highlight-color-rgb );
