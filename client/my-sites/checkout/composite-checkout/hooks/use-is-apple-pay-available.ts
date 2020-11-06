@@ -18,7 +18,7 @@ interface ApplePaySessionInterface {
 	canMakePayments: () => boolean;
 }
 
-interface CanMakePaymentState {
+export interface CanMakePaymentState {
 	isLoading: boolean;
 	canMakePayment: boolean;
 }
