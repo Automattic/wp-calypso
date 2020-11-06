@@ -20,20 +20,18 @@ Used studio-orange for the primary+accent.
 The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35.
 */
 
-// Set up variables for Calypso ectoplasm
-:root {
-    --theme-text-color: #ffffff; /* Direct from wp-admin */
-    --theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
-    --theme-base-color: #59524c; /* Direct from wp-admin */
-    --theme-base-color-rgb: 89, 82, 76; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-submenu-background-color: #46403c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/
-    --theme-icon-color: #ece6f6; /* Direct from wp-admin */
-    --theme-highlight-color: #c7a589; /* Direct from wp-admin */
-    --theme-highlight-color-rgb: 199, 165, 137; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
-    --theme-notification-color: #9ea476; /* Direct from wp-admin */
-}
-
 .color-scheme.is-coffee {
+	/* Variables used in Calypso Coffee */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #59524c; /* Direct from wp-admin */
+	--theme-base-color-rgb: 89, 82, 76; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-background-color: #46403c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-highlight-color: #c7a589; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 199, 165, 137; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #9ea476; /* Direct from wp-admin */
+
 	/* Primary */
 	--color-primary: var( --theme-highlight-color );
 	--color-primary-rgb: var( --theme-highlight-color-rgb );
