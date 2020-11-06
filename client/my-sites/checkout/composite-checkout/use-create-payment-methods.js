@@ -18,7 +18,6 @@ import {
 	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
@@ -45,6 +44,7 @@ import {
 	createNetBankingMethod,
 } from './payment-methods/netbanking';
 import { createFullCreditsMethod } from './payment-methods/full-credits';
+import { createFreePaymentMethod } from './payment-methods/free-purchase';
 
 function useCreatePayPal() {
 	const paypalMethod = useMemo( createPayPalMethod, [] );
