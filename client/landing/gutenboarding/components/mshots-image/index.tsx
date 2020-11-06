@@ -3,11 +3,6 @@
  */
 import * as React from 'react';
 import classnames from 'classnames';
-import { Spinner } from '@wordpress/components';
-
-/**
- * Internal dependencies
- */
 
 /**
  * Style dependencies
@@ -48,11 +43,7 @@ const MshotsImage: React.FunctionComponent< Props > = ( { src, alt } ) => {
 
 	return (
 		<div className="mshots-image__container">
-			{ ( ! resolvedUrl || ! isVisible ) && (
-				<p className="mshots-image__loader">
-					<Spinner />
-				</p>
-			) }
+			{ ( ! resolvedUrl || ! isVisible ) && <div className="mshots-image__loader"></div> }
 			{ resolvedUrl && (
 				<img
 					className={ classnames( 'mshots-image', {
