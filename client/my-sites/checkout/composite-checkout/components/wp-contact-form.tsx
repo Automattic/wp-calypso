@@ -45,7 +45,7 @@ export default function WPContactForm( {
 }: {
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
-	contactDetailsType: ContactDetailsType;
+	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	contactValidationCallback: () => Promise< boolean >;
 	isLoggedOutCart: boolean;
 } ): JSX.Element {

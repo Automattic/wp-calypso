@@ -36,7 +36,7 @@ export default function ContactDetailsContainer( {
 	isDisabled,
 	isLoggedOutCart,
 }: {
-	contactDetailsType: ContactDetailsType;
+	contactDetailsType: Exclude< ContactDetailsType, 'none' >;
 	contactInfo: ManagedContactDetails;
 	countriesList: CountryListItem[];
 	shouldShowContactDetailsValidationErrors: boolean;
