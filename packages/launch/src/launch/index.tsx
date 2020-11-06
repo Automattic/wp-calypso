@@ -5,8 +5,12 @@ import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
-import FocusedLaunch from '../focused-launch';
 
+/**
+ * Internal dependencies
+ */
+import FocusedLaunch from '../focused-launch';
+import LaunchContext from '../context';
 import './styles.scss';
 
 interface Props {
@@ -27,7 +31,9 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId
 		>
 			<div className="launch__focused-modal-wrapper ">
 				<div className="launch__focused-modal-body">
-					<FocusedLaunch siteId={ siteId } />
+					<LaunchContext.Provider value={ { siteId } }>
+						<FocusedLaunch />
+					</LaunchContext.Provider>
 				</div>
 			</div>
 		</Modal>

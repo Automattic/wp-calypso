@@ -9,7 +9,6 @@ import FocusedLaunchModal from '@automattic/launch';
 /**
  * Internal dependencies
  */
-import { useOnLaunch } from '@automattic/launch';
 import { LAUNCH_STORE } from './stores';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
@@ -20,9 +19,6 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
 		const { isFocusedLaunchOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 		const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
-
-		// handle redirects to checkout / my home after launch
-		useOnLaunch();
 
 		if ( ! isFocusedLaunchOpen ) {
 			return null;

@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
 
@@ -98,7 +98,17 @@ export class UserStep extends Component {
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		i18n.on( 'change', this.handleI18nChange );
 	}
+
+	componentWillUnmount() {
+		i18n.off( 'change', this.handleI18nChange );
+	}
+
+	handleI18nChange = () => {
+		this.setSubHeaderText( this.props );
+	};
 
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
