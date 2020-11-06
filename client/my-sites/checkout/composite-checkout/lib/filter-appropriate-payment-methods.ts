@@ -81,15 +81,9 @@ export default function filterAppropriatePaymentMethods( {
 				// If the free payment method still exists here (see above filter), it's enabled
 				return true;
 			}
-			return isPaymentMethodEnabled(
-				methodObject.id as CheckoutPaymentMethodSlug,
-				allowedPaymentMethods
-			);
+			return isPaymentMethodEnabled( methodObject.id, allowedPaymentMethods );
 		} )
-		.filter(
-			( methodObject ) =>
-				! isPaymentMethodLegallyRestricted( methodObject.id as CheckoutPaymentMethodSlug )
-		);
+		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
 }
 
 function isPaymentMethodLegallyRestricted( paymentMethodId: CheckoutPaymentMethodSlug ): boolean {
