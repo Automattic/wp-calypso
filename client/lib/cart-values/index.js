@@ -2,7 +2,7 @@
  * External dependencies
  */
 import url from 'url'; // eslint-disable-line no-restricted-imports
-import { get, isArray, invert } from 'lodash';
+import { get, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 
@@ -23,6 +23,7 @@ import {
 } from 'calypso/lib/products-values';
 import { detectWebPaymentMethod } from 'calypso/lib/web-payment';
 import config from 'calypso/config';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
@@ -374,6 +375,13 @@ export function paymentMethodName( method ) {
 	return paymentMethodsNames[ method ] || method;
 }
 
+/**
+ * Determines if a payment method is enabled
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
+ * @param {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug').CheckoutPaymentMethodSlug} method The short payment method string
+ * @returns {boolean} true if enabled
+ */
 export function isPaymentMethodEnabled( cart, method ) {
 	const redirectPaymentMethods = [
 		'alipay',
@@ -388,28 +396,21 @@ export function isPaymentMethodEnabled( cart, method ) {
 		'wechat',
 		'sofort',
 	];
-	const methodClassName = paymentMethodClassName( method );
+	const methodClassName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method );
 
-	if ( '' === methodClassName ) {
+	if ( ! methodClassName ) {
 		return false;
 	}
 
 	// Redirect payments might not be possible in some cases - for example in the desktop app
 	if (
-		redirectPaymentMethods.indexOf( method ) >= 0 &&
+		redirectPaymentMethods.includes( method ) &&
 		! config.isEnabled( 'upgrades/redirect-payments' )
 	) {
 		return false;
 	}
 
-	if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
-		return false;
-	}
-
-	return (
-		isArray( cart.allowed_payment_methods ) &&
-		cart.allowed_payment_methods.indexOf( methodClassName ) >= 0
-	);
+	return cart.allowed_payment_methods.includes( methodClassName );
 }
 
 export function getLocationOrigin( l ) {
