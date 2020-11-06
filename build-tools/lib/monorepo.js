@@ -1,7 +1,6 @@
 /**
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
-/* eslint-disable import/no-nodejs-modules */
 
 /**
  * External dependencies
