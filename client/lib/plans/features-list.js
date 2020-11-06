@@ -664,6 +664,13 @@ export const FEATURES_LIST = {
 			),
 	},
 
+	[ constants.FEATURE_LIVE_CHAT_SUPPORT ]: {
+		getSlug: () => constants.FEATURE_LIVE_CHAT_SUPPORT,
+		getTitle: () => i18n.translate( 'Live chat support' ),
+		getDescription: () =>
+			i18n.translate( 'Live chat is available 24 hours a day from Monday through Friday.' ),
+	},
+
 	[ constants.FEATURE_PREMIUM_SUPPORT ]: {
 		getSlug: () => constants.FEATURE_PREMIUM_SUPPORT,
 		getTitle: () => i18n.translate( 'Priority Support' ),

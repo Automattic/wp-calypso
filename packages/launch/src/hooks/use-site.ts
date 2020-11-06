@@ -1,24 +1,19 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { SITE_STORE } from '../stores';
-
-declare global {
-	interface Window {
-		_currentSiteId: number;
-	}
-}
+import LaunchContext from '../context';
 
 export function useSite() {
-	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( window._currentSiteId ) );
-	const launchStatus = useSelect( ( select ) =>
-		select( SITE_STORE ).isLaunched( window._currentSiteId )
-	);
+	const { siteId } = React.useContext( LaunchContext );
+	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
+	const launchStatus = useSelect( ( select ) => select( SITE_STORE ).isLaunched( siteId ) );
 
 	return {
 		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895

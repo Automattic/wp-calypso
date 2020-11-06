@@ -169,6 +169,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		}
 	}, [ allDomainSuggestions, setBaseRailcarId ] );
 
+	// Update domain search query using initialDomainSearch prop if there is no search field
+	useEffect( () => {
+		if ( ! showSearchField ) {
+			setDomainSearch( initialDomainSearch );
+		}
+	}, [ initialDomainSearch, showSearchField ] );
+
 	const handleItemRender = (
 		domain: string,
 		railcarId: string,
@@ -317,6 +324,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</>
 
 						{ ! isExpanded &&
+							quantity < quantityExpanded &&
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">

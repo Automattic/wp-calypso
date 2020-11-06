@@ -2,20 +2,17 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { useEntityProp } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 
 /**
  * External dependencies
  */
 import { LAUNCH_STORE } from '../stores';
-import { useSite } from './';
+import { useSite, useTitle } from './';
 
-export function useDomainSearch() {
+export function useDomainSearch(): string {
 	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const [ title ] = useEntityProp( 'root', 'site', 'title' );
+	const { title } = useTitle();
 	const { currentDomainName } = useSite();
 
 	let search = domainSearch.trim() || title;

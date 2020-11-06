@@ -2,16 +2,16 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { READER_LIST_ITEM_DELETE_FEED } from 'calypso/state/reader/action-types';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { DEFAULT_NOTICE_DURATION } from 'calypso/state/notices/constants';
 
 registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 	[ READER_LIST_ITEM_DELETE_FEED ]: [
@@ -26,7 +26,9 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 					},
 					action
 				),
-			onSuccess: noop,
+			onSuccess: successNotice( translate( 'Feed removed from list successfully.' ), {
+				duration: DEFAULT_NOTICE_DURATION,
+			} ),
 			onError: () => errorNotice( translate( 'Unable to remove feed from list' ) ),
 		} ),
 	],

@@ -8,6 +8,7 @@ import type {
 	SiteDetails,
 	SiteError,
 	Cart,
+	Domain,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -115,6 +116,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
+	const receiveSiteDomains = ( siteId: number, domains: Domain[] ) => ( {
+		type: 'RECEIVE_SITE_DOMAINS' as const,
+		siteId,
+		domains,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -139,6 +146,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	return {
+		receiveSiteDomains,
 		saveSiteTitle,
 		receiveSiteTitle,
 		fetchNewSite,
@@ -161,6 +169,7 @@ export type ActionCreators = ReturnType< typeof createActions >;
 export type Action =
 	| ReturnType<
 			| ActionCreators[ 'fetchNewSite' ]
+			| ActionCreators[ 'receiveSiteDomains' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
