@@ -26,12 +26,7 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	WordPressCreditsLabel,
-	WordPressCreditsSummary,
-	WordPressFreePurchaseLabel,
-	WordPressFreePurchaseSummary,
-} from './payment-method-helpers';
+import { WordPressFreePurchaseLabel, WordPressFreePurchaseSummary } from './payment-method-helpers';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 import {
 	createCreditCardPaymentMethodStore,
@@ -252,10 +247,7 @@ function useCreateEbanxTef() {
 }
 
 function useCreateFullCredits( { credits } ) {
-	const fullCreditsPaymentMethod = useMemo( createFullCreditsMethod, [] );
-	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
-	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
-	return fullCreditsPaymentMethod;
+	return useMemo( () => createFullCreditsMethod( { credits } ), [ credits ] );
 }
 
 function useCreateFree() {
