@@ -29,10 +29,6 @@
 		}
 	}
 
-	.plugin-action {
-		padding: 8px;
-	}
-
 	.all-sites-icon {
 		display: inline-block;
 		margin: 0;
@@ -57,7 +53,8 @@
 	}
 }
 
-.plugin-site__secondary-sites {
+.plugin-site__secondary-sites,
+.plugin-site-network__secondary-site-actions {
 	padding-top: 16px;
 }
 

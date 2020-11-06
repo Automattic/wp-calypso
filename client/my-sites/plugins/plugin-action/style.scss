@@ -23,8 +23,21 @@
 		}
 	}
 
-	.components-toggle-control .components-base-control__field {
-		margin-bottom: 5px;
+	.components-toggle-control {
+		.components-base-control__field {
+			display: inline-block;
+			margin-bottom: 5px;
+
+			.components-form-toggle {
+				margin-right: 0;
+			}
+		}
+
+		.components-toggle-control__label {
+			float: left;
+			font-size: $font-body-small;
+			margin-right: 8px;
+		}
 	}
 }
 
@@ -44,12 +57,13 @@
 
 	.has-disabled-info & {
 		cursor: default;
+		flex-direction: row;
 	}
 }
 
 .plugin-action__disabled-info.info-popover {
 	flex: none;
-	margin: -1px 4px;
+	margin: 0 4px -1px;
 
 	.gridicon {
 		display: block;
