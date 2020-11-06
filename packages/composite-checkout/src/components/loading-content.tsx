@@ -10,40 +10,6 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import styled from '../lib/styled';
 
-export default function LoadingContent() {
-	const { __ } = useI18n();
-
-	return (
-		<LoadingContentWrapper>
-			<LoadingContentInnerWrapper>
-				<LoadingCard>
-					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
-					<LoadingCopy />
-					<LoadingCopy />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-					<LoadingCopy />
-					<LoadingCopy />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-				</LoadingCard>
-				<LoadingFooter />
-			</LoadingContentInnerWrapper>
-
-			<LoadingSidebar>
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-			</LoadingSidebar>
-		</LoadingContentWrapper>
-	);
-}
-
 const LoadingContentWrapper = styled.div`
 	display: flex;
 
@@ -184,3 +150,37 @@ const LoadingFooter = styled.div`
 		height: 40px;
 	}
 `;
+
+export default function LoadingContent() {
+	const { __ } = useI18n();
+
+	return (
+		<LoadingContentWrapper>
+			<LoadingContentInnerWrapper>
+				<LoadingCard>
+					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingFooter />
+			</LoadingContentInnerWrapper>
+
+			<LoadingSidebar>
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+			</LoadingSidebar>
+		</LoadingContentWrapper>
+	);
+}
