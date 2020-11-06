@@ -3,13 +3,13 @@
  */
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
-
-/**
- * Internal dependencies
- */
-import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
-import { useFormStatus } from '../form-status';
+import {
+	Button,
+	useFormStatus,
+	FormStatus,
+	useLineItems,
+	useEvents,
+} from '@automattic/composite-checkout';
 
 export function createFreePaymentMethod() {
 	return {
