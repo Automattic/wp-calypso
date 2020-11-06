@@ -10,12 +10,14 @@ import React, { ReactNode } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { Route } from '../route';
 import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
+import { LAUNCH_STORE } from '../../stores';
 
 import './style.scss';
 
@@ -32,10 +34,6 @@ const info = (
 		<Rect x="10.5" y="10" width="3" height="8" fill="#8C8F94" />
 	</SVG>
 );
-
-function noop( ...args: unknown[] ) {
-	return args;
-}
 
 type SummaryStepProps = {
 	input: ReactNode;
@@ -90,7 +88,11 @@ const SiteNameStep: React.FunctionComponent< SiteNameStepProps > = ( {
 // the remaining extra props
 type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
 		React.ComponentProps< typeof DomainPicker >,
-		'existingSubdomain' | 'currentDomain' | 'initialDomainSearch'
+		| 'existingSubdomain'
+		| 'currentDomain'
+		| 'initialDomainSearch'
+		| 'onDomainSelect'
+		| 'onExistingSubdomainSelect'
 	>;
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
@@ -99,6 +101,8 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	currentDomain,
 	initialDomainSearch,
 	hasPaidDomain,
+	onDomainSelect,
+	onExistingSubdomainSelect,
 } ) => {
 	return (
 		<SummaryStep
@@ -134,13 +138,12 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							}
 							existingSubdomain={ existingSubdomain }
 							currentDomain={ currentDomain }
-							onDomainSelect={ noop }
+							onDomainSelect={ onDomainSelect }
+							onExistingSubdomainSelect={ onExistingSubdomainSelect }
 							initialDomainSearch={ initialDomainSearch }
 							showSearchField={ false }
 							analyticsFlowId="focused-launch"
 							analyticsUiAlgo="focused_launch_domain_picker"
-							onDomainSearchBlur={ () => noop( 'TODO: on domain search blur' ) }
-							onSetDomainSearch={ () => noop( 'TODO: on set domain search' ) }
 							quantity={ 3 }
 							quantityExpanded={ 3 }
 							itemType="individual-item"
@@ -211,9 +214,15 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => 
 	);
 };
 
-const Summary: React.FunctionComponent = () => {
+type SummaryProps = {
+	siteId: number;
+};
+
+const Summary: React.FunctionComponent< SummaryProps > = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
 
 	const domainSearch = useDomainSearch();
 
@@ -227,14 +236,22 @@ const Summary: React.FunctionComponent = () => {
 			onBlur={ saveTitle }
 		/>
 	);
+
 	const renderDomainStep = ( index: number ) => (
 		<DomainStep
 			stepIndex={ index }
 			key={ index }
 			existingSubdomain={ siteSubdomain?.domain }
-			currentDomain={ sitePrimaryDomain?.domain }
+			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
+			onDomainSelect={ setDomain }
+			/** NOTE: this makes the assumption that the user has a free domain,
+			 * thus when they click the free domain, we just remove the value from the store
+			 * this is a valid strategy in this context because they won't even see this step if
+			 * they already have a paid domain
+			 * */
+			onExistingSubdomainSelect={ unsetDomain }
 		/>
 	);
 	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
