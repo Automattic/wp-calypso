@@ -48,7 +48,9 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					return [
 						receiveReaderList( { list } ),
 						navigate( `/read/list/${ list.owner }/${ list.slug }/edit` ),
-						successNotice( translate( 'List created successfully!' ) ),
+						successNotice( translate( 'List created successfully.' ), {
+							duration: DEFAULT_NOTICE_DURATION,
+						} ),
 					];
 				}
 				// NOTE: Add better handling for unexpected response format here.
@@ -73,7 +75,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				),
 			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
 			onError: ( action, error ) => [
-				errorNotice( String( error ), { duration: DEFAULT_NOTICE_DURATION } ),
+				errorNotice( String( error ) ),
 				handleReaderListRequestFailure( error ),
 			],
 		} ),
@@ -93,7 +95,9 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			},
 			onSuccess: ( action, response ) => [
 				receiveUpdatedListDetails( response ),
-				successNotice( translate( 'List updated successfully!' ) ),
+				successNotice( translate( 'List updated successfully.' ), {
+					duration: DEFAULT_NOTICE_DURATION,
+				} ),
 			],
 			onError: ( action, error ) => [
 				errorNotice( String( error ) ),
@@ -113,7 +117,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
-			onError: ( action, error ) => errorNotice( error ),
+			onError: ( action, error ) => errorNotice( String( error ) ),
 		} ),
 	],
 } );

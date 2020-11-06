@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import impureLodash from 'calypso/lib/impure-lodash';
 const { uniqueId } = impureLodash;
 
