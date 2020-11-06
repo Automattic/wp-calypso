@@ -48,7 +48,6 @@ import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
@@ -76,7 +75,6 @@ import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
-import { needsDomainDetails } from './payment-method-helpers';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
@@ -101,6 +99,7 @@ import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
+import getContactDetailsType from './lib/get-contact-details-type';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -545,10 +544,9 @@ export default function CompositeCheckout( {
 		[ addProductsToCart, products, recordEvent ]
 	);
 
-	const includeDomainDetails = needsDomainDetails( responseCart );
-	const includeGSuiteDetails = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const includeDomainDetails = contactDetailsType === 'domain';
+	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor = useMemo(
 		() => ( {
 			includeDomainDetails,
