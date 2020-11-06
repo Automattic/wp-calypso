@@ -54,7 +54,7 @@ const BackupChanges = ( { deltas } ) => {
 	const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
 
 	const deletedElement = [
-		<div className="daily-backup-status__media-image">
+		<div className="daily-backup-status__media-image" key="media-deleted">
 			<img alt="" src={ mediaImage } />
 			<div className="daily-backup-status__deleted-count-bubble">
 				-{ deltas.mediaDeleted.length }
