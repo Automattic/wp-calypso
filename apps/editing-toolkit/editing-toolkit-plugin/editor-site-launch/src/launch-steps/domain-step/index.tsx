@@ -86,6 +86,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
+					locale={ document.documentElement.lang }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">
