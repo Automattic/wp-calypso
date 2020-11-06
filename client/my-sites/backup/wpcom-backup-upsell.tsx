@@ -10,11 +10,12 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { preventWidows } from 'calypso/lib/formatting';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackDisconnectedWPCOM from 'calypso/components/jetpack/jetpack-disconnected-wpcom';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -134,6 +135,9 @@ export default function WPCOMUpsellPage( { reason }: { reason: string } ): React
 			break;
 		case 'vp_active_on_site':
 			body = <BackupVPActiveBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnectedWPCOM />;
 			break;
 		default:
 			body = <BackupUpsellBody />;
