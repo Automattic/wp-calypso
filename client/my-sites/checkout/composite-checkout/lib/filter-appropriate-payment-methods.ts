@@ -10,7 +10,7 @@ import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
 import { CheckoutCartItem } from '../types/checkout-cart';
 import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 
-const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
+const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
 
 export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
