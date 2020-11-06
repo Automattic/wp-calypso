@@ -214,11 +214,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => 
 	);
 };
 
-type SummaryProps = {
-	siteId: number;
-};
-
-const Summary: React.FunctionComponent< SummaryProps > = () => {
+const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
