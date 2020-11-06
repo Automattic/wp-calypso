@@ -49,7 +49,9 @@ export const MySitesSidebarUnified = ( { path } ) => {
 
 	return (
 		<Sidebar>
-			<CurrentSite forceAllSitesView={ isAllDomainsView } />
+			<li>
+				<CurrentSite forceAllSitesView={ isAllDomainsView } />
+			</li>
 			{ menuItems.map( ( item, i ) => {
 				const isSelected = item?.url && itemLinkMatches( item.url, path );
 
