@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:composite-checkout:use-is-apple-pay-availab
 
 declare global {
 	interface Window {
-		ApplePaySession: ApplePaySessionInterface | undefined;
+		ApplePaySession?: ApplePaySessionInterface;
 	}
 }
 
