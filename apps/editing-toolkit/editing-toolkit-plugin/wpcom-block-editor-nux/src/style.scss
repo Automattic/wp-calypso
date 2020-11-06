@@ -149,6 +149,16 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 	@media ( min-width: $wpcom-modal-breakpoint ) {
 		font-size: 42px;
 	}
+
+	// TODO: remove this hack once the welcome editor deals better with
+	// overflowing text
+	body.locale-de & {
+		font-size: 24px;
+
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			font-size: 28px;
+		}
+	}
 }
 
 .wpcom-block-editor-nux__description {
