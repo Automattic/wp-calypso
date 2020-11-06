@@ -28,7 +28,7 @@ function getCanUseWebP() {
 
 const canUseWebP = getCanUseWebP();
 
-export const getDesignImageUrl = ( design: Design ) => {
+export const getDesignImageUrl = ( design: Design, locale = 'en' ): string => {
 	// We temporarily show pre-generated screenshots until we can generate tall versions dynamically using mshots.
 	// See `bin/generate-gutenboarding-design-thumbnails.js` for generating screenshots.
 	// https://github.com/Automattic/mShots/issues/16
@@ -52,6 +52,7 @@ export const getDesignImageUrl = ( design: Design ) => {
 			font_base: design.fonts.base,
 			site_title: design.title,
 			viewport_height: 700,
+			language: locale,
 		}
 	);
 	const mShotsParams = {

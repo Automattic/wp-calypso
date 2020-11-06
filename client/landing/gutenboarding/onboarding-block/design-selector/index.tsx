@@ -30,7 +30,7 @@ import './style.scss';
 const makeOptionId = ( { slug }: Design ): string => `design-selector__option-name__${ slug }`;
 
 const DesignSelector: React.FunctionComponent = () => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
@@ -88,7 +88,7 @@ const DesignSelector: React.FunctionComponent = () => {
 							>
 								<span className="design-selector__image-frame">
 									{ isEnabled( 'gutenboarding/mshot-preview' ) ? (
-										<MshotsImage src={ getDesignImageUrl( design ) } alt="" />
+										<MshotsImage src={ getDesignImageUrl( design, i18nLocale ) } alt="" />
 									) : (
 										<img
 											alt=""
