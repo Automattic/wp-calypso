@@ -25,8 +25,8 @@ function PaymentMethods( { translate, cart } ) {
 
 	let methods = getEnabledPaymentMethods( cart );
 
-	if ( methods.includes( 'credit-card' ) ) {
-		methods.splice( methods.indexOf( 'credit-card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
+	if ( methods.includes( 'card' ) ) {
+		methods.splice( methods.indexOf( 'card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
 	}
 
 	methods = intersection( methods, POSSIBLE_TYPES );
