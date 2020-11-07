@@ -304,7 +304,7 @@ export function paymentMethodName( method ) {
 	const paymentMethodsNames = {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
-		'credit-card': translate( 'Credit or debit card' ),
+		card: translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
 		id_wallet: 'OVO',
@@ -313,13 +313,7 @@ export function paymentMethodName( method ) {
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
-		// The web-payment method technically supports multiple digital
-		// wallets, but only Apple Pay is used for now. To enable other
-		// wallets, we'd need to split web-payment up into multiple methods
-		// anyway (so that each wallet is a separate payment choice for the
-		// user), so it's fine to just hardcode this to "Apple Pay" in the
-		// meantime.
-		'web-payment': 'Apple Pay',
+		'apple-pay': 'Apple Pay',
 		wechat: translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
