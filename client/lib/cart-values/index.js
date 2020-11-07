@@ -331,16 +331,6 @@ export function getEnabledPaymentMethods( cart ) {
 }
 
 /**
- * Return a string that represents the WPCOM class name for a payment method
- *
- * @param {string} method -  payment method
- * @returns {string} the wpcom class name
- */
-export function paymentMethodClassName( method ) {
-	return PAYMENT_METHODS[ method ] || '';
-}
-
-/**
  * Return a string that represents the User facing name for payment method
  *
  * @param {string} method - payment method
