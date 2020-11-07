@@ -13,21 +13,22 @@ import { defaultRewindConfig, RewindConfig } from './types';
 import { rewindRestore } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getInProgressRewindPercentComplete from 'calypso/state/selectors/get-in-progress-rewind-percent-complete';
-import getInProgressRewindEntryDetails from 'calypso/state/selectors/get-in-progress-rewind-entry-details';
 import getInProgressRewindStatus from 'calypso/state/selectors/get-in-progress-rewind-status';
+import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import Gridicon from 'calypso/components/gridicon';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
 
 /**
  * Type dependencies
  */
-import { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { RewindState } from 'calypso/state/data-layer/wpcom/sites/rewind/type';
+import type { RestoreProgress } from 'calypso/state/data-layer/wpcom/activity-log/rewind/restore-status/type';
 
 interface Props {
 	backupDisplayDate: string;
@@ -52,11 +53,8 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const inProgressRewindStatus = useSelector( ( state ) =>
 		getInProgressRewindStatus( state, siteId, rewindId )
 	);
-	const inProgressRewindPercentComplete = useSelector( ( state ) =>
-		getInProgressRewindPercentComplete( state, siteId, rewindId )
-	);
-	const inProgressRewindEntryDetails = useSelector( ( state ) =>
-		getInProgressRewindEntryDetails( state, siteId, rewindId )
+	const { message, percent, currentEntry, status } = useSelector(
+		( state ) => getRestoreProgress( state, siteId ) || ( {} as RestoreProgress )
 	);
 
 	const requestRestore = useCallback(
@@ -69,7 +67,7 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	}, [ setUserHasRequestedRestore, requestRestore ] );
 
 	const loading = rewindState.state === 'uninitialized';
-	const { message, currentEntry } = inProgressRewindEntryDetails;
+	const { restoreId } = rewindState.rewind || {};
 
 	const renderConfirm = () => (
 		<>
@@ -115,10 +113,10 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 			</div>
 			<h3 className="rewind-flow__title">{ translate( 'Currently restoring your site' ) }</h3>
 			<ProgressBar
-				isReady={ 'running' === inProgressRewindStatus }
+				isReady={ 'running' === status }
 				message={ message }
 				entry={ currentEntry }
-				percent={ inProgressRewindPercentComplete }
+				percent={ percent }
 			/>
 			<p className="rewind-flow__info">
 				{ translate(
@@ -211,6 +209,9 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	return (
 		<>
 			<QueryRewindState siteId={ siteId } />
+			{ restoreId && 'running' === inProgressRewindStatus && (
+				<QueryRewindRestoreStatus siteId={ siteId } restoreId={ restoreId } />
+			) }
 			{ render() }
 		</>
 	);
