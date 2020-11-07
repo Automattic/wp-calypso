@@ -21,33 +21,16 @@ import {
 	isDomainRedemption,
 	allowedProductAttributes,
 } from 'calypso/lib/products-values';
-import { detectWebPaymentMethod } from 'calypso/lib/web-payment';
 import config from 'calypso/config';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
 	return object ? update( object, value ) : update( {}, value );
 } );
-
-const PAYMENT_METHODS = {
-	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
-	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
-	'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
-	ebanx: 'WPCOM_Billing_Ebanx',
-	eps: 'WPCOM_Billing_Stripe_Source_Eps',
-	giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
-	id_wallet: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet',
-	ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
-	netbanking: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking',
-	paypal: 'WPCOM_Billing_PayPal_Express',
-	p24: 'WPCOM_Billing_Stripe_Source_P24',
-	'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
-	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
-	'web-payment': 'WPCOM_Billing_Web_Payment',
-	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
-	stripe: 'WPCOM_Billing_Stripe_Payment_Method',
-};
 
 /**
  * Preprocesses cart for server.
@@ -302,32 +285,14 @@ export function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
+/**
+ * Returns a list of enabled payment methods
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
+ * @returns {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug.ts').CheckoutPaymentMethodSlug[]} An array of payment method ids
+ */
 export function getEnabledPaymentMethods( cart ) {
-	// Clone our allowed payment methods array
-	let allowedPaymentMethods = cart.allowed_payment_methods.slice( 0 );
-
-	// Ebanx is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Ebanx' !== method;
-	} );
-
-	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
-	} );
-
-	// Web payment methods such as Apple Pay are enabled based on client-side
-	// capabilities.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
-	} );
-
-	// Invert so we can search by class name.
-	const paymentMethodsKeys = invert( PAYMENT_METHODS );
-
-	return allowedPaymentMethods.map( function ( methodClassName ) {
-		return paymentMethodsKeys[ methodClassName ];
-	} );
+	return cart.allowed_payment_methods.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 }
 
 /**
