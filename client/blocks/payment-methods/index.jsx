@@ -29,15 +29,6 @@ function PaymentMethods( { translate, cart } ) {
 		methods.splice( methods.indexOf( 'credit-card' ), 1, 'mastercard', 'visa', 'amex', 'discover' );
 	}
 
-	// The web-payment method technically supports multiple digital wallets,
-	// but only Apple Pay is used for now. To enable other wallets, we'd need
-	// to split web-payment up into multiple methods anyway (so that each
-	// wallet is a separate payment choice for the user), so it's fine to just
-	// hardcode this to Apple Pay in the meantime.
-	if ( methods.includes( 'web-payment' ) ) {
-		methods.splice( methods.indexOf( 'web-payment' ), 1, 'apple-pay' );
-	}
-
 	methods = intersection( methods, POSSIBLE_TYPES );
 
 	if ( methods.length === 0 ) {
