@@ -2,7 +2,6 @@
  * External dependencies
  */
 import url from 'url'; // eslint-disable-line no-restricted-imports
-import { get, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 
@@ -119,11 +118,11 @@ export function removeCoupon() {
 	};
 }
 
-export const getTaxCountryCode = ( cart ) => get( cart, [ 'tax', 'location', 'country_code' ] );
+export const getTaxCountryCode = ( cart ) => cart?.tax?.location?.country_code;
 
-export const getTaxPostalCode = ( cart ) => get( cart, [ 'tax', 'location', 'postal_code' ] );
+export const getTaxPostalCode = ( cart ) => cart?.tax?.location?.postal_code;
 
-export const getTaxLocation = ( cart ) => get( cart, [ 'tax', 'location' ], {} );
+export const getTaxLocation = ( cart ) => cart?.tax?.location ?? {};
 
 export function setTaxCountryCode( countryCode ) {
 	return function ( cart ) {
@@ -375,5 +374,5 @@ export function hasPendingPayment( cart ) {
 }
 
 export function shouldShowTax( cart ) {
-	return get( cart, [ 'tax', 'display_taxes' ], false );
+	return cart?.tax?.display_taxes ?? false;
 }
