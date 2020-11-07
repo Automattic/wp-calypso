@@ -4,7 +4,7 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -17,8 +17,13 @@ import MarketingToolsHeader from './header';
 import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+
+/**
+ * Images
+ */
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
 
 /**
  * Types
@@ -57,6 +62,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
+	const handleFacebookMessengerClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
+	};
+
 	const handleFindYourExpertClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
 	};
@@ -89,6 +98,29 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						{ translate( 'Create a logo' ) }
 					</Button>
 				</MarketingToolsFeature>
+
+				{ getLocaleSlug() === 'en' && (
+					<MarketingToolsFeature
+						title={ translate( 'Want to convert visitors into customers? Add Messenger Chat!' ) }
+						description={ translate(
+							'Customers like to buy from a business they can message. Build trust, help customers, and provide support with the Official Facebook Messenger Chat Plugin. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							{
+								components: {
+									em: <em />,
+								},
+							}
+						) }
+						imagePath={ facebookMessenger }
+					>
+						<Button
+							onClick={ handleFacebookMessengerClick }
+							href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+							target="_blank"
+						>
+							{ translate( 'Add Messenger Chat' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 
 				<MarketingToolsFeature
 					title={ translate( 'Build your community, following, and income with Earn tools' ) }
