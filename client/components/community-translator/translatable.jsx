@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -14,7 +14,7 @@ import { Dialog, Button } from '@automattic/components';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import TranslatableTextarea from './translatable-textarea';
 import TranslatedSuccess from './translated-success';
-import { getSingleTranslationData, getTranslationPermaLink, submitTranslation } from './utils.js';
+import { getTranslationPermaLink, submitTranslation } from './utils.js';
 
 /**
  * Module varialbles
@@ -29,9 +29,33 @@ export class Translatable extends Component {
 		formState: {},
 	};
 
-	hasDataLoaded() {
-		return ! isEmpty( this.state.originalData ) || ! isEmpty( this.state.error );
+	componentDidMount() {
+		const { singular, context, plural, locale } = this.props;
+
+		if ( ! this.hasRequestedData() ) {
+			this.props.requestTranslationData( locale, { singular, context, plural } );
+		}
 	}
+
+	hasRequestedData = () => {
+		return this.props.translationData !== undefined;
+	};
+
+	hasDataLoaded = () => {
+		return ! isEmpty( this.props.translationData );
+	};
+
+	isTranslated = () => {
+		return this.hasDataLoaded() && ! isEmpty( this.props.translationData.translatedSingular );
+	};
+
+	isUntranslated = () => {
+		return this.hasDataLoaded() && isEmpty( this.props.translationData.translatedSingular );
+	};
+
+	isUserTranslated = () => {
+		return false;
+	};
 
 	handleTranslationChange = ( event ) => {
 		const { name, value } = event.target;
@@ -58,27 +82,6 @@ export class Translatable extends Component {
 		event.preventDefault();
 
 		this.setState( { showDialog: true } );
-
-		const { singular, context, plural, locale } = this.props;
-
-		if ( ! this.hasDataLoaded() ) {
-			getSingleTranslationData( locale, { singular, context, plural } )
-				.then( ( originalData ) =>
-					this.setState( {
-						originalData,
-						translationUrl: getTranslationPermaLink( originalData.originalId, locale ),
-						formState: {
-							translatedSingular: originalData.translatedSingular,
-							translatedPlural: originalData.translatedPlural,
-						},
-					} )
-				)
-				.catch( () => {
-					this.setState( {
-						error: TRANSLATION_FETCH_ERROR,
-					} );
-				} );
-		}
 	};
 
 	submitForm = () => {
@@ -99,6 +102,16 @@ export class Translatable extends Component {
 					error: TRANSLATION_SUBMIT_ERROR,
 				} );
 			} );
+	};
+
+	getTranslationUrl = () => {
+		const { locale, translationData } = this.props;
+
+		if ( ! this.hasDataLoaded() || ! translationData.originalId ) {
+			return null;
+		}
+
+		return getTranslationPermaLink( translationData.originalId, locale );
 	};
 
 	getDialogButtons = () => {
@@ -151,7 +164,8 @@ export class Translatable extends Component {
 	}
 
 	renderTranslatableContent() {
-		const { error, submissionSuccess, originalData, submitting, formState } = this.state;
+		const { error, submissionSuccess, submitting, formState } = this.state;
+		const { translationData } = this.props;
 
 		if ( error ) {
 			return (
@@ -162,38 +176,41 @@ export class Translatable extends Component {
 		}
 
 		if ( submissionSuccess ) {
-			return <TranslatedSuccess translationUrl={ this.state.translationUrl } />;
+			return <TranslatedSuccess translationUrl={ this.getTranslationUrl() } />;
 		}
 
-		return [
-			originalData.comment && <p key="translationComment">{ originalData.comment }</p>,
+		return (
+			<Fragment>
+				{ translationData.comment && <p key="translationComment">{ translationData.comment }</p> }
 
-			<TranslatableTextarea
-				key="translatedSingular"
-				originalString={ this.props.singular }
-				title="Singular"
-				fieldName="translatedSingular"
-				onChange={ this.handleTranslationChange }
-				disabled={ submitting }
-				value={ formState.translatedSingular }
-			/>,
-
-			this.state.formState.translatedPlural && (
 				<TranslatableTextarea
-					key="translatedPlural"
-					originalString={ this.props.plural }
-					title="Plural"
-					fieldName="translatedPlural"
+					key="translatedSingular"
+					originalString={ this.props.singular }
+					title="Singular"
+					fieldName="translatedSingular"
 					onChange={ this.handleTranslationChange }
 					disabled={ submitting }
-					value={ formState.translatedPlural }
+					value={ formState.translatedSingular }
 				/>
-			),
-		];
+
+				{ this.state.formState.translatedPlural && (
+					<TranslatableTextarea
+						key="translatedPlural"
+						originalString={ this.props.plural }
+						title="Plural"
+						fieldName="translatedPlural"
+						onChange={ this.handleTranslationChange }
+						disabled={ submitting }
+						value={ formState.translatedPlural }
+					/>
+				) }
+			</Fragment>
+		);
 	}
 
 	renderDialogContent() {
 		const { translate } = this.props;
+		const translationUrl = this.getTranslationUrl();
 
 		return (
 			<div className="community-translator__dialog-content">
@@ -204,12 +221,12 @@ export class Translatable extends Component {
 						} ) }
 					</h2>
 					<nav>
-						{ this.state.translationUrl && (
+						{ translationUrl && (
 							<a
 								target="_blank"
 								rel="noopener noreferrer"
 								title={ translate( 'Open this translation in translate.wordpress.com' ) }
-								href={ this.state.translationUrl }
+								href={ translationUrl }
 								className="community-translator__nav-link"
 							>
 								<Gridicon icon="external" size={ 12 } />
@@ -241,10 +258,12 @@ export class Translatable extends Component {
 	}
 
 	render() {
-		const { untranslated, children } = this.props;
+		const { children } = this.props;
 
 		const classes = classNames( 'translatable community-translator__element', {
-			'is-untranslated': untranslated,
+			'is-translated': this.isTranslated(),
+			'is-untranslated': this.isUntranslated(),
+			'is-user-translated': this.isUserTranslated(),
 		} );
 
 		return (

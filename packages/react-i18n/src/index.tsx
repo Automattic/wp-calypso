@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
+import { addFilter, removeFilter, applyFilters } from '@wordpress/hooks';
 
 export interface I18nReact {
 	__: I18n[ '__' ];
@@ -12,6 +13,11 @@ export interface I18nReact {
 	_x: I18n[ '_x' ];
 	isRTL: I18n[ 'isRTL' ];
 	i18nLocale: string;
+	localeData?: LocaleData;
+	hasTranslation: Function;
+	addFilter?: Function;
+	removeFilter?: Function;
+	applyFilters?: Function;
 }
 
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
@@ -19,11 +25,53 @@ const I18nContext = React.createContext< I18nReact >( makeContextValue() );
 interface Props {
 	localeData?: LocaleData;
 }
+/**
+ * Prefix for filter hook names
+ */
+const FILTER_PREFIX = 'a8c.reactI18n';
+
+interface I18nReactFilters {
+	addFilter: Function;
+	removeFilter: Function;
+	applyFilters: Function;
+}
+
+/**
+ * React hook for managing filters
+ */
+const useFilters = (): I18nReactFilters => {
+	// State is only used to provide reactivity when add/removing filters
+	const [ , setFiltersUpdates ] = React.useState( 0 );
+
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const bindFn = ( fn: Function, shouldUpdate = true ) => ( ...args: any[] ) => {
+		// Apply filter hook name prefix
+		args[ 0 ] = `${ FILTER_PREFIX }.${ args[ 0 ] }`;
+		const result = fn( ...args );
+
+		if ( shouldUpdate ) {
+			setFiltersUpdates( ( i ) => ++i );
+		}
+
+		return result;
+	};
+
+	return {
+		addFilter: bindFn( addFilter ),
+		removeFilter: bindFn( removeFilter ),
+		applyFilters: bindFn( applyFilters, false ),
+	};
+};
 
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
-	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData ), [
+	const options = {
+		filters: useFilters(),
+	};
+	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData, options ), [
 		localeData,
+		options,
 	] );
+
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 
@@ -61,22 +109,83 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
 	};
 }, 'withI18n' );
 
+interface MakeContextValueOptions {
+	filters: I18nReactFilters;
+}
+
+/**
+ * Bind an I18n function to its instance
+ *
+ * @param i18n I18n instance
+ * @param fnName '__' | '_n' | '_nx' | '_x'
+ * @param options Make context value options object
+ * @returns Bound I18n function with applied transformation hooks
+ */
+function bindI18nFunction(
+	i18n: I18n,
+	fnName: '__' | '_n' | '_nx' | '_x',
+	options?: MakeContextValueOptions
+) {
+	const boundFn = i18n[ fnName ].bind( i18n );
+
+	if ( ! options?.filters ) {
+		return boundFn;
+	}
+
+	return ( ...args: ( string | number )[] ) => {
+		const filteredArguments = options.filters.applyFilters( 'arguments', args, fnName, options );
+
+		return options.filters.applyFilters(
+			'translation',
+			boundFn( ...filteredArguments ),
+			filteredArguments,
+			fnName,
+			options
+		);
+	};
+}
+
+const CONTEXT_DELIMETER = '\u0004';
+
+/**
+ * Check if provided translation entry exists in locale data for provided singular and context
+ *
+ * @param localeData Locale data object
+ * @param singular Translation singular string
+ * @param context Gettext context
+ */
+function hasTranslation( localeData: LocaleData, singular: string, context?: string ): boolean {
+	const key =
+		typeof context === 'string' ? ''.concat( context, CONTEXT_DELIMETER, singular ) : singular;
+
+	return key in localeData;
+}
+
 /**
  * Utility to make a new context value
  *
  * @param localeData The localeData
+ * @param options Context options object
  *
  * @returns The context value with bound translation functions
  */
-function makeContextValue( localeData?: LocaleData ): I18nReact {
+function makeContextValue( localeData?: LocaleData, options?: MakeContextValueOptions ): I18nReact {
 	const i18n = createI18n( localeData );
 	const i18nLocale = localeData?.[ '' ]?.localeSlug ?? 'en';
+	const boundHasTranslation = ( singular: string, context?: string ) =>
+		hasTranslation( localeData || {}, singular, context );
+
 	return {
-		__: i18n.__.bind( i18n ),
-		_n: i18n._n.bind( i18n ),
-		_nx: i18n._nx.bind( i18n ),
-		_x: i18n._x.bind( i18n ),
+		__: bindI18nFunction( i18n, '__', options ),
+		_n: bindI18nFunction( i18n, '_n', options ),
+		_nx: bindI18nFunction( i18n, '_nx', options ),
+		_x: bindI18nFunction( i18n, '_x', options ),
 		isRTL: i18n.isRTL.bind( i18n ),
 		i18nLocale,
+		localeData,
+		hasTranslation: boundHasTranslation,
+		addFilter: options?.filters?.addFilter,
+		removeFilter: options?.filters?.removeFilter,
+		applyFilters: options?.filters?.applyFilters,
 	};
 }
