@@ -9,8 +9,23 @@ import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
  */
 import { CheckoutCartItem } from '../types/checkout-cart';
 import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
+
+const redirectPaymentMethods = [
+	'alipay',
+	'bancontact',
+	'eps',
+	'giropay',
+	'ideal',
+	'netbanking',
+	'paypal',
+	'p24',
+	'brazil-tef',
+	'wechat',
+	'sofort',
+];
 
 export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
@@ -97,9 +112,18 @@ function isPaymentMethodEnabled(
 	method: CheckoutPaymentMethodSlug,
 	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
+	// Redirect payments might not be possible in some cases - for example in the desktop app
+	if (
+		redirectPaymentMethods.includes( method ) &&
+		! config.isEnabled( 'upgrades/redirect-payments' )
+	) {
+		return false;
+	}
+
 	// By default, allow all payment methods
 	if ( ! allowedPaymentMethods?.length ) {
 		return true;
 	}
+
 	return allowedPaymentMethods.includes( method );
 }
