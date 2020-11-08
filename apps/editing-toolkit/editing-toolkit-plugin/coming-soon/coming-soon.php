@@ -129,3 +129,107 @@ function coming_soon_page() {
 	die();
 }
 add_action( 'template_redirect', __NAMESPACE__ . '\coming_soon_page' );
+
+/**
+ * We offer Public Coming Soon mode for both simple and Atomic sites. This function is notified whenever atomic site setting.
+ * update is being requested via Calypso. It updates the value of `wpcom_public_coming_soon` site option.
+ *
+ * @see sync_blog_public_and_atomic_privacy_model_for_atomic_sites
+ *
+ * @param  object|WP_Error         $response              Response from Jetpack API.
+ * @param  array                   $json_api_request_args Jetpack API request args.
+ * @param  WPCOM_JSON_API_Endpoint $endpoint              Local endpoint instance. It's not really used on WP.com - $response comes from corresponding code called on remote site.
+ * @param  int                     $site_id               ID of the site in question.
+ * @return object|WP_Error         the potentially-mutated API response body or WP_Error on failure.
+ */
+function store_wpcom_public_coming_soon_on_atomic_settings_update( $response, $json_api_request_args, $endpoint, $site_id ) : object {
+	if (
+		is_wp_error( $response ) ||
+		! is_a( $endpoint, 'WPCOM_JSON_API_Site_Settings_Endpoint' ) ||
+		! \A8C\Atomic\is_wpcom_atomic( $site_id )
+	) {
+		return $response;
+	}
+
+	if ( 'POST' === $json_api_request_args['method'] ) {
+		// Check if response is in expected format
+		if ( ! isset( $response->updated ) ) {
+			return $response;
+		}
+
+		// Act based on the value of blog_public requested by user.
+		$request_body = json_decode( $json_api_request_args['body'] );
+
+		if ( ! isset( $request_body->wpcom_public_coming_soon ) ) {
+			return $response;
+		}
+
+		// Don't update if the new value is the same as the old one.
+		$old_value = get_blog_option( $site_id, 'wpcom_public_coming_soon' );
+		$new_value = $request_body->wpcom_public_coming_soon ? 1 : 0;
+		if ( $old_value === $new_value ) {
+			return $response;
+		}
+
+		update_blog_option( $site_id, 'wpcom_public_coming_soon', $new_value );
+
+		// Deep clone to avoid mutating the original response.
+		$response                                    = json_decode( wp_json_encode( $response ) );
+		$response->updated                           = (object) $response->updated; // json_decode reads an empty object as an array
+		$response->updated->wpcom_public_coming_soon = $new_value;
+
+		return $response;
+	}
+
+	if ( 'GET' === $json_api_request_args['method'] ) {
+		// Check if response is in expected format.
+		if ( ! $response->settings ) {
+			return $response;
+		}
+
+		// Deep clone to avoid mutating the original response
+		$response = json_decode( json_encode( $response ) );
+		$response->settings->wpcom_public_coming_soon = (int) get_blog_option( $site_id, 'wpcom_public_coming_soon' );
+	}
+
+	return $response;
+}
+add_filter( 'wpcom_json_api_jetpack_response', 'store_wpcom_public_coming_soon_on_atomic_settings_update', 10, 4 );
+
+
+/**
+ * Updates the site settings response in the Jetpack API to return the value of `wpcom_public_coming_soon`
+ *
+ * Calypso settings are managed using Site_Settings_Endpoint. The /site/<id> endpoint is proxied to remote Jetpack site.
+ * The problem is that for Atomic sites all requests to Site_Settings_Endpoint are passed directly to Jetpack API on remote host and no Endpoint code is executed
+ * on WP.com.
+ *
+ * This function is notified:
+ * After wpcom-json-api.php receives a response from Atomic site.
+ * Before that response is returned to the client.
+ **
+ * @param  object|WP_Error         $response              Response from Jetpack API.
+ * @param  array                   $json_api_request_args Jetpack API request args.
+ * @param  WPCOM_JSON_API_Endpoint $endpoint              Local endpoint instance. It's not really used on WP.com - $response comes from corresponding code called on remote site.                       
+ * @param  int                     $site_id               ID of the site in question,
+ * @return object|WP_Error         the potentially-mutated API response body or WP_Error on failure.
+ */
+function add_wpcom_public_coming_soon_to_atomic_settings_response( $response, $json_api_request_args, $endpoint, $site_id ) : object {
+	if (
+		is_wp_error( $response ) ||
+		! is_a( $endpoint, 'WPCOM_JSON_API_GET_Site_Endpoint' ) ||
+		! \A8C\Atomic\is_wpcom_atomic( $site_id )
+	) {
+		return $response;
+	}
+
+	if ( 'GET' === $json_api_request_args['method'] ) {
+		// Deep clone to avoid mutating the original response
+		$response                 = json_decode( wp_json_encode( $response ) );
+		$response->is_coming_soon = (bool) get_blog_option( $site_id, 'wpcom_public_coming_soon' );
+	}
+
+	return $response;
+}
+add_filter( 'wpcom_json_api_jetpack_response', 'add_wpcom_public_coming_soon_to_atomic_settings_response', 10, 4 );
+
