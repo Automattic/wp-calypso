@@ -20,7 +20,7 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
 import formBase from 'calypso/me/form-base';
 import config from 'calypso/config';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';

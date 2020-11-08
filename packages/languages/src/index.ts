@@ -1,3 +1,13 @@
+/**
+ * External dependencies
+ */
+import values from 'lodash/values';
+
+/**
+ * Internal dependencies
+ */
+import data from './languages-meta.json';
+
 type LanguageSlug = string;
 type WPLocale = string;
 
@@ -14,4 +24,7 @@ type BaseLanguage = {
 type SubLanguage = BaseLanguage & { parentLangSlug: string };
 
 export type Language = BaseLanguage | SubLanguage;
-export const languages: Language[];
+
+const languages: Language[] = values( data );
+
+export default languages;
