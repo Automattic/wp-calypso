@@ -9,7 +9,7 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 } from '@wordpress/components';
-import { BlockControls, InnerBlocks } from '@wordpress/block-editor';
+import { BlockControls } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
@@ -311,24 +311,6 @@ function Edit( props ) {
 
 		return false;
 	};
-
-	if ( isPreview ) {
-		return (
-			<div className="premium-content-wrapper">
-				<InnerBlocks
-					templateLock={ false }
-					templateInsertUpdatesSelection={ false }
-					template={ [
-						[ 'premium-content/logged-out-view',
-							{
-								isPreview: true,
-							},
-						],
-					] }
-				/>
-			</div>
-		);
-	}
 
 	return (
 		<>

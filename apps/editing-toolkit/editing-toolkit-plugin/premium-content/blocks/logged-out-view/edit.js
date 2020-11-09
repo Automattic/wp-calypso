@@ -12,7 +12,7 @@ import { useEffect } from '@wordpress/element';
  */
 import Context from '../container/context';
 
-function Edit( { attributes, parentClientId, isSelected } ) {
+function Edit( { parentClientId, isSelected } ) {
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 
 	useEffect( () => {
@@ -45,12 +45,7 @@ function Edit( { attributes, parentClientId, isSelected } ) {
 									),
 								},
 							],
-							[
-								'premium-content/buttons',
-								{
-									isPreview: attributes.isPreview,
-								},
-							],
+							[ 'premium-content/buttons' ],
 						] }
 					/>
 				</div>
