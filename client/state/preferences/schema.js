@@ -59,6 +59,7 @@ export const remoteValuesSchema = {
 				'ocean',
 				'powder-snow',
 				'sakura',
+				'sunrise',
 				'sunset',
 			],
 		},
