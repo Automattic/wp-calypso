@@ -23,6 +23,7 @@ import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -90,7 +91,6 @@ class Layout extends React.Component {
 			/* Keyboard shortcutes */
 			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
-				modifierKeyIsActive: this.modifierKeyIsActive,
 				lastInputWasKeyboard: false,
 			};
 		}
@@ -316,10 +316,6 @@ class Layout extends React.Component {
 		this.forceUpdate();
 	};
 
-	modifierKeyIsActive = ( e ) => {
-		return e.altKey || e.ctrlKey || e.metaKey;
-	};
-
 	handleKeyDown = ( event ) => {
 		if ( ! this.props.isShowing ) {
 			return;
@@ -353,7 +349,7 @@ class Layout extends React.Component {
 		 * that require a modifier key should be
 		 * captured above.
 		 */
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 

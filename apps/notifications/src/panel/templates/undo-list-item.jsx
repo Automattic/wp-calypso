@@ -13,6 +13,7 @@ import actions from '../state/actions';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import { bumpStat } from '../rest-client/bump-stat';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 import Gridicon from './gridicons';
 
@@ -48,7 +49,7 @@ export class UndoListItem extends React.Component {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 

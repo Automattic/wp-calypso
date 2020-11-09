@@ -16,6 +16,7 @@ import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
 import { formatString, validURL } from './functions';
 import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 var debug = require( 'debug' )( 'notifications:reply' );
 var { recordTracksEvent } = require( '../helpers/stats' );
@@ -69,7 +70,7 @@ const CommentReplyInput = createReactClass( {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
