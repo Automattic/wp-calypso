@@ -23,7 +23,8 @@ $menu-submenu-focus-text: lighten( $highlight-color, 35% ) = #f7e3d3
 Well use studio-orange for both the primary and accent colors
 */
 
-.color-scheme.is-sunrise {
+.color-scheme.is-sunrise,
+.color-scheme.is-sunrise .is-nav-unification {
 	/* Variables used in Calypso Sunrise */
 	--theme-text-color: #ffffff; /* Direct from wp-admin */
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
@@ -134,5 +135,9 @@ Well use studio-orange for both the primary and accent colors
 	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
 	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
 	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover: var( --theme-text-color );
 }
 
