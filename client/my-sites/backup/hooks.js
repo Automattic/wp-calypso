@@ -73,6 +73,29 @@ export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
 	};
 };
 
+const getDailyAttemptFilter = ( { before, after, successOnly, sortOrder } = {} ) => {
+	return {
+		name: successOnly ? SUCCESSFUL_BACKUP_ACTIVITIES : BACKUP_ATTEMPT_ACTIVITIES,
+		before: before ? before.toISOString() : undefined,
+		after: after ? after.toISOString() : undefined,
+		aggregate: false,
+		number: 1,
+		sortOrder,
+	};
+};
+
+// For more context, see the note on real-time backups in
+// `useFirstMatchingBackupAttempt`
+const getRealtimeAttemptFilter = ( { before, after, sortOrder } = {} ) => {
+	return {
+		before: before ? before.toISOString() : undefined,
+		after: after ? after.toISOString() : undefined,
+		aggregate: false,
+		number: 100,
+		sortOrder,
+	};
+};
+
 export const useFirstMatchingBackupAttempt = (
 	siteId,
 	{ before, after, successOnly, sortOrder } = {},
@@ -84,23 +107,48 @@ export const useFirstMatchingBackupAttempt = (
 	const hasRealtimeBackups =
 		isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
 
-	const backupAttemptActivities = [
-		...( hasRealtimeBackups ? DELTA_ACTIVITIES : [] ),
-		...( successOnly ? SUCCESSFUL_BACKUP_ACTIVITIES : BACKUP_ATTEMPT_ACTIVITIES ),
-	];
-
-	const filter = {
-		name: backupAttemptActivities,
-		before: before ? before.toISOString() : undefined,
-		after: after ? after.toISOString() : undefined,
-		aggregate: false,
-		number: 1,
-		sortOrder,
-	};
+	const filter = hasRealtimeBackups
+		? getRealtimeAttemptFilter( { before, after, sortOrder } )
+		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
 	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, shouldExecute );
+
+	if ( ! shouldExecute ) {
+		return {
+			isLoading: false,
+			backupAttempt: undefined,
+		};
+	}
+
+	if ( isLoadingActivityLogs ) {
+		return {
+			isLoading: true,
+			backupAttempt: undefined,
+		};
+	}
+
+	// Daily backups are a much simpler case than real-time;
+	// let's get them out of the way before handling the more
+	// complex stuff
+	if ( ! hasRealtimeBackups ) {
+		return {
+			isLoading: false,
+			backupAttempt: activityLogs[ 0 ] || undefined,
+		};
+	}
+
+	// For real-time backups (for now), the most reliable way to find the first
+	// backup event in a list is by getting a large list and filtering by
+	// `activityIsRewindable`. This may change soon, with the introduction of an
+	// API endpoint to fetch all backup points in a given date range.
+	const matchingAttempt = activityLogs
+		// Sort in descending order by default, but flip if sortOrder is
+		// explicitly set to 'asc'
+		.sort( ( a, b ) => byActivityTsDescending( a, b ) * ( sortOrder === 'asc' ? -1 : 1 ) )
+		.filter( ( { activityIsRewindable } ) => activityIsRewindable )[ 0 ];
+
 	return {
 		isLoading: isLoadingActivityLogs,
-		backupAttempt: activityLogs[ 0 ] || undefined,
+		backupAttempt: matchingAttempt || undefined,
 	};
 };
