@@ -23,11 +23,11 @@ import {
 	useTotal,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -46,10 +46,14 @@ import {
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
 } from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
-import { needsDomainDetails } from 'calypso/my-sites/checkout/composite-checkout/payment-method-helpers';
 import { login } from 'calypso/lib/paths';
 import config from 'calypso/config';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'calypso/lib/cart-values/cart-items';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -57,17 +61,15 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+	const { responseCart } = useShoppingCart();
+	const contactDetailsType = getContactDetailsType( responseCart );
 
-	if ( areDomainsInLineItems( items ) ) {
+	if ( contactDetailsType === 'domain' ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
 	}
-	if ( isGSuiteInCart ) {
+	if ( contactDetailsType === 'gsuite' ) {
 		return ! isActive && isComplete
 			? translate( 'G Suite account information' )
 			: translate( 'Enter your G Suite account information' );
@@ -113,14 +115,12 @@ export default function WPCheckout( {
 	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
-	const areThereDomainProductsInCart = items.some( isLineItemADomain );
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
-	const shouldShowContactStep =
-		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
-	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
+
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const shouldShowContactStep = contactDetailsType !== 'none';
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -172,9 +172,7 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -185,7 +183,7 @@ export default function WPCheckout( {
 				applyDomainContactValidationResults,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -217,13 +215,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
@@ -364,7 +360,7 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
-									shouldShowDomainContactFields={ shouldShowDomainContactFields }
+									contactDetailsType={ contactDetailsType }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}

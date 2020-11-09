@@ -15,12 +15,6 @@ import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-} from 'calypso/lib/cart-values/cart-items';
 import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
@@ -331,19 +325,6 @@ export async function wpcomPayPalExpress( payload, transactionOptions ) {
 	}
 
 	return wp.undocumented().paypalExpressUrl( payload );
-}
-
-export function needsDomainDetails( cart ) {
-	if ( cart && hasOnlyRenewalItems( cart ) ) {
-		return false;
-	}
-	if (
-		cart &&
-		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	) {
-		return true;
-	}
-	return false;
 }
 
 export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
