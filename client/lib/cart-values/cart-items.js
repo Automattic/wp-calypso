@@ -16,7 +16,6 @@ import {
 	merge,
 	reject,
 	some,
-	toLower,
 	uniq,
 } from 'lodash';
 import emailValidator from 'email-validator';
@@ -1183,7 +1182,9 @@ export function isNextDomainFree( cart, domain = '' ) {
 export function isDomainBundledWithPlan( cart, domain ) {
 	const bundledDomain = get( cart, 'bundled_domain', '' );
 
-	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
+	return (
+		'' !== bundledDomain && domain.toLowerCase() === get( cart, 'bundled_domain', '' ).toLowerCase()
+	);
 }
 
 /**
