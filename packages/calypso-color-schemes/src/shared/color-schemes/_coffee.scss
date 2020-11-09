@@ -20,7 +20,8 @@ Used studio-orange for the primary+accent.
 The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35.
 */
 
-.color-scheme.is-coffee {
+.color-scheme.is-coffee,
+.color-scheme.is-coffee .is-nav-unification {
 	/* Variables used in Calypso Coffee */
 	--theme-text-color: #ffffff; /* Direct from wp-admin */
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
@@ -130,6 +131,10 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
 	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
 	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover: var( --theme-text-color );
 
 	.upsell-nudge.banner.card.is-compact {
 		background-color: #302c29; /* 15% Darken on base color, #59524c */
