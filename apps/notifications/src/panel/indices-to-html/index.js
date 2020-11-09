@@ -97,6 +97,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'h5':
 		case 'h6':
 		case 'figure':
+		case 'figcaption':
 			switch ( range_info_type ) {
 				case 'list':
 					range_info_type = 'span';
@@ -183,13 +184,14 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
  */
 function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	let text_start = null,
-		text_stop = null,
-		i;
+		text_stop = null;
+
+	const ranges = JSON.parse( JSON.stringify( sub_ranges ) ); // clone through serialization
 
 	// We use sub_ranges and not sub_text because we *can* have an empty string with a range
 	// acting upon it. For example an a tag with just an alt-text-less image tag inside of it
-	for ( i = 0; i < sub_ranges.length; i++ ) {
-		if ( sub_ranges[ i ].index.length === 0 ) {
+	for ( let i = 0; i < sub_ranges.length; i++ ) {
+		if ( ranges[ i ].index.length === 0 ) {
 			// This is a simple text element without applicable ranges
 			if ( text_start == null ) {
 				// This is the beginning of the text element
@@ -207,106 +209,64 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 				text_stop = null;
 			}
 
-			// Separate empty ranges from non-empty ranges so they are not rendered inside ranges
-			// sharing the same start position.
-			const empty_ranges = sub_ranges[ i ].index.filter( ( range ) => range.len === 0 );
-			const non_empty_ranges = sub_ranges[ i ].index.filter( ( range ) => range.len !== 0 );
-
 			// At this point we have one or more ranges we could be entering. We need to decide
-			// which ones. For recursion to work we must pick the first empty range and/or the
-			// longest range. If there are ties for longest range from this position then it doesn't
-			// matter which one wins. This may not be true for all cases forever. If we find a bug
-			// where a particular range needs to win out over another then this is the place for that
-			// logic.
+			// which one. If we find a bug where a particular range needs to win out over another
+			// then this is the place for that logic.
 			//
-			// sub_ranges[i].index looks like:
+			// ranges[i].index looks like:
 			// [ { id: [index of range in range_data], len: [span of range indices] }, { id: x, len: y }, ..., { id: n, len: m } ]
-			const empty_range = empty_ranges.length > 0 ? empty_ranges[ 0 ] : null;
-			let non_empty_range = null;
-			non_empty_ranges.forEach( ( range ) => {
-				if ( null === non_empty_range || range.len > non_empty_range.len ) {
-					non_empty_range = range;
-				}
-			} );
-
-			if ( empty_range ) {
-				// Since we've picked a range we'll record some information for future reference
-				const empty_range_info = range_data[ empty_range.id ]; // the origin range data
-				const empty_new_sub_text = ''; // the text we will be recursing with
-				const empty_new_sub_range = sub_ranges.slice( i, i + 1 ); // the new ranges we'll be recursing with
-
-				// Remove ranges already processed. Otherwise we will end up in an infinite loop and
-				// everybody will be mad at us.
-				for ( let index = 0; index < empty_new_sub_range.length; index++ ) {
-					empty_new_sub_range[ index ].index = empty_new_sub_range[ index ].index.filter(
-						( range ) => {
-							// Remove the range we are recusing into.
-							if ( range.id === empty_range.id ) {
-								return false;
-							}
-
-							// Remove any non-empty range.
-							if ( range.len !== 0 ) {
-								return false;
-							}
-
-							return true;
-						}
-					);
+			let range = null;
+			for ( const potential_range of ranges[ i ].index ) {
+				// Give priority to the first empty range so it is not rendered inside a sibling
+				// range sharing the same start position.
+				if ( potential_range.len === 0 ) {
+					range = potential_range;
+					break;
 				}
 
-				container.appendChild(
-					render_range(
-						empty_new_sub_text,
-						empty_new_sub_range,
-						empty_range_info,
-						range_data,
-						options
-					)
-				);
+				// For recursion to work we must pick the longest range. If there are ties for
+				// longest range from this position then it doesn't matter which one wins. This
+				// may not be true for all cases forever.
+				if ( null === range || potential_range.len > range.len ) {
+					range = potential_range;
+				}
 			}
 
-			if ( non_empty_range ) {
-				// Since we've picked a range we'll record some information for future reference
-				const non_empty_range_info = range_data[ non_empty_range.id ]; // the origin range data
-				const non_empty_new_sub_text = sub_text.substring( i, i + non_empty_range.len ); // the text we will be recursing with
-				const non_empty_new_sub_range = sub_ranges.slice( i, i + non_empty_range.len ); // the new ranges we'll be recursing with
+			// Since we've picked a range we'll record some information for future reference
+			const range_info = range_data[ range.id ]; // the origin range data
+			const new_sub_text = sub_text.substring( i, i + range.len ); // the text we will be recursing with
+			const new_sub_range = sub_ranges.slice( i, i + ( range.len > 0 ? range.len : 1 ) ); // the new ranges we'll be recursing with
 
-				// Remove ranges already processed. Otherwise we will end up in an infinite loop and
-				// everybody will be mad at us.
-				for ( let index = 0; index < non_empty_new_sub_range.length; index++ ) {
-					non_empty_new_sub_range[ index ].index = non_empty_new_sub_range[ index ].index.filter(
-						( range ) => {
-							// Remove the range we are recusing into.
-							if ( range.id === non_empty_range.id ) {
-								return false;
-							}
+			// Remove empty ranges processed on this iteration so they are not picked on next iteration.
+			ranges[ i ].index = ranges[ i ].index.filter( ( sub_range ) => sub_range.len > 0 );
 
-							// Remove any empty range sharing the same start position;
-							if (
-								range.len === 0 &&
-								non_empty_range_info.indices[ 0 ] === range_data[ range.id ]
-							) {
-								return false;
-							}
+			for ( let j = 0; j < new_sub_range.length; j++ ) {
+				new_sub_range[ j ].index = new_sub_range[ j ].index.filter( ( new_range ) => {
+					// Remove the range we are recursing into from the ranges we're recursing with.
+					// Otherwise we will end up in an infinite loop and everybody will be mad at us.
+					if ( range.id === new_range.id ) {
+						return false;
+					}
 
-							return true;
-						}
-					);
-				}
+					// Remove non-empty ranges if we've picked an empty range.
+					if ( range.len === 0 && new_range.len > 0 ) {
+						return false;
+					}
 
-				container.appendChild(
-					render_range(
-						non_empty_new_sub_text,
-						non_empty_new_sub_range,
-						non_empty_range_info,
-						range_data,
-						options
-					)
-				);
+					// Remove empty ranges if we've picked a non-empty range.
+					if ( range.len > 0 && new_range.len === 0 ) {
+						return false;
+					}
 
-				i += non_empty_range.len - 1; // the position we will be jumping to after recursing
+					return true;
+				} );
 			}
+
+			container.appendChild(
+				render_range( new_sub_text, new_sub_range, range_info, range_data, options )
+			);
+
+			i += range.len - 1; // the position we will be jumping to after recursing
 		}
 	}
 	if ( text_start != null ) {
@@ -358,10 +318,6 @@ function recurse_convert( text, ranges, options ) {
 	const container = document.createDocumentFragment();
 	const ranges_copy = JSON.parse( JSON.stringify( ranges ) ); // clone through serialization
 	const t = []; // Holds the range information for each position in the text
-	let i;
-	let id;
-	let n;
-	let range_len;
 
 	// Create a representation of the string as an array of
 	// positions, each holding a list of ranges that apply to that
@@ -376,8 +332,12 @@ function recurse_convert( text, ranges, options ) {
 	//                       : of longest to shortest ranges
 	//
 	// Step 1: Create the empty array of positions
-	for ( i = 0; i <= text.length; i++ ) {
-		t[ i ] = { index: [] };
+	if ( text.length > 0 ) {
+		for ( let i = 0; i < text.length; i++ ) {
+			t[ i ] = { index: [] };
+		}
+	} else {
+		t.push( { index: [] } );
 	}
 
 	// Step 2: in order of largest to smallest, add the information
@@ -385,16 +345,20 @@ function recurse_convert( text, ranges, options ) {
 	// the ranges _should be_ guaranteed to be valid and non-overlapping,
 	// we can see from the diagram above that ordering them from largest
 	// to smallest gives us the proper order for descending recursively.
-	for ( i = 0; i < ranges_copy.length; i++ ) {
-		id = find_largest_range( ranges_copy );
-		range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
-		for ( n = ranges[ id ].indices[ 0 ]; n <= ranges[ id ].indices[ 1 ]; n++ ) {
-			t[ n ].index.push( { id: id, len: range_len } );
+	ranges_copy.forEach( () => {
+		const id = find_largest_range( ranges_copy );
+		const range_len = ranges[ id ].indices[ 1 ] - ranges[ id ].indices[ 0 ];
+		if ( range_len > 0 ) {
+			for ( let i = ranges[ id ].indices[ 0 ]; i < ranges[ id ].indices[ 1 ]; i++ ) {
+				t[ i ].index.push( { id: id, len: range_len } );
+			}
+		} else if ( typeof t[ ranges[ id ].indices[ 0 ] ] !== 'undefined' ) {
+			t[ ranges[ id ].indices[ 0 ] ].index.push( { id: id, len: range_len } );
 		}
 		// Clear out the currently-selected range so that it won't
 		// return as the largest range in the next loop iteration
 		ranges_copy[ id ] = null;
-	}
+	} );
 
 	// Create a document fragment, and fill it with recursively built chunks of things.
 	build_chunks( text, t, ranges, container, options );
