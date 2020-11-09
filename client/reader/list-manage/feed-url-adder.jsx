@@ -43,7 +43,7 @@ export default function FeedUrlAdder( { list, query } ) {
 									list.ID,
 									list.owner,
 									list.slug,
-									addSchemeIfMissing( query )
+									addSchemeIfMissing( query, 'https' )
 							  )
 							: deleteReaderListFeed(
 									list.ID,
