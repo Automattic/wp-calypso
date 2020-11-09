@@ -46,9 +46,11 @@ export function resolveDomainStatus(
 
 			if ( ( ! isJetpackSite || isSiteAutomatedTransfer ) && ! domain.pointsToWpcom ) {
 				return {
-					statusText: translate( 'Action required' ),
-					statusClass: 'status-error',
+					statusText: translate( 'Complete setup' ),
+					statusClass: 'status-warning',
 					icon: 'info',
+					listStatusText: translate( 'Complete setup' ),
+					listStatusClass: 'warning',
 				};
 			}
 
@@ -134,7 +136,7 @@ export function resolveDomainStatus(
 			if ( isRecentlyRegistered( domain.registrationDate ) ) {
 				return {
 					statusText: translate( 'Activating' ),
-					statusClass: 'status-pending',
+					statusClass: 'status-success',
 					icon: 'cloud_upload',
 					listStatusText: translate( 'Activating' ),
 					listStatusClass: 'info',
@@ -152,7 +154,7 @@ export function resolveDomainStatus(
 			if ( isDomainOnlySite ) {
 				return {
 					statusText: translate( 'Parked' ),
-					statusClass: 'status-parked',
+					statusClass: 'status-neutral',
 					icon: 'download_done',
 				};
 			}

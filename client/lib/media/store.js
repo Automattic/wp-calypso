@@ -75,11 +75,6 @@ function receivePage( siteId, items ) {
 	} );
 }
 
-function clearPointers( siteId ) {
-	MediaStore._pointers[ siteId ] = {};
-	MediaStore._media[ siteId ] = {};
-}
-
 MediaStore.get = function ( siteId, postId ) {
 	if ( ! ( siteId in MediaStore._media ) ) {
 		return;
@@ -104,11 +99,6 @@ MediaStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	switch ( action.type ) {
-		case 'CHANGE_MEDIA_SOURCE':
-			clearPointers( action.siteId );
-			MediaStore.emit( 'change' );
-			break;
-
 		case 'CREATE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEM':
 		case 'RECEIVE_MEDIA_ITEMS':
@@ -157,12 +147,6 @@ MediaStore.dispatchToken = Dispatcher.register( function ( payload ) {
 			} );
 
 			MediaStore.emit( 'change' );
-			break;
-		case 'FETCH_MEDIA_LIMITS':
-			if ( ! action.siteId ) {
-				break;
-			}
-			MediaStore.emit( 'fetch-media-limits' );
 			break;
 	}
 } );

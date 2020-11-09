@@ -81,7 +81,7 @@
 	line-height: normal;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		font-weight: 600;
 		max-width: none;
 		white-space: normal;
@@ -188,7 +188,7 @@ input[type='radio'].domain-management-list-item__radio {
 .list-header {
 	.info-popover {
 		vertical-align: middle;
-		margin-left: 1px;
+		margin-left: 2px;
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
@@ -280,7 +280,7 @@ input[type='radio'].domain-management-list-item__radio {
 }
 
 .list__domain-auto-renew {
-	width: 95px;
+	width: 96px;
 }
 
 .list__domain-privacy {
@@ -342,6 +342,12 @@ input[type='radio'].domain-management-list-item__radio {
 	.cart__count-badge .count {
 		top: -7px;
 		right: -3px;
+	}
+}
+
+.domain-item__enable-selection {
+	> .list__domain-transfer-lock, > .list__domain-privacy, > .list__domain-auto-renew, > .list__domain-email, > .list__domain-options {
+		visibility: hidden;
 	}
 }
 

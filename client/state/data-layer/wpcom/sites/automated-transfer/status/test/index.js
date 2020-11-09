@@ -14,7 +14,7 @@ import {
 	setAutomatedTransferStatus,
 } from 'state/automated-transfer/actions';
 import { http } from 'state/data-layer/wpcom-http/actions';
-import { useFakeTimers } from 'test/helpers/use-sinon';
+import { useFakeTimers } from 'test-helpers/use-sinon';
 
 const siteId = 1916284;
 

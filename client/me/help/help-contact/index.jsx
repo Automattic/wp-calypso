@@ -584,9 +584,9 @@ class HelpContact extends React.Component {
 			this.contactFormPropsCompactFilter( this.getContactFormPropsVariation( supportVariation ) )
 		);
 
-		// Customers sent to Directly and Forum are not affected by live chat closures
+		// Customers sent to Directly, Forums, and Upwork are not affected by live chat closures
 		// const isUserAffectedByLiveChatClosure =
-		// 	supportVariation !== SUPPORT_DIRECTLY && supportVariation !== SUPPORT_FORUM;
+		// 	[ SUPPORT_DIRECTLY, SUPPORT_FORUM, SUPPORT_UPWORK_TICKET ].indexOf( supportVariation ) === -1;
 
 		const activeTicketCount = activeSupportTickets.length;
 

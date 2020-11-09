@@ -25,7 +25,7 @@ import {
 	POST_SAVE_SUCCESS,
 } from 'state/action-types';
 import { successNotice, withoutNotice } from 'state/notices/actions';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {

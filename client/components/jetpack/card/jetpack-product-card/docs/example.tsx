@@ -13,7 +13,6 @@ import {
 	ownedProductCard,
 	productCardWithProductTypeAndBadge,
 	productCardWithDiscount,
-	productCardWithLongTexts,
 	expandedProductCardWithCategoriesAndMore,
 	productCardWithCancelButton,
 } from '../fixture';
@@ -35,9 +34,6 @@ export default function JetpackProductCardExample() {
 			<br />
 			<h3>Jetpack Product Card with Discount</h3>
 			<JetpackProductCard { ...productCardWithDiscount } />
-			<br />
-			<h3>Jetpack Product Card with Long Texts</h3>
-			<JetpackProductCard { ...productCardWithLongTexts } />
 			<br />
 			<h3>Expanded Jetpack Product Card with Features Categories and More Link</h3>
 			<JetpackProductCard { ...expandedProductCardWithCategoriesAndMore } />

@@ -20,6 +20,7 @@ import { UserStep as User } from '../';
 jest.mock( 'blocks/signup-form', () => require( 'components/empty-component' ) );
 jest.mock( 'lib/abtest', () => ( {
 	abtest: () => '',
+	getABTestVariation: () => null,
 } ) );
 jest.mock( 'signup/step-wrapper', () => require( 'components/empty-component' ) );
 jest.mock( 'signup/utils', () => ( {

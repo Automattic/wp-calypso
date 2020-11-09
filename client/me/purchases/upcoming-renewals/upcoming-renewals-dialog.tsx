@@ -24,22 +24,14 @@ import { useLocalizedMoment } from 'components/localized-moment';
 import { managePurchase } from '../paths';
 
 /**
+ * Type dependencies
+ */
+import type { Purchase } from 'lib/purchases/types';
+
+/**
  * Style dependencies
  */
 import './style.scss';
-
-export interface Purchase {
-	id: number;
-	saleAmount?: number;
-	amount: number;
-	meta?: string;
-	isDomainRegistration?: boolean;
-	productName: string;
-	currencyCode: string;
-	expiryDate: string;
-	renewDate: string;
-	productSlug: string;
-}
 
 interface Site {
 	domain: string;

@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { AspectRatios } from 'state/editor/image-editor/constants';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'lib/oauth-token', () => ( {

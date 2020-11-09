@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { noop } from 'lodash';
+import moment from 'moment';
 
 export const featuresItems = [
 	{
@@ -42,8 +43,10 @@ export const planCardWithDiscount = {
 
 export const deprecatedPlanCard = {
 	...planCard,
+	iconSlug: 'jetpack_business',
 	badgeLabel: 'Best value',
 	discountedPrice: 80,
 	withStartingPrice: true,
-	deprecated: true,
+	isDeprecated: true,
+	expiryDate: moment( '2021-01-01' ),
 };

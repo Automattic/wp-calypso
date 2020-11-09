@@ -15,10 +15,9 @@ import { connect } from 'react-redux';
  */
 import { Button } from '@automattic/components';
 import ImagePreloader from 'components/image-preloader';
-import MediaStore from 'lib/media/store';
 import Spinner from 'components/spinner';
 import { url } from 'lib/media/utils';
-import { fetchMediaItem } from 'state/media/thunks';
+import { fetchMediaItem, getMediaItem } from 'state/media/thunks';
 
 export class ImageSelectorPreview extends Component {
 	static propTypes = {
@@ -38,7 +37,6 @@ export class ImageSelectorPreview extends Component {
 
 	componentDidMount() {
 		this.fetchImages();
-		MediaStore.on( 'change', this.updateImageState );
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -48,15 +46,11 @@ export class ImageSelectorPreview extends Component {
 		}
 	}
 
-	componentWillUnmount() {
-		MediaStore.off( 'change', this.updateImageState );
-	}
-
 	setTransientImages = () => {
 		const newTransientImages = {};
 		this.state.images.forEach( ( image ) => {
 			if ( image.transient ) {
-				const media = MediaStore.get( this.props.siteId, image.ID );
+				const media = this.props.getMediaItem( this.props.siteId, image.ID );
 				newTransientImages[ media.ID ] = image.URL;
 			}
 		} );
@@ -79,7 +73,7 @@ export class ImageSelectorPreview extends Component {
 
 			itemIds.map( ( id ) => {
 				id = parseInt( id, 10 );
-				const media = MediaStore.get( siteId, id );
+				const media = this.props.getMediaItem( siteId, id );
 				if ( ! media ) {
 					this.props.fetchMediaItem( siteId, id );
 				}
@@ -92,12 +86,8 @@ export class ImageSelectorPreview extends Component {
 		this.setTransientImages();
 		const images = uniq(
 			itemIds
-				.map( ( id ) => {
-					return MediaStore.get( siteId, id );
-				} )
-				.filter( function ( e ) {
-					return e;
-				} )
+				.map( ( id ) => this.props.getMediaItem( siteId, id ) )
+				.filter( ( mediaItem ) => mediaItem )
 		);
 
 		this.setState( { images }, () => {
@@ -238,4 +228,6 @@ export class ImageSelectorPreview extends Component {
 	}
 }
 
-export default connect( null, { fetchMediaItem } )( localize( ImageSelectorPreview ) );
+export default connect( null, { fetchMediaItem, getMediaItem } )(
+	localize( ImageSelectorPreview )
+);

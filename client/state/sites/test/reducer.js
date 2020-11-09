@@ -31,7 +31,7 @@ import {
 	DESERIALIZE,
 } from 'state/action-types';
 import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

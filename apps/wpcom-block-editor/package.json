@@ -16,14 +16,14 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"bundle": "check-npm-client && calypso-build --env.WP",
-		"build:dev": "check-npm-client && npm run bundle --",
-		"build:prod": "check-npm-client && NODE_ENV=production yarn run bundle --",
-		"build": "check-npm-client && npm-run-all --parallel \"build:* -- {@}\" --",
-		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && yarn run clean",
-		"dev": "check-npm-client && node bin/npm-run-build.js --dev",
-		"wpcom-sync": "check-npm-client && ./bin/wpcom-watch-and-sync.sh"
+		"bundle": "calypso-build --env.WP",
+		"build:dev": "npm run bundle --",
+		"build:prod": "NODE_ENV=production yarn run bundle --",
+		"build": "npm-run-all --parallel \"build:* -- {@}\" --",
+		"clean": "npx rimraf dist",
+		"prebuild": "yarn run clean",
+		"dev": "node bin/npm-run-build.js --dev",
+		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh"
 	},
 	"dependencies": {
 		"@wordpress/block-editor": "^4.3.3",

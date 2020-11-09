@@ -91,6 +91,7 @@ const nodeModulesToTranspile = [
 	'striptags/',
 	'unicode-match-property-ecmascript/',
 	'unicode-match-property-value-ecmascript/',
+	'wp-calypso-client/',
 ];
 
 /**

@@ -18,7 +18,7 @@ import {
 	READER_THUMBNAIL_REQUEST_FAILURE,
 	READER_THUMBNAIL_RECEIVE,
 } from 'state/reader/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

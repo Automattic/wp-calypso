@@ -36,5 +36,5 @@ export const editMedia = ( siteId, item ) => ( dispatch, getState ) => {
 
 	dispatchFluxUpdateMediaItem( siteId, editedMediaItem );
 
-	dispatch( editMediaItem( siteId, item ) );
+	dispatch( editMediaItem( siteId, editedMediaItem, item ) );
 };

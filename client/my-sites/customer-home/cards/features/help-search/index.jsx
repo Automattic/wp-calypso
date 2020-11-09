@@ -5,31 +5,41 @@ import { Card } from '@automattic/components';
 import React, { useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
+import { get, isUndefined, omitBy } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import CardHeading from 'components/card-heading';
 import Gridicon from 'components/gridicon';
-
+import { recordTracksEvent } from 'state/analytics/actions';
 import getSearchQuery from 'state/inline-help/selectors/get-search-query';
 import { hideInlineHelp, showInlineHelp } from 'state/inline-help/actions';
 import { openSupportArticleDialog } from 'state/inline-support-article/actions';
 import HelpSearchCard from 'blocks/inline-help/inline-help-search-card';
 import HelpSearchResults from 'blocks/inline-help/inline-help-search-results';
 import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
-import { RESULT_POST_ID, RESULT_LINK } from 'blocks/inline-help/constants';
+import {
+	RESULT_POST_ID,
+	RESULT_ARTICLE,
+	RESULT_LINK,
+	RESULT_TOUR,
+	RESULT_TYPE,
+} from 'blocks/inline-help/constants';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
+const HELP_COMPONENT_LOCATION = 'customer-home';
+
 const amendYouTubeLink = ( link = '' ) =>
 	link.replace( 'youtube.com/embed/', 'youtube.com/watch?v=' );
 
-const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog } ) => {
+const getResultLink = ( result ) => amendYouTubeLink( get( result, RESULT_LINK ) );
+
+const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDialog, track } ) => {
 	const translate = useTranslate();
 
 	// When the Customer Home Support is shown we must hide the
@@ -41,18 +51,35 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 		return () => showInlineHelpUI();
 	}, [ hideInlineHelpUI, showInlineHelpUI ] );
 
+	// trackResultView: Given a result, send an "_open" tracking event indicating that result is opened.
+	const trackResultView = ( result ) => {
+		const resultLink = getResultLink( result );
+		const type = get( result, RESULT_TYPE, RESULT_ARTICLE );
+		const tour = get( result, RESULT_TOUR );
+
+		const tracksData = omitBy(
+			{
+				search_query: searchQuery,
+				tour,
+				result_url: resultLink,
+				location: HELP_COMPONENT_LOCATION,
+			},
+			isUndefined
+		);
+		track( `calypso_inlinehelp_${ type }_open`, tracksData );
+	};
+
+	// openResultView: Given a result, open that result, and use trackResultView() to track it.
 	const openResultView = ( event, result ) => {
 		event.preventDefault();
-
-		// Edge case if no search result is selected
 		if ( ! result ) {
 			return;
 		}
 
-		// Grab properties using constants for safety
-		const resultPostId = get( result, RESULT_POST_ID );
-		const resultLink = amendYouTubeLink( get( result, RESULT_LINK ) );
+		trackResultView( result );
 
+		const resultPostId = get( result, RESULT_POST_ID );
+		const resultLink = getResultLink( result );
 		openDialog( { postId: resultPostId, actionUrl: resultLink } );
 	};
 
@@ -66,7 +93,7 @@ const HelpSearch = ( { searchQuery, hideInlineHelpUI, showInlineHelpUI, openDial
 							<HelpSearchCard
 								onSelect={ openResultView }
 								query={ searchQuery }
-								location="customer-home"
+								location={ HELP_COMPONENT_LOCATION }
 								placeholder={ translate( 'Search support articles' ) }
 							/>
 							<HelpSearchResults
@@ -100,6 +127,7 @@ const mapDispatchToProps = {
 	hideInlineHelpUI: hideInlineHelp,
 	showInlineHelpUI: showInlineHelp,
 	openDialog: openSupportArticleDialog,
+	track: recordTracksEvent,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( HelpSearch );

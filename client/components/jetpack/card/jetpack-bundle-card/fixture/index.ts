@@ -8,17 +8,21 @@ export const featuresItems = [
 		text: 'Backup',
 	},
 	{
-		text: 'Scan',
+		icon: 'bug',
+		text: 'Anti-spam ',
+		description: 'Lorem ipsum dolor sit amet consectetur adipisicing elit.',
 	},
 ];
 
-export const features = {
-	items: featuresItems,
+export const categorizedFeatures = {
+	items: {
+		Security: featuresItems,
+	},
 };
 
 export const bundleCard = {
-	iconSlug: 'jetpack_anti_spam',
-	productName: 'Security Security',
+	iconSlug: 'jetpack_security_v2',
+	productName: 'Jetpack Security',
 	subheadline: 'Comprehensive WordPress protection',
 	description:
 		'Enjoy the peace of mind of complete site security. Easy-to-use, powerful security tools guard your site, so you can focus on your business.',
@@ -27,7 +31,7 @@ export const bundleCard = {
 	billingTimeFrame: 'per month, billed monthly',
 	buttonLabel: 'Get Jetpack Security',
 	onButtonClick: noop,
-	features,
+	features: categorizedFeatures,
 };
 
 export const bundleCardWithBadge = {

@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .domain-suggestion:not( .featured-domain-suggestion ) {
 	display: flex;
 	flex-direction: column;
@@ -249,6 +252,118 @@
 	.is-section-domains & {
 		@include breakpoint-deprecated( '>800px' ) {
 			display: block;
+		}
+	}
+}
+
+body.is-section-signup.is-white-signup {
+	.featured-domain-suggestions {
+		.domain-registration-suggestion__title {
+			font-size: 1.625rem;
+		}
+	}
+
+	.domain-registration-suggestion__progress-bar {
+		.badge {
+			background-color: var( --color-neutral-100 );
+			border-radius: 2px;
+		}
+	}
+
+	.domain-suggestion {
+
+		.domain-product-price__free-text {
+			color: var( --color-neutral-60 );
+			font-size: $font-body;
+		}
+
+		.domain-product-price__price {
+			font-size: $font-body-small;
+
+			&:not( .domain-product-price__free-price ) {
+				color: var( --color-neutral-40 );
+			}
+		}
+
+		&:not( .featured-domain-suggestion ) {
+
+			.domain-suggestion__content {
+				@include breakpoint-deprecated( '>660px' ) {
+					&.domain-suggestion__content-domain-copy-test {
+						justify-content: space-between;
+					}
+				}
+			}
+
+			.domain-registration-suggestion__domain-title {
+				line-height: 3rem;
+				.domain-registration-suggestion__domain-title-tld {
+					color: var( --color-accent );
+				}
+			}
+
+			.domain-product-price__free-price {
+				font-size: $font-body;
+				
+				@include break-mobile {
+					font-size: $font-body-small;
+				}
+			}
+
+			.domain-product-price__free-text {
+				font-size: $font-body;
+				
+				@include break-mobile {
+					font-size: $font-body-small;
+				}
+			}
+
+			.domain-product-price__price:not( .domain-product-price__free-price ) {
+				font-size: $font-body-small;
+
+				@include break-mobile {
+					font-size: $font-body-extra-small;
+				}
+			}
+
+			&.is-clickable:hover {
+				@include break-mobile {
+					background: var( --color-primary-0 );
+					box-shadow: 0 0 0 1px var( --color-primary-40 );
+
+					.domain-suggestion__action:not( .is-borderless ) {
+						border-radius: 4px;
+						display: block;
+						line-height: 17px;
+						padding: 11px 24px 10px;
+					}
+
+					.domain-product-price {
+						display: none;
+					}
+				}
+			}
+
+			&:not( .domain-transfer-suggestion ) {
+				.domain-suggestion__action {
+					@include break-mobile {
+						display: none;
+					}
+				}
+			}
+	
+			&.domain-transfer-suggestion {
+				$cod-grey: #2b2d2f;
+
+				.domain-suggestion__action {
+					color: $cod-grey;
+					text-decoration-line: underline;
+				}
+				.domain-suggestion__chevron {
+					fill: $cod-grey;
+					margin-left: 0;
+				}
+			}
 		}
 	}
 }

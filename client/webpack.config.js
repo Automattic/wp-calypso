@@ -36,9 +36,9 @@ const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive
 const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack/generate-chunks-map-plugin' );
+const getAliasesForExtensions = require( './webpack-utils/extensions' );
+const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
 
 /**
  * Internal variables
@@ -63,7 +63,7 @@ const isDesktopMonorepo = isDesktop && process.env.DESKTOP_MONOREPO === 'true';
 const defaultBrowserslistEnv = isDesktop ? 'defaults' : 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
-
+const cachePath = path.resolve( '.cache', extraPath );
 const hasLanguagesMeta = fs.existsSync(
 	path.join( __dirname, 'languages', 'languages-meta.json' )
 );
@@ -164,6 +164,9 @@ const webpackConfig = {
 	},
 	optimization: {
 		concatenateModules: ! isDevelopment && shouldConcatenateModules,
+		// Desktop: override removeAvailableModules and removeEmptyChunks to minimize resource/RAM usage.
+		removeAvailableModules: ! isDesktop,
+		removeEmptyChunks: ! isDesktop,
 		splitChunks: {
 			chunks: 'all',
 			name: !! ( isDevelopment || shouldEmitStats ),
@@ -178,10 +181,24 @@ const webpackConfig = {
 			cache: process.env.CIRCLECI
 				? `${ process.env.HOME }/terser-cache/${ extraPath }`
 				: 'docker' !== process.env.CONTAINER,
+			// Desktop: number of workers should *not* exceed # of vCPUs available.
+			// For both medium Machine and Docker images, number of vCPUs == 2.
+			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
 			parallel: isDesktop ? 2 : workerCount,
+			// Desktop: disable sourceMaps for performance
 			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
+			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
 			terserOptions: {
-				mangle: ! isDesktop,
+				...( isDesktop
+					? {
+							ecma: 2017,
+							mangle: true,
+							compress: false,
+							safari10: false,
+					  }
+					: {
+							mangle: true,
+					  } ),
 			},
 		} ),
 	},
@@ -212,6 +229,7 @@ const webpackConfig = {
 					},
 				},
 				prelude: `@import '${ path.join( __dirname, 'assets/stylesheets/shared/_utils.scss' ) }';`,
+				cacheDirectory: path.resolve( cachePath, 'css-loader' ),
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
@@ -245,6 +263,9 @@ const webpackConfig = {
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
 				'@wordpress/data': require.resolve( '@wordpress/data' ),
 				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// Alias wp-calypso-client to ./client. This allows for smaller bundles, as it ensures that
+				// importing `./client/file.js` is the same thing than importing `wp-calypso-client/file.js`
+				'wp-calypso-client': __dirname,
 			},
 			getAliasesForExtensions( {
 				extensionsDirectory: path.resolve( __dirname, 'extensions' ),
@@ -309,8 +330,15 @@ const webpackConfig = {
 			} ),
 		new RequireChunkCallbackPlugin(),
 		isDevelopment && new webpack.HotModuleReplacementPlugin(),
-		! config.isEnabled( 'desktop' ) &&
-			new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+		...( ! config.isEnabled( 'desktop' )
+			? [
+					new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash-es/noop' ),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]desktop$/,
+						'lodash/noop'
+					),
+			  ]
+			: [] ),
 		/*
 		 * Forcibly remove dashicon while we wait for better tree-shaking in `@wordpress/*`.
 		 */
@@ -330,11 +358,19 @@ const webpackConfig = {
 		/*
 		 * Local storage used to throw errors in Safari private mode, but that's no longer the case in Safari >=11.
 		 */
-		browserslistEnv === 'evergreen' &&
-			new webpack.NormalModuleReplacementPlugin(
-				/^lib[/\\]local-storage-polyfill$/,
-				'lodash-es/noop'
-			),
+		...( browserslistEnv === 'evergreen'
+			? [
+					new webpack.NormalModuleReplacementPlugin(
+						/^lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+					new webpack.NormalModuleReplacementPlugin(
+						/^wp-calypso-client[/\\]lib[/\\]local-storage-polyfill$/,
+						'lodash-es/noop'
+					),
+			  ]
+			: [] ),
+
 		/*
 		 * When not available, replace languages-meta.json with fallback-languages-meta.json.
 		 */

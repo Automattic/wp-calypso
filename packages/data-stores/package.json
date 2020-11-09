@@ -26,10 +26,10 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "check-npm-client && yarn run clean",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.18.0",

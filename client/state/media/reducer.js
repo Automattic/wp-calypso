@@ -23,6 +23,8 @@ import {
 	MEDIA_SET_NEXT_PAGE_HANDLE,
 	MEDIA_SOURCE_CHANGE,
 	MEDIA_SET_QUERY,
+	MEDIA_CLEAR_SITE,
+	MEDIA_ITEM_EDIT,
 } from 'state/action-types';
 import { combineReducers, withoutPersistence } from 'state/utils';
 import MediaQueryManager from 'lib/query-manager/media';
@@ -175,6 +177,18 @@ export const queries = ( () => {
 			case MEDIA_DELETE: {
 				const { siteId, mediaIds } = action;
 				return applyToManager( state, siteId, 'removeItems', true, mediaIds );
+			}
+			case MEDIA_ITEM_EDIT: {
+				const { siteId, mediaItem } = action;
+				return applyToManager( state, siteId, 'receive', true, mediaItem, { patch: true } );
+			}
+			case MEDIA_SOURCE_CHANGE:
+			case MEDIA_CLEAR_SITE: {
+				if ( ! action.siteId ) {
+					return state;
+				}
+
+				return omit( state, action.siteId );
 			}
 		}
 
@@ -488,7 +502,7 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 			return {
 				...state,
 				[ siteId ]: merge( {}, state[ siteId ], {
-					nextPageHandle: mediaRequestMeta?.next_page ?? null,
+					nextPageHandle: mediaRequestMeta?.next_page || null,
 				} ),
 			};
 		}
@@ -500,6 +514,7 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 
 			if ( ! isEqual( query, state[ siteId ]?.query ) ) {
 				delete newState.nextPageHandle;
+				newState.nextPage = false;
 			}
 
 			return {

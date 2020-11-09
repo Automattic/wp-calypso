@@ -5,6 +5,7 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { JETPACK_SCAN_THREAT_IGNORE } from 'state/action-types';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { requestScanStatus } from 'state/jetpack-scan/actions';
+import { requestJetpackScanHistory } from 'state/jetpack-scan/history/actions';
 import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/actions';
 import * as sitesAlertsIgnoreHandlers from 'state/data-layer/wpcom/sites/alerts/ignore';
 
@@ -15,7 +16,11 @@ export const request = ( action ) => {
 
 export const success = ( action, rewindState ) => {
 	const defaultActions = sitesAlertsIgnoreHandlers.success( action, rewindState );
-	return [ ...defaultActions, requestScanStatus( action.siteId, false ) ];
+	return [
+		...defaultActions,
+		requestScanStatus( action.siteId, false ),
+		requestJetpackScanHistory( action.siteId ),
+	];
 };
 
 export const failure = ( action ) => {

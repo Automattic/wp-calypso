@@ -11,7 +11,7 @@ import { fetchState } from '../actions';
 import store from '../store';
 import Dispatcher from 'dispatcher';
 import { IMPORTS_STORE_RESET } from 'state/action-types';
-import { nock, useNock } from 'test/helpers/use-nock';
+import { nock, useNock } from 'test-helpers/use-nock';
 
 const testSiteId = 'en.blog.wordpress.com';
 const fetchTestState = partial( fetchState, testSiteId );

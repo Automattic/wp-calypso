@@ -96,12 +96,9 @@ export class List extends React.Component {
 					position="domain-list"
 					selectedSite={ this.props.selectedSite }
 					allowedRules={ [
-						'newDomainsWithPrimary',
-						'newDomains',
 						'unverifiedDomainsCanManage',
 						'pendingGSuiteTosAcceptanceDomains',
 						'unverifiedDomainsCannotManage',
-						'wrongNSMappedDomains',
 						'transferStatus',
 						'newTransfersWrongNS',
 						'pendingConsent',
@@ -502,7 +499,7 @@ export class List extends React.Component {
 						}
 					>
 						{ this.state.changePrimaryDomainModeEnabled
-							? translate( 'Abort primary domain change' )
+							? translate( 'Cancel primary domain change' )
 							: translate( 'Change primary domain' ) }
 					</Button>
 				</div>
@@ -577,7 +574,12 @@ export class List extends React.Component {
 
 		return [
 			<QuerySitePurchases key="query-purchases" siteId={ selectedSite.ID } />,
-			<ListHeader key="domains-header" />,
+			<ListHeader
+				key="domains-header"
+				headerClasses={ {
+					'domain-item__enable-selection': this.state.changePrimaryDomainModeEnabled,
+				} }
+			/>,
 			...domainListItems,
 			manageAllDomainsLink,
 		];

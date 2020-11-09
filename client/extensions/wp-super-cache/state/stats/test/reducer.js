@@ -18,7 +18,7 @@ import {
 } from '../../action-types';
 import reducer, { generating } from '../reducer';
 import { DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	const primarySiteId = 123456;

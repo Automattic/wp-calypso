@@ -94,7 +94,6 @@ const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
 										onSelect( plan.storeSlug );
 									} }
 									isPrimary
-									isLarge
 								>
 									<span>{ __( 'Choose' ) }</span>
 								</Button>

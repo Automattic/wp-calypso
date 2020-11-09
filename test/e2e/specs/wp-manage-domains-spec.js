@@ -100,7 +100,7 @@ describe( `[${ host }] Managing Domains: (${ screenSize })`, function () {
 
 		step( 'Can see checkout page and enter registrar details', async function () {
 			const checkOutPage = await CheckOutPage.Expect( driver );
-			await checkOutPage.enterRegistarDetails( testDomainRegistarDetails );
+			await checkOutPage.enterRegistrarDetails( testDomainRegistarDetails );
 			return await checkOutPage.submitForm();
 		} );
 

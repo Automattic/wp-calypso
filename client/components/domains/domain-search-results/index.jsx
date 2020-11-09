@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, includes, times, first } from 'lodash';
+import { isMobile } from '@automattic/viewport';
 
 /**
  * Internal dependencies
@@ -58,6 +59,7 @@ class DomainSearchResults extends React.Component {
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
 		unavailableDomains: PropTypes.array,
+		isReskinned: PropTypes.bool,
 	};
 
 	componentDidUpdate() {
@@ -224,7 +226,8 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, isReskinned } = this.props;
+		const isReskinnedAndNotOnMobile = isReskinned && ! isMobile();
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
@@ -292,6 +295,7 @@ class DomainSearchResults extends React.Component {
 						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 						selectedFreePlanInSwapFlow={ this.props.selectedFreePlanInSwapFlow }
 						selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+						buttonStyles={ { primary: isReskinnedAndNotOnMobile } }
 					/>
 				);
 			} );

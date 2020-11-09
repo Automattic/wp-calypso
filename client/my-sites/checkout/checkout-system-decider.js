@@ -8,32 +8,18 @@ import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import cookie from 'cookie';
-import { isArray } from 'lodash';
 
 /**
  * Internal Dependencies
  */
 import CheckoutContainer from './checkout/checkout-container';
-import IncludedProductNoticeContent from './checkout/included-product-notice-content';
-import OwnedProductNoticeContent from './checkout/owned-product-notice-content';
+import PrePurchaseNotices from './checkout/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { getPlanByPathSlug } from 'lib/plans';
-import { GROUP_JETPACK, JETPACK_PLANS } from 'lib/plans/constants';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { isJetpackBackup, isJetpackBackupSlug } from 'lib/products-values';
 import { StripeHookProvider } from 'lib/stripe';
 import config from 'config';
 import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { isJetpackSite, getSiteProducts, getSitePlan } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
 import { logToLogstash } from 'state/logstash/actions';
-import {
-	isPlanIncludingSiteBackup,
-	isBackupProductIncludedInSitePlan,
-} from 'state/sites/products/conflicts';
-import { abtest } from 'lib/abtest';
 import Recaptcha from 'signup/recaptcha';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
@@ -65,57 +51,14 @@ export default function CheckoutSystemDecider( {
 	isLoggedOutCart,
 	isNoSiteCart,
 } ) {
-	const siteId = selectedSite?.ID;
-	const jetpackPlan = getPlanByPathSlug( product, GROUP_JETPACK );
-
-	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
-	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const countryCode =
 		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
-	const locale = useSelector( ( state ) => getCurrentLocaleSlug( state ) );
-	const isJetpackPlanIncludingSiteBackup = useSelector( ( state ) =>
-		jetpackPlan ? isPlanIncludingSiteBackup( state, siteId, jetpackPlan.getStoreSlug() ) : null
-	);
-	const isBackupIncludedInSitePlan = useSelector( ( state ) =>
-		isJetpackBackupSlug( product )
-			? isBackupProductIncludedInSitePlan( state, siteId, product )
-			: null
-	);
-	const currentProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
-	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 
-	let infoMessage;
+	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
 
-	if ( isJetpackPlanIncludingSiteBackup && selectedSite ) {
-		const backupProduct = isArray( currentProducts ) && currentProducts.find( isJetpackBackup );
-
-		infoMessage = backupProduct && (
-			<OwnedProductNoticeContent product={ backupProduct } selectedSite={ selectedSite } />
-		);
-	}
-
-	if ( isBackupIncludedInSitePlan && selectedSite ) {
-		infoMessage = currentPlan && (
-			<IncludedProductNoticeContent
-				plan={ currentPlan }
-				productSlug={ product }
-				selectedSite={ selectedSite }
-			/>
-		);
-	}
-
-	const checkoutVariant = getCheckoutVariant(
-		cart,
-		countryCode,
-		locale,
-		product,
-		purchaseId,
-		isJetpack,
-		isAtomic,
-		isLoggedOutCart
-	);
+	const checkoutVariant = getCheckoutVariant( countryCode );
 
 	useEffect( () => {
 		if ( product ) {
@@ -131,21 +74,6 @@ export default function CheckoutSystemDecider( {
 			);
 		}
 	}, [ reduxDispatch, product ] );
-
-	useEffect( () => {
-		if ( 'disallowed-product' === checkoutVariant ) {
-			reduxDispatch(
-				logToLogstash( {
-					feature: 'calypso_client',
-					message: 'CheckoutSystemDecider unsupported product for composite checkout',
-					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-					extra: {
-						productSlug: product,
-					},
-				} )
-			);
-		}
-	}, [ reduxDispatch, checkoutVariant, product ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
@@ -199,7 +127,7 @@ export default function CheckoutSystemDecider( {
 							plan={ plan }
 							cart={ cart }
 							isComingFromUpsell={ isComingFromUpsell }
-							infoMessage={ infoMessage }
+							infoMessage={ prepurchaseNotices }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
 							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
@@ -227,21 +155,12 @@ export default function CheckoutSystemDecider( {
 			redirectTo={ redirectTo }
 			upgradeIntent={ upgradeIntent }
 			clearTransaction={ clearTransaction }
-			infoMessage={ infoMessage }
+			infoMessage={ prepurchaseNotices }
 		/>
 	);
 }
 
-function getCheckoutVariant(
-	cart,
-	countryCode,
-	locale,
-	productSlug,
-	purchaseId,
-	isJetpack,
-	isAtomic,
-	isLoggedOutCart
-) {
+function getCheckoutVariant( countryCode ) {
 	if ( config.isEnabled( 'old-checkout-force' ) ) {
 		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
 		return 'old-checkout';
@@ -259,90 +178,6 @@ function getCheckoutVariant(
 			countryCode?.toLowerCase()
 		);
 		return 'disallowed-geo';
-	}
-
-	// Disable for Jetpack sites in production
-	if ( config( 'env_id' ) === 'production' && isJetpack && ! isAtomic ) {
-		debug( 'shouldShowCompositeCheckout false because jetpack site' );
-		return 'jetpack-site';
-	}
-	// Disable for Jetpack plans in production
-	if (
-		config( 'env_id' ) === 'production' &&
-		cart.products?.find( ( product ) => product.product_slug.includes( 'jetpack' ) )
-	) {
-		debug( 'shouldShowCompositeCheckout false because cart contains jetpack' );
-		return 'jetpack-product';
-	}
-
-	// If the URL is adding a product, only allow things already supported.
-	// Calypso uses special slugs that aren't real product slugs when adding
-	// products via URL, so we list those slugs here. Renewals use actual slugs,
-	// so they do not need to go through this check.
-	const isRenewal = !! purchaseId;
-	let pseudoSlugsToAllow = [
-		'blogger',
-		'blogger-2-years',
-		'business',
-		'business-2-years',
-		'concierge-session',
-		'ecommerce',
-		'ecommerce-2-years',
-		'personal',
-		'personal-2-years',
-		'premium', // WordPress.com or Jetpack Premium Yearly
-		'premium-2-years',
-	];
-	const jetpackPseudoSlugsToAllow = [
-		'jetpack-personal',
-		'jetpack-personal-monthly',
-		'premium-monthly',
-		'professional',
-		'professional-monthly',
-	];
-	if ( config( 'env_id' ) !== 'production' ) {
-		pseudoSlugsToAllow = [
-			...pseudoSlugsToAllow,
-			...jetpackPseudoSlugsToAllow,
-			...JETPACK_PLANS,
-			...JETPACK_PRODUCTS_LIST,
-		];
-	}
-	const slugPrefixesToAllow = [ 'domain-mapping:', 'theme:' ];
-	if (
-		! isRenewal &&
-		productSlug &&
-		! pseudoSlugsToAllow.find( ( slug ) => productSlug === slug ) &&
-		! slugPrefixesToAllow.find( ( slugPrefix ) => productSlug.startsWith( slugPrefix ) )
-	) {
-		debug(
-			'shouldShowCompositeCheckout false because product does not match list of allowed products',
-			productSlug
-		);
-		return 'disallowed-product';
-	}
-
-	// Removes users from initial AB test
-	if (
-		cart.currency === 'USD' &&
-		countryCode?.toLowerCase() === 'us' &&
-		locale?.toLowerCase().startsWith( 'en' )
-	) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Show composite checkout for registrationless checkout users
-	const urlParams = new URLSearchParams( window.location.search );
-	if ( isLoggedOutCart || 'no-user' === urlParams.get( 'cart' ) ) {
-		debug( 'shouldShowCompositeCheckout true' );
-		return 'composite-checkout';
-	}
-
-	// Add remaining users to new AB test with 10% holdout
-	if ( abtest( 'showCompositeCheckoutI18N' ) !== 'composite' ) {
-		debug( 'shouldShowCompositeCheckout false because user is in abtest control variant' );
-		return 'control-variant';
 	}
 
 	debug( 'shouldShowCompositeCheckout true' );

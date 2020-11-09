@@ -1,23 +1,73 @@
+/* eslint-disable wpcalypso/import-docblock */
 /**
- * Internal dependencies
+ * Type dependencies
  */
-import { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
-import { ALL, PERFORMANCE, SECURITY } from './constants';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactNode } from 'react';
+import type { TERM_ANNUALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import type { Purchase } from 'lib/purchases/types';
+import type {
+	ALL,
+	PERFORMANCE,
+	SECURITY,
+	PRODUCTS_WITH_OPTIONS,
+	ITEM_TYPE_PLAN,
+	ITEM_TYPE_BUNDLE,
+	ITEM_TYPE_PRODUCT,
+} from './constants';
+import type { Features } from 'components/jetpack/card/jetpack-product-card/types';
 
 export type Duration = typeof TERM_ANNUALLY | typeof TERM_MONTHLY;
-
+export type DurationString = 'annual' | 'monthly';
 export type ProductType = typeof ALL | typeof PERFORMANCE | typeof SECURITY;
+export type ItemType = typeof ITEM_TYPE_PLAN | typeof ITEM_TYPE_BUNDLE | typeof ITEM_TYPE_PRODUCT;
+export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: Purchase ) => void;
 
-export interface SelectorPageProps {
+interface BasePageProps {
+	rootUrl: string;
+	header: ReactNode;
+}
+
+export interface SelectorPageProps extends BasePageProps {
 	defaultDuration?: Duration;
 }
 
-export interface DetailsPageProps {
+export interface DetailsPageProps extends BasePageProps {
 	duration?: Duration;
-	productType: string;
+	productSlug: string;
 }
 
-export interface UpsellPageProps {
-	duration: Duration;
+export interface UpsellPageProps extends BasePageProps {
+	duration?: Duration;
 	productSlug: string;
+}
+
+export type SelectorProductSlug = typeof PRODUCTS_WITH_OPTIONS[ number ];
+
+export type SelectorProductCost = {
+	cost?: number;
+	discountCost?: number;
+	loadingCost?: boolean;
+};
+
+export interface SelectorProduct extends SelectorProductCost {
+	productSlug: string;
+	iconSlug: string;
+	type: ItemType;
+	costProductSlug?: string;
+	monthlyProductSlug?: string;
+	displayName: TranslateResult;
+	shortName: TranslateResult;
+	tagline: TranslateResult;
+	description: TranslateResult | ReactNode;
+	term: Duration;
+	buttonLabel?: TranslateResult;
+	features: Features;
+	subtypes: string[];
+	legacy?: boolean;
+}
+
+export interface AvailableProductData {
+	product_slug: string;
+	cost: number;
 }

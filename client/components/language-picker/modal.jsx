@@ -242,7 +242,7 @@ export class LanguagePickerModal extends PureComponent {
 		}
 
 		return translate(
-			'%(language)s is only %(percentTranslated)d% translated :(. You can help translate WordPress.com into your language. {{a}}Learn more.{{/a}}',
+			'%(language)s is only %(percentTranslated)d%% translated :(. You can help translate WordPress.com into your language. {{a}}Learn more.{{/a}}',
 			{
 				components: {
 					a: <a href="https://translate.wordpress.com/faq/" />,

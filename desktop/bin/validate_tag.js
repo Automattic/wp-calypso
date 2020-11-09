@@ -21,7 +21,7 @@ const sanitizedVersion = version.replace( /^v/, '' );
 console.log( `Validating package.json version matches ${ version }...` );
 
 const fs = require( 'fs' );
-const config = JSON.parse( fs.readFileSync( './package.json', 'utf8' ) );
+const config = JSON.parse( fs.readFileSync( '../package.json', 'utf8' ) );
 const packageVersion = config.version;
 
 if ( packageVersion !== sanitizedVersion ) {

@@ -16,5 +16,5 @@ export function getJetpackProductDisplayName( product ) {
 	assertValidProduct( product );
 	const jetpackProductsDisplayNames = getJetpackProductsDisplayNames();
 
-	return jetpackProductsDisplayNames?.[ product.productSlug ];
+	return jetpackProductsDisplayNames?.[ product.product_slug ];
 }

@@ -49,7 +49,7 @@ button.security-2fa-backups-codes-list__generate-button {
 .security-2fa-backup-codes-list__codes li {
 	color: var( --color-neutral-70 );
 	float: left;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	line-height: 28px;
 	width: 50%;

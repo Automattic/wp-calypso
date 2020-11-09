@@ -1,10 +1,8 @@
 /**
  * Internal dependencies
  */
-import MediaStore from 'lib/media/store';
 import { getSelectedSiteId } from 'state/ui/selectors';
-
-const { getAll: getAllMedia } = MediaStore;
+import getAllMedia from 'state/selectors/get-media';
 
 /**
  * Returns true if the selected site has any media files.
@@ -17,6 +15,6 @@ export const doesSelectedSiteHaveMediaFiles = ( state ) => {
 	if ( ! siteId ) {
 		return false;
 	}
-	const media = getAllMedia( siteId );
+	const media = getAllMedia( state, siteId );
 	return media && media.length && media.length > 0;
 };

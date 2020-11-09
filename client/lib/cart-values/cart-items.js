@@ -67,6 +67,7 @@ import {
 	isWpComBloggerPlan,
 } from 'lib/plans';
 import { getTermDuration } from 'lib/plans/constants';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -161,6 +162,12 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 
 	if ( isJetpackProduct( cartItem ) ) {
 		// adding a Jetpack product should replace the cart
+
+		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
+		if ( shouldShowOfferResetFlow() ) {
+			return false;
+		}
+
 		return true;
 	}
 
@@ -515,11 +522,13 @@ export function getDomainTransfers( cart ) {
 /**
  * Determines whether all items are renewal items in the specified shopping cart.
  *
+ * Ignores partial credits, which aren't really a line item in this sense.
+ *
  * @param {CartValue} cart - cart as `CartValue` object
  * @returns {boolean} true if there are only renewal items, false otherwise
  */
 export function hasOnlyRenewalItems( cart ) {
-	return every( getAllCartItems( cart ), isRenewal );
+	return getAllCartItems( cart ).every( ( item ) => isRenewal( item ) || isPartialCredits( item ) );
 }
 
 /**
@@ -1097,6 +1106,16 @@ export function removePrivacyFromAllDomains( cart ) {
 		replaceItem,
 		false
 	);
+}
+
+/**
+ * Determines whether a cart item is partial credits
+ *
+ * @param {CartItemValue} cartItem - `CartItemValue` object
+ * @returns {boolean} true if item is credits
+ */
+export function isPartialCredits( cartItem ) {
+	return cartItem.product_slug === 'wordpress-com-credits';
 }
 
 /**

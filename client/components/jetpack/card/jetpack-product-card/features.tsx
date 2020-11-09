@@ -15,11 +15,13 @@ import FeaturesItem from './features-item';
 import type { Features } from './types';
 
 export type Props = {
+	className?: string;
 	features: Features;
 	isExpanded?: boolean;
 };
 
 const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
+	className,
 	features,
 	isExpanded: isExpandedByDefault,
 } ) => {
@@ -63,6 +65,7 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 
 	return (
 		<FoldableCard
+			className={ className }
 			header={ isExpanded ? translate( 'Hide features' ) : translate( 'Show features' ) }
 			clickableHeader
 			expanded={ isExpanded }

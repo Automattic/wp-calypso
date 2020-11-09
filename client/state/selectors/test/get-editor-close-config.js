@@ -5,7 +5,6 @@ import getEditorCloseConfig from 'state/selectors/get-editor-close-config';
 import getPostTypeAllPostsUrl from 'state/selectors/get-post-type-all-posts-url';
 import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
 import PostQueryManager from 'lib/query-manager/post';
-import { ROUTE_SET } from 'state/action-types';
 
 const postType = 'post';
 const pagePostType = 'page';
@@ -16,8 +15,6 @@ const siteSlug = 'fake.url.wordpress.com';
 const siteUrl = `https://${ siteSlug }`;
 const customerHomeUrl = `/home/${ siteSlug }`;
 const themesUrl = `/themes/${ siteSlug }`;
-const blockEditorAction = { type: ROUTE_SET, path: '/block-editor/page/1' };
-const customerHomeAction = { type: ROUTE_SET, path: customerHomeUrl };
 
 describe( 'getEditorCloseConfig()', () => {
 	test( 'should return URL for customer home as default when no previous route is given', () => {
@@ -27,7 +24,7 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
-			ui: { selectedSiteId: siteId, actionLog: [] },
+			ui: { selectedSiteId: siteId },
 		};
 
 		expect( getEditorCloseConfig( state, siteId, postType ).url ).toEqual( customerHomeUrl );
@@ -41,13 +38,10 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			route: {
-				path: {
-					previous: '/route-with-no-match',
-				},
+				lastNonEditorRoute: '/route-with-no-match',
 			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [],
 			},
 		};
 
@@ -81,7 +75,7 @@ describe( 'getEditorCloseConfig()', () => {
 					} ),
 				},
 			},
-			ui: { selectedSiteId: siteId, actionLog: [] },
+			ui: { selectedSiteId: siteId },
 		};
 
 		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
@@ -99,13 +93,10 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			route: {
-				path: {
-					previous: customerHomeUrl,
-				},
+				lastNonEditorRoute: customerHomeUrl,
 			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [],
 			},
 		};
 
@@ -119,9 +110,11 @@ describe( 'getEditorCloseConfig()', () => {
 					[ siteId ]: { URL: siteUrl },
 				},
 			},
+			route: {
+				lastNonEditorRoute: customerHomeUrl,
+			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [ customerHomeAction, blockEditorAction ],
 			},
 		};
 
@@ -136,13 +129,10 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			route: {
-				path: {
-					previous: '/route-with-no-match',
-				},
+				lastNonEditorRoute: '/route-with-no-match',
 			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [],
 			},
 		};
 
@@ -159,13 +149,10 @@ describe( 'getEditorCloseConfig()', () => {
 				},
 			},
 			route: {
-				path: {
-					previous: themesUrl,
-				},
+				lastNonEditorRoute: themesUrl,
 			},
 			ui: {
 				selectedSiteId: siteId,
-				actionLog: [],
 			},
 		};
 

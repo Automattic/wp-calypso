@@ -6,7 +6,13 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { features, plans, redirectToCheckout, redirectToPlans } from './controller';
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from './controller';
 import { currentPlan } from './current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
@@ -19,12 +25,6 @@ const trackedPage = ( url, ...rest ) => {
 
 export default function () {
 	trackedPage( '/plans', siteSelection, sites );
-
-	// Load offer reset plans picker.
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2( '/plans/:site', navigation );
-		return;
-	}
 	trackedPage( '/plans/compare', siteSelection, navigation, redirectToPlans );
 	trackedPage( '/plans/compare/:domain', siteSelection, navigation, redirectToPlans );
 	trackedPage( '/plans/features', siteSelection, navigation, redirectToPlans );
@@ -36,4 +36,7 @@ export default function () {
 
 	// This route renders the plans page for both WPcom and Jetpack sites.
 	trackedPage( '/plans/:intervalType?/:site', siteSelection, navigation, plans );
+	if ( shouldShowOfferResetFlow() ) {
+		plansV2( '/plans/:site', siteSelection, redirectToPlansIfNotJetpack, navigation );
+	}
 }

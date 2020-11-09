@@ -17,10 +17,10 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__browser-data-collector*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__browser-data-collector*\"",
+		"prepublish": "yarn run clean",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"wpcom-proxy-request": "^6.0.0"

@@ -14,7 +14,7 @@ import {
 	POST_COUNTS_REQUEST_SUCCESS,
 	POST_COUNTS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

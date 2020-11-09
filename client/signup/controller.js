@@ -63,6 +63,13 @@ const removeWhiteBackground = function () {
 	document.body.classList.remove( 'is-white-signup' );
 };
 
+const gutenbergRedirect = function () {
+	const url = new URL( window.location );
+	url.pathname = '/new';
+
+	window.location.replace( url.toString() );
+};
+
 export const addP2SignupClassName = () => {
 	if ( ! document ) {
 		return;
@@ -109,13 +116,19 @@ export default {
 
 			next();
 		} else {
+			const userLoggedIn = isUserLoggedIn( context.store.getState() );
+			if ( userLoggedIn && 'gutenberg' === abtest( 'existingUsersGutenbergOnboard' ) ) {
+				gutenbergRedirect();
+				return;
+			}
+
 			waitForData( {
 				geo: () => requestGeoLocation(),
 			} )
 				.then( ( { geo } ) => {
 					const countryCode = geo.data.body.country_short;
 					if ( 'gutenberg' === abtest( 'newSiteGutenbergOnboarding', countryCode ) ) {
-						window.location.replace( window.location.origin + '/new' + window.location.search );
+						gutenbergRedirect();
 					} else if (
 						( ! user() || ! user().get() ) &&
 						-1 === context.pathname.indexOf( 'free' ) &&

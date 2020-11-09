@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+const path = require( 'path' );
 const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
 const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 
@@ -11,13 +12,30 @@ const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
  * @param  {string[]}  _.includePaths                 Sass files lookup paths
  * @param  {string}    _.prelude                      String to prepend to each Sass file
  * @param  {object}    _.postCssConfig                PostCSS config
+ * @param  {object}    _.cacheDirectory               Directory used to store the cache
  *
  * @returns {object}                                  webpack loader object
  */
-module.exports.loader = ( { includePaths, prelude, postCssConfig = {} } ) => ( {
+module.exports.loader = ( { includePaths, prelude, postCssConfig = {}, cacheDirectory } ) => ( {
 	test: /\.(sc|sa|c)ss$/,
 	use: [
 		MiniCssExtractPluginWithRTL.loader,
+		...( cacheDirectory
+			? [
+					{
+						loader: require.resolve( 'cache-loader' ),
+						options: {
+							cacheDirectory: cacheDirectory,
+						},
+					},
+			  ]
+			: [] ),
+		{
+			loader: require.resolve( 'cache-loader' ),
+			options: {
+				cacheDirectory: path.resolve( process.env.HOME, '.cache', 'webpack', 'css' ),
+			},
+		},
 		{
 			loader: require.resolve( 'css-loader' ),
 			options: {

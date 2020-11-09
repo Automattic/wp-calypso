@@ -926,7 +926,7 @@ class PurchaseNotice extends Component {
 			return null;
 		}
 
-		if ( isDomainTransfer( this.props.purchase ) || isPartnerPurchase( this.props.purchase ) ) {
+		if ( isDomainTransfer( this.props.purchase ) ) {
 			return null;
 		}
 
@@ -943,6 +943,10 @@ class PurchaseNotice extends Component {
 		const expiredNotice = this.renderExpiredRenewNotice();
 		if ( expiredNotice ) {
 			return expiredNotice;
+		}
+
+		if ( isPartnerPurchase( this.props.purchase ) ) {
+			return null;
 		}
 
 		const expiringNotice = this.renderPurchaseExpiringNotice();

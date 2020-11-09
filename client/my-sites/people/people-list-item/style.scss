@@ -42,7 +42,7 @@
 
 .people-list-item.is-invite .people-profile__username {
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 	}
 }
 

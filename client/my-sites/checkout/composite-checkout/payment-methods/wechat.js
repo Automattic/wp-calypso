@@ -21,12 +21,12 @@ import {
 /**
  * Internal dependencies
  */
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/wpcom/components/payment-method-logos';
-import Field from 'my-sites/checkout/composite-checkout/wpcom/components/field';
+import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
+import Field from 'my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/wpcom/components/summary-details';
+} from 'my-sites/checkout/composite-checkout/components/summary-details';
 import WeChatPaymentQRcode from 'my-sites/checkout/checkout/wechat-payment-qrcode';
 import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
 import userAgent from 'lib/user-agent';

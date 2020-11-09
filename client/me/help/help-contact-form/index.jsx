@@ -372,17 +372,17 @@ export class HelpContactForm extends React.PureComponent {
 		const howCanWeHelpOptions = [
 			{
 				value: 'gettingStarted',
-				label: translate( 'Help getting started' ),
+				label: translate( 'Get started' ),
 				subtext: translate( 'Can you show me how to…' ),
 			},
 			{
 				value: 'somethingBroken',
-				label: translate( 'Something is broken' ),
+				label: translate( "Report something isn't working" ),
 				subtext: translate( 'Can you check this out…' ),
 			},
 			{
 				value: 'suggestion',
-				label: translate( 'I have a suggestion' ),
+				label: translate( 'Make a suggestion' ),
 				subtext: translate( 'I think it would be cool if…' ),
 			},
 		];
@@ -419,7 +419,7 @@ export class HelpContactForm extends React.PureComponent {
 
 				{ showHowCanWeHelpField && (
 					<div>
-						<FormLabel>{ translate( 'How can we help?' ) }</FormLabel>
+						<FormLabel>{ translate( "You're reaching out to…" ) }</FormLabel>
 						{ this.renderFormSelection( 'howCanWeHelp', howCanWeHelpOptions ) }
 					</div>
 				) }

@@ -42,6 +42,7 @@ const theme = {
 	breakpoints: {
 		desktopUp: 'min-width: 960px',
 		tabletUp: 'min-width: 700px',
+		bigPhoneUp: 'min-width: 480px',
 		smallPhoneUp: 'min-width: 400px',
 	},
 	weights: {

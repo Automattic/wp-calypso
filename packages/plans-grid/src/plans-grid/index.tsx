@@ -16,6 +16,7 @@ import PlansDetails from '../plans-details';
  * Style dependencies
  */
 import './style.scss';
+
 type PlansSlug = Plans.PlanSlug;
 
 export interface Props {
@@ -24,6 +25,7 @@ export interface Props {
 	onPlanSelect: ( plan: PlansSlug ) => void;
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
+	disabledPlans?: { [ planSlug: string ]: string };
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -32,6 +34,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	onPlanSelect,
 	onPickDomainClick,
+	disabledPlans,
 } ) => {
 	const { __ } = useI18n();
 
@@ -46,6 +49,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						onPlanSelect={ onPlanSelect }
 						currentDomain={ currentDomain }
 						onPickDomainClick={ onPickDomainClick }
+						disabledPlans={ disabledPlans }
 					></PlansTable>
 				</div>
 			</div>

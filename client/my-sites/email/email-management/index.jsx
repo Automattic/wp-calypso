@@ -33,10 +33,9 @@ import GSuiteUsersCard from 'my-sites/email/email-management/gsuite-users-card';
 import Placeholder from 'my-sites/email/email-management/gsuite-users-card/placeholder';
 import VerticalNav from 'components/vertical-nav';
 import VerticalNavItem from 'components/vertical-nav/item';
-import PlansNavigation from 'my-sites/plans/navigation';
 import EmptyContent from 'components/empty-content';
 import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
-import { emailManagement, emailManagementForwarding } from 'my-sites/email/paths';
+import { emailManagementForwarding } from 'my-sites/email/paths';
 import { getSelectedDomain, isMappedDomain, isMappedDomainWithWpcomNameservers } from 'lib/domains';
 import DocumentHead from 'components/data/document-head';
 import QueryEmailAccounts from 'components/data/query-email-accounts';
@@ -107,7 +106,7 @@ class EmailManagement extends React.Component {
 	}
 
 	headerOrPlansNavigation() {
-		const { cart, selectedSiteSlug, selectedDomainName, translate } = this.props;
+		const { selectedDomainName, translate } = this.props;
 
 		if ( selectedDomainName ) {
 			return (
@@ -117,12 +116,7 @@ class EmailManagement extends React.Component {
 			);
 		}
 
-		return (
-			<PlansNavigation
-				cart={ cart }
-				path={ emailManagement( selectedSiteSlug, selectedDomainName ) }
-			/>
-		);
+		return null;
 	}
 
 	content() {

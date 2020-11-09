@@ -10,11 +10,9 @@ import { defaultRegistry } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import wp from 'lib/wp';
-import {
-	createTransactionEndpointRequestPayloadFromLineItems,
-	createPayPalExpressEndpointRequestPayloadFromLineItems,
-} from './types';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/wpcom';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
+import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
 import {
 	hasGoogleApps,
 	hasDomainRegistration,
@@ -22,7 +20,7 @@ import {
 	hasTransferProduct,
 } from 'lib/cart-values/cart-items';
 import { createStripePaymentMethod } from 'lib/stripe';
-import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/wpcom/types/wpcom-store-state';
+import { prepareDomainContactDetailsForTransaction } from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
 import { getSavedVariations } from 'lib/abtest';
 import { stringifyBody } from 'state/login/utils';
@@ -138,7 +136,7 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 	return submit( formattedTransactionData );
 }
 
-export async function submitStripeRedirectTransaction( paymentMethodId, transactionData, submit ) {
+export async function submitRedirectTransaction( paymentMethodId, transactionData, submit ) {
 	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
 		?.name;
 	if ( ! paymentMethodType ) {
@@ -147,7 +145,7 @@ export async function submitStripeRedirectTransaction( paymentMethodId, transact
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType,
-		paymentPartnerProcessorId: transactionData.stripeConfiguration.processor_id,
+		paymentPartnerProcessorId: transactionData.stripeConfiguration?.processor_id,
 	} );
 	debug(
 		`sending stripe redirect transaction for type: ${ paymentMethodId }`,

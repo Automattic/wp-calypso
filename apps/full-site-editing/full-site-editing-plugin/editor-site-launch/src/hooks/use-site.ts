@@ -4,7 +4,7 @@
 import { useSelect } from '@wordpress/data';
 
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { SITE_STORE } from '../stores';
 
@@ -21,8 +21,8 @@ export function useSite() {
 	);
 
 	return {
-		isSiteUnlaunched: site?.launch_status === 'unlaunched' && ! launchStatus,
-		isFreePlan: site?.plan.is_free,
+		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
 		launchStatus,
+		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
 	};
 }

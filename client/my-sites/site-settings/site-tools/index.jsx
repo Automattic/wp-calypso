@@ -94,7 +94,7 @@ class SiteTools extends Component {
 		return (
 			<div className="site-tools">
 				<QueryRewindState siteId={ siteId } />
-				<SettingsSectionHeader title={ translate( 'Site tools' ) } />
+				<SettingsSectionHeader id="site-tools__header" title={ translate( 'Site tools' ) } />
 				{ showChangeAddress && (
 					<SiteToolsLink
 						href={ changeAddressLink }

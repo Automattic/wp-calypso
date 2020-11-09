@@ -50,7 +50,7 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	switch ( action.type ) {
 		case USER_SUGGESTIONS_RECEIVE: {
 			const { siteId, suggestions } = action;
-			return { ...state, [ siteId ]: suggestions };
+			return { ...state, [ siteId ]: suggestions || [] };
 		}
 	}
 

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { has, noop } from 'lodash';
 
 /**
@@ -18,7 +17,9 @@ import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
 import { http } from 'state/data-layer/wpcom-http/actions';
 import { registerHandlers } from 'state/data-layer/handler-registry';
 import { replaceHistory } from 'state/ui/actions';
+
 import 'state/editor-deprecation-group/init';
+import 'state/gutenberg-opt-in-out/init';
 
 const fetchGutenbergOptInData = ( action ) =>
 	http(

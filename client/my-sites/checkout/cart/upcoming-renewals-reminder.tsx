@@ -27,7 +27,7 @@ import {
 import UpcomingRenewalsDialog, {
 	Purchase,
 } from 'me/purchases/upcoming-renewals/upcoming-renewals-dialog';
-import { MockResponseCart } from 'my-sites/checkout/composite-checkout/wpcom/components/secondary-cart-promotions';
+import { MockResponseCart } from 'my-sites/checkout/composite-checkout/components/secondary-cart-promotions';
 import { useLocalizedMoment } from 'components/localized-moment';
 
 const OtherPurchasesLink = styled.button`

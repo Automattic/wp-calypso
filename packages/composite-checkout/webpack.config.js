@@ -13,7 +13,16 @@ module.exports = {
 			},
 			{
 				test: /\.css$/,
-				use: [ 'style-loader', 'css-loader' ],
+				use: [
+					{
+						loader: 'cache-loader',
+						options: {
+							cacheDirectory: path.resolve( process.env.HOME, '.cache', 'webpack', 'css' ),
+						},
+					},
+					'style-loader',
+					'css-loader',
+				],
 			},
 		],
 	},

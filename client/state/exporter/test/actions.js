@@ -31,7 +31,7 @@ import {
 	EXPORT_STARTED,
 	EXPORT_STATUS_FETCH,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -89,31 +89,35 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch receive action when request completes', ( done ) => {
-			advancedSettingsFetch( 100658273 )( spy, getState )
-				.then( () => {
-					expect( spy ).to.have.been.calledWithMatch( {
-						type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
-						siteId: 100658273,
-						advancedSettings: SAMPLE_ADVANCED_SETTINGS,
-					} );
+		test( 'should dispatch receive action when request completes', () => {
+			return new Promise( ( done ) => {
+				advancedSettingsFetch( 100658273 )( spy, getState )
+					.then( () => {
+						expect( spy ).to.have.been.calledWithMatch( {
+							type: EXPORT_ADVANCED_SETTINGS_RECEIVE,
+							siteId: 100658273,
+							advancedSettings: SAMPLE_ADVANCED_SETTINGS,
+						} );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 
-		test( 'should dispatch fail action when request fails', ( done ) => {
-			advancedSettingsFetch( 0 )( spy, getState )
-				.then( () => {
-					expect( spy ).to.have.been.calledWithMatch( {
-						type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
-						siteId: 0,
-					} );
+		test( 'should dispatch fail action when request fails', () => {
+			return new Promise( ( done ) => {
+				advancedSettingsFetch( 0 )( spy, getState )
+					.then( () => {
+						expect( spy ).to.have.been.calledWithMatch( {
+							type: EXPORT_ADVANCED_SETTINGS_FETCH_FAIL,
+							siteId: 0,
+						} );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
@@ -153,45 +157,51 @@ describe( 'actions', () => {
 			} );
 		} );
 
-		test( 'should dispatch custom export action when thunk triggered', ( done ) => {
-			startExport( 2916284, false )( spy, getStateCustomSettings )
-				.then( () => {
-					expect( spy ).to.have.been.calledWith( {
-						type: EXPORT_STARTED,
-						siteId: 2916284,
-					} );
+		test( 'should dispatch custom export action when thunk triggered', () => {
+			return new Promise( ( done ) => {
+				startExport( 2916284, false )( spy, getStateCustomSettings )
+					.then( () => {
+						expect( spy ).to.have.been.calledWith( {
+							type: EXPORT_STARTED,
+							siteId: 2916284,
+						} );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 
-		test( 'should dispatch export started action when request completes', ( done ) => {
-			startExport( 2916284 )( spy, getState )
-				.then( () => {
-					expect( spy ).to.have.been.calledTwice;
-					expect( spy ).to.have.been.calledWith( {
-						type: EXPORT_STARTED,
-						siteId: 2916284,
-					} );
+		test( 'should dispatch export started action when request completes', () => {
+			return new Promise( ( done ) => {
+				startExport( 2916284 )( spy, getState )
+					.then( () => {
+						expect( spy ).to.have.been.calledTwice;
+						expect( spy ).to.have.been.calledWith( {
+							type: EXPORT_STARTED,
+							siteId: 2916284,
+						} );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 
-		test( 'should dispatch export failed action when request fails', ( done ) => {
-			startExport( 77203074 )( spy, getState )
-				.then( () => {
-					expect( spy ).to.have.been.calledTwice;
-					expect( spy ).to.have.been.calledWithMatch( {
-						type: EXPORT_FAILURE,
-						siteId: 77203074,
-					} );
+		test( 'should dispatch export failed action when request fails', () => {
+			return new Promise( ( done ) => {
+				startExport( 77203074 )( spy, getState )
+					.then( () => {
+						expect( spy ).to.have.been.calledTwice;
+						expect( spy ).to.have.been.calledWithMatch( {
+							type: EXPORT_FAILURE,
+							siteId: 77203074,
+						} );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 

@@ -21,6 +21,7 @@ import FormButton from 'components/forms/form-button';
 import FormTextInput from 'components/forms/form-text-input';
 import P2StepWrapper from 'signup/p2-step-wrapper';
 import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import { logToLogstash } from 'state/logstash/actions';
 
 /**
  * Style dependencies
@@ -102,6 +103,18 @@ class P2Site extends React.Component {
 		}
 	};
 
+	logValidationErrorToLogstash = ( error, errorMessage ) => {
+		this.props.logToLogstash( {
+			feature: 'calypso_wp_for_teams',
+			message: 'P2 signup validation failed',
+			extra: {
+				'site-address': formState.getFieldValue( this.state.form, 'site' ),
+				error,
+				'error-message': errorMessage,
+			},
+		} );
+	};
+
 	validate = ( fields, onComplete ) => {
 		const messages = {};
 
@@ -142,15 +155,21 @@ class P2Site extends React.Component {
 						timesValidationFailed++;
 
 						if ( error.error === 'blog_title_invalid' ) {
+							const errorMessage = this.props.translate(
+								'Please enter a valid team or project name.'
+							);
+
 							messages.siteTitle = {
-								[ error.error ]: this.props.translate(
-									'Please enter a valid team or project name.'
-								),
+								[ error.error ]: errorMessage,
 							};
+
+							this.logValidationErrorToLogstash( error.error, errorMessage );
 						} else {
 							messages.site = {
 								[ error.error ]: error.message,
 							};
+
+							this.logValidationErrorToLogstash( error.error, error.message );
 						}
 					}
 
@@ -158,6 +177,20 @@ class P2Site extends React.Component {
 				}
 			);
 		} else if ( ! isEmpty( messages ) ) {
+			if ( messages.siteTitle ) {
+				this.logValidationErrorToLogstash(
+					ERROR_CODE_MISSING_SITE_TITLE,
+					messages.siteTitle[ ERROR_CODE_MISSING_SITE_TITLE ]
+				);
+			}
+
+			if ( messages.site ) {
+				this.logValidationErrorToLogstash(
+					ERROR_CODE_MISSING_SITE,
+					messages.site[ ERROR_CODE_MISSING_SITE ]
+				);
+			}
+
 			onComplete( null, messages );
 		}
 	};
@@ -353,4 +386,6 @@ class P2Site extends React.Component {
 	}
 }
 
-export default connect( null, { saveSignupStep, submitSignupStep } )( localize( P2Site ) );
+export default connect( null, { saveSignupStep, submitSignupStep, logToLogstash } )(
+	localize( P2Site )
+);

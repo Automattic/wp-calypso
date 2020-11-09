@@ -44,8 +44,8 @@ It used to be that `devDependencies` needed to be added to the root `package.jso
 
 ### dependencies
 
-Running the following in your `wp-calypso` root  
-`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}`  
+Running the following in your `wp-calypso` root
+`yarn workspace @automattic/{{your-package}} run prepare && npx @yarnpkg/doctor packages/{{your-package}}`
 will output all the unmet dependencies.
 
 ### sideEffects
@@ -90,9 +90,9 @@ failing to do so, will make your package work correctly in the dev build but tre
 	},
 	"files": [ "dist", "src" ],
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile"
+		"clean": "npx rimraf dist",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile"
 	}
 }
 ```
@@ -100,11 +100,10 @@ failing to do so, will make your package work correctly in the dev build but tre
 If your package requires compilation, the `package.json` `prepare` script should compile the package:
 
 - If it contains ES6+ code that needs to be transpiled, use `transpile` (from `@automattic/calypso-build`) which will automatically compile code in `src/` to `dist/cjs` (CommonJS) and `dist/esm` (ECMAScript Modules) by running `babel` over any source files it finds. Also, make sure to add `@automattic/calypso-build` in `devDependencies`.
-- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"prepare": "check-npm-client && transpile && copy-assets"`.
+- If it contains [assets](https://github.com/Automattic/wp-calypso/blob/d709f0e79ba29f2feb35690d275087179b18f632/packages/calypso-build/bin/copy-assets.js#L17-L25) (eg `.scss`) then after `transpile` append `&& copy-assets` ie `"prepare": "transpile && copy-assets"`.
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
-Please note the inclusion of `check-npm-client` before each script. This is an intentional guard against someone accidentally using `npm` in the repository instead of `yarn` and should be included at the start of each script. See the root [`package.json`](../../package.json) for an example.
 
 ## Running Tests
 

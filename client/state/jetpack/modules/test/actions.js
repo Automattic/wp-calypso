@@ -22,7 +22,7 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_MODULES_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

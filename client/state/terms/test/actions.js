@@ -21,7 +21,7 @@ import {
 	TERMS_REQUEST_SUCCESS,
 	TERMS_REQUEST_FAILURE,
 } from 'state/action-types';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 
 /**
  * Module Variables

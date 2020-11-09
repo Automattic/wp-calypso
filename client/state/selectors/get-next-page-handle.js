@@ -10,5 +10,5 @@ import { get } from 'lodash';
  * @param {number} siteId The site ID
  */
 export default function getNextPageHandle( state, siteId ) {
-	return get( state.media.fetching, [ siteId, 'nextPageHandle' ], null );
+	return get( state.media.fetching, [ siteId, 'nextPageHandle' ] );
 }

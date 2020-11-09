@@ -71,8 +71,8 @@ export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState 
 };
 
 export const editMedia = ( action ) => {
-	const { siteId, item } = action;
-	const { ID: mediaId, ...rest } = item;
+	const { siteId, data } = action;
+	const { ID: mediaId, ...rest } = data;
 
 	return [
 		http(
@@ -118,6 +118,7 @@ export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, ge
 		dispatch( successMediaRequest( siteId, query ) );
 		return;
 	}
+
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 	dispatch( setNextPageHandle( siteId, data.meta ) );

@@ -106,6 +106,9 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		margin-top: 20px;
 	}
 }
+.jetpack-connect__main-logo.add-bottom-margin {
+	margin-bottom: 35px;
+}
 
 .jetpack-connect__main.is-wide {
 	max-width: 100%;
@@ -654,7 +657,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.plan-features .plan-price.is-original .plan-price__currency-symbol,
 	.plan-features .plan-price.is-original .plan-price__fraction {
-		font-size: 8px;
+		font-size: 1rem;
 	}
 
 	.plan-features .plan-price.is-discounted {

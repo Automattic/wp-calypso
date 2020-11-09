@@ -16,5 +16,5 @@ export function getJetpackProductTagline( product ) {
 	assertValidProduct( product );
 	const jetpackProductsTaglines = getJetpackProductsTaglines();
 
-	return jetpackProductsTaglines?.[ product.productSlug ];
+	return jetpackProductsTaglines?.[ product.product_slug ];
 }

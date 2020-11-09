@@ -74,7 +74,7 @@ class EditorFeaturedImagePreview extends Component {
 		}
 
 		// Compare images by resolving the media store reference for the
-		// transient copy. MediaStore tracks pointers from transient media
+		// transient copy. Media state tracks pointers from transient media
 		// to its persisted copy, so we can compare the resolved object IDs
 		const media = this.props.getMediaItem( siteId, image.ID );
 		return media && media.ID === nextProps.image.ID;

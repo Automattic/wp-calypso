@@ -200,24 +200,6 @@ describe( 'MediaListStore', () => {
 		} );
 	} );
 
-	describe( '#hasNextPage()', () => {
-		test( 'should return true if the previous response included next_page meta', () => {
-			dispatchReceiveMediaItems();
-
-			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.be.ok;
-		} );
-
-		test( 'should return true if the site is unknown', () => {
-			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.be.ok;
-		} );
-
-		test( 'should return false if the previous response did not include next_page meta', () => {
-			dispatchReceiveMediaItems( { data: { media: [] } } );
-
-			expect( MediaListStore.hasNextPage( DUMMY_SITE_ID ) ).to.not.be.ok;
-		} );
-	} );
-
 	describe( '#isItemMatchingQuery', () => {
 		let isItemMatchingQuery;
 

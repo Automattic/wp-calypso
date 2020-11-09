@@ -21,8 +21,8 @@ describe( 'getNextPageQuery', () => {
 	} );
 
 	// null represents when there is no next page
-	it.each( [ Symbol( 'next page handle' ), null ] )(
-		'should return the existing query with the next page handle',
+	it.each( [ 'the-next-page', 12345 ] )(
+		"should return the existing query with the next page's handle when the nextPageHandle is %s",
 		( nextPageHandle ) => {
 			const state = {
 				media: {

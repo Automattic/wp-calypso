@@ -65,7 +65,7 @@
 		color: var( --color-text );
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: 18px;
+			font-size: $font-title-small;
 			line-height: 28px;
 			margin-bottom: 32px;
 		}

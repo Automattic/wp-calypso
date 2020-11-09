@@ -4,6 +4,7 @@ jest.mock( '../controller', () => ( {
 	plans: jest.fn(),
 	redirectToCheckout: jest.fn(),
 	redirectToPlans: jest.fn(),
+	redirectToPlansIfNotJetpack: jest.fn(),
 } ) );
 jest.mock( '../current-plan/controller', () => ( {
 	currentPlan: jest.fn(),
@@ -17,6 +18,10 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
+jest.mock( 'lib/abtest/getters', () => ( {
+	shouldShowOfferResetFlow: jest.fn( () => false ),
+} ) );
+jest.mock( 'my-sites/plans-v2', () => jest.fn() );
 
 /**
  * External dependencies
@@ -26,10 +31,18 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { features, plans, redirectToCheckout, redirectToPlans } from '../controller';
+import {
+	features,
+	plans,
+	redirectToCheckout,
+	redirectToPlans,
+	redirectToPlansIfNotJetpack,
+} from '../controller';
 import { currentPlan } from '../current-plan/controller';
 import { makeLayout, render as clientRender } from 'controller';
 import { navigation, siteSelection, sites } from 'my-sites/controller';
+import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
+import plansV2 from 'my-sites/plans-v2';
 
 import router from '../index';
 
@@ -65,5 +78,22 @@ describe( 'Sets all routes', () => {
 			const [ , ...actualMiddleware ] = page.mock.calls.find( ( [ path ] ) => path === route );
 			expect( actualMiddleware ).toEqual( expectedMiddleware );
 		} );
+	} );
+} );
+
+describe( 'Loads Jetpack plan page', () => {
+	it( 'Does not load plans-v2 if A/B test returns false', () => {
+		router();
+		expect( plansV2 ).not.toHaveBeenCalled();
+	} );
+	it( 'Loads plans-v2 if A/B test returns true', () => {
+		shouldShowOfferResetFlow.mockReturnValueOnce( true );
+		router();
+		expect( plansV2 ).toHaveBeenCalledWith(
+			'/plans/:site',
+			siteSelection,
+			redirectToPlansIfNotJetpack,
+			navigation
+		);
 	} );
 } );

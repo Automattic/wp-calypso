@@ -293,3 +293,13 @@ exports.selectElementByText = async function ( driver, selector, text ) {
 	};
 	return await this.clickWhenClickable( driver, element );
 };
+
+exports.clearTextArea = async function ( driver, selector ) {
+	const textArea = await driver.findElement( selector );
+	const textValue = await textArea.getText();
+	let i = textValue.length;
+	while ( i > 0 ) {
+		await textArea.sendKeys( webdriver.Key.BACK_SPACE );
+		i--;
+	}
+};

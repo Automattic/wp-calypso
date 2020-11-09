@@ -109,10 +109,6 @@ function updateActiveQueryStatus( siteId, status ) {
 	assign( MediaListStore._activeQueries[ siteId ], status );
 }
 
-function getNextPageMetaFromResponse( response ) {
-	return response && response.meta && response.meta.next_page ? response.meta.next_page : null;
-}
-
 function isQuerySame( siteId, query ) {
 	if ( ! ( siteId in MediaListStore._activeQueries ) ) {
 		return false;
@@ -195,24 +191,12 @@ MediaListStore.getAll = function ( siteId ) {
 	}
 };
 
-MediaListStore.hasNextPage = function ( siteId ) {
-	return (
-		! ( siteId in MediaListStore._activeQueries ) ||
-		null !== MediaListStore._activeQueries[ siteId ].nextPageHandle
-	);
-};
-
 MediaListStore.dispatchToken = Dispatcher.register( function ( payload ) {
 	const action = payload.action;
 
 	Dispatcher.waitFor( [ MediaStore.dispatchToken ] );
 
 	switch ( action.type ) {
-		case 'CHANGE_MEDIA_SOURCE':
-			clearSite( action.siteId );
-			MediaListStore.emit( 'change' );
-			break;
-
 		case 'SET_MEDIA_QUERY':
 			if ( action.siteId && action.query ) {
 				updateActiveQuery( action.siteId, action.query );
@@ -260,7 +244,6 @@ MediaListStore.dispatchToken = Dispatcher.register( function ( payload ) {
 
 			updateActiveQueryStatus( action.siteId, {
 				isFetchingNextPage: false,
-				nextPageHandle: getNextPageMetaFromResponse( action.data ),
 			} );
 
 			if (

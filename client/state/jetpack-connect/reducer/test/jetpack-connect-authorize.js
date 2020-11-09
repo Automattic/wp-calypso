@@ -16,7 +16,7 @@ import {
 } from 'state/jetpack-connect/action-types';
 import { DESERIALIZE, SERIALIZE, SITE_REQUEST_FAILURE } from 'state/action-types';
 
-import { useSandbox } from 'test/helpers/use-sinon';
+import { useSandbox } from 'test-helpers/use-sinon';
 
 describe( '#jetpackConnectAuthorize()', () => {
 	useSandbox( ( sandbox ) => {

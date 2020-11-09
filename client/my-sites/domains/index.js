@@ -32,7 +32,7 @@ function getCommonHandlers( {
 	noSitePath = paths.domainManagementRoot(),
 	warnIfJetpack = true,
 } = {} ) {
-	const handlers = [ siteSelection, navigation ];
+	const handlers = [ siteSelection, navigation, domainsController.wpForTeamsNoDomainsRedirect ];
 
 	if ( noSitePath ) {
 		handlers.push( domainsController.redirectIfNoSite( noSitePath ) );

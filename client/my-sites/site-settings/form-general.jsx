@@ -429,7 +429,9 @@ export class SiteSettingsFormGeneral extends Component {
 
 		return (
 			<FormFieldset>
-				<FormLabel htmlFor="blogtimezone">{ translate( 'Site timezone' ) }</FormLabel>
+				<FormLabel htmlFor="blogtimezone" id="site-settings__blogtimezone">
+					{ translate( 'Site timezone' ) }
+				</FormLabel>
 
 				<Timezone
 					selectedZone={ fields.timezone_string }
@@ -605,7 +607,10 @@ export class SiteSettingsFormGeneral extends Component {
 
 				{ ! isWPForTeamsSite && ! siteIsJetpack && (
 					<div className="site-settings__footer-credit-container">
-						<SettingsSectionHeader title={ translate( 'Footer credit' ) } />
+						<SettingsSectionHeader
+							title={ translate( 'Footer credit' ) }
+							id="site-settings__footer-credit-header"
+						/>
 						<CompactCard className="site-settings__footer-credit-explanation">
 							<p>
 								{ preventWidows(

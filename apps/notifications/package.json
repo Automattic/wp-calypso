@@ -17,9 +17,9 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist",
-		"prebuild": "check-npm-client && yarn run clean",
-		"build": "check-npm-client && calypso-build --config='./webpack.config.js'"
+		"clean": "npx rimraf dist",
+		"prebuild": "yarn run clean",
+		"build": "calypso-build --config='./webpack.config.js'"
 	},
 	"dependencies": {
 		"@automattic/calypso-color-schemes": "^2.1.1",
@@ -44,6 +44,6 @@
 		"@automattic/calypso-build": "^6.1.0",
 		"enzyme": "^3.11.0",
 		"html-webpack-plugin": "^3.2.0",
-		"webpack": "^4.42.0"
+		"webpack": "^4.44.1"
 	}
 }

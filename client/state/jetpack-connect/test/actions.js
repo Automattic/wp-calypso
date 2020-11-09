@@ -5,7 +5,7 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import useNock from 'test/helpers/use-nock';
+import useNock from 'test-helpers/use-nock';
 import wpcom from 'lib/wp';
 import {
 	JETPACK_CONNECT_AUTHORIZE,

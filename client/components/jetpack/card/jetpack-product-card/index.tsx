@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite, isNumber } from 'lodash';
 import React, { createElement, useRef, FunctionComponent, ReactNode } from 'react';
 
@@ -10,10 +10,16 @@ import React, { createElement, useRef, FunctionComponent, ReactNode } from 'reac
  * Internal dependencies
  */
 import { Button, ProductIcon } from '@automattic/components';
+import { useLocalizedMoment } from 'components/localized-moment';
 import { preventWidows } from 'lib/formatting';
 import PlanPrice from 'my-sites/plan-price';
 import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
 import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
+
+/**
+ * Type dependencies
+ */
+import type { Moment } from 'moment';
 
 /**
  * Style dependencies
@@ -23,27 +29,30 @@ import './style.scss';
 type OwnProps = {
 	className?: string;
 	iconSlug: string;
-	productName: string;
+	productName: TranslateResult;
 	productType?: string;
 	headingLevel?: number;
-	subheadline: string;
-	description: ReactNode;
+	subheadline?: TranslateResult;
+	description?: ReactNode;
 	currencyCode: string;
 	originalPrice: number;
 	discountedPrice?: number;
 	withStartingPrice?: boolean;
-	billingTimeFrame: string;
-	badgeLabel?: string;
-	discountMessage?: string;
-	buttonLabel: string;
+	billingTimeFrame: TranslateResult;
+	badgeLabel?: TranslateResult;
+	discountMessage?: TranslateResult;
+	buttonLabel: TranslateResult;
 	onButtonClick: () => void;
-	cancelLabel?: string;
+	cancelLabel?: TranslateResult;
 	onCancelClick?: () => void;
 	isHighlighted?: boolean;
 	isOwned?: boolean;
+	isDeprecated?: boolean;
+	expiryDate?: Moment;
+	UpgradeNudge?: ReactNode;
 };
 
-export type Props = OwnProps & FeaturesProps;
+export type Props = OwnProps & Partial< FeaturesProps >;
 
 const JetpackProductCard: FunctionComponent< Props > = ( {
 	className,
@@ -66,20 +75,32 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 	onCancelClick,
 	isHighlighted,
 	isOwned,
+	isDeprecated,
+	expiryDate,
 	features,
 	isExpanded,
+	UpgradeNudge,
 } ) => {
 	const translate = useTranslate();
 	const priceEl = useRef( null );
 	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
+	const moment = useLocalizedMoment();
 
 	const isDiscounted = isFinite( discountedPrice );
 	const parsedHeadingLevel = isNumber( headingLevel )
 		? Math.min( Math.max( Math.floor( headingLevel ), 1 ), 6 )
 		: 2;
+	const parsedExpiryDate =
+		moment.isMoment( expiryDate ) && expiryDate.isValid() ? expiryDate : null;
 
 	return (
-		<div className={ classNames( className, 'jetpack-product-card', { 'is-owned': isOwned } ) }>
+		<div
+			className={ classNames( className, 'jetpack-product-card', {
+				'is-owned': isOwned,
+				'is-deprecated': isDeprecated,
+			} ) }
+			data-icon={ iconSlug }
+		>
 			<header className="jetpack-product-card__header">
 				<ProductIcon className="jetpack-product-card__icon" slug={ iconSlug } />
 				<div className="jetpack-product-card__summary">
@@ -97,7 +118,9 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 								) }
 							</>
 						) }
-						<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
+						{ subheadline && (
+							<p className="jetpack-product-card__subheadline">{ preventWidows( subheadline ) }</p>
+						) }
 					</div>
 					<div
 						className={ classNames( 'jetpack-product-card__price', {
@@ -118,7 +141,20 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 								<PlanPrice rawPrice={ discountedPrice } discounted currencyCode={ currencyCode } />
 							) }
 						</span>
-						<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
+						{ parsedExpiryDate ? (
+							<time
+								className="jetpack-product-card__expiration-date"
+								dateTime={ parsedExpiryDate.format( 'YYYY-DD-YY' ) }
+							>
+								{ translate( 'expires %(date)s', {
+									args: {
+										date: parsedExpiryDate.format( 'L' ),
+									},
+								} ) }
+							</time>
+						) : (
+							<span className="jetpack-product-card__billing-time-frame">{ billingTimeFrame }</span>
+						) }
 					</div>
 				</div>
 				{ badgeLabel && <div className="jetpack-product-card__badge">{ badgeLabel }</div> }
@@ -141,9 +177,12 @@ const JetpackProductCard: FunctionComponent< Props > = ( {
 						{ cancelLabel }
 					</Button>
 				) }
-				<p className="jetpack-product-card__description">{ description }</p>
+				{ description && <p className="jetpack-product-card__description">{ description }</p> }
 			</div>
-			<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+			{ features && features.items.length > 0 && (
+				<JetpackProductCardFeatures features={ features } isExpanded={ isExpanded } />
+			) }
+			{ UpgradeNudge }
 		</div>
 	);
 };

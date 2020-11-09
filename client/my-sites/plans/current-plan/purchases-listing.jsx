@@ -182,8 +182,8 @@ class PurchasesListing extends Component {
 	getActionButton( purchase ) {
 		const { selectedSiteSlug, translate } = this.props;
 
-		// No action button if there's no site selected or we're dealing with a partner site.
-		if ( ! selectedSiteSlug || ! purchase || isPartnerPurchase( purchase ) ) {
+		// No action button if there's no site selected.
+		if ( ! selectedSiteSlug || ! purchase ) {
 			return null;
 		}
 

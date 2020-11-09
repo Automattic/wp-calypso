@@ -24,10 +24,10 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
-		"prepare": "check-npm-client && tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
-		"prepublish": "check-npm-client && yarn run clean",
-		"watch": "check-npm-client && tsc --project ./tsconfig.json --watch"
+		"clean": "npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
+		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --project ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",

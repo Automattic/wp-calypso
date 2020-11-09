@@ -39,3 +39,21 @@
 		margin: 0 auto;
 	}
 }
+
+body.is-section-signup.is-white-signup {
+	.example-domain-suggestions {
+		max-width: 678px;
+
+		p {
+			text-align: left;
+		}
+		.example-domain-suggestions__explanation {
+			color: var( --color-neutral-40 );
+		}
+		.example-domain-suggestions__mapping-information {
+			a {
+				color: var( --color-neutral-60 );
+			}
+		}
+	}
+}

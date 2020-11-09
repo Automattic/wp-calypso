@@ -163,11 +163,11 @@ export class TldFilterBar extends Component {
 		return (
 			<Popover
 				autoPosition={ false }
-				className="search-filters__popover"
+				className="search-filters__popover search-filters-extensions__popover"
 				context={ this.button }
 				isVisible={ this.state.showPopover }
 				onClose={ this.handleFiltersSubmit }
-				position="bottom left"
+				position="bottom"
 			>
 				<FormFieldset className="search-filters__token-field-fieldset">
 					<TokenField

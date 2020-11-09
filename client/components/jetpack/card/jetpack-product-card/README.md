@@ -1,6 +1,6 @@
 # Jetpack Product Card
 
-This component represents a generic Jetpack product card. It doesn't represent any product type. Use it as a foundation to create product cards, such as in the example below:
+This component is used to display a Jetpack product card.
 
 ---
 
@@ -9,19 +9,17 @@ This component represents a generic Jetpack product card. It doesn't represent a
 ```js
 import JetpackProductCard from 'components/jetpack/card/jetpack-product-card';
 
-export default function JetpackBundleCard() {
+export default function JetpackProductCardExample() {
 	return (
         <JetpackProductCard
-            iconSlug="jetpack_security"
-            productName="Security Security"
-            subheadline="Comprehensive WordPress protection"
-            description="Enjoy the peace of mind of complete site security. Easy-to-use, powerful security tools guard your site, so you can focus on your business."
+            iconSlug="jetpack_backup_v2"
+            productName="Jetpack Backup"
             currencyCode="USD"
-            originalPrice={25}
+            originalPrice={10}
             billingTimeFrame="per month, billed monthly"
-            buttonLabel="Get Jetpack Security"
+            buttonLabel="Get Backup"
             onButtonClick={ () => /* do something */ }
-            features={ [ { text: 'Backup' } ] }
+            features={ [ { text: 'Automated WordPress backups' } ] }
         />
 	);
 }
@@ -36,8 +34,8 @@ export default function JetpackBundleCard() {
 | `productName`\*      | `string`     | none    | Name of the product, shown as the title of the card                                        |
 | `productType`        | `string`     | none    | Product type (e.g. 'Daily', or 'Real Time'), appended to its name                          |
 | `headingLevel`       | `number`     | 2       | Heading level of the HTML element wrapping the product name                                |
-| `subheadline`\*      | `string`     | none    | Summary of the product                                                                     |
-| `description`\*      | `React.Node` | none    | Description of the product                                                                 |
+| `subheadline`        | `string`     | none    | Summary of the product                                                                     |
+| `description`        | `React.Node` | none    | Description of the product                                                                 |
 | `currencyCode`\*     | `string`     | none    | Code of the currency in which to display the price                                         |
 | `originalPrice`\*    | `number`     | none    | Price of the product                                                                       |
 | `discountedPrice`    | `number`     | none    | Discounted price of the product                                                            |
@@ -53,3 +51,5 @@ export default function JetpackBundleCard() {
 | `isOwned`            | `boolean`    | `false` | Use when the product is already owned or included in another product owned by the customer |
 | `features`\*         | `Features`   | none    | Features of the product                                                                    |
 | `isExpanded`         | `boolean`    | `false` | Use to expand the card and show the product features                                       |
+| `isDeprecated`       | `boolean`    | `false` | Use to identify the plan as deprecated                                                     |
+| `expiryDate`         | `Moment`     | none    | Expiry date of the product                                                                 |

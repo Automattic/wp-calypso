@@ -7,11 +7,11 @@ import { castArray, noop, zip } from 'lodash';
  * Internal dependencies
  */
 import {
-	dispatchFluxFetchMediaLimits,
 	dispatchFluxReceiveMediaItemError,
 	dispatchFluxReceiveMediaItemSuccess,
 } from 'state/media/utils/flux-adapter';
 import { receiveMedia, successMediaItemRequest, failMediaItemRequest } from 'state/media/actions';
+import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
 import { isFileList } from 'state/media/utils/is-file-list';
 
@@ -73,7 +73,7 @@ export const uploadMedia = (
 			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
-			dispatchFluxFetchMediaLimits( siteId );
+			dispatch( requestMediaStorage( siteId ) );
 
 			onItemUploaded( uploadedMediaWithTransientId, file );
 			uploadedItems.push( uploadedMediaWithTransientId );

@@ -9,7 +9,7 @@ import { useFormStatus, useSelect } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import PaymentLogo from 'my-sites/checkout/composite-checkout/wpcom/components/payment-logo';
+import PaymentLogo from 'my-sites/checkout/composite-checkout/components/payment-logo';
 import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
 import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';

@@ -33,7 +33,7 @@
 	}
 
 	@include breakpoint-deprecated( '>480px' ) {
-		font-size: 18px;
+		font-size: $font-title-small;
 		max-width: none;
 	}
 }

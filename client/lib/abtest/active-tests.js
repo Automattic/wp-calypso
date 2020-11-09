@@ -118,7 +118,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	newSiteGutenbergOnboarding: {
-		datestamp: '20200731',
+		datestamp: '20200818',
 		variations: {
 			gutenberg: 50,
 			control: 50,
@@ -205,16 +205,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	showCompositeCheckoutI18N: {
-		datestamp: '20200710',
-		variations: {
-			composite: 90,
-			regular: 10,
-		},
-		defaultVariation: 'regular',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
 	offerResetFlow: {
 		datestamp: '20200804',
 		variations: {
@@ -225,7 +215,7 @@ export default {
 		allowExistingUsers: true,
 	},
 	userlessCheckout: {
-		datestamp: '20200806',
+		datestamp: '20210806',
 		variations: {
 			variantUserless: 50,
 			control: 50,
@@ -233,5 +223,26 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 		countryCodeTargets: [ 'US', 'CA' ],
+	},
+	reskinSignupFlow: {
+		datestamp: '20200812',
+		variations: {
+			reskinned: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		localeTargets: 'any',
+		localeExceptions: [ 'en', 'es' ],
+	},
+	existingUsersGutenbergOnboard: {
+		datestamp: '20200818',
+		variations: {
+			gutenberg: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
+		localeTargets: [ 'en' ],
 	},
 };

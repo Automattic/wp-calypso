@@ -310,7 +310,7 @@
 
 .mce-window .mce-window-head .mce-title {
 	color: #444;
-	font-size: 18px;
+	font-size: $font-title-small;
 	font-weight: 600;
 	line-height: 36px;
 	margin: 0;
@@ -1615,7 +1615,7 @@ i.mce-i-wp_code::before {
 
 #wp-fullscreen-tagline {
 	color: #82878c;
-	font-size: 18px;
+	font-size: $font-title-small;
 	float: right;
 	padding: 4px 0 0;
 }
@@ -1699,7 +1699,7 @@ i.mce-i-wp_code::before {
 	background: none;
 	color: #32373c;
 	cursor: pointer;
-	font-size: 18px;
+	font-size: $font-title-small;
 	line-height: 20px;
 	overflow: visible;
 	text-align: center;

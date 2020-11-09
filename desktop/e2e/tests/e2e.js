@@ -3,15 +3,14 @@ const { step } = require( 'mocha-steps' );
 const { assert } = require( 'chai' );
 const webdriver = require( 'selenium-webdriver' );
 const chrome = require( 'selenium-webdriver/chrome' );
-const EditorPage = require( './lib/pages/editor-page' );
 const LoginPage = require( './lib/pages/login-page' );
 const SignupStepsPage = require( './lib/pages/signup-steps-page' );
-const PostEditorToolbarComponent = require( './lib/components/post-editor-toolbar-component' );
 const NavBarComponent = require( './lib/components/nav-bar-component' );
 const ProfilePage = require( './lib/pages/profile-page' );
 const ReaderPage = require( './lib/pages/reader-page' );
-const ViewPostPage = require( './lib/pages/view-post-page' );
+const PostPreviewComponent = require( './lib/components/post-preview-component' );
 const CheckoutPage = require( './lib/pages/checkout-page' );
+const GutenbergEditorComponent = require( './lib/components/gutenberg-editor-component' );
 
 const dataHelper = require( './lib/data-helper' );
 const options = new chrome.Options();
@@ -50,7 +49,7 @@ describe( 'User Can log in', function () {
 
 	step( 'Can log in', async function () {
 		const loginPage = await LoginPage.Expect( driver );
-		return await loginPage.login( process.env.E2EUSERNAME, process.env.E2EPASSWORD );
+		return await loginPage.login( process.env.E2EGUTENBERGUSER, process.env.E2EPASSWORD );
 	} );
 
 	step( 'Can see Reader Page after logging in', async function () {
@@ -63,7 +62,7 @@ describe( 'Publish a New Post', function () {
 	this.timeout( 30000 );
 	const blogPostTitle = dataHelper.randomPhrase();
 	const blogPostQuote =
-		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.”\n- Mark Twain';
+		'“Whenever you find yourself on the side of the majority, it is time to pause and reflect.” Mark Twain';
 
 	step( 'Can navigate to post editor', async function () {
 		const navbarComponent = await NavBarComponent.Expect( driver );
@@ -71,27 +70,43 @@ describe( 'Publish a New Post', function () {
 	} );
 
 	step( 'Can enter post title and content', async function () {
-		const editorPage = await EditorPage.Expect( driver );
-		await editorPage.enterTitle( blogPostTitle );
-		await editorPage.enterContent( blogPostQuote + '\n' );
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await gEditorComponent.enterTitle( blogPostTitle );
+		await gEditorComponent.enterText( blogPostQuote + '\n' );
 
-		const errorShown = await editorPage.errorDisplayed();
+		const errorShown = await gEditorComponent.errorDisplayed();
 		return assert.strictEqual( errorShown, false, 'There is an error shown on the editor page!' );
 	} );
 
-	step( 'Can publish and view content', async function () {
-		const postEditorToolbarComponent = await PostEditorToolbarComponent.Expect( driver );
-		await postEditorToolbarComponent.ensureSaved();
-		return await postEditorToolbarComponent.publishAndViewContent( { useConfirmStep: true } );
+	step( 'Can publish and preview content', async function () {
+		const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+		await gEditorComponent.ensureSaved();
+		await gEditorComponent.publish();
+		return gEditorComponent.launchPreview();
 	} );
 
-	step( 'Can see correct post title', async function () {
-		const viewPostPage = await ViewPostPage.Expect( driver );
-		const postTitle = await viewPostPage.postTitle();
-		return assert.strictEqual(
-			postTitle.toLowerCase(),
-			blogPostTitle.toLowerCase(),
-			'The published blog post title is not correct'
+	step( 'Can see correct page title in preview', async function () {
+		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+		await postPreviewComponent.displayed();
+		const actualPageTitle = await postPreviewComponent.postTitle();
+		assert.strictEqual(
+			actualPageTitle.toUpperCase(),
+			blogPostTitle.toUpperCase(),
+			'The post preview title is not correct'
+		);
+	} );
+
+	step( 'Can see correct page content in preview', async function () {
+		const postPreviewComponent = await PostPreviewComponent.Expect( driver );
+		const content = await postPreviewComponent.postContent();
+		assert.equal(
+			content.indexOf( blogPostQuote ) > -1,
+			true,
+			'The post preview content (' +
+			content +
+			') does not include the expected content (' +
+			blogPostQuote +
+			')'
 		);
 	} );
 
@@ -100,8 +115,7 @@ describe( 'Publish a New Post', function () {
 	} );
 } );
 
-// FIXME: flakey, should fix
-describe.skip( 'Can Log Out', function () {
+describe( 'Can Log Out', function () {
 	this.timeout( 30000 );
 
 	step( 'Can view profile to log out', async function () {
@@ -176,5 +190,6 @@ describe.skip( 'Can Sign up', function () {
 
 after( async function () {
 	this.timeout( 30000 );
+	await driver.executeScript( 'window.localStorage.clear();' );
 	return await driver.quit();
 } );

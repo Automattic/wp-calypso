@@ -3,11 +3,11 @@
  */
 import { uploadMedia as uploadMediaThunk } from 'state/media/thunks/upload-media';
 import {
-	dispatchFluxFetchMediaLimits,
 	dispatchFluxReceiveMediaItemError,
 	dispatchFluxReceiveMediaItemSuccess,
 } from 'state/media/utils/flux-adapter';
 import * as syncActions from 'state/media/actions';
+import { requestMediaStorage } from 'state/sites/media-storage/actions';
 import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
 
 jest.mock( 'state/media/utils/is-file-list', () => ( {
@@ -19,9 +19,12 @@ jest.mock( 'state/media/thunks/create-transient-media-items', () => ( {
 } ) );
 
 jest.mock( 'state/media/utils/flux-adapter', () => ( {
-	dispatchFluxFetchMediaLimits: jest.fn(),
 	dispatchFluxReceiveMediaItemError: jest.fn(),
 	dispatchFluxReceiveMediaItemSuccess: jest.fn(),
+} ) );
+
+jest.mock( 'state/sites/media-storage/actions', () => ( {
+	requestMediaStorage: jest.fn(),
 } ) );
 
 describe( 'media - thunks - uploadMedia', () => {
@@ -113,7 +116,7 @@ describe( 'media - thunks - uploadMedia', () => {
 						ID: savedId,
 					}
 				);
-				expect( dispatchFluxFetchMediaLimits ).toHaveBeenCalledWith( siteId );
+				expect( requestMediaStorage ).toHaveBeenCalledWith( siteId );
 			} );
 		} );
 	} );

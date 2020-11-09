@@ -40,8 +40,8 @@
 		"react-dom": "^16.8"
 	},
 	"scripts": {
-		"clean": "check-npm-client && npx rimraf dist \"../../.tsc-cache/packages__components*\"",
-		"prepublish": "check-npm-client && yarn run clean",
-		"prepare": "check-npm-client && transpile && tsc && copy-assets"
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__components*\"",
+		"prepublish": "yarn run clean",
+		"prepare": "transpile && tsc && copy-assets"
 	}
 }
