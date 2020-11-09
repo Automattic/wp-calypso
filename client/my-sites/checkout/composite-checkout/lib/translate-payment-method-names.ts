@@ -148,3 +148,20 @@ export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 	}
 	return snakeCase( paymentMethodSlug );
 }
+
+export function isRedirectPaymentMethod( slug: CheckoutPaymentMethodSlug ): boolean {
+	const redirectPaymentMethods = [
+		'alipay',
+		'bancontact',
+		'eps',
+		'giropay',
+		'ideal',
+		'netbanking',
+		'paypal',
+		'p24',
+		'brazil-tef',
+		'wechat',
+		'sofort',
+	];
+	return redirectPaymentMethods.includes( slug );
+}

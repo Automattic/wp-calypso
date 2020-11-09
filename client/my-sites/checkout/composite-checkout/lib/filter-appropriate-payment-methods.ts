@@ -8,26 +8,13 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { CheckoutCartItem } from '../types/checkout-cart';
-import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import type { CheckoutCartItem } from '../types/checkout-cart';
+import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
+import { isRedirectPaymentMethod } from './translate-payment-method-names';
 import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
-
-const redirectPaymentMethods = [
-	'alipay',
-	'bancontact',
-	'eps',
-	'giropay',
-	'ideal',
-	'netbanking',
-	'paypal',
-	'p24',
-	'brazil-tef',
-	'wechat',
-	'sofort',
-];
 
 export default function filterAppropriatePaymentMethods( {
 	paymentMethodObjects,
@@ -109,14 +96,11 @@ function isPaymentMethodLegallyRestricted( paymentMethodId: CheckoutPaymentMetho
 }
 
 function isPaymentMethodEnabled(
-	method: CheckoutPaymentMethodSlug,
+	slug: CheckoutPaymentMethodSlug,
 	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
 ): boolean {
 	// Redirect payments might not be possible in some cases - for example in the desktop app
-	if (
-		redirectPaymentMethods.includes( method ) &&
-		! config.isEnabled( 'upgrades/redirect-payments' )
-	) {
+	if ( isRedirectPaymentMethod( slug ) && ! config.isEnabled( 'upgrades/redirect-payments' ) ) {
 		return false;
 	}
 
@@ -125,5 +109,5 @@ function isPaymentMethodEnabled(
 		return true;
 	}
 
-	return allowedPaymentMethods.includes( method );
+	return allowedPaymentMethods.includes( slug );
 }
