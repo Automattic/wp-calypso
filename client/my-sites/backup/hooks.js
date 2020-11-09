@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 import { getHttpData } from 'calypso/state/data-layer/http-data';
 import { getRequestActivityLogsId, requestActivityLogs } from 'calypso/state/data-getters';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import { requestRewindCapabilities } from 'calypso/state/rewind/capabilities/actions';
 
 const isLoading = ( response ) => [ 'uninitialized', 'pending' ].includes( response.state );
 
@@ -77,6 +78,8 @@ export const useFirstMatchingBackupAttempt = (
 	{ before, after, successOnly, sortOrder } = {},
 	shouldExecute = true
 ) => {
+	useEffect( () => requestRewindCapabilities( siteId ), [ siteId ] );
+
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 	const hasRealtimeBackups =
 		isArray( rewindCapabilities ) && rewindCapabilities.includes( 'backup-realtime' );
