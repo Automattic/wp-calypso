@@ -7,21 +7,6 @@ import { CheckoutPaymentMethodSlug } from '../checkout-payment-method-slug';
  * Payment method slugs as returned by the WPCOM backend.
  * These need to be translated to the values expected by
  * composite-checkout.
- *
- * Defining these as interfaces allows WPCOMPaymentMethod
- * to be treated as a discriminated union so the compiler
- * can do exhaustiveness checking. For example, in a switch
- * block such as
- *
- *     // method : WPCOMPaymentMethod
- *     switch ( method ) {
- *       case ...
- *     }
- *
- * the typescript compiler will raise an error if we forget to
- * handle all the cases.
- *
- * @see https://www.typescriptlang.org/docs/handbook/advanced-types.html#exhaustiveness-checking
  */
 export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
