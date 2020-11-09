@@ -55,11 +55,9 @@ import {
 } from 'calypso/signup/storageUtils';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
 import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms.jsx';
-import {
-	useStoredCards,
-	useIsApplePayAvailable,
-	filterAppropriatePaymentMethods,
-} from './payment-method-helpers';
+import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
+import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
+import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
@@ -94,6 +92,7 @@ import {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
+	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
 import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
@@ -447,11 +446,16 @@ export default function CompositeCheckout( {
 		createUserAndSiteBeforeTransaction
 	);
 
-	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
-		recordEvent,
-		isLoggedOutCart
+		Boolean( isLoggedOutCart )
 	);
+
+	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
+		);
+	} );
 
 	const {
 		canMakePayment: isApplePayAvailable,
@@ -483,15 +487,18 @@ export default function CompositeCheckout( {
 			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
 			: isApplePayLoading );
 
+	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const countryCode: string = contactInfo?.countryCode?.value ?? '';
+
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
+				countryCode,
 				total,
 				credits,
 				subtotal,
-				allowedPaymentMethods,
-				serverAllowedPaymentMethods,
+				allowedPaymentMethods: allowedPaymentMethods || serverAllowedPaymentMethods,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 

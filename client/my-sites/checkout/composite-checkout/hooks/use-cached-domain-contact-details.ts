@@ -4,6 +4,7 @@
 import { useEffect, useRef } from 'react';
 import { useSelector, useDispatch as useReduxDispatch } from 'react-redux';
 import { defaultRegistry } from '@automattic/composite-checkout';
+import type { UpdateTaxLocationInCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
 
 /**
@@ -16,7 +17,9 @@ const { dispatch } = defaultRegistry;
 
 const debug = debugFactory( 'calypso:composite-checkout:use-cached-domain-contact-details' );
 
-export default function useCachedDomainContactDetails( updateCartLocation ) {
+export default function useCachedDomainContactDetails(
+	updateCartLocation: UpdateTaxLocationInCart
+): void {
 	const reduxDispatch = useReduxDispatch();
 	const haveRequestedCachedDetails = useRef( false );
 
