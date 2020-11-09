@@ -8,18 +8,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import {
-	hasRenewalItem,
-	hasFreeTrial,
-	hasProduct,
-	hasDomainRegistration,
-	hasPlan,
-} from './cart-items';
-import {
-	isCredits,
-	isDomainRedemption,
-	allowedProductAttributes,
-} from 'calypso/lib/products-values';
+import { hasFreeTrial, hasProduct, hasDomainRegistration, hasPlan } from './cart-items';
+import { allowedProductAttributes } from 'calypso/lib/products-values';
 import config from 'calypso/config';
 import {
 	translateCheckoutPaymentMethodToWpcomPaymentMethod,
@@ -180,18 +170,6 @@ export function setTaxLocation( { postalCode, countryCode } ) {
 			},
 		} );
 	};
-}
-
-export function canRemoveFromCart( cart, cartItem ) {
-	if ( isCredits( cartItem ) ) {
-		return false;
-	}
-
-	if ( hasRenewalItem( cart ) && isDomainRedemption( cartItem ) ) {
-		return false;
-	}
-
-	return true;
 }
 
 /**
