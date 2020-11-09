@@ -21,9 +21,9 @@ export async function makeAuthRequest( username, password, authCode = '' ) {
 	} );
 
 	const json = await response.json();
-	const errorMessage = json?.error_description ?? '';
 
-	if ( errorMessage ) {
+	if ( ! response.ok ) {
+		const errorMessage = json?.error_description ?? '';
 		const error = new Error( errorMessage );
 		error.type = json.error;
 
