@@ -12,7 +12,6 @@ import { getCurrencyObject } from '@automattic/format-currency';
 import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { canRemoveFromCart } from 'calypso/lib/cart-values';
 import { getIncludedDomain } from 'calypso/lib/cart-values/cart-items';
 import {
 	isCredits,
@@ -341,21 +340,19 @@ export class CartItem extends React.Component {
 	}
 
 	removeButton() {
-		const { cart, cartItem, translate } = this.props;
+		const { translate } = this.props;
 		const labelText = translate( 'Remove item' );
 
-		if ( canRemoveFromCart( cart, cartItem ) ) {
-			return (
-				<button
-					className="cart__remove-item"
-					onClick={ this.removeFromCart }
-					aria-label={ labelText }
-					title={ labelText }
-				>
-					<Gridicon icon="trash" size={ 24 } />
-				</button>
-			);
-		}
+		return (
+			<button
+				className="cart__remove-item"
+				onClick={ this.removeFromCart }
+				aria-label={ labelText }
+				title={ labelText }
+			>
+				<Gridicon icon="trash" size={ 24 } />
+			</button>
+		);
 	}
 }
 
