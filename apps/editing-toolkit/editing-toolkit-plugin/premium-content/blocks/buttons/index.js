@@ -28,6 +28,15 @@ const settings = {
 		alignWide: false,
 		lightBlockWrapper: true,
 	},
+	attributes: {
+		isPremiumContentChild: {
+			type: 'bool',
+			default: true,
+		},
+	},
+	providesContext: {
+		isPremiumContentChild: 'isPremiumContentChild',
+	},
 	keywords: [ __( 'link', 'full-site-editing' ) ],
 	edit,
 	save,
