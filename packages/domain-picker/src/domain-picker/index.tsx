@@ -3,7 +3,7 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { useSelect } from '@wordpress/data';
-import { times } from 'lodash';
+import { noop, times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
@@ -67,7 +67,7 @@ export interface Props {
 	quantityExpanded?: number;
 
 	/** Called when the user leaves the search box */
-	onDomainSearchBlur: ( value: string ) => void;
+	onDomainSearchBlur?: ( value: string ) => void;
 
 	currentDomain?: string;
 
@@ -85,7 +85,7 @@ export interface Props {
 	initialDomainSearch?: string;
 
 	/** Called when the domain search query is changed */
-	onSetDomainSearch: ( value: string ) => void;
+	onSetDomainSearch?: ( value: string ) => void;
 
 	/** Whether to segregate free and paid domains from each other */
 	segregateFreeAndPaid?: boolean;
@@ -104,11 +104,11 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur,
+	onDomainSearchBlur = noop,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch,
+	onSetDomainSearch = noop,
 	currentDomain,
 	isCheckingDomainAvailability,
 	existingSubdomain,

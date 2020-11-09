@@ -81,6 +81,10 @@ If a block is rendering incorrectly due to formatting information being lost bef
 
 This server logic can be found in the WPCOM codebase, and its primary entry point is in `/wp-content/lib/class.notifications-builder.php:1046` in a call to `Notification_Block::add_post_block()`. Further information about the server logic associated with notifications can be found in the PCYsg-46P-p2 FG entry.
 
+### Block rendering
+
+Gutenberg blocks are parsed within the post content before being passed by the API. However, no native mechanism exists for enqueuing block styles or scripts (since notifications, within Calypso, are not a WordPress-specific context). This makes it very important to ensure that blocks have sensible fallback markup, and can take advantage of the WordPress.com inline styles library; see PCYsg-tvN-p2 for details.
+
 ## Creating a post notification
 
 To test notification rendering of Gutenberg posts, the easiest way is to follow a WP.com blog (generally one that you control in some fashion). Use the "Follow" button that appears in the bottom right corner of the blog to add it to your Reader subscriptions:
