@@ -20,7 +20,8 @@ $link-focus: darken($highlight-color, 10%);
 Used studio-blue for the primary+accent.
 */
 
-.color-scheme.is-modern {
+.color-scheme.is-modern,
+.color-scheme.is-modern .is-nav-unification {
 	/* Variables used in Calypso Modern */
 	--theme-text-color: #ffffff; /* Direct from wp-admin */
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
@@ -135,6 +136,10 @@ Used studio-blue for the primary+accent.
 	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
 	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
 	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover: var( --theme-text-color );
 }
 
 
