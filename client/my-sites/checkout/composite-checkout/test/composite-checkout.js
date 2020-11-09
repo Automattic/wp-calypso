@@ -141,7 +141,7 @@ describe( 'CompositeCheckout', () => {
 				location: {},
 			},
 			temporary: false,
-			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
+			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 			savings_total_integer: 0,
 			savings_total_display: 'R$0',
 			total_tax_integer: 700,
@@ -235,7 +235,6 @@ describe( 'CompositeCheckout', () => {
 						<CompositeCheckout
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
-							allowedPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
 							overrideCountryList={ countryList }
 							{ ...additionalProps }
 						/>
@@ -792,11 +791,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		currency: requestCurrency,
 		credits_integer: 0,
 		credits_display: '0',
-		allowed_payment_methods: [
-			'WPCOM_Billing_Stripe_Payment_Method',
-			'WPCOM_Billing_Ebanx',
-			'WPCOM_Billing_Web_Payment',
-		],
+		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 		savings_total_display: requestCoupon ? 'R$10' : 'R$0',
