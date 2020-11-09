@@ -18,7 +18,7 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import LanguagePicker from 'calypso/components/language-picker';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import config from 'calypso/config';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import FormInput from 'calypso/components/forms/form-text-input';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';

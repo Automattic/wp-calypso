@@ -20,7 +20,6 @@ import SearchCard from 'calypso/components/search-card';
 /**
  * Docs examples
  */
-import Accordion from 'calypso/components/accordion/docs/example';
 import ActionCard from 'calypso/components/action-card/docs/example';
 import ActionPanel from 'calypso/components/action-panel/docs/example';
 import Animate from 'calypso/components/animate/docs/example';
@@ -186,7 +185,6 @@ export default class DesignAssets extends React.Component {
 					{ config.isEnabled( 'devdocs/color-scheme-picker' ) && (
 						<ColorSchemePicker readmeFilePath="color-scheme-picker" />
 					) }
-					<Accordion readmeFilePath="accordion" />
 					<ActionCard readmeFilePath="action-card" />
 					<ActionPanel readmeFilePath="action-panel" />
 					<Animate readmeFilePath="animate" />

@@ -55,7 +55,7 @@ export class ReaderSidebarTags extends Component {
 	render() {
 		const { tags, isOpen, translate, onClick } = this.props;
 		return (
-			<ul>
+			<li>
 				{ ! tags && <QueryReaderFollowedTags /> }
 				<ExpandableSidebarMenu
 					expanded={ isOpen }
@@ -72,7 +72,7 @@ export class ReaderSidebarTags extends Component {
 						onAction={ this.followTag }
 					/>
 				</ExpandableSidebarMenu>
-			</ul>
+			</li>
 		);
 	}
 }

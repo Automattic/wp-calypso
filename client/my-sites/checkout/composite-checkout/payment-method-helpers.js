@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useReducer, useEffect, useState } from 'react';
+import React from 'react';
 import debugFactory from 'debug';
 import styled from '@emotion/styled';
 import i18n, { useTranslate } from 'i18n-calypso';
@@ -15,12 +15,6 @@ import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
-import {
-	hasGoogleApps,
-	hasDomainRegistration,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-} from 'calypso/lib/cart-values/cart-items';
 import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
@@ -29,52 +23,6 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
-
-export function useStoredCards( getStoredCards, onEvent, isLoggedOutCart ) {
-	const [ state, dispatch ] = useReducer( storedCardsReducer, {
-		storedCards: [],
-		isLoading: true,
-	} );
-
-	useEffect( () => {
-		if ( isLoggedOutCart ) {
-			return;
-		}
-		let isSubscribed = true;
-		async function fetchStoredCards() {
-			debug( 'fetching stored cards' );
-			return getStoredCards();
-		}
-
-		fetchStoredCards()
-			.then( ( cards ) => {
-				debug( 'stored cards fetched', cards );
-				isSubscribed && dispatch( { type: 'FETCH_END', payload: cards } );
-			} )
-			.catch( ( error ) => {
-				debug( 'stored cards failed to load', error );
-				onEvent( { type: 'STORED_CARD_ERROR', payload: error.message } );
-				isSubscribed && dispatch( { type: 'FETCH_END', payload: [] } );
-			} );
-
-		return () => ( isSubscribed = false );
-	}, [ getStoredCards, onEvent, isLoggedOutCart ] );
-
-	if ( isLoggedOutCart ) {
-		return { ...state, isLoading: false };
-	}
-
-	return state;
-}
-
-function storedCardsReducer( state, action ) {
-	switch ( action.type ) {
-		case 'FETCH_END':
-			return { ...state, storedCards: action.payload, isLoading: false };
-		default:
-			return state;
-	}
-}
 
 export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting existing card transaction', transactionData );
@@ -169,14 +117,6 @@ export function submitFreePurchaseTransaction( transactionData, submit ) {
 	} );
 	debug( 'submitting free transaction', formattedTransactionData );
 	return submit( formattedTransactionData );
-}
-
-export function isPaymentMethodEnabled( method, allowedPaymentMethods ) {
-	// By default, allow all payment methods
-	if ( ! allowedPaymentMethods?.length ) {
-		return true;
-	}
-	return allowedPaymentMethods.includes( method );
 }
 
 export function WordPressFreePurchaseLabel() {
@@ -387,181 +327,6 @@ export async function wpcomPayPalExpress( payload, transactionOptions ) {
 	return wp.undocumented().paypalExpressUrl( payload );
 }
 
-export function useIsApplePayAvailable( stripe, stripeConfiguration, isStripeError, items ) {
-	const [ canMakePayment, setCanMakePayment ] = useState( { isLoading: true, value: false } );
-
-	useEffect( () => {
-		let isSubscribed = true;
-		const unsubscribe = () => {
-			isSubscribed = false;
-		};
-
-		// Only calculate this once
-		if ( ! canMakePayment.isLoading ) {
-			return unsubscribe;
-		}
-
-		// If stripe did not load, we will never load
-		if ( isStripeError ) {
-			debug( 'isApplePayAvailable giving up due to stripe error' );
-			setCanMakePayment( { isLoading: false, value: false } );
-			return unsubscribe;
-		}
-
-		// We'll need the Stripe library so wait until it is loaded
-		if ( ! stripe || ! stripeConfiguration ) {
-			debug( 'isApplePayAvailable waiting on stripe' );
-			return unsubscribe;
-		}
-
-		// Our Apple Pay implementation uses the Payment Request API, so
-		// check that first.
-		if ( ! window.PaymentRequest ) {
-			debug( 'isApplePayAvailable giving up because there is no paymentRequest API' );
-			setCanMakePayment( { isLoading: false, value: false } );
-			return unsubscribe;
-		}
-
-		// Ask the browser if apple pay can be used. This can be very
-		// expensive on certain Safari versions due to a bug
-		// (https://trac.webkit.org/changeset/243447/webkit)
-		try {
-			const browserResponse = !! window.ApplePaySession?.canMakePayments();
-			if ( ! browserResponse ) {
-				debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-				setCanMakePayment( { isLoading: false, value: false } );
-				return unsubscribe;
-			}
-		} catch ( error ) {
-			debug( 'isApplePayAvailable giving up because apple pay is not available in browser' );
-			setCanMakePayment( { isLoading: false, value: false } );
-			return unsubscribe;
-		}
-
-		// Ask Stripe if apple pay can be used. This is async.
-		const countryCode =
-			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
-		const currency = items.reduce(
-			( firstCurrency, item ) => firstCurrency || item.amount.currency,
-			'usd'
-		);
-		const paymentRequestOptions = {
-			requestPayerName: true,
-			requestPayerPhone: false,
-			requestPayerEmail: false,
-			requestShipping: false,
-			country: countryCode,
-			currency: currency.toLowerCase(),
-			// This is just used here to determine if apple pay is available, not for the actual payment, so we leave this blank
-			displayItems: [],
-			total: {
-				label: 'Total',
-				amount: 0,
-			},
-		};
-		const request = stripe.paymentRequest( paymentRequestOptions );
-		request.canMakePayment().then( ( result ) => {
-			debug( 'applePay canMakePayment returned', result );
-			if ( ! isSubscribed ) {
-				debug( 'useIsApplePayAvailable not subscribed; not updating' );
-				return;
-			}
-			debug( 'isApplePayAvailable setting result from Stripe', !! result?.applePay );
-			setCanMakePayment( { isLoading: false, value: !! result?.applePay } );
-		} );
-
-		return unsubscribe;
-	}, [ canMakePayment, stripe, items, stripeConfiguration, isStripeError ] );
-
-	debug( 'useIsApplePayAvailable', canMakePayment );
-	return { canMakePayment: canMakePayment.value, isLoading: canMakePayment.isLoading };
-}
-
-export function filterAppropriatePaymentMethods( {
-	paymentMethodObjects,
-	total,
-	credits,
-	subtotal,
-	allowedPaymentMethods,
-	serverAllowedPaymentMethods,
-} ) {
-	const isPurchaseFree = total.amount.value === 0;
-	const isFullCredits =
-		! isPurchaseFree && credits?.amount.value > 0 && credits?.amount.value >= subtotal.amount.value;
-	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
-	debug( 'filtering payment methods with this input', {
-		total,
-		credits,
-		subtotal,
-		allowedPaymentMethods,
-		serverAllowedPaymentMethods,
-		isPurchaseFree,
-		isFullCredits,
-		countryCode,
-	} );
-
-	return paymentMethodObjects
-		.filter( ( methodObject ) => {
-			// If the purchase is free, only display the free-purchase method
-			if ( methodObject.id === 'free-purchase' ) {
-				return isPurchaseFree ? true : false;
-			}
-			return isPurchaseFree ? false : true;
-		} )
-		.filter( ( methodObject ) => {
-			// If the purchase is full-credits, only display the full-credits method
-			if ( methodObject.id === 'full-credits' ) {
-				return isFullCredits ? true : false;
-			}
-			return isFullCredits ? false : true;
-		} )
-		.filter( ( methodObject ) => {
-			// Some country-specific payment methods should only be available if that
-			// country is selected in the contact information.
-			if ( methodObject.id === 'netbanking' && countryCode !== 'IN' ) {
-				return false;
-			}
-			if ( methodObject.id === 'ebanx-tef' && countryCode !== 'BR' ) {
-				return false;
-			}
-			return true;
-		} )
-		.filter( ( methodObject ) => {
-			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
-				return isPaymentMethodEnabled(
-					'card',
-					allowedPaymentMethods || serverAllowedPaymentMethods
-				);
-			}
-			if ( methodObject.id === 'full-credits' ) {
-				// If the full-credits payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			if ( methodObject.id === 'free-purchase' ) {
-				// If the free payment method still exists here (see above filter), it's enabled
-				return true;
-			}
-			return isPaymentMethodEnabled(
-				methodObject.id,
-				allowedPaymentMethods || serverAllowedPaymentMethods
-			);
-		} )
-		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
-}
-
-export function needsDomainDetails( cart ) {
-	if ( cart && hasOnlyRenewalItems( cart ) ) {
-		return false;
-	}
-	if (
-		cart &&
-		( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-	) {
-		return true;
-	}
-	return false;
-}
-
 export function createStripePaymentMethodToken( { stripe, name, country, postalCode } ) {
 	return createStripePaymentMethod( stripe, {
 		name,
@@ -576,11 +341,4 @@ export function getPostalCode() {
 	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
 	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
 	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
-}
-
-function isPaymentMethodLegallyRestricted( paymentMethodId ) {
-	// Add the names of any legally-restricted payment methods to this list.
-	const restrictedPaymentMethods = [];
-
-	return restrictedPaymentMethods.includes( paymentMethodId );
 }

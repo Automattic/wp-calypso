@@ -376,7 +376,7 @@ class CalypsoifyIframe extends Component<
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
 			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
-			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
+			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' );
 			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {

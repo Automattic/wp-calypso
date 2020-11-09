@@ -82,7 +82,7 @@ import {
 	makeRedirectResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus, PaymentProcessorResponseType } from './types';
+export * from './types';
 
 // Re-export the public API
 export {
@@ -103,14 +103,11 @@ export {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	FormStatus,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
-	PaymentProcessorResponseType,
 	SubmitButtonWrapper,
-	TransactionStatus,
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,

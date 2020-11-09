@@ -48,7 +48,7 @@ function updateEditor() {
 		// Don't proceed if the launch URL is missing
 		! window?.calypsoifyGutenberg?.launchUrl ||
 		// Don't proceed is the site wasn't created through Gutenbaording,
-		// or if the gutenboarding/persistent-launch-button flag is enabled
+		// or if the create/persistent-launch-button flag is enabled
 		! ( isGutenboarding || isPersistentLaunchButton )
 	) {
 		return;

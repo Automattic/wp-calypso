@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo, useEffect, useRef } from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import {
+import type {
 	TempResponseCart,
+	ResponseCart,
 	RequestCartProduct,
 	CartLocation,
 	ShoppingCartManager,
@@ -102,10 +103,15 @@ export default function useShoppingCartManager( {
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
 	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+
 	const responseCartWithoutTempProducts = useMemo(
 		() => convertTempResponseCartToResponseCart( responseCart ),
 		[ responseCart ]
 	);
+	const lastValidResponseCart = useRef< ResponseCart >( responseCartWithoutTempProducts );
+	if ( cacheStatus === 'valid' ) {
+		lastValidResponseCart.current = responseCartWithoutTempProducts;
+	}
 
 	const shoppingCartManager = useMemo(
 		() => ( {
@@ -122,10 +128,10 @@ export default function useShoppingCartManager( {
 			replaceProductInCart,
 			replaceProductsInCart,
 			reloadFromServer,
-			responseCart: responseCartWithoutTempProducts,
+			responseCart: lastValidResponseCart.current,
 		} ),
 		[
-			responseCartWithoutTempProducts,
+			lastValidResponseCart,
 			isLoading,
 			isPendingUpdate,
 			loadingErrorForManager,

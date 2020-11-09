@@ -137,7 +137,7 @@ class ToolsMenu extends PureComponent {
 	render() {
 		const menuItems = [ this.getPluginItem(), this.getImportItem(), this.getExportItem() ];
 
-		return <ul>{ menuItems.map( this.renderMenuItem, this ) }</ul>;
+		return menuItems.map( this.renderMenuItem, this );
 	}
 }
 

@@ -145,7 +145,7 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 					return reduxDispatch(
 						recordTracksEvent( 'calypso_checkout_composite_stored_card_error', {
 							error_type: action.payload.type,
-							error_message: String( action.payload.message ),
+							error_message: String( action.payload ),
 						} )
 					);
 				case 'CART_ERROR':
