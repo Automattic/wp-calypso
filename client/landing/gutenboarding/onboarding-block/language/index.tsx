@@ -11,7 +11,7 @@ import LanguagePicker, { createLanguageGroups } from '@automattic/language-picke
  * Internal dependencies
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
-import { languages } from '../../../../languages';
+import languages from '@automattic/languages';
 
 /**
  * Style dependencies

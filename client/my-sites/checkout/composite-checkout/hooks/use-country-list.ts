@@ -10,20 +10,23 @@ import { useSelector, useDispatch } from 'react-redux';
  */
 import getCountries from 'calypso/state/selectors/get-countries';
 import { fetchPaymentCountries } from 'calypso/state/countries/actions';
+import type { CountryListItem } from '../types/country-list-item';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-country-list' );
 
-export default function useCountryList( overrideCountryList ) {
+export default function useCountryList(
+	overrideCountryList: CountryListItem[]
+): CountryListItem[] {
 	// Should we fetch the country list from global state?
 	const shouldFetchList = overrideCountryList?.length <= 0;
 
 	const [ countriesList, setCountriesList ] = useState( overrideCountryList );
 
 	const reduxDispatch = useDispatch();
-	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) );
+	const globalCountryList = useSelector( ( state ) => getCountries( state, 'payments' ) ) || [];
 
 	// Has the global list been populated?
-	const isListFetched = globalCountryList?.length > 0;
+	const isListFetched = globalCountryList.length > 0;
 
 	useEffect( () => {
 		if ( shouldFetchList ) {

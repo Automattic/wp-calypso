@@ -15,7 +15,6 @@ export {
  * Docs examples
  */
 export { default as ActionCard } from 'calypso/components/action-card';
-export { default as Accordion } from 'calypso/components/accordion';
 export { default as Animate } from 'calypso/components/animate';
 export { default as BackButton } from 'calypso/components/back-button';
 export { default as Badge } from 'calypso/components/badge';
