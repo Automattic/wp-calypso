@@ -34,22 +34,26 @@ export async function makeAuthRequest( username, password, authCode = '' ) {
 }
 
 export function bumpStats( error ) {
+	if ( ! error ) {
+		recordTracksEvent( 'calypso_oauth_login_success' );
+		bumpStat( 'calypso_oauth_login', 'success' );
+		return;
+	}
+
 	const errorType = error.type ? error.type : `status_${ error.status }`;
 
 	if ( errorType === errors.ERROR_REQUIRES_2FA ) {
 		recordTracksEvent( 'calypso_oauth_login_needs2fa' );
 		bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
-	} else if ( errorType ) {
-		recordTracksEvent( 'calypso_oauth_login_fail', {
-			error: error.error,
-		} );
-
-		bumpStat( {
-			calypso_oauth_login_error: errorType,
-			calypso_oauth_login: 'error',
-		} );
-	} else {
-		recordTracksEvent( 'calypso_oauth_login_success' );
-		bumpStat( 'calypso_oauth_login', 'success' );
+		return;
 	}
+
+	recordTracksEvent( 'calypso_oauth_login_fail', {
+		error: error.error,
+	} );
+
+	bumpStat( {
+		calypso_oauth_login_error: errorType,
+		calypso_oauth_login: 'error',
+	} );
 }
