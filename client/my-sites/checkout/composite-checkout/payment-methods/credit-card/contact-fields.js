@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,10 +20,11 @@ export default function ContactFields( {
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 	const countriesList = useCountryList( [] );
+	const { responseCart } = useShoppingCart();
 
 	return (
 		<div className="contact-fields">
-			{ shouldRenderAdditionalCountryFields( getFieldValue( 'countryCode' ) ) && (
+			{ shouldRenderAdditionalCountryFields( getFieldValue( 'countryCode' ), responseCart ) && (
 				<CountrySpecificPaymentFields
 					countryCode={ getFieldValue( 'countryCode' ) }
 					countriesList={ countriesList }
