@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -12,6 +12,10 @@ import { get, uniqueId } from 'lodash';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import config from 'calypso/config';
+
+const isTouch = hasTouch();
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
@@ -48,6 +52,7 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
+	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
 	if ( null === expanded ) {
 		expanded = containsSelectedSidebarItem( children );
@@ -56,7 +61,18 @@ export const ExpandableSidebarMenu = ( {
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
+		hovered: submenuHovered,
 	} );
+
+	const onEnter = () => {
+		if ( expanded || isTouch ) return;
+		setSubmenuHovered( true );
+	};
+
+	const onLeave = () => {
+		if ( expanded || isTouch ) return;
+		setSubmenuHovered( false );
+	};
 
 	const menuId = uniqueId( 'menu' );
 
@@ -72,6 +88,8 @@ export const ExpandableSidebarMenu = ( {
 				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
+				onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
+				onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
 				{ ...props }
 			/>
 			<li role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
