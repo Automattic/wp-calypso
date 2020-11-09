@@ -20,11 +20,7 @@ import {
 	isDomainRedemption,
 	allowedProductAttributes,
 } from 'calypso/lib/products-values';
-import config from 'calypso/config';
-import {
-	translateCheckoutPaymentMethodToWpcomPaymentMethod,
-	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
@@ -321,44 +317,6 @@ export function paymentMethodName( method ) {
 	};
 
 	return paymentMethodsNames[ method ] || method;
-}
-
-/**
- * Determines if a payment method is enabled
- *
- * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
- * @param {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug').CheckoutPaymentMethodSlug} method The short payment method string
- * @returns {boolean} true if enabled
- */
-export function isPaymentMethodEnabled( cart, method ) {
-	const redirectPaymentMethods = [
-		'alipay',
-		'bancontact',
-		'eps',
-		'giropay',
-		'ideal',
-		'netbanking',
-		'paypal',
-		'p24',
-		'brazil-tef',
-		'wechat',
-		'sofort',
-	];
-	const methodClassName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method );
-
-	if ( ! methodClassName ) {
-		return false;
-	}
-
-	// Redirect payments might not be possible in some cases - for example in the desktop app
-	if (
-		redirectPaymentMethods.includes( method ) &&
-		! config.isEnabled( 'upgrades/redirect-payments' )
-	) {
-		return false;
-	}
-
-	return cart.allowed_payment_methods.includes( methodClassName );
 }
 
 export function getLocationOrigin( l ) {
