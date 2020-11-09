@@ -132,6 +132,32 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod 
 	return null;
 }
 
+export function readCheckoutPaymentMethodSlug( slug: string ): CheckoutPaymentMethodSlug | null {
+	switch ( slug ) {
+		case 'ebanx':
+		case 'brazil-tef':
+		case 'netbanking':
+		case 'id_wallet':
+		case 'paypal-direct':
+		case 'paypal':
+		case 'card':
+		case 'alipay':
+		case 'bancontact':
+		case 'eps':
+		case 'giropay':
+		case 'ideal':
+		case 'p24':
+		case 'sofort':
+		case 'stripe-three-d-secure':
+		case 'wechat':
+		case 'apple-pay':
+		case 'full-credits':
+		case 'free-purchase':
+			return slug;
+	}
+	return null;
+}
+
 export function translateCheckoutPaymentMethodToTracksPaymentMethod(
 	paymentMethod: CheckoutPaymentMethodSlug
 ): string {

@@ -11,7 +11,10 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutCartItem } from '../types/checkout-cart';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
-import { isRedirectPaymentMethod } from './translate-payment-method-names';
+import {
+	isRedirectPaymentMethod,
+	readCheckoutPaymentMethodSlug,
+} from './translate-payment-method-names';
 import config from 'calypso/config';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
@@ -75,15 +78,19 @@ export default function filterAppropriatePaymentMethods( {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled( 'card', allowedPaymentMethods );
 			}
-			if ( methodObject.id === 'full-credits' ) {
+			const slug = readCheckoutPaymentMethodSlug( methodObject.id );
+			if ( ! slug ) {
+				return false;
+			}
+			if ( slug === 'full-credits' ) {
 				// If the full-credits payment method still exists here (see above filter), it's enabled
 				return true;
 			}
-			if ( methodObject.id === 'free-purchase' ) {
+			if ( slug === 'free-purchase' ) {
 				// If the free payment method still exists here (see above filter), it's enabled
 				return true;
 			}
-			return isPaymentMethodEnabled( methodObject.id, allowedPaymentMethods );
+			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
 		} )
 		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
 }
