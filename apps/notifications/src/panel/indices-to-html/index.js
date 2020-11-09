@@ -232,13 +232,10 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 				}
 			}
 
-			// Since we've picked a range we'll record some information for future reference
-			const range_info = range_data[ range.id ]; // the origin range data
-			const new_sub_text = sub_text.substring( i, i + range.len ); // the text we will be recursing with
-			const new_sub_range = sub_ranges.slice( i, i + ( range.len > 0 ? range.len : 1 ) ); // the new ranges we'll be recursing with
-
-			// Remove empty ranges processed on this iteration so they are not picked on next iteration.
-			ranges[ i ].index = ranges[ i ].index.filter( ( sub_range ) => sub_range.len > 0 );
+			// Since we've picked a range we'll record some information for future reference.
+			const range_info = range_data[ range.id ]; // The origin range data.
+			const new_sub_text = sub_text.substring( i, i + range.len ); // The text we will be recursing with.
+			const new_sub_range = sub_ranges.slice( i, i + ( range.len > 0 ? range.len : 1 ) ); // The new ranges we'll be recursing with.
 
 			for ( let j = 0; j < new_sub_range.length; j++ ) {
 				new_sub_range[ j ].index = new_sub_range[ j ].index.filter( ( new_range ) => {
@@ -253,11 +250,6 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 						return false;
 					}
 
-					// Remove empty ranges if we've picked a non-empty range.
-					if ( range.len > 0 && new_range.len === 0 ) {
-						return false;
-					}
-
 					return true;
 				} );
 			}
@@ -266,7 +258,12 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 				render_range( new_sub_text, new_sub_range, range_info, range_data, options )
 			);
 
-			i += range.len - 1; // the position we will be jumping to after recursing
+			// Remove empty ranges from the current position so they are not picked again during the
+			// next iteration if the position doesn't change (only possible if the picked range for
+			// the current iteration is empty).
+			ranges[ i ].index = ranges[ i ].index.filter( ( sub_range ) => sub_range.len > 0 );
+
+			i += range.len - 1; // The position we will be jumping to after recursing.
 		}
 	}
 	if ( text_start != null ) {
