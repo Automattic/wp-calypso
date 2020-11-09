@@ -27,6 +27,7 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
 	--theme-base-color: #59524c; /* Direct from wp-admin */
 	--theme-base-color-rgb: 89, 82, 76; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #cdcbc9; /* mix( $base-color, $text-color, 30% ) */
 	--theme-submenu-background-color: #46403c; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
 	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
 	--theme-highlight-color: #c7a589; /* Direct from wp-admin */
@@ -135,6 +136,12 @@ The wp-admin highlight color hue is 27, while studio-orange ranges from 25 to 35
 	/* Sidebar Hover - Nav unification */
 	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
 	--color-sidebar-menu-hover: var( --theme-text-color );
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
+	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
 
 	.upsell-nudge.banner.card.is-compact {
 		background-color: #302c29; /* 15% Darken on base color, #59524c */
