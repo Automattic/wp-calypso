@@ -15,7 +15,7 @@ const Sidebar = ( { children, onClick, className, ...props } ) => {
 	const finalClassName = classNames( 'sidebar', className, { 'has-regions': hasRegions } );
 
 	return (
-		<div
+		<ul
 			role="presentation"
 			className={ finalClassName }
 			onClick={ onClick }
@@ -23,7 +23,7 @@ const Sidebar = ( { children, onClick, className, ...props } ) => {
 			{ ...props }
 		>
 			{ children }
-		</div>
+		</ul>
 	);
 };
 

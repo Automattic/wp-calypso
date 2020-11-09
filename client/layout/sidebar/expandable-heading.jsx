@@ -24,12 +24,14 @@ const ExpandableSidebarHeading = ( {
 	materialIconStyle,
 	expanded,
 	menuId,
+	...props
 } ) => {
 	return (
 		<SidebarHeading
 			aria-controls={ menuId }
 			aria-expanded={ expanded ? 'true' : 'false' }
 			onClick={ onClick }
+			{ ...props }
 		>
 			{ icon && <Gridicon className="sidebar__menu-icon" icon={ icon } /> }
 			{ materialIcon && (
