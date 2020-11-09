@@ -16,8 +16,8 @@ import { Component, Fragment } from '@wordpress/element';
 
 class PostContentEdit extends Component {
 	toggleEditing() {
-		const { isEditing, setState } = this.props;
-		setState( { isEditing: ! isEditing } );
+		// const { isEditing, setState } = this.props;
+		// setState( { isEditing: ! isEditing } );
 	}
 
 	onSelectPost( { id, type } ) {
