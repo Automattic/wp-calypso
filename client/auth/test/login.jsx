@@ -14,13 +14,12 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { Auth } from '../login';
-import { makeAuthRequest } from '../oauth-utils';
+import { makeAuthRequest } from '../login-request';
 import FormButton from 'calypso/components/forms/form-button';
 
-jest.mock( '../oauth-utils', () => ( {
+jest.mock( '../login-request', () => ( {
 	makeAuthRequest: require( 'sinon' ).stub(),
 	bumpStats: () => {},
-	actions: {},
 	errors: {},
 } ) );
 
