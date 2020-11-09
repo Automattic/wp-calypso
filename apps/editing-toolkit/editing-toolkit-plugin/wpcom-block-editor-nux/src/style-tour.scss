@@ -1,0 +1,31 @@
+// Core modal style overrides
+$wpcom-modal-breakpoint: 660px;
+
+$wpcom-modal-padding-v: 40px;
+$wpcom-modal-padding-h: 50px;
+$wpcom-modal-content-min-height: 350px;
+$wpcom-modal-footer-padding-v: 20px;
+$wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
+
+.wpcom-block-editor-nux-tour {
+	&.components-modal__frame {
+		overflow: visible;
+		height: 65vh;
+		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
+
+		// Small screen
+		@media ( max-width: $wpcom-modal-breakpoint ) {
+			width: 90vw;
+			min-width: 90vw;
+			left: 0;
+			right: 5vw;
+		}
+
+		// Tablet & desktop
+		@media ( min-width: $wpcom-modal-breakpoint ) {
+			width: 720px;
+			height: $wpcom-modal-content-min-height;
+			top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
+		}
+	}
+}
