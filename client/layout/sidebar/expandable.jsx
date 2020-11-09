@@ -35,22 +35,22 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
-export const ExpandableSidebarMenu = ( props ) => {
-	const {
-		className,
-		title,
-		count,
-		onClick,
-		icon,
-		materialIcon,
-		materialIconStyle,
-		customIcon,
-	} = props;
-
+export const ExpandableSidebarMenu = ( {
+	className,
+	title,
+	count,
+	onClick,
+	icon,
+	materialIcon,
+	materialIconStyle,
+	customIcon,
+	children,
+	...props
+} ) => {
 	let { expanded } = props;
 
 	if ( null === expanded ) {
-		expanded = containsSelectedSidebarItem( props.children );
+		expanded = containsSelectedSidebarItem( children );
 	}
 
 	const classes = classNames( className, {
@@ -72,15 +72,11 @@ export const ExpandableSidebarMenu = ( props ) => {
 				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
+				{ ...props }
 			/>
-			<div
-				role="region"
-				id={ menuId }
-				className="sidebar__expandable-content"
-				hidden={ ! expanded }
-			>
-				{ props.children }
-			</div>
+			<li role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
+				<ul>{ children }</ul>
+			</li>
 		</SidebarMenu>
 	);
 };

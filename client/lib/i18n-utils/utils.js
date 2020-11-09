@@ -8,7 +8,7 @@ import i18n, { getLocaleSlug } from 'i18n-calypso';
  * Internal dependencies
  */
 import config from 'calypso/config';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import { getUrlParts, getUrlFromParts } from 'calypso/lib/url/url-parts';
 
 /**

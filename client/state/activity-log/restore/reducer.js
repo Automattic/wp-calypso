@@ -25,7 +25,18 @@ const startProgress = ( state, { timestamp } ) => ( {
 
 const updateProgress = (
 	state,
-	{ errorCode, failureReason, message, percent, restoreId, status, timestamp, rewindId, context }
+	{
+		errorCode,
+		failureReason,
+		message,
+		percent,
+		restoreId,
+		status,
+		timestamp,
+		rewindId,
+		context,
+		currentEntry,
+	}
 ) => ( {
 	errorCode,
 	failureReason,
@@ -36,6 +47,7 @@ const updateProgress = (
 	timestamp,
 	rewindId,
 	context,
+	currentEntry,
 } );
 
 export const restoreProgress = withSchemaValidation(

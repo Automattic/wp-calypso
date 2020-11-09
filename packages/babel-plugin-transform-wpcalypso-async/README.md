@@ -31,8 +31,8 @@ See [Babel options documentation](http://babeljs.io/docs/usage/options/) for mor
 `asyncRequire` expects one required argument, with an optional callback:
 
 ```js
-asyncRequire( 'components/accordion', ( Accordion ) => {
-	console.log( Accordion );
+asyncRequire( 'calypso/components/search', ( Search ) => {
+	console.log( Search );
 } );
 ```
 
@@ -41,7 +41,7 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 ```js
 // Before:
 
-<AsyncLoad require="components/accordion" />;
+<AsyncLoad require="calypso/components/search" />;
 ```
 
 ```js
@@ -49,7 +49,7 @@ asyncRequire( 'components/accordion', ( Accordion ) => {
 
 <AsyncLoad
 	require={ function ( callback ) {
-		asyncRequire( 'components/accordion', callback );
+		asyncRequire( 'calypso/components/search', callback );
 	} }
 />;
 ```

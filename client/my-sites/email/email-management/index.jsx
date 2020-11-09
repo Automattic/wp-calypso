@@ -50,6 +50,7 @@ import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 import EmailProvidersComparison from '../email-providers-comparison';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 /**
  * Style dependencies
@@ -135,11 +136,19 @@ class EmailManagement extends React.Component {
 
 		const domainList = selectedDomainName ? [ getSelectedDomain( this.props ) ] : domains;
 
-		if ( domainList.some( hasGSuiteWithUs ) || domainList.some( hasTitanMailWithUs ) ) {
+		const validDomains = domainList.filter(
+			( domain ) => domain.type === domainTypes.REGISTERED || domain.type === domainTypes.MAPPED
+		);
+
+		if ( validDomains.some( hasGSuiteWithUs ) || validDomains.some( hasTitanMailWithUs ) ) {
 			return this.googleAppsUsersCard();
 		}
 
-		const selectedDomain = domainList[ 0 ];
+		if ( validDomains.length === 0 ) {
+			return this.emptyContent();
+		}
+
+		const selectedDomain = validDomains[ 0 ];
 		return (
 			<EmailProvidersComparison
 				domain={ selectedDomain }

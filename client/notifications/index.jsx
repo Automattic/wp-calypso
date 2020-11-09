@@ -19,6 +19,13 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import page from 'page';
 import { connect } from 'react-redux';
+import NotificationsPanel, {
+	refreshNotes,
+} from '@automattic/notifications/src/panel/Notifications';
+
+/**
+ * Internal dependencies
+ */
 import wpcom from 'calypso/lib/wp';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import config from 'calypso/config';
@@ -28,11 +35,6 @@ import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-
 import { setUnseenCount } from 'calypso/state/notifications';
 import { shouldForceRefresh } from 'calypso/state/notifications-panel/selectors';
 import { didForceRefresh } from 'calypso/state/notifications-panel/actions';
-
-/**
- * Internal dependencies
- */
-import NotificationsPanel, { refreshNotes } from './src/panel/Notifications';
 
 /**
  * Style dependencies

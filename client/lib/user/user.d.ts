@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import { EventEmitter } from 'events';
-import { Language } from '../../languages';
+import { Language } from '@automattic/languages';
 import { GravatarOptions } from '../../gravatar/types';
 import { URL, JSONSerializable } from '../../types';
 

@@ -121,7 +121,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				`type-${ type }`
 			) }
 		>
-			{ type === ITEM_TYPE_RADIO &&
+			{ [ ITEM_TYPE_RADIO, ITEM_TYPE_INDIVIDUAL_ITEM ].indexOf( type ) > -1 &&
 				( isLoading ? (
 					<Spinner />
 				) : (

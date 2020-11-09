@@ -732,7 +732,7 @@ const StepTitle = styled.span< StepTitleProps & React.HTMLAttributes< HTMLSpanEl
 	font-weight: ${ ( props ) =>
 		props.isActive ? props.theme.weights.bold : props.theme.weights.normal };
 	margin-right: ${ ( props ) => ( props.fullWidth ? '0' : '8px' ) };
-	flex: ${ ( props ) => ( props.fullWidth ? '1' : 'inherit' ) };
+	flex: 1;
 
 	.rtl & {
 		margin-right: 0;
