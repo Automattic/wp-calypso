@@ -17,10 +17,10 @@ import {
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	WPCOMPaymentMethodClass,
 } from '../types/backend/payment-method';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
+import doesValueExist from './does-value-exist';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -129,6 +129,13 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+
+	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
+		.map( readWPCOMPaymentMethodClass )
+		.filter( doesValueExist )
+		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
+
 	return {
 		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
@@ -137,15 +144,10 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
-		allowedPaymentMethods: allowed_payment_methods
-			.map( readWPCOMPaymentMethodClass )
-			.filter( ( Boolean as WPCOMPaymentMethodClass ) as ExcludesNull )
-			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod ),
+		allowedPaymentMethods,
 		couponCode: coupon,
 	};
 }
-
-type ExcludesNull = < T >( x: T | null ) => x is T;
 
 function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.

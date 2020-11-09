@@ -7,21 +7,6 @@ import { CheckoutPaymentMethodSlug } from '../checkout-payment-method-slug';
  * Payment method slugs as returned by the WPCOM backend.
  * These need to be translated to the values expected by
  * composite-checkout.
- *
- * Defining these as interfaces allows WPCOMPaymentMethodClass
- * to be treated as a discriminated union so the compiler
- * can do exhaustiveness checking. For example, in a switch
- * block such as
- *
- *     // method : WPCOMPaymentMethodClass
- *     switch ( method.name ) {
- *       case ...
- *     }
- *
- * the typescript compiler will raise an error if we forget to
- * handle all the cases.
- *
- * @see https://www.typescriptlang.org/docs/handbook/advanced-types.html#exhaustiveness-checking
  */
 export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_WPCOM'
@@ -43,22 +28,7 @@ export type WPCOMPaymentMethod =
 	| 'WPCOM_Billing_Stripe_Source_Wechat'
 	| 'WPCOM_Billing_Web_Payment';
 
-export type WPCOMPaymentMethodClass = { name: WPCOMPaymentMethod };
-
-/**
- * Convert a payment method class name from a string to a
- * typed value. This function is extensionally equivalent to
- *
- *     ( slug ) => { name: slug }
- *
- * However the explicit switch is necessary for inferring the
- * correct type.
- *
- * @param slug Name of one of the payment method classes on WPCOM
- *
- * @returns Typed payment method slug or null
- */
-export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodClass | null {
+export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethod | null {
 	switch ( slug ) {
 		case 'WPCOM_Billing_WPCOM':
 		case 'WPCOM_Billing_Ebanx':
@@ -78,7 +48,7 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
 		case 'WPCOM_Billing_Stripe_Source_Three_D_Secure':
 		case 'WPCOM_Billing_Stripe_Source_Wechat':
 		case 'WPCOM_Billing_Web_Payment':
-			return { name: slug };
+			return slug;
 	}
 	return null;
 }
@@ -90,9 +60,9 @@ export function readWPCOMPaymentMethodClass( slug: string ): WPCOMPaymentMethodC
  * @returns Payment method slug accepted by the checkout component
  */
 export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
-	paymentMethod: WPCOMPaymentMethodClass
+	paymentMethod: WPCOMPaymentMethod
 ): CheckoutPaymentMethodSlug {
-	switch ( paymentMethod.name ) {
+	switch ( paymentMethod ) {
 		case 'WPCOM_Billing_WPCOM':
 			return 'free-purchase';
 		case 'WPCOM_Billing_Ebanx':
@@ -134,49 +104,49 @@ export function translateWpcomPaymentMethodToCheckoutPaymentMethod(
 
 export function translateCheckoutPaymentMethodToWpcomPaymentMethod(
 	paymentMethod: CheckoutPaymentMethodSlug
-): WPCOMPaymentMethodClass | null {
+): WPCOMPaymentMethod | null {
 	// existing cards have unique paymentMethodIds
 	if ( paymentMethod.startsWith( 'existingCard' ) ) {
 		paymentMethod = 'card';
 	}
 	switch ( paymentMethod ) {
 		case 'ebanx':
-			return { name: 'WPCOM_Billing_Ebanx' };
+			return 'WPCOM_Billing_Ebanx';
 		case 'brazil-tef':
-			return { name: 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef' };
+			return 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef';
 		case 'netbanking':
-			return { name: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking' };
+			return 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking';
 		case 'id_wallet':
-			return { name: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet' };
+			return 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet';
 		case 'paypal-direct':
-			return { name: 'WPCOM_Billing_PayPal_Direct' };
+			return 'WPCOM_Billing_PayPal_Direct';
 		case 'paypal':
-			return { name: 'WPCOM_Billing_PayPal_Express' };
+			return 'WPCOM_Billing_PayPal_Express';
 		case 'card':
-			return { name: 'WPCOM_Billing_Stripe_Payment_Method' };
+			return 'WPCOM_Billing_Stripe_Payment_Method';
 		case 'alipay':
-			return { name: 'WPCOM_Billing_Stripe_Source_Alipay' };
+			return 'WPCOM_Billing_Stripe_Source_Alipay';
 		case 'bancontact':
-			return { name: 'WPCOM_Billing_Stripe_Source_Bancontact' };
+			return 'WPCOM_Billing_Stripe_Source_Bancontact';
 		case 'eps':
-			return { name: 'WPCOM_Billing_Stripe_Source_Eps' };
+			return 'WPCOM_Billing_Stripe_Source_Eps';
 		case 'giropay':
-			return { name: 'WPCOM_Billing_Stripe_Source_Giropay' };
+			return 'WPCOM_Billing_Stripe_Source_Giropay';
 		case 'ideal':
-			return { name: 'WPCOM_Billing_Stripe_Source_Ideal' };
+			return 'WPCOM_Billing_Stripe_Source_Ideal';
 		case 'p24':
-			return { name: 'WPCOM_Billing_Stripe_Source_P24' };
+			return 'WPCOM_Billing_Stripe_Source_P24';
 		case 'sofort':
-			return { name: 'WPCOM_Billing_Stripe_Source_Sofort' };
+			return 'WPCOM_Billing_Stripe_Source_Sofort';
 		case 'stripe-three-d-secure':
-			return { name: 'WPCOM_Billing_Stripe_Source_Three_D_Secure' };
+			return 'WPCOM_Billing_Stripe_Source_Three_D_Secure';
 		case 'wechat':
-			return { name: 'WPCOM_Billing_Stripe_Source_Wechat' };
+			return 'WPCOM_Billing_Stripe_Source_Wechat';
 		case 'apple-pay':
-			return { name: 'WPCOM_Billing_Web_Payment' };
+			return 'WPCOM_Billing_Web_Payment';
 		case 'full-credits':
-			return { name: 'WPCOM_Billing_WPCOM' };
+			return 'WPCOM_Billing_WPCOM';
 		case 'free-purchase':
-			return { name: 'WPCOM_Billing_WPCOM' };
+			return 'WPCOM_Billing_WPCOM';
 	}
 }
