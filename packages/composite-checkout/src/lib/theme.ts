@@ -72,7 +72,7 @@ const theme: Theme = {
 		disabledPaymentButtons: swatches.gray0,
 		disabledPaymentButtonsAccent: swatches.gray5,
 		disabledButtons: swatches.gray20,
-		borderColor: swatches.gray20,
+		borderColor: swatches.gray10,
 		borderColorLight: swatches.gray5,
 		borderColorDark: swatches.gray50,
 		upcomingStepBackground: swatches.gray5,
