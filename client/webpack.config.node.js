@@ -58,7 +58,7 @@ function getExternals() {
 				// Force all monorepo packages to be bundled. We can guarantee that they are safe
 				// to bundle, and can avoid shipping the entire contents of the `packages/` folder
 				// (there are symlinks into `packages/` from the `node_modules` folder)
-				...packagesInMonorepo().map( ( pgk ) => new RegExp( `^${ pgk.name }(/|$)` ) ),
+				...packagesInMonorepo().map( ( pkg ) => new RegExp( `^${ pkg.name }(/|$)` ) ),
 
 				// bundle the core-js polyfills. We pick only a very small subset of the library
 				// to polyfill a few things that are not supported by the latest LTS Node.js,
