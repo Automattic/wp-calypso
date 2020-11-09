@@ -1319,36 +1319,6 @@ Undocumented.prototype.readTagImages = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.followList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/follow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/follow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.unfollowList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/unfollow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/unfollow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );

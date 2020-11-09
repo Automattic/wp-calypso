@@ -23,6 +23,7 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Style dependencies
@@ -53,6 +54,7 @@ class CreditCards extends Component {
 	}
 
 	goToAddCreditCard = () => {
+		recordTracksEvent( 'calypso_purchases_click_add_new_payment_method' );
 		page( this.props.addPaymentMethodUrl );
 	};
 

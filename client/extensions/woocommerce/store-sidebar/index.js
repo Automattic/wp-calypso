@@ -251,15 +251,13 @@ class StoreSidebar extends Component {
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
 				<SidebarMenu>
-					<ul>
-						{ this.dashboard() }
-						{ showAllSidebarItems && this.products() }
-						{ showAllSidebarItems && this.orders() }
-						{ showAllSidebarItems && this.promotions() }
-						{ showAllSidebarItems && this.reviews() }
-						{ showAllSidebarItems && <SidebarSeparator /> }
-						{ showAllSidebarItems && this.settings() }
-					</ul>
+					{ this.dashboard() }
+					{ showAllSidebarItems && this.products() }
+					{ showAllSidebarItems && this.orders() }
+					{ showAllSidebarItems && this.promotions() }
+					{ showAllSidebarItems && this.reviews() }
+					{ showAllSidebarItems && <SidebarSeparator /> }
+					{ showAllSidebarItems && this.settings() }
 				</SidebarMenu>
 				{ shouldLoadSettings && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Sidebar>
