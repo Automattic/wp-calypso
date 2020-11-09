@@ -30,13 +30,7 @@ import { saveSiteSettings } from 'calypso/state/site-settings/actions';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-import {
-	isPaidForFullyInCredits,
-	isFree,
-	getLocationOrigin,
-	isPaymentMethodEnabled,
-} from 'calypso/lib/cart-values';
-import { hasFreeTrial } from 'calypso/lib/cart-values/cart-items';
+import { getLocationOrigin } from 'calypso/lib/cart-values';
 import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'calypso/state/selectors/get-countries';
@@ -132,25 +126,7 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	getVisiblePaymentBox( { cart, paymentMethods } ) {
-		let i;
-
-		if ( isPaidForFullyInCredits( cart ) ) {
-			return 'credits';
-		} else if ( isFree( cart ) ) {
-			return 'free-cart';
-		} else if ( hasFreeTrial( cart ) ) {
-			return 'free-trial';
-		} else if ( this.state && this.state.userSelectedPaymentBox ) {
-			return this.state.userSelectedPaymentBox;
-		}
-
-		for ( i = 0; i < paymentMethods.length; i++ ) {
-			if ( isPaymentMethodEnabled( cart, get( paymentMethods, [ i ] ) ) ) {
-				return paymentMethods[ i ];
-			}
-		}
-
+	getVisiblePaymentBox() {
 		return null;
 	}
 
