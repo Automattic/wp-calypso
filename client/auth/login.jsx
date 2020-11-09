@@ -62,6 +62,8 @@ export class Auth extends Component {
 
 		debug( 'Error processing login: ' + stateChanges.errorMessage );
 
+		bumpStats( error );
+
 		if ( error.type === errorTypes.ERROR_REQUIRES_2FA ) {
 			stateChanges.requires2fa = true;
 			stateChanges.errorLevel = 'is-info';
@@ -74,6 +76,8 @@ export class Auth extends Component {
 
 	handleLogin = ( response ) => {
 		debug( 'Access token received' );
+
+		bumpStats();
 
 		OAuthToken.setToken( response.body.access_token );
 
@@ -92,7 +96,6 @@ export class Auth extends Component {
 
 			this.handleLogin( response );
 		} catch ( error ) {
-			bumpStats( error );
 			this.setState( this.handleAuthError( error ) );
 		}
 	};
