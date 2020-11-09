@@ -64,7 +64,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s with WordPress.com Credits' ), total.amount.displayValue );
+		return sprintf( __( 'Pay %s with credits' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }
