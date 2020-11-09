@@ -9,11 +9,8 @@ import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
  */
 import type { CheckoutCartItem } from '../types/checkout-cart';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
-import {
-	isRedirectPaymentMethod,
-	readCheckoutPaymentMethodSlug,
-} from './translate-payment-method-names';
-import config from 'calypso/config';
+import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
+import isPaymentMethodEnabled from './is-payment-method-enabled';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
 
@@ -92,21 +89,4 @@ export default function filterAppropriatePaymentMethods( {
 			}
 			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
 		} );
-}
-
-function isPaymentMethodEnabled(
-	slug: CheckoutPaymentMethodSlug,
-	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
-): boolean {
-	// Redirect payments might not be possible in some cases - for example in the desktop app
-	if ( isRedirectPaymentMethod( slug ) && ! config.isEnabled( 'upgrades/redirect-payments' ) ) {
-		return false;
-	}
-
-	// By default, allow all payment methods
-	if ( ! allowedPaymentMethods?.length ) {
-		return true;
-	}
-
-	return allowedPaymentMethods.includes( slug );
 }
