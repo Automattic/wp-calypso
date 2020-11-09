@@ -74,9 +74,9 @@ export const ExpandableSidebarMenu = ( {
 				menuId={ menuId }
 				{ ...props }
 			/>
-			<ul role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
-				{ children }
-			</ul>
+			<li role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
+				<ul>{ children }</ul>
+			</li>
 		</SidebarMenu>
 	);
 };

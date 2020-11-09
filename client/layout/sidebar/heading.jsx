@@ -21,14 +21,16 @@ const SidebarHeading = ( { children, onClick, ...props } ) => {
 
 	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 	return (
-		<li
-			tabIndex={ tabIndex }
-			className="sidebar__heading"
-			onKeyDown={ onKeyDown }
-			onClick={ onClick }
-			{ ...props }
-		>
-			{ children }
+		<li>
+			<h2
+				tabIndex={ tabIndex }
+				className="sidebar__heading"
+				onKeyDown={ onKeyDown }
+				onClick={ onClick }
+				{ ...props }
+			>
+				{ children }
+			</h2>
 		</li>
 	);
 };

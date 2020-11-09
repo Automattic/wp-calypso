@@ -202,15 +202,14 @@ class MeSidebar extends React.Component {
 
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
-						<ul>
-							<SidebarItem
-								selected={ selected === 'get-apps' }
-								link={ '/me/get-apps' }
-								label={ translate( 'Get Apps' ) }
-								icon="my-sites"
-								onNavigate={ this.onNavigate }
-							/>
-						</ul>
+
+						<SidebarItem
+							selected={ selected === 'get-apps' }
+							link={ '/me/get-apps' }
+							label={ translate( 'Get Apps' ) }
+							icon="my-sites"
+							onNavigate={ this.onNavigate }
+						/>
 					</SidebarMenu>
 				</SidebarRegion>
 				<SidebarFooter />
