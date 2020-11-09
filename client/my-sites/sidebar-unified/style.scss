@@ -21,6 +21,11 @@
 	--color-sidebar-gridicon-fill: #a2aab2;
 	--color-sidebar-notice-background: #3c434a;
 
+	--color-sidebar-submenu-background: #32373c;
+	--color-sidebar-submenu-text: #b4b9be;
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: #00b9eb;
+
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
@@ -107,7 +112,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__expandable-content {
-			background: #32373c;
+			background: var( --color-sidebar-submenu-background );
 			padding: 7px 0 8px;
 
 			.sidebar__menu-link {
@@ -116,12 +121,12 @@ $font-size: rem( 14px );
 				font-size: rem( 13px );
 				line-height: 1.4;
 				font-weight: 400;
-				color: #b4b9be;
+				color: var( --color-sidebar-submenu-text );
 
 				&:hover,
 				&:focus {
-					background-color: transparent;
-					color: var( --color-sidebar-menu-hover );
+					background-color: var( --color-sidebar-submenu-hover-background );
+					color: var( --color-sidebar-submenu-hover-text );
 				}
 			}
 
