@@ -73,12 +73,12 @@ export default function FeedItem( props: {
 	owner: string;
 } ) {
 	const { list, owner, item } = props;
-	const feed: Feed | FeedError = useSelector( ( state ) => {
+	const feed = useSelector( ( state ) => {
 		let feed = props.item.meta?.data?.feed;
 		if ( ! feed && props.item.feed_ID ) {
-			feed = getFeed( state, props.item.feed_ID ) as Feed | FeedError;
+			feed = getFeed( state, props.item.feed_ID ) as Feed | undefined;
 		}
-		return feed as Feed | FeedError;
+		return feed;
 	} );
 
 	const isInList = !! useSelector( ( state ) =>
