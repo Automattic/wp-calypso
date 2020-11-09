@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -39,6 +39,11 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
+const offScreen = ( submenu ) => {
+	const rect = submenu.getBoundingClientRect();
+	return rect.y + rect.height > window.innerHeight;
+};
+
 export const ExpandableSidebarMenu = ( {
 	className,
 	title,
@@ -52,7 +57,9 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
+	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
+	const [ submenuStyles, setSubmenuStyles ] = useState( { top: 0 } );
 
 	if ( null === expanded ) {
 		expanded = containsSelectedSidebarItem( children );
@@ -76,8 +83,18 @@ export const ExpandableSidebarMenu = ( {
 
 	const menuId = uniqueId( 'menu' );
 
+	useEffect( () => {
+		if ( offScreen( submenu.current ) ) {
+			setSubmenuStyles( { bottom: 0 } );
+		}
+	}, [ submenuHovered ] );
+
 	return (
-		<SidebarMenu className={ classes }>
+		<SidebarMenu
+			className={ classes }
+			onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
+			onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
+		>
 			<ExpandableSidebarHeading
 				title={ title }
 				count={ count }
@@ -88,11 +105,16 @@ export const ExpandableSidebarMenu = ( {
 				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
-				onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
-				onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
 				{ ...props }
 			/>
-			<li role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
+			<li
+				role="region"
+				ref={ submenu }
+				id={ menuId }
+				className="sidebar__expandable-content"
+				hidden={ ! expanded }
+				style={ submenuStyles }
+			>
 				<ul>{ children }</ul>
 			</li>
 		</SidebarMenu>
