@@ -293,6 +293,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 			case 'Simple Payments':
 			case 'Pay with PayPal':
+				ariaLabel = 'Block: Pay with PayPal';
 				prefix = 'jetpack-';
 				blockClass = 'simple-payments';
 				break;
@@ -651,5 +652,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 			}
 		}
+	}
+
+	async clickUpgradeOnPremiumBlock() {
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
 	}
 }
