@@ -154,6 +154,7 @@ const settings = {
 	save,
 	providesContext: {
 		'premium-content/planId': 'selectedPlanId',
+		'premium-content/isPreview': 'isPreview',
 	},
 };
 

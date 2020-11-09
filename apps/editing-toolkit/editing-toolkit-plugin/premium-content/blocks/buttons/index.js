@@ -23,12 +23,6 @@ const settings = {
 		'full-site-editing'
 	),
 	icon,
-	attributes: {
-		isPreview: {
-			type: 'boolean',
-			default: false,
-		},
-	},
 	supports: {
 		align: true,
 		alignWide: false,
@@ -37,7 +31,7 @@ const settings = {
 	keywords: [ __( 'link', 'full-site-editing' ) ],
 	edit,
 	save,
-	usesContext: [ 'premium-content/planId' ],
+	usesContext: [ 'premium-content/planId', 'premium-content/isPreview' ],
 };
 
 export { name, category, settings };

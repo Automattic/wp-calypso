@@ -24,9 +24,9 @@ const alignmentHooksSetting = {
 	isEmbedButton: true,
 };
 
-function ButtonsEdit( { attributes, context, subscribeButton, setSubscribeButtonPlan } ) {
-	const { isPreview } = attributes;
+function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
+	const isPreview = context ? context[ 'premium-content/isPreview' ] : false;
 
 	const previewTemplate = [
 		[
