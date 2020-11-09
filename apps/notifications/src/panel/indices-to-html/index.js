@@ -352,7 +352,7 @@ function recurse_convert( text, ranges, options ) {
 			for ( let i = ranges[ id ].indices[ 0 ]; i < ranges[ id ].indices[ 1 ]; i++ ) {
 				t[ i ].index.push( { id: id, len: range_len } );
 			}
-		} else if ( typeof t[ ranges[ id ].indices[ 0 ] ] !== 'undefined' ) {
+		} else {
 			t[ ranges[ id ].indices[ 0 ] ].index.push( { id: id, len: range_len } );
 		}
 		// Clear out the currently-selected range so that it won't
