@@ -93,7 +93,6 @@ import {
 	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
-import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
 import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
@@ -117,7 +116,6 @@ export default function CompositeCheckout( {
 	siteId,
 	productAliasFromUrl,
 	getStoredCards,
-	allowedPaymentMethods: overridePaymentMethods,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -134,7 +132,6 @@ export default function CompositeCheckout( {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	getStoredCards?: () => StoredCard[];
-	allowedPaymentMethods?: CheckoutPaymentMethodSlug[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -258,7 +255,7 @@ export default function CompositeCheckout( {
 		total,
 		credits,
 		subtotal,
-		allowedPaymentMethods: serverAllowedPaymentMethods,
+		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
 
 	useShowAddCouponSuccessMessage(
@@ -477,8 +474,6 @@ export default function CompositeCheckout( {
 	} );
 	debug( 'created payment method objects', paymentMethodObjects );
 
-	const allowedPaymentMethods = overridePaymentMethods || serverAllowedPaymentMethods;
-
 	// Once we pass paymentMethods into CompositeCheckout, we should try to avoid
 	// changing them because it can cause awkward UX. Here we try to wait for
 	// them to be all finished loading before we pass them along.
@@ -486,13 +481,9 @@ export default function CompositeCheckout( {
 		items.length < 1 ||
 		isInitialCartLoading ||
 		// Only wait for stored cards to load if we are using cards
-		( allowedPaymentMethods
-			? allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards
-			: isLoadingStoredCards ) ||
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
 		// Only wait for apple pay to load if we are using apple pay
-		( allowedPaymentMethods
-			? allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
-			: isApplePayLoading );
+		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
 
 	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactInfo?.countryCode?.value ?? '';
