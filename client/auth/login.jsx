@@ -5,12 +5,12 @@ import React, { Component } from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
 import AuthCodeButton from './auth-code-button';
-import { makeRequest, handleLogin, handleAuthError } from 'calypso/lib/oauth-utils';
 import config from 'calypso/config';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
@@ -24,6 +24,10 @@ import SelfHostedInstructions from './self-hosted-instructions';
 import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+import * as OAuthToken from 'calypso/lib/oauth-token';
+import { errors as errorTypes, makeAuthRequest, bumpStats } from './oauth-utils';
+
+const debug = debugFactory( 'calypso:oauth' );
 
 export class Auth extends Component {
 	state = {
@@ -48,6 +52,34 @@ export class Auth extends Component {
 		}
 	};
 
+	handleAuthError = ( error ) => {
+		const stateChanges = {
+			errorLevel: 'is-error',
+			requires2fa: false,
+			inProgress: false,
+			errorMessage: error.message,
+		};
+
+		debug( 'Error processing login: ' + stateChanges.errorMessage );
+
+		if ( error.type === errorTypes.ERROR_REQUIRES_2FA ) {
+			stateChanges.requires2fa = true;
+			stateChanges.errorLevel = 'is-info';
+		} else if ( error.type === errorTypes.ERROR_INVALID_OTP ) {
+			stateChanges.requires2fa = true;
+		}
+
+		return stateChanges;
+	};
+
+	handleLogin = ( response ) => {
+		debug( 'Access token received' );
+
+		OAuthToken.setToken( response.body.access_token );
+
+		document.location.replace( '/' );
+	};
+
 	submitForm = async ( event ) => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -56,11 +88,12 @@ export class Auth extends Component {
 
 		try {
 			const { login, password, auth_code } = this.state;
-			const response = await makeRequest( login, password, auth_code );
+			const response = await makeAuthRequest( login, password, auth_code );
 
-			handleLogin( response );
+			this.handleLogin( response );
 		} catch ( error ) {
-			this.setState( handleAuthError( error ) );
+			bumpStats( error );
+			this.setState( this.handleAuthError( error ) );
 		}
 	};
 
