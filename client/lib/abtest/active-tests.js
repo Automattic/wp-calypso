@@ -197,9 +197,10 @@ export default {
 		variations: {
 			'v0 - Offer Reset': 0, // Offer Reset
 			'v1 - 3 cols layout': 0, // first Offer Reset iteration (3 layout columns + simpler cards)
-			'v2 - slide outs': 100, // second Offer Reset iteration (reorder & slide outs)
+			'i2 - slide outs': 100, // second Offer Reset iteration (reorder & slide outs)
+			'i5 - Saas table design': 0, // third Offer Reset iteration (Saas table design)
 		},
-		defaultVariation: 'v2 - slide outs',
+		defaultVariation: 'i2 - slide outs',
 		allowExistingUsers: true,
 	},
 	secureYourBrand: {
