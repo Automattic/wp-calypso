@@ -40,7 +40,7 @@ const settings = {
 	keywords: [ __( 'link', 'full-site-editing' ) ],
 	edit,
 	save,
-	usesContext: [ 'premium-content/planId' ],
+	usesContext: [ 'premium-content/planId', 'premium-content/isPreview' ],
 };
 
 export { name, category, settings };
