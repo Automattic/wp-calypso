@@ -71,7 +71,7 @@ export class Auth extends Component {
 			stateChanges.requires2fa = true;
 		}
 
-		return stateChanges;
+		this.setState( stateChanges );
 	};
 
 	handleLogin = ( response ) => {
@@ -96,7 +96,7 @@ export class Auth extends Component {
 
 			this.handleLogin( response );
 		} catch ( error ) {
-			this.setState( this.handleAuthError( error ) );
+			this.handleAuthError( error );
 		}
 	};
 
