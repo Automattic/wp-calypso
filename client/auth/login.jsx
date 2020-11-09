@@ -108,6 +108,11 @@ export class Auth extends Component {
 	handleChange = ( event ) => {
 		const { name, value } = event.currentTarget;
 
+		if ( name === 'auth_code' ) {
+			this.setState( { auth_code: value.replace( /\s/g, '' ) } );
+			return;
+		}
+
 		this.setState( { [ name ]: value } );
 	};
 

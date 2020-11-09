@@ -16,7 +16,7 @@ export async function makeAuthRequest( username, password, authCode = '' ) {
 		body: JSON.stringify( {
 			username,
 			password,
-			auth_code: authCode.replace( /\s/g, '' ),
+			auth_code: authCode,
 		} ),
 	} );
 
