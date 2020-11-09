@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.3
+Stable tag: 2.8.4
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,18 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.4 =
+* Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)
+* Editor Toolkit: update slide copy in NUX (https://github.com/Automattic/wp-calypso/pull/46674)
+* Focused Launch: fix domain picker not showing in summary page in Calypso (https://github.com/Automattic/wp-calypso/pull/47141)
+* Premium Content: Make text of Subscribe button editable (https://github.com/Automattic/wp-calypso/pull/46983)
+* Remove premium content block placeholder. (https://github.com/Automattic/wp-calypso/pull/47068)
+* Focused Launch: use site title hook in the name step (https://github.com/Automattic/wp-calypso/pull/46921)
+* Add block pattern dom validation tests (https://github.com/Automattic/wp-calypso/pull/45747)
+* Coming soon fallback page: namespace the class names, add an svg for the wp logo (https://github.com/Automattic/wp-calypso/pull/46994)
+* Update global font pairings (https://github.com/Automattic/wp-calypso/pull/46927)
+* Add recordTracksEvent for Editor NUX modal (https://github.com/Automattic/wp-calypso/pull/46796)
 
 = 2.8.3 =
 * Focused Launch: added WIP Focused Launch modal behind a flag (https://github.com/Automattic/wp-calypso/pull/46686)

@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 import config from 'calypso/config';
 import MasterbarItem from './item';
 import LanguagePickerModal from 'calypso/components/language-picker/modal';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import {

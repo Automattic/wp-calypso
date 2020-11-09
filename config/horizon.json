@@ -21,6 +21,7 @@
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
 		"composite-checkout-testing": true,
+		"create/persistent-launch-button": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,
