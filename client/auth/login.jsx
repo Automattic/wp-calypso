@@ -25,7 +25,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import * as OAuthToken from 'calypso/lib/oauth-token';
-import { errors as errorTypes, makeAuthRequest, bumpStats } from './oauth-utils';
+import { errors as errorTypes, makeAuthRequest, bumpStats } from './login-request';
 
 const debug = debugFactory( 'calypso:oauth' );
 
