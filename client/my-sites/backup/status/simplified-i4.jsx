@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getDeltaActivities } from 'calypso/lib/jetpack/backup-utils';
+import { getDeltaActivities, isSuccessfulDailyBackup } from 'calypso/lib/jetpack/backup-utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useApplySiteOffset } from 'calypso/components/site-offset';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -78,6 +78,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		lastBackupBeforeDate,
 		lastBackupAttemptOnDate,
 		earlierBackupAttemptsOnDate,
+		rawDeltas,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
 
 	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
@@ -93,7 +94,13 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		lastBackupAttemptOnDate &&
 		mostRecentBackupEver.activityId === lastBackupAttemptOnDate.activityId;
 
-	const dailyDeltas = getDeltaActivities( [ lastBackupAttemptOnDate ].filter( ( i ) => i ) );
+	// If the latest backup for this date is a full backup,
+	// show details about what it contains
+	const dailyDeltas = getDeltaActivities(
+		isSuccessfulDailyBackup( lastBackupAttemptOnDate )
+			? rawDeltas
+			: [ lastBackupAttemptOnDate ].filter( ( i ) => i )
+	);
 
 	return (
 		<ul className="status__card-list">
