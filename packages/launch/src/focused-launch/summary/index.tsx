@@ -343,6 +343,10 @@ const Summary: React.FunctionComponent = () => {
 
 	const domainSearch = useDomainSearch();
 
+	// @TODO: plan step to be implemented
+	// https://github.com/Automattic/wp-calypso/issues/46865
+	const hasPaidPlan = false;
+
 	// Prepare Steps
 	const renderSiteNameStep = ( index: number ) => (
 		<SiteNameStep
@@ -374,14 +378,14 @@ const Summary: React.FunctionComponent = () => {
 	);
 	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
 
-	// Steps that are not interactive (e.g. user has already selected domain/plan)
-	// Steps that are not interactive (e.g. user has already selected domain/plan)
-	const disabledSteps = hasPaidDomain ? [ renderDomainStep ] : [];
+	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
+	// Active steps require user interaction
+	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
+	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
 
-	// Steps that require the user interaction
-	const activeSteps = hasPaidDomain
-		? [ renderSiteNameStep, renderPlanStep ]
-		: [ renderSiteNameStep, renderDomainStep, renderPlanStep ];
+	activeSteps.push( renderSiteNameStep );
+	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
+	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
 	return (
 		<div className="focused-launch-summary__container">
