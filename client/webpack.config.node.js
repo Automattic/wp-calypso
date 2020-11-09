@@ -7,8 +7,6 @@
 /**
  * External dependencies
  */
-const fs = require( 'fs' );
-const globby = require( 'globby' );
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
@@ -25,6 +23,7 @@ const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpac
 const nodeExternals = require( 'webpack-node-externals' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const ExternalModulesWriter = require( './server/bundler/external-modules' );
+const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 
 /**
  * Internal variables
@@ -43,16 +42,6 @@ const fileLoader = FileConfig.loader( {
 
 const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMIT_SHA : '(unknown)';
 
-function getMonorepoPackages() {
-	// find package.json files in all 1st level subdirectories of packages/
-	return globby.sync( 'packages/*/package.json' ).map( ( pkgJsonPath ) => {
-		// read the package.json file
-		const pkgJson = JSON.parse( fs.readFileSync( pkgJsonPath ) );
-		// create a package name regexp that matches all requests that start with it
-		return new RegExp( `^${ pkgJson.name }(/|$)` );
-	} );
-}
-
 /**
  * This lists modules that must use commonJS `require()`s
  * All modules listed here need to be ES5.
@@ -69,7 +58,7 @@ function getExternals() {
 				// Force all monorepo packages to be bundled. We can guarantee that they are safe
 				// to bundle, and can avoid shipping the entire contents of the `packages/` folder
 				// (there are symlinks into `packages/` from the `node_modules` folder)
-				...getMonorepoPackages(),
+				...packagesInMonorepo().map( ( pkg ) => new RegExp( `^${ pkg.name }(/|$)` ) ),
 
 				// bundle the core-js polyfills. We pick only a very small subset of the library
 				// to polyfill a few things that are not supported by the latest LTS Node.js,
