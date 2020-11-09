@@ -9,13 +9,12 @@ import deepFreeze from 'deep-freeze';
 import { items, listItems, updatedLists, missingLists, subscribedLists } from '../reducer';
 import {
 	READER_LIST_DELETE,
-	READER_LISTS_RECEIVE,
-	READER_LISTS_FOLLOW_SUCCESS,
-	READER_LISTS_UNFOLLOW_SUCCESS,
+	READER_LIST_FOLLOW_RECEIVE,
+	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE_SUCCESS,
-	READER_LIST_DISMISS_NOTICE,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LISTS_RECEIVE,
 } from 'calypso/state/reader/action-types';
 
 describe( 'reducer', () => {
@@ -116,27 +115,6 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).toEqual( [ 841 ] );
-		} );
-
-		test( 'should remove a list ID when a notice is dismissed', () => {
-			let state = updatedLists( null, {
-				type: READER_LIST_UPDATE_SUCCESS,
-				data: {
-					list: {
-						ID: 841,
-						title: 'Hello World',
-					},
-				},
-			} );
-
-			expect( state ).toEqual( [ 841 ] );
-
-			state = updatedLists( null, {
-				type: READER_LIST_DISMISS_NOTICE,
-				listId: 841,
-			} );
-
-			expect( state ).toEqual( [] );
 		} );
 	} );
 
@@ -246,10 +224,8 @@ describe( 'reducer', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
-					type: READER_LISTS_FOLLOW_SUCCESS,
-					data: {
-						list: { ID: 5 },
-					},
+					type: READER_LIST_FOLLOW_RECEIVE,
+					list: { ID: 5 },
 				} )
 			).toEqual( expect.arrayContaining( [ 1, 2, 5 ] ) );
 		} );
@@ -258,10 +234,8 @@ describe( 'reducer', () => {
 			const initial = deepFreeze( [ 1, 2 ] );
 			expect(
 				subscribedLists( initial, {
-					type: READER_LISTS_UNFOLLOW_SUCCESS,
-					data: {
-						list: { ID: 1 },
-					},
+					type: READER_LIST_UNFOLLOW_RECEIVE,
+					list: { ID: 1 },
 				} )
 			).toEqual( [ 2 ] );
 		} );

@@ -10,7 +10,7 @@ import { find, isUndefined } from 'lodash';
 /**
  * Internal dependencies
  */
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import { loadjQueryDependentScriptDesktopWrapper } from 'calypso/lib/load-jquery-dependent-script-desktop-wrapper';
 import user from 'calypso/lib/user';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

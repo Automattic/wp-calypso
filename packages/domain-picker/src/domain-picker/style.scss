@@ -198,6 +198,11 @@ $accent-blue: #117ac9;
 		}
 	}
 
+	// hide the radio button in individual mode
+	&.type-individual-item input[type='radio'].domain-picker__suggestion-radio-button {
+		display: none;
+	}
+
 	.components-spinner {
 		margin: 1px 10px 0 0;
 	}
