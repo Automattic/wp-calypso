@@ -118,6 +118,8 @@ export const ExpandableSidebarMenu = ( {
 				materialIconStyle={ materialIconStyle }
 				expanded={ expanded }
 				menuId={ menuId }
+				onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
+				onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
 				{ ...props }
 			/>
 			<li
