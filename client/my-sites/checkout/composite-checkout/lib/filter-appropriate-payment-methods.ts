@@ -91,15 +91,7 @@ export default function filterAppropriatePaymentMethods( {
 				return true;
 			}
 			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
-		} )
-		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
-}
-
-function isPaymentMethodLegallyRestricted( paymentMethodId: CheckoutPaymentMethodSlug ): boolean {
-	// Add the names of any legally-restricted payment methods to this list.
-	const restrictedPaymentMethods: CheckoutPaymentMethodSlug[] = [];
-
-	return restrictedPaymentMethods.includes( paymentMethodId );
+		} );
 }
 
 function isPaymentMethodEnabled(
