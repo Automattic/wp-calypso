@@ -12,6 +12,7 @@ import LoginFlow from '../lib/flows/login-flow.js';
 
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
+import WPHomePage from '../lib/pages/wp-home-page.js';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -21,6 +22,7 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 
 let driver;
 
@@ -152,6 +154,36 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				originalCartAmount,
 				'Coupon not removed properly'
 			);
+		} );
+
+		step( 'Can Save Order And Continue', async function () {
+			return await driverHelper.clickWhenClickable(
+				driver,
+				By.css(
+					'.composite-checkout .wp-checkout__review-order-step .checkout-button.is-status-primary'
+				)
+			);
+		} );
+	} );
+
+	describe( 'Can Make Payment', function () {
+		const currencyValue = 'GBP';
+		const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
+
+		step( 'We Can Set The Sandbox Cookie For Payments', async function () {
+			// TODO: It doesn't feel right that these methods live in the WPHomePage class?
+			const wPHomePage = await WPHomePage.Expect( driver );
+			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
+			return await wPHomePage.setCurrencyForPayments( currencyValue );
+		} );
+
+		step( 'Can Enter/Submit Test Payment Details', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
+			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
+			await securePaymentComponent.submitPaymentDetails();
+			await securePaymentComponent.waitForCreditCardPaymentProcessing();
+			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 	} );
 } );
