@@ -58,12 +58,12 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
-	const menu = React.createRef(); // Needed for HoverIntent
+	const menu = React.createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
 	if ( submenu.current ) {
-		// Sets flyout to expand towards bottom
+		// Sets flyout to expand towards bottom.
 		submenu.current.style.bottom = 'auto';
 		submenu.current.style.top = 0;
 	}
@@ -98,7 +98,7 @@ export const ExpandableSidebarMenu = ( {
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {
-			// Sets flyout to expand towards top
+			// Sets flyout to expand towards top.
 			submenu.current.style.bottom = 0;
 			submenu.current.style.top = 'auto';
 		}
