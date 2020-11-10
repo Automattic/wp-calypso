@@ -73,7 +73,7 @@ export default function FeedItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement {
+} ): React.ReactElement | null {
 	const { list, owner, item } = props;
 	const feed = useSelector( ( state ) => {
 		let feed = props.item.meta?.data?.feed;

@@ -17,7 +17,7 @@ export default function ListItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement {
+} ): React.ReactElement | null {
 	if ( props.item.feed_ID ) {
 		return <FeedItem { ...props } />;
 	} else if ( props.item.site_ID ) {

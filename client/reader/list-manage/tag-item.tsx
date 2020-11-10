@@ -28,7 +28,7 @@ export default function TagItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement {
+} ): React.ReactElement | null {
 	const { item, list, owner } = props;
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 	const dispatch = useDispatch();

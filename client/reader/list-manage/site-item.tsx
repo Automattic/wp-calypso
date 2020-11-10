@@ -74,9 +74,9 @@ export default function SiteItem( props: {
 	item: Item;
 	list: List;
 	owner: string;
-} ): React.ReactElement {
+} ): React.ReactElement | null {
 	const { item, list, owner } = props;
-	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
+	const site = props.item.meta?.data?.site as Site | SiteError;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 
