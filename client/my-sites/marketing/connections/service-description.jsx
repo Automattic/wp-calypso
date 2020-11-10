@@ -182,20 +182,21 @@ class SharingServiceDescription extends Component {
 		} else if ( 'refresh-failed' === this.props.status ) {
 			if ( this.props.expires ) {
 				description = this.props.translate(
-					'We are unable to refresh your %(service)s token. Please reconnect before %(expiryDate)s',
+					'Your %(service)s connection has expired. This happens sometimes. Click the "Reconnect" button to fix it before %(expiryDate)s',
 					{
 						args: {
 							service: this.props.service.label,
 							expiryDate: this.props.moment( this.props.expires * 1000 ).format( 'll' ),
 						},
-						context: 'Sharing: Publicize',
 					}
 				);
 			} else {
-				description = this.props.translate( 'We are unable to refresh your %(service)s token.', {
-					args: { service: this.props.service.label },
-					context: 'Sharing: Publicize',
-				} );
+				description = this.props.translate(
+					'Your %(service)s connection has expired. This happens sometimes. Click the "Reconnect" button to fix it.',
+					{
+						args: { service: this.props.service.label },
+					}
+				);
 			}
 		} else if (
 			'function' === typeof this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ]
