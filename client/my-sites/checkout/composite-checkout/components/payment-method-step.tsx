@@ -64,9 +64,11 @@ const CheckoutTermsWrapper = styled.div`
 
 export default function PaymentMethodStep( {
 	subtotal,
+	credits,
 	activeStepContent,
 }: {
 	subtotal: LineItemType;
+	credits: LineItemType;
 	activeStepContent: JSX.Element;
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
@@ -85,6 +87,7 @@ export default function PaymentMethodStep( {
 				{ taxes.map( ( tax ) => (
 					<LineItem tax key={ tax.id } item={ tax } />
 				) ) }
+				{ credits && <LineItem subtotal item={ credits } /> }
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 		</>

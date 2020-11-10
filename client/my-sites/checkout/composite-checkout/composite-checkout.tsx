@@ -729,6 +729,7 @@ export default function CompositeCheckout( {
 					responseCart={ responseCart }
 					addItemToCart={ addItemWithEssentialProperties }
 					subtotal={ subtotal }
+					credits={ credits }
 					isCartPendingUpdate={ isCartPendingUpdate }
 					showErrorMessageBriefly={ showErrorMessageBriefly }
 					isLoggedOutCart={ isLoggedOutCart }
