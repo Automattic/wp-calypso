@@ -26,6 +26,19 @@ const alignmentHooksSetting = {
 
 function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
+	const isPreview = context ? context[ 'premium-content/isPreview' ] : false;
+
+	const previewTemplate = [
+		[
+			'core/button',
+			{
+				element: 'a',
+				uniqueId: 'recurring-payments-id',
+				text: __( 'Subscribe', 'full-site-editing' ),
+			},
+		],
+		[ 'premium-content/login-button' ],
+	];
 
 	const template = [
 		[
@@ -81,7 +94,7 @@ function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 			<AlignmentHookSettingsProvider value={ alignmentHooksSetting }>
 				<InnerBlocks
 					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ template }
+					template={ isPreview ? previewTemplate : template }
 					__experimentalMoverDirection="horizontal"
 					templateInsertUpdatesSelection={ false }
 				/>
