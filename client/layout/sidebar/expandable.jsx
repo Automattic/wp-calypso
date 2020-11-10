@@ -59,7 +59,6 @@ export const ExpandableSidebarMenu = ( {
 	let { expanded } = props;
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
-	const [ submenuStyles, setSubmenuStyles ] = useState( { top: 0 } );
 
 	if ( null === expanded ) {
 		expanded = containsSelectedSidebarItem( children );
@@ -90,8 +89,8 @@ export const ExpandableSidebarMenu = ( {
 	const menuId = uniqueId( 'menu' );
 
 	useLayoutEffect( () => {
-		if ( offScreen( submenu.current ) ) {
-			setSubmenuStyles( { bottom: 0 } );
+		if ( submenuHovered && offScreen( submenu.current ) ) {
+			submenu.current.style = 'bottom: 0; top:auto';
 		}
 	}, [ submenuHovered ] );
 
@@ -119,7 +118,6 @@ export const ExpandableSidebarMenu = ( {
 				id={ menuId }
 				className="sidebar__expandable-content"
 				hidden={ ! expanded }
-				style={ submenuStyles }
 			>
 				<ul>{ children }</ul>
 			</li>
