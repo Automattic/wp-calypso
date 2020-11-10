@@ -1,26 +1,24 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
-import React, { RefObject, useMemo, useState, useCallback, useEffect, useRef } from 'react';
-import { useSelector } from 'react-redux';
 import { sortBy } from 'lodash';
+import { useTranslate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ProductCardAlt2 from '../product-card-alt-2';
+import { getProductPosition } from '../product-grid/products-order';
+import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
+import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
+import { isJetpackPlanSlug } from 'calypso/lib/products-values';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
-import { slugToSelectorProduct } from '../utils';
-import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import { isJetpackPlanSlug } from 'calypso/lib/products-values';
-import { getProductPosition } from '../product-grid/products-order';
-import ProductCardAlt2 from '../product-card-alt-2';
-import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 
 /**
  * Type dependencies
@@ -37,8 +35,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	onSelectProduct,
 	urlQueryArgs,
 } ) => {
-	const [ isPlanRowExpanded, setPlanRowExpanded ] = useState( true );
-	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
+	const translate = useTranslate();
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -78,88 +75,53 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 		() => sortedGridItems.filter( ( { productSlug } ) => ! isJetpackPlanSlug( productSlug ) ),
 		[ sortedGridItems ]
 	);
-
-	const planGridRef: RefObject< HTMLDivElement > = useRef( null );
-
-	const onPlanRowFeaturesToggle = useCallback( () => setPlanRowExpanded( ! isPlanRowExpanded ), [
-		isPlanRowExpanded,
-	] );
-	const onResize = useCallback( () => {
-		if ( planGridRef ) {
-			const { current: grid } = planGridRef;
-
-			if ( grid ) {
-				const firstChild = grid.children[ 0 ];
-
-				if ( firstChild instanceof HTMLElement ) {
-					const firtRowItemCount = Math.floor( grid.offsetWidth / firstChild.offsetWidth );
-
-					setPlanRowWrapping( firtRowItemCount < planItems.length );
-				}
-			}
-		}
-	}, [ planGridRef, planItems ] );
-
-	const hasLegacyPlan = currentPlanSlug && JETPACK_LEGACY_PLANS.includes( currentPlanSlug );
 	const isInConnectFlow = useMemo( isConnectionFlow, [] );
-	const showJetpackFreeCard = isInConnectFlow || isJetpackCloud();
-	const currentPlan = currentPlanSlug && slugToSelectorProduct( currentPlanSlug );
-
-	useEffect( () => {
-		onResize();
-		window.addEventListener( 'resize', onResize );
-
-		return () => window.removeEventListener( 'resize', onResize );
-	}, [ onResize ] );
+	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
 
 	return (
 		<>
-			<div
-				className={ classNames( 'products-grid-alt-2 has-plans', {
-					'is-wrapping': isPlanRowWrapping,
-				} ) }
-				ref={ planGridRef }
-			>
-				{ planItems.map( ( product ) => (
-					<ProductCardAlt2
-						key={ product.iconSlug }
-						item={ product }
-						onClick={ onSelectProduct }
-						siteId={ siteId }
-						currencyCode={ currencyCode }
-						selectedTerm={ duration }
-						shouldExpand={ isPlanRowWrapping ? undefined : isPlanRowExpanded }
-						onFeaturesToggle={ isPlanRowWrapping ? undefined : onPlanRowFeaturesToggle }
-					/>
-				) ) }
-			</div>
-			<div className="products-grid-i5">
-				{ hasLegacyPlan && currentPlan && (
-					<ProductCardAlt2
-						key={ currentPlanSlug as string }
-						item={ currentPlan }
-						onClick={ onSelectProduct }
-						siteId={ siteId }
-						currencyCode={ currencyCode }
-						selectedTerm={ duration }
-					/>
-				) }
-
-				{ productItems.map( ( product ) => (
-					<ProductCardAlt2
-						key={ product.iconSlug }
-						item={ product }
-						onClick={ onSelectProduct }
-						siteId={ siteId }
-						currencyCode={ currencyCode }
-						selectedTerm={ duration }
-					/>
-				) ) }
-
-				{ showJetpackFreeCard && siteId && (
-					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
-				) }
-			</div>
+			<section className="products-grid-i5__section">
+				<h2 className="products-grid-i5__section-title">{ translate( 'Product Bundles' ) }</h2>
+				<div className="products-grid-i5__filter-bar"></div>
+				<ul className="products-grid-i5__plan-grid">
+					{ planItems.map( ( product ) => (
+						<li key={ product.iconSlug }>
+							<ProductCardAlt2
+								item={ product }
+								onClick={ onSelectProduct }
+								siteId={ siteId }
+								currencyCode={ currencyCode }
+								selectedTerm={ duration }
+							/>
+						</li>
+					) ) }
+				</ul>
+				<div className="products-grid-i5__more"></div>
+			</section>
+			<section className="products-grid-i5__section">
+				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
+				<ul className="products-grid-i5__product-grid">
+					{ productItems.map( ( product ) => (
+						<li key={ product.iconSlug }>
+							<ProductCardAlt2
+								item={ product }
+								onClick={ onSelectProduct }
+								siteId={ siteId }
+								currencyCode={ currencyCode }
+								selectedTerm={ duration }
+							/>
+						</li>
+					) ) }
+				</ul>
+				<div className="products-grid-i5__free">
+					{ ( isInConnectFlow || isInJetpackCloud ) && siteId && (
+						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
+					) }
+				</div>
+			</section>
+			<section className="products-grid-i5__section">
+				<h2 className="products-grid-i5__section-title">{ translate( 'Bundle Comparison' ) }</h2>
+			</section>
 		</>
 	);
 };

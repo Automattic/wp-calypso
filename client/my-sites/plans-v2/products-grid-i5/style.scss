@@ -1,45 +1,31 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
+.products-grid-i5__section {
+	margin-bottom: 70px;
+}
 
-.products-grid-alt-2 {
-	.jetpack-free-card-alt {
-		/*
-		 * To match its top and bottom border with the borders
-		 * of the product cards next to it
-		 */
-		margin-block-start: calc( 24px + 32.5px );
-		margin-bottom: 24px;
-	}
+.products-grid-i5__section-title {
+	margin-top: 54px;
+	margin-bottom: 32px;
 
-	.formatted-header__title {
-		font-size: 1.25rem;
-		color: var( --studio-color-gray-70 );
+	font-size: 2.25rem;
+	font-weight: 700;
+	letter-spacing: -1px;
+	text-align: center;
+}
+
+.products-grid-i5__plan-grid,
+.products-grid-i5__product-grid {
+	margin: 0;
+
+	list-style-type: none;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
 	}
 }
 
-/*
- * We really should be using @include break-small here,
- * but Calypso's main Layout component doesn't play nicely with it yet.
- */
-@include breakpoint-deprecated( '>660px' ) {
-	.products-grid-alt-2 {
-		display: grid;
-		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-		grid-gap: calc( 32.5px + 44px ) 16px; /* $jetpack-product-card-alt-2-circle-size/2 */
-		align-items: flex-start;
-
-		margin-top: 24px;
-		padding-top: 32.5px; // $jetpack-product-card-alt-2-circle-size/2
-
-		&.has-plans {
-			margin-bottom: 44px;
-			padding-bottom: 44px;
-
-			border-bottom: 1px solid var( --color-border-subtle );
-		}
-
-		.jetpack-free-card-alt {
-			grid-column-end: span 2;
-		}
+.products-grid-i5__product-grid {
+	@include breakpoint-deprecated( '>660px' ) {
+		grid-gap: 24px 16px;
 	}
 }
