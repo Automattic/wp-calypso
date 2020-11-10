@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { stringify } from 'qs';
+
+/**
  * Internal dependencies
  */
 import { setFeatures, setFeaturesByType, setPlans, setPrices } from './actions';
@@ -12,7 +17,7 @@ import {
 	PLAN_ECOMMERCE,
 	plansProductSlugs,
 } from './constants';
-import { fetchAndParse } from '../wpcom-request-controls';
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
 /**
  * Calculates the monthly price of a plan
@@ -36,10 +41,11 @@ function getMonthlyPrice( plan: APIPlan ) {
 	return `${ currency.symbol }${ price }`;
 }
 
-export function* getPrices() {
-	const { body: plans } = yield fetchAndParse( 'https://public-api.wordpress.com/rest/v1.5/plans', {
-		mode: 'cors',
-		credentials: 'omit',
+export function* getPrices( locale = 'en' ) {
+	const plans = yield wpcomRequest( {
+		path: '/plans',
+		query: stringify( { locale } ),
+		apiVersion: '1.5',
 	} );
 
 	// filter for supported plans
