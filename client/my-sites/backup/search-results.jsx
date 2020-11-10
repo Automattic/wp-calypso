@@ -21,6 +21,7 @@ const SearchResults = () => {
 
 	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
 	const { activityLogs } = useActivityLogs( siteId, filter );
+	const rewindableEvents = activityLogs && activityLogs.filter( ( a ) => a.activityIsRewindable );
 
 	return (
 		<div className="backup__search">
@@ -30,7 +31,7 @@ const SearchResults = () => {
 					'This is the complete event history for your site. Filter by date range and/ or activity type.'
 				) }
 			</div>
-			<ActivityCardList logs={ activityLogs } pageSize={ 10 } siteSlug={ siteSlug } />
+			<ActivityCardList logs={ rewindableEvents } pageSize={ 10 } siteSlug={ siteSlug } />
 		</div>
 	);
 };
