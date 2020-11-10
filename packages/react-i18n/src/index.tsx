@@ -4,8 +4,8 @@
 import * as React from 'react';
 import { createI18n, I18n, LocaleData, __, _n, _nx, _x, isRTL } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { createHooks, addAction } from '@wordpress/hooks';
-import type { addFilter, removeFilter, applyFilters } from '@wordpress/hooks';
+import { createHooks, addAction as globalAddAction } from '@wordpress/hooks';
+import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
 
 export interface I18nReact {
 	__: I18n[ '__' ];
@@ -19,39 +19,6 @@ export interface I18nReact {
 	removeFilter: typeof removeFilter;
 }
 
-/**
- * Private hooks instance.
- */
-const hooks = createHooks();
-
-/**
- * Hooks added counter.
- */
-let hooksAdded = 0;
-
-/**
- * Check if there are any i18n filters have been added.
- *
- * @returns Whether any i18n filters have been added
- */
-function hasI18nFilters(): boolean {
-	return hooksAdded > 0;
-}
-
-/**
- * Transmits internal hooks from the shared instance to the private one
- * due to a problem in with private hooks instances in @wordpress/hooks.
- *
- * @see  https://github.com/WordPress/gutenberg/pull/26498
- * @todo Remove when issue gets fixed in @wordpress/hooks.
- */
-addAction( 'hookAdded', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-	hooks.doAction( 'hookAdded', ...args );
-} );
-addAction( 'hookRemoved', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
-	hooks.doAction( 'hookRemoved', ...args );
-} );
-
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
 
 interface Props {
@@ -61,30 +28,57 @@ interface Props {
 interface I18nFilters {
 	addFilter: typeof addFilter;
 	removeFilter: typeof removeFilter;
+	hasFilter: typeof hasFilter;
 	applyFilters: typeof applyFilters;
 }
 
 export const I18nProvider: React.FunctionComponent< Props > = ( { children, localeData } ) => {
-	const { addAction, removeAction, applyFilters, addFilter, removeFilter } = hooks;
-	const [ filters, setFilters ] = React.useState( { applyFilters, addFilter, removeFilter } );
+	const hooks = React.useMemo( () => createHooks(), [] );
+	const {
+		addAction,
+		removeAction,
+		doAction,
+		addFilter,
+		removeFilter,
+		hasFilter,
+		applyFilters,
+	} = hooks;
+	const [ filters, setFilters ] = React.useState( {
+		addFilter,
+		removeFilter,
+		hasFilter,
+		applyFilters,
+	} );
 
 	React.useEffect( () => {
+		/**
+		 * Transmits internal hooks from the shared instance to the private one
+		 * due to a problem in with private hooks instances in @wordpress/hooks.
+		 *
+		 * @see  https://github.com/WordPress/gutenberg/pull/26498
+		 * @todo Remove when issue gets fixed in @wordpress/hooks.
+		 */
+		globalAddAction( 'hookAdded', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
+			doAction( 'hookAdded', ...args );
+		} );
+		globalAddAction( 'hookRemoved', 'a8c/react-i18n/transmit-internal-hooks', ( ...args ) => {
+			doAction( 'hookRemoved', ...args );
+		} );
+
 		addAction( 'hookAdded', 'a8c/react-i18n/filters', () => {
-			setFilters( { applyFilters, addFilter, removeFilter } );
-			hooksAdded++;
+			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
 			return () => removeAction( 'hookAdded', 'a8c/react-i18n/filters' );
 		} );
 		addAction( 'hookRemoved', 'a8c/react-i18n/filters', () => {
-			setFilters( { applyFilters, addFilter, removeFilter } );
-			hooksAdded--;
+			setFilters( { addFilter, removeFilter, hasFilter, applyFilters } );
 			return () => removeAction( 'hookRemoved', 'a8c/react-i18n/filters' );
 		} );
 	}, [] );
 
-	const contextValue = React.useMemo< I18nReact >(
-		() => makeContextValue( localeData, { filters } ),
-		[ localeData, filters ]
-	);
+	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData, filters ), [
+		localeData,
+		filters,
+	] );
 
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
@@ -123,43 +117,30 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
 	};
 }, 'withI18n' );
 
-interface MakeContextValueOptions {
-	filters: I18nFilters;
-}
-
 /**
  * Bind an I18n function to its instance
  *
  * @param i18n I18n instance
  * @param fnName '__' | '_n' | '_nx' | '_x'
- * @param options Make context value options object
+ * @param filters Make context filters instance
  * @returns Bound I18n function with applied transformation hooks
  */
-function bindI18nFunction(
-	i18n: I18n,
-	fnName: '__' | '_n' | '_nx' | '_x',
-	options: MakeContextValueOptions
-) {
+function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filters: I18nFilters ) {
 	const boundFn = i18n[ fnName ].bind( i18n );
 
-	if ( ! hasI18nFilters() ) {
+	if ( ! filters.hasFilter( 'preTranslation' ) && ! filters.hasFilter( 'postTranslation' ) ) {
 		return boundFn;
 	}
 
 	return ( ...args: ( string | number )[] ) => {
-		const filteredArguments = options.filters.applyFilters(
-			'preTranslation',
-			args,
-			fnName,
-			options
-		);
+		const filteredArguments = filters.applyFilters( 'preTranslation', args, fnName, filters );
 
-		return options.filters.applyFilters(
+		return filters.applyFilters(
 			'postTranslation',
 			boundFn( ...filteredArguments ),
 			filteredArguments,
 			fnName,
-			options
+			filters
 		);
 	};
 }
@@ -184,11 +165,11 @@ function hasTranslation( localeData: LocaleData, singular: string, context?: str
  * Utility to make a new context value
  *
  * @param localeData The localeData
- * @param options Context options object
+ * @param filters Context filters instance
  *
  * @returns The context value with bound translation functions
  */
-function makeContextValue( localeData?: LocaleData, options?: MakeContextValueOptions ): I18nReact {
+function makeContextValue( localeData?: LocaleData, filters?: I18nFilters ): I18nReact {
 	if ( ! localeData ) {
 		return { __, _n, _nx, _x, isRTL };
 	}
@@ -197,15 +178,14 @@ function makeContextValue( localeData?: LocaleData, options?: MakeContextValueOp
 	const boundHasTranslation = ( singular: string, context?: string ) =>
 		hasTranslation( localeData || {}, singular, context );
 
-	const { addFilter, removeFilter, applyFilters } = options?.filters ?? hooks;
-	const filters = { addFilter, removeFilter, applyFilters };
-	const i18nFunctionOptions = { filters };
+	const { addFilter, removeFilter, hasFilter, applyFilters } = filters ?? createHooks();
+	const i18nFunctionFilters = { addFilter, removeFilter, hasFilter, applyFilters };
 
 	return {
-		__: bindI18nFunction( i18n, '__', i18nFunctionOptions ),
-		_n: bindI18nFunction( i18n, '_n', i18nFunctionOptions ),
-		_nx: bindI18nFunction( i18n, '_nx', i18nFunctionOptions ),
-		_x: bindI18nFunction( i18n, '_x', i18nFunctionOptions ),
+		__: bindI18nFunction( i18n, '__', i18nFunctionFilters ),
+		_n: bindI18nFunction( i18n, '_n', i18nFunctionFilters ),
+		_nx: bindI18nFunction( i18n, '_nx', i18nFunctionFilters ),
+		_x: bindI18nFunction( i18n, '_x', i18nFunctionFilters ),
 		isRTL: i18n.isRTL.bind( i18n ),
 		localeData,
 		hasTranslation: boundHasTranslation,
