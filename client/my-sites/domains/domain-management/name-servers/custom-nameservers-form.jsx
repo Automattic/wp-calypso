@@ -14,7 +14,6 @@ import { localize } from 'i18n-calypso';
 import { Card } from '@automattic/components';
 import FormButton from 'calypso/components/forms/form-button';
 import CustomNameserversRow from './custom-nameservers-row';
-import { change, remove } from 'calypso/lib/domains/nameservers';
 import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
 import {
 	composeAnalytics,
@@ -94,12 +93,24 @@ class CustomNameserversForm extends React.PureComponent {
 		} );
 	}
 
+	removeNameserver( index ) {
+		const nameservers = [ ...this.props.nameservers ];
+		nameservers.splice( index, 1 );
+		return nameservers;
+	}
+
+	editNameserver( index, nameserver ) {
+		const nameservers = [ ...this.props.nameservers ];
+		nameservers[ index ] = nameserver;
+		return nameservers;
+	}
+
 	handleRemove = ( index ) => {
-		this.props.onChange( remove( this.props.nameservers, index ) );
+		this.props.onChange( this.removeNameserver( index ) );
 	};
 
 	handleChange = ( nameserver, index ) => {
-		this.props.onChange( change( this.props.nameservers, index, nameserver ) );
+		this.props.onChange( this.editNameserver( index, nameserver ) );
 	};
 
 	render() {
