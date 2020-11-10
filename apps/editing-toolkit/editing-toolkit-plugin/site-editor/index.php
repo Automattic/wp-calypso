@@ -61,5 +61,5 @@ function is_site_editor_active() {
 	 *
 	 * @param bool true if Site Editor should be enabled, false otherwise.
 	 */
-	return apply_filters( 'a8c_enable_core_site_editor', false );
+	return is_readable( get_stylesheet_directory() . '/block-templates/index.html' );
 }
