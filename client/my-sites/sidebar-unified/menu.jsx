@@ -60,38 +60,40 @@ export const MySitesSidebarUnifiedMenu = ( {
 	}, [ selected, childIsSelected, reduxDispatch, sectionId, sidebarCollapsed ] );
 
 	return (
-		<ExpandableSidebarMenu
-			onClick={ () => {
-				if ( link ) {
-					if ( isExternal( link ) ) {
-						// If the URL is external, page() will fail to replace state between different domains
-						externalRedirect( link );
-						return;
+		<li>
+			<ExpandableSidebarMenu
+				onClick={ () => {
+					if ( link ) {
+						if ( isExternal( link ) ) {
+							// If the URL is external, page() will fail to replace state between different domains.
+							externalRedirect( link );
+							return;
+						}
+						page( link );
 					}
-					page( link );
-				}
-				if ( ! sidebarCollapsed ) {
-					reduxDispatch( collapseAllMySitesSidebarSections() );
-					reduxDispatch( toggleSection( sectionId ) );
-				}
-			} }
-			expanded={ ! sidebarCollapsed && isExpanded }
-			title={ title }
-			customIcon={ <SidebarCustomIcon icon={ icon } /> }
-			className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
-		>
-			{ children.map( ( item ) => {
-				const isSelected = selectedMenuItem?.url === item.url;
-				return (
-					<MySitesSidebarUnifiedItem
-						key={ item.slug }
-						{ ...item }
-						selected={ isSelected }
-						isSubItem={ true }
-					/>
-				);
-			} ) }
-		</ExpandableSidebarMenu>
+					if ( ! sidebarCollapsed ) {
+						reduxDispatch( collapseAllMySitesSidebarSections() );
+						reduxDispatch( toggleSection( sectionId ) );
+					}
+				} }
+				expanded={ ! sidebarCollapsed && isExpanded }
+				title={ title }
+				customIcon={ <SidebarCustomIcon icon={ icon } /> }
+				className={ ( selected || childIsSelected ) && 'sidebar__menu--selected' }
+			>
+				{ children.map( ( item ) => {
+					const isSelected = selectedMenuItem?.url === item.url;
+					return (
+						<MySitesSidebarUnifiedItem
+							key={ item.slug }
+							{ ...item }
+							selected={ isSelected }
+							isSubItem={ true }
+						/>
+					);
+				} ) }
+			</ExpandableSidebarMenu>
+		</li>
 	);
 };
 

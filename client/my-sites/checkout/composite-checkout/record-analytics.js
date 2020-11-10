@@ -3,8 +3,10 @@
  */
 import debugFactory from 'debug';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
-import { translateCheckoutPaymentMethodToTracksPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateCheckoutPaymentMethodToTracksPaymentMethod,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 import { defaultRegistry } from '@automattic/composite-checkout';
 
 /**
