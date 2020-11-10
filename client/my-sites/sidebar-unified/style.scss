@@ -484,6 +484,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+			// .hovered is hanled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;
 
 			.sidebar__heading {
