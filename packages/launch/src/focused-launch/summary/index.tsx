@@ -7,7 +7,7 @@ import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext } from 'react';
+import React, { ReactNode, useContext, useState, useEffect } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
@@ -338,12 +338,29 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle } = useTitle();
+	const [ forceSiteNameRender, setForceSiteNameRender ] = useState( false );
+
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
 	const { locale } = useContext( LaunchContext );
 
 	const domainSearch = useDomainSearch();
+
+	// The RegExp check is more relaxed on purpose — chances are that if the title
+	// matches (even it not exactly) the default title, the user would like want
+	// to change it before launch.
+	const isDefaultSiteTitle = new RegExp( DEFAULT_SITE_NAME, 'i' ).test( title );
+
+	// Ensure that the Site Name step doesn't disappear as soon as the user
+	// edits its value. This is achieved by ignoring the `isDefaultSiteTitle`
+	// check after the Site Name steps renders for the first time.
+	const shouldRenderNameStep = forceSiteNameRender || isDefaultSiteTitle;
+	useEffect( () => {
+		if ( shouldRenderNameStep ) {
+			setForceSiteNameRender( true );
+		}
+	}, [ shouldRenderNameStep ] );
 
 	// @TODO: plan step to be implemented
 	// https://github.com/Automattic/wp-calypso/issues/46865
@@ -384,14 +401,7 @@ const Summary: React.FunctionComponent = () => {
 	// Active steps require user interaction
 	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
 	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
-
-	// Only show site name step if the current site title is still the default one.
-	// The RegExp check is more relaxed on purpose — chances are that if the title
-	// matches (even it not exactly) the default title, the user would like want
-	// to change it before launch.
-	if ( new RegExp( DEFAULT_SITE_NAME, 'i' ).test( title ) ) {
-		activeSteps.push( renderSiteNameStep );
-	}
+	shouldRenderNameStep && activeSteps.push( renderSiteNameStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
