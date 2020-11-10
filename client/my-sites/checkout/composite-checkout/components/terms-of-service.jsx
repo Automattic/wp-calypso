@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-
 import { localize } from 'i18n-calypso';
 
 /**
@@ -15,6 +14,8 @@ import {
 } from 'calypso/lib/url/support';
 import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
+
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 
 class TermsOfService extends React.Component {
 	static displayName = 'TermsOfService';

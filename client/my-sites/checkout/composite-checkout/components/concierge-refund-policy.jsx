@@ -12,6 +12,8 @@ import { REFUNDS } from 'calypso/lib/url/support';
 import Gridicon from 'calypso/components/gridicon';
 import { hasConciergeSession } from 'calypso/lib/cart-values/cart-items';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class ConciergeRefundPolicy extends React.Component {
 	static displayName = 'RegistrationRefundPolicy';
 

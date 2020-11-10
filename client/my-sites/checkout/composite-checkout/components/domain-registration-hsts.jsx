@@ -15,6 +15,8 @@ import { HTTPS_SSL } from 'calypso/lib/url/support';
 import { getProductsList } from 'calypso/state/products-list/selectors';
 import { getTld, isHstsRequired } from 'calypso/lib/domains';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class DomainRegistrationHsts extends React.PureComponent {
 	getHstsTlds = () => {
 		const { cart, productsList } = this.props;

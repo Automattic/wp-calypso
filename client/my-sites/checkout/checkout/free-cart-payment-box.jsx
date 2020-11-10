@@ -15,7 +15,7 @@ import CartToggle from './cart-toggle';
 import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
 import { hasOnlyProductsOf } from 'calypso/lib/cart-values/cart-items';
 import { isBlogger } from 'calypso/lib/products-values';
-import CheckoutTerms from './checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 
 class FreeCartPaymentBox extends React.Component {
 	static propTypes = {

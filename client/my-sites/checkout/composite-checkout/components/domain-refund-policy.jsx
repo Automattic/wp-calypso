@@ -17,6 +17,8 @@ import {
 	hasNewDomainRegistration,
 } from 'calypso/lib/cart-values/cart-items';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+
 class DomainRefundPolicy extends React.Component {
 	recordCancelDomainSupportClick = () => {
 		gaRecordEvent( 'Upgrades', 'Clicked Cancel Domain Support Link' );
