@@ -15,7 +15,6 @@ import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../pr
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { isJetpackPlanSlug } from 'calypso/lib/products-values';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -24,6 +23,8 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
  * Type dependencies
  */
 import type { ProductsGridProps } from '../types';
+import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
+import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
 
 /**
  * Style dependencies
@@ -46,37 +47,28 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 		siteId
 	);
 
-	const plansToDisplay = useMemo( () => getPlansToDisplay( { duration, currentPlanSlug } ), [
-		duration,
-		currentPlanSlug,
-	] );
-	const productsToDisplay = useMemo(
-		() =>
-			getProductsToDisplay( {
-				duration,
-				availableProducts,
-				purchasedProducts,
-				includedInPlanProducts,
-			} ),
-		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
-	);
-	const sortedGridItems = useMemo(
-		() =>
-			sortBy( [ ...plansToDisplay, ...productsToDisplay ], ( item ) =>
-				getProductPosition( item.productSlug )
-			),
-		[ plansToDisplay, productsToDisplay ]
-	);
-	const planItems = useMemo(
-		() => sortedGridItems.filter( ( { productSlug } ) => isJetpackPlanSlug( productSlug ) ),
-		[ sortedGridItems ]
-	);
-	const productItems = useMemo(
-		() => sortedGridItems.filter( ( { productSlug } ) => ! isJetpackPlanSlug( productSlug ) ),
-		[ sortedGridItems ]
-	);
 	const isInConnectFlow = useMemo( isConnectionFlow, [] );
 	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
+	const sortedPlans = useMemo(
+		() =>
+			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
+				getProductPosition( item.productSlug as JetpackPlanSlugs )
+			),
+		[ duration, currentPlanSlug ]
+	);
+	const sortedProducts = useMemo(
+		() =>
+			sortBy(
+				getProductsToDisplay( {
+					duration,
+					availableProducts,
+					purchasedProducts,
+					includedInPlanProducts,
+				} ),
+				( item ) => getProductPosition( item.productSlug as JetpackProductSlug )
+			),
+		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
+	);
 
 	return (
 		<>
@@ -84,7 +76,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 				<h2 className="products-grid-i5__section-title">{ translate( 'Product Bundles' ) }</h2>
 				<div className="products-grid-i5__filter-bar"></div>
 				<ul className="products-grid-i5__plan-grid">
-					{ planItems.map( ( product ) => (
+					{ sortedPlans.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCardAlt2
 								item={ product }
@@ -101,7 +93,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
 				<ul className="products-grid-i5__product-grid">
-					{ productItems.map( ( product ) => (
+					{ sortedProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
 							<ProductCardAlt2
 								item={ product }

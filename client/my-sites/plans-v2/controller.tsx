@@ -9,6 +9,7 @@ import React from 'react';
 
 import DetailsPage from './details';
 import { getSelectorComponent } from './iterations';
+import SelectorPage from './selector';
 import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
@@ -28,7 +29,7 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) ||
 		( TERM_ANNUALLY as Duration );
 	const urlQueryArgs: QueryArgs = context.query;
-	const SelectorComponent = getSelectorComponent();
+	const SelectorComponent = getSelectorComponent() || SelectorPage;
 
 	context.primary = (
 		<SelectorComponent
