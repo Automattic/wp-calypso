@@ -36,7 +36,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const planPrices = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPrices( document.documentElement.lang )
+		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
 	);
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
