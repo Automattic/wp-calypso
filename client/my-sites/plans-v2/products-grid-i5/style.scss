@@ -25,7 +25,7 @@
 	.products-grid-alt-2 {
 		display: grid;
 		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-		grid-gap: calc( 32.5px /* $jetpack-product-card-alt-2-circle-size/2 */ + 44px ) 16px;
+		grid-gap: calc( 32.5px + 44px ) 16px; /* $jetpack-product-card-alt-2-circle-size/2 */
 		align-items: flex-start;
 
 		margin-top: 24px;

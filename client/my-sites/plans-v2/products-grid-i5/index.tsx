@@ -2,15 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import React, {
-	ReactElement,
-	RefObject,
-	useMemo,
-	useState,
-	useCallback,
-	useEffect,
-	useRef,
-} from 'react';
+import React, { RefObject, useMemo, useState, useCallback, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { sortBy } from 'lodash';
 
@@ -33,22 +25,18 @@ import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../pr
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, QueryArgs } from '../types';
+import type { ProductsGridProps } from '../types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const ProductsGridAlt3 = ( {
+const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	duration,
 	onSelectProduct,
 	urlQueryArgs,
-}: {
-	duration: Duration;
-	onSelectProduct: PurchaseCallback;
-	urlQueryArgs: QueryArgs;
-} ): ReactElement => {
+} ) => {
 	const [ isPlanRowExpanded, setPlanRowExpanded ] = useState( true );
 	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
 
@@ -126,7 +114,6 @@ const ProductsGridAlt3 = ( {
 
 	return (
 		<>
-			<h4>i5 - Saas table design</h4>
 			<div
 				className={ classNames( 'products-grid-alt-2 has-plans', {
 					'is-wrapping': isPlanRowWrapping,
@@ -146,7 +133,7 @@ const ProductsGridAlt3 = ( {
 					/>
 				) ) }
 			</div>
-			<div className="products-grid-alt-2">
+			<div className="products-grid-i5">
 				{ hasLegacyPlan && currentPlan && (
 					<ProductCardAlt2
 						key={ currentPlanSlug as string }
@@ -177,4 +164,4 @@ const ProductsGridAlt3 = ( {
 	);
 };
 
-export default ProductsGridAlt3;
+export default ProductsGridI5;
