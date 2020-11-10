@@ -20,8 +20,5 @@
 		"watch": "tsc --project ./tsconfig.json --watch",
 		"download": "node bin/download.js",
 		"test": "yarn jest"
-	},
-	"dependencies": {
-		"lodash": "^4.17.15"
 	}
 }

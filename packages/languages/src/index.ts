@@ -1,17 +1,12 @@
 /**
- * External dependencies
- */
-import values from 'lodash/values';
-
-/**
  * Internal dependencies
  */
 import data from './languages-meta.json';
 
-type LanguageSlug = string;
-type WPLocale = string;
+export type LanguageSlug = string;
+export type WPLocale = string;
 
-type BaseLanguage = {
+export type BaseLanguage = {
 	langSlug: LanguageSlug;
 	name: string;
 	popular?: number;
@@ -21,10 +16,15 @@ type BaseLanguage = {
 	wpLocale: WPLocale | '';
 };
 
-type SubLanguage = BaseLanguage & { parentLangSlug: string };
+export type SubLanguage = BaseLanguage & { parentLangSlug: string };
 
 export type Language = BaseLanguage | SubLanguage;
 
-const languages: Language[] = values( data );
+export interface LanguagesBySlug {
+	[ key: string ]: Language;
+}
 
+export const languagesBySlug: LanguagesBySlug = data;
+export const languageSlugs: LanguageSlug[] = Object.keys( data );
+export const languages: Language[] = Object.values( data );
 export default languages;
