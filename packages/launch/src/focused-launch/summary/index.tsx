@@ -225,39 +225,106 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	);
 };
 
-type PlanStepProps = CommonStepProps;
+type PlanStepProps = CommonStepProps & { hasPaidPlan?: boolean };
 
-const PlanStep: React.FunctionComponent< PlanStepProps > = ( { stepIndex } ) => {
+const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
+	stepIndex,
+	hasPaidPlan = false,
+} ) => {
 	return (
 		<SummaryStep
 			input={
-				<>
-					<label className="focused-launch-summary__label">
-						{ stepIndex }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
-					</label>
-					<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
-						<Icon icon={ bulb } /> Monetize your site with <strong>WordPress Premium</strong>
-					</p>
-					<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
-				</>
+				hasPaidPlan ? (
+					<>
+						<label className="focused-launch-summary__label">
+							{ __( 'Your plan', __i18n_text_domain__ ) }
+							<Tooltip
+								position="top center"
+								text={ __(
+									'Changes to your purchased plan can be managed from your Plans page.',
+									__i18n_text_domain__
+								) }
+							>
+								{ info }
+							</Tooltip>
+							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+								<Icon icon={ bulb } />
+								{ createInterpolateElement(
+									__(
+										'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
+										__i18n_text_domain__
+									),
+									{
+										strong: <strong />,
+									}
+								) }
+							</p>
+						</label>
+						{ /* @TODO: insert locked purchased plan item here */ }
+					</>
+				) : (
+					<>
+						<label className="focused-launch-summary__label">
+							{ stepIndex }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
+						</label>
+						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+							<Icon icon={ bulb } />
+							{ createInterpolateElement(
+								__(
+									'Grow your business with <strong>WordPress Business</strong>',
+									__i18n_text_domain__
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</p>
+						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+					</>
+				)
 			}
 			commentary={
-				<>
+				hasPaidPlan ? (
 					<p className="focused-launch-summary__side-commentary-title">
-						Monetize your site with <strong>WordPress Premium</strong>
+						{ createInterpolateElement(
+							__(
+								'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
+								__i18n_text_domain__
+							),
+							{
+								strong: <strong />,
+							}
+						) }
 					</p>
-					<ul className="focused-launch-summary__side-commentary-list">
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Advanced tools and customization
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Unlimited premium themes
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Accept payments
-						</li>
-					</ul>
-				</>
+				) : (
+					<>
+						<p className="focused-launch-summary__side-commentary-title">
+							{ createInterpolateElement(
+								__(
+									'Monetize your site with <strong>WordPress Premium</strong>',
+									__i18n_text_domain__
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</p>
+						<ul className="focused-launch-summary__side-commentary-list">
+							<li className="focused-launch-summary__side-commentary-list-item">
+								<Icon icon={ check } />
+								{ __( 'Advanced tools and customization' ) }
+							</li>
+							<li className="focused-launch-summary__side-commentary-list-item">
+								<Icon icon={ check } />
+								{ __( 'Unlimited premium themes' ) }
+							</li>
+							<li className="focused-launch-summary__side-commentary-list-item">
+								<Icon icon={ check } />
+								{ __( 'Accept payments' ) }
+							</li>
+						</ul>
+					</>
+				)
 			}
 		/>
 	);
