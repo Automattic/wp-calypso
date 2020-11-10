@@ -141,3 +141,12 @@
 .segmented-control {
 	display: inline-flex;
 }
+
+.calendar-step__explanation {
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+}
+
+.calendar-step__webinars {
+margin-top: 10px;
+}

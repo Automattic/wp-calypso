@@ -87,16 +87,19 @@ class CalendarStep extends Component {
 						align="left"
 						isSecondary={ true }
 					/>
-					<p>
-						<em>
+					<div class="calendar-step__explanation">
+						<div>
 							{ translate(
 								'Our sessions are available 24 hours a day. If you don’t see a day or time that works for you, please check back soon for more options! '
 							) }
-							<br />
+						</div>
+
+						<div class="calendar-step__webinars">
 							{ translate(
-								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{externalLink}}View webinars{{/externalLink}}.',
+								'In the meantime, consider attending one of our expert webinars on a wide variety of topics designed to help you build and grow your site. {{u}}{{externalLink}}View webinars{{/externalLink}}{{/u}}.',
 								{
 									components: {
+										u: <u />,
 										externalLink: (
 											<ExternalLinkWithTracking
 												icon={ false }
@@ -107,8 +110,8 @@ class CalendarStep extends Component {
 									},
 								}
 							) }
-						</em>
-					</p>
+						</div>
+					</div>
 				</CompactCard>
 
 				<AvailableTimePicker
