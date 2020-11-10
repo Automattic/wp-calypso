@@ -88,6 +88,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 			overlayClassName="editor-checkout-modal"
 			onRequestClose={ onClose }
 			title=""
+			shouldCloseOnClickOutside={ false }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 		>
 			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>

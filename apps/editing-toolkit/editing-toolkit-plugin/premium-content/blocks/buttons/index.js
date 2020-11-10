@@ -28,10 +28,19 @@ const settings = {
 		alignWide: false,
 		lightBlockWrapper: true,
 	},
+	attributes: {
+		isPremiumContentChild: {
+			type: 'bool',
+			default: true,
+		},
+	},
+	providesContext: {
+		isPremiumContentChild: 'isPremiumContentChild',
+	},
 	keywords: [ __( 'link', 'full-site-editing' ) ],
 	edit,
 	save,
-	usesContext: [ 'premium-content/planId' ],
+	usesContext: [ 'premium-content/planId', 'premium-content/isPreview' ],
 };
 
 export { name, category, settings };

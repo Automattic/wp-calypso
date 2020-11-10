@@ -13,9 +13,12 @@ import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thum
 import nightfallImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
 import sakuraImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
 import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
+import aquaticImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-aquatic.svg';
+import sunriseImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunrise.svg';
 import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
 import midnightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
 import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
+import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ectoplasm.svg';
 
 /**
  * !! Note !!
@@ -83,6 +86,22 @@ export default function ( translate ) {
 			},
 		},
 		{
+			label: translate( 'Aquatic' ),
+			value: 'aquatic',
+			thumbnail: {
+				cssClass: 'is-aquatic',
+				imageUrl: aquaticImg,
+			},
+		},
+		{
+			label: translate( 'Sunrise' ),
+			value: 'sunrise',
+			thumbnail: {
+				cssClass: 'is-sunrise',
+				imageUrl: sunriseImg,
+			},
+		},
+		{
 			label: translate( 'Sunset' ),
 			value: 'sunset',
 			thumbnail: {
@@ -104,6 +123,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-contrast',
 				imageUrl: contrastImg,
+			},
+		},
+		{
+			label: translate( 'Ectoplasm', { context: 'admin color scheme' } ),
+			value: 'ectoplasm',
+			thumbnail: {
+				cssClass: 'is-ectoplasm',
+				imageUrl: ectoplasmImg,
 			},
 		},
 	] );

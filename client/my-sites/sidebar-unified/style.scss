@@ -499,7 +499,7 @@ $font-size: rem( 14px );
 			// indicator arrow
 			.sidebar__heading::after {
 				display: block;
-				border-right-color: var( --color-sidebar-menu-hover-background );
+				border-right-color: var( --color-sidebar-submenu-background );
 			}
 
 			// flyout content
