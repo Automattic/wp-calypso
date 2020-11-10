@@ -11,8 +11,6 @@ import {
 } from 'calypso/lib/jetpack/backup-utils';
 import { DELTA_ACTIVITIES, useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
 
-const byActivityTsDescending = ( a, b ) => ( a.activityTs > b.activityTs ? -1 : 1 );
-
 const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {
 		before,
@@ -22,7 +20,7 @@ const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } 
 	} );
 };
 
-const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {} ) => {
+const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {}, shouldExecute = true ) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
 		before: before ? before.toISOString() : undefined,
@@ -32,15 +30,23 @@ const useBackupDeltas = ( siteId, { before, after, number = 1000 } = {} ) => {
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs( siteId, filter, isValidRequest );
+	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! ( isValidRequest && shouldExecute )
+	);
 
 	return {
-		isLoadingDeltas: isLoadingActivityLogs,
+		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
 		deltas: getDeltaActivitiesByType( activityLogs ),
 	};
 };
 
-const useRawBackupDeltas = ( siteId, { before, after, number = 1000 } = {} ) => {
+const useRawBackupDeltas = (
+	siteId,
+	{ before, after, number = 1000 } = {},
+	shouldExecute = true
+) => {
 	const filter = {
 		name: DELTA_ACTIVITIES,
 		before: before ? before.toISOString() : undefined,
@@ -50,11 +56,15 @@ const useRawBackupDeltas = ( siteId, { before, after, number = 1000 } = {} ) => 
 
 	const isValidRequest = filter.before && filter.after;
 
-	const { isLoadingActivityLogs, activityLogs } = useActivityLogs( siteId, filter, isValidRequest );
+	const { isLoadingActivityLogs, activityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! ( isValidRequest && shouldExecute )
+	);
 
 	return {
-		isLoadingDeltas: isLoadingActivityLogs,
-		deltas: getDeltaActivities( activityLogs ).sort( byActivityTsDescending ),
+		isLoadingDeltas: !! ( shouldExecute && isLoadingActivityLogs ),
+		deltas: getDeltaActivities( activityLogs ),
 	};
 };
 
@@ -80,20 +90,20 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 
 	const backupDeltas = useBackupDeltas(
 		siteId,
-		hasPreviousBackup &&
-			successfulLastAttempt && {
-				before: moment( lastAttemptOnDate.backupAttempt.activityTs ),
-				after: moment( lastBackupBeforeDate.backupAttempt.activityTs ),
-			}
+		{
+			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
+			before: moment( lastAttemptOnDate.backupAttempt?.activityTs ),
+		},
+		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
 	const rawBackupDeltas = useRawBackupDeltas(
 		siteId,
-		hasPreviousBackup &&
-			successfulLastAttempt && {
-				after: moment( lastBackupBeforeDate.backupAttempt.activityTs ),
-				before: moment( lastAttemptOnDate.backupAttempt.activityTs ),
-			}
+		{
+			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
+			before: moment( lastAttemptOnDate.backupAttempt?.activityTs ),
+		},
+		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
 	return {
@@ -140,11 +150,11 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 
 	const rawDeltas = useRawBackupDeltas(
 		siteId,
-		hasPreviousBackup &&
-			successfulLastAttempt && {
-				before: applySiteOffset( lastBackupAttemptOnDate.activityTs ),
-				after: applySiteOffset( lastBackupBeforeDate.backupAttempt.activityTs ),
-			}
+		{
+			before: applySiteOffset( lastBackupAttemptOnDate?.activityTs ),
+			after: applySiteOffset( lastBackupBeforeDate.backupAttempt?.activityTs ),
+		},
+		!! ( hasPreviousBackup && successfulLastAttempt )
 	);
 
 	return {

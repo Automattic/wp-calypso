@@ -68,7 +68,7 @@ export const useActivityLogs = ( siteId, filter, shouldExecute = true ) => {
 	] );
 
 	return {
-		isLoadingActivityLogs: shouldExecute && isLoading( response ),
+		isLoadingActivityLogs: !! ( shouldExecute && isLoading( response ) ),
 		activityLogs: ( response?.data || [] ).sort( byActivityTsDescending ),
 	};
 };
@@ -113,7 +113,11 @@ export const useFirstMatchingBackupAttempt = (
 		? getRealtimeAttemptFilter( { before, after, sortOrder } )
 		: getDailyAttemptFilter( { before, after, successOnly, sortOrder } );
 
-	const { activityLogs, isLoadingActivityLogs } = useActivityLogs( siteId, filter, shouldExecute );
+	const { activityLogs, isLoadingActivityLogs } = useActivityLogs(
+		siteId,
+		filter,
+		!! shouldExecute
+	);
 
 	if ( ! shouldExecute ) {
 		return {
