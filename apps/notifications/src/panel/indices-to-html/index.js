@@ -191,7 +191,7 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 	// We use sub_ranges and not sub_text because we *can* have an empty string with a range
 	// acting upon it. For example an a tag with just an alt-text-less image tag inside of it
 	for ( let i = 0; i < sub_ranges.length; i++ ) {
-		if ( ranges[ i ].index.length === 0 ) {
+		if ( ranges[ i ].length === 0 ) {
 			// This is a simple text element without applicable ranges
 			if ( text_start == null ) {
 				// This is the beginning of the text element
@@ -213,14 +213,14 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 			// which one. If we find a bug where a particular range needs to win out over another
 			// then this is the place for that logic.
 			//
-			// ranges[i].index looks like:
+			// ranges[i] looks like:
 			// [ { pos: [position of range in range_data], len: [span of range indices] }, { pos: x, len: y }, ..., { pos: n, len: m } ]
 			let range = null;
-			for ( const potential_range of ranges[ i ].index ) {
+			for ( const potential_range of ranges[ i ] ) {
 				// For recursion to work we must pick a range that does not have a parent in the
 				// current set of ranges.
 				if ( potential_range.parent ) {
-					const parent_range = ranges[ i ].index.find( ( r ) => r.id === potential_range.parent );
+					const parent_range = ranges[ i ].find( ( r ) => r.id === potential_range.parent );
 					if ( parent_range ) {
 						continue;
 					}
@@ -242,24 +242,13 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 
 			// Since we've picked a range we'll record some information for future reference.
 			const range_info = range_data[ range.pos ]; // The origin range data.
-			const new_sub_text = sub_text.substring( i, i + range.len ); // The text we will be recursing with.
+			const new_sub_text = sub_text.substr( i, range.len ); // The text we will be recursing with.
 			const new_sub_range = sub_ranges.slice( i, i + ( range.len > 0 ? range.len : 1 ) ); // The new ranges we'll be recursing with.
 
 			for ( let j = 0; j < new_sub_range.length; j++ ) {
-				new_sub_range[ j ].index = new_sub_range[ j ].index.filter( ( new_range ) => {
-					// Remove the range we are recursing into from the ranges we're recursing with.
-					// Otherwise we will end up in an infinite loop and everybody will be mad at us.
-					if ( range.pos === new_range.pos ) {
-						return false;
-					}
-
-					// Remove non-empty ranges if we've picked an empty range.
-					if ( range.len === 0 && new_range.len > 0 ) {
-						return false;
-					}
-
-					return true;
-				} );
+				// Remove siblings ranges we are recursing into from the ranges we're recursing with.
+				// Otherwise we will end up in an infinite loop and everybody will be mad at us.
+				new_sub_range[ j ] = new_sub_range[ j ].filter( ( r ) => range.parent !== r.parent );
 			}
 
 			container.appendChild(
@@ -269,7 +258,7 @@ function build_chunks( sub_text, sub_ranges, range_data, container, options ) {
 			// Remove empty ranges from the current position so they are not picked again during the
 			// next iteration if the position doesn't change (only possible if the picked range for
 			// the current iteration is empty).
-			ranges[ i ].index = ranges[ i ].index.filter( ( sub_range ) => sub_range.len > 0 );
+			ranges[ i ] = ranges[ i ].filter( ( sub_range ) => sub_range.len > 0 );
 
 			i += range.len - 1; // The position we will be jumping to after recursing.
 		}
@@ -304,8 +293,12 @@ function recurse_convert( text, ranges, options ) {
 	//                       : of longest to shortest ranges
 	//
 	// Step 1: Create the empty array of positions
-	for ( let i = 0; i <= text.length; i++ ) {
-		t[ i ] = { index: [] };
+	if ( text.length > 0 ) {
+		for ( let i = 0; i < text.length; i++ ) {
+			t[ i ] = [];
+		}
+	} else {
+		t.push( [] );
 	}
 
 	// Step 2: in order of largest to smallest, add the information
@@ -320,10 +313,13 @@ function recurse_convert( text, ranges, options ) {
 		const len = stop - start;
 		if ( len > 0 ) {
 			for ( let i = start; i < stop; i++ ) {
-				t[ i ].index.push( { id, len, parent, pos } );
+				t[ i ].push( { id, len, parent, pos } );
 			}
 		} else {
-			t[ start ].index.push( { id, len, parent, pos } );
+			if ( typeof t[ start ] === 'undefined' ) {
+				t[ start ] = [];
+			}
+			t[ start ].push( { id, len, parent, pos } );
 		}
 	} );
 
