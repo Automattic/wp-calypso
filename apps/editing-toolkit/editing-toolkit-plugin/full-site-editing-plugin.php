@@ -260,24 +260,6 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load editing toolkit block patterns
- */
-function load_local_block_patterns() {
-	if ( apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
-		return;
-	}
-
-	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
-		return;
-	}
-
-	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
-
-	Block_Patterns::get_instance();
-}
-add_action( 'init', __NAMESPACE__ . '\load_local_block_patterns', 20 );
-
-/**
  * Load editing toolkit block patterns from the API
  *
  * @param obj $current_screen The current screen object.
