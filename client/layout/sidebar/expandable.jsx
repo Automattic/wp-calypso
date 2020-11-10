@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -89,7 +89,7 @@ export const ExpandableSidebarMenu = ( {
 
 	const menuId = uniqueId( 'menu' );
 
-	useEffect( () => {
+	useLayoutEffect( () => {
 		if ( offScreen( submenu.current ) ) {
 			setSubmenuStyles( { bottom: 0 } );
 		}
