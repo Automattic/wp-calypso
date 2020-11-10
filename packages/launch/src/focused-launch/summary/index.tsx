@@ -6,7 +6,7 @@
 import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
@@ -18,6 +18,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Route } from '../route';
 import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
 import { LAUNCH_STORE } from '../../stores';
+import LaunchContext from '../../context';
 
 import './style.scss';
 
@@ -93,6 +94,7 @@ type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
 		| 'initialDomainSearch'
 		| 'onDomainSelect'
 		| 'onExistingSubdomainSelect'
+		| 'locale'
 	>;
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
@@ -103,6 +105,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	hasPaidDomain,
 	onDomainSelect,
 	onExistingSubdomainSelect,
+	locale,
 } ) => {
 	return (
 		<SummaryStep
@@ -147,6 +150,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							quantity={ 3 }
 							quantityExpanded={ 3 }
 							itemType="individual-item"
+							locale={ locale }
 						/>
 						<Link to={ Route.DomainDetails }>
 							{ __( 'View all domains', __i18n_text_domain__ ) }
@@ -219,6 +223,7 @@ const Summary: React.FunctionComponent = () => {
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
+	const { locale } = useContext( LaunchContext );
 
 	const domainSearch = useDomainSearch();
 
@@ -248,6 +253,7 @@ const Summary: React.FunctionComponent = () => {
 			 * they already have a paid domain
 			 * */
 			onExistingSubdomainSelect={ unsetDomain }
+			locale={ locale }
 		/>
 	);
 	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;

@@ -40,7 +40,7 @@ interface Props {
 }
 
 const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale: locale } = useI18n();
 	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
 
@@ -147,6 +147,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				isCheckingDomainAvailability={ isCheckingDomainAvailability }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
+				locale={ locale }
 			/>
 		</div>
 	);
