@@ -9,12 +9,13 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import Gridicon from 'calypso/components/gridicon';
+import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import Gridicon from 'calypso/components/gridicon';
 import { addReaderListTag, deleteReaderListTag } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialogue from './item-remove-dialogue';
-import { Item, Tag } from './types';
+import { Item, List, Tag } from './types';
 
 function TagTitle( { tag: { display_name, slug } }: { tag: Tag } ) {
 	return <>{ display_name || slug }</>;
@@ -22,11 +23,12 @@ function TagTitle( { tag: { display_name, slug } }: { tag: Tag } ) {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function TagItem( props: {
-	hideIfInList: boolean;
+	hideIfInList?: boolean;
+	isFollowed?: boolean;
 	item: Item;
 	list: List;
 	owner: string;
-} ) {
+} ): React.ReactElement {
 	const { item, list, owner } = props;
 	const tag: Tag = props.item.meta?.data?.tag?.tag as Tag;
 	const dispatch = useDispatch();
@@ -78,6 +80,10 @@ export default function TagItem( props: {
 					</div>
 				</a>
 			</div>
+
+			{ props.isFollowed && (
+				<FollowButton followLabel={ translate( 'Following site' ) } following />
+			) }
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>

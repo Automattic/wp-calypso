@@ -10,12 +10,13 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
+import FollowButton from 'calypso/blocks/follow-button/button';
 import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
 import ItemRemoveDialogue from './item-remove-dialogue';
-import { Item, Site, SiteError } from './types';
+import { Item, List, Site, SiteError } from './types';
 
 function isSiteError( site: Site | SiteError ): site is SiteError {
 	return 'errors' in site;
@@ -68,12 +69,13 @@ function renderSiteError( err: SiteError ) {
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export default function SiteItem( props: {
-	hideIfInList: boolean;
+	hideIfInList?: boolean;
+	isFollowed?: boolean;
 	item: Item;
 	list: List;
 	owner: string;
-} ) {
-	const { list, owner } = props;
+} ): React.ReactElement {
+	const { item, list, owner } = props;
 	const site: Site | SiteError = props.item.meta?.data?.site as Site | SiteError;
 	const dispatch = useDispatch();
 	const translate = useTranslate();
@@ -105,6 +107,10 @@ export default function SiteItem( props: {
 	return (
 		<Card className="list-manage__site-card">
 			{ isSiteError( site ) ? renderSiteError( site ) : renderSite( site ) }
+
+			{ props.isFollowed && (
+				<FollowButton followLabel={ translate( 'Following site' ) } following />
+			) }
 
 			{ ! isInList ? (
 				<Button primary onClick={ addItem }>

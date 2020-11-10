@@ -60,8 +60,9 @@ export default function ItemAdder( props ) {
 				followResults?.map( ( item ) => (
 					<ListItem
 						hideIfInList
-						key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
+						isFollowed
 						item={ item }
+						key={ item.feed_ID || item.site_ID || item.tag_ID || item.feed_URL }
 						list={ props.list }
 						owner={ props.owner }
 					/>
@@ -70,8 +71,8 @@ export default function ItemAdder( props ) {
 				feedResults?.map( ( item ) => (
 					<ListItem
 						hideIfInList
-						key={ item.feed_ID || item.feed_URL }
 						item={ item }
+						key={ item.feed_ID || item.feed_URL }
 						list={ props.list }
 						owner={ props.owner }
 					/>

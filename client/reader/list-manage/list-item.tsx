@@ -6,24 +6,24 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { Item } from './types';
+import { Item, List } from './types';
 import FeedItem from './feed-item';
 import SiteItem from './site-item';
 import TagItem from './tag-item';
 
 export default function ListItem( props: {
-	hideIfInList: boolean;
+	hideIfInList?: boolean;
+	isFollowed?: boolean;
 	item: Item;
+	list: List;
 	owner: string;
-	list: any;
-} ) {
-	const { hideIfInList, item, owner, list } = props;
-	if ( item.feed_ID ) {
-		return <FeedItem hideIfInList={ hideIfInList } item={ item } owner={ owner } list={ list } />;
-	} else if ( item.site_ID ) {
-		return <SiteItem hideIfInList={ hideIfInList } item={ item } owner={ owner } list={ list } />;
-	} else if ( item.tag_ID ) {
-		return <TagItem hideIfInList={ hideIfInList } item={ item } owner={ owner } list={ list } />;
+} ): React.ReactElement {
+	if ( props.item.feed_ID ) {
+		return <FeedItem { ...props } />;
+	} else if ( props.item.site_ID ) {
+		return <SiteItem { ...props } />;
+	} else if ( props.item.tag_ID ) {
+		return <TagItem { ...props } />;
 	}
 	return null;
 }
