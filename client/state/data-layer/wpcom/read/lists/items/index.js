@@ -23,7 +23,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/items/index.js', {
 				),
 			onSuccess: ( action, apiResponse ) =>
 				receiveReaderListItems( apiResponse.list_ID, apiResponse.items ),
-			onError: ( action, error ) => errorNotice( error ),
+			onError: ( action, error ) => errorNotice( String( error ) ),
 		} ),
 	],
 } );
