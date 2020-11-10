@@ -97,7 +97,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	// If the latest backup for this date is a full backup,
 	// show details about what it contains
 	const dailyDeltas = getDeltaActivities(
-		isSuccessfulDailyBackup( lastBackupAttemptOnDate )
+		lastBackupAttemptOnDate && isSuccessfulDailyBackup( lastBackupAttemptOnDate )
 			? rawDeltas
 			: [ lastBackupAttemptOnDate ].filter( ( i ) => i )
 	);
