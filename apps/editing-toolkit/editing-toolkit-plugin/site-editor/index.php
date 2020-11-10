@@ -36,11 +36,15 @@ function initialize_site_editor() {
 function add_site_editor_menu_item() {
 	add_menu_page(
 		__( 'Site Editor (beta)', 'full-site-editing' ),
-		__( 'Site Editor (beta)', 'full-site-editing' ),
+		sprintf(
+			/* translators: %s: "beta" label. */
+			__( 'Site Editor %s', 'full-site-editing' ),
+			'<span class="awaiting-mod">' . __( 'beta', 'gutenberg' ) . '</span>'
+		),
 		'edit_theme_options',
 		'gutenberg-edit-site',
 		'gutenberg_edit_site_page',
-		'dashicons-edit'
+		'dashicons-layout'
 	);
 }
 
