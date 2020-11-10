@@ -180,7 +180,8 @@ class SharingServiceDescription extends Component {
 				context: 'Sharing: Publicize',
 			} );
 		} else if ( 'refresh-failed' === this.props.status ) {
-			if ( this.props.expires ) {
+			const nowInSeconds = Math.floor( Date.now() / 1000 );
+			if ( this.props.expires && this.props.expires > nowInSeconds ) {
 				description = this.props.translate(
 					'Please reconnect to %(service)s before your connection expires on %(expiryDate)s.',
 					{
