@@ -31,12 +31,12 @@ const DatePicker = ( { onSelectDate, selectedDate } ) => {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const firstKnownBackupAttempt = useFirstKnownBackupAttempt( siteId );
-	const oldestDateAvailable = firstKnownBackupAttempt.isLoading
+	const oldestDateAvailable = ! firstKnownBackupAttempt.backupAttempt
 		? undefined
 		: applySiteOffset?.( firstKnownBackupAttempt.backupAttempt.activityTs );
 
 	if ( ! applySiteOffset ) {
-		return;
+		return null;
 	}
 
 	return (
