@@ -58,6 +58,7 @@ export const remoteValuesSchema = {
 				'contrast',
 				'ectoplasm',
 				'midnight',
+				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',

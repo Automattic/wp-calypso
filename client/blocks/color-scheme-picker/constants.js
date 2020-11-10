@@ -10,6 +10,7 @@ import classicBrightImg from 'calypso/assets/images/color-schemes/color-scheme-t
 import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
 import blueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-blue.svg';
 import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
+import modernImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-modern.svg';
 import nightfallImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
 import sakuraImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
 import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
@@ -60,6 +61,14 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-powder-snow',
 				imageUrl: powderSnowImg,
+			},
+		},
+		{
+			label: translate( 'Modern' ),
+			value: 'modern',
+			thumbnail: {
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
 			},
 		},
 		{
