@@ -72,12 +72,18 @@ export const ExpandableSidebarMenu = ( {
 	} );
 
 	const onEnter = () => {
-		if ( expanded || isTouch ) return;
+		if ( expanded || isTouch ) {
+			return;
+		}
+
 		setSubmenuHovered( true );
 	};
 
 	const onLeave = () => {
-		if ( expanded || isTouch ) return;
+		if ( expanded || isTouch ) {
+			return;
+		}
+
 		setSubmenuHovered( false );
 	};
 

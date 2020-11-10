@@ -65,7 +65,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 				onClick={ () => {
 					if ( link ) {
 						if ( isExternal( link ) ) {
-							// If the URL is external, page() will fail to replace state between different domains
+							// If the URL is external, page() will fail to replace state between different domains.
 							externalRedirect( link );
 							return;
 						}
