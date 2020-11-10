@@ -52,10 +52,12 @@ export default function WPCheckoutOrderReview( {
 	const hasRenewal = Boolean(
 		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
 	);
-	const currentPlanProductSlug = useSelector( ( state ) => getCurrentPlan( state, siteId ) )
-		?.productSlug;
+	const currentPlanProductSlug = useSelector(
+		( state ) => siteId && getCurrentPlan( state, siteId )
+	)?.productSlug;
 	const hasFreeOrMonthlySubscription =
-		isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug );
+		currentPlanProductSlug &&
+		( isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug ) );
 	const isMonthlyPricingTest =
 		hasDotcomPlan &&
 		! hasRenewal &&
