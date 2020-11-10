@@ -146,8 +146,7 @@ class Block_Patterns_From_API {
 	 * @return string ISO 639 locale string
 	 */
 	private function get_iso_639_locale() {
-		// Make sure to get blog locale, not user locale.
-		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		$language = get_user_locale( get_current_user_id() );
 		$language = strtolower( $language );
 
 		if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
