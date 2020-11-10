@@ -182,7 +182,7 @@ class SharingServiceDescription extends Component {
 		} else if ( 'refresh-failed' === this.props.status ) {
 			if ( this.props.expires ) {
 				description = this.props.translate(
-					'Your %(service)s connection has expired. This happens sometimes. Click the "Reconnect" button to fix it before %(expiryDate)s',
+					'Please reconnect to %(service)s before your connection expires on %(expiryDate)s.',
 					{
 						args: {
 							service: this.props.service.label,
@@ -192,7 +192,7 @@ class SharingServiceDescription extends Component {
 				);
 			} else {
 				description = this.props.translate(
-					'Your %(service)s connection has expired. This happens sometimes. Click the "Reconnect" button to fix it.',
+					'Your connection has expired. Please reconnect to %(service)s.',
 					{
 						args: { service: this.props.service.label },
 					}
