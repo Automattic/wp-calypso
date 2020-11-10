@@ -4,6 +4,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState, useRef, useLayoutEffect } from 'react';
+import HoverIntent from 'react-hoverintent';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -57,6 +58,7 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
+	const menu = React.createRef(); // Needed for HoverIntent
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
@@ -77,7 +79,7 @@ export const ExpandableSidebarMenu = ( {
 	} );
 
 	const onEnter = () => {
-		if ( expanded || isTouch ) {
+		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
@@ -85,7 +87,7 @@ export const ExpandableSidebarMenu = ( {
 	};
 
 	const onLeave = () => {
-		if ( expanded || isTouch ) {
+		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
@@ -103,33 +105,37 @@ export const ExpandableSidebarMenu = ( {
 	}, [ submenuHovered ] );
 
 	return (
-		<SidebarMenu
-			className={ classes }
-			onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
-			onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
+		<HoverIntent
+			onMouseOver={ () => onEnter() }
+			onMouseOut={ () => onLeave() }
+			sensitivity={ 7 }
+			interval={ 90 }
+			timeout={ 200 }
 		>
-			<ExpandableSidebarHeading
-				title={ title }
-				count={ count }
-				onClick={ onClick }
-				customIcon={ customIcon }
-				icon={ icon }
-				materialIcon={ materialIcon }
-				materialIconStyle={ materialIconStyle }
-				expanded={ expanded }
-				menuId={ menuId }
-				{ ...props }
-			/>
-			<li
-				role="region"
-				ref={ submenu }
-				id={ menuId }
-				className="sidebar__expandable-content"
-				hidden={ ! expanded }
-			>
-				<ul>{ children }</ul>
-			</li>
-		</SidebarMenu>
+			<SidebarMenu ref={ menu } className={ classes }>
+				<ExpandableSidebarHeading
+					title={ title }
+					count={ count }
+					onClick={ onClick }
+					customIcon={ customIcon }
+					icon={ icon }
+					materialIcon={ materialIcon }
+					materialIconStyle={ materialIconStyle }
+					expanded={ expanded }
+					menuId={ menuId }
+					{ ...props }
+				/>
+				<li
+					role="region"
+					ref={ submenu }
+					id={ menuId }
+					className="sidebar__expandable-content"
+					hidden={ ! expanded }
+				>
+					<ul>{ children }</ul>
+				</li>
+			</SidebarMenu>
+		</HoverIntent>
 	);
 };
 
