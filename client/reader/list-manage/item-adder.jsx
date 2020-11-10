@@ -33,7 +33,7 @@ export default function ItemAdder( props ) {
 	);
 
 	return (
-		<div className="list-manage__item-adder">
+		<div className="list-manage__item-adder" id="reader-list-item-adder">
 			<Card className="list-manage__query-input">
 				<SearchInput
 					additionalClasses="following-manage__search-new"

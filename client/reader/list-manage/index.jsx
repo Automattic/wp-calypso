@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Card } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import {
 	getListByOwnerAndSlug,
 	getListItems,
@@ -61,7 +61,12 @@ function Items( { list, listItems, owner } ) {
 		<>
 			{ listItems?.length > 0 && (
 				<>
-					<h1 className="list-manage__subscriptions-header">Added sites</h1>
+					<h1 className="list-manage__subscriptions-header">
+						Added sites
+						<Button compact primary href="#reader-list-item-adder">
+							Add Site
+						</Button>
+					</h1>
 					{ listItems.map( ( item ) => (
 						<ListItem
 							key={ item.feed_ID || item.site_ID || item.tag_ID }

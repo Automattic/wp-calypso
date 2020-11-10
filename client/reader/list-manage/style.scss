@@ -102,6 +102,11 @@
 }
 .list-manage__subscriptions-header {
 	margin: 1em 0;
+
+	.button {
+		margin-left: 1em;
+		vertical-align: middle;
+	}
 }
 
 .list-manage__item-adder {
