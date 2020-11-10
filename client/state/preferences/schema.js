@@ -50,15 +50,18 @@ export const remoteValuesSchema = {
 		colorScheme: {
 			type: 'string',
 			enum: [
+				'aquatic',
 				'classic-blue',
 				'classic-bright',
 				'contrast',
+				'ectoplasm',
 				'midnight',
 				'modern',
 				'nightfall',
 				'ocean',
 				'powder-snow',
 				'sakura',
+				'sunrise',
 				'sunset',
 			],
 		},

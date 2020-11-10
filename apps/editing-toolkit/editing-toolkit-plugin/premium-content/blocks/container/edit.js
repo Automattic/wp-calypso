@@ -96,6 +96,7 @@ function Edit( props ) {
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
 	// @ts-ignore needed in some upgrade flows - depending how we implement this
 	const [ siteSlug, setSiteSlug ] = useState( '' ); // eslint-disable-line
+	const { isPreview } = props.attributes;
 
 	/**
 	 * Hook to save a new plan.
@@ -212,6 +213,10 @@ function Edit( props ) {
 	const { isSelected, className } = props;
 
 	useEffect( () => {
+		if ( isPreview ) {
+			return;
+		}
+
 		const origin = getQueryArg( window.location.href, 'origin' );
 		const path = addQueryArgs( '/wpcom/v2/memberships/status', {
 			source: origin === 'https://wordpress.com' ? 'gutenberg-wpcom' : 'gutenberg',
@@ -284,7 +289,7 @@ function Edit( props ) {
 		setTimeout( () => props.selectBlock(), 1000 );
 	}, [] );
 
-	if ( apiState === API_STATE_LOADING ) {
+	if ( apiState === API_STATE_LOADING && ! isPreview ) {
 		return (
 			<div className={ className } ref={ wrapperRef }>
 				{ props.noticeUI }

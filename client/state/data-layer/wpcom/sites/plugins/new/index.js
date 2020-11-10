@@ -3,7 +3,7 @@
  */
 
 import { translate } from 'i18n-calypso';
-import { find, includes, toLower } from 'lodash';
+import { find, includes } from 'lodash';
 
 /**
  * Internal dependencies
@@ -47,7 +47,7 @@ const showErrorNotice = ( error ) => {
 		incompatible: translate( 'The uploaded file is not a compatible plugin.' ),
 		unsupported_mime_type: translate( 'The uploaded file is not a valid zip.' ),
 	};
-	const errorString = toLower( error.error + error.message );
+	const errorString = `${ error.error }${ error.message }`.toLowerCase();
 	const knownError = find( knownErrors, ( v, key ) => includes( errorString, key ) );
 
 	if ( knownError ) {
