@@ -26,8 +26,6 @@ function initialize_site_editor() {
 		return;
 	}
 
-	// Force enable required Gutenberg experiments if they are not already active.
-	add_filter( 'pre_option_gutenberg-experiments', __NAMESPACE__ . '\enable_site_editor_experiment' );
 	// Add top level Site Editor menu item.
 	add_action( 'admin_menu', __NAMESPACE__ . '\add_site_editor_menu_item' );
 }
@@ -44,33 +42,6 @@ function add_site_editor_menu_item() {
 		'gutenberg_edit_site_page',
 		'dashicons-edit'
 	);
-}
-
-/**
- * Used to filter corresponding Site Editor experiment options.
- *
- * This needs to be toggled on for the Site Editor to work properly.
- * Furthermore, it's not enough to set it just on a given site.
- * In WP.com context this needs to be enabled in API context too,
- * and since we want to have it selectively enabled for some subset of
- * sites initially, we can't set this option for the whole API.
- * Instead we'll intercept it with its options filter (pre_option_gutenberg-experiments)
- * and override its values for eligible sites.
- *
- * @param array $experiments_option Default experiments option array.
- *
- * @return array Experiments option array with FSE values enabled.
- */
-function enable_site_editor_experiment( $experiments_option ) {
-	if ( ! is_array( $experiments_option ) ) {
-		$experiments_option = array();
-	}
-
-	if ( empty( $experiments_option['gutenberg-full-site-editing'] ) ) {
-		$experiments_option['gutenberg-full-site-editing'] = 1;
-	}
-
-	return $experiments_option;
 }
 
 /**
