@@ -16,7 +16,6 @@ import EmptyContent from 'calypso/components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import { submit } from 'calypso/lib/store-transactions';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -342,34 +341,6 @@ export class SecurePaymentForm extends Component {
 				>
 					{ this.props.children }
 				</StripeElementsPaymentBox>
-			</PaymentBox>
-		);
-	}
-
-	renderPayPalPaymentBox() {
-		const incompatibleProducts = this.props.incompatibleProducts;
-		return (
-			<PaymentBox
-				classSet="paypal-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="paypal"
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ incompatibleProducts }
-			>
-				<QueryPaymentCountries />
-				<PayPalPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ this.props.countriesList }
-					selectedSite={ this.props.selectedSite }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-					incompatibleProducts={ incompatibleProducts }
-				>
-					{ this.props.children }
-				</PayPalPaymentBox>
 			</PaymentBox>
 		);
 	}
