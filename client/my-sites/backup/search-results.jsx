@@ -8,14 +8,19 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import ActivityCardList from 'calypso/components/activity-card-list';
+import { useActivityLogs } from './hooks';
 
 const SearchResults = () => {
 	const translate = useTranslate();
 
+	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const rewindableEvents = []; // TODO
+
+	const filter = useSelector( ( state ) => getActivityLogFilter( state, siteId ) );
+	const { activityLogs } = useActivityLogs( siteId, filter );
 
 	return (
 		<div className="backup__search">
@@ -25,7 +30,7 @@ const SearchResults = () => {
 					'This is the complete event history for your site. Filter by date range and/ or activity type.'
 				) }
 			</div>
-			<ActivityCardList logs={ rewindableEvents } pageSize={ 10 } siteSlug={ siteSlug } />
+			<ActivityCardList logs={ activityLogs } pageSize={ 10 } siteSlug={ siteSlug } />
 		</div>
 	);
 };
