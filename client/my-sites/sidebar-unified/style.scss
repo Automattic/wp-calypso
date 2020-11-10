@@ -9,9 +9,8 @@
 
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
-	--color-sidebar-menu-hover-background: #32373c;
-	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
-	--color-sidebar-menu-hover-heading-background: #1a1e23;
+	--color-sidebar-menu-hover-background: #1a1e23;
+	--color-sidebar-menu-hover-background-rgb: rgb( #1a1e23; );
 	--color-sidebar-menu-hover: #00b9eb;
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
@@ -80,7 +79,7 @@ $font-size: rem( 14px );
 
 			&:hover,
 			&:focus {
-				background-color: var( --color-sidebar-menu-hover-heading-background );
+				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-hover );
 			}
 
@@ -204,7 +203,7 @@ $font-size: rem( 14px );
 		// Is toggled open
 		.sidebar__menu.is-toggle-open {
 			.sidebar__heading {
-				background: var( --color-sidebar-menu-hover-heading-background );
+				background: var( --color-sidebar-menu-hover-background );
 
 				&:hover {
 					.sidebar__menu-icon {
@@ -280,7 +279,7 @@ $font-size: rem( 14px );
 
 	//client/components/site-selector/style.scss
 	.site-selector .site.is-highlighted {
-		background-color: var ( --color-sidebar-menu-hover-background );
+		background-color: var ( --color-sidebar-submenu-background );
 	}
 
 	.site-selector .site.is-highlighted .site__domain,
@@ -314,7 +313,7 @@ $font-size: rem( 14px );
 
 	// client/my-sites/current-site/style.scss
 	.current-site__switch-sites:hover .button.is-borderless:hover {
-		background-color: var( --color-sidebar-menu-hover-heading-background );
+		background-color: var( --color-sidebar-menu-hover-background );
 	}
 
 	.current-site__switch-sites .button.is-borderless {
@@ -495,7 +494,7 @@ $font-size: rem( 14px );
 			position: relative;
 
 			.sidebar__heading {
-				background-color: var( --color-sidebar-menu-hover-heading-background );
+				background-color: var( --color-sidebar-menu-hover-background );
 				color: var( --color-sidebar-menu-hover );
 			}
 
