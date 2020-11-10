@@ -16,6 +16,7 @@ import { Button } from '@wordpress/components';
  * Internal dependencies
  */
 import InfoTooltip from '../info-tooltip';
+import { localizeUrl } from '@automattic/i18n-utils';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
@@ -162,9 +163,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href="https://wordpress.com/support/https-ssl"
+											href={ localizeUrl( 'https://wordpress.com/support/https-ssl' ) }
 										/>
-									), // TODO Wrap this in `localizeUrl` from lib/i18n-utils
+									),
 								}
 							) }
 						</InfoTooltip>
