@@ -85,8 +85,7 @@ export async function submitEbanxCardTransaction( transactionData, submit ) {
 }
 
 export async function submitRedirectTransaction( paymentMethodId, transactionData, submit ) {
-	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId )
-		?.name;
+	const paymentMethodType = translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId );
 	if ( ! paymentMethodType ) {
 		throw new Error( `No payment method found for type: ${ paymentMethodId }` );
 	}

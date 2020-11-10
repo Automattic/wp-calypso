@@ -93,13 +93,13 @@ import {
 	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
-import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
 import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
+import type { ReactStandardAction } from './types/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -116,8 +116,6 @@ export default function CompositeCheckout( {
 	siteId,
 	productAliasFromUrl,
 	getStoredCards,
-	allowedPaymentMethods,
-	onlyLoadPaymentMethods,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -134,8 +132,6 @@ export default function CompositeCheckout( {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	getStoredCards?: () => StoredCard[];
-	allowedPaymentMethods?: CheckoutPaymentMethodSlug[];
-	onlyLoadPaymentMethods?: CheckoutPaymentMethodSlug[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -159,7 +155,11 @@ export default function CompositeCheckout( {
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
-	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
+		createAnalyticsEventHandler( reduxDispatch ),
+		[]
+	);
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -255,7 +255,7 @@ export default function CompositeCheckout( {
 		total,
 		credits,
 		subtotal,
-		allowedPaymentMethods: serverAllowedPaymentMethods,
+		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
 
 	useShowAddCouponSuccessMessage(
@@ -462,7 +462,6 @@ export default function CompositeCheckout( {
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -481,10 +480,10 @@ export default function CompositeCheckout( {
 	const arePaymentMethodsLoading =
 		items.length < 1 ||
 		isInitialCartLoading ||
-		isLoadingStoredCards ||
-		( onlyLoadPaymentMethods
-			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
-			: isApplePayLoading );
+		// Only wait for stored cards to load if we are using cards
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
+		// Only wait for apple pay to load if we are using apple pay
+		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
 
 	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactInfo?.countryCode?.value ?? '';
@@ -497,7 +496,7 @@ export default function CompositeCheckout( {
 				total,
 				credits,
 				subtotal,
-				allowedPaymentMethods: allowedPaymentMethods || serverAllowedPaymentMethods,
+				allowedPaymentMethods,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
@@ -608,17 +607,6 @@ export default function CompositeCheckout( {
 		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
 	);
 
-	useRecordCheckoutLoaded( {
-		recordEvent,
-		isLoadingCart: isInitialCartLoading,
-		isApplePayAvailable,
-		isApplePayLoading,
-		isLoadingStoredCards,
-		responseCart,
-		storedCards,
-		productAliasFromUrl,
-	} );
-
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -633,17 +621,28 @@ export default function CompositeCheckout( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isLoading =
-		isInitialCartLoading || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
+	const isLoading: boolean =
+		isInitialCartLoading ||
+		arePaymentMethodsLoading ||
+		paymentMethods.length < 1 ||
+		items.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
-			isLoadingStoredCards,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: items.length < 1,
 		} );
 	}
+
+	useRecordCheckoutLoaded( {
+		recordEvent,
+		isLoading,
+		isApplePayAvailable,
+		responseCart,
+		storedCards,
+		productAliasFromUrl,
+	} );
 
 	if (
 		shouldShowEmptyCartPage( {
