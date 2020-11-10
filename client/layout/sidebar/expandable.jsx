@@ -60,6 +60,12 @@ export const ExpandableSidebarMenu = ( {
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
+	if ( submenu.current ) {
+		// Sets flyout to expand towards bottom
+		submenu.current.style.bottom = 'auto';
+		submenu.current.style.top = 0;
+	}
+
 	if ( null === expanded ) {
 		expanded = containsSelectedSidebarItem( children );
 	}
@@ -90,7 +96,9 @@ export const ExpandableSidebarMenu = ( {
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {
-			submenu.current.style = 'bottom: 0; top:auto';
+			// Sets flyout to expand towards top
+			submenu.current.style.bottom = 0;
+			submenu.current.style.top = 'auto';
 		}
 	}, [ submenuHovered ] );
 
