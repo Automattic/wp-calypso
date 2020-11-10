@@ -14,7 +14,7 @@ import { createStripePaymentMethod } from '@automattic/calypso-stripe';
 import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/types/backend/payment-method';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
 import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
