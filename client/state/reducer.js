@@ -33,7 +33,6 @@ import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import orderTransactions from './order-transactions/reducer';
-import pageTemplates from './page-templates/reducer';
 import postFormats from './post-formats/reducer';
 import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
@@ -75,7 +74,6 @@ const reducers = {
 	notices,
 	notificationsUnseenCount,
 	orderTransactions,
-	pageTemplates,
 	postFormats,
 	receipts,
 	rewind,
