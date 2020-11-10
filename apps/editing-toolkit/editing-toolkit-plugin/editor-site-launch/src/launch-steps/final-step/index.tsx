@@ -27,6 +27,7 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
+import { localizeUrl } from '@automattic/i18n-utils';
 
 import './styles.scss';
 
@@ -161,7 +162,11 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 									</ul>
 									<p>
 										{ __( 'Questions?', 'full-site-editing' ) }{ ' ' }
-										<Button isLink href="https://wordpress.com/help/contact" target="_blank">
+										<Button
+											isLink
+											href={ localizeUrl( 'https://wordpress.com/help/contact' ) }
+											target="_blank"
+										>
 											{ __( 'Ask a Happiness Engineer', 'full-site-editing' ) }
 										</Button>
 									</p>
