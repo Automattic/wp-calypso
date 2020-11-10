@@ -67,12 +67,23 @@ module.exports = {
 			},
 		},
 		{
-			// Eventually the whole repo should follow this rule. This is the list of the folders we have
-			// already cleaned up. Once we have cleaned all repo, this override should dissapear and the rule
-			// should be enabled as a regular `rule`.
 			files: [ 'packages/**/*' ],
 			rules: {
-				'import/no-extraneous-dependencies': 'error',
+				// These two rules are to ensure packages don't import form calypso by accident to avoid circular deps.
+				'no-restricted-imports': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
+				'no-restricted-modules': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
 			},
 		},
 		{
@@ -348,7 +359,6 @@ module.exports = {
 				],
 			},
 		],
-		// Disabled for now until we finish the migration
 		'wpcalypso/no-package-relative-imports': [
 			'error',
 			{
