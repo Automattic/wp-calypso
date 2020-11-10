@@ -16,7 +16,7 @@ export const getJetpackCROActiveVersion = (): string => {
 			return 'v0';
 		case 'v1 - 3 cols layout':
 			return 'v1';
-		case 'i2 - slide outs':
+		case 'v2 - slide outs':
 			return 'v2';
 		case 'i5 - Saas table design':
 			return 'i5';
