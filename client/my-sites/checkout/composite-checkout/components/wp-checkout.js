@@ -28,7 +28,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import CheckoutTerms from '../components/checkout-terms';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
 import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
@@ -36,7 +35,6 @@ import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import { isCompleteAndValid } from '../types/wpcom-store-state';
-import { WPOrderReviewTotal, WPOrderReviewSection, LineItem } from './wp-order-review-line-items';
 import MaterialIcon from 'calypso/components/material-icon';
 import Gridicon from 'calypso/components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
@@ -56,6 +54,7 @@ import {
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
 import QueryExperiments from 'calypso/components/data/query-experiments';
+import PaymentMethodStep from './payment-method-step';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -391,7 +390,10 @@ export default function WPCheckout( {
 					<CheckoutStep
 						stepId="payment-method-step"
 						activeStepContent={
-							<PaymentMethodStep responseCart={ responseCart } subtotal={ subtotal } />
+							<PaymentMethodStep
+								activeStepContent={ paymentMethodStep.activeStepContent }
+								subtotal={ subtotal }
+							/>
 						}
 						completeStepContent={ paymentMethodStep.completeStepContent }
 						titleContent={ paymentMethodStep.titleContent }
@@ -501,77 +503,6 @@ const CheckoutSummaryBody = styled.div`
 		max-width: 328px;
 		position: fixed;
 		width: 100%;
-	}
-`;
-
-function PaymentMethodStep( { responseCart, subtotal } ) {
-	const [ items, total ] = useLineItems();
-	const taxes = items.filter( ( item ) => item.type === 'tax' );
-	return (
-		<>
-			{ paymentMethodStep.activeStepContent }
-
-			<CheckoutTermsWrapper>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsWrapper>
-
-			<WPOrderReviewSection>
-				{ subtotal && <LineItem subtotal item={ subtotal } /> }
-				{ taxes.map( ( tax ) => (
-					<LineItem tax key={ tax.id } item={ tax } />
-				) ) }
-				<WPOrderReviewTotal total={ total } />
-			</WPOrderReviewSection>
-		</>
-	);
-}
-
-const CheckoutTermsWrapper = styled.div`
-	& > * {
-		margin: 16px 0 16px -24px;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	.rtl & > * {
-		margin: 16px -24px 16px 0;
-		padding-right: 24px;
-		padding-left: 0;
-	}
-
-	& div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 32px;
-	}
-
-	svg {
-		width: 16px;
-		height: 16px;
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		.rtl & {
-			left: auto;
-			right: 0;
-		}
-	}
-
-	p {
-		font-size: 12px;
-		margin: 0;
-		word-break: break-word;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
 	}
 `;
 
