@@ -35,7 +35,6 @@ import { unseenCount as notificationsUnseenCount } from './notifications';
 import orderTransactions from './order-transactions/reducer';
 import pageTemplates from './page-templates/reducer';
 import postFormats from './post-formats/reducer';
-import receipts from './receipts/reducer';
 import rewind from './rewind/reducer';
 import selectedEditor from './selected-editor/reducer';
 import simplePayments from './simple-payments/reducer';
@@ -77,7 +76,6 @@ const reducers = {
 	orderTransactions,
 	pageTemplates,
 	postFormats,
-	receipts,
 	rewind,
 	selectedEditor,
 	simplePayments,
