@@ -35,7 +35,9 @@ const TickIcon = <Icon icon={ check } size={ 17 } />;
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const planPrices = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPrices( document.documentElement.lang )
+	);
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );

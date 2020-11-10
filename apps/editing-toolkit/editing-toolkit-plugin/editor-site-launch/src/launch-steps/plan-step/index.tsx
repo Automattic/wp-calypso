@@ -70,6 +70,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 					}
 					isExperimental={ isExperimental }
 					selectedFeatures={ selectedFeatures }
+					locale={ document.documentElement.lang }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">
