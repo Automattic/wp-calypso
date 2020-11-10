@@ -100,14 +100,12 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<>
-					<LineItemMeta>
-						<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
-						<DomainDiscountCallout item={ item } />
-						{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
-						<DiscountForFirstYearOnly item={ item } />
-					</LineItemMeta>
-				</>
+				<LineItemMeta>
+					<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
+					<DomainDiscountCallout item={ item } />
+					{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
+					<DiscountForFirstYearOnly item={ item } />
+				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
