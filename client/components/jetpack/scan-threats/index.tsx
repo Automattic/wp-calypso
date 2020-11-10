@@ -161,8 +161,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 			<p>
 				{ translate(
-					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
-					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threat on {{strong}}%(siteName)s{{/strong}}.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threats on {{strong}}%(siteName)s{{/strong}}.',
 					{
 						args: {
 							siteName: site.name,
@@ -174,9 +174,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						count: threats.length,
 					}
 				) }
-				<br />
 				{ translate(
-					'Please review them below and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
+					'Please review and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
 					{
 						components: {
 							a: (
