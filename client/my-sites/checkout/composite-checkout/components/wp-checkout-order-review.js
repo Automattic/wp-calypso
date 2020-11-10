@@ -59,7 +59,10 @@ export default function WPCheckoutOrderReview( {
 		currentPlanProductSlug &&
 		( isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug ) );
 	const isMonthlyPricingTest =
-		useSelector( isTreatmentInMonthlyPricingTest ) && hasDotcomPlan && ! hasRenewal && hasFreeOrMonthlySubscription;
+		useSelector( isTreatmentInMonthlyPricingTest ) &&
+		hasDotcomPlan &&
+		! hasRenewal &&
+		hasFreeOrMonthlySubscription;
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 
