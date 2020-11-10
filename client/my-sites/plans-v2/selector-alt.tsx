@@ -26,6 +26,7 @@ import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import ProductsGridAlt from './products-grid-alt';
 import ProductsGridAlt2 from './products-grid-alt-2';
+import ProductsGridAlt3 from './products-grid-alt-3';
 
 /**
  * Type dependencies
@@ -142,9 +143,21 @@ const SelectorPageAlt = ( {
 		setDuration( selectedDuration );
 	};
 
+	const getProductsGrid = ( activeVariation = 'v0' ) => {
+		switch ( activeVariation ) {
+			case 'i5':
+				return ProductsGridAlt3;
+			case 'v2':
+				return ProductsGridAlt2;
+			default:
+				return ProductsGridAlt;
+		}
+	};
+
 	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
-	const Grid = getJetpackCROActiveVersion() === 'v2' ? ProductsGridAlt2 : ProductsGridAlt;
+	const currentABTestVariation = getJetpackCROActiveVersion();
+	const Grid = getProductsGrid( currentABTestVariation );
 
 	return (
 		<Main className="selector-alt__main" wideLayout>
