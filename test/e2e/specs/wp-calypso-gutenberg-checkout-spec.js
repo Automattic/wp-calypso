@@ -9,10 +9,10 @@ import assert from 'assert';
  * Internal dependencies
  */
 import LoginFlow from '../lib/flows/login-flow.js';
-
 import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
-import WPHomePage from '../lib/pages/wp-home-page.js';
+import UpsellPage from '../lib/pages/signup/upsell-page';
+import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -22,8 +22,6 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
-const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
-const locale = driverManager.currentLocale();
 
 let driver;
 
@@ -32,25 +30,20 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, function () {
+describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive`, function () {
 	this.timeout( mochaTimeOut );
-	const currencyValue = 'USD';
+	let editorUrl;
 
-	describe( 'Can Trigger The Checkout Modal via Post Editor', function () {
-		step( 'We Can Set The Sandbox Cookie For Payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
-			await wPHomePage.checkURL( locale );
-			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
-		} );
-
-		step( 'Can Log In', async function () {
+	describe( 'Can trigger the checkout modal via post editor', function () {
+		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
-			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
-			return await this.loginFlow.loginAndStartNewPost( null, true );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
+				useSandboxForPayments: true,
+			} );
+			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
-		step( 'Can Insert The Premium Block', async function () {
+		step( 'Can insert the premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.addBlock( 'Simple Payments' );
 			return await driverHelper.waitTillPresentAndDisplayed(
@@ -59,13 +52,14 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Premium Block Has Clickable Upgrade Button Displayed', async function () {
+		step( 'Can click Upgrade button on premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 			await gEditorComponent.clickUpgradeOnPremiumBlock();
 			return await driver.switchTo().defaultContent();
 		} );
 
-		step( 'Can View Checkout Modal', async function () {
+		step( 'Can view checkout modal', async function () {
+			editorUrl = await driver.executeScript( 'return window.location.href' );
 			await driverHelper.waitTillPresentAndDisplayed( driver, By.css( '.editor-checkout-modal' ) );
 			const compositeCheckoutIsPresent = await driverHelper.isElementPresent(
 				driver,
@@ -79,7 +73,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Has Correct Plan Details', function () {
+	describe( 'Has correct plan details', function () {
 		step( 'Contains Premium Plan', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const checkoutContainsPremiumPlan = await securePaymentComponent.containsPremiumPlan();
@@ -90,7 +84,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 			);
 		} );
 
-		step( 'Can Change Plan Length', async function () {
+		step( 'Can change plan length', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			const originalCartAmount = await securePaymentComponent.cartTotalAmount();
 			await driverHelper.waitTillPresentAndDisplayed(
@@ -124,7 +118,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Can Add/Remove Coupons', async function () {
+	describe( 'Can add/remove coupons', async function () {
 		step( 'Can Enter Coupon Code', async function () {
 			const enterCouponCodeButton = await driverHelper.isElementPresent(
 				driver,
@@ -151,6 +145,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				);
 			}
 		} );
+
 		step( 'Can Remove Coupon', async function () {
 			await driver.switchTo().defaultContent();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
@@ -163,6 +158,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				'Coupon not removed properly'
 			);
 		} );
+
 		step( 'Can Save Order And Continue', async function () {
 			return await driverHelper.clickWhenClickable(
 				driver,
@@ -173,16 +169,52 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 		} );
 	} );
 
-	describe( 'Can Make Payment', function () {
+	describe( 'Can make payment', function () {
 		const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 
-		step( 'Can Enter/Submit Test Payment Details', async function () {
+		step( 'Can enter/submit test payment details', async function () {
+			const existingCardIsPresent = await driverHelper.isElementPresent(
+				driver,
+				By.css( '[id*="existingCard-"]' )
+			);
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
-			await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
+			if ( ! existingCardIsPresent ) {
+				await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
+			}
 			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
 			return await securePaymentComponent.waitForPageToDisappear();
+		} );
+
+		step( 'Can decline upgrade offer', async function () {
+			const upsellPage = await UpsellPage.Expect( driver );
+			return await upsellPage.declineOffer();
+		} );
+
+		step( 'Can return to editor', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
+			await driver.switchTo().defaultContent();
+			const destinationUrl = await driver.executeScript( 'return window.location.href' );
+			assert.strictEqual(
+				editorUrl,
+				destinationUrl,
+				'Did not return to editor after using editor checkout'
+			);
+		} );
+	} );
+
+	describe( 'Can delete the premium plan', async function () {
+		step( 'Can log in', async function () {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
+				useSandboxForPayments: true,
+			} );
+			return await loginFlow.login();
+		} );
+
+		step( 'Can delete the premium plan', async function () {
+			return await new DeletePlanFlow( driver ).deletePlan( 'premium' );
 		} );
 	} );
 } );
