@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
@@ -15,7 +16,7 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
 import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
-import { getABTestVariation } from 'calypso/lib/abtest';
+import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -49,7 +50,7 @@ export default function WPCheckoutOrderReview( {
 		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
 	);
 	const isMonthlyPricingTest =
-		hasDotcomPlan && ! hasRenewal && 'treatment' === getABTestVariation( 'monthlyPricing' );
+		useSelector( isTreatmentInMonthlyPricingTest ) && hasDotcomPlan && ! hasRenewal;
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 

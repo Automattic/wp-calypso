@@ -57,6 +57,8 @@ import { abtest, getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
+import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 /**
  * Style dependencies
  */
@@ -744,6 +746,7 @@ class DomainsStep extends React.Component {
 				fallbackSubHeaderText={ fallbackSubHeaderText }
 				stepContent={
 					<div>
+						{ ! this.props.hasAnonId && <QueryExperiments /> }
 						{ ! this.props.productsLoaded && <QueryProductsList /> }
 						{ this.renderContent() }
 					</div>
@@ -813,6 +816,7 @@ export default connect(
 			sites: getSitesItems( state ),
 			isReskinned,
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
+			hasAnonId: tracksAnonymousUserId( state ) || false,
 		};
 	},
 	{
