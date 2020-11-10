@@ -101,7 +101,9 @@ export const useFirstMatchingBackupAttempt = (
 	{ before, after, successOnly, sortOrder } = {},
 	shouldExecute = true
 ) => {
-	useEffect( () => requestRewindCapabilities( siteId ), [ siteId ] );
+	useEffect( () => {
+		requestRewindCapabilities( siteId );
+	}, [ siteId ] );
 
 	const rewindCapabilities = useSelector( ( state ) => getRewindCapabilities( state, siteId ) );
 	const hasRealtimeBackups =
