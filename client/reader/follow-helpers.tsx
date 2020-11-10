@@ -34,7 +34,9 @@ export function filterFollowsByQuery(
 		const siteAuthor = getSiteAuthorName( site );
 
 		return (
-			`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`.search(
+			// NOTE: String pieces are separated by non-breaking space.
+			// eslint-disable-next-line no-irregular-whitespace
+			`${ follow.URL } ${ siteName } ${ siteUrl } ${ siteDescription } ${ siteAuthor }`.search(
 				phraseRe
 			) !== -1
 		);
