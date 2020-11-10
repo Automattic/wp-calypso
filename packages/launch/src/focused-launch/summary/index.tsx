@@ -5,6 +5,7 @@
  */
 import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
+import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import React, { ReactNode } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
@@ -120,6 +121,18 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
+							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+								<Icon icon={ bulb } />
+								{ createInterpolateElement(
+									__(
+										'<strong>Unique domains</strong> help build brand trust',
+										__i18n_text_domain__
+									),
+									{
+										strong: <strong />,
+									}
+								) }
+							</p>
 						</label>
 						<LockedPurchasedItem domainName={ currentDomain || '' } />
 					</>
@@ -132,7 +145,16 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 										{ stepIndex }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
 									</label>
 									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
-										<Icon icon={ bulb } /> 46.9% of globally registered domains are .com
+										<Icon icon={ bulb } />
+										{ createInterpolateElement(
+											__(
+												'<strong>46.9%</strong> of registered domains are <strong>.com</strong>',
+												__i18n_text_domain__
+											),
+											{
+												strong: <strong />,
+											}
+										) }
 									</p>
 								</>
 							}
@@ -156,20 +178,47 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 			}
 			commentary={
 				<>
-					<p className="focused-launch-summary__side-commentary-title">
-						<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>
-					</p>
-					<ul className="focused-launch-summary__side-commentary-list">
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Stand out with a unique domain
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Easy to remember and easy to share
-						</li>
-						<li className="focused-launch-summary__side-commentary-list-item">
-							<Icon icon={ check } /> Builds brand recognition and trust
-						</li>
-					</ul>
+					{ hasPaidDomain ? (
+						<p className="focused-launch-summary__side-commentary-title">
+							{ createInterpolateElement(
+								__(
+									'<strong>Unique domains</strong> help build brand recongnition and trust',
+									__i18n_text_domain__
+								),
+								{
+									strong: <strong />,
+								}
+							) }
+						</p>
+					) : (
+						<>
+							<p className="focused-launch-summary__side-commentary-title">
+								{ createInterpolateElement(
+									__(
+										'<strong>46.9%</strong> of globally registered domains are <strong>.com</strong>',
+										__i18n_text_domain__
+									),
+									{
+										strong: <strong />,
+									}
+								) }
+							</p>
+							<ul className="focused-launch-summary__side-commentary-list">
+								<li className="focused-launch-summary__side-commentary-list-item">
+									<Icon icon={ check } />
+									{ __( 'Stand out with a unique domain' ) }
+								</li>
+								<li className="focused-launch-summary__side-commentary-list-item">
+									<Icon icon={ check } />
+									{ __( 'Easy to remember and easy to share' ) }
+								</li>
+								<li className="focused-launch-summary__side-commentary-list-item">
+									<Icon icon={ check } />
+									{ __( 'Builds brand recognition and trust' ) }
+								</li>
+							</ul>
+						</>
+					) }
 				</>
 			}
 		/>
