@@ -51,6 +51,7 @@ export const remoteValuesSchema = {
 			type: 'string',
 			enum: [
 				'aquatic',
+				'blue',
 				'classic-blue',
 				'classic-bright',
 				'coffee',
