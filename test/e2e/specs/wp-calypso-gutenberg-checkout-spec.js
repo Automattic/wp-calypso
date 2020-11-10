@@ -23,6 +23,7 @@ const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
+const locale = driverManager.currentLocale();
 
 let driver;
 
@@ -33,9 +34,18 @@ before( async function () {
 
 describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, function () {
 	this.timeout( mochaTimeOut );
+	const currencyValue = 'USD';
 
 	describe( 'Can Trigger The Checkout Modal via Post Editor', function () {
+		step( 'We Can Set The Sandbox Cookie For Payments', async function () {
+			const wPHomePage = await WPHomePage.Visit( driver );
+			await wPHomePage.checkURL( locale );
+			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
+			return await wPHomePage.setCurrencyForPayments( currencyValue );
+		} );
+
 		step( 'Can Log In', async function () {
+			this.timeout( mochaTimeOut * 12 );
 			this.loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await this.loginFlow.loginAndStartNewPost( null, true );
 		} );
@@ -128,7 +138,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				const newCartAmount = await securePaymentComponent.cartTotalAmount();
 				const expectedCartAmount =
 					Math.round( ( originalCartAmount * 0.99 + Number.EPSILON ) * 100 ) / 100;
-
 				assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 			} else {
 				const existingCoupon = await driverHelper.isElementPresent(
@@ -142,7 +151,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				);
 			}
 		} );
-
 		step( 'Can Remove Coupon', async function () {
 			await driver.switchTo().defaultContent();
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
@@ -155,7 +163,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 				'Coupon not removed properly'
 			);
 		} );
-
 		step( 'Can Save Order And Continue', async function () {
 			return await driverHelper.clickWhenClickable(
 				driver,
@@ -167,15 +174,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout (${ screenSize })`, fu
 	} );
 
 	describe( 'Can Make Payment', function () {
-		const currencyValue = 'GBP';
 		const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
-
-		step( 'We Can Set The Sandbox Cookie For Payments', async function () {
-			// TODO: It doesn't feel right that these methods live in the WPHomePage class?
-			const wPHomePage = await WPHomePage.Expect( driver );
-			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
-		} );
 
 		step( 'Can Enter/Submit Test Payment Details', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
