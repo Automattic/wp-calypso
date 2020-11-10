@@ -1182,7 +1182,7 @@ export function isNextDomainFree( cart, domain = '' ) {
 export function isDomainBundledWithPlan( cart, domain ) {
 	const bundledDomain = get( cart, 'bundled_domain', '' );
 
-	return '' !== bundledDomain && domain.toLowerCase() === bundledDomain.toLowerCase();
+	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
 /**
