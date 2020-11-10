@@ -81,6 +81,7 @@ class DomainsStep extends React.Component {
 		selectedSite: PropTypes.object,
 		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
+		hasAnonId: PropTypes.bool,
 	};
 
 	getDefaultState = () => ( {
@@ -816,7 +817,7 @@ export default connect(
 			sites: getSitesItems( state ),
 			isReskinned,
 			isPlanStepSkipped: isPlanStepExistsAndSkipped( state ),
-			hasAnonId: tracksAnonymousUserId( state ) || false,
+			hasAnonId: !! tracksAnonymousUserId( state ),
 		};
 	},
 	{
