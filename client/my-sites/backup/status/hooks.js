@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { useApplySiteOffset } from 'calypso/components/site-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getDeltaActivities,
@@ -122,7 +121,6 @@ export const useDailyBackupStatus = ( siteId, selectedDate ) => {
 };
 
 export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 
 	const mostRecentBackupEver = useLatestBackupAttempt( siteId, {
@@ -151,8 +149,8 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 	const rawDeltas = useRawBackupDeltas(
 		siteId,
 		{
-			before: applySiteOffset( lastBackupAttemptOnDate?.activityTs ),
-			after: applySiteOffset( lastBackupBeforeDate.backupAttempt?.activityTs ),
+			before: moment( lastBackupAttemptOnDate?.activityTs ),
+			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 		},
 		!! ( hasPreviousBackup && successfulLastAttempt )
 	);

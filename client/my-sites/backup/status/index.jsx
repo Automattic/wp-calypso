@@ -7,12 +7,12 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { useApplySiteOffset } from 'calypso/components/site-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupDelta from 'calypso/components/jetpack/backup-delta';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status';
+import { useDateWithOffset } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**
@@ -23,7 +23,6 @@ import './style.scss';
 export const DailyStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 
 	const { isLoading, lastBackupBeforeDate, lastBackupAttemptOnDate, deltas } = useDailyBackupStatus(
@@ -35,6 +34,11 @@ export const DailyStatus = ( { selectedDate } ) => {
 	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
+	const lastBackupDate = useDateWithOffset(
+		lastBackupBeforeDate?.activityTs,
+		!! lastBackupBeforeDate
+	);
+
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
@@ -43,7 +47,7 @@ export const DailyStatus = ( { selectedDate } ) => {
 		<MostRecentStatus
 			{ ...{
 				selectedDate,
-				lastBackupDate: lastBackupBeforeDate && applySiteOffset( lastBackupBeforeDate.activityTs ),
+				lastBackupDate,
 				backup: lastBackupAttemptOnDate,
 				deltas,
 			} }
@@ -54,7 +58,6 @@ export const DailyStatus = ( { selectedDate } ) => {
 export const RealtimeStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 
 	const {
@@ -68,6 +71,11 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
+	const lastBackupDate = useDateWithOffset(
+		lastBackupBeforeDate?.activityTs,
+		!! lastBackupBeforeDate
+	);
+
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
 	}
@@ -77,8 +85,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 			<MostRecentStatus
 				{ ...{
 					selectedDate,
-					lastBackupDate:
-						lastBackupBeforeDate && applySiteOffset( lastBackupBeforeDate.activityTs ),
+					lastBackupDate,
 					backup: lastBackupAttemptOnDate,
 				} }
 			/>

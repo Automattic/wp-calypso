@@ -9,11 +9,11 @@ import { useSelector } from 'react-redux';
  */
 import { getDeltaActivities, isSuccessfulDailyBackup } from 'calypso/lib/jetpack/backup-utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useApplySiteOffset } from 'calypso/components/site-offset';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupCard from 'calypso/components/jetpack/backup-card';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status/index-alternate';
+import { useDateWithOffset } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**
@@ -24,7 +24,7 @@ import './style.scss';
 export const DailyStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const applySiteOffset = useApplySiteOffset();
+	const dateWithOffset = useDateWithOffset( selectedDate );
 	const moment = useLocalizedMoment();
 
 	const {
@@ -33,11 +33,16 @@ export const DailyStatus = ( { selectedDate } ) => {
 		lastBackupBeforeDate,
 		lastBackupAttemptOnDate,
 		rawDeltas,
-	} = useDailyBackupStatus( siteId, selectedDate );
+	} = useDailyBackupStatus( siteId, dateWithOffset );
 
 	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
-	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
-	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
+	useDailyBackupStatus( siteId, moment( dateWithOffset ).subtract( 1, 'day' ) );
+	useDailyBackupStatus( siteId, moment( dateWithOffset ).add( 1, 'day' ) );
+
+	const lastBackupDate = useDateWithOffset(
+		lastBackupBeforeDate?.activityTs,
+		!! lastBackupBeforeDate
+	);
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -53,9 +58,8 @@ export const DailyStatus = ( { selectedDate } ) => {
 			<li key="daily-backup-status">
 				<MostRecentStatus
 					{ ...{
-						selectedDate,
-						lastBackupDate:
-							lastBackupBeforeDate && applySiteOffset( lastBackupBeforeDate.activityTs ),
+						selectedDate: dateWithOffset,
+						lastBackupDate,
 						backup: lastBackupAttemptOnDate,
 						isLatestBackup,
 						dailyDeltas: rawDeltas,
@@ -69,7 +73,6 @@ export const DailyStatus = ( { selectedDate } ) => {
 export const RealtimeStatus = ( { selectedDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
 
 	const {
@@ -84,6 +87,11 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
+
+	const lastBackupDate = useDateWithOffset(
+		lastBackupBeforeDate?.activityTs,
+		!! lastBackupBeforeDate
+	);
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -108,8 +116,7 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 				<MostRecentStatus
 					{ ...{
 						selectedDate,
-						lastBackupDate:
-							lastBackupBeforeDate && applySiteOffset( lastBackupBeforeDate.activityTs ),
+						lastBackupDate,
 						backup: lastBackupAttemptOnDate,
 						isLatestBackup,
 						dailyDeltas,

@@ -13,7 +13,6 @@ import { isArray } from 'lodash';
  */
 import { isEnabled } from 'calypso/config';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useApplySiteOffset } from 'calypso/components/site-offset';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
@@ -31,6 +30,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
+import { useDateWithOffset } from './hooks';
 import { backupMainPath } from './paths';
 import DatePicker from './date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
@@ -54,15 +54,9 @@ const BackupPage = ( { queryDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const isAdmin = useSelector( ( state ) => isCurrentUserAdmin( state, siteId ) );
 
-	const applySiteOffset = useApplySiteOffset();
 	const moment = useLocalizedMoment();
-	const selectedDate = applySiteOffset?.(
-		queryDate ? moment( queryDate, INDEX_FORMAT ) : moment()
-	);
-
-	if ( ! selectedDate ) {
-		return null;
-	}
+	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
+	const selectedDate = useDateWithOffset( parsedQueryDate );
 
 	return (
 		<div
