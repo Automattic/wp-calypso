@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -12,6 +12,10 @@ import { get, uniqueId } from 'lodash';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
+import { hasTouch } from 'calypso/lib/touch-detect';
+import config from 'calypso/config';
+
+const isTouch = hasTouch();
 
 function containsSelectedSidebarItem( children ) {
 	let selectedItemFound = false;
@@ -35,6 +39,11 @@ function containsSelectedSidebarItem( children ) {
 	return selectedItemFound;
 }
 
+const offScreen = ( submenu ) => {
+	const rect = submenu.getBoundingClientRect();
+	return rect.y + rect.height > window.innerHeight;
+};
+
 export const ExpandableSidebarMenu = ( {
 	className,
 	title,
@@ -48,6 +57,14 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
+	const submenu = useRef();
+	const [ submenuHovered, setSubmenuHovered ] = useState( false );
+
+	if ( submenu.current ) {
+		// Sets flyout to expand towards bottom
+		submenu.current.style.bottom = 'auto';
+		submenu.current.style.top = 0;
+	}
 
 	if ( null === expanded ) {
 		expanded = containsSelectedSidebarItem( children );
@@ -56,12 +73,41 @@ export const ExpandableSidebarMenu = ( {
 	const classes = classNames( className, {
 		'is-toggle-open': !! expanded,
 		'is-togglable': true,
+		hovered: submenuHovered,
 	} );
+
+	const onEnter = () => {
+		if ( expanded || isTouch ) {
+			return;
+		}
+
+		setSubmenuHovered( true );
+	};
+
+	const onLeave = () => {
+		if ( expanded || isTouch ) {
+			return;
+		}
+
+		setSubmenuHovered( false );
+	};
 
 	const menuId = uniqueId( 'menu' );
 
+	useLayoutEffect( () => {
+		if ( submenuHovered && offScreen( submenu.current ) ) {
+			// Sets flyout to expand towards top
+			submenu.current.style.bottom = 0;
+			submenu.current.style.top = 'auto';
+		}
+	}, [ submenuHovered ] );
+
 	return (
-		<SidebarMenu className={ classes }>
+		<SidebarMenu
+			className={ classes }
+			onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
+			onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
+		>
 			<ExpandableSidebarHeading
 				title={ title }
 				count={ count }
@@ -74,7 +120,13 @@ export const ExpandableSidebarMenu = ( {
 				menuId={ menuId }
 				{ ...props }
 			/>
-			<li role="region" id={ menuId } className="sidebar__expandable-content" hidden={ ! expanded }>
+			<li
+				role="region"
+				ref={ submenu }
+				id={ menuId }
+				className="sidebar__expandable-content"
+				hidden={ ! expanded }
+			>
 				<ul>{ children }</ul>
 			</li>
 		</SidebarMenu>

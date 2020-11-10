@@ -32,41 +32,33 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 
 	const currentCROvariant = getJetpackCROActiveVersion();
 
-	if ( currentCROvariant === 'v1' ) {
-		context.primary = (
-			<SelectorPageAlt
-				defaultDuration={ duration }
-				rootUrl={ rootUrl }
-				siteSlug={ context.params.site || context.query.site }
-				urlQueryArgs={ urlQueryArgs }
-				header={ context.header }
-				footer={ context.footer }
-			/>
-		);
-	} else if ( currentCROvariant === 'v2' ) {
-		// TODO: render the new iteration. It's possible that we won't need a new
-		// Selector page for this. In that case, we should delete this if branch.
-		context.primary = (
-			<SelectorPageAlt
-				defaultDuration={ duration }
-				rootUrl={ rootUrl }
-				siteSlug={ context.params.site || context.query.site }
-				urlQueryArgs={ urlQueryArgs }
-				header={ context.header }
-				footer={ context.footer }
-			/>
-		);
-	} else {
-		context.primary = (
-			<SelectorPage
-				defaultDuration={ duration }
-				rootUrl={ rootUrl }
-				siteSlug={ context.params.site || context.query.site }
-				urlQueryArgs={ urlQueryArgs }
-				header={ context.header }
-				footer={ context.footer }
-			/>
-		);
+	switch ( currentCROvariant ) {
+		case 'i5':
+		case 'v1':
+		case 'v2':
+			context.primary = (
+				<SelectorPageAlt
+					defaultDuration={ duration }
+					rootUrl={ rootUrl }
+					siteSlug={ context.params.site || context.query.site }
+					urlQueryArgs={ urlQueryArgs }
+					header={ context.header }
+					footer={ context.footer }
+				/>
+			);
+			break;
+		default:
+			context.primary = (
+				<SelectorPage
+					defaultDuration={ duration }
+					rootUrl={ rootUrl }
+					siteSlug={ context.params.site || context.query.site }
+					urlQueryArgs={ urlQueryArgs }
+					header={ context.header }
+					footer={ context.footer }
+				/>
+			);
+			break;
 	}
 
 	next();

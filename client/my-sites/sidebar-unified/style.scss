@@ -488,7 +488,8 @@ $font-size: rem( 14px );
 			}
 		}
 
-		.sidebar__menu.is-togglable:not( .is-toggle-open ):hover {
+		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;
 
 			.sidebar__heading {
@@ -505,8 +506,9 @@ $font-size: rem( 14px );
 			// flyout content
 			.sidebar__expandable-content {
 				display: block;
-				position: absolute;
 				top: 0;
+				bottom: auto;
+				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
 
