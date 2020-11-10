@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { compact } from 'lodash';
+import { compact, shuffle } from 'lodash';
 
 /**
  * Image dependencies
@@ -30,10 +30,10 @@ import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumb
  * `client/state/preferences/schema.js` or preferences state persistence may be invalidated.
  */
 
-export default function ( translate ) {
-	return compact( [
+const items = shuffle(
+	compact( [
 		{
-			label: translate( 'Classic Bright' ),
+			label: ( translate ) => translate( 'Classic Bright' ),
 			value: 'classic-bright',
 			thumbnail: {
 				cssClass: 'is-classic-bright',
@@ -41,7 +41,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Classic Blue' ),
+			label: ( translate ) => translate( 'Classic Blue' ),
 			value: 'classic-blue',
 			thumbnail: {
 				cssClass: 'is-classic-blue',
@@ -49,7 +49,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Blue' ),
+			label: ( translate ) => translate( 'Blue' ),
 			value: 'blue',
 			thumbnail: {
 				cssClass: 'is-blue',
@@ -57,7 +57,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Powder Snow' ),
+			label: ( translate ) => translate( 'Powder Snow' ),
 			value: 'powder-snow',
 			thumbnail: {
 				cssClass: 'is-powder-snow',
@@ -65,7 +65,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Light' ),
+			label: ( translate ) => translate( 'Light' ),
 			value: 'light',
 			thumbnail: {
 				cssClass: 'is-light',
@@ -73,7 +73,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Modern' ),
+			label: ( translate ) => translate( 'Modern' ),
 			value: 'modern',
 			thumbnail: {
 				cssClass: 'is-modern',
@@ -81,7 +81,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Nightfall' ),
+			label: ( translate ) => translate( 'Nightfall' ),
 			value: 'nightfall',
 			thumbnail: {
 				cssClass: 'is-nightfall',
@@ -89,7 +89,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Sakura' ),
+			label: ( translate ) => translate( 'Sakura' ),
 			value: 'sakura',
 			thumbnail: {
 				cssClass: 'is-sakura',
@@ -97,7 +97,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Ocean' ),
+			label: ( translate ) => translate( 'Ocean' ),
 			value: 'ocean',
 			thumbnail: {
 				cssClass: 'is-ocean',
@@ -105,7 +105,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Aquatic' ),
+			label: ( translate ) => translate( 'Aquatic' ),
 			value: 'aquatic',
 			thumbnail: {
 				cssClass: 'is-aquatic',
@@ -113,7 +113,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Sunrise' ),
+			label: ( translate ) => translate( 'Sunrise' ),
 			value: 'sunrise',
 			thumbnail: {
 				cssClass: 'is-sunrise',
@@ -121,7 +121,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Sunset' ),
+			label: ( translate ) => translate( 'Sunset' ),
 			value: 'sunset',
 			thumbnail: {
 				cssClass: 'is-sunset',
@@ -129,7 +129,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Midnight' ),
+			label: ( translate ) => translate( 'Midnight' ),
 			value: 'midnight',
 			thumbnail: {
 				cssClass: 'is-midnight',
@@ -137,7 +137,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Coffee' ),
+			label: ( translate ) => translate( 'Coffee' ),
 			value: 'coffee',
 			thumbnail: {
 				cssClass: 'is-coffee',
@@ -145,7 +145,7 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Contrast' ),
+			label: ( translate ) => translate( 'Contrast' ),
 			value: 'contrast',
 			thumbnail: {
 				cssClass: 'is-contrast',
@@ -153,12 +153,21 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Ectoplasm', { context: 'admin color scheme' } ),
+			label: ( translate ) => translate( 'Ectoplasm', { context: 'admin color scheme' } ),
 			value: 'ectoplasm',
 			thumbnail: {
 				cssClass: 'is-ectoplasm',
 				imageUrl: ectoplasmImg,
 			},
 		},
-	] );
+	] )
+);
+
+export default function ( translate ) {
+	return [ ...items ].map( ( item ) => {
+		if ( 'function' === typeof item.label ) {
+			item.label = item.label( translate );
+		}
+		return item;
+	} );
 }
