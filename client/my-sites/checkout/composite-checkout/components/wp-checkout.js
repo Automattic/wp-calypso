@@ -316,6 +316,7 @@ export default function WPCheckout( {
 							onChangePlanLength={ changePlanLength }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
@@ -326,6 +327,7 @@ export default function WPCheckout( {
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }

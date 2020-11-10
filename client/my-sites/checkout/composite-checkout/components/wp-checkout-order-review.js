@@ -15,7 +15,9 @@ import joinClasses from './join-classes';
 import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
-import { isWpComPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
+import { isWpComPlan, getBillingMonthsForPlan, isWpComFreePlan } from 'calypso/lib/plans';
+import { isMonthly } from 'calypso/lib/plans/constants';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 export default function WPCheckoutOrderReview( {
@@ -29,6 +31,7 @@ export default function WPCheckoutOrderReview( {
 	siteUrl,
 	isSummary,
 	createUserAndSiteBeforeTransaction,
+	siteId,
 } ) {
 	const translate = useTranslate();
 	const [ items, total ] = useLineItems();
@@ -49,8 +52,14 @@ export default function WPCheckoutOrderReview( {
 	const hasRenewal = Boolean(
 		items.find( ( { wpcom_meta } ) => 'renewal' === wpcom_meta?.extra?.purchaseType )
 	);
+	const currentPlanProductSlug = useSelector(
+		( state ) => siteId && getCurrentPlan( state, siteId )
+	)?.productSlug;
+	const hasFreeOrMonthlySubscription =
+		currentPlanProductSlug &&
+		( isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug ) );
 	const isMonthlyPricingTest =
-		useSelector( isTreatmentInMonthlyPricingTest ) && hasDotcomPlan && ! hasRenewal;
+		useSelector( isTreatmentInMonthlyPricingTest ) && hasDotcomPlan && ! hasRenewal && hasFreeOrMonthlySubscription;
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 
