@@ -87,7 +87,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, toLocale: Locale | null ): string {
+export function localizeUrl( fullUrl: string, toLocale?: Locale ): string {
 	const locale =
 		toLocale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() || 'en' : 'en' );
 
