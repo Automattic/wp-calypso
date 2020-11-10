@@ -30,6 +30,8 @@ import Missing from 'calypso/reader/list-stream/missing';
 import ListDelete from './list-delete';
 import ListForm from './list-form';
 import ListItem from './list-item';
+import EmptyContent from 'calypso/components/empty-content';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
@@ -104,8 +106,18 @@ function ReaderListEdit( props ) {
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
-
 	const sectionProps = { ...props, list, listItems };
+
+	// Only the list owner can manage the list
+	if ( list && ! list.is_owner ) {
+		return (
+			<EmptyContent
+				title={ preventWidows( translate( "You don't have permission to manage this list." ) ) }
+				illustration="/calypso/images/illustrations/error.svg"
+			/>
+		);
+	}
+
 	return (
 		<>
 			{ ! list && <QueryReaderList owner={ props.owner } slug={ props.slug } /> }
