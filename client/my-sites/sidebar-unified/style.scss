@@ -25,6 +25,8 @@
 	--color-sidebar-submenu-text: #b4b9be;
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: #00b9eb;
+	--color-sidebar-submenu-selected-background: transparent;
+	--color-sidebar-submenu-selected-text: white;
 
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
@@ -131,8 +133,8 @@ $font-size: rem( 14px );
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: transparent;
-				color: white;
+				background-color: var( --color-sidebar-submenu-selected-background );
+				color: var( --color-sidebar-submenu-selected-text );
 				font-weight: 600;
 			}
 
