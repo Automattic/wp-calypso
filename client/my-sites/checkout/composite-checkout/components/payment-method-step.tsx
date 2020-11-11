@@ -91,7 +91,7 @@ export default function PaymentMethodStep( {
 					<LineItem tax key={ tax.id } item={ tax } />
 				) ) }
 				{ credits && <LineItem subtotal item={ credits } /> }
-				<WPOrderReviewTotal total={ total } />
+				<WPOrderReviewTotal total={ isFullCredits ? subtotal : total } />
 			</WPOrderReviewSection>
 		</>
 	);
