@@ -190,9 +190,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 								<>
 									<span className="jetpack-product-card-alt-2__raw-price">
 										<PlanPrice
-											rawPrice={ Math.floor(
-												( isDiscounted ? discountedPrice : originalPrice ) as number
-											) }
+											rawPrice={ ( isDiscounted ? discountedPrice : originalPrice ) as number }
 											discounted
 											currencyCode={ currencyCode }
 										/>
