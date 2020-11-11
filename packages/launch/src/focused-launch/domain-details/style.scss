@@ -1,0 +1,18 @@
+@import '~@automattic/onboarding/styles/mixins';
+
+.focused-launch-domain-details__header {
+    margin-bottom: 38px;
+
+    @include break-medium {
+        margin-bottom: 64px;
+    }
+}
+
+.focused-launch-domain-details__back-link {
+    a {
+        display: flex;
+        align-items: center;
+        color: var( --studio-black );
+        margin-bottom: 16px;
+    }
+}
