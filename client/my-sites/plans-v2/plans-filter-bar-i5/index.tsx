@@ -73,7 +73,7 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 	return (
 		<div className={ classNames( 'plans-filter-bar-i5__discount-message', { primary: primary } ) }>
 			<div>
-				<span className="message">
+				<span className="plans-filter-bar-i5__discount-message-text">
 					{ isMobile
 						? translate( 'SAVE %(discount)s BY PAYING YEARLY', {
 								args: { discount: highestAnnualDiscount },
@@ -114,7 +114,7 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	useEffect( () => {
 		const selectedDuration = durationChecked ? TERM_ANNUALLY : TERM_MONTHLY;
 		onDurationChange?.( selectedDuration );
-	}, [ durationChecked ] );
+	}, [ onDurationChange, durationChecked ] );
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar-i5', { sticky: hasCrossed } ) }>
@@ -123,13 +123,13 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 					checked: durationChecked,
 				} ) }
 			>
-				<span className="toggle-off-label">Bill monthly</span>
+				<span className="plans-filter-bar-i5__toggle-off-label">Bill monthly</span>
 				<ToggleControl
 					className="plans-filter-bar-i5__toggle-control"
 					checked={ durationChecked }
 					onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
 				/>
-				<span className="toggle-on-label">Bill yearly</span>
+				<span className="plans-filter-bar-i5__toggle-on-label">Bill yearly</span>
 			</div>
 			{ showDiscountMessage && <DiscountMessage primary={ durationChecked } /> }
 		</div>

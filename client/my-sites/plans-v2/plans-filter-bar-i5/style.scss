@@ -22,15 +22,15 @@
 		font-weight: 700;
 		padding-bottom: 20px;
 
-		.toggle-off-label {
+		.plans-filter-bar-i5__toggle-off-label {
 			color: var( --color-primary );
 		}
 
 		&.checked {
-			.toggle-on-label {
+			.plans-filter-bar-i5__toggle-on-label {
 				color: var( --color-primary );
 			}
-			.toggle-off-label {
+			.plans-filter-bar-i5__toggle-off-label {
 				color: var( --studio-gray-50 );
 			}
 		}
@@ -89,7 +89,7 @@
 		background-color: var( --color-primary-light );
 	}
 
-	.message {
+	.plans-filter-bar-i5__discount-message-text {
 		padding-right: 6px;
 	}
 }
