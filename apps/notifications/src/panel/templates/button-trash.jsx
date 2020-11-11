@@ -9,11 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { trashNote } from '../flux/note-actions';
+import { trashNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
+import { connect } from 'react-redux';
 
-const TrashButton = ( { note, translate, updateUndoBar } ) => (
+const TrashButton = ( { note, translate, updateUndoBar, trashNote } ) => (
 	<ActionButton
 		{ ...{
 			icon: 'trash',
@@ -34,4 +35,4 @@ TrashButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( TrashButton );
+export default connect( null, { trashNote } )( localize( TrashButton ) );

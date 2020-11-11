@@ -2,18 +2,18 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { spamNote } from '../flux/note-actions';
+import { spamNote } from '../state/notes/thunks';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 
-const SpamButton = ( { note, translate, updateUndoBar } ) => (
+const SpamButton = ( { note, translate, updateUndoBar, spamNote } ) => (
 	<ActionButton
 		icon={ 'spam' }
 		isActive={ false }
@@ -32,4 +32,4 @@ SpamButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( SpamButton );
+export default connect( null, { spamNote } )( localize( SpamButton ) );
