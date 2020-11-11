@@ -4,7 +4,8 @@
 import actions from './fixtures/actions';
 
 describe( 'Plugins Log Store', () => {
-	let Dispatcher, LogStore;
+	let Dispatcher;
+	let LogStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );

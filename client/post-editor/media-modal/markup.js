@@ -77,7 +77,9 @@ const Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function ( site, media ) {
-		let img, caption, width;
+		let img;
+		let caption;
+		let width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
@@ -136,7 +138,8 @@ const Markup = {
 				options
 			);
 
-			let width, height;
+			let width;
+			let height;
 			if ( 'full' === options.size ) {
 				width = media.width;
 				height = media.height;

@@ -112,7 +112,8 @@ class StatsPostDetail extends Component {
 		}
 
 		const postType = post && post.type !== null ? post.type : 'post';
-		let actionLabel, noViewsLabel;
+		let actionLabel;
+		let noViewsLabel;
 
 		if ( postType === 'page' ) {
 			actionLabel = translate( 'View Page' );

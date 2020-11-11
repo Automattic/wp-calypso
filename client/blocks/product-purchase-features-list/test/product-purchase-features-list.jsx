@@ -56,7 +56,8 @@ describe( 'ProductPurchaseFeaturesList getFeatures() tests', () => {
 		},
 	};
 
-	let spy, spyWrong;
+	let spy;
+	let spyWrong;
 
 	afterEach( () => {
 		if ( spy ) {

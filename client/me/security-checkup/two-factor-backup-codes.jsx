@@ -46,7 +46,8 @@ class SecurityCheckupTwoFactorBackupCodes extends React.Component {
 			return null;
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( areBackupCodesPrinted ) {
 			icon = getOKIcon();

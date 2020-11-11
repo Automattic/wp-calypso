@@ -156,17 +156,17 @@ class EmailForwardingAddNew extends React.Component {
 			return null;
 		}
 
-		const { translate, selectedDomainName } = this.props,
-			contactText = translate( 'contact', {
-				context: 'part of e-mail address',
-				comment: 'As it would be part of an e-mail address contact@example.com',
-			} ),
-			exampleEmailText = translate( 'e.g. %(example)s', {
-				args: { example: contactText },
-			} ),
-			isValidMailbox = this.isValid( 'mailbox' ),
-			isValidDestination = this.isValid( 'destination' ),
-			{ mailbox, destination } = formState.getAllFieldValues( this.state.fields );
+		const { translate, selectedDomainName } = this.props;
+		const contactText = translate( 'contact', {
+			context: 'part of e-mail address',
+			comment: 'As it would be part of an e-mail address contact@example.com',
+		} );
+		const exampleEmailText = translate( 'e.g. %(example)s', {
+			args: { example: contactText },
+		} );
+		const isValidMailbox = this.isValid( 'mailbox' );
+		const isValidDestination = this.isValid( 'destination' );
+		const { mailbox, destination } = formState.getAllFieldValues( this.state.fields );
 
 		return (
 			<div className="email-forwarding__form-content">

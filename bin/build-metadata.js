@@ -216,8 +216,8 @@ function removeAllNumberKeys( obj ) {
 function removeRegionCodeAndCountryDialCodeIfSameWithCountryDialCode( countryData ) {
 	for ( let key in countryData ) {
 		if ( countryData.hasOwnProperty( key ) ) {
-			const country = countryData[ key ],
-				{ countryDialCode, dialCode } = country;
+			const country = countryData[ key ];
+			const { countryDialCode, dialCode } = country;
 			if ( countryDialCode === dialCode ) {
 				delete country.regionCode;
 				delete country.countryDialCode;

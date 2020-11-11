@@ -17,10 +17,10 @@ import notices from 'calypso/notices';
  */
 import './style.scss';
 
-const RESEND_IDLE = 0,
-	RESEND_IN_PROGRESS = 1,
-	RESEND_SUCCESS = 2,
-	RESEND_ERROR = 3;
+const RESEND_IDLE = 0;
+const RESEND_IN_PROGRESS = 1;
+const RESEND_SUCCESS = 2;
+const RESEND_ERROR = 3;
 
 class HelpUnverifiedWarning extends Component {
 	constructor( props ) {

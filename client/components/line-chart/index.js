@@ -257,9 +257,9 @@ class LineChart extends Component {
 		const { svg, data } = this.state;
 
 		const xDate = xScale.invert( X );
-		let closestDate = 0,
-			prevClosestDate = 0,
-			nextClosestDate = 0;
+		let closestDate = 0;
+		let prevClosestDate = 0;
+		let nextClosestDate = 0;
 
 		const firstDataSerie = data[ 0 ];
 		const drawFullSeries = firstDataSerie.length < POINTS_MAX;

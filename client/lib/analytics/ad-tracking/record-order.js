@@ -454,7 +454,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		return;
 	}
 
-	let products, brand, totalCostUSD;
+	let products;
+	let brand;
+	let totalCostUSD;
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		products = wpcomJetpackCartInfo.wpcomProducts;

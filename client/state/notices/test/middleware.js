@@ -29,7 +29,8 @@ import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {
-		let store, dispatchSpy;
+		let store;
+		let dispatchSpy;
 		useSandbox( ( sandbox ) => {
 			const spyMiddleware = () => ( next ) => {
 				dispatchSpy = sandbox.spy( next );

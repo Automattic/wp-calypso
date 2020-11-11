@@ -32,7 +32,11 @@ import {
  */
 
 function sortProducts( products ) {
-	let planItems, includedItems, domainItems, creditItems, otherItems;
+	let planItems;
+	let includedItems;
+	let domainItems;
+	let creditItems;
+	let otherItems;
 
 	planItems = products.filter( isPlan );
 

@@ -78,7 +78,8 @@ class PostPhoto extends React.Component {
 			backgroundPosition: 'center',
 		};
 
-		let newWidth, newHeight;
+		let newWidth;
+		let newHeight;
 		if ( this.props.isExpanded ) {
 			const cardWidth = this.state.cardWidth;
 			const { width: naturalWidth, height: naturalHeight } = imageSize;

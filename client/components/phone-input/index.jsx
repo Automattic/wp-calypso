@@ -285,13 +285,13 @@ function recordCursorPosition( oldCursorPosition, newPosition ) {
  */
 function calculateInputAndCountryCode( value, countryCode, countriesList, freezeSelection ) {
 	const calculatedCountry = guessCountryFromValueOrGetSelected(
-			value,
-			countryCode,
-			countriesList,
-			freezeSelection
-		),
-		calculatedValue = format( value, calculatedCountry.isoCode, countriesList ),
-		calculatedCountryCode = calculatedCountry.isoCode;
+		value,
+		countryCode,
+		countriesList,
+		freezeSelection
+	);
+	const calculatedValue = format( value, calculatedCountry.isoCode, countriesList );
+	const calculatedCountryCode = calculatedCountry.isoCode;
 
 	return { value: calculatedValue, countryCode: calculatedCountryCode };
 }

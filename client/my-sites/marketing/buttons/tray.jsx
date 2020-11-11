@@ -125,9 +125,9 @@ class SharingButtonsTray extends React.Component {
 	};
 
 	onButtonClick = ( button ) => {
-		let buttons = this.props.buttons.slice( 0 ),
-			currentButton = find( buttons, { ID: button.ID } ),
-			isEnabled;
+		let buttons = this.props.buttons.slice( 0 );
+		let currentButton = find( buttons, { ID: button.ID } );
+		let isEnabled;
 
 		if ( button.visibility === this.props.visibility ) {
 			// Assuming visibility hasn't changed, we can simply toggle the

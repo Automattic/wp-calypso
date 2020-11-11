@@ -150,12 +150,12 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleSubmit( event ) {
-		var wpObject,
-			submitComment,
-			component = this,
-			statusMessage,
-			successMessage = this.props.translate( 'Reply posted!' ),
-			linkMessage = this.props.translate( 'View your comment.' );
+		var wpObject;
+		var submitComment;
+		var component = this;
+		var statusMessage;
+		var successMessage = this.props.translate( 'Reply posted!' );
+		var linkMessage = this.props.translate( 'View your comment.' );
 
 		if ( event ) {
 			event.preventDefault();

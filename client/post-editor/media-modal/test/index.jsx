@@ -55,7 +55,12 @@ const DUMMY_VIDEO_MEDIA = [
 ];
 
 describe( 'EditorMediaModal', () => {
-	let spy, deleteMedia, onClose, setMediaLibrarySelectedItems, changeMediaSource, baseProps;
+	let spy;
+	let deleteMedia;
+	let onClose;
+	let setMediaLibrarySelectedItems;
+	let changeMediaSource;
+	let baseProps;
 
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();

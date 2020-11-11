@@ -238,8 +238,8 @@ class ConfirmCancelDomain extends React.Component {
 			);
 		}
 
-		const selectedReason = this.state.selectedReason,
-			confirmed = this.state.confirmed;
+		const selectedReason = this.state.selectedReason;
+		const confirmed = this.state.confirmed;
 
 		if ( selectedReason && 'misspelled' === selectedReason.value ) {
 			return (

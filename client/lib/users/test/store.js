@@ -16,7 +16,10 @@ import site from './fixtures/site';
 import usersData from './fixtures/users';
 
 describe( 'Users Store', () => {
-	let Dispatcher, UsersStore, siteId, options;
+	let Dispatcher;
+	let UsersStore;
+	let siteId;
+	let options;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );
@@ -153,8 +156,8 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Should update a specific user with new attributes', () => {
-			const users = UsersStore.getUsers( options ),
-				testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
+			const users = UsersStore.getUsers( options );
+			const testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
 			let usersAgain;
 
 			Dispatcher.handleServerAction( actions.updateSingleUser );
@@ -163,9 +166,10 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'Error should restore the updated user', () => {
-			const userId = usersData.users[ 0 ].ID,
-				user = UsersStore.getUser( siteId, userId );
-			let userAgain, userRestored;
+			const userId = usersData.users[ 0 ].ID;
+			const user = UsersStore.getUser( siteId, userId );
+			let userAgain;
+			let userRestored;
 
 			assert.equal( user.name, 'Test One' );
 
@@ -180,7 +184,8 @@ describe( 'Users Store', () => {
 	} );
 
 	describe( 'Delete a user', () => {
-		let userId, userAgain;
+		let userId;
+		let userAgain;
 
 		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetched );
@@ -206,7 +211,8 @@ describe( 'Users Store', () => {
 		} );
 
 		test( 'There should be no undefined objects in user array after deleting a user', () => {
-			let users, someUndefined;
+			let users;
+			let someUndefined;
 			Dispatcher.handleServerAction( actions.deleteUser );
 			users = UsersStore.getUsers( options );
 			someUndefined = some( users, isUndefined );

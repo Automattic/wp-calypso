@@ -23,7 +23,13 @@ jest.mock( 'lib/oauth-token', () => ( {
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'EditGravatar', () => {
-	let EditGravatar, FilePicker, Gravatar, ImageEditor, VerifyEmailDialog, DropZone, sandbox;
+	let EditGravatar;
+	let FilePicker;
+	let Gravatar;
+	let ImageEditor;
+	let VerifyEmailDialog;
+	let DropZone;
+	let sandbox;
 	const user = {
 		email_verified: false,
 	};

@@ -33,8 +33,8 @@ function getAvailabilityNotice( domain, error, errorData ) {
 	// Consumers should check for the message prop in order
 	// to determine whether to display the notice
 	// See for e.g., client/components/domains/register-domain-step/index.jsx
-	let message,
-		severity = 'error';
+	let message;
+	let severity = 'error';
 
 	switch ( error ) {
 		case domainAvailability.REGISTERED:

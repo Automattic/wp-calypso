@@ -91,18 +91,18 @@ class TransferOtherUser extends React.Component {
 	}
 
 	handleConfirmTransferDomain( closeDialog ) {
-		const { selectedDomainName } = this.props,
-			selectedUserDisplay = this.getSelectedUserDisplayName(),
-			successMessage = this.props.translate(
-				'%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s',
-				{ args: { selectedDomainName, selectedUserDisplay } }
-			),
-			defaultErrorMessage = this.props.translate(
-				'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
-				{
-					args: { selectedDomainName },
-				}
-			);
+		const { selectedDomainName } = this.props;
+		const selectedUserDisplay = this.getSelectedUserDisplayName();
+		const successMessage = this.props.translate(
+			'%(selectedDomainName)s has been transferred to %(selectedUserDisplay)s',
+			{ args: { selectedDomainName, selectedUserDisplay } }
+		);
+		const defaultErrorMessage = this.props.translate(
+			'Failed to transfer %(selectedDomainName)s, please try again or contact support.',
+			{
+				args: { selectedDomainName },
+			}
+		);
 
 		this.setState( { disableDialogButtons: true } );
 		wpcom

@@ -200,7 +200,8 @@ export class PlansStep extends Component {
 		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
-		let backUrl, backLabelText;
+		let backUrl;
+		let backLabelText;
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;

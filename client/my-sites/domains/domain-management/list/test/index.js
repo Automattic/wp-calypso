@@ -146,7 +146,9 @@ describe( 'index', () => {
 			} );
 
 			describe( '#handleUpdatePrimaryDomain', () => {
-				let setPrimaryDomainStub, setPrimaryDomainResolve, setPrimaryDomainReject;
+				let setPrimaryDomainStub;
+				let setPrimaryDomainResolve;
+				let setPrimaryDomainReject;
 				beforeEach( () => {
 					setPrimaryDomainStub = jest
 						.spyOn( component.instance(), 'setPrimaryDomain' )

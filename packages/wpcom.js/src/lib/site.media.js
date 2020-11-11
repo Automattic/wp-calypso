@@ -21,7 +21,10 @@ function buildFormData( files ) {
 	const isArray = Array.isArray( files );
 	files = isArray ? files : [ files ];
 
-	let i, f, k, param;
+	let i;
+	let f;
+	let k;
+	let param;
 	for ( i = 0; i < files.length; i++ ) {
 		f = files[ i ];
 
@@ -188,7 +191,10 @@ Media.prototype.addUrls = function ( query, media, fn ) {
 	const body = { media_urls: [] };
 
 	// process formData
-	let i, m, url, k;
+	let i;
+	let m;
+	let url;
+	let k;
 
 	media = Array.isArray( media ) ? media : [ media ];
 	for ( i = 0; i < media.length; i++ ) {

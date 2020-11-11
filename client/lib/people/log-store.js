@@ -12,10 +12,10 @@ const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 
-let _errors = [],
-	_inProgress = [],
-	_completed = [],
-	PeopleLogStore;
+let _errors = [];
+let _inProgress = [];
+let _completed = [];
+let PeopleLogStore;
 
 function removeLog( log ) {
 	debug( 'removing log:', log );
