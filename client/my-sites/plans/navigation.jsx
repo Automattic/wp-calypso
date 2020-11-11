@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -22,7 +23,6 @@ import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		shouldShowMyPlan: PropTypes.bool,
@@ -95,13 +95,17 @@ class PlansNavigation extends React.Component {
 	};
 
 	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
+		if (
+			! config.isEnabled( 'upgrades/checkout' ) ||
+			! this.props.shoppingCartManager ||
+			! this.props.site
+		) {
 			return null;
 		}
 
 		return (
 			<PopoverCart
-				cart={ this.props.cart }
+				cart={ this.props.shoppingCartManager.responseCart }
 				selectedSite={ this.props.site }
 				onToggle={ this.toggleCartVisibility }
 				pinned={ isMobile() }
@@ -122,4 +126,4 @@ export default connect( ( state ) => {
 		shouldShowMyPlan: ! isOnFreePlan || isJetpack,
 		site,
 	};
-} )( localize( PlansNavigation ) );
+} )( withShoppingCart( localize( PlansNavigation ) ) );
