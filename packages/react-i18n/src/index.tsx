@@ -127,15 +127,16 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  */
 function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filters: I18nFilters ) {
 	const translateFn = i18n[ fnName ];
+	const { hasFilter, applyFilters } = filters;
 
-	if ( ! filters.hasFilter( 'preTranslation' ) && ! filters.hasFilter( 'postTranslation' ) ) {
+	if ( ! hasFilter( 'preTranslation' ) && ! hasFilter( 'postTranslation' ) ) {
 		return translateFn;
 	}
 
 	return ( ...args: ( string | number )[] ) => {
-		const filteredArguments = filters.applyFilters( 'preTranslation', args, fnName, filters );
+		const filteredArguments = applyFilters( 'preTranslation', args, fnName, filters );
 
-		return filters.applyFilters(
+		return applyFilters(
 			'postTranslation',
 			translateFn( ...filteredArguments ),
 			filteredArguments,
