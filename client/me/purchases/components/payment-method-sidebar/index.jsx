@@ -58,7 +58,7 @@ function renderMainCard( purchase, translate, moment ) {
 					isBold={ true }
 					className="payment-method-sidebar__title"
 				>
-					{ translate( 'Purchase details' ) }
+					{ translate( 'Purchase Details' ) }
 				</CardHeading>
 
 				<p className="payment-method-sidebar__paragraph">
