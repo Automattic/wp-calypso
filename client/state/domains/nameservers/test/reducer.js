@@ -1,12 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	fetchNameservers,
-	fetchNameserversFailure,
-	fetchNameserversSuccess,
-	updateNameserversSuccess,
-} from '../actions';
+import { fetchNameservers, fetchNameserversFailure, receiveNameservers } from '../actions';
 import reducer, { initialDomainState } from '../reducer';
 
 describe( 'reducer', () => {
@@ -43,7 +38,7 @@ describe( 'reducer', () => {
 		} );
 	} );
 
-	test( 'should return a list with name servers when fetching domain data completed', () => {
+	test( 'should return a list with name servers when receiving nameservers completed', () => {
 		const initialState = {
 			[ domainName ]: {
 				...initialDomainState,
@@ -51,7 +46,7 @@ describe( 'reducer', () => {
 			},
 		};
 
-		const state = reducer( initialState, fetchNameserversSuccess( domainName, nameServers ) );
+		const state = reducer( initialState, receiveNameservers( domainName, nameServers ) );
 
 		expect( state ).toEqual( {
 			[ domainName ]: {
@@ -59,33 +54,6 @@ describe( 'reducer', () => {
 				hasLoadedFromServer: true,
 				error: false,
 				list: nameServers,
-			},
-		} );
-	} );
-
-	test( 'should return an updated list with name servers when name servers update completed', () => {
-		const updatedNameServers = [ 'ns1.foo.com', 'ns2.foo.com' ];
-
-		const initialState = {
-			[ domainName ]: {
-				isFetching: false,
-				hasLoadedFromServer: true,
-				error: false,
-				list: nameServers,
-			},
-		};
-
-		const state = reducer(
-			initialState,
-			updateNameserversSuccess( domainName, updatedNameServers )
-		);
-
-		expect( state ).toEqual( {
-			[ domainName ]: {
-				isFetching: false,
-				hasLoadedFromServer: true,
-				error: false,
-				list: updatedNameServers,
 			},
 		} );
 	} );

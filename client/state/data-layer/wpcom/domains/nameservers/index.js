@@ -11,9 +11,8 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { DOMAIN_NAMESERVERS_FETCH, DOMAIN_NAMESERVERS_UPDATE } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
-	fetchNameserversSuccess,
 	fetchNameserversFailure,
-	updateNameserversSuccess,
+	receiveNameservers,
 } from 'calypso/state/domains/nameservers/actions';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
@@ -28,7 +27,7 @@ export const fetchDomainNameservers = ( action ) =>
 	);
 
 export const fetchDomainNameserversSuccess = ( { domainName }, nameservers ) =>
-	fetchNameserversSuccess( domainName, nameservers );
+	receiveNameservers( domainName, nameservers );
 
 export const fetchDomainNameserversError = ( { domainName } ) =>
 	fetchNameserversFailure( domainName );
@@ -50,7 +49,7 @@ export const updateDomainNameservers = ( action ) =>
 	);
 
 export const updateDomainNameserversSuccess = ( { domainName }, nameservers ) => [
-	updateNameserversSuccess( domainName, nameservers ),
+	receiveNameservers( domainName, nameservers ),
 	successNotice( translate( 'Yay, the name servers have been successfully updated!' ), {
 		duration: 5000,
 		id: `nameserver-update-notification-${ domainName }`,

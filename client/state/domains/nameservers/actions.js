@@ -3,10 +3,9 @@
  */
 import {
 	DOMAIN_NAMESERVERS_FETCH,
-	DOMAIN_NAMESERVERS_FETCH_SUCCESS,
 	DOMAIN_NAMESERVERS_FETCH_FAILURE,
+	DOMAIN_NAMESERVERS_RECEIVE,
 	DOMAIN_NAMESERVERS_UPDATE,
-	DOMAIN_NAMESERVERS_UPDATE_SUCCESS,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/domains/nameservers/index.js';
@@ -19,9 +18,9 @@ export function fetchNameservers( domainName ) {
 	};
 }
 
-export function fetchNameserversSuccess( domainName, nameservers ) {
+export function receiveNameservers( domainName, nameservers ) {
 	return {
-		type: DOMAIN_NAMESERVERS_FETCH_SUCCESS,
+		type: DOMAIN_NAMESERVERS_RECEIVE,
 		domainName,
 		nameservers,
 	};
@@ -37,14 +36,6 @@ export function fetchNameserversFailure( domainName ) {
 export function updateNameservers( domainName, nameservers ) {
 	return {
 		type: DOMAIN_NAMESERVERS_UPDATE,
-		domainName,
-		nameservers,
-	};
-}
-
-export function updateNameserversSuccess( domainName, nameservers ) {
-	return {
-		type: DOMAIN_NAMESERVERS_UPDATE_SUCCESS,
 		domainName,
 		nameservers,
 	};

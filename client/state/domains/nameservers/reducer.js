@@ -4,8 +4,7 @@
 import {
 	DOMAIN_NAMESERVERS_FETCH,
 	DOMAIN_NAMESERVERS_FETCH_FAILURE,
-	DOMAIN_NAMESERVERS_FETCH_SUCCESS,
-	DOMAIN_NAMESERVERS_UPDATE_SUCCESS,
+	DOMAIN_NAMESERVERS_RECEIVE,
 } from 'calypso/state/action-types';
 
 export const initialDomainState = {
@@ -47,14 +46,7 @@ export default function reducer( state = {}, action ) {
 				error: true,
 			} );
 		}
-		case DOMAIN_NAMESERVERS_FETCH_SUCCESS: {
-			return updateState( state, action.domainName, {
-				isFetching: false,
-				hasLoadedFromServer: true,
-				list: action.nameservers,
-			} );
-		}
-		case DOMAIN_NAMESERVERS_UPDATE_SUCCESS: {
+		case DOMAIN_NAMESERVERS_RECEIVE: {
 			return updateState( state, action.domainName, {
 				isFetching: false,
 				hasLoadedFromServer: true,
