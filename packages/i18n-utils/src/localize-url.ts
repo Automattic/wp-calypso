@@ -8,7 +8,6 @@ import {
 	localesWithPrivacyPolicy,
 	localesWithCookiePolicy,
 	localesToSubdomains,
-	livechatSupportLocales,
 	supportSiteLocales,
 	forumLocales,
 	magnificentNonEnLocales,
@@ -75,7 +74,7 @@ interface UrlLocalizationMapping {
 }
 
 const urlLocalizationMapping: UrlLocalizationMapping = {
-	'wordpress.com/support/': prefixLocalizedUrlPath( livechatSupportLocales ),
+	'wordpress.com/support/': prefixLocalizedUrlPath( supportSiteLocales ),
 	'wordpress.com/blog/': prefixLocalizedUrlPath( localesWithBlog, /^\/blog\/?$/ ),
 	'wordpress.com/tos/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'jetpack.com': setLocalizedUrlHost( 'jetpack.com', jetpackComLocales ),

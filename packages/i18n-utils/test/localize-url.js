@@ -330,4 +330,13 @@ describe( '#localizeUrl', () => {
 			'https://de.wordpress.com/wp-login.php?action=lostpassword'
 		);
 	} );
+
+	test( 'WordPress.com new style support URLs', () => {
+		expect( localizeUrl( 'https://wordpress.com/support/reader/', 'de' ) ).toEqual(
+			'https://wordpress.com/de/support/reader/'
+		);
+		expect( localizeUrl( 'https://wordpress.com/support/reader/#blocking-sites', 'de' ) ).toEqual(
+			'https://wordpress.com/de/support/reader/#blocking-sites'
+		);
+	} );
 } );
