@@ -1524,28 +1524,29 @@ export const PLANS_LIST = {
 		group: constants.GROUP_WPCOM,
 		type: constants.TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
-		getDescription: () => i18n.translate( 'Some long description' ),
+		getDescription: () =>
+			i18n.translate(
+				'Supercharge your P2 site and take it to next level! [placeholder, text needs updating]'
+			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
-			constants.FEATURE_EMAIL_SUPPORT,
-			constants.FEATURE_BASIC_DESIGN,
+			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_13GB_STORAGE,
-			constants.FEATURE_NO_ADS,
+			constants.FEATURE_VIDEO_UPLOADS,
 		],
+
+		// TODO: update this once we put P2+ in the signup.
 		getSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
-		getBlogSignupFeatures: () => [
-			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-			constants.FEATURE_ALL_FREE_FEATURES,
-		],
-		getPortfolioSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+
+		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
 		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 		getInferiorHiddenFeatures: () => [],
-		getAudience: () => i18n.translate( 'Best for P2ers' ),
-		getBlogAudience: () => i18n.translate( 'Best for P2ers' ),
-		getPortfolioAudience: () => i18n.translate( 'Best for P2ers' ),
-		getStoreAudience: () => i18n.translate( 'Best for P2ers' ),
+
+		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
+		getAudience: () => i18n.translate( 'Best for bloggers' ),
+
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
 		getProductId: () => 1040,
