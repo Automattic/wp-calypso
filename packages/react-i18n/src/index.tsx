@@ -126,10 +126,10 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  * @returns Bound I18n function with applied transformation hooks
  */
 function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filters: I18nFilters ) {
-	const boundFn = i18n[ fnName ].bind( i18n );
+	const translateFn = i18n[ fnName ];
 
 	if ( ! filters.hasFilter( 'preTranslation' ) && ! filters.hasFilter( 'postTranslation' ) ) {
-		return boundFn;
+		return translateFn;
 	}
 
 	return ( ...args: ( string | number )[] ) => {
@@ -137,7 +137,7 @@ function bindI18nFunction( i18n: I18n, fnName: '__' | '_n' | '_nx' | '_x', filte
 
 		return filters.applyFilters(
 			'postTranslation',
-			boundFn( ...filteredArguments ),
+			translateFn( ...filteredArguments ),
 			filteredArguments,
 			fnName,
 			filters
@@ -186,7 +186,7 @@ function makeContextValue( localeData?: LocaleData, filters?: I18nFilters ): I18
 		_n: bindI18nFunction( i18n, '_n', i18nFunctionFilters ),
 		_nx: bindI18nFunction( i18n, '_nx', i18nFunctionFilters ),
 		_x: bindI18nFunction( i18n, '_x', i18nFunctionFilters ),
-		isRTL: i18n.isRTL.bind( i18n ),
+		isRTL: i18n.isRTL,
 		localeData,
 		hasTranslation: boundHasTranslation,
 		addFilter,
