@@ -15,7 +15,7 @@ import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 
 import RestClient from './rest-client';
-import { setGlobalData } from './flux/app-actions';
+import fluxStore from './flux/store';
 import repliesCache from './comment-replies-cache';
 
 import { init as initAPI } from './rest-client/wpcom';
@@ -29,9 +29,7 @@ import './boot/stylesheets/style.scss';
 
 let client;
 
-const globalData = {};
-
-setGlobalData( globalData );
+const globalData = fluxStore.get( 'global' );
 
 repliesCache.cleanup();
 
