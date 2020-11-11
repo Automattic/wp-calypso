@@ -17,7 +17,7 @@ import PaymentChatButton from './payment-chat-button';
 import CartToggle from './cart-toggle';
 import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import RecentRenewals from './recent-renewals';
-import CheckoutTerms from './checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';
 import IncompatibleProductNotice from './incompatible-product-notice';
 

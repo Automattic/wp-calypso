@@ -100,16 +100,12 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<>
-					<LineItemMeta>
-						<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
-						<DomainDiscountCallout item={ item } />
-						{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
-					</LineItemMeta>
-					<LineItemMeta>
-						<DiscountForFirstYearOnly item={ item } />
-					</LineItemMeta>
-				</>
+				<LineItemMeta>
+					<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
+					<DomainDiscountCallout item={ item } />
+					{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
+					<DiscountForFirstYearOnly item={ item } />
+				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
@@ -619,26 +615,14 @@ function DiscountForFirstYearOnly( { item } ) {
 		group: GROUP_WPCOM,
 	} );
 	if ( isWpcomOneYearPlan ) {
-		return (
-			<div>
-				{ translate(
-					'Promotional pricing is for the first year only. Your plan will renew at the regular price.'
-				) }
-			</div>
-		);
+		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
 		term: TERM_BIENNIALLY,
 		group: GROUP_WPCOM,
 	} );
 	if ( isWpcomTwoYearPlan ) {
-		return (
-			<div>
-				{ translate(
-					'Promotional pricing is for the first 2 years only. Your plan will renew at the regular price.'
-				) }
-			</div>
-		);
+		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
 	return null;
