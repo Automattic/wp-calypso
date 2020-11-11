@@ -1,29 +1,36 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { translate } from 'i18n-calypso';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import CartData from 'calypso/components/data/cart';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
+import wp from 'calypso/lib/wp';
+
+const wpcom = wp.undocumented();
+
+const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
+const wpcomSetCart = ( cartKey: string, requestCart: RequestCart ) =>
+	wpcom.setCart( cartKey, requestCart );
 
 const StandardPlansHeader = () => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<CartData>
-			<PlansNavigation path={ '/plans' } />
-		</CartData>
+		<PlansNavigation path={ '/plans' } />
 	</>
 );
 const ConnectFlowPlansHeader = () => (
@@ -36,14 +43,13 @@ const ConnectFlowPlansHeader = () => (
 				brandFont
 			/>
 		</div>
-		<CartData>
-			<PlansNavigation path={ '/plans' } />
-		</CartData>
+		<PlansNavigation path={ '/plans' } />
 	</>
 );
 
 const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
-	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const siteId = useSelector( getSelectedSiteId );
+	const selectedSite = useSelector( getSelectedSite );
 	// Site plan
 	const currentPlan =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
@@ -58,21 +64,25 @@ const PlansHeader = ( { context }: { context: PageJS.Context } ) => {
 
 	const [ showNotice, setShowNotice ] = useState( true );
 
+	const cartKey = useMemo( () => getCartKey( { selectedSite } ), [ selectedSite ] );
+
 	// Only show ConnectFlowPlansHeader if coming from in-connect flow and if no products or plans have been purchased.
 	return isInConnectFlow && currentPlan === PLAN_JETPACK_FREE && ! purchasedProducts.length ? (
-		<>
+		<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
 			{ showNotice && (
 				<Notice status="is-success" onDismissClick={ () => setShowNotice( false ) }>
 					{ translate( 'Jetpack is now connected. Next select a plan.' ) }
 				</Notice>
 			) }
 			<ConnectFlowPlansHeader />
-		</>
+		</ShoppingCartProvider>
 	) : (
-		<StandardPlansHeader />
+		<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
+			<StandardPlansHeader />
+		</ShoppingCartProvider>
 	);
 };
 
-export default function setJetpackHeader( context: PageJS.Context ) {
+export default function setJetpackHeader( context: PageJS.Context ): void {
 	context.header = <PlansHeader context={ context } />;
 }
