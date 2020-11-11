@@ -39,7 +39,7 @@ import {
 	recordTracksEvent,
 } from 'calypso/state/analytics/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import { getByDomainName } from 'calypso/state/domains/nameservers/selectors';
+import { getNameserversByDomainName } from 'calypso/state/domains/nameservers/selectors';
 
 /**
  * Style dependencies
@@ -333,7 +333,7 @@ const customNameServersLearnMoreClick = ( domainName ) =>
 export default connect(
 	( state, { selectedDomainName } ) => ( {
 		currentRoute: getCurrentRoute( state ),
-		nameservers: getByDomainName( state, selectedDomainName ),
+		nameservers: getNameserversByDomainName( state, selectedDomainName ),
 	} ),
 	{
 		customNameServersLearnMoreClick,

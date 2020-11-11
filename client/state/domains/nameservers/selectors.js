@@ -3,6 +3,6 @@
  */
 import { initialDomainState } from './reducer';
 
-export function getByDomainName( state, domainName ) {
+export function getNameserversByDomainName( state, domainName ) {
 	return state.domains?.nameservers[ domainName ] || initialDomainState;
 }

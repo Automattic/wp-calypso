@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 import { initialDomainState } from '../reducer';
-import { getByDomainName } from '../selectors';
+import { getNameserversByDomainName } from '../selectors';
 
 describe( 'selectors', () => {
-	describe( 'getByDomainName', () => {
+	describe( 'getNameserversByDomainName', () => {
 		const DOMAIN_NAME = 'dummy.com';
 
 		test( 'should return default domain state when state is empty', () => {
-			expect( getByDomainName( {}, DOMAIN_NAME ) ).toEqual( initialDomainState );
+			expect( getNameserversByDomainName( {}, DOMAIN_NAME ) ).toEqual( initialDomainState );
 		} );
 
 		test( 'should return default domain state when fetching state for domain that has no data', () => {
@@ -23,7 +23,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getByDomainName( state, DOMAIN_NAME ) ).toEqual( initialDomainState );
+			expect( getNameserversByDomainName( state, DOMAIN_NAME ) ).toEqual( initialDomainState );
 		} );
 
 		test( 'should return domain data when domain data is known', () => {
@@ -38,7 +38,7 @@ describe( 'selectors', () => {
 					},
 				},
 			};
-			expect( getByDomainName( state, DOMAIN_NAME ) ).toEqual( domainState );
+			expect( getNameserversByDomainName( state, DOMAIN_NAME ) ).toEqual( domainState );
 		} );
 	} );
 } );
