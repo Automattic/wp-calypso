@@ -6,6 +6,7 @@ import {
 	DOMAIN_NAMESERVERS_FETCH_FAILURE,
 	DOMAIN_NAMESERVERS_RECEIVE,
 } from 'calypso/state/action-types';
+import { keyedReducer } from 'calypso/state/utils';
 
 export const initialDomainState = {
 	isFetching: false,
@@ -18,36 +19,33 @@ export const initialDomainState = {
  * Updates name servers entry for given domain.
  *
  * @param {object} [state] Current state.
- * @param {string} [domainName] Domain name.
  * @param {object} [data] Domain name servers data.
  * @returns {object} New state
  */
-function updateState( state, domainName, data ) {
+function updateState( state, data ) {
 	return Object.assign( {}, state, {
-		[ domainName ]: {
-			...initialDomainState,
-			...state[ domainName ],
-			...data,
-		},
+		...initialDomainState,
+		...state,
+		...data,
 	} );
 }
 
-export default function reducer( state = {}, action ) {
+const reducer = keyedReducer( 'domainName', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case DOMAIN_NAMESERVERS_FETCH: {
-			return updateState( state, action.domainName, {
+			return updateState( state, {
 				isFetching: true,
 				error: false,
 			} );
 		}
 		case DOMAIN_NAMESERVERS_FETCH_FAILURE: {
-			return updateState( state, action.domainName, {
+			return updateState( state, {
 				isFetching: false,
 				error: true,
 			} );
 		}
 		case DOMAIN_NAMESERVERS_RECEIVE: {
-			return updateState( state, action.domainName, {
+			return updateState( state, {
 				isFetching: false,
 				hasLoadedFromServer: true,
 				list: action.nameservers,
@@ -56,4 +54,6 @@ export default function reducer( state = {}, action ) {
 	}
 
 	return state;
-}
+} );
+
+export default reducer;
