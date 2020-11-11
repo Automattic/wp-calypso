@@ -51,25 +51,19 @@ export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLik
 };
 
 export const spamNote = function ( note ) {
-	const global = store.get( 'global' );
-
 	bumpStat( 'spam-comment' );
 	recordTracksEvent( 'calypso_notification_note_spam', {
 		note_type: note.type,
 	} );
 
 	reduxStore.dispatch( actions.notes.spamNote( note.id ) );
-	global.updateUndoBar( 'spam', note );
 };
 
 export const trashNote = function ( note ) {
-	const global = store.get( 'global' );
-
 	bumpStat( 'trash-comment' );
 	recordTracksEvent( 'calypso_notification_note_trash', {
 		note_type: note.type,
 	} );
 
 	reduxStore.dispatch( actions.notes.trashNote( note.id ) );
-	global.updateUndoBar( 'trash', note );
 };

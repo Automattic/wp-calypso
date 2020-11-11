@@ -21,7 +21,16 @@ const hasBadge = ( body ) =>
 	body.some( ( { media } ) => media && media.some( ( { type } ) => 'badge' === type ) );
 
 export const Note = React.forwardRef( ( props, ref ) => {
-	const { currentNote, detailView, global, isApproved, isRead, note, selectedNote } = props;
+	const {
+		currentNote,
+		detailView,
+		global,
+		isApproved,
+		isRead,
+		note,
+		selectedNote,
+		updateUndoBar,
+	} = props;
 
 	let hasCommentReply = false;
 	let hasUnapprovedComment = false;
@@ -71,6 +80,7 @@ export const Note = React.forwardRef( ( props, ref ) => {
 					note={ note }
 					global={ global }
 					updateStatusBar={ props.updateStatusBar }
+					updateUndoBar={ updateUndoBar }
 				/>
 			) }
 		</li>

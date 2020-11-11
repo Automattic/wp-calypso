@@ -38,8 +38,6 @@ export class NoteList extends React.Component {
 	};
 
 	state = {
-		undoAction: null,
-		undoNote: null,
 		scrollY: 0,
 		scrolling: false,
 	};
@@ -47,8 +45,6 @@ export class NoteList extends React.Component {
 	noteElements = {};
 
 	UNSAFE_componentWillMount() {
-		this.props.global.updateUndoBar = this.updateUndoBar;
-
 		if ( 'function' === typeof this.props.storeVisibilityUpdater ) {
 			this.props.storeVisibilityUpdater( this.ensureSelectedNoteVisibility );
 		}
@@ -111,28 +107,6 @@ export class NoteList extends React.Component {
 		this.setState( { scrolling: false } );
 	};
 
-	updateUndoBar = ( action, note ) => {
-		this.setState(
-			{
-				undoAction: action,
-				undoNote: note,
-			},
-			() => {
-				/* Jump-start the undo bar if it hasn't updated yet */
-				if ( this.startUndoSequence ) {
-					this.startUndoSequence();
-				}
-			}
-		);
-	};
-
-	resetUndoBar = () => {
-		this.setState( {
-			undoAction: null,
-			undoNote: null,
-		} );
-	};
-
 	ensureSelectedNoteVisibility = () => {
 		let scrollTarget = null;
 		const selectedNote = this.props.selectedNote;
@@ -187,10 +161,6 @@ export class NoteList extends React.Component {
 		this.undoBar = ref;
 	};
 
-	storeUndoStartSequence = ( startSequence ) => {
-		this.startUndoSequence = startSequence;
-	};
-
 	render() {
 		const groupTitles = [
 			this.props.translate( 'Today', {
@@ -223,35 +193,38 @@ export class NoteList extends React.Component {
 		const timeGroups = zip( timeBoundaries.slice( 0, -1 ), timeBoundaries.slice( 1 ) );
 
 		const createNoteComponent = ( note ) => {
-			if ( this.state.undoNote && note.id === this.state.undoNote.id ) {
+			if ( this.props.undoNote && note.id === this.props.undoNote.id ) {
 				return (
 					<UndoListItem
 						ref={ this.storeUndoBar }
 						storeImmediateActor={ this.storeUndoActImmediately }
-						storeStartSequence={ this.storeUndoStartSequence }
-						key={ 'undo-' + this.state.undoAction + '-' + note.id }
-						action={ this.state.undoAction }
-						note={ this.state.undoNote }
-						resetUndoBar={ this.resetUndoBar }
+						storeStartSequence={ this.props.storeUndoStartSequence }
+						key={ 'undo-' + this.props.undoAction + '-' + note.id }
+						action={ this.props.undoAction }
+						note={ this.props.undoNote }
+						resetUndoBar={ this.props.resetUndoBar }
 					/>
 				);
 			}
 
 			/* Only show the note if it's not in the list of hidden notes */
-			if ( ! this.props.isNoteHidden( note.id ) ) {
-				return (
-					<Note
-						note={ note }
-						ref={ this.storeNote( note.id ) }
-						key={ 'note-' + note.id }
-						detailView={ false }
-						client={ this.props.client }
-						global={ this.props.global }
-						currentNote={ this.props.selectedNoteId }
-						selectedNote={ this.props.selectedNote }
-					/>
-				);
+			if ( this.props.isNoteHidden( note.id ) ) {
+				return null;
 			}
+
+			return (
+				<Note
+					note={ note }
+					ref={ this.storeNote( note.id ) }
+					key={ 'note-' + note.id }
+					detailView={ false }
+					client={ this.props.client }
+					global={ this.props.global }
+					currentNote={ this.props.selectedNoteId }
+					selectedNote={ this.props.selectedNote }
+					updateUndoBar={ this.props.updateUndoBar }
+				/>
+			);
 		};
 
 		// Create new groups of messages by time periods

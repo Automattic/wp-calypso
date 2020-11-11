@@ -81,6 +81,8 @@ class Layout extends React.Component {
 		statusMessage: '',
 		statusClasses: [],
 		statusTimeout: null,
+		undoAction: null,
+		undoNote: null,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -191,6 +193,31 @@ class Layout extends React.Component {
 			statusClasses: [],
 			statusTimeout: null,
 		} );
+	};
+
+	updateUndoBar = ( action, note, cb ) => {
+		this.setState(
+			{
+				undoAction: action,
+				undoNote: note,
+			},
+			() => {
+				if ( this.startUndoSequence ) {
+					this.startUndoSequence();
+				}
+			}
+		);
+	};
+
+	resetUndoBar = () => {
+		this.setState( {
+			undoAction: null,
+			undoNote: null,
+		} );
+	};
+
+	storeUndoStartSequence = ( startSequence ) => {
+		this.startUndoSequence = startSequence;
 	};
 
 	navigateByDirection = ( direction ) => {
@@ -414,7 +441,7 @@ class Layout extends React.Component {
 				}
 				break;
 			case KEY_U: // Unread filter
-				if ( ! this.props.selectedNoteId && ! ( this.noteList && this.noteList.state.undoNote ) ) {
+				if ( ! this.props.selectedNoteId && ! ( this.noteList && this.state.undoNote ) ) {
 					this.filterController.selectFilter( 'unread' );
 				}
 				break;
@@ -486,6 +513,11 @@ class Layout extends React.Component {
 						statusClasses={ this.state.statusClasses }
 						statusTimeout={ this.state.statusTimeout }
 						resetStatusBar={ this.resetStatusBar }
+						updateUndoBar={ this.updateUndoBar }
+						storeUndoStartSequence={ this.storeUndoStartSequence }
+						undoAction={ this.state.undoAction }
+						undoNote={ this.state.undoNote }
+						resetUndoBar={ this.resetUndoBar }
 					/>
 				) }
 
@@ -536,6 +568,7 @@ class Layout extends React.Component {
 								note={ currentNote }
 								selectedNote={ this.state.selectedNote }
 								updateStatusBar={ this.updateStatusBar }
+								updateUndoBar={ this.updateUndoBar }
 							/>
 						</ol>
 					) }

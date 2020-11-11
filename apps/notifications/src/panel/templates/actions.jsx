@@ -46,7 +46,15 @@ const getInitialReplyValue = ( note, translate ) => {
 		: translate( 'Reply to comment...' );
 };
 
-const ActionsPane = ( { global, isApproved, isLiked, note, translate, updateStatusBar } ) => {
+const ActionsPane = ( {
+	global,
+	isApproved,
+	isLiked,
+	note,
+	translate,
+	updateStatusBar,
+	updateUndoBar,
+} ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
@@ -55,8 +63,12 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate, updateStat
 		<div className="wpnc__note-actions">
 			<div className="wpnc__note-actions__buttons">
 				{ hasAction( 'approve-comment' ) && <ApproveButton { ...{ note, isApproved } } /> }
-				{ hasAction( 'spam-comment' ) && <SpamButton note={ note } /> }
-				{ hasAction( 'trash-comment' ) && <TrashButton note={ note } /> }
+				{ hasAction( 'spam-comment' ) && (
+					<SpamButton note={ note } updateUndoBar={ updateUndoBar } />
+				) }
+				{ hasAction( 'trash-comment' ) && (
+					<TrashButton note={ note } updateUndoBar={ updateUndoBar } />
+				) }
 				{ hasAction( [ 'like-post', 'like-comment' ] ) && <LikeButton { ...{ note, isLiked } } /> }
 				{ hasAction( 'edit-comment' ) && <EditButton note={ note } /> }
 			</div>
