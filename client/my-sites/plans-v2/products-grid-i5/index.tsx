@@ -5,7 +5,6 @@ import { sortBy } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -19,6 +18,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import MoreInfoBox from '../more-info-box';
 
 /**
  * Type dependencies
@@ -99,16 +99,11 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="products-grid-i5__more">
-					<div className="products-grid-i5__more-container">
-						<h3 className="products-grid-i5__more-headline">{ translate( 'Need more info?' ) }</h3>
-						<Button
-							onClick={ scrollToComparison }
-							className="products-grid-i5__more-button"
-							primary
-						>
-							{ translate( 'Compare all product bundles' ) }
-						</Button>
-					</div>
+					<MoreInfoBox
+						headline={ translate( 'Need more info?' ) }
+						buttonLabel={ translate( 'Compare all product bundles' ) }
+						onButtonClick={ scrollToComparison }
+					/>
 				</div>
 			</section>
 			<section className="products-grid-i5__section">
