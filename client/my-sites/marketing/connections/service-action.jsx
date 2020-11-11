@@ -64,7 +64,7 @@ const SharingServiceAction = ( {
 		if ( 'must-disconnect' === status ) {
 			warning = true;
 		}
-	} else if ( 'reconnect' === status ) {
+	} else if ( 'reconnect' === status || 'refresh-failed' === status ) {
 		label = translate( 'Reconnect', {
 			context: 'Sharing: Publicize reconnect pending button label',
 		} );

@@ -1,50 +1,58 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
 
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'calypso/components/formatted-header';
-import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import JetpackComMasterbar from '../jpcom-masterbar';
+import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from 'calypso/config';
+import { preventWidows } from 'calypso/lib/formatting';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Header = () => {
-	const isAlternateSelector =
-		getJetpackCROActiveVersion() === 'v1' || getJetpackCROActiveVersion() === 'v2';
-	const header = isAlternateSelector
-		? translate( 'Security, performance, and growth tools for WordPress' )
-		: translate( 'Security, performance, and marketing tools for WordPress' );
-
+const Header: React.FC = () => {
 	const identity = config( 'olark_chat_identity' );
+	const translate = useTranslate();
+	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
+
+	const title =
+		{
+			[ Iterations.V1 ]: translate( 'Security, performance, and growth tools for WordPress' ),
+			[ Iterations.V2 ]: translate( 'Security, performance, and growth tools for WordPress' ),
+			[ Iterations.I5 ]: translate( 'Security, performance, and growth tools for WordPress' ),
+		}[ iteration ] ?? translate( 'Security, performance, and marketing tools for WordPress' );
+	const tagline =
+		{
+			[ Iterations.V1 ]: '',
+			[ Iterations.V2 ]: '',
+			[ Iterations.I5 ]: '',
+		}[ iteration ] ??
+		translate(
+			'Get everything your site needs, in one package — so you can focus on your business.'
+		);
 
 	return (
 		<>
 			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
-			<div className="header">
+			<div className={ classNames( 'header', iteration ) }>
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows( header ) }
+					headerText={ preventWidows( title ) }
 					align="center"
 				/>
-				{ ! isAlternateSelector && (
-					<p>
-						{ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-					</p>
-				) }
+				{ tagline && <p>{ tagline }</p> }
 			</div>
 		</>
 	);

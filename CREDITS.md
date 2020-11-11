@@ -56,17 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
 
 ## <https://github.com/WordPress/WordPress>
 
-### client/components/tinymce/plugins/wpcom
-
-### client/components/tinymce/plugins/wpcom-autoresize
-
-### client/components/tinymce/plugins/wpcom-view
-
-### client/components/tinymce/plugins/wpeditimage
-
 ### client/components/tinymce/plugins/wplink
-
-### client/components/tinymce/plugins/wptextpattern
 
 ### client/lib/media/constants.js
 
@@ -462,7 +452,6 @@ included with WordPress can be freely obtained at the following URL:
 	https://wordpress.org/download/source/
 
 ### https://github.com/tinymce/tinymce
-#### client/components/tinymce/plugins/wpcom-charmap
 
 		  GNU LESSER GENERAL PUBLIC LICENSE
 		       Version 2.1, February 1999
