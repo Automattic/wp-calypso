@@ -5,7 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
-import { includes, isEmpty, noop, flowRight, has, trim, sortBy, reverse } from 'lodash';
+import { includes, isEmpty, noop, flowRight, has, trim, sortBy } from 'lodash';
 import url from 'url'; // eslint-disable-line no-restricted-imports
 import moment from 'moment';
 
@@ -120,10 +120,7 @@ class SiteImporterInputPane extends React.Component {
 					];
 				}, [] );
 				this.setState( {
-					availableEndpoints: reverse( sortBy( endpoints, 'lastModifiedTimestamp' ) ).slice(
-						0,
-						20
-					),
+					availableEndpoints: sortBy( endpoints, 'lastModifiedTimestamp' ).reverse().slice( 0, 20 ),
 				} );
 			} )
 			.catch( ( err ) => {
