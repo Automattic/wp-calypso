@@ -98,6 +98,13 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 		case 'h6':
 		case 'figure':
 		case 'figcaption':
+		case 'table':
+		case 'thead':
+		case 'tbody':
+		case 'tfoot':
+		case 'tr':
+		case 'th':
+		case 'td':
 			switch ( range_info_type ) {
 				case 'list':
 					range_info_type = 'span';
