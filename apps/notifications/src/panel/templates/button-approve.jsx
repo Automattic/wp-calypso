@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,30 +12,36 @@ import { setApproveStatus } from '../flux/note-actions';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
+import { RestClientContext } from '../Notifications';
 
-const ApproveButton = ( { isApproved, note, translate } ) => (
-	<ActionButton
-		{ ...{
-			icon: 'checkmark',
-			isActive: isApproved,
-			hotkey: keys.KEY_A,
-			onToggle: () =>
-				setApproveStatus(
-					note.id,
-					getReferenceId( note, 'site' ),
-					getReferenceId( note, 'comment' ),
-					! isApproved,
-					note.type
-				),
-			text: isApproved
-				? translate( 'Approved', { context: 'verb: past-tense' } )
-				: translate( 'Approve', { context: 'verb: imperative' } ),
-			title: isApproved
-				? translate( 'Unapprove comment', { context: 'verb: imperative' } )
-				: translate( 'Approve comment', { context: 'verb: imperative' } ),
-		} }
-	/>
-);
+const ApproveButton = ( { isApproved, note, translate } ) => {
+	const restClient = useContext( RestClientContext );
+
+	return (
+		<ActionButton
+			{ ...{
+				icon: 'checkmark',
+				isActive: isApproved,
+				hotkey: keys.KEY_A,
+				onToggle: () =>
+					setApproveStatus(
+						note.id,
+						getReferenceId( note, 'site' ),
+						getReferenceId( note, 'comment' ),
+						! isApproved,
+						note.type,
+						restClient
+					),
+				text: isApproved
+					? translate( 'Approved', { context: 'verb: past-tense' } )
+					: translate( 'Approve', { context: 'verb: imperative' } ),
+				title: isApproved
+					? translate( 'Unapprove comment', { context: 'verb: imperative' } )
+					: translate( 'Approve comment', { context: 'verb: imperative' } ),
+			} }
+		/>
+	);
+};
 
 ApproveButton.propTypes = {
 	isApproved: PropTypes.bool.isRequired,
