@@ -29,7 +29,14 @@ export function register(): typeof STORE_KEY {
 			controls,
 			reducer: reducer as any,
 			selectors,
-			persist: [ 'domain', 'domainSearch', 'plan', 'confirmedDomainSelection', 'isExperimental' ],
+			persist: [
+				'domain',
+				'domainSearch',
+				'plan',
+				'confirmedDomainSelection',
+				'isExperimental',
+				'isSiteTitleStepVisible',
+			],
 		} );
 	}
 	return STORE_KEY;

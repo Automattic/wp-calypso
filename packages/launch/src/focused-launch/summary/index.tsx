@@ -7,7 +7,7 @@ import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext, useState, useEffect } from 'react';
+import React, { ReactNode, useContext, useEffect } from 'react';
 import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
@@ -336,8 +336,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 };
 
 const Summary: React.FunctionComponent = () => {
-	const { title, updateTitle, saveTitle } = useTitle();
-	const [ forceSiteNameRender, setForceSiteNameRender ] = useState( false );
+	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
@@ -346,16 +345,13 @@ const Summary: React.FunctionComponent = () => {
 
 	const { locale } = useContext( LaunchContext );
 
-	// Ensure that the Site Name step doesn't disappear as soon as the user
-	// edits its value. This is achieved by ignoring the `isDefaultSiteTitle`
-	// check after the Site Name steps renders for the first time.
-	const shouldRenderNameStep =
-		forceSiteNameRender || isDefaultSiteTitle( { currentSiteTitle: title } );
+	// If the user needs to change the site title, always show the site title
+	// step to the user when in this launch flow.
 	useEffect( () => {
-		if ( shouldRenderNameStep ) {
-			setForceSiteNameRender( true );
+		if ( ! isSiteTitleStepVisible && isDefaultSiteTitle( { currentSiteTitle: title } ) ) {
+			showSiteTitleStep();
 		}
-	}, [ shouldRenderNameStep ] );
+	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	// @TODO: plan step to be implemented
 	// https://github.com/Automattic/wp-calypso/issues/46865
@@ -398,7 +394,7 @@ const Summary: React.FunctionComponent = () => {
 	// groups, and allows the actve steps to always show the correct step index.
 	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
 	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
-	shouldRenderNameStep && activeSteps.push( renderSiteNameStep );
+	isSiteTitleStepVisible && activeSteps.push( renderSiteNameStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
