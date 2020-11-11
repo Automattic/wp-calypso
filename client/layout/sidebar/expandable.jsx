@@ -4,7 +4,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import HoverIntent from 'react-hoverintent';
 import { get, uniqueId } from 'lodash';
 
 /**
@@ -14,6 +13,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import HoverIntent from 'calypso/lib/hoverIntent';
 import config from 'calypso/config';
 
 const isTouch = hasTouch();
