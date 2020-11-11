@@ -20,10 +20,9 @@ import { Route } from '../route';
 import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
 import { LAUNCH_STORE } from '../../stores';
 import LaunchContext from '../../context';
+import { isDefaultSiteTitle } from '../../utils';
 
 import './style.scss';
-
-const DEFAULT_SITE_NAME = 'Site Title';
 
 const bulb = (
 	<SVG viewBox="0 0 24 24">
@@ -347,15 +346,11 @@ const Summary: React.FunctionComponent = () => {
 
 	const domainSearch = useDomainSearch();
 
-	// The RegExp check is more relaxed on purpose — chances are that if the title
-	// matches (even it not exactly) the default title, the user would like want
-	// to change it before launch.
-	const isDefaultSiteTitle = new RegExp( DEFAULT_SITE_NAME, 'i' ).test( title );
-
 	// Ensure that the Site Name step doesn't disappear as soon as the user
 	// edits its value. This is achieved by ignoring the `isDefaultSiteTitle`
 	// check after the Site Name steps renders for the first time.
-	const shouldRenderNameStep = forceSiteNameRender || isDefaultSiteTitle;
+	const shouldRenderNameStep =
+		forceSiteNameRender || isDefaultSiteTitle( { currentSiteTitle: title } );
 	useEffect( () => {
 		if ( shouldRenderNameStep ) {
 			setForceSiteNameRender( true );
