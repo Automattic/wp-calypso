@@ -326,7 +326,7 @@ In general, it's best to avoid checking the type of a value, and instead just re
 
 If you really must check the type of a value, however, do the following:
 
-- String: [`isString( value )`](https://lodash.com/docs#isString).
+- String: `typeof value === 'string'`. This doesn't work for strings created with `new String( ... )`, however, so if you really must check for those for whatever reason, be sure to do `typeof value === 'string' || value instanceof String` instead.
 - Number: [`Number.isFinite( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite) for finite numbers only, or [`isNumber( value )`](https://lodash.com/docs#isNumber) if you accept infinite numbers as well.
 - Boolean: `value === true || value === false` (don't use Lodash's `isBoolean`, as it's incredibly wasteful).
 - Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject).
