@@ -24,6 +24,7 @@ var { recordTracksEvent } = require( '../helpers/stats' );
 const hasTouch = () =>
 	'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch );
 
+// eslint-disable-next-line react/prefer-es6-class
 const CommentReplyInput = createReactClass( {
 	displayName: 'CommentReplyInput',
 	mixins: [ repliesCache.LocalStorageMixin, Suggestions ],
@@ -206,7 +207,7 @@ const CommentReplyInput = createReactClass( {
 					} );
 					this.replyInput.focus();
 
-					this.props.global.updateStatusBar( errorMessageDuplicateComment, [ 'fail' ], 6000 );
+					this.props.updateStatusBar( errorMessageDuplicateComment, [ 'fail' ], 6000 );
 					this.props.unselectNote();
 				} else if ( component.state.retryCount < 3 ) {
 					component.setState( {
@@ -223,7 +224,7 @@ const CommentReplyInput = createReactClass( {
 					} );
 
 					/* Flag submission failure */
-					component.props.global.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
+					component.props.updateStatusBar( errorMessage, [ 'fail' ], 6000 );
 
 					component.props.enableKeyboardShortcuts();
 					component.props.global.toggleNavigation( true );
@@ -255,7 +256,7 @@ const CommentReplyInput = createReactClass( {
 				statusMessage = successMessage;
 			}
 
-			component.props.global.updateStatusBar( statusMessage, [ 'success' ], 12000 );
+			component.props.updateStatusBar( statusMessage, [ 'success' ], 12000 );
 
 			component.props.enableKeyboardShortcuts();
 			component.props.global.toggleNavigation( true );

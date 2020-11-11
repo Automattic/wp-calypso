@@ -78,6 +78,9 @@ class Layout extends React.Component {
 		previousDetailScrollTop: 0,
 		previouslySelectedNoteId: null,
 		selectedNote: null,
+		statusMessage: '',
+		statusClasses: [],
+		statusTimeout: null,
 	};
 
 	UNSAFE_componentWillMount() {
@@ -173,6 +176,22 @@ class Layout extends React.Component {
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.redraw );
 	}
+
+	updateStatusBar = ( message, classList, delay ) => {
+		this.setState( {
+			statusClasses: classList,
+			statusMessage: message,
+			statusTimeout: delay,
+		} );
+	};
+
+	resetStatusBar = () => {
+		this.setState( {
+			statusMessage: '',
+			statusClasses: [],
+			statusTimeout: null,
+		} );
+	};
 
 	navigateByDirection = ( direction ) => {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
@@ -463,6 +482,10 @@ class Layout extends React.Component {
 						initialLoad={ this.props.notes === null }
 						notes={ filteredNotes }
 						selectedNote={ this.state.selectedNote }
+						statusMessage={ this.state.statusMessage }
+						statusClasses={ this.state.statusClasses }
+						statusTimeout={ this.state.statusTimeout }
+						resetStatusBar={ this.resetStatusBar }
 					/>
 				) }
 
@@ -512,6 +535,7 @@ class Layout extends React.Component {
 								global={ this.props.global }
 								note={ currentNote }
 								selectedNote={ this.state.selectedNote }
+								updateStatusBar={ this.updateStatusBar }
 							/>
 						</ol>
 					) }

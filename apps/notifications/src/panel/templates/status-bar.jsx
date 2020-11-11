@@ -24,7 +24,7 @@ export class StatusBar extends React.Component {
 			timeoutHandle: null,
 		} );
 
-		this.props.statusReset();
+		this.props.resetStatusBar();
 	};
 
 	/*

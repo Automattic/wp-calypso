@@ -65,7 +65,14 @@ export const Note = React.forwardRef( ( props, ref ) => {
 					global={ global }
 				/>
 			) }
-			{ detailView && <NoteBody key={ 'note-body-' + note.id } note={ note } global={ global } /> }
+			{ detailView && (
+				<NoteBody
+					key={ 'note-body-' + note.id }
+					note={ note }
+					global={ global }
+					updateStatusBar={ props.updateStatusBar }
+				/>
+			) }
 		</li>
 	);
 } );

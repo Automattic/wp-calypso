@@ -42,13 +42,11 @@ export class NoteList extends React.Component {
 		undoNote: null,
 		scrollY: 0,
 		scrolling: false,
-		statusMessage: '',
 	};
 
 	noteElements = {};
 
 	UNSAFE_componentWillMount() {
-		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
 
 		if ( 'function' === typeof this.props.storeVisibilityUpdater ) {
@@ -111,21 +109,6 @@ export class NoteList extends React.Component {
 
 	onScrollEnd = () => {
 		this.setState( { scrolling: false } );
-	};
-
-	updateStatusBar = ( message, classList, delay ) => {
-		this.setState( {
-			statusClasses: classList,
-			statusMessage: message,
-			statusTimeout: delay,
-		} );
-	};
-
-	resetStatusBar = () => {
-		this.setState( {
-			statusClasses: [],
-			statusMessage: '',
-		} );
 	};
 
 	updateUndoBar = ( action, note ) => {
@@ -340,10 +323,10 @@ export class NoteList extends React.Component {
 				<div ref={ this.storeScrollableContainer } className={ listViewClasses }>
 					<ol ref={ this.storeNoteList } className="wpnc__notes">
 						<StatusBar
-							statusClasses={ this.state.statusClasses }
-							statusMessage={ this.state.statusMessage }
-							statusTimeout={ this.state.statusTimeout }
-							statusReset={ this.resetStatusBar }
+							statusClasses={ this.props.statusClasses }
+							statusMessage={ this.props.statusMessage }
+							statusTimeout={ this.props.statusTimeout }
+							resetStatusBar={ this.props.resetStatusBar }
 						/>
 						{ notes }
 						{ this.props.isLoading && (

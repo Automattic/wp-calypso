@@ -106,6 +106,7 @@ export const NoteBody = createReactClass( {
 						note={ this.props.note }
 						block={ block.block }
 						global={ this.props.global }
+						updateStatusBar={ this.props.updateStatusBar }
 					/>
 				);
 			}

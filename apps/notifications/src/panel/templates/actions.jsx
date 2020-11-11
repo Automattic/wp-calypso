@@ -46,7 +46,7 @@ const getInitialReplyValue = ( note, translate ) => {
 		: translate( 'Reply to comment...' );
 };
 
-const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
+const ActionsPane = ( { global, isApproved, isLiked, note, translate, updateStatusBar } ) => {
 	const actions = getActions( note );
 	const hasAction = ( types ) =>
 		[].concat( types ).some( ( type ) => actions.hasOwnProperty( type ) );
@@ -62,11 +62,10 @@ const ActionsPane = ( { global, isApproved, isLiked, note, translate } ) => {
 			</div>
 			{ !! actions[ 'replyto-comment' ] && (
 				<ReplyInput
-					{ ...{
-						note,
-						defaultValue: getInitialReplyValue( note, translate ),
-						global,
-					} }
+					note={ note }
+					defaultValue={ getInitialReplyValue( note, translate ) }
+					global={ global }
+					updateStatusBar={ updateStatusBar }
 				/>
 			) }
 		</div>
