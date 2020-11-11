@@ -57,11 +57,13 @@ export const updateDomainNameserversSuccess = ( { domainName }, nameservers ) =>
 	} ),
 ];
 
-export const updateDomainNameserversError = ( action, error ) =>
-	errorNotice( error.message, {
+export const updateDomainNameserversError = ( action, error ) => {
+	const defaultMessage = translate( 'An error occurred while updating the nameservers.' );
+	return errorNotice( error.message || defaultMessage, {
 		duration: 5000,
 		id: `nameserver-update-notification-${ action.domainName }`,
 	} );
+};
 
 registerHandlers( 'state/data-layer/wpcom/domains/nameservers/index.js', {
 	[ DOMAIN_NAMESERVERS_FETCH ]: [
