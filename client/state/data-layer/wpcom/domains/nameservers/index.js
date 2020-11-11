@@ -39,10 +39,9 @@ export const updateDomainNameservers = ( action ) =>
 			method: 'POST',
 			path: `/domains/${ action.domainName }/nameservers/`,
 			body: {
-				nameservers:
-					action.nameservers?.map( ( nameserver ) => ( {
-						nameserver,
-					} ) ) || [],
+				nameservers: action.nameservers.map( ( nameserver ) => ( {
+					nameserver,
+				} ) ),
 			},
 		},
 		action
