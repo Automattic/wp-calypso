@@ -97,6 +97,14 @@ const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action
 	return state;
 };
 
+const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'SHOW_SITE_TITLE_STEP' ) {
+		return true;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	domain,
@@ -107,6 +115,7 @@ const reducer = combineReducers( {
 	isSidebarFullscreen,
 	isExperimental,
 	isFocusedLaunchOpen,
+	isSiteTitleStepVisible,
 } );
 
 export type State = ReturnType< typeof reducer >;
