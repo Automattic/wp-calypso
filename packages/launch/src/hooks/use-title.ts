@@ -21,8 +21,8 @@ export function useTitle() {
 
 	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
 
-	const isSiteTitleStepVisible = useSelect(
-		( select ) => select( LAUNCH_STORE ).isSiteTitleStepVisible
+	const isSiteTitleStepVisible = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).isSiteTitleStepVisible()
 	);
 
 	const showSiteTitleStep = useDispatch( LAUNCH_STORE ).showSiteTitleStep;
