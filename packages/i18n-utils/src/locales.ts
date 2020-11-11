@@ -12,10 +12,7 @@ export const localesWithCookiePolicy: Locale[] = [ 'en', 'fr', 'de' ];
 
 type LocaleSubdomain = string;
 
-export interface LocalesToSubdomains {
-	[ key: string ]: LocaleSubdomain;
-}
-export const localesToSubdomains: LocalesToSubdomains = {
+export const localesToSubdomains: Record< string, LocaleSubdomain > = {
 	'pt-br': 'br',
 	br: 'bre',
 	zh: 'zh-cn',
