@@ -8,6 +8,6 @@ import { get } from 'lodash';
  */
 import 'calypso/state/site-address-change/init';
 
-export default function ( state, siteId ) {
+export function getSiteAddressValidationError( state, siteId ) {
 	return get( state, [ 'siteAddressChange', 'validation', siteId, 'error' ] );
 }

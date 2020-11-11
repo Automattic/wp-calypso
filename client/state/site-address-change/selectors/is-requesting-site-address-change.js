@@ -13,5 +13,6 @@ import 'calypso/state/site-address-change/init';
  * @param {number} siteId - site ID
  * @returns {boolean} Signals whether or not there is currently a request in progress for the given siteId
  */
-export default ( state, siteId ) =>
-	get( state, [ 'siteAddressChange', 'requesting', siteId ], null );
+export function isRequestingSiteAddressChange( state, siteId ) {
+	return get( state, [ 'siteAddressChange', 'requesting', siteId ], null );
+}

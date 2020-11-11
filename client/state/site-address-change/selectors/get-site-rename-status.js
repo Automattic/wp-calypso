@@ -13,4 +13,6 @@ import 'calypso/state/site-address-change/init';
  * @param {number} siteId site ID
  * @returns {object} An object that represents the current status for site rename requests.
  */
-export default ( state, siteId ) => get( state, [ 'siteAddressChange', 'status', siteId ], {} );
+export function getSiteRenameStatus( state, siteId ) {
+	return get( state, [ 'siteAddressChange', 'status', siteId ], {} );
+}
