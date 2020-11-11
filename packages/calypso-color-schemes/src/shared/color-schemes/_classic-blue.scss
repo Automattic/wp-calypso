@@ -1,5 +1,36 @@
 .color-scheme.is-classic-blue {
 	/* Theme Properties */
+	--color-primary: var( --studio-blue-50 );
+	--color-primary-rgb: var( --studio-blue-50-rgb );
+	--color-primary-dark: var( --studio-blue-70 );
+	--color-primary-dark-rgb: var( --studio-blue-70-rgb );
+	--color-primary-light: var( --studio-blue-30 );
+	--color-primary-light-rgb: var( --studio-blue-30-rgb );
+	--color-primary-0: var( --studio-blue-0 );
+	--color-primary-0-rgb: var( --studio-blue-0-rgb );
+	--color-primary-5: var( --studio-blue-5 );
+	--color-primary-5-rgb: var( --studio-blue-5-rgb );
+	--color-primary-10: var( --studio-blue-10 );
+	--color-primary-10-rgb: var( --studio-blue-10-rgb );
+	--color-primary-20: var( --studio-blue-20 );
+	--color-primary-20-rgb: var( --studio-blue-20-rgb );
+	--color-primary-30: var( --studio-blue-30 );
+	--color-primary-30-rgb: var( --studio-blue-30-rgb );
+	--color-primary-40: var( --studio-blue-40 );
+	--color-primary-40-rgb: var( --studio-blue-40-rgb );
+	--color-primary-50: var( --studio-blue-50 );
+	--color-primary-50-rgb: var( --studio-blue-50-rgb );
+	--color-primary-60: var( --studio-blue-60 );
+	--color-primary-60-rgb: var( --studio-blue-60-rgb );
+	--color-primary-70: var( --studio-blue-70 );
+	--color-primary-70-rgb: var( --studio-blue-70-rgb );
+	--color-primary-80: var( --studio-blue-80 );
+	--color-primary-80-rgb: var( --studio-blue-80-rgb );
+	--color-primary-90: var( --studio-blue-90 );
+	--color-primary-90-rgb: var( --studio-blue-90-rgb );
+	--color-primary-100: var( --studio-blue-100 );
+	--color-primary-100-rgb: var( --studio-blue-100-rgb );
+
 	--color-accent: var( --studio-orange-50 );
 	--color-accent-rgb: var( --studio-orange-50-rgb );
 	--color-accent-dark: var( --studio-orange-70 );
@@ -32,12 +63,24 @@
 	--color-accent-100-rgb: var( --studio-orange-100-rgb );
 
 	/* Component Properties */
+	--color-masterbar-background: var( --studio-blue-60 );
+	--color-masterbar-border: var( --studio-blue-70 );
+	--color-masterbar-text: var( --studio-white );
+	--color-masterbar-item-hover-background: var( --studio-blue-70 );
+	--color-masterbar-item-active-background: var( --studio-blue-90 );
+	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
+	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-unread-dot-background: var( --color-accent-30 );
+	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-40 );
+	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
+	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 	
 	--color-sidebar-background: var( --studio-gray-5 );
 	--color-sidebar-background-rgb: var( --studio-gray-5-rgb );
-	--color-sidebar-text-alternative: var( --studio-gray-50 );
 	--color-sidebar-border: var( --studio-gray-10 );
+	--color-sidebar-text: var( --studio-gray-80 );
+	--color-sidebar-text-alternative: var( --studio-gray-50 );
+	--color-sidebar-gridicon-fill: var( --studio-gray-50 );
 	--color-sidebar-menu-selected-background: var( --studio-gray-60 );
 	--color-sidebar-menu-selected-background-rgb: var( --studio-gray-60-rgb );
 	--color-sidebar-menu-selected-text: var( --studio-white );
