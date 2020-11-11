@@ -98,6 +98,7 @@ class PlansNavigation extends React.Component {
 		if (
 			! config.isEnabled( 'upgrades/checkout' ) ||
 			! this.props.shoppingCartManager ||
+			this.props.shoppingCartManager.isLoading ||
 			! this.props.site
 		) {
 			return null;
