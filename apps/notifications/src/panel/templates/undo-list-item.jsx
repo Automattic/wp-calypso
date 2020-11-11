@@ -84,7 +84,7 @@ export class UndoListItem extends React.Component {
 		};
 
 		if ( ! ( this.props.action in actionHandlers ) ) {
-			this.props.global.resetUndoBar();
+			this.props.resetUndoBar();
 			return;
 		}
 
@@ -168,7 +168,7 @@ export class UndoListItem extends React.Component {
 
 	finishExecution = () => {
 		this.instance && this.setState( { undoTimer: null } );
-		this.props.global.resetUndoBar();
+		this.props.resetUndoBar();
 	};
 
 	storeInstance = ( ref ) => {

@@ -50,7 +50,6 @@ export class NoteList extends React.Component {
 	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
-		this.props.global.resetUndoBar = this.resetUndoBar;
 
 		if ( 'function' === typeof this.props.storeVisibilityUpdater ) {
 			this.props.storeVisibilityUpdater( this.ensureSelectedNoteVisibility );
@@ -250,7 +249,7 @@ export class NoteList extends React.Component {
 						key={ 'undo-' + this.state.undoAction + '-' + note.id }
 						action={ this.state.undoAction }
 						note={ this.state.undoNote }
-						global={ this.props.global }
+						resetUndoBar={ this.resetUndoBar }
 					/>
 				);
 			}
