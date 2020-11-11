@@ -3,6 +3,8 @@
  */
 import { AppState } from 'calypso/types';
 
+import 'calypso/state/rewind/init';
+
 const uninitialized = {
 	state: 'uninitialized',
 };
