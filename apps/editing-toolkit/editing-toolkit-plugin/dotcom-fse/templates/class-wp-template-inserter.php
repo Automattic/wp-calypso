@@ -353,10 +353,11 @@ class WP_Template_Inserter {
 			);
 			return;
 		}
+		error_log( 'wp-templates-inserter insert_default_pages' . A8C\FSE\Common\get_iso_639_locale() );
 
 		$request_url = add_query_arg(
 			array(
-				'_locale' => $this->get_iso_639_locale(),
+				'_locale' => A8C\FSE\Common\get_iso_639_locale(),
 			),
 			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
 		);
@@ -415,23 +416,6 @@ class WP_Template_Inserter {
 				'theme_slug' => $this->theme_slug,
 			)
 		);
-	}
-
-	/**
-	 * Returns ISO 639 conforming locale string.
-	 *
-	 * @return string ISO 639 locale string
-	 */
-	public function get_iso_639_locale() {
-		$language = strtolower( get_locale() );
-
-		if ( in_array( $language, array( 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
-			$language = str_replace( '_', '-', $language );
-		} else {
-			$language = preg_replace( '/([-_].*)$/i', '', $language );
-		}
-
-		return $language;
 	}
 
 	/**
