@@ -644,7 +644,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const { request } = await app.run();
 		const staticUrls = request.context.app.staticUrls;
 		expect( staticUrls ).toEqual( {
-			'editor.css': '/calypso/editor.css?v=hash',
 			'tinymce/skins/wordpress/wp-content.css':
 				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
 		} );
