@@ -1,10 +1,17 @@
 .products-grid-i5__section {
 	margin-bottom: 70px;
+	padding-left: 20px;
+	padding-right: 20px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		padding-left: 0;
+		padding-right: 0;
+	}
 }
 
 .products-grid-i5__section-title {
-	margin-top: 56px;
-	margin-bottom: 28px;
+	margin-top: 60px;
+	margin-bottom: 40px;
 
 	font-size: 2.25rem;
 	font-weight: 700;
@@ -18,14 +25,24 @@
 
 	list-style-type: none;
 
-	@include breakpoint-deprecated( '>660px' ) {
-		display: grid;
-		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
-	}
+	display: grid;
+	grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+	grid-gap: 24px 16px;
 }
 
-.products-grid-i5__product-grid {
-	@include breakpoint-deprecated( '>660px' ) {
-		grid-gap: 24px 16px;
+.products-grid-i5__plan-grid:not( .is-wrapping ) {
+	grid-gap: 24px 0;
+
+	// Considering there are 3 plans
+	> li {
+		&:first-child {
+			position: relative;
+			left: 8px;
+		}
+
+		&:last-child {
+			position: relative;
+			left: -8px;
+		}
 	}
 }
