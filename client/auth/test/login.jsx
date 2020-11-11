@@ -20,7 +20,7 @@ import FormButton from 'calypso/components/forms/form-button';
 jest.mock( '../login-request', () => ( {
 	makeAuthRequest: require( 'sinon' ).stub(),
 	bumpStats: () => {},
-	errors: {},
+	errorTypes: {},
 } ) );
 
 jest.mock( 'lib/analytics/ga', () => ( {

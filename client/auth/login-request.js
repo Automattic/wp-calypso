@@ -4,7 +4,7 @@
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 
-export const errors = {
+export const errorTypes = {
 	ERROR_REQUIRES_2FA: 'needs_2fa', // From WP.com API
 	ERROR_INVALID_OTP: 'invalid_otp', // From WP.com API
 };
@@ -42,7 +42,7 @@ export function bumpStats( error ) {
 
 	const errorType = error.type ? error.type : `status_${ error.status }`;
 
-	if ( errorType === errors.ERROR_REQUIRES_2FA ) {
+	if ( errorType === errorTypes.ERROR_REQUIRES_2FA ) {
 		recordTracksEvent( 'calypso_oauth_login_needs2fa' );
 		bumpStat( 'calypso_oauth_login', 'success-needs-2fa' );
 		return;

@@ -25,7 +25,7 @@ import WordPressLogo from 'calypso/components/wordpress-logo';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import * as OAuthToken from 'calypso/lib/oauth-token';
-import { errors as errorTypes, makeAuthRequest, bumpStats } from './login-request';
+import { errorTypes, makeAuthRequest, bumpStats } from './login-request';
 
 const debug = debugFactory( 'calypso:oauth' );
 
@@ -92,7 +92,7 @@ export class Auth extends Component {
 
 		try {
 			const { login, password, auth_code } = this.state;
-			const response = await makeAuthRequest( login, password, auth_code );
+			const response = await makeAuthRequest( login, password, auth_code.replace( /\s/g, '' ) );
 
 			this.handleLogin( response );
 		} catch ( error ) {
@@ -109,7 +109,7 @@ export class Auth extends Component {
 		const { name, value } = event.currentTarget;
 
 		if ( name === 'auth_code' ) {
-			this.setState( { auth_code: value.replace( /\s/g, '' ) } );
+			this.setState( { auth_code: value } );
 			return;
 		}
 
