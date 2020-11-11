@@ -165,6 +165,7 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 					duration={ currentDuration }
 					onSelectProduct={ selectProduct }
 					urlQueryArgs={ urlQueryArgs }
+					{ ...( ! showFilterBarInSelector() && { onDurationChange: trackDurationChange } ) }
 				/>
 			) }
 

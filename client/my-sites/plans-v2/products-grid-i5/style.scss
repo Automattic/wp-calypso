@@ -4,7 +4,7 @@
 
 .products-grid-i5__section-title {
 	margin-top: 56px;
-	margin-bottom: 28px;
+	margin-bottom: 15px;
 
 	font-size: 2.25rem;
 	font-weight: 700;
@@ -28,4 +28,9 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		grid-gap: 24px 16px;
 	}
+}
+
+.products-grid-i5__filter-bar {
+	height: 63px;
+	padding-bottom: 50px;
 }
