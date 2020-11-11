@@ -21,7 +21,7 @@ export default function PaymentMethods(): JSX.Element {
 	const translate = useTranslate();
 
 	return (
-		<Main className="payment-methods is-wide-layout">
+		<Main className="payment-methods__main is-wide-layout">
 			<DocumentHead title={ translate( 'Payment Methods' ) } />
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
 			<MeSidebarNavigation />
