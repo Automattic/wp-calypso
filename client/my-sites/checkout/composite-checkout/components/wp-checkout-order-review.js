@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import styled from '@emotion/styled';
 import { FormStatus, useLineItems, useFormStatus } from '@automattic/composite-checkout';
@@ -15,10 +16,9 @@ import Coupon from './coupon';
 import { WPOrderReviewLineItems, WPOrderReviewSection } from './wp-order-review-line-items';
 import { isLineItemADomain } from '../hooks/has-domains';
 import { isWpComPlan, getBillingMonthsForPlan, isWpComFreePlan } from 'calypso/lib/plans';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import { isMonthly } from 'calypso/lib/plans/constants';
-import { useSelector } from 'react-redux';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 export default function WPCheckoutOrderReview( {
 	className,
@@ -59,10 +59,10 @@ export default function WPCheckoutOrderReview( {
 		currentPlanProductSlug &&
 		( isWpComFreePlan( currentPlanProductSlug ) || isMonthly( currentPlanProductSlug ) );
 	const isMonthlyPricingTest =
+		useSelector( isTreatmentInMonthlyPricingTest ) &&
 		hasDotcomPlan &&
 		! hasRenewal &&
-		hasFreeOrMonthlySubscription &&
-		'treatment' === getABTestVariation( 'monthlyPricing' );
+		hasFreeOrMonthlySubscription;
 	const itemsForMonthlyPricing =
 		isMonthlyPricingTest && items.map( ( item ) => overrideItemSublabel( item, translate ) );
 
