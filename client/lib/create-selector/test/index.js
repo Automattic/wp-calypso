@@ -12,7 +12,8 @@ import createSelector from '../';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'index', () => {
-	let selector, getSitePosts;
+	let selector;
+	let getSitePosts;
 
 	useSandbox( ( sandbox ) => {
 		sandbox.stub( console, 'warn' );

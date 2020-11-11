@@ -30,7 +30,8 @@ import { useSandbox } from 'calypso/test-helpers/use-sinon';
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

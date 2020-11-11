@@ -219,7 +219,8 @@ class CrossPost extends PureComponent {
 
 export default connect( ( state, ownProps ) => {
 	const { feedId, blogId } = ownProps.postKey;
-	let feed, site;
+	let feed;
+	let site;
 	if ( feedId ) {
 		feed = getFeed( state, feedId );
 		site = feed && feed.blog_ID ? getSite( state, feed.blog_ID ) : undefined;

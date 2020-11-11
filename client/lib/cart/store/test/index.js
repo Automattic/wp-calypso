@@ -44,7 +44,8 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 
 describe( 'Cart Store', () => {
-	let CartStore, Dispatcher;
+	let CartStore;
+	let Dispatcher;
 
 	beforeEach( () => {
 		jest.isolateModules( () => {
@@ -69,7 +70,8 @@ describe( 'Cart Store', () => {
 	} );
 
 	test( 'Store should ignore update actions that arrive after disable', () => {
-		let disableCart, removeCoupon;
+		let disableCart;
+		let removeCoupon;
 		jest.isolateModules( () => {
 			const cartActions = jest.requireActual( 'lib/cart/actions' );
 			disableCart = cartActions.disableCart;

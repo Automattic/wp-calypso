@@ -27,7 +27,7 @@ import { getAvailableExternalAccounts, isServiceExpanded } from 'calypso/state/s
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getKeyringConnectionsByName,
-	getBrokenKeyringConnectionsByName,
+	getRefreshableKeyringConnections,
 } from 'calypso/state/sharing/keyring/selectors';
 import {
 	getBrokenSiteUserConnectionsForService,
@@ -120,7 +120,7 @@ export class SharingService extends Component {
 				path,
 			} );
 			this.props.recordGoogleEvent( 'Sharing', 'Clicked Disconnect Button', this.props.service.ID );
-		} else if ( 'reconnect' === connectionStatus ) {
+		} else if ( 'reconnect' === connectionStatus || 'refresh-failed' === connectionStatus ) {
 			this.refresh();
 			this.props.recordTracksEvent( 'calypso_connections_reconnect_button_click', {
 				service: this.props.service.ID,
@@ -403,6 +403,9 @@ export class SharingService extends Component {
 		} else if ( some( this.getConnections(), { status: 'broken' } ) ) {
 			// A problematic connection exists
 			status = 'reconnect';
+		} else if ( some( this.getConnections(), { status: 'refresh-failed' } ) ) {
+			// We need to manually refresh a token
+			status = 'refresh-failed';
 		} else if ( some( this.getConnections(), isConnectionInvalidOrMustReauth ) ) {
 			// A valid connection is not available anymore, user must reconnect
 			status = 'must-disconnect';
@@ -412,6 +415,12 @@ export class SharingService extends Component {
 		}
 
 		return status;
+	}
+
+	getConnectionExpiry() {
+		const expiringConnections = this.getConnections().filter( ( conn ) => conn.expires );
+		const oldestConnection = expiringConnections.sort( ( a, b ) => a.expires - b.expires ).shift();
+		return oldestConnection?.expires;
 	}
 
 	/**
@@ -501,6 +510,7 @@ export class SharingService extends Component {
 	render() {
 		const connections = this.getConnections();
 		const connectionStatus = this.getConnectionStatus( this.props.service.ID );
+		const earliestExpiry = this.getConnectionExpiry();
 		const classNames = classnames( 'sharing-service', this.props.service.ID, connectionStatus, {
 			'is-open': this.state.isOpen,
 		} );
@@ -516,6 +526,7 @@ export class SharingService extends Component {
 					<ServiceDescription
 						service={ this.props.service }
 						status={ connectionStatus }
+						expires={ earliestExpiry }
 						numberOfConnections={ this.getConnections().length }
 					/>
 				</div>
@@ -623,10 +634,10 @@ export function connectFor( sharingService, mapStateToProps, mapDispatchToProps 
 				userId,
 				service.ID
 			);
-			const brokenKeyringConnections = getBrokenKeyringConnectionsByName( state, service.ID );
+			const refreshableConnections = getRefreshableKeyringConnections( state, service.ID );
 			const props = {
 				availableExternalAccounts: getAvailableExternalAccounts( state, service.ID ),
-				brokenConnections: brokenPublicizeConnections.concat( brokenKeyringConnections ),
+				brokenConnections: brokenPublicizeConnections.concat( refreshableConnections ),
 				isFetching: isFetchingConnections( state, siteId ),
 				keyringConnections: getKeyringConnectionsByName( state, service.ID ),
 				removableConnections: getRemovableConnections( state, service.ID ),

@@ -13,7 +13,10 @@ import unmodifiedConfig from 'calypso/config';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'api', () => {
-	let app, config, localRequest, sandbox;
+	let app;
+	let config;
+	let localRequest;
+	let sandbox;
 
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
@@ -68,8 +71,8 @@ describe( 'api', () => {
 
 		test( 'should return a login error with a bad login', function () {
 			return new Promise( ( done ) => {
-				const end = sandbox.stub( request.Request.prototype, 'end' ),
-					response = { error: 'invalid_request' };
+				const end = sandbox.stub( request.Request.prototype, 'end' );
+				const response = { error: 'invalid_request' };
 
 				end.callsArgWithAsync( 0, { status: 400 }, { body: response } );
 
@@ -100,8 +103,8 @@ describe( 'api', () => {
 
 		test( 'should return a successful login', function () {
 			return new Promise( ( done ) => {
-				const response = { access_token: '1234' },
-					end = sandbox.stub( request.Request.prototype, 'end' );
+				const response = { access_token: '1234' };
+				const end = sandbox.stub( request.Request.prototype, 'end' );
 
 				end.callsArgWithAsync( 0, null, { body: response } );
 

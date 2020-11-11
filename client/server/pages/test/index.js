@@ -943,7 +943,8 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	} );
 
 	describe( 'for authenticated users', () => {
-		let theStore, theAction;
+		let theStore;
+		let theAction;
 
 		beforeEach( () => {
 			theStore = {

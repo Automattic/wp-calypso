@@ -83,9 +83,9 @@ class DeleteUser extends React.Component {
 	};
 
 	handleRadioChange = ( event ) => {
-		const name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
+		const updateObj = {};
 
 		updateObj[ name ] = value;
 

@@ -142,14 +142,14 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-				'ENABLE_AUTOUPDATE_PLUGIN',
-				'DISABLE_AUTOUPDATE_PLUGIN',
-			] ),
-			getDisabledInfo = this.getDisabledInfo(),
-			label = translate( 'Autoupdates', {
-				comment:
-					'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
-			} );
+			'ENABLE_AUTOUPDATE_PLUGIN',
+			'DISABLE_AUTOUPDATE_PLUGIN',
+		] );
+		const getDisabledInfo = this.getDisabledInfo();
+		const label = translate( 'Autoupdates', {
+			comment:
+				'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
+		} );
 
 		return (
 			<PluginAction

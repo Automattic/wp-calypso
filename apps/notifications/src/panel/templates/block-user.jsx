@@ -35,11 +35,11 @@ export class UserBlock extends React.Component {
 	 * @returns {string} - Time stamp formatted for display or '' if input invalid
 	 */
 	getTimeString = ( timestamp ) => {
-		var DAY_IN_SECONDS = 3600 * 24,
-			MAX_LENGTH = 15,
-			parsedTime = Date.parse( timestamp ),
-			momentTime,
-			timeString;
+		var DAY_IN_SECONDS = 3600 * 24;
+		var MAX_LENGTH = 15;
+		var parsedTime = Date.parse( timestamp );
+		var momentTime;
+		var timeString;
 
 		if ( isNaN( parsedTime ) ) {
 			return '';
@@ -65,13 +65,13 @@ export class UserBlock extends React.Component {
 	};
 
 	render() {
-		var grav = this.props.block.media[ 0 ],
-			home_url = '',
-			home_title = '',
-			timeIndicator,
-			homeTemplate,
-			followLink,
-			noteActions;
+		var grav = this.props.block.media[ 0 ];
+		var home_url = '';
+		var home_title = '';
+		var timeIndicator;
+		var homeTemplate;
+		var followLink;
+		var noteActions;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {

@@ -668,7 +668,8 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
-		let pageUpsellBanner, previewUpsellBanner;
+		let pageUpsellBanner;
+		let previewUpsellBanner;
 		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =

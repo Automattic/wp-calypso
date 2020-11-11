@@ -15,7 +15,8 @@ import site from './fixtures/site';
 
 describe( 'Viewers Store', () => {
 	const siteId = site.ID;
-	let Dispatcher, ViewersStore;
+	let Dispatcher;
+	let ViewersStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );
@@ -59,7 +60,8 @@ describe( 'Viewers Store', () => {
 	} );
 
 	describe( 'Fetch Viewers', () => {
-		let viewers, viewersAgain;
+		let viewers;
+		let viewersAgain;
 		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedViewers );
 			viewers = ViewersStore.getViewers( siteId );
@@ -127,7 +129,8 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'Should restore a single viewer on removal error.', () => {
-			let viewersAfterRemove, viewersAfterError;
+			let viewersAfterRemove;
+			let viewersAfterError;
 
 			Dispatcher.handleServerAction( actions.removeViewer );
 			viewersAfterRemove = ViewersStore.getViewers( siteId );

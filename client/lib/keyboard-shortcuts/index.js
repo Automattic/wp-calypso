@@ -5,8 +5,8 @@
 import { flatMap } from 'lodash';
 
 // only require keymaster if this is a browser environment
-const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' ),
-	defaultFilter = keymaster ? keymaster.filter : undefined;
+const keymaster = typeof window === 'undefined' ? undefined : require( 'keymaster' );
+const defaultFilter = keymaster ? keymaster.filter : undefined;
 
 /**
  * Internal dependencies
@@ -75,8 +75,8 @@ KeyboardShortcuts.prototype.bindShortcuts = function ( keyBindings ) {
 };
 
 KeyboardShortcuts.prototype.bindShortcut = function ( eventName, keys, type, checkKeys ) {
-	let keyCombinations = [],
-		matches;
+	let keyCombinations = [];
+	let matches;
 
 	if ( typeof keys[ 0 ] === 'string' ) {
 		// this is a single key combination

@@ -16,9 +16,7 @@ import EmptyContent from 'calypso/components/empty-content';
 import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import PayPalPaymentBox from './paypal-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
-import RedirectPaymentBox from './redirect-payment-box';
 import { submit } from 'calypso/lib/store-transactions';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'calypso/lib/transaction/actions';
@@ -80,8 +78,8 @@ export class SecurePaymentForm extends Component {
 		}
 
 		// From transaction-steps-mixin
-		const prevStep = prevProps.transaction.step,
-			nextStep = this.props.transaction.step;
+		const prevStep = prevProps.transaction.step;
+		const nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
 			await this.handleTransactionStep( this.props );
@@ -347,63 +345,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderPayPalPaymentBox() {
-		const incompatibleProducts = this.props.incompatibleProducts;
-		return (
-			<PaymentBox
-				classSet="paypal-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="paypal"
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ incompatibleProducts }
-			>
-				<QueryPaymentCountries />
-				<PayPalPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ this.props.countriesList }
-					selectedSite={ this.props.selectedSite }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-					incompatibleProducts={ incompatibleProducts }
-				>
-					{ this.props.children }
-				</PayPalPaymentBox>
-			</PaymentBox>
-		);
-	}
-
-	renderRedirectPaymentBox( paymentType ) {
-		const incompatibleProducts = this.props.incompatibleProducts;
-		return (
-			<PaymentBox
-				classSet="redirect-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod={ paymentType }
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ incompatibleProducts }
-			>
-				<QueryPaymentCountries />
-				<RedirectPaymentBox
-					cart={ this.props.cart }
-					transaction={ this.props.transaction }
-					countriesList={ this.props.countriesList }
-					selectedSite={ this.props.selectedSite }
-					paymentType={ paymentType }
-					redirectTo={ this.props.redirectTo }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-					incompatibleProducts={ incompatibleProducts }
-				>
-					{ this.props.children }
-				</RedirectPaymentBox>
-			</PaymentBox>
-		);
-	}
-
 	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -432,22 +373,7 @@ export class SecurePaymentForm extends Component {
 						{ this.renderPayPalPaymentBox() }
 					</div>
 				);
-			case 'alipay':
-			case 'bancontact':
-			case 'eps':
-			case 'giropay':
-			case 'id_wallet':
-			case 'ideal':
-			case 'netbanking':
-			case 'p24':
-			case 'brazil-tef':
-			case 'sofort':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderRedirectPaymentBox( visiblePaymentBox ) }
-					</div>
-				);
+
 			default:
 				debug( 'WARN: %o payment unknown', visiblePaymentBox );
 				return null;

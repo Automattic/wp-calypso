@@ -459,8 +459,8 @@ Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 };
 
 Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams,
-		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
+	const { apiVersion, method } = originalParams;
+	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -1732,12 +1732,12 @@ Undocumented.prototype.fetchWapiDomainInfo = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function ( options, fn ) {
-	const { domainName } = options,
-		data = {
-			domainStatus: JSON.stringify( {
-				command: 'send-code',
-			} ),
-		};
+	const { domainName } = options;
+	const data = {
+		domainStatus: JSON.stringify( {
+			command: 'send-code',
+		} ),
+	};
 
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };

@@ -30,15 +30,15 @@ class FollowingEmptyContent extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read/search"
-				>
-					{ this.props.translate( 'Find sites to follow' ) }
-				</a>
-			),
-			secondaryAction = null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find sites to follow' ) }
+			</a>
+		);
+		const secondaryAction = null;
 
 		return (
 			<EmptyContent

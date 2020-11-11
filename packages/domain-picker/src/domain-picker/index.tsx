@@ -7,7 +7,6 @@ import { noop, times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
-import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 import { __ } from '@wordpress/i18n';
@@ -95,6 +94,8 @@ export interface Props {
 
 	/** Whether to show radio button or select button. Defaults to radio button */
 	itemType?: SUGGESTION_ITEM_TYPE;
+
+	locale?: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -115,6 +116,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	segregateFreeAndPaid = false,
 	showSearchField = true,
 	itemType = ITEM_TYPE_RADIO,
+	locale,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -133,13 +135,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		errorMessage: domainSuggestionErrorMessage,
 		state: domainSuggestionState,
 		retryRequest: retryDomainSuggestionRequest,
-	} =
-		useDomainSuggestions(
-			domainSearch.trim(),
-			quantityExpanded,
-			domainCategory,
-			useI18n().i18nLocale
-		) || {};
+	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,

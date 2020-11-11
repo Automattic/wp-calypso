@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import { Button } from '@automattic/components';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -30,8 +29,8 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-import { isIgnoredAdSource } from 'calypso/lib/analytics/sem';
-import { abtest } from 'calypso/lib/abtest';
+import QueryExperiments from 'calypso/components/data/query-experiments';
+import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
@@ -149,6 +148,7 @@ export class PlansStep extends Component {
 		return (
 			<div>
 				<QueryPlans />
+				<QueryExperiments />
 
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
@@ -200,7 +200,8 @@ export class PlansStep extends Component {
 		const subHeaderText = this.getSubHeaderText();
 		const fallbackSubHeaderText = this.props.fallbackSubHeaderText || subHeaderText;
 
-		let backUrl, backLabelText;
+		let backUrl;
+		let backLabelText;
 
 		if ( 0 === positionInFlow && hasInitializedSitesBackUrl ) {
 			backUrl = hasInitializedSitesBackUrl;
@@ -267,23 +268,8 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 	return is_domain_registration && getTld( meta ) === 'blog';
 };
 
-function isEligibleForMonthlyPricingTest( flowName ) {
-	if ( 'onboarding' !== flowName ) {
-		return false;
-	}
-
-	if ( isIgnoredAdSource() ) {
-		return false;
-	}
-
-	const countryCode = cookie.parse( document.cookie )?.country_code;
-	const variation = abtest( 'monthlyPricing', countryCode || '' );
-
-	return 'treatment' === variation;
-}
-
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem }, flowName } ) => ( {
+	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -295,7 +281,7 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isMonthlyPricingTest: isEligibleForMonthlyPricingTest( flowName ),
+		isMonthlyPricingTest: isTreatmentInMonthlyPricingTest( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );

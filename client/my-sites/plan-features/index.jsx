@@ -573,8 +573,8 @@ export class PlanFeatures extends Component {
 				'is-top-buttons'
 			);
 
-			let forceDisplayButton = false,
-				buttonText = null;
+			let forceDisplayButton = false;
+			let buttonText = null;
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -683,9 +683,9 @@ export class PlanFeatures extends Component {
 		return map( planProperties, ( properties ) => {
 			const { features, planName } = properties;
 
-			const featureKeys = Object.keys( features ),
-				key = featureKeys[ rowIndex ],
-				currentFeature = features[ key ];
+			const featureKeys = Object.keys( features );
+			const key = featureKeys[ rowIndex ];
+			const currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,

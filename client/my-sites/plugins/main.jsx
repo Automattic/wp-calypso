@@ -116,8 +116,8 @@ export class PluginsMain extends Component {
 	}
 
 	getPluginsState( nextProps ) {
-		const sites = this.props.sites,
-			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
+		const sites = this.props.sites;
+		const pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
 			plugins: this.getPluginsFromStore( nextProps, sites ),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
@@ -197,8 +197,8 @@ export class PluginsMain extends Component {
 
 	getEmptyContentUpdateData() {
 		const { translate } = this.props;
-		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
-			{ selectedSite } = this.props;
+		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' };
+		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
 			emptyContentData.title = translate(

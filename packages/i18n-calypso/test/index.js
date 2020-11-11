@@ -171,18 +171,18 @@ describe( 'I18n', function () {
 
 		describe( 'with mixed components', function () {
 			it( 'should handle sprintf and component interpolation together', function () {
-				const input = React.createElement( 'input' ),
-					expectedResultString = '<span>foo <input/> bar</span>',
-					placeholder = 'bar',
-					translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
-						components: {
-							input: input,
-						},
-						args: {
-							placeholder: placeholder,
-						},
-					} ),
-					instance = React.createElement( 'span', null, translatedComponent );
+				const input = React.createElement( 'input' );
+				const expectedResultString = '<span>foo <input/> bar</span>';
+				const placeholder = 'bar';
+				const translatedComponent = translate( 'foo {{ input /}} %(placeholder)s', {
+					components: {
+						input: input,
+					},
+					args: {
+						placeholder: placeholder,
+					},
+				} );
+				const instance = React.createElement( 'span', null, translatedComponent );
 
 				expect( stripReactAttributes( ReactDomServer.renderToStaticMarkup( instance ) ) ).toBe(
 					expectedResultString

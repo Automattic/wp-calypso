@@ -14,7 +14,7 @@ import React from 'react';
  */
 import { CreditCardPaymentBox } from '../credit-card-payment-box';
 import PaymentChatButton from '../payment-chat-button';
-import CheckoutTerms from '../checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { INPUT_VALIDATION } from 'calypso/lib/store-transactions/step-types';
 import {
 	PLAN_ECOMMERCE,

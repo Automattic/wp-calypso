@@ -29,7 +29,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
-import CheckoutTerms from './checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';
 import { setStripeObject } from 'calypso/lib/transaction/actions';
 
@@ -143,17 +143,17 @@ class CreditCardPaymentBox extends React.Component {
 
 	paymentButtons = () => {
 		const {
-				cart,
-				incompatibleProducts,
-				transactionStep,
-				translate,
-				presaleChatAvailable,
-			} = this.props,
-			hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
-				overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
-			),
-			showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart,
-			paymentButtonClasses = 'payment-box__payment-buttons';
+			cart,
+			incompatibleProducts,
+			transactionStep,
+			translate,
+			presaleChatAvailable,
+		} = this.props;
+		const hasBusinessPlanInCart = some( cart.products, ( { product_slug } ) =>
+			overSome( isWpComBusinessPlan, isWpComEcommercePlan )( product_slug )
+		);
+		const showPaymentChatButton = presaleChatAvailable && hasBusinessPlanInCart;
+		const paymentButtonClasses = 'payment-box__payment-buttons';
 
 		return (
 			<>

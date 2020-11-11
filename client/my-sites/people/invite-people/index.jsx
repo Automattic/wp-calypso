@@ -125,9 +125,9 @@ class InvitePeople extends React.Component {
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
-				errors = get( sendInvitesErrored, 'errors', {} ),
-				updatedState = { sendingInvites: false };
+			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
+			const errors = get( sendInvitesErrored, 'errors', {} );
+			const updatedState = { sendingInvites: false };
 			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
 				const errorKeys = Object.keys( errors );
 				Object.assign( updatedState, {
@@ -191,10 +191,12 @@ class InvitePeople extends React.Component {
 
 	refreshValidation = () => {
 		const errors =
-				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
-			success = InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [],
-			errorsKeys = Object.keys( errors ),
-			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
+			InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {};
+		const success =
+			InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [];
+		const errorsKeys = Object.keys( errors );
+		const errorToDisplay =
+			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
 
 		this.setState( {
 			errorToDisplay,

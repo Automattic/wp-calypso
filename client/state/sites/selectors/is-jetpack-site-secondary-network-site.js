@@ -25,8 +25,8 @@ export default function isJetpackSiteSecondaryNetworkSite( state, siteId ) {
 		return false;
 	}
 
-	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' ),
-		mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const mainNetworkSite = getSiteOption( state, siteId, 'main_network_site' );
 
 	if ( ! unmappedUrl || ! mainNetworkSite ) {
 		return false;

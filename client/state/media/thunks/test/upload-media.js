@@ -18,7 +18,8 @@ jest.mock( 'state/sites/media-storage/actions', () => ( {
 } ) );
 
 describe( 'media - thunks - uploadMedia', () => {
-	let dispatch, fileUploader;
+	let dispatch;
+	let fileUploader;
 
 	const siteId = 1343323;
 	const site = { ID: siteId };

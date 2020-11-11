@@ -77,8 +77,8 @@ export default class LoginFlow {
 
 		console.log( 'Logging in as ' + this.account.username );
 
-		let loginURL = this.account.loginURL,
-			loginPage;
+		let loginURL = this.account.loginURL;
+		let loginPage;
 
 		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;

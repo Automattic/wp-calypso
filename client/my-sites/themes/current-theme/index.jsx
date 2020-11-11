@@ -46,9 +46,9 @@ class CurrentTheme extends Component {
 	trackClick = ( event ) => trackClick( 'current theme', event );
 
 	render() {
-		const { currentTheme, currentThemeId, siteId, translate } = this.props,
-			placeholderText = <span className="current-theme__placeholder">loading...</span>,
-			text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
+		const { currentTheme, currentThemeId, siteId, translate } = this.props;
+		const placeholderText = <span className="current-theme__placeholder">loading...</span>;
+		const text = currentTheme && currentTheme.name ? currentTheme.name : placeholderText;
 
 		const options = pickBy(
 			this.props.options,

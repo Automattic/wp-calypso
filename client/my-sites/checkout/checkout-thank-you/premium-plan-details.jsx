@@ -32,8 +32,8 @@ const PremiumPlanDetails = ( {
 	customizeUrl,
 } ) => {
 	const translate = useTranslate();
-	const plan = find( sitePlans.data, isPremium ),
-		isPremiumPlan = isPremium( selectedSite.plan );
+	const plan = find( sitePlans.data, isPremium );
+	const isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (

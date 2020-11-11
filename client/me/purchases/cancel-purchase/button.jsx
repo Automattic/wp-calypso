@@ -82,8 +82,8 @@ class CancelPurchaseButton extends Component {
 	};
 
 	goToCancelConfirmation = () => {
-		const { id } = this.props.purchase,
-			slug = this.props.siteSlug;
+		const { id } = this.props.purchase;
+		const slug = this.props.siteSlug;
 
 		page( this.props.getConfirmCancelDomainUrlFor( slug, id ) );
 	};
@@ -94,8 +94,8 @@ class CancelPurchaseButton extends Component {
 		this.setDisabled( true );
 
 		cancelPurchase( purchase.id, ( success ) => {
-			const purchaseName = getName( purchase ),
-				subscriptionEndDate = getSubscriptionEndDate( purchase );
+			const purchaseName = getName( purchase );
+			const subscriptionEndDate = getSubscriptionEndDate( purchase );
 
 			this.props.refreshSitePlans( purchase.siteId );
 
@@ -259,7 +259,8 @@ class CancelPurchaseButton extends Component {
 
 	render() {
 		const { purchase, selectedSite, translate } = this.props;
-		let text, onClick;
+		let text;
+		let onClick;
 
 		if ( hasAmountAvailableToRefund( purchase ) ) {
 			onClick = this.handleCancelPurchaseClick;

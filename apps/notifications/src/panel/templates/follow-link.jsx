@@ -69,7 +69,8 @@ export const FollowLink = createReactClass( {
 	},
 
 	render: function () {
-		var gridicon_icon, link_text;
+		var gridicon_icon;
+		var link_text;
 
 		if ( this.state.isFollowing ) {
 			gridicon_icon = 'reader-following';

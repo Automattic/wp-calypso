@@ -30,8 +30,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the message if metadata contains message', () => {
-			let message = 'Post with Taxonomies',
-				value;
+			let message = 'Post with Taxonomies';
+			let value;
 
 			value = PostMetadata.publicizeMessage( {
 				metadata: [ { id: '796', key: '_wpas_mess', value: message } ],
@@ -63,8 +63,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of done services in the metadata', () => {
-			let ID = 11491646,
-				value;
+			let ID = 11491646;
+			let value;
 
 			value = PostMetadata.publicizeDone( {
 				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '1' } ],
@@ -74,8 +74,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646,
-				value;
+			let ID = 11491646;
+			let value;
 
 			value = PostMetadata.publicizeDone( {
 				metadata: [ { id: '797', key: '_wpas_done_' + ID, value: '0' } ],
@@ -107,8 +107,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of skipped services in the metadata', () => {
-			let ID = 11491646,
-				value;
+			let ID = 11491646;
+			let value;
 
 			value = PostMetadata.publicizeSkipped( {
 				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '1' } ],
@@ -118,8 +118,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646,
-				value;
+			let ID = 11491646;
+			let value;
 
 			value = PostMetadata.publicizeSkipped( {
 				metadata: [ { id: '797', key: '_wpas_skip_' + ID, value: '0' } ],
@@ -149,8 +149,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the address if metadata contains geolocation address', () => {
-			let address = 'New York, NY, USA',
-				value;
+			let address = 'New York, NY, USA';
+			let value;
 
 			value = PostMetadata.geoLabel( {
 				metadata: [ { id: '796', key: 'geo_address', value: address } ],
@@ -188,9 +188,9 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of float values if metadata contains coordinate', () => {
-			let latitude = 40.7127837,
-				longitude = -74.00594130000002,
-				value;
+			let latitude = 40.7127837;
+			let longitude = -74.00594130000002;
+			let value;
 
 			value = PostMetadata.geoCoordinates( {
 				metadata: [

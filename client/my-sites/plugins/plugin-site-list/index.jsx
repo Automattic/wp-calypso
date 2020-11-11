@@ -54,8 +54,8 @@ export class PluginSiteList extends Component {
 		if ( ! this.props.sites || this.props.sites.length === 0 ) {
 			return null;
 		}
-		const classes = classNames( 'plugin-site-list', this.props.className ),
-			pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
+		const classes = classNames( 'plugin-site-list', this.props.className );
+		const pluginSites = this.props.sitesWithSecondarySites.map( this.renderPluginSite, this );
 
 		return (
 			<div className={ classes }>

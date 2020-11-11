@@ -382,8 +382,8 @@ class ManagePurchase extends Component {
 			return null;
 		}
 
-		let text,
-			link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
+		let text;
+		let link = this.props.getCancelPurchaseUrlFor( this.props.siteSlug, id );
 
 		if (
 			isAtomicSite &&

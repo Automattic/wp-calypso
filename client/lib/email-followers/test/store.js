@@ -19,7 +19,8 @@ import site from './lib/mock-site';
 const options = { siteId: site.ID };
 
 describe( 'Email Followers Store', () => {
-	let Dispatcher, EmailFollowersStore;
+	let Dispatcher;
+	let EmailFollowersStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );
@@ -47,8 +48,8 @@ describe( 'Email Followers Store', () => {
 		} );
 
 		test( 'Fetching more email followers should update the array in the store', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
+			let followers = EmailFollowersStore.getFollowers( options );
+			let followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			followersAgain = EmailFollowersStore.getFollowers( options );
@@ -72,8 +73,8 @@ describe( 'Email Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
+			let followers = EmailFollowersStore.getFollowers( options );
+			let followersAgain;
 
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
@@ -82,9 +83,9 @@ describe( 'Email Followers Store', () => {
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAfterRemove,
-				followersAfterError;
+			let followers = EmailFollowersStore.getFollowers( options );
+			let followersAfterRemove;
+			let followersAfterError;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			followersAfterRemove = EmailFollowersStore.getFollowers( options );
