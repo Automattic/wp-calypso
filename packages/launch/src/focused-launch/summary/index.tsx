@@ -342,9 +342,9 @@ const Summary: React.FunctionComponent = () => {
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
-	const { locale } = useContext( LaunchContext );
-
 	const domainSearch = useDomainSearch();
+
+	const { locale } = useContext( LaunchContext );
 
 	// Ensure that the Site Name step doesn't disappear as soon as the user
 	// edits its value. This is achieved by ignoring the `isDefaultSiteTitle`
