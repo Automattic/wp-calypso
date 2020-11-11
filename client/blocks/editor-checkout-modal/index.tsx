@@ -3,7 +3,6 @@
  */
 import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
-import wp from 'calypso/lib/wp';
 import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
@@ -20,6 +19,7 @@ import getCartKey from 'calypso/my-sites/checkout/get-cart-key';
 import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import wp from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -54,20 +54,11 @@ const EditorCheckoutModal = ( props: Props ) => {
 
 	const user = userFactory();
 	const isLoggedOutCart = ! user?.get();
-	const waitForOtherCartUpdates = false;
-	// We can assume if they're accessing the checkout in an editor that they have a site.
-	const isNoSiteCart = false;
 
-	const cartKey = useMemo(
-		() =>
-			getCartKey( {
-				selectedSite: site,
-				isLoggedOutCart,
-				isNoSiteCart,
-				waitForOtherCartUpdates,
-			} ),
-		[ waitForOtherCartUpdates, site, isLoggedOutCart, isNoSiteCart ]
-	);
+	const cartKey = useMemo( () => getCartKey( { selectedSite: site, isLoggedOutCart } ), [
+		site,
+		isLoggedOutCart,
+	] );
 
 	useEffect( () => {
 		return () => {
@@ -83,7 +74,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 	const productSlugs = hasEmptyCart
 		? null
 		: cartData.products.map( ( product ) => product.product_slug );
-	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
+	const commaSeparatedProductSlugs = productSlugs?.join( ',' );
 
 	return (
 		isOpen && (
