@@ -274,6 +274,7 @@
 		"npm-merge-driver": "^2.3.5",
 		"npm-run-all": "^4.1.5",
 		"photon": "^3.0.0",
+		"postcss": "^8.1.7",
 		"postcss-cli": "^8.2.0",
 		"postcss-custom-properties": "^9.1.1",
 		"prettier": "npm:wp-prettier@2.1.1-beta-1",
