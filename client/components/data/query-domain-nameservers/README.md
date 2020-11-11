@@ -8,9 +8,13 @@ Render the component, passing `domainName`. It does not accept any children, nor
 
 ```jsx
 import React from 'react';
+import { useSelector } from 'react-redux';
 import QueryDomainNameservers from 'calypso/components/data/query-domain-nameservers';
+import { getByDomainName } from 'calypso/state/domains/nameservers/selectors';
 
-export default function MyDomainNameservers( { domainName, nameservers } ) {
+export default function MyDomainNameservers( { domainName } ) {
+	const nameservers = useSelector( state => getByDomainName( state, domainName ) );
+
 	return (
 		<div>
 			<QueryDomainNameservers domainName={ domainName } />
