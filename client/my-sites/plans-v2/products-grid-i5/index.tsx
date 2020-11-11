@@ -3,8 +3,9 @@
  */
 import { sortBy } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useSelector } from 'react-redux';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
@@ -37,6 +38,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	urlQueryArgs,
 } ) => {
 	const translate = useTranslate();
+	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -70,6 +72,14 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
 
+	const scrollToComparison = () => {
+		if ( bundleComparisonRef.current ) {
+			bundleComparisonRef.current?.scrollIntoView( {
+				behavior: 'smooth',
+			} );
+		}
+	};
+
 	return (
 		<>
 			<section className="products-grid-i5__section">
@@ -88,7 +98,18 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						</li>
 					) ) }
 				</ul>
-				<div className="products-grid-i5__more"></div>
+				<div className="products-grid-i5__more">
+					<div className="products-grid-i5__more-container">
+						<h3 className="products-grid-i5__more-headline">{ translate( 'Need more info?' ) }</h3>
+						<Button
+							onClick={ scrollToComparison }
+							className="products-grid-i5__more-button"
+							primary
+						>
+							{ translate( 'Compare all product bundles' ) }
+						</Button>
+					</div>
+				</div>
 			</section>
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
@@ -111,7 +132,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) }
 				</div>
 			</section>
-			<section className="products-grid-i5__section">
+			<section ref={ bundleComparisonRef } className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Bundle Comparison' ) }</h2>
 			</section>
 		</>

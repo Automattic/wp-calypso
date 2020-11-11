@@ -29,3 +29,24 @@
 		grid-gap: 24px 16px;
 	}
 }
+
+.products-grid-i5__more-container {
+	background-color: rgba( 157, 217, 119, 0.1 );
+
+	margin: 0 30px;
+	padding: 30px 15px 26px;
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
+	text-align: center;
+}
+
+.products-grid-i5__more-headline {
+	padding-bottom: 15px;
+	font-size: 1.5rem;
+	font-weight: 400;
+}
+
+.products-grid-i5__more-button {
+	font-size: 1rem;
+	font-weight: 600;
+}
