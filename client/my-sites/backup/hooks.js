@@ -33,18 +33,6 @@ export const BACKUP_ATTEMPT_ACTIVITIES = [
 	'rewind__backup_error',
 ];
 
-export const DELTA_ACTIVITIES = [
-	'attachment__uploaded',
-	'attachment__deleted',
-	'post__published',
-	'post__trashed',
-	'plugin__installed',
-	'plugin__deleted',
-	'theme__installed',
-	'theme__deleted',
-	'user__invite_accepted',
-];
-
 const useMemoizeFilter = ( filter ) => {
 	const filterRef = useRef();
 

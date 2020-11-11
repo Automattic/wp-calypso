@@ -3,12 +3,13 @@
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
+	DELTA_ACTIVITIES,
 	getDeltaActivities,
 	getDeltaActivitiesByType,
 	isActivityBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { DELTA_ACTIVITIES, useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
+import { useActivityLogs, useFirstMatchingBackupAttempt } from '../hooks';
 
 const useLatestBackupAttempt = ( siteId, { before, after, successOnly = false } = {} ) => {
 	return useFirstMatchingBackupAttempt( siteId, {

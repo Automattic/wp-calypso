@@ -106,23 +106,21 @@ export const getMetaDiffForDailyBackup = ( logs, date ) => {
 	];
 };
 
-export const getDeltaActivities = ( logs ) => {
-	const DELTA_ACTIVITIES = [
-		'attachment__uploaded',
-		// 'attachment__updated',
-		'attachment__deleted',
-		'post__published',
-		'post__trashed',
-		'post__published',
-		// 'post__updated',
-		'post__trashed',
-		'plugin__installed',
-		'plugin__deleted',
-		'theme__installed',
-		'theme__deleted',
-		'user__invite_accepted',
-	];
+export const DELTA_ACTIVITIES = [
+	'attachment__uploaded',
+	// 'attachment__updated',
+	'attachment__deleted',
+	'post__published',
+	'post__trashed',
+	// 'post__updated',
+	'plugin__installed',
+	'plugin__deleted',
+	'theme__installed',
+	'theme__deleted',
+	'user__invite_accepted',
+];
 
+export const getDeltaActivities = ( logs ) => {
 	return logs.filter( ( { activityName } ) => DELTA_ACTIVITIES.includes( activityName ) );
 };
 
