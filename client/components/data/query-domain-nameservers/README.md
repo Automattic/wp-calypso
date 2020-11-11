@@ -13,7 +13,7 @@ import QueryDomainNameservers from 'calypso/components/data/query-domain-nameser
 import { getNameserversByDomainName } from 'calypso/state/domains/nameservers/selectors';
 
 export default function MyDomainNameservers( { domainName } ) {
-	const nameservers = useSelector( state => getNameserversByDomainName( state, domainName ) );
+	const nameservers = useSelector( ( state ) => getNameserversByDomainName( state, domainName ) );
 
 	return (
 		<div>
