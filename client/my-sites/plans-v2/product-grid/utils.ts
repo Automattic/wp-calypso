@@ -4,8 +4,9 @@
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS, JETPACK_SECURITY_PLANS } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { SELECTOR_PLANS_ALT_V1, SELECTOR_PLANS_ALT_V2 } from '../constants';
+import { SELECTOR_PLANS_ALT_V1, SELECTOR_PLANS_ALT_V2, SELECTOR_PLANS_I5 } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
+import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 
 /**
  * Type dependencies
@@ -20,12 +21,18 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
+	const iteration = getJetpackCROActiveVersion() as Iterations;
+	const plans =
+		{
+			[ Iterations.V1 ]: SELECTOR_PLANS_ALT_V1,
+			[ Iterations.V2 ]: SELECTOR_PLANS_ALT_V2,
+			[ Iterations.I5 ]: SELECTOR_PLANS_I5,
+		}[ iteration ] || [];
 	const currentPlanTerms = currentPlanSlug
 		? [ getMonthlyPlanByYearly( currentPlanSlug ), getYearlyPlanByMonthly( currentPlanSlug ) ]
 		: [];
 
-	const isCROv1 = getJetpackCROActiveVersion() === 'v1';
-	const plansToDisplay = ( isCROv1 ? SELECTOR_PLANS_ALT_V1 : SELECTOR_PLANS_ALT_V2 )
+	const plansToDisplay = plans
 		.map( slugToSelectorProduct )
 		// Remove plans that don't fit the filters or have invalid data.
 		.filter(
@@ -36,7 +43,7 @@ export const getPlansToDisplay = ( {
 				! currentPlanTerms.includes( product.productSlug ) &&
 				// In v1, we don't show both versions of Jetpack Security
 				! (
-					isCROv1 &&
+					iteration === 'v1' &&
 					currentPlanSlug &&
 					JETPACK_SECURITY_PLANS.includes( currentPlanSlug ) &&
 					JETPACK_SECURITY_PLANS.includes( product.productSlug )

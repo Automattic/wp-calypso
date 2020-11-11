@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -17,16 +17,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ProductsGridAlt from './products-grid-alt';
-import ProductsGridAlt2 from './products-grid-alt-2';
-import ProductsGridAlt3 from './products-grid-alt-3';
+import { getGridComponent, showFilterBarInSelector } from './iterations';
 
 /**
  * Type dependencies
@@ -36,20 +33,22 @@ import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
-const SelectorPageAlt = ( {
+const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
 	urlQueryArgs,
 	header,
 	footer,
-}: SelectorPageProps ): ReactElement => {
+}: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+
+	const Grid = useMemo( () => getGridComponent(), [] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -143,21 +142,8 @@ const SelectorPageAlt = ( {
 		setDuration( selectedDuration );
 	};
 
-	const getProductsGrid = ( activeVariation = 'v0' ) => {
-		switch ( activeVariation ) {
-			case 'i5':
-				return ProductsGridAlt3;
-			case 'v2':
-				return ProductsGridAlt2;
-			default:
-				return ProductsGridAlt;
-		}
-	};
-
 	const viewTrackerPath = siteId ? `${ rootUrl }/:site` : rootUrl;
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
-	const currentABTestVariation = getJetpackCROActiveVersion();
-	const Grid = getProductsGrid( currentABTestVariation );
 
 	return (
 		<Main className="selector-alt__main" wideLayout>
@@ -165,18 +151,22 @@ const SelectorPageAlt = ( {
 
 			{ header }
 
-			<PlansFilterBar
-				showDiscountMessage
-				showDurations
-				onDurationChange={ trackDurationChange }
-				duration={ currentDuration }
-			/>
+			{ showFilterBarInSelector() && (
+				<PlansFilterBar
+					showDiscountMessage
+					showDurations
+					onDurationChange={ trackDurationChange }
+					duration={ currentDuration }
+				/>
+			) }
 
-			<Grid
-				duration={ currentDuration }
-				onSelectProduct={ selectProduct }
-				urlQueryArgs={ urlQueryArgs }
-			/>
+			{ Grid && (
+				<Grid
+					duration={ currentDuration }
+					onSelectProduct={ selectProduct }
+					urlQueryArgs={ urlQueryArgs }
+				/>
+			) }
 
 			<QueryProductsList />
 			<QueryProducts />
