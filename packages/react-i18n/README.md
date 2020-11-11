@@ -91,33 +91,27 @@ hasTranslation( 'post', 'verb' );
 
 ### Filter Functions
 
-`addFilter`, `removeFilter`, `applyFilters` are based on [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/packages/packages-hooks/). Refer to their documentation there.
-
-In order to keep filter hook names short filter and avoid collision with other package in the same time, the exposed filter functions from within the package will prefix the passed hook name with `a8c.reactI18n.{hookName}`:
-
-```js
-addFilter( 'translation', 'namespace', () => {} ); // Hook name will become `a8c.reactI18n.translation`
-```
+`addFilter` and `removeFilter` are based on [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/packages/packages-hooks/). Refer to their documentation there.
 
 #### Available Filters
 
-**arguments**
+**preTranslation**
 
-Allows you to modify the arguments passed to a translate function.
+Modify the input arguments before the translation lookup.
 
 _Parameters_
 
 - _args_ `array`: The arguments array passed to the translate function.
 - _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
-- _options_ `object`: `@automattic/react-i18n` context options object.
+- _filters_ `object`: `@automattic/react-i18n` context filters object.
 
-**arguments**
+**postTranslation**
 
-Allows you to modify the arguments passed to a translate function.
+Modify the result of the translate function.
 
 _Parameters_
 
 - _translation_ `string`: The retrieved translation string.
-- _args_ `array`: The arguments array passed to the translate function.
+- _args_ `array`: The input arguments array passed to the translate function.
 - _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
-- _options_ `object`: `@automattic/react-i18n` context options object.
+- _filters_ `object`: `@automattic/react-i18n` context filters object.
