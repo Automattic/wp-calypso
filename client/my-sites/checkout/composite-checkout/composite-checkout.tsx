@@ -496,6 +496,7 @@ export default function CompositeCheckout( {
 				credits,
 				subtotal,
 				allowedPaymentMethods,
+				responseCart,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
