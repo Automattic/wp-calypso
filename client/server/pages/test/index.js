@@ -189,7 +189,7 @@ const buildApp = ( environment ) => {
 				}[ key ] )
 		);
 
-		appFactory = require( '../index' );
+		appFactory = require( '../index' ).default;
 	} );
 	const app = appFactory();
 
