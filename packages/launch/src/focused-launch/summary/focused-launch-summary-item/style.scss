@@ -1,0 +1,27 @@
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+
+$accent-blue: #117ac9;
+
+.focused-launch-summary__item {
+	border: 2px solid var( --studio-gray-5 );
+	padding: 10px 14px;
+    min-height: 64px;
+    /* stylelint-disable-next-line scales/radii */
+	border-radius: 5px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.focused-launch-summary__item * {
+    vertical-align: middle;
+}
+
+.focused-launch-summary__item + .focused-launch-summary__item {
+    margin-top: 10px;
+}
+
+.focused-launch-summary__item.is-selected {
+	border: 2px solid $accent-blue;
+}

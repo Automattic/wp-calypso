@@ -8,11 +8,11 @@ import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import React, { ReactNode, useContext } from 'react';
-import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
+import DomainPicker from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-
+import FocusedLaunchSummaryItem from './focused-launch-summary-item';
 /**
  * Internal dependencies
  */
@@ -137,7 +137,14 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 								) }
 							</p>
 						</label>
-						<LockedPurchasedItem domainName={ currentDomain || '' } />
+						<FocusedLaunchSummaryItem
+							leftSide={ currentDomain || '' }
+							rightSide={
+								<>
+									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
+								</>
+							}
+						></FocusedLaunchSummaryItem>
 					</>
 				) : (
 					<>
@@ -283,6 +290,21 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								}
 							) }
 						</p>
+						<div>
+							{ [ 1, 2, 3 ].map( ( el ) => {
+								return (
+									<FocusedLaunchSummaryItem
+										leftSide={ el }
+										rightSide={
+											<>
+												<Icon icon={ check } size={ 18 } />{ ' ' }
+												{ __( 'Purchased', __i18n_text_domain__ ) }
+											</>
+										}
+									></FocusedLaunchSummaryItem>
+								);
+							} ) }
+						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
 				)
