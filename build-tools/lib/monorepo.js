@@ -14,6 +14,7 @@ const packagesInMonorepo = () =>
 	fs
 		.readdirSync( PACKAGES_DIR, { withFileTypes: true } )
 		.filter( ( file ) => file.isDirectory() )
+		.filter( ( dir ) => fs.existsSync( path.join( PACKAGES_DIR, dir.name, 'package.json' ) ) )
 		.map( ( packageDir ) => require( path.join( PACKAGES_DIR, packageDir.name, 'package.json' ) ) );
 
 module.exports = {
