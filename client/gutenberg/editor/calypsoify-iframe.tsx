@@ -28,7 +28,7 @@ import { clearLastNonEditorRoute, setRoute } from 'calypso/state/route/actions';
 import { updateSiteFrontPage } from 'calypso/state/sites/actions';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import getPostTypeTrashUrl from 'calypso/state/selectors/get-post-type-trash-url';
-import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import wpcom from 'calypso/lib/wp';
@@ -850,7 +850,7 @@ const mapStateToProps = (
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
-			getGutenbergEditorUrl,
+			getEditorUrl,
 			state,
 			siteId,
 			partial.placeholder,
