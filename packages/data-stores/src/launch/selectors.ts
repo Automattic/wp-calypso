@@ -59,5 +59,5 @@ export const isFlowStarted = ( state: State ): boolean =>
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
 
-// Get first incomplete step
+// Check if site title step should be displayed
 export const isSiteTitleStepVisible = ( state: State ): boolean => state.isSiteTitleStepVisible;
