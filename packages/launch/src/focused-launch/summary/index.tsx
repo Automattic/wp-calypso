@@ -394,6 +394,8 @@ const Summary: React.FunctionComponent = () => {
 
 	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
 	// Active steps require user interaction
+	// Using this arrays allows to easily sort the steps correctly in both
+	// groups, and allows the actve steps to always show the correct step index.
 	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
 	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
 	shouldRenderNameStep && activeSteps.push( renderSiteNameStep );
