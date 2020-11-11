@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'calypso/state/site-address-change/init';
@@ -14,5 +9,5 @@ import 'calypso/state/site-address-change/init';
  * @returns {object} An object that represents the current status for site rename requests.
  */
 export function getSiteRenameStatus( state, siteId ) {
-	return get( state, [ 'siteAddressChange', 'status', siteId ], {} );
+	return state.siteAddressChange.status[ siteId ] ?? {};
 }

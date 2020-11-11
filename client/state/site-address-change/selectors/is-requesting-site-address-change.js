@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import 'calypso/state/site-address-change/init';
@@ -14,5 +9,5 @@ import 'calypso/state/site-address-change/init';
  * @returns {boolean} Signals whether or not there is currently a request in progress for the given siteId
  */
 export function isRequestingSiteAddressChange( state, siteId ) {
-	return get( state, [ 'siteAddressChange', 'requesting', siteId ], null );
+	return state.siteAddressChange.requesting[ siteId ] ?? null;
 }
