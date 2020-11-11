@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { initialDomainState } from '../reducer';
+import initialDomainState from '../initial';
 import { getNameserversByDomainName } from '../selectors';
 
 describe( 'selectors', () => {

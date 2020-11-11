@@ -2,7 +2,8 @@
  * Internal dependencies
  */
 import { fetchNameservers, fetchNameserversFailure, receiveNameservers } from '../actions';
-import reducer, { initialDomainState } from '../reducer';
+import initialDomainState from '../initial';
+import reducer from '../reducer';
 
 describe( 'reducer', () => {
 	const domainName = 'dummy.com';

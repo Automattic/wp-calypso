@@ -7,13 +7,7 @@ import {
 	DOMAIN_NAMESERVERS_RECEIVE,
 } from 'calypso/state/action-types';
 import { keyedReducer } from 'calypso/state/utils';
-
-export const initialDomainState = {
-	isFetching: false,
-	hasLoadedFromServer: false,
-	error: false,
-	list: null,
-};
+import initialDomainState from './initial';
 
 /**
  * Updates name servers entry for given domain.
