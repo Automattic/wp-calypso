@@ -2,17 +2,17 @@
  * External dependencies
  */
 import React, { FunctionComponent, useCallback, ComponentProps } from 'react';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
 import StoredCard from './stored-card';
+import { Card } from '@automattic/components';
 
 /**
  * Style dependencies
  */
-import './style.scss';
+import './credit-card.scss';
 
 type SelectHandler = React.EventHandler<
 	React.MouseEvent< HTMLDivElement > | React.KeyboardEvent< HTMLDivElement >
@@ -41,11 +41,6 @@ const CreditCard: FunctionComponent< Props > = ( {
 		[ onSelect ]
 	);
 
-	const classes = classNames( 'credit-card', className, {
-		'is-selected': selected,
-		'is-selectable': onSelect,
-	} );
-
 	const selectionProps = onSelect && {
 		tabIndex: -1,
 		role: 'radio',
@@ -55,9 +50,9 @@ const CreditCard: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<div className={ classes } { ...selectionProps }>
+		<Card className="credit-card" { ...selectionProps }>
 			{ card ? <StoredCard { ...card } selected={ selected } /> : children }
-		</div>
+		</Card>
 	);
 };
 

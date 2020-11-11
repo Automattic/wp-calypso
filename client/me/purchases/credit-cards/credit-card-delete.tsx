@@ -23,11 +23,6 @@ import StoredCard from 'calypso/components/credit-card/stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
-import './credit-card-delete.scss';
-
 interface Props {
 	card: PaymentMethod;
 }
@@ -73,7 +68,7 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 	};
 
 	return (
-		<div className="credit-cards__credit-card-delete">
+		<>
 			<PaymentMethodDeleteDialog
 				paymentMethodSummary={ getPaymentMethodSummary( {
 					translate,
@@ -94,7 +89,7 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 				expiry={ card.expiry }
 			/>
 			{ renderDeleteButton() }
-		</div>
+		</>
 	);
 };
 

@@ -8,6 +8,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
+import CardHeading from 'calypso/components/card-heading';
 import './style.scss';
 
 interface Props {
@@ -29,10 +30,16 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 			isVisible={ isVisible }
 			additionalClassNames="payment-method-delete-dialog"
 			onClose={ onClose }
+			buttons={ [
+				<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>,
+				<Button onClick={ onConfirm } primary>
+					{ translate( 'Delete' ) }
+				</Button>,
+			] }
 		>
-			<h2 className="payment-method-delete-dialog__header">
+			<CardHeading tagName="h2" size={ 24 }>
 				{ translate( 'Remove payment method' ) }
-			</h2>
+			</CardHeading>
 			<p>
 				{ translate(
 					'The payment method {{paymentMethodSummary/}} will be removed from your account and from all the associated subscriptions.',
@@ -43,10 +50,6 @@ const PaymentMethodDeleteDialog: FunctionComponent< Props > = ( {
 					}
 				) }
 			</p>
-			<Button onClick={ onClose }>{ translate( 'Cancel' ) }</Button>
-			<Button onClick={ onConfirm } primary>
-				{ translate( 'Delete' ) }
-			</Button>
 		</Dialog>
 	);
 };

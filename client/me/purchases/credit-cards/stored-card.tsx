@@ -45,29 +45,31 @@ const StoredCard: FunctionComponent< Props > = ( {
 	const displayExpirationDate = expirationDate?.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
 	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
-	const typeStyle = {
-		backgroundImage: getPaymentMethodImageURL( type, selected ),
-	};
 
 	return (
-		<div className="credit-card__stored-card" style={ typeStyle }>
-			<span className="credit-card__stored-card-number">
-				{ getPaymentMethodSummary( {
-					translate,
-					type,
-					digits: lastDigits,
-					email,
-				} ) }
-			</span>
-			<span className="credit-card__stored-card-name">{ name }</span>
-			<span className="credit-card__stored-card-expiration-date">
-				{ displayExpirationDate &&
-					translate( 'Expires %(date)s', {
+		<>
+			<img src={ getPaymentMethodImageURL( type, selected ) } className="stored-card__image" />
+			<div>
+				<span className="credit-card__stored-card-number">
+					{ getPaymentMethodSummary( {
+						translate,
+						type,
+						digits: lastDigits,
+						email,
+					} ) }
+				</span>
+				<span className="credit-card__stored-card-name">{ name }</span>
+			</div>
+			
+			{ displayExpirationDate && (
+				<span className="credit-card__stored-card-expiration-date">
+					{ translate( 'Expires %(date)s', {
 						args: { date: displayExpirationDate },
 						context: 'date is of the form MM/YY',
 					} ) }
-			</span>
-		</div>
+				</span>
+			) }
+		</>
 	);
 };
 

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
  */
 import { Button, Card } from '@automattic/components';
 import config from 'calypso/config';
-import CreditCard from 'calypso/components/credit-card';
+import CreditCard from './credit-card';
 import CreditCardDelete from './credit-card-delete';
 import {
 	getStoredCards,
@@ -25,23 +25,14 @@ import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-/**
- * Style dependencies
- */
-import './credit-cards.scss';
-
 class CreditCards extends Component {
 	renderCards( cards ) {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
-			return <div className="credit-cards__no-results">{ this.props.translate( 'Loading…' ) }</div>;
+			return <Card>{ this.props.translate( 'Loading…' ) }</Card>;
 		}
 
 		if ( ! cards.length ) {
-			return (
-				<div className="credit-cards__no-results">
-					{ this.props.translate( 'You have no saved cards.' ) }
-				</div>
-			);
+			return <Card>{ this.props.translate( 'You have no saved cards.' ) }</Card>;
 		}
 
 		return cards.map( ( card ) => {
@@ -77,16 +68,13 @@ class CreditCards extends Component {
 				<SectionHeader label={ this.props.translate( 'Manage your credit cards' ) }>
 					{ this.renderAddCreditCardButton() }
 				</SectionHeader>
-				<Card>
-					<div>{ this.renderCards( this.props.cards ) }</div>
-				</Card>
+
+				{ this.renderCards( this.props.cards ) }
 
 				{ this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 && (
 					<>
 						<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) } />
-						<Card>
-							<div>{ this.renderCards( this.props.paymentAgreements ) }</div>
-						</Card>
+						{ this.renderCards( this.props.paymentAgreements ) }
 					</>
 				) }
 			</div>
