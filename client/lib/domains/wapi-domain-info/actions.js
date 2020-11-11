@@ -94,33 +94,6 @@ export function declineTransfer( domainName, onComplete ) {
 	} );
 }
 
-export function enablePrivacyProtection( domainName, onComplete ) {
-	wpcom.undocumented().enablePrivacyProtection( domainName, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
-
-		Dispatcher.handleServerAction( {
-			type: PRIVACY_PROTECTION_ENABLE_COMPLETED,
-			domainName,
-		} );
-
-		onComplete( null );
-	} );
-}
-
-export function disablePrivacyProtection( domainName, onComplete ) {
-	wpcom.undocumented().disablePrivacyProtection( domainName, ( error ) => {
-		if ( error ) {
-			onComplete( error );
-			return;
-		}
-
-		onComplete( null );
-	} );
-}
-
 export function fetchWapiDomainInfo( domainName ) {
 	const wapiDomainInfo = WapiDomainInfoStore.getByDomainName( domainName );
 
