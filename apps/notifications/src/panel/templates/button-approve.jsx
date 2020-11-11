@@ -4,17 +4,18 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { setApproveStatus } from '../flux/note-actions';
+import { setApproveStatus } from '../state/notes/thunks';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
 import { RestClientContext } from '../Notifications';
 
-const ApproveButton = ( { isApproved, note, translate } ) => {
+const ApproveButton = ( { isApproved, note, translate, setApproveStatus } ) => {
 	const restClient = useContext( RestClientContext );
 
 	return (
@@ -49,4 +50,4 @@ ApproveButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( ApproveButton );
+export default connect( null, { setApproveStatus } )( localize( ApproveButton ) );

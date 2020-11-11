@@ -4,17 +4,18 @@
 import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import { setLikeStatus } from '../flux/note-actions';
+import { setLikeStatus } from '../state/notes/thunks/index';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
 import { RestClientContext } from '../Notifications';
 
-const LikeButton = ( { commentId, isLiked, note, translate } ) => {
+const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) => {
 	const restClient = useContext( RestClientContext );
 
 	return (
@@ -54,4 +55,4 @@ LikeButton.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-export default localize( LikeButton );
+export default connect( null, { setLikeStatus } )( localize( LikeButton ) );
