@@ -32,9 +32,9 @@ describe( 'index', () => {
 
 	test( 'should not render ending content if not passed a `maxContent` prop', () => {
 		let range = TestUtils.renderIntoDocument(
-				<FormRange minContent={ <Gridicon icon="minus-small" /> } />
-			),
-			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
+			<FormRange minContent={ <Gridicon icon="minus-small" /> } />
+		);
+		let content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
 		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-min' );
@@ -49,9 +49,9 @@ describe( 'index', () => {
 
 	test( 'should not render beginning content if not passed a `minContent` prop', () => {
 		let range = TestUtils.renderIntoDocument(
-				<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
-			),
-			content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
+			<FormRange maxContent={ <Gridicon icon="plus-small" /> } />
+		);
+		let content = TestUtils.scryRenderedDOMComponentsWithClass( range, 'range__content' );
 
 		expect( content ).to.have.length( 1 );
 		expect( content[ 0 ].getAttribute( 'class' ) ).to.contain( 'is-max' );
@@ -59,9 +59,9 @@ describe( 'index', () => {
 
 	test( 'should render a value label if passed a truthy `showValueLabel` prop', () => {
 		let range = TestUtils.renderIntoDocument(
-				<FormRange value={ 8 } showValueLabel={ true } readOnly={ true } />
-			),
-			label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
+			<FormRange value={ 8 } showValueLabel={ true } readOnly={ true } />
+		);
+		let label = TestUtils.findRenderedDOMComponentWithClass( range, 'range__label' );
 
 		expect( label.textContent ).to.equal( '8' );
 	} );

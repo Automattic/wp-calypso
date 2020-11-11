@@ -215,6 +215,8 @@ module.exports = {
 
 		'no-path-concat': 'error',
 
+		'one-var': [ 'error', 'never' ],
+
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
 

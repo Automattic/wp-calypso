@@ -30,13 +30,13 @@ export default function Pinghub( wpcom ) {
  */
 Pinghub.prototype.connect = function ( path, fn ) {
 	debug( 'connect', path, fn );
-	let pinghub = this,
-		params = {
-			action: 'connect',
-			path: '/pinghub' + path,
-		},
-		errorCallback = function () {}, // we want an xhr, not a promise
-		xhr = ( this.conns[ path ] = this.wpcom.req.get( params, errorCallback ) );
+	let pinghub = this;
+	let params = {
+		action: 'connect',
+		path: '/pinghub' + path,
+	};
+	let errorCallback = function () {}; // we want an xhr, not a promise
+	let xhr = ( this.conns[ path ] = this.wpcom.req.get( params, errorCallback ) );
 	xhr.onload = function ( e ) {
 		debug( 'onload', path, e );
 		fn( null, e );
@@ -57,10 +57,10 @@ Pinghub.prototype.connect = function ( path, fn ) {
 Pinghub.prototype.disconnect = function ( path ) {
 	debug( 'disconnect', path );
 	let params = {
-			action: 'disconnect',
-			path: '/pinghub' + path,
-		},
-		errorCallback = function () {}; // no promises
+		action: 'disconnect',
+		path: '/pinghub' + path,
+	};
+	let errorCallback = function () {}; // no promises
 	this.wpcom.req.get( params, errorCallback );
 };
 

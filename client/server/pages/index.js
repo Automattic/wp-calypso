@@ -269,7 +269,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, start;
+	let redirectUrl;
+	let start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',

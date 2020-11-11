@@ -35,7 +35,8 @@ jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
 );
 
 describe( 'MediaLibraryList item selection', () => {
-	let wrapper, mediaList;
+	let wrapper;
+	let mediaList;
 
 	const setMediaLibrarySelectedItems = jest.fn();
 

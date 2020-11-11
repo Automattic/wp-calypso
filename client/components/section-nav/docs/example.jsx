@@ -136,15 +136,15 @@ class SectionNavigation extends PureComponent {
 	}
 
 	getSelectedText = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			text = this.props[ section ][ selected ];
+		var selected = this.state[ section + 'SelectedIndex' ];
+		var text = this.props[ section ][ selected ];
 
 		return 'object' === typeof text ? text.name : text;
 	};
 
 	getSelectedCount = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			selectedItem = this.props[ section ][ selected ];
+		var selected = this.state[ section + 'SelectedIndex' ];
+		var selectedItem = this.props[ section ][ selected ];
 
 		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	};

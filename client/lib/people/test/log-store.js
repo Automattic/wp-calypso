@@ -15,7 +15,8 @@ import site from './fixtures/site';
 import userActions from 'calypso/lib/users/test/fixtures/actions';
 
 describe( 'Viewers Store', () => {
-	let Dispatcher, PeopleLogStore;
+	let Dispatcher;
+	let PeopleLogStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );

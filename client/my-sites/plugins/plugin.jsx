@@ -85,16 +85,16 @@ const SinglePlugin = createReactClass( {
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props;
 
-		const sites = uniq( props.sites ),
-			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
-			plugin = Object.assign(
-				{
-					name: props.pluginSlug,
-					id: props.pluginSlug,
-					slug: props.pluginSlug,
-				},
-				sitePlugin
-			);
+		const sites = uniq( props.sites );
+		const sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
+		const plugin = Object.assign(
+			{
+				name: props.pluginSlug,
+				id: props.pluginSlug,
+				slug: props.pluginSlug,
+			},
+			sitePlugin
+		);
 
 		return {
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],

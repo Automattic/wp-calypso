@@ -35,9 +35,9 @@ describe( 'actions', () => {
 
 	describe( '#addStoredCard', () => {
 		const cardData = {
-				token: 'pg_1234',
-			},
-			item = { stored_details_id: 123 };
+			token: 'pg_1234',
+		};
+		const item = { stored_details_id: 123 };
 		let sandbox;
 
 		useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );

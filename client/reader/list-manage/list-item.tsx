@@ -33,7 +33,11 @@ export default function ListItem( props: { item: Item; owner: string; list: any 
 	const dispatch = useDispatch();
 	const [ deleteState, setDeleteState ] = React.useState( '' );
 
-	let feed, deleteAction, itemTitle, site, tag;
+	let feed;
+	let deleteAction;
+	let itemTitle;
+	let site;
+	let tag;
 
 	if ( item.feed_ID ) {
 		deleteAction = deleteReaderListFeed( list.ID, owner, list.slug, item.feed_ID );

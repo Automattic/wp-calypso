@@ -131,11 +131,11 @@ export class FormPhoneInput extends React.Component {
 	}
 
 	getValue() {
-		const countryData = this.getCountryData(),
-			numberClean = this.cleanNumber( this.state.phoneNumber ),
-			countryNumericCode = countryData ? countryData.numeric_code : '',
-			numberFull = countryNumericCode + numberClean,
-			isValid = this.validate( numberFull );
+		const countryData = this.getCountryData();
+		const numberClean = this.cleanNumber( this.state.phoneNumber );
+		const countryNumericCode = countryData ? countryData.numeric_code : '';
+		const numberFull = countryNumericCode + numberClean;
+		const isValid = this.validate( numberFull );
 
 		return {
 			isValid: ! isValid.error,

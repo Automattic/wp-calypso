@@ -233,9 +233,11 @@ class DomainsStep extends React.Component {
 	};
 
 	getThemeArgs = () => {
-		const themeSlug = this.getThemeSlug(),
-			themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug ),
-			theme = this.isPurchasingTheme() ? themeItem( themeSlug, 'signup-with-theme' ) : undefined;
+		const themeSlug = this.getThemeSlug();
+		const themeSlugWithRepo = this.getThemeSlugWithRepo( themeSlug );
+		const theme = this.isPurchasingTheme()
+			? themeItem( themeSlug, 'signup-with-theme' )
+			: undefined;
 
 		return { themeSlug, themeSlugWithRepo, themeItem: theme };
 	};
@@ -544,9 +546,9 @@ class DomainsStep extends React.Component {
 	};
 
 	mappingForm = () => {
-		const initialState = this.props.step ? this.props.step.mappingForm : undefined,
-			initialQuery =
-				this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
+		const initialState = this.props.step ? this.props.step.mappingForm : undefined;
+		const initialQuery =
+			this.props.step && this.props.step.domainForm && this.props.step.domainForm.lastQuery;
 
 		return (
 			<div className="domains__step-section-wrapper" key="mappingForm">
@@ -694,7 +696,9 @@ class DomainsStep extends React.Component {
 
 		const { flowName, isAllDomains, translate, sites } = this.props;
 		const hasSite = Object.keys( sites ).length > 0;
-		let backUrl, backLabelText, isExternalBackUrl;
+		let backUrl;
+		let backLabelText;
+		let isExternalBackUrl;
 
 		if ( 'transfer' === this.props.stepSectionName || 'mapping' === this.props.stepSectionName ) {
 			backUrl = getStepUrl(

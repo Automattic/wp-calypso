@@ -336,7 +336,9 @@ export class JetpackSignup extends Component {
 			loginSocialConnect,
 			loginTwoFactorAuthType,
 		} = this.state;
-		let header, subHeader, content;
+		let header;
+		let subHeader;
+		let content;
 		const footerLinks = [];
 		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
 		const wooDna = this.getWooDnaConfig();

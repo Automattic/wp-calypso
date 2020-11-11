@@ -24,8 +24,8 @@ const StatsActionFollow = createReactClass( {
 	mixins: [ observe( 'followSite' ) ],
 
 	clickHandler: function ( event ) {
-		let site = this.props.followSite,
-			gaEvent;
+		let site = this.props.followSite;
+		let gaEvent;
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -43,21 +43,21 @@ const StatsActionFollow = createReactClass( {
 	},
 
 	render: function () {
-		let site = this.props.followSite,
-			following = site.is_following,
-			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
-				follow: ! following,
-				following: following,
-			} ),
-			label = following
-				? this.props.translate( 'Following', {
-						context: 'Stats: Follow action / Following status',
-				  } )
-				: this.props.translate( 'Follow', {
-						context: 'Stats: Follow action / Following status',
-				  } ),
-			gridiconType = following ? 'reader-following' : 'reader-follow',
-			wrapperClassSet;
+		let site = this.props.followSite;
+		let following = site.is_following;
+		let wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
+			follow: ! following,
+			following: following,
+		} );
+		let label = following
+			? this.props.translate( 'Following', {
+					context: 'Stats: Follow action / Following status',
+			  } )
+			: this.props.translate( 'Follow', {
+					context: 'Stats: Follow action / Following status',
+			  } );
+		let gridiconType = following ? 'reader-following' : 'reader-follow';
+		let wrapperClassSet;
 
 		wrapperClassSet = classNames( wrapperClass );
 

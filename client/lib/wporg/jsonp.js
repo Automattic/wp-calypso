@@ -34,13 +34,13 @@ function noop() {}
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	let prefix = '__jp',
-		timeout = 60000,
-		enc = encodeURIComponent,
-		target = document.getElementsByTagName( 'script' )[ 0 ] || document.head,
-		script,
-		timer,
-		id;
+	let prefix = '__jp';
+	let timeout = 60000;
+	let enc = encodeURIComponent;
+	let target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
+	let script;
+	let timer;
+	let id;
 
 	// generate a unique id for this request
 	id = prefix + count++;

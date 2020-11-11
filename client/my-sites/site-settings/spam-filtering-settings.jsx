@@ -60,9 +60,9 @@ const SpamFilteringSettings = ( {
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
 	const isInvalidKey = ( isDirty && hasAkismetKeyError && ! isStoredKey ) || isEmptyKey;
-	let validationText,
-		className,
-		header = null;
+	let validationText;
+	let className;
+	let header = null;
 
 	if ( inTransition ) {
 		return null;

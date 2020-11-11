@@ -42,11 +42,11 @@ class Team extends React.Component {
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			listClass = classNames( {
-				'bulk-editing': this.state.bulkEditing,
-				'people-invites__invites-list': true,
-			} );
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
+		const listClass = classNames( {
+			'bulk-editing': this.state.bulkEditing,
+			'people-invites__invites-list': true,
+		} );
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {

@@ -507,8 +507,8 @@ export class CheckoutThankYou extends React.Component {
 	 */
 	getComponentAndPrimaryPurchaseAndDomain = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			const purchases = getPurchases( this.props ),
-				failedPurchases = getFailedPurchases( this.props );
+			const purchases = getPurchases( this.props );
+			const failedPurchases = getFailedPurchases( this.props );
 
 			if ( failedPurchases.length > 0 ) {
 				return [ FailedPurchaseDetails ];

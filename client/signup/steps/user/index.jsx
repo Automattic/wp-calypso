@@ -389,7 +389,8 @@ export class UserStep extends Component {
 
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, flowName } = this.props;
-		let socialService, socialServiceResponse;
+		let socialService;
+		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {

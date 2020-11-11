@@ -14,7 +14,9 @@ import ReactDomServer from 'react-dom/server';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'markup', () => {
-	let sandbox, markup, site;
+	let sandbox;
+	let markup;
+	let site;
 
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 

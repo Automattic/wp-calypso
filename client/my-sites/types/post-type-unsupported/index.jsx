@@ -31,7 +31,10 @@ const CONFIGURABLE_TYPES = [ 'jetpack-portfolio', 'jetpack-testimonial' ];
 function PostTypeUnsupported( { translate, canManage, siteSlug, type } ) {
 	const isConfigurableType = includes( CONFIGURABLE_TYPES, type );
 
-	let title, line, action, actionUrl;
+	let title;
+	let line;
+	let action;
+	let actionUrl;
 	if ( isConfigurableType && canManage ) {
 		switch ( type ) {
 			case 'jetpack-portfolio':

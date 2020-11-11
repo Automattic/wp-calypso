@@ -16,8 +16,8 @@ function wrap( innerHtml, wrapperNode ) {
 }
 
 function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
-	let child = newChildren.pop(),
-		last;
+	let child = newChildren.pop();
+	let last;
 	if ( child ) {
 		node.replaceChild( child, oldChild );
 		last = child;
@@ -32,12 +32,12 @@ function replaceChildNodesWithGroup( node, newChildren, oldChild ) {
  * @private
  */
 function highlightNode( node, term, wrapperNode ) {
-	let nodes = [],
-		found = false,
-		pos,
-		leftText,
-		midText,
-		remainingText;
+	let nodes = [];
+	let found = false;
+	let pos;
+	let leftText;
+	let midText;
+	let remainingText;
 	if ( node.nodeName === '#text' ) {
 		remainingText = node.nodeValue;
 	}

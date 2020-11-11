@@ -27,34 +27,34 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
-let _fetching = {},
-	_pluginsBySite = {},
-	_filters = {
-		none: function () {
-			return false;
-		},
-		all: function () {
-			return true;
-		},
-		active: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && site.plugin.active;
-			} );
-		},
-		inactive: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && ! site.plugin.active;
-			} );
-		},
-		updates: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && site.plugin.update && site.canUpdateFiles;
-			} );
-		},
-		isEqual: function ( pluginSlug, plugin ) {
-			return plugin.slug === pluginSlug;
-		},
-	};
+let _fetching = {};
+let _pluginsBySite = {};
+let _filters = {
+	none: function () {
+		return false;
+	},
+	all: function () {
+		return true;
+	},
+	active: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && site.plugin.active;
+		} );
+	},
+	inactive: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && ! site.plugin.active;
+		} );
+	},
+	updates: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && site.plugin.update && site.canUpdateFiles;
+		} );
+	},
+	isEqual: function ( pluginSlug, plugin ) {
+		return plugin.slug === pluginSlug;
+	},
+};
 
 function refreshNetworkSites( site ) {
 	const networkSites = getNetworkSites( reduxGetState(), site.ID );
@@ -114,8 +114,8 @@ function updatePlugins( site, plugins ) {
 
 const PluginsStore = {
 	getPlugin: function ( sites, pluginSlug ) {
-		let pluginData = {},
-			fetched = false;
+		let pluginData = {};
+		let fetched = false;
 		pluginData.sites = [];
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
@@ -143,8 +143,8 @@ const PluginsStore = {
 	},
 
 	getPlugins: function ( sites, pluginFilter ) {
-		let fetched = false,
-			plugins = {};
+		let fetched = false;
+		let plugins = {};
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
 
@@ -208,9 +208,9 @@ const PluginsStore = {
 
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
-		let plugin,
-			plugins = this.getPlugins( sites ),
-			pluginSites;
+		let plugin;
+		let plugins = this.getPlugins( sites );
+		let pluginSites;
 		if ( ! plugins ) {
 			return;
 		}

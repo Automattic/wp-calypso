@@ -316,8 +316,8 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let activityLink = '/activity-log' + siteSuffix,
-			activityLabel = translate( 'Activity' );
+		let activityLink = '/activity-log' + siteSuffix;
+		let activityLabel = translate( 'Activity' );
 
 		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
 			activityLink += '?group=rewind';
@@ -458,14 +458,14 @@ export class MySitesSidebar extends Component {
 
 	design() {
 		const {
-				path,
-				site,
-				translate,
-				canUserEditThemeOptions,
-				showCustomizerLink,
-				showSiteEditor,
-			} = this.props,
-			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
+			path,
+			site,
+			translate,
+			canUserEditThemeOptions,
+			showCustomizerLink,
+			showSiteEditor,
+		} = this.props;
+		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {

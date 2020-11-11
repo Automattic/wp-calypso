@@ -308,8 +308,8 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain, mode );
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } ),
-			currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
+		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain
