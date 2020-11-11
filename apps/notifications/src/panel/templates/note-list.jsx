@@ -49,7 +49,6 @@ export class NoteList extends React.Component {
 
 	UNSAFE_componentWillMount() {
 		this.props.global.updateStatusBar = this.updateStatusBar;
-		this.props.global.resetStatusBar = this.resetStatusBar;
 		this.props.global.updateUndoBar = this.updateUndoBar;
 		this.props.global.resetUndoBar = this.resetUndoBar;
 
