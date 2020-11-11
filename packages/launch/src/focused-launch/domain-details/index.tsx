@@ -23,6 +23,8 @@ import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
 
+const ANALYTICS_UI_LOCATION = 'editor_domain_modal';
+
 const DomainStep: React.FunctionComponent = () => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
@@ -52,7 +54,7 @@ const DomainStep: React.FunctionComponent = () => {
 		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
 			flow: FOCUSED_LAUNCH_FLOW_ID,
 			query,
-			where: 'editor_domain_modal',
+			where: ANALYTICS_UI_LOCATION,
 		} );
 	};
 
@@ -79,7 +81,7 @@ const DomainStep: React.FunctionComponent = () => {
 					existingSubdomain={ currentDomainName }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
-					analyticsUiAlgo="editor_domain_modal"
+					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }
 					itemType={ ITEM_TYPE_BUTTON }
