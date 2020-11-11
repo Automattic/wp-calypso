@@ -420,7 +420,7 @@ class WP_Template_Inserter {
 
 	private function get_template_locale() {
 		$language = get_locale();
-		return A8C\FSE\Common\get_iso_639_locale( $language );
+		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 
 	/**

@@ -246,6 +246,6 @@ class Starter_Page_Templates {
 	private function get_verticals_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
-		return get_iso_639_locale( $language );
+		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 }
