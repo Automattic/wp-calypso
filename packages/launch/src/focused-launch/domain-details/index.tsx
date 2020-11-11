@@ -23,7 +23,7 @@ import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
 
-const ANALYTICS_UI_LOCATION = 'editor_domain_modal';
+const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainStep: React.FunctionComponent = () => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
@@ -73,7 +73,6 @@ const DomainStep: React.FunctionComponent = () => {
 			</div>
 			<div className="focused-launch-domain-details__body">
 				<DomainPicker
-					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
@@ -81,6 +80,7 @@ const DomainStep: React.FunctionComponent = () => {
 					existingSubdomain={ currentDomainName }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
+					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }
