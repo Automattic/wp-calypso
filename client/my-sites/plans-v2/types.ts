@@ -39,6 +39,12 @@ export interface SelectorPageProps extends BasePageProps {
 	siteSlug?: string;
 }
 
+export interface ProductsGridProps {
+	duration: Duration;
+	onSelectProduct: PurchaseCallback;
+	urlQueryArgs: QueryArgs;
+}
+
 export interface DetailsPageProps extends BasePageProps {
 	duration?: Duration;
 	productSlug: string;

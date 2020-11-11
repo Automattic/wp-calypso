@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ReactElement, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { sortBy } from 'lodash';
 
@@ -23,22 +23,18 @@ import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../pr
 /**
  * Type dependencies
  */
-import type { Duration, PurchaseCallback, QueryArgs } from '../types';
+import type { ProductsGridProps } from '../types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const ProductsGridAlt = ( {
+const ProductsGridAlt: React.FC< ProductsGridProps > = ( {
 	duration,
 	onSelectProduct,
 	urlQueryArgs,
-}: {
-	duration: Duration;
-	onSelectProduct: PurchaseCallback;
-	urlQueryArgs: QueryArgs;
-} ): ReactElement => {
+} ) => {
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
