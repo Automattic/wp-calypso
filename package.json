@@ -222,7 +222,6 @@
 		"autoprefixer": "^9.7.3",
 		"babel-eslint": "^10.1.0",
 		"babel-jest": "^26.3.0",
-		"babel-plugin-add-module-exports": "^1.0.2",
 		"babel-plugin-dynamic-import-node": "^2.3.0",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24",
 		"browserslist": "^4.12.0",

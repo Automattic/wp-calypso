@@ -9,7 +9,7 @@ import { forEach, repeat } from 'lodash';
 /**
  * Internal dependencies
  */
-import * as DISPLAY_TYPES from '../display-types';
+import DISPLAY_TYPES from '../display-types';
 import { classifyPost } from '../normalization-rules';
 import addDiscoverProperties from 'calypso/lib/post-normalizer/rule-add-discover-properties';
 import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
