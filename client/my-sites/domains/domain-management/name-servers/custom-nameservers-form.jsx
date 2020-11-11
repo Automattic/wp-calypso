@@ -93,24 +93,14 @@ class CustomNameserversForm extends React.PureComponent {
 		} );
 	}
 
-	removeNameserver( index ) {
-		const nameservers = [ ...this.props.nameservers ];
-		nameservers.splice( index, 1 );
-		return nameservers;
-	}
-
-	editNameserver( index, nameserver ) {
-		const nameservers = [ ...this.props.nameservers ];
-		nameservers[ index ] = nameserver;
-		return nameservers;
-	}
-
 	handleRemove = ( index ) => {
-		this.props.onChange( this.removeNameserver( index ) );
+		this.props.onChange( this.props.nameservers.filter( ( ns, idx ) => idx !== index ) );
 	};
 
 	handleChange = ( nameserver, index ) => {
-		this.props.onChange( this.editNameserver( index, nameserver ) );
+		this.props.onChange(
+			this.props.nameservers.map( ( ns, idx ) => ( idx === index ? nameserver : ns ) )
+		);
 	};
 
 	render() {
