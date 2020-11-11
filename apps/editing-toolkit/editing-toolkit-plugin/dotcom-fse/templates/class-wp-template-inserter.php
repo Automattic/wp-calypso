@@ -353,11 +353,11 @@ class WP_Template_Inserter {
 			);
 			return;
 		}
-		error_log( 'wp-templates-inserter insert_default_pages' . A8C\FSE\Common\get_iso_639_locale() );
+		error_log( 'wp-templates-inserter insert_default_pages' . $this->get_template_locale() );
 
 		$request_url = add_query_arg(
 			array(
-				'_locale' => A8C\FSE\Common\get_iso_639_locale(),
+				'_locale' => $this->get_template_locale(),
 			),
 			'https://public-api.wordpress.com/wpcom/v2/verticals/m1/templates'
 		);
@@ -416,6 +416,11 @@ class WP_Template_Inserter {
 				'theme_slug' => $this->theme_slug,
 			)
 		);
+	}
+
+	private function get_template_locale() {
+		$language = get_locale();
+		return A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 
 	/**

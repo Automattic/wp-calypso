@@ -159,12 +159,10 @@ add_action( 'after_setup_theme', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom
 /**
  * Returns ISO 639 conforming locale string.
  *
- * @return string ISO 639 locale string
+ * @param string $language a language tag to be converted e.g. "en_US".
+ * @return string ISO 639 locale string e.g. "en"
  */
-function get_iso_639_locale() {
-	// Make sure to get blog locale, not user locale.
-	// todo: get blog locale for atomic sites
-	$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+function get_iso_639_locale( $language ) {
 	$language = strtolower( $language );
 
 	if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {

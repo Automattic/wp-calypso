@@ -204,13 +204,13 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_templates = get_transient( $this->templates_cache_key );
-		error_log( 'wp-starter-page-templates fetch_vertical_data' . A8C\FSE\Common\get_iso_639_locale() );
+		error_log( 'wp-starter-page-templates fetch_vertical_data' . $this->get_verticals_locale() );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
 			$vertical_id = get_option( 'site_vertical' ) ? get_option( 'site_vertical' ) : 'default';
 			$request_url = add_query_arg(
-				array( '_locale' => A8C\FSE\Common\get_iso_639_locale() ),
+				array( '_locale' => $this->get_verticals_locale() ),
 				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
 			);
 			$response    = wp_remote_get( esc_url_raw( $request_url ) );
@@ -241,5 +241,11 @@ class Starter_Page_Templates {
 	 */
 	public function clear_templates_cache() {
 		delete_transient( $this->templates_cache_key );
+	}
+
+	private function get_verticals_locale() {
+		// Make sure to get blog locale, not user locale.
+		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		return get_iso_639_locale( $language );
 	}
 }

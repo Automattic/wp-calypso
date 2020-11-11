@@ -32,14 +32,14 @@ class Block_Patterns_From_API {
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
-		error_log( 'block-patterns-from-api constructer' . A8C\FSE\Common\get_iso_639_locale() );
+		error_log( 'block-patterns-from-api constructer' . $this->get_block_patterns_locale() );
 		$this->patterns_cache_key = sha1(
 			implode(
 				'_',
 				array(
 					'block_patterns',
 					PLUGIN_VERSION,
-					A8C\FSE\Common\get_iso_639_locale(),
+					$this->get_block_patterns_locale(),
 				)
 			)
 		);
@@ -119,7 +119,7 @@ class Block_Patterns_From_API {
 					array(
 						'tags' => 'pattern',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . A8C\FSE\Common\get_iso_639_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
 			);
 
@@ -141,5 +141,9 @@ class Block_Patterns_From_API {
 		return $block_patterns;
 	}
 
-
+	private function get_block_patterns_locale() {
+		// Make sure to get blog locale, not user locale.
+		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
+		return A8C\FSE\Common\get_iso_639_locale( $language );
+	}
 }
