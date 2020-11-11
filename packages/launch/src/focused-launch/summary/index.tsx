@@ -57,10 +57,10 @@ type CommonStepProps = {
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
-type SiteNameStepProps = CommonStepProps &
+type SiteTitleStepProps = CommonStepProps &
 	Pick< React.ComponentProps< typeof TextControl >, 'value' | 'onChange' | 'onBlur' >;
 
-const SiteNameStep: React.FunctionComponent< SiteNameStepProps > = ( {
+const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 	stepIndex,
 	value,
 	onChange,
@@ -358,8 +358,8 @@ const Summary: React.FunctionComponent = () => {
 	const hasPaidPlan = false;
 
 	// Prepare Steps
-	const renderSiteNameStep = ( index: number ) => (
-		<SiteNameStep
+	const renderSiteTitleStep = ( index: number ) => (
+		<SiteTitleStep
 			stepIndex={ index }
 			key={ index }
 			value={ title }
@@ -394,7 +394,7 @@ const Summary: React.FunctionComponent = () => {
 	// groups, and allows the actve steps to always show the correct step index.
 	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
 	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
-	isSiteTitleStepVisible && activeSteps.push( renderSiteNameStep );
+	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
