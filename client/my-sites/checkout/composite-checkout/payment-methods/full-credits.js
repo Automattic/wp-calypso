@@ -69,9 +69,8 @@ function WordPressCreditsLabel( { credits } ) {
 	return (
 		<React.Fragment>
 			<div>
-				{ __( 'WordPress.com Credits: %(amount)s available', {
-					args: { amount: credits.wpcom_meta.credits_display },
-					comment: "The total value of credits on the user's account",
+				{ sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
+					amount: credits.wpcom_meta.credits_display,
 				} ) }
 			</div>
 			<WordPressLogo />
