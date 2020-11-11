@@ -581,6 +581,14 @@ nestedProp = object.nestedObject?.property;
 anotherNestedProp = object.nestedObject?.anotherProperty; // safely returns undefined
 ```
 
+If you need default values, you can combine optional chaining with nullish coalescing:
+
+```js
+nestedProp = object.nestedObject?.property ?? 'defaultValue'; // use `defaultValue` if missing
+```
+
+Note that the default value will be used if the expression preceding it resolves to `null` or `undefined`, whereas Lodash's `get` only applies the default value for `undefined`. This distinction isn't usually a concern, but if you're rewriting existing code be sure to double-check the logic.
+
 ## “Yoda” Conditions #
 
 Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
