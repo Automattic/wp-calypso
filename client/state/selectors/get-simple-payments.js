@@ -9,13 +9,15 @@ import { get, find, orderBy } from 'lodash';
  */
 import createSelector from 'calypso/lib/create-selector';
 
+import 'calypso/state/simple-payments/init';
+
 /**
  * Get all Simple Payment or the one specified by `simplePaymentId`. They will be returned ordered by
  * ID from the largest to the lowest number (the same as ordering by creation date DESC).
  *
  * @param {object} state           Global state tree
- * @param {int}    siteId          Site which the Simple Payment belongs to.
- * @param {int}    simplePaymentId The ID of the Simple Payment to get. Optional.
+ * @param {number} siteId          Site which the Simple Payment belongs to.
+ * @param {number} simplePaymentId The ID of the Simple Payment to get. Optional.
  * @returns {Array|object|null}     Array of Simple Payment objects or an object if `simplePaymentId` specified.
  */
 export default createSelector(

@@ -2,9 +2,11 @@
  * Internal dependencies
  */
 
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import productList from './product-list/reducer';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	productList,
 } );
+
+export default withStorageKey( 'simplePayments', combinedReducer );

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import {
 	SIMPLE_PAYMENTS_PRODUCT_GET,
 	SIMPLE_PAYMENTS_PRODUCTS_LIST,
@@ -12,6 +11,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/simple-payments';
+import 'calypso/state/simple-payments/init';
 
 export const requestProducts = ( siteId ) => ( {
 	siteId,
