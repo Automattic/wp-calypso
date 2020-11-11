@@ -48,18 +48,15 @@ import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import CartMessages from 'calypso/my-sites/checkout/cart/cart-messages';
-import CheckoutTerms from 'calypso/my-sites/checkout/checkout/checkout-terms.jsx';
-import {
-	useStoredCards,
-	useIsApplePayAvailable,
-	filterAppropriatePaymentMethods,
-} from './payment-method-helpers';
+import CheckoutTerms from './components/checkout-terms';
+import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
+import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
+import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
 import useCreatePaymentMethods from './use-create-payment-methods';
 import {
@@ -78,7 +75,6 @@ import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
 import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
-import { needsDomainDetails } from './payment-method-helpers';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
 import useRedirectIfCartEmpty from './hooks/use-redirect-if-cart-empty';
@@ -94,14 +90,16 @@ import {
 	applyContactDetailsRequiredMask,
 	domainRequiredContactDetails,
 	taxRequiredContactDetails,
+	ManagedContactDetails,
 } from './types/wpcom-store-state';
 import { StoredCard } from './types/stored-cards';
-import { CheckoutPaymentMethodSlug } from './types/checkout-payment-method-slug';
 import { CountryListItem } from './types/country-list-item';
 import { TransactionResponse, Purchase } from './types/wpcom-store-state';
 import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
+import getContactDetailsType from './lib/get-contact-details-type';
+import type { ReactStandardAction } from './types/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -118,8 +116,6 @@ export default function CompositeCheckout( {
 	siteId,
 	productAliasFromUrl,
 	getStoredCards,
-	allowedPaymentMethods,
-	onlyLoadPaymentMethods,
 	overrideCountryList,
 	redirectTo,
 	feature,
@@ -136,8 +132,6 @@ export default function CompositeCheckout( {
 	siteId: number | undefined;
 	productAliasFromUrl?: string | undefined;
 	getStoredCards?: () => StoredCard[];
-	allowedPaymentMethods?: CheckoutPaymentMethodSlug[];
-	onlyLoadPaymentMethods?: CheckoutPaymentMethodSlug[];
 	overrideCountryList?: CountryListItem[];
 	redirectTo?: string | undefined;
 	feature?: string | undefined;
@@ -161,7 +155,11 @@ export default function CompositeCheckout( {
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
-	const recordEvent = useCallback( createAnalyticsEventHandler( reduxDispatch ), [] ); // eslint-disable-line react-hooks/exhaustive-deps
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
+		createAnalyticsEventHandler( reduxDispatch ),
+		[]
+	);
 
 	const showErrorMessage = useCallback(
 		( error ) => {
@@ -257,7 +255,7 @@ export default function CompositeCheckout( {
 		total,
 		credits,
 		subtotal,
-		allowedPaymentMethods: serverAllowedPaymentMethods,
+		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
 
 	useShowAddCouponSuccessMessage(
@@ -447,11 +445,16 @@ export default function CompositeCheckout( {
 		createUserAndSiteBeforeTransaction
 	);
 
-	const { storedCards, isLoading: isLoadingStoredCards } = useStoredCards(
+	const { storedCards, isLoading: isLoadingStoredCards, error: storedCardsError } = useStoredCards(
 		getStoredCards || wpcomGetStoredCards,
-		recordEvent,
-		isLoggedOutCart
+		Boolean( isLoggedOutCart )
 	);
+
+	useActOnceOnStrings( [ storedCardsError ].filter( doesValueExist ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			recordEvent( { type: 'STORED_CARD_ERROR', payload: message } )
+		);
+	} );
 
 	const {
 		canMakePayment: isApplePayAvailable,
@@ -459,7 +462,6 @@ export default function CompositeCheckout( {
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
 
 	const paymentMethodObjects = useCreatePaymentMethods( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -478,20 +480,23 @@ export default function CompositeCheckout( {
 	const arePaymentMethodsLoading =
 		items.length < 1 ||
 		isInitialCartLoading ||
-		isLoadingStoredCards ||
-		( onlyLoadPaymentMethods
-			? onlyLoadPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading
-			: isApplePayLoading );
+		// Only wait for stored cards to load if we are using cards
+		( allowedPaymentMethods.includes( 'card' ) && isLoadingStoredCards ) ||
+		// Only wait for apple pay to load if we are using apple pay
+		( allowedPaymentMethods.includes( 'apple-pay' ) && isApplePayLoading );
+
+	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
+	const countryCode: string = contactInfo?.countryCode?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
 		: filterAppropriatePaymentMethods( {
 				paymentMethodObjects,
+				countryCode,
 				total,
 				credits,
 				subtotal,
 				allowedPaymentMethods,
-				serverAllowedPaymentMethods,
 		  } );
 	debug( 'filtered payment method objects', paymentMethods );
 
@@ -538,10 +543,9 @@ export default function CompositeCheckout( {
 		[ addProductsToCart, products, recordEvent ]
 	);
 
-	const includeDomainDetails = needsDomainDetails( responseCart );
-	const includeGSuiteDetails = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const includeDomainDetails = contactDetailsType === 'domain';
+	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const dataForProcessor = useMemo(
 		() => ( {
 			includeDomainDetails,
@@ -603,17 +607,6 @@ export default function CompositeCheckout( {
 		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
 	);
 
-	useRecordCheckoutLoaded( {
-		recordEvent,
-		isLoadingCart: isInitialCartLoading,
-		isApplePayAvailable,
-		isApplePayLoading,
-		isLoadingStoredCards,
-		responseCart,
-		storedCards,
-		productAliasFromUrl,
-	} );
-
 	const jetpackColors = isJetpackNotAtomic
 		? {
 				primary: colors[ 'Jetpack Green' ],
@@ -628,17 +621,28 @@ export default function CompositeCheckout( {
 		: {};
 	const theme = { ...checkoutTheme, colors: { ...checkoutTheme.colors, ...jetpackColors } };
 
-	const isLoading =
-		isInitialCartLoading || isLoadingStoredCards || paymentMethods.length < 1 || items.length < 1;
+	const isLoading: boolean =
+		isInitialCartLoading ||
+		arePaymentMethodsLoading ||
+		paymentMethods.length < 1 ||
+		items.length < 1;
 	if ( isLoading ) {
 		debug( 'still loading because one of these is true', {
 			isInitialCartLoading,
-			isLoadingStoredCards,
 			paymentMethods: paymentMethods.length < 1,
 			arePaymentMethodsLoading: arePaymentMethodsLoading,
 			items: items.length < 1,
 		} );
 	}
+
+	useRecordCheckoutLoaded( {
+		recordEvent,
+		isLoading,
+		isApplePayAvailable,
+		responseCart,
+		storedCards,
+		productAliasFromUrl,
+	} );
 
 	if (
 		shouldShowEmptyCartPage( {

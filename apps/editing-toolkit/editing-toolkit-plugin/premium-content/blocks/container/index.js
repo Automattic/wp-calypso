@@ -66,6 +66,10 @@ const settings = {
 			type: 'number',
 			default: 0,
 		},
+		isPreview: {
+			type: 'boolean',
+			default: false,
+		},
 	},
 	/**
 	 * This is the display title for your block, which can be translated with `i18n` functions.
@@ -90,6 +94,12 @@ const settings = {
 	 * These can be any of WordPress’ Dashicons, or a custom svg element.
 	 */
 	icon,
+
+	example: {
+		attributes: {
+			isPreview: true,
+		},
+	},
 
 	/**
 	 * Optional block extended support features.
@@ -144,6 +154,7 @@ const settings = {
 	save,
 	providesContext: {
 		'premium-content/planId': 'selectedPlanId',
+		'premium-content/isPreview': 'isPreview',
 	},
 };
 

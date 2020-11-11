@@ -14,7 +14,7 @@ import { identity } from 'lodash';
  */
 import { CreditsPaymentBox } from '../credits-payment-box';
 import PaymentChatButton from '../payment-chat-button';
-import CheckoutTerms from '../checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import {
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,

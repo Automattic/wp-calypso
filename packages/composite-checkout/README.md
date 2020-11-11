@@ -148,6 +148,12 @@ The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
 
+### CheckoutCheckIcon
+
+An icon that is displayed for each complete step.
+
+Requires an `id` prop, which is a string that is used to construct the SVG `id`.
+
 ### CheckoutErrorBoundary
 
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
@@ -297,6 +303,15 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### PaymentLogo
+
+Renders a logo for a credit card.
+
+Takes two props:
+
+  - `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+  - `isSummary: boolean`. If true, will display a more compact version of the logo.
 
 ### PaymentProcessorResponseType
 

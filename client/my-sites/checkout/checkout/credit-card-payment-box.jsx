@@ -29,7 +29,7 @@ import { isWpComBusinessPlan, isWpComEcommercePlan } from 'calypso/lib/plans';
 import { ProgressBar } from '@automattic/components';
 import CartToggle from './cart-toggle';
 import RecentRenewals from './recent-renewals';
-import CheckoutTerms from './checkout-terms';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import IncompatibleProductMessage from './incompatible-product-message';
 import { setStripeObject } from 'calypso/lib/transaction/actions';
 

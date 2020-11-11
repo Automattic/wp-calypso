@@ -17,6 +17,7 @@ import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
@@ -29,6 +30,21 @@ export function showUpsellIfNoScan( context, next ) {
 
 export function showUpsellIfNoScanHistory( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanHistoryPlaceholder />, context.primary );
+	next();
+}
+
+export function showJetpackIsDisconnected( context, next ) {
+	const JetpackConnectionFailed = isJetpackCloud() ? (
+		<ScanUpsellPage reason="no_connected_jetpack" />
+	) : (
+		<WPCOMScanUpsellPage reason="no_connected_jetpack" />
+	);
+	context.primary = (
+		<IsJetpackDisconnectedSwitch
+			trueComponent={ JetpackConnectionFailed }
+			falseComponent={ context.primary }
+		/>
+	);
 	next();
 }
 

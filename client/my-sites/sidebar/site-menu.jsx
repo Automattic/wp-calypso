@@ -3,7 +3,7 @@
  */
 
 import PropTypes from 'prop-types';
-import React, { PureComponent } from 'react';
+import React, { PureComponent, Fragment } from 'react';
 import { connect } from 'react-redux';
 import { compact, includes, omit, reduce, get, partial } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -265,11 +265,11 @@ class SiteMenu extends PureComponent {
 		const menuItems = [ ...this.getDefaultMenuItems(), ...this.getCustomMenuItems() ];
 
 		return (
-			<ul>
+			<Fragment>
 				{ siteId && <QueryPostTypes siteId={ siteId } /> }
 				{ siteId && canCurrentUser( 'edit_posts' ) && <QuerySiteCommentCounts siteId={ siteId } /> }
 				{ menuItems.map( this.renderMenuItem, this ) }
-			</ul>
+			</Fragment>
 		);
 	}
 }

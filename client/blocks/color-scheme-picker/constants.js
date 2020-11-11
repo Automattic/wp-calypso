@@ -8,13 +8,20 @@ import { compact } from 'lodash';
  */
 import classicBrightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
 import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
+import blueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-blue.svg';
 import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
+import lightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-light.svg';
+import modernImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-modern.svg';
 import nightfallImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-nightfall.svg';
 import sakuraImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sakura.svg';
 import oceanImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ocean.svg';
+import aquaticImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-aquatic.svg';
+import sunriseImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunrise.svg';
 import sunsetImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-sunset.svg';
 import midnightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-midnight.svg';
+import coffeeImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-coffee.svg';
 import contrastImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-contrast.svg';
+import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-ectoplasm.svg';
 
 /**
  * !! Note !!
@@ -42,11 +49,35 @@ export default function ( translate ) {
 			},
 		},
 		{
+			label: translate( 'Blue' ),
+			value: 'blue',
+			thumbnail: {
+				cssClass: 'is-blue',
+				imageUrl: blueImg,
+			},
+		},
+		{
 			label: translate( 'Powder Snow' ),
 			value: 'powder-snow',
 			thumbnail: {
 				cssClass: 'is-powder-snow',
 				imageUrl: powderSnowImg,
+			},
+		},
+		{
+			label: translate( 'Light' ),
+			value: 'light',
+			thumbnail: {
+				cssClass: 'is-light',
+				imageUrl: lightImg,
+			},
+		},
+		{
+			label: translate( 'Modern' ),
+			value: 'modern',
+			thumbnail: {
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
 			},
 		},
 		{
@@ -74,6 +105,22 @@ export default function ( translate ) {
 			},
 		},
 		{
+			label: translate( 'Aquatic' ),
+			value: 'aquatic',
+			thumbnail: {
+				cssClass: 'is-aquatic',
+				imageUrl: aquaticImg,
+			},
+		},
+		{
+			label: translate( 'Sunrise' ),
+			value: 'sunrise',
+			thumbnail: {
+				cssClass: 'is-sunrise',
+				imageUrl: sunriseImg,
+			},
+		},
+		{
 			label: translate( 'Sunset' ),
 			value: 'sunset',
 			thumbnail: {
@@ -90,11 +137,27 @@ export default function ( translate ) {
 			},
 		},
 		{
+			label: translate( 'Coffee' ),
+			value: 'coffee',
+			thumbnail: {
+				cssClass: 'is-coffee',
+				imageUrl: coffeeImg,
+			},
+		},
+		{
 			label: translate( 'Contrast' ),
 			value: 'contrast',
 			thumbnail: {
 				cssClass: 'is-contrast',
 				imageUrl: contrastImg,
+			},
+		},
+		{
+			label: translate( 'Ectoplasm', { context: 'admin color scheme' } ),
+			value: 'ectoplasm',
+			thumbnail: {
+				cssClass: 'is-ectoplasm',
+				imageUrl: ectoplasmImg,
 			},
 		},
 	] );

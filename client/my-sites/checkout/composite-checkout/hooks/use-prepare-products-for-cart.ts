@@ -200,9 +200,12 @@ function useAddRenewalItems( {
 					dispatch( {
 						type: 'PRODUCTS_ADD_ERROR',
 						message: String(
-							translate( "Could not find renewal product matching '%(productSlug)s'", {
-								args: { productSlug },
-							} )
+							translate(
+								"I tried and failed to create a renewal product matching the identifier '%(productSlug)s'",
+								{
+									args: { productSlug },
+								}
+							)
 						),
 					} );
 					return null;
@@ -221,9 +224,12 @@ function useAddRenewalItems( {
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
 				message: String(
-					translate( "Creating renewal products failed for '%(productAlias)s'", {
-						args: { productAlias },
-					} )
+					translate(
+						"I tried and failed to create products matching the identifier '%(productAlias)s'",
+						{
+							args: { productAlias },
+						}
+					)
 				),
 			} );
 			return;
@@ -315,9 +321,12 @@ function useAddProductFromSlug( {
 			dispatch( {
 				type: 'PRODUCTS_ADD_ERROR',
 				message: String(
-					translate( "Creating products failed for '%(productAliasFromUrl)s'", {
-						args: { productAliasFromUrl },
-					} )
+					translate(
+						"I tried and failed to create products matching the identifier '%(productAlias)s'",
+						{
+							args: { productAlias: productAliasFromUrl },
+						}
+					)
 				),
 			} );
 			return;

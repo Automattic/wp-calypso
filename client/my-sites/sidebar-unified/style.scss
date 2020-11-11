@@ -21,6 +21,13 @@
 	--color-sidebar-gridicon-fill: #a2aab2;
 	--color-sidebar-notice-background: #3c434a;
 
+	--color-sidebar-submenu-background: #32373c;
+	--color-sidebar-submenu-text: #b4b9be;
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: #00b9eb;
+	--color-sidebar-submenu-selected-background: transparent;
+	--color-sidebar-submenu-selected-text: white;
+
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
@@ -107,7 +114,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__expandable-content {
-			background: #32373c;
+			background: var( --color-sidebar-submenu-background );
 			padding: 7px 0 8px;
 
 			.sidebar__menu-link {
@@ -116,18 +123,18 @@ $font-size: rem( 14px );
 				font-size: rem( 13px );
 				line-height: 1.4;
 				font-weight: 400;
-				color: #b4b9be;
+				color: var( --color-sidebar-submenu-text );
 
 				&:hover,
 				&:focus {
-					background-color: transparent;
-					color: var( --color-sidebar-menu-hover );
+					background-color: var( --color-sidebar-submenu-hover-background );
+					color: var( --color-sidebar-submenu-hover-text );
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: transparent;
-				color: white;
+				background-color: var( --color-sidebar-submenu-selected-background );
+				color: var( --color-sidebar-submenu-selected-text );
 				font-weight: 600;
 			}
 
@@ -483,7 +490,8 @@ $font-size: rem( 14px );
 			}
 		}
 
-		.sidebar__menu.is-togglable:not( .is-toggle-open ):hover {
+		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;
 
 			.sidebar__heading {
@@ -494,14 +502,15 @@ $font-size: rem( 14px );
 			// indicator arrow
 			.sidebar__heading::after {
 				display: block;
-				border-right-color: var( --color-sidebar-menu-hover-background );
+				border-right-color: var( --color-sidebar-submenu-background );
 			}
 
 			// flyout content
 			.sidebar__expandable-content {
 				display: block;
-				position: absolute;
 				top: 0;
+				bottom: auto;
+				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
 

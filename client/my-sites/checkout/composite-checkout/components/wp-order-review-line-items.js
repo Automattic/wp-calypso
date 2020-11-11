@@ -20,7 +20,7 @@ import { useSelector } from 'react-redux';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { isGSuiteProductSlug, isGSuiteOrExtraLicenseProductSlug } from 'calypso/lib/gsuite';
 import { planMatches, isWpComPlan } from 'calypso/lib/plans';
 import {
 	isMonthly as isMonthlyPlan,
@@ -73,7 +73,7 @@ function WPLineItem( {
 	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
-	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
+	const isGSuite = isGSuiteOrExtraLicenseProductSlug( item.wpcom_meta?.product_slug );
 
 	const productSlug = item.wpcom_meta?.product_slug;
 
@@ -100,16 +100,12 @@ function WPLineItem( {
 				<LineItemPrice item={ item } isSummary={ isSummary } />
 			</span>
 			{ item.sublabel && (
-				<>
-					<LineItemMeta>
-						<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
-						<DomainDiscountCallout item={ item } />
-						{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
-					</LineItemMeta>
-					<LineItemMeta>
-						<DiscountForFirstYearOnly item={ item } />
-					</LineItemMeta>
-				</>
+				<LineItemMeta>
+					<LineItemSublabelAndPrice item={ item } isMonthlyPricingTest={ isMonthlyPricingTest } />
+					<DomainDiscountCallout item={ item } />
+					{ isMonthlyPricingTest && <AnnualDiscountCallout item={ item } /> }
+					<DiscountForFirstYearOnly item={ item } />
+				</LineItemMeta>
 			) }
 			{ isGSuite && <GSuiteUsersList item={ item } /> }
 			{ hasDeleteButton && formStatus === FormStatus.READY && (
@@ -186,12 +182,12 @@ WPLineItem.propTypes = {
 };
 
 function LineItemPrice( { item, isSummary } ) {
-	const originalAmountDisplay =
-		item.wpcom_meta?.related_monthly_plan_cost_display ||
-		item.wpcom_meta?.item_original_subtotal_display;
-	const originalAmountInteger =
-		item.wpcom_meta?.related_monthly_plan_cost_integer ||
-		item.wpcom_meta?.item_original_subtotal_integer;
+	let originalAmountDisplay = item.wpcom_meta?.item_original_subtotal_display;
+	let originalAmountInteger = item.wpcom_meta?.item_original_subtotal_integer;
+	if ( item.wpcom_meta?.related_monthly_plan_cost_integer ) {
+		originalAmountInteger = item.wpcom_meta?.related_monthly_plan_cost_integer;
+		originalAmountDisplay = item.wpcom_meta?.related_monthly_plan_cost_display;
+	}
 	const isDiscounted = item.amount.value < originalAmountInteger && originalAmountDisplay;
 	const actualAmount = item.amount.displayValue;
 	return (
@@ -503,7 +499,7 @@ function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 	const translate = useTranslate();
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
-	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
+	const isGSuite = isGSuiteOrExtraLicenseProductSlug( item.wpcom_meta?.product_slug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
 		if ( isMonthlyPricingTest ) {
@@ -619,26 +615,14 @@ function DiscountForFirstYearOnly( { item } ) {
 		group: GROUP_WPCOM,
 	} );
 	if ( isWpcomOneYearPlan ) {
-		return (
-			<div>
-				{ translate(
-					'Promotional pricing is for the first year only. Your plan will renew at the regular price.'
-				) }
-			</div>
-		);
+		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
 	}
 	const isWpcomTwoYearPlan = planMatches( item.wpcom_meta.product_slug, {
 		term: TERM_BIENNIALLY,
 		group: GROUP_WPCOM,
 	} );
 	if ( isWpcomTwoYearPlan ) {
-		return (
-			<div>
-				{ translate(
-					'Promotional pricing is for the first 2 years only. Your plan will renew at the regular price.'
-				) }
-			</div>
-		);
+		return <DiscountCallout>{ translate( 'Discount for first term' ) }</DiscountCallout>;
 	}
 
 	return null;

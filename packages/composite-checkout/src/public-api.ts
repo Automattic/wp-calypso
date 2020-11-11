@@ -3,6 +3,7 @@
  */
 import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
+import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
@@ -82,7 +83,7 @@ import {
 	makeRedirectResponse,
 } from './lib/payment-processors';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus, PaymentProcessorResponseType } from './types';
+export * from './types';
 
 // Re-export the public API
 export {
@@ -103,14 +104,12 @@ export {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	FormStatus,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
-	PaymentProcessorResponseType,
+	PaymentLogo,
 	SubmitButtonWrapper,
-	TransactionStatus,
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,

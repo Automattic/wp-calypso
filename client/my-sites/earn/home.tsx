@@ -50,13 +50,6 @@ import {
  * Image dependencies
  */
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
-import adsImage from 'calypso/assets/images/earn/ads.svg';
-import recurringImage from 'calypso/assets/images/earn/recurring.svg';
-import donationsImage from 'calypso/assets/images/earn/donations.svg';
-import referralImage from 'calypso/assets/images/earn/referral.svg';
-import simplePaymentsImage from 'calypso/assets/images/earn/simple-payments.svg';
-import premiumContentImage from 'calypso/assets/images/earn/premium-content.svg';
-import paidNewsletterImage from 'calypso/assets/images/earn/newsletters.svg';
 
 /**
  * Style dependencies
@@ -171,9 +164,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: simplePaymentsImage,
-			},
+			icon: 'credit-card',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -229,9 +220,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: recurringImage,
-			},
+			icon: 'money',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -280,9 +269,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: donationsImage,
-			},
+			icon: 'heart-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -347,9 +334,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: premiumContentImage,
-			},
+			icon: 'bookmark-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -399,9 +384,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: paidNewsletterImage,
-			},
+			icon: 'mail',
 			actions: {
 				cta,
 			},
@@ -450,9 +433,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							},
 						}
 				  ),
-			image: {
-				path: referralImage,
-			},
+			icon: 'user-add',
 			actions: {
 				cta,
 			},
@@ -505,9 +486,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: adsImage,
-			},
+			icon: 'speaker',
 			actions: {
 				cta,
 				learnMoreLink,

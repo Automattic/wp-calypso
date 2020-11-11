@@ -139,10 +139,27 @@ a.rewind-flow-notice__title-warning:visited {
 	margin-bottom: 22.5px;
 
 	p {
-		color: var( --color-neutral-light );
-		font-size: $font-body-extra-small;
+		font-size: $font-body-small;
 		margin: 0;
 	}
+}
+
+.rewind-flow__progress-bar-header {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+}
+
+.rewind-flow__progress-bar-percent {
+	color: var( --studio-gray-50 );
+}
+
+.rewind-flow__progress-bar-message {
+	font-weight: 700;
+}
+
+.rewind-flow__progress-bar-entry {
+	color: var( --studio-gray-50 );
 }
 
 .rewind-flow__info {

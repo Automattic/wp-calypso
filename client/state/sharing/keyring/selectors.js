@@ -57,6 +57,21 @@ export function getBrokenKeyringConnectionsByName( state, service ) {
 }
 
 /**
+ * Returns an array of keyring connection objects for a specified service that
+ * need to be manually refreshed/reconnected.
+ *
+ * @param  {object} state   Global state tree
+ * @param  {string} service Service slug.
+ * @returns {Array}         Keyring connections, if any.
+ */
+export function getRefreshableKeyringConnections( state, service ) {
+	return filter(
+		getKeyringConnectionsByName( state, service ),
+		( conn ) => 'broken' === conn.status || 'refresh-failed' === conn.status
+	);
+}
+
+/**
  * Returns an array of keyring connection objects for a specific user.
  *
  * @param  {object} state  Global state tree

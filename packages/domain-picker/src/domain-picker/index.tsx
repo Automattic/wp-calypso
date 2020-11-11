@@ -3,11 +3,10 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { useSelect } from '@wordpress/data';
-import { times } from 'lodash';
+import { noop, times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
-import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
 import { __ } from '@wordpress/i18n';
@@ -67,7 +66,7 @@ export interface Props {
 	quantityExpanded?: number;
 
 	/** Called when the user leaves the search box */
-	onDomainSearchBlur: ( value: string ) => void;
+	onDomainSearchBlur?: ( value: string ) => void;
 
 	currentDomain?: string;
 
@@ -85,7 +84,7 @@ export interface Props {
 	initialDomainSearch?: string;
 
 	/** Called when the domain search query is changed */
-	onSetDomainSearch: ( value: string ) => void;
+	onSetDomainSearch?: ( value: string ) => void;
 
 	/** Whether to segregate free and paid domains from each other */
 	segregateFreeAndPaid?: boolean;
@@ -95,6 +94,8 @@ export interface Props {
 
 	/** Whether to show radio button or select button. Defaults to radio button */
 	itemType?: SUGGESTION_ITEM_TYPE;
+
+	locale?: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -104,17 +105,18 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur,
+	onDomainSearchBlur = noop,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch,
+	onSetDomainSearch = noop,
 	currentDomain,
 	isCheckingDomainAvailability,
 	existingSubdomain,
 	segregateFreeAndPaid = false,
 	showSearchField = true,
 	itemType = ITEM_TYPE_RADIO,
+	locale,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -133,13 +135,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		errorMessage: domainSuggestionErrorMessage,
 		state: domainSuggestionState,
 		retryRequest: retryDomainSuggestionRequest,
-	} =
-		useDomainSuggestions(
-			domainSearch.trim(),
-			quantityExpanded,
-			domainCategory,
-			useI18n().i18nLocale
-		) || {};
+	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,
