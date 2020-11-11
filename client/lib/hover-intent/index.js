@@ -15,23 +15,23 @@ class HoverIntent extends Component {
 		this.timer = 0;
 	}
 	componentDidMount() {
-		this.element.addEventListener( 'mouseover', this.dispatchOver.bind( this ), false );
-		this.element.addEventListener( 'mouseout', this.dispatchOut.bind( this ), false );
+		this.element.addEventListener( 'mouseover', this.dispatchOver, false );
+		this.element.addEventListener( 'mouseout', this.dispatchOut, false );
 	}
 	componentWillUnmount() {
-		this.element.removeEventListener( 'mouseover', this.dispatchOver.bind( this ), false );
-		this.element.removeEventListener( 'mouseout', this.dispatchOut.bind( this ), false );
+		this.element.removeEventListener( 'mouseover', this.dispatchOver, false );
+		this.element.removeEventListener( 'mouseout', this.dispatchOut, false );
 	}
-	delay( e ) {
+	delay = ( e ) => {
 		if ( this.timer ) this.timer = clearTimeout( this.timer );
 		this.status = 0;
 		return this.props.onMouseOut.call( this.element, e );
-	}
-	tracker( e ) {
+	};
+	tracker = ( e ) => {
 		this.x = e.clientX;
 		this.y = e.clientY;
-	}
-	compare( e ) {
+	};
+	compare = ( e ) => {
 		if ( this.timer ) this.timer = clearTimeout( this.timer );
 		if ( Math.abs( this.pX - this.x ) + Math.abs( this.pY - this.y ) < this.props.sensitivity ) {
 			this.status = 1;
@@ -40,24 +40,24 @@ class HoverIntent extends Component {
 		this.pX = this.x;
 		this.pY = this.y;
 		this.timer = setTimeout( () => this.compare( this.element, e ), this.props.interval );
-	}
-	dispatchOver( e ) {
+	};
+	dispatchOver = ( e ) => {
 		if ( this.timer ) this.timer = clearTimeout( this.timer );
-		this.element.removeEventListener( 'mousemove', this.tracker.bind( this ), false );
+		this.element.removeEventListener( 'mousemove', this.tracker, false );
 		if ( this.status !== 1 ) {
 			this.pX = e.clientX;
 			this.pY = e.clientY;
-			this.element.addEventListener( 'mousemove', this.tracker.bind( this ), false );
+			this.element.addEventListener( 'mousemove', this.tracker, false );
 			this.timer = setTimeout( () => this.compare( this.element, e ), this.props.interval );
 		}
-	}
-	dispatchOut( e ) {
+	};
+	dispatchOut = ( e ) => {
 		if ( this.timer ) this.timer = clearTimeout( this.timer );
-		this.element.removeEventListener( 'mousemove', this.tracker.bind( this ), false );
+		this.element.removeEventListener( 'mousemove', this.tracker, false );
 		if ( this.status === 1 ) {
 			this.timer = setTimeout( () => this.delay( this.element, e ), this.props.timeout );
 		}
-	}
+	};
 	render() {
 		return React.cloneElement( this.props.children, {
 			ref: ( element ) => {
