@@ -98,9 +98,9 @@ class CustomNameserversForm extends React.PureComponent {
 	};
 
 	handleChange = ( nameserver, index ) => {
-		this.props.onChange(
-			this.props.nameservers.map( ( ns, idx ) => ( idx === index ? nameserver : ns ) )
-		);
+		const nameservers = [ ...this.props.nameservers ];
+		nameservers[ index ] = nameserver;
+		this.props.onChange( nameservers );
 	};
 
 	render() {
