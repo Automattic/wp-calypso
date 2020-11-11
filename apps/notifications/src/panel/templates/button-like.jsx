@@ -2,7 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useContext } from 'react';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -12,34 +12,40 @@ import { setLikeStatus } from '../flux/note-actions';
 import ActionButton from './action-button';
 import { keys } from '../helpers/input';
 import { getReferenceId } from '../helpers/notes';
+import { RestClientContext } from '../Notifications';
 
-const LikeButton = ( { commentId, isLiked, note, translate } ) => (
-	<ActionButton
-		{ ...{
-			icon: 'star',
-			isActive: isLiked,
-			hotkey: keys.KEY_L,
-			onToggle: () =>
-				setLikeStatus(
-					note.id,
-					getReferenceId( note, 'site' ),
-					getReferenceId( note, 'post' ),
-					getReferenceId( note, 'comment' ),
-					! isLiked
-				),
-			text: isLiked
-				? translate( 'Liked', { context: 'verb: past-tense' } )
-				: translate( 'Like', { context: 'verb: imperative' } ),
-			title: isLiked
-				? commentId
-					? translate( 'Remove like from comment' )
-					: translate( 'Remove like from post' )
-				: commentId
-				? translate( 'Like comment', { context: 'verb: imperative' } )
-				: translate( 'Like post', { context: 'verb: imperative' } ),
-		} }
-	/>
-);
+const LikeButton = ( { commentId, isLiked, note, translate } ) => {
+	const restClient = useContext( RestClientContext );
+
+	return (
+		<ActionButton
+			{ ...{
+				icon: 'star',
+				isActive: isLiked,
+				hotkey: keys.KEY_L,
+				onToggle: () =>
+					setLikeStatus(
+						note.id,
+						getReferenceId( note, 'site' ),
+						getReferenceId( note, 'post' ),
+						getReferenceId( note, 'comment' ),
+						! isLiked,
+						restClient
+					),
+				text: isLiked
+					? translate( 'Liked', { context: 'verb: past-tense' } )
+					: translate( 'Like', { context: 'verb: imperative' } ),
+				title: isLiked
+					? commentId
+						? translate( 'Remove like from comment' )
+						: translate( 'Remove like from post' )
+					: commentId
+					? translate( 'Like comment', { context: 'verb: imperative' } )
+					: translate( 'Like post', { context: 'verb: imperative' } ),
+			} }
+		/>
+	);
+};
 
 LikeButton.propTypes = {
 	commentId: PropTypes.number,

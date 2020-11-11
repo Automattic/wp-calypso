@@ -5,7 +5,6 @@ import { store as reduxStore } from '../state/';
 import actions from '../state/actions';
 
 import { wpcom } from '../rest-client/wpcom';
-import store from './store';
 import { bumpStat as rawBumpStat } from '../rest-client/bump-stat';
 
 const { recordTracksEvent } = require( '../helpers/stats' );
@@ -14,13 +13,7 @@ function bumpStat( name ) {
 	rawBumpStat( 'notes-click-action', name );
 }
 
-function updateNote( id ) {
-	const globalClient = store.get( 'global' ).client;
-
-	return () => globalClient.getNote( id );
-}
-
-export const setApproveStatus = function ( noteId, siteId, commentId, isApproved, type ) {
+export const setApproveStatus = function ( noteId, siteId, commentId, isApproved, type, client ) {
 	const comment = wpcom().site( siteId ).comment( commentId );
 
 	reduxStore.dispatch( actions.notes.approveNote( noteId, isApproved ) );
@@ -29,10 +22,12 @@ export const setApproveStatus = function ( noteId, siteId, commentId, isApproved
 		note_type: type,
 	} );
 
-	comment.update( { status: isApproved ? 'approved' : 'unapproved' }, updateNote( noteId ) );
+	comment.update( { status: isApproved ? 'approved' : 'unapproved' }, () =>
+		client.getNote( noteId )
+	);
 };
 
-export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLiked ) {
+export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLiked, client ) {
 	const type = commentId ? 'comment' : 'post';
 	const target =
 		'comment' === type
@@ -46,8 +41,8 @@ export const setLikeStatus = function ( noteId, siteId, postId, commentId, isLik
 	} );
 
 	return isLiked
-		? target.like().add( updateNote( noteId ) )
-		: target.like().del( updateNote( noteId ) );
+		? target.like().add( () => client.getNote( noteId ) )
+		: target.like().del( () => client.getNote( noteId ) );
 };
 
 export const spamNote = function ( note ) {
