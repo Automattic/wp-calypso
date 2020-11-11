@@ -96,7 +96,8 @@ class DomainSearchResults extends React.Component {
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
-		let availabilityElement, offer;
+		let availabilityElement;
+		let offer;
 
 		if (
 			domain &&

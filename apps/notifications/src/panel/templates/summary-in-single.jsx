@@ -94,7 +94,8 @@ var Header = React.createFactory(
 
 class SummaryInSingle extends React.Component {
 	render() {
-		var header_url, parser;
+		var header_url;
+		var parser;
 		if ( ! this.props.note.header || 0 === this.props.note.header.length ) {
 			return <span />;
 		}

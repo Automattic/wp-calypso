@@ -625,7 +625,8 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 	}
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
@@ -662,7 +663,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	};
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );

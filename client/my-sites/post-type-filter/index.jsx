@@ -54,7 +54,8 @@ export class PostTypeFilter extends Component {
 		return reduce(
 			counts,
 			( memo, count, status ) => {
-				let label, pathStatus;
+				let label;
+				let pathStatus;
 				switch ( status ) {
 					case 'publish':
 						label = this.props.translate( 'Published', {

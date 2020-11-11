@@ -25,7 +25,8 @@ import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-select
  */
 const allowedCategoryNames = [ 'new', 'popular', 'featured' ];
 
-let lastPluginsListVisited, lastPluginsQuerystring;
+let lastPluginsListVisited;
+let lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );

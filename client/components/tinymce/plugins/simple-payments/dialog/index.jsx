@@ -385,7 +385,10 @@ class SimplePaymentsDialog extends Component {
 
 		const formCanBeSubmitted = formIsValid && ( formIsDirty || isDirtyAfterImageEdit );
 
-		let cancelHandler, finishHandler, finishDisabled, finishLabel;
+		let cancelHandler;
+		let finishHandler;
+		let finishDisabled;
+		let finishLabel;
 		if ( activeTab === 'form' && isNumber( editedPaymentId ) ) {
 			// When editing an existing payment, show:
 			// - "Cancel" buttons that drops the changes and navigates back to where we came from

@@ -11,7 +11,10 @@ import sinon from 'sinon';
 jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
 
 describe( 'index', () => {
-	let FollowList, FollowListSite, followList, site;
+	let FollowList;
+	let FollowListSite;
+	let followList;
+	let site;
 
 	beforeAll( () => {
 		FollowList = require( 'calypso/lib/follow-list' );

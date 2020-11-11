@@ -21,11 +21,11 @@ const isErrorNotice = ( action ) => {
 
 describe( 'wpcom-api', () => {
 	describe( 'email accounts request', () => {
-		const siteId = 1,
-			action = {
-				type: EMAIL_ACCOUNTS_REQUEST,
-				siteId,
-			};
+		const siteId = 1;
+		const action = {
+			type: EMAIL_ACCOUNTS_REQUEST,
+			siteId,
+		};
 
 		describe( '#getEmailAccounts', () => {
 			test( 'should dispatch an HTTP request to the get email-accounts endpoint', () => {

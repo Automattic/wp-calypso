@@ -146,8 +146,8 @@ const notices = {
 		if ( ! notice.container ) {
 			return;
 		}
-		const containerList = list[ notice.container ],
-			index = containerList.indexOf( notice );
+		const containerList = list[ notice.container ];
+		const index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
 			return;

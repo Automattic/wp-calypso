@@ -60,8 +60,8 @@ export class PaymentBox extends PureComponent {
 			/>
 		);
 
-		let labelAdditionalText = '',
-			webPaymentMethod = '';
+		let labelAdditionalText = '';
+		let webPaymentMethod = '';
 
 		switch ( method ) {
 			case 'credit-card':
@@ -167,8 +167,8 @@ export class PaymentBox extends PureComponent {
 
 	render() {
 		const paymentMethods = this.getPaymentMethods();
-		const cardClass = classNames( 'payment-box', this.props.classSet ),
-			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
+		const cardClass = classNames( 'payment-box', this.props.classSet );
+		const contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
 		const titleText = this.props.currentPaymentMethod
 			? this.props.translate( 'Pay with %(paymentMethod)s', {

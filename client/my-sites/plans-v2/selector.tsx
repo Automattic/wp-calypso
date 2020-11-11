@@ -42,14 +42,14 @@ import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
-const SelectorPage = ( {
+const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
 	urlQueryArgs,
 	header,
 	footer,
-}: SelectorPageProps ) => {
+} ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );

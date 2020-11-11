@@ -33,16 +33,14 @@ const DomainRegistrationDetails = ( {
 	hasNonPrimaryDomainsFlag,
 	onPickPlanUpsellClick,
 } ) => {
-	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
-		domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified ),
-		hasOtherPrimaryDomain =
-			selectedSite.options &&
-			selectedSite.options.is_mapped_domain &&
-			selectedSite.domain !== domain,
-		showPlanUpsell =
-			hasNonPrimaryDomainsFlag && isFreePlan( selectedSite.plan ) && ! purchases.some( isPlan ),
-		purchasedDomain = purchases.find( isDomainRegistration ).meta,
-		isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified );
+	const hasOtherPrimaryDomain =
+		selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
+	const showPlanUpsell =
+		hasNonPrimaryDomainsFlag && isFreePlan( selectedSite.plan ) && ! purchases.some( isPlan );
+	const purchasedDomain = purchases.find( isDomainRegistration ).meta;
+	const isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
 
 	return (
 		<div>

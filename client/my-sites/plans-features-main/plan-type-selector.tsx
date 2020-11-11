@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useTranslate } from 'i18n-calypso';
 import { Primitive } from 'utility-types';
 import { omit } from 'lodash';
+import styled from '@emotion/styled';
 
 /**
  * Internal dependencies
@@ -108,6 +109,15 @@ export const PopupMessages: React.FunctionComponent< PopupMessageProps > = ( {
 type MonthlyPricingProps = { isMonthlyPricingTest?: boolean };
 type IntervalTypeProps = Pick< Props, 'intervalType' > & MonthlyPricingProps;
 
+const IntervalTypeToggleWrapper = styled.div`
+	display: flex;
+	align-content: space-between;
+
+	> .segmented-control {
+		width: auto;
+	}
+`;
+
 export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = ( props ) => {
 	const translate = useTranslate();
 	const { intervalType, isMonthlyPricingTest } = props;
@@ -119,28 +129,30 @@ export const IntervalTypeToggle: React.FunctionComponent< IntervalTypeProps > = 
 	const popupIsVisible = Boolean( isMonthlyPricingTest && intervalType === 'monthly' );
 
 	return (
-		<SegmentedControl compact className={ segmentClasses } primary={ true }>
-			<SegmentedControl.Item
-				selected={ intervalType === 'monthly' }
-				path={ generatePath( props, { intervalType: 'monthly' } ) }
-			>
-				<span>
-					{ isMonthlyPricingTest ? translate( 'Pay monthly' ) : translate( 'Monthly billing' ) }
-				</span>
-			</SegmentedControl.Item>
+		<IntervalTypeToggleWrapper>
+			<SegmentedControl compact className={ segmentClasses } primary={ true }>
+				<SegmentedControl.Item
+					selected={ intervalType === 'monthly' }
+					path={ generatePath( props, { intervalType: 'monthly' } ) }
+				>
+					<span>
+						{ isMonthlyPricingTest ? translate( 'Pay monthly' ) : translate( 'Monthly billing' ) }
+					</span>
+				</SegmentedControl.Item>
 
-			<SegmentedControl.Item
-				selected={ intervalType === 'yearly' }
-				path={ generatePath( props, { intervalType: 'yearly' } ) }
-			>
-				<span ref={ ( ref ) => ref && setSpanRef( ref ) }>
-					{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
-				</span>
-				<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
-					{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
-				</PopupMessages>
-			</SegmentedControl.Item>
-		</SegmentedControl>
+				<SegmentedControl.Item
+					selected={ intervalType === 'yearly' }
+					path={ generatePath( props, { intervalType: 'yearly' } ) }
+				>
+					<span ref={ ( ref ) => ref && setSpanRef( ref ) }>
+						{ isMonthlyPricingTest ? translate( 'Pay annually' ) : translate( 'Yearly billing' ) }
+					</span>
+					<PopupMessages context={ spanRef } isVisible={ popupIsVisible }>
+						{ translate( 'Save up to 43% by paying annually and get a free domain for one year' ) }
+					</PopupMessages>
+				</SegmentedControl.Item>
+			</SegmentedControl>
+		</IntervalTypeToggleWrapper>
 	);
 };
 

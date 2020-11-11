@@ -564,7 +564,8 @@ export class ProductSelector extends Component {
 				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
 				: product.link.url;
 
-			let purchase, isCurrent;
+			let purchase;
+			let isCurrent;
 			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
 				isCurrent = currentPlanInSelectedTimeframe;

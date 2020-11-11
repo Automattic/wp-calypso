@@ -54,6 +54,7 @@ import {
 	hasDomainRegistration,
 	hasTransferProduct,
 } from 'calypso/lib/cart-values/cart-items';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -275,6 +276,7 @@ export default function WPCheckout( {
 
 	return (
 		<Checkout>
+			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
 				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
 					<CheckoutSummaryTitle>

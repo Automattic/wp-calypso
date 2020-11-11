@@ -403,8 +403,8 @@ export class ProductPurchaseFeaturesList extends Component {
 
 export default connect(
 	( state, ownProps ) => {
-		const selectedSite = getSelectedSite( state ),
-			selectedSiteId = getSelectedSiteId( state );
+		const selectedSite = getSelectedSite( state );
+		const selectedSiteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {

@@ -11,11 +11,11 @@ import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 import PluginsDataActions from './actions';
 
-let _shortLists = {},
-	_fullLists = {},
-	_fetching = {},
-	_currentSearchTerm = null,
-	_DEFAULT_FIRST_PAGE = 1;
+let _shortLists = {};
+let _fullLists = {};
+let _fetching = {};
+let _currentSearchTerm = null;
+let _DEFAULT_FIRST_PAGE = 1;
 
 function appendPage( category, page, list ) {
 	_fullLists[ category ] = _fullLists[ category ] || [];

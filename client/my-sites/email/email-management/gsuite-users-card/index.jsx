@@ -98,13 +98,13 @@ class GSuiteUsersCard extends React.Component {
 
 	renderUser( user, index ) {
 		if ( user.error ) {
-			let status = 'is-warning',
-				text = user.error,
-				supportLink = (
-					<a href={ CALYPSO_CONTACT }>
-						<strong>{ this.props.translate( 'Please contact support' ) }</strong>
-					</a>
-				);
+			let status = 'is-warning';
+			let text = user.error;
+			let supportLink = (
+				<a href={ CALYPSO_CONTACT }>
+					<strong>{ this.props.translate( 'Please contact support' ) }</strong>
+				</a>
+			);
 
 			const domain = find( this.props.domains, { name: user.domain } );
 			const subscribedDate = get( domain, 'googleAppsSubscription.subscribedDate', false );

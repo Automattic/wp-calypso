@@ -50,8 +50,8 @@ const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class P2Site extends React.Component {
 	static displayName = 'P2Site';
@@ -319,10 +319,10 @@ class P2Site extends React.Component {
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: window.location.href,
+		} );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;

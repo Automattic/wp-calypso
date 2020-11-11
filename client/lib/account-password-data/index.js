@@ -94,12 +94,12 @@ AccountPasswordData.prototype.getValidationFailures = function () {
 };
 
 AccountPasswordData.prototype.generate = function () {
-	let i,
-		length = random( 12, 35 ),
-		chars = map( this.charsets, function ( charset ) {
-			// Ensure one character from each character set is in the password
-			return sample( charset );
-		} );
+	let i;
+	let length = random( 12, 35 );
+	let chars = map( this.charsets, function ( charset ) {
+		// Ensure one character from each character set is in the password
+		return sample( charset );
+	} );
 
 	for ( i = 0; i < length; i++ ) {
 		if ( 0 === i % 4 ) {

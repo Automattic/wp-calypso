@@ -308,7 +308,8 @@ ABTest.prototype.getSavedVariation = function () {
 };
 
 ABTest.prototype.assignVariation = function () {
-	let variationName, randomAllocationAmount;
+	let variationName;
+	let randomAllocationAmount;
 	let sum = 0;
 
 	const userId = user()?.get()?.ID;

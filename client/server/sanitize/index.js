@@ -12,8 +12,8 @@
  */
 
 function jsSlashEncoder( charStr ) {
-	const code = charStr.charCodeAt( 0 ),
-		hex = code.toString( 16 ).toUpperCase();
+	const code = charStr.charCodeAt( 0 );
+	const hex = code.toString( 16 ).toUpperCase();
 
 	if ( code < 0x80 ) {
 		// ASCII

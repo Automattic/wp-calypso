@@ -17,7 +17,8 @@ import { ImageEditorToolbar } from '../image-editor-toolbar';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'ImageEditorToolbar', () => {
-	let defaultProps, wrapper;
+	let defaultProps;
+	let wrapper;
 
 	useSandbox( ( sandbox ) => {
 		defaultProps = {

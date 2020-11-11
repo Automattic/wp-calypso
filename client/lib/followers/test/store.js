@@ -19,7 +19,8 @@ import site from './lib/mock-site';
 const options = { siteId: site.ID };
 
 describe( 'WPCOM Followers Store', () => {
-	let Dispatcher, FollowersStore;
+	let Dispatcher;
+	let FollowersStore;
 
 	beforeEach( () => {
 		Dispatcher = require( 'calypso/dispatcher' );
@@ -47,8 +48,8 @@ describe( 'WPCOM Followers Store', () => {
 		} );
 
 		test( 'Fetching more followers should update the array in the store', () => {
-			let followers = FollowersStore.getFollowers( options ),
-				followersAgain;
+			let followers = FollowersStore.getFollowers( options );
+			let followersAgain;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
 			followersAgain = FollowersStore.getFollowers( options );
@@ -72,8 +73,8 @@ describe( 'WPCOM Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			let followers = FollowersStore.getFollowers( options ),
-				followersAgain;
+			let followers = FollowersStore.getFollowers( options );
+			let followersAgain;
 
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
@@ -82,9 +83,9 @@ describe( 'WPCOM Followers Store', () => {
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			let followers = FollowersStore.getFollowers( options ),
-				followersAfterRemove,
-				followersAfterError;
+			let followers = FollowersStore.getFollowers( options );
+			let followersAfterRemove;
+			let followersAfterError;
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			followersAfterRemove = FollowersStore.getFollowers( options );

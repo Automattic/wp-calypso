@@ -47,7 +47,8 @@ import isSupportVariationDetermined from 'calypso/state/selectors/is-support-var
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
-import { getABTestVariation } from 'calypso/lib/abtest';
+import { useIsLoading } from 'calypso/state/experiments/hooks';
+import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
 
 export default function WPCheckoutOrderSummary( {
@@ -65,8 +66,9 @@ export default function WPCheckoutOrderSummary( {
 	const plan = usePlanInCart();
 	const hasMonthlyPlan = Boolean( plan && isMonthly( plan?.wpcom_meta?.product_slug ) );
 	const hasRenewalInCart = useHasRenewalInCart();
+	const isExperimentLoading = useIsLoading();
 	const isMonthlyPricingTest =
-		plan && ! hasRenewalInCart && 'treatment' === getABTestVariation( 'monthlyPricing' );
+		useSelector( isTreatmentInMonthlyPricingTest ) && plan && ! hasRenewalInCart;
 
 	return (
 		<CheckoutSummaryCard
@@ -77,7 +79,7 @@ export default function WPCheckoutOrderSummary( {
 				<CheckoutSummaryFeaturesTitle>
 					{ translate( 'Included with your purchase' ) }
 				</CheckoutSummaryFeaturesTitle>
-				{ isCartUpdating ? (
+				{ isCartUpdating || isExperimentLoading ? (
 					<LoadingCheckoutSummaryFeaturesList />
 				) : (
 					<CheckoutSummaryFeaturesList
@@ -86,7 +88,7 @@ export default function WPCheckoutOrderSummary( {
 						nextDomainIsFree={ nextDomainIsFree }
 					/>
 				) }
-				{ ! isMonthlyPricingTest && <CheckoutSummaryHelp /> }
+				{ ! isMonthlyPricingTest && ! isExperimentLoading && <CheckoutSummaryHelp /> }
 				{ isMonthlyPricingTest && hasMonthlyPlan && (
 					<SwitchToAnnualPlan plan={ plan } onChangePlanLength={ onChangePlanLength } />
 				) }

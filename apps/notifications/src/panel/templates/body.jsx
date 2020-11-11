@@ -52,8 +52,8 @@ export const NoteBody = createReactClass( {
 	},
 
 	UNSAFE_componentWillMount: function () {
-		var note = this.props.note,
-			hasReplyBlock;
+		var note = this.props.note;
+		var hasReplyBlock;
 
 		if ( note.meta && note.meta.ids.reply_comment ) {
 			hasReplyBlock =

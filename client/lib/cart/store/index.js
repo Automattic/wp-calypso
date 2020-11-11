@@ -213,7 +213,8 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case TRANSACTION_PAYMENT_SET:
 			{
-				let postalCode, countryCode;
+				let postalCode;
+				let countryCode;
 
 				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
 				switch ( paymentMethod ) {

@@ -334,7 +334,8 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		let items, focusedIndex;
+		let items;
+		let focusedIndex;
 
 		if ( this.props.options.length ) {
 			items = filter( this.props.options, ( item ) => item && ! item.isLabel );

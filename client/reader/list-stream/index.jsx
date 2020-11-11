@@ -60,10 +60,10 @@ class ListStream extends React.Component {
 	};
 
 	render() {
-		const list = this.props.list,
-			shouldShowFollow = list && ! list.is_owner,
-			emptyContent = <EmptyContent />,
-			listStreamIconClasses = 'gridicon gridicon__list';
+		const list = this.props.list;
+		const shouldShowFollow = list && ! list.is_owner;
+		const emptyContent = <EmptyContent />;
+		const listStreamIconClasses = 'gridicon gridicon__list';
 
 		if ( list ) {
 			this.title = list.title;

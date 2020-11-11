@@ -6,12 +6,12 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import SelectorPage from './selector';
-import SelectorPageAlt from './selector-alt';
+
 import DetailsPage from './details';
+import { getSelectorComponent } from './iterations';
+import SelectorPage from './selector';
 import UpsellPage from './upsell';
 import { stringToDuration } from './utils';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -29,37 +29,18 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) ||
 		( TERM_ANNUALLY as Duration );
 	const urlQueryArgs: QueryArgs = context.query;
+	const SelectorComponent = getSelectorComponent() || SelectorPage;
 
-	const currentCROvariant = getJetpackCROActiveVersion();
-
-	switch ( currentCROvariant ) {
-		case 'i5':
-		case 'v1':
-		case 'v2':
-			context.primary = (
-				<SelectorPageAlt
-					defaultDuration={ duration }
-					rootUrl={ rootUrl }
-					siteSlug={ context.params.site || context.query.site }
-					urlQueryArgs={ urlQueryArgs }
-					header={ context.header }
-					footer={ context.footer }
-				/>
-			);
-			break;
-		default:
-			context.primary = (
-				<SelectorPage
-					defaultDuration={ duration }
-					rootUrl={ rootUrl }
-					siteSlug={ context.params.site || context.query.site }
-					urlQueryArgs={ urlQueryArgs }
-					header={ context.header }
-					footer={ context.footer }
-				/>
-			);
-			break;
-	}
+	context.primary = (
+		<SelectorComponent
+			defaultDuration={ duration }
+			rootUrl={ rootUrl }
+			siteSlug={ context.params.site || context.query.site }
+			urlQueryArgs={ urlQueryArgs }
+			header={ context.header }
+			footer={ context.footer }
+		/>
+	);
 
 	next();
 };
