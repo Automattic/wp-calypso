@@ -1078,7 +1078,10 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_BACKUP_REALTIME_V2 ]: {
 		getSlug: () => constants.FEATURE_BACKUP_REALTIME_V2,
-		getTitle: () => i18n.translate( 'Automated real-time site backups' ),
+		getTitle: () =>
+			( {
+				i5: i18n.translate( 'Automated real-time backups' ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated real-time site backups' ) ),
 	},
 
 	[ constants.FEATURE_PRODUCT_BACKUP_V2 ]: {
@@ -1514,7 +1517,11 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ONE_CLICK_RESTORE_V2 ]: {
 		getSlug: () => constants.FEATURE_ONE_CLICK_RESTORE_V2,
-		getTitle: () => i18n.translate( 'One-click restores from desktop or mobile' ),
+		getTitle: () =>
+			( {
+				i5: i18n.translate( 'One-click restores' ),
+			}[ getJetpackCROActiveVersion() ] ||
+			i18n.translate( 'One-click restores from desktop or mobile' ) ),
 	},
 
 	[ constants.FEATURE_ONE_CLICK_FIX_V2 ]: {

@@ -216,21 +216,36 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const backupDailyDescription = translate(
-		'Never lose a word, image, page, or time worrying about your site.'
-	);
+	const backupDailyDescription =
+		{
+			i5: translate(
+				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const searchDescription = translate(
-		'Help your site visitors find answers instantly so they keep reading and buying.'
-	);
+	const searchDescription =
+		{
+			i5: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
+
 	const scanDescription = translate(
 		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
 	);
-	const antiSpamDescription = translate(
-		'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
-	);
+	const antiSpamDescription =
+		{
+			i5: translate(
+				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate(
+			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
