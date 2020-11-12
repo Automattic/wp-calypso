@@ -25,6 +25,7 @@ import {
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import MoreInfoBox from '../more-info-box';
 
 /**
  * Type dependencies
@@ -45,6 +46,8 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	onDurationChange,
 } ) => {
 	const translate = useTranslate();
+
+	const bundleComparisonRef = useRef< null | HTMLElement >( null );
 	const planGridRef: RefObject< HTMLUListElement > = useRef( null );
 	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
 
@@ -79,6 +82,14 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 			),
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
+
+	const scrollToComparison = () => {
+		if ( bundleComparisonRef.current ) {
+			bundleComparisonRef.current?.scrollIntoView( {
+				behavior: 'smooth',
+			} );
+		}
+	};
 
 	const onResize = useCallback( () => {
 		if ( planGridRef ) {
@@ -137,7 +148,13 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						</li>
 					) ) }
 				</ul>
-				<div className="products-grid-i5__more"></div>
+				<div className="products-grid-i5__more">
+					<MoreInfoBox
+						headline={ translate( 'Need more info?' ) }
+						buttonLabel={ translate( 'Compare all product bundles' ) }
+						onButtonClick={ scrollToComparison }
+					/>
+				</div>
 			</section>
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
@@ -160,7 +177,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) }
 				</div>
 			</section>
-			<section className="products-grid-i5__section">
+			<section ref={ bundleComparisonRef } className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Bundle Comparison' ) }</h2>
 			</section>
 		</>
