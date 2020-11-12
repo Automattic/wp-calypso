@@ -7,12 +7,19 @@ import { Button } from '@automattic/components';
 /**
  * Type dependencies
  */
-import type { MoreInfoProps } from 'calypso/my-sites/plans-v2/types.ts';
+import type { TranslateResult } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+type MoreInfoProps = {
+	headline: TranslateResult;
+	buttonLabel: TranslateResult | ReactNode;
+	onButtonClick: () => void;
+};
 
 const MoreInfoBox: React.FC< MoreInfoProps > = ( { headline, buttonLabel, onButtonClick } ) => (
 	<div className="more-info-box__more-container">

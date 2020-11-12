@@ -130,9 +130,3 @@ export interface AvailableProductData {
 	product_slug: string;
 	cost: number;
 }
-
-export type MoreInfoProps = {
-	headline: TranslateResult;
-	buttonLabel: TranslateResult | ReactNode;
-	onButtonClick: () => void;
-};
