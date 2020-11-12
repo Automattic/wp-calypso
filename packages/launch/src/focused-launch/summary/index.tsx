@@ -350,6 +350,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	);
 };
 
+type StepIndexRenderFunction = ( renderOptions: {
+	stepIndex: number;
+	forwardStepIndex: boolean;
+} ) => ReactNode;
+
 const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 
@@ -373,20 +378,20 @@ const Summary: React.FunctionComponent = () => {
 	const hasPaidPlan = false;
 
 	// Prepare Steps
-	const renderSiteTitleStep = ( index: number ) => (
+	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<SiteTitleStep
-			stepIndex={ index }
-			key={ index }
+			stepIndex={ forwardStepIndex ? stepIndex : undefined }
+			key={ stepIndex }
 			value={ title }
 			onChange={ updateTitle }
 			onBlur={ saveTitle }
 		/>
 	);
 
-	const renderDomainStep = ( index: number ) => (
+	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
-			stepIndex={ index }
-			key={ index }
+			stepIndex={ forwardStepIndex ? stepIndex : undefined }
+			key={ stepIndex }
 			existingSubdomain={ siteSubdomain?.domain }
 			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
 			initialDomainSearch={ domainSearch }
@@ -401,14 +406,16 @@ const Summary: React.FunctionComponent = () => {
 			locale={ locale }
 		/>
 	);
-	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
+	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
+		<PlanStep stepIndex={ forwardStepIndex ? stepIndex : undefined } key={ stepIndex } />
+	);
 
 	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
 	// Active steps require user interaction
 	// Using this arrays allows to easily sort the steps correctly in both
 	// groups, and allows the actve steps to always show the correct step index.
-	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
-	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
+	const disabledSteps: StepIndexRenderFunction[] = [];
+	const activeSteps: StepIndexRenderFunction[] = [];
 	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
