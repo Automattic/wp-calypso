@@ -235,7 +235,6 @@ $font-size: rem( 14px );
 		}
 
 		.notice {
-			background-color: var( --color-sidebar-notice-background );
 			/* stylelint-disable-next-line scales/font-weight */
 			font-weight: 300;
 
@@ -255,12 +254,7 @@ $font-size: rem( 14px );
 					width: 18px;
 					height: 18px;
 					border-radius: 50%;
-					background: var( --color-sidebar-gridicon-fill );
 				}
-			}
-
-			.gridicon {
-				fill: var( --color-sidebar-notice-background );
 			}
 
 			.notice__content {
