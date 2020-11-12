@@ -87,9 +87,17 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search =
-		currentCROvariant === 'v2' ? translate( 'Jetpack Site Search' ) : translate( 'Jetpack Search' );
-	const scan = translate( 'Jetpack Scan' );
-	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
+		{
+			v2: translate( 'Jetpack Site Search' ),
+			i5: translate( 'Site Search' ),
+		}[ currentCROvariant ] || translate( 'Jetpack Search' );
+	const scan = currentCROvariant === 'i5' ? translate( 'Scan' ) : translate( 'Jetpack Scan' );
+	const antiSpam =
+		currentCROvariant === 'i5' ? (
+			translate( 'Anti-spam' )
+		) : (
+			<>{ translate( 'Jetpack Anti-spam' ) }</>
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
