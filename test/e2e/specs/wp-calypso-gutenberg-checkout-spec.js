@@ -172,13 +172,19 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	describe( 'Can make payment', function () {
 		const testCreditCardDetails = dataHelper.getTestCreditCardDetails();
 
-		step( 'Can enter/submit test payment details', async function () {
+		step( 'Can fill out billing information', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			return await securePaymentComponent.completeTaxDetailsInContactSection(
+				testCreditCardDetails
+			);
+		} );
+
+		step( 'Can enter and submit card details', async function () {
 			const existingCardIsPresent = await driverHelper.isElementPresent(
 				driver,
-				By.css( '[id*="existingCard-"]' )
+				By.css( '[id*="existingCard-"]:checked' )
 			);
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			await securePaymentComponent.completeTaxDetailsInContactSection( testCreditCardDetails );
 			if ( ! existingCardIsPresent ) {
 				await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			}
