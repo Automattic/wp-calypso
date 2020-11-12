@@ -1,0 +1,6 @@
+.is-fullscreen-mode {
+	.block-editor-block-list__layout > div:first-child > .block-list-appender:first-child .wp-block,
+	.block-editor-block-list__layout > .block-list-appender:first-child .wp-block {
+		margin: 0 auto !important;
+	}
+}

@@ -1,0 +1,139 @@
+@import "~@wordpress/base-styles/animations";
+@import "~@wordpress/base-styles/z-index";
+@import "~@wordpress/base-styles/mixins";
+@import "~@wordpress/base-styles/breakpoints";
+@import "~@wordpress/base-styles/colors";
+@import "~@wordpress/base-styles/variables";
+
+.edit-post-header-toolbar {
+	display: inline-flex;
+	align-items: center;
+	border: none;
+
+	// Hide all action buttons except the inserter on mobile.
+	.edit-post-header-toolbar__left > .components-button {
+		display: none;
+
+		@include break-small() {
+			display: inline-flex;
+		}
+	}
+
+	.edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle {
+		display: inline-flex;
+	}
+
+	// Hide table of contents and block navigation on mobile.
+	.block-editor-block-navigation {
+		display: none;
+
+		@include break-small() {
+			display: flex;
+		}
+	}
+
+	// The Toolbar component adds different styles to buttons, so we reset them
+	// here to the original button styles
+	.edit-post-header-toolbar__left > .components-button.has-icon,
+	.edit-post-header-toolbar__left > .components-dropdown > .components-button.has-icon {
+		height: $button-size;
+		min-width: $button-size;
+		padding: 6px;
+
+		&.is-pressed {
+			background: $gray-900;
+		}
+
+		&:focus:not(:disabled) {
+			box-shadow: 0 0 0 $border-width-focus var(--wp-admin-theme-color), inset 0 0 0 $border-width $white;
+			outline: 1px solid transparent;
+		}
+
+		&::before {
+			display: none;
+		}
+	}
+}
+
+.edit-post-header-toolbar__left {
+	display: inline-flex;
+	align-items: center;
+	padding-left: 0;
+}
+
+// Block toolbar when fixed to the top of the screen.
+.edit-post-header-toolbar__block-toolbar {
+	// Stack toolbar below Editor Bar.
+	position: absolute;
+	top: $header-height + $border-width;
+	left: 0;
+	right: 0;
+	background: $white;
+	border-bottom: $border-width solid $gray-400;
+
+	&:empty {
+		display: none;
+	}
+
+	.block-editor-block-toolbar .components-toolbar-group,
+	.block-editor-block-toolbar .components-toolbar {
+		border-top: none;
+		border-bottom: none;
+	}
+
+	.is-sidebar-opened & {
+		display: none;
+	}
+
+	.block-editor-block-toolbar__block-parent-selector-wrapper {
+		display: none;
+	}
+
+	@include break-medium {
+		.is-sidebar-opened & {
+			display: block;
+			right: $sidebar-width;
+		}
+	}
+
+	// Move toolbar into top Editor Bar.
+	@include break-wide {
+		position: static;
+		left: auto;
+		right: auto;
+		background: none;
+		border-bottom: none;
+
+		.is-sidebar-opened & {
+			right: auto;
+		}
+
+		.block-editor-block-toolbar {
+			border-left: $border-width solid $gray-400;
+		}
+
+		.block-editor-block-toolbar .components-toolbar-group,
+		.block-editor-block-toolbar .components-toolbar {
+			$top-toolbar-padding: ($header-height - $grid-unit-60) / 2;
+			height: $header-height;
+			padding: $top-toolbar-padding 0;
+		}
+	}
+}
+
+.edit-post-header-toolbar .edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle.has-icon {
+	margin-right: $grid-unit-10;
+	// Special dimensions for this button.
+	min-width: 32px;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+
+	.show-icon-labels & {
+		height: 36px;
+	}
+}
+
+.edit-post-header-toolbar__block-toolbar .block-editor-block-toolbar {
+	overflow-y: hidden;
+}
