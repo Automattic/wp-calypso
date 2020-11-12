@@ -56,7 +56,7 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, comm
 );
 
 type CommonStepProps = {
-	stepIndex: number;
+	stepIndex?: number;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -76,7 +76,8 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 					className="focused-launch-summary__input"
 					label={
 						<label className="focused-launch-summary__label">
-							{ stepIndex }. { __( 'Name your site', __i18n_text_domain__ ) }
+							{ stepIndex && `${ stepIndex }. ` }
+							{ __( 'Name your site', __i18n_text_domain__ ) }
 						</label>
 					}
 					value={ value }
@@ -158,7 +159,8 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							header={
 								<>
 									<label className="focused-launch-summary__label">
-										{ stepIndex }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
+										{ stepIndex && `${ stepIndex }. ` }
+										{ __( 'Confirm your domain', __i18n_text_domain__ ) }
 									</label>
 									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 										<Icon icon={ bulb } />
@@ -282,7 +284,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 				) : (
 					<>
 						<label className="focused-launch-summary__label">
-							{ stepIndex }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
+							{ stepIndex && `${ stepIndex }. ` }
+							{ __( 'Confirm your plan', __i18n_text_domain__ ) }
 						</label>
 						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 							<Icon icon={ bulb } />
