@@ -73,11 +73,10 @@ export default class extends React.Component {
 	};
 
 	_getState = ( fetchOptions ) => {
-		let paginationData;
 		let users;
 		fetchOptions = fetchOptions || this.props.fetchOptions;
 		fetchOptions = Object.assign( {}, defaultOptions, fetchOptions );
-		paginationData = UsersStore.getPaginationData( fetchOptions );
+		const paginationData = UsersStore.getPaginationData( fetchOptions );
 		users = UsersStore.getUsers( fetchOptions );
 
 		if ( this.props.exclude ) {

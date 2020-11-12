@@ -57,9 +57,7 @@ const StatsActionFollow = createReactClass( {
 					context: 'Stats: Follow action / Following status',
 			  } );
 		const gridiconType = following ? 'reader-following' : 'reader-follow';
-		let wrapperClassSet;
-
-		wrapperClassSet = classNames( wrapperClass );
+		const wrapperClassSet = classNames( wrapperClass );
 
 		return (
 			<li className="module-content-list-item-action">

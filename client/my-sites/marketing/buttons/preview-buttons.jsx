@@ -75,14 +75,13 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	detectWidgetPreviewChanges = ( event ) => {
-		let preview;
 		let offset;
 
 		// Ensure this only triggers in the context of an official preview
 		if ( ! this.refs.iframe ) {
 			return;
 		}
-		preview = ReactDom.findDOMNode( this.refs.iframe );
+		const preview = ReactDom.findDOMNode( this.refs.iframe );
 
 		// Parse the JSON message data
 		let data;
@@ -223,19 +222,17 @@ class SharingButtonsPreviewButtons extends React.Component {
 	};
 
 	getMorePreviewElement = () => {
-		let classes;
-		let hiddenButtons;
 		if ( ! this.props.showMore ) {
 			return;
 		}
 
-		classes = classNames( 'sharing-buttons-preview-buttons__more', {
+		const classes = classNames( 'sharing-buttons-preview-buttons__more', {
 			'is-visible': this.state.morePreviewVisible,
 		} );
 
 		// The more preview is only ever used to show hidden buttons, so we
 		// filter on the current set of buttons
-		hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
+		const hiddenButtons = filter( this.props.buttons, { visibility: 'hidden' } );
 
 		return (
 			<div ref="more" className={ classes } style={ this.state.morePreviewOffset }>

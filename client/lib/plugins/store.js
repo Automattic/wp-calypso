@@ -208,19 +208,17 @@ const PluginsStore = {
 
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
-		let plugin;
 		const plugins = this.getPlugins( sites );
-		let pluginSites;
 		if ( ! plugins ) {
 			return;
 		}
 
-		plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
+		const plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 		if ( ! plugin ) {
 			return null;
 		}
 
-		pluginSites = plugin.sites
+		const pluginSites = plugin.sites
 			.filter( ( site ) => site.visible )
 			.map( ( site ) => {
 				// clone the site object before adding a new property. Don't modify the return value of getSite
