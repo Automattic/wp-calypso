@@ -18,6 +18,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isSiteCreatedInPublicComingSoonMode } from 'calypso/state/selectors/is-site-coming-soon';
 
 /**
  * Style dependencies
@@ -97,7 +98,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { site, translate } = this.props;
+		const { site, translate, isPublicComingSoonSite } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -118,7 +119,7 @@ class Site extends React.Component {
 
 		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
 		const isPublicComingSoon =
-			isEnabled( 'coming-soon-v2' ) && ! site.is_private && this.props.site.is_coming_soon;
+			isPublicComingSoonSite && ! site.is_private && this.props.site.is_coming_soon;
 
 		return (
 			<div className={ siteClass }>
@@ -196,12 +197,14 @@ class Site extends React.Component {
 function mapStateToProps( state, ownProps ) {
 	const siteId = ownProps.siteId || ownProps.site.ID;
 	const site = siteId ? getSite( state, siteId ) : ownProps.site;
+	const isPublicComingSoonSite = isSiteCreatedInPublicComingSoonMode( state, siteId );
 
 	return {
 		siteId,
 		site,
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isPublicComingSoonSite,
 	};
 }
 

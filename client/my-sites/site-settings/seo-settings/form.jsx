@@ -38,7 +38,9 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteComingSoon, {
+	isSiteCreatedInPublicComingSoonMode,
+} from 'calypso/state/selectors/is-site-coming-soon';
 import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -58,7 +60,6 @@ import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
 import WebPreview from 'calypso/components/web-preview';
 import { getFirstConflictingPlugin } from 'calypso/lib/seo';
-import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -274,6 +275,7 @@ export class SeoForm extends React.Component {
 		const {
 			conflictedSeoPlugin,
 			isFetchingSite,
+			isPublicComingSoonSite,
 			siteId,
 			siteIsJetpack,
 			siteIsComingSoon,
@@ -322,7 +324,7 @@ export class SeoForm extends React.Component {
 						} ),
 			  };
 		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
-		const isPublicComingSoon = isEnabled( 'coming-soon-v2' ) && ! isSitePrivate && siteIsComingSoon;
+		const isPublicComingSoon = isPublicComingSoonSite && ! isSitePrivate && siteIsComingSoon;
 
 		return (
 			<div>
@@ -497,6 +499,8 @@ const mapStateToProps = ( state ) => {
 	const conflictedSeoPlugin = siteIsJetpack
 		? getFirstConflictingPlugin( activePlugins ) // Pick first one to keep the notice short.
 		: null;
+	const isPublicComingSoonSite = isSiteCreatedInPublicComingSoonMode( state, siteId );
+
 	return {
 		conflictedSeoPlugin,
 		isFetchingSite: isRequestingSite( state, siteId ),
@@ -515,6 +519,7 @@ const mapStateToProps = ( state ) => {
 		isSaveSuccess: isSiteSettingsSaveSuccessful( state, siteId ),
 		saveError: getSiteSettingsSaveError( state, siteId ),
 		path: getCurrentRouteParameterized( state, siteId ),
+		isPublicComingSoonSite,
 	};
 };
 

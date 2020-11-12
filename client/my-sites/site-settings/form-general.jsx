@@ -31,7 +31,9 @@ import { isBusiness } from 'calypso/lib/products-values';
 import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
 import QuerySiteSettings from 'calypso/components/data/query-site-settings';
 import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
-import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import isSiteComingSoon, {
+	isSiteCreatedInPublicComingSoonMode,
+} from 'calypso/state/selectors/is-site-coming-soon';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
@@ -632,7 +634,13 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
+		const {
+			isRequestingSettings,
+			translate,
+			handleSubmitForm,
+			isSavingSettings,
+			isPublicComingSoonSite,
+		} = this.props;
 
 		return (
 			<>
@@ -646,8 +654,8 @@ export class SiteSettingsFormGeneral extends Component {
 				/>
 				<Card>
 					<form>
-						{ ! config.isEnabled( 'coming-soon-v2' ) && this.visibilityOptionsComingSoon() }
-						{ config.isEnabled( 'coming-soon-v2' ) && this.visibilityOptionsComingSoonV2() }
+						{ ! isPublicComingSoonSite && this.visibilityOptionsComingSoon() }
+						{ isPublicComingSoonSite && this.visibilityOptionsComingSoonV2() }
 					</form>
 				</Card>
 			</>
@@ -783,10 +791,12 @@ const connectComponent = connect(
 		const siteId = getSelectedSiteId( state );
 		const siteIsJetpack = isJetpackSite( state, siteId );
 		const selectedSite = getSelectedSite( state );
+		const isPublicComingSoonSite = isSiteCreatedInPublicComingSoonMode( state, siteId );
 
 		return {
 			isUnlaunchedSite: isUnlaunchedSite( state, siteId ),
 			isComingSoon: isSiteComingSoon( state, siteId ),
+			isPublicComingSoonSite,
 			needsVerification: ! isCurrentUserEmailVerified( state ),
 			siteIsJetpack,
 			siteIsVip: isVipSite( state, siteId ),
