@@ -64,7 +64,7 @@ const siteMock = {
 		return wpcomPluginMock;
 	},
 };
-var mock = {
+const mock = {
 	site: function () {
 		return siteMock;
 	},

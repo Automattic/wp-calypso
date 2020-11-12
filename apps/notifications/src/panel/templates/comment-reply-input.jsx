@@ -286,29 +286,27 @@ const CommentReplyInput = createReactClass( {
 
 		if ( this.state.isSubmitting ) {
 			submitLink = <Spinner className="wpnc__spinner" />;
+		} else if ( value.length ) {
+			const submitLinkTitle = this.props.translate( 'Submit reply', {
+				context: 'verb: imperative',
+			} );
+			submitLink = (
+				<button
+					title={ submitLinkTitle }
+					className="active"
+					onClick={ this.handleSubmit }
+					onKeyDown={ this.handleSendEnter }
+				>
+					{ sendText }
+				</button>
+			);
 		} else {
-			if ( value.length ) {
-				var submitLinkTitle = this.props.translate( 'Submit reply', {
-					context: 'verb: imperative',
-				} );
-				submitLink = (
-					<button
-						title={ submitLinkTitle }
-						className="active"
-						onClick={ this.handleSubmit }
-						onKeyDown={ this.handleSendEnter }
-					>
-						{ sendText }
-					</button>
-				);
-			} else {
-				var submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
-				submitLink = (
-					<button title={ submitLinkTitle } className="inactive">
-						{ sendText }
-					</button>
-				);
-			}
+			const submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
+			submitLink = (
+				<button title={ submitLinkTitle } className="inactive">
+					{ sendText }
+				</button>
+			);
 		}
 
 		return (
