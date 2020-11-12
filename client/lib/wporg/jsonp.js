@@ -34,10 +34,10 @@ function noop() {}
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	let prefix = '__jp';
-	let timeout = 60000;
-	let enc = encodeURIComponent;
-	let target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
+	const prefix = '__jp';
+	const timeout = 60000;
+	const enc = encodeURIComponent;
+	const target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
 	let script;
 	let timer;
 	let id;

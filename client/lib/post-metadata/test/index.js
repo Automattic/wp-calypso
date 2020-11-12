@@ -30,7 +30,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the message if metadata contains message', () => {
-			let message = 'Post with Taxonomies';
+			const message = 'Post with Taxonomies';
 			let value;
 
 			value = PostMetadata.publicizeMessage( {
@@ -63,7 +63,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of done services in the metadata', () => {
-			let ID = 11491646;
+			const ID = 11491646;
 			let value;
 
 			value = PostMetadata.publicizeDone( {
@@ -74,7 +74,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646;
+			const ID = 11491646;
 			let value;
 
 			value = PostMetadata.publicizeDone( {
@@ -107,7 +107,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of numeric IDs of skipped services in the metadata', () => {
-			let ID = 11491646;
+			const ID = 11491646;
 			let value;
 
 			value = PostMetadata.publicizeSkipped( {
@@ -118,7 +118,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should only return IDs of services where metadata value is equal to "1"', () => {
-			let ID = 11491646;
+			const ID = 11491646;
 			let value;
 
 			value = PostMetadata.publicizeSkipped( {
@@ -149,7 +149,7 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return the address if metadata contains geolocation address', () => {
-			let address = 'New York, NY, USA';
+			const address = 'New York, NY, USA';
 			let value;
 
 			value = PostMetadata.geoLabel( {
@@ -188,8 +188,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should return an array of float values if metadata contains coordinate', () => {
-			let latitude = 40.7127837;
-			let longitude = -74.00594130000002;
+			const latitude = 40.7127837;
+			const longitude = -74.00594130000002;
 			let value;
 
 			value = PostMetadata.geoCoordinates( {

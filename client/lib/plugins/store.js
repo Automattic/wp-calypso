@@ -27,9 +27,9 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
-let _fetching = {};
-let _pluginsBySite = {};
-let _filters = {
+const _fetching = {};
+const _pluginsBySite = {};
+const _filters = {
 	none: function () {
 		return false;
 	},
@@ -209,7 +209,7 @@ const PluginsStore = {
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
 		let plugin;
-		let plugins = this.getPlugins( sites );
+		const plugins = this.getPlugins( sites );
 		let pluginSites;
 		if ( ! plugins ) {
 			return;

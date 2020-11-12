@@ -175,8 +175,8 @@ class SharingButtonsPreviewButtons extends React.Component {
 		// to include the non-enabled icons in a preview. Non-enabled icons are
 		// only needed in the button selection tray, where official buttons are
 		// rendered in the text-only style.
-		let buttons = filter( this.props.buttons, { visibility: this.props.visibility } );
-		let previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
+		const buttons = filter( this.props.buttons, { visibility: this.props.visibility } );
+		const previewUrl = previewWidget.generatePreviewUrlFromButtons( buttons, this.props.showMore );
 
 		return (
 			<ResizableIframe

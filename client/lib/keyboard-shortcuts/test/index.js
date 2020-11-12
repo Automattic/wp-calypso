@@ -10,9 +10,9 @@ import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 describe( 'KeyboardShortcuts', () => {
 	test( 'should emit events to subscribers', () => {
-		let arbitraryData = 'hello, world?';
+		const arbitraryData = 'hello, world?';
 		let eventResult = '';
-		let handleEvent = function ( data ) {
+		const handleEvent = function ( data ) {
 			eventResult = data;
 		};
 

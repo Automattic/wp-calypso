@@ -1,16 +1,16 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me.connectedconnection
  */
 describe( 'wpcom.me.publicizeConnection', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
 
 	describe( 'wpcom.me.publicizeConnection.get', function () {
 		it( "should get current user' publicize connections", function () {
@@ -21,7 +21,7 @@ describe( 'wpcom.me.publicizeConnection', function () {
 					assert.ok( data );
 					assert.ok( data.connections );
 
-					let connectionId =
+					const connectionId =
 						data.publicize_connections && data.publicize_connections[ 0 ]
 							? data.publicize_connections[ 0 ].ID
 							: null;

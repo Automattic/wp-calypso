@@ -1,12 +1,12 @@
-var pluginsInstallCalls = 0;
-var pluginsAutoupdateCalls = 0;
-var pluginsActivateCalls = 0;
-var pluginsDeactivateCalls = 0;
-var pluginsDisableAutoupdateCalls = 0;
-var pluginsRemoveCalls = 0;
-var lastRequestParams = null;
-var deactivatedCallbacks = false;
-var wpcomPluginMock = {
+let pluginsInstallCalls = 0;
+let pluginsAutoupdateCalls = 0;
+let pluginsActivateCalls = 0;
+let pluginsDeactivateCalls = 0;
+let pluginsDisableAutoupdateCalls = 0;
+let pluginsRemoveCalls = 0;
+let lastRequestParams = null;
+let deactivatedCallbacks = false;
+const wpcomPluginMock = {
 	deactivate: function ( callback ) {
 		pluginsDeactivateCalls++;
 		callback();
@@ -17,7 +17,7 @@ var wpcomPluginMock = {
 		callback();
 	},
 };
-var pluginMock = {
+const pluginMock = {
 	activate: function ( callback ) {
 		pluginsActivateCalls++;
 		callback();
@@ -55,7 +55,7 @@ var pluginMock = {
 		}
 	},
 };
-var siteMock = {
+const siteMock = {
 	plugin: function () {
 		return pluginMock;
 	},

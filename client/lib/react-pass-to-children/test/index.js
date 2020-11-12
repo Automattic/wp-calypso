@@ -14,7 +14,7 @@ import passToChildren from '../';
 /**
  * Module variables
  */
-let DUMMY_PROPS = { data: [ 1, 2, 3 ] };
+const DUMMY_PROPS = { data: [ 1, 2, 3 ] };
 let PassThrough;
 
 PassThrough = class extends React.Component {
