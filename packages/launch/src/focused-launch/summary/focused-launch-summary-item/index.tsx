@@ -42,7 +42,8 @@ const FocusedLaunchSummaryItem: React.FunctionComponent< {
 	children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
 } > = ( { children, isSelected = false, readOnly = false } ) => {
 	return (
-		<div
+		<button
+			disabled={ readOnly }
 			className={ classnames( 'focused-launch-summary__item', {
 				'is-selected': isSelected,
 				'is-readonly': readOnly,
@@ -50,7 +51,7 @@ const FocusedLaunchSummaryItem: React.FunctionComponent< {
 		>
 			{ children[ 0 ] }
 			{ children[ 1 ] }
-		</div>
+		</button>
 	);
 };
 
