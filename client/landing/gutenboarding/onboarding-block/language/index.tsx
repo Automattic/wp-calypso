@@ -25,10 +25,10 @@ import languages from '@automattic/languages';
 import './style.scss';
 
 const LanguageStep: React.FunctionComponent = () => {
-	const { __ } = useI18n();
+	const { __, i18nLocale } = useI18n();
 
 	const localizedLanguageNames = useSelect( ( select ) =>
-		select( I18N_STORE ).getLocalizedLanguageNames()
+		select( I18N_STORE ).getLocalizedLanguageNames( i18nLocale )
 	);
 
 	const history = useHistory();
