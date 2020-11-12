@@ -30,19 +30,22 @@ export const LeadingContentSide: React.FunctionComponent< LeadingSideProps > = (
 };
 
 export const TrailingContentSide: React.FunctionComponent< TrailingSideProps > = ( props ) => {
-	if ( props.price ) {
-		return <div className="focused-launch-summary-item__price-cost">{ props.price }</div>;
+	if ( props.warningNote ) {
+		return <div className="focused-launch-summary-item__warning-note">{ props.warningNote }</div>;
 	}
-	return <div className="focused-launch-summary-item__warning-note">{ props.warningNote }</div>;
+	return <div className="focused-launch-summary-item__price-cost">{ props.price }</div>;
 };
 
-const FocusedLaunchSummaryItem: React.FunctionComponent< {
-	isSelected?: boolean;
-	readOnly?: boolean;
-	children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
-} > = ( { children, isSelected = false, readOnly = false } ) => {
+const FocusedLaunchSummaryItem: React.FunctionComponent<
+	{
+		isSelected?: boolean;
+		readOnly?: boolean;
+		children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
+	} & React.ButtonHTMLAttributes< HTMLButtonElement >
+> = ( { children, isSelected = false, readOnly = false, ...rest } ) => {
 	return (
 		<button
+			{ ...rest }
 			disabled={ readOnly }
 			className={ classnames( 'focused-launch-summary__item', {
 				'is-selected': isSelected,

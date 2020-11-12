@@ -316,21 +316,48 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</p>
 						<div>
 							{ hasPaidPlan ? (
-								<div>Locked premium plan</div>
+								<FocusedLaunchSummaryItem readOnly={ true }>
+									<LeadingContentSide label="FIGURE OUT A WAY TO GET THE PLAN NAME" />
+									<TrailingContentSide
+										price={
+											<>
+												<Icon icon={ check } size={ 18 } />{ ' ' }
+												{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
+											</>
+										}
+									/>
+								</FocusedLaunchSummaryItem>
 							) : (
 								[
-									<button
-										disabled={ hasPaidDomain || selectedPaidDomain }
+									<FocusedLaunchSummaryItem
+										readOnly={ hasPaidDomain || selectedPaidDomain }
 										onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
+										isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
 									>
-										{ selectedPlan?.isFree && '[Selected]' } Free plan item{ ' ' }
-										{ ( hasPaidDomain || selectedPaidDomain ) && 'not available with paid domain' }
-									</button>,
-									<button onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }>
-										{ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug && '[Selected]' }{ ' ' }
-										{ defaultPaidPlan?.title }{ ' ' }
-										{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
-									</button>,
+										<LeadingContentSide label={ __( 'Free plan', __i18n_text_domain__ ) } />
+										<TrailingContentSide
+											price={ __( 'Free', __i18n_text_domain__ ) }
+											warningNote={
+												hasPaidDomain || selectedPaidDomain
+													? __( 'Not available with your domain selection', __i18n_text_domain__ )
+													: ''
+											}
+										/>
+									</FocusedLaunchSummaryItem>,
+									<FocusedLaunchSummaryItem
+										onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }
+										isSelected={ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug }
+									>
+										<LeadingContentSide
+											label={ defaultPaidPlan?.title }
+											badgeText={
+												defaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
+											}
+										/>
+										<TrailingContentSide
+											price={ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
+										/>
+									</FocusedLaunchSummaryItem>,
 								]
 							) }
 						</div>
