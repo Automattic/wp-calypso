@@ -24,7 +24,7 @@ const actions = {
 };
 
 const selectors = {
-	isWpcomNuxEnabled: ( state ) => state.isNuxEnabled,
+	isWpcomNuxEnabled: ( state ) => true,
 };
 
 registerStore( 'automattic/nux', {

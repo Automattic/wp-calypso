@@ -7,10 +7,32 @@ $wpcom-modal-content-min-height: 350px;
 $wpcom-modal-footer-padding-v: 20px;
 $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 
+.components-modal__screen-overlay {
+	// background-color: transparent;
+	bottom: 0;
+	left: 0;
+	right: 760px;
+
+	// Small screen
+	@media ( max-width: $wpcom-modal-breakpoint ) {
+		width: 90vw;
+		min-width: 90vw;
+		left: 0;
+		right: 5vw;
+	}
+
+	// Tablet & desktop
+	@media ( min-width: $wpcom-modal-breakpoint ) {
+		width: 720px;
+		height: $wpcom-modal-content-min-height;
+		top: 70%;
+	}
+}
+
 .wpcom-block-editor-nux-tour {
 	&.components-modal__frame {
 		overflow: visible;
-		height: 65vh;
+		height: 100%;
 		top: calc( 17.5vh - #{$wpcom-modal-footer-height / 2} );
 
 		// Small screen
@@ -24,7 +46,7 @@ $wpcom-modal-footer-height: 30px + ( $wpcom-modal-footer-padding-v * 2 );
 		// Tablet & desktop
 		@media ( min-width: $wpcom-modal-breakpoint ) {
 			width: 720px;
-			height: $wpcom-modal-content-min-height;
+			// height: $wpcom-modal-content-min-height;
 			top: calc( 50% - #{$wpcom-modal-footer-height / 2} );
 		}
 	}
