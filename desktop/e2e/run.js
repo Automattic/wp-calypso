@@ -116,7 +116,7 @@ async function run() {
 		await videoRecorder.startVideo();
 
 		const parentEnv = process.env;
-		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, null, {
+		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, appLog.fd, {
 			WP_DEBUG_LOG: appLog.path,
 			DEBUG: true,
 			...parentEnv,
