@@ -59,6 +59,23 @@ type CommonStepProps = {
 	stepIndex?: number;
 };
 
+function generatePlanStepOptions(
+	hasPaidDomain: boolean,
+	selectedPaidDomain: boolean,
+	hasPaidPlan: boolean,
+	onSelectPlan
+) {
+	if ( hasPaidPlan ) {
+		return <div>Locked premium plan</div>;
+	}
+	return [
+		<div>
+			free plan item { ( hasPaidDomain || selectedPaidDomain ) && 'not available with paid domain' }
+		</div>,
+		<div>Premium plan</div>,
+	];
+}
+
 // Props in common between all summary steps + a few props from <TextControl>
 type SiteTitleStepProps = CommonStepProps &
 	Pick< React.ComponentProps< typeof TextControl >, 'value' | 'onChange' | 'onBlur' >;
@@ -244,11 +261,17 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	);
 };
 
-type PlanStepProps = CommonStepProps & { hasPaidPlan?: boolean };
+type PlanStepProps = CommonStepProps & {
+	hasPaidPlan?: boolean;
+	hasPaidDomain?: boolean;
+	selectedPaidDomain?: boolean;
+};
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	stepIndex,
 	hasPaidPlan = false,
+	hasPaidDomain = false,
+	selectedPaidDomain = false,
 } ) => {
 	return (
 		<SummaryStep
@@ -279,7 +302,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								) }
 							</p>
 						</label>
-						{ /* @TODO: insert locked purchased plan item here */ }
 					</>
 				) : (
 					<>
@@ -299,6 +321,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								}
 							) }
 						</p>
+						<div>
+							{ generatePlanStepOptions( hasPaidDomain, selectedPaidDomain, hasPaidPlan, null ) }
+						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
 				)
@@ -406,8 +431,15 @@ const Summary: React.FunctionComponent = () => {
 			locale={ locale }
 		/>
 	);
+
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
-		<PlanStep stepIndex={ forwardStepIndex ? stepIndex : undefined } key={ stepIndex } />
+		<PlanStep
+			hasPaidPlan={ hasPaidPlan }
+			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
+			hasPaidDomain={ hasPaidDomain }
+			stepIndex={ forwardStepIndex ? stepIndex : undefined }
+			key={ stepIndex }
+		/>
 	);
 
 	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
