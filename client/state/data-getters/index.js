@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { omit, sortBy } from 'lodash';
+import { omit, isArray, isUndefined, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
@@ -64,14 +64,35 @@ export const requestActivityActionTypeCounts = (
 };
 
 export const getRequestActivityLogsId = ( siteId, filter ) => {
-	const group =
-		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
-	const before = filter && filter.before ? filter.before : '';
-	const after = filter && filter.after ? filter.after : '';
-	const on = filter && filter.on ? filter.on : '';
-	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
+	const knownFilterOptions = [
+		'action',
+		'after',
+		'aggregate',
+		'before',
+		'by',
+		'dateRange',
+		'group',
+		'name',
+		'notGroup',
+		'number',
+		'on',
+		'sortOrder',
+	];
+	const filterCacheKey = knownFilterOptions
+		.map( ( opt ) => {
+			const optionValue = filter[ opt ];
+			if ( isUndefined( optionValue ) ) {
+				return undefined;
+			}
 
-	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+			const cacheKeyValue = String( isArray( optionValue ) ? sortBy( optionValue ) : optionValue );
+
+			return `${ opt }=${ cacheKeyValue }`;
+		} )
+		.filter( ( pair ) => pair )
+		.join( '-' );
+
+	return `activity-log-${ siteId }-${ filterCacheKey }`;
 };
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
