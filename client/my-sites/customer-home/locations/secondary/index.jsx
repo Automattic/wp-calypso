@@ -33,6 +33,7 @@ const Secondary = ( { cards } ) => {
 					cardComponents[ card ] &&
 					React.createElement( cardComponents[ card ], {
 						key: card,
+						card,
 					} )
 			) }
 		</>

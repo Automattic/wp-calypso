@@ -91,6 +91,21 @@
 	&.is-loading > *:not( .spinner ) {
 		visibility: hidden;
 	}
+
+	&.is-urgent {
+		background: var( --color-neutral-80 );
+		color: var( --color-neutral-0 );
+
+		.task__badge {
+			background: var( --color-neutral-0 );
+			color: var( --color-text );
+		}
+
+		.task__description,
+		.task__skip {
+			color: var( --color-neutral-0 );
+		}
+	}
 }
 
 .task__skip-popover .popover__menu {

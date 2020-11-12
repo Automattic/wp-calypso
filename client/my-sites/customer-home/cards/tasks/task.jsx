@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { connect, useDispatch } from 'react-redux';
 import { Button } from '@automattic/components';
@@ -31,6 +31,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import './style.scss';
 
 const Task = ( {
+	actionButton,
 	actionOnClick,
 	actionTarget,
 	actionText,
@@ -39,19 +40,22 @@ const Task = ( {
 	completeOnStart = false,
 	description,
 	illustration,
+	isLoading: forceIsLoading = false,
+	isUrgent = false,
 	enableSkipOptions = true,
 	scary,
 	siteId,
 	taskId,
 	timing,
 	title,
-	actionButton,
 } ) => {
-	const [ isLoading, setIsLoading ] = useState( false );
+	const [ isLoading, setIsLoading ] = useState( forceIsLoading );
 	const [ areSkipOptionsVisible, setSkipOptionsVisible ] = useState( false );
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const skipButtonRef = useRef( null );
+
+	useEffect( () => setIsLoading( forceIsLoading ), [ forceIsLoading ] );
 
 	const startTask = () => {
 		if ( actionOnClick instanceof Function ) {
@@ -100,7 +104,7 @@ const Task = ( {
 	};
 
 	return (
-		<div className={ classnames( 'task', { 'is-loading': isLoading } ) }>
+		<div className={ classnames( 'task', { 'is-loading': isLoading, 'is-urgent': isUrgent } ) }>
 			{ isLoading && <Spinner /> }
 			<div className="task__text">
 				{ timing && (

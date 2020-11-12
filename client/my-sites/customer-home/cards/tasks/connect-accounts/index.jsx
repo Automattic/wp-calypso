@@ -12,14 +12,13 @@ import { isMobile } from '@automattic/viewport';
 import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_CONNECT_ACCOUNTS } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
 import connectSocialAccountsIllustration from 'calypso/assets/images/customer-home/illustration--task-connect-social-accounts.svg';
 
-const ConnectAccountsTask = ( { siteSlug } ) => {
+const ConnectAccountsTask = ( { card, siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -38,7 +37,7 @@ const ConnectAccountsTask = ( { siteSlug } ) => {
 				}
 				illustration={ connectSocialAccountsIllustration }
 				timing={ 3 }
-				taskId={ TASK_CONNECT_ACCOUNTS }
+				taskId={ card }
 			/>
 		</>
 	);

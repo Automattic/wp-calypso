@@ -25,6 +25,7 @@ const Tertiary = ( { cards } ) => {
 					cardComponents[ card ] &&
 					React.createElement( cardComponents[ card ], {
 						key: index,
+						card,
 					} )
 			) }
 		</>

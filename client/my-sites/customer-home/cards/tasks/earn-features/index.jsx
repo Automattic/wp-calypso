@@ -10,10 +10,9 @@ import { connect } from 'react-redux';
  */
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { TASK_EARN_FEATURES } from 'calypso/my-sites/customer-home/cards/constants';
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
-const EarnFeatures = ( { siteSlug } ) => {
+const EarnFeatures = ( { card, siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -26,7 +25,7 @@ const EarnFeatures = ( { siteSlug } ) => {
 			actionUrl={ `/earn/${ siteSlug }` }
 			completeOnStart={ false }
 			illustration={ earnIllustration }
-			taskId={ TASK_EARN_FEATURES }
+			taskId={ card }
 		/>
 	);
 };

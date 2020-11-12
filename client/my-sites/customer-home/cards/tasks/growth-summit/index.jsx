@@ -8,10 +8,9 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { TASK_GROWTH_SUMMIT } from 'calypso/my-sites/customer-home/cards/constants';
 import growthSummitIllustration from 'calypso/assets/images/customer-home/illustration--growth-summit.svg';
 
-const GrowthSummit = () => {
+const GrowthSummit = ( { card } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -25,7 +24,7 @@ const GrowthSummit = () => {
 			actionTarget="_blank"
 			completeOnStart={ false }
 			illustration={ growthSummitIllustration }
-			taskId={ TASK_GROWTH_SUMMIT }
+			taskId={ card }
 		/>
 	);
 };

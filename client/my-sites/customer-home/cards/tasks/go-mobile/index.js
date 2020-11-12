@@ -11,13 +11,11 @@ import PropTypes from 'prop-types';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { preventWidows } from 'calypso/lib/formatting';
 import AppsBadge from 'calypso/blocks/get-apps/apps-badge';
-import {
-	TASK_GO_MOBILE_ANDROID,
-	TASK_GO_MOBILE_IOS,
-} from 'calypso/my-sites/customer-home/cards/constants';
+import { TASK_GO_MOBILE_IOS } from 'calypso/my-sites/customer-home/cards/constants';
 
-const GoMobile = ( { isIos } ) => {
+const GoMobile = ( { card } ) => {
 	const translate = useTranslate();
+	const isIos = card === TASK_GO_MOBILE_IOS;
 
 	const actionButton = isIos ? (
 		<AppsBadge storeName={ 'ios' } utm_source="calypso-customer-home"></AppsBadge>
@@ -35,13 +33,13 @@ const GoMobile = ( { isIos } ) => {
 			) }
 			actionButton={ actionButton }
 			timing={ 2 }
-			taskId={ isIos ? TASK_GO_MOBILE_IOS : TASK_GO_MOBILE_ANDROID }
+			taskId={ card }
 		/>
 	);
 };
 
 GoMobile.propTypes = {
-	isIos: PropTypes.bool,
+	card: PropTypes.string,
 };
 
 export default GoMobile;

@@ -55,6 +55,7 @@ const ManageSite = ( { cards, trackCards } ) => {
 					cardComponents[ card ] &&
 					React.createElement( cardComponents[ card ], {
 						key: index,
+						card,
 					} )
 			) }
 		</>
