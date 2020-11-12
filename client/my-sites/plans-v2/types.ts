@@ -26,6 +26,7 @@ export interface QueryArgs {
 }
 
 export type PurchaseCallback = ( arg0: SelectorProduct, arg1?: boolean, arg2?: Purchase ) => void;
+export type DurationChangeCallback = ( arg0: Duration ) => void;
 
 interface BasePageProps {
 	rootUrl: string;
@@ -43,6 +44,7 @@ export interface ProductsGridProps {
 	duration: Duration;
 	onSelectProduct: PurchaseCallback;
 	urlQueryArgs: QueryArgs;
+	onDurationChange?: DurationChangeCallback;
 }
 
 export interface DetailsPageProps extends BasePageProps {

@@ -9,6 +9,10 @@
 	}
 }
 
+.products-grid-i5__section:first-of-type > .products-grid-i5__section-title {
+	margin-bottom: 15px;
+}
+
 .products-grid-i5__section-title {
 	margin-top: 60px;
 	margin-bottom: 40px;
@@ -45,4 +49,9 @@
 			left: -8px;
 		}
 	}
+}
+
+.products-grid-i5__filter-bar {
+	height: 63px;
+	padding-bottom: 50px;
 }

@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+
+import PlansFilterBarI5 from '../plans-filter-bar-i5';
 import ProductCardI5 from '../product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
@@ -40,6 +42,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	duration,
 	onSelectProduct,
 	urlQueryArgs,
+	onDurationChange,
 } ) => {
 	const translate = useTranslate();
 	const planGridRef: RefObject< HTMLUListElement > = useRef( null );
@@ -104,7 +107,13 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 		<>
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Product Bundles' ) }</h2>
-				<div className="products-grid-i5__filter-bar"></div>
+				<div className="products-grid-i5__filter-bar">
+					<PlansFilterBarI5
+						showDiscountMessage
+						onDurationChange={ onDurationChange }
+						duration={ duration }
+					/>
+				</div>
 				<ul
 					className={ classNames( 'products-grid-i5__plan-grid', {
 						'is-wrapping': isPlanRowWrapping,

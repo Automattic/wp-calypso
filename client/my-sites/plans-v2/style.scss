@@ -41,13 +41,15 @@
 // This only affects the Plans grid and the Filter bar.
 .selector-alt__main {
 	.plans-filter-bar,
+	.plans-filter-bar-i5,
 	.products-grid-alt,
-	.products-grid-alt-2 {
+	.products-grid-alt-2,
+	.products-grid-i5__section {
 		--color-accent: var( --studio-jetpack-green-40 );
 		--color-primary: var( --studio-jetpack-green-40 );
 		--color-accent-60: var( --studio-jetpack-green-60 );
-		--color-primary-light: var( --studio-jetpack-green-60 );
-		--color-primary-dark: var( --studio-jetpack-green-40 );
+		--color-primary-light: var( --studio-jetpack-green-40 );
+		--color-primary-dark: var( --studio-jetpack-green-60 );
 	}
 }
 
