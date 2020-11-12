@@ -35,7 +35,7 @@ function version_compare( v1, v2, operator ) {
 	// (1alpha is < 1 and < 1.1 but > 1dev1)
 	// If a non-numerical value can't be mapped to this table, it receives
 	// -7 as its value.
-	let vm = {
+	const vm = {
 		dev: -6,
 		alpha: -5,
 		a: -5,
@@ -56,7 +56,7 @@ function version_compare( v1, v2, operator ) {
 	// even less than an unexisting value in vm (-7), hence [-8].
 	// It's also important to not strip spaces because of this.
 	//   version_compare('', ' ') == 1
-	let prepVersion = function ( v ) {
+	const prepVersion = function ( v ) {
 		v = ( '' + v ).replace( /[_\-+]/g, '.' );
 		v = v.replace( /([^.\d]+)/g, '.$1.' ).replace( /\.{2,}/g, '.' );
 		return ! v.length ? [ -8 ] : v.split( '.' );

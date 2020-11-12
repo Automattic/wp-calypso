@@ -3,32 +3,27 @@
  */
 import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
+import {
+	Button,
+	useFormStatus,
+	FormStatus,
+	useLineItems,
+	useEvents,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
-import { useFormStatus } from '../form-status';
+import WordPressLogo from '../components/wordpress-logo';
 
 export function createFreePaymentMethod() {
 	return {
 		id: 'free-purchase',
-		label: <FreePurchaseLabel />,
+		label: <WordPressFreePurchaseLabel />,
 		submitButton: <FreePurchaseSubmitButton />,
-		inactiveContent: <FreePurchaseSummary />,
+		inactiveContent: <WordPressFreePurchaseSummary />,
 		getAriaLabel: ( __ ) => __( 'Free' ),
 	};
-}
-
-function FreePurchaseLabel() {
-	const { __ } = useI18n();
-
-	return (
-		<React.Fragment>
-			<div>{ __( 'Free Purchase' ) }</div>
-		</React.Fragment>
-	);
 }
 
 function FreePurchaseSubmitButton( { disabled, onClick } ) {
@@ -67,7 +62,18 @@ function ButtonContents( { formStatus } ) {
 	return __( 'Please wait…' );
 }
 
-function FreePurchaseSummary() {
+function WordPressFreePurchaseLabel() {
+	const { __ } = useI18n();
+
+	return (
+		<React.Fragment>
+			<div>{ __( 'Free Purchase' ) }</div>
+			<WordPressLogo />
+		</React.Fragment>
+	);
+}
+
+function WordPressFreePurchaseSummary() {
 	const { __ } = useI18n();
 	return <div>{ __( 'Free Purchase' ) }</div>;
 }

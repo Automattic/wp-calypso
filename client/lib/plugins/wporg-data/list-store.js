@@ -15,7 +15,7 @@ let _shortLists = {};
 let _fullLists = {};
 let _fetching = {};
 let _currentSearchTerm = null;
-let _DEFAULT_FIRST_PAGE = 1;
+const _DEFAULT_FIRST_PAGE = 1;
 
 function appendPage( category, page, list ) {
 	_fullLists[ category ] = _fullLists[ category ] || [];

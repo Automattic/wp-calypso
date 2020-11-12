@@ -21,7 +21,6 @@ import emailVerification from 'calypso/components/email-verification';
 import { getSavedVariations } from 'calypso/lib/abtest'; // used by error logger
 import accessibleFocus from 'calypso/lib/accessible-focus';
 import Logger from 'calypso/lib/catch-js-errors';
-import { bindState as bindWpLocaleState } from 'calypso/lib/wp/localization';
 import { hasTouch } from 'calypso/lib/touch-detect';
 import { installPerfmonPageHandlers } from 'calypso/lib/perfmon';
 import { setupRoutes } from 'calypso/sections-middleware';
@@ -209,8 +208,6 @@ const utils = () => {
 
 const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
-
-	bindWpLocaleState( reduxStore );
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store

@@ -15,6 +15,12 @@ import React from 'react';
  */
 import { AspectRatios } from 'calypso/state/editor/image-editor/constants';
 import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import { EditGravatar } from 'calypso/blocks/edit-gravatar';
+import FilePicker from 'calypso/components/file-picker';
+import Gravatar from 'calypso/components/gravatar';
+import ImageEditor from 'calypso/blocks/image-editor';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
+import DropZone from 'calypso/components/drop-zone';
 
 jest.mock( 'event', () => require( 'component-event' ), { virtual: true } );
 jest.mock( 'lib/oauth-token', () => ( {
@@ -23,12 +29,6 @@ jest.mock( 'lib/oauth-token', () => ( {
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'EditGravatar', () => {
-	let EditGravatar;
-	let FilePicker;
-	let Gravatar;
-	let ImageEditor;
-	let VerifyEmailDialog;
-	let DropZone;
 	let sandbox;
 	const user = {
 		email_verified: false,
@@ -40,15 +40,6 @@ describe( 'EditGravatar', () => {
 			revokeObjectURL: sandbox.stub(),
 			createObjectURL: sandbox.stub(),
 		};
-	} );
-
-	beforeAll( function () {
-		EditGravatar = require( 'calypso/blocks/edit-gravatar' ).EditGravatar;
-		FilePicker = require( 'calypso/components/file-picker' );
-		Gravatar = require( 'calypso/components/gravatar' ).default;
-		ImageEditor = require( 'calypso/blocks/image-editor' );
-		VerifyEmailDialog = require( 'calypso/components/email-verification/email-verification-dialog' );
-		DropZone = require( 'calypso/components/drop-zone' ).default;
 	} );
 
 	describe( 'component rendering', () => {

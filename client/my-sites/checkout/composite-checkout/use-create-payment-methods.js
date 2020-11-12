@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -18,8 +18,6 @@ import {
 	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createFullCreditsMethod,
-	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
@@ -27,12 +25,6 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	WordPressCreditsLabel,
-	WordPressCreditsSummary,
-	WordPressFreePurchaseLabel,
-	WordPressFreePurchaseSummary,
-} from './payment-method-helpers';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 import {
 	createCreditCardPaymentMethodStore,
@@ -50,6 +42,8 @@ import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from './payment-methods/netbanking';
+import { createFullCreditsMethod } from './payment-methods/full-credits';
+import { createFreePaymentMethod } from './payment-methods/free-purchase';
 
 function useCreatePayPal() {
 	const paypalMethod = useMemo( createPayPalMethod, [] );
@@ -252,17 +246,11 @@ function useCreateEbanxTef() {
 }
 
 function useCreateFullCredits( { credits } ) {
-	const fullCreditsPaymentMethod = useMemo( createFullCreditsMethod, [] );
-	fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
-	fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
-	return fullCreditsPaymentMethod;
+	return useMemo( () => createFullCreditsMethod( { credits } ), [ credits ] );
 }
 
 function useCreateFree() {
-	const freePaymentMethod = useMemo( createFreePaymentMethod, [] );
-	freePaymentMethod.label = <WordPressFreePurchaseLabel />;
-	freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
-	return freePaymentMethod;
+	return useMemo( createFreePaymentMethod, [] );
 }
 
 function useCreateApplePay( {

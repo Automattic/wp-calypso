@@ -1,18 +1,18 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me.settings.password
  */
 describe( 'wpcom.me.settings.password', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
-	var settings = me.settings();
-	var password = settings.password();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
+	const settings = me.settings();
+	const password = settings.password();
 
 	describe( 'wpcom.me.settings.password.validate', function () {
 		it( "should don't pass `no_backslashes` validation", function () {
@@ -22,7 +22,7 @@ describe( 'wpcom.me.settings.password', function () {
 
 					assert.ok( false === data.passed );
 
-					let failed = data.test_results.failed[ 0 ];
+					const failed = data.test_results.failed[ 0 ];
 					assert.equal( 'no_backslashes', failed.test_name );
 					done();
 				} );
@@ -36,7 +36,7 @@ describe( 'wpcom.me.settings.password', function () {
 
 					assert.ok( false === data.passed );
 
-					let failed = data.test_results.failed[ 0 ];
+					const failed = data.test_results.failed[ 0 ];
 					assert.equal( 'minimum_length', failed.test_name );
 					done();
 				} );
@@ -50,7 +50,7 @@ describe( 'wpcom.me.settings.password', function () {
 
 					assert.ok( false === data.passed );
 
-					let failed = data.test_results.failed[ 0 ];
+					const failed = data.test_results.failed[ 0 ];
 					assert.equal( 'not_a_common_password', failed.test_name );
 					done();
 				} );

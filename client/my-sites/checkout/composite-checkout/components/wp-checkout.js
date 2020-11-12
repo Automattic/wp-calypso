@@ -21,6 +21,7 @@ import {
 	usePaymentMethod,
 	useSelect,
 	useTotal,
+	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import { useShoppingCart } from '@automattic/shopping-cart';
@@ -274,27 +275,47 @@ export default function WPCheckout( {
 		[ onEvent ]
 	);
 
+	const onSummaryError = useCallback(
+		( error ) =>
+			onEvent( {
+				type: 'STEP_LOAD_ERROR',
+				payload: {
+					message: error,
+					stepId: 'summary',
+				},
+			} ),
+		[ onEvent ]
+	);
+
 	return (
 		<Checkout>
 			<QueryExperiments />
 			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
-				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-					<CheckoutSummaryTitle>
-						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-						{ translate( 'Purchase Details' ) }
-						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-					</CheckoutSummaryTitle>
-					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-						{ total.amount.displayValue }
-					</CheckoutSummaryTitlePrice>
-				</CheckoutSummaryTitleLink>
-				<CheckoutSummaryBody>
-					<WPCheckoutOrderSummary
-						onChangePlanLength={ changePlanLength }
-						nextDomainIsFree={ responseCart?.next_domain_is_free }
-					/>
-					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
-				</CheckoutSummaryBody>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+					onError={ onSummaryError }
+				>
+					<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+						<CheckoutSummaryTitle>
+							<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+							{ translate( 'Purchase Details' ) }
+							<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+						</CheckoutSummaryTitle>
+						<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+							{ total.amount.displayValue }
+						</CheckoutSummaryTitlePrice>
+					</CheckoutSummaryTitleLink>
+					<CheckoutSummaryBody>
+						<WPCheckoutOrderSummary
+							onChangePlanLength={ changePlanLength }
+							nextDomainIsFree={ responseCart?.next_domain_is_free }
+						/>
+						<SecondaryCartPromotions
+							responseCart={ responseCart }
+							addItemToCart={ addItemToCart }
+						/>
+					</CheckoutSummaryBody>
+				</CheckoutErrorBoundary>
 			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }

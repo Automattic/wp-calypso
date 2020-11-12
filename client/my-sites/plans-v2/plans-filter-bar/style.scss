@@ -133,3 +133,9 @@
 		margin-top: 80px;
 	}
 }
+.plans-filter-bar.sticky + .products-grid-alt-2 {
+	transform: translateY( 95px );
+}
+.plans-filter-bar.sticky + .products-grid-alt {
+	transform: translateY( 70px );
+}
