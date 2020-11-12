@@ -132,15 +132,3 @@ export interface AvailableProductData {
 	product_slug: string;
 	cost: number;
 }
-
-export interface FilterBarProps {
-	showDiscountMessage?: boolean;
-	showDurations?: boolean;
-	duration?: Duration;
-	onDurationChange?: DurationChangeCallback;
-	onProductTypeChange?: ( arg0: ProductType ) => void;
-}
-
-export type DiscountMessageProps = {
-	primary?: boolean;
-};

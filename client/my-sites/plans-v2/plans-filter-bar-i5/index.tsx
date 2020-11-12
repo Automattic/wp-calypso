@@ -29,12 +29,24 @@ import { getHighestAnnualDiscount } from '../utils';
 /**
  * Type dependencies
  */
-import type { FilterBarProps, DiscountMessageProps } from '../types';
+import type { Duration, DurationChangeCallback, ProductType } from '../types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+interface FilterBarProps {
+	showDiscountMessage?: boolean;
+	showDurations?: boolean;
+	duration?: Duration;
+	onDurationChange?: DurationChangeCallback;
+	onProductTypeChange?: ( arg0: ProductType ) => void;
+}
+
+type DiscountMessageProps = {
+	primary?: boolean;
+};
 
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 94;
@@ -79,12 +91,12 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 								args: { discount: highestAnnualDiscount },
 								comment: 'Discount is either a currency-formatted number or percentage',
 						  } )
-						: translate( 'Save %(discount)s', {
+						: translate( 'SAVE %(discount)s', {
 								args: { discount: highestAnnualDiscount },
 								comment: 'Discount is either a currency-formatted number or percentage',
 						  } ) }
 				</span>
-				🎉
+				{ String.fromCodePoint( 0x1f389 ) } { /* Celebration emoji 🎉 */ }
 			</div>
 		</div>
 	);
