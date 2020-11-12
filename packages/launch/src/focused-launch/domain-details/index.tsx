@@ -67,6 +67,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }
 					itemType={ ITEM_TYPE_BUTTON }
+					quantity={ 10 }
 				/>
 			</div>
 		</div>
