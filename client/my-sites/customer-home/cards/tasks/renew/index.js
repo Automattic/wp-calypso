@@ -37,63 +37,56 @@ const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
 		: translate( '%(planName)s plan expiring soon', { args: { planName } } );
 	let description;
 	let actionText;
-	switch ( true ) {
-		case isOwner && hasExpired:
-			description = translate(
-				'Your %(planName)s plan expired %(timeSinceExpiry)s. Reactivate now to continue enjoying features such as increased storage space, access to expert support, and automatic removal of WordPress.com ads.',
-				{
-					args: {
-						planName,
-						timeSinceExpiry: expiryText,
-					},
-					comment:
-						'%(timeSinceExpiry)s is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-				}
-			);
-			actionText = translate( 'Reactivate plan' );
-			break;
-		case isOwner && ! hasExpired:
-			description = translate(
-				'Your %(planName)s plan expires %(timeUntilExpiry)s. Renew now to continue enjoying features such as increased storage space, access to expert support, and automatic removal of WordPress.com ads.',
-				{
-					args: {
-						planName,
-						timeUntilExpiry: expiryText,
-					},
-					comment:
-						'%(timeUntilExpiry)s is of the form "in [number] [time-period]" i.e. "in 3 days"',
-				}
-			);
-			actionText = translate( 'Renew now' );
-			break;
-		case ! isOwner && hasExpired:
-			description = translate(
-				'The %(planName)s plan of this site expired %(timeSinceExpiry)s. To reactivate it, since it was purchased by a different WordPress.com account, log in to that account or contact the account owner.',
-				{
-					args: {
-						planName,
-						timeSinceExpiry: expiryText,
-					},
-					comment:
-						'%(timeSinceExpiry)s is of the form "[number] [time-period] ago" i.e. "3 days ago"',
-				}
-			);
-			actionText = translate( 'Got it' );
-			break;
-		case ! isOwner && ! hasExpired:
-			description = translate(
-				'The %(planName)s plan of this site expires %(timeUntilExpiry)s. To renew it, since it was purchased by a different WordPress.com account, log in to that account or contact the account owner.',
-				{
-					args: {
-						planName,
-						timeUntilExpiry: expiryText,
-					},
-					comment:
-						'%(timeUntilExpiry)s is of the form "in [number] [time-period]" i.e. "in 3 days"',
-				}
-			);
-			actionText = translate( 'Got it' );
-			break;
+	if ( isOwner && hasExpired ) {
+		description = translate(
+			'Your %(planName)s plan expired %(timeSinceExpiry)s. Reactivate now to continue enjoying features such as increased storage space, access to expert support, and automatic removal of WordPress.com ads.',
+			{
+				args: {
+					planName,
+					timeSinceExpiry: expiryText,
+				},
+				comment:
+					'%(timeSinceExpiry)s is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			}
+		);
+		actionText = translate( 'Reactivate plan' );
+	} else if ( isOwner && ! hasExpired ) {
+		description = translate(
+			'Your %(planName)s plan expires %(timeUntilExpiry)s. Renew now to continue enjoying features such as increased storage space, access to expert support, and automatic removal of WordPress.com ads.',
+			{
+				args: {
+					planName,
+					timeUntilExpiry: expiryText,
+				},
+				comment: '%(timeUntilExpiry)s is of the form "in [number] [time-period]" i.e. "in 3 days"',
+			}
+		);
+		actionText = translate( 'Renew now' );
+	} else if ( ! isOwner && hasExpired ) {
+		description = translate(
+			'The %(planName)s plan of this site expired %(timeSinceExpiry)s. To reactivate it, since it was purchased by a different WordPress.com account, log in to that account or contact the account owner.',
+			{
+				args: {
+					planName,
+					timeSinceExpiry: expiryText,
+				},
+				comment:
+					'%(timeSinceExpiry)s is of the form "[number] [time-period] ago" i.e. "3 days ago"',
+			}
+		);
+		actionText = translate( 'Got it' );
+	} else if ( ! isOwner && ! hasExpired ) {
+		description = translate(
+			'The %(planName)s plan of this site expires %(timeUntilExpiry)s. To renew it, since it was purchased by a different WordPress.com account, log in to that account or contact the account owner.',
+			{
+				args: {
+					planName,
+					timeUntilExpiry: expiryText,
+				},
+				comment: '%(timeUntilExpiry)s is of the form "in [number] [time-period]" i.e. "in 3 days"',
+			}
+		);
+		actionText = translate( 'Got it' );
 	}
 	const actionUrl = isOwner
 		? `/checkout/${ planSlug }/renew/${ planPurchase?.id }/${ siteSlug }`
