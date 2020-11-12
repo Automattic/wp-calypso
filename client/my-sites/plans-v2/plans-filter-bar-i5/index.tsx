@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -11,18 +11,11 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 /**
  * Internal dependencies
  */
-import {
-	JETPACK_PRODUCTS_BY_TERM,
-	PRODUCT_JETPACK_BACKUP_REALTIME,
-} from 'calypso/lib/products-values/constants';
-import {
-	JETPACK_RESET_PLANS_BY_TERM,
-	PLAN_JETPACK_SECURITY_REALTIME,
-} from 'calypso/lib/plans/constants';
+import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/products-values/constants';
+import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
-import { getJetpackCROActiveVersion } from '../abtest';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import { getHighestAnnualDiscount } from '../utils';
 
@@ -51,29 +44,15 @@ type DiscountMessageProps = {
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = 94;
 
-const REALTIME_PRODUCTS = [ PLAN_JETPACK_SECURITY_REALTIME, PRODUCT_JETPACK_BACKUP_REALTIME ];
-
 const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
-	const croVersion = getJetpackCROActiveVersion();
-	const slugsToCheck = useMemo(
-		() =>
-			[
-				...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
-				...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
-			].filter( ( slug ) => {
-				// Don't factor in real-time products for CRO v1 --
-				// they're not visible in the product grid
-				if ( croVersion === 'v1' && REALTIME_PRODUCTS.includes( slug ) ) {
-					return false;
-				}
+	const slugsToCheck = [
+		...JETPACK_PRODUCTS_BY_TERM.map( ( s ) => s.yearly ),
+		...JETPACK_RESET_PLANS_BY_TERM.map( ( s ) => s.yearly ),
+	];
 
-				return true;
-			} ),
-		[ croVersion ]
-	);
 	const highestAnnualDiscount = useSelector( ( state ) =>
 		getHighestAnnualDiscount( state, slugsToCheck )
 	);
