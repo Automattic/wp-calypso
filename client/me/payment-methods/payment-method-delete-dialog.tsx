@@ -10,6 +10,11 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { Button, Dialog } from '@automattic/components';
 import CardHeading from 'calypso/components/card-heading';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	paymentMethodSummary: TranslateResult;
 	isVisible: boolean;

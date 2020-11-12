@@ -1,26 +1,39 @@
-.credit-card__wrapper {
+.payment-method__wrapper {
 	margin-bottom: 0;
 }
 
-.credit-card {
+.payment-method-list__loader {
+	display: flex;
+}
+
+.payment-method-list__loading-placeholder-card {
+	width: 60px;
+	margin-right: 16px;
+}
+
+.payment-method-list__loading-placeholder-details {
+	flex-grow: 1;
+}
+
+.payment-method {
 	margin-bottom: 0;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
 
-.stored-card__image {
+.payment-method-details__image {
 	width: 60px;
 	height: 38px;
 	margin-right: 16px;
 }
 
-.stored-card__details {
+.payment-method-details__details {
 	flex-grow: 1;
 	margin-right: 16px;
 }
 
-.stored-card__number {
+.payment-method-details__number {
 	color: var( --color-neutral-80 );
 	font-weight: 600;
 	display: block;
@@ -31,11 +44,11 @@
 	}
 }
 
-.stored-card__expiration-date {
+.payment-method-details__expiration-date {
 	color: var( --color-neutral-50 );
 }
 
-.stored-card__name {
+.payment-method-details__name {
 	color: var( --color-neutral-50 );
 	display: block;
 }

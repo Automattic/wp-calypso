@@ -19,7 +19,7 @@ import {
 	getPaymentMethodSummary,
 	PaymentMethod,
 } from 'calypso/lib/checkout/payment-methods';
-import StoredCard from './stored-card';
+import PaymentMethodDetails from './payment-method-details';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
@@ -27,7 +27,7 @@ interface Props {
 	card: PaymentMethod;
 }
 
-const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
+const PaymentMethodDelete: FunctionComponent< Props > = ( { card } ) => {
 	const translate = useTranslate();
 	const isDeleting = useSelector( ( state ) =>
 		isDeletingStoredCard( state, card.stored_details_id )
@@ -58,7 +58,6 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 
 		return (
 			<Button
-				className="credit-cards__delete-button"
 				disabled={ isDeleting }
 				onClick={ () => setIsDialogVisible( true ) }
 			>
@@ -80,7 +79,7 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 				onClose={ closeDialog }
 				onConfirm={ handleDelete }
 			/>
-			<StoredCard
+			<PaymentMethodDetails
 				lastDigits={ card.card }
 				email={ card.email }
 				cardType={ card.card_type || '' }
@@ -93,4 +92,4 @@ const CreditCardDelete: FunctionComponent< Props > = ( { card } ) => {
 	);
 };
 
-export default CreditCardDelete;
+export default PaymentMethodDelete;

@@ -13,6 +13,11 @@ import {
 	getPaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
 
+/**
+ * Style dependencies
+ */
+import './style.scss';
+
 interface Props {
 	lastDigits?: string;
 	cardType: string;
@@ -23,7 +28,7 @@ interface Props {
 	selected?: boolean;
 }
 
-const StoredCard: FunctionComponent< Props > = ( {
+const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	cardType,
 	expiry,
 	lastDigits,
@@ -45,11 +50,11 @@ const StoredCard: FunctionComponent< Props > = ( {
 		<>
 			<img
 				src={ getPaymentMethodImageURL( type, selected ) }
-				className="stored-card__image"
+				className="payment-method-details__image"
 				alt=""
 			/>
-			<div className="stored-card__details">
-				<span className="stored-card__number">
+			<div className="payment-method-details__details">
+				<span className="payment-method-details__number">
 					{ getPaymentMethodSummary( {
 						translate,
 						type,
@@ -59,17 +64,17 @@ const StoredCard: FunctionComponent< Props > = ( {
 				</span>
 
 				{ displayExpirationDate && (
-					<span className="stored-card__expiration-date">
+					<span className="payment-method-details__expiration-date">
 						{ translate( 'Expires %(date)s', {
 							args: { date: displayExpirationDate },
 							context: 'date is of the form MM/YY',
 						} ) }
 					</span>
 				) }
-				<span className="stored-card__name">{ name }</span>
+				<span className="payment-method-details__name">{ name }</span>
 			</div>
 		</>
 	);
 };
 
-export default StoredCard;
+export default PaymentMethodDetails;
