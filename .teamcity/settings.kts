@@ -8,7 +8,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.DockerCommandStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
@@ -650,16 +649,131 @@ object WpCalypso : GitVcsRoot({
 object WpDesktop : Project({
 	name = "Desktop"
 	buildType(WpDesktop_DesktopE2ETests)
+
+	params {
+		text("docker_image_dekstop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+	}
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
 	name = "Desktop e2e tests"
+
+	artifactRules = """
+		desktop/release => desktop/release
+		desktop/e2e/logs => desktop/e2e/logs
+	""".trimIndent()
+
+	params {
+		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
+	}
 
 	vcs {
 		root(WpCalypso)
 		cleanCheckout = true
 	}
 
-	steps {	}
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				set -e
+
+				export HOME="/calypso"
+				export CHROMEDRIVER_SKIP_DOWNLOAD=true
+				export PUPPETEER_SKIP_DOWNLOAD=true
+				export npm_config_cache=${'$'}(yarn cache dir)
+				export CONFIG_ENV="release"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Restore mtime to maximize cache hits
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+
+				# Decript certs
+				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build Calypso source"
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export CONFIG_ENV="release"
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Build desktop
+				yarn run build-desktop:source
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build app (linux)"
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export CONFIG_ENV="release"
+				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+				export USE_HARD_LINKS=false
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Install app deps
+				yarn run build-desktop:install-app-deps
+
+				# Build app
+				yarn run build-desktop:app
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Run tests (linux)"
+			scriptContent = """
+				set -e
+				export HOME="/calypso"
+				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
+				export E2EPASSWORD="%E2EPASSWORD%"
+				export DISPLAY=:99
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Start framebuffer
+				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
+
+				# Run tests
+				yarn run test-desktop:e2e
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
 })
 
