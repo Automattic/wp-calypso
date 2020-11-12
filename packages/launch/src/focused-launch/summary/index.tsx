@@ -431,8 +431,17 @@ const Summary: React.FunctionComponent = () => {
 					) }
 				</p>
 			</div>
-			{ disabledSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
-			{ activeSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
+			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
+				// Disabled steps don't show the step index
+				disabledStepRenderer( { stepIndex: disabledStepIndex + 1, forwardStepIndex: false } )
+			) }
+			{ activeSteps.map( ( activeStepRenderer, activeStepIndex ) =>
+				// Active steps show the step index only if there are at least 2 steps
+				activeStepRenderer( {
+					stepIndex: activeStepIndex + 1,
+					forwardStepIndex: activeSteps.length > 1,
+				} )
+			) }
 		</div>
 	);
 };
