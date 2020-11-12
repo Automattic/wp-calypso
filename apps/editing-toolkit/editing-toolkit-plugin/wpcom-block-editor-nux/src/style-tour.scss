@@ -1,0 +1,24 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
+
+.wpcom-editor-welcome-tour-container {
+	background-color: $white;
+	border-radius: 2px;
+	bottom: 40px;
+	display: inline;
+	left: 40px;
+	position: fixed;
+}
+
+.wpcom-block-editor-welcome-tour__card-heading,
+.wpcom-block-editor-welcome-tour__subheading {
+	padding: $grid-unit-05 $grid-unit-20;
+	font-size: $big-font-size;
+	// margin: 0 0 8px;
+}
+
+.wpcom-editor-welcome-tour__minimized-container {
+	border-radius: 2px;
+}
