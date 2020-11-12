@@ -65,17 +65,14 @@ class CreditCards extends Component {
 		return (
 			<div className="credit-cards">
 				<QueryStoredCards />
-				<SectionHeader label={ this.props.translate( 'Manage your credit cards' ) }>
+				<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) }>
 					{ this.renderAddCreditCardButton() }
 				</SectionHeader>
 
 				{ this.renderCards( this.props.cards ) }
 
 				{ this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 && (
-					<>
-						<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) } />
-						{ this.renderCards( this.props.paymentAgreements ) }
-					</>
+					<>{ this.renderCards( this.props.paymentAgreements ) }</>
 				) }
 			</div>
 		);
