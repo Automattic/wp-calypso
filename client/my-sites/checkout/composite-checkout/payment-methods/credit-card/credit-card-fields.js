@@ -28,7 +28,7 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
-import { paymentMethodClassName } from 'calypso/lib/cart-values';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
@@ -82,7 +82,11 @@ export default function CreditCardFields() {
 	);
 	const shouldShowContactFields =
 		contactCountryCode === 'BR' &&
-		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
+		Boolean(
+			cart?.allowed_payment_methods?.includes(
+				translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+			)
+		);
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 

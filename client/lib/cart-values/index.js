@@ -2,7 +2,6 @@
  * External dependencies
  */
 import url from 'url'; // eslint-disable-line no-restricted-imports
-import { get, isArray, invert } from 'lodash';
 import update, { extend as extendImmutabilityHelper } from 'immutability-helper';
 import { translate } from 'i18n-calypso';
 
@@ -21,32 +20,16 @@ import {
 	isDomainRedemption,
 	allowedProductAttributes,
 } from 'calypso/lib/products-values';
-import { detectWebPaymentMethod } from 'calypso/lib/web-payment';
 import config from 'calypso/config';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	translateWpcomPaymentMethodToCheckoutPaymentMethod,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
 	return object ? update( object, value ) : update( {}, value );
 } );
-
-const PAYMENT_METHODS = {
-	alipay: 'WPCOM_Billing_Stripe_Source_Alipay',
-	bancontact: 'WPCOM_Billing_Stripe_Source_Bancontact',
-	'credit-card': 'WPCOM_Billing_MoneyPress_Paygate',
-	ebanx: 'WPCOM_Billing_Ebanx',
-	eps: 'WPCOM_Billing_Stripe_Source_Eps',
-	giropay: 'WPCOM_Billing_Stripe_Source_Giropay',
-	id_wallet: 'WPCOM_Billing_Dlocal_Redirect_Indonesia_Wallet',
-	ideal: 'WPCOM_Billing_Stripe_Source_Ideal',
-	netbanking: 'WPCOM_Billing_Dlocal_Redirect_India_Netbanking',
-	paypal: 'WPCOM_Billing_PayPal_Express',
-	p24: 'WPCOM_Billing_Stripe_Source_P24',
-	'brazil-tef': 'WPCOM_Billing_Ebanx_Redirect_Brazil_Tef',
-	wechat: 'WPCOM_Billing_Stripe_Source_Wechat',
-	'web-payment': 'WPCOM_Billing_Web_Payment',
-	sofort: 'WPCOM_Billing_Stripe_Source_Sofort',
-	stripe: 'WPCOM_Billing_Stripe_Payment_Method',
-};
 
 /**
  * Preprocesses cart for server.
@@ -135,11 +118,11 @@ export function removeCoupon() {
 	};
 }
 
-export const getTaxCountryCode = ( cart ) => get( cart, [ 'tax', 'location', 'country_code' ] );
+export const getTaxCountryCode = ( cart ) => cart?.tax?.location?.country_code;
 
-export const getTaxPostalCode = ( cart ) => get( cart, [ 'tax', 'location', 'postal_code' ] );
+export const getTaxPostalCode = ( cart ) => cart?.tax?.location?.postal_code;
 
-export const getTaxLocation = ( cart ) => get( cart, [ 'tax', 'location' ], {} );
+export const getTaxLocation = ( cart ) => cart?.tax?.location ?? {};
 
 export function setTaxCountryCode( countryCode ) {
 	return function ( cart ) {
@@ -301,42 +284,14 @@ export function getRefundPolicy( cart ) {
 	return 'genericRefund';
 }
 
-export function getEnabledPaymentMethods( cart ) {
-	// Clone our allowed payment methods array
-	let allowedPaymentMethods = cart.allowed_payment_methods.slice( 0 );
-
-	// Ebanx is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Ebanx' !== method;
-	} );
-
-	// Stripe Elements is used as part of the credit-card method, does not need to be listed.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Stripe_Payment_Method' !== method;
-	} );
-
-	// Web payment methods such as Apple Pay are enabled based on client-side
-	// capabilities.
-	allowedPaymentMethods = allowedPaymentMethods.filter( function ( method ) {
-		return 'WPCOM_Billing_Web_Payment' !== method || null !== detectWebPaymentMethod();
-	} );
-
-	// Invert so we can search by class name.
-	const paymentMethodsKeys = invert( PAYMENT_METHODS );
-
-	return allowedPaymentMethods.map( function ( methodClassName ) {
-		return paymentMethodsKeys[ methodClassName ];
-	} );
-}
-
 /**
- * Return a string that represents the WPCOM class name for a payment method
+ * Returns a list of enabled payment methods
  *
- * @param {string} method -  payment method
- * @returns {string} the wpcom class name
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
+ * @returns {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug.ts').CheckoutPaymentMethodSlug[]} An array of payment method ids
  */
-export function paymentMethodClassName( method ) {
-	return PAYMENT_METHODS[ method ] || '';
+export function getEnabledPaymentMethods( cart ) {
+	return cart.allowed_payment_methods.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 }
 
 /**
@@ -349,7 +304,7 @@ export function paymentMethodName( method ) {
 	const paymentMethodsNames = {
 		alipay: 'Alipay',
 		bancontact: 'Bancontact',
-		'credit-card': translate( 'Credit or debit card' ),
+		card: translate( 'Credit or debit card' ),
 		eps: 'EPS',
 		giropay: 'Giropay',
 		id_wallet: 'OVO',
@@ -358,13 +313,7 @@ export function paymentMethodName( method ) {
 		paypal: 'PayPal',
 		p24: 'Przelewy24',
 		'brazil-tef': 'Transferência bancária',
-		// The web-payment method technically supports multiple digital
-		// wallets, but only Apple Pay is used for now. To enable other
-		// wallets, we'd need to split web-payment up into multiple methods
-		// anyway (so that each wallet is a separate payment choice for the
-		// user), so it's fine to just hardcode this to "Apple Pay" in the
-		// meantime.
-		'web-payment': 'Apple Pay',
+		'apple-pay': 'Apple Pay',
 		wechat: translate( 'WeChat Pay', {
 			comment: 'Name for WeChat Pay - https://pay.weixin.qq.com/',
 		} ),
@@ -374,6 +323,13 @@ export function paymentMethodName( method ) {
 	return paymentMethodsNames[ method ] || method;
 }
 
+/**
+ * Determines if a payment method is enabled
+ *
+ * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
+ * @param {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug').CheckoutPaymentMethodSlug} method The short payment method string
+ * @returns {boolean} true if enabled
+ */
 export function isPaymentMethodEnabled( cart, method ) {
 	const redirectPaymentMethods = [
 		'alipay',
@@ -388,28 +344,21 @@ export function isPaymentMethodEnabled( cart, method ) {
 		'wechat',
 		'sofort',
 	];
-	const methodClassName = paymentMethodClassName( method );
+	const methodClassName = translateCheckoutPaymentMethodToWpcomPaymentMethod( method );
 
-	if ( '' === methodClassName ) {
+	if ( ! methodClassName ) {
 		return false;
 	}
 
 	// Redirect payments might not be possible in some cases - for example in the desktop app
 	if (
-		redirectPaymentMethods.indexOf( method ) >= 0 &&
+		redirectPaymentMethods.includes( method ) &&
 		! config.isEnabled( 'upgrades/redirect-payments' )
 	) {
 		return false;
 	}
 
-	if ( 'web-payment' === method && null === detectWebPaymentMethod() ) {
-		return false;
-	}
-
-	return (
-		isArray( cart.allowed_payment_methods ) &&
-		cart.allowed_payment_methods.indexOf( methodClassName ) >= 0
-	);
+	return cart.allowed_payment_methods.includes( methodClassName );
 }
 
 export function getLocationOrigin( l ) {
@@ -425,5 +374,5 @@ export function hasPendingPayment( cart ) {
 }
 
 export function shouldShowTax( cart ) {
-	return get( cart, [ 'tax', 'display_taxes' ], false );
+	return cart?.tax?.display_taxes ?? false;
 }
