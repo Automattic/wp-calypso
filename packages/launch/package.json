@@ -34,6 +34,7 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/onboarding": "^1.0.0",
+		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/url": "^2.17.0",
