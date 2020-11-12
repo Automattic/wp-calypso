@@ -1,26 +1,45 @@
+.credit-card__wrapper {
+	margin-bottom: 0;
+}
+
 .credit-card {
 	margin-bottom: 0;
 	display: flex;
-}
-
-.credit-card__stored-card-name {
-	color: var( --color-neutral-50 );
-}
-
-.credit-card__stored-card-number {
-	color: var( --color-neutral-80 );
-	display: block;
-	font-weight: 600;
-}
-
-.credit-card__stored-card-expiration-date {
-	color: var( --color-neutral-50 );
-	font-style: italic;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .stored-card__image {
 	width: 60px;
+	height: 38px;
+	margin-right: 16px;
 }
+
+.stored-card__details {
+	flex-grow: 1;
+	margin-right: 16px;
+}
+
+.stored-card__number {
+	color: var( --color-neutral-80 );
+	font-weight: 600;
+	display: block;
+	margin-right: 8px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		display: inline;
+	}
+}
+
+.stored-card__expiration-date {
+	color: var( --color-neutral-50 );
+}
+
+.stored-card__name {
+	color: var( --color-neutral-50 );
+	display: block;
+}
+
 
 .payment-method-delete-dialog {
 	&.dialog {

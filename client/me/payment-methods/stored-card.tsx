@@ -43,9 +43,13 @@ const StoredCard: FunctionComponent< Props > = ( {
 
 	return (
 		<>
-			<img src={ getPaymentMethodImageURL( type, selected ) } className="stored-card__image" />
-			<div>
-				<span className="credit-card__stored-card-number">
+			<img
+				src={ getPaymentMethodImageURL( type, selected ) }
+				className="stored-card__image"
+				alt=""
+			/>
+			<div className="stored-card__details">
+				<span className="stored-card__number">
 					{ getPaymentMethodSummary( {
 						translate,
 						type,
@@ -53,17 +57,17 @@ const StoredCard: FunctionComponent< Props > = ( {
 						email,
 					} ) }
 				</span>
-				<span className="credit-card__stored-card-name">{ name }</span>
+
+				{ displayExpirationDate && (
+					<span className="stored-card__expiration-date">
+						{ translate( 'Expires %(date)s', {
+							args: { date: displayExpirationDate },
+							context: 'date is of the form MM/YY',
+						} ) }
+					</span>
+				) }
+				<span className="stored-card__name">{ name }</span>
 			</div>
-			
-			{ displayExpirationDate && (
-				<span className="credit-card__stored-card-expiration-date">
-					{ translate( 'Expires %(date)s', {
-						args: { date: displayExpirationDate },
-						context: 'date is of the form MM/YY',
-					} ) }
-				</span>
-			) }
 		</>
 	);
 };
