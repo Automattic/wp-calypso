@@ -160,6 +160,17 @@ function register_blocks() {
 }
 
 /**
+ * Determines whether the current user can edit.
+ *
+ * @return bool Whether the user can edit.
+ */
+function premium_content_current_user_can_edit() {
+	$user = wp_get_current_user();
+	// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
+	return 0 !== $user->ID && current_user_can( 'edit_post', get_the_ID() );
+}
+
+/**
  * Determines if the current user can view the protected content of the given block.
  *
  * @param array  $attributes Block attributes.
@@ -168,8 +179,6 @@ function register_blocks() {
  * @return bool Whether the use can view the content.
  */
 function premium_content_current_visitor_can_access( $attributes, $block ) {
-	$user = wp_get_current_user();
-
 	/**
 	 * If the current WordPress install has as signed in user
 	 * they can see the content.
@@ -177,8 +186,7 @@ function premium_content_current_visitor_can_access( $attributes, $block ) {
 	 * Ideas:
 	 *  - Capability check?
 	 */
-	// phpcs:ignore ImportDetection.Imports.RequireImports.Symbol
-	if ( 0 !== $user->ID && current_user_can( 'edit_post', get_the_ID() ) ) {
+	if ( premium_content_current_user_can_edit() ) {
 		return true;
 	}
 
@@ -211,7 +219,7 @@ function premium_content_current_visitor_can_access( $attributes, $block ) {
  *
  * @return bool Whether the memberships module is set up.
  */
-function premium_content_pre_render_checks() {
+function premium_content_membership_checks() {
 	// If Jetpack is not yet configured, don't show anything ...
 	if ( ! class_exists( '\Jetpack_Memberships' ) ) {
 		return false;
@@ -221,6 +229,35 @@ function premium_content_pre_render_checks() {
 		return false;
 	}
 	return true;
+}
+
+/**
+ * Determines if the block should be rendered. Returns true
+ * if the memberships module is set up, or if it has not been
+ * set up but the user is an admin.
+ *
+ * @return bool Whether the block should be rendered.
+ */
+function premium_content_pre_render_checks() {
+	return (
+		premium_content_membership_checks() ||
+		premium_content_current_user_can_edit()
+	);
+}
+
+/**
+ * Determines if the a preview of the block with disconnected
+ * buttons should be shown on the frontend. Returns true
+ * if the memberships module is not set up, but the user is
+ * an admin.
+ *
+ * @return bool Whether the frontend preview should be shown
+ */
+function premium_content_should_render_frontend_preview() {
+	return (
+		! premium_content_membership_checks() &&
+		premium_content_current_user_can_edit()
+	);
 }
 
 // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
@@ -252,6 +289,10 @@ function premium_content_container_render( $attributes, $content ) {
 function premium_content_block_logged_out_view_render( $attributes, $content, $block = null ) {
 	if ( ! premium_content_pre_render_checks() ) {
 		return '';
+	}
+
+	if ( premium_content_should_render_frontend_preview() ) {
+		return $content;
 	}
 
 	$visitor_has_access = premium_content_current_visitor_can_access( $attributes, $block );
@@ -306,6 +347,10 @@ function premium_content_render_login_button_block( $attributes, $content ) {
 		return '';
 	}
 
+	if ( premium_content_should_render_frontend_preview() ) {
+		return $content;
+	}
+
 	if ( is_user_logged_in() ) {
 		// The viewer is logged it, so they shouldn't see the login button.
 		return '';
@@ -313,7 +358,8 @@ function premium_content_render_login_button_block( $attributes, $content ) {
 
 	$url = premium_content_subscription_service()->access_url();
 
-	return preg_replace( '/(<a\b[^><]*)>/i', '$1 href="' . esc_url( $url ) . '">', $content );
+	$login_button = preg_replace( '/(<a\b[^><]*)>/i', '$1 href="' . esc_url( $url ) . '">', $content );
+	return "{$login_button}";
 }
 
 /**
