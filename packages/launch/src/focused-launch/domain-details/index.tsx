@@ -17,7 +17,7 @@ import { Icon, chevronLeft } from '@wordpress/icons';
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useSite, useDomainSearch } from '../../hooks';
+import { useSite, useDomainSearch, useDomainSelection } from '../../hooks';
 import { LAUNCH_STORE } from '../../stores';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
@@ -26,29 +26,11 @@ import './style.scss';
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
-	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
 	const domainSearch = useDomainSearch();
-
-	const {
-		setDomain,
-		unsetDomain,
-		setDomainSearch,
-		unsetPlan,
-		confirmDomainSelection,
-	} = useDispatch( LAUNCH_STORE );
-
-	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
-		confirmDomainSelection();
-		setDomain( suggestion );
-		if ( plan?.isFree ) {
-			unsetPlan();
-		}
-	};
-
-	const handleExistingSubdomainSelect = () => {
-		unsetDomain();
-	};
+	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
+	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
 	const trackDomainSearchInteraction = ( query: string ) => {
 		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
@@ -78,8 +60,8 @@ const DomainDetails: React.FunctionComponent = () => {
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ domain?.domain_name || currentDomainName }
 					existingSubdomain={ currentDomainName }
-					onDomainSelect={ handleDomainSelect }
-					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
+					onDomainSelect={ onDomainSelect }
+					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid
