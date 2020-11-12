@@ -24,8 +24,9 @@ const configData = window.configData;
 
 // calypso.live matches
 // hash-abcd1234.calypso.live matches
+// container-abcd_1234.calypso.live matches
 // calypso.live.com doesn't match
-const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9-]+\.)?calypso\.live$/;
+const CALYPSO_LIVE_REGEX = /^([a-zA-Z0-9_-]+\.)?calypso\.live$/;
 
 // check if the current browser location is *.calypso.live
 export function isCalypsoLive() {
