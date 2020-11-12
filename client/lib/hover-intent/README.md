@@ -4,7 +4,7 @@ HoverIntent is a wrapper component that attempts to determine the user's intent 
 
 1. Having a button that triggers a popover (example below). In that case, when user hovers their mouse fast over the element but doesn't stop over the element then `onMouseOver` will not be triggered.
 
-2. Evaluating the users intention to move the cursor to a flyout submenu. 
+2. Evaluating the users intention to move the cursor to a flyout submenu.
 
 ![Example](example.gif)
 
@@ -39,15 +39,13 @@ class App extends Component {
 	constructor() {
 		super();
 		this.state = { mouseover: false };
-		this.onMouseOver = this.onMouseOver;
-		this.onMouseOut = this.onMouseOut;
 	}
 	onMouseOver = () => {
 		this.setState( { mouseover: true } );
-	}
+	};
 	onMouseOut = () => {
 		this.setState( { mouseover: false } );
-	}
+	};
 	render() {
 		const { mouseover } = this.state;
 		return (
