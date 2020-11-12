@@ -5,7 +5,9 @@ import initialDomainState from './initial';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { domainTransferSchema } from './schema';
 import {
+	DOMAIN_TRANSFER_ACCEPT,
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
+	DOMAIN_TRANSFER_CANCEL_REQUEST,
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
@@ -54,15 +56,33 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 				needsUpdate: true,
 			} );
 		}
+		case DOMAIN_TRANSFER_CANCEL_REQUEST: {
+			return updateDomainState( state, action.domain, {
+				isCancelingTransfer: true,
+			} );
+		}
 		case DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED: {
 			return updateDomainState( state, action.domain, {
+				isCancelingTransfer: false,
 				data: Object.assign( {}, state[ action.domain ].data, {
 					locked: action.locked,
 					pendingTransfer: false,
 				} ),
 			} );
 		}
-		case DOMAIN_TRANSFER_ACCEPT_COMPLETED:
+		case DOMAIN_TRANSFER_ACCEPT: {
+			return updateDomainState( state, action.domain, {
+				isAcceptingTransfer: true,
+			} );
+		}
+		case DOMAIN_TRANSFER_ACCEPT_COMPLETED: {
+			return updateDomainState( state, action.domain, {
+				isAcceptingTransfer: false,
+				data: Object.assign( {}, state[ action.domain ].data, {
+					pendingTransfer: false,
+				} ),
+			} );
+		}
 		case DOMAIN_TRANSFER_DECLINE_COMPLETED: {
 			return updateDomainState( state, action.domain, {
 				data: Object.assign( {}, state[ action.domain ].data, {
