@@ -10,7 +10,7 @@ import i18n, { getLocaleSlug } from 'i18n-calypso';
 import config from 'calypso/config';
 import languages from '@automattic/languages';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-export { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl as localizeUrlActual } from '@automattic/i18n-utils';
 
 /**
  * a locale can consist of three component
@@ -20,6 +20,13 @@ export { localizeUrl } from '@automattic/i18n-utils';
  * while the language code is mandatory, the other two are optional.
  */
 const localeRegex = /^[A-Z]{2,3}(-[A-Z]{2,3})?(_[A-Z]{2,6})?$/i;
+
+export function localizeUrl( url, locale = null ) {
+	return localizeUrlActual(
+		url,
+		locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() || 'en' : 'en' )
+	);
+}
 
 export function getPathParts( path ) {
 	// Remove trailing slash then split. If there is a trailing slash,
