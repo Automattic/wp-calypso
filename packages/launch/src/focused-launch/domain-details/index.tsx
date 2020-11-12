@@ -25,7 +25,7 @@ import './style.scss';
 
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
-const DomainStep: React.FunctionComponent = () => {
+const DomainDetails: React.FunctionComponent = () => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
 	const domainSearch = useDomainSearch();
@@ -91,4 +91,4 @@ const DomainStep: React.FunctionComponent = () => {
 	);
 };
 
-export default DomainStep;
+export default DomainDetails;
