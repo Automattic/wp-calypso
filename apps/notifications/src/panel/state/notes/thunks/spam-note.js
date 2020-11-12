@@ -2,12 +2,8 @@
  * Internal dependencies
  */
 import { spamNote as spamNoteAction } from '../actions';
-import { bumpStat as rawBumpStat } from '../../../rest-client/bump-stat';
-const { recordTracksEvent } = require( '../../../helpers/stats' );
-
-function bumpStat( name ) {
-	rawBumpStat( 'notes-click-action', name );
-}
+import { recordTracksEvent } from '../../../helpers/stats';
+import bumpStat from '../utils/bump-stat';
 
 const spamNote = ( note, restClient ) => ( dispatch ) => {
 	bumpStat( 'spam-comment' );
