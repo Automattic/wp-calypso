@@ -12,7 +12,10 @@ import DomainPicker from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-import FocusedLaunchSummaryItem from './focused-launch-summary-item';
+import FocusedLaunchSummaryItem, {
+	LeadingContentSide,
+	TrailingContentSide,
+} from './focused-launch-summary-item';
 /**
  * Internal dependencies
  */
@@ -137,14 +140,16 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 								) }
 							</p>
 						</label>
-						<FocusedLaunchSummaryItem
-							leftSide={ currentDomain || '' }
-							rightSide={
-								<>
-									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
-								</>
-							}
-						></FocusedLaunchSummaryItem>
+						<FocusedLaunchSummaryItem readOnly>
+							<LeadingContentSide label={ currentDomain || '' } />
+							<TrailingContentSide
+								price={
+									<>
+										<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
+									</>
+								}
+							/>
+						</FocusedLaunchSummaryItem>
 					</>
 				) : (
 					<>
@@ -291,19 +296,26 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							) }
 						</p>
 						<div>
-							{ [ 1, 2, 3 ].map( ( el ) => {
-								return (
-									<FocusedLaunchSummaryItem
-										leftSide={ el }
-										rightSide={
-											<>
-												<Icon icon={ check } size={ 18 } />{ ' ' }
-												{ __( 'Purchased', __i18n_text_domain__ ) }
-											</>
-										}
-									></FocusedLaunchSummaryItem>
-								);
-							} ) }
+							<FocusedLaunchSummaryItem>
+								<LeadingContentSide label={ 'Premium Plan' } badgeText="Popular" />
+								<TrailingContentSide price="$25/mo" />
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem isSelected>
+								<LeadingContentSide label={ 'Selected Premium Plan' } badgeText="Popular" />
+								<TrailingContentSide price="$25" />
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem>
+								<LeadingContentSide label={ 'Free Plan' } />
+								<TrailingContentSide price="Free" />
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem isSelected>
+								<LeadingContentSide label={ 'Selected Free Plan' } />
+								<TrailingContentSide price="Free" />
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem readOnly>
+								<LeadingContentSide label={ 'Disabled Free Plan' } />
+								<TrailingContentSide warningNote="Not available with your domain selection" />
+							</FocusedLaunchSummaryItem>
 						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
