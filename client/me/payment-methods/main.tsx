@@ -9,13 +9,18 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { addCreditCard } from 'calypso/me/purchases/paths';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import CreditCards from 'calypso/me/purchases/credit-cards';
+import CreditCards from 'calypso/me/payment-methods/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 export default function PaymentMethods(): JSX.Element {
 	const translate = useTranslate();

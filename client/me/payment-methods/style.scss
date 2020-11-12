@@ -1,4 +1,8 @@
-/* 1. `background-image` is set inline by the component logic */
+.credit-card {
+	margin-bottom: 0;
+	display: flex;
+}
+
 .credit-card__stored-card-name {
 	color: var( --color-neutral-50 );
 }
@@ -16,4 +20,14 @@
 
 .stored-card__image {
 	width: 60px;
+}
+
+.payment-method-delete-dialog {
+	&.dialog {
+		max-width: 440px;
+	}
+
+	.card-heading {
+		margin-top: 0;
+	}
 }

@@ -13,11 +13,6 @@ import {
 	getPaymentMethodSummary,
 } from 'calypso/lib/checkout/payment-methods';
 
-/**
- * Style dependencies
- */
-import './stored-card.scss';
-
 interface Props {
 	lastDigits?: string;
 	cardType: string;

@@ -9,11 +9,6 @@ import React, { FunctionComponent, useCallback, ComponentProps } from 'react';
 import StoredCard from './stored-card';
 import { Card } from '@automattic/components';
 
-/**
- * Style dependencies
- */
-import './credit-card.scss';
-
 type SelectHandler = React.EventHandler<
 	React.MouseEvent< HTMLDivElement > | React.KeyboardEvent< HTMLDivElement >
 >;

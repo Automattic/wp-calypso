@@ -19,7 +19,7 @@ import {
 	getPaymentMethodSummary,
 	PaymentMethod,
 } from 'calypso/lib/checkout/payment-methods';
-import StoredCard from 'calypso/components/credit-card/stored-card';
+import StoredCard from './stored-card';
 import PaymentMethodDeleteDialog from './payment-method-delete-dialog';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
