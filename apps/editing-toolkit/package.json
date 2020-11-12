@@ -93,6 +93,7 @@
 		"@automattic/launch": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/typography": "^1.0.0",
 		"@babel/core": "^7.11.1",
 		"@testing-library/jest-dom": "^5.9.0",

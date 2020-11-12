@@ -2,12 +2,13 @@
  * External dependencies
  */
 import React, { FunctionComponent, useEffect, useState } from 'react';
-import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
@@ -58,6 +59,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	selected,
 	type = ITEM_TYPE_RADIO,
 } ) => {
+	const { __, i18nLocale } = useI18n();
+
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const dotPos = domain.indexOf( '.' );
@@ -162,7 +165,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href="https://wordpress.com/support/https-ssl"
+											href={ localizeUrl( 'https://wordpress.com/support/https-ssl', i18nLocale ) }
 										/>
 									), // TODO Wrap this in `localizeUrl` from lib/i18n-utils
 								}
