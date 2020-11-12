@@ -136,7 +136,10 @@ export const getJetpackProductsCallToAction = () => {
 		</>
 	);
 	const search =
-		currentCROvariant === 'v1' ? translate( 'Get Jetpack Search' ) : translate( 'Get Search' );
+		{
+			v1: translate( 'Get Jetpack Search' ),
+			i5: translate( 'Get Site Search' ),
+		}[ currentCROvariant ] || translate( 'Get Search' );
 	const scan =
 		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
 	const antiSpam =
