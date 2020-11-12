@@ -9,6 +9,7 @@ import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordp
 /**
  * Internal dependencies
  */
+import PatternBadge from './components/pattern-badge';
 import './style.scss';
 
 export function PatternTitleContainer( { title } ) {
@@ -21,7 +22,9 @@ export function PatternTitleContainer( { title } ) {
 		>
 			{ showTooltip ? <div>Hello, there!</div> : null }
 			<span> { title } </span>
-			<span> { __( 'Premium', 'full-site-editing' ) } </span>
+			<div>
+				<PatternBadge> { __( 'Premium', 'full-site-editing' ) } </PatternBadge>
+			</div>
 		</div>
 	);
 }

@@ -1,0 +1,10 @@
+@import '~@wordpress/base-styles/colors';
+
+.pattern-badge {
+	display: inline-block;
+	background: $gray-900;
+	border-radius: 1em; /* stylelint-disable-line scales/radii */
+	padding: 2px 8px;
+	color: $white;
+	text-transform: uppercase;
+}
