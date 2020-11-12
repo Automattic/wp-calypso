@@ -42,7 +42,7 @@ version = "2020.1"
 project {
 
 	vcsRoot(WpCalypso)
-
+	subProject(WpDesktop)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
@@ -196,7 +196,6 @@ object BuildDockerImage : BuildType({
 		}
 	}
 })
-
 
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
@@ -646,5 +645,15 @@ object WpCalypso : GitVcsRoot({
 	authMethod = uploadedKey {
 		uploadedKey = "Sergio TeamCity"
 	}
+})
+
+object WpDesktop : Project({
+	name = "Desktop"
+	buildType(WpDesktop_DesktopE2ETests)
+})
+
+object WpDesktop_DesktopE2ETests : BuildType({
+	name = "Desktop e2e tests"
+	steps {	}
 })
 
