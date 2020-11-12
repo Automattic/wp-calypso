@@ -355,7 +355,19 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											}
 										/>
 										<TrailingContentSide
-											price={ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
+											price={
+												<>
+													<span>
+														{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
+													</span>
+													<span>
+														{
+															// translators: /mo is short for "per-month"
+															__( '/mo', __i18n_text_domain__ )
+														}
+													</span>
+												</>
+											}
 										/>
 									</FocusedLaunchSummaryItem>,
 								]
