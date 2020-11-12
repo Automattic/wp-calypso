@@ -16,7 +16,7 @@ import ProductCardI5 from '../product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_REALTIME,
