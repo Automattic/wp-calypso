@@ -21,7 +21,6 @@ export const CHECKLIST_KNOWN_TASKS = {
 	MOBILE_APP_INSTALLED: 'mobile_app_installed',
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
-	SITE_MENU_UPDATED: 'site_menu_updated',
 	JETPACK_BACKUPS: 'jetpack_backups',
 	JETPACK_MONITOR: 'jetpack_monitor',
 	JETPACK_PLUGIN_UPDATES: 'jetpack_plugin_updates',

@@ -141,6 +141,7 @@ export const getTask = (
 				actionText: translate( 'Name your site' ),
 				actionUrl: `/settings/general/${ siteSlug }`,
 				tour: 'checklistSiteTitle',
+				isSkippable: true,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.MOBILE_APP_INSTALLED:
@@ -170,6 +171,7 @@ export const getTask = (
 				actionDispatch: launchSiteOrRedirectToLaunchSignupFlow,
 				actionDispatchArgs: [ siteId ],
 				actionDisableOnComplete: true,
+				isSkippable: true,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.FRONT_PAGE_UPDATED:
@@ -181,6 +183,7 @@ export const getTask = (
 				),
 				actionText: translate( 'Edit homepage' ),
 				actionUrl: taskUrls?.front_page_updated,
+				isSkippable: true,
 			};
 			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_MENU_UPDATED:
