@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
@@ -11,10 +12,10 @@ import { noop } from 'lodash';
 import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
-	cancelTransferRequest,
+	cancelDomainTransferRequest,
 	fetchWapiDomainInfo,
-	requestTransferCode,
-} from 'calypso/lib/domains/wapi-domain-info/actions';
+	requestDomainTransferCode,
+} from 'calypso/state/domains/transfer/actions';
 import notices from 'calypso/notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import {
@@ -57,81 +58,77 @@ class Unlocked extends React.Component {
 		const enablePrivacy = ! privateDomain;
 		const lockDomain = domainLockingAvailable;
 
-		cancelTransferRequest(
-			{
-				domainName: this.props.selectedDomainName,
-				declineTransfer: pendingTransfer,
-				siteId: this.props.selectedSite.ID,
-				enablePrivacy,
-				lockDomain,
-			},
-			( error ) => {
-				this.setStateIfMounted( { submitting: false } );
+		this.props.cancelDomainTransferRequest( this.props.selectedDomainName, {
+			declineTransfer: pendingTransfer,
+			siteId: this.props.selectedSite.ID,
+			enablePrivacy,
+			lockDomain,
+		} );
+		// TODO: Fix this
+		const error = {};
+		this.setStateIfMounted( { submitting: false } );
 
-				if ( error ) {
-					const contactLink = (
-						<a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
+		if ( error ) {
+			const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
+			let errorMessage;
+
+			switch ( error.error ) {
+				case 'enable_private_reg_failed':
+					errorMessage = translate(
+						'We were unable to enable Privacy Protection for your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+						{ components: { contactLink } }
 					);
-					let errorMessage;
-
-					switch ( error.error ) {
-						case 'enable_private_reg_failed':
-							errorMessage = translate(
-								'We were unable to enable Privacy Protection for your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						case 'decline_transfer_failed':
-							errorMessage = translate(
-								'We were unable to stop the transfer for your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						case 'lock_domain_failed':
-							errorMessage = translate(
-								'We were unable to lock your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						default:
-							errorMessage = translate(
-								'Oops! Something went wrong and your request could not be ' +
-									'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
-									'you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-					}
-					notices.error( errorMessage );
-				} else {
-					// Success.
-					this.setStateIfMounted( { sent: false } );
-
-					let successMessage;
-					if ( enablePrivacy && lockDomain ) {
-						successMessage = translate(
-							"We've canceled your domain transfer. Your domain is now re-locked and " +
-								'Privacy Protection has been enabled.'
-						);
-					} else if ( enablePrivacy ) {
-						successMessage = translate(
-							"We've canceled your domain transfer and " + 'Privacy Protection has been re-enabled.'
-						);
-					} else if ( lockDomain ) {
-						successMessage = translate(
-							"We've canceled your domain transfer and " + 're-locked your domain.'
-						);
-					} else {
-						successMessage = translate( "We've canceled your domain transfer. " );
-					}
-
-					notices.success( successMessage );
-				}
+					break;
+				case 'decline_transfer_failed':
+					errorMessage = translate(
+						'We were unable to stop the transfer for your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+						{ components: { contactLink } }
+					);
+					break;
+				case 'lock_domain_failed':
+					errorMessage = translate(
+						'We were unable to lock your domain. ' +
+							'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+						{ components: { contactLink } }
+					);
+					break;
+				default:
+					errorMessage = translate(
+						'Oops! Something went wrong and your request could not be ' +
+							'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
+							'you continue to have trouble.',
+						{ components: { contactLink } }
+					);
+					break;
 			}
-		);
+			notices.error( errorMessage );
+		} else {
+			// Success.
+			this.setStateIfMounted( { sent: false } );
+
+			let successMessage;
+			if ( enablePrivacy && lockDomain ) {
+				successMessage = translate(
+					"We've canceled your domain transfer. Your domain is now re-locked and " +
+						'Privacy Protection has been enabled.'
+				);
+			} else if ( enablePrivacy ) {
+				successMessage = translate(
+					"We've canceled your domain transfer and " + 'Privacy Protection has been re-enabled.'
+				);
+			} else if ( lockDomain ) {
+				successMessage = translate(
+					"We've canceled your domain transfer and " + 're-locked your domain.'
+				);
+			} else {
+				successMessage = translate( "We've canceled your domain transfer. " );
+			}
+
+			notices.success( successMessage );
+		}
+		// END TODO: Fix this
 	};
 
 	isDomainAlwaysTransferrable() {
@@ -183,21 +180,23 @@ class Unlocked extends React.Component {
 	handleSendConfirmationCodeClick = () => {
 		const options = {
 			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName,
 			unlock: false,
 			disablePrivacy: false,
 		};
 
 		this.setState( { submitting: true } );
 
-		requestTransferCode( options, ( error ) => {
-			this.setState( { submitting: false } );
-			if ( ! error ) {
-				this.setState( { sent: true } );
-			}
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			fetchWapiDomainInfo( this.props.selectedDomainName );
-		} );
+		this.props.requestDomainTransferCode( this.props.selectedDomainName, options );
+
+		// TODO: Fix this
+		const error = {};
+		this.setState( { submitting: false } );
+		if ( ! error ) {
+			this.setState( { sent: true } );
+		}
+		displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+		this.props.fetchWapiDomainInfo( this.props.selectedDomainName );
+		// END TODO
 	};
 
 	renderPendingTransferBody() {
@@ -316,4 +315,8 @@ class Unlocked extends React.Component {
 	}
 }
 
-export default localize( Unlocked );
+export default connect( null, {
+	cancelDomainTransferRequest,
+	fetchWapiDomainInfo,
+	requestDomainTransferCode,
+} )( localize( Unlocked ) );

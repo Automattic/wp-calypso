@@ -23,8 +23,6 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import StoreConnection from 'calypso/components/data/store-connection';
 import UsersStore from 'calypso/lib/users/store';
-import WapiDomainInfoStore from 'calypso/lib/domains/wapi-domain-info/store';
-import { fetchWapiDomainInfo } from 'calypso/lib/domains/wapi-domain-info/actions';
 
 function getStateFromStores( props ) {
 	return {
@@ -38,7 +36,6 @@ function getStateFromStores( props ) {
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
 		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
-		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
 	};
 }
 
@@ -53,7 +50,6 @@ class DomainManagementData extends React.Component {
 		needsContactDetails: PropTypes.bool,
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
-		needsDomainInfo: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
 		needsUsers: PropTypes.bool,
@@ -74,10 +70,6 @@ class DomainManagementData extends React.Component {
 	loadData( prevProps ) {
 		const { needsUsers, selectedDomainName, selectedSite } = this.props;
 
-		if ( this.props.needsDomainInfo ) {
-			fetchWapiDomainInfo( selectedDomainName );
-		}
-
 		if (
 			needsUsers &&
 			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
@@ -91,7 +83,6 @@ class DomainManagementData extends React.Component {
 			needsCart,
 			needsContactDetails,
 			needsDomains,
-			needsDomainInfo,
 			needsPlans,
 			needsProductsList,
 			needsUsers,
@@ -101,9 +92,6 @@ class DomainManagementData extends React.Component {
 		const stores = [];
 		if ( needsCart ) {
 			stores.push( CartStore );
-		}
-		if ( needsDomainInfo ) {
-			stores.push( WapiDomainInfoStore );
 		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );

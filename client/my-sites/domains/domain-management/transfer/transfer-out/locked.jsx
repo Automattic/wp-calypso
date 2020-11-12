@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -11,8 +12,8 @@ import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	fetchWapiDomainInfo,
-	requestTransferCode,
-} from 'calypso/lib/domains/wapi-domain-info/actions';
+	requestDomainTransferCode,
+} from 'calypso/state/domains/transfer/actions';
 import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 
@@ -27,19 +28,19 @@ class Locked extends React.Component {
 
 		const options = {
 			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName,
 			unlock: true,
 			disablePrivacy: privateDomain,
 		};
 
 		this.setState( { submitting: true } );
-		requestTransferCode( options, ( error ) => {
-			if ( error ) {
-				this.setState( { submitting: false } );
-			}
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			fetchWapiDomainInfo( this.props.selectedDomainName );
-		} );
+		this.props.requestDomainTransferCode( this.props.selectedDomainName, options );
+
+		// TODO: Fix this
+		this.setState( { submitting: false } );
+		const error = {};
+		displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
+		this.props.fetchWapiDomainInfo( this.props.selectedDomainName );
+		// END TODO
 	};
 
 	isManualTransferRequired() {
@@ -91,4 +92,7 @@ class Locked extends React.Component {
 	}
 }
 
-export default localize( Locked );
+export default connect( null, {
+	fetchWapiDomainInfo,
+	requestDomainTransferCode,
+} )( localize( Locked ) );

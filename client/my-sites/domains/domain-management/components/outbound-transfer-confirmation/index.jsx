@@ -12,10 +12,9 @@ import { localize } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import {
-	acceptTransfer,
-	cancelTransferRequest,
-} from 'calypso/lib/domains/wapi-domain-info/actions';
-import notices from 'calypso/notices';
+	acceptDomainTransfer,
+	cancelDomainTransferRequest,
+} from 'calypso/state/domains/transfer/actions';
 import { getMaintenanceMessageFromError } from '../../../../../landing/domains/utils';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
@@ -61,45 +60,24 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	};
 
 	onAcceptTransferClick = () => {
-		const { domain, translate } = this.props;
+		const { domain } = this.props;
 		this.setState( { isAccepting: true } );
-		acceptTransfer( domain.name, ( error ) => {
-			this.setStateIfMounted( { isAccepting: false } );
-			if ( error ) {
-				notices.error( this.getErrorMessage( error ) );
-			} else {
-				notices.success(
-					translate(
-						'You have successfully expedited your domain transfer. There is nothing else you need to do.'
-					)
-				);
-			}
-		} );
+		this.props.acceptDomainTransfer( domain.name );
+		// TODO: fix this
+		this.setState( { isAccepting: false } );
 		this.props.recordTracksEvent( 'calypso_outbound_transfer_accept_click' );
 	};
 
 	onCancelTransferClick = () => {
-		const { domain, siteId, translate } = this.props;
+		const { domain, siteId } = this.props;
 		this.setState( { isCanceling: true } );
-		cancelTransferRequest(
-			{
-				domainName: domain.name,
-				siteId: siteId,
-				declineTransfer: true,
-			},
-			( error ) => {
-				this.setStateIfMounted( { isCanceling: false } );
-				if ( error ) {
-					notices.error( this.getErrorMessage( error ) );
-				} else {
-					notices.success(
-						translate(
-							'You have successfully cancelled your domain transfer. There is nothing else you need to do.'
-						)
-					);
-				}
-			}
-		);
+		this.props.cancelDomainTransferRequest( {
+			domainName: domain.name,
+			siteId: siteId,
+			declineTransfer: true,
+		} );
+		// TODO: fix this
+		this.setStateIfMounted( { isCanceling: false } );
 		this.props.recordTracksEvent( 'calypso_outbound_transfer_cancel_click' );
 	};
 
@@ -241,4 +219,8 @@ class OutboundTransferConfirmation extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( OutboundTransferConfirmation ) );
+export default connect( null, {
+	acceptDomainTransfer,
+	cancelDomainTransferRequest,
+	recordTracksEvent,
+} )( localize( OutboundTransferConfirmation ) );
