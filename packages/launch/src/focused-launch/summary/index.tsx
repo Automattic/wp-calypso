@@ -296,40 +296,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								}
 							) }
 						</p>
-						<div>
-							<FocusedLaunchSummaryItem readOnly>
-								<LeadingContentSide label="somepurchaseddomain.com" />
-								<TrailingContentSide
-									price={
-										<>
-											<Icon icon={ check } size={ 18 } />{ ' ' }
-											{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
-										</>
-									}
-								/>
-							</FocusedLaunchSummaryItem>
-
-							<FocusedLaunchSummaryItem>
-								<LeadingContentSide label={ 'Premium Plan' } badgeText="Popular" />
-								<TrailingContentSide price="$25/mo" />
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem isSelected>
-								<LeadingContentSide label={ 'Selected Premium Plan' } badgeText="Popular" />
-								<TrailingContentSide price="$25" />
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem>
-								<LeadingContentSide label={ 'Free Plan' } />
-								<TrailingContentSide price="Free" />
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem isSelected>
-								<LeadingContentSide label={ 'Selected Free Plan' } />
-								<TrailingContentSide price="Free" />
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem readOnly>
-								<LeadingContentSide label={ 'Disabled Free Plan' } />
-								<TrailingContentSide warningNote="Not available with your domain selection" />
-							</FocusedLaunchSummaryItem>
-						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
 				)
