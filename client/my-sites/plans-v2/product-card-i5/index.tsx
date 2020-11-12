@@ -89,7 +89,6 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 
 	return (
 		<JetpackProductCard
-			iconSlug={ isPlan ? undefined : item.iconSlug }
 			productSlug={ item.productSlug }
 			productName={ item.displayName }
 			headingLevel={ 3 }
