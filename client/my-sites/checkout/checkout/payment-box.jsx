@@ -17,7 +17,7 @@ import SectionNav from 'calypso/components/section-nav';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { paymentMethodName, isPaymentMethodEnabled } from 'calypso/lib/cart-values';
+import { paymentMethodName } from 'calypso/lib/cart-values';
 import {
 	detectWebPaymentMethod,
 	getWebPaymentMethodName,
@@ -119,10 +119,6 @@ export class PaymentBox extends PureComponent {
 	}
 
 	paymentMethod( method ) {
-		if ( ! isPaymentMethodEnabled( this.props.cart, method ) ) {
-			return null;
-		}
-
 		return (
 			<NavItem
 				key={ method }
