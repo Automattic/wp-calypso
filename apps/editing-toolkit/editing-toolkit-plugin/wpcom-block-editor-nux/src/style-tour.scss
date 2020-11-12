@@ -3,89 +3,22 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/z-index';
 
-.wpcom-editor-welcome-tour-frame {
+.wpcom-editor-welcome-tour-container {
 	background-color: $white;
-	border-radius: 4px;
+	border-radius: 2px;
 	bottom: 40px;
 	display: inline;
 	left: 40px;
 	position: fixed;
 }
 
-.welcome-tour-card__heading {
-	font-size: 1.25rem;
-	margin: 0.5rem 0;
+.wpcom-block-editor-welcome-tour__card-heading,
+.wpcom-block-editor-welcome-tour__subheading {
+	padding: $grid-unit-05 $grid-unit-20;
+	font-size: $big-font-size;
+	// margin: 0 0 8px;
 }
 
-.welcome-tour-card__description {
-	font-size: 0.875rem;
-	line-height: 1.5rem;
-}
-
-.wpcom-editor-welcome-tour__resume-btn {
-	border-radius: 4px;
-	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
-		0 1px 1px rgba( 0, 0, 0, 0.08 );
-	background-color: $white;
-	color: $black;
-
-	&.components-button {
-		height: 44px;
-	}
-}
-
-.wpcom-editor-welcome-tour-card-frame {
-	position: relative;
-
-	// TODO update markup/css  if this isn't ok
-	.components-guide__page-control {
-		bottom: 0;
-		left: $grid-unit-20;
-		margin: 0;
-		position: absolute;
-
-		li {
-			margin-bottom: 0;
-		}
-	}
-}
-
-.welcome-tour-card {
-	max-width: 400px;
-
-	.components-card__body,
-	.components-card__footer {
-		border-top: none;
-		padding: $grid-unit-15 !important;
-	}
-
-	.components-guide__page-control {
-		margin: 0;
-
-		.components-button {
-			min-width: auto;
-			&.has-icon {
-				padding: 3px;
-			}
-		}
-
-		li {
-			margin-bottom: 0;
-		}
-	}
-}
-
-.welcome-tour-card__overlay-controls {
-	left: 0;
-	padding: $grid-unit-15;
-	position: absolute;
-	right: 0;
-
-	.components-button {
-		background: $dark-gray-700;
-	}
-}
-
-.welcome-tour-card__next-btn {
-	margin-left: $grid-unit-15;
+.wpcom-editor-welcome-tour__minimized-container {
+	border-radius: 2px;
 }
