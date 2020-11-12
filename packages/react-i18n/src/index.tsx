@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
+import { createI18n, I18n, LocaleData, __, _n, _nx, _x, isRTL } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 export interface I18nReact {
@@ -24,6 +24,28 @@ export const I18nProvider: React.FunctionComponent< Props > = ( { children, loca
 	const contextValue = React.useMemo< I18nReact >( () => makeContextValue( localeData ), [
 		localeData,
 	] );
+	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
+};
+
+interface GlobalI18nProviderProps {
+	localeSlug: string;
+}
+
+export const GlobalI18nProvider: React.FunctionComponent< GlobalI18nProviderProps > = ( {
+	children,
+	localeSlug,
+} ) => {
+	const contextValue = React.useMemo< I18nReact >(
+		() => ( {
+			__,
+			_n,
+			_nx,
+			_x,
+			isRTL,
+			i18nLocale: localeSlug,
+		} ),
+		[ localeSlug ]
+	);
 	return <I18nContext.Provider value={ contextValue }>{ children }</I18nContext.Provider>;
 };
 
