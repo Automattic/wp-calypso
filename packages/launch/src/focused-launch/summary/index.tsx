@@ -20,8 +20,8 @@ import FocusedLaunchSummaryItem, {
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
-import { LAUNCH_STORE } from '../../stores';
+import { useTitle, useDomainSearch, useSiteDomains, useSite } from '../../hooks';
+import { LAUNCH_STORE, PLANS_STORE, Plan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
 
@@ -58,23 +58,6 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, comm
 type CommonStepProps = {
 	stepIndex?: number;
 };
-
-function generatePlanStepOptions(
-	hasPaidDomain: boolean,
-	selectedPaidDomain: boolean,
-	hasPaidPlan: boolean,
-	onSelectPlan
-) {
-	if ( hasPaidPlan ) {
-		return <div>Locked premium plan</div>;
-	}
-	return [
-		<div>
-			free plan item { ( hasPaidDomain || selectedPaidDomain ) && 'not available with paid domain' }
-		</div>,
-		<div>Premium plan</div>,
-	];
-}
 
 // Props in common between all summary steps + a few props from <TextControl>
 type SiteTitleStepProps = CommonStepProps &
@@ -265,6 +248,11 @@ type PlanStepProps = CommonStepProps & {
 	hasPaidPlan?: boolean;
 	hasPaidDomain?: boolean;
 	selectedPaidDomain?: boolean;
+	defaultPaidPlan: Plan | undefined;
+	defaultFreePlan: Plan | undefined;
+	planPrices: Record< string, string >;
+	selectedPlan: Plan | undefined;
+	onSetPlan: ( plan: Plan ) => void;
 };
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
@@ -272,6 +260,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	hasPaidPlan = false,
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
+	defaultPaidPlan,
+	defaultFreePlan,
+	planPrices,
+	selectedPlan,
+	onSetPlan,
 } ) => {
 	return (
 		<SummaryStep
@@ -322,7 +315,24 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							) }
 						</p>
 						<div>
-							{ generatePlanStepOptions( hasPaidDomain, selectedPaidDomain, hasPaidPlan, null ) }
+							{ hasPaidPlan ? (
+								<div>Locked premium plan</div>
+							) : (
+								[
+									<button
+										disabled={ hasPaidDomain || selectedPaidDomain }
+										onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
+									>
+										{ selectedPlan?.isFree && '[Selected]' } Free plan item{ ' ' }
+										{ ( hasPaidDomain || selectedPaidDomain ) && 'not available with paid domain' }
+									</button>,
+									<button onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }>
+										{ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug && '[Selected]' }{ ' ' }
+										{ defaultPaidPlan?.title }{ ' ' }
+										{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
+									</button>,
+								]
+							) }
 						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
@@ -384,9 +394,14 @@ const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, setPlan } = useDispatch( LAUNCH_STORE );
 	const domainSearch = useDomainSearch();
+	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
+	const defaultFreePlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultFreePlan() );
+	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const site = useSite();
 
 	const { locale } = useContext( LaunchContext );
 
@@ -398,9 +413,7 @@ const Summary: React.FunctionComponent = () => {
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
-	// @TODO: plan step to be implemented
-	// https://github.com/Automattic/wp-calypso/issues/46865
-	const hasPaidPlan = false;
+	const hasPaidPlan = site.isPaidPlan;
 
 	// Prepare Steps
 	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
@@ -439,6 +452,11 @@ const Summary: React.FunctionComponent = () => {
 			hasPaidDomain={ hasPaidDomain }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
+			defaultPaidPlan={ defaultPaidPlan }
+			defaultFreePlan={ defaultFreePlan }
+			selectedPlan={ selectedPlan }
+			onSetPlan={ setPlan }
+			planPrices={ planPrices }
 		/>
 	);
 

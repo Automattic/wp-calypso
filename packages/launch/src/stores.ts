@@ -18,3 +18,5 @@ const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( { vendor: 'variatio
 const LAUNCH_STORE = Launch.register();
 
 export { SITE_STORE, PLANS_STORE, DOMAIN_SUGGESTIONS_STORE, LAUNCH_STORE };
+
+export type Plan = Plans.Plan;
