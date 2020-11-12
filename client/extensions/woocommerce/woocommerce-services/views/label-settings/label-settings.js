@@ -235,7 +235,8 @@ class ShippingLabels extends Component {
 		const onPaymentMethodChange = ( value ) =>
 			this.props.setValue( 'selected_payment_method_id', value );
 
-		let description, buttonLabel;
+		let description;
+		let buttonLabel;
 		if ( paymentMethods.length ) {
 			description = translate(
 				'To purchase shipping labels, choose a credit card you have on file or add a new card.'

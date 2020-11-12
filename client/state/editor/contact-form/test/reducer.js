@@ -16,14 +16,9 @@ import {
 	EDITOR_CONTACT_FORM_FIELD_UPDATE,
 	EDITOR_CONTACT_FORM_SETTINGS_UPDATE,
 } from 'calypso/state/action-types';
+import reducer from '../reducer';
 
 describe( "editor's contact form state reducer", () => {
-	let reducer;
-
-	beforeAll( () => {
-		reducer = require( '../reducer' );
-	} );
-
 	test( 'should return the default contact form when neither state nor action is provided', () => {
 		const state = reducer( undefined, {} );
 

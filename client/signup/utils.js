@@ -44,13 +44,13 @@ function isStepSectionName( pathFragment ) {
 }
 
 export function getStepUrl( flowName, stepName, stepSectionName, localeSlug ) {
-	const flow = flowName ? `/${ flowName }` : '',
-		step = stepName ? `/${ stepName }` : '',
-		section = stepSectionName ? `/${ stepSectionName }` : '',
-		// when the user is logged in, the locale slug is meaningless in a
-		// signup URL, as the page will be translated in the language the user
-		// has in their settings.
-		locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
+	const flow = flowName ? `/${ flowName }` : '';
+	const step = stepName ? `/${ stepName }` : '';
+	const section = stepSectionName ? `/${ stepSectionName }` : '';
+	// when the user is logged in, the locale slug is meaningless in a
+	// signup URL, as the page will be translated in the language the user
+	// has in their settings.
+	const locale = localeSlug && ! user().get() ? `/${ localeSlug }` : '';
 
 	if ( flowName === defaultFlowName ) {
 		// we don't include the default flow name in the route

@@ -189,7 +189,8 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType, upgradeItem;
+	let upsellType;
+	let upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = 'concierge-quickstart-session';

@@ -168,6 +168,8 @@ function WPLineItem( {
 WPLineItem.propTypes = {
 	className: PropTypes.string,
 	total: PropTypes.bool,
+	tax: PropTypes.bool,
+	subtotal: PropTypes.bool,
 	isSummary: PropTypes.bool,
 	hasDeleteButton: PropTypes.bool,
 	removeProductFromCart: PropTypes.func,
@@ -179,6 +181,8 @@ WPLineItem.propTypes = {
 	} ),
 	getItemVariants: PropTypes.func,
 	onChangePlanLength: PropTypes.func,
+	createUserAndSiteBeforeTransaction: PropTypes.bool,
+	isMonthlyPricingTest: PropTypes.bool,
 };
 
 function LineItemPrice( { item, isSummary } ) {
@@ -318,7 +322,7 @@ function DeleteIcon( { uniqueID, product } ) {
 	);
 }
 
-export function WPOrderReviewTotal( { total, className } ) {
+export function WPOrderReviewTotal( { total, className = null } ) {
 	return (
 		<div className={ joinClasses( [ className, 'order-review-total' ] ) }>
 			<LineItem total item={ total } />

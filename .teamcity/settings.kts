@@ -42,7 +42,7 @@ version = "2020.1"
 project {
 
 	vcsRoot(WpCalypso)
-
+	subProject(WpDesktop)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
@@ -97,17 +97,24 @@ object BuildBaseImages : BuildType({
 				VERSION="%build.number%"
 				BUILDER_IMAGE_NAME="registry.a8c.com/calypso/base"
 				CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
+				CI_DESKTOP_IMAGE_NAME="registry.a8c.com/calypso/ci-desktop"
 				BUILDER_IMAGE="${'$'}{BUILDER_IMAGE_NAME}:${'$'}{VERSION}"
 				CI_IMAGE="${'$'}{CI_IMAGE_NAME}:${'$'}{VERSION}"
+				CI_DESKTOP_IMAGE="${'$'}{CI_DESKTOP_IMAGE_NAME}:${'$'}{VERSION}"
 
 				docker build -f Dockerfile.base --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
 				docker build -f Dockerfile.base --target ci -t "${'$'}CI_IMAGE" .
+				docker build -f Dockerfile.base --target ci-desktop -t "${'$'}CI_DESKTOP_IMAGE" .
 
 				docker tag "${'$'}BUILDER_IMAGE" "${'$'}{BUILDER_IMAGE_NAME}:latest"
 				docker tag "${'$'}CI_IMAGE" "${'$'}{CI_IMAGE_NAME}:latest"
+				docker tag "${'$'}CI_DESKTOP_IMAGE" "${'$'}{CI_DESKTOP_IMAGE_NAME}:latest"
 
 				docker push "${'$'}CI_IMAGE"
 				docker push "${'$'}{CI_IMAGE_NAME}:latest"
+
+				docker push "${'$'}CI_DESKTOP_IMAGE"
+				docker push "${'$'}{CI_DESKTOP_IMAGE_NAME}:latest"
 
 				docker push "${'$'}BUILDER_IMAGE"
 				docker push "${'$'}{BUILDER_IMAGE_NAME}:latest"
@@ -189,7 +196,6 @@ object BuildDockerImage : BuildType({
 		}
 	}
 })
-
 
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
@@ -437,25 +443,6 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Build media-library storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="production"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				yarn media-library:storybook:start --ci --smoke-test -h localhost
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
 			name = "Build search storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
@@ -658,5 +645,15 @@ object WpCalypso : GitVcsRoot({
 	authMethod = uploadedKey {
 		uploadedKey = "Sergio TeamCity"
 	}
+})
+
+object WpDesktop : Project({
+	name = "Desktop"
+	buildType(WpDesktop_DesktopE2ETests)
+})
+
+object WpDesktop_DesktopE2ETests : BuildType({
+	name = "Desktop e2e tests"
+	steps {	}
 })
 

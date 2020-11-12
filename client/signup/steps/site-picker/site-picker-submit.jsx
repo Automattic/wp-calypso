@@ -17,9 +17,9 @@ export const siteHasPaidPlan = ( selectedSite ) =>
 
 export class SitePickerSubmit extends React.Component {
 	UNSAFE_componentWillMount() {
-		const { stepSectionName, stepName, goToStep, selectedSite } = this.props,
-			hasPaidPlan = siteHasPaidPlan( selectedSite ),
-			{ ID: siteId, slug: siteSlug } = selectedSite;
+		const { stepSectionName, stepName, goToStep, selectedSite } = this.props;
+		const hasPaidPlan = siteHasPaidPlan( selectedSite );
+		const { ID: siteId, slug: siteSlug } = selectedSite;
 
 		this.props.submitSignupStep( {
 			stepName,

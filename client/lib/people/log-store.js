@@ -12,10 +12,9 @@ const debug = debugFactory( 'calypso:my-sites:people:log-store' );
 import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 
-let _errors = [],
-	_inProgress = [],
-	_completed = [],
-	PeopleLogStore;
+let _errors = [];
+let _inProgress = [];
+let _completed = [];
 
 function removeLog( log ) {
 	debug( 'removing log:', log );
@@ -69,7 +68,7 @@ function filterList( listName, filterBy ) {
 	return clone( list );
 }
 
-PeopleLogStore = {
+const PeopleLogStore = {
 	hasUnauthorizedError: function ( siteId ) {
 		return Boolean(
 			find( _errors, ( log ) => log.siteId === siteId && log.error === 'unauthorized' )

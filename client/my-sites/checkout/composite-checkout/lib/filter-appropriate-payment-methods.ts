@@ -3,12 +3,14 @@
  */
 import debugFactory from 'debug';
 import type { PaymentMethod, LineItem } from '@automattic/composite-checkout';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { CheckoutCartItem } from '../types/checkout-cart';
 import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
 
@@ -18,6 +20,7 @@ export default function filterAppropriatePaymentMethods( {
 	total,
 	credits,
 	subtotal,
+	responseCart,
 	allowedPaymentMethods,
 }: {
 	paymentMethodObjects: PaymentMethod[];
@@ -26,13 +29,10 @@ export default function filterAppropriatePaymentMethods( {
 	credits: CheckoutCartItem | null;
 	subtotal: CheckoutCartItem;
 	allowedPaymentMethods: CheckoutPaymentMethodSlug[];
+	responseCart: ResponseCart;
 } ): PaymentMethod[] {
 	const isPurchaseFree = total.amount.value === 0;
-	const isFullCredits =
-		! isPurchaseFree &&
-		credits &&
-		credits.amount.value > 0 &&
-		credits.amount.value >= subtotal.amount.value;
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 	debug( 'filtering payment methods with this input', {
 		total,
 		credits,

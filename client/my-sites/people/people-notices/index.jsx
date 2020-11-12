@@ -167,16 +167,16 @@ class PeopleNotices extends React.Component {
 	state = this.getState();
 
 	render() {
-		const logNotices = this.state,
-			onDismissErrorNotice = () => {
-				PeopleActions.removePeopleNotices( logNotices.errors );
-			},
-			onDismissSuccessNotice = () => {
-				PeopleActions.removePeopleNotices( logNotices.completed );
-			};
+		const logNotices = this.state;
+		const onDismissErrorNotice = () => {
+			PeopleActions.removePeopleNotices( logNotices.errors );
+		};
+		const onDismissSuccessNotice = () => {
+			PeopleActions.removePeopleNotices( logNotices.completed );
+		};
 
-		let notice = null,
-			message;
+		let notice = null;
+		let message;
 
 		if ( logNotices.inProgress.length > 0 ) {
 			message = this.inProgressMessage();

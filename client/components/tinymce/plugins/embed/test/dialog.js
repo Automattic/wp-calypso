@@ -126,7 +126,8 @@ describe( 'EmbedDialog', () => {
 	} );
 
 	describe( 'EmbedDialog parseEmbedEndpointResult', () => {
-		let wrapper, instance;
+		let wrapper;
+		let instance;
 		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 
 		beforeEach( () => {

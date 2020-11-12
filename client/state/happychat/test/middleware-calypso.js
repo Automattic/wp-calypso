@@ -34,7 +34,8 @@ import {
 } from 'calypso/state/action-types';
 
 describe( 'middleware', () => {
-	let actionMiddleware, store;
+	let actionMiddleware;
+	let store;
 	beforeEach( () => {
 		store = {
 			getState: jest.fn(),

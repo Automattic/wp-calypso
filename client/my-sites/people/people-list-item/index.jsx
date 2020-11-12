@@ -47,8 +47,8 @@ class PeopleListItem extends React.PureComponent {
 	};
 
 	canLinkToProfile = () => {
-		const site = this.props.site,
-			user = this.props.user;
+		const site = this.props.site;
+		const user = this.props.user;
 		return (
 			config.isEnabled( 'manage/edit-user' ) &&
 			user &&

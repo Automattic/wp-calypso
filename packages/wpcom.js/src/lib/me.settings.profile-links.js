@@ -77,7 +77,7 @@ ProfileLinks.prototype.add = function ( links, query, fn ) {
 	// Set api version 1.2 for this endpoint
 	query.apiVersion = '1.2';
 
-	let path = root + '/new';
+	const path = root + '/new';
 	return this.wpcom.req.post( path, query, { links: links }, fn );
 };
 
@@ -100,7 +100,7 @@ ProfileLinks.prototype.add = function ( links, query, fn ) {
  * @returns {Function} request handler
  */
 ProfileLinks.prototype.del = function ( slug, query, fn ) {
-	let path = root + '/' + slug + '/delete';
+	const path = root + '/' + slug + '/delete';
 	return this.wpcom.req.del( path, query, fn );
 };
 

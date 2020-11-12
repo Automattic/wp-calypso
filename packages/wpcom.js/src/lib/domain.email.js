@@ -32,7 +32,7 @@ class DomainEmail {
 	 * @returns {Function} request handler
 	 */
 	forward( destination, query, fn ) {
-		let body = { destination: destination };
+		const body = { destination: destination };
 		return this.wpcom.req.post( this._subpath + this._email, query, body, fn );
 	}
 
@@ -51,7 +51,7 @@ class DomainEmail {
 			query = {};
 		}
 
-		let body = {
+		const body = {
 			mailbox: mailbox,
 			destination: destination,
 		};

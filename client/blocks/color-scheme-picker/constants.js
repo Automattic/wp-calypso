@@ -7,6 +7,7 @@ import { compact } from 'lodash';
  * Image dependencies
  */
 import classicBrightImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-bright.svg';
+import classicDarkImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-dark.svg';
 import classicBlueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-classic-blue.svg';
 import blueImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-blue.svg';
 import powderSnowImg from 'calypso/assets/images/color-schemes/color-scheme-thumbnail-powder-snow.svg';
@@ -33,19 +34,11 @@ import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumb
 export default function ( translate ) {
 	return compact( [
 		{
-			label: translate( 'Classic Bright' ),
-			value: 'classic-bright',
+			label: translate( 'Aquatic' ),
+			value: 'aquatic',
 			thumbnail: {
-				cssClass: 'is-classic-bright',
-				imageUrl: classicBrightImg,
-			},
-		},
-		{
-			label: translate( 'Classic Blue' ),
-			value: 'classic-blue',
-			thumbnail: {
-				cssClass: 'is-classic-blue',
-				imageUrl: classicBlueImg,
+				cssClass: 'is-aquatic',
+				imageUrl: aquaticImg,
 			},
 		},
 		{
@@ -57,83 +50,27 @@ export default function ( translate ) {
 			},
 		},
 		{
-			label: translate( 'Powder Snow' ),
-			value: 'powder-snow',
+			label: translate( 'Classic Blue' ),
+			value: 'classic-blue',
 			thumbnail: {
-				cssClass: 'is-powder-snow',
-				imageUrl: powderSnowImg,
+				cssClass: 'is-classic-blue',
+				imageUrl: classicBlueImg,
 			},
 		},
 		{
-			label: translate( 'Light' ),
-			value: 'light',
+			label: translate( 'Classic Bright' ),
+			value: 'classic-bright',
 			thumbnail: {
-				cssClass: 'is-light',
-				imageUrl: lightImg,
+				cssClass: 'is-classic-bright',
+				imageUrl: classicBrightImg,
 			},
 		},
 		{
-			label: translate( 'Modern' ),
-			value: 'modern',
+			label: translate( 'Classic Dark' ),
+			value: 'classic-dark',
 			thumbnail: {
-				cssClass: 'is-modern',
-				imageUrl: modernImg,
-			},
-		},
-		{
-			label: translate( 'Nightfall' ),
-			value: 'nightfall',
-			thumbnail: {
-				cssClass: 'is-nightfall',
-				imageUrl: nightfallImg,
-			},
-		},
-		{
-			label: translate( 'Sakura' ),
-			value: 'sakura',
-			thumbnail: {
-				cssClass: 'is-sakura',
-				imageUrl: sakuraImg,
-			},
-		},
-		{
-			label: translate( 'Ocean' ),
-			value: 'ocean',
-			thumbnail: {
-				cssClass: 'is-ocean',
-				imageUrl: oceanImg,
-			},
-		},
-		{
-			label: translate( 'Aquatic' ),
-			value: 'aquatic',
-			thumbnail: {
-				cssClass: 'is-aquatic',
-				imageUrl: aquaticImg,
-			},
-		},
-		{
-			label: translate( 'Sunrise' ),
-			value: 'sunrise',
-			thumbnail: {
-				cssClass: 'is-sunrise',
-				imageUrl: sunriseImg,
-			},
-		},
-		{
-			label: translate( 'Sunset' ),
-			value: 'sunset',
-			thumbnail: {
-				cssClass: 'is-sunset',
-				imageUrl: sunsetImg,
-			},
-		},
-		{
-			label: translate( 'Midnight' ),
-			value: 'midnight',
-			thumbnail: {
-				cssClass: 'is-midnight',
-				imageUrl: midnightImg,
+				cssClass: 'is-classic-dark',
+				imageUrl: classicDarkImg,
 			},
 		},
 		{
@@ -158,6 +95,78 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-ectoplasm',
 				imageUrl: ectoplasmImg,
+			},
+		},
+		{
+			label: translate( 'Light' ),
+			value: 'light',
+			thumbnail: {
+				cssClass: 'is-light',
+				imageUrl: lightImg,
+			},
+		},
+		{
+			label: translate( 'Midnight' ),
+			value: 'midnight',
+			thumbnail: {
+				cssClass: 'is-midnight',
+				imageUrl: midnightImg,
+			},
+		},
+		{
+			label: translate( 'Modern' ),
+			value: 'modern',
+			thumbnail: {
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
+			},
+		},
+		{
+			label: translate( 'Nightfall' ),
+			value: 'nightfall',
+			thumbnail: {
+				cssClass: 'is-nightfall',
+				imageUrl: nightfallImg,
+			},
+		},
+		{
+			label: translate( 'Ocean' ),
+			value: 'ocean',
+			thumbnail: {
+				cssClass: 'is-ocean',
+				imageUrl: oceanImg,
+			},
+		},
+		{
+			label: translate( 'Powder Snow' ),
+			value: 'powder-snow',
+			thumbnail: {
+				cssClass: 'is-powder-snow',
+				imageUrl: powderSnowImg,
+			},
+		},
+		{
+			label: translate( 'Sakura' ),
+			value: 'sakura',
+			thumbnail: {
+				cssClass: 'is-sakura',
+				imageUrl: sakuraImg,
+			},
+		},
+		{
+			label: translate( 'Sunrise' ),
+			value: 'sunrise',
+			thumbnail: {
+				cssClass: 'is-sunrise',
+				imageUrl: sunriseImg,
+			},
+		},
+		{
+			label: translate( 'Sunset' ),
+			value: 'sunset',
+			thumbnail: {
+				cssClass: 'is-sunset',
+				imageUrl: sunsetImg,
 			},
 		},
 	] );

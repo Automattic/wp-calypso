@@ -181,7 +181,9 @@ class PeopleProfile extends Component {
 	renderRole = () => {
 		const { isExternalContributor, translate, user } = this.props;
 
-		let contractorBadge, superAdminBadge, roleBadge;
+		let contractorBadge;
+		let superAdminBadge;
+		let roleBadge;
 
 		if ( user && user.is_super_admin ) {
 			superAdminBadge = (

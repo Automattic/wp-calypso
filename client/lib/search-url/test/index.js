@@ -13,7 +13,9 @@ import { useSandbox } from 'calypso/test-helpers/use-sinon';
 const SEARCH_KEYWORD = 'giraffe';
 
 describe( 'SearchUrl', () => {
-	let onSearch, onReplace, onPage;
+	let onSearch;
+	let onReplace;
+	let onPage;
 
 	useSandbox( ( sandbox ) => {
 		onSearch = sandbox.stub();

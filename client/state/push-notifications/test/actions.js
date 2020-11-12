@@ -18,7 +18,8 @@ import { useSandbox } from 'calypso/test-helpers/use-sinon';
 const API_DOMAIN = 'https://public-api.wordpress.com:443';
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

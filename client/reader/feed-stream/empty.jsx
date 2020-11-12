@@ -26,23 +26,23 @@ class FeedEmptyContent extends React.PureComponent {
 	render() {
 		const translate = this.props.translate;
 		const action = (
-				<a
-					className="empty-content__action button is-primary" //eslint-disable-line
-					onClick={ this.recordAction }
-					href="/read/search"
-				>
-					{ translate( 'Find sites to follow' ) }
-				</a>
-			),
-			secondaryAction = (
-				<a
-					className="empty-content__action button" //eslint-disable-line
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ translate( 'Explore' ) }
-				</a>
-			);
+			<a
+				className="empty-content__action button is-primary" //eslint-disable-line
+				onClick={ this.recordAction }
+				href="/read/search"
+			>
+				{ translate( 'Find sites to follow' ) }
+			</a>
+		);
+		const secondaryAction = (
+			<a
+				className="empty-content__action button" //eslint-disable-line
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ translate( 'Explore' ) }
+			</a>
+		);
 
 		return (
 			<EmptyContent

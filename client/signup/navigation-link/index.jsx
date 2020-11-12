@@ -130,7 +130,9 @@ export class NavigationLink extends Component {
 			return null;
 		}
 
-		let backGridicon, forwardGridicon, text;
+		let backGridicon;
+		let forwardGridicon;
+		let text;
 
 		if ( this.props.direction === 'back' ) {
 			backGridicon = <Gridicon icon="arrow-left" size={ 18 } />;

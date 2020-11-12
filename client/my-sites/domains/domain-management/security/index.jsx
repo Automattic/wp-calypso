@@ -58,7 +58,8 @@ class Security extends React.Component {
 		const { translate } = this.props;
 
 		const { sslStatus } = domain;
-		let icon, text;
+		let icon;
+		let text;
 
 		switch ( sslStatus ) {
 			case sslStatuses.SSL_PENDING:

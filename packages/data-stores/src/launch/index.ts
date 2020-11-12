@@ -27,9 +27,16 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			actions,
 			controls,
-			reducer: reducer as any,
+			reducer,
 			selectors,
-			persist: [ 'domain', 'domainSearch', 'plan', 'confirmedDomainSelection', 'isExperimental' ],
+			persist: [
+				'domain',
+				'domainSearch',
+				'plan',
+				'confirmedDomainSelection',
+				'isExperimental',
+				'isSiteTitleStepVisible',
+			],
 		} );
 	}
 	return STORE_KEY;

@@ -304,7 +304,8 @@ export class Checkout extends React.Component {
 	addNewItemToCart() {
 		const { planSlug, product, cart, isJetpackNotAtomic, isPrivate } = this.props;
 
-		let cartItem, cartMeta;
+		let cartItem;
+		let cartMeta;
 
 		if ( planSlug ) {
 			cartItem = getCartItemForPlan( planSlug );
@@ -538,9 +539,9 @@ export class Checkout extends React.Component {
 		// I wouldn't be surprised if it doesn't work as intended in some scenarios.
 		// Especially around the Concierge / Checklist logic.
 
-		let renewalItem,
-			signupDestination,
-			displayModeParam = {};
+		let renewalItem;
+		let signupDestination;
+		let displayModeParam = {};
 		const {
 			cart,
 			product,
@@ -674,7 +675,9 @@ export class Checkout extends React.Component {
 	}
 
 	handleCheckoutCompleteRedirect = ( shouldHideUpsellNudges = false ) => {
-		let product, purchasedProducts, renewalItem;
+		let product;
+		let purchasedProducts;
+		let renewalItem;
 
 		const {
 			cart,

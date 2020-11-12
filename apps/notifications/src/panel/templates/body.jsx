@@ -24,7 +24,7 @@ class ReplyBlock extends React.Component {
 	render() {
 		// explicitly send className of '' here so we don't get the default of
 		// "paragraph"
-		var replyText = p( html( this.props.block ), '' );
+		const replyText = p( html( this.props.block ), '' );
 
 		return <div className="wpnc__reply">{ replyText }</div>;
 	}
@@ -52,8 +52,8 @@ export const NoteBody = createReactClass( {
 	},
 
 	UNSAFE_componentWillMount: function () {
-		var note = this.props.note,
-			hasReplyBlock;
+		const note = this.props.note;
+		let hasReplyBlock;
 
 		if ( note.meta && note.meta.ids.reply_comment ) {
 			hasReplyBlock =
@@ -75,13 +75,13 @@ export const NoteBody = createReactClass( {
 	},
 
 	render: function () {
-		var blocks = zipWithSignature( this.props.note.body, this.props.note );
-		var actions = '';
-		var preface = '';
-		var replyBlock = null;
-		var replyMessage;
-		var firstNonTextIndex;
-		var i;
+		let blocks = zipWithSignature( this.props.note.body, this.props.note );
+		let actions = '';
+		let preface = '';
+		let replyBlock = null;
+		let replyMessage;
+		let firstNonTextIndex;
+		let i;
 
 		for ( i = 0; i < blocks.length; i++ ) {
 			if ( 'text' !== blocks[ i ].signature.type ) {
@@ -95,10 +95,10 @@ export const NoteBody = createReactClass( {
 			blocks = blocks.slice( i );
 		}
 
-		var body = [];
+		const body = [];
 		for ( i = 0; i < blocks.length; i++ ) {
-			var block = blocks[ i ];
-			var blockKey = 'block-' + this.props.note.id + '-' + i;
+			const block = blocks[ i ];
+			const blockKey = 'block-' + this.props.note.id + '-' + i;
 
 			if ( block.block.actions && 'user' !== block.signature.type ) {
 				actions = (

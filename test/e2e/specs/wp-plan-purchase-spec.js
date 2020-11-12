@@ -76,7 +76,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Viewing a specific plan with coupon: @parallel @jetpack', function () {
-		let originalCartAmount, loginFlow;
+		let originalCartAmount;
+		let loginFlow;
 
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );

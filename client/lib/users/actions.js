@@ -103,8 +103,8 @@ export function deleteUser( siteId, userId, reassignUserId ) {
 
 export function updateUser( siteId, userId, attributes ) {
 	debug( 'updateUser', userId );
-	const user = UsersStore.getUser( siteId, userId ),
-		updatedUser = Object.assign( user, attributes );
+	const user = UsersStore.getUser( siteId, userId );
+	const updatedUser = Object.assign( user, attributes );
 
 	if ( ! user ) {
 		return;

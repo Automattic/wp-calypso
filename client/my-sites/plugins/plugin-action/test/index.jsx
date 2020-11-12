@@ -54,11 +54,11 @@ describe( 'PluginAction', () => {
 
 		test( 'should render child within plugin-action__children container', () => {
 			const wrapper = mount(
-					<PluginAction>
-						<span />
-					</PluginAction>
-				),
-				children = wrapper.find( '.plugin-action__children' );
+				<PluginAction>
+					<span />
+				</PluginAction>
+			);
+			const children = wrapper.find( '.plugin-action__children' );
 
 			expect( children.length ).to.equal( 1 );
 			expect( children.props().children[ 0 ].type ).to.equal( 'span' );

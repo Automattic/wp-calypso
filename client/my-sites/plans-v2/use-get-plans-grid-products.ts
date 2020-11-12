@@ -83,7 +83,7 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 				PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY
 			);
 		}
-		// In v2, we show the Backup product the site owns and the one the site doesn't own. In other words,
+		// We show the Backup product the site owns and the one the site doesn't own. In other words,
 		// we always show both Backup Daily and Backup Real-time.
 	} else {
 		if (

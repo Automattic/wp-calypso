@@ -21,7 +21,6 @@
 		{ "path": "../packages/components" },
 		{ "path": "../packages/data-stores" },
 		{ "path": "../packages/language-picker" },
-		{ "path": "../packages/media-library" },
 		{ "path": "../packages/react-i18n" }
 	],
 	"include": [ "**/*", "../build-tools/**" ],

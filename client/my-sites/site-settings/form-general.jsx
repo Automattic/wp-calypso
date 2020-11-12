@@ -150,8 +150,8 @@ export class SiteSettingsFormGeneral extends Component {
 
 	blogAddress() {
 		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
-		let customAddress = '',
-			addressDescription = '';
+		let customAddress = '';
+		let addressDescription = '';
 
 		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
@@ -592,7 +592,8 @@ export class SiteSettingsFormGeneral extends Component {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
 		} );
 		const btnText = translate( 'Launch site' );
-		let querySiteDomainsComponent, btnComponent;
+		let querySiteDomainsComponent;
+		let btnComponent;
 
 		if ( 0 === siteDomains.length ) {
 			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
