@@ -57,7 +57,7 @@ const debug = debugFactory( 'calypso:pages' );
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
+const staticFiles = [ { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
