@@ -42,8 +42,6 @@ describe( 'EditGravatar', () => {
 		};
 	} );
 
-	beforeAll( function () {} );
-
 	describe( 'component rendering', () => {
 		test( 'displays a Gravatar', () => {
 			const wrapper = shallow( <EditGravatar translate={ noop } user={ user } /> );
