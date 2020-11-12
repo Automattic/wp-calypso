@@ -162,7 +162,8 @@ export function getSerializedThemesQuery( query = {}, siteId ) {
  * @returns {object}                 Deserialized themes query details
  */
 export function getDeserializedThemesQueryDetails( serializedQuery ) {
-	let siteId, query;
+	let siteId;
+	let query;
 
 	const matches = serializedQuery.match( REGEXP_SERIALIZED_QUERY );
 	if ( matches ) {

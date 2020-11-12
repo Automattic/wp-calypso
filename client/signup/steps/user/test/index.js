@@ -41,7 +41,8 @@ jest.mock( 'signup/utils', () => ( {
 } ) );
 
 describe( '#signupStep User', () => {
-	let testElement, rendered;
+	let testElement;
+	let rendered;
 
 	test( 'should show community subheader text if User step is first in the flow', () => {
 		testElement = React.createElement( User, {
@@ -66,7 +67,9 @@ describe( '#signupStep User', () => {
 	} );
 
 	describe( '#updateComponentProps', () => {
-		let node, spyComponentProps, component;
+		let node;
+		let spyComponentProps;
+		let component;
 
 		beforeEach( () => {
 			node = document.createElement( 'div' );

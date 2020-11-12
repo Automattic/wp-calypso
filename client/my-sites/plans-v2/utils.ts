@@ -119,6 +119,12 @@ export function durationToString( duration: Duration ): DurationString {
 }
 
 export function durationToText( duration: Duration ): TranslateResult {
+	if ( 'i5' === getJetpackCROActiveVersion() ) {
+		return duration === TERM_MONTHLY
+			? translate( 'per month{{br/}}billed monthly', { components: { br: createElement( 'br' ) } } )
+			: translate( 'per month{{br/}}billed yearly', { components: { br: createElement( 'br' ) } } );
+	}
+
 	return duration === TERM_MONTHLY
 		? translate( 'per month, billed monthly' )
 		: translate( 'per month, billed yearly' );
@@ -413,7 +419,7 @@ export function itemToSelectorProduct(
 		}
 
 		const currentCROvariant = getJetpackCROActiveVersion();
-		const iconSlug = [ 'v1', 'v2' ].includes( currentCROvariant )
+		const iconSlug = [ 'v1', 'v2', 'i5' ].includes( currentCROvariant )
 			? `${ yearlyProductSlug || item.product_slug }_v2_dark`
 			: `${ yearlyProductSlug || item.product_slug }_v2`;
 

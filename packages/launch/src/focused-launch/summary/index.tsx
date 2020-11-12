@@ -7,12 +7,15 @@ import { Title } from '@automattic/onboarding';
 import { __ } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext } from 'react';
-import DomainPicker, { LockedPurchasedItem } from '@automattic/domain-picker';
+import React, { ReactNode, useContext, useEffect } from 'react';
+import DomainPicker from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-
+import FocusedLaunchSummaryItem, {
+	LeadingContentSide,
+	TrailingContentSide,
+} from './focused-launch-summary-item';
 /**
  * Internal dependencies
  */
@@ -20,6 +23,7 @@ import { Route } from '../route';
 import { useTitle, useDomainSearch, useSiteDomains } from '../../hooks';
 import { LAUNCH_STORE } from '../../stores';
 import LaunchContext from '../../context';
+import { isDefaultSiteTitle } from '../../utils';
 
 import './style.scss';
 
@@ -56,10 +60,10 @@ type CommonStepProps = {
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
-type SiteNameStepProps = CommonStepProps &
+type SiteTitleStepProps = CommonStepProps &
 	Pick< React.ComponentProps< typeof TextControl >, 'value' | 'onChange' | 'onBlur' >;
 
-const SiteNameStep: React.FunctionComponent< SiteNameStepProps > = ( {
+const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 	stepIndex,
 	value,
 	onChange,
@@ -137,7 +141,16 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 								) }
 							</p>
 						</label>
-						<LockedPurchasedItem domainName={ currentDomain || '' } />
+						<FocusedLaunchSummaryItem readOnly>
+							<LeadingContentSide label={ currentDomain || '' } />
+							<TrailingContentSide
+								price={
+									<>
+										<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
+									</>
+								}
+							/>
+						</FocusedLaunchSummaryItem>
 					</>
 				) : (
 					<>
@@ -335,17 +348,30 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 };
 
 const Summary: React.FunctionComponent = () => {
-	const { title, updateTitle, saveTitle } = useTitle();
+	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
+
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
-	const { locale } = useContext( LaunchContext );
-
 	const domainSearch = useDomainSearch();
 
+	const { locale } = useContext( LaunchContext );
+
+	// If the user needs to change the site title, always show the site title
+	// step to the user when in this launch flow.
+	useEffect( () => {
+		if ( ! isSiteTitleStepVisible && isDefaultSiteTitle( { currentSiteTitle: title } ) ) {
+			showSiteTitleStep();
+		}
+	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
+
+	// @TODO: plan step to be implemented
+	// https://github.com/Automattic/wp-calypso/issues/46865
+	const hasPaidPlan = false;
+
 	// Prepare Steps
-	const renderSiteNameStep = ( index: number ) => (
-		<SiteNameStep
+	const renderSiteTitleStep = ( index: number ) => (
+		<SiteTitleStep
 			stepIndex={ index }
 			key={ index }
 			value={ title }
@@ -374,14 +400,15 @@ const Summary: React.FunctionComponent = () => {
 	);
 	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
 
-	// Steps that are not interactive (e.g. user has already selected domain/plan)
-	// Steps that are not interactive (e.g. user has already selected domain/plan)
-	const disabledSteps = hasPaidDomain ? [ renderDomainStep ] : [];
-
-	// Steps that require the user interaction
-	const activeSteps = hasPaidDomain
-		? [ renderSiteNameStep, renderPlanStep ]
-		: [ renderSiteNameStep, renderDomainStep, renderPlanStep ];
+	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
+	// Active steps require user interaction
+	// Using this arrays allows to easily sort the steps correctly in both
+	// groups, and allows the actve steps to always show the correct step index.
+	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
+	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
+	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
+	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
+	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
 	return (
 		<div className="focused-launch-summary__container">

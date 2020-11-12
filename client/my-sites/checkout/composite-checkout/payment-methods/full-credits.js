@@ -4,33 +4,27 @@
 import React from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
+import {
+	Button,
+	FormStatus,
+	useLineItems,
+	useFormStatus,
+	useEvents,
+} from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
-import { useFormStatus } from '../form-status';
+import WordPressLogo from '../components/wordpress-logo';
 
-export function createFullCreditsMethod() {
+export function createFullCreditsMethod( { credits } ) {
 	return {
 		id: 'full-credits',
-		label: <FullCreditsLabel />,
+		label: <WordPressCreditsLabel credits={ credits } />,
 		submitButton: <FullCreditsSubmitButton />,
-		inactiveContent: <FullCreditsSummary />,
+		inactiveContent: <WordPressCreditsSummary />,
 		getAriaLabel: ( __ ) => __( 'Credits' ),
 	};
-}
-
-function FullCreditsLabel() {
-	const { __ } = useI18n();
-
-	return (
-		<React.Fragment>
-			<div>{ __( 'Credits' ) }</div>
-			<div>{ __( 'Pay entirely with credits' ) }</div>
-		</React.Fragment>
-	);
 }
 
 function FullCreditsSubmitButton( { disabled, onClick } ) {
@@ -69,7 +63,22 @@ function ButtonContents( { formStatus, total } ) {
 	return __( 'Please wait…' );
 }
 
-function FullCreditsSummary() {
+function WordPressCreditsLabel( { credits } ) {
 	const { __ } = useI18n();
-	return __( 'Pay using Credits' );
+
+	return (
+		<React.Fragment>
+			<div>
+				{ sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
+					amount: credits.wpcom_meta.credits_display,
+				} ) }
+			</div>
+			<WordPressLogo />
+		</React.Fragment>
+	);
+}
+
+function WordPressCreditsSummary() {
+	const { __ } = useI18n();
+	return <div>{ __( 'WordPress.com Credits' ) }</div>;
 }

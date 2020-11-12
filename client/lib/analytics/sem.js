@@ -9,7 +9,6 @@ import { pushEventToTracksQueue } from '@automattic/calypso-analytics';
  * Internal dependencies.
  */
 import { urlParseAmpCompatible } from 'calypso/lib/analytics/utils';
-import { decodeURIComponentIfValid } from 'calypso/lib/url';
 
 /**
  * Const variables.
@@ -119,42 +118,4 @@ export function updateQueryParamsTracking() {
 		setUtmCookie( 'ad_details', sanitizedQueryString );
 		setUtmCookie( 'ad_timestamp', Math.floor( new Date().getTime() / 1000 ) );
 	}
-}
-
-export function isIgnoredAdSource() {
-	const cookies = cookie.parse( document.cookie );
-	const adDetails = new URLSearchParams( decodeURIComponentIfValid( cookies.ad_details || '' ) );
-
-	return [
-		'ads',
-		'adwords',
-		'adwords-yt',
-		'akismet',
-		'bing',
-		'bingads',
-		'brmarketingemail',
-		'display',
-		'email',
-		'facebook',
-		'facebook.com',
-		'facebook_page',
-		'fbads',
-		'google',
-		'houseads',
-		'hs_email',
-		'iterable',
-		'linkedin',
-		'oath',
-		'outbrain',
-		'pinterest',
-		'shrinkify',
-		'social',
-		'spotify',
-		'twitter',
-		'twitter.com',
-		'woocommerce',
-		'wordadsiponweb',
-		'yelp',
-		'youtube',
-	].includes( adDetails.get( 'utm_source' ) );
 }

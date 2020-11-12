@@ -55,7 +55,11 @@ class ConciergeBanner extends Component {
 	getBannerContent() {
 		const { bannerType, translate } = this.props;
 
-		let headerText, mainText, buttonText, buttonHref, illustrationUrl;
+		let headerText;
+		let mainText;
+		let buttonText;
+		let buttonHref;
+		let illustrationUrl;
 
 		switch ( bannerType ) {
 			case CONCIERGE_HAS_UPCOMING_APPOINTMENT:

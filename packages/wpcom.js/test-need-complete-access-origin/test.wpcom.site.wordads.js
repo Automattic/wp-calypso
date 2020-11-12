@@ -1,19 +1,19 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * wpcom.site.post.subscriber
  */
 describe( 'wpcom.site.wordads', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.wordAds().site );
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.wordAds().site );
 
 	describe( 'wpcom.site.wordads.settings', function () {
-		var wordAdsSettings = site.wordAds().settings();
+		const wordAdsSettings = site.wordAds().settings();
 
 		describe( 'wpcom.site.wordads.settings.get', function () {
 			it( 'should get site wordAds settings', function () {
@@ -32,7 +32,7 @@ describe( 'wpcom.site.wordads', function () {
 		describe( 'wpcom.site.wordads.settings.update', function () {
 			it( 'should update WordAds settings of the site', function () {
 				return new Promise( ( done ) => {
-					var settings = {};
+					let settings = {};
 
 					wordAdsSettings.get( function ( err, data ) {
 						if ( err ) throw err;
@@ -43,7 +43,7 @@ describe( 'wpcom.site.wordads', function () {
 						wordAdsSettings.update( settings, function ( err2, data2 ) {
 							if ( err2 ) throw err2;
 
-							for ( let k in data2.updated ) {
+							for ( const k in data2.updated ) {
 								assert.equal( data2.updated[ k ], settings[ k ] );
 							}
 
@@ -56,7 +56,7 @@ describe( 'wpcom.site.wordads', function () {
 	} );
 
 	describe( 'wpcom.site.wordads.earnings', function () {
-		var wordAdsEarnings = site.wordAds().earnings();
+		const wordAdsEarnings = site.wordAds().earnings();
 
 		describe( 'wpcom.site.wordads.earnings.get', function () {
 			it( 'should get site wordAds earnings', function () {
@@ -74,7 +74,7 @@ describe( 'wpcom.site.wordads', function () {
 	} );
 
 	describe( 'wpcom.site.wordads.tos', function () {
-		var wordAdsTOS = site.wordAds().tos();
+		const wordAdsTOS = site.wordAds().tos();
 
 		describe( 'wpcom.site.wordads.tos.get', function () {
 			it( 'should get site wordAds tos', function () {
@@ -93,7 +93,7 @@ describe( 'wpcom.site.wordads', function () {
 		describe( 'wpcom.site.wordads.tos.update', function () {
 			it( 'should update WordAds TOS of the site', function () {
 				return new Promise( ( done ) => {
-					var send = { tos: 'signed' };
+					const send = { tos: 'signed' };
 
 					wordAdsTOS.update( send, function ( err, data ) {
 						if ( err ) throw err;
@@ -106,7 +106,7 @@ describe( 'wpcom.site.wordads', function () {
 
 			it( 'should get error 400 sending wrong body in the request', function () {
 				return new Promise( ( done ) => {
-					var send = { tos: 'foo' };
+					const send = { tos: 'foo' };
 
 					wordAdsTOS.update( send, function ( err ) {
 						assert.equal( 'You must agree to the Terms of Service.', err.message );

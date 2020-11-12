@@ -91,8 +91,8 @@ export function getExitCheckoutUrl(
 
 	if ( hasRenewalItem( cart ) ) {
 		const firstRenewalItem = getRenewalItems( cart )[ 0 ];
-		const { purchaseId, purchaseDomain } = firstRenewalItem.extra,
-			siteName = siteSlug || purchaseDomain;
+		const { purchaseId, purchaseDomain } = firstRenewalItem.extra;
+		const siteName = siteSlug || purchaseDomain;
 
 		if ( isDomainRegistration( firstRenewalItem ) ) {
 			const domainManagementPage = domainManagementEdit( siteName, firstRenewalItem.meta );

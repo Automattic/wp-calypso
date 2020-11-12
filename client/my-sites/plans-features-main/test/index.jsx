@@ -24,17 +24,10 @@ jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( x ) => x } />,
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
-
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import React from 'react';
 
 /**
  * Internal dependencies

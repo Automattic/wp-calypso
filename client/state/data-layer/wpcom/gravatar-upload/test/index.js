@@ -42,7 +42,8 @@ describe( '#uploadGravatar()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	let oFormData, oFileReader;
+	let oFormData;
+	let oFileReader;
 	const noop = () => {};
 	const tempImageSrc = 'tempImageSrc';
 

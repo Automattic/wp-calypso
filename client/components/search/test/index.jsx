@@ -20,7 +20,8 @@ jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {
-		let onSearch, rendered;
+		let onSearch;
+		let rendered;
 
 		beforeEach( () => {
 			onSearch = sinon.stub();

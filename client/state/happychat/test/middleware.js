@@ -33,7 +33,9 @@ import {
 } from 'calypso/state/happychat/constants';
 
 describe( 'middleware', () => {
-	let actionMiddleware, connection, store;
+	let actionMiddleware;
+	let connection;
+	let store;
 	beforeEach( () => {
 		connection = {
 			init: jest.fn(),

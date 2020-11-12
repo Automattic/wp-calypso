@@ -1,21 +1,27 @@
 /**
  * External dependencies
  */
+import classNames from 'classnames';
 import { sortBy } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef, useState, useEffect, useCallback, RefObject } from 'react';
 import { useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+
 import PlansFilterBarI5 from '../plans-filter-bar-i5';
-import ProductCardAlt2 from '../product-card-alt-2';
+import ProductCardI5 from '../product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import {
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+} from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -39,6 +45,8 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	onDurationChange,
 } ) => {
 	const translate = useTranslate();
+	const planGridRef: RefObject< HTMLUListElement > = useRef( null );
+	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
@@ -72,6 +80,29 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 		[ duration, availableProducts, includedInPlanProducts, purchasedProducts ]
 	);
 
+	const onResize = useCallback( () => {
+		if ( planGridRef ) {
+			const { current: grid } = planGridRef;
+
+			if ( grid ) {
+				const firstChild = grid.children[ 0 ];
+
+				if ( firstChild instanceof HTMLElement ) {
+					const itemCount = Math.round( grid.offsetWidth / firstChild.offsetWidth );
+
+					setPlanRowWrapping( itemCount < sortedPlans.length );
+				}
+			}
+		}
+	}, [ planGridRef, sortedPlans ] );
+
+	useEffect( () => {
+		onResize();
+		window.addEventListener( 'resize', onResize );
+
+		return () => window.removeEventListener( 'resize', onResize );
+	}, [ onResize ] );
+
 	return (
 		<>
 			<section className="products-grid-i5__section">
@@ -83,15 +114,25 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						duration={ duration }
 					/>
 				</div>
-				<ul className="products-grid-i5__plan-grid">
+				<ul
+					className={ classNames( 'products-grid-i5__plan-grid', {
+						'is-wrapping': isPlanRowWrapping,
+					} ) }
+					ref={ planGridRef }
+				>
 					{ sortedPlans.map( ( product ) => (
 						<li key={ product.iconSlug }>
-							<ProductCardAlt2
+							<ProductCardI5
 								item={ product }
 								onClick={ onSelectProduct }
 								siteId={ siteId }
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
+								isAligned={ ! isPlanRowWrapping }
+								featuredPlans={ [
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+								] }
 							/>
 						</li>
 					) ) }
@@ -103,7 +144,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 				<ul className="products-grid-i5__product-grid">
 					{ sortedProducts.map( ( product ) => (
 						<li key={ product.iconSlug }>
-							<ProductCardAlt2
+							<ProductCardI5
 								item={ product }
 								onClick={ onSelectProduct }
 								siteId={ siteId }

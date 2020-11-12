@@ -189,7 +189,7 @@ const buildApp = ( environment ) => {
 				}[ key ] )
 		);
 
-		appFactory = require( '../index' );
+		appFactory = require( '../index' ).default;
 	} );
 	const app = appFactory();
 
@@ -943,7 +943,8 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	} );
 
 	describe( 'for authenticated users', () => {
-		let theStore, theAction;
+		let theStore;
+		let theAction;
 
 		beforeEach( () => {
 			theStore = {

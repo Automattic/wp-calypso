@@ -39,7 +39,8 @@ describe( 'main', () => {
 			demo_uri: 'https://twentysixteendemo.wordpress.com/',
 		};
 
-		let store, initialState;
+		let store;
+		let initialState;
 
 		beforeAll( () => {
 			store = createReduxStore();

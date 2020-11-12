@@ -31,7 +31,8 @@ class EditorMediaModal extends Component {
 
 	insertMedia( { type, items, settings } ) {
 		const { site } = this.props;
-		let media, stat;
+		let media;
+		let stat;
 
 		const getItemMarkup = partial( markup.get, site );
 

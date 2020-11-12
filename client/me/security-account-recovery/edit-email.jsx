@@ -48,8 +48,8 @@ class SecurityAccountRecoveryRecoveryEmailEdit extends React.Component {
 	};
 
 	renderExplanation = () => {
-		let explanation = null,
-			text;
+		let explanation = null;
+		let text;
 
 		if ( this.props.primaryEmail ) {
 			text = this.props.translate( 'Your primary email address is {{email/}}', {

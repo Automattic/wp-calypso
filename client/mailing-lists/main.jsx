@@ -226,11 +226,11 @@ class MainComponent extends React.Component {
 	render() {
 		const translate = this.props.translate;
 		const headingLabel = this.state.isSubscribed
-				? translate( "You're subscribed" )
-				: translate( "We've unsubscribed your email." ),
-			messageLabel = this.state.isSubscribed
-				? translate( "We'll send you updates for this mailing list." )
-				: translate( 'You will no longer receive updates for this mailing list.' );
+			? translate( "You're subscribed" )
+			: translate( "We've unsubscribed your email." );
+		const messageLabel = this.state.isSubscribed
+			? translate( "We'll send you updates for this mailing list." )
+			: translate( 'You will no longer receive updates for this mailing list.' );
 
 		return (
 			<div className="mailing-lists">

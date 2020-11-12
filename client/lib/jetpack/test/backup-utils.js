@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getBackupAttemptsForDate } from 'calypso/lib/jetpack/backup-utils';
+import { getBackupAttemptsForDate } from '../backup-utils';
 
 describe( 'getBackupAttemptsForDate', () => {
 	test( 'should filter out rewind complete items not on date in utc', () => {

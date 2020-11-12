@@ -22,8 +22,8 @@ import {
 } from 'calypso/lib/plans/constants';
 import { requestProductsList } from 'calypso/state/products-list/actions';
 import { myFormatCurrency } from 'calypso/blocks/subscription-length-picker';
-import { getABTestVariation } from 'calypso/lib/abtest';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:product-variants' );
 
@@ -35,8 +35,7 @@ export function useProductVariants( { siteId, productSlug } ) {
 
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
 	const shouldOverride =
-		isWpComFreePlan( currentPlan?.productSlug ) &&
-		'treatment' === getABTestVariation( 'monthlyPricing' );
+		useSelector( isTreatmentInMonthlyPricingTest ) && isWpComFreePlan( currentPlan?.productSlug );
 
 	const productsWithPrices = useSelector( ( state ) => {
 		return computeProductsWithPrices(

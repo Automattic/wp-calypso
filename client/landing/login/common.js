@@ -10,7 +10,6 @@ import debugFactory from 'debug';
 import config from 'calypso/config';
 import { initializeAnalytics } from 'calypso/lib/analytics/init';
 import getSuperProps from 'calypso/lib/analytics/super-props';
-import { bindState as bindWpLocaleState } from 'calypso/lib/wp/localization';
 import { getUrlParts } from 'calypso/lib/url';
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { setRoute } from 'calypso/state/route/actions';
@@ -81,8 +80,6 @@ function renderDevHelpers( reduxStore ) {
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {
 	debug( 'Executing Calypso configure Redux store.' );
-
-	bindWpLocaleState( reduxStore );
 
 	if ( currentUser.get() ) {
 		// Set current user in Redux store

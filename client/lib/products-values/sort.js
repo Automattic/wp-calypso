@@ -32,11 +32,11 @@ import {
  */
 
 function sortProducts( products ) {
-	let planItems, includedItems, domainItems, creditItems, otherItems;
+	let domainItems;
 
-	planItems = products.filter( isPlan );
+	const planItems = products.filter( isPlan );
 
-	includedItems = products.filter( isIncludedWithPlan );
+	const includedItems = products.filter( isIncludedWithPlan );
 
 	domainItems = difference( products, includedItems );
 	domainItems = domainItems.filter( isDomainProduct );
@@ -52,9 +52,9 @@ function sortProducts( products ) {
 	} );
 	domainItems = flatten( domainItems );
 
-	creditItems = products.filter( isCredits );
+	const creditItems = products.filter( isCredits );
 
-	otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
+	const otherItems = difference( products, planItems, domainItems, includedItems, creditItems );
 
 	return planItems
 		.concat( includedItems )

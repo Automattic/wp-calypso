@@ -31,6 +31,8 @@ jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
 
+jest.mock( 'components/data/query-experiments' );
+
 const domainProduct = {
 	product_name: '.cash Domain',
 	product_slug: 'domain_reg',

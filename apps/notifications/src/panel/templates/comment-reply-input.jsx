@@ -17,8 +17,8 @@ import { wpcom } from '../rest-client/wpcom';
 import { bumpStat } from '../rest-client/bump-stat';
 import { formatString, validURL } from './functions';
 
-var debug = require( 'debug' )( 'notifications:reply' );
-var { recordTracksEvent } = require( '../helpers/stats' );
+const debug = require( 'debug' )( 'notifications:reply' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
 const hasTouch = () =>
 	'ontouchstart' in window || ( window.DocumentTouch && document instanceof DocumentTouch );
@@ -35,8 +35,8 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	getInitialState: function () {
-		var getSavedReply = function () {
-			var savedReply = this.localStorage.getItem( this.savedReplyKey );
+		const getSavedReply = function () {
+			const savedReply = this.localStorage.getItem( this.savedReplyKey );
 
 			return savedReply ? savedReply[ 0 ] : '';
 		};
@@ -103,7 +103,7 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleChange: function ( event ) {
-		var textarea = this.replyInput;
+		const textarea = this.replyInput;
 
 		disableKeyboardShortcuts();
 
@@ -150,12 +150,12 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	handleSubmit( event ) {
-		var wpObject,
-			submitComment,
-			component = this,
-			statusMessage,
-			successMessage = this.props.translate( 'Reply posted!' ),
-			linkMessage = this.props.translate( 'View your comment.' );
+		let wpObject;
+		let submitComment;
+		const component = this;
+		let statusMessage;
+		const successMessage = this.props.translate( 'Reply posted!' );
+		const linkMessage = this.props.translate( 'View your comment.' );
 
 		if ( event ) {
 			event.preventDefault();
@@ -280,35 +280,33 @@ const CommentReplyInput = createReactClass( {
 	},
 
 	render: function () {
-		var value = this.state.value;
-		var submitLink = '';
-		var sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
+		const value = this.state.value;
+		let submitLink = '';
+		const sendText = this.props.translate( 'Send', { context: 'verb: imperative' } );
 
 		if ( this.state.isSubmitting ) {
 			submitLink = <Spinner className="wpnc__spinner" />;
+		} else if ( value.length ) {
+			const submitLinkTitle = this.props.translate( 'Submit reply', {
+				context: 'verb: imperative',
+			} );
+			submitLink = (
+				<button
+					title={ submitLinkTitle }
+					className="active"
+					onClick={ this.handleSubmit }
+					onKeyDown={ this.handleSendEnter }
+				>
+					{ sendText }
+				</button>
+			);
 		} else {
-			if ( value.length ) {
-				var submitLinkTitle = this.props.translate( 'Submit reply', {
-					context: 'verb: imperative',
-				} );
-				submitLink = (
-					<button
-						title={ submitLinkTitle }
-						className="active"
-						onClick={ this.handleSubmit }
-						onKeyDown={ this.handleSendEnter }
-					>
-						{ sendText }
-					</button>
-				);
-			} else {
-				var submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
-				submitLink = (
-					<button title={ submitLinkTitle } className="inactive">
-						{ sendText }
-					</button>
-				);
-			}
+			const submitLinkTitle = this.props.translate( 'Write your response in order to submit' );
+			submitLink = (
+				<button title={ submitLinkTitle } className="inactive">
+					{ sendText }
+				</button>
+			);
 		}
 
 		return (

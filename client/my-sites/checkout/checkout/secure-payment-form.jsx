@@ -78,8 +78,8 @@ export class SecurePaymentForm extends Component {
 		}
 
 		// From transaction-steps-mixin
-		const prevStep = prevProps.transaction.step,
-			nextStep = this.props.transaction.step;
+		const prevStep = prevProps.transaction.step;
+		const nextStep = this.props.transaction.step;
 
 		if ( ! isEqual( prevStep, nextStep ) ) {
 			await this.handleTransactionStep( this.props );

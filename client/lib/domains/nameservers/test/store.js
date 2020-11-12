@@ -16,8 +16,8 @@ import {
 } from '../action-types';
 
 describe( 'store', () => {
-	const DOMAIN_NAME = 'dummy.com',
-		NAMSERVERS = [ 'ns1.dummy.com', 'ns2.dummy.com', 'ns3.dummy.com' ];
+	const DOMAIN_NAME = 'dummy.com';
+	const NAMSERVERS = [ 'ns1.dummy.com', 'ns2.dummy.com', 'ns3.dummy.com' ];
 
 	test( 'should be an object', () => {
 		expect( NameserversStore ).to.be.an( 'object' );

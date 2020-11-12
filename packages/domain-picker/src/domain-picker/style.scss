@@ -206,15 +206,6 @@ $accent-blue: #117ac9;
 	.components-spinner {
 		margin: 1px 10px 0 0;
 	}
-
-	&.locked .domain-picker__suggestion-item-name,
-	&.locked .domain-picker__price {
-		color: var( --studio-gray-50 );
-		svg {
-			vertical-align: bottom;
-			fill: currentColor;
-		}
-	}
 }
 
 .domain-picker__suggestion-item-name {

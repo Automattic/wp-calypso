@@ -40,9 +40,9 @@ const EmailFollowersStore = {
 	},
 
 	getFollowers: function ( fetchOptions ) {
-		const namespace = getNamespace( fetchOptions ),
-			siteId = fetchOptions.siteId,
-			followers = [];
+		const namespace = getNamespace( fetchOptions );
+		const siteId = fetchOptions.siteId;
+		const followers = [];
 
 		debug( 'getFollowers:', namespace );
 
@@ -83,8 +83,8 @@ function updateFollower( siteId, id, follower ) {
 }
 
 function updateFollowers( fetchOptions, followers, total ) {
-	const namespace = getNamespace( fetchOptions ),
-		page = fetchOptions.page;
+	const namespace = getNamespace( fetchOptions );
+	const page = fetchOptions.page;
 
 	debug( 'updateFollowers:', namespace );
 

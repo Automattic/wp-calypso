@@ -43,7 +43,8 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 			);
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! accountRecoveryPhone ) {
 			icon = getWarningIcon();

@@ -18,15 +18,15 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'email forwarding add forward request', () => {
-		const domainName = 'example.com',
-			mailbox = 'test',
-			destination = '123@abc.com',
-			action = {
-				type: EMAIL_FORWARDING_ADD_REQUEST,
-				domainName,
-				mailbox,
-				destination,
-			};
+		const domainName = 'example.com';
+		const mailbox = 'test';
+		const destination = '123@abc.com';
+		const action = {
+			type: EMAIL_FORWARDING_ADD_REQUEST,
+			domainName,
+			mailbox,
+			destination,
+		};
 
 		describe( '#addEmailForward', () => {
 			test( 'should dispatch an HTTP request to the email forward new endpoint', () => {
