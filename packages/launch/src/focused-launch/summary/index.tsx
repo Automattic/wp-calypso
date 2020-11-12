@@ -296,6 +296,18 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							) }
 						</p>
 						<div>
+							<FocusedLaunchSummaryItem readOnly>
+								<LeadingContentSide label="somepurchaseddomain.com" />
+								<TrailingContentSide
+									price={
+										<>
+											<Icon icon={ check } size={ 18 } />{ ' ' }
+											{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
+										</>
+									}
+								/>
+							</FocusedLaunchSummaryItem>
+
 							<FocusedLaunchSummaryItem>
 								<LeadingContentSide label={ 'Premium Plan' } badgeText="Popular" />
 								<TrailingContentSide price="$25/mo" />
