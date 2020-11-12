@@ -1,5 +1,5 @@
 let keyboardNavigation = false;
-let keyboardNavigationKeycodes = [ 9, 32, 37, 38, 39, 40 ]; // keyCodes for tab, space, left, up, right, down respectively
+const keyboardNavigationKeycodes = [ 9, 32, 37, 38, 39, 40 ]; // keyCodes for tab, space, left, up, right, down respectively
 
 function accessibleFocus() {
 	document.addEventListener( 'keydown', function ( event ) {

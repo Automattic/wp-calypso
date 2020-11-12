@@ -15,7 +15,6 @@ import emitter from 'calypso/lib/mixins/emitter';
 let _errors = [];
 let _inProgress = [];
 let _completed = [];
-let LogStore;
 
 function addLog( status, action, site, plugin, error ) {
 	const log = {
@@ -83,7 +82,7 @@ function removeSingleLog( log ) {
 	}
 }
 
-LogStore = {
+const LogStore = {
 	getErrors: function () {
 		return clone( _errors );
 	},

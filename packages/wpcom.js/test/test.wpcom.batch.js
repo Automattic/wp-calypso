@@ -19,9 +19,9 @@ describe( 'wpcom.batch', () => {
 			const batch = wpcom.batch();
 			const site = wpcom.site( util.site() );
 
-			var url_site = `/sites/${ site._id }`;
-			var url_posts = `/sites/${ site._id }/posts`;
-			var url_me = '/me';
+			const url_site = `/sites/${ site._id }`;
+			const url_posts = `/sites/${ site._id }/posts`;
+			const url_me = '/me';
 
 			batch
 				.add( url_site )

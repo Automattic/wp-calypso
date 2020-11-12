@@ -68,7 +68,6 @@ describe( 'Email Followers Store', () => {
 		} );
 		test( 'Should remove a single follower.', () => {
 			const followers = EmailFollowersStore.getFollowers( options );
-
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			Dispatcher.handleServerAction( actions.removeFollowerSuccess );

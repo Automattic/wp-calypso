@@ -27,9 +27,9 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
-let _fetching = {};
-let _pluginsBySite = {};
-let _filters = {
+const _fetching = {};
+const _pluginsBySite = {};
+const _filters = {
 	none: function () {
 		return false;
 	},
@@ -208,19 +208,17 @@ const PluginsStore = {
 
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
-		let plugin;
-		let plugins = this.getPlugins( sites );
-		let pluginSites;
+		const plugins = this.getPlugins( sites );
 		if ( ! plugins ) {
 			return;
 		}
 
-		plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
+		const plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 		if ( ! plugin ) {
 			return null;
 		}
 
-		pluginSites = plugin.sites
+		const pluginSites = plugin.sites
 			.filter( ( site ) => site.visible )
 			.map( ( site ) => {
 				// clone the site object before adding a new property. Don't modify the return value of getSite

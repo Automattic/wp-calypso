@@ -153,7 +153,6 @@ describe( 'Users Store', () => {
 		test( 'Should update a specific user with new attributes', () => {
 			const users = UsersStore.getUsers( options );
 			const testUserIndex = findIndex( users, ( user ) => user.name === 'Test One' );
-
 			Dispatcher.handleServerAction( actions.updateSingleUser );
 			const usersAgain = UsersStore.getUsers( options );
 			assert.equal( usersAgain[ testUserIndex ].name, 'Test Won' );
