@@ -1,16 +1,10 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
 import { approveNote } from '../actions';
-
 import { wpcom } from '../../../rest-client/wpcom';
-import { bumpStat as rawBumpStat } from '../../../rest-client/bump-stat';
-
-const { recordTracksEvent } = require( '../../../helpers/stats' );
-
-function bumpStat( name ) {
-	rawBumpStat( 'notes-click-action', name );
-}
+import { recordTracksEvent } from '../../../helpers/stats';
+import bumpStat from '../utils/bump-stat';
 
 const setApproveStatus = ( noteId, siteId, commentId, isApproved, type, restClient ) => (
 	dispatch
