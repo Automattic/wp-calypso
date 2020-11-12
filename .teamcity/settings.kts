@@ -654,6 +654,12 @@ object WpDesktop : Project({
 
 object WpDesktop_DesktopE2ETests : BuildType({
 	name = "Desktop e2e tests"
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
 	steps {	}
 })
 
