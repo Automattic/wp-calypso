@@ -145,6 +145,10 @@
 
 	font-size: 1rem;
 	font-weight: 700;
+
+	em {
+		font-style: normal;
+	}
 }
 
 .jetpack-product-card-i5__features {
@@ -155,6 +159,10 @@
 	margin: 32px 0;
 
 	list-style-type: none;
+
+	em {
+		font-style: normal;
+	}
 }
 
 .jetpack-product-card-i5__features-item {

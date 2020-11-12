@@ -1101,18 +1101,20 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } )
-				: i18n.translate( 'Backup {{em}}Daily{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ),
+			( {
+				v2: i18n.translate( 'Backup {{strong}}{{em}}Daily{{/em}}{{/strong}}', {
+					components: {
+						em: <em />,
+						strong: <strong />,
+					},
+				} ),
+				i5: i18n.translate( 'Backup Daily (off-site)' ),
+			}[ getJetpackCROActiveVersion() ] ||
+			i18n.translate( 'Backup {{em}}Daily{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Automatic daily backups of your entire site, with unlimited, WordPress-optimized secure storage. {{link}}Learn more{{/link}}.',
@@ -1129,20 +1131,22 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRODUCT_BACKUP_REALTIME_V2,
 		getIcon: () => 'cloud-upload',
 		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-							nbh: <>&#8209;</>,
-						},
-						comment: '{{nbh}} represents a non breakable hyphen',
-				  } )
-				: i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
-						components: {
-							em: <em />,
-						},
-				  } ),
+			( {
+				v2: i18n.translate( 'Backup {{strong}}{{em}}Real{{nbh/}}time{{/em}}{{/strong}}', {
+					components: {
+						em: <em />,
+						strong: <strong />,
+						nbh: <>&#8209;</>,
+					},
+					comment: '{{nbh}} represents a non breakable hyphen',
+				} ),
+				i5: i18n.translate( 'Backup Real-time (off-site)' ),
+			}[ getJetpackCROActiveVersion() ] ||
+			i18n.translate( 'Backup {{em}}Real-time{{/em}}', {
+				components: {
+					em: <em />,
+				},
+			} ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Real-time backups of your entire site and database with unlimited secure storage. {{link}}Learn more{{/link}}.',
@@ -1204,11 +1208,14 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
+			( {
+				i5: i18n.translate( 'Scan Daily (automated)' ),
+			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Daily{{/em}}', {
 				components: {
 					em: <em />,
 				},
-			} ),
+			} ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated daily scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1229,11 +1236,14 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
 		getIcon: () => ( { icon: 'security', component: MaterialIcon } ),
 		getTitle: () =>
+			( {
+				i5: i18n.translate( 'Real-time Scan (automated)' ),
+			}[ getJetpackCROActiveVersion() ] ||
 			i18n.translate( 'Scan {{em}}Real-time{{/em}}', {
 				components: {
 					em: <em />,
 				},
-			} ),
+			} ) ),
 		getDescription: () =>
 			i18n.translate(
 				'Automated real-time scanning for security vulnerabilities or threats on your site. Includes instant notifications and automatic security fixes. {{link}}Learn more{{/link}}.',
@@ -1248,7 +1258,10 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_ANTISPAM_V2 ]: {
 		getSlug: () => constants.FEATURE_ANTISPAM_V2,
-		getTitle: () => i18n.translate( 'Automated spam protection' ),
+		getTitle: () =>
+			( {
+				i5: i18n.translate( 'Always-on spam protection' ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Automated spam protection' ) ),
 	},
 
 	[ constants.FEATURE_PRODUCT_ANTISPAM_V2 ]: {
@@ -1300,7 +1313,10 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
 		getSlug: () => constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		getIcon: () => 'clipboard',
-		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
+		getTitle: () =>
+			( {
+				i5: i18n.translate( "1-year's worth of activity events" ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Activity log: 1-year archive' ) ),
 		getDescription: () =>
 			i18n.translate(
 				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',
@@ -1321,14 +1337,16 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_PRODUCT_SEARCH_V2,
 		getIcon: () => ( getJetpackCROActiveVersion() === 'v2' ? 'search' : null ),
 		getTitle: () =>
-			getJetpackCROActiveVersion() === 'v2'
-				? i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
-						components: {
-							em: <em />,
-							strong: <strong />,
-						},
-				  } )
-				: i18n.translate( 'Search: up to 100k records' ),
+			( {
+				v2: i18n.translate( 'Jetpack Search {{strong}}{{em}}Up to 100k records{{/em}}{{/strong}}', {
+					components: {
+						em: <em />,
+						strong: <strong />,
+					},
+				} ),
+				i5: i18n.translate( 'Site Search: up to 100k records' ),
+			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Search: up to 100k records' ) ),
+
 		getDescription: () =>
 			i18n.translate(
 				'Help your site visitors find answers instantly so they keep reading and buying. Powerful filtering and customization options. {{link}}Learn more.{{/link}}',
