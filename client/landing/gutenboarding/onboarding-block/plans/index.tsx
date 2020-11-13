@@ -28,7 +28,7 @@ interface Props {
 }
 
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale: locale } = useI18n();
 	const history = useHistory();
 	const makePath = usePath();
 	const { goBack, goNext } = useStepNavigation();
@@ -109,6 +109,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				onPickDomainClick={ handlePickDomain }
 				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
 				selectedFeatures={ selectedFeatures }
+				locale={ locale }
 			/>
 		</div>
 	);

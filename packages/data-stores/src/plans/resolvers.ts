@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { apiFetch } from '@wordpress/data-controls';
-import type { APIFetchOptions } from '@wordpress/api-fetch';
+import { stringify } from 'qs';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import {
 	PLAN_ECOMMERCE,
 	plansProductSlugs,
 } from './constants';
+import { fetchAndParse, wpcomRequest } from '../wpcom-request-controls';
 
 /**
  * Calculates the monthly price of a plan
@@ -41,18 +41,12 @@ function getMonthlyPrice( plan: APIPlan ) {
 	return `${ currency.symbol }${ price }`;
 }
 
-export function* getPrices() {
-	/* the type below (APIFetchOptions) as a blatant lie to TypeScript :D
-	   the data-controls package is mistyped to demand APIFetchOptions
-	   as a parameter, while APIFetchOptions is meant for `@wordpress/api-fetch`,
-	   NOT for { apiFetch } from '@wordpress/data-controls'.
-	*/
-	const plans = yield apiFetch( {
-		global: true, // needed when used in wp-admin, otherwise wp-admin will add site-prefix (search for wpcomFetchAddSitePrefix)
-		url: 'https://public-api.wordpress.com/rest/v1.5/plans',
-		mode: 'cors',
-		credentials: 'omit',
-	} as APIFetchOptions );
+export function* getPrices( locale = 'en' ) {
+	const plans = yield wpcomRequest( {
+		path: '/plans',
+		query: stringify( { locale } ),
+		apiVersion: '1.5',
+	} );
 
 	// filter for supported plans
 	const WPCOMPlans: APIPlan[] = plans.filter(
@@ -78,14 +72,15 @@ const mapShortNameToProductSlug: Record< string, string > = {
 
 export function* getPlansDetails( locale = 'en' ) {
 	try {
-		const rawPlansDetails = yield apiFetch( {
-			global: true,
-			url: `https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
+		const { body: rawPlansDetails } = yield fetchAndParse(
+			`https://public-api.wordpress.com/wpcom/v2/plans/details?locale=${ encodeURIComponent(
 				locale
 			) }`,
-			mode: 'cors',
-			credentials: 'omit',
-		} as APIFetchOptions );
+			{
+				mode: 'cors',
+				credentials: 'omit',
+			}
+		);
 
 		const plans: Record< string, Plan > = {};
 		const features: Record< string, PlanFeature > = {};

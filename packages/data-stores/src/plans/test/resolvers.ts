@@ -4,13 +4,19 @@
 import { getPrices, getPlansDetails } from '../resolvers';
 import { PLAN_FREE } from '../constants';
 
+// Don't need to mock specific functions for any tests, but mocking
+// module because it accesses the `document` global.
+jest.mock( 'wpcom-proxy-request', () => ( {
+	__esModule: true,
+} ) );
+
 describe( 'getPrices', () => {
 	it( 'calls setPrices after fetching prices', () => {
 		const iter = getPrices();
 
 		expect( iter.next().value ).toEqual( {
-			type: 'API_FETCH',
-			request: expect.objectContaining( { url: expect.stringMatching( /\/plans$/ ) } ),
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( { path: expect.stringMatching( /\/plans$/ ) } ),
 		} );
 
 		const planData = [
@@ -35,8 +41,8 @@ describe( 'getPrices', () => {
 		const iter = getPrices();
 
 		expect( iter.next().value ).toEqual( {
-			type: 'API_FETCH',
-			request: expect.objectContaining( { url: expect.stringMatching( /\/plans$/ ) } ),
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( { path: expect.stringMatching( /\/plans$/ ) } ),
 		} );
 
 		const planData = [
@@ -56,18 +62,30 @@ describe( 'getPrices', () => {
 			},
 		} );
 	} );
+
+	it( 'requests price info using the locale passed in', () => {
+		const iter = getPrices( 'ja' );
+
+		expect( iter.next().value ).toEqual( {
+			type: 'WPCOM_REQUEST',
+			request: expect.objectContaining( {
+				path: expect.stringMatching( /\/plans$/ ),
+				query: 'locale=ja',
+			} ),
+		} );
+	} );
 } );
 
 describe( 'getPlanDetails', () => {
 	it( 'loads plan data into the store', () => {
 		const iter = getPlansDetails( 'en' );
 
-		expect( iter.next().value ).toEqual( {
-			type: 'API_FETCH',
-			request: expect.objectContaining( {
-				url: expect.stringMatching( /\/plans\/details\?locale=en$/ ),
-			} ),
-		} );
+		expect( iter.next().value ).toEqual(
+			expect.objectContaining( {
+				type: 'FETCH_AND_PARSE',
+				resource: expect.stringMatching( /\/plans\/details\?locale=en$/ ),
+			} )
+		);
 
 		const planDetailsData = {
 			plans: [
@@ -94,7 +112,7 @@ describe( 'getPlanDetails', () => {
 			],
 		};
 
-		expect( iter.next( planDetailsData ).value ).toEqual( {
+		expect( iter.next( { body: planDetailsData } ).value ).toEqual( {
 			type: 'SET_PLANS',
 			plans: expect.objectContaining( {
 				[ PLAN_FREE ]: expect.objectContaining( {
@@ -122,5 +140,16 @@ describe( 'getPlanDetails', () => {
 				},
 			],
 		} );
+	} );
+
+	it( 'requests data using the locale passed in', () => {
+		const iter = getPlansDetails( 'ja' );
+
+		expect( iter.next().value ).toEqual(
+			expect.objectContaining( {
+				type: 'FETCH_AND_PARSE',
+				resource: expect.stringMatching( /locale=ja/ ),
+			} )
+		);
 	} );
 } );

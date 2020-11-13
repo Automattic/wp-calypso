@@ -35,6 +35,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
+	locale: string;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -44,9 +45,10 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	onPickDomainClick,
 	currentDomain,
 	disabledPlans,
+	locale,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 
 	const isLoading = ! supportedPlans?.length;
 	const placeholderPlans = [ 1, 2, 3, 4 ];

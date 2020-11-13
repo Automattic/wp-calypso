@@ -39,7 +39,7 @@ export const getPlansPaths = ( state: State ) => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 };
 
-export const getPrices = ( state: State ) => state.prices;
+export const getPrices = ( state: State, _: string ) => state.prices; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
 	return planSlug === PLAN_ECOMMERCE;
