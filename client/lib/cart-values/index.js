@@ -20,7 +20,6 @@ import {
 	isDomainRedemption,
 	allowedProductAttributes,
 } from 'calypso/lib/products-values';
-import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 // Auto-vivification from https://github.com/kolodny/immutability-helper#autovivification
 extendImmutabilityHelper( '$auto', function ( value, object ) {
@@ -278,16 +277,6 @@ export function getRefundPolicy( cart ) {
 	}
 
 	return 'genericRefund';
-}
-
-/**
- * Returns a list of enabled payment methods
- *
- * @param {import('@automattic/shopping-cart').ResponseCart} cart The shopping cart
- * @returns {import('calypso/my-sites/checkout/composite-checkout/types/checkout-payment-method-slug.ts').CheckoutPaymentMethodSlug[]} An array of payment method ids
- */
-export function getEnabledPaymentMethods( cart ) {
-	return cart.allowed_payment_methods.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 }
 
 /**
