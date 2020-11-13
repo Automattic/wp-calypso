@@ -16,7 +16,7 @@ import './style.scss';
 
 const Success: React.FunctionComponent = () => {
 	const { siteSubdomain } = useSiteDomains();
-	const { unsetModalDismissible } = useFocusedLaunchModal();
+	const { unsetModalDismissible, closeFocusedLaunch } = useFocusedLaunchModal();
 
 	// When in the Success view, the user can't dismiss the modal anymore
 	useEffect( () => {
@@ -34,6 +34,11 @@ const Success: React.FunctionComponent = () => {
 			</p>
 
 			<a href={ `/home/${ siteSubdomain?.domain }` }>Back home</a>
+			{ /* @TODO: this will work only when the modal in in the block editor. */ }
+			<button onClick={ closeFocusedLaunch }>
+				{ __( 'Continue editing', __i18n_text_domain__ ) }
+			</button>
+
 		</div>
 	);
 };
