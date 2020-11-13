@@ -663,8 +663,9 @@ object WpDesktop_DesktopE2ETests : BuildType({
 	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
-		desktop/release => desktop/release
-		desktop/e2e/logs => desktop/e2e/logs
+		desktop/release => release
+		desktop/e2e/logs => logs
+		desktop/e2e/screenshots => screenshots
 	""".trimIndent()
 
 	vcs {
