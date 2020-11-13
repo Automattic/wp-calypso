@@ -10,11 +10,12 @@ import { Title } from '@automattic/onboarding';
 /**
  * Internal dependencies
  */
-import { useLaunchModal } from '../../hooks';
+import { useLaunchModal, useSiteDomains } from '../../hooks';
 
 import './style.scss';
 
 const Success: React.FunctionComponent = () => {
+	const { siteSubdomain } = useSiteDomains();
 	const { setModalDismissible } = useLaunchModal();
 
 	// When in the Success view, the user can't dismiss the modal anymore
@@ -31,6 +32,8 @@ const Success: React.FunctionComponent = () => {
 					__i18n_text_domain__
 				) }
 			</p>
+
+			<a href={ `/home/${ siteSubdomain?.domain }` }>Back home</a>
 		</div>
 	);
 };
