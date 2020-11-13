@@ -58,16 +58,6 @@ class ThreatDescription extends React.PureComponent< Props > {
 					<strong>{ translate( 'What was the problem?' ) }</strong>
 				</p>
 				{ this.renderTextOrNode( problem ) }
-				{ fix && (
-					<p className="threat-description__section-title">
-						<strong>
-							{ status === 'fixed'
-								? translate( 'How did Jetpack fix it?' )
-								: translate( 'How we will fix it?' ) }
-						</strong>
-					</p>
-				) }
-				{ fix && this.renderTextOrNode( fix ) }
 				{ ( filename || context || diff ) && (
 					<p className="threat-description__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>
@@ -76,6 +66,16 @@ class ThreatDescription extends React.PureComponent< Props > {
 				{ this.renderFilename() }
 				{ context && <MarkedLines context={ context } /> }
 				{ diff && <DiffViewer diff={ diff } /> }
+				{ fix && (
+					<p className="threat-description__section-title threat-description__section-title-fix">
+						<strong>
+							{ status === 'fixed'
+								? translate( 'How did Jetpack fix it?' )
+								: translate( 'How we will fix it?' ) }
+						</strong>
+					</p>
+				) }
+				{ fix && this.renderTextOrNode( fix ) }
 				{ children }
 			</div>
 		);
