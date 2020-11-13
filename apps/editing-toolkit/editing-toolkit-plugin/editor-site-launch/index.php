@@ -39,7 +39,7 @@ function enqueue_script_and_style() {
 		'a8c-fse-editor-site-launch-script',
 		'wpcomEditorSiteLaunch',
 		array(
-			'locale' => get_locale(),
+			'locale' => determine_locale(),
 		)
 	);
 
