@@ -22,6 +22,7 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"@automattic/react-i18n": "^1.0.0-alpha.0"
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@testing-library/react-hooks": "^3.4.2"
 	}
 }

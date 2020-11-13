@@ -1,8 +1,7 @@
 /**
  * Internal dependencies
  */
-import { localizeUrl } from '../src';
-
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 // Mock only the getLocaleSlug function from i18n-calypso, and use
 // original references for all the other functions
 function mockFunctions() {

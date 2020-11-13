@@ -1,12 +1,49 @@
+/* eslint-disable no-shadow -- shadowing localizeUrl makes tests readable */
+
+/**
+ * External dependencies
+ */
+import { renderHook } from '@testing-library/react-hooks';
+
 /**
  * Internal dependencies
  */
-import { localizeUrl } from '../src';
+import { useI18nUtils } from '../src';
 
-// Mock only the getLocaleSlug function from i18n-calypso, and use
-// original references for all the other functions
+jest.mock( '@automattic/react-i18n', () => {
+	const original = jest.requireActual( '@automattic/react-i18n' );
+	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
+		useI18n: jest.fn( () => ( { i18nLocale: 'en' } ) ),
+	} );
+} );
+const { useI18n } = jest.requireMock( '@automattic/react-i18n' );
 
 describe( '#localizeUrl', () => {
+	function useLocalizeUrl( locale = 'en' ) {
+		useI18n.mockImplementation( () => ( { i18nLocale: locale } ) );
+		const {
+			result: {
+				current: { localizeUrl },
+			},
+		} = renderHook( () => useI18nUtils() ); // eslint-disable-line react-hooks/rules-of-hooks -- being called within renderHook context
+		return localizeUrl;
+	}
+
+	const localizeUrl = useLocalizeUrl( 'en' );
+
+	test( 'should use react-i18n useI18n hook for locale fallback', () => {
+		let localizeUrl;
+
+		localizeUrl = useLocalizeUrl( 'pt-br' );
+		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
+			'https://br.forums.wordpress.com/'
+		);
+		localizeUrl = useLocalizeUrl( 'en' );
+		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
+			'https://en.forums.wordpress.com/'
+		);
+	} );
+
 	test( 'should not change URL for `en`', () => {
 		[
 			'https://wordpress.com/',

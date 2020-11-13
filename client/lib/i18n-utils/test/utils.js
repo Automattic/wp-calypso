@@ -12,7 +12,6 @@ import {
 	isDefaultLocale,
 	removeLocaleFromPath,
 	isLocaleVariant,
-	localizeUrl,
 	canBeTranslated,
 	getPathParts,
 	filterLanguageRevisions,
@@ -32,14 +31,6 @@ jest.mock( 'i18n-calypso', () => mockFunctions() );
 const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
-	// todo: remove once all usage is moved over to the @automattic/i18n-utils package version
-	describe( '#localizeUrl', () => {
-		test( 'localizeUrl is still provided by client/lib/i18n-utisl', () => {
-			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
-				'https://de.wordpress.com/'
-			);
-		} );
-	} );
 	describe( '#isDefaultLocale', () => {
 		test( 'should return false when a non-default locale provided', () => {
 			expect( isDefaultLocale( 'fr' ) ).toEqual( false );
