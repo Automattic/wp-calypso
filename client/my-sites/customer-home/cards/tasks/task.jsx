@@ -39,6 +39,7 @@ const Task = ( {
 	badgeText,
 	completeOnStart = false,
 	description,
+	hasAction = true,
 	illustration,
 	isLoading: forceIsLoading = false,
 	isUrgent = false,
@@ -103,6 +104,29 @@ const Task = ( {
 		);
 	};
 
+	const renderAction = () => {
+		if ( ! hasAction ) {
+			return null;
+		}
+
+		if ( actionButton ) {
+			return <ActionButtonWithStats>{ actionButton }</ActionButtonWithStats>;
+		}
+
+		return (
+			<Button
+				className="task__action"
+				primary
+				scary={ scary }
+				onClick={ startTask }
+				href={ actionUrl }
+				target={ actionTarget }
+			>
+				{ actionText }
+			</Button>
+		);
+	};
+
 	return (
 		<div className={ classnames( 'task', { 'is-loading': isLoading, 'is-urgent': isUrgent } ) }>
 			{ isLoading && <Spinner /> }
@@ -121,20 +145,7 @@ const Task = ( {
 				<h2 className="task__title">{ title }</h2>
 				<p className="task__description">{ description }</p>
 				<div className="task__actions">
-					{ actionButton ? (
-						<ActionButtonWithStats>{ actionButton }</ActionButtonWithStats>
-					) : (
-						<Button
-							className="task__action"
-							primary
-							scary={ scary }
-							onClick={ startTask }
-							href={ actionUrl }
-							target={ actionTarget }
-						>
-							{ actionText }
-						</Button>
-					) }
+					{ renderAction() }
 					<Button
 						className="task__skip is-link"
 						ref={ skipButtonRef }

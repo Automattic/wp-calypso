@@ -103,7 +103,7 @@ const Renew = ( { card, moment, purchases, site, siteSlug } ) => {
 			illustration={ illustration }
 			isLoading={ ! planPurchase }
 			isUrgent={ hasExpired }
-			completeOnStart={ ! isOwner }
+			hasAction={ isOwner }
 			taskId={ card }
 		/>
 	);
