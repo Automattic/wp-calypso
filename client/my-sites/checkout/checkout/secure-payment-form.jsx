@@ -15,7 +15,6 @@ import notices from 'calypso/notices';
 import EmptyContent from 'calypso/components/empty-content';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
-import StripeElementsPaymentBox from './stripe-elements-payment-box';
 import { submit } from 'calypso/lib/store-transactions';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { setPayment, setTransactionStep } from 'calypso/lib/transaction/actions';
@@ -30,10 +29,8 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getLocationOrigin } from 'calypso/lib/cart-values';
-import PaymentBox from './payment-box';
 import isPresalesChatAvailable from 'calypso/state/happychat/selectors/is-presales-chat-available';
 import getCountries from 'calypso/state/selectors/get-countries';
-import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_WPCOM_RESPONSE,
@@ -274,37 +271,6 @@ export class SecurePaymentForm extends Component {
 		);
 	}
 
-	renderStripeElementsPaymentBox() {
-		const incompatibleProducts = this.props.incompatibleProducts;
-		return (
-			<PaymentBox
-				classSet="credit-card-payment-box"
-				cart={ this.props.cart }
-				paymentMethods={ this.props.paymentMethods }
-				currentPaymentMethod="credit-card"
-				infoMessage={ this.props.infoMessage }
-				onSelectPaymentMethod={ this.selectPaymentBox }
-				incompatibleProducts={ incompatibleProducts }
-			>
-				<QueryPaymentCountries />
-				<StripeElementsPaymentBox
-					translate={ this.props.translate }
-					cards={ this.props.cards }
-					transaction={ this.props.transaction }
-					cart={ this.props.cart }
-					countriesList={ this.props.countriesList }
-					initialCard={ this.getInitialCard() }
-					selectedSite={ this.props.selectedSite }
-					onSubmit={ this.handlePaymentBoxSubmit }
-					presaleChatAvailable={ this.props.presaleChatAvailable }
-					incompatibleProducts={ incompatibleProducts }
-				>
-					{ this.props.children }
-				</StripeElementsPaymentBox>
-			</PaymentBox>
-		);
-	}
-
 	renderPaymentBox = ( visiblePaymentBox ) => {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
@@ -314,14 +280,6 @@ export class SecurePaymentForm extends Component {
 
 			case 'free-cart':
 				return this.renderFreeCartPaymentBox();
-
-			case 'credit-card':
-				return (
-					<div>
-						{ this.renderGreatChoiceHeader() }
-						{ this.renderStripeElementsPaymentBox() }
-					</div>
-				);
 
 			case 'paypal':
 				return (
