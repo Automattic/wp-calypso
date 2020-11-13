@@ -121,7 +121,9 @@ function coming_soon_page() {
 	if ( ! show_coming_soon_page() ) {
 		return;
 	}
-
+	if ( ! defined( 'GRAVATAR_HOVERCARDS__DISABLE' ) ) {
+		define( 'GRAVATAR_HOVERCARDS__DISABLE', true );
+	}
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
 	// Disable WP scripts, social og meta, cookie banner.
