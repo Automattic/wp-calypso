@@ -5,6 +5,7 @@ import './public-path';
  * Internal dependencies
  */
 import WelcomeTourCard from './tour-card';
+import getTourContent from './tour-content';
 import './style-tour.scss';
 
 /**
@@ -46,11 +47,22 @@ function WelcomeTourFrame() {
 		return null;
 	}
 
+	const cardContent = getTourContent();
+
 	return (
 		<div className="wpcom-editor-welcome-tour-container">
 			{ ! isMinimized ? (
-				<WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
+				cardContent.map( ( card, index ) => (
+					<WelcomeTourCard
+						cardIndex={ index }
+						heading={ card.heading }
+						key={ card.heading }
+						onDismiss={ dismissWpcomNuxTour }
+						onMinimize={ setIsMinimized }
+					/>
+				) )
 			) : (
+				// <WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
 				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
 			) }
 		</div>
