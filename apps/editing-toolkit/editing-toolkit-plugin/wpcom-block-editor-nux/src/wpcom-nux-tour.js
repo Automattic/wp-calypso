@@ -4,14 +4,15 @@ import './public-path';
 /**
  * Internal dependencies
  */
+import WelcomeTourCard from './tour-card';
 import './style-tour.scss';
 
 /**
  * External dependencies
  */
-import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
-// import styled from '@emotion/styled';
-import { Icon, expand, chevronUp } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Icon, chevronUp } from '@wordpress/icons';
+// TODO: fix issue with expand icon not found.  Probably to do with old icon lib version
 
 import { createPortal, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
@@ -19,21 +20,22 @@ import { registerPlugin } from '@wordpress/plugins';
 function LaunchWpcomNuxTour() {
 	// Create parent for welcome tour portal
 	const portalParent = document.createElement( 'div' );
+	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 	useEffect( () => {
 		document.body.appendChild( portalParent );
 		return () => {
+			// TODO: figure out how to unmount as this is not running when modal is closed
 			document.body.removeChild( portalParent );
 		};
 	} );
 
-	return <div>{ createPortal( <WelcomeTour />, portalParent ) }</div>;
+	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
 
-function WelcomeTour() {
+function WelcomeTourFrame() {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	// TODO: replace with wp.data
 	const [ isNuxEnabled, setIsNuxEnabled ] = useState( true );
-
 	const dismissWpcomNuxTour = () => {
 		// TODO recordTracksEvent
 		// setWpcomNuxStatus( { isNuxEnabled: false } );
@@ -44,47 +46,10 @@ function WelcomeTour() {
 		return null;
 	}
 
-	// const containerClass = isMinimized ? 'minimized';
 	return (
 		<div className="wpcom-editor-welcome-tour-container">
 			{ ! isMinimized ? (
-				<Card className="welcome-tour-card">
-					<div className="welcome-tour-card__overlay-controls">
-						<Flex>
-							<Button
-								isPrimary
-								icon="pets"
-								iconSize={ 14 }
-								onClick={ () => setIsMinimized( true ) }
-							></Button>
-							<Button
-								isPrimary
-								icon="no-alt"
-								iconSize={ 14 }
-								onClick={ dismissWpcomNuxTour }
-							></Button>
-						</Flex>
-					</div>
-					<CardMedia>
-						<img
-							alt="Editor Welcome Tour"
-							src="https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px"
-						/>
-					</CardMedia>
-					<CardBody>
-						<h2 className="welcome-tour-card__card-heading">Welcome to WordPress</h2>
-						<p>Learn the basic editor tools so you can edit and build your dream website.</p>
-					</CardBody>
-					<CardFooter>
-						<div>• • • • • •</div>
-						<div>
-							<Button isTertiary={ true }>No thanks</Button>
-							<Button isPrimary={ true } className="welcome-tour-card__next-btn">
-								Let's start
-							</Button>
-						</div>
-					</CardFooter>
-				</Card>
+				<WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
 			) : (
 				<div className="wpcom-editor-welcome-tour__minimized-container">
 					<Button
