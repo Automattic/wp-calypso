@@ -47,8 +47,8 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"build:esm": "tsc --project ./tsconfig.json && copy-assets --esm",
-		"build:cjs": "tsc --project ./tsconfig-cjs.json && copy-assets --cjs",
+		"build:esm": "tsc --build ./tsconfig.json && copy-assets --esm",
+		"build:cjs": "tsc --build ./tsconfig-cjs.json && copy-assets --cjs",
 		"prepare": "yarn run build:esm",
 		"prepack": "yarn run clean && yarn run build:esm && yarn run build:cjs"
 	}

@@ -16,8 +16,8 @@
 	"scripts": {
 		"clean": "npx rimraf dist",
 		"prepublish": "yarn run clean",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"watch": "tsc --project ./tsconfig.json --watch",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
+		"watch": "tsc --build ./tsconfig.json --watch",
 		"download": "node bin/download.js",
 		"test": "yarn jest"
 	},

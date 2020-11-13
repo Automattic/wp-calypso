@@ -8,9 +8,9 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist \"../../.tsc-cache/packages__composite-checkout*\"",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
 		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [
 		"dist",
