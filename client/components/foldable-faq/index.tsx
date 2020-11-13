@@ -28,7 +28,7 @@ const ICON_SIZE = 24;
 const FoldableFAQ: React.FC< FAQProps > = ( {
 	question,
 	children,
-	className = 'foldable-faq',
+	className = '',
 	icon = 'chevron-right',
 	iconSize = ICON_SIZE,
 	expanded = false,
@@ -52,10 +52,10 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 
 	return (
 		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
-			<div className="foldable-faq__question" onClick={ toggleAnswer }>
+			<button className="foldable-faq__question" onClick={ toggleAnswer }>
 				<Gridicon icon={ icon } size={ iconSize } />
 				<div className="foldable-faq__question-text">{ question }</div>
-			</div>
+			</button>
 			<div
 				ref={ answerRef }
 				style={ { maxHeight: `${ height }px` } }

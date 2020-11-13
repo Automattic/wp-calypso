@@ -1,3 +1,12 @@
+button.foldable-faq__question {
+	appearance: none;
+	background: transparent;
+	border: none;
+	font-size: inherit;
+	outline: 0;
+	vertical-align: baseline;
+}
+
 .foldable-faq__question {
 	display: flex;
 	align-items: center;
@@ -34,6 +43,7 @@
 
 	font-size: 1rem;
 	color: var( --studio-gray-60 );
+	line-height: 1.6rem;
 
 	.is-expanded & {
 		height: auto;
