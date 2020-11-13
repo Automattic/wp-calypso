@@ -13,7 +13,7 @@ import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/
 
 // import { useEffect, useState } from '@wordpress/element';
 
-function WelcomeTourCard( { onMinimize, onDismiss } ) {
+function WelcomeTourCard( { cardIndex, heading, onMinimize, onDismiss } ) {
 	return (
 		<Card className="welcome-tour-card">
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
@@ -24,7 +24,7 @@ function WelcomeTourCard( { onMinimize, onDismiss } ) {
 				/>
 			</CardMedia>
 			<CardBody>
-				<h2 className="welcome-tour-card__card-heading">Welcome to WordPress</h2>
+				<h2 className="welcome-tour-card__card-heading">{ heading }</h2>
 				<p>Learn the basic editor tools so you can edit and build your dream website.</p>
 			</CardBody>
 			<CardFooter>
