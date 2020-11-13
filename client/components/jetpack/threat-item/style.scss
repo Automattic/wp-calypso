@@ -43,14 +43,11 @@
 	&__buttons {
 		display: flex;
 		justify-content: flex-end;
+
 	}
 
 	.foldable-card__action.foldable-card__expand {
 		border: none;
-	}
-
-	.foldable-card__header {
-		border-bottom: 1px solid var( --studio-gray-5 );
 	}
 }
 
