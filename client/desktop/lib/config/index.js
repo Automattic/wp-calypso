@@ -19,4 +19,12 @@ config.isBeta = function () {
 	return this.build === 'beta';
 };
 
+// Do not send function and DOM objects (exception in Electron v9).
+config.toRenderer = function () {
+	return {
+		build: this.build,
+		version: this.version,
+	};
+};
+
 module.exports = config;
