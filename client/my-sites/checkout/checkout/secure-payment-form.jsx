@@ -13,7 +13,6 @@ import debugFactory from 'debug';
  */
 import notices from 'calypso/notices';
 import EmptyContent from 'calypso/components/empty-content';
-import CreditsPaymentBox from './credits-payment-box';
 import FreeTrialConfirmationBox from './free-trial-confirmation-box';
 import FreeCartPaymentBox from './free-cart-payment-box';
 import StripeElementsPaymentBox from './stripe-elements-payment-box';
@@ -251,21 +250,6 @@ export class SecurePaymentForm extends Component {
 		}
 	}
 
-	renderCreditsPaymentBox() {
-		return (
-			<CreditsPaymentBox
-				cart={ this.props.cart }
-				onSubmit={ this.handlePaymentBoxSubmit }
-				transactionStep={ this.props.transaction.step }
-				presaleChatAvailable={ this.props.presaleChatAvailable }
-				infoMessage={ this.props.infoMessage }
-				incompatibleProducts={ this.props.incompatibleProducts }
-			>
-				{ this.props.children }
-			</CreditsPaymentBox>
-		);
-	}
-
 	renderFreeTrialConfirmationBox() {
 		return (
 			<FreeTrialConfirmationBox
@@ -325,9 +309,6 @@ export class SecurePaymentForm extends Component {
 		debug( 'getting %o payment box ...', visiblePaymentBox );
 
 		switch ( visiblePaymentBox ) {
-			case 'credits':
-				return this.renderCreditsPaymentBox();
-
 			case 'free-trial':
 				return this.renderFreeTrialConfirmationBox();
 
