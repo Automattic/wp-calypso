@@ -1642,31 +1642,6 @@ Undocumented.prototype.uploadTheme = function ( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.nameservers = function ( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.updateNameservers = function ( domain, nameservers, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/nameservers/', {}, nameservers, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
 Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
