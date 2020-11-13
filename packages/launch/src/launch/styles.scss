@@ -6,6 +6,18 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
+@mixin visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border-width: 0;
+}
+
 body.has-focused-launch-modal {
 	overflow: hidden;
 }
@@ -25,9 +37,9 @@ body.has-focused-launch-modal {
 		@include break-medium {
 			border-bottom: none;
 
-			.components-modal__icon-container,
+			// Make sure that the modal title can still be read by screen readers
 			.components-modal__header-heading {
-				display: none;
+				@include visually-hidden();
 			}
 		}
 	}
@@ -44,6 +56,16 @@ body.has-focused-launch-modal {
 		// consequence where if the content height is shorter than the viewport height
 		// the modal header overlaps the scrollbar on Chrome.
 		overflow: auto;
+	}
+
+	&.launch__focused-modal--hide-title {
+		.components-modal__header {
+			border-bottom: none;
+		}
+
+		.components-modal__header-heading {
+			@include visually-hidden();
+		}
 	}
 }
 

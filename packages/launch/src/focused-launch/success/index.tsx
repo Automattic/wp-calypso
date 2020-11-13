@@ -20,7 +20,7 @@ const isCopyApiSupported = ! document.queryCommandSupported( 'copy' );
 
 const Success: React.FunctionComponent = () => {
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
-	const { unsetModalDismissible, closeFocusedLaunch } = useFocusedLaunchModal();
+	const { unsetModalDismissible, closeFocusedLaunch, hideModalTitle } = useFocusedLaunchModal();
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = useState( '' );
 
 	const siteUrlRef = useRef< HTMLSpanElement >( null );
@@ -76,10 +76,12 @@ const Success: React.FunctionComponent = () => {
 		}
 	}, [ isCopyConfirmationMessageVisible ] );
 
-	// When in the Success view, the user can't dismiss the modal anymore
+	// When in the Success view, the user can't dismiss the modal anymore,
+	// and the modal title is hidden
 	useEffect( () => {
 		unsetModalDismissible();
-	}, [ unsetModalDismissible ] );
+		hideModalTitle();
+	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	return (
 		<div>

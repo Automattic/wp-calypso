@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -21,17 +22,29 @@ interface Props {
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId, locale } ) => {
-	const { isModalDismissible, setModalDismissible } = useFocusedLaunchModal();
+	const {
+		isModalDismissible,
+		setModalDismissible,
+		isModalTitleVisible,
+		showModalTitle,
+	} = useFocusedLaunchModal();
 
-	// Make sure the modal is dimissible when launched
+	// Make sure the modal is dimissible when launched.
 	useEffect( () => {
 		setModalDismissible();
 	}, [ setModalDismissible ] );
 
+	// Make sure the modal title is visible when launched.
+	useEffect( () => {
+		showModalTitle();
+	}, [ showModalTitle ] );
+
 	return (
 		<Modal
 			open={ true }
-			className="launch__focused-modal"
+			className={ classNames( 'launch__focused-modal', {
+				'launch__focused-modal--hide-title': ! isModalTitleVisible,
+			} ) }
 			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
 			onRequestClose={ onClose }
