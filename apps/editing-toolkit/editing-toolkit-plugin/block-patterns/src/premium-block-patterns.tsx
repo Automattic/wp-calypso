@@ -9,27 +9,36 @@ import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordp
 /**
  * Internal dependencies
  */
+import PatternPopover from './components/pattern-popover';
 import PatternBadge from './components/pattern-badge';
 import './style.scss';
 
-export function PatternTitleContainer( { title } ) {
-	const [ showTooltip, setShowTooltip ] = React.useState( false );
+interface PatternTitleProps {
+	title: string;
+}
+
+export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps > = ( {
+	title,
+} ) => {
+	const [ showPopover, setShowPopover ] = React.useState( false );
 
 	return (
-		<div
-			onMouseEnter={ () => setShowTooltip( true ) }
-			onMouseLeave={ () => setShowTooltip( false ) }
-		>
-			{ showTooltip ? <div>Hello, there!</div> : null }
+		<div>
+			<div
+				className="pattern-title-container"
+				onMouseEnter={ () => setShowPopover( true ) }
+				onMouseLeave={ () => setShowPopover( false ) }
+			></div>
+			{ showPopover ? <PatternPopover title={ title }></PatternPopover> : null }
 			<span> { title } </span>
 			<div>
 				<PatternBadge> { __( 'Premium', 'full-site-editing' ) } </PatternBadge>
 			</div>
 		</div>
 	);
-}
+};
 
-export const PremiumBlockPatterns = () => {
+export const PremiumBlockPatterns: React.FunctionComponent = () => {
 	const { __experimentalBlockPatterns } = useSelect(
 		( select ) => select( 'core/block-editor' ).getSettings() as any
 	);
