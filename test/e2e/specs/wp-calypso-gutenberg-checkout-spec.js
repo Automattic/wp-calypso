@@ -179,16 +179,27 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 			);
 		} );
 
-		step( 'Can enter and submit card details', async function () {
+		step( 'Can select and fill out credit card payment method', async function () {
 			const existingCardIsPresent = await driverHelper.isElementPresent(
 				driver,
 				By.css( '[id*="existingCard-"]:checked' )
 			);
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+
 			if ( ! existingCardIsPresent ) {
-				await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
+				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+				return await securePaymentComponent.enterTestCreditCardDetails( testCreditCardDetails );
 			}
-			await securePaymentComponent.submitPaymentDetails();
+
+			return true;
+		} );
+
+		step( 'Can click the submit payment button', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			return await securePaymentComponent.submitPaymentDetails();
+		} );
+
+		step( 'Can process card payment', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
 			return await securePaymentComponent.waitForPageToDisappear();
 		} );
