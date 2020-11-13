@@ -137,7 +137,7 @@ async function run() {
 		);
 
 		const tests = path.join( E2E_DIR, 'tests', 'e2e.js' );
-		execSync( `npx mocha ${ tests } --timeout 20000 --exit`, {
+		execSync( `npx mocha ${ tests } --timeout 20000 --exit --reporter mocha-junit-reporter`, {
 			stdio: 'inherit',
 		} );
 	} catch ( err ) {
