@@ -2,7 +2,7 @@
 @import '~@wordpress/base-styles/mixins';
 
 .more-info-box__more-container {
-	background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	background-color: var( --color-surface );
 
 	margin: 24px 0;
 	padding: 30px 15px 26px;
@@ -20,10 +20,33 @@
 .more-info-box__more-headline {
 	padding-bottom: 15px;
 	font-size: 1.5rem;
-	font-weight: 400;
+	font-weight: 700;
 }
 
-.more-info-box__more-button {
+.more-info-box__more-button.button {
+	display: flex;
+	align-items: center;
+
+	margin: 0 auto;
+	padding: 10px 16px 10px 40px;
+
+	border: solid 2px currentColor;
+	border-radius: 4px;
+	color: var( --studio-jetpack-green-40 );
+
 	font-size: 1rem;
-	font-weight: 600;
+	font-weight: 700;
+}
+
+.more-info-box__icon.gridicon {
+	top: 2px;
+
+	margin-left: 8px;
+}
+
+/* I5 specifics */
+.is-section-jetpack-cloud-pricing {
+	.more-info-box__more-container {
+		background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	}
 }
