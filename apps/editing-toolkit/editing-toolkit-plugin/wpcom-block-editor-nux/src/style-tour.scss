@@ -12,13 +12,42 @@
 	position: fixed;
 }
 
-.wpcom-block-editor-welcome-tour__card-heading,
-.wpcom-block-editor-welcome-tour__subheading {
-	padding: $grid-unit-05 $grid-unit-20;
+.welcome-tour-card__heading,
+.welcome-tour-card__subheading {
 	font-size: $big-font-size;
-	// margin: 0 0 8px;
+	padding: $grid-unit-05 $grid-unit-20;
 }
 
 .wpcom-editor-welcome-tour__minimized-container {
 	border-radius: 2px;
+}
+
+.wpcom-editor-welcome-tour__resume-btn {
+	background-color: $white;
+	border: 1px solid $light-gray-900;
+}
+
+.wpcom-editor-welcome-tour__resume-btn-text {
+	margin-right: 60px;
+}
+
+.welcome-tour-card {
+	max-width: 400px;
+	.components-card__footer {
+		border-top: none;
+	}
+}
+
+.welcome-tour-card__overlay-controls {
+	left: 0;
+	padding: 12px;
+	position: absolute;
+	right: 0;
+	.components-button {
+		background: $dark-gray-700;
+	}
+}
+
+.welcome-tour-card__next-btn {
+	margin-left: 10px;
 }
