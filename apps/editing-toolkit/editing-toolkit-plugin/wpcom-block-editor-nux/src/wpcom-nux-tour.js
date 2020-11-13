@@ -51,17 +51,23 @@ function WelcomeTourFrame() {
 			{ ! isMinimized ? (
 				<WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
 			) : (
-				<div className="wpcom-editor-welcome-tour__minimized-container">
-					<Button
-						onClick={ () => setIsMinimized( false ) }
-						className="wpcom-editor-welcome-tour__resume-btn"
-					>
-						<p className="wpcom-editor-welcome-tour__resume-btn-text"> Click to resume tutorial</p>
-						<Icon icon={ chevronUp } size={ 16 } />
-						{ /* expand icon is throwing an error <Icon icon={ expand } size={ 16 } /> */ }
-					</Button>
-				</div>
+				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
 			) }
+		</div>
+	);
+}
+
+function WelcomeTourMinimized( { onMaximize } ) {
+	return (
+		<div className="wpcom-editor-welcome-tour__minimized-container">
+			<Button
+				onClick={ () => onMaximize( false ) }
+				className="wpcom-editor-welcome-tour__resume-btn"
+			>
+				<p className="wpcom-editor-welcome-tour__resume-btn-text"> Click to resume tutorial</p>
+				<Icon icon={ chevronUp } size={ 16 } />
+				{ /* expand icon is throwing an error <Icon icon={ expand } size={ 16 } /> */ }
+			</Button>
 		</div>
 	);
 }
