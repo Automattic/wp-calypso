@@ -37,6 +37,7 @@
 		{ "path": "../data-stores" },
 		{ "path": "../components" },
 		{ "path": "../onboarding" },
-		{ "path": "../domain-picker" }
+		{ "path": "../domain-picker" },
+		{ "path": "../plans-grid" }
 	]
 }
