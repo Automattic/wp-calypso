@@ -21,6 +21,7 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'calypso/state/ui/actions';
@@ -371,7 +372,7 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
+			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding' && ! this.props.plan;
 			const isSiteUnlaunched = this.props.isSiteUnlaunched;
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
@@ -786,6 +787,7 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const plan = getCurrentPlan( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -861,6 +863,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
+		plan,
 	};
 };
 
