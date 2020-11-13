@@ -8,7 +8,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import FoldableFAQ from 'calypso/components/foldable-faq';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getHelpLink } from '../jetpack-faq';
 
 /**
  * Style dependencies
@@ -17,23 +17,6 @@ import './style.scss';
 
 const JetpackFAQi5: React.FC = () => {
 	const translate = useTranslate();
-	// We want to allow Jetpack Free users to contact support, even when it isn't not available
-	// for them, because it could push them into purchasing a product. To make this possible, we
-	// add two query parameters that let's show the support form to Jetpack Free users:
-	// 1. rel=support is what shows the contact form
-	// 2. hpi=1 stands for has purchase intent
-	const getHelpLink = ( context: string ) => {
-		return (
-			<a
-				href="https://jetpack.com/contact-support/?rel=support&hpi=1"
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ () => {
-					recordTracksEvent( 'calypso_jetpack_faq_support_click', { context } );
-				} }
-			/>
-		);
-	};
 
 	return (
 		<>
