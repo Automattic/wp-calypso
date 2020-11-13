@@ -757,7 +757,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export DISPLAY=:99
-				export MOCHA_FILE="./desktop/e2e/result.xml"
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
