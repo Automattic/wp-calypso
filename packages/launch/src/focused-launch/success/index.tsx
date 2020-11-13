@@ -81,11 +81,6 @@ const Success: React.FunctionComponent = () => {
 		unsetModalDismissible();
 	}, [ unsetModalDismissible ] );
 
-	// The button is disabled if the APIs are not supported, or if a confirmation
-	// message is temporarily being shown after the user successfully copied the
-	// value to the clipboard.
-	const isCopyButtonDisabled = isCopyApiSupported || isCopyConfirmationMessageVisible;
-
 	return (
 		<div>
 			<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
@@ -101,17 +96,19 @@ const Success: React.FunctionComponent = () => {
 				<a href={ displayedSiteUrl } target="_blank" rel="noopener noreferrer">
 					<Icon icon={ external } size={ 24 } />
 				</a>
-				<button
-					onClick={ handleCopyButtonClick }
-					ref={ copyButtonRef }
-					disabled={ isCopyButtonDisabled }
-				>
-					{ isCopyConfirmationMessageVisible
-						? // translators: message shown when user successfully copies the link
-						  __( 'Copied!', __i18n_text_domain__ )
-						: // Translators: the action of copying the link to the clipboard
-						  __( 'Copy Link', __i18n_text_domain__ ) }
-				</button>
+				{ isCopyApiSupported && (
+					<button
+						onClick={ handleCopyButtonClick }
+						ref={ copyButtonRef }
+						disabled={ isCopyConfirmationMessageVisible }
+					>
+						{ isCopyConfirmationMessageVisible
+							? // translators: message shown when user successfully copies the link
+							  __( 'Copied!', __i18n_text_domain__ )
+							: // Translators: the action of copying the link to the clipboard
+							  __( 'Copy Link', __i18n_text_domain__ ) }
+					</button>
+				) }
 			</div>
 
 			{ /* @TODO: this will work only when the modal in in the block editor. */ }
