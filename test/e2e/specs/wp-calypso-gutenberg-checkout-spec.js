@@ -193,16 +193,20 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 			return true;
 		} );
 
-		step( 'Can click the submit payment button', async function () {
+		step( 'Can process the payment', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
-			return await securePaymentComponent.submitPaymentDetails();
-		} );
-
-		step( 'Can process card payment', async function () {
-			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			await securePaymentComponent.submitPaymentDetails();
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
-			// return await securePaymentComponent.waitForPageToDisappear();
-			return await driverHelper.waitTillNotPresent( driver, By.css( '.editor-checkout-modal' ) );
+			const errorNoticeIsNotPresent = await driverHelper.elementIsNotPresent(
+				driver,
+				By.css( '.notice.is-error' )
+			);
+			assert.strictEqual(
+				errorNoticeIsNotPresent,
+				true,
+				'The checkout produced a notice error when processing this payment'
+			);
+			return await securePaymentComponent.waitForPageToDisappear();
 		} );
 
 		step( 'Can decline upgrade offer', async function () {
