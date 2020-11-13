@@ -33,12 +33,12 @@ const Success: React.FunctionComponent = () => {
 				) }
 			</p>
 
-			<a href={ `/home/${ siteSubdomain?.domain }` }>Back home</a>
 			{ /* @TODO: this will work only when the modal in in the block editor. */ }
 			<button onClick={ closeFocusedLaunch }>
 				{ __( 'Continue editing', __i18n_text_domain__ ) }
 			</button>
 
+			<a href={ `/home/${ siteSubdomain?.domain }` }>{ __( 'Back home', __i18n_text_domain__ ) }</a>
 		</div>
 	);
 };
