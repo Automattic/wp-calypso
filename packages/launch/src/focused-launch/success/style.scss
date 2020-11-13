@@ -1,0 +1,35 @@
+.focused-launch-success {
+	padding: 0 20px 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.focused-launch-success__wrapper {
+	width: 100%;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+
+	.onboarding-title {
+		margin-bottom: 12px;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 32px;
+	}
+}
+
+.focused-launch-success__wordpress-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.focused-launch-success__confetti {
+	width: 100%;
+	max-width: 356px;
+	margin-bottom: -20px;
+}

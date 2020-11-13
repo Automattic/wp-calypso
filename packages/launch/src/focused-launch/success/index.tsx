@@ -5,13 +5,14 @@
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Title } from '@automattic/onboarding';
+import { Title, SubTitle } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import { useFocusedLaunchModal, useSiteDomains } from '../../hooks';
+import Confetti from './confetti';
 
 import './style.scss';
 
@@ -84,41 +85,46 @@ const Success: React.FunctionComponent = () => {
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	return (
-		<div>
-			<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
-			<p>
-				{ __(
-					"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
-					__i18n_text_domain__
-				) }
-			</p>
+		<div className="focused-launch-success">
+			<div className="focused-launch-success__wrapper">
+				<Confetti />
+				<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
+				<SubTitle>
+					{ __(
+						"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
+						__i18n_text_domain__
+					) }
+				</SubTitle>
 
-			<div>
-				<span ref={ siteUrlRef }>{ displayedSiteUrl }</span>
-				<a href={ displayedSiteUrl } target="_blank" rel="noopener noreferrer">
-					<Icon icon={ external } size={ 24 } />
+				<div>
+					<span ref={ siteUrlRef }>{ displayedSiteUrl }</span>
+					<a href={ displayedSiteUrl } target="_blank" rel="noopener noreferrer">
+						<Icon icon={ external } size={ 24 } />
+					</a>
+					{ isCopyApiSupported && (
+						<button
+							onClick={ handleCopyButtonClick }
+							ref={ copyButtonRef }
+							disabled={ isCopyConfirmationMessageVisible }
+						>
+							{ isCopyConfirmationMessageVisible
+								? // translators: message shown when user successfully copies the link
+								  __( 'Copied!', __i18n_text_domain__ )
+								: // Translators: the action of copying the link to the clipboard
+								  __( 'Copy Link', __i18n_text_domain__ ) }
+						</button>
+					) }
+				</div>
+
+				{ /* @TODO: this will work only when the modal in in the block editor. */ }
+				<button onClick={ closeFocusedLaunch }>
+					{ __( 'Continue Editing', __i18n_text_domain__ ) }
+				</button>
+
+				<a href={ `/home/${ siteSubdomain?.domain }` }>
+					{ __( 'Back home', __i18n_text_domain__ ) }
 				</a>
-				{ isCopyApiSupported && (
-					<button
-						onClick={ handleCopyButtonClick }
-						ref={ copyButtonRef }
-						disabled={ isCopyConfirmationMessageVisible }
-					>
-						{ isCopyConfirmationMessageVisible
-							? // translators: message shown when user successfully copies the link
-							  __( 'Copied!', __i18n_text_domain__ )
-							: // Translators: the action of copying the link to the clipboard
-							  __( 'Copy Link', __i18n_text_domain__ ) }
-					</button>
-				) }
 			</div>
-
-			{ /* @TODO: this will work only when the modal in in the block editor. */ }
-			<button onClick={ closeFocusedLaunch }>
-				{ __( 'Continue Editing', __i18n_text_domain__ ) }
-			</button>
-
-			<a href={ `/home/${ siteSubdomain?.domain }` }>{ __( 'Back home', __i18n_text_domain__ ) }</a>
 		</div>
 	);
 };
