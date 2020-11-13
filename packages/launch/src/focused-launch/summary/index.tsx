@@ -423,12 +423,21 @@ const Summary: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch-summary__container">
 			<div className="focused-launch-summary__section">
-				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
+				<Title>
+					{ hasPaidDomain && hasPaidPlan
+						? __( "You're ready to launch", __i18n_text_domain__ )
+						: __( "You're almost there", __i18n_text_domain__ ) }
+				</Title>
 				<p className="focused-launch-summary__caption">
-					{ __(
-						'Prepare for launch! Confirm a few final things before you take it live.',
-						__i18n_text_domain__
-					) }
+					{ hasPaidDomain && hasPaidPlan
+						? __(
+								"You're good to go! Launch your site and share your site address.",
+								__i18n_text_domain__
+						  )
+						: __(
+								'Prepare for launch! Confirm a few final things before you take it live.',
+								__i18n_text_domain__
+						  ) }
 				</p>
 			</div>
 			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
