@@ -31,11 +31,9 @@ import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
-import orderTransactions from './order-transactions/reducer';
 import postFormats from './post-formats/reducer';
 import selectedEditor from './selected-editor/reducer';
 import simplePayments from './simple-payments/reducer';
-import siteAddressChange from './site-address-change/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
@@ -69,11 +67,9 @@ const reducers = {
 	mySites,
 	notices,
 	notificationsUnseenCount,
-	orderTransactions,
 	postFormats,
 	selectedEditor,
 	simplePayments,
-	siteAddressChange,
 	siteKeyrings,
 	siteRoles,
 	sites,

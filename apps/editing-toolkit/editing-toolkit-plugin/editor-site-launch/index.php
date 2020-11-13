@@ -35,6 +35,14 @@ function enqueue_script_and_style() {
 
 	wp_set_script_translations( 'a8c-fse-editor-site-launch-script', 'full-site-editing' );
 
+	wp_localize_script(
+		'a8c-fse-editor-site-launch-script',
+		'wpcomEditorSiteLaunch',
+		array(
+			'locale' => determine_locale(),
+		)
+	);
+
 	wp_enqueue_style(
 		'a8c-fse-editor-site-launch-style',
 		plugins_url( 'dist/editor-site-launch.css', __FILE__ ),

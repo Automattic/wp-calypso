@@ -41,8 +41,9 @@ type DiscountMessageProps = {
 	primary?: boolean;
 };
 
+const CLOUD_MASTERBAR_STICKY = false;
 const CALYPSO_MASTERBAR_HEIGHT = 47;
-const CLOUD_MASTERBAR_HEIGHT = 94;
+const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
 
 const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 	const translate = useTranslate();
@@ -86,17 +87,8 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	duration,
 	onDurationChange,
 } ) => {
-	const isCloud = isJetpackCloud();
-	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
-	const masterbarDefaultHeight = isCloud ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
-
-	const barRef = useRef< HTMLDivElement | null >( null );
-	const isMasterbarVisible = useSelector( masterbarIsVisible );
-	// if we can find the masterbar in the DOM, get its height directly from the element.
-	const masterbarHeight =
-		document.querySelector( masterbarSelector )?.offsetHeight || masterbarDefaultHeight;
-	const masterbarOffset = isMasterbarVisible || isCloud ? masterbarHeight : 0;
-	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
+	const windowBoundaryOffset = isJetpackCloud() ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
+	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
 
 	const [ durationChecked, setDurationChecked ] = useState(
 		duration === TERM_ANNUALLY ? true : false

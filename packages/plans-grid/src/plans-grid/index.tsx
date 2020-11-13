@@ -33,6 +33,7 @@ export interface Props {
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
 	isExperimental?: boolean;
+	locale: string;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -44,6 +45,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPickDomainClick,
 	disabledPlans,
 	isExperimental,
+	locale,
 } ) => {
 	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
 	// and Gutenboarding flow is started with ?latest query param
@@ -63,6 +65,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
+							locale={ locale }
 						></PlansAccordion>
 					) : (
 						<PlansTable
@@ -71,6 +74,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
+							locale={ locale }
 						></PlansTable>
 					) }
 				</div>
@@ -81,7 +85,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 					<Title>{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
 				</div>
 				<div className="plans-grid__details-container">
-					<PlansDetails onSelect={ onPlanSelect } />
+					<PlansDetails onSelect={ onPlanSelect } locale={ locale } />
 				</div>
 			</div>
 		</div>

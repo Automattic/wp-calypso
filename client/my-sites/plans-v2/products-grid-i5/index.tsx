@@ -16,7 +16,7 @@ import ProductCardI5 from '../product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
 import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../product-grid/utils';
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
-import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-alt';
+import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_REALTIME,
@@ -173,15 +173,15 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="products-grid-i5__free">
-					{ ( isInConnectFlow || isInJetpackCloud ) && siteId && (
+					{ ( isInConnectFlow || isInJetpackCloud ) && (
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
 			</section>
-			<section ref={ bundleComparisonRef } className="products-grid-i5__section">
+			{ /* <section ref={ bundleComparisonRef } className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Bundle Comparison' ) }</h2>
-			</section>
-			{ ! isJetpackCloud() && <StoreFooter /> }
+			</section> */ }
+      { ! isJetpackCloud() && <StoreFooter /> }
 		</>
 	);
 };

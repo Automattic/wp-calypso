@@ -56,7 +56,7 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, comm
 );
 
 type CommonStepProps = {
-	stepIndex: number;
+	stepIndex?: number;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -76,7 +76,8 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 					className="focused-launch-summary__input"
 					label={
 						<label className="focused-launch-summary__label">
-							{ stepIndex }. { __( 'Name your site', __i18n_text_domain__ ) }
+							{ stepIndex && `${ stepIndex }. ` }
+							{ __( 'Name your site', __i18n_text_domain__ ) }
 						</label>
 					}
 					value={ value }
@@ -158,7 +159,8 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							header={
 								<>
 									<label className="focused-launch-summary__label">
-										{ stepIndex }. { __( 'Confirm your domain', __i18n_text_domain__ ) }
+										{ stepIndex && `${ stepIndex }. ` }
+										{ __( 'Confirm your domain', __i18n_text_domain__ ) }
 									</label>
 									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 										<Icon icon={ bulb } />
@@ -282,7 +284,8 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 				) : (
 					<>
 						<label className="focused-launch-summary__label">
-							{ stepIndex }. { __( 'Confirm your plan', __i18n_text_domain__ ) }
+							{ stepIndex && `${ stepIndex }. ` }
+							{ __( 'Confirm your plan', __i18n_text_domain__ ) }
 						</label>
 						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 							<Icon icon={ bulb } />
@@ -347,6 +350,11 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	);
 };
 
+type StepIndexRenderFunction = ( renderOptions: {
+	stepIndex: number;
+	forwardStepIndex: boolean;
+} ) => ReactNode;
+
 const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 
@@ -370,20 +378,20 @@ const Summary: React.FunctionComponent = () => {
 	const hasPaidPlan = false;
 
 	// Prepare Steps
-	const renderSiteTitleStep = ( index: number ) => (
+	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<SiteTitleStep
-			stepIndex={ index }
-			key={ index }
+			stepIndex={ forwardStepIndex ? stepIndex : undefined }
+			key={ stepIndex }
 			value={ title }
 			onChange={ updateTitle }
 			onBlur={ saveTitle }
 		/>
 	);
 
-	const renderDomainStep = ( index: number ) => (
+	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
-			stepIndex={ index }
-			key={ index }
+			stepIndex={ forwardStepIndex ? stepIndex : undefined }
+			key={ stepIndex }
 			existingSubdomain={ siteSubdomain?.domain }
 			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
 			initialDomainSearch={ domainSearch }
@@ -398,14 +406,16 @@ const Summary: React.FunctionComponent = () => {
 			locale={ locale }
 		/>
 	);
-	const renderPlanStep = ( index: number ) => <PlanStep stepIndex={ index } key={ index } />;
+	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
+		<PlanStep stepIndex={ forwardStepIndex ? stepIndex : undefined } key={ stepIndex } />
+	);
 
 	// Disabled steps are not interactive (e.g. user has already selected domain/plan)
 	// Active steps require user interaction
 	// Using this arrays allows to easily sort the steps correctly in both
 	// groups, and allows the actve steps to always show the correct step index.
-	const disabledSteps: ( ( index: number ) => ReactNode )[] = [];
-	const activeSteps: ( ( index: number ) => ReactNode )[] = [];
+	const disabledSteps: StepIndexRenderFunction[] = [];
+	const activeSteps: StepIndexRenderFunction[] = [];
 	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
@@ -413,16 +423,34 @@ const Summary: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch-summary__container">
 			<div className="focused-launch-summary__section">
-				<Title>{ __( "You're almost there", __i18n_text_domain__ ) }</Title>
+				<Title>
+					{ hasPaidDomain && hasPaidPlan
+						? __( "You're ready to launch", __i18n_text_domain__ )
+						: __( "You're almost there", __i18n_text_domain__ ) }
+				</Title>
 				<p className="focused-launch-summary__caption">
-					{ __(
-						'Prepare for launch! Confirm a few final things before you take it live.',
-						__i18n_text_domain__
-					) }
+					{ hasPaidDomain && hasPaidPlan
+						? __(
+								"You're good to go! Launch your site and share your site address.",
+								__i18n_text_domain__
+						  )
+						: __(
+								'Prepare for launch! Confirm a few final things before you take it live.',
+								__i18n_text_domain__
+						  ) }
 				</p>
 			</div>
-			{ disabledSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
-			{ activeSteps.map( ( step, stepIndex ) => step( stepIndex + 1 ) ) }
+			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
+				// Disabled steps don't show the step index
+				disabledStepRenderer( { stepIndex: disabledStepIndex + 1, forwardStepIndex: false } )
+			) }
+			{ activeSteps.map( ( activeStepRenderer, activeStepIndex ) =>
+				// Active steps show the step index only if there are at least 2 steps
+				activeStepRenderer( {
+					stepIndex: activeStepIndex + 1,
+					forwardStepIndex: activeSteps.length > 1,
+				} )
+			) }
 		</div>
 	);
 };

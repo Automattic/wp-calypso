@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { __ } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
@@ -22,16 +21,15 @@ const TickIcon = <Icon icon={ check } size={ 25 } />;
 
 type Props = {
 	onSelect: ( storeSlug: string ) => void;
+	locale: string;
 };
 
-const PlansDetails: React.FunctionComponent< Props > = ( { onSelect } ) => {
-	const { i18nLocale } = useI18n();
-
+const PlansDetails: React.FunctionComponent< Props > = ( { onSelect, locale } ) => {
 	const { features, featuresByType, plans } = useSelect( ( select ) =>
-		select( PLANS_STORE ).getPlansDetails( i18nLocale )
+		select( PLANS_STORE ).getPlansDetails( locale )
 	);
 
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 
 	const isLoading = ! supportedPlans?.length;
