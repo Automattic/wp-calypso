@@ -11,13 +11,14 @@ import { connect } from 'react-redux';
 import { preventWidows } from 'calypso/lib/formatting';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { TASK_FIND_DOMAIN } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
 import findDomainIllustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 
-const FindDomain = ( { card, siteSlug } ) => {
+const FindDomain = ( { siteSlug } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -32,7 +33,7 @@ const FindDomain = ( { card, siteSlug } ) => {
 			actionUrl={ `/domains/add/${ siteSlug }` }
 			illustration={ findDomainIllustration }
 			timing={ 10 }
-			taskId={ card }
+			taskId={ TASK_FIND_DOMAIN }
 		/>
 	);
 };

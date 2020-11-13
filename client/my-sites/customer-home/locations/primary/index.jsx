@@ -76,6 +76,7 @@ const Primary = ( { cards, trackCards } ) => {
 					cardComponents[ card ] &&
 					React.createElement( cardComponents[ card ], {
 						key: index,
+						isIos: card === 'home-task-go-mobile-ios' ? true : null,
 						card,
 					} )
 			) }

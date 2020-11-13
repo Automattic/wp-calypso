@@ -11,9 +11,10 @@ import { useTranslate } from 'i18n-calypso';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSiteUrl } from 'calypso/state/sites/selectors';
+import { TASK_SITE_SETUP_CHECKLIST_ECOMMERCE } from 'calypso/my-sites/customer-home/cards/constants';
 import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 
-export const SiteSetupListEcommerce = ( { card, siteUrl } ) => {
+export const SiteSetupListEcommerce = ( { siteUrl } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -26,7 +27,7 @@ export const SiteSetupListEcommerce = ( { card, siteUrl } ) => {
 			actionUrl={ `${ siteUrl }/wp-admin/admin.php?page=wc-admin&calypsoify=1` }
 			completeOnStart={ true }
 			illustration={ earnSectionImage }
-			taskId={ card }
+			taskId={ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE }
 			timing={ 7 }
 		/>
 	);

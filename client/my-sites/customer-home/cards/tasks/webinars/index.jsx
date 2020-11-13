@@ -8,9 +8,10 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { TASK_WEBINARS } from 'calypso/my-sites/customer-home/cards/constants';
 import webinarsIllustration from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 
-const Webinars = ( { card } ) => {
+const Webinars = () => {
 	const translate = useTranslate();
 
 	return (
@@ -25,7 +26,7 @@ const Webinars = ( { card } ) => {
 			completeOnStart={ true }
 			illustration={ webinarsIllustration }
 			timing={ 2 }
-			taskId={ card }
+			taskId={ TASK_WEBINARS }
 		/>
 	);
 };
