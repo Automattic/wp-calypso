@@ -94,16 +94,16 @@ add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_o
 
 // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
- * Adds the `wpcom_public_coming_soon` option to new sites
+ * Adds the `wpcom_public_coming_soon` option to new sites  if requested by the client.
  *
  * @param int    $blog_id    Blog ID.
  * @param int    $user_id    User ID.
  * @param string $domain     Site domain.
  * @param string $path       Site path.
- * @param int    $site_id    Site ID.
+ * @param int    $network_id Network ID. Only relevant on multi-network installations.
  * @param array  $meta       Meta data. Used to set initial site options.
  */
-function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $network_id, $meta ) {
 	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
 		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
 	} else {
