@@ -1,3 +1,10 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.foldable-faq {
+	padding: 0 15px;
+}
+
 button.foldable-faq__question {
 	appearance: none;
 	background: transparent;
@@ -27,10 +34,14 @@ button.foldable-faq__question {
 
 .foldable-faq__question-text {
 	padding-left: 16px;
-
-	font-size: 1.5rem;
+	font-size: 1.125rem;
 	font-weight: 600;
+	text-align: left;
 	color: var( --studio-gray-80 );
+
+	@include break-mobile {
+		font-size: 1.5rem;
+	}
 }
 
 .foldable-faq__answer {
