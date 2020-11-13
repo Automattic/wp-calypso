@@ -1531,9 +1531,12 @@ export const PLANS_LIST = {
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
+			constants.FEATURE_P2_TEST,
+			constants.FEATURE_P2_MENTIONS,
+			constants.FEATURE_P2_NO_ADS,
 			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
 			constants.FEATURE_13GB_STORAGE,
-			constants.FEATURE_VIDEO_UPLOADS,
+			constants.FEATURE_P2_VIDEO,
 		],
 
 		// TODO: update this once we put P2+ in the signup.
@@ -1553,6 +1556,18 @@ export const PLANS_LIST = {
 		getStoreSlug: () => constants.PLAN_P2_PLUS,
 		getPathSlug: () => 'p2-plus',
 	},
+};
+
+PLANS_LIST[ constants.PLAN_P2_FREE ] = {
+	...PLANS_LIST[ constants.PLAN_FREE ],
+	getDescription: () => i18n.translate( 'P2 Free description' ),
+	getTitle: () => i18n.translate( 'P2 Free' ),
+	getPlanCompareFeatures: () => [
+		// pay attention to ordering, shared features should align on /plan page
+		constants.FEATURE_P2_TEST,
+		constants.FEATURE_P2_MENTIONS,
+		constants.FEATURE_P2_NO_ADS,
+	],
 };
 
 export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );

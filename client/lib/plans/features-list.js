@@ -1560,6 +1560,30 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_SPELLING_CORRECTION_V2,
 		getTitle: () => i18n.translate( 'Spelling correction' ),
 	},
+
+	[ constants.FEATURE_P2_TEST ]: {
+		getSlug: () => constants.FEATURE_P2_TEST,
+		getTitle: () => i18n.translate( 'Testing p2 feature' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_MENTIONS ]: {
+		getSlug: () => constants.FEATURE_P2_MENTIONS,
+		getTitle: () => i18n.translate( 'Mentions' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_NO_ADS ]: {
+		getSlug: () => constants.FEATURE_P2_NO_ADS,
+		getTitle: () => i18n.translate( 'See no ads!' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_VIDEO ]: {
+		getSlug: () => constants.FEATURE_P2_VIDEO,
+		getTitle: () => i18n.translate( 'Upload videos' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {
