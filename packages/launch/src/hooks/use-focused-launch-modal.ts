@@ -12,6 +12,9 @@ type ReturnType = {
 	isModalDismissible: boolean;
 	setModalDismissible: () => void;
 	unsetModalDismissible: () => void;
+	isModalTitleVisible: boolean;
+	showModalTitle: () => void;
+	hideModalTitle: () => void;
 	isFocusedLaunchOpen: boolean;
 	openFocusedLaunch: () => void;
 	closeFocusedLaunch: () => void;
@@ -19,6 +22,9 @@ type ReturnType = {
 
 export function useFocusedLaunchModal(): ReturnType {
 	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
+	const isModalTitleVisible = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).isModalTitleVisible()
+	);
 
 	const isFocusedLaunchOpen = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).isFocusedLaunchOpen()
@@ -27,6 +33,8 @@ export function useFocusedLaunchModal(): ReturnType {
 	const {
 		setModalDismissible,
 		unsetModalDismissible,
+		showModalTitle,
+		hideModalTitle,
 		openFocusedLaunch,
 		closeFocusedLaunch,
 	} = useDispatch( LAUNCH_STORE );
@@ -35,6 +43,9 @@ export function useFocusedLaunchModal(): ReturnType {
 		isModalDismissible,
 		setModalDismissible,
 		unsetModalDismissible,
+		isModalTitleVisible,
+		showModalTitle,
+		hideModalTitle,
 		isFocusedLaunchOpen,
 		openFocusedLaunch,
 		closeFocusedLaunch,

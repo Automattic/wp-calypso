@@ -116,6 +116,16 @@ export const unsetModalDismissible = () =>
 		type: 'UNSET_MODAL_DISMISSIBLE',
 	} as const );
 
+export const showModalTitle = () =>
+	( {
+		type: 'SHOW_MODAL_TITLE',
+	} as const );
+
+export const hideModalTitle = () =>
+	( {
+		type: 'HIDE_MODAL_TITLE',
+	} as const );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -134,4 +144,6 @@ export type LaunchAction = ReturnType<
 	| typeof showSiteTitleStep
 	| typeof setModalDismissible
 	| typeof unsetModalDismissible
+	| typeof showModalTitle
+	| typeof hideModalTitle
 >;
