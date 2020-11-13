@@ -5,7 +5,7 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -38,6 +38,7 @@ export interface Props {
 	slug: string;
 	name: string;
 	price: string;
+	tagline?: string | false;
 	features: Array< string >;
 	domain?: DomainSuggestions.DomainSuggestion;
 	isPopular?: boolean;
@@ -48,6 +49,7 @@ export interface Props {
 	onToggleExpandAll?: () => void;
 	allPlansExpanded: boolean;
 	disabledLabel?: string;
+	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
 }
 
 // NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
@@ -56,6 +58,7 @@ export interface Props {
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
+	tagline,
 	price,
 	isPopular = false,
 	isFree = false,
@@ -66,6 +69,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	onToggleExpandAll,
 	allPlansExpanded,
 	disabledLabel,
+	CTAVariation = 'NORMAL',
 } ) => {
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
@@ -99,6 +103,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						<div className="plan-item__heading">
 							<div className="plan-item__name">{ name }</div>
 						</div>
+						{ tagline && <p className="plan-item__tagline">{ tagline }</p> }
 						<div className="plan-item__price">
 							<div className={ classNames( 'plan-item__price-amount', { 'is-loading': ! price } ) }>
 								{ price || nbsp }
@@ -114,16 +119,34 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						</div>
 
 						<div className="plan-item__actions">
-							<Button
-								className="plan-item__select-button"
-								onClick={ () => {
-									onSelect( slug );
-								} }
-								isPrimary
-								disabled={ !! disabledLabel }
-							>
-								<span>{ __( 'Choose', __i18n_text_domain__ ) }</span>
-							</Button>
+							{ CTAVariation === 'NORMAL' ? (
+								<Button
+									className="plan-item__select-button"
+									onClick={ () => {
+										onSelect( slug );
+									} }
+									isPrimary
+									disabled={ !! disabledLabel }
+								>
+									<span>{ __( 'Choose', __i18n_text_domain__ ) }</span>
+								</Button>
+							) : (
+								<Button
+									className="plan-item__select-button full-width"
+									onClick={ () => {
+										onSelect( slug );
+									} }
+									isPrimary={ isPopular }
+									disabled={ !! disabledLabel }
+								>
+									<span>
+										{
+											/* translators: %s is plan name (eg: Free, Personal) */
+											sprintf( __( 'Select %s', __i18n_text_domain__ ), name )
+										}
+									</span>
+								</Button>
+							) }
 						</div>
 						<PlansFeatureList
 							features={ features }

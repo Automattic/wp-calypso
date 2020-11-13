@@ -9,29 +9,30 @@ import { __ } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
 import { Route } from '../route';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite } from '../../hooks';
-
 import './style.scss';
 
 const PlanDetails: React.FunctionComponent = () => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
+	const history = useHistory();
 
 	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
 
-	const { selectedFeatures } = useSite();
+	//const { selectedFeatures } = useSite();
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
 	const handleSelect = ( planSlug: Plans.PlanSlug ) => {
 		updatePlan( planSlug );
+		history.goBack();
 	};
 
 	const handlePickDomain = () => {
@@ -46,7 +47,7 @@ const PlanDetails: React.FunctionComponent = () => {
 					<Title>{ __( 'Select a plan', __i18n_text_domain__ ) }</Title>
 					<SubTitle>
 						{ __(
-							'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.',
+							"There's no risk, you can cancel for a full refund within 30 days.",
 							__i18n_text_domain__
 						) }
 					</SubTitle>
@@ -56,7 +57,9 @@ const PlanDetails: React.FunctionComponent = () => {
 				<PlansGrid
 					currentDomain={ domain }
 					onPlanSelect={ handleSelect }
+					currentPlan={ selectedPlan }
 					onPickDomainClick={ handlePickDomain }
+					showPlanTaglines
 					disabledPlans={
 						hasPaidDomain
 							? {
@@ -67,7 +70,7 @@ const PlanDetails: React.FunctionComponent = () => {
 							  }
 							: undefined
 					}
-					selectedFeatures={ selectedFeatures }
+					CTAVariation="FULL_WIDTH"
 				/>
 			</div>
 		</div>

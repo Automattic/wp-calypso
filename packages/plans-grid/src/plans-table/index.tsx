@@ -23,6 +23,8 @@ export interface Props {
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
 	locale: string;
+	showTaglines?: boolean;
+	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -32,6 +34,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	currentDomain,
 	disabledPlans,
 	locale,
+	showTaglines = false,
+	CTAVariation = 'NORMAL',
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
@@ -47,6 +51,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 							key={ plan.storeSlug }
 							slug={ plan.storeSlug }
 							domain={ currentDomain }
+							tagline={ showTaglines && plan.description }
+							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
 							isPopular={ plan.isPopular }
 							isFree={ plan.isFree }

@@ -34,6 +34,8 @@ export interface Props {
 	disabledPlans?: { [ planSlug: string ]: string };
 	isAccordion?: boolean;
 	locale: string;
+	showPlanTaglines?: boolean;
+	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -46,6 +48,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	isAccordion,
 	locale,
+	showPlanTaglines = false,
+	CTAVariation = 'NORMAL',
 } ) => {
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
@@ -67,12 +71,14 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						></PlansAccordion>
 					) : (
 						<PlansTable
+							CTAVariation={ CTAVariation }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 							onPlanSelect={ onPlanSelect }
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
 							locale={ locale }
+							showTaglines={ showPlanTaglines }
 						></PlansTable>
 					) }
 				</div>
