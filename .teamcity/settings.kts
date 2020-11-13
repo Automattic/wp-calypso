@@ -821,6 +821,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			firstSuccessAfterFailure = true
 			buildProbablyHanging = true
 		}
+	}
 
 })
 
