@@ -172,7 +172,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="products-grid-i5__free">
-					{ ( isInConnectFlow || isInJetpackCloud ) && siteId && (
+					{ ( isInConnectFlow || isInJetpackCloud ) && (
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
