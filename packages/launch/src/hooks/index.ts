@@ -5,4 +5,4 @@ export * from './use-domain-search';
 export * from './use-title';
 export * from './use-site-domains';
 export * from './use-plans';
-export * from './use-launch-modal';
+export * from './use-focused-launch-modal';

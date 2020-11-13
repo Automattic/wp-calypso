@@ -10,15 +10,18 @@ import { LAUNCH_STORE } from '../stores';
 
 type ReturnType = {
 	isModalDismissible: boolean;
-	setModalDismissible: ( isDismissible: boolean ) => void;
+	setModalDismissible: () => void;
+	unsetModalDismissible: () => void;
 };
 
-export function useLaunchModal(): ReturnType {
+export function useFocusedLaunchModal(): ReturnType {
 	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
-	const setModalDismissible = useDispatch( LAUNCH_STORE ).setModalDismissible;
+
+	const { setModalDismissible, unsetModalDismissible } = useDispatch( LAUNCH_STORE );
 
 	return {
 		isModalDismissible,
 		setModalDismissible,
+		unsetModalDismissible,
 	};
 }

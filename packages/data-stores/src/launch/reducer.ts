@@ -107,7 +107,11 @@ const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false
 
 const isModalDismissible: Reducer< boolean, LaunchAction > = ( state = true, action ) => {
 	if ( action.type === 'SET_MODAL_DISMISSIBLE' ) {
-		return action.isDismissible;
+		return true;
+	}
+
+	if ( action.type === 'UNSET_MODAL_DISMISSIBLE' ) {
+		return false;
 	}
 
 	return state;

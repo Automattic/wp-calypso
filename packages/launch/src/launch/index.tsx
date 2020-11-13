@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
@@ -11,7 +11,7 @@ import { Icon, wordpress } from '@wordpress/icons';
  */
 import FocusedLaunch from '../focused-launch';
 import LaunchContext from '../context';
-import { useLaunchModal } from '../hooks';
+import { useFocusedLaunchModal } from '../hooks';
 import './styles.scss';
 
 interface Props {
@@ -21,7 +21,12 @@ interface Props {
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId, locale } ) => {
-	const { isModalDismissible } = useLaunchModal();
+	const { isModalDismissible, setModalDismissible } = useFocusedLaunchModal();
+
+	// Make sure the modal is dimissible when launched
+	useEffect( () => {
+		setModalDismissible();
+	}, [ setModalDismissible ] );
 
 	return (
 		<Modal

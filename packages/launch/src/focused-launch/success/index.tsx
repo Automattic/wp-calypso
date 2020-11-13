@@ -10,18 +10,18 @@ import { Title } from '@automattic/onboarding';
 /**
  * Internal dependencies
  */
-import { useLaunchModal, useSiteDomains } from '../../hooks';
+import { useFocusedLaunchModal, useSiteDomains } from '../../hooks';
 
 import './style.scss';
 
 const Success: React.FunctionComponent = () => {
 	const { siteSubdomain } = useSiteDomains();
-	const { setModalDismissible } = useLaunchModal();
+	const { unsetModalDismissible } = useFocusedLaunchModal();
 
 	// When in the Success view, the user can't dismiss the modal anymore
 	useEffect( () => {
-		setModalDismissible?.( false );
-	}, [ setModalDismissible ] );
+		unsetModalDismissible();
+	}, [ unsetModalDismissible ] );
 
 	return (
 		<div>

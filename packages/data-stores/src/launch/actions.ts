@@ -106,10 +106,14 @@ export const showSiteTitleStep = () =>
 		type: 'SHOW_SITE_TITLE_STEP',
 	} as const );
 
-export const setModalDismissible = ( isDismissible: boolean ) =>
+export const setModalDismissible = () =>
 	( {
 		type: 'SET_MODAL_DISMISSIBLE',
-		isDismissible,
+	} as const );
+
+export const unsetModalDismissible = () =>
+	( {
+		type: 'UNSET_MODAL_DISMISSIBLE',
 	} as const );
 
 export type LaunchAction = ReturnType<
@@ -129,4 +133,5 @@ export type LaunchAction = ReturnType<
 	| typeof unsetSidebarFullscreen
 	| typeof showSiteTitleStep
 	| typeof setModalDismissible
+	| typeof unsetModalDismissible
 >;
