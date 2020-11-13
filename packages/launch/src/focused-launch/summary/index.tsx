@@ -129,6 +129,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
+							{ /* @TODO: should use <Subtitle/> once https://github.com/Automattic/wp-calypso/issues/47418 is solved */ }
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
 								{ createInterpolateElement(
