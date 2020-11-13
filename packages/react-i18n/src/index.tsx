@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { createI18n, I18n, LocaleData, __, _n, _nx, _x, isRTL } from '@wordpress/i18n';
+import { createI18n, I18n, LocaleData, __, _n, _nx, _x, sprintf, isRTL } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 export interface I18nReact {
@@ -10,6 +10,7 @@ export interface I18nReact {
 	_n: I18n[ '_n' ];
 	_nx: I18n[ '_nx' ];
 	_x: I18n[ '_x' ];
+	sprintf: typeof sprintf;
 	isRTL: I18n[ 'isRTL' ];
 	i18nLocale: string;
 }
@@ -41,6 +42,7 @@ export const GlobalI18nProvider: React.FunctionComponent< GlobalI18nProviderProp
 			_n,
 			_nx,
 			_x,
+			sprintf,
 			isRTL,
 			i18nLocale: localeSlug,
 		} ),
@@ -99,6 +101,7 @@ function makeContextValue( localeData?: LocaleData ): I18nReact {
 		_nx: i18n._nx.bind( i18n ),
 		_x: i18n._x.bind( i18n ),
 		isRTL: i18n.isRTL.bind( i18n ),
+		sprintf,
 		i18nLocale,
 	};
 }
