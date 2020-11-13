@@ -67,7 +67,7 @@ const ThreatItem: React.FC< Props > = ( {
 			};
 			return (
 				<Button
-					compact
+					primary
 					className={ classnames( 'threat-item__fix-button', className ) }
 					onClick={ onClickHandler }
 					disabled={ isFixing }
@@ -158,11 +158,9 @@ const ThreatItem: React.FC< Props > = ( {
 			/>
 
 			<div className="threat-item__buttons">
-				{ isFixable && renderFixThreatButton( 'is-details' ) }
 				{ threat.status === 'current' && (
 					<Button
 						scary
-						compact
 						className="threat-item__ignore-button"
 						onClick={ onIgnoreThreat }
 						disabled={ isFixing }
@@ -170,6 +168,18 @@ const ThreatItem: React.FC< Props > = ( {
 						{ translate( 'Ignore threat' ) }
 					</Button>
 				) }
+				{ ! isFixable && (
+					<Button
+						primary
+						className="threat-item__codeable-button"
+						href="https://codeable.io/partners/jetpack-scan/"
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'Get a free estimate' ) }
+					</Button>
+				) }
+				{ isFixable && renderFixThreatButton( 'is-details' ) }
 			</div>
 		</LogItem>
 	);
