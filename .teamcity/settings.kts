@@ -757,6 +757,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export DISPLAY=:99
+				export CI=true
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
