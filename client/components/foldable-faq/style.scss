@@ -1,0 +1,44 @@
+.foldable-faq__question {
+	display: flex;
+	align-items: center;
+	padding: 12px 0;
+
+	cursor: pointer;
+
+	.gridicon {
+		fill: var( --color-gray-50 );
+
+		transition: transform 0.25s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ), color 0.2s ease-in;
+
+		.is-expanded & {
+			transform: rotate( 90deg );
+		}
+	}
+}
+
+.foldable-faq__question-text {
+	padding-left: 16px;
+
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: var( --studio-gray-80 );
+}
+
+.foldable-faq__answer {
+	overflow: hidden;
+	padding: 0 16px 0 40px;
+	margin-bottom: 16px;
+	border-bottom: 1px solid var( --studio-gray-5 );
+
+	transition: max-height 0.25s cubic-bezier( 0.175, 0.885, 0.32, 1.275 );
+	max-height: 0;
+
+	font-size: 1rem;
+	color: var( --studio-gray-60 );
+
+	.is-expanded & {
+		height: auto;
+		max-height: 250px; // fallback if not set inline with js
+		padding-bottom: 16px;
+	}
+}
