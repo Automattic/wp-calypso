@@ -30,7 +30,7 @@ type MoreInfoProps = {
 const MoreInfoBox: React.FC< MoreInfoProps > = ( { headline, buttonLabel } ) => (
 	<div className="more-info-box__more-container">
 		<h3 className="more-info-box__more-headline">{ headline }</h3>
-		<Button href={ PLAN_COMPARISON_PAGE } className="more-info-box__more-button">
+		<Button href={ PLAN_COMPARISON_PAGE } target="_blank" className="more-info-box__more-button">
 			{ buttonLabel }
 			<Gridicon className="more-info-box__icon" icon="external" />
 		</Button>
