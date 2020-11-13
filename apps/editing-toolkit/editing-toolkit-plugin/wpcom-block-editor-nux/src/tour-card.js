@@ -5,91 +5,49 @@ import './public-path';
  * Internal dependencies
  */
 import './style-tour.scss';
-import PaginationControl from './pagination';
-import minimize from './icons/minimize';
 
 /**
  * External dependencies
  */
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
-import { close } from '@wordpress/icons';
 
 // import { useEffect, useState } from '@wordpress/element';
 
-function WelcomeTourCard( {
-	cardContent,
-	cardIndex,
-	lastCardIndex,
-	onMinimize,
-	onDismiss,
-	setCurrentCard,
-} ) {
-	const { description, heading, imgSrc } = cardContent;
-
+function WelcomeTourCard( { onMinimize, onDismiss } ) {
+	console.log( 'WelcomeTourCard' );
 	return (
-		<Card className="welcome-tour-card" isElevated>
-			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
+		<Card className="welcome-tour-card">
+			<div className="welcome-tour-card__overlay-controls">
+				<Flex>
+					<Button
+						isPrimary
+						icon="pets"
+						iconSize={ 14 }
+						onClick={ () => onMinimize( true ) }
+					></Button>
+					<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
+				</Flex>
+			</div>
 			<CardMedia>
-				<img alt="Editor Welcome Tour" src={ imgSrc } />
+				<img
+					alt="Editor Welcome Tour"
+					src="https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px"
+				/>
 			</CardMedia>
 			<CardBody>
-				<h2 className="welcome-tour-card__heading">{ heading }</h2>
-				<p className="welcome-tour-card__description">{ description }</p>
-				{ /* TODO: add conditional "Restart tour" functionality for last slide" */ }
+				<h2 className="welcome-tour-card__card-heading">Welcome to WordPress</h2>
+				<p>Learn the basic editor tools so you can edit and build your dream website.</p>
 			</CardBody>
 			<CardFooter>
-				<PaginationControl
-					className=""
-					currentPage={ cardIndex }
-					numberOfPages={ lastCardIndex + 1 }
-					setCurrentPage={ setCurrentCard }
-				/>
+				<div>• • • • • •</div>
 				<div>
-					{ cardIndex === 0 ? (
-						<Button isTertiary={ true } onClick={ () => onDismiss() }>
-							No thanks
-						</Button>
-					) : (
-						<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
-							Back
-						</Button>
-					) }
-					{ cardIndex < lastCardIndex ? (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isPrimary={ true }
-							onClick={ () => setCurrentCard( cardIndex + 1 ) }
-						>
-							{ cardIndex === 0 ? "Let's start" : 'Next' }
-						</Button>
-					) : (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isPrimary={ true }
-							onClick={ () => onDismiss() }
-						>
-							Done
-						</Button>
-					) }
+					<Button isTertiary={ true }>No thanks</Button>
+					<Button isPrimary={ true } className="welcome-tour-card__next-btn">
+						Let's start
+					</Button>
 				</div>
 			</CardFooter>
 		</Card>
-	);
-}
-
-function CardOverlayControls( { onMinimize, onDismiss } ) {
-	return (
-		<div className="welcome-tour-card__overlay-controls">
-			<Flex>
-				<Button
-					isPrimary
-					icon={ minimize }
-					iconSize={ 24 }
-					onClick={ () => onMinimize( true ) }
-				></Button>
-				<Button isPrimary icon={ close } iconSize={ 24 } onClick={ () => onDismiss() }></Button>
-			</Flex>
-		</div>
 	);
 }
 
