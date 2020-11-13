@@ -7,6 +7,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import { localizeUrl } from './localize-url';
+import { Locale } from './locales';
 
 export function useI18nUtils() {
 	const { i18nLocale } = useI18n();
@@ -21,3 +22,6 @@ export function useI18nUtils() {
 		},
 	};
 }
+
+// todo: drop this, tests need updating to use the hook instead
+export { localizeUrl };
