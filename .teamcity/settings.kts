@@ -93,30 +93,30 @@ object BuildBaseImages : BuildType({
 		script {
 			name = "Build docker images"
 			scriptContent = """
+				set -e
+				set -x
+
 				VERSION="%build.number%"
-				BUILDER_IMAGE_NAME="registry.a8c.com/calypso/base"
-				CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
-				CI_DESKTOP_IMAGE_NAME="registry.a8c.com/calypso/ci-desktop"
-				BUILDER_IMAGE="${'$'}{BUILDER_IMAGE_NAME}:${'$'}{VERSION}"
-				CI_IMAGE="${'$'}{CI_IMAGE_NAME}:${'$'}{VERSION}"
-				CI_DESKTOP_IMAGE="${'$'}{CI_DESKTOP_IMAGE_NAME}:${'$'}{VERSION}"
+				REGISTRY="registry.a8c.com/calypso"
 
-				docker build -f Dockerfile.base --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
-				docker build -f Dockerfile.base --target ci -t "${'$'}CI_IMAGE" .
-				docker build -f Dockerfile.base --target ci-desktop -t "${'$'}CI_DESKTOP_IMAGE" .
+				function build {
+					imageName="$1"
+					buildArgs="$2"
 
-				docker tag "${'$'}BUILDER_IMAGE" "${'$'}{BUILDER_IMAGE_NAME}:latest"
-				docker tag "${'$'}CI_IMAGE" "${'$'}{CI_IMAGE_NAME}:latest"
-				docker tag "${'$'}CI_DESKTOP_IMAGE" "${'$'}{CI_DESKTOP_IMAGE_NAME}:latest"
+					imageVersioned="${REGISTRY}/${imageName}:${VERSION}"
+					imageLatest="${REGISTRY}/${imageName}:latest"
 
-				docker push "${'$'}CI_IMAGE"
-				docker push "${'$'}{CI_IMAGE_NAME}:latest"
+					# Using eval because buildArgs is a single word and we need to expand it to multiple args
+					eval docker build -f Dockerfile.base "${buildArgs}" -t "${imageVersioned}" .
+					docker tag "${imageVersioned}" "${imageLatest}"
+					docker push "${imageVersioned}"
+					docker push "${imageLatest}"
+				}
 
-				docker push "${'$'}CI_DESKTOP_IMAGE"
-				docker push "${'$'}{CI_DESKTOP_IMAGE_NAME}:latest"
-
-				docker push "${'$'}BUILDER_IMAGE"
-				docker push "${'$'}{BUILDER_IMAGE_NAME}:latest"
+				build "base" "--no-cache --target builder"
+				build "ci" "--target ci"
+				build "ci-desktop" "--target ci-desktop"
+				build "ci-e2e" "--target builder"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerRunParameters = "-u %env.UID%"
