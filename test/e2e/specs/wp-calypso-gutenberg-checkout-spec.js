@@ -13,6 +13,7 @@ import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-componen
 import SecurePaymentComponent from '../lib/components/secure-payment-component.js';
 import UpsellPage from '../lib/pages/signup/upsell-page';
 import DeletePlanFlow from '../lib/flows/delete-plan-flow';
+import WPHomePage from '../lib/pages/wp-home-page.js';
 
 import * as driverManager from '../lib/driver-manager';
 import * as driverHelper from '../lib/driver-helper';
@@ -22,6 +23,10 @@ const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
+const locale = driverManager.currentLocale();
+const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
+
+const currencyValue = 'USD';
 
 let driver;
 
@@ -35,6 +40,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	let editorUrl;
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
+		step( 'We can set the sandbox cookie for payments', async function () {
+			const wPHomePage = await WPHomePage.Visit( driver );
+			await wPHomePage.checkURL( locale );
+			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
+			return await wPHomePage.setCurrencyForPayments( currencyValue );
+		} );
+
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
@@ -228,6 +240,13 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	} );
 
 	describe( 'Can delete the premium plan', async function () {
+		step( 'We can set the sandbox cookie for payments', async function () {
+			const wPHomePage = await WPHomePage.Visit( driver );
+			await wPHomePage.checkURL( locale );
+			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
+			return await wPHomePage.setCurrencyForPayments( currencyValue );
+		} );
+
 		step( 'Can log in', async function () {
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
 				useSandboxForPayments: true,
