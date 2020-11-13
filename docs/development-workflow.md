@@ -23,6 +23,20 @@ For example: `ENTRY_LIMIT=entry-login,entry-main yarn start` would start Calypso
 
 To find all available entry points, you can refer to the `entry` option in Calypso's primary `webpack.config.js` file.
 
+### Obsolete packages tolerance
+
+Calypso build process starts with installing the packages by running the command `yarn install --frozen-lockfile` under the hood. However, since it is an expensive operation, we only perform it if `node_modules` is considered older than `yarn.lock`. To determine whether `node_modules` is older than `yarn.lock`, we compare the time of their last modification.
+
+By default, if `node_modules` has been modified at least **a second** before `yarn.lock`, we'll run a `yarn run distclean` to remove the obsolete packages, and proceed with fresh package installation.
+
+If you're too often running into package rebuilding (usually when switching branches), and consider it's happening without a good reason, you can tweak the tolerance from `1000` **(one second)** to a larger value. To do it, set the `LOCKFILE_TIME_TOLERANCE` environment variable to a larger value when starting the Calypso build. For example, this sets the tolerance to `86400000`, which equals to **one day**:
+
+```bash
+> LOCKFILE_TIME_TOLERANCE=86400000 yarn start
+```
+
+**Warning:** increasing the lockfile time tolerance can lead to unexpected bugs or errors locally, caused by running obsolete packages. Use this with caution and at your own discretion.
+
 ### Internet Explorer
 
 It's possible to debug/fix IE issues using the [fallback development workflow](./fallback-development-workflow.md).

@@ -30,7 +30,8 @@ const needsInstall = () => {
 		}
 
 		const nodeModulesTime = fs.statSync( path.join( packageDir, 'node_modules' ) ).mtime;
-		return lockfileTime - nodeModulesTime > 1000; // In Windows, directory mtime has less precision than file mtime
+		const allowedTimeDifference = parseInt( process.env.LOCKFILE_TIME_TOLERANCE ) || 1000;
+		return lockfileTime - nodeModulesTime > allowedTimeDifference; // In Windows, directory mtime has less precision than file mtime
 	} catch ( e ) {
 		//debug( e );
 		return true;
