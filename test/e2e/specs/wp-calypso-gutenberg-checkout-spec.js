@@ -40,12 +40,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	let editorUrl;
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
-		step( 'We can set the sandbox cookie for payments', async function () {
-			const wPHomePage = await WPHomePage.Visit( driver );
-			await wPHomePage.checkURL( locale );
-			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
-		} );
 
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
@@ -53,6 +47,15 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 				useSandboxForPayments: true,
 			} );
 			return await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'We can set the sandbox cookie for payments', async function () {
+			const wPHomePage = await WPHomePage.Visit( driver );
+			await wPHomePage.checkURL( locale );
+			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
+			await wPHomePage.setCurrencyForPayments( currencyValue );
+			await this.driver.navigate().back();
+
 		} );
 
 		step( 'Can insert the premium block', async function () {
