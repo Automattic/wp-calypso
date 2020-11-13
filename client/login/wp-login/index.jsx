@@ -7,7 +7,6 @@ import React from 'react';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
@@ -80,8 +79,10 @@ export class Login extends React.Component {
 		let title = 'Login';
 
 		if ( twoFactorAuthType ) {
+			const authTypeTitle =
+				twoFactorAuthType.charAt( 0 ).toUpperCase() + twoFactorAuthType.slice( 1 );
 			url += `/${ twoFactorAuthType }`;
-			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
+			title += ` > Two-Step Authentication > ${ authTypeTitle }`;
 		}
 
 		if ( socialConnect ) {
