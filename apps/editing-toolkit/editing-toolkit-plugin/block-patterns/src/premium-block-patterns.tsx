@@ -42,7 +42,7 @@ export const PremiumBlockPatterns = () => {
 		__experimentalBlockPatterns.forEach( ( originalPattern: any ) => {
 			const pattern = { ...originalPattern };
 
-			if ( typeof pattern.title === 'string' ) {
+			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
 				const originalTitle = pattern.title;
 
 				pattern.title = <PatternTitleContainer title={ originalTitle } />;
