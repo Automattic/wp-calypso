@@ -100,17 +100,17 @@ object BuildBaseImages : BuildType({
 				REGISTRY="registry.a8c.com/calypso"
 
 				function build {
-					imageName="$1"
-					buildArgs="$2"
+					imageName="${'$'}1"
+					buildArgs="${'$'}2"
 
-					imageVersioned="${REGISTRY}/${imageName}:${VERSION}"
-					imageLatest="${REGISTRY}/${imageName}:latest"
+					imageVersioned="${'$'}{REGISTRY}/${'$'}{imageName}:${'$'}{VERSION}"
+					imageLatest="${'$'}{REGISTRY}/${'$'}{imageName}:latest"
 
 					# Using eval because buildArgs is a single word and we need to expand it to multiple args
-					eval docker build -f Dockerfile.base "${buildArgs}" -t "${imageVersioned}" .
-					docker tag "${imageVersioned}" "${imageLatest}"
-					docker push "${imageVersioned}"
-					docker push "${imageLatest}"
+					eval docker build -f Dockerfile.base "${'$'}{buildArgs}" -t "${'$'}{imageVersioned}" .
+					docker tag "${'$'}{imageVersioned}" "${'$'}{imageLatest}"
+					docker push "${'$'}{imageVersioned}"
+					docker push "${'$'}{imageLatest}"
 				}
 
 				build "base" "--no-cache --target builder"
