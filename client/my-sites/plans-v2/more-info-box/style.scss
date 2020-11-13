@@ -2,7 +2,7 @@
 @import '~@wordpress/base-styles/mixins';
 
 .more-info-box__more-container {
-	background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	background-color: var( --color-surface );
 
 	margin: 24px 0;
 	padding: 30px 15px 26px;
@@ -26,4 +26,11 @@
 .more-info-box__more-button {
 	font-size: 1rem;
 	font-weight: 600;
+}
+
+/* I5 specifics */
+.is-section-jetpack-cloud-pricing {
+	.more-info-box__more-container {
+		background-color: rgba( var( --studio-jetpack-green-10-rgb ), 0.1 );
+	}
 }
