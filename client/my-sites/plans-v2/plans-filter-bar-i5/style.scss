@@ -111,18 +111,6 @@
 	.plans-filter-bar-i5.sticky {
 		top: 0;
 	}
-
-	@include breakpoint-deprecated( '>960px' ) {
-		.plans-filter-bar-i5.sticky {
-			top: 94px;
-		}
-	}
-}
-
-@include breakpoint-deprecated( '>960px' ) {
-	.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing .plans-filter-bar-i5.sticky {
-		top: 94px;
-	}
 }
 
 // target Calypso pricing filter bar, not jetpack cloud
