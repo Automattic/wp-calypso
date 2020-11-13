@@ -652,22 +652,20 @@ object WpDesktop : Project({
 
 	params {
 		text("docker_image_dekstop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
 	}
 })
 
 object WpDesktop_DesktopE2ETests : BuildType({
 	name = "Desktop e2e tests"
+	description = "Run wp-desktop e2e tests in Linux"
 
 	artifactRules = """
 		desktop/release => desktop/release
 		desktop/e2e/logs => desktop/e2e/logs
 	""".trimIndent()
-
-	params {
-		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
-		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
-		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
-	}
 
 	vcs {
 		root(WpCalypso)
@@ -758,6 +756,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export DISPLAY=:99
+				export MOCHA_FILE="./desktop/e2e/result.xml"
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -775,5 +774,53 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 	}
+
+	failureConditions {
+		executionTimeoutMin = 15
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#wp-desktop-calypso-e2e"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+					maximumNumberOfChanges = 10
+				}
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+
 })
 
