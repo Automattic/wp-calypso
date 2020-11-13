@@ -187,14 +187,42 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<div className="scan-threats__threats">
 				<div className="scan-threats__buttons">
 					{ hasFixableThreats && (
-						<Button
-							primary
-							className="scan-threats__fix-all-threats-button"
-							onClick={ openFixAllThreatsDialog }
-							disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
-						>
-							{ translate( 'Fix all' ) }
-						</Button>
+						<>
+							<p>
+								{ translate(
+									'Jetpack can auto fix 1 found threat.',
+									'Jetpack can auto fix %(fixableCount)s of %(threatCount)s found threats.',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+											threatCount: numberFormat( threats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats, %(threatCount)s represents the number of threats currently identified on the site',
+										count: allFixableThreats.length,
+									}
+								) }
+							</p>
+							<Button
+								primary
+								className="scan-threats__fix-all-threats-button"
+								onClick={ openFixAllThreatsDialog }
+								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
+							>
+								{ translate(
+									'Auto fix %(fixableCount)s threat',
+									'Auto fix %(fixableCount)s threats',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats on the site',
+										count: allFixableThreats.length,
+									}
+								) }
+							</Button>
+						</>
 					) }
 				</div>
 				{ threats.map( ( threat ) => (
