@@ -353,7 +353,6 @@ class WP_Template_Inserter {
 			);
 			return;
 		}
-		error_log( 'wp-templates-inserter insert_default_pages' . $this->get_template_locale() );
 
 		$request_url = add_query_arg(
 			array(
@@ -418,6 +417,9 @@ class WP_Template_Inserter {
 		);
 	}
 
+	/**
+	 * Returns the locale to be used for page templates
+	 */
 	private function get_template_locale() {
 		$language = get_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
@@ -428,7 +430,7 @@ class WP_Template_Inserter {
 	 */
 	public function register_template_post_types() {
 		register_post_type(
-			'wp_template_part',
+			'wp_template_part', // phpcs:ignore WordPress.NamingConventions.ValidPostTypeSlug.ReservedPrefix
 			array(
 				'labels'                => array(
 					'name'                     => _x( 'Template Parts', 'post type general name', 'full-site-editing' ),

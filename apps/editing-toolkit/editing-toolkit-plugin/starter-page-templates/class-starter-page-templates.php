@@ -204,7 +204,6 @@ class Starter_Page_Templates {
 	 */
 	public function fetch_vertical_data() {
 		$vertical_templates = get_transient( $this->templates_cache_key );
-		error_log( 'wp-starter-page-templates fetch_vertical_data' . $this->get_verticals_locale() );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
 		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
@@ -243,6 +242,9 @@ class Starter_Page_Templates {
 		delete_transient( $this->templates_cache_key );
 	}
 
+	/**
+	 * Gets the locale to be used for fetching the site vertical
+	 */
 	private function get_verticals_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();

@@ -16,7 +16,6 @@ namespace A8C\FSE\Coming_soon;
  * @return string Language slug
  */
 function get_current_locale() {
-	error_log( 'called get_current_locale()' );
 	$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 	return \A8C\FSE\Common\get_iso_639_locale( $language );
 }
@@ -69,7 +68,6 @@ function get_onboarding_url() {
 
 	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
 }
-error_log( 'rendering coming soon page' );
 
 ?>
 <!DOCTYPE html>

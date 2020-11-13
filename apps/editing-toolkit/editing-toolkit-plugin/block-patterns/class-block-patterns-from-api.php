@@ -32,7 +32,6 @@ class Block_Patterns_From_API {
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
-		error_log( 'block-patterns-from-api constructer' . $this->get_block_patterns_locale() );
 		$this->patterns_cache_key = sha1(
 			implode(
 				'_',
@@ -141,6 +140,9 @@ class Block_Patterns_From_API {
 		return $block_patterns;
 	}
 
+	/**
+	 * Get the locale to be used for fetching block patterns
+	 */
 	private function get_block_patterns_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
