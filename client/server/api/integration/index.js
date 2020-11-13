@@ -23,7 +23,7 @@ describe( 'api', () => {
 	beforeAll( () => {
 		config = require( 'calypso/config' );
 		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
-		app = require( '../' )();
+		app = require( '../' ).default();
 		localRequest = supertest( app );
 	} );
 
@@ -69,6 +69,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a login error with a bad login', function () {
 			return new Promise( ( done ) => {
 				const end = sandbox.stub( request.Request.prototype, 'end' );
@@ -83,6 +84,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a 400 needs_2fa if the user has 2FA enabled', function () {
 			return new Promise( ( done ) => {
 				const response = {
@@ -101,6 +103,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a successful login', function () {
 			return new Promise( ( done ) => {
 				const response = { access_token: '1234' };
@@ -115,6 +118,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a 408 with no connection', function () {
 			return new Promise( ( done ) => {
 				const response = {
