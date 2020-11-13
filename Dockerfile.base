@@ -14,7 +14,8 @@ ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV HOME=/calypso
 
 RUN git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
-	&& git -C "$NVM_DIR" checkout v0.35.3
+	&& git -C "$NVM_DIR" checkout v0.35.3 \
+	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
 
 COPY . .
 
@@ -24,7 +25,6 @@ RUN cd / \
 	&& . "$NVM_DIR/nvm.sh" \
 	&& cd $HOME \
 	&& nvm install \
-	&& nvm use \
 	# Prime yarn cache
 	&& yarn \
 	# Prime webpack caches
