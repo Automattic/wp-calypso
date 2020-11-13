@@ -85,17 +85,31 @@ const ThreatItem: React.FC< Props > = ( {
 		}
 
 		if ( ! threat.fixable ) {
-			return translate(
-				'Jetpack Scan cannot automatically fix this threat. You can fix it manually and re-run scan afterwards, or {{link}}contact us{{/link}} for help.',
-				{
-					components: {
-						link: <a href={ contactSupportUrl } rel="noopener noreferrer" target="_blank" />,
-					},
-				}
+			return (
+				<>
+					<p className="threat-description__section-text">
+						{ translate(
+							'Jetpack Scan cannot automatically fix this threat. Consider resolving the threat manually. Check WordPress, your theme, and plugins are up to date. ' +
+								'You may also consider removing the offending code, plugin or theme from your site.'
+						) }
+					</p>
+					<p className="threat-description__section-text">
+						{ translate(
+							'For further help, we recommend our partners {{strong}}Codeable{{/strong}}. Their pricing ranges from $70-120/hour, with no obligation to hire. ' +
+								'Codeable is a WordPress-exclusive freelancer marketplace with a community of 530+ highly vetted security experts. ' +
+								'Get a free, no obligation estimate for resolving this threat.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
+						) }
+					</p>
+				</>
 			);
 		}
 
-		return getThreatFix( threat.fixable );
+		return <p className="threat-description__section-text">{ getThreatFix( threat.fixable ) }</p>;
 	}, [ contactSupportUrl, threat ] );
 
 	const isFixable = React.useMemo(
@@ -140,6 +154,7 @@ const ThreatItem: React.FC< Props > = ( {
 				context={ threat.context }
 				diff={ threat.diff }
 				filename={ threat.filename }
+				isFixable={ isFixable }
 			/>
 
 			<div className="threat-item__buttons">
