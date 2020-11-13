@@ -29,5 +29,5 @@ export default function FoldableFAQExample() {
 | `question`\* | `React.Node` | none          | The question appearing above the answer                   |
 | `children`\* | `React.Node` | none          | The answer                                                |
 | `icon`       | `string`     | chevron-right | Gridicon string                                           |
-| `iconSize`\* | `number`     | 24            | Size of the icon                                          |
-| `expanded`\* | `boolean`    | false         | Whether or not the the answer starts off expanded/showing |
+| `iconSize`   | `number`     | 24            | Size of the icon                                          |
+| `expanded`   | `boolean`    | false         | Whether or not the the answer starts off expanded/showing |
