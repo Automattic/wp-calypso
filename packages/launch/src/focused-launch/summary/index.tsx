@@ -279,6 +279,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		}
 	}, [ selectedPaidDomain, selectedPlan, onUnsetPlan ] );
 
+	// if the user picks up a paid plan from the detailed plan page, show it, otherwise show premium plan
+	const paidPlan = selectedPlan && ! selectedPlan.isFree ? selectedPlan : defaultPaidPlan;
+
 	return (
 		<SummaryStep
 			input={
@@ -357,19 +360,17 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								/>
 							</FocusedLaunchSummaryItem>
 							<FocusedLaunchSummaryItem
-								onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }
-								isSelected={ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug }
+								onClick={ () => paidPlan && onSetPlan( paidPlan ) }
+								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
 							>
 								<LeadingContentSide
-									label={ defaultPaidPlan?.titleWithPlanSuffix }
-									badgeText={
-										defaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
-									}
+									label={ paidPlan?.titleWithPlanSuffix }
+									badgeText={ paidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
 								/>
 								<TrailingContentSide
 									price={
 										<>
-											<span>{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }</span>
+											<span>{ paidPlan && planPrices[ paidPlan?.storeSlug ] }</span>
 											<span>
 												{
 													// translators: /mo is short for "per-month"
