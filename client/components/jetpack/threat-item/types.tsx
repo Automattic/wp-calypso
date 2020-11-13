@@ -8,7 +8,7 @@ export type Extension = {
 
 export type ThreatType = 'core' | 'file' | 'plugin' | 'theme' | 'database' | 'none' | string;
 
-export type ThreatFixType = 'replace' | 'delete' | 'update' | string;
+export type ThreatFixType = 'replace' | 'delete' | 'update' | 'rollback' | string;
 
 export type ThreatFix = {
 	fixer: ThreatFixType;
