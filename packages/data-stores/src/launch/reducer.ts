@@ -105,6 +105,14 @@ const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false
 	return state;
 };
 
+const isModalDismissible: Reducer< boolean, LaunchAction > = ( state = true, action ) => {
+	if ( action.type === 'SET_MODAL_DISMISSIBLE' ) {
+		return action.isDismissible;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	domain,
@@ -116,6 +124,7 @@ const reducer = combineReducers( {
 	isExperimental,
 	isFocusedLaunchOpen,
 	isSiteTitleStepVisible,
+	isModalDismissible,
 } );
 
 export type State = ReturnType< typeof reducer >;

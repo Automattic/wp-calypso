@@ -3,13 +3,25 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Title } from '@automattic/onboarding';
+
+/**
+ * Internal dependencies
+ */
+import { useLaunchModal } from '../../hooks';
 
 import './style.scss';
 
 const Success: React.FunctionComponent = () => {
+	const { setModalDismissible } = useLaunchModal();
+
+	// When in the Success view, the user can't dismiss the modal anymore
+	useEffect( () => {
+		setModalDismissible?.( false );
+	}, [ setModalDismissible ] );
+
 	return (
 		<div>
 			<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
