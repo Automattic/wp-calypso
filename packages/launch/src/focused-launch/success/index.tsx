@@ -6,6 +6,7 @@
 import React, { useEffect } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Title } from '@automattic/onboarding';
+import { Icon, wordpress } from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -39,6 +40,8 @@ const Success: React.FunctionComponent = () => {
 			</button>
 
 			<a href={ `/home/${ siteSubdomain?.domain }` }>{ __( 'Back home', __i18n_text_domain__ ) }</a>
+
+			<Icon icon={ wordpress } size={ 36 } />
 		</div>
 	);
 };
