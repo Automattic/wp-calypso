@@ -28,9 +28,10 @@ import {
 	requestSiteAddressAvailability,
 	clearValidationError,
 } from 'calypso/state/site-address-change/actions';
-import getSiteAddressAvailabilityPending from 'calypso/state/selectors/get-site-address-availability-pending';
-import getSiteAddressValidationError from 'calypso/state/selectors/get-site-address-validation-error';
-import isRequestingSiteAddressChange from 'calypso/state/selectors/is-requesting-site-address-change';
+import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
+import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
+import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
+import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
@@ -376,17 +377,11 @@ export default flow(
 			const selectedSite = getSelectedSite( state );
 			const siteId = selectedSite.ID;
 			const selectedSiteSlug = selectedSite.slug;
-			const isAvailable = get( state, [
-				'siteAddressChange',
-				'validation',
-				siteId,
-				'isAvailable',
-			] );
 
 			return {
 				siteId,
 				selectedSiteSlug,
-				isAvailable,
+				isAvailable: isSiteAddressValidationAvailable( state, siteId ),
 				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 				validationError: getSiteAddressValidationError( state, siteId ),
