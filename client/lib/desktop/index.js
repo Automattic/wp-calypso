@@ -9,7 +9,6 @@ import debugFactory from 'debug';
 import { newPost } from 'calypso/lib/paths';
 import store from 'store';
 import user from 'calypso/lib/user';
-import { ipcRenderer as ipc } from 'electron';
 import userUtilities from 'calypso/lib/user/utils';
 import * as oAuthToken from 'calypso/lib/oauth-token';
 import { getStatsPathForTab } from 'calypso/lib/route';
@@ -43,21 +42,27 @@ const Desktop = {
 		debug( 'Registering IPC listeners' );
 
 		// Register IPC listeners
-		ipc.on( 'page-my-sites', this.onShowMySites.bind( this ) );
-		ipc.on( 'page-reader', this.onShowReader.bind( this ) );
-		ipc.on( 'page-profile', this.onShowProfile.bind( this ) );
-		ipc.on( 'new-post', this.onNewPost.bind( this ) );
-		ipc.on( 'signout', this.onSignout.bind( this ) );
-		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
-		ipc.on( 'notifications-panel-show', this.onNotificationsPanelShow.bind( this ) );
-		ipc.on( 'notifications-panel-refresh', this.onNotificationsPanelRefresh.bind( this ) );
-		ipc.on( 'notification-clicked', this.onNotificationClicked.bind( this ) );
-		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
-		ipc.on( 'navigate', this.onNavigate.bind( this ) );
-		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
-		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
-		ipc.on( 'enable-notification-badge', this.sendNotificationUnseenCount );
-		ipc.on( 'request-user-login-status', this.sendUserLoginStatus );
+		window.electron.receive( 'page-my-sites', this.onShowMySites.bind( this ) );
+		window.electron.receive( 'page-reader', this.onShowReader.bind( this ) );
+		window.electron.receive( 'page-profile', this.onShowProfile.bind( this ) );
+		window.electron.receive( 'new-post', this.onNewPost.bind( this ) );
+		window.electron.receive( 'signout', this.onSignout.bind( this ) );
+		window.electron.receive( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+		window.electron.receive(
+			'notifications-panel-show',
+			this.onNotificationsPanelShow.bind( this )
+		);
+		window.electron.receive(
+			'notifications-panel-refresh',
+			this.onNotificationsPanelRefresh.bind( this )
+		);
+		window.electron.receive( 'notification-clicked', this.onNotificationClicked.bind( this ) );
+		window.electron.receive( 'page-help', this.onShowHelp.bind( this ) );
+		window.electron.receive( 'navigate', this.onNavigate.bind( this ) );
+		window.electron.receive( 'request-site', this.onRequestSite.bind( this ) );
+		window.electron.receive( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		window.electron.receive( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		window.electron.receive( 'request-user-login-status', this.sendUserLoginStatus );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -108,14 +113,14 @@ const Desktop = {
 		const unseenCount = store.get( 'wpnotes_unseen_count' );
 		if ( unseenCount !== null ) {
 			debug( `Sending unseen count: ${ unseenCount }` );
-			ipc.send( 'unread-notices-count', unseenCount );
+			window.electron.send( 'unread-notices-count', unseenCount );
 		}
 	},
 
 	onUnseenCountUpdated: function ( event ) {
 		const { unseenCount } = event.detail;
 		debug( `Sending unseen count: ${ unseenCount }` );
-		ipc.send( 'unread-notices-count', unseenCount );
+		window.electron.send( 'unread-notices-count', unseenCount );
 	},
 
 	onNotificationClicked: function ( _, notification ) {
@@ -143,7 +148,7 @@ const Desktop = {
 
 		debug( 'Sending logged-in = ' + status );
 
-		ipc.send( 'user-login-status', status, user(), oAuthToken.getToken() );
+		window.electron.send( 'user-login-status', status, user(), oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function () {
@@ -219,14 +224,14 @@ const Desktop = {
 			canUserManageOptions,
 		};
 
-		ipc.send( 'cannot-use-editor', payload );
+		window.electron.send( 'cannot-use-editor', payload );
 	},
 
 	onViewPostClicked: function ( event ) {
 		const { url } = event.detail;
 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
 
-		ipc.send( 'view-post-clicked', url );
+		window.electron.send( 'view-post-clicked', url );
 	},
 
 	onActivateJetpackSiteModule: function ( event, info ) {
@@ -243,7 +248,7 @@ const Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			ipc.send( 'enable-site-option-response', { status, siteId, error } );
+			window.electron.send( 'enable-site-option-response', { status, siteId, error } );
 		}
 		window.addEventListener(
 			response,
@@ -266,7 +271,7 @@ const Desktop = {
 			if ( Number( siteId ) !== Number( responseSiteId ) ) {
 				error = `Expected response for siteId: ${ siteId }, got: ${ responseSiteId }`;
 			}
-			ipc.send( 'request-site-response', { siteId, status, error } );
+			window.electron.send( 'request-site-response', { siteId, status, error } );
 		}
 		window.addEventListener( response, onDidRequestSite.bind( onDidRequestSite ) );
 
@@ -287,7 +292,7 @@ const Desktop = {
 	},
 
 	print: function ( title, html ) {
-		ipc.send( 'print', title, html );
+		window.electron.send( 'print', title, html );
 	},
 };
 
