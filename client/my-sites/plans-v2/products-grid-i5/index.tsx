@@ -177,9 +177,9 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) }
 				</div>
 			</section>
-			<section ref={ bundleComparisonRef } className="products-grid-i5__section">
+			{ /* <section ref={ bundleComparisonRef } className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Bundle Comparison' ) }</h2>
-			</section>
+			</section> */ }
 		</>
 	);
 };
