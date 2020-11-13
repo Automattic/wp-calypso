@@ -235,7 +235,7 @@ export const getJetpackProductsDescriptions = () => {
 		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
 
 	const scanDescription = translate(
-		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
 	const antiSpamDescription =
 		{
