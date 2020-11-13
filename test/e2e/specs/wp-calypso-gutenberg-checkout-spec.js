@@ -201,7 +201,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 		step( 'Can process card payment', async function () {
 			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
 			await securePaymentComponent.waitForCreditCardPaymentProcessing();
-			return await securePaymentComponent.waitForPageToDisappear();
+			// return await securePaymentComponent.waitForPageToDisappear();
+			return await driverHelper.waitTillNotPresent( driver, By.css( '.editor-checkout-modal' ) );
 		} );
 
 		step( 'Can decline upgrade offer', async function () {
