@@ -137,9 +137,14 @@ async function run() {
 		);
 
 		const tests = path.join( E2E_DIR, 'tests', 'e2e.js' );
-		execSync( `npx mocha ${ tests } --timeout 20000 --exit --reporter mocha-junit-reporter`, {
-			stdio: 'inherit',
-		} );
+		const reporterOptions = path.join( E2E_DIR, 'mocha-reporter.json' );
+		execSync(
+			`npx mocha ${ tests } --timeout 20000 --exit --reporter mocha-multi-reporters --reporter-options configFile=${ reporterOptions }`,
+			{
+				cwd: PROJECT_DIR,
+				stdio: 'inherit',
+			}
+		);
 	} catch ( err ) {
 		console.error( err ); // eslint-disable-line no-console
 		process.exitCode = 1;
