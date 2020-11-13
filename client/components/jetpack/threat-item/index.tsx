@@ -129,12 +129,6 @@ const ThreatItem: React.FC< Props > = ( {
 			} ) }
 			header={ <ThreatItemHeader threat={ threat } isStyled={ true } /> }
 			subheader={ <ThreatItemSubheader threat={ threat } /> }
-			{ ...( isFixable
-				? {
-						summary: renderFixThreatButton( 'is-summary' ),
-						expandedSummary: renderFixThreatButton( 'is-summary' ),
-				  }
-				: {} ) }
 			{ ...( threat.status === 'current' ? { highlight: 'error' } : {} ) }
 			clickableHeader={ true }
 			onClick={ onOpenTrackEvent }
