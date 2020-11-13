@@ -124,6 +124,16 @@ function coming_soon_page() {
 
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
+	// Disable WP scripts, social og meta, cookie banner.
+	remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'header_js', 5 );
+	remove_action( 'wp_head', 'global_css', 5 );
+	remove_action( 'wp_footer', 'wpcom_subs_js' );
+	remove_action( 'wp_footer', 'stats_footer', 101 );
+	add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
+	add_filter( 'jetpack_enable_opengraph', '__return_false', 1 );
 
 	render_fallback_coming_soon_page();
 	die();

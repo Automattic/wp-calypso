@@ -68,17 +68,6 @@ function get_onboarding_url() {
 	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
 }
 
-// Disable WP scripts, social og meta, cookie banner.
-remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
-remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-remove_action( 'wp_print_styles', 'print_emoji_styles' );
-remove_action( 'wp_head', 'header_js', 5 );
-remove_action( 'wp_head', 'global_css', 5 );
-remove_action( 'wp_footer', 'wpcom_subs_js' );
-remove_action( 'wp_footer', 'stats_footer', 101 );
-add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
-add_filter( 'jetpack_enable_opengraph', '__return_false', 1 )
-
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
