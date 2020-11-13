@@ -43,9 +43,11 @@ import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '..
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
+	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
@@ -79,6 +81,7 @@ import PurchaseSiteHeader from '../purchases-site/header';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
@@ -681,7 +684,11 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<QueryUserPurchases userId={ this.props.userId } />
+				{ this.props.siteId ? (
+					<QuerySitePurchases siteId={ this.props.siteId } />
+				) : (
+					<QueryUserPurchases userId={ this.props.userId } />
+				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
@@ -728,7 +735,8 @@ export default connect( ( state, props ) => {
 		purchase && purchase.attachedToPurchaseId
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
-	const siteId = purchase ? purchase.siteId : null;
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
@@ -740,7 +748,9 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedDomains,
 		hasLoadedSites,
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedUserPurchasesFromServer: selectedSiteId
+			? hasLoadedSitePurchasesFromServer( state )
+			: hasLoadedUserPurchasesFromServer( state ), // TODO: refactor this
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
