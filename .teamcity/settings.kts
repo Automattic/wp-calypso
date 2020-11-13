@@ -679,11 +679,8 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			scriptContent = """
 				set -e
 
-				export HOME="/calypso"
 				export CHROMEDRIVER_SKIP_DOWNLOAD=true
 				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
-				export CONFIG_ENV="release"
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -697,6 +694,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 				# Install modules
 				yarn install
+				yarn run build-desktop:install-app-deps
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
@@ -708,8 +706,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Build Calypso source"
 			scriptContent = """
 				set -e
-				export HOME="/calypso"
-				export CONFIG_ENV="release"
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -728,17 +724,13 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Build app (linux)"
 			scriptContent = """
 				set -e
-				export HOME="/calypso"
-				export CONFIG_ENV="release"
+
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
-
-				# Install app deps
-				yarn run build-desktop:install-app-deps
 
 				# Build app
 				yarn run build-desktop:app
@@ -753,7 +745,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Run tests (linux)"
 			scriptContent = """
 				set -e
-				export HOME="/calypso"
+
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export DISPLAY=:99
