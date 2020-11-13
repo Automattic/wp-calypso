@@ -14,20 +14,9 @@ import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/
 // import { useEffect, useState } from '@wordpress/element';
 
 function WelcomeTourCard( { onMinimize, onDismiss } ) {
-	console.log( 'WelcomeTourCard' );
 	return (
 		<Card className="welcome-tour-card">
-			<div className="welcome-tour-card__overlay-controls">
-				<Flex>
-					<Button
-						isPrimary
-						icon="pets"
-						iconSize={ 14 }
-						onClick={ () => onMinimize( true ) }
-					></Button>
-					<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
-				</Flex>
-			</div>
+			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img
 					alt="Editor Welcome Tour"
@@ -48,6 +37,17 @@ function WelcomeTourCard( { onMinimize, onDismiss } ) {
 				</div>
 			</CardFooter>
 		</Card>
+	);
+}
+
+function CardOverlayControls( { onMinimize, onDismiss } ) {
+	return (
+		<div className="welcome-tour-card__overlay-controls">
+			<Flex>
+				<Button isPrimary icon="pets" iconSize={ 14 } onClick={ () => onMinimize( true ) }></Button>
+				<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
+			</Flex>
+		</div>
 	);
 }
 
