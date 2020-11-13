@@ -379,7 +379,7 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
 						confirmTitle={ translate( 'Create download' ) }
-						onClose={ this.cancelBackupIntent }
+						onClose={ this.cancelDownloadIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backup"
