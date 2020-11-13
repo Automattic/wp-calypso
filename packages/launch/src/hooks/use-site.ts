@@ -16,6 +16,7 @@ export function useSite() {
 	const launchStatus = useSelect( ( select ) => select( SITE_STORE ).isLaunched( siteId ) );
 
 	return {
+		sitePlan: site?.plan,
 		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
 		launchStatus,
 		currentDomainName: site?.URL && new URL( site?.URL ).hostname,

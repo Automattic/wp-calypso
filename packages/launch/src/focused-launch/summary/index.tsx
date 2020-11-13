@@ -21,7 +21,7 @@ import FocusedLaunchSummaryItem, {
  */
 import { Route } from '../route';
 import { useTitle, useDomainSearch, useSiteDomains, useSite } from '../../hooks';
-import { LAUNCH_STORE, PLANS_STORE, Plan } from '../../stores';
+import { LAUNCH_STORE, PLANS_STORE, Plan, SiteDetailsPlan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
 
@@ -201,7 +201,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 						<p className="focused-launch-summary__side-commentary-title">
 							{ createInterpolateElement(
 								__(
-									'<strong>Unique domains</strong> help build brand recongnition and trust',
+									'<strong>Unique domains</strong> help build brand recognition and trust',
 									__i18n_text_domain__
 								),
 								{
@@ -253,6 +253,8 @@ type PlanStepProps = CommonStepProps & {
 	planPrices: Record< string, string >;
 	selectedPlan: Plan | undefined;
 	onSetPlan: ( plan: Plan ) => void;
+	onUnsetPlan: () => void;
+	sitePlan: SiteDetailsPlan | undefined;
 };
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
@@ -265,7 +267,18 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	planPrices,
 	selectedPlan,
 	onSetPlan,
+	onUnsetPlan,
+	sitePlan,
 } ) => {
+	useEffect( () => {
+		// To keep the launch store state valid,
+		// unselect the free plan if the user selected a paid domain.
+		// free plans don't support paid domains.
+		if ( selectedPaidDomain && selectedPlan && selectedPlan.isFree ) {
+			onUnsetPlan();
+		}
+	}, [ selectedPaidDomain, selectedPlan, onUnsetPlan ] );
+
 	return (
 		<SummaryStep
 			input={
@@ -295,6 +308,19 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								) }
 							</p>
 						</label>
+						<div>
+							<FocusedLaunchSummaryItem readOnly={ true }>
+								<LeadingContentSide label={ sitePlan?.product_name_short_with_suffix } />
+								<TrailingContentSide
+									price={
+										<>
+											<Icon icon={ check } size={ 18 } />{ ' ' }
+											{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
+										</>
+									}
+								/>
+							</FocusedLaunchSummaryItem>
+						</div>
 					</>
 				) : (
 					<>
@@ -315,63 +341,45 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							) }
 						</p>
 						<div>
-							{ hasPaidPlan ? (
-								<FocusedLaunchSummaryItem readOnly={ true }>
-									<LeadingContentSide label="FIGURE OUT A WAY TO GET THE PLAN NAME" />
-									<TrailingContentSide
-										price={
-											<>
-												<Icon icon={ check } size={ 18 } />{ ' ' }
-												{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
-											</>
-										}
-									/>
-								</FocusedLaunchSummaryItem>
-							) : (
-								[
-									<FocusedLaunchSummaryItem
-										readOnly={ hasPaidDomain || selectedPaidDomain }
-										onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
-										isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
-									>
-										<LeadingContentSide label={ __( 'Free plan', __i18n_text_domain__ ) } />
-										<TrailingContentSide
-											price={ __( 'Free', __i18n_text_domain__ ) }
-											warningNote={
-												hasPaidDomain || selectedPaidDomain
-													? __( 'Not available with your domain selection', __i18n_text_domain__ )
-													: ''
-											}
-										/>
-									</FocusedLaunchSummaryItem>,
-									<FocusedLaunchSummaryItem
-										onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }
-										isSelected={ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug }
-									>
-										<LeadingContentSide
-											label={ defaultPaidPlan?.title }
-											badgeText={
-												defaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
-											}
-										/>
-										<TrailingContentSide
-											price={
-												<>
-													<span>
-														{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }
-													</span>
-													<span>
-														{
-															// translators: /mo is short for "per-month"
-															__( '/mo', __i18n_text_domain__ )
-														}
-													</span>
-												</>
-											}
-										/>
-									</FocusedLaunchSummaryItem>,
-								]
-							) }
+							<FocusedLaunchSummaryItem
+								readOnly={ hasPaidDomain || selectedPaidDomain }
+								onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
+								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
+							>
+								<LeadingContentSide label={ defaultFreePlan?.titleWithPlanSuffix } />
+								<TrailingContentSide
+									price={ __( 'Free', __i18n_text_domain__ ) }
+									warningNote={
+										hasPaidDomain || selectedPaidDomain
+											? __( 'Not available with your domain selection', __i18n_text_domain__ )
+											: ''
+									}
+								/>
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem
+								onClick={ () => defaultPaidPlan && onSetPlan( defaultPaidPlan ) }
+								isSelected={ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug }
+							>
+								<LeadingContentSide
+									label={ defaultPaidPlan?.titleWithPlanSuffix }
+									badgeText={
+										defaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
+									}
+								/>
+								<TrailingContentSide
+									price={
+										<>
+											<span>{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }</span>
+											<span>
+												{
+													// translators: /mo is short for "per-month"
+													__( '/mo', __i18n_text_domain__ )
+												}
+											</span>
+										</>
+									}
+								/>
+							</FocusedLaunchSummaryItem>
 						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
 					</>
@@ -435,7 +443,7 @@ const Summary: React.FunctionComponent = () => {
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setDomain, unsetDomain, setPlan } = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
 	const domainSearch = useDomainSearch();
 	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
 	const defaultFreePlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultFreePlan() );
@@ -452,6 +460,7 @@ const Summary: React.FunctionComponent = () => {
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
+	const sitePlan = site.sitePlan;
 	const hasPaidPlan = site.isPaidPlan;
 
 	// Prepare Steps
@@ -495,7 +504,9 @@ const Summary: React.FunctionComponent = () => {
 			defaultFreePlan={ defaultFreePlan }
 			selectedPlan={ selectedPlan }
 			onSetPlan={ setPlan }
+			onUnsetPlan={ unsetPlan }
 			planPrices={ planPrices }
+			sitePlan={ sitePlan }
 		/>
 	);
 

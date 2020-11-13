@@ -12,6 +12,7 @@ export type PlanAction = {
 
 export interface Plan {
 	title: string;
+	titleWithPlanSuffix: string;
 	description: string;
 	productId: number;
 	storeSlug: PlanSlug;
@@ -96,6 +97,7 @@ export type APIPlanProduct = {
 
 export type APIPlanDetail = {
 	short_name: string;
+	short_name_with_suffix: string;
 	tagline: string;
 	products: Array< APIPlanProduct >;
 	nonlocalized_short_name: string;

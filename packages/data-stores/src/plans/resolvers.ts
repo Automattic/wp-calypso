@@ -97,6 +97,7 @@ export function* getPlansDetails( locale = 'en' ) {
 		rawPlansDetails.plans.forEach( ( rawPlan: APIPlanDetail ) => {
 			const plan: Plan = {
 				title: rawPlan.short_name,
+				titleWithPlanSuffix: rawPlan.short_name_with_suffix,
 				description: rawPlan.tagline,
 				productId: rawPlan.products[ 0 ].plan_id,
 				storeSlug: mapShortNameToProductSlug[ rawPlan.nonlocalized_short_name ],
