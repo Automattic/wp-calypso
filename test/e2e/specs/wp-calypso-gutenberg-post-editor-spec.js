@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -1294,6 +1295,28 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const content = await editor.getContent();
 			assert.strictEqual( title, originalTitle, 'The restored post title is not correct' );
 			assert.strictEqual( content, originalContent, 'The restored post content is not correct' );
+		} );
+	} );
+
+	describe( 'Settings @parallel', function () {
+		step( 'Can log in', async function () {
+			const loginFlow = new LoginFlow( driver, gutenbergUser );
+			await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
+		step( 'Line height setting is available', async function () {
+			const editor = await GutenbergEditorComponent.Expect( driver );
+			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+			await editor.enterText( 'Foobar' );
+			await gSidebarComponent.displayComponentIfNecessary();
+			await gSidebarComponent.chooseBlockSettings();
+
+			const lineHeighSettingPresent = await driverHelper.isElementPresent(
+				driver,
+				By.css( '.block-editor-line-height-control' )
+			);
+			assert.strictEqual( lineHeighSettingPresent, true, 'Line height setting not found' );
 		} );
 	} );
 } );
