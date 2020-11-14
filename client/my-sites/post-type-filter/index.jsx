@@ -182,7 +182,7 @@ export default flow(
 	connect( ( state, { query } ) => {
 		const siteId = getSelectedSiteId( state );
 		let authorToggleHidden = false;
-		if ( query && query.type === 'post' ) {
+		if ( query && ( query.type === 'post' || query.type === 'page' ) ) {
 			if ( siteId ) {
 				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
 			} else {

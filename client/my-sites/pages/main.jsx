@@ -16,12 +16,10 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
 import urlSearch from 'calypso/lib/url-search';
 import Main from 'calypso/components/main';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
 import NavItem from 'calypso/components/section-nav/item';
-import NavTabs from 'calypso/components/section-nav/tabs';
 import PageList from './page-list';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import Search from 'calypso/components/search';
-import SectionNav from 'calypso/components/section-nav';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { mapPostStatus as mapStatus } from 'calypso/lib/route';
@@ -111,24 +109,7 @@ class PagesMain extends React.Component {
 					headerText={ translate( 'Pages' ) }
 					align="left"
 				/>
-				<SectionNav selectedText={ filterStrings[ status ] }>
-					<NavTabs label={ translate( 'Status', { context: 'Filter page group label for tabs' } ) }>
-						{ this.getNavItems( filterStrings, status ) }
-					</NavTabs>
-					{ /* Disable search in all-sites mode because it doesn't work. */ }
-					{ isSingleSite && (
-						<Search
-							pinned
-							fitsContainer
-							isOpen={ this.props.getSearchOpen() }
-							onSearch={ this.props.doSearch }
-							initialValue={ search }
-							placeholder={ `${ searchPagesPlaceholder }…` }
-							analyticsGroup="Pages"
-							delaySearch={ true }
-						/>
-					) }
-				</SectionNav>
+				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ filterStrings[ status ] } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
 
 				{ /* ExPlat's Evergreen A/A Test Experiment:
