@@ -62,7 +62,13 @@ export function CreditCardForm( {
 	onCancel = undefined,
 	translate,
 } ) {
-	const { stripe, stripeConfiguration, setStripeError } = useStripe();
+	const {
+		stripe,
+		stripeConfiguration,
+		setStripeError,
+		isStripeLoading,
+		stripeLoadingError,
+	} = useStripe();
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
@@ -149,6 +155,15 @@ export function CreditCardForm( {
 			error && displayError( { translate, error } );
 		}
 	};
+
+	if ( stripeLoadingError ) {
+		displayError( { translate, stripeLoadingError } );
+		return <div>{ translate( 'An unexpected error occurred. Please try again later.' ) }</div>;
+	}
+
+	if ( isStripeLoading ) {
+		return translate( 'Loading…' );
+	}
 
 	return (
 		<form onSubmit={ onSubmit }>
