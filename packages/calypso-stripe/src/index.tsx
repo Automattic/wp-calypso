@@ -359,11 +359,11 @@ function useStripeJs(
 		}
 
 		async function loadAndInitStripe() {
-			if ( ! stripeConfiguration ) {
-				return;
-			}
 			if ( stripeConfigurationError ) {
 				throw stripeConfigurationError;
+			}
+			if ( ! stripeConfiguration ) {
+				return;
 			}
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
@@ -434,7 +434,29 @@ function useStripeConfiguration(
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
 		fetchStripeConfiguration( requestArgs || {} )
-			.then( ( configuration ) => isSubscribed && setStripeConfiguration( configuration ) )
+			.then( ( configuration ) => {
+				if ( ! isSubscribed ) {
+					return;
+				}
+				if ( requestArgs?.needs_intent && ! configuration.setup_intent_id ) {
+					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
+					throw new StripeConfigurationError(
+						'Error loading new credit card form. Received invalid data from the server.'
+					);
+				}
+				if (
+					! configuration.js_url ||
+					! configuration.public_key ||
+					! configuration.processor_id
+				) {
+					debug( 'invalid stripe configuration; missing some data', configuration );
+					throw new StripeConfigurationError(
+						'Error loading credit card form. Received invalid data from the server.'
+					);
+				}
+				debug( 'stripe configuration received', configuration );
+				setStripeConfiguration( configuration );
+			} )
 			.catch( ( error ) => {
 				setStripeConfigurationError( error );
 			} );
