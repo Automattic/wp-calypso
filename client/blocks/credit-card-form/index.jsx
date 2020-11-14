@@ -158,7 +158,7 @@ export function CreditCardForm( {
 
 	useEffect( () => {
 		if ( stripeLoadingError ) {
-			displayError( { translate, stripeLoadingError } );
+			displayError( { translate, error: stripeLoadingError } );
 		}
 	}, [ stripeLoadingError, translate ] );
 
