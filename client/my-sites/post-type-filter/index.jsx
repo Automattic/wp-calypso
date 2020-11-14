@@ -156,7 +156,12 @@ export class PostTypeFilter extends Component {
 						) ) }
 					</NavTabs>
 					{ ! authorToggleHidden && (
-						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />
+						<AuthorSegmented
+							author={ query.author }
+							siteId={ siteId }
+							statusSlug={ statusSlug }
+							type={ query.type }
+						/>
 					) }
 					{ /* Disable search in all-sites mode because it doesn't work. */ }
 					{ isSingleSite && (
