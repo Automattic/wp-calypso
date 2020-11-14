@@ -310,7 +310,7 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	shouldRenderCountrySpecificFields() {
+	shouldRenderCountrySpecificFields = () => {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
 		// i.e., when there is a current transaction.
@@ -318,7 +318,7 @@ export class CreditCardFormFields extends React.Component {
 			this.props.isNewTransaction &&
 			shouldRenderAdditionalCountryFields( this.getFieldValue( 'country' ) )
 		);
-	}
+	};
 
 	render() {
 		const { translate, countriesList, autoFocus } = this.props;
