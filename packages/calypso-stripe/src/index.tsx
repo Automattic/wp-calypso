@@ -138,6 +138,8 @@ export class StripeValidationError extends Error {
 	}
 }
 
+export class StripeConfigurationError extends Error {}
+
 /**
  * An error related to a Setup Intent
  *
@@ -225,7 +227,7 @@ export async function createStripeSetupIntent(
 	debug( 'creating setup intent...', paymentDetails );
 	if ( ! stripeConfiguration.setup_intent_id ) {
 		debug( 'Unable to create setup intent; missing intent ID' );
-		throw new Error(
+		throw new StripeConfigurationError(
 			'There is a problem with the credit card system configuration. Please try reloading the page.'
 		);
 	}
