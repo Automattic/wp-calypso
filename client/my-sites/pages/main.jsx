@@ -78,14 +78,7 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const {
-			siteId,
-			search,
-			status = 'published',
-			translate,
-			searchPagesPlaceholder,
-			queryType,
-		} = this.props;
+		const { siteId, search, status = 'published', translate, queryType, author } = this.props;
 
 		const filterStrings = {
 			published: translate( 'Published', { context: 'Filter label for pages list' } ),
@@ -94,12 +87,11 @@ class PagesMain extends React.Component {
 			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
 		};
 
-		const isSingleSite = !! siteId;
-
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
 			site_visibility: ! siteId ? 'visible' : undefined,
+			author,
 			// When searching, search across all statuses so the user can
 			// always find what they are looking for, regardless of what tab
 			// the search was initiated from. Use POST_STATUSES rather than
