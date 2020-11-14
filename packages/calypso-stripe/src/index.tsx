@@ -223,6 +223,12 @@ export async function createStripeSetupIntent(
 	paymentDetails: PaymentDetails
 ): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
+	if ( ! stripeConfiguration.setup_intent_id ) {
+		debug( 'Unable to create setup intent; missing intent ID' );
+		throw new Error(
+			'There is a problem with the credit card system configuration. Please try reloading the page.'
+		);
+	}
 	let stripeResponse: HandleCardSetupResponse | undefined;
 	try {
 		stripeResponse = await stripe.handleCardSetup( stripeConfiguration.setup_intent_id, {
