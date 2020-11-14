@@ -327,19 +327,14 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
-
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div className="credit-card-form-fields">
-				{ this.createField( 'name', Input, {
-					autoFocus,
-					label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
-						comment: 'Cardholder name label on credit card form',
-						components: {
-							span: <span className="credit-card-form-fields__explainer" />,
-						},
-					} ),
-					placeholder: ' ',
-				} ) }
+				<CardholderNameField
+					autoFocus={ autoFocus }
+					createField={ this.createField }
+					shouldRenderCountrySpecificFields={ this.shouldRenderCountrySpecificFields }
+				/>
 				<div className="credit-card-form-fields__field number">
 					<CreditCardNumberField
 						translate={ this.props.translate }
@@ -384,6 +379,30 @@ export class CreditCardFormFields extends React.Component {
 			</div>
 		);
 	}
+}
+
+function CardholderNameField( { createField, shouldRenderCountrySpecificFields, autoFocus } ) {
+	const translate = useTranslate();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
+
+	const disabled =
+		isStripeLoading || stripeLoadingError ? ! shouldRenderCountrySpecificFields() : false;
+
+	return (
+		<>
+			{ createField( 'name', Input, {
+				disabled,
+				autoFocus,
+				label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
+					comment: 'Cardholder name label on credit card form',
+					components: {
+						span: <span className="credit-card-form-fields__explainer" />,
+					},
+				} ),
+				placeholder: ' ',
+			} ) }
+		</>
+	);
 }
 
 export default localize( CreditCardFormFields );
