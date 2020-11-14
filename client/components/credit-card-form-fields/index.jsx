@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { isEmpty, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { useStripe } from '@automattic/calypso-stripe';
 
 /**
@@ -17,7 +17,6 @@ import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-numbe
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
-import notices from 'calypso/notices';
 import PaymentCountrySelect from 'calypso/components/payment-country-select';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { maskField, unmaskField, getCreditCardType } from 'calypso/lib/checkout';
@@ -158,9 +157,6 @@ CreditCardNumberField.propTypes = {
 
 function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage, card } ) {
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
-	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
-		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
-	}
 
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
