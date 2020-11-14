@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
@@ -156,14 +156,13 @@ export function CreditCardForm( {
 		}
 	};
 
-	if ( stripeLoadingError ) {
-		displayError( { translate, stripeLoadingError } );
-		return <div>{ translate( 'An unexpected error occurred. Please try again later.' ) }</div>;
-	}
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			displayError( { translate, stripeLoadingError } );
+		}
+	}, [ stripeLoadingError, translate ] );
 
-	if ( isStripeLoading ) {
-		return translate( 'Loading…' );
-	}
+	const disabled = isStripeLoading || stripeLoadingError;
 
 	return (
 		<form onSubmit={ onSubmit }>
@@ -189,7 +188,11 @@ export function CreditCardForm( {
 					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
 				/>
 
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
+				<SaveButton
+					translate={ translate }
+					disabled={ disabled }
+					formSubmitting={ formSubmitting }
+				/>
 
 				{ onCancel && (
 					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
@@ -218,9 +221,9 @@ CreditCardForm.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-function SaveButton( { translate, formSubmitting } ) {
+function SaveButton( { translate, disabled, formSubmitting } ) {
 	return (
-		<FormButton disabled={ formSubmitting } type="submit">
+		<FormButton disabled={ disabled || formSubmitting } type="submit">
 			{ formSubmitting
 				? translate( 'Saving card…', {
 						context: 'Button label',
