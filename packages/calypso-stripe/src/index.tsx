@@ -406,7 +406,7 @@ function useStripeJs(
  */
 function useStripeConfiguration(
 	fetchStripeConfiguration: GetStripeConfiguration,
-	requestArgs: undefined | null | GetStripeConfigurationArgs = null
+	requestArgs?: undefined | null | GetStripeConfigurationArgs
 ): { stripeConfiguration: StripeConfiguration | undefined; setStripeError: SetStripeError } {
 	const [ stripeError, setStripeError ] = useState< undefined | string >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
