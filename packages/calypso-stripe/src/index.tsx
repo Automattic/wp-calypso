@@ -228,7 +228,7 @@ export async function createStripeSetupIntent(
 	if ( ! stripeConfiguration.setup_intent_id ) {
 		debug( 'Unable to create setup intent; missing intent ID' );
 		throw new StripeConfigurationError(
-			'There is a problem with the credit card system configuration. Please try reloading the page.'
+			'There is a problem with the payment method system configuration.'
 		);
 	}
 	let stripeResponse: HandleCardSetupResponse | undefined;
@@ -441,7 +441,7 @@ function useStripeConfiguration(
 				if ( requestArgs?.needs_intent && ! configuration.setup_intent_id ) {
 					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
 					throw new StripeConfigurationError(
-						'Error loading new credit card form. Received invalid data from the server.'
+						'Error loading new payment method configuration. Received invalid data from the server.'
 					);
 				}
 				if (
@@ -451,7 +451,7 @@ function useStripeConfiguration(
 				) {
 					debug( 'invalid stripe configuration; missing some data', configuration );
 					throw new StripeConfigurationError(
-						'Error loading credit card form. Received invalid data from the server.'
+						'Error loading payment method configuration. Received invalid data from the server.'
 					);
 				}
 				debug( 'stripe configuration received', configuration );
