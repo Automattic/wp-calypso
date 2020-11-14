@@ -47,7 +47,7 @@ function useLogPaymentMethodsError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
