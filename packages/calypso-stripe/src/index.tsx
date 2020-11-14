@@ -333,11 +333,13 @@ function getValidationErrorsFromStripeError(
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @param {Error|undefined} [stripeConfigurationError] Any error that occured trying to load the configuration
  * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {object} { stripeJs, isStripeLoading }
  */
 function useStripeJs(
 	stripeConfiguration: StripeConfiguration | undefined,
+	stripeConfigurationError: undefined | Error,
 	locale: string | undefined = undefined
 ): UseStripeJs {
 	const [ stripeJs, setStripeJs ] = useState< null | Stripe >( null );
@@ -359,6 +361,9 @@ function useStripeJs(
 		async function loadAndInitStripe() {
 			if ( ! stripeConfiguration ) {
 				return;
+			}
+			if ( stripeConfigurationError ) {
+				throw stripeConfigurationError;
 			}
 			if ( window.Stripe ) {
 				debug( 'stripe.js already loaded' );
@@ -387,7 +392,7 @@ function useStripeJs(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripeConfiguration, stripeJs, stripeLocale ] );
+	}, [ stripeConfigurationError, stripeConfiguration, stripeJs, stripeLocale ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -415,22 +420,29 @@ function useStripeJs(
 function useStripeConfiguration(
 	fetchStripeConfiguration: GetStripeConfiguration,
 	requestArgs?: undefined | null | GetStripeConfigurationArgs
-): { stripeConfiguration: StripeConfiguration | undefined; setStripeError: SetStripeError } {
+): {
+	stripeConfiguration: StripeConfiguration | undefined;
+	stripeConfigurationError: undefined | Error;
+	setStripeError: SetStripeError;
+} {
 	const [ stripeError, setStripeError ] = useState< undefined | string >();
+	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
 		undefined | StripeConfiguration
 	>();
 	useEffect( () => {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		fetchStripeConfiguration( requestArgs || {} ).then(
-			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
-		);
+		fetchStripeConfiguration( requestArgs || {} )
+			.then( ( configuration ) => isSubscribed && setStripeConfiguration( configuration ) )
+			.catch( ( error ) => {
+				setStripeConfigurationError( error );
+			} );
 		return () => {
 			isSubscribed = false;
 		};
 	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
-	return { stripeConfiguration, setStripeError };
+	return { stripeConfiguration, stripeConfigurationError, setStripeError };
 }
 
 function StripeHookProviderInnerWrapper( {
@@ -459,12 +471,13 @@ export function StripeHookProvider( {
 	locale?: undefined | string;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
-	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
+	const { stripeConfiguration, stripeConfigurationError, setStripeError } = useStripeConfiguration(
 		fetchStripeConfiguration,
 		configurationArgs
 	);
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
+		stripeConfigurationError,
 		locale
 	);
 
