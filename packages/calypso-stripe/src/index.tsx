@@ -413,10 +413,9 @@ function useStripeConfiguration(
 		undefined | StripeConfiguration
 	>();
 	useEffect( () => {
-		const getConfig = fetchStripeConfiguration;
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		getConfig( requestArgs || {} ).then(
+		fetchStripeConfiguration( requestArgs || {} ).then(
 			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
 		);
 		return () => {
