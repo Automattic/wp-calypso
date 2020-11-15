@@ -31,7 +31,7 @@ const AuthorSegmented = ( { author, siteSlug, statusSlug, translate, user, type 
 				const path = compact( [
 					basePath,
 					isMe ? 'my' : null,
-					statusSlug.toLowerCase(),
+					statusSlug?.toLowerCase(),
 					siteSlug,
 				] ).join( '/' );
 

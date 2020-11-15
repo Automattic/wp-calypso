@@ -51,6 +51,15 @@ export class PostTypeFilter extends Component {
 	getNavItems() {
 		const { query, siteId, siteSlug, statusSlug, jetpack, counts } = this.props;
 
+		const isPostOrPage = query.type === 'post' || query.type === 'page';
+
+		let basePath = '/types/' + query.type;
+		if ( query.type === 'page' ) {
+			basePath = '/pages';
+		} else if ( query.type === 'post' ) {
+			basePath = '/posts';
+		}
+
 		return reduce(
 			counts,
 			( memo, count, status ) => {
@@ -88,10 +97,10 @@ export class PostTypeFilter extends Component {
 				return memo.concat( {
 					key: `filter-${ status }`,
 					// Hide count in all sites mode; and in Jetpack mode for non-posts
-					count: ! siteId || ( jetpack && query.type !== 'post' ) ? null : count,
+					count: ! siteId || ( jetpack && ! isPostOrPage ) ? null : count,
 					path: compact( [
-						query.type === 'post' ? '/posts' : '/types/' + query.type,
-						query.type === 'post' && query.author && 'my',
+						basePath,
+						isPostOrPage && query.author && 'my',
 						pathStatus,
 						siteSlug,
 					] ).join( '/' ),
