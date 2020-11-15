@@ -120,7 +120,7 @@ class Site extends React.Component {
 		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
 		const isPublicComingSoon =
 			isEnabled( 'coming-soon-v2' ) && ! site.is_private && this.props.site.is_coming_soon;
-		// Private and unlaunched for v1 Coming soon === coming soon mode v1 is on
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 
 		return (

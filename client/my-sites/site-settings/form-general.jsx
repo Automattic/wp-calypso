@@ -422,7 +422,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-		// Private and unlaunched for v1 Coming soon === coming soon mode v1 is on
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 		const isAnyComingSoonEnabled =
@@ -617,7 +617,7 @@ export class SiteSettingsFormGeneral extends Component {
 		}
 
 		const blogPublic = parseInt( fields.blog_public, 10 );
-		// Private and default for v1 Coming soon === coming soon mode v1 is on
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 
 		return (
