@@ -17,12 +17,11 @@ import DocumentHead from 'calypso/components/data/document-head';
 import urlSearch from 'calypso/lib/url-search';
 import Main from 'calypso/components/main';
 import PostTypeFilter from 'calypso/my-sites/post-type-filter';
-import NavItem from 'calypso/components/section-nav/item';
 import PageList from './page-list';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { mapPostStatus as mapStatus } from 'calypso/lib/route';
+import { mapPostStatus } from 'calypso/lib/route';
 import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
 import { Experiment } from 'calypso/components/experiment';
@@ -31,8 +30,6 @@ import { Experiment } from 'calypso/components/experiment';
  * Style dependencies
  */
 import './style.scss';
-
-const statuses = [ 'published', 'drafts', 'scheduled', 'trashed' ];
 
 class PagesMain extends React.Component {
 	static displayName = 'Pages';
@@ -76,14 +73,8 @@ class PagesMain extends React.Component {
 	}
 
 	render() {
-		const { siteId, search, status = 'published', translate, queryType, author } = this.props;
-
-		const filterStrings = {
-			published: translate( 'Published', { context: 'Filter label for pages list' } ),
-			drafts: translate( 'Drafts', { context: 'Filter label for pages list' } ),
-			scheduled: translate( 'Scheduled', { context: 'Filter label for pages list' } ),
-			trashed: translate( 'Trashed', { context: 'Filter label for pages list' } ),
-		};
+		const { siteId, search, status, translate, queryType, author } = this.props;
+		const postStatus = mapPostStatus( status );
 
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
@@ -94,7 +85,7 @@ class PagesMain extends React.Component {
 			// always find what they are looking for, regardless of what tab
 			// the search was initiated from. Use POST_STATUSES rather than
 			// "any" to do this, since the latter excludes trashed posts.
-			status: search ? POST_STATUSES.join( ',' ) : mapStatus( status ),
+			status: search ? POST_STATUSES.join( ',' ) : postStatus,
 			type: queryType,
 		};
 
@@ -109,7 +100,7 @@ class PagesMain extends React.Component {
 					headerText={ translate( 'Pages' ) }
 					align="left"
 				/>
-				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ filterStrings[ status ] } />
+				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ status } />
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
 
 				{ /* ExPlat's Evergreen A/A Test Experiment:
@@ -130,28 +121,6 @@ class PagesMain extends React.Component {
 				/>
 			</Main>
 		);
-	}
-
-	getNavItems( filterStrings, currentStatus ) {
-		const { site, siteId } = this.props;
-		const sitePart = ( site && site.slug ) || siteId;
-		const siteFilter = sitePart ? '/' + sitePart : '';
-
-		return statuses.map( function ( status ) {
-			let path = `/pages${ siteFilter }`;
-			if ( status !== 'publish' ) {
-				path = `/pages/${ status }${ siteFilter }`;
-			}
-			return (
-				<NavItem
-					path={ path }
-					selected={ currentStatus === status }
-					key={ `page-filter-${ status }` }
-				>
-					{ filterStrings[ status ] }
-				</NavItem>
-			);
-		} );
 	}
 }
 
