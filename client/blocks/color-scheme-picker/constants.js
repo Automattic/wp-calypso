@@ -34,6 +34,30 @@ import ectoplasmImg from 'calypso/assets/images/color-schemes/color-scheme-thumb
 export default function ( translate ) {
 	return compact( [
 		{
+			label: translate( 'Aquatic' ),
+			value: 'aquatic',
+			thumbnail: {
+				cssClass: 'is-aquatic',
+				imageUrl: aquaticImg,
+			},
+		},
+		{
+			label: translate( 'Blue' ),
+			value: 'blue',
+			thumbnail: {
+				cssClass: 'is-blue',
+				imageUrl: blueImg,
+			},
+		},
+		{
+			label: translate( 'Classic Blue' ),
+			value: 'classic-blue',
+			thumbnail: {
+				cssClass: 'is-classic-blue',
+				imageUrl: classicBlueImg,
+			},
+		},
+		{
 			label: translate( 'Classic Bright' ),
 			value: 'classic-bright',
 			thumbnail: {
@@ -47,102 +71,6 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-classic-dark',
 				imageUrl: classicDarkImg,
-			},
-		},
-		{
-			label: translate( 'Classic Blue' ),
-			value: 'classic-blue',
-			thumbnail: {
-				cssClass: 'is-classic-blue',
-				imageUrl: classicBlueImg,
-			},
-		},
-		{
-			label: translate( 'Blue' ),
-			value: 'blue',
-			thumbnail: {
-				cssClass: 'is-blue',
-				imageUrl: blueImg,
-			},
-		},
-		{
-			label: translate( 'Powder Snow' ),
-			value: 'powder-snow',
-			thumbnail: {
-				cssClass: 'is-powder-snow',
-				imageUrl: powderSnowImg,
-			},
-		},
-		{
-			label: translate( 'Light' ),
-			value: 'light',
-			thumbnail: {
-				cssClass: 'is-light',
-				imageUrl: lightImg,
-			},
-		},
-		{
-			label: translate( 'Modern' ),
-			value: 'modern',
-			thumbnail: {
-				cssClass: 'is-modern',
-				imageUrl: modernImg,
-			},
-		},
-		{
-			label: translate( 'Nightfall' ),
-			value: 'nightfall',
-			thumbnail: {
-				cssClass: 'is-nightfall',
-				imageUrl: nightfallImg,
-			},
-		},
-		{
-			label: translate( 'Sakura' ),
-			value: 'sakura',
-			thumbnail: {
-				cssClass: 'is-sakura',
-				imageUrl: sakuraImg,
-			},
-		},
-		{
-			label: translate( 'Ocean' ),
-			value: 'ocean',
-			thumbnail: {
-				cssClass: 'is-ocean',
-				imageUrl: oceanImg,
-			},
-		},
-		{
-			label: translate( 'Aquatic' ),
-			value: 'aquatic',
-			thumbnail: {
-				cssClass: 'is-aquatic',
-				imageUrl: aquaticImg,
-			},
-		},
-		{
-			label: translate( 'Sunrise' ),
-			value: 'sunrise',
-			thumbnail: {
-				cssClass: 'is-sunrise',
-				imageUrl: sunriseImg,
-			},
-		},
-		{
-			label: translate( 'Sunset' ),
-			value: 'sunset',
-			thumbnail: {
-				cssClass: 'is-sunset',
-				imageUrl: sunsetImg,
-			},
-		},
-		{
-			label: translate( 'Midnight' ),
-			value: 'midnight',
-			thumbnail: {
-				cssClass: 'is-midnight',
-				imageUrl: midnightImg,
 			},
 		},
 		{
@@ -167,6 +95,78 @@ export default function ( translate ) {
 			thumbnail: {
 				cssClass: 'is-ectoplasm',
 				imageUrl: ectoplasmImg,
+			},
+		},
+		{
+			label: translate( 'Light' ),
+			value: 'light',
+			thumbnail: {
+				cssClass: 'is-light',
+				imageUrl: lightImg,
+			},
+		},
+		{
+			label: translate( 'Midnight' ),
+			value: 'midnight',
+			thumbnail: {
+				cssClass: 'is-midnight',
+				imageUrl: midnightImg,
+			},
+		},
+		{
+			label: translate( 'Modern' ),
+			value: 'modern',
+			thumbnail: {
+				cssClass: 'is-modern',
+				imageUrl: modernImg,
+			},
+		},
+		{
+			label: translate( 'Nightfall' ),
+			value: 'nightfall',
+			thumbnail: {
+				cssClass: 'is-nightfall',
+				imageUrl: nightfallImg,
+			},
+		},
+		{
+			label: translate( 'Ocean' ),
+			value: 'ocean',
+			thumbnail: {
+				cssClass: 'is-ocean',
+				imageUrl: oceanImg,
+			},
+		},
+		{
+			label: translate( 'Powder Snow' ),
+			value: 'powder-snow',
+			thumbnail: {
+				cssClass: 'is-powder-snow',
+				imageUrl: powderSnowImg,
+			},
+		},
+		{
+			label: translate( 'Sakura' ),
+			value: 'sakura',
+			thumbnail: {
+				cssClass: 'is-sakura',
+				imageUrl: sakuraImg,
+			},
+		},
+		{
+			label: translate( 'Sunrise' ),
+			value: 'sunrise',
+			thumbnail: {
+				cssClass: 'is-sunrise',
+				imageUrl: sunriseImg,
+			},
+		},
+		{
+			label: translate( 'Sunset' ),
+			value: 'sunset',
+			thumbnail: {
+				cssClass: 'is-sunset',
+				imageUrl: sunsetImg,
 			},
 		},
 	] );

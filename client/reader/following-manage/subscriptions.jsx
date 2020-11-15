@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { reverse, sortBy, trimStart, isEmpty } from 'lodash';
+import { sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
@@ -48,7 +48,7 @@ class FollowingManageSubscriptions extends Component {
 			} );
 		}
 
-		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
+		return sortBy( follows, [ 'date_subscribed' ] ).reverse();
 	}
 
 	handleSortChange = ( sort ) => {

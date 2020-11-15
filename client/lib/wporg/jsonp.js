@@ -34,16 +34,14 @@ function noop() {}
  * @param {Function} optional callback
  */
 function jsonp( url, query, fn ) {
-	let prefix = '__jp';
-	let timeout = 60000;
-	let enc = encodeURIComponent;
-	let target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
-	let script;
+	const prefix = '__jp';
+	const timeout = 60000;
+	const enc = encodeURIComponent;
+	const target = document.getElementsByTagName( 'script' )[ 0 ] || document.head;
 	let timer;
-	let id;
 
 	// generate a unique id for this request
-	id = prefix + count++;
+	const id = prefix + count++;
 
 	if ( timeout ) {
 		timer = setTimeout( function () {
@@ -85,7 +83,7 @@ function jsonp( url, query, fn ) {
 	debug( 'jsonp req "%s"', url );
 
 	// create script
-	script = document.createElement( 'script' );
+	const script = document.createElement( 'script' );
 	script.src = url;
 	target.parentNode.insertBefore( script, target );
 

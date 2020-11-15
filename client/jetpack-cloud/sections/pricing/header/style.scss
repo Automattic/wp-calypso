@@ -1,3 +1,6 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .header {
 	text-align: center;
 }
@@ -16,7 +19,20 @@
 	.header.i5
 	.header__main-title
 	.formatted-header__title {
-	font-size: 2rem;
+	max-width: 280px;
+	margin-bottom: 60px;
+	margin-right: auto;
+	margin-left: auto;
+
+	font-size: 1.5rem;
 	font-weight: 700;
 	letter-spacing: -1px;
+	line-height: 1.4;
+
+	@include break-small {
+		max-width: none;
+
+		font-size: 2rem;
+		line-height: 1.2;
+	}
 }

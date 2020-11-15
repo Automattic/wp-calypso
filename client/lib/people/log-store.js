@@ -15,7 +15,6 @@ import emitter from 'calypso/lib/mixins/emitter';
 let _errors = [];
 let _inProgress = [];
 let _completed = [];
-let PeopleLogStore;
 
 function removeLog( log ) {
 	debug( 'removing log:', log );
@@ -69,7 +68,7 @@ function filterList( listName, filterBy ) {
 	return clone( list );
 }
 
-PeopleLogStore = {
+const PeopleLogStore = {
 	hasUnauthorizedError: function ( siteId ) {
 		return Boolean(
 			find( _errors, ( log ) => log.siteId === siteId && log.error === 'unauthorized' )

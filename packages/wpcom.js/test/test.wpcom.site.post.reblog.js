@@ -1,25 +1,25 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * site.post.reblog
  */
 describe( 'wpcom.site.post.reblog', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var testing_reblog_post = wpcom
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const testing_reblog_post = wpcom
 		.site( fixture.reblog.original_blog )
 		.post( fixture.reblog.original_post );
-	var testing_post;
+	let testing_post;
 
 	// Create a testing_post before to start tests
 	before( ( done ) => {

@@ -54,7 +54,7 @@ const BackupChanges = ( { deltas } ) => {
 	const mediaCountDisplay = `${ mediaOperator }${ mediaCount }`;
 
 	const deletedElement = [
-		<div className="daily-backup-status__media-image">
+		<div className="daily-backup-status__media-image" key="media-deleted">
 			<img alt="" src={ mediaImage } />
 			<div className="daily-backup-status__deleted-count-bubble">
 				-{ deltas.mediaDeleted.length }
@@ -136,14 +136,23 @@ const BackupChanges = ( { deltas } ) => {
 		);
 	} );
 
+	const users = deltas.users.map( ( item ) => {
+		return (
+			<div key={ item.activityId } className="daily-backup-status__extension-block-installed">
+				<Gridicon icon="plus" className="daily-backup-status__extension-block-installed" />
+				<div className="daily-backup-status__extension-block-text">
+					{ item.activityDescription[ 0 ].children[ 0 ] }
+				</div>
+			</div>
+		);
+	} );
+
 	const hasChanges = !! (
-		(
-			deltas.mediaCreated.length ||
-			deltas.posts.length ||
-			deltas.plugins.length ||
-			deltas.themes.length
-		)
-		//|| !! metaDiff.filter( ( diff ) => 0 !== diff.num ).length
+		deltas.mediaCreated.length ||
+		deltas.posts.length ||
+		deltas.plugins.length ||
+		deltas.themes.length ||
+		deltas.users.length
 	);
 
 	return (
@@ -188,7 +197,12 @@ const BackupChanges = ( { deltas } ) => {
 					<div className="daily-backup-status__section-plugins">{ themes }</div>
 				</>
 			) }
-			{ /*{ renderMetaDiff( metaDiff ) }*/ }
+			{ !! deltas.users.length && (
+				<>
+					<div className="daily-backup-status__section-header">{ translate( 'Users' ) }</div>
+					<div className="daily-backup-status__section-plugins">{ users }</div>
+				</>
+			) }
 		</div>
 	);
 };

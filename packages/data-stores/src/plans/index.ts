@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { controls } from '@wordpress/data-controls';
 import { registerStore } from '@wordpress/data';
 import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 
@@ -13,6 +12,7 @@ import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
 import * as resolvers from './resolvers';
+import { controls } from '../wpcom-request-controls';
 
 export type { State };
 export type { Plan, PlanSlug } from './types';
@@ -35,7 +35,7 @@ export function register(): typeof STORE_KEY {
 		registerStore< State >( STORE_KEY, {
 			resolvers,
 			actions,
-			controls,
+			controls: controls as any,
 			reducer: reducer as any,
 			selectors,
 		} );

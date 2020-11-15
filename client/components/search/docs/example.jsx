@@ -13,7 +13,7 @@ import SearchCard from 'calypso/components/search-card';
 /**
  * Globals
  */
-var noop = () => {};
+const noop = () => {};
 
 class SearchDemo extends PureComponent {
 	static displayName = 'Search';

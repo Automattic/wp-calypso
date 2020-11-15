@@ -212,7 +212,6 @@ export default {
 				component={ DomainManagement.NameServers }
 				context={ pageContext }
 				needsDomains
-				needsNameservers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);

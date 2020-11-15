@@ -14,11 +14,7 @@ import { format as formatUrl, parse as parseUrl } from 'url';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import {
-	shouldShowTax,
-	hasPendingPayment,
-	getEnabledPaymentMethods,
-} from 'calypso/lib/cart-values';
+import { shouldShowTax, hasPendingPayment } from 'calypso/lib/cart-values';
 import {
 	conciergeSessionItem,
 	domainMapping,
@@ -835,7 +831,6 @@ export class Checkout extends React.Component {
 				cart={ cart }
 				transaction={ transaction }
 				cards={ cards }
-				paymentMethods={ this.paymentMethodsAbTestFilter() }
 				products={ productsList }
 				selectedSite={ selectedSite }
 				setHeaderText={ setHeaderText }
@@ -903,12 +898,6 @@ export class Checkout extends React.Component {
 		} );
 		replaceItem( product, cartItem );
 	};
-
-	paymentMethodsAbTestFilter() {
-		// This methods can be used to filter payment methods
-		// For example, for the purpose of AB tests.
-		return getEnabledPaymentMethods( this.props.cart );
-	}
 
 	isLoading() {
 		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;

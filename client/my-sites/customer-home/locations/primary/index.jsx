@@ -18,20 +18,23 @@ import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
 import CelebrateSiteSetupComplete from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-setup-complete';
+import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import {
 	NOTICE_CELEBRATE_SITE_CREATION,
 	NOTICE_CELEBRATE_SITE_LAUNCH,
 	NOTICE_CELEBRATE_SITE_MIGRATION,
 	NOTICE_CELEBRATE_SITE_SETUP_COMPLETE,
 	TASK_CONNECT_ACCOUNTS,
+	TASK_EARN_FEATURES,
 	TASK_FIND_DOMAIN,
-	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
 	TASK_GO_MOBILE_ANDROID,
 	TASK_GO_MOBILE_IOS,
-	TASK_SITE_SETUP_CHECKLIST,
-	TASK_WEBINARS,
-	TASK_EARN_FEATURES,
 	TASK_GROWTH_SUMMIT,
+	TASK_RENEW_EXPIRED_PLAN,
+	TASK_RENEW_EXPIRING_PLAN,
+	TASK_SITE_SETUP_CHECKLIST,
+	TASK_SITE_SETUP_CHECKLIST_ECOMMERCE,
+	TASK_WEBINARS,
 } from 'calypso/my-sites/customer-home/cards/constants';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -51,6 +54,8 @@ const cardComponents = {
 	[ NOTICE_CELEBRATE_SITE_LAUNCH ]: CelebrateSiteLaunch,
 	[ NOTICE_CELEBRATE_SITE_MIGRATION ]: CelebrateSiteMigration,
 	[ NOTICE_CELEBRATE_SITE_SETUP_COMPLETE ]: CelebrateSiteSetupComplete,
+	[ TASK_RENEW_EXPIRED_PLAN ]: Renew,
+	[ TASK_RENEW_EXPIRING_PLAN ]: Renew,
 };
 
 const Primary = ( { cards, trackCards } ) => {
@@ -72,6 +77,7 @@ const Primary = ( { cards, trackCards } ) => {
 					React.createElement( cardComponents[ card ], {
 						key: index,
 						isIos: card === 'home-task-go-mobile-ios' ? true : null,
+						card,
 					} )
 			) }
 		</>

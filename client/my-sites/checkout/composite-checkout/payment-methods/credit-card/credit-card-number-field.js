@@ -5,6 +5,7 @@ import React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { CardNumberElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect, PaymentLogo } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -31,8 +32,9 @@ export default function CreditCardNumberField( {
 	);
 	const errorMessages = getErrorMessagesForField( 'number' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
+	const { responseCart } = useShoppingCart();
 
-	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode ) ) {
+	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode, responseCart ) ) {
 		return (
 			<CreditCardNumberInput
 				isError={ !! errorMessage }

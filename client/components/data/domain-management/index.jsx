@@ -16,8 +16,6 @@ import { getPlansBySite } from 'calypso/state/sites/plans/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getProductsList } from 'calypso/state/products-list/selectors';
-import NameserversStore from 'calypso/lib/domains/nameservers/store';
-import { fetchNameservers } from 'calypso/lib/domains/nameservers/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryProductsList from 'calypso/components/data/query-products-list';
@@ -34,7 +32,6 @@ function getStateFromStores( props ) {
 		context: props.context,
 		domains: props.selectedSite ? props.domains : null,
 		isRequestingSiteDomains: props.isRequestingSiteDomains,
-		nameservers: NameserversStore.getByDomainName( props.selectedDomainName ),
 		products: props.products,
 		selectedDomainName: props.selectedDomainName,
 		selectedSite: props.selectedSite,
@@ -57,7 +54,6 @@ class DomainManagementData extends React.Component {
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
 		needsDomainInfo: PropTypes.bool,
-		needsNameservers: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
 		needsUsers: PropTypes.bool,
@@ -82,10 +78,6 @@ class DomainManagementData extends React.Component {
 			fetchWapiDomainInfo( selectedDomainName );
 		}
 
-		if ( this.props.needsNameservers ) {
-			fetchNameservers( selectedDomainName );
-		}
-
 		if (
 			needsUsers &&
 			( prevProps.needsUsers !== needsUsers || prevProps.selectedSite !== selectedSite )
@@ -100,7 +92,6 @@ class DomainManagementData extends React.Component {
 			needsContactDetails,
 			needsDomains,
 			needsDomainInfo,
-			needsNameservers,
 			needsPlans,
 			needsProductsList,
 			needsUsers,
@@ -113,9 +104,6 @@ class DomainManagementData extends React.Component {
 		}
 		if ( needsDomainInfo ) {
 			stores.push( WapiDomainInfoStore );
-		}
-		if ( needsNameservers ) {
-			stores.push( NameserversStore );
 		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );

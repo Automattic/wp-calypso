@@ -19,22 +19,14 @@ jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnecti
 jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
 jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( x ) => x } />,
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import React from 'react';
 
 /**
  * Internal dependencies

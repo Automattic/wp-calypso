@@ -8,9 +8,11 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 /**
  * Internal dependencies
  */
-import { CheckoutCartItem } from '../types/checkout-cart';
-import { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import type { CheckoutCartItem } from '../types/checkout-cart';
+import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
 import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
+import { readCheckoutPaymentMethodSlug } from './translate-payment-method-names';
+import isPaymentMethodEnabled from './is-payment-method-enabled';
 
 const debug = debugFactory( 'calypso:composite-checkout:filter-appropriate-payment-methods' );
 
@@ -73,33 +75,18 @@ export default function filterAppropriatePaymentMethods( {
 			if ( methodObject.id.startsWith( 'existingCard-' ) ) {
 				return isPaymentMethodEnabled( 'card', allowedPaymentMethods );
 			}
-			if ( methodObject.id === 'full-credits' ) {
+			const slug = readCheckoutPaymentMethodSlug( methodObject.id );
+			if ( ! slug ) {
+				return false;
+			}
+			if ( slug === 'full-credits' ) {
 				// If the full-credits payment method still exists here (see above filter), it's enabled
 				return true;
 			}
-			if ( methodObject.id === 'free-purchase' ) {
+			if ( slug === 'free-purchase' ) {
 				// If the free payment method still exists here (see above filter), it's enabled
 				return true;
 			}
-			return isPaymentMethodEnabled( methodObject.id, allowedPaymentMethods );
-		} )
-		.filter( ( methodObject ) => ! isPaymentMethodLegallyRestricted( methodObject.id ) );
-}
-
-function isPaymentMethodLegallyRestricted( paymentMethodId: CheckoutPaymentMethodSlug ): boolean {
-	// Add the names of any legally-restricted payment methods to this list.
-	const restrictedPaymentMethods: CheckoutPaymentMethodSlug[] = [];
-
-	return restrictedPaymentMethods.includes( paymentMethodId );
-}
-
-function isPaymentMethodEnabled(
-	method: CheckoutPaymentMethodSlug,
-	allowedPaymentMethods: null | CheckoutPaymentMethodSlug[]
-): boolean {
-	// By default, allow all payment methods
-	if ( ! allowedPaymentMethods?.length ) {
-		return true;
-	}
-	return allowedPaymentMethods.includes( method );
+			return isPaymentMethodEnabled( slug, allowedPaymentMethods );
+		} );
 }

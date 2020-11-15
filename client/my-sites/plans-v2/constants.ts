@@ -301,19 +301,23 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 		? 'jetpack_crm_dark'
 		: 'jetpack_crm',
 	displayName:
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Jetpack CRM' ),
+		{
+			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
+				components: {
+					em: createElement( 'em' ),
+				},
+			} ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] || translate( 'Jetpack CRM' ),
+
 	shortName:
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack CRM ' )
-			: translate( 'CRM', {
-					comment: 'Short name of the Jetpack CRM',
-			  } ),
+		{
+			v2: translate( 'Jetpack CRM ' ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'CRM', {
+			comment: 'Short name of the Jetpack CRM',
+		} ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.

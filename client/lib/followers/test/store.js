@@ -12,6 +12,8 @@ import { assert } from 'chai';
  */
 import actions from './lib/mock-actions';
 import site from './lib/mock-site';
+import Dispatcher from 'calypso/dispatcher';
+import FollowersStore from 'calypso/lib/followers/store';
 
 /**
  * Internal dependencies
@@ -19,14 +21,6 @@ import site from './lib/mock-site';
 const options = { siteId: site.ID };
 
 describe( 'WPCOM Followers Store', () => {
-	let Dispatcher;
-	let FollowersStore;
-
-	beforeEach( () => {
-		Dispatcher = require( 'calypso/dispatcher' );
-		FollowersStore = require( 'calypso/lib/followers/store' );
-	} );
-
 	test( 'Store should be an object', () => {
 		assert.isObject( FollowersStore );
 	} );
@@ -48,11 +42,10 @@ describe( 'WPCOM Followers Store', () => {
 		} );
 
 		test( 'Fetching more followers should update the array in the store', () => {
-			let followers = FollowersStore.getFollowers( options );
-			let followersAgain;
+			const followers = FollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
-			followersAgain = FollowersStore.getFollowers( options );
+			const followersAgain = FollowersStore.getFollowers( options );
 			assert.equal( followersAgain.length, 4 );
 		} );
 
@@ -73,25 +66,21 @@ describe( 'WPCOM Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			let followers = FollowersStore.getFollowers( options );
-			let followersAgain;
-
+			const followers = FollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			Dispatcher.handleServerAction( actions.removeFollowerSuccess );
-			followersAgain = FollowersStore.getFollowers( options );
+			const followersAgain = FollowersStore.getFollowers( options );
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			let followers = FollowersStore.getFollowers( options );
-			let followersAfterRemove;
-			let followersAfterError;
+			const followers = FollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
-			followersAfterRemove = FollowersStore.getFollowers( options );
+			const followersAfterRemove = FollowersStore.getFollowers( options );
 			assert.equal( followersAfterRemove.length, 1 );
 			Dispatcher.handleServerAction( actions.removeFollowerError );
-			followersAfterError = FollowersStore.getFollowers( options );
+			const followersAfterError = FollowersStore.getFollowers( options );
 			assert.equal( followersAfterError.length, 2 );
 		} );
 	} );

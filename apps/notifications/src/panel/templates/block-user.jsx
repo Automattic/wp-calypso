@@ -14,7 +14,7 @@ import { linkProps } from './functions';
 import FollowLink from './follow-link';
 
 function getDisplayURL( url ) {
-	var parser = document.createElement( 'a' );
+	const parser = document.createElement( 'a' );
 	parser.href = url;
 	return ( parser.hostname + parser.pathname ).replace( /\/$/, '' );
 }
@@ -35,11 +35,11 @@ export class UserBlock extends React.Component {
 	 * @returns {string} - Time stamp formatted for display or '' if input invalid
 	 */
 	getTimeString = ( timestamp ) => {
-		var DAY_IN_SECONDS = 3600 * 24;
-		var MAX_LENGTH = 15;
-		var parsedTime = Date.parse( timestamp );
-		var momentTime;
-		var timeString;
+		const DAY_IN_SECONDS = 3600 * 24;
+		const MAX_LENGTH = 15;
+		const parsedTime = Date.parse( timestamp );
+		let momentTime;
+		let timeString;
 
 		if ( isNaN( parsedTime ) ) {
 			return '';
@@ -65,13 +65,13 @@ export class UserBlock extends React.Component {
 	};
 
 	render() {
-		var grav = this.props.block.media[ 0 ];
-		var home_url = '';
-		var home_title = '';
-		var timeIndicator;
-		var homeTemplate;
-		var followLink;
-		var noteActions;
+		const grav = this.props.block.media[ 0 ];
+		let home_url = '';
+		let home_title = '';
+		let timeIndicator;
+		let homeTemplate;
+		let followLink;
+		let noteActions;
 
 		if ( this.props.block.meta ) {
 			if ( this.props.block.meta.links ) {
@@ -110,7 +110,7 @@ export class UserBlock extends React.Component {
 		}
 
 		if ( home_title ) {
-			var homeClassName =
+			const homeClassName =
 				timeIndicator != '' ? 'wpnc__user__meta wpnc__user__bulleted' : 'wpnc__user__meta';
 			homeTemplate = (
 				<p className={ homeClassName }>
