@@ -49,6 +49,7 @@ RUN chown $UID /calypso
 COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=builder --chown=$UID /calypso/.cache /calypso/.cache
+COPY --from=builder --chown=$UID /calypso/.bashrc /calypso/.bashrc
 
 
 #### ci-desktop image
