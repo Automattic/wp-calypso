@@ -25,7 +25,6 @@ import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
-import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import media from './media/reducer';
 import mySites from './my-sites/reducer';
@@ -60,7 +59,6 @@ const reducers = {
 	immediateLogin,
 	importerNux,
 	inlineSupportArticle,
-	jetpackSync,
 	jitm,
 	media,
 	mySites,
