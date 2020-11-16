@@ -23,7 +23,7 @@ const JetpackFAQi5: React.FC = () => {
 			<section className="jetpack-faq-i5">
 				<h2 className="jetpack-faq-i5__heading">Frequently Asked Questions</h2>
 
-				<FoldableFAQ question={ translate( 'What is the cancellation policy?' ) }>
+				<FoldableFAQ id="faq-1" question={ translate( 'What is the cancellation policy?' ) }>
 					{ translate(
 						'We want to make sure Jetpack is exactly what you need, so you can request a cancellation' +
 							' within 30 days of purchase and receive a full refund. If there’s something you’d like' +
@@ -34,7 +34,7 @@ const JetpackFAQi5: React.FC = () => {
 					) }
 				</FoldableFAQ>
 
-				<FoldableFAQ question={ translate( 'Why do I need a WordPress.com account?' ) }>
+				<FoldableFAQ id="faq-2" question={ translate( 'Why do I need a WordPress.com account?' ) }>
 					{ translate(
 						"Many of Jetpack's core features make use of the WordPress.com cloud. In order to make sure everything" +
 							" works correctly, Jetpack requires you to connect a free WordPress.com account. If you don't already" +
@@ -42,13 +42,16 @@ const JetpackFAQi5: React.FC = () => {
 					) }
 				</FoldableFAQ>
 
-				<FoldableFAQ question={ translate( 'What are the hosting requirements?' ) }>
+				<FoldableFAQ id="faq-3" question={ translate( 'What are the hosting requirements?' ) }>
 					{ translate(
 						'You should be running the latest version of WordPress and a publicly-accessible site with XML-RPC enabled.'
 					) }
 				</FoldableFAQ>
 
-				<FoldableFAQ question={ translate( 'Does this work with a multisite network?' ) }>
+				<FoldableFAQ
+					id="faq-4"
+					question={ translate( 'Does this work with a multisite network?' ) }
+				>
 					{ translate(
 						'Jetpack’s free features are compatible with WordPress Multisite networks. Paid features' +
 							' also work with Multisite networks, but each site requires its own subscription. Jetpack Backup' +
@@ -56,7 +59,7 @@ const JetpackFAQi5: React.FC = () => {
 					) }
 				</FoldableFAQ>
 
-				<FoldableFAQ question={ translate( 'Have more questions?' ) }>
+				<FoldableFAQ id="faq-5" question={ translate( 'Have more questions?' ) }>
 					{ translate(
 						'No problem! Feel free to {{helpLink}}get in touch{{/helpLink}} with our Happiness Engineers.',
 						{

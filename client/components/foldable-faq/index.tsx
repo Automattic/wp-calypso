@@ -8,6 +8,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
  * Style dependencies
@@ -15,6 +16,7 @@ import Gridicon from 'calypso/components/gridicon';
 import './style.scss';
 
 interface FAQProps {
+	id: string;
 	question?: React.ReactNode;
 	children?: React.ReactNode;
 	className?: string;
@@ -26,6 +28,7 @@ interface FAQProps {
 const ICON_SIZE = 24;
 
 const FoldableFAQ: React.FC< FAQProps > = ( {
+	id,
 	question,
 	children,
 	className = '',
@@ -38,6 +41,10 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 	const [ isExpanded, setIsExpanded ] = useState( expanded );
 	const [ height, setHeight ] = useState( 0 );
 
+	const trackProps = { faqID: id };
+	const trackOpenFaq = useTrackCallback( undefined, 'calypso_plans_faq_open', trackProps );
+	const trackCloseFaq = useTrackCallback( undefined, 'calypso_plans_faq_closed', trackProps );
+
 	const toggleAnswer = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
 	}, [ setIsExpanded ] );
@@ -45,20 +52,28 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 	useLayoutEffect( () => {
 		if ( isExpanded ) {
 			setHeight( answerRef?.current?.scrollHeight || 250 );
+			trackOpenFaq();
 		} else {
 			setHeight( 0 );
+			trackCloseFaq();
 		}
 	}, [ isExpanded ] );
 
 	return (
 		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
-			<button className="foldable-faq__question" onClick={ toggleAnswer }>
+			<button
+				className="foldable-faq__question"
+				aria-controls={ id }
+				aria-expanded={ isExpanded }
+				onClick={ toggleAnswer }
+			>
 				<Gridicon icon={ icon } size={ iconSize } />
 				<div className="foldable-faq__question-text">{ question }</div>
 			</button>
 			<div
 				ref={ answerRef }
 				style={ { maxHeight: `${ height }px` } }
+				id={ id }
 				className="foldable-faq__answer"
 			>
 				{ children }
