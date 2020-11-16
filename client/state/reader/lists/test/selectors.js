@@ -219,40 +219,42 @@ describe( 'selectors', () => {
 			},
 		};
 		test( 'should return false if the list does not exist', () => {
-			expect( getMatchingItem( state, { feedUrl: 'www.example.com', listId: 2 } ) ).to.eql( false );
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com', listId: 2 } ) ).toEqual(
+				false
+			);
 		} );
 
 		test( 'should return the matching feed by its ID if it exists in the specified list', () => {
-			expect( getMatchingItem( state, { feedId: 1, listId: 1 } ) ).to.eql( feed );
-			expect( getMatchingItem( state, { feedId: '1', listId: 1 } ) ).to.eql( feed );
-			expect( getMatchingItem( state, { feedId: 1, listId: '1' } ) ).to.eql( feed );
-			expect( getMatchingItem( state, { feedId: 2, listId: 1 } ) ).to.eql( false );
+			expect( getMatchingItem( state, { feedId: 1, listId: 1 } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: '1', listId: 1 } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: 1, listId: '1' } ) ).toEqual( feed );
+			expect( getMatchingItem( state, { feedId: 2, listId: 1 } ) ).toEqual( false );
 		} );
 
 		test( 'should return the matching feed by its URL if it exists in the specified list', () => {
 			expect(
 				getMatchingItem( state, { feedUrl: 'https://www.example.com/rss', listId: 1 } )
-			).to.eql( feed );
+			).toEqual( feed );
 			expect(
 				getMatchingItem( state, { feedUrl: 'http://www.example.com/rss', listId: 1 } )
-			).to.eql( feed );
-			expect( getMatchingItem( state, { feedUrl: 'www.example.com/rss', listId: 1 } ) ).to.eql(
+			).toEqual( feed );
+			expect( getMatchingItem( state, { feedUrl: 'www.example.com/rss', listId: 1 } ) ).toEqual(
 				feed
 			);
 		} );
 
 		test( 'should return the matching site by its ID if it exists in the specified list', () => {
-			expect( getMatchingItem( state, { siteId: 1, listId: 1 } ) ).to.eql( site );
-			expect( getMatchingItem( state, { siteId: '1', listId: 1 } ) ).to.eql( site );
-			expect( getMatchingItem( state, { siteId: 1, listId: '1' } ) ).to.eql( site );
-			expect( getMatchingItem( state, { siteId: 2, listId: 1 } ) ).to.eql( false );
+			expect( getMatchingItem( state, { siteId: 1, listId: 1 } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: '1', listId: 1 } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: 1, listId: '1' } ) ).toEqual( site );
+			expect( getMatchingItem( state, { siteId: 2, listId: 1 } ) ).toEqual( false );
 		} );
 
 		test( 'should return the matching tag by its ID if it exists in the specified list', () => {
-			expect( getMatchingItem( state, { tagId: 1, listId: 1 } ) ).to.eql( tag );
-			expect( getMatchingItem( state, { tagId: '1', listId: 1 } ) ).to.eql( tag );
-			expect( getMatchingItem( state, { tagId: 1, listId: '1' } ) ).to.eql( tag );
-			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).to.eql( false );
+			expect( getMatchingItem( state, { tagId: 1, listId: 1 } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: '1', listId: 1 } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: 1, listId: '1' } ) ).toEqual( tag );
+			expect( getMatchingItem( state, { tagId: 2, listId: 1 } ) ).toEqual( false );
 		} );
 	} );
 
