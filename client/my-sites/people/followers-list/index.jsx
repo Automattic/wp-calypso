@@ -52,12 +52,6 @@ class Followers extends Component {
 		bulkEditing: false,
 	};
 
-	componentDidUpdate( prevProps ) {
-		if ( prevProps.site.ID !== this.props.site.ID ) {
-			this.props.resetPage();
-		}
-	}
-
 	renderPlaceholders() {
 		return <PeopleListItem key="people-list-item-placeholder" />;
 	}
@@ -299,20 +293,16 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 		page: currentPage,
 		siteId: site.ID,
 		type,
+		search,
 	};
-
-	if ( search ) {
-		query.search = search;
-	}
 
 	return (
 		<>
-			<QueryFollowers query={ query } />
+			<QueryFollowers siteId={ site.ID } query={ query } />
 			<ConnectedFollowers
 				query={ query }
 				site={ site }
 				incrementPage={ () => setCurrentPage( currentPage + 1 ) }
-				resetPage={ () => setCurrentPage( 1 ) }
 			/>
 		</>
 	);
