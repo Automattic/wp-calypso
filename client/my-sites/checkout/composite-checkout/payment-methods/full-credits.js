@@ -73,7 +73,7 @@ function WordPressCreditsLabel() {
 		<React.Fragment>
 			<div>
 				{ sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
-					amount: responseCart.available_credits_display,
+					amount: responseCart.credits_display,
 				} ) }
 			</div>
 			<WordPressLogo />
