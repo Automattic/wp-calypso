@@ -25,11 +25,13 @@ import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
 
+const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
-	constructor( driver, accountOrFeatures ) {
+	constructor( driver, accountOrFeatures, { useSandboxForPayments = null } ) {
 		this.driver = driver;
+		this.useSandboxForPayments = useSandboxForPayments;
 		if ( host !== 'WPCOM' && ! accountOrFeatures ) {
 			accountOrFeatures = 'jetpackUser' + host;
 		}
@@ -89,6 +91,12 @@ export default class LoginFlow {
 			return await loginPage.logonSSO();
 		}
 		loginPage = await LoginPage.Visit( this.driver );
+
+		if ( this.useSandboxForPayments ) {
+			await this.driver.executeScript(
+				`window.document.cookie="store_sandbox=${ sandboxCookieValue };domain=.wordpress.com;path=/"`
+			);
+		}
 
 		if ( emailSSO ) {
 			return await loginPage.login(
