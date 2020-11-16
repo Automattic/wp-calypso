@@ -245,8 +245,8 @@ function useCreateEbanxTef() {
 	);
 }
 
-function useCreateFullCredits( { credits } ) {
-	return useMemo( () => createFullCreditsMethod( { credits } ), [ credits ] );
+function useCreateFullCredits() {
+	return useMemo( () => createFullCreditsMethod(), [] );
 }
 
 function useCreateFree() {
@@ -296,7 +296,6 @@ export default function useCreatePaymentMethods( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	credits,
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
@@ -374,9 +373,7 @@ export default function useCreatePaymentMethods( {
 		stripe,
 	} );
 
-	const fullCreditsPaymentMethod = useCreateFullCredits( {
-		credits,
-	} );
+	const fullCreditsPaymentMethod = useCreateFullCredits();
 
 	const freePaymentMethod = useCreateFree();
 

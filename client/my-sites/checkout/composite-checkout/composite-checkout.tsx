@@ -465,7 +465,6 @@ export default function CompositeCheckout( {
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
-		credits,
 		isApplePayAvailable,
 		isApplePayLoading,
 		storedCards,
