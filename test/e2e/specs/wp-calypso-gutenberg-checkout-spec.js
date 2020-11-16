@@ -42,7 +42,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	describe( 'Can trigger the checkout modal via post editor', function () {
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
+				useSandboxForPayments: true,
+			} );
 			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -50,7 +52,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
+			await wPHomePage.setCurrencyForPayments( currencyValue );
+			return await driver.navigate().back();
 		} );
 
 		step( 'Can insert the premium block', async function () {
@@ -239,7 +242,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 
 	describe( 'Can delete the premium plan', async function () {
 		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
+				useSandboxForPayments: true,
+			} );
 			return await loginFlow.login();
 		} );
 
@@ -247,7 +252,8 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
-			return await wPHomePage.setCurrencyForPayments( currencyValue );
+			await wPHomePage.setCurrencyForPayments( currencyValue );
+			return await driver.navigate().back();
 		} );
 
 		step( 'Can delete the premium plan', async function () {
