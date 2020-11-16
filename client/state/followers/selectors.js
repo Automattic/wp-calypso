@@ -21,3 +21,27 @@ export function getFollowersForQuery( state, query ) {
 		} )
 		.filter( Boolean );
 }
+
+export const getFollowersByQuery = ( state, query ) => {
+	const serializedQuery = getSerializedQuery( query );
+	return (
+		state.followers?.queries[ serializedQuery ]?.ids.map(
+			( id ) => state.followers?.items[ id ]
+		) ?? []
+	);
+};
+
+export const getIsFetchingFollowersForQuery = ( state, query ) => {
+	const serializedQuery = getSerializedQuery( query );
+	return state.followers?.queryRequests[ serializedQuery ];
+};
+
+export const getTotalFollowersByQuery = ( state, query ) => {
+	const serializedQuery = getSerializedQuery( query );
+	return state.followers?.queries[ serializedQuery ]?.total;
+};
+
+export const getCurrentPage = ( state, query ) => {
+	const serializedQuery = getSerializedQuery( query );
+	return state.followers?.queries[ serializedQuery ]?.page;
+};
