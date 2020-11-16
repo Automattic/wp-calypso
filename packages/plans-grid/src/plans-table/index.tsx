@@ -24,7 +24,9 @@ export interface Props {
 	disabledPlans?: { [ planSlug: string ]: string };
 	locale: string;
 	showTaglines?: boolean;
-	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
+	CTAVariation?: 'FULL_WIDTH' | 'NORMAL';
+	popularBadgeVariation: 'ON_TOP' | 'NEXT_TO_NAME';
+	customTagLines?: Record< string, string >;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -36,6 +38,8 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	locale,
 	showTaglines = false,
 	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
+	customTagLines,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
 	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
@@ -47,11 +51,12 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 				( plan ) =>
 					plan && (
 						<PlanItem
+							popularBadgeVariation={ popularBadgeVariation }
 							allPlansExpanded={ allPlansExpanded }
 							key={ plan.storeSlug }
 							slug={ plan.storeSlug }
 							domain={ currentDomain }
-							tagline={ showTaglines && plan.description }
+							tagline={ ( showTaglines && customTagLines?.[ plan.storeSlug ] ) ?? plan.description }
 							CTAVariation={ CTAVariation }
 							features={ plan.features ?? [] }
 							isPopular={ plan.isPopular }

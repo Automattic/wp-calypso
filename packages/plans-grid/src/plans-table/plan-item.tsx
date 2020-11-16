@@ -50,6 +50,7 @@ export interface Props {
 	allPlansExpanded: boolean;
 	disabledLabel?: string;
 	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
+	popularBadgeVariation: 'ON_TOP' | 'NEXT_TO_NAME';
 }
 
 // NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
@@ -70,6 +71,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	allPlansExpanded,
 	disabledLabel,
 	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
 } ) => {
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
@@ -85,8 +87,14 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	const isOpen = allPlansExpanded || isDesktop || isPopular || isOpenInternalState;
 
 	return (
-		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
-			{ isPopular && (
+		<div
+			className={ classNames( 'plan-item', {
+				'is-popular': isPopular,
+				'is-open': isOpen,
+				'badge-next-to-name': popularBadgeVariation === 'NEXT_TO_NAME',
+			} ) }
+		>
+			{ isPopular && popularBadgeVariation === 'ON_TOP' && (
 				<span className="plan-item__badge">{ __( 'Popular', __i18n_text_domain__ ) }</span>
 			) }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
@@ -100,8 +108,17 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 						}
 						className="plan-item__summary"
 					>
-						<div className="plan-item__heading">
+						<div
+							className={ classNames( 'plan-item__heading', {
+								'badge-next-to-name': popularBadgeVariation === 'NEXT_TO_NAME',
+							} ) }
+						>
 							<div className="plan-item__name">{ name }</div>
+							{ isPopular && popularBadgeVariation === 'NEXT_TO_NAME' && (
+								<span className="plan-item__badge-next-to-name">
+									{ __( 'Popular', __i18n_text_domain__ ) }
+								</span>
+							) }
 						</div>
 						{ tagline && <p className="plan-item__tagline">{ tagline }</p> }
 						<div className="plan-item__price">
@@ -141,7 +158,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								>
 									<span>
 										{
-											/* translators: %s is plan name (eg: Free, Personal) */
+											/* translators: %s is a WordPress.com plan name (eg: Free, Personal) */
 											sprintf( __( 'Select %s', __i18n_text_domain__ ), name )
 										}
 									</span>

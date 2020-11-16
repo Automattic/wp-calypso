@@ -35,7 +35,9 @@ export interface Props {
 	isAccordion?: boolean;
 	locale: string;
 	showPlanTaglines?: boolean;
-	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
+	CTAVariation?: 'FULL_WIDTH' | 'NORMAL';
+	popularBadgeVariation?: 'ON_TOP' | 'NEXT_TO_NAME';
+	customTagLines?: Record< string, string >;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -50,6 +52,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	locale,
 	showPlanTaglines = false,
 	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
+	customTagLines,
 } ) => {
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
@@ -71,9 +75,11 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						></PlansAccordion>
 					) : (
 						<PlansTable
+							popularBadgeVariation={ popularBadgeVariation }
 							CTAVariation={ CTAVariation }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 							onPlanSelect={ onPlanSelect }
+							customTagLines={ customTagLines }
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }

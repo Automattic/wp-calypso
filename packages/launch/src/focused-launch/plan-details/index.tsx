@@ -9,13 +9,14 @@ import { __ } from '@wordpress/i18n';
 import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 /**
  * Internal dependencies
  */
-import { Route } from '../route';
 import { LAUNCH_STORE } from '../../stores';
+import GoBackButton from '../go-back-button';
+
 import './style.scss';
 
 const PlanDetails: React.FunctionComponent = () => {
@@ -41,7 +42,7 @@ const PlanDetails: React.FunctionComponent = () => {
 
 	return (
 		<div>
-			<Link to={ Route.Summary }>{ __( 'Go back', __i18n_text_domain__ ) }</Link>
+			<GoBackButton />
 			<div className="focused-launch-plan-details__header">
 				<div>
 					<Title>{ __( 'Select a plan', __i18n_text_domain__ ) }</Title>
@@ -59,7 +60,12 @@ const PlanDetails: React.FunctionComponent = () => {
 					onPlanSelect={ handleSelect }
 					currentPlan={ selectedPlan }
 					onPickDomainClick={ handlePickDomain }
+					customTagLines={ {
+						free_plan: __( 'Best for getting started', __i18n_text_domain__ ),
+						'business-bundle': __( 'Best for small businesses', __i18n_text_domain__ ),
+					} }
 					showPlanTaglines
+					popularBadgeVariation="NEXT_TO_NAME"
 					disabledPlans={
 						hasPaidDomain
 							? {
