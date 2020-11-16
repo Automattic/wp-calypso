@@ -29,8 +29,12 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				siteId={ window._currentSiteId }
 				onClose={ closeFocusedLaunch }
 				locale={ document.documentElement.lang }
-				redirectTo={ ( url: string ) => {
-					console.log( `TODO: should redirect calypso to ${ url }` );
+				redirectTo={ ( path: string ) => {
+					// @TODO: rewrite so that the "wordpress.com" doesn't have
+					// to be hardcoded
+					window.top.location.href = `https://wordpress.com${
+						path.startsWith( '/' ) ? path : `/${ path }`
+					}`;
 				} }
 			/>
 		);
