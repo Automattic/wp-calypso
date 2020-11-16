@@ -4,7 +4,7 @@
  * External dependencies
  */
 import { Title } from '@automattic/onboarding';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import React, { ReactNode, useContext, useEffect } from 'react';
@@ -349,7 +349,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
 								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
 							>
-								<LeadingContentSide label={ defaultFreePlan?.titleWithPlanSuffix } />
+								<LeadingContentSide
+									label={
+										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+										sprintf( __( '%s Plan', __i18n_text_domain__ ), defaultFreePlan?.title ?? '' )
+									}
+								/>
 								<TrailingContentSide
 									price={ __( 'Free', __i18n_text_domain__ ) }
 									warningNote={
@@ -364,7 +369,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
 							>
 								<LeadingContentSide
-									label={ paidPlan?.titleWithPlanSuffix }
+									label={
+										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+										sprintf( __( '%s Plan', __i18n_text_domain__ ), paidPlan?.title ?? '' )
+									}
 									badgeText={ paidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
 								/>
 								<TrailingContentSide
