@@ -23,20 +23,8 @@ class CreditCardSelector extends React.Component {
 	}
 
 	render() {
-		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div className="payment-box-sections">
-				{ this.storedCards() }
-				{ this.newCardForm() }
-			</div>
-		);
+		return null;
 	}
-
-	storedCards = () => {
-		return this.props.cards.map( () => {
-			return null;
-		} );
-	};
 
 	componentDidMount() {
 		// This defer is needed to avoid a dispatch within a dispatch when
@@ -52,10 +40,6 @@ class CreditCardSelector extends React.Component {
 			defer( () => this.savePayment( this.state.section ) );
 		}
 	}
-
-	newCardForm = () => {
-		return null;
-	};
 
 	handleClickedSection = ( section ) => {
 		if ( section === this.state.section ) {
