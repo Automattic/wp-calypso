@@ -68,7 +68,36 @@ function createServer() {
 		return require( 'https' ).createServer( loadSslCert(), app );
 	}
 
+	setTimeout( getServerRoot, 1500 );
 	return require( 'http' ).createServer( app );
+}
+
+// Sends a "GET /" to the dev server in order to kickstart the compilation process.
+function getServerRoot() {
+	const thisHost = process.env.HOST || config( 'hostname' );
+	const thisPort = process.env.PORT || config( 'port' );
+
+	const http = require( 'http' );
+	const options = {
+		hostname: thisHost,
+		port: thisPort,
+		path: '/',
+		method: 'GET',
+	};
+
+	const req = http.request( options, ( res ) => {
+		console.log( `statusCode: ${ res.statusCode }` );
+
+		res.on( 'data', ( d ) => {
+			process.stdout.write( d );
+		} );
+	} );
+
+	req.on( 'error', ( error ) => {
+		console.error( error );
+	} );
+
+	req.end();
 }
 
 const server = createServer();
