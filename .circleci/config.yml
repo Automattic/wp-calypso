@@ -1092,7 +1092,12 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source
+      - wp-desktop-source:
+          filters:
+            branches:
+              only:
+                - master
+                - trunk
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
