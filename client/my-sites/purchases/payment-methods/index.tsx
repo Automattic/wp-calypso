@@ -47,12 +47,12 @@ function useLogPaymentMethodsError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
+export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level payment methods load error'
@@ -81,7 +81,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
+export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
 	const createAddCardToken = ( ...args: unknown[] ) => createCardToken( 'card_add', ...args );
 	const goToBillingHistory = () => page( getPaymentMethodsUrlFor( siteSlug ) );

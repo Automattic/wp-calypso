@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { isEmpty, noop } from 'lodash';
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { useStripe } from '@automattic/calypso-stripe';
 
 /**
@@ -17,7 +17,6 @@ import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-numbe
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import FormLabel from 'calypso/components/forms/form-label';
 import InfoPopover from 'calypso/components/info-popover';
-import notices from 'calypso/notices';
 import PaymentCountrySelect from 'calypso/components/payment-country-select';
 import { Input } from 'calypso/my-sites/domains/components/form';
 import { maskField, unmaskField, getCreditCardType } from 'calypso/lib/checkout';
@@ -136,10 +135,11 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 		);
 	}
 
-	const disabled =
-		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
-			: false;
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderAdditionalCountryFields( card.country ),
+	} );
 
 	return createField( 'number', CreditCardNumberInput, {
 		inputMode: 'numeric',
@@ -158,9 +158,6 @@ CreditCardNumberField.propTypes = {
 
 function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage, card } ) {
 	const { stripe, isStripeLoading, stripeLoadingError } = useStripe();
-	if ( stripeLoadingError && ! shouldRenderAdditionalCountryFields( card.country ) ) {
-		notices.error( stripeLoadingError.message || 'Error loading Stripe' );
-	}
 
 	const cvcLabel = translate( 'Security Code {{span}}("CVC" or "CVV"){{/span}}', {
 		components: {
@@ -205,10 +202,11 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 		);
 	}
 
-	const disabled =
-		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
-			: false;
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderAdditionalCountryFields( card.country ),
+	} );
 
 	return (
 		<React.Fragment>
@@ -314,7 +312,7 @@ export class CreditCardFormFields extends React.Component {
 		this.updateFieldValues( event.target.name, event.target.value );
 	};
 
-	shouldRenderCountrySpecificFields() {
+	shouldRenderCountrySpecificFields = () => {
 		// The add/update card endpoints do not process Ebanx payment details
 		// so we only show Ebanx fields at checkout,
 		// i.e., when there is a current transaction.
@@ -322,7 +320,7 @@ export class CreditCardFormFields extends React.Component {
 			this.props.isNewTransaction &&
 			shouldRenderAdditionalCountryFields( this.getFieldValue( 'country' ) )
 		);
-	}
+	};
 
 	render() {
 		const { translate, countriesList, autoFocus } = this.props;
@@ -331,19 +329,14 @@ export class CreditCardFormFields extends React.Component {
 			'credit-card-form-fields__extras': true,
 			'ebanx-details-required': countryDetailsRequired,
 		} );
-
+		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div className="credit-card-form-fields">
-				{ this.createField( 'name', Input, {
-					autoFocus,
-					label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
-						comment: 'Cardholder name label on credit card form',
-						components: {
-							span: <span className="credit-card-form-fields__explainer" />,
-						},
-					} ),
-					placeholder: ' ',
-				} ) }
+				<CardholderNameField
+					autoFocus={ autoFocus }
+					createField={ this.createField }
+					shouldRenderCountrySpecificFields={ this.shouldRenderCountrySpecificFields }
+				/>
 				<div className="credit-card-form-fields__field number">
 					<CreditCardNumberField
 						translate={ this.props.translate }
@@ -388,6 +381,44 @@ export class CreditCardFormFields extends React.Component {
 			</div>
 		);
 	}
+}
+
+function CardholderNameField( { createField, shouldRenderCountrySpecificFields, autoFocus } ) {
+	const translate = useTranslate();
+	const { isStripeLoading, stripeLoadingError } = useStripe();
+
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderCountrySpecificFields(),
+	} );
+
+	return (
+		<>
+			{ createField( 'name', Input, {
+				disabled,
+				autoFocus,
+				label: translate( 'Cardholder Name {{span}}(as written on card){{/span}}', {
+					comment: 'Cardholder name label on credit card form',
+					components: {
+						span: <span className="credit-card-form-fields__explainer" />,
+					},
+				} ),
+				placeholder: ' ',
+			} ) }
+		</>
+	);
+}
+
+function isFieldDisabled( { isStripeLoading, stripeLoadingError, isUsingEbanx } ) {
+	const isStripeNotReady = isStripeLoading || stripeLoadingError;
+	if ( isUsingEbanx ) {
+		return false;
+	}
+	if ( isStripeNotReady ) {
+		return true;
+	}
+	return false;
 }
 
 export default localize( CreditCardFormFields );
