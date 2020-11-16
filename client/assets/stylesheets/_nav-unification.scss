@@ -18,13 +18,11 @@
 	}
 	$nav-unification-primary: #23282d;
 	$nav-unification-secondary: #101517;
-	$nav-unification-masterbar-font-size: 13px;
+	$nav-unification-masterbar-font-size: 14px;
+
+	--color-masterbar-border: #3c434a;
 
 	// packages/calypso-color-schemes/src/shared/color-schemes/_default.scss
-	--color-masterbar-background: #101517;
-	--color-masterbar-border: #333;
-	--color-masterbar-item-hover-background: #333;
-	--color-masterbar-item-active-background: #23282d;
 
 	// client/layout/style.scss
 	.layout__secondary {
@@ -34,12 +32,14 @@
 	// client/layout/masterbar/style.scss
 	.masterbar {
 		font-size: $nav-unification-masterbar-font-size;
+		border-bottom: 1px solid var( --color-masterbar-border );
 	}
 
 	// client/layout/masterbar/style.scss
 	.masterbar__item {
 		padding: 0 24px;
 		font-size: $nav-unification-masterbar-font-size;
+		margin-top: -1px; // temp!
 	}
 
 	// client/layout/masterbar/style.scss
@@ -51,7 +51,7 @@
 	// client/layout/masterbar/style.scss
 	.masterbar__item-new,
 	.masterbar__toggle-drafts.button.is-borderless {
-		height: 24px;
+		height: 32px;
 		margin: 4px 8px;
 		/* stylelint-disable-next-line scales/radii */
 		border-radius: 2px;
