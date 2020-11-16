@@ -22,12 +22,9 @@ import './style.scss';
 const PlanDetails: React.FunctionComponent = () => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const history = useHistory();
 
-	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
-
-	//const { selectedFeatures } = useSite();
+	const { updatePlan } = useDispatch( LAUNCH_STORE );
 
 	const hasPaidDomain = domain && ! domain.is_free;
 
@@ -37,7 +34,7 @@ const PlanDetails: React.FunctionComponent = () => {
 	};
 
 	const handlePickDomain = () => {
-		setStep( LaunchStep.Domain );
+		history.goBack();
 	};
 
 	return (
