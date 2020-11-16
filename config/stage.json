@@ -121,6 +121,7 @@
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
+		"reader/list-management": true,
 		"reader/seen-posts": true,
 		"reader/user-mention-suggestions": true,
 		"republicize": true,
