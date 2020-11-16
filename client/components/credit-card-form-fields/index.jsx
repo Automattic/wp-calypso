@@ -135,10 +135,11 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 		);
 	}
 
-	const disabled =
-		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
-			: false;
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderAdditionalCountryFields( card.country ),
+	} );
 
 	return createField( 'number', CreditCardNumberInput, {
 		inputMode: 'numeric',
@@ -201,10 +202,11 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 		);
 	}
 
-	const disabled =
-		isStripeLoading || stripeLoadingError
-			? ! shouldRenderAdditionalCountryFields( card.country )
-			: false;
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderAdditionalCountryFields( card.country ),
+	} );
 
 	return (
 		<React.Fragment>
@@ -385,8 +387,11 @@ function CardholderNameField( { createField, shouldRenderCountrySpecificFields, 
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError } = useStripe();
 
-	const disabled =
-		isStripeLoading || stripeLoadingError ? ! shouldRenderCountrySpecificFields() : false;
+	const disabled = isFieldDisabled( {
+		isStripeLoading,
+		stripeLoadingError,
+		isUsingEbanx: shouldRenderCountrySpecificFields(),
+	} );
 
 	return (
 		<>
@@ -403,6 +408,17 @@ function CardholderNameField( { createField, shouldRenderCountrySpecificFields, 
 			} ) }
 		</>
 	);
+}
+
+function isFieldDisabled( { isStripeLoading, stripeLoadingError, isUsingEbanx } ) {
+	const isStripeNotReady = isStripeLoading || stripeLoadingError;
+	if ( isUsingEbanx ) {
+		return false;
+	}
+	if ( isStripeNotReady ) {
+		return true;
+	}
+	return false;
 }
 
 export default localize( CreditCardFormFields );
