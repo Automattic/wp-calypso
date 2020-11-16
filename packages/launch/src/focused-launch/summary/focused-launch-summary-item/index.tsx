@@ -48,9 +48,10 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 	{
 		isSelected?: boolean;
 		readOnly?: boolean;
+		isLoading?: boolean;
 		children: [ ReturnType< typeof LeadingContentSide >, ReturnType< typeof TrailingContentSide > ];
 	} & React.ButtonHTMLAttributes< HTMLButtonElement >
-> = ( { children, isSelected = false, readOnly = false, ...rest } ) => {
+> = ( { children, isSelected = false, readOnly = false, isLoading, ...rest } ) => {
 	return (
 		<button
 			{ ...rest }
@@ -58,6 +59,7 @@ const FocusedLaunchSummaryItem: React.FunctionComponent<
 			className={ classnames( 'focused-launch-summary__item', {
 				'is-selected': isSelected,
 				'is-readonly': readOnly,
+				'is-loading': isLoading,
 			} ) }
 		>
 			{ children[ 0 ] }

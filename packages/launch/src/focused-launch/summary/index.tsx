@@ -20,8 +20,8 @@ import FocusedLaunchSummaryItem, {
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch, useSiteDomains, useSite } from '../../hooks';
-import { LAUNCH_STORE, PLANS_STORE, Plan, SiteDetailsPlan } from '../../stores';
+import { useTitle, useDomainSearch, useSiteDomains, useSite, usePlans } from '../../hooks';
+import { LAUNCH_STORE, Plan, SiteDetailsPlan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
 
@@ -336,6 +336,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</p>
 						<div>
 							<FocusedLaunchSummaryItem
+								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 								readOnly={ hasPaidDomain || selectedPaidDomain }
 								onClick={ () => defaultFreePlan && onSetPlan( defaultFreePlan ) }
 								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
@@ -355,6 +356,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 							<FocusedLaunchSummaryItem
+								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 								onClick={ () => paidPlan && onSetPlan( paidPlan ) }
 								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
 							>
@@ -440,9 +442,8 @@ const Summary: React.FunctionComponent = () => {
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain, setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
 	const domainSearch = useDomainSearch();
-	const defaultPaidPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
-	const defaultFreePlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultFreePlan() );
-	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( '' ) );
+	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
+
 	const site = useSite();
 
 	const { locale } = useContext( LaunchContext );
