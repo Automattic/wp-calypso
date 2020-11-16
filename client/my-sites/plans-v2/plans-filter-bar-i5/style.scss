@@ -21,7 +21,7 @@
 		justify-content: center;
 		align-items: center;
 		font-weight: 700;
-		padding-bottom: 20px;
+		padding-bottom: 10px;
 
 		.plans-filter-bar-i5__toggle-off-label {
 			color: var( --color-primary );
@@ -80,14 +80,12 @@
 }
 
 .plans-filter-bar-i5__discount-message {
-	padding: 6px 8px;
-	border-radius: 4px;
 	font-size: 0.8125rem;
 	font-weight: 600;
+	padding-top: 5px;
 
 	&.primary {
-		color: #fff;
-		background-color: var( --color-primary-light );
+		color: var( --color-primary );
 	}
 
 	.plans-filter-bar-i5__discount-message-text {
