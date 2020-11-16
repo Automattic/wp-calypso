@@ -50,9 +50,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
-				useSandboxForPayments: true,
-			} );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
@@ -250,9 +248,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 		} );
 
 		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser', {
-				useSandboxForPayments: true,
-			} );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
 			return await loginFlow.login();
 		} );
 
