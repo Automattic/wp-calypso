@@ -29,7 +29,7 @@ const sandboxCookieValue = config.get( 'storeSandboxCookieValue' );
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
-	constructor( driver, accountOrFeatures, { useSandboxForPayments = null } ) {
+	constructor( driver, accountOrFeatures, { useSandboxForPayments = null } = {} ) {
 		this.driver = driver;
 		this.useSandboxForPayments = useSandboxForPayments;
 		if ( host !== 'WPCOM' && ! accountOrFeatures ) {
