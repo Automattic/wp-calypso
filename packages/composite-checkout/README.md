@@ -309,8 +309,8 @@ Renders a logo for a credit card.
 
 Takes two props:
 
-  - `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
-  - `isSummary: boolean`. If true, will display a more compact version of the logo.
+- `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+- `isSummary: boolean`. If true, will display a more compact version of the logo.
 
 ### PaymentProcessorResponseType
 

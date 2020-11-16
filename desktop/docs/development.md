@@ -15,28 +15,28 @@ We use Electron's [IPC](https://github.com/atom/electron/blob/master/docs/api/ip
 
 ### How does it work?
 
-It's a fairly complicated process so buckle up. Note that *(main)* and *(renderer)* will be added to show where the code actually runs.
+It's a fairly complicated process so buckle up. Note that _(main)_ and _(renderer)_ will be added to show where the code actually runs.
 
 For clarity, all file and folder locations are relative to the root of the Calypso monorepo.
 
-- *(main)* The `main` entry in `desktop/package.json` refers to `build/desktop.js`, which is the entrypoint of the compiled webpack bundle of the Calypso server running in Electron's main process.
+- _(main)_ The `main` entry in `desktop/package.json` refers to `build/desktop.js`, which is the entrypoint of the compiled webpack bundle of the Calypso server running in Electron's main process.
   - The Calypso server is an Express.js HTTP server that serves files to Electron's Renderer process.
   - `client/desktop/server/index.js` is where the Calypso server is started by the Electron process. Calypso's `boot` code is contained in the file `client/server/boot/index.js`.
-- *(main)* `client/desktop/index.js` sets up the environment in `client/desktop/env.js` - this includes Node paths for Calypso
-- *(main)* Various [app handlers](../../client/desktop/app-handlers/README.md) are loaded from `client/desktop/app-handlers` - these are bits of code that run before the main window opens
-- *(main)* A Calypso server is started directly from Electron's Node process in `client/desktop/server.js`. The server is customized to serve files from the following directories:
+- _(main)_ `client/desktop/index.js` sets up the environment in `client/desktop/env.js` - this includes Node paths for Calypso
+- _(main)_ Various [app handlers](../../client/desktop/app-handlers/README.md) are loaded from `client/desktop/app-handlers` - these are bits of code that run before the main window opens
+- _(main)_ A Calypso server is started directly from Electron's Node process in `client/desktop/server.js`. The server is customized to serve files from the following directories:
   - `/calypso` - mapped to `/public`
   - `/desktop` - mapped to `/public_desktop`
-- *(main)* An Electron `BrowserWindow` is opened and loads the 'index' page from the Calypso server
-- *(main)* Once the window has opened the [window handlers](../../client/desktop/window-handlers/README.md) load to provide interaction between Calypso and Electron
-- *(renderer)* Calypso's index page is served by a React renderer in `client/document/desktop.jsx`. In addition:
+- _(main)_ An Electron `BrowserWindow` is opened and loads the 'index' page from the Calypso server
+- _(main)_ Once the window has opened the [window handlers](../../client/desktop/window-handlers/README.md) load to provide interaction between Calypso and Electron
+- _(renderer)_ Calypso's index page is served by a React renderer in `client/document/desktop.jsx`. In addition:
   - `desktop/public_desktop/wordpress-desktop.css` - any CSS specific to the desktop app (mapped to `desktop` directory mentioned above)
   - `desktop/public_desktop/desktop-app.js` - desktop-specific JS and also the Calypso boot code (mapped to `desktop` directory mentioned above)
   - The Calypso client bundle for the Desktop app is built to `desktop/public`.
     - The built Calypso bundle has multiple webpack entrypoints (like `entry-main.[hash].min.js`).
     - The various Calypso filenames are written to `desktop/build/assets-evergreen.js` at buildtime. The Express.js server loads this `assets-evergreen.js` file to find out which `<script>` and `link rel="stylesheet">` tags to send to the browser.
-- *(renderer)* The `desktop-app.js` code runs which sets up various app-specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
-- *(renderer)* The code in `calypso/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
+- _(renderer)_ The `desktop-app.js` code runs which sets up various app-specific handlers that need to be inside the renderer. It also starts Calypso with `AppBoot()`
+- _(renderer)_ The code in `calypso/client/lib/desktop` runs to send and receive IPC messages between the main process and Calypso.
 
 Phew!
 

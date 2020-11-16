@@ -51,8 +51,8 @@ class Listing extends React.Component {
 	}
 
 	renderLoadingPlaceholders() {
-		const count = this.props.list.get().length ? 2 : this.props.list.perPage,
-			placeholders = [];
+		const count = this.props.list.get().length ? 2 : this.props.list.perPage;
+		const placeholders = [];
 		times( count, function ( i ) {
 			placeholders.push( <PostPlaceholder key={ 'placeholder-' + i } /> );
 		} );
