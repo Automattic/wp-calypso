@@ -6,18 +6,6 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
-@mixin visually-hidden {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect( 0, 0, 0, 0 );
-	white-space: nowrap;
-	border-width: 0;
-}
-
 body.has-focused-launch-modal {
 	overflow: hidden;
 }
@@ -39,7 +27,7 @@ body.has-focused-launch-modal {
 
 			// Make sure that the modal title can still be read by screen readers
 			.components-modal__header-heading {
-				@include visually-hidden();
+				@include onboarding-screen-reader-text();
 			}
 		}
 	}
@@ -64,7 +52,7 @@ body.has-focused-launch-modal {
 		}
 
 		.components-modal__header-heading {
-			@include visually-hidden();
+			@include onboarding-screen-reader-text();
 		}
 	}
 }
