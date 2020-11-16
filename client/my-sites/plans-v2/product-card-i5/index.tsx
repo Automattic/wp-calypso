@@ -14,7 +14,6 @@ import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { planHasFeature } from 'calypso/lib/plans';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { isJetpackPlanSlug } from 'calypso/lib/products-values';
 import { isCloseToExpiration } from 'calypso/lib/purchases';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -85,7 +84,6 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
-	const isPlan = isJetpackPlanSlug( item.productSlug );
 
 	return (
 		<JetpackProductCard
@@ -106,7 +104,6 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			isDeprecated={ item.legacy }
 			isAligned={ isAligned }
 			features={ item.features }
-			showAllFeatures={ isPlan }
 		/>
 	);
 };

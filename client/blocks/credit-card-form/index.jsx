@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
@@ -62,7 +62,13 @@ export function CreditCardForm( {
 	onCancel = undefined,
 	translate,
 } ) {
-	const { stripe, stripeConfiguration, setStripeError } = useStripe();
+	const {
+		stripe,
+		stripeConfiguration,
+		setStripeError,
+		isStripeLoading,
+		stripeLoadingError,
+	} = useStripe();
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
@@ -150,6 +156,14 @@ export function CreditCardForm( {
 		}
 	};
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			displayError( { translate, error: stripeLoadingError } );
+		}
+	}, [ stripeLoadingError, translate ] );
+
+	const disabled = isStripeLoading || stripeLoadingError;
+
 	return (
 		<form onSubmit={ onSubmit }>
 			<Card className="credit-card-form__content">
@@ -174,7 +188,11 @@ export function CreditCardForm( {
 					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
 				/>
 
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
+				<SaveButton
+					translate={ translate }
+					disabled={ disabled }
+					formSubmitting={ formSubmitting }
+				/>
 
 				{ onCancel && (
 					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
@@ -203,9 +221,9 @@ CreditCardForm.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-function SaveButton( { translate, formSubmitting } ) {
+function SaveButton( { translate, disabled, formSubmitting } ) {
 	return (
-		<FormButton disabled={ formSubmitting } type="submit">
+		<FormButton disabled={ disabled || formSubmitting } type="submit">
 			{ formSubmitting
 				? translate( 'Saving card…', {
 						context: 'Button label',

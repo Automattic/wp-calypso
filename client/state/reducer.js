@@ -25,7 +25,6 @@ import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
-import jetpackSync from './jetpack-sync/reducer';
 import jitm from './jitm/reducer';
 import media from './media/reducer';
 import mySites from './my-sites/reducer';
@@ -33,7 +32,6 @@ import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import postFormats from './post-formats/reducer';
 import selectedEditor from './selected-editor/reducer';
-import simplePayments from './simple-payments/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
@@ -61,7 +59,6 @@ const reducers = {
 	immediateLogin,
 	importerNux,
 	inlineSupportArticle,
-	jetpackSync,
 	jitm,
 	media,
 	mySites,
@@ -69,7 +66,6 @@ const reducers = {
 	notificationsUnseenCount,
 	postFormats,
 	selectedEditor,
-	simplePayments,
 	siteKeyrings,
 	siteRoles,
 	sites,

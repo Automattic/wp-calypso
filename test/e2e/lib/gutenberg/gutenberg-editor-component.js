@@ -306,7 +306,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 			case 'Pricing Table':
 				prefix = 'coblocks-';
-				hasChildBlocks = true;
+				hasChildBlocks = false;
 				break;
 			case 'Logos':
 				prefix = 'coblocks-';

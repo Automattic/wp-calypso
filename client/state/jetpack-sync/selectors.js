@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, reduce } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/jetpack-sync/init';
 
 /**
  * Returns a sync status object by site ID.

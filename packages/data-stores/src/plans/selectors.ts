@@ -2,8 +2,9 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
+import { select } from '@wordpress/data';
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
 
@@ -13,8 +14,12 @@ export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
 	return state.plans[ slug ] ?? undefined;
 };
 
-export const getDefaultPaidPlan = ( state: State ): Plan => {
-	return state.plans[ DEFAULT_PAID_PLAN ] ?? undefined;
+export const getDefaultPaidPlan = (): Plan => {
+	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ DEFAULT_PAID_PLAN ];
+};
+
+export const getDefaultFreePlan = (): Plan => {
+	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ PLAN_FREE ];
 };
 
 export const getSupportedPlans = ( state: State ): Plan[] => {

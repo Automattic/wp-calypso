@@ -40,6 +40,8 @@ repliesCache.cleanup();
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
+export const RestClientContext = React.createContext( client );
+
 export class Notifications extends PureComponent {
 	static propTypes = {
 		customEnhancer: PropTypes.func,
@@ -132,15 +134,15 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
-				<Layout
-					{ ...{
-						client,
-						data: globalData,
-						global: globalData,
-						isShowing: this.props.isShowing,
-						locale: this.props.locale,
-					} }
-				/>
+				<RestClientContext.Provider value={ client }>
+					<Layout
+						client={ client }
+						data={ globalData }
+						global={ globalData }
+						isShowing={ this.props.isShowing }
+						locale={ this.props.local }
+					/>
+				</RestClientContext.Provider>
 			</Provider>
 		);
 	}

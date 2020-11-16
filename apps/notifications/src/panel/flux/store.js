@@ -8,16 +8,11 @@ const eventEmitter = new events.EventEmitter();
  * Internal dependencies
  */
 import { actions } from './constants';
-import inputReducers from './input-reducers';
 
 /**
  * Module variables
  */
-const initialState = {
-	input: {
-		shortcutsAreEnabled: true,
-	},
-};
+const initialState = {};
 let state = { ...initialState };
 
 function emitChange() {
@@ -40,12 +35,10 @@ function reduce( state, action ) {
 			break;
 	}
 
-	newState = inputReducers( newState, action );
-
 	return newState;
 }
 
-export default {
+const store = {
 	dispatch( action ) {
 		const oldState = state;
 
@@ -64,3 +57,5 @@ export default {
 		return state;
 	},
 };
+
+export default store;

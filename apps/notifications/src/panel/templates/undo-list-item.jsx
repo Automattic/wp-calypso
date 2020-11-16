@@ -12,6 +12,8 @@ import { wpcom } from '../rest-client/wpcom';
 import actions from '../state/actions';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
 import { bumpStat } from '../rest-client/bump-stat';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 import Gridicon from './gridicons';
 
@@ -43,11 +45,11 @@ export class UndoListItem extends React.Component {
 	}
 
 	handleKeyDown = ( event ) => {
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -201,6 +203,7 @@ export class UndoListItem extends React.Component {
 
 const mapStateToProps = ( state ) => ( {
 	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {

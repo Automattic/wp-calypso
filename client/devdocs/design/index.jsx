@@ -56,6 +56,7 @@ import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
+import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import FormFields from 'calypso/components/forms/docs/example';
@@ -219,6 +220,7 @@ export default class DesignAssets extends React.Component {
 					<FilePickers readmeFilePath="file-picker" />
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
+					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />

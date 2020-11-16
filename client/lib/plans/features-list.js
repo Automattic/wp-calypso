@@ -1316,10 +1316,7 @@ export const FEATURES_LIST = {
 	[ constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2 ]: {
 		getSlug: () => constants.FEATURE_ACTIVITY_LOG_1_YEAR_V2,
 		getIcon: () => 'clipboard',
-		getTitle: () =>
-			( {
-				i5: i18n.translate( "1-year's worth of activity events" ),
-			}[ getJetpackCROActiveVersion() ] || i18n.translate( 'Activity log: 1-year archive' ) ),
+		getTitle: () => i18n.translate( 'Activity log: 1-year archive' ),
 		getDescription: () =>
 			i18n.translate(
 				'View every change to your site in the last year. Pairs with Backup to restore your site to any earlier version. {{link}}Learn more.{{/link}}',

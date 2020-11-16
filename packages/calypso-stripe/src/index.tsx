@@ -138,6 +138,8 @@ export class StripeValidationError extends Error {
 	}
 }
 
+export class StripeConfigurationError extends Error {}
+
 /**
  * An error related to a Setup Intent
  *
@@ -223,6 +225,12 @@ export async function createStripeSetupIntent(
 	paymentDetails: PaymentDetails
 ): Promise< StripeSetupIntent > {
 	debug( 'creating setup intent...', paymentDetails );
+	if ( ! stripeConfiguration.setup_intent_id ) {
+		debug( 'Unable to create setup intent; missing intent ID' );
+		throw new StripeConfigurationError(
+			'There is a problem with the payment method system configuration.'
+		);
+	}
 	let stripeResponse: HandleCardSetupResponse | undefined;
 	try {
 		stripeResponse = await stripe.handleCardSetup( stripeConfiguration.setup_intent_id, {
@@ -325,11 +333,13 @@ function getValidationErrorsFromStripeError(
  * Its parameter is the value returned by useStripeConfiguration
  *
  * @param {object} stripeConfiguration An object containing { public_key, js_url }
+ * @param {Error|undefined} [stripeConfigurationError] Any error that occured trying to load the configuration
  * @param {string} [locale] The locale, like 'en-us'. Stripe will auto-detect if not set.
  * @returns {object} { stripeJs, isStripeLoading }
  */
 function useStripeJs(
 	stripeConfiguration: StripeConfiguration | undefined,
+	stripeConfigurationError: undefined | Error,
 	locale: string | undefined = undefined
 ): UseStripeJs {
 	const [ stripeJs, setStripeJs ] = useState< null | Stripe >( null );
@@ -349,6 +359,9 @@ function useStripeJs(
 		}
 
 		async function loadAndInitStripe() {
+			if ( stripeConfigurationError ) {
+				throw stripeConfigurationError;
+			}
 			if ( ! stripeConfiguration ) {
 				return;
 			}
@@ -379,7 +392,7 @@ function useStripeJs(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ stripeConfiguration, stripeJs, stripeLocale ] );
+	}, [ stripeConfigurationError, stripeConfiguration, stripeJs, stripeLocale ] );
 	return { stripeJs, isStripeLoading, stripeLoadingError };
 }
 
@@ -406,24 +419,52 @@ function useStripeJs(
  */
 function useStripeConfiguration(
 	fetchStripeConfiguration: GetStripeConfiguration,
-	requestArgs: undefined | null | GetStripeConfigurationArgs = null
-): { stripeConfiguration: StripeConfiguration | undefined; setStripeError: SetStripeError } {
+	requestArgs?: undefined | null | GetStripeConfigurationArgs
+): {
+	stripeConfiguration: StripeConfiguration | undefined;
+	stripeConfigurationError: undefined | Error;
+	setStripeError: SetStripeError;
+} {
 	const [ stripeError, setStripeError ] = useState< undefined | string >();
+	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
 		undefined | StripeConfiguration
 	>();
 	useEffect( () => {
-		const getConfig = fetchStripeConfiguration;
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
-		getConfig( requestArgs || {} ).then(
-			( configuration ) => isSubscribed && setStripeConfiguration( configuration )
-		);
+		fetchStripeConfiguration( requestArgs || {} )
+			.then( ( configuration ) => {
+				if ( ! isSubscribed ) {
+					return;
+				}
+				if ( requestArgs?.needs_intent && ! configuration.setup_intent_id ) {
+					debug( 'invalid stripe configuration; missing setup_intent_id', configuration );
+					throw new StripeConfigurationError(
+						'Error loading new payment method configuration. Received invalid data from the server.'
+					);
+				}
+				if (
+					! configuration.js_url ||
+					! configuration.public_key ||
+					! configuration.processor_id
+				) {
+					debug( 'invalid stripe configuration; missing some data', configuration );
+					throw new StripeConfigurationError(
+						'Error loading payment method configuration. Received invalid data from the server.'
+					);
+				}
+				debug( 'stripe configuration received', configuration );
+				setStripeConfiguration( configuration );
+			} )
+			.catch( ( error ) => {
+				setStripeConfigurationError( error );
+			} );
 		return () => {
 			isSubscribed = false;
 		};
 	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
-	return { stripeConfiguration, setStripeError };
+	return { stripeConfiguration, stripeConfigurationError, setStripeError };
 }
 
 function StripeHookProviderInnerWrapper( {
@@ -452,12 +493,13 @@ export function StripeHookProvider( {
 	locale?: undefined | string;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
-	const { stripeConfiguration, setStripeError } = useStripeConfiguration(
+	const { stripeConfiguration, stripeConfigurationError, setStripeError } = useStripeConfiguration(
 		fetchStripeConfiguration,
 		configurationArgs
 	);
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
+		stripeConfigurationError,
 		locale
 	);
 

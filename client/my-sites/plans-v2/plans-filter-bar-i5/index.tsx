@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -15,7 +15,6 @@ import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/products-values/constants'
 import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
-import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import { getHighestAnnualDiscount } from '../utils';
 
@@ -67,11 +66,11 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 			<div>
 				<span className="plans-filter-bar-i5__discount-message-text">
 					{ isMobile
-						? translate( 'SAVE %(discount)s BY PAYING YEARLY', {
+						? translate( 'Save %(discount)s by paying yearly', {
 								args: { discount: highestAnnualDiscount },
 								comment: 'Discount is either a currency-formatted number or percentage',
 						  } )
-						: translate( 'SAVE %(discount)s', {
+						: translate( 'Save %(discount)s', {
 								args: { discount: highestAnnualDiscount },
 								comment: 'Discount is either a currency-formatted number or percentage',
 						  } ) }

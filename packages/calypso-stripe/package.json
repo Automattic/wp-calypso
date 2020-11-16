@@ -8,10 +8,10 @@
 	"sideEffects": false,
 	"scripts": {
 		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"build:esm": "tsc --project ./tsconfig.json",
-		"build:cjs": "tsc --project ./tsconfig-cjs.json",
+		"build:esm": "tsc --build ./tsconfig.json",
+		"build:cjs": "tsc --build ./tsconfig-cjs.json",
 		"prepare": "yarn run build:esm",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [
 		"dist",

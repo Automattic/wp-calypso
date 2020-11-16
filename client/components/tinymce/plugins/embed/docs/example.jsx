@@ -64,7 +64,6 @@ connectedEmbedDialogExample.displayName = 'EmbedDialogExample';
 // todo
 // connecting this component feels wrong. it's an example, so shouldn't it instantiate EmbedDialog with renderWithReduxStore
 // rather than getting the siteid here?
-// this is what the simple-payments example does, though.
 // maybe because inside devdocs we can't use getSelectedSiteId(), we have to use get( getCurrentUser( state ), 'primary_blog' ),
 // if that's the reason, would it be better to just pass in a hardcoded site ID here, instead of connect()ing this component?
 

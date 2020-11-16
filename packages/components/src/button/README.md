@@ -5,7 +5,7 @@ Buttons express what action will occur when the user clicks or taps it. Buttons 
 ## Usage
 
 ```jsx
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
@@ -44,7 +44,7 @@ export default function RockOnButton() {
 To use an icon button, insert a Gridicon so that it displays to the left of the text (displaying the `external` icon to the right of the text is the exception). Wrap the text in a `span` or some other element for spacing purposes. You may also create an icon button without text, but use sparingly because it may reduce clarity.
 
 ```jsx
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
 
 export default function RockOnButton() {

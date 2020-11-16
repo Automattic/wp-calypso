@@ -20,6 +20,7 @@ const Test = () => (
 ## Props
 
 There are two props:
+
 - `siteId`: Site ID to check.
 - `settingsUrl`: Site settings URL. If unset defaults to current page.
 - `status`: This is optional, and allows overriding the notice status. See the `Notice` component for allowed values.
