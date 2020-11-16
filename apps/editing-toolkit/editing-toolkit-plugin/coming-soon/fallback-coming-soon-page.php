@@ -70,7 +70,6 @@ function get_onboarding_url() {
 }
 
 nocache_headers();
-header( 'Content-Type: ' . get_bloginfo( 'html_type' ) . '; charset=' . get_bloginfo( 'charset' ) );
 
 ?>
 <!DOCTYPE html>
