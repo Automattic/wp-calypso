@@ -8,10 +8,7 @@ import { mergeWith } from 'lodash';
  */
 import apiFetch from '@wordpress/api-fetch';
 import { getBlockType, registerBlockType, unregisterBlockType } from '@wordpress/blocks';
-import {
-	__experimentalAlignmentHookSettingsProvider,
-	__experimentalBlock,
-} from '@wordpress/block-editor';
+import { __experimentalBlock } from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -22,9 +19,7 @@ import * as loggedOutView from './blocks/logged-out-view';
 import * as buttons from './blocks/buttons';
 import * as loginButton from './blocks/login-button';
 
-const supportsDecoupledBlocks = !! (
-	__experimentalAlignmentHookSettingsProvider && __experimentalBlock
-);
+const supportsDecoupledBlocks = !! __experimentalBlock;
 
 /**
  * Function to register an individual block.

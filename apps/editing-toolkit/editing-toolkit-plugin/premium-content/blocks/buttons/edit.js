@@ -2,11 +2,7 @@
  * WordPress dependencies
  */
 // eslint-disable-next-line wpcalypso/import-docblock
-import {
-	__experimentalAlignmentHookSettingsProvider as AlignmentHookSettingsProvider,
-	InnerBlocks,
-	__experimentalBlock as Block,
-} from '@wordpress/block-editor';
+import { InnerBlocks, __experimentalBlock as Block } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -18,11 +14,6 @@ const ALLOWED_BLOCKS = [
 	'jetpack/recurring-payments',
 	'premium-content/login-button',
 ];
-
-// Inside buttons block alignment options are not supported.
-const alignmentHooksSetting = {
-	isEmbedButton: true,
-};
 
 function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
@@ -91,14 +82,13 @@ function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Block.div className="wp-block-buttons">
-			<AlignmentHookSettingsProvider value={ alignmentHooksSetting }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ isPreview ? previewTemplate : template }
-					__experimentalMoverDirection="horizontal"
-					templateInsertUpdatesSelection={ false }
-				/>
-			</AlignmentHookSettingsProvider>
+			<InnerBlocks
+				allowedBlocks={ ALLOWED_BLOCKS }
+				template={ isPreview ? previewTemplate : template }
+				templateInsertUpdatesSelection={ false }
+				__experimentalLayout={ { type: 'default', alignments: [] } }
+				__experimentalMoverDirection="horizontal"
+			/>
 		</Block.div>
 	);
 }
