@@ -9,7 +9,11 @@
 	box-shadow: 0px 4px 24px rgba( 0, 0, 0, 0.05 );
 
 	&.is-featured {
+		position: relative;
+		top: 8px;
 		z-index: 1;
+
+		margin-left: -8px;
 	}
 }
 
@@ -47,13 +51,6 @@
 		border-top: none;
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;
-	}
-
-	.is-featured.is-aligned & {
-		box-sizing: border-box;
-		height: calc( 100% + 8px );
-
-		background-color: inherit;
 	}
 }
 
