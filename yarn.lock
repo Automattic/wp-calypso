@@ -1580,7 +1580,7 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-syntax-typescript" "^7.10.4"
 
-"@babel/plugin-transform-typescript@^7.12.1":
+"@babel/plugin-transform-typescript@^7.12.1", "@babel/plugin-transform-typescript@^7.3.2":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-typescript/-/plugin-transform-typescript-7.12.1.tgz#d92cc0af504d510e26a754a7dbc2e5c8cd9c7ab4"
   integrity sha512-VrsBByqAIntM+EYMqSm59SiMEf7qkmI9dqMt6RbD/wlwueWmYcI0FFK5Fj47pP6DRZm+3teXjosKlwcZJ5lIMw==
@@ -1904,7 +1904,7 @@
     "@babel/helper-plugin-utils" "^7.10.4"
     "@babel/plugin-transform-typescript" "^7.10.4"
 
-"@babel/preset-typescript@^7.9.0":
+"@babel/preset-typescript@^7.3.3", "@babel/preset-typescript@^7.8.3", "@babel/preset-typescript@^7.9.0":
   version "7.12.1"
   resolved "https://registry.yarnpkg.com/@babel/preset-typescript/-/preset-typescript-7.12.1.tgz#86480b483bb97f75036e8864fe404cc782cc311b"
   integrity sha512-hNK/DhmoJPsksdHuI/RVrcEws7GN5eamhi28JkO52MqIxU8Z0QpmiSOQxZHWOHV7I3P4UjHV97ay4TcamMA6Kw==
@@ -4076,15 +4076,33 @@
     npmlog "^4.1.2"
     pretty-hrtime "^1.0.3"
 
+"@storybook/node-logger@^5.3.17":
+  version "5.3.21"
+  resolved "https://registry.yarnpkg.com/@storybook/node-logger/-/node-logger-5.3.21.tgz#f11d45042bd57dc69e9037d8f374d9fd0aad8071"
+  integrity sha512-8xibncy873JXePCK5MC0qem1MKtWI1Lc4hv6rwURSwYpZtkO7yElay3XAFGUSfz8qFJkoDBmMTxBR3fp4Dln7g==
+  dependencies:
+    "@types/npmlog" "^4.1.2"
+    chalk "^3.0.0"
+    core-js "^3.0.1"
+    npmlog "^4.1.2"
+    pretty-hrtime "^1.0.3"
+    regenerator-runtime "^0.13.3"
+
 "@storybook/preset-scss@^1.0.3":
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/@storybook/preset-scss/-/preset-scss-1.0.3.tgz#8ac834545c642dada0f64f510ef08dfb882e9737"
   integrity sha512-o9Iz6wxPeNENrQa2mKlsDKynBfqU2uWaRP80HeWp4TkGgf7/x3DVF2O7yi9N0x/PI1qzzTTpxlQ90D62XmpiTw==
 
-"@storybook/preset-typescript@^1.2.2":
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/@storybook/preset-typescript/-/preset-typescript-1.2.2.tgz#79bad0623a0917182236e721a1b2517eb9b97886"
-  integrity sha512-CwAg6motnLJKkPZ0mrLS9/fI9uJHtAN4BqAgarfnXf3vh9UzUOyPRbo1hMT5zcMLPa0mo3tHPWGK6mt6lqc7lQ==
+"@storybook/preset-typescript@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@storybook/preset-typescript/-/preset-typescript-3.0.0.tgz#e157baf6f2c4982c3da3328f5e1a640b3d7db9e4"
+  integrity sha512-tEbFWg5h/8SPfSCNXPxyqY418704K14q5H/xb9t0ARMXK3kZPTkKqKvdTvYg3UEKBBYbc+GA57UWaL+9b+DbDg==
+  dependencies:
+    "@babel/preset-typescript" "^7.8.3"
+    "@storybook/node-logger" "^5.3.17"
+    "@types/babel__core" "^7.1.6"
+    babel-preset-typescript-vue "^1.0.3"
+    fork-ts-checker-webpack-plugin "^4.1.0"
 
 "@storybook/react@^6.0.28":
   version "6.0.28"
@@ -4490,6 +4508,17 @@
   version "7.1.9"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.9.tgz#77e59d438522a6fb898fa43dc3455c6e72f3963d"
   integrity sha512-sY2RsIJ5rpER1u3/aQ8OFSI7qGIy8o1NEEbgb2UaJcvOtXOMpd39ko723NBpjQFg9SIX7TXtjejZVGeIMLhoOw==
+  dependencies:
+    "@babel/parser" "^7.1.0"
+    "@babel/types" "^7.0.0"
+    "@types/babel__generator" "*"
+    "@types/babel__template" "*"
+    "@types/babel__traverse" "*"
+
+"@types/babel__core@^7.1.6":
+  version "7.1.12"
+  resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.12.tgz#4d8e9e51eb265552a7e4f1ff2219ab6133bdfb2d"
+  integrity sha512-wMTHiiTiBAAPebqaPiPDLFA4LYPKr6Ph0Xq/6rq1Ur3v66HXyG+clfR9CNETkD7MQS8ZHvpQOtA53DLws5WAEQ==
   dependencies:
     "@babel/parser" "^7.1.0"
     "@babel/types" "^7.0.0"
@@ -8576,6 +8605,16 @@ babel-preset-react-app@^9.0.2:
     babel-plugin-macros "2.8.0"
     babel-plugin-transform-react-remove-prop-types "0.4.24"
 
+babel-preset-typescript-vue@^1.0.3:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/babel-preset-typescript-vue/-/babel-preset-typescript-vue-1.1.1.tgz#6a617dcb0ee26f911735d5f2bbe530286b2c7c02"
+  integrity sha512-wXeR7Y4xCsRUEdm4t4qlpv4wnxolS6jU0c7P2E6zJRWeG1sR0e6NL7DRN0tNuUwkUt0PU8bqVo4vzoA2VEuxnw==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.0.0"
+    "@babel/plugin-transform-typescript" "^7.3.2"
+    "@babel/preset-typescript" "^7.3.3"
+    vue-template-compiler "^2.6.11"
+
 babel-register@^6.26.0:
   version "6.26.0"
   resolved "https://registry.yarnpkg.com/babel-register/-/babel-register-6.26.0.tgz#6ed021173e2fcb486d7acb45c6009a856f647071"
@@ -11608,6 +11647,11 @@ dateformat@~1.0.12:
     get-stdin "^4.0.1"
     meow "^3.3.0"
 
+de-indent@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
+  integrity sha1-sgOOhG3DO6pXlhKNCAS0VbjB4h0=
+
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3, debug@^2.6.0, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -14385,7 +14429,7 @@ fork-ts-checker-webpack-plugin@3.1.1, fork-ts-checker-webpack-plugin@^3.1.1:
     tapable "^1.0.0"
     worker-rpc "^0.1.0"
 
-fork-ts-checker-webpack-plugin@^4.1.4:
+fork-ts-checker-webpack-plugin@^4.1.0, fork-ts-checker-webpack-plugin@^4.1.4:
   version "4.1.6"
   resolved "https://registry.yarnpkg.com/fork-ts-checker-webpack-plugin/-/fork-ts-checker-webpack-plugin-4.1.6.tgz#5055c703febcf37fa06405d400c122b905167fc5"
   integrity sha512-DUxuQaKoqfNne8iikd14SAkh5uw4+8vNifp6gmA73yYNS6ywLIWSLD/n/mBzHQRpW3J7rbATEakmiA8JvkTyZw==
@@ -15601,7 +15645,7 @@ hawk@~1.0.0:
     hoek "0.9.x"
     sntp "0.2.x"
 
-he@1.2.0, he@1.2.x, he@^1.2.0:
+he@1.2.0, he@1.2.x, he@^1.1.0, he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -29749,6 +29793,14 @@ vm-browserify@^1.0.0, vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha512-2ham8XPWTONajOR0ohOKOHXkm3+gaBmGut3SRuu75xLd/RRaY6vqgh8NBYYk7+RW3u5AtzPQZG8F10LHkl0lAQ==
+
+vue-template-compiler@^2.6.11:
+  version "2.6.12"
+  resolved "https://registry.yarnpkg.com/vue-template-compiler/-/vue-template-compiler-2.6.12.tgz#947ed7196744c8a5285ebe1233fe960437fcc57e"
+  integrity sha512-OzzZ52zS41YUbkCBfdXShQTe69j1gQDZ9HIX8miuC9C3rBCk9wIRjLiZZLrmX9V+Ftq/YEyv1JaVr5Y/hNtByg==
+  dependencies:
+    de-indent "^1.0.2"
+    he "^1.1.0"
 
 w3c-hr-time@^1.0.1, w3c-hr-time@^1.0.2:
   version "1.0.2"

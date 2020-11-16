@@ -180,7 +180,7 @@
 		"@signal-noise/stylelint-scales": "^1.4.0",
 		"@storybook/addon-actions": "^6.0.28",
 		"@storybook/preset-scss": "^1.0.3",
-		"@storybook/preset-typescript": "^1.2.2",
+		"@storybook/preset-typescript": "^3.0.0",
 		"@storybook/react": "^6.0.28",
 		"@types/classnames": "^2.2.10",
 		"@types/cookie": "^0.4.0",
