@@ -20,8 +20,6 @@ const cart = {
 	total_cost_integer: 0,
 	total_cost_display: '$0',
 	currency: 'USD',
-	available_credits_integer: 0,
-	available_credits_display: '$0',
 	credits_integer: 0,
 	credits_display: '$0',
 	allowed_payment_methods: [],
