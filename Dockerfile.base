@@ -13,8 +13,7 @@ ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV HOME=/calypso
 
-RUN git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
-	&& git -C "$NVM_DIR" checkout v0.35.3 \
+RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
 	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
 
 COPY . .
