@@ -101,7 +101,11 @@ export interface UseStripeJs {
 	stripeLoadingError: null | undefined | string;
 }
 
-type GetStripeConfigurationArgs = { country?: string; needs_intent?: boolean };
+type GetStripeConfigurationArgs = {
+	country?: string;
+	needs_intent?: boolean;
+	withCredentials?: boolean;
+};
 type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs
 ) => Promise< StripeConfiguration >;

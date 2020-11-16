@@ -94,6 +94,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
 				<StripeHookProvider
 					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+					configurationArgs={ { withCredentials: true } }
 					locale={ props.locale }
 				>
 					<CompositeCheckout
