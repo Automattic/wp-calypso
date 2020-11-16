@@ -29,7 +29,7 @@
     .dialog__action-buttons {
         display: flex;
         flex-direction: row;
-        flex-wrap: nowrap;
+        flex-wrap: wrap;
         position: relative;
         margin-top: 1.5rem;
         justify-content: space-between;
@@ -38,4 +38,32 @@
             margin-left: 1rem;
         }
     }
+}
+
+.language-picker__modal-empathy-mode {
+    display: flex;
+    align-items: center;
+}
+
+.language-picker__modal-checkboxes {
+    border-bottom: 1px solid var( --color-neutral-0 );
+    width: 100%;
+    padding: 0 16px 10px;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.language-picker__modal-incomplete-locale-notice {
+    color: var( --color-text-subtle );
+    fill: var( --color-text-subtle );
+    display: inline-block;
+
+    &-info {
+        display: flex;
+        align-items: flex-end;
+    }
+}
+
+.language-picker__modal-incomplete-locale-text {
+    margin-right: 8px;
 }

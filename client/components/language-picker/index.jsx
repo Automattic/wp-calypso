@@ -92,22 +92,7 @@ export class LanguagePicker extends PureComponent {
 		return language;
 	}
 
-	handleSelectLanguage = ( language ) => {
-		const value = language[ this.props.valueKey ] || language.langSlug;
-		const event = { target: { value } };
-		this.props.onChange( event );
-		this.setState( {
-			selectedLanguage: language,
-		} );
-	};
-
-	selectLanguage = ( languageSlug, { empathyMode, useFallbackForIncompleteLanguages } ) => {
-		// Find the language by the slug
-		const language = this.findLanguage( 'langSlug', languageSlug );
-		if ( ! language ) {
-			return;
-		}
-
+	handleSelectLanguage = ( language, { empathyMode, useFallbackForIncompleteLanguages } ) => {
 		// onChange takes an object in shape of a DOM event as argument
 		const value = language[ this.props.valueKey ] || language.langSlug;
 		const event = { target: { value, empathyMode, useFallbackForIncompleteLanguages } };

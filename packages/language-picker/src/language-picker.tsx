@@ -24,11 +24,11 @@ import { getSearchedLanguages, LocalizedLanguageNames } from './search';
  */
 import './style.scss';
 
-type Props = {
-	onSelectLanguage: ( language: Language ) => void;
-	languages: Language[];
+type Props< TLanguage extends Language > = {
+	onSelectLanguage: ( language: TLanguage ) => void;
+	languages: TLanguage[];
 	languageGroups: LanguageGroup[];
-	selectedLanguage?: Language;
+	selectedLanguage?: TLanguage;
 	localizedLanguageNames?: LocalizedLanguageNames;
 	headingButtons?: ReactNode;
 	headingTitle?: ReactNode;
@@ -70,7 +70,7 @@ const findBestDefaultLanguageGroupId = (
 	);
 };
 
-const LanguagePicker: React.FC< Props > = ( {
+function LanguagePicker< TLanguage extends Language >( {
 	onSelectLanguage,
 	languages,
 	languageGroups,
@@ -78,7 +78,7 @@ const LanguagePicker: React.FC< Props > = ( {
 	localizedLanguageNames,
 	headingTitle,
 	headingButtons,
-} ) => {
+}: Props< TLanguage > ): JSX.Element {
 	const { __ } = useI18n();
 	const [ filter, setFilter ] = useState(
 		findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, languageGroups[ 0 ].id )
@@ -215,6 +215,6 @@ const LanguagePicker: React.FC< Props > = ( {
 			</FlexBlock>
 		</Flex>
 	);
-};
+}
 
 export default LanguagePicker;
