@@ -19,10 +19,10 @@ export default function FoldableFAQExample() {
 	return (
 		<section className="docs__foldable-faq">
 			<h2 className="docs__foldable-faq-heading">Frequently Asked Questions</h2>
-			<FoldableFAQ question={ translate( 'Have questions?' ) }>
+			<FoldableFAQ id="faq-1" question={ translate( 'Have questions?' ) }>
 				{ translate( 'We have answers!' ) }
 			</FoldableFAQ>
-			<FoldableFAQ question={ translate( 'Have more questions?' ) }>
+			<FoldableFAQ id="faq-2" question={ translate( 'Have more questions?' ) }>
 				{ translate( 'No problem! Feel free to get in touch with our Happiness Engineers.' ) }
 			</FoldableFAQ>
 		</section>

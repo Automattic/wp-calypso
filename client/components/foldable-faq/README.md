@@ -14,7 +14,7 @@ export default function FoldableFAQExample() {
 	const translate = useTranslate();
 
 	return (
-		<FoldableFAQ question={ translate( 'Have more questions?' ) }>
+		<FoldableFAQ id="faq-1" question={ translate( 'Have more questions?' ) }>
 			{ translate( 'No problem! Feel free to get in touch with our Happiness Engineers.' ) }
 		</FoldableFAQ>
 	);
@@ -25,6 +25,7 @@ export default function FoldableFAQExample() {
 
 | Name         | Type         | Default       | Description                                               |
 | ------------ | ------------ | ------------- | --------------------------------------------------------- |
+| `id`\*       | `string`     | ''            | Unique id for the FAQ. Used for accessibility purposes.   |
 | `className`  | `string`     | ''            | Custom class added to the root element of the component   |
 | `question`\* | `React.Node` | none          | The question appearing above the answer                   |
 | `children`\* | `React.Node` | none          | The answer                                                |
