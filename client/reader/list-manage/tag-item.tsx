@@ -14,7 +14,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { addReaderListTag, deleteReaderListTag } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import ItemRemoveDialogue from './item-remove-dialogue';
+import ItemRemoveDialog from './item-remove-dialog';
 import { Item, List, Tag } from './types';
 
 function TagTitle( { tag: { display_name, slug } }: { tag: Tag } ) {
@@ -95,7 +95,7 @@ export default function TagItem( props: {
 				</Button>
 			) }
 
-			<ItemRemoveDialogue
+			<ItemRemoveDialog
 				onClose={ deleteItem }
 				title={ <TagTitle tag={ tag } /> }
 				type="tag"

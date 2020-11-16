@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { Dialog } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
 
-export default function ItemRemoveDialogue( props ) {
+export default function ItemRemoveDialog( props ) {
 	const { title, visibility, onClose, type } = props;
 	const translate = useTranslate();
 

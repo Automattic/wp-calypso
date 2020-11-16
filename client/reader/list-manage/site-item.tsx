@@ -15,7 +15,7 @@ import SitePlaceholder from 'calypso/blocks/site/placeholder';
 import Gridicon from 'calypso/components/gridicon';
 import { addReaderListSite, deleteReaderListSite } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import ItemRemoveDialogue from './item-remove-dialogue';
+import ItemRemoveDialog from './item-remove-dialog';
 import { Item, List, Site, SiteError } from './types';
 
 function isSiteError( site: Site | SiteError ): site is SiteError {
@@ -122,7 +122,7 @@ export default function SiteItem( props: {
 				</Button>
 			) }
 
-			<ItemRemoveDialogue
+			<ItemRemoveDialog
 				onClose={ deleteItem }
 				title={ <SiteTitle site={ site } /> }
 				type="site"

@@ -18,7 +18,7 @@ import { getFeed } from 'calypso/state/reader/feeds/selectors';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 import { addReaderListFeed, deleteReaderListFeed } from 'calypso/state/reader/lists/actions';
 import { getMatchingItem } from 'calypso/state/reader/lists/selectors';
-import ItemRemoveDialogue from './item-remove-dialogue';
+import ItemRemoveDialog from './item-remove-dialog';
 
 function isFeedError( feed: Feed | FeedError ): feed is FeedError {
 	return 'errors' in feed;
@@ -125,7 +125,7 @@ export default function FeedItem( props: {
 				</Button>
 			) }
 
-			<ItemRemoveDialogue
+			<ItemRemoveDialog
 				onClose={ deleteItem }
 				title={ <FeedTitle feed={ feed } /> }
 				type="feed"
