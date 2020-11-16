@@ -18,10 +18,10 @@ import { useShoppingCart } from '@automattic/shopping-cart';
  */
 import WordPressLogo from '../components/wordpress-logo';
 
-export function createFullCreditsMethod( { credits } ) {
+export function createFullCreditsMethod() {
 	return {
 		id: 'full-credits',
-		label: <WordPressCreditsLabel credits={ credits } />,
+		label: <WordPressCreditsLabel />,
 		submitButton: <FullCreditsSubmitButton />,
 		inactiveContent: <WordPressCreditsSummary />,
 		getAriaLabel: ( __ ) => __( 'Credits' ),
@@ -65,14 +65,15 @@ function ButtonContents( { formStatus, total } ) {
 	return __( 'Please wait…' );
 }
 
-function WordPressCreditsLabel( { credits } ) {
+function WordPressCreditsLabel() {
 	const { __ } = useI18n();
+	const { responseCart } = useShoppingCart();
 
 	return (
 		<React.Fragment>
 			<div>
 				{ sprintf( __( 'WordPress.com Credits: %(amount)s available' ), {
-					amount: credits.wpcom_meta.credits_display,
+					amount: responseCart.available_credits_display,
 				} ) }
 			</div>
 			<WordPressLogo />
