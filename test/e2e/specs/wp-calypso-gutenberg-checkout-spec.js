@@ -65,6 +65,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 
 		step( 'Can click Upgrade button on premium block', async function () {
 			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.ensureSaved();
 			await gEditorComponent.clickUpgradeOnPremiumBlock();
 			return await driver.switchTo().defaultContent();
 		} );
