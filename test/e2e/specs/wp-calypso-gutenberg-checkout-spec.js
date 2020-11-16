@@ -40,18 +40,18 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	let editorUrl;
 
 	describe( 'Can trigger the checkout modal via post editor', function () {
+		step( 'Can log in', async function () {
+			this.timeout( mochaTimeOut * 12 );
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
+			return await loginFlow.loginAndStartNewPost( null, true );
+		} );
+
 		step( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			await wPHomePage.setCurrencyForPayments( currencyValue );
 			return await driver.navigate().back();
-		} );
-
-		step( 'Can log in', async function () {
-			this.timeout( mochaTimeOut * 12 );
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
-			return await loginFlow.loginAndStartNewPost( null, true );
 		} );
 
 		step( 'Can insert the premium block', async function () {
@@ -240,17 +240,17 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	} );
 
 	describe( 'Can delete the premium plan', async function () {
+		step( 'Can log in', async function () {
+			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
+			return await loginFlow.login();
+		} );
+
 		step( 'We can set the sandbox cookie for payments', async function () {
 			const wPHomePage = await WPHomePage.Visit( driver );
 			await wPHomePage.checkURL( locale );
 			await wPHomePage.setSandboxModeForPayments( sandboxCookieValue );
 			await wPHomePage.setCurrencyForPayments( currencyValue );
 			return await driver.navigate().back();
-		} );
-
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
-			return await loginFlow.login();
 		} );
 
 		step( 'Can delete the premium plan', async function () {
