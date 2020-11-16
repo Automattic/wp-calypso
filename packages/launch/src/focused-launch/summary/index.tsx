@@ -144,13 +144,9 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
 							<LeadingContentSide label={ currentDomain || '' } />
-							<TrailingContentSide
-								price={
-									<>
-										<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
-									</>
-								}
-							/>
+							<TrailingContentSide nodeType="PRICE">
+								<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
+							</TrailingContentSide>
 						</FocusedLaunchSummaryItem>
 					</>
 				) : (
@@ -314,14 +310,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<div>
 							<FocusedLaunchSummaryItem readOnly={ true }>
 								<LeadingContentSide label={ sitePlan?.product_name_short_with_suffix } />
-								<TrailingContentSide
-									price={
-										<>
-											<Icon icon={ check } size={ 18 } />{ ' ' }
-											{ __( 'Purchased', __i18n_text_domain__ ) }{ ' ' }
-										</>
-									}
-								/>
+								<TrailingContentSide nodeType="PRICE">
+									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
+								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 						</div>
 					</>
@@ -356,13 +347,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									}
 								/>
 								<TrailingContentSide
-									price={ __( 'Free', __i18n_text_domain__ ) }
-									warningNote={
-										hasPaidDomain || selectedPaidDomain
-											? __( 'Not available with your domain selection', __i18n_text_domain__ )
-											: ''
-									}
-								/>
+									nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
+								>
+									{ hasPaidDomain || selectedPaidDomain
+										? __( 'Not available with your domain selection', __i18n_text_domain__ )
+										: __( 'Free', __i18n_text_domain__ ) }
+								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 							<FocusedLaunchSummaryItem
 								onClick={ () => paidPlan && onSetPlan( paidPlan ) }
@@ -375,19 +365,15 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									}
 									badgeText={ paidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
 								/>
-								<TrailingContentSide
-									price={
-										<>
-											<span>{ paidPlan && planPrices[ paidPlan?.storeSlug ] }</span>
-											<span>
-												{
-													// translators: /mo is short for "per-month"
-													__( '/mo', __i18n_text_domain__ )
-												}
-											</span>
-										</>
-									}
-								/>
+								<TrailingContentSide nodeType="PRICE">
+									<span>{ paidPlan && planPrices[ paidPlan?.storeSlug ] }</span>
+									<span>
+										{
+											// translators: /mo is short for "per-month"
+											__( '/mo', __i18n_text_domain__ )
+										}
+									</span>
+								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 						</div>
 						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>

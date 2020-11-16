@@ -11,8 +11,7 @@ interface LeadingSideProps {
 }
 
 interface TrailingSideProps {
-	price?: ReactNode;
-	warningNote?: ReactNode;
+	nodeType: 'PRICE' | 'WARNING';
 }
 
 export const LeadingContentSide: React.FunctionComponent< LeadingSideProps > = ( {
@@ -29,11 +28,20 @@ export const LeadingContentSide: React.FunctionComponent< LeadingSideProps > = (
 	);
 };
 
-export const TrailingContentSide: React.FunctionComponent< TrailingSideProps > = ( props ) => {
-	if ( props.warningNote ) {
-		return <div className="focused-launch-summary-item__warning-note">{ props.warningNote }</div>;
-	}
-	return <div className="focused-launch-summary-item__price-cost">{ props.price }</div>;
+export const TrailingContentSide: React.FunctionComponent< TrailingSideProps > = ( {
+	nodeType,
+	children,
+} ) => {
+	return (
+		<div
+			className={ classnames( {
+				'focused-launch-summary-item__warning-note': nodeType === 'WARNING',
+				'focused-launch-summary-item__price-cost': nodeType === 'PRICE',
+			} ) }
+		>
+			{ children }
+		</div>
+	);
 };
 
 const FocusedLaunchSummaryItem: React.FunctionComponent<
