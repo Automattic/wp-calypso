@@ -57,7 +57,7 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 			setHeight( 0 );
 			trackCloseFaq();
 		}
-	}, [ isExpanded ] );
+	}, [ isExpanded, trackCloseFaq, trackOpenFaq ] );
 
 	return (
 		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
