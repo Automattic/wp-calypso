@@ -23,13 +23,6 @@
 
 	--masterbar-height: 40px;
 
-	--color-sidebar-submenu-background: #32373c;
-	--color-sidebar-submenu-text: #b4b9be;
-	--color-sidebar-submenu-hover-background: transparent;
-	--color-sidebar-submenu-hover-text: #00b9eb;
-	--color-sidebar-submenu-selected-background: transparent;
-	--color-sidebar-submenu-selected-text: white;
-
 	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
 		--sidebar-width-max: 36px;
 		--sidebar-width-min: 36px;
@@ -166,11 +159,11 @@ $font-size: rem( 14px );
 			opacity: 0.6;
 		}
 
-		.sidebar__menu-item-parent {
-			&.selected {
-				.sidebar__menu-link {
-					background: var( --color-sidebar-menu-selected-background );
-					color: white;
+		// .sidebar__menu-item-parent {
+		// 	&.selected {
+		// 		// .sidebar__menu-link {
+		// 		// 	background: var( --color-sidebar-menu-selected-background );
+		// 		// 	color: white;
 
 		// 		// 	.sidebar__menu-icon {
 		// 		// 		color: white;
@@ -180,12 +173,12 @@ $font-size: rem( 14px );
 						opacity: 1;
 					}
 
-					&::after {
-						display: block;
-					}
-				}
-			}
-		}
+		// 		// 	&::after {
+		// 		// 		display: block;
+		// 		// 	}
+		// 		// }
+		// 	}
+		// }
 
 		.sidebar__menu,
 		.sidebar__menu-item-parent,
