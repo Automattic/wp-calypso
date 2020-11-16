@@ -161,8 +161,8 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 			<p>
 				{ translate(
-					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threat on {{strong}}%(siteName)s{{/strong}}. Please review the threat and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
-					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threats on {{strong}}%(siteName)s{{/strong}}. Please review each threat and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threat on {{strong}}%(siteName)s{{/strong}}. Please review the threat and take action.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threats on {{strong}}%(siteName)s{{/strong}}. Please review each threat and take action.',
 					{
 						args: {
 							siteName: site.name,
@@ -170,13 +170,6 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 						},
 						components: {
 							strong: <strong />,
-							a: (
-								<a
-									href={ contactSupportUrl( site.URL ) }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
 						},
 						comment:
 							'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site. The {{a}} tag is a link that goes to a contact support page.',
