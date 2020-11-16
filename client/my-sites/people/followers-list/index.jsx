@@ -279,7 +279,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
 
 	const query = {
-		max: 50,
+		max: 100,
 		page: currentPage,
 		siteId: site.ID,
 		type,
