@@ -28,7 +28,7 @@ import PagesPage from '../pages/pages-page';
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
-	constructor( driver, accountOrFeatures = {} ) {
+	constructor( driver, accountOrFeatures ) {
 		this.driver = driver;
 		if ( host !== 'WPCOM' && ! accountOrFeatures ) {
 			accountOrFeatures = 'jetpackUser' + host;
