@@ -67,6 +67,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	sub_total_integer: number;
 	sub_total_display: string;
 	currency: string;
+	available_credits_integer: number;
+	available_credits_display: string;
 	credits_integer: number;
 	credits_display: string;
 	allowed_payment_methods: string[];
