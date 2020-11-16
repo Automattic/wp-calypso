@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
 import {
@@ -29,7 +24,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBeFalsy();
 		} );
 
 		test( 'should return true if fetching', () => {
@@ -41,7 +36,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBeTruthy();
 		} );
 	} );
 
@@ -55,7 +50,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.false;
+			expect( isRequesting ).toBeFalsy();
 		} );
 
 		test( 'should return true if fetching', () => {
@@ -67,7 +62,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( isRequesting ).to.be.true;
+			expect( isRequesting ).toBeTruthy();
 		} );
 	} );
 
@@ -87,7 +82,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( subscribedLists ).to.eql( [] );
+			expect( subscribedLists ).toEqual( [] );
 		} );
 
 		test( 'should retrieve items in a-z slug order', () => {
@@ -109,7 +104,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( subscribedLists ).to.eql( [
+			expect( subscribedLists ).toEqual( [
 				{ ID: 456, slug: 'ants' },
 				{ ID: 123, slug: 'bananas' },
 			] );
@@ -129,7 +124,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( isUpdated ).to.be.false;
+			expect( isUpdated ).toBeFalsy();
 		} );
 
 		test( 'should return true if the list has been updated', () => {
@@ -144,7 +139,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( isUpdated ).to.be.true;
+			expect( isUpdated ).toBeTruthy();
 		} );
 	} );
 
@@ -160,7 +155,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( list ).to.eql( undefined );
+			expect( list ).toEqual( undefined );
 		} );
 
 		test( 'should return a list if the owner and slug match', () => {
@@ -187,7 +182,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( list ).to.eql( {
+			expect( list ).toEqual( {
 				ID: 123,
 				owner: 'lister',
 				slug: 'bananas',
@@ -271,7 +266,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isSubscribed ).to.eql( false );
+			expect( isSubscribed ).toEqual( false );
 		} );
 
 		test( 'should return true if the owner and slug match a subscribed list', () => {
@@ -299,7 +294,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isSubscribed ).to.eql( true );
+			expect( isSubscribed ).toEqual( true );
 		} );
 	} );
 
@@ -316,7 +311,7 @@ describe( 'selectors', () => {
 				456
 			);
 
-			expect( result ).to.be.false;
+			expect( result ).toBeFalsy();
 		} );
 
 		test( 'should return true if the list has an error', () => {
@@ -331,7 +326,7 @@ describe( 'selectors', () => {
 				123
 			);
 
-			expect( result ).to.be.true;
+			expect( result ).toBeTruthy();
 		} );
 	} );
 
@@ -349,7 +344,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isMissing ).to.eql( false );
+			expect( isMissing ).toEqual( false );
 		} );
 
 		test( 'should return true if the owner and slug match a missing list', () => {
@@ -365,7 +360,7 @@ describe( 'selectors', () => {
 				'bananas'
 			);
 
-			expect( isMissing ).to.eql( true );
+			expect( isMissing ).toEqual( true );
 		} );
 	} );
 } );
