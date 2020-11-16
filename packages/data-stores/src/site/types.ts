@@ -58,7 +58,7 @@ export interface CreateSiteParams {
 		font_base?: string;
 		use_patterns?: boolean;
 		selected_features?: string[];
-		wpcom_public_coming_soon?: boolean;
+		wpcom_public_coming_soon?: number;
 	};
 }
 
