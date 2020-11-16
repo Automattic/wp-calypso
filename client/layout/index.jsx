@@ -116,7 +116,7 @@ class Layout extends Component {
 
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
 		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
-		const exemptedRoutesStartingWith = [ '/start/p2', '/something/else' ];
+		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
