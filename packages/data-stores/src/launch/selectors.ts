@@ -26,6 +26,15 @@ export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSugge
 	state.domain;
 export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state.plan;
 
+/**
+ * Returns the last paid plan the user has picked.
+ * If they revert to a free plan,
+ * this is useful if you want to recommend their once-picked paid plan
+ *
+ * @param state State
+ */
+export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
+
 // Completion status of steps is derived from the state of the launch flow
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
