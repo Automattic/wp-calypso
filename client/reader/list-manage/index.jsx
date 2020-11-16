@@ -62,9 +62,9 @@ function Items( { list, listItems, owner } ) {
 			{ listItems?.length > 0 && (
 				<>
 					<h1 className="list-manage__subscriptions-header">
-						Added sites
+						{ translate( 'Added sites' ) }
 						<Button compact primary href="#reader-list-item-adder">
-							Add Site
+							{ translate( 'Add Site' ) }
 						</Button>
 					</h1>
 					{ listItems.map( ( item ) => (
