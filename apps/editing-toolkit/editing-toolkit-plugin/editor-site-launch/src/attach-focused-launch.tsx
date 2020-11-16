@@ -29,6 +29,9 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				siteId={ window._currentSiteId }
 				onClose={ closeFocusedLaunch }
 				locale={ document.documentElement.lang }
+				redirectTo={ ( url: string ) => {
+					console.log( `TODO: should redirect calypso to ${ url }` );
+				} }
 			/>
 		);
 	},

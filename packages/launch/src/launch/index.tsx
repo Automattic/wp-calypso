@@ -19,9 +19,18 @@ interface Props {
 	onClose: () => void;
 	siteId: number;
 	locale: string;
+	redirectTo?: ( url: string ) => void;
 }
 
-const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId, locale } ) => {
+const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
+	onClose,
+	siteId,
+	locale,
+	redirectTo = ( url: string ) => {
+		// Won't work if trying to redirect the parent frame
+		window.location.href = url;
+	},
+} ) => {
 	const {
 		isModalDismissible,
 		setModalDismissible,
@@ -54,7 +63,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( { onClose, siteId
 		>
 			<div className="launch__focused-modal-wrapper ">
 				<div className="launch__focused-modal-body">
-					<LaunchContext.Provider value={ { siteId, locale } }>
+					<LaunchContext.Provider value={ { siteId, locale, redirectTo } }>
 						<FocusedLaunch />
 					</LaunchContext.Provider>
 				</div>

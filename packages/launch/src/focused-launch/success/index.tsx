@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
@@ -14,10 +14,13 @@ import { ClipboardButton } from '@wordpress/components';
  */
 import { useFocusedLaunchModal, useSiteDomains } from '../../hooks';
 import Confetti from './confetti';
+import LaunchContext from '../../context';
 
 import './style.scss';
 
 const Success: React.FunctionComponent = () => {
+	const { redirectTo } = useContext( LaunchContext );
+
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
 	const { unsetModalDismissible, closeFocusedLaunch, hideModalTitle } = useFocusedLaunchModal();
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = useState( '' );
@@ -35,6 +38,9 @@ const Success: React.FunctionComponent = () => {
 		hideModalTitle();
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
+	const redirectToHome = () => {
+		redirectTo( `/home/${ siteSubdomain?.domain }` );
+	};
 	return (
 		<div className="focused-launch-success">
 			<div className="focused-launch-success__wrapper">
