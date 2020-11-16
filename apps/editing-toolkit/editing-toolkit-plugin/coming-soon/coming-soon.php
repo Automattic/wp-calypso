@@ -94,16 +94,16 @@ add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_o
 
 // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
- * Adds the `wpcom_public_coming_soon` option to new sites
+ * Adds the `wpcom_public_coming_soon` option to new sites  if requested by the client.
  *
  * @param int    $blog_id    Blog ID.
  * @param int    $user_id    User ID.
  * @param string $domain     Site domain.
  * @param string $path       Site path.
- * @param int    $site_id    Site ID.
+ * @param int    $network_id Network ID. Only relevant on multi-network installations.
  * @param array  $meta       Meta data. Used to set initial site options.
  */
-function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $site_id, $meta ) {
+function add_option_to_new_site( $blog_id, $user_id, $domain, $path, $network_id, $meta ) {
 	if ( 0 === $meta['public'] && 1 === (int) $meta['options']['wpcom_public_coming_soon'] ) {
 		add_blog_option( $blog_id, 'wpcom_public_coming_soon', 1 );
 	} else {
@@ -121,9 +121,21 @@ function coming_soon_page() {
 	if ( ! show_coming_soon_page() ) {
 		return;
 	}
-
+	if ( ! defined( 'GRAVATAR_HOVERCARDS__DISABLE' ) ) {
+		define( 'GRAVATAR_HOVERCARDS__DISABLE', true );
+	}
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
+	// Disable WP scripts, social og meta, cookie banner.
+	remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'header_js', 5 );
+	remove_action( 'wp_head', 'global_css', 5 );
+	remove_action( 'wp_footer', 'wpcom_subs_js' );
+	remove_action( 'wp_footer', 'stats_footer', 101 );
+	add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
+	add_filter( 'jetpack_enable_opengraph', '__return_false', 1 );
 
 	render_fallback_coming_soon_page();
 	die();
