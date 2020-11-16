@@ -14,6 +14,7 @@ import HappychatButton from 'calypso/components/happychat/button';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getSupportLevel from 'calypso/state/selectors/get-support-level';
 
+/* eslint-disable wpcalypso/jsx-classname-namespace */
 export class PaymentChatButton extends Component {
 	chatButtonClicked = () => {
 		const { plan, supportLevel } = this.props;

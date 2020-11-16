@@ -22,7 +22,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
-import PaymentChatButton from 'calypso/my-sites/checkout/checkout/payment-chat-button';
+import PaymentChatButton from './payment-chat-button';
 import getSupportVariation, {
 	SUPPORT_HAPPYCHAT,
 	SUPPORT_FORUM,
