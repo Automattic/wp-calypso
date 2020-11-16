@@ -5,7 +5,7 @@
  */
 import React, { useState, useEffect, useContext } from 'react';
 import { __ } from '@wordpress/i18n';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
 import { ClipboardButton } from '@wordpress/components';
 
@@ -41,6 +41,7 @@ const Success: React.FunctionComponent = () => {
 	const redirectToHome = () => {
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
+
 	return (
 		<div className="focused-launch-success">
 			<div className="focused-launch-success__wrapper">
@@ -78,13 +79,16 @@ const Success: React.FunctionComponent = () => {
 				</div>
 
 				{ /* @TODO: this will work only when the modal in in the block editor. */ }
-				<button onClick={ closeFocusedLaunch }>
+				<NextButton
+					onClick={ closeFocusedLaunch }
+					className="focused-launch-success__continue-editing-button"
+				>
 					{ __( 'Continue Editing', __i18n_text_domain__ ) }
-				</button>
+				</NextButton>
 
-				<a href={ `/home/${ siteSubdomain?.domain }` }>
+				<BackButton onClick={ redirectToHome }>
 					{ __( 'Back home', __i18n_text_domain__ ) }
-				</a>
+				</BackButton>
 			</div>
 		</div>
 	);
