@@ -1,14 +1,12 @@
 .jetpack-product-card-i5 {
 	position: relative;
 
+	height: 100%;
+
 	background: var( --color-surface );
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
 	box-shadow: 0px 4px 24px rgba( 0, 0, 0, 0.05 );
-
-	&.is-aligned {
-		height: 100%;
-	}
 
 	&.is-featured {
 		z-index: 1;
@@ -182,28 +180,6 @@
 	color: var( --studio-gray-100 );
 
 	font-weight: 700;
-}
-
-.jetpack-product-card-i5__features-toggle {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-
-	width: 100%;
-
-	color: var( --studio-gray-50 );
-
-	font-size: 1rem;
-
-	cursor: pointer;
-}
-
-.jetpack-product-card-i5__features-chevron {
-	transform: rotate( 180deg );
-
-	.is-expanded & {
-		transform: rotate( 0deg );
-	}
 }
 
 /* Prices Loading state */
