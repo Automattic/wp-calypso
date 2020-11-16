@@ -15,7 +15,7 @@ import { Verticals } from '@automattic/data-stores';
 
 const VERTICALS_STORE = Verticals.register();
 
-const VerticalSelect = () => {
+export const VerticalSelect = (): React.FunctionComponent<  > => {
 	const verticals = useSelect( ( select ) => select( VERTICALS_STORE ).getVerticals() );
 
 	return (
@@ -39,7 +39,7 @@ When an application needs to use a store that should be configured, it may be he
 ```ts
 // vertical-store.ts
 import { DomainSuggestions } from '@automattic/data-stores';
-export const DOMAIN_SUGGESTIONS_STORE = DomainsSuggestions.register( {
+export const DOMAIN_SUGGESTIONS_STORE = DomainSuggestions.register( {
 	/* …my application configuration… */
 } );
 // elsewhere…
