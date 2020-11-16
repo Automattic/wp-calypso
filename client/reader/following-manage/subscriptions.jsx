@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { escapeRegExp, sortBy, trimStart, isEmpty } from 'lodash';
+import { sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
@@ -21,12 +21,7 @@ import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
 import { getReaderFollows, getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 import UrlSearch from 'calypso/lib/url-search';
-import {
-	getSiteName,
-	getSiteUrl,
-	getSiteDescription,
-	getSiteAuthorName,
-} from 'calypso/reader/get-helpers';
+import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
 import EllipsisMenu from 'calypso/components/ellipsis-menu';
 import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import { formatUrlForDisplay, getFeedTitle } from 'calypso/reader/lib/feed-display-helper';
@@ -42,31 +37,6 @@ class FollowingManageSubscriptions extends Component {
 		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		windowScrollerRef: PropTypes.func,
 	};
-
-	filterFollowsByQuery( query ) {
-		const { follows } = this.props;
-
-		if ( ! query ) {
-			return follows;
-		}
-
-		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
-
-		return follows.filter( ( follow ) => {
-			const feed = follow.feed;
-			const site = follow.site;
-			const siteName = getSiteName( { feed, site } );
-			const siteUrl = getSiteUrl( { feed, site } );
-			const siteDescription = getSiteDescription( { feed, site } );
-			const siteAuthor = getSiteAuthorName( site );
-
-			return (
-				`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`.search(
-					phraseRe
-				) !== -1
-			);
-		} );
-	}
 
 	sortFollows( follows, sortOrder ) {
 		if ( sortOrder === 'alpha' ) {
@@ -87,7 +57,7 @@ class FollowingManageSubscriptions extends Component {
 
 	render() {
 		const { width, translate, query, followsCount, sortOrder } = this.props;
-		const filteredFollows = this.filterFollowsByQuery( query );
+		const filteredFollows = filterFollowsByQuery( query, this.props.follows );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
 		const noSitesMatchQuery = isEmpty( sortedFollows );
 		const subsListClassNames = classnames( 'following-manage__subscriptions-list', {
