@@ -47,7 +47,8 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
 * Enable persistent launch button in all environments (https://github.com/Automattic/wp-calypso/pull/46817)
 * Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
-* Coming soon: fix the localised login link on the coming soon page
+* Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
+* Comgin soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
 
 = 2.8.4 =
 * Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)
