@@ -21,7 +21,6 @@ import {
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
-import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -50,8 +49,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		coupon,
 		tax,
 	} = serverCart;
-
-	const isFullCredits = doesPurchaseHaveFullCredits( serverCart );
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
@@ -143,7 +140,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
-		total: isFullCredits ? subtotalItem : totalItem,
+		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
