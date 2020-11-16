@@ -69,6 +69,8 @@ function get_onboarding_url() {
 	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
 }
 
+nocache_headers();
+
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
