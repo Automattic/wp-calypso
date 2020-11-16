@@ -13,6 +13,7 @@ import {
 	hasOnlyRenewalItems,
 } from 'calypso/lib/cart-values/cart-items';
 import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 export default function getContactDetailsType( responseCart: ResponseCart ): ContactDetailsType {
 	const hasDomainProduct =
@@ -22,10 +23,7 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 	);
 	const isOnlyRenewals = hasOnlyRenewalItems( responseCart );
 	const isPurchaseFree = responseCart.total_cost_integer === 0;
-	const isFullCredits =
-		! isPurchaseFree &&
-		responseCart.credits_integer > 0 &&
-		responseCart.credits_integer >= responseCart.sub_total_integer;
+	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
 
 	if ( hasDomainProduct && ! isOnlyRenewals ) {
 		return 'domain';
