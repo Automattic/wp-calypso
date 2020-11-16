@@ -225,15 +225,15 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							<ul className="focused-launch-summary__side-commentary-list">
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Stand out with a unique domain' ) }
+									{ __( 'Stand out with a unique domain', __i18n_text_domain__ ) }
 								</li>
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Easy to remember and easy to share' ) }
+									{ __( 'Easy to remember and easy to share', __i18n_text_domain__ ) }
 								</li>
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Builds brand recognition and trust' ) }
+									{ __( 'Builds brand recognition and trust', __i18n_text_domain__ ) }
 								</li>
 							</ul>
 						</>
@@ -332,15 +332,15 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<ul className="focused-launch-summary__side-commentary-list">
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Advanced tools and customization' ) }
+								{ __( 'Advanced tools and customization', __i18n_text_domain__ ) }
 							</li>
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Unlimited premium themes' ) }
+								{ __( 'Unlimited premium themes', __i18n_text_domain__ ) }
 							</li>
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Accept payments' ) }
+								{ __( 'Accept payments', __i18n_text_domain__ ) }
 							</li>
 						</ul>
 					</>
