@@ -7,6 +7,7 @@ import { translate } from 'i18n-calypso';
 import classnames from 'classnames';
 import { Button } from '@automattic/components';
 import { noop } from 'lodash';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 /**
  * Internal dependencies
@@ -169,15 +170,16 @@ const ThreatItem: React.FC< Props > = ( {
 					</Button>
 				) }
 				{ ! isFixable && (
-					<Button
-						primary
-						className="threat-item__codeable-button"
+					<ExternalLinkWithTracking
+						className="button is-primary threat-item__codeable-button"
 						href="https://codeable.io/partners/jetpack-scan/"
 						target="_blank"
 						rel="noopener noreferrer"
+						tracksEventName="calypso_jetpack_scan_threat_codeable_estimate"
+						onClick={ () => {} }
 					>
 						{ translate( 'Get a free estimate' ) }
-					</Button>
+					</ExternalLinkWithTracking>
 				) }
 				{ isFixable && renderFixThreatButton( 'is-details' ) }
 			</div>
