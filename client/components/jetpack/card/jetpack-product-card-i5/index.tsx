@@ -68,7 +68,6 @@ const JetpackProductCardAlt2: React.FC< Props > = ( {
 	isDeprecated,
 	isAligned,
 	features,
-	showAllFeatures,
 }: Props ) => {
 	const translate = useTranslate();
 	const isDiscounted = isFinite( discountedPrice );
