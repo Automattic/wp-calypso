@@ -64,7 +64,7 @@ const Success: React.FunctionComponent = () => {
 						// translators: text accessible to screen readers
 						aria-label={ __( 'Visit site', __i18n_text_domain__ ) }
 					>
-						<Icon icon={ external } size={ 24 } />
+						<Icon icon={ external } size={ 16 } />
 					</a>
 					<ClipboardButton
 						text={ displayedSiteUrl }
