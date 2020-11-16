@@ -65,4 +65,3 @@ export default withI18n( MyComponent );
 ## API
 
 The translation functions `__`, `_n`, `_nx`, and `_x` are exposed from [`@wordpress/i18n`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/i18n). Refer to their documentation there.
-`i18nLocale` is a `string` containing the current locale. This is determined from the provided localeData and will fall back to `en`.
