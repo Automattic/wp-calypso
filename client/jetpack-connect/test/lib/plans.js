@@ -233,7 +233,6 @@ export const DEFAULT_PROPS = {
 	calypsoStartedConnection: false,
 	canPurchasePlans: true,
 	cart: CART,
-	completeFlow: noop,
 	context: CONTEXT,
 	flowType: false,
 	getPlanBySlug: noop,
