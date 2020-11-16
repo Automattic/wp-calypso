@@ -154,7 +154,7 @@ $font-size: rem( 14px );
 			padding-left: 24px;
 
 			.sidebar__menu-item--child {
-				&:nth-of-type(1) {
+				&:nth-of-type( 1 ) {
 					font-weight: 600;
 				}
 			}
@@ -559,7 +559,7 @@ $font-size: rem( 14px );
 				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
-				box-shadow: 0 3px 30px rgba(25, 30, 35, .2);
+				box-shadow: 0 3px 30px rgba( 25, 30, 35, 0.2 );
 
 				.sidebar__menu-link:hover {
 					//font-weight: normal;
