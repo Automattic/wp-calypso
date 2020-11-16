@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
@@ -97,7 +96,7 @@ export const JETPACK_PLANS = [
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS : [] ),
+	...JETPACK_RESET_PLANS,
 ];
 
 export const JETPACK_RESET_PLANS_BY_TERM = [
@@ -128,7 +127,7 @@ export const JETPACK_PLANS_BY_TERM = [
 		yearly: PLAN_JETPACK_PREMIUM,
 		monthly: PLAN_JETPACK_PREMIUM_MONTHLY,
 	},
-	...( shouldShowOfferResetFlow() ? JETPACK_RESET_PLANS_BY_TERM : [] ),
+	...JETPACK_RESET_PLANS_BY_TERM,
 ];
 
 export const PLAN_MONTHLY_PERIOD = 31;

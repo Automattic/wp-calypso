@@ -25,7 +25,6 @@ import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_LEGACY_PLANS,
@@ -177,7 +176,7 @@ class CurrentPlan extends Component {
 		let showExpiryNotice = false;
 		let purchase = null;
 
-		if ( shouldShowOfferResetFlow() && JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
+		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}

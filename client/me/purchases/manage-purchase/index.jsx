@@ -17,7 +17,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { applyTestFiltersToPlansList } from 'calypso/lib/plans';
 import { Button, Card, CompactCard, ProductIcon } from '@automattic/components';
 import config from 'calypso/config';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	cardProcessorSupportsUpdates,
 	getDomainRegistrationAgreementUrl,
@@ -671,11 +670,7 @@ class ManagePurchase extends Component {
 		let showExpiryNotice = false;
 		let preventRenewal = false;
 
-		if (
-			shouldShowOfferResetFlow() &&
-			purchase &&
-			JETPACK_LEGACY_PLANS.includes( purchase.productSlug )
-		) {
+		if ( purchase && JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) ) {
 			showExpiryNotice = isCloseToExpiration( purchase );
 			preventRenewal = ! isRenewable( purchase );
 		}
