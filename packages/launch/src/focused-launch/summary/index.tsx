@@ -20,7 +20,14 @@ import FocusedLaunchSummaryItem, {
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch, useSiteDomains, useSite, usePlans } from '../../hooks';
+import {
+	useTitle,
+	useDomainSearch,
+	useSiteDomains,
+	useSite,
+	usePlans,
+	useFocusedLaunchModal,
+} from '../../hooks';
 import { LAUNCH_STORE, Plan, SiteDetailsPlan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
@@ -448,6 +455,18 @@ const Summary: React.FunctionComponent = () => {
 	const site = useSite();
 
 	const { locale } = useContext( LaunchContext );
+
+	const { setModalDismissible, showModalTitle } = useFocusedLaunchModal();
+
+	// Make sure the modal is dimissible when the summary view is launched.
+	useEffect( () => {
+		setModalDismissible();
+	}, [ setModalDismissible ] );
+
+	// Make sure the modal title is visible when the summary view is launched.
+	useEffect( () => {
+		showModalTitle();
+	}, [ showModalTitle ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
