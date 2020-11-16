@@ -1,0 +1,280 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+/**
+ * These color come from Jetpack.com color pallette. We leave them as they are
+ * because we want to make this page resemble as closest as possible jetpack.com/pricing.
+ */
+$jpcom-primary: #00be28;
+$jpcom-gray: #87a6bc;
+$jpcom-gray-lighten20: lighten( $jpcom-gray, 20% ); // #c8d7e1
+$jpcom-gray-lighten30: lighten( $jpcom-gray, 30% ); // #e9eff3
+$jpcom-gray-darken30: darken( $jpcom-gray, 30% ); // #3d596d
+
+.jpcom-masterbar {
+	background-color: var( --color-surface );
+
+	padding: 1em 16px;
+
+	// Undo the padding-top set by .layout__content for each
+	// screen size.
+	margin-top: -47px;
+
+	// We need to use this deprecated breakpoint because we need
+	// to match Calypso's layout breakpoint also.
+	@include breakpoint-deprecated( '>660px' ) {
+		padding: 1em 0;
+
+		margin-top: -71px;
+	}
+
+	@include break-large {
+		margin-top: -79px;
+	}
+}
+
+.jpcom-masterbar__inner {
+	// Breakpoint taken from jetpack.com, not standard in Calypso
+	@media ( min-width: 375px ) {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+
+		text-align: left;
+	}
+
+	@include break-large {
+		flex-wrap: nowrap;
+
+		max-width: 1040px;
+
+		margin: 0 auto;
+		padding: 0 32px;
+	}
+}
+
+.jpcom-masterbar__logo {
+	padding-top: 0.25em;
+}
+
+.jpcom-masterbar {
+	// Pin to the top only on screens wider than `break-large`.
+	// ( and only if not "iteration-i5", iteration-i5 has static, free scrolling masterbar )
+	@include break-large {
+		&:not( .iteration-i5 ) {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 3;
+
+			width: 100%;
+			margin-top: 0;
+		}
+	}
+}
+
+.jpcom-masterbar__nav {
+	flex: 1 1 100%;
+
+	display: none;
+	flex-direction: column;
+
+	list-style: none;
+	list-style-image: none;
+
+	line-height: 150%;
+
+	margin: 0 auto 1.5em;
+	padding: 1em 0;
+
+	background: $jpcom-gray-lighten30;
+
+	&.is-open {
+		display: flex;
+	}
+
+	@include break-large {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+
+		padding: 0;
+		margin: 0.5em 0;
+
+		background: var( --color-surface );
+	}
+}
+
+.jpcom-masterbar__nav-item {
+	padding: 0 30px;
+
+	// Breakpoint taken from jetpack.com, not standard in Calypso
+	@media ( min-width: 375px ) {
+		padding: 0 3px;
+	}
+
+	a {
+		color: $jpcom-primary;
+
+		display: inline-block;
+
+		width: 90%;
+
+		padding: 10px 0;
+
+		font-weight: 600;
+		font-size: 0.875rem;
+
+		border-bottom: 2px transparent solid;
+		border-radius: 0;
+
+		transition: all 0.5s ease-in-out;
+
+		@media ( min-width: 375px ) {
+			margin-left: 16px;
+
+			font-size: 1.125rem;
+		}
+
+		@include break-large {
+			width: inherit;
+
+			padding: 10px 14px;
+
+			margin-left: 0;
+		}
+	}
+
+	a.current,
+	a:hover {
+		border-bottom: 2px $jpcom-gray solid;
+		color: black;
+		background: 0 0;
+	}
+}
+
+.jpcom-masterbar__navbutton.mobilenav {
+	width: 100%;
+	margin-top: 24px;
+
+	// Breakpoint taken from jetpack.com, not standard in Calypso
+	@media ( min-width: 375px ) {
+		width: auto;
+		margin-top: 0;
+		margin-bottom: 8px;
+	}
+
+	@include break-large {
+		display: none;
+	}
+
+	display: flex;
+	flex-basis: 3em;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	padding: 16px;
+
+	color: $jpcom-gray-darken30;
+	font-weight: bold;
+	text-transform: uppercase;
+
+	background: $jpcom-gray-lighten30;
+
+	border-color: $jpcom-gray-lighten30;
+	border-radius: 3px;
+	border-width: 2px;
+	border-style: outset;
+
+	overflow: visible;
+
+	transition-property: opacity, filter;
+	transition-duration: 0.15s;
+	transition-timing-function: linear;
+	transition: all 0.5s ease-in-out;
+
+	&:hover,
+	&.is-active {
+		background: $jpcom-gray-lighten20;
+		border-color: $jpcom-gray-lighten20;
+	}
+
+	.jpcom-masterbar__navbox {
+		width: 30px;
+		height: 20px;
+		display: inline-block;
+		position: relative;
+		margin-right: 1em;
+	}
+
+	.jpcom-masterbar__navinner {
+		display: block;
+		top: 50%;
+		margin-top: -2px;
+	}
+
+	.jpcom-masterbar__navinner,
+	.jpcom-masterbar__navinner::before,
+	.jpcom-masterbar__navinner::after {
+		width: 30px;
+		height: 3px;
+		background-color: $jpcom-gray-darken30;
+		border-radius: 4px;
+		position: absolute;
+		transition-property: transform;
+		transition-duration: 0.15s;
+		transition-timing-function: ease;
+	}
+
+	.jpcom-masterbar__navinner::before,
+	.jpcom-masterbar__navinner::after {
+		content: '';
+		display: block;
+	}
+
+	.jpcom-masterbar__navinner::before {
+		top: -8px;
+	}
+
+	.jpcom-masterbar__navinner::after {
+		bottom: -8px;
+	}
+
+	.jpcom-masterbar__navlabel {
+		display: inline-block;
+		line-height: 1.5;
+	}
+}
+
+// when mobilenav is tapped
+.jpcom-masterbar__navbutton.is-active {
+	.jpcom-masterbar__navbox {
+		margin-right: 0;
+	}
+}
+
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::before {
+	transition: top 0.1s 0.14s ease, opacity 0.1s ease;
+}
+
+.jpcom-masterbar__navbutton.mobilenav .jpcom-masterbar__navinner::after {
+	transition: bottom 0.1s 0.14s ease, transform 0.1s cubic-bezier( 0.55, 0.055, 0.675, 0.19 );
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner {
+	transform: rotate( 45deg );
+	transition-delay: 0.14s;
+	transition-timing-function: cubic-bezier( 0.215, 0.61, 0.355, 1 );
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::before {
+	top: 0;
+	opacity: 0;
+	transition: top 0.1s ease, opacity 0.1s 0.14s ease;
+}
+
+.jpcom-masterbar__navbutton.mobilenav.is-active .jpcom-masterbar__navinner::after {
+	bottom: 0;
+	transform: rotate( -90deg );
+	transition: bottom 0.1s ease, transform 0.1s 0.14s cubic-bezier( 0.215, 0.61, 0.355, 1 );
+}
