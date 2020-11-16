@@ -104,7 +104,6 @@ export interface UseStripeJs {
 type GetStripeConfigurationArgs = {
 	country?: string;
 	needs_intent?: boolean;
-	withCredentials?: boolean;
 };
 type GetStripeConfiguration = (
 	requestArgs: GetStripeConfigurationArgs
