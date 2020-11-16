@@ -49,9 +49,9 @@ export default function filterAppropriatePaymentMethods( {
 		.filter( ( methodObject ) => {
 			// If the purchase is free, only display the free-purchase method
 			if ( methodObject.id === 'free-purchase' ) {
-				return isPurchaseFree ? true : false;
+				return isPurchaseFree && ! isFullCredits ? true : false;
 			}
-			return isPurchaseFree ? false : true;
+			return isPurchaseFree && ! isFullCredits ? false : true;
 		} )
 		.filter( ( methodObject ) => {
 			// If the purchase is full-credits, only display the full-credits method
