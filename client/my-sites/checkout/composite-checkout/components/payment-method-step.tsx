@@ -12,7 +12,6 @@ import type { LineItem as LineItemType } from '@automattic/composite-checkout';
  */
 import CheckoutTerms from '../components/checkout-terms';
 import { WPOrderReviewTotal, WPOrderReviewSection, LineItem } from './wp-order-review-line-items';
-import doesPurchaseHaveFullCredits from '../lib/does-purchase-have-full-credits';
 
 const CheckoutTermsWrapper = styled.div`
 	& > * {
@@ -74,9 +73,7 @@ export default function PaymentMethodStep( {
 } ): JSX.Element {
 	const { responseCart } = useShoppingCart();
 	const [ items, total ] = useLineItems();
-	const isFullCredits = doesPurchaseHaveFullCredits( responseCart );
-	// NOTE: if we have full credits, we currently do not charge taxes. This may not be ideal, but it's how the back-end works.
-	const taxes = isFullCredits ? [] : items.filter( ( item ) => item.type === 'tax' );
+	const taxes = items.filter( ( item ) => item.type === 'tax' );
 	return (
 		<>
 			{ activeStepContent }
