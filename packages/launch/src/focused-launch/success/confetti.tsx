@@ -5,12 +5,13 @@
  */
 import React from 'react';
 
-const Confetti: React.FunctionComponent = () => (
+const Confetti: React.FunctionComponent< { className?: string } > = ( { className } ) => (
 	<svg
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
 		viewBox="0 0 356 136"
-		className="focused-launch-success__confetti"
+		role="presentation"
+		className={ className }
 	>
 		<rect
 			x="314.913"

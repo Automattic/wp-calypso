@@ -45,7 +45,7 @@ const Success: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch-success">
 			<div className="focused-launch-success__wrapper">
-				<Confetti />
+				<Confetti className="focused-launch-success__confetti" />
 				<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
 				<SubTitle>
 					{ __(
