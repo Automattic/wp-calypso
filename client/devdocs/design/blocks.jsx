@@ -76,7 +76,6 @@ import ReaderShare from 'calypso/blocks/reader-share/docs/example';
 import Login from 'calypso/blocks/login/docs/example';
 import LocationSearch from 'calypso/blocks/location-search/docs/example';
 import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
-import SimplePaymentsDialog from 'calypso/components/tinymce/plugins/simple-payments/dialog/docs/example';
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
 import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
@@ -185,7 +184,6 @@ export default class AppComponents extends React.Component {
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
-					<SimplePaymentsDialog />
 					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />

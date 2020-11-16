@@ -33,7 +33,6 @@ import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import postFormats from './post-formats/reducer';
 import selectedEditor from './selected-editor/reducer';
-import simplePayments from './simple-payments/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
@@ -69,7 +68,6 @@ const reducers = {
 	notificationsUnseenCount,
 	postFormats,
 	selectedEditor,
-	simplePayments,
 	siteKeyrings,
 	siteRoles,
 	sites,
