@@ -40,18 +40,13 @@ class ColorSchemePicker extends PureComponent {
 	};
 
 	render() {
-		let colorSchemesData = getColorSchemesData( translate );
-		let checkedColorScheme = find( colorSchemesData, [ 'value', this.props.colorSchemePreference ] )
+		const colorSchemesData = getColorSchemesData( translate );
+		const checkedColorScheme = find( colorSchemesData, [
+			'value',
+			this.props.colorSchemePreference,
+		] )
 			? this.props.colorSchemePreference
 			: colorSchemesData[ 0 ].value;
-		/*
-		 * This temporary code ensures a smooth renaming from Ocean to Aquatic.
-		 * @see https://github.com/Automattic/wp-calypso/issues/47256
-		 */
-		if ( checkedColorScheme === 'ocean' ) {
-			checkedColorScheme = 'aquatic';
-		}
-		colorSchemesData = colorSchemesData.filter( ( scheme ) => scheme.value !== 'ocean' );
 		return (
 			<div className="color-scheme-picker">
 				<QueryPreferences />
