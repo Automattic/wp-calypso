@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { createI18n, I18n, LocaleData } from '@wordpress/i18n';
+import { createI18n, I18n, LocaleData, __, _n, _nx, _x, isRTL } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 export interface I18nReact {
@@ -69,8 +69,14 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  * @returns The context value with bound translation functions
  */
 function makeContextValue( localeData?: LocaleData ): I18nReact {
-	const i18n = createI18n( localeData );
 	const i18nLocale = localeData?.[ '' ]?.localeSlug ?? 'en';
+
+	if ( ! localeData ) {
+		return { __, _n, _nx, _x, isRTL, i18nLocale };
+	}
+
+	const i18n = createI18n( localeData );
+
 	return {
 		__: i18n.__.bind( i18n ),
 		_n: i18n._n.bind( i18n ),
