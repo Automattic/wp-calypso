@@ -19,7 +19,7 @@ const SpamButton = ( { note, translate, spamNote } ) => {
 
 	return (
 		<ActionButton
-			icon={ 'spam' }
+			icon="spam"
 			isActive={ false }
 			hotkey={ keys.KEY_S }
 			onToggle={ () => spamNote( note, restClient ) }

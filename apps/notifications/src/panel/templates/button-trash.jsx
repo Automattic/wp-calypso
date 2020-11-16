@@ -20,7 +20,7 @@ const TrashButton = ( { note, translate, trashNote } ) => {
 
 	return (
 		<ActionButton
-			icon={ 'trash' }
+			icon="trash"
 			isActive={ false }
 			hotkey={ keys.KEY_T }
 			onToggle={ () => trashNote( note, restClient ) }

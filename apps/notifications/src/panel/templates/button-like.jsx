@@ -20,7 +20,7 @@ const LikeButton = ( { commentId, isLiked, note, translate, setLikeStatus } ) =>
 
 	return (
 		<ActionButton
-			icon={ 'star' }
+			icon="star"
 			isActive={ isLiked }
 			hotkey={ keys.KEY_L }
 			onToggle={ () =>
