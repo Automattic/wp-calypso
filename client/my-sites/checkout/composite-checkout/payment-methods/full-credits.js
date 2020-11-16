@@ -11,6 +11,7 @@ import {
 	useFormStatus,
 	useEvents,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -28,7 +29,8 @@ export function createFullCreditsMethod( { credits } ) {
 }
 
 function FullCreditsSubmitButton( { disabled, onClick } ) {
-	const [ items, total ] = useLineItems();
+	const [ items ] = useLineItems();
+	const { responseCart } = useShoppingCart();
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
 
@@ -47,7 +49,7 @@ function FullCreditsSubmitButton( { disabled, onClick } ) {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents formStatus={ formStatus } total={ responseCart.sub_total_display } />
 		</Button>
 	);
 }
@@ -58,7 +60,7 @@ function ButtonContents( { formStatus, total } ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s with credits' ), total.amount.displayValue );
+		return sprintf( __( 'Pay %s with credits' ), total );
 	}
 	return __( 'Please wait…' );
 }
