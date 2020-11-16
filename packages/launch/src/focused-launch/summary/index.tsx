@@ -458,15 +458,12 @@ const Summary: React.FunctionComponent = () => {
 
 	const { setModalDismissible, showModalTitle } = useFocusedLaunchModal();
 
-	// Make sure the modal is dimissible when the summary view is launched.
+	// When the summary view is active, the modal should be dismissible, and
+	// the modal title should be visible
 	useEffect( () => {
 		setModalDismissible();
-	}, [ setModalDismissible ] );
-
-	// Make sure the modal title is visible when the summary view is launched.
-	useEffect( () => {
 		showModalTitle();
-	}, [ showModalTitle ] );
+	}, [ setModalDismissible, showModalTitle ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
