@@ -29,7 +29,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/delete/index.js', {
 			onSuccess: successNotice( translate( 'Feed removed from list successfully.' ), {
 				duration: DEFAULT_NOTICE_DURATION,
 			} ),
-			onError: () => errorNotice( translate( 'Unable to remove feed from list' ) ),
+			onError: () => errorNotice( translate( 'Unable to remove feed from list.' ) ),
 		} ),
 	],
 } );
