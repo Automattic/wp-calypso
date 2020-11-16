@@ -288,7 +288,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 
 	return (
 		<>
-			<QueryFollowers siteId={ site.ID } query={ query } />
+			<QueryFollowers query={ query } refresh />
 			<ConnectedFollowers
 				query={ query }
 				site={ site }
