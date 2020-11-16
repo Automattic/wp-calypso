@@ -39,10 +39,7 @@ class QueryFollowers extends React.Component {
 	}
 
 	refreshFollowers() {
-		const { max, page } = this.props.query;
-
-		// refresh the whole list of followers and do it silently
-		this.props.fetchFollowers( { ...this.props.query, max: max * page, page: 1 }, true );
+		this.props.fetchFollowers( this.props.query, true );
 	}
 
 	render() {
