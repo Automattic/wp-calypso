@@ -41,7 +41,7 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 	const [ isExpanded, setIsExpanded ] = useState( expanded );
 	const [ height, setHeight ] = useState( 0 );
 
-	const trackProps = { faqID: id };
+	const trackProps = { faq_id: id };
 	const trackOpenFaq = useTrackCallback( undefined, 'calypso_plans_faq_open', trackProps );
 	const trackCloseFaq = useTrackCallback( undefined, 'calypso_plans_faq_closed', trackProps );
 
