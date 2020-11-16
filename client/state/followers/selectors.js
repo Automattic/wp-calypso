@@ -40,8 +40,3 @@ export const getTotalFollowersByQuery = ( state, query ) => {
 	const serializedQuery = getSerializedQuery( query );
 	return state.followers?.queries[ serializedQuery ]?.total;
 };
-
-export const getCurrentPage = ( state, query ) => {
-	const serializedQuery = getSerializedQuery( query );
-	return state.followers?.queries[ serializedQuery ]?.page;
-};

@@ -16,8 +16,6 @@ import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card, Button } from '@automattic/components';
 import classNames from 'classnames';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
-import FollowersActions from 'calypso/lib/followers/actions';
-import EmailFollowersActions from 'calypso/lib/email-followers/actions';
 import InfiniteList from 'calypso/components/infinite-list';
 import NoResults from 'calypso/my-sites/no-results';
 import EmptyContent from 'calypso/components/empty-content';
@@ -28,10 +26,10 @@ import { preventWidows } from 'calypso/lib/formatting';
 import QueryFollowers from 'calypso/components/data/query-followers';
 import {
 	getFollowersByQuery,
-	getCurrentPage,
 	getIsFetchingFollowersForQuery,
 	getTotalFollowersByQuery,
 } from 'calypso/state/followers/selectors';
+import { removeFollower } from 'calypso/state/followers/thunks';
 
 /**
  * Stylesheet dependencies
@@ -83,10 +81,7 @@ class Followers extends Component {
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
-					( 'email' === this.props.type ? EmailFollowersActions : FollowersActions ).removeFollower(
-						this.props.site.ID,
-						follower
-					);
+					this.props.removeFollower( this.props.site.ID, follower );
 				} else {
 					gaRecordEvent(
 						'People',
@@ -99,10 +94,6 @@ class Followers extends Component {
 	}
 
 	renderFollower = ( follower ) => {
-		const removeFollower = () => {
-			this.removeFollower( follower );
-		};
-
 		return (
 			<PeopleListItem
 				key={ follower.ID }
@@ -110,7 +101,7 @@ class Followers extends Component {
 				type="follower"
 				site={ this.props.site }
 				isSelectable={ this.state.bulkEditing }
-				onRemove={ removeFollower }
+				onRemove={ () => this.removeFollower( follower ) }
 			/>
 		);
 	};
@@ -279,11 +270,10 @@ const mapStateToProps = ( state, ownProps ) => {
 		followers: getFollowersByQuery( state, ownProps.query ),
 		fetching: getIsFetchingFollowersForQuery( state, ownProps.query ),
 		totalFollowers: getTotalFollowersByQuery( state, ownProps.query ),
-		currentPage: getCurrentPage( state, ownProps.query ),
 	};
 };
 
-const ConnectedFollowers = connect( mapStateToProps )( localize( Followers ) );
+const ConnectedFollowers = connect( mapStateToProps, { removeFollower } )( localize( Followers ) );
 
 const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );
@@ -302,6 +292,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 			<ConnectedFollowers
 				query={ query }
 				site={ site }
+				currentPage={ currentPage }
 				incrementPage={ () => setCurrentPage( currentPage + 1 ) }
 			/>
 		</>

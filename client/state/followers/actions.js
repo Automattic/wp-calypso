@@ -27,20 +27,20 @@ export const failRequestFollowers = ( query, error ) => ( {
 	error,
 } );
 
-export const requestRemoveFollower = () => ( siteId, follower ) => ( {
+export const requestRemoveFollower = ( siteId, follower ) => ( {
 	type: FOLLOWER_REMOVE_REQUEST,
 	siteId,
 	follower,
 } );
 
-export const successRemoveFollower = () => ( siteId, follower, data ) => ( {
+export const successRemoveFollower = ( siteId, follower, data ) => ( {
 	type: FOLLOWER_REMOVE_SUCCESS,
 	siteId,
 	follower,
 	data,
 } );
 
-export const failRemoveFollower = () => ( siteId, follower, error ) => ( {
+export const failRemoveFollower = ( siteId, follower, error ) => ( {
 	type: FOLLOWER_REMOVE_ERROR,
 	siteId,
 	follower,

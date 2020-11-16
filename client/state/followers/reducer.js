@@ -45,7 +45,6 @@ export function queries( state = {}, action ) {
 						ids,
 						action.data.subscribers.map( ( follower ) => follower.ID )
 					),
-					page: action.data.page,
 					total: action.data.total,
 					lastPage: action.data.pages,
 				},
