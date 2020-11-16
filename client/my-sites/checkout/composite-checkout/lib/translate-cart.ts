@@ -21,6 +21,7 @@ import {
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
 import doesValueExist from './does-value-exist';
+import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -87,7 +88,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			currency: currency,
 			value: credits_integer,
 			displayValue: String(
-				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+				translate( '- %(discountAmount)s', {
+					args: {
+						// Clamp the credits display value to the total
+						discountAmount: doesPurchaseHaveFullCredits( serverCart )
+							? sub_total_display
+							: credits_display,
+					},
+				} )
 			),
 		},
 		wpcom_meta: {
