@@ -31,10 +31,6 @@ exports.createDir = function ( dir ) {
 
 exports.isVideoEnabled = function () {
 	const video = process.env.CI;
-	// eslint-disable-next-line no-console
-	console.log( process.env.CI );
-	// eslint-disable-next-line no-console
-	console.log( process.env.CI === 'true' );
 	return video === 'true';
 };
 
