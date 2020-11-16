@@ -35,7 +35,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/delete/index.js', {
 					} ),
 				];
 			},
-			onError: () => errorNotice( translate( 'There was a problem deleting the list.' ) ),
+			onError: () => errorNotice( translate( 'Unable to delete list.' ) ),
 		} ),
 	],
 } );

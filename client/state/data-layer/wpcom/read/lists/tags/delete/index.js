@@ -29,7 +29,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/delete/index.js', {
 			onSuccess: successNotice( translate( 'Tag removed from list successfully.' ), {
 				duration: DEFAULT_NOTICE_DURATION,
 			} ),
-			onError: () => errorNotice( translate( 'Unable to remove tag from list' ) ),
+			onError: () => errorNotice( translate( 'Unable to remove tag from list.' ) ),
 		} ),
 	],
 } );
