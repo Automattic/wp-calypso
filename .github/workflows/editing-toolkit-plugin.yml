@@ -142,8 +142,8 @@ jobs:
     # This is a workaround for https://github.com/Automattic/wp-calypso/issues/47255
     # Once a newer version of wp-env is available (https://github.com/WordPress/gutenberg/pull/26712)
     # we should be able to remove this step.
-    - name: Rebuild nodegit
-      run: yarn rebuild nodegit
+    - name: Add nodegit
+      run: yarn add nodegit
       working-directory: apps/editing-toolkit
 
     - name: Setup wp-env dependencies
