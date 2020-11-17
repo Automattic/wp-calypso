@@ -34,6 +34,7 @@
 		"jetpack-cloud": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
+		"jetpack/connect/remote-install": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": true,
 		"jetpack/server-credentials-advanced-flow": true,
@@ -55,7 +56,8 @@
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
-		"scan": true
+		"scan": true,
+		"jetpack-connect": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
