@@ -372,9 +372,7 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			const isGutenboarding =
-				this.props.siteCreationFlow === 'gutenboarding' &&
-				( ! this.props.plan || this.props.plan.is_free ); // prevent showing StepByStepLaunch on sites with paid plans
+			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
 			const isSiteUnlaunched = this.props.isSiteUnlaunched;
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
 			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
