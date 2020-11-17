@@ -12,6 +12,12 @@ const debug = debugFactory( 'calypso:followers-actions' );
 import wpcom from 'calypso/lib/wp';
 import { requestRemoveFollower, successRemoveFollower, failRemoveFollower } from '../actions';
 
+/**
+ * Request removal of a follower for a given site.
+ *
+ * @param {number} siteId site identifier
+ * @param {object} follower contains the follower object
+ */
 function removeFollower( siteId, follower ) {
 	return ( dispatch ) => {
 		debug( 'removing follower', follower, siteId );
