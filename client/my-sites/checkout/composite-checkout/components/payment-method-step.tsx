@@ -87,7 +87,7 @@ export default function PaymentMethodStep( {
 				{ taxes.map( ( tax ) => (
 					<LineItem tax key={ tax.id } item={ tax } />
 				) ) }
-				{ credits && <LineItem subtotal item={ credits } /> }
+				{ credits && subtotal.amount.value > 0 && <LineItem subtotal item={ credits } /> }
 				<WPOrderReviewTotal total={ total } />
 			</WPOrderReviewSection>
 		</>
