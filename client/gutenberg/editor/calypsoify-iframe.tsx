@@ -372,12 +372,14 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding' && ! this.props.plan;
+			const isGutenboarding =
+				this.props.siteCreationFlow === 'gutenboarding' &&
+				( ! this.props.plan || this.props.plan.is_free ); // prevent showing StepByStepLaunch on sites with paid plans
 			const isSiteUnlaunched = this.props.isSiteUnlaunched;
 			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
-			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
-			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
-			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' );
+			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
+			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' ); // TODO: remove after ETK 2.8.6 is released
+			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' ); // TODO: remove after ETK 2.8.6 is released
 			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {
