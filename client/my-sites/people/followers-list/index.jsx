@@ -25,9 +25,9 @@ import ListEnd from 'calypso/components/list-end';
 import { preventWidows } from 'calypso/lib/formatting';
 import QueryFollowers from 'calypso/components/data/query-followers';
 import {
-	getFollowersByQuery,
+	getFollowersForQuery,
 	getIsFetchingFollowersForQuery,
-	getTotalFollowersByQuery,
+	getTotalFollowersForQuery,
 } from 'calypso/state/followers/selectors';
 import { removeFollower } from 'calypso/state/followers/thunks';
 
@@ -267,9 +267,9 @@ class Followers extends Component {
 
 const mapStateToProps = ( state, ownProps ) => {
 	return {
-		followers: getFollowersByQuery( state, ownProps.query ),
+		followers: getFollowersForQuery( state, ownProps.query ),
 		fetching: getIsFetchingFollowersForQuery( state, ownProps.query ),
-		totalFollowers: getTotalFollowersByQuery( state, ownProps.query ),
+		totalFollowers: getTotalFollowersForQuery( state, ownProps.query ),
 	};
 };
 

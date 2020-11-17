@@ -1,12 +1,11 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import { getFollowersForQuery } from '../selectors';
+import {
+	getFollowersForQuery,
+	getIsFetchingFollowersForQuery,
+	getTotalFollowersForQuery,
+} from '../selectors';
 import { getSerializedQuery } from '../utils';
 
 describe( 'selctors', () => {
@@ -33,21 +32,14 @@ describe( 'selctors', () => {
 						},
 					},
 					queries: {
-						[ getSerializedQuery( { siteId: 555 } ) ]: [ 101 ],
+						[ getSerializedQuery( { siteId: 555 } ) ]: {
+							ids: [ 101 ],
+						},
 					},
 				},
 			};
 			const query = { siteId: 555 };
-			expect( getFollowersForQuery( state, query ) ).to.eql( [
-				{
-					ID: 101,
-					avatar: 'https://1.gravatar.com/avatar',
-					avatar_URL: 'https://1.gravatar.com/avatar',
-					login: 'test101',
-					label: 'Test Person101',
-					display_name: 'test101',
-				},
-			] );
+			expect( getFollowersForQuery( state, query ) ).toEqual( [ state.followers.items[ 101 ] ] );
 		} );
 
 		test( 'should return null for untracked queries', () => {
@@ -57,7 +49,49 @@ describe( 'selctors', () => {
 				},
 			};
 			const query = { siteId: 555 };
-			expect( getFollowersForQuery( state, query ) ).to.be.null;
+			expect( getFollowersForQuery( state, query ) ).toBeNull;
+		} );
+	} );
+
+	describe( '#getIsFetchingFollowersForQuery', () => {
+		test( 'should return true if currently fetching', () => {
+			const serializedQuery = getSerializedQuery( { siteId: 555 } );
+			const state = {
+				followers: {
+					queryRequests: {
+						[ serializedQuery ]: true,
+					},
+				},
+			};
+			expect( getIsFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( true );
+		} );
+
+		test( 'should return false if not currently fetching', () => {
+			const serializedQuery = getSerializedQuery( { siteId: 555 } );
+			const state = {
+				followers: {
+					queryRequests: {
+						[ serializedQuery ]: false,
+					},
+				},
+			};
+			expect( getIsFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( false );
+		} );
+	} );
+
+	describe( '#getTotalFollowersForQuery', () => {
+		test( 'should return the total number of followers for a query', () => {
+			const serializedQuery = getSerializedQuery( { siteId: 555 } );
+			const state = {
+				followers: {
+					queries: {
+						[ serializedQuery ]: {
+							total: 5,
+						},
+					},
+				},
+			};
+			expect( getTotalFollowersForQuery( state, { siteId: 555 } ) ).toBe( 5 );
 		} );
 	} );
 } );
