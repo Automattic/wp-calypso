@@ -81,7 +81,7 @@ function renderDevHelpers( reduxStore ) {
 		const featureHelperEl = document.querySelector( '.environment.is-features' );
 		if ( featureHelperEl ) {
 			asyncRequire( 'lib/features-helper', ( featureHelper ) => {
-				featureHelper( featureHelperEl, reduxStore );
+				featureHelper( featureHelperEl );
 			} );
 		}
 	}

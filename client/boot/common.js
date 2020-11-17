@@ -402,7 +402,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		document.querySelector( '.environment.is-features' )
 	) {
 		asyncRequire( 'lib/features-helper', ( featureHelper ) => {
-			featureHelper( document.querySelector( '.environment.is-features' ), reduxStore );
+			featureHelper( document.querySelector( '.environment.is-features' ) );
 		} );
 	}
 };
