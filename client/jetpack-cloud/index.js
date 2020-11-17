@@ -46,5 +46,5 @@ export default function () {
 	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
 	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
 	page( '/oauth-override', handleOAuthOverride );
-	page( '/', siteSelection, redirectToPrimarySiteLanding );
+	page( '/', redirectToPrimarySiteLanding );
 }
