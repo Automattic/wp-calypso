@@ -117,7 +117,7 @@ function CreditCardNumberField( { translate, createField, getErrorMessage, card 
 	return createField( 'number', CreditCardNumberInput, {
 		inputMode: 'numeric',
 		label: cardNumberLabel,
-		placeholder: ' ',
+		placeholder: disabled ? ' ' : '1234 1234 1234 1234',
 		disabled,
 	} );
 }
@@ -184,16 +184,18 @@ function CreditCardExpiryAndCvvFields( { translate, createField, getErrorMessage
 				inputMode: 'numeric',
 				label: expiryLabel,
 				disabled,
-				placeholder: ' ',
+				placeholder: disabled ? ' ' : translate( 'MM / YY' ),
 			} ) }
 
-			<div className="credit-card-form-fields__cvv-wrapper">
+			<div className="credit-card-form-fields__cvv-wrapper credit-card-form-fields__cvv-wrapper--local-fields">
 				{ createField( 'cvv', Input, {
 					inputMode: 'numeric',
 					disabled,
-					placeholder: ' ',
+					placeholder: disabled ? ' ' : translate( 'CVC' ),
 					label: cvcLabel,
 				} ) }
+
+				<CvvCard className="credit-card-form-fields__cvv-illustration--local-fields" />
 			</div>
 		</React.Fragment>
 	);
@@ -380,11 +382,11 @@ function isFieldDisabled( { isStripeLoading, stripeLoadingError, isUsingEbanx } 
 	return false;
 }
 
-function CvvCard() {
+function CvvCard( { className = '' } ) {
 	const translate = useTranslate();
 	return (
 		<svg
-			className="credit-card-form-fields__cvv-illustration"
+			className={ 'credit-card-form-fields__cvv-illustration ' + className }
 			viewBox="0 0 68 41"
 			preserveAspectRatio="xMaxYMin meet"
 			fill="none"
