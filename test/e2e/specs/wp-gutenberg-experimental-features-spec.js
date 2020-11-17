@@ -25,7 +25,6 @@ const gutenbergUser =
 const EXPERIMENTAL_FEATURES = {
 	'@wordpress/block-editor': [
 		// Used in the premium content block in the Editing Toolkit plugin
-		'__experimentalAlignmentHookSettingsProvider',
 		'__experimentalBlock',
 	],
 };
