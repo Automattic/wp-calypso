@@ -32,7 +32,7 @@ class HeaderCart extends React.Component {
 	render() {
 		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;
 		const noop = () => {};
-		let isVisible = this.props.isPopoverCartVisible;
+		let isVisible = this.state.isPopoverCartVisible;
 		if ( isCartEmpty ) {
 			isVisible = false;
 		}
