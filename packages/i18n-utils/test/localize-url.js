@@ -8,7 +8,7 @@ import { renderHook } from '@testing-library/react-hooks';
 /**
  * Internal dependencies
  */
-import { useI18nUtils } from '../src';
+import { localizeUrl, useLocalizeUrl } from '../src';
 
 jest.mock( '../src/locale-context', () => {
 	const original = jest.requireActual( '../src/locale-context' );
@@ -23,14 +23,10 @@ describe( '#localizeUrl', () => {
 	function testLocalizeUrl( locale = 'en' ) {
 		useLocale.mockImplementation( () => locale );
 		const {
-			result: {
-				current: { localizeUrl },
-			},
-		} = renderHook( () => useI18nUtils() ); // eslint-disable-line react-hooks/rules-of-hooks -- being called within renderHook context
+			result: { current: localizeUrl },
+		} = renderHook( () => useLocalizeUrl() ); // eslint-disable-line react-hooks/rules-of-hooks -- being called within renderHook context
 		return localizeUrl;
 	}
-
-	const localizeUrl = testLocalizeUrl( 'en' );
 
 	test( 'should use useLocale for current provider locale as the switch to locale when none is specified', () => {
 		let localizeUrl;

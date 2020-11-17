@@ -12,6 +12,7 @@ import {
 	jetpackComLocales,
 	Locale,
 } from './locales';
+import { useLocale } from './locale-context';
 
 const INVALID_URL = `http://__domain__.invalid`;
 
@@ -126,4 +127,15 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 
 	// Nothing needed to be changed, just return it unmodified.
 	return fullUrl;
+}
+
+export function useLocalizeUrl(): typeof localizeUrl {
+	const providerLocale = useLocale();
+
+	return ( fullUrl: string, locale?: Locale ) => {
+		if ( locale ) {
+			return localizeUrl( fullUrl, locale );
+		}
+		return localizeUrl( fullUrl, providerLocale );
+	};
 }
