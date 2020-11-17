@@ -29,6 +29,7 @@ import {
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
 } from 'calypso/state/action-types';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
@@ -140,10 +141,31 @@ export const requestDomainTransferCode = ( action ) =>
 		action
 	);
 
-export const requestDomainTransferCodeSuccess = ( action ) => [
-	requestDomainTransferCodeCompleted( action.domain, action.options ),
-	fetchWapiDomainInfo( action.domain ),
-];
+export const requestDomainTransferCodeSuccess = ( action ) => ( dispatch, getState ) => {
+	const domainInfo = getDomainWapiInfoByDomainName( getState(), action.domain );
+
+	dispatch( requestDomainTransferCodeCompleted( action.domain, action.options ) );
+
+	dispatch( fetchWapiDomainInfo( action.domain ) );
+
+	if ( domainInfo.manualTransferRequired ) {
+		dispatch(
+			translate(
+				'The registry for your domain requires a special process for transfers. ' +
+					'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
+					'shortly to help you complete the process.'
+			)
+		);
+		return;
+	}
+
+	dispatch(
+		translate(
+			"We have sent the transfer authorization code to the domain registrant's email address. " +
+				"If you don't receive the email shortly, please check your spam folder."
+		)
+	);
+};
 
 export const requestDomainTransferCodeFailure = ( action, error ) => [
 	requestDomainTransferCodeFailed( action.domain ),
