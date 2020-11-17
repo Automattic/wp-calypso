@@ -1,10 +1,5 @@
 .inspect-license-form {
 	&__actions.form-fieldset {
-		display: flex;
 		margin-bottom: 0;
-
-		> * + * {
-			margin-left: 16px;
-		}
 	}
 }
