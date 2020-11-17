@@ -118,56 +118,6 @@ class PurchaseMeta extends Component {
 		} );
 	}
 
-	renderRenewsOrExpiresOnLabel() {
-		const { purchase, translate } = this.props;
-
-		if ( isExpiring( purchase ) ) {
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Domain expires on' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Subscription expires on' );
-			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				return translate( 'Expires on' );
-			}
-		}
-
-		if ( isExpired( purchase ) ) {
-			if ( isDomainRegistration( purchase ) ) {
-				return translate( 'Domain expired on' );
-			}
-
-			if ( isConciergeSession( purchase ) ) {
-				return translate( 'Session used on' );
-			}
-
-			if ( isSubscription( purchase ) ) {
-				return translate( 'Subscription expired on' );
-			}
-
-			if ( isOneTimePurchase( purchase ) ) {
-				return translate( 'Expired on' );
-			}
-		}
-
-		if ( isDomainRegistration( purchase ) ) {
-			return translate( 'Domain renews on' );
-		}
-
-		if ( isSubscription( purchase ) ) {
-			return translate( 'Subscription renews on' );
-		}
-
-		if ( isOneTimePurchase( purchase ) ) {
-			return translate( 'Renews on' );
-		}
-
-		return null;
-	}
-
 	renderRenewsOrExpiresOn() {
 		const { moment, purchase, siteSlug, translate, getManagePurchaseUrlFor } = this.props;
 
@@ -417,7 +367,9 @@ class PurchaseMeta extends Component {
 
 		return (
 			<li>
-				<em className="manage-purchase__detail-label">{ this.renderRenewsOrExpiresOnLabel() }</em>
+				<em className="manage-purchase__detail-label">
+					{ renderRenewsOrExpiresOnLabel( this.props ) }
+				</em>
 				<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
 			</li>
 		);
@@ -462,6 +414,54 @@ class PurchaseMeta extends Component {
 			</>
 		);
 	}
+}
+
+function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
+	if ( isExpiring( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'Domain expires on' );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			return translate( 'Subscription expires on' );
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			return translate( 'Expires on' );
+		}
+	}
+
+	if ( isExpired( purchase ) ) {
+		if ( isDomainRegistration( purchase ) ) {
+			return translate( 'Domain expired on' );
+		}
+
+		if ( isConciergeSession( purchase ) ) {
+			return translate( 'Session used on' );
+		}
+
+		if ( isSubscription( purchase ) ) {
+			return translate( 'Subscription expired on' );
+		}
+
+		if ( isOneTimePurchase( purchase ) ) {
+			return translate( 'Expired on' );
+		}
+	}
+
+	if ( isDomainRegistration( purchase ) ) {
+		return translate( 'Domain renews on' );
+	}
+
+	if ( isSubscription( purchase ) ) {
+		return translate( 'Subscription renews on' );
+	}
+
+	if ( isOneTimePurchase( purchase ) ) {
+		return translate( 'Renews on' );
+	}
+
+	return null;
 }
 
 export default connect( ( state, props ) => {
