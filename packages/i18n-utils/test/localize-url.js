@@ -10,17 +10,18 @@ import { renderHook } from '@testing-library/react-hooks';
  */
 import { useI18nUtils } from '../src';
 
-jest.mock( '@automattic/react-i18n', () => {
-	const original = jest.requireActual( '@automattic/react-i18n' );
+jest.mock( '../src/locale-context', () => {
+	const original = jest.requireActual( '../src/locale-context' );
 	return Object.assign( Object.create( Object.getPrototypeOf( original ) ), original, {
-		useI18n: jest.fn( () => ( { i18nLocale: 'en' } ) ),
+		useLocale: jest.fn( () => 'en' ),
 	} );
 } );
-const { useI18n } = jest.requireMock( '@automattic/react-i18n' );
+
+const { useLocale } = jest.requireMock( '../src/locale-context' );
 
 describe( '#localizeUrl', () => {
-	function useLocalizeUrl( locale = 'en' ) {
-		useI18n.mockImplementation( () => ( { i18nLocale: locale } ) );
+	function testLocalizeUrl( locale = 'en' ) {
+		useLocale.mockImplementation( () => locale );
 		const {
 			result: {
 				current: { localizeUrl },
@@ -29,16 +30,16 @@ describe( '#localizeUrl', () => {
 		return localizeUrl;
 	}
 
-	const localizeUrl = useLocalizeUrl( 'en' );
+	const localizeUrl = testLocalizeUrl( 'en' );
 
-	test( 'should use react-i18n useI18n hook for locale fallback', () => {
+	test( 'should use useLocale for current provider locale as the switch to locale when none is specified', () => {
 		let localizeUrl;
 
-		localizeUrl = useLocalizeUrl( 'pt-br' );
+		localizeUrl = testLocalizeUrl( 'pt-br' );
 		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
 			'https://br.forums.wordpress.com/'
 		);
-		localizeUrl = useLocalizeUrl( 'en' );
+		localizeUrl = testLocalizeUrl( 'en' );
 		expect( localizeUrl( 'https://en.forums.wordpress.com/' ) ).toEqual(
 			'https://en.forums.wordpress.com/'
 		);
