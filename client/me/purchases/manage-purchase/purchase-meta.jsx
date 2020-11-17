@@ -51,7 +51,7 @@ import PaymentLogo from 'calypso/components/payment-logo';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { canEditPaymentDetails, isDataLoading } from '../utils';
+import { canEditPaymentDetails } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -59,7 +59,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 class PurchaseMeta extends Component {
 	static propTypes = {
 		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 		purchase: PropTypes.object,
 		site: PropTypes.object,
@@ -70,7 +70,7 @@ class PurchaseMeta extends Component {
 
 	static defaultProps = {
 		hasLoadedSites: false,
-		hasLoadedUserPurchasesFromServer: false,
+		hasLoadedPurchasesFromServer: false,
 		purchaseId: false,
 		getManagePurchaseUrlFor: managePurchase,
 	};
@@ -436,10 +436,14 @@ class PurchaseMeta extends Component {
 		);
 	}
 
+	isDataLoading( props ) {
+		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
+	}
+
 	render() {
 		const { translate, purchaseId } = this.props;
 
-		if ( isDataLoading( this.props ) || ! purchaseId ) {
+		if ( this.isDataLoading( this.props ) || ! purchaseId ) {
 			return this.renderPlaceholder();
 		}
 
@@ -460,13 +464,15 @@ class PurchaseMeta extends Component {
 	}
 }
 
-export default connect( ( state, { purchaseId } ) => {
+export default connect( ( state, props ) => {
+	const { purchaseId } = props;
 	const purchase = getByPurchaseId( state, purchaseId );
 	const isProductOwner = purchase && purchase.userId === getCurrentUserId( state );
 
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedPurchasesFromServer:
+			props.hasLoadedPurchasesFromServer ?? hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		site: purchase ? getSite( state, purchase.siteId ) : null,
 		isProductOwner,

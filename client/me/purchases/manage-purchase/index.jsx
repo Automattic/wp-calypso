@@ -522,6 +522,7 @@ class ManagePurchase extends Component {
 	renderPlaceholder() {
 		const {
 			siteSlug,
+			hasLoadedPurchasesFromServer,
 			getManagePurchaseUrlFor,
 			getAddCardDetailsPathFor,
 			getAddPaymentMethodUrlFor,
@@ -545,6 +546,7 @@ class ManagePurchase extends Component {
 					<PurchaseMeta
 						purchaseId={ false }
 						siteSlug={ siteSlug }
+						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						getAddCardDetailsPathFor={ getAddCardDetailsPathFor }
 						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
@@ -582,6 +584,7 @@ class ManagePurchase extends Component {
 			getManagePurchaseUrlFor,
 			siteSlug,
 			getEditPaymentMethodUrlFor,
+			hasLoadedPurchasesFromServer,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -628,6 +631,7 @@ class ManagePurchase extends Component {
 						<PurchaseMeta
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
+							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
 						/>
