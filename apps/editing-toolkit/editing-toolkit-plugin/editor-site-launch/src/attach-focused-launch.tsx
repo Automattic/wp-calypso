@@ -33,7 +33,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				onClose={ closeFocusedLaunch }
 				locale={ document.documentElement.lang }
 				redirectTo={ ( url: string ) => {
-					const origin = window?.top.location.origin || 'https://wordpress.com';
+					const origin = 'https://wordpress.com';
 					const path = url.startsWith( '/' ) ? url : `/${ url }`;
 					window.top.location.href = `${ origin }${ path }`;
 				} }
