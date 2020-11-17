@@ -176,13 +176,24 @@
 
 		.search {
 			border-radius: 2px 2px 0 0;
+			border: 6px solid var( --color-surface );
+
+			&.is-open {
+				width: auto;
+				max-width: 100%;
+			}
 
 			&.is-open.has-focus {
-				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
+				box-shadow: none;
+				border-color: var( --color-primary-light );
 
 				@include breakpoint-deprecated( '>660px' ) {
-					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
+					box-shadow: none;
 				}
+			}
+
+			@include breakpoint-deprecated( '>660px' ) {
+				border-width: 4px;
 			}
 
 			.search__input {
