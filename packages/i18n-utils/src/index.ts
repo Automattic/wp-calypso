@@ -5,7 +5,7 @@ import { localizeUrl } from './localize-url';
 import { Locale } from './locales';
 import { LocaleProvider, useLocale } from './locale-context';
 
-export { LocaleProvider, useLocale };
+export { LocaleProvider, useLocale, localizeUrl };
 
 export interface I18nUtils {
 	localizeUrl: typeof localizeUrl;
