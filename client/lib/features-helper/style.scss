@@ -18,16 +18,25 @@
 }
 
 .features-helper__feature-header {
+	margin-top: 15px;
+    margin-bottom: 10px;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.features-helper__feature-item {
 	text-transform: initial;
 	margin-top: 5px;
 	font-weight: 600;
 	white-space: nowrap;
 	overflow: hidden;
+}
 
-	button {
-		display: inline;
-		margin-right: 5px;
-	}
+.features-helper__feature-item-enabled {
+    color: var( --studio-green-70 );
+}
+.features-helper__feature-item-disabled {
+    color: var( --studio-red-70 );
 }
 
 .environment.is-features:hover .features-helper__current-features.card {
