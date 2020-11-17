@@ -14,6 +14,7 @@ import Masterbar from './masterbar';
 import Item from './item';
 import Publish from './publish';
 import Notifications from './notifications';
+import FlagNotifier from './flag-notifier';
 import Gravatar from 'calypso/components/gravatar';
 import config from 'calypso/config';
 import { preload } from 'calypso/sections-helper';
@@ -224,6 +225,7 @@ class MasterbarLoggedIn extends React.Component {
 				>
 					{ translate( 'Reader', { comment: 'Toolbar, must be shorter than ~12 chars' } ) }
 				</Item>
+				<FlagNotifier />
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
