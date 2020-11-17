@@ -3,7 +3,6 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
@@ -31,15 +30,18 @@ class HeaderCart extends React.Component {
 	};
 
 	render() {
-		if ( isEmpty( getAllCartItems( this.props.cart ) ) ) {
-			return null;
+		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;
+		const noop = () => {};
+		let isVisible = this.props.isPopoverCartVisible;
+		if ( isCartEmpty ) {
+			isVisible = false;
 		}
 
 		return (
 			<PopoverCart
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
-				visible={ this.state.isPopoverCartVisible }
+				visible={ isVisible }
 				pinned={ false }
 				path={ this.props.currentRoute }
 				onToggle={ this.togglePopoverCart }
