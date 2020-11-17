@@ -23,11 +23,11 @@ const BlackFriday2020Banner: React.FC = () => {
 		<div className="black-friday-2020-banner">
 			<picture className="black-friday-2020-banner__image">
 				<source
-					media="(max-width: 782px)"
+					media="(max-width: 679px)"
 					srcSet={ `${ bannerMobile } 375w, ${ bannerMobile2x } 750w` }
 				/>
 
-				<source media="(min-width: 783px)" srcSet={ `${ banner } 1080w, ${ banner2x } 2160w` } />
+				<source media="(min-width: 680px)" srcSet={ `${ banner } 1080w, ${ banner2x } 2160w` } />
 
 				<img
 					src={ `${ banner }` }
