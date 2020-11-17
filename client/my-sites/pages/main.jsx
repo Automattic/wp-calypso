@@ -99,6 +99,7 @@ class PagesMain extends React.Component {
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
+			site_visibility: ! siteId ? 'visible' : undefined,
 			// When searching, search across all statuses so the user can
 			// always find what they are looking for, regardless of what tab
 			// the search was initiated from. Use POST_STATUSES rather than
