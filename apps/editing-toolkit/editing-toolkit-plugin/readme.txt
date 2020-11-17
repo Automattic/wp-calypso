@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.4
+Stable tag: 2.8.5
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,15 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.5 =
+* Launch: support i18n in plans grid (https://github.com/Automattic/wp-calypso/pull/47227)
+* Launch: support i18n in domain picker (https://github.com/Automattic/wp-calypso/pull/47178)
+* Premium Content: add block preview for the Premium Content block (https://github.com/Automattic/wp-calypso/pull/47200)
+* Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
+* Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
+* Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
+* Comgin soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
 
 = 2.8.4 =
 * Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)
