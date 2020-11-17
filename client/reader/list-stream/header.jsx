@@ -42,14 +42,8 @@ const ListStreamHeader = ( {
 				<div className="list-stream__header-title">
 					<h1>{ title }</h1>
 					{ ! isPublic && (
-						<div
-							className="list-stream__header-title-privacy"
-							title={ translate( 'Private list' ) }
-						>
-							<Gridicon icon="lock" size={ 18 } />
-							<span className="list-stream__header-title-privacy-label screen-reader-text">
-								{ translate( '(private)' ) }
-							</span>
+						<div className="list-stream__header-title-privacy">
+							<Gridicon icon="lock" size={ 18 } title={ translate( 'Private list' ) } />
 						</div>
 					) }
 				</div>
