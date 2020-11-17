@@ -74,7 +74,7 @@ const Primary = ( { cards, trackCards } ) => {
 
 	return (
 		<>
-			{ [ cards ].map(
+			{ cards.map(
 				( card, index ) =>
 					cardComponents[ card ] &&
 					React.createElement( cardComponents[ card ], {
