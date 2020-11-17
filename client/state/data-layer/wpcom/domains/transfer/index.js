@@ -33,6 +33,7 @@ import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/se
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
+const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
 const transferCodeErrorMessages = {
 	unlock_domain_and_disable_private_reg_failed: translate(
 		'The domain could not be unlocked. ' +
@@ -49,35 +50,77 @@ const transferCodeErrorMessages = {
 };
 
 const getDomainTransferCodeError = ( errorCode ) => {
-	const contactLink = <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />;
-
 	if ( errorCode && transferCodeErrorMessages.hasOwnProperty( errorCode ) ) {
-		return errorNotice(
-			translate(
-				'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
-					'Please {{a}}Contact Support{{/a}}.',
-				{
-					args: transferCodeErrorMessages[ errorCode ],
-					components: {
-						strong: <strong />,
-						a: contactLink,
-					},
-				}
-			)
-		);
-	}
-
-	return errorNotice(
-		translate(
-			'An error occurred while trying to send the Domain Transfer code. ' +
-				'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
-				'to have trouble.',
+		return translate(
+			'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
+				'Please {{a}}Contact Support{{/a}}.',
 			{
+				args: transferCodeErrorMessages[ errorCode ],
 				components: {
+					strong: <strong />,
 					a: contactLink,
 				},
 			}
-		)
+		);
+	}
+
+	return translate(
+		'An error occurred while trying to send the Domain Transfer code. ' +
+			'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
+			'to have trouble.',
+		{
+			components: {
+				a: contactLink,
+			},
+		}
+	);
+};
+
+const getCancelTransferSuccessMessage = ( { enablePrivacy, lockDomain } ) => {
+	if ( enablePrivacy && lockDomain ) {
+		return translate(
+			"We've canceled your domain transfer. Your domain is now re-locked and " +
+				'Privacy Protection has been enabled.'
+		);
+	} else if ( enablePrivacy ) {
+		return translate(
+			"We've canceled your domain transfer and " + 'Privacy Protection has been re-enabled.'
+		);
+	} else if ( lockDomain ) {
+		return translate( "We've canceled your domain transfer and " + 're-locked your domain.' );
+	}
+
+	return translate( "We've canceled your domain transfer. " );
+};
+
+const cancelTransferErrorMessages = {
+	enable_private_reg_failed: translate(
+		'We were unable to enable Privacy Protection for your domain. ' +
+			'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+		{ components: { contactLink } }
+	),
+	decline_transfer_failed: translate(
+		'We were unable to stop the transfer for your domain. ' +
+			'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+		{ components: { contactLink } }
+	),
+	lock_domain_failed: translate(
+		'We were unable to lock your domain. ' +
+			'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
+		{ components: { contactLink } }
+	),
+};
+
+const getCancelTransferErrorMessage = ( errorCode ) => {
+	if ( errorCode && cancelTransferErrorMessages.hasOwnProperty( errorCode ) ) {
+		return cancelTransferErrorMessages[ errorCode ];
+	}
+
+	return translate(
+		'Oops! Something went wrong and your request could not be ' +
+			'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
+			'you continue to have trouble.',
+		{ components: { contactLink } }
 	);
 };
 
@@ -169,7 +212,7 @@ export const requestDomainTransferCodeSuccess = ( action ) => ( dispatch, getSta
 
 export const requestDomainTransferCodeFailure = ( action, error ) => [
 	requestDomainTransferCodeFailed( action.domain ),
-	getDomainTransferCodeError( error.error ),
+	errorNotice( getDomainTransferCodeError( error.error ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
 
@@ -193,29 +236,19 @@ export const cancelDomainTransferRequest = ( action ) =>
 
 export const cancelDomainTransferRequestSuccess = ( action ) => [
 	cancelDomainTransferRequestCompleted( action.domain, action.options ),
-	successNotice(
-		translate(
-			'You have successfully cancelled your domain transfer. There is nothing else you need to do.'
-		),
-		{
-			duration: 5000,
-			id: `domain-transfer-notification-${ action.domain }`,
-		}
-	),
+	successNotice( getCancelTransferSuccessMessage( action.options ), {
+		duration: 5000,
+		id: `domain-transfer-notification-${ action.domain }`,
+	} ),
 ];
 
-export const cancelDomainTransferRequestError = ( action, error ) => {
-	const defaultMessage = translate(
-		'An error occurred while canceling the domain transfer request.'
-	);
-	return [
-		cancelDomainTransferRequestFailed( action.domain ),
-		errorNotice( error.message || defaultMessage, {
-			duration: 5000,
-			id: `domain-transfer-notification-${ action.domain }`,
-		} ),
-	];
-};
+export const cancelDomainTransferRequestError = ( action, error ) => [
+	cancelDomainTransferRequestFailed( action.domain ),
+	errorNotice( getCancelTransferErrorMessage( error.error ), {
+		duration: 5000,
+		id: `domain-transfer-notification-${ action.domain }`,
+	} ),
+];
 
 export const acceptDomainTransfer = ( action ) =>
 	http(
