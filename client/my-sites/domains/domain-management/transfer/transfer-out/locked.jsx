@@ -18,10 +18,6 @@ import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 class Locked extends React.Component {
-	state = {
-		showDialog: false,
-	};
-
 	unlockAndRequestTransferCode = () => {
 		const { privateDomain } = getSelectedDomain( this.props );
 
