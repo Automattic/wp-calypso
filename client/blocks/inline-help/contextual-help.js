@@ -277,6 +277,33 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 	],
+	'site-purchases': [
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/auto-renewal/' ),
+			post_id: 110924,
+			title: translate( 'Subscriptions for Plans and Domains' ),
+			description: translate(
+				'Your WordPress.com plans and any domains you add to your sites are based ' +
+					'on a yearly subscription that renews automatically.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/discover-the-wordpress-com-plans/' ),
+			post_id: 140323,
+			title: translate( 'Explore the WordPress.com Plans' ),
+			description: translate(
+				"Upgrading your plan unlocks a ton of features! We'll help you pick the best fit for your needs and goals."
+			),
+		},
+	],
 	'notification-settings': [
 		{
 			link: localizeUrl( 'https://wordpress.com/support/notifications/' ),
