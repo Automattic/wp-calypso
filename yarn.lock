@@ -21027,6 +21027,21 @@ nodegit@^0.26.2:
     request-promise-native "^1.0.5"
     tar-fs "^1.16.3"
 
+nodegit@^0.27.0:
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/nodegit/-/nodegit-0.27.0.tgz#4e8cc236f60e1c97324a5acff99056fe116a6ebe"
+  integrity sha512-E9K4gPjWiA0b3Tx5lfWCzG7Cvodi2idl3V5UD2fZrOrHikIfrN7Fc2kWLtMUqqomyoToYJLeIC8IV7xb1CYRLA==
+  dependencies:
+    fs-extra "^7.0.0"
+    got "^10.7.0"
+    json5 "^2.1.0"
+    lodash "^4.17.14"
+    nan "^2.14.0"
+    node-gyp "^4.0.0"
+    node-pre-gyp "^0.13.0"
+    ramda "^0.25.0"
+    tar-fs "^1.16.3"
+
 noms@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/noms/-/noms-0.0.0.tgz#da8ebd9f3af9d6760919b27d9cdc8092a7332859"
