@@ -114,7 +114,7 @@ class ManagePurchase extends Component {
 		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
@@ -329,7 +329,7 @@ class ManagePurchase extends Component {
 		return (
 			<RemovePurchase
 				hasLoadedSites={ hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
 				site={ site }
@@ -748,9 +748,9 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedDomains,
 		hasLoadedSites,
-		hasLoadedUserPurchasesFromServer: selectedSiteId
+		hasLoadedPurchasesFromServer: selectedSiteId
 			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ), // TODO: refactor this
+			: hasLoadedUserPurchasesFromServer( state ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,
