@@ -68,7 +68,7 @@ class DomainManagementData extends React.Component {
 	}
 
 	loadData( prevProps ) {
-		const { needsUsers, selectedDomainName, selectedSite } = this.props;
+		const { needsUsers, selectedSite } = this.props;
 
 		if (
 			needsUsers &&
