@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { Fragment, useLayoutEffect } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 
@@ -25,6 +25,8 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
 import { hydrate } from './web-util.js';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 
 /**
  * Re-export
@@ -44,8 +46,22 @@ export const ProviderWrappedLayout = ( {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
+	// This code ( and <QueryExperiments /> ) should be removed when the nav-unification project has been rolled out to 100% of the customers.
+	useLayoutEffect( () => {
+		const variation = getVariationForUser( state, 'nav_unification_demo' );
+		if ( variation === 'treatment' ) {
+			// Hacky way to set a feature-flag.
+			window.configData.features[ 'nav-unification' ] = true;
+		} else {
+			window.configData.features[ 'nav-unification' ] = false;
+		}
+	} );
+
 	const layout = userLoggedIn ? (
-		<Layout primary={ primary } secondary={ secondary } />
+		<Fragment>
+			<QueryExperiments />
+			<Layout primary={ primary } secondary={ secondary } />
+		</Fragment>
 	) : (
 		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 	);
