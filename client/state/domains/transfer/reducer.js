@@ -79,7 +79,7 @@ export const items = withSchemaValidation( domainTransferSchema, ( state = {}, a
 			return updateDomainState( state, action.domain, {
 				isCancelingTransfer: false,
 				data: Object.assign( {}, state[ action.domain ].data, {
-					locked: action.locked,
+					locked: action.options.locked,
 					pendingTransfer: false,
 				} ),
 			} );
