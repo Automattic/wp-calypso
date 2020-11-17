@@ -14,12 +14,11 @@ import {
 	fetchWapiDomainInfo,
 	requestDomainTransferCode,
 } from 'calypso/state/domains/transfer/actions';
-import { displayRequestTransferCodeResponseNotice } from './shared';
 import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 class Locked extends React.Component {
 	state = {
-		submitting: false,
 		showDialog: false,
 	};
 
@@ -32,15 +31,7 @@ class Locked extends React.Component {
 			disablePrivacy: privateDomain,
 		};
 
-		this.setState( { submitting: true } );
 		this.props.requestDomainTransferCode( this.props.selectedDomainName, options );
-
-		// TODO: Fix this
-		this.setState( { submitting: false } );
-		const error = {};
-		displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-		this.props.fetchWapiDomainInfo( this.props.selectedDomainName );
-		// END TODO
 	};
 
 	isManualTransferRequired() {
@@ -82,7 +73,7 @@ class Locked extends React.Component {
 						className="transfer-out__action-button"
 						onClick={ this.unlockAndRequestTransferCode }
 						primary
-						disabled={ this.state.submitting }
+						disabled={ this.props.isRequestingTransferCode }
 					>
 						{ translate( 'Update settings and continue' ) }
 					</Button>
@@ -92,7 +83,16 @@ class Locked extends React.Component {
 	}
 }
 
-export default connect( null, {
-	fetchWapiDomainInfo,
-	requestDomainTransferCode,
-} )( localize( Locked ) );
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const domainInfo = getDomainWapiInfoByDomainName( state, selectedDomainName );
+
+		return {
+			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
+		};
+	},
+	{
+		fetchWapiDomainInfo,
+		requestDomainTransferCode,
+	}
+)( localize( Locked ) );

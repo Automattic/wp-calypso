@@ -10,55 +10,51 @@ import { translate } from 'i18n-calypso';
 import notices from 'calypso/notices';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
-export const displayResponseError = ( responseError ) => {
-	const errorMessages = {
-		unlock_domain_and_disable_private_reg_failed: translate(
-			'The domain could not be unlocked. ' +
-				'Additionally, Privacy Protection could not be disabled. ' +
-				'The transfer will most likely fail due to these errors.'
-		),
-		unlock_domain_failed: translate(
-			'The domain could not be unlocked. ' + 'The transfer will most likely fail due to this error.'
-		),
-		disable_private_reg_failed: translate(
-			'Privacy Protection could not be disabled. ' +
-				'The transfer will most likely fail due to this error.'
-		),
-	};
-
-	if ( responseError.error && Object.keys( errorMessages ).indexOf( responseError.error ) !== -1 ) {
-		notices.error(
-			translate(
-				'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
-					'Please {{a}}Contact Support{{/a}}.',
-				{
-					args: errorMessages[ responseError.error ],
-					components: {
-						strong: <strong />,
-						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
-					},
-				}
-			)
-		);
-	} else {
-		notices.error(
-			translate(
-				'An error occurred while trying to send the Domain Transfer code. ' +
-					'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
-					'to have trouble.',
-				{
-					components: {
-						a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
-					},
-				}
-			)
-		);
-	}
+const errorMessages = {
+	unlock_domain_and_disable_private_reg_failed: translate(
+		'The domain could not be unlocked. ' +
+			'Additionally, Privacy Protection could not be disabled. ' +
+			'The transfer will most likely fail due to these errors.'
+	),
+	unlock_domain_failed: translate(
+		'The domain could not be unlocked. ' + 'The transfer will most likely fail due to this error.'
+	),
+	disable_private_reg_failed: translate(
+		'Privacy Protection could not be disabled. ' +
+			'The transfer will most likely fail due to this error.'
+	),
 };
 
 export const displayRequestTransferCodeResponseNotice = ( responseError, domainStatus ) => {
 	if ( responseError ) {
-		displayResponseError( responseError );
+		if ( responseError.error && errorMessages.hasOwnProperty( responseError.error ) ) {
+			notices.error(
+				translate(
+					'An error occurred while trying to send the Domain Transfer code: {{strong}}%s{{/strong}} ' +
+						'Please {{a}}Contact Support{{/a}}.',
+					{
+						args: errorMessages[ responseError.error ],
+						components: {
+							strong: <strong />,
+							a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				)
+			);
+		} else {
+			notices.error(
+				translate(
+					'An error occurred while trying to send the Domain Transfer code. ' +
+						'Please try again or {{a}}Contact Support{{/a}} if you continue ' +
+						'to have trouble.',
+					{
+						components: {
+							a: <a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />,
+						},
+					}
+				)
+			);
+		}
 		return;
 	}
 

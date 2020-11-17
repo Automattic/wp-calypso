@@ -8,6 +8,7 @@ import {
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
 	DOMAIN_TRANSFER_DECLINE,
 	DOMAIN_TRANSFER_DECLINE_COMPLETED,
 	DOMAIN_TRANSFER_IPS_TAG_SAVE,
@@ -45,6 +46,11 @@ export const requestDomainTransferCodeCompleted = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	domain,
 	options,
+} );
+
+export const requestDomainTransferCodeFailed = ( domain ) => ( {
+	type: DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
+	domain,
 } );
 
 export const cancelDomainTransferRequest = ( domain, options ) => ( {
