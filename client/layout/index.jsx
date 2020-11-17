@@ -43,6 +43,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -80,14 +81,21 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
-		if ( config.isEnabled( 'nav-unification' ) ) {
+
+		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
+		if ( this.props.navUnificationVariation === 'treatment' ) {
+			// Hacky way to set a feature-flag.
+			window.configData.features[ 'nav-unification' ] = true;
+
 			window.addEventListener( 'scroll', scrollCallback );
 			window.addEventListener( 'resize', scrollCallback );
+		} else {
+			window.configData.features[ 'nav-unification' ] = false;
 		}
 	}
 
 	componentWillUnmount() {
-		if ( config.isEnabled( 'nav-unification' ) ) {
+		if ( this.props.navUnificationVariation === 'treatment' ) {
 			window.removeEventListener( 'scroll', scrollCallback );
 			window.removeEventListener( 'resize', scrollCallback );
 		}
@@ -314,6 +322,7 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
+			navUnificationVariation: getVariationForUser( state, 'nav_unification_demo' ),
 		};
 	} )
 )( Layout );
