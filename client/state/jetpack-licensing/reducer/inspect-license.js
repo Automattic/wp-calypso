@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import {
-	JETPACK_LICENSING_INSPECT_LICENSE_UPDATE,
+	JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE,
 	JETPACK_LICENSING_INSPECT_LICENSE_REQUEST,
 	JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_FAILURE,
 	JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_SUCCESS,
@@ -16,54 +16,16 @@ export const initialState = {
 	result: '',
 };
 
-/**
- * `Reducer` function which handles request/response actions to/from WP REST-API for license inspection.
- *
- * @param {object} state - current state
- * @param {object} action - plans action
- * @returns {object} updated state
- */
-/*export default withoutPersistence( ( state = initialState, action ) => {
+export const licenseKey = withoutPersistence( ( state = initialState.licenseKey, action ) => {
 	switch ( action.type ) {
-		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
-			return {
-				...state,
-				licenseKey: action.licenseKey,
-				isInspecting: true,
-				error: '',
-				result: '',
-			};
-
-		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_SUCCESS:
-			return {
-				...state,
-				isInspecting: false,
-				result: action.data,
-			};
-
-		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_FAILURE:
-			return {
-				...state,
-				isInspecting: false,
-				error: action.data,
-			};
-	}
-
-	return state;
-} );*/
-
-export const licenseKey = ( state = initialState.licenseKey, action ) => {
-	console.log( 'HERE!' );
-	debugger;
-	switch ( action.type ) {
-		case JETPACK_LICENSING_INSPECT_LICENSE_UPDATE:
+		case JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE:
 			return action.licenseKey;
 	}
 
 	return state;
-};
+} );
 
-export const isInspecting = ( state = initialState.isInspecting, action ) => {
+export const isInspecting = withoutPersistence( ( state = initialState.isInspecting, action ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
 			return true;
@@ -74,31 +36,31 @@ export const isInspecting = ( state = initialState.isInspecting, action ) => {
 	}
 
 	return state;
-};
+} );
 
-export const error = ( state = initialState.error, action ) => {
-	switch ( action.type ) {
-		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
-			return '';
-
-		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_FAILURE:
-			return action.data;
-	}
-
-	return state;
-};
-
-export const result = ( state = initialState.result, action ) => {
+export const result = withoutPersistence( ( state = initialState.result, action ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
 			return '';
 
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_SUCCESS:
-			return action.data;
+			return action.license;
 	}
 
 	return state;
-};
+} );
+
+export const error = withoutPersistence( ( state = initialState.error, action ) => {
+	switch ( action.type ) {
+		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
+			return '';
+
+		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_FAILURE:
+			return `${ action.error.status }: ${ action.error.message }`;
+	}
+
+	return state;
+} );
 
 export default combineReducers( {
 	licenseKey,
