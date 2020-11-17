@@ -22,7 +22,6 @@
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"i18n-calypso": "^5.0.0",
 		"react": "^16.12.0"
 	}
 }

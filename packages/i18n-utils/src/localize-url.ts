@@ -1,8 +1,6 @@
 /**
  * Internal dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
-
 import {
 	localesWithBlog,
 	localesWithPrivacyPolicy,
@@ -86,10 +84,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, toLocale?: Locale ): string {
-	const locale =
-		toLocale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() || 'en' : 'en' );
-
+export function localizeUrl( fullUrl: string, locale: Locale ): string {
 	const url = new URL( String( fullUrl ), INVALID_URL );
 
 	// Ignore and passthrough /relative/urls that have no host specified
