@@ -123,7 +123,7 @@ class Block_Patterns_From_API {
 					array(
 						'site' => WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE,
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_iso_639_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
 			);
 
