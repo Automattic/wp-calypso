@@ -96,7 +96,7 @@ function ProductVariant( {
 				id={ variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
-				isDisabled={ isDisabled }
+				disabled={ isDisabled }
 				onChange={ () => {
 					! isDisabled &&
 						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );
