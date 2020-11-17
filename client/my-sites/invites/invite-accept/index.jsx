@@ -15,8 +15,6 @@ import { connect } from 'react-redux';
 import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
 import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
 import { login } from 'calypso/lib/paths';
-import { fetchInvite } from 'calypso/lib/invites/actions';
-import InvitesStore from 'calypso/lib/invites/stores/invites-accept-validation';
 import EmptyContent from 'calypso/components/empty-content';
 import { successNotice, infoNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -26,6 +24,8 @@ import NoticeAction from 'calypso/components/notice/notice-action';
 import userUtils from 'calypso/lib/user/utils';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import wpcom from 'calypso/lib/wp';
+import normalizeInvite from './utils/normalize-invite';
 
 /**
  * Style dependencies
@@ -49,32 +49,34 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
-	UNSAFE_componentWillMount() {
+	componentDidMount() {
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
-			fetchInvite( this.props.siteId, this.props.inviteKey );
+			this.fetchInvite();
 		}
-
-		InvitesStore.on( 'change', this.refreshInvite );
 	}
 
-	componentWillUnmount() {
-		InvitesStore.off( 'change', this.refreshInvite );
-	}
+	async fetchInvite() {
+		try {
+			const response = await wpcom
+				.undocumented()
+				.getInvite( this.props.siteId, this.props.inviteKey );
 
-	refreshInvite = () => {
-		const invite = InvitesStore.getInvite( this.props.siteId, this.props.inviteKey );
-		const error = InvitesStore.getInviteError( this.props.siteId, this.props.inviteKey );
-
-		if ( invite ) {
-			// add subscription-related keys to the invite
-			Object.assign( invite, {
+			const invite = {
+				...normalizeInvite( response ),
 				activationKey: this.props.activationKey,
 				authKey: this.props.authKey,
+			};
+
+			this.setState( { invite } );
+		} catch ( error ) {
+			this.setState( { error } );
+
+			recordTracksEvent( 'calypso_invite_validation_failure', {
+				error: error.error,
 			} );
 		}
-		this.setState( { invite, error } );
-	};
+	}
 
 	isMatchEmailError = () => {
 		const { invite } = this.state;
