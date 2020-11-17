@@ -18,7 +18,7 @@ const Podcasting = () => {
 		<Task
 			title={ translate( 'Grow your audience with a podcast' ) }
 			description={ translate(
-				`Easily turn your blog into a podcast with Anchor -- the world's biggest podcasting platform.`
+				`Easily turn your blog into a podcast with Anchor — the world's biggest podcasting platform.`
 			) }
 			actionText={ translate( 'Get started' ) }
 			actionUrl={ `https://anchor.fm` }
