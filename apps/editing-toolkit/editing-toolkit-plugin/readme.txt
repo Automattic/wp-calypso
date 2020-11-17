@@ -45,7 +45,6 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Launch: support i18n in domain picker (https://github.com/Automattic/wp-calypso/pull/47178)
 * Premium Content: add block preview for the Premium Content block (https://github.com/Automattic/wp-calypso/pull/47200)
 * Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
-* Enable persistent launch button in all environments (https://github.com/Automattic/wp-calypso/pull/46817)
 * Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
 * Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
 * Comgin soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
