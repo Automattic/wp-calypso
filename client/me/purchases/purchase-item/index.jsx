@@ -70,9 +70,9 @@ class PurchaseItem extends Component {
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
 
-			return translate( 'Renews at %(price)s on %(date)s', {
+			return translate( 'Renews at %(amount)s on %(date)s.', {
 				args: {
-					price: purchase.priceText,
+					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
 				},
 			} );
