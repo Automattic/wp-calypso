@@ -101,7 +101,7 @@ type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
 		| 'onDomainSelect'
 		| 'onExistingSubdomainSelect'
 		| 'locale'
-	>;
+	> & { isLoading: boolean };
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	stepIndex,
@@ -112,6 +112,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	onDomainSelect,
 	onExistingSubdomainSelect,
 	locale,
+	isLoading,
 } ) => {
 	return (
 		<SummaryStep
@@ -172,6 +173,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 									</p>
 								</>
 							}
+							areDependenciesLoading={ isLoading }
 							existingSubdomain={ existingSubdomain }
 							currentDomain={ currentDomain }
 							onDomainSelect={ onDomainSelect }
@@ -441,7 +443,7 @@ const Summary: React.FunctionComponent = () => {
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain, setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
-	const domainSearch = useDomainSearch();
+	const { domainSearch, isLoading } = useDomainSearch();
 	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
 
 	const site = useSite();
@@ -464,7 +466,7 @@ const Summary: React.FunctionComponent = () => {
 		<SiteTitleStep
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
-			value={ title }
+			value={ title || '' }
 			onChange={ updateTitle }
 			onBlur={ saveTitle }
 		/>
@@ -479,6 +481,7 @@ const Summary: React.FunctionComponent = () => {
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			onDomainSelect={ setDomain }
+			isLoading={ isLoading }
 			/** NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if
