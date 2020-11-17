@@ -4,7 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -24,22 +23,13 @@ class Unlocked extends React.Component {
 		sent: ! this.isDomainAlwaysTransferrable(),
 	};
 
-	componentWillUnmount() {
-		this.setStateIfMounted = noop;
-	}
-
-	setStateIfMounted( ...args ) {
-		/**
-		 * Wrap setState calls that might occur after unmounting.
-		 *
-		 * When we cancel a transfer, that might update locking or privacy,
-		 * but errors mean we can't know in time - the store gets the information
-		 * before we do.
-		 *
-		 * The recommended solution is cancellable promises, but we don't want to
-		 * cancel these requests if we navigate away, so that won't work for us here.
-		 */
-		this.setState( ...args );
+	componentDidUpdate( prevProps ) {
+		if ( this.state.sent && prevProps.isCancelingTransfer && ! this.props.isCancelingTransfer ) {
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				sent: false,
+			} );
+		}
 	}
 
 	handleCancelTransferClick = () => {
@@ -56,16 +46,6 @@ class Unlocked extends React.Component {
 			enablePrivacy,
 			lockDomain,
 		} );
-		// TODO: Fix this
-		const error = {};
-
-		if ( error ) {
-			// TODO: Remove his
-		} else {
-			// Success.
-			this.setStateIfMounted( { sent: false } );
-		}
-		// END TODO: Fix this
 	};
 
 	isDomainAlwaysTransferrable() {
@@ -246,6 +226,7 @@ export default connect(
 		const isCancelingTransfer = !! domainInfo.isCancelingTransfer;
 
 		return {
+			isCancelingTransfer,
 			isSubmitting: isRequestingTransferCode || isCancelingTransfer,
 		};
 	},

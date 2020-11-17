@@ -193,19 +193,23 @@ export const requestDomainTransferCodeSuccess = ( action ) => ( dispatch, getSta
 
 	if ( domainInfo.manualTransferRequired ) {
 		dispatch(
-			translate(
-				'The registry for your domain requires a special process for transfers. ' +
-					'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
-					'shortly to help you complete the process.'
+			successNotice(
+				translate(
+					'The registry for your domain requires a special process for transfers. ' +
+						'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
+						'shortly to help you complete the process.'
+				)
 			)
 		);
 		return;
 	}
 
 	dispatch(
-		translate(
-			"We have sent the transfer authorization code to the domain registrant's email address. " +
-				"If you don't receive the email shortly, please check your spam folder."
+		successNotice(
+			translate(
+				"We have sent the transfer authorization code to the domain registrant's email address. " +
+					"If you don't receive the email shortly, please check your spam folder."
+			)
 		)
 	);
 };
@@ -236,6 +240,7 @@ export const cancelDomainTransferRequest = ( action ) =>
 
 export const cancelDomainTransferRequestSuccess = ( action ) => [
 	cancelDomainTransferRequestCompleted( action.domain, action.options ),
+	fetchWapiDomainInfo( action.domain ),
 	successNotice( getCancelTransferSuccessMessage( action.options ), {
 		duration: 5000,
 		id: `domain-transfer-notification-${ action.domain }`,
