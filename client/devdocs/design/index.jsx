@@ -39,7 +39,6 @@ import Collection from 'calypso/devdocs/design/search-collection';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import Count from 'calypso/components/count/docs/example';
 import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
-import CreditCard from 'calypso/components/credit-card/docs/example';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
@@ -203,7 +202,6 @@ export default class DesignAssets extends React.Component {
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
-					<CreditCard readmeFilePath="credit-card" />
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />

@@ -16,7 +16,7 @@ import {
 /**
  * Style dependencies
  */
-import './stored-card.scss';
+import './style.scss';
 
 interface Props {
 	lastDigits?: string;
@@ -28,7 +28,7 @@ interface Props {
 	selected?: boolean;
 }
 
-const StoredCard: FunctionComponent< Props > = ( {
+const PaymentMethodDetails: FunctionComponent< Props > = ( {
 	cardType,
 	expiry,
 	lastDigits,
@@ -45,30 +45,36 @@ const StoredCard: FunctionComponent< Props > = ( {
 	const displayExpirationDate = expirationDate?.isValid() ? expirationDate.format( 'MM/YY' ) : null;
 
 	const type = cardType?.toLocaleLowerCase() || paymentPartner || '';
-	const typeStyle = {
-		backgroundImage: getPaymentMethodImageURL( type, selected ),
-	};
 
 	return (
-		<div className="credit-card__stored-card" style={ typeStyle }>
-			<span className="credit-card__stored-card-number">
-				{ getPaymentMethodSummary( {
-					translate,
-					type,
-					digits: lastDigits,
-					email,
-				} ) }
-			</span>
-			<span className="credit-card__stored-card-name">{ name }</span>
-			<span className="credit-card__stored-card-expiration-date">
-				{ displayExpirationDate &&
-					translate( 'Expires %(date)s', {
-						args: { date: displayExpirationDate },
-						context: 'date is of the form MM/YY',
+		<>
+			<img
+				src={ getPaymentMethodImageURL( type, selected ) }
+				className="payment-method-details__image"
+				alt=""
+			/>
+			<div className="payment-method-details__details">
+				<span className="payment-method-details__number">
+					{ getPaymentMethodSummary( {
+						translate,
+						type,
+						digits: lastDigits,
+						email,
 					} ) }
-			</span>
-		</div>
+				</span>
+
+				{ displayExpirationDate && (
+					<span className="payment-method-details__expiration-date">
+						{ translate( 'Expires %(date)s', {
+							args: { date: displayExpirationDate },
+							context: 'date is of the form MM/YY',
+						} ) }
+					</span>
+				) }
+				<span className="payment-method-details__name">{ name }</span>
+			</div>
+		</>
 	);
 };
 
-export default StoredCard;
+export default PaymentMethodDetails;

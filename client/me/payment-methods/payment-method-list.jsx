@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
  */
 import { Button, Card } from '@automattic/components';
 import config from 'calypso/config';
-import CreditCard from 'calypso/components/credit-card';
-import CreditCardDelete from './credit-card-delete';
+import PaymentMethod from './payment-method';
+import PaymentMethodDelete from './payment-method-delete';
 import {
 	getStoredCards,
 	getUniquePaymentAgreements,
@@ -28,43 +28,44 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 /**
  * Style dependencies
  */
-import './credit-cards.scss';
+import './style.scss';
 
-class CreditCards extends Component {
-	renderCards( cards ) {
+class PaymentMethodList extends Component {
+	renderPaymentMethods( cards ) {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
-			return <div className="credit-cards__no-results">{ this.props.translate( 'Loading…' ) }</div>;
+			return (
+				<Card className="payment-method-list__loader">
+					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />
+					<div className="payment-method-list__loading-placeholder-details loading-placeholder__content" />
+				</Card>
+			);
 		}
 
 		if ( ! cards.length ) {
-			return (
-				<div className="credit-cards__no-results">
-					{ this.props.translate( 'You have no saved cards.' ) }
-				</div>
-			);
+			return <Card>{ this.props.translate( 'You have no saved cards.' ) }</Card>;
 		}
 
 		return cards.map( ( card ) => {
 			return (
-				<CreditCard key={ card.stored_details_id }>
-					<CreditCardDelete card={ card } />
-				</CreditCard>
+				<PaymentMethod key={ card.stored_details_id }>
+					<PaymentMethodDelete card={ card } />
+				</PaymentMethod>
 			);
 		} );
 	}
 
-	goToAddCreditCard = () => {
+	goToAddPaymentMethod = () => {
 		recordTracksEvent( 'calypso_purchases_click_add_new_payment_method' );
 		page( this.props.addPaymentMethodUrl );
 	};
 
-	renderAddCreditCardButton() {
+	renderAddPaymentMethodButton() {
 		if ( ! config.isEnabled( 'manage/payment-methods' ) ) {
 			return null;
 		}
 
 		return (
-			<Button primary compact className="credit-cards__add" onClick={ this.goToAddCreditCard }>
+			<Button primary compact onClick={ this.goToAddPaymentMethod }>
 				{ this.props.translate( 'Add credit card' ) }
 			</Button>
 		);
@@ -72,29 +73,23 @@ class CreditCards extends Component {
 
 	render() {
 		return (
-			<div className="credit-cards">
+			<div className="payment-method-list">
 				<QueryStoredCards />
-				<SectionHeader label={ this.props.translate( 'Manage your credit cards' ) }>
-					{ this.renderAddCreditCardButton() }
+				<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) }>
+					{ this.renderAddPaymentMethodButton() }
 				</SectionHeader>
-				<Card>
-					<div>{ this.renderCards( this.props.cards ) }</div>
-				</Card>
+
+				{ this.renderPaymentMethods( this.props.cards ) }
 
 				{ this.props.hasLoadedFromServer && this.props.paymentAgreements.length > 0 && (
-					<>
-						<SectionHeader label={ this.props.translate( 'Manage Your Payment Agreements' ) } />
-						<Card>
-							<div>{ this.renderCards( this.props.paymentAgreements ) }</div>
-						</Card>
-					</>
+					<>{ this.renderPaymentMethods( this.props.paymentAgreements ) }</>
 				) }
 			</div>
 		);
 	}
 }
 
-CreditCards.propTypes = {
+PaymentMethodList.propTypes = {
 	addPaymentMethodUrl: PropTypes.string.isRequired,
 	// From connect:
 	cards: PropTypes.array.isRequired,
@@ -108,4 +103,4 @@ export default connect( ( state ) => ( {
 	paymentAgreements: getUniquePaymentAgreements( state ),
 	hasLoadedFromServer: hasLoadedStoredCardsFromServer( state ),
 	isFetching: isFetchingStoredCards( state ),
-} ) )( localize( CreditCards ) );
+} ) )( localize( PaymentMethodList ) );
