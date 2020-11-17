@@ -312,6 +312,22 @@ Takes two props:
 - `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
 - `isSummary: boolean`. If true, will display a more compact version of the logo.
 
+### RadioButton
+
+Renders a radio button wrapper for payment methods or other similar boxes.
+
+Props:
+
+- `name: string`
+- `id: string`
+- `label: React.ReactNode`
+- `disabled?: boolean`
+- `checked?: boolean`
+- `value: string`
+- `onChange?: () => void`
+- `ariaLabel: string`
+- `children?: React.ReactNode`
+
 ### PaymentProcessorResponseType
 
 An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).

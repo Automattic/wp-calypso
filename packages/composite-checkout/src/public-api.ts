@@ -80,6 +80,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
+import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
 export * from './types';
 
@@ -107,6 +108,7 @@ export {
 	OrderReviewSection,
 	OrderReviewTotal,
 	PaymentLogo,
+	RadioButton,
 	SubmitButtonWrapper,
 	checkoutTheme,
 	createAlipayMethod,
