@@ -320,7 +320,7 @@ class Signup extends React.Component {
 
 	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
 		// See comment below for `this.bizxSurveyTimerComplete`
-		if ( this.bizxSurveyTimerComplete ) {
+		if ( this.bizxSurveyTimerComplete && window && window.hj ) {
 			await this.bizxSurveyTimerComplete;
 		}
 
