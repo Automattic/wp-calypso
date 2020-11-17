@@ -32,7 +32,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
-	isExperimental?: boolean;
+	isAccordion?: boolean;
 	locale: string;
 }
 
@@ -44,12 +44,10 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPlanSelect,
 	onPickDomainClick,
 	disabledPlans,
-	isExperimental,
+	isAccordion,
 	locale,
 } ) => {
-	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
-	// and Gutenboarding flow is started with ?latest query param
-	isExperimental && debug( 'PlansGrid experimental version is active' );
+	isAccordion && debug( 'PlansGrid accordion version is active' );
 
 	return (
 		<div className="plans-grid">
@@ -57,7 +55,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
-					{ isExperimental ? (
+					{ isAccordion ? (
 						<PlansAccordion
 							selectedFeatures={ selectedFeatures }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
