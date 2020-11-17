@@ -139,6 +139,13 @@ jobs:
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
 
+    # This is a workaround for https://github.com/Automattic/wp-calypso/issues/47255
+    # Once a newer version of wp-env is available (https://github.com/WordPress/gutenberg/pull/26712)
+    # we should be able to remove this step.
+    - name: Rebuild nodegit
+      run: yarn rebuild nodegit
+      working-directory: apps/editing-toolkit
+
     - name: Setup wp-env dependencies
       run: |
         echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
@@ -173,7 +180,7 @@ jobs:
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
       if: ${{ steps.changes.outputs.all != '' }}
-    
+
     - name: No changes found
       run: echo "No changes found to check!"
       if: ${{ steps.changes.outputs.all == '' }}
