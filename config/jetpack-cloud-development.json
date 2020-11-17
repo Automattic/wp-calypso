@@ -56,7 +56,8 @@
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
-		"scan": true
+		"scan": true,
+		"checkout": true
 	},
 	"site_filter": [ "jetpack" ],
 	"theme": "jetpack-cloud",
