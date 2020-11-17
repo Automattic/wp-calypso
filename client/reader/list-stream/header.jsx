@@ -48,7 +48,7 @@ const ListStreamHeader = ( {
 						>
 							<Gridicon icon="lock" size={ 18 } />
 							<span className="list-stream__header-title-privacy-label screen-reader-text">
-								{ translate( '(private list)' ) }
+								{ translate( '(private)' ) }
 							</span>
 						</div>
 					) }

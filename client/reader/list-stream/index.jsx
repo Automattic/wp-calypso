@@ -88,7 +88,7 @@ class ListStream extends React.Component {
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
-					isPublic={ list && list.is_public }
+					isPublic={ list?.is_public }
 					icon={
 						<svg
 							className={ listStreamIconClasses }
@@ -109,7 +109,7 @@ class ListStream extends React.Component {
 						</svg>
 					}
 					title={ this.title }
-					description={ list && list.description }
+					description={ list?.description }
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
