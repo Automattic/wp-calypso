@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { By } from 'selenium-webdriver';
-import config from 'config';
 
 /**
  * Internal dependencies
