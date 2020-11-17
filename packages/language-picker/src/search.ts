@@ -11,8 +11,8 @@ import { Language } from './Language';
 type SearchableFields = string[];
 export type LocalizedLanguageNames = { [ slug: string ]: { localized: string; en: string } };
 
-const getSearchableFields = (
-	language: Language,
+const getSearchableFields = < TLanguage extends Language >(
+	language: TLanguage,
 	localizedLanguageNames?: LocalizedLanguageNames
 ): SearchableFields =>
 	[
@@ -22,11 +22,11 @@ const getSearchableFields = (
 		deburr( localizedLanguageNames?.[ language.langSlug ]?.en ),
 	].map( ( s ) => s.toLowerCase() );
 
-export const getSearchedLanguages = (
-	languages: Language[],
+export const getSearchedLanguages = < TLanguage extends Language >(
+	languages: TLanguage[],
 	search: string,
 	localizedLanguageNames?: LocalizedLanguageNames
-): Language[] => {
+): TLanguage[] => {
 	const searchString = deburr( search ).toLowerCase();
 	return languages.filter( ( language ) =>
 		getSearchableFields( language, localizedLanguageNames ).some( ( name ) =>
