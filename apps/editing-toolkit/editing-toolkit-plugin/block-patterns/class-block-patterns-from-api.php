@@ -94,7 +94,7 @@ class Block_Patterns_From_API {
 					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
-						'description'   => $pattern['title'],
+						'description'   => $pattern['description'],
 						'content'       => $pattern['html'],
 						'viewportWidth' => 1280,
 						'categories'    => array_keys(

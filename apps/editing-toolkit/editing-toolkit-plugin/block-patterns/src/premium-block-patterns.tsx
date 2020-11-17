@@ -15,10 +15,22 @@ import './style.scss';
 
 interface PatternTitleProps {
 	title: string;
+	description?: string;
+}
+
+interface ExperimentalBlockPattern {
+	categories: string[];
+	content: string;
+	description: string;
+	isPremium: boolean;
+	name: string;
+	title: string;
+	viewportWidth: int;
 }
 
 export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps > = ( {
 	title,
+	description,
 } ) => {
 	const [ showPopover, setShowPopover ] = React.useState( false );
 
@@ -29,7 +41,9 @@ export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps >
 				onMouseEnter={ () => setShowPopover( true ) }
 				onMouseLeave={ () => setShowPopover( false ) }
 			></div>
-			{ showPopover ? <PatternPopover title={ title }></PatternPopover> : null }
+			{ showPopover ? (
+				<PatternPopover title={ title } description={ description }></PatternPopover>
+			) : null }
 			<span> { title } </span>
 			<div>
 				<PatternBadge> { __( 'Premium', 'full-site-editing' ) } </PatternBadge>
@@ -39,22 +53,25 @@ export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps >
 };
 
 export const PremiumBlockPatterns: React.FunctionComponent = () => {
-	const { __experimentalBlockPatterns } = useSelect(
-		( select ) => select( 'core/block-editor' ).getSettings() as any
+	const { __experimentalBlockPatterns } = useSelect( ( select ) =>
+		select( 'core/block-editor' ).getSettings()
 	);
 	const { updateSettings } = useDispatch( 'core/block-editor' );
 
 	if ( __experimentalBlockPatterns ) {
 		let shouldUpdateBlockPatterns = false;
-		const updatedPatterns: any = [];
+		const updatedPatterns: Array = [];
 
-		__experimentalBlockPatterns.forEach( ( originalPattern: any ) => {
+		__experimentalBlockPatterns.forEach( ( originalPattern: ExperimentalBlockPattern ) => {
 			const pattern = { ...originalPattern };
 
 			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
 				const originalTitle = pattern.title;
+				const description = pattern.description;
 
-				pattern.title = <PatternTitleContainer title={ originalTitle } />;
+				pattern.title = (
+					<PatternTitleContainer title={ originalTitle } description={ description } />
+				);
 				pattern.title.toString = () => originalTitle;
 
 				shouldUpdateBlockPatterns = true;
@@ -65,7 +82,7 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 		if ( shouldUpdateBlockPatterns ) {
 			updateSettings( {
 				__experimentalBlockPatterns: updatedPatterns,
-			} as any );
+			} );
 		}
 	}
 
