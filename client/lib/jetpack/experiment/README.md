@@ -1,4 +1,4 @@
-# Jetpack Purchaseable Items API (EXPERIMENTAL)
+# Jetpack Purchasable Items API (EXPERIMENTAL)
 
 This API is intended to unify and normalize access to Jetpack bundles, products,
 and legacy plans, eventually replacing several data sources with one canonical
@@ -23,7 +23,7 @@ With the introduction of the Offer Reset in 2020, "plans," "products," and
 "bundles" all existed as separate and distinct, but very similar concepts. They
 evolved organically over the years, but as their APIs intermingled they became
 increasingly difficult to query and manipulate. To attempt to smooth this over,
-the proposal here refers to all three as types of **purchaseable item**. Sure,
+the proposal here refers to all three as types of **purchasable item**. Sure,
 it doesn't exactly roll off the tongue, but it gives us a common foundation from
 which to start: products, bundles, and plans each have their own special
 properties and behaviors, but they're all items in some sense.
@@ -65,14 +65,14 @@ The API is structured as follows. With this approach to organization, the hope
 is to make it easier to inspect or modify existing items, as well as make it
 obvious where to add new ones:
 
-- **`purchaseable-items/`**: Basic item information
+- **`purchasable-items/`**: Basic item information
   - **`bundles/`**: Bundles like Jetpack Security and Jetpack Complete, which
   "contain" multiple individual products
   - **`legacy-plans/`**: Plans that still exist but are no longer made publicly
   available for purchase (e.g., Jetpack Personal)
   - **`products/`**: Individual products, like Jetpack Backup and Jetpack Scan
   - `attributes.ts`: Defines the limited set of intrinsic attributes that can be
-  attached to a purchaseable item (more on this in **Part 3**)
+  attached to a purchasable item (more on this in **Part 3**)
   - `index.ts`: Exposes item collections for convenience, methods to query
   across all items by various criteria, and functions to decorate items with
   more information
@@ -97,7 +97,7 @@ property values are guaranteed not to change.
 The core API exposes all products, bundles, and plans, but we only describe them
 in the most basic terms.
 
-More concretely: a `PurchaseableItem` consists of a slug and a limited set of
+More concretely: a `PurchasableItem` consists of a slug and a limited set of
 intrinsic attributes: whether it's an individual product, a bundle, or a
 legacy plan; which family of items it belongs to; its billing term; and whether
 it exists as a daily or real-time variant. Attributes are the small set of
@@ -148,46 +148,46 @@ identity and tend to change much more often than, say, a slug.
 ### Get all individual products/bundles/legacy plans
 
 ```ts
-import { Products, Bundles, LegacyPlans } from 'calypso/lib/jetpack/experiment/purchaseable-items';
+import { Products, Bundles, LegacyPlans } from 'calypso/lib/jetpack/experiment/purchasable-items';
 ```
 
 ### Get one or more specific items by importing them directly
 
 ```ts
-import { SearchAnnual } from 'calypso/lib/jetpack/experiment/purchaseable-items/products';
-import { ProfessionalMonthly } from 'calypso/lib/jetpack/experiment/purchaseable-items/legacy-plans';
+import { SearchAnnual } from 'calypso/lib/jetpack/experiment/purchasable-items/products';
+import { ProfessionalMonthly } from 'calypso/lib/jetpack/experiment/purchasable-items/legacy-plans';
 ```
 
 ### Get an item by its slug
 
 ```ts
-import { getItemBySlug } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import { getItemBySlug } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const completeBundleAnnual: PurchaseableItem = getItemBySlug( 'jetpack_complete' );
+const completeBundleAnnual: PurchasableItem = getItemBySlug( 'jetpack_complete' );
 ```
 
 ### Get all items matching a set of criteria
 
 ```ts
-import { Attributes, getItemsWithAttributes } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem, PurchaseableBundle } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import { Attributes, getItemsWithAttributes } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem, PurchasableBundle } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const allAnnualItems: PurchaseableItem[] = getItemsWithAttributes( {
+const allAnnualItems: PurchasableItem[] = getItemsWithAttributes( {
 	billingTerm: Attributes.BillingTerm.ANNUAL,
 } );
-const allMonthlyBundles: PurchaseableBundle[] = getItemsWithAttributes( {
+const allMonthlyBundles: PurchasableBundle[] = getItemsWithAttributes( {
 	itemType: Attributes.ItemType.BUNDLE,
 	billingTerm: Attributes.BillingTerm.MONTHLY,
-} ) as PurchaseableBundle[];
+} ) as PurchasableBundle[];
 ```
 
 ### Get an item by its attributes
 ```ts
-import { Attributes, getOnlyItemWithAttributes } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import { Attributes, getOnlyItemWithAttributes } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const antispamMonthly: PurchaseableItem = getOnlyItemWithAttributes( {
+const antispamMonthly: PurchasableItem = getOnlyItemWithAttributes( {
 	family: 'jetpack_anti_spam',
 	billingTerm: Attributes.BillingTerm.MONTHLY,
 } );
@@ -200,25 +200,25 @@ import {
 	getItemBySlug,
 	getItemBilledMonthly,
 	getItemBilledAnnually,
-} from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+} from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const backupAnnual: PurchaseableItem = getItemBySlug( 'jetpack_backup_daily' );
-const backupMonthly: PurchaseableItem = getItemBilledMonthly( backupAnnual.slug );
-const backupAnnualAgain: PurchaseableItem = getItemBilledAnnually( backupMonthly.slug );
+const backupAnnual: PurchasableItem = getItemBySlug( 'jetpack_backup_daily' );
+const backupMonthly: PurchasableItem = getItemBilledMonthly( backupAnnual.slug );
+const backupAnnualAgain: PurchasableItem = getItemBilledAnnually( backupMonthly.slug );
 ```
 
 ### Convert between daily and real-time options
 
 ```ts
-import { Attributes, getItemBySlug, getOnlyRelatedItem } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import { Attributes, getItemBySlug, getOnlyRelatedItem } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const securityDaily: PurchaseableItem = getItemBySlug( 'jetpack_security_daily' );
-const securityRealtime: PurchaseableItem = getOnlyRelatedItem(
+const securityDaily: PurchasableItem = getItemBySlug( 'jetpack_security_daily' );
+const securityRealtime: PurchasableItem = getOnlyRelatedItem(
 	securityDaily, { dailyOrRealtime: Attributes.DailyRealtimeOption.REALTIME }
 );
-const securityDailyAgain: PurchaseableItem = getOnlyRelatedItem(
+const securityDailyAgain: PurchasableItem = getOnlyRelatedItem(
 	securityRealtime, { dailyOrRealtime: Attributes.DailyRealtimeOption.DAILY }
 );
 ```
@@ -226,14 +226,14 @@ const securityDailyAgain: PurchaseableItem = getOnlyRelatedItem(
 ### Safely check and smartly cast an item of an unknown type to a specific type
 
 ```ts
-import { getItemBySlug, isBundle } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import { getItemBySlug, isBundle } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
-const securityDailyAnnual: PurchaseableItem = getItemBySlug( 'jetpack_security_daily' );
+const securityDailyAnnual: PurchasableItem = getItemBySlug( 'jetpack_security_daily' );
 if ( isBundle( securityDailyAnnual ) ) {
-	// isBundle is a type predicate for PurchaseableBundle; so,
+	// isBundle is a type predicate for PurchasableBundle; so,
 	// everything in this block can safely assume that securityDailyAnnual
-	// is a PurchaseableBundle and has all that type's members
+	// is a PurchasableBundle and has all that type's members
 	const includedSlugs: string[] = shouldBeABundle.includedProducts.map( p => p.slug );
 	console.log( includedSlugs.join( ',' ) );
 }
@@ -245,11 +245,11 @@ if ( isBundle( securityDailyAnnual ) ) {
 import React from 'react';
 import { useSelector } from 'react-redux';
 
-import { decorateItem } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import { BackupRealtimeAnnual } from 'calypso/lib/jetpack/experiment/purchaseable-items/products';
-import { withDisplayProperties } from 'calypso/lib/jetpack/experiment/purchaseable-items-examples/display';
-import type { DisplayableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items-examples/display/types';
-import { withSelectors, SelectableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items-examples/selectors';
+import { decorateItem } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import { BackupRealtimeAnnual } from 'calypso/lib/jetpack/experiment/purchasable-items/products';
+import { withDisplayProperties } from 'calypso/lib/jetpack/experiment/purchasable-items-examples/display';
+import type { DisplayableItem } from 'calypso/lib/jetpack/experiment/purchasable-items-examples/display/types';
+import { withSelectors, SelectableItem } from 'calypso/lib/jetpack/experiment/purchasable-items-examples/selectors';
 
 const decoratedBackup = decorateItem(
 	BackupRealtimeAnnual, [ withDisplayProperties, withSelectors ]
@@ -267,9 +267,9 @@ const ExampleComponent = () => {
 ### Compose an array of items with extra properties
 
 ```ts
-import { decorateItems, Products } from 'calypso/lib/jetpack/experiment/purchaseable-items';
-import { withDisplayProperties } from 'calypso/lib/jetpack/experiment/purchaseable-items-examples/display';
-import type { DisplayableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items-examples/display/types';
+import { decorateItems, Products } from 'calypso/lib/jetpack/experiment/purchasable-items';
+import { withDisplayProperties } from 'calypso/lib/jetpack/experiment/purchasable-items-examples/display';
+import type { DisplayableItem } from 'calypso/lib/jetpack/experiment/purchasable-items-examples/display/types';
 
 const ProductsList = Object.values( Products );
 const productsWithDisplayProps = decorateItems(

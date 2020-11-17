@@ -3,14 +3,14 @@
  */
 import * as MySitesPlansV2 from 'calypso/my-sites/plans-v2/constants';
 import { BillingTerm, ItemType } from '../attributes';
-import type { PurchaseableProduct } from '../types';
+import type { PurchasableProduct } from '../types';
 
 const commonAttributes = {
 	itemType: ItemType.PRODUCT,
 	family: MySitesPlansV2.EXTERNAL_PRODUCT_CRM.productSlug,
 };
 
-export const CrmAnnual: PurchaseableProduct = {
+export const CrmAnnual: PurchasableProduct = {
 	slug: MySitesPlansV2.EXTERNAL_PRODUCT_CRM.productSlug,
 	attributes: {
 		...commonAttributes,
@@ -18,7 +18,7 @@ export const CrmAnnual: PurchaseableProduct = {
 	},
 } as const;
 
-export const CrmMonthly: PurchaseableProduct = {
+export const CrmMonthly: PurchasableProduct = {
 	slug: MySitesPlansV2.EXTERNAL_PRODUCT_CRM_MONTHLY.productSlug,
 	attributes: {
 		...commonAttributes,

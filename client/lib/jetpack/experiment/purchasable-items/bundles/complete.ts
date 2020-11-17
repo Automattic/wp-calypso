@@ -4,14 +4,14 @@
 import * as PlanConstants from 'calypso/lib/plans/constants';
 import { ItemType, BillingTerm } from '../attributes';
 import * as Products from '../products';
-import type { PurchaseableBundle } from '../types';
+import type { PurchasableBundle } from '../types';
 
 const commonAttributes = {
 	itemType: ItemType.BUNDLE,
 	family: PlanConstants.PLAN_JETPACK_COMPLETE,
 };
 
-export const CompleteAnnual: PurchaseableBundle = {
+export const CompleteAnnual: PurchasableBundle = {
 	slug: PlanConstants.PLAN_JETPACK_COMPLETE,
 	attributes: {
 		...commonAttributes,
@@ -25,7 +25,7 @@ export const CompleteAnnual: PurchaseableBundle = {
 	],
 } as const;
 
-export const CompleteMonthly: PurchaseableBundle = {
+export const CompleteMonthly: PurchasableBundle = {
 	slug: PlanConstants.PLAN_JETPACK_COMPLETE_MONTHLY,
 	attributes: {
 		...commonAttributes,

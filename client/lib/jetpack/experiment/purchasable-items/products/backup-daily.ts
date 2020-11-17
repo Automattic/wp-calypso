@@ -3,24 +3,24 @@
  */
 import * as ProductConstants from 'calypso/lib/products-values/constants';
 import { BillingTerm, DailyRealtimeOption, ItemType } from '../attributes';
-import type { PurchaseableProduct } from '../types';
+import type { PurchasableProduct } from '../types';
 
 const commonAttributes = {
 	itemType: ItemType.PRODUCT,
 	family: ProductConstants.PRODUCT_JETPACK_BACKUP,
-	dailyOrRealtime: DailyRealtimeOption.REALTIME,
+	dailyOrRealtime: DailyRealtimeOption.DAILY,
 };
 
-export const BackupRealtimeAnnual: PurchaseableProduct = {
-	slug: ProductConstants.PRODUCT_JETPACK_BACKUP_REALTIME,
+export const BackupDailyAnnual: PurchasableProduct = {
+	slug: ProductConstants.PRODUCT_JETPACK_BACKUP_DAILY,
 	attributes: {
 		...commonAttributes,
 		billingTerm: BillingTerm.ANNUAL,
 	},
 } as const;
 
-export const BackupRealtimeMonthly: PurchaseableProduct = {
-	slug: ProductConstants.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+export const BackupDailyMonthly: PurchasableProduct = {
+	slug: ProductConstants.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	attributes: {
 		...commonAttributes,
 		billingTerm: BillingTerm.MONTHLY,

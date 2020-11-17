@@ -4,7 +4,7 @@
 import * as PlanConstants from 'calypso/lib/plans/constants';
 import { BillingTerm, DailyRealtimeOption, ItemType } from '../attributes';
 import * as Products from '../products';
-import type { PurchaseableBundle } from '../types';
+import type { PurchasableBundle } from '../types';
 
 const commonAttributes = {
 	itemType: ItemType.BUNDLE,
@@ -12,7 +12,7 @@ const commonAttributes = {
 	dailyOrRealtime: DailyRealtimeOption.DAILY,
 };
 
-export const SecurityDailyAnnual: PurchaseableBundle = {
+export const SecurityDailyAnnual: PurchasableBundle = {
 	slug: PlanConstants.PLAN_JETPACK_SECURITY_DAILY,
 	attributes: {
 		...commonAttributes,
@@ -21,7 +21,7 @@ export const SecurityDailyAnnual: PurchaseableBundle = {
 	includedProducts: [ Products.BackupDailyAnnual, Products.ScanAnnual ],
 } as const;
 
-export const SecurityDailyMonthly: PurchaseableBundle = {
+export const SecurityDailyMonthly: PurchasableBundle = {
 	slug: PlanConstants.PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	attributes: {
 		...commonAttributes,

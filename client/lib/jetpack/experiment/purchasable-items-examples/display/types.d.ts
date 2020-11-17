@@ -7,7 +7,7 @@ import type { TranslateResult } from 'i18n-calypso';
  * Internal dependencies
  */
 import type { AppState } from 'calypso/types';
-import type { PurchaseableItem } from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+import type { PurchasableItem } from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
 export interface DisplayableItemFeature {
 	slug: string;
@@ -27,4 +27,4 @@ export interface DisplayableItemProperties {
 	features: DisplayableItemFeature[];
 }
 
-export type DisplayableItem = PurchaseableItem & DisplayableItemProperties;
+export type DisplayableItem = PurchasableItem & DisplayableItemProperties;

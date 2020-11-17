@@ -2,19 +2,19 @@
  * Internal dependencies
  */
 import type {
-	PurchaseableItem,
-	PurchaseableItemDecorator,
-} from 'calypso/lib/jetpack/experiment/purchaseable-items/types';
+	PurchasableItem,
+	PurchasableItemDecorator,
+} from 'calypso/lib/jetpack/experiment/purchasable-items/types';
 
 const selectors = {
 	isOwned: (/* state: AppState */) => true,
 	getBillingAmount: (/* state: AppState */) => 0,
 };
 
-export type SelectableItem = PurchaseableItem & typeof selectors;
+export type SelectableItem = PurchasableItem & typeof selectors;
 
-export const withSelectors: PurchaseableItemDecorator< SelectableItem > = (
-	item: PurchaseableItem
+export const withSelectors: PurchasableItemDecorator< SelectableItem > = (
+	item: PurchasableItem
 ) => {
 	return { ...item, ...selectors };
 };
