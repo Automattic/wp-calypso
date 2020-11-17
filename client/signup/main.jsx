@@ -318,7 +318,12 @@ class Signup extends React.Component {
 		}
 	}
 
-	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
+	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
+		// See comment below for `this.bizxSurveyTimerComplete`
+		if ( this.bizxSurveyTimerComplete ) {
+			await this.bizxSurveyTimerComplete;
+		}
+
 		const filteredDestination = getDestination(
 			destination,
 			dependencies,
@@ -355,6 +360,12 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+			/* Temporary change to add a 10 second delay to the processing screen.
+			 * This is done to allow the user 10 seconds to answer the bizx survey
+			 */
+			if ( ! this.bizxSurveyTimerComplete ) {
+				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+			}
 
 			if ( isWPForTeamsFlow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
