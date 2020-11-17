@@ -8,13 +8,15 @@ import { __ } from '@wordpress/i18n';
 import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
 import { ClipboardButton } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
-import { useFocusedLaunchModal, useSiteDomains } from '../../hooks';
+import { useSiteDomains } from '../../hooks';
 import Confetti from './confetti';
 import LaunchContext from '../../context';
+import { LAUNCH_STORE } from '../../stores';
 
 import './style.scss';
 
@@ -22,7 +24,7 @@ const Success: React.FunctionComponent = () => {
 	const { redirectTo } = useContext( LaunchContext );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
-	const { unsetModalDismissible, closeFocusedLaunch, hideModalTitle } = useFocusedLaunchModal();
+	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 	const [ displayedSiteUrl, setDisplayedSiteUrl ] = useState( '' );
 
 	const [ hasCopied, setHasCopied ] = useState( false );

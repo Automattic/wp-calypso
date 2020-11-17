@@ -6,13 +6,14 @@ import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
 import classNames from 'classnames';
+import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import FocusedLaunch from '../focused-launch';
 import LaunchContext from '../context';
-import { useFocusedLaunchModal } from '../hooks';
+import { LAUNCH_STORE } from '../stores';
 import './styles.scss';
 
 interface Props {
@@ -31,7 +32,10 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 		window.location.href = url;
 	},
 } ) => {
-	const { isModalDismissible, isModalTitleVisible } = useFocusedLaunchModal();
+	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
+	const isModalTitleVisible = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).isModalTitleVisible()
+	);
 
 	return (
 		<Modal

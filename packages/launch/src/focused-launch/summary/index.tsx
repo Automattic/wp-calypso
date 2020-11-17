@@ -20,14 +20,7 @@ import FocusedLaunchSummaryItem, {
  * Internal dependencies
  */
 import { Route } from '../route';
-import {
-	useTitle,
-	useDomainSearch,
-	useSiteDomains,
-	useSite,
-	usePlans,
-	useFocusedLaunchModal,
-} from '../../hooks';
+import { useTitle, useDomainSearch, useSiteDomains, useSite, usePlans } from '../../hooks';
 import { LAUNCH_STORE, Plan, SiteDetailsPlan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
@@ -456,7 +449,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const { locale } = useContext( LaunchContext );
 
-	const { setModalDismissible, showModalTitle } = useFocusedLaunchModal();
+	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
 	// When the summary view is active, the modal should be dismissible, and
 	// the modal title should be visible
