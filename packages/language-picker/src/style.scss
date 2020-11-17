@@ -65,7 +65,8 @@
 		&-desktop {
 			display: none;
 			@include break-small() {
-				display: initial;
+				display: block;
+				width: 240px;
 			}
 		}
 

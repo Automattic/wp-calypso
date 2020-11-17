@@ -171,7 +171,7 @@ function LanguagePicker< TLanguage extends Language >( {
 					<Search
 						openIconSide="right"
 						onSearch={ setSearch }
-						fitsContainer
+						compact
 						placeholder={ __( 'Search languages…' ) }
 						onSearchClose={ () =>
 							setFilter(
