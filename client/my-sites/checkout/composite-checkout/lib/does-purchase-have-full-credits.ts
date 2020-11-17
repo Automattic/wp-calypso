@@ -6,5 +6,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 export default function doesPurchaseHaveFullCredits( cart: ResponseCart ): boolean {
 	const credits = cart.credits_integer;
 	const subtotal = cart.sub_total_integer;
-	return credits > 0 && subtotal > 0 && credits >= subtotal;
+	const taxes = cart.total_tax_integer;
+	const totalBeforeCredits = subtotal + taxes;
+	return credits > 0 && totalBeforeCredits > 0 && credits >= totalBeforeCredits;
 }
