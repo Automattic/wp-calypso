@@ -12,14 +12,14 @@ export interface I18nUtils {
 }
 
 export function useI18nUtils(): I18nUtils {
-	const locale = useLocale();
+	const providerLocale = useLocale();
 
 	return {
-		localizeUrl: ( fullUrl: string, toLocale?: Locale ) => {
-			if ( toLocale ) {
-				return localizeUrl( fullUrl, toLocale );
+		localizeUrl: ( fullUrl: string, locale?: Locale ) => {
+			if ( locale ) {
+				return localizeUrl( fullUrl, locale );
 			}
-			return localizeUrl( fullUrl, locale );
+			return localizeUrl( fullUrl, providerLocale );
 		},
 	};
 }
