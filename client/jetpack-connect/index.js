@@ -12,7 +12,6 @@ import * as controller from './controller';
 import { login } from 'calypso/lib/paths';
 import { siteSelection } from 'calypso/my-sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
 import plansV2 from 'calypso/my-sites/plans-v2';
 import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
@@ -106,17 +105,7 @@ export default function () {
 		clientRender
 	);
 
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2( `/jetpack/connect/store`, controller.offerResetContext );
-	} else {
-		page(
-			`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
-			controller.setLoggedOutLocale,
-			controller.plansLanding,
-			makeLayout,
-			clientRender
-		);
-	}
+	plansV2( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
@@ -130,22 +119,12 @@ export default function () {
 		);
 	}
 
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2(
-			`/jetpack/connect/plans`,
-			siteSelection,
-			controller.offerResetRedirects,
-			controller.offerResetContext
-		);
-	} else {
-		page(
-			'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
-			siteSelection,
-			controller.plansSelection,
-			makeLayout,
-			clientRender
-		);
-	}
+	plansV2(
+		`/jetpack/connect/plans`,
+		siteSelection,
+		controller.offerResetRedirects,
+		controller.offerResetContext
+	);
 
 	page(
 		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,

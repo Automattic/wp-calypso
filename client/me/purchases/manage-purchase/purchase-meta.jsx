@@ -11,7 +11,6 @@ import { times } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	getName,
 	isExpired,
@@ -475,7 +474,6 @@ export default connect( ( state, { purchaseId } ) => {
 		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
 		hideAutoRenew:
 			purchase &&
-			shouldShowOfferResetFlow() &&
 			JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
 			! isRenewable( purchase ),
 		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
