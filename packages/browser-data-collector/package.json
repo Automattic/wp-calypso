@@ -21,7 +21,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
-		"watch": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"wpcom-proxy-request": "^6.0.0"
