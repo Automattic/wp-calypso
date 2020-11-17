@@ -15,11 +15,16 @@ export function useSite() {
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const launchStatus = useSelect( ( select ) => select( SITE_STORE ).isLaunched( siteId ) );
 
+	const isLoading: boolean = useSelect( ( select ) =>
+		select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ siteId ] )
+	);
+
 	return {
 		sitePlan: site?.plan,
 		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
 		launchStatus,
 		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
 		selectedFeatures: site?.options?.selected_features,
+		isLoading,
 	};
 }

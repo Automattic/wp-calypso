@@ -45,7 +45,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const { title } = useTitle();
 	const { currentDomainName } = useSite();
 	const domainSuggestion = useDomainSuggestion();
-	const domainSearch = useDomainSearch();
+	const { domainSearch } = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 

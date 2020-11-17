@@ -13,10 +13,16 @@ import LaunchContext from '../context';
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
-	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
+	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( title );
+
+	// watch get site (as opposed  to getSiteTitle) because the underlying resolver belongs to getSite
+	const isLoading: boolean =
+		useSelect( ( select ) =>
+			select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ siteId ] )
+		) || typeof title === 'undefined';
 
 	useEffect( () => {
-		setLocalStateTitle( title || '' );
+		setLocalStateTitle( title );
 	}, [ title ] );
 
 	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
@@ -40,5 +46,6 @@ export function useTitle() {
 		},
 		isSiteTitleStepVisible,
 		showSiteTitleStep,
+		isLoading,
 	};
 }
