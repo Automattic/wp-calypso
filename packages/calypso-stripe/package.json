@@ -5,12 +5,12 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
+	"calypso:src": "index.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"build:esm": "tsc --build ./tsconfig.json",
-		"build:cjs": "tsc --build ./tsconfig-cjs.json",
-		"prepare": "yarn run build:esm",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [
