@@ -9,7 +9,7 @@ import { translate } from 'i18n-calypso';
  */
 import { AppState } from 'calypso/types';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import type { DisplayableItemProperties } from './types';
+import type { DisplayableItemProperties } from '../types';
 
 const currentCROVariant = getJetpackCROActiveVersion();
 
