@@ -21,6 +21,7 @@ const Podcasting = () => {
 				`Easily turn your blog into a podcast with Anchor — the world's biggest podcasting platform.`
 			) }
 			actionText={ translate( 'Get started' ) }
+			// TODO replace with more appropriate URL: https://github.com/Automattic/dotcom-manage/issues/320
 			actionUrl={ `https://anchor.fm` }
 			completeOnStart={ false }
 			illustration={ podcastingIllustration }
