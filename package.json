@@ -92,7 +92,7 @@
 		"build-client-stats": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=true PROGRESS=true yarn run build-client-evergreen",
 		"build-packages": "tsc --build packages/tsconfig.json",
 		"build-packages:watch": "tsc --build packages/tsconfig.json --watch",
-		"build-languages": "yarn run translate && node bin/build-languages.js",
+		"build-languages": "yarn run translate && yarn workspace @automattic/languages run build && node bin/build-languages.js",
 		"build-languages-if-enabled": "node -e \"(process.env.BUILD_TRANSLATION_CHUNKS === 'true' || process.env.ENABLE_FEATURES === 'use-translation-chunks') && process.exit(1)\" || yarn run build-languages",
 		"calypso-doctor": "./node_modules/.bin/calypso-doctor",
 		"clean": "yarn run clean:packages && yarn run clean:build && yarn run clean:public && yarn run clean:translations",
