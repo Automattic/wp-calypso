@@ -58,6 +58,7 @@ FROM ci as ci-desktop
 
 ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 ENV USE_HARD_LINKS=false
+# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json
 ENV CHROME_VERSION="80.0.3987.163-1"
 ENV DISPLAY=:99
 
@@ -86,6 +87,20 @@ RUN apt update \
 		xfonts-cyrillic \
 		xfonts-scalable \
 		xvfb
+
+RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-e2e image
+FROM ci-desktop as ci-e2e
+
+# This chrome image is the latest version that accepts SameSite=None
+# test/e2e/test/mocha.env.js will install a compatible chromedriver
+ENV CHROME_VERSION="84.0.4147.135-1"
+ENV DETECT_CHROMEDRIVER_VERSION=true
 
 RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
 	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
