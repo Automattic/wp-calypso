@@ -38,6 +38,7 @@
 		{ "path": "../../packages/calypso-analytics" },
 		{ "path": "../../packages/composite-checkout" },
 		{ "path": "../../packages/domain-picker" },
+		{ "path": "../../packages/format-currency" },
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/plans-grid" },
