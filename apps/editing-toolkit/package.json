@@ -89,8 +89,8 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
-		"@automattic/launch": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
+		"@automattic/launch": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
@@ -143,11 +143,10 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
-		"@babel/preset-typescript": "^7.10.4",
 		"@types/wordpress__plugins": "^2.3.6",
+		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
 		"babel-jest": "^26.3.0",
-		"nodegit": "^0.27.0",
 		"webpack": "^4.44.2"
 	}
 }
