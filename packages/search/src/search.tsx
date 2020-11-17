@@ -336,6 +336,8 @@ class Search extends React.Component< Props, State > {
 		const fadeClass = classNames( 'search-component__input-fade', this.props.dir );
 		const inputClass = classNames( 'search-component__input', this.props.dir );
 
+		const shouldRenderRightOpenIcon = this.props.openIconSide === 'right' && ! this.state.keyword;
+
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
@@ -368,7 +370,7 @@ class Search extends React.Component< Props, State > {
 					/>
 					{ this.renderStylingDiv() }
 				</form>
-				{ this.props.openIconSide === 'right' ? this.renderOpenIcon() : this.closeButton() }
+				{ shouldRenderRightOpenIcon ? this.renderOpenIcon() : this.closeButton() }
 			</div>
 		);
 	}
