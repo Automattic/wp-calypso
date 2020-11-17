@@ -6,6 +6,7 @@ import {
 	DOMAIN_TRANSFER_ACCEPT_COMPLETED,
 	DOMAIN_TRANSFER_CANCEL_REQUEST,
 	DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
+	DOMAIN_TRANSFER_CANCEL_REQUEST_FAILED,
 	DOMAIN_TRANSFER_CODE_REQUEST,
 	DOMAIN_TRANSFER_CODE_REQUEST_COMPLETED,
 	DOMAIN_TRANSFER_CODE_REQUEST_FAILED,
@@ -63,6 +64,11 @@ export const cancelDomainTransferRequestCompleted = ( domain, options ) => ( {
 	type: DOMAIN_TRANSFER_CANCEL_REQUEST_COMPLETED,
 	domain,
 	options,
+} );
+
+export const cancelDomainTransferRequestFailed = ( domain ) => ( {
+	type: DOMAIN_TRANSFER_CANCEL_REQUEST_FAILED,
+	domain,
 } );
 
 export const acceptDomainTransfer = ( domain ) => ( {

@@ -13,6 +13,7 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	acceptDomainTransferCompleted,
 	cancelDomainTransferRequestCompleted,
+	cancelDomainTransferRequestFailed,
 	declineDomainTransferCompleted,
 	fetchWapiDomainInfo,
 	requestDomainTransferCodeCompleted,
@@ -185,10 +186,13 @@ export const cancelDomainTransferRequestError = ( action, error ) => {
 	const defaultMessage = translate(
 		'An error occurred while canceling the domain transfer request.'
 	);
-	return errorNotice( error.message || defaultMessage, {
-		duration: 5000,
-		id: `domain-transfer-notification-${ action.domain }`,
-	} );
+	return [
+		cancelDomainTransferRequestFailed( action.domain ),
+		errorNotice( error.message || defaultMessage, {
+			duration: 5000,
+			id: `domain-transfer-notification-${ action.domain }`,
+		} ),
+	];
 };
 
 export const acceptDomainTransfer = ( action ) =>
