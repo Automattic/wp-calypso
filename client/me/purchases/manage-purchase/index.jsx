@@ -39,7 +39,7 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
+import { canEditPaymentDetails, getEditCardDetailsPath } from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -169,8 +169,12 @@ class ManagePurchase extends Component {
 		}
 	}
 
+	isDataLoading( props = this.props ) {
+		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
+	}
+
 	isDataValid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
+		if ( this.isDataLoading( props ) ) {
 			return true;
 		}
 
@@ -566,7 +570,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPurchaseDetail( preventRenewal ) {
-		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
+		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -666,7 +670,7 @@ class ManagePurchase extends Component {
 		} = this.props;
 
 		let editCardDetailsPath = false;
-		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
+		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
 			editCardDetailsPath = getEditPaymentMethodUrlFor( siteSlug, purchase );
 		}
 
@@ -701,7 +705,7 @@ class ManagePurchase extends Component {
 					</Notice>
 				) : (
 					<PurchaseNotice
-						isDataLoading={ isDataLoading( this.props ) }
+						isDataLoading={ this.isDataLoading( this.props ) }
 						handleRenew={ this.handleRenew }
 						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
 						selectedSite={ site }
