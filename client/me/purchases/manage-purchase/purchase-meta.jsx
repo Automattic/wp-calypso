@@ -118,32 +118,6 @@ class PurchaseMeta extends Component {
 		} );
 	}
 
-	renderRenewsOrExpiresOn() {
-		const { moment, purchase, siteSlug, translate, getManagePurchaseUrlFor } = this.props;
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
-
-			return (
-				<span>
-					<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
-				</span>
-			);
-		}
-
-		if ( isExpiring( purchase ) || isExpired( purchase ) ) {
-			return moment( purchase.expiryDate ).format( 'LL' );
-		}
-
-		if ( isRenewing( purchase ) ) {
-			return moment( purchase.renewDate ).format( 'LL' );
-		}
-
-		if ( isOneTimePurchase( purchase ) ) {
-			return translate( 'Never Expires' );
-		}
-	}
-
 	renderPaymentInfo() {
 		const { purchase, translate, moment } = this.props;
 		const payment = purchase?.payment;
@@ -370,21 +344,8 @@ class PurchaseMeta extends Component {
 				<em className="manage-purchase__detail-label">
 					{ renderRenewsOrExpiresOnLabel( this.props ) }
 				</em>
-				<span className="manage-purchase__detail">{ this.renderRenewsOrExpiresOn() }</span>
+				<span className="manage-purchase__detail">{ renderRenewsOrExpiresOn( this.props ) }</span>
 			</li>
-		);
-	}
-
-	renderPlaceholder() {
-		return (
-			<ul className="manage-purchase__meta">
-				{ times( 4, ( i ) => (
-					<li key={ i }>
-						<em className="manage-purchase__detail-label" />
-						<span className="manage-purchase__detail" />
-					</li>
-				) ) }
-			</ul>
 		);
 	}
 
@@ -396,7 +357,7 @@ class PurchaseMeta extends Component {
 		const { translate, purchaseId } = this.props;
 
 		if ( this.isDataLoading( this.props ) || ! purchaseId ) {
-			return this.renderPlaceholder();
+			return renderPlaceholder();
 		}
 
 		return (
@@ -462,6 +423,49 @@ function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
 	}
 
 	return null;
+}
+
+function renderRenewsOrExpiresOn( {
+	moment,
+	purchase,
+	siteSlug,
+	translate,
+	getManagePurchaseUrlFor,
+} ) {
+	if ( isIncludedWithPlan( purchase ) ) {
+		const attachedPlanUrl = getManagePurchaseUrlFor( siteSlug, purchase.attachedToPurchaseId );
+
+		return (
+			<span>
+				<a href={ attachedPlanUrl }>{ translate( 'Renews with Plan' ) }</a>
+			</span>
+		);
+	}
+
+	if ( isExpiring( purchase ) || isExpired( purchase ) ) {
+		return moment( purchase.expiryDate ).format( 'LL' );
+	}
+
+	if ( isRenewing( purchase ) ) {
+		return moment( purchase.renewDate ).format( 'LL' );
+	}
+
+	if ( isOneTimePurchase( purchase ) ) {
+		return translate( 'Never Expires' );
+	}
+}
+
+function renderPlaceholder() {
+	return (
+		<ul className="manage-purchase__meta">
+			{ times( 4, ( i ) => (
+				<li key={ i }>
+					<em className="manage-purchase__detail-label" />
+					<span className="manage-purchase__detail" />
+				</li>
+			) ) }
+		</ul>
+	);
 }
 
 export default connect( ( state, props ) => {
