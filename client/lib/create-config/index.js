@@ -66,9 +66,19 @@ const config = ( data ) => ( key ) => {
 const isEnabled = ( data ) => ( feature ) =>
 	( data.features && !! data.features[ feature ] ) || false;
 
+/**
+ * Gets a list of all enabled features.
+ *
+ * @param data A set of config data (Not used by general users, is pre-filled via currying).
+ * @returns {Array} List of enabled features (strings).
+ */
+const enabledFeatures = ( data ) => () =>
+	Object.keys( data.features ).filter( ( feature ) => !! data.features[ feature ] );
+
 module.exports = ( data ) => {
 	const configApi = config( data );
 	configApi.isEnabled = isEnabled( data );
+	configApi.enabledFeatures = enabledFeatures( data );
 
 	return configApi;
 };
