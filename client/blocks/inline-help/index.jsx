@@ -154,7 +154,7 @@ class InlineHelp extends Component {
 					title={ translate( 'Help' ) }
 					ref={ this.inlineHelpToggleRef }
 				>
-					<Gridicon icon="help-outline" size={ 36 } />
+					<Gridicon icon="help" size={ 36 } />
 				</Button>
 				{ isPopoverVisible && (
 					<InlineHelpPopover
