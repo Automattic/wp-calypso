@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import Debug from 'debug';
 import page from 'page';
 import React from 'react';
 
@@ -14,7 +15,10 @@ import { startJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-overri
 import { translate } from 'i18n-calypso';
 import Landing from './sections/landing';
 
+const debug = new Debug( 'calypso:jetpack-cloud:controller' );
+
 const selectionPrompt = ( context, next ) => {
+	debug( 'controller: selectionPrompt', context );
 	context.getSiteSelectionHeaderText = () =>
 		// When "text-transform: capitalize;" is active,
 		// (see rule for "".sites__select-heading strong")
@@ -26,6 +30,7 @@ const selectionPrompt = ( context, next ) => {
 };
 
 const redirectToPrimarySiteLanding = ( context ) => {
+	debug( 'controller: redirectToPrimarySiteLanding', context );
 	const state = context.store.getState();
 	const currentUser = getCurrentUser( state );
 
@@ -33,11 +38,13 @@ const redirectToPrimarySiteLanding = ( context ) => {
 };
 
 const landingController = ( context, next ) => {
+	debug( 'controller: landingController', context );
 	context.primary = <Landing />;
 	next();
 };
 
 export const handleOAuthOverride = () => {
+	debug( 'controller: handleOAuthOverride', context );
 	startJetpackCloudOAuthOverride();
 	window.location.replace( '/' );
 };
