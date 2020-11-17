@@ -2,21 +2,6 @@
 	display: none;
 }
 
-.features-helper__list {
-	margin: 5px 0 8px 20px;
-
-	li {
-		font-weight: normal;
-		text-transform: initial;
-		margin-right: 5px;
-	}
-}
-
-.features-helper__unset {
-	color: var( --color-accent );
-	cursor: pointer;
-}
-
 .features-helper__feature-header {
 	margin-top: 15px;
     margin-bottom: 10px;
@@ -35,6 +20,7 @@
 .features-helper__feature-item-enabled {
     color: var( --studio-green-70 );
 }
+
 .features-helper__feature-item-disabled {
     color: var( --studio-red-70 );
 }
