@@ -22,7 +22,6 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from 'calypso/config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -41,9 +40,7 @@ export function* createSite(
 	username: string,
 	languageSlug: string,
 	bearerToken?: string,
-	visibility: number = isEnabled( 'coming-soon-v2' )
-		? Site.Visibility.PublicNotIndexed
-		: Site.Visibility.Private
+	visibility: number = Site.Visibility.Private
 ) {
 	const {
 		domain,
@@ -87,10 +84,6 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
-			...( isEnabled( 'coming-soon-v2' ) &&
-				visibility === Site.Visibility.PublicNotIndexed && {
-					wpcom_public_coming_soon: 1,
-				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};
