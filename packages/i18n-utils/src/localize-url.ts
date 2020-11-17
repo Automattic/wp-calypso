@@ -129,7 +129,7 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 	return fullUrl;
 }
 
-export function useLocalizeUrl(): typeof localizeUrl {
+export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string {
 	const providerLocale = useLocale();
 
 	return ( fullUrl: string, locale?: Locale ) => {
