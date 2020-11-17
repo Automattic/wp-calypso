@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
@@ -37,6 +37,10 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 		select( LAUNCH_STORE ).isModalTitleVisible()
 	);
 
+	const onModalRequestClose = useCallback( () => {
+		isModalDismissible && onClose();
+	}, [ isModalDismissible, onClose ] );
+
 	return (
 		<Modal
 			open={ true }
@@ -45,7 +49,7 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 			} ) }
 			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
-			onRequestClose={ onClose }
+			onRequestClose={ onModalRequestClose }
 			title={ __( 'Complete setup', __i18n_text_domain__ ) }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			isDismissible={ isModalDismissible }
