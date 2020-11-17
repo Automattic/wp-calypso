@@ -30,9 +30,12 @@
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        position: relative;
-        margin-top: 1.5rem;
         justify-content: space-between;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        // prevent buttons div from covering language options
+        margin-top: 1.5rem;
 
         .components-button {
             margin-left: 1rem;
@@ -48,9 +51,17 @@
 .language-picker__modal-checkboxes {
     border-bottom: 1px solid var( --color-neutral-0 );
     width: 100%;
-    padding: 0 16px 10px;
-    margin-bottom: 16px;
+    padding: 24px;
     text-align: left;
+}
+
+.language-picker__modal-buttons {
+    padding: 24px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
 .language-picker__modal-incomplete-locale-notice {
@@ -66,4 +77,9 @@
 
 .language-picker__modal-incomplete-locale-text {
     margin-right: 8px;
+}
+
+.language-picker__modal-incomplete-locale-tooltip-text {
+    display: flex;
+    flex-direction: column;
 }
