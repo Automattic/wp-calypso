@@ -83,18 +83,12 @@ $commentary-column-gap-wide: 100px;
 	@include break-wide {
 		gap: $commentary-column-gap-wide;
 	}
-}
 
-// by default: highlight all steps when nothing is in focus
-.focused-launch-container:not( :focus-within ) {
-	.focused-launch-summary__step {
+	// this is unused yet, find the right logic to determine
+	// when a step should be highlighted
+	&.highlighted {
 		opacity: 1;
 	}
-}
-
-// highlight the focused step
-.focused-launch-summary__step:focus-within {
-	opacity: 1;
 }
 
 .focused-launch-summary__side-commentary {
