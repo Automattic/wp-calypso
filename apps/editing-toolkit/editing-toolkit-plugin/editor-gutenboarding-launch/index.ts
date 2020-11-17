@@ -21,9 +21,7 @@ interface CalypsoifyWindow extends Window {
 		launchUrl?: string;
 		isGutenboarding?: boolean;
 		isSiteUnlaunched?: boolean;
-		isNewLaunchMobile?: boolean;
 		isExperimental?: boolean;
-		isPersistentLaunchButton?: boolean;
 		[ key: string ]: unknown;
 	};
 }
@@ -38,7 +36,6 @@ domReady( () => {
 let handled = false;
 function updateEditor() {
 	const isGutenboarding = window?.calypsoifyGutenberg?.isGutenboarding;
-	const isPersistentLaunchButton = window?.calypsoifyGutenberg?.isPersistentLaunchButton;
 
 	if (
 		// Don't proceed if this function has already run
@@ -46,10 +43,7 @@ function updateEditor() {
 		// Don't proceed if the site has already been launched
 		! window?.calypsoifyGutenberg?.isSiteUnlaunched ||
 		// Don't proceed if the launch URL is missing
-		! window?.calypsoifyGutenberg?.launchUrl ||
-		// Don't proceed is the site wasn't created through Gutenbaording,
-		// or if the create/persistent-launch-button flag is enabled
-		! ( isGutenboarding || isPersistentLaunchButton )
+		! window?.calypsoifyGutenberg?.launchUrl
 	) {
 		return;
 	}
@@ -63,10 +57,6 @@ function updateEditor() {
 		}
 		clearInterval( awaitSettingsBar );
 
-		const BREAK_MEDIUM = 782;
-		const isMobileViewport = window.innerWidth < BREAK_MEDIUM;
-		// Enables the "step by step" flow also for mobile viewports
-		const isNewLaunchMobile = window?.calypsoifyGutenberg?.isNewLaunchMobile;
 		const isExperimental = window?.calypsoifyGutenberg?.isExperimental;
 
 		// Assert reason: We have an early return above with optional and falsy values. This should be a string.
@@ -82,15 +72,18 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			// Clicking on the persisten "Launch" button (when added to the UI)
-			// would normally open the control launch flow by redirecting the
-			// page to `launchUrl`.
-			// But if the site was created via Gutenboarding (/new),
-			// and potentially depending on the browser's viewport, the control
-			// launch flow gets replaced by the "Step by Step" launch flow,
-			// appering in a modal on top of the editor (no redirect needed)
-			const shouldOpenStepByStepLaunch =
-				isGutenboarding && ( ! isMobileViewport || ( isMobileViewport && isNewLaunchMobile ) );
+			/*
+			 * Default:
+			 * Clicking on the "Launch" button would open the control launch flow
+			 * by redirecting the page to `launchUrl`.
+			 *
+			 * New Onboarding (with a free plan):
+			 * If the site was created via New Onboarding flow (starting at /new) with a free plan,
+			 * the control launch flow gets replaced by the "Step by Step" launch flow,
+			 * displayed in a modal on top of the editor (no redirect needed)
+			 */
+			const shouldOpenStepByStepLaunch = isGutenboarding;
+
 			// This currently comes from a feature flag, but should eventually be
 			// replaced with A/B testing logic
 			const shouldOpenFocusedLaunch = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
