@@ -33,6 +33,7 @@ import {
 	getCancelTransferErrorMessage,
 	getCancelTransferSuccessMessage,
 	getDomainTransferCodeError,
+	getNoticeOptions,
 } from './notices';
 
 /**
@@ -109,7 +110,8 @@ export const requestDomainTransferCodeSuccess = ( action ) => ( dispatch, getSta
 					'The registry for your domain requires a special process for transfers. ' +
 						'Our Happiness Engineers have been notified about your transfer request and will be in touch ' +
 						'shortly to help you complete the process.'
-				)
+				),
+				getNoticeOptions( action.domain )
 			)
 		);
 		return;
@@ -120,14 +122,15 @@ export const requestDomainTransferCodeSuccess = ( action ) => ( dispatch, getSta
 			translate(
 				"We have sent the transfer authorization code to the domain registrant's email address. " +
 					"If you don't receive the email shortly, please check your spam folder."
-			)
+			),
+			getNoticeOptions( action.domain )
 		)
 	);
 };
 
 export const requestDomainTransferCodeFailure = ( action, error ) => [
 	requestDomainTransferCodeFailed( action.domain ),
-	errorNotice( getDomainTransferCodeError( error.error ) ),
+	errorNotice( getDomainTransferCodeError( error.error ), getNoticeOptions( action.domain ) ),
 	fetchWapiDomainInfo( action.domain ),
 ];
 
@@ -152,18 +155,15 @@ export const cancelDomainTransferRequest = ( action ) =>
 export const cancelDomainTransferRequestSuccess = ( action ) => [
 	cancelDomainTransferRequestCompleted( action.domain, action.options ),
 	fetchWapiDomainInfo( action.domain ),
-	successNotice( getCancelTransferSuccessMessage( action.options ), {
-		duration: 5000,
-		id: `domain-transfer-notification-${ action.domain }`,
-	} ),
+	successNotice(
+		getCancelTransferSuccessMessage( action.options ),
+		getNoticeOptions( action.domain )
+	),
 ];
 
 export const cancelDomainTransferRequestError = ( action, error ) => [
 	cancelDomainTransferRequestFailed( action.domain ),
-	errorNotice( getCancelTransferErrorMessage( error.error ), {
-		duration: 5000,
-		id: `domain-transfer-notification-${ action.domain }`,
-	} ),
+	errorNotice( getCancelTransferErrorMessage( error.error ), getNoticeOptions( action.domain ) ),
 ];
 
 export const acceptDomainTransfer = ( action ) =>
@@ -187,19 +187,13 @@ export const acceptDomainTransferSuccess = ( action ) => [
 		translate(
 			'You have successfully expedited your domain transfer. There is nothing else you need to do.'
 		),
-		{
-			duration: 5000,
-			id: `domain-transfer-notification-${ action.domain }`,
-		}
+		getNoticeOptions( action.domain )
 	),
 ];
 
 export const acceptDomainTransferError = ( action, error ) => {
 	const defaultMessage = translate( 'An error occurred while accepting the domain transfer.' );
-	return errorNotice( error.message || defaultMessage, {
-		duration: 5000,
-		id: `domain-transfer-notification-${ action.domain }`,
-	} );
+	return errorNotice( error.message || defaultMessage, getNoticeOptions( action.domain ) );
 };
 
 export const declineDomainTransfer = ( action ) =>

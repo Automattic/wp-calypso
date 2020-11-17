@@ -98,3 +98,8 @@ export const getCancelTransferErrorMessage = ( errorCode ) => {
 		{ components: { contactLink } }
 	);
 };
+
+export const getNoticeOptions = ( domain ) => ( {
+	duration: 5000,
+	id: `domain-transfer-notification-${ domain }`,
+} );
