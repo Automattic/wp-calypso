@@ -11,10 +11,14 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     steps:
+    # Pinned this to node version 12.18.4
+    # This is a workaround for https://github.com/Automattic/wp-calypso/issues/47255
+    # Once a newer version of wp-env is available (https://github.com/WordPress/gutenberg/pull/26712)
+    # we should be able to remove this step.
     - name: Set up Node
       uses: actions/setup-node@v1
       with:
-        node-version: '^12.18.4'
+        node-version: '12.18.4'
     - name: Checkout code
       uses: actions/checkout@HEAD
 
@@ -138,13 +142,6 @@ jobs:
     - name: Install dependencies
       if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
-
-    # This is a workaround for https://github.com/Automattic/wp-calypso/issues/47255
-    # Once a newer version of wp-env is available (https://github.com/WordPress/gutenberg/pull/26712)
-    # we should be able to remove this step.
-    - name: Add nodegit
-      run: yarn add nodegit
-      working-directory: apps/editing-toolkit
 
     - name: Setup wp-env dependencies
       run: |
