@@ -614,7 +614,7 @@ class Signup extends React.Component {
 			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
 		}
 
-		return <SignupProcessingScreen />;
+		return <SignupProcessingScreen flowName={ this.props.flowName } />;
 	}
 
 	renderCurrentStep() {

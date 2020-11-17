@@ -63,6 +63,10 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	componentDidMount() {
+		const { flowName } = this.props;
+		if ( flowName !== 'onboarding' ) {
+			return;
+		}
 		addHotJarScript();
 		if ( window && window.hj ) {
 			window.hj( 'trigger', 'bizx_questionnaire' );
