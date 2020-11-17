@@ -12,6 +12,7 @@
  */
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -30,8 +31,10 @@ import Spinner from 'calypso/components/spinner';
 import { itemLinkMatches } from '../sidebar/utils';
 import { getSidebarIsCollapsed } from 'calypso/state/ui/selectors';
 import './style.scss';
+import config from 'calypso/config';
 
 export const MySitesSidebarUnified = ( { path } ) => {
+	const [ renderCount, setRenderCount ] = useState( 0 );
 	const menuItems = useSiteMenuItems();
 	const isAllDomainsView = useDomainsViewStatus();
 	const isRequestingMenu = useSelector( getIsRequestingAdminMenu );
@@ -75,6 +78,34 @@ export const MySitesSidebarUnified = ( { path } ) => {
 				return <MySitesSidebarUnifiedItem key={ item.slug } selected={ isSelected } { ...item } />;
 			} ) }
 			<CollapseSidebar key="collapse" title="Collapse menu" icon="dashicons-admin-collapse" />
+			<li>
+				Feature "foo" is: { config.isEnabled( 'foo' ) ? 'ON' : 'OFF' }
+				<br />
+				<span
+					role="link"
+					tabIndex={ -10 }
+					onKeyDown={ () => setRenderCount( renderCount + 1 ) /* Pass accessibility lint */ }
+					onClick={ () => {
+						config.enable( 'foo' );
+						setRenderCount( renderCount + 1 ); // Force Rerender, since config changes don't
+					} }
+				>
+					Click to Enable
+				</span>
+				<br />
+				<span
+					role="link"
+					tabIndex={ -11 }
+					onKeyDown={ () => setRenderCount( renderCount + 1 ) }
+					onClick={ () => {
+						config.disable( 'foo' );
+						setRenderCount( renderCount + 1 ); // Force Rerender, since config changes don't
+					} }
+				>
+					Click to Disable
+				</span>
+				<br />
+			</li>
 		</Sidebar>
 	);
 };

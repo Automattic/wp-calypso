@@ -66,9 +66,23 @@ const config = ( data ) => ( key ) => {
 const isEnabled = ( data ) => ( feature ) =>
 	( data.features && !! data.features[ feature ] ) || false;
 
+const enable = ( data ) => ( feature ) => {
+	if ( data.features ) {
+		data.features[ feature ] = true;
+	}
+};
+
+const disable = ( data ) => ( feature ) => {
+	if ( data.features ) {
+		data.features[ feature ] = false;
+	}
+};
+
 module.exports = ( data ) => {
 	const configApi = config( data );
 	configApi.isEnabled = isEnabled( data );
+	configApi.enable = enable( data );
+	configApi.disable = disable( data );
 
 	return configApi;
 };
