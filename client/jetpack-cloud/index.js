@@ -20,7 +20,7 @@ const selectionPrompt = ( context, next ) => {
 		// (see rule for "".sites__select-heading strong")
 		// Jetpack.com displays as Jetpack.Com in some browsers (e.g., Chrome)
 		translate( 'Select a site to open {{strong}}Jetpack.com{{/strong}}', {
-			components: { strong: <strong style={ { 'text-transform': 'none' } } /> },
+			components: { strong: <strong style={ { textTransform: 'none' } } /> },
 		} );
 	next();
 };
