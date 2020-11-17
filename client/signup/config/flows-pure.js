@@ -123,7 +123,7 @@ export function generateFlows( {
 		},
 
 		'onboarding-secure-your-brand': {
-			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
+			steps: [ 'user', 'domains', 'plans', 'secure-your-brand' ],
 			destination: getSignupDestination,
 			description: 'Onboarding flow with an additional step to upsell domains',
 			lastModified: '2020-10-08',

@@ -546,9 +546,9 @@ class Signup extends React.Component {
 
 		// redirect the user to the next step
 		scrollPromise.then( () => {
-			if ( ! this.isEveryStepSubmitted() ) {
+			if ( ! this.isEveryStepSubmitted( this.props.progress, flowName ) ) {
 				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
-			} else if ( this.isEveryStepSubmitted() ) {
+			} else if ( this.isEveryStepSubmitted( this.props.progress, flowName ) ) {
 				this.goToFirstInvalidStep();
 			}
 		} );
@@ -587,9 +587,9 @@ class Signup extends React.Component {
 		}
 	};
 
-	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+	isEveryStepSubmitted = ( progress = this.props.progress, flowName = this.props.flowName ) => {
+		const flowSteps = flows.getFlow( flowName ).steps;
+		const completedSteps = getCompletedSteps( flowName, progress );
 		return flowSteps.length === completedSteps.length;
 	};
 

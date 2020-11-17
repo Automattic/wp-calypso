@@ -5,11 +5,12 @@
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { intersection } from 'lodash';
+import { intersection, includes } from 'lodash';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import { Button } from '@automattic/components';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -40,6 +42,21 @@ import './style.scss';
 export class PlansStep extends Component {
 	componentDidMount() {
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+	}
+
+	getGeoLocationFromCookie() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.country_code;
+	}
+
+	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
+		return (
+			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
+			isPurchasingItem &&
+			! this.props.skipSecureYourBrand &&
+			'test' === abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
+		);
 	}
 
 	onSelectPlan = ( cartItem ) => {
@@ -79,7 +96,12 @@ export class PlansStep extends Component {
 		this.props.submitSignupStep( step, {
 			cartItem,
 		} );
-		this.props.goToNextStep();
+
+		if ( this.isEligibleForSecureYourBrandTest( cartItem ) ) {
+			this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		} else {
+			this.props.goToNextStep();
+		}
 	};
 
 	getDomainName() {
