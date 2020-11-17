@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { isEnabled } from 'calypso/config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
@@ -107,7 +106,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
-				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
+				isAccordion
 				selectedFeatures={ selectedFeatures }
 				locale={ locale }
 			/>
