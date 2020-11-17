@@ -72,14 +72,18 @@ function updateEditor() {
 			// Disable href navigation
 			e.preventDefault();
 
-			// Clicking on the persisten "Launch" button (when added to the UI)
-			// would normally open the control launch flow by redirecting the
-			// page to `launchUrl`.
-			// But if the site was created via Gutenboarding (/new),
-			// and potentially depending on the browser's viewport, the control
-			// launch flow gets replaced by the "Step by Step" launch flow,
-			// appering in a modal on top of the editor (no redirect needed)
+			/*
+			 * Default:
+			 * Clicking on the "Launch" button would open the control launch flow
+			 * by redirecting the page to `launchUrl`.
+			 *
+			 * New Onboarding (with a free plan):
+			 * If the site was created via New Onboarding flow (starting at /new) with a free plan,
+			 * the control launch flow gets replaced by the "Step by Step" launch flow,
+			 * displayed in a modal on top of the editor (no redirect needed)
+			 */
 			const shouldOpenStepByStepLaunch = isGutenboarding;
+
 			// This currently comes from a feature flag, but should eventually be
 			// replaced with A/B testing logic
 			const shouldOpenFocusedLaunch = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
