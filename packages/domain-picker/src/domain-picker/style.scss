@@ -298,7 +298,7 @@ $accent-blue: #117ac9;
 		border-radius: 4px;
 		text-transform: unset;
 		// stylelint-disable-next-line scales/font-size
-		font-size: 12px; // typography-exception smaller size needed
+		font-size: $font-body-extra-small; // typography-exception smaller size needed
 	}
 
 	&.is-selected {
