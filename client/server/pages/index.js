@@ -203,6 +203,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
+		context.features = true;
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
