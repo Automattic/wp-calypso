@@ -41,19 +41,6 @@ define( 'PLUGIN_VERSION', '2.8.12' );
 require_once __DIR__ . '/dotcom-fse/helpers.php';
 
 /**
- * Load Core Site Editor.
- */
-function load_core_site_editor() {
-	require_once __DIR__ . '/site-editor/index.php';
-	initialize_site_editor();
-}
-// Change priority so this code is loaded before Gutenberg. This is needed because
-// FSE files are conditionally loaded based on the existence of experiment option
-// as of https://github.com/WordPress/gutenberg/pull/24182. initialize_site_editor
-// is setting the required option and needs to kick in first.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor', 7 );
-
-/**
  * Load dotcom-FSE.
  */
 function load_full_site_editing() {
