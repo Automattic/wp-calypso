@@ -1101,9 +1101,10 @@ workflows:
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
-      - wp-desktop-linux:
-          requires:
-            - wp-desktop-source
+      # Use TeamCity to run Linux build
+      # - wp-desktop-linux:
+      #     requires:
+      #       - wp-desktop-source
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
