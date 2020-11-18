@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import page from 'page';
 
@@ -25,7 +25,6 @@ import {
 } from 'calypso/state/immediate-login/selectors';
 import { getSiteFragment } from 'calypso/lib/route';
 import { hydrate } from './web-util.js';
-import QueryExperiments from 'calypso/components/data/query-experiments';
 
 /**
  * Re-export
@@ -46,10 +45,7 @@ export const ProviderWrappedLayout = ( {
 	const userLoggedIn = isUserLoggedIn( state );
 
 	const layout = userLoggedIn ? (
-		<Fragment>
-			<QueryExperiments />
-			<Layout primary={ primary } secondary={ secondary } />
-		</Fragment>
+		<Layout primary={ primary } secondary={ secondary } />
 	) : (
 		<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
 	);
