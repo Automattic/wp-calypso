@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
@@ -59,20 +59,27 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 function PurchaseMeta( {
 	translate,
 	purchaseId,
-	hasLoadedSites,
 	hasLoadedPurchasesFromServer,
-	owner,
-	isJetpack,
-	purchase,
-	site,
 	siteSlug,
 	moment,
-	isAutorenewalEnabled,
-	isProductOwner,
-	hideAutoRenew,
 	getEditPaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
+	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
+	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
+	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
+	const hasLoadedSites = ! useSelector( isRequestingSites );
+	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
+
+	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
+	const owner = useSelector( ( state ) => getUser( state, purchase?.userId ) ) || null;
+
+	const hideAutoRenew =
+		purchase &&
+		shouldShowOfferResetFlow() &&
+		JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
+		! isRenewable( purchase );
+
 	const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
 
 	if ( isDataLoading || ! purchaseId ) {
@@ -506,23 +513,10 @@ function renderExpiration( {
 }
 
 export default connect( ( state, props ) => {
-	const { purchaseId } = props;
-	const purchase = getByPurchaseId( state, purchaseId );
-	const isProductOwner = purchase && purchase.userId === getCurrentUserId( state );
+	const { hasLoadedPurchasesFromServer } = props;
 
 	return {
-		hasLoadedSites: ! isRequestingSites( state ),
 		hasLoadedPurchasesFromServer:
-			props.hasLoadedPurchasesFromServer ?? hasLoadedUserPurchasesFromServer( state ),
-		purchase,
-		site: purchase ? getSite( state, purchase.siteId ) : null,
-		isProductOwner,
-		owner: purchase ? getUser( state, purchase.userId ) : null,
-		isAutorenewalEnabled: purchase ? ! isExpiring( purchase ) : null,
-		hideAutoRenew:
-			purchase &&
-			JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
-			! isRenewable( purchase ),
-		isJetpack: purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) ),
+			hasLoadedPurchasesFromServer ?? hasLoadedUserPurchasesFromServer( state ),
 	};
 } )( localize( withLocalizedMoment( PurchaseMeta ) ) );
