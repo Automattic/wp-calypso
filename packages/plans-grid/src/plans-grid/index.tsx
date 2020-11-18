@@ -13,6 +13,8 @@ import debugFactory from 'debug';
 import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
+import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
+export type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
 
 /**
  * Style dependencies
@@ -34,6 +36,10 @@ export interface Props {
 	disabledPlans?: { [ planSlug: string ]: string };
 	isAccordion?: boolean;
 	locale: string;
+	showPlanTaglines?: boolean;
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation?: PopularBadgeVariation;
+	customTagLines?: CustomTagLinesMap;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -46,6 +52,10 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	disabledPlans,
 	isAccordion,
 	locale,
+	showPlanTaglines = false,
+	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
+	customTagLines,
 } ) => {
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
@@ -67,12 +77,16 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 						></PlansAccordion>
 					) : (
 						<PlansTable
+							popularBadgeVariation={ popularBadgeVariation }
+							CTAVariation={ CTAVariation }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 							onPlanSelect={ onPlanSelect }
+							customTagLines={ customTagLines }
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
 							locale={ locale }
+							showTaglines={ showPlanTaglines }
 						></PlansTable>
 					) }
 				</div>
