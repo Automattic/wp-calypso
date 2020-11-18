@@ -178,7 +178,7 @@ const webpackConfig = {
 			// Desktop: number of workers should *not* exceed # of vCPUs available.
 			// For both medium Machine and Docker images, number of vCPUs == 2.
 			// Ref: https://support.circleci.com/hc/en-us/articles/360038192673-NodeJS-Builds-or-Test-Suites-Fail-With-ENOMEM-or-a-Timeout
-			parallel: isDesktop ? 2 : workerCount,
+			parallel: isDesktop && process.env.CIRCLECI ? 2 : workerCount,
 			// Desktop: disable sourceMaps for performance
 			sourceMap: isDesktop ? false : Boolean( process.env.SOURCEMAP ),
 			// Note: terserOptions will override (Object.assign) default terser options in packages/calypso-build/webpack/minify.js
