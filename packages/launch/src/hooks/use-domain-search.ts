@@ -12,8 +12,8 @@ import { isDefaultSiteTitle } from '../utils';
 
 export function useDomainSearch(): { domainSearch: string; isLoading: boolean } {
 	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { title, isLoading: isTitleLoading } = useTitle();
-	const { currentDomainName, isLoading: isSiteLoading } = useSite();
+	const { title } = useTitle();
+	const { currentDomainName, isLoadingSite } = useSite();
 
 	let search = domainSearch.trim() || title;
 
@@ -23,6 +23,6 @@ export function useDomainSearch(): { domainSearch: string; isLoading: boolean } 
 
 	return {
 		domainSearch: search,
-		isLoading: isTitleLoading || isSiteLoading,
+		isLoading: isLoadingSite,
 	};
 }
