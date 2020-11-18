@@ -42,9 +42,19 @@ function WelcomeTourCard( {
 					setCurrentPage={ setCurrentCard }
 				/>
 				<div>
-					<Button isTertiary={ true } onClick={ () => onDismiss() }>
-						No thanks
-					</Button>
+					{ cardIndex === 0 ? (
+						<Button isTertiary={ true } onClick={ () => onDismiss() }>
+							No thanks
+						</Button>
+					) : (
+						<Button
+							className="welcome-tour-card__next-btn"
+							isTertiary={ true }
+							onClick={ () => setCurrentCard( cardIndex - 1 ) }
+						>
+							Back
+						</Button>
+					) }
 					{ cardIndex < lastCardIndex ? (
 						<Button
 							className="welcome-tour-card__next-btn"
