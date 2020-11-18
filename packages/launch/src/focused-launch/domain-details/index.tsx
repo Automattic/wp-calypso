@@ -8,9 +8,8 @@ import { useHistory } from 'react-router-dom';
 
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
-import { Title, SubTitle, BackButton } from '@automattic/onboarding';
+import { Title, SubTitle } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Icon, chevronLeft } from '@wordpress/icons';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -18,6 +17,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  */
 import { useSite, useDomainSearch, useDomainSelection } from '../../hooks';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
+import GoBackButton from '../go-back-button';
 
 import './style.scss';
 
@@ -50,11 +50,8 @@ const DomainDetails: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch-container">
 			<div className="focused-launch-domain-details__header">
-				<div className="focused-launch-domain-details__back-link">
-					<BackButton onClick={ goBack }>
-						<Icon icon={ chevronLeft } />
-						<span>{ __( 'Go back', __i18n_text_domain__ ) }</span>
-					</BackButton>
+				<div className="focused-launch-plan-details__back-button-wrapper">
+					<GoBackButton onClick={ goBack } />
 				</div>
 				<Title>{ __( 'Choose a domain', __i18n_text_domain__ ) }</Title>
 				<SubTitle>
