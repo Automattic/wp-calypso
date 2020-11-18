@@ -127,6 +127,7 @@
 		"@wordpress/keycodes": "*",
 		"@wordpress/nux": "^3.20.5",
 		"@wordpress/plugins": "*",
+		"@wordpress/primitives": "*",
 		"@wordpress/rich-text": "*",
 		"@wordpress/scripts": "^12.1.1",
 		"@wordpress/server-side-render": "^1.16.5",
