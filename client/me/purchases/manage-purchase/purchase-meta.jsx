@@ -75,47 +75,6 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	renderPaymentDetails() {
-		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug, site, moment } = this.props;
-
-		const handleEditPaymentMethodClick = () => {
-			recordTracksEvent( 'calypso_purchases_edit_payment_method' );
-		};
-
-		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-			return null;
-		}
-
-		const paymentDetails = (
-			<span>
-				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-				<span className="manage-purchase__detail">
-					{ renderPaymentInfo( { purchase, translate, moment } ) }
-				</span>
-			</span>
-		);
-
-		if (
-			! canEditPaymentDetails( purchase ) ||
-			! isPaidWithCreditCard( purchase ) ||
-			! cardProcessorSupportsUpdates( purchase ) ||
-			! site
-		) {
-			return <li>{ paymentDetails }</li>;
-		}
-
-		return (
-			<li>
-				<a
-					href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
-					onClick={ handleEditPaymentMethodClick }
-				>
-					{ paymentDetails }
-				</a>
-			</li>
-		);
-	}
-
 	renderRenewErrorMessage() {
 		const { isJetpack, purchase, translate } = this.props;
 
@@ -269,7 +228,7 @@ class PurchaseMeta extends Component {
 						<span className="manage-purchase__detail">{ renderPrice( this.props ) }</span>
 					</li>
 					{ this.renderExpiration() }
-					{ this.renderPaymentDetails() }
+					{ renderPaymentDetails( this.props ) }
 				</ul>
 				{ this.renderRenewErrorMessage() }
 			</>
@@ -462,6 +421,52 @@ function renderPrice( { purchase, translate } ) {
 			period: <span className="manage-purchase__time-period" />,
 		},
 	} );
+}
+
+function renderPaymentDetails( {
+	purchase,
+	translate,
+	getEditPaymentMethodUrlFor,
+	siteSlug,
+	site,
+	moment,
+} ) {
+	const handleEditPaymentMethodClick = () => {
+		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
+	};
+
+	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+		return null;
+	}
+
+	const paymentDetails = (
+		<span>
+			<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
+			<span className="manage-purchase__detail">
+				{ renderPaymentInfo( { purchase, translate, moment } ) }
+			</span>
+		</span>
+	);
+
+	if (
+		! canEditPaymentDetails( purchase ) ||
+		! isPaidWithCreditCard( purchase ) ||
+		! cardProcessorSupportsUpdates( purchase ) ||
+		! site
+	) {
+		return <li>{ paymentDetails }</li>;
+	}
+
+	return (
+		<li>
+			<a
+				href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
+				onClick={ handleEditPaymentMethodClick }
+			>
+				{ paymentDetails }
+			</a>
+		</li>
+	);
 }
 
 export default connect( ( state, props ) => {
