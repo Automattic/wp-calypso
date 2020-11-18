@@ -44,7 +44,7 @@ const landingController = ( context, next ) => {
 };
 
 export const handleOAuthOverride = () => {
-	debug( 'controller: handleOAuthOverride', context );
+	debug( 'controller: handleOAuthOverride' );
 	startJetpackCloudOAuthOverride();
 	window.location.replace( '/' );
 };
