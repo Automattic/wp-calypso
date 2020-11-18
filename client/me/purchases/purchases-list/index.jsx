@@ -131,7 +131,11 @@ class PurchasesList extends Component {
 			);
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length && ! this.props.subscriptions.length ) {
+		if (
+			this.props.hasLoadedUserPurchasesFromServer &&
+			! this.props.purchases.length &&
+			! this.props.subscriptions.length
+		) {
 			if ( ! this.props.sites.length ) {
 				return (
 					<Main>
