@@ -206,6 +206,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
 
+	/* if we know the existing domain while the suggestions are loading, we need one less placeholder */
+	const neededPlaceholdersCount = quantity - ( existingSubdomain ? 1 : 0 );
+
 	return (
 		<div className="domain-picker">
 			{ header && header }
@@ -321,7 +324,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											/>
 										);
 									} ) ) ||
-									times( quantity - ( existingSubdomain ? 1 : 0 ), ( i ) => (
+									times( neededPlaceholdersCount, ( i ) => (
 										<SuggestionItemPlaceholder type={ itemType } key={ i } />
 									) ) }
 							</ItemGrouper>
