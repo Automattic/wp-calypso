@@ -4,5 +4,8 @@
 import type { State } from './reducer';
 import type { LocalizedLanguageNames } from './types';
 
-export const getLocalizedLanguageNames = ( state: State ): LocalizedLanguageNames =>
-	state.localizedLanguageNames;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const getLocalizedLanguageNames = (
+	state: State,
+	i18nLocale: string
+): LocalizedLanguageNames => state.localizedLanguageNames[ i18nLocale ];

@@ -15,5 +15,5 @@ export function* getLocalizedLanguageNames( locale: string ) {
 		mode: 'cors',
 	} as APIFetchOptions );
 
-	yield setLocalizedLanguageNames( localizedLanguageNames );
+	yield setLocalizedLanguageNames( locale, localizedLanguageNames );
 }
