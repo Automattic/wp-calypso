@@ -81,7 +81,7 @@ export default function PurchaseMeta( {
 	const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
 
 	if ( isDataLoading || ! purchaseId ) {
-		return renderPlaceholder();
+		return <PurchaseMetaPlaceholder />;
 	}
 
 	return (
@@ -216,7 +216,7 @@ function renderRenewsOrExpiresOn( {
 	}
 }
 
-function renderPlaceholder() {
+function PurchaseMetaPlaceholder() {
 	return (
 		<ul className="manage-purchase__meta">
 			{ times( 4, ( i ) => (
