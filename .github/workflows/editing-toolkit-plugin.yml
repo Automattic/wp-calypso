@@ -110,10 +110,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    # Pin to Node v12 to work around issue: https://github.com/Automattic/wp-calypso/issues/47255
+    # We should be able to remove this once a wp-env update is released that includes an updated nodegit
+    # More info at: https://github.com/WordPress/gutenberg/pull/26712
     - name: Set up Node
       uses: actions/setup-node@v1
       with:
         node-version: '12.18.4'
+
     - name: Checkout code
       uses: actions/checkout@HEAD
 
@@ -140,7 +144,7 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
 
     - name: Install dependencies
-      # if: steps.cache.outputs.cache-hit != 'true'
+      if: steps.cache.outputs.cache-hit != 'true'
       run: yarn install --frozen-lockfile
 
     - name: Setup wp-env dependencies
