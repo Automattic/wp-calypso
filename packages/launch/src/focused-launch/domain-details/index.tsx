@@ -27,7 +27,7 @@ const NUMBER_OF_VISIBLE_DOMAINS = 10;
 
 const DomainDetails: React.FunctionComponent = () => {
 	const { currentDomainName } = useSite();
-	const domainSearch = useDomainSearch();
+	const { domainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, selectedDomain } = useDomainSelection();
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 	const history = useHistory();
