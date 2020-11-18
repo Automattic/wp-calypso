@@ -61,10 +61,13 @@ class PurchaseItem extends Component {
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
 
-			return translate( 'Renews at %(amount)s on %(date)s.', {
+			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
 					amount: purchase.priceText,
 					date: renewDate.format( 'LL' ),
+				},
+				components: {
+					span: <span className="purchase-item__date" />,
 				},
 			} );
 		}
@@ -88,8 +91,11 @@ class PurchaseItem extends Component {
 				);
 			}
 
-			return translate( 'Expires on %s', {
+			return translate( 'Expires on {{span}}%s{{/span}}', {
 				args: expiry.format( 'LL' ),
+				components: {
+					span: <span className="purchase-item__date" />,
+				},
 			} );
 		}
 
@@ -132,7 +138,23 @@ class PurchaseItem extends Component {
 		window.scrollTo( 0, 0 );
 	}
 
-	getLabelText() {
+	getPurchaseType() {
+		const { purchase, site } = this.props;
+
+		if ( ! purchase ) {
+			//Add site-level condition
+			return purchaseType( purchase );
+		}
+
+		return (
+			<>
+				{ purchaseType( purchase ) } for{ ' ' }
+				<span className="purchase-item__site-name">{ site.name }</span>
+			</>
+		);
+	}
+
+	getStatus() {
 		const { purchase, translate } = this.props;
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -143,12 +165,23 @@ class PurchaseItem extends Component {
 			} );
 		}
 
+		return this.renewsOrExpiresOn();
+	}
+
+	getPaymentMethod() {
+		const { purchase } = this.props;
+
+		if ( isRenewing( purchase ) ) {
+			if ( purchase.payment.type === 'credit_card' ) {
+				return purchase.payment.creditCard.type + ' **** ' + purchase.payment.creditCard.number;
+			}
+		}
+
 		return null;
 	}
 
 	renderPurhaseItemContent = () => {
 		const { isPlaceholder, purchase, site } = this.props;
-		const label = this.getLabelText();
 		const classes = classNames(
 			'purchase-item__wrapper',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
@@ -162,16 +195,20 @@ class PurchaseItem extends Component {
 
 		return (
 			<div className={ classes }>
-				<SiteIcon site={ site } />
-
-				<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
-				<div className="purchase-item__purchase-type">
-					{ purchaseType( purchase ) + ' for ' + site.name + ' (' + site.URL + ')' }
-				</div>
-				{ label && <div className="purchase-item__term-label">{ label }</div> }
-				{ ! isPartnerPurchase( purchase ) && (
-					<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+				{ true && ( // check prop to inlude site info
+					<div className="purchase-item__site-icon">
+						<SiteIcon site={ site } size={ 24 } />
+					</div>
 				) }
+
+				<div className="purchase-item__information">
+					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
+				</div>
+
+				<div className="purchase-item__status">{ this.getStatus() }</div>
+
+				<div className="purchase-item__payment-method">{ this.getPaymentMethod() }</div>
 			</div>
 		);
 	};
