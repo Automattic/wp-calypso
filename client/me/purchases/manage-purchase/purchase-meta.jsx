@@ -87,33 +87,33 @@ export default function PurchaseMeta( {
 	return (
 		<>
 			<ul className="manage-purchase__meta">
-				{ renderOwner( { translate, owner } ) }
+				<PurchaseMetaOwner translate={ translate } owner={ owner } />
 				<li>
 					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 					<span className="manage-purchase__detail">
-						{ renderPrice( { purchase, translate } ) }
+						<PurchaseMetaPrice purchase={ purchase } translate={ translate } />
 					</span>
 				</li>
-				{ renderExpiration( {
-					purchase,
-					site,
-					siteSlug,
-					translate,
-					moment,
-					isAutorenewalEnabled,
-					isProductOwner,
-					hideAutoRenew,
-					getEditPaymentMethodUrlFor,
-					getManagePurchaseUrlFor,
-				} ) }
-				{ renderPaymentDetails( {
-					purchase,
-					translate,
-					getEditPaymentMethodUrlFor,
-					siteSlug,
-					site,
-					moment,
-				} ) }
+				<PurchaseMetaExpiration
+					purchase={ purchase }
+					site={ site }
+					siteSlug={ siteSlug }
+					translate={ translate }
+					moment={ moment }
+					isAutorenewalEnabled={ isAutorenewalEnabled }
+					isProductOwner={ isProductOwner }
+					hideAutoRenew={ hideAutoRenew }
+					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				/>
+				<PurchaseMetaPaymentDetails
+					purchase={ purchase }
+					translate={ translate }
+					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					siteSlug={ siteSlug }
+					site={ site }
+					moment={ moment }
+				/>
 			</ul>
 			<RenewErrorMessage
 				isJetpack={ isJetpack }
@@ -234,7 +234,7 @@ function PurchaseMetaPlaceholder() {
 	);
 }
 
-function renderOwner( { translate, owner } ) {
+function PurchaseMetaOwner( { translate, owner } ) {
 	if ( ! owner ) {
 		return null;
 	}
@@ -288,7 +288,7 @@ function renderPaymentInfo( { purchase, translate, moment } ) {
 	return translate( 'None' );
 }
 
-function renderPrice( { purchase, translate } ) {
+function PurchaseMetaPrice( { purchase, translate } ) {
 	const { priceText, currencyCode, productSlug } = purchase;
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
@@ -330,7 +330,7 @@ function renderPrice( { purchase, translate } ) {
 	} );
 }
 
-function renderPaymentDetails( {
+function PurchaseMetaPaymentDetails( {
 	purchase,
 	translate,
 	getEditPaymentMethodUrlFor,
@@ -428,7 +428,7 @@ function RenewErrorMessage( { isJetpack, purchase, translate, site } ) {
 	);
 }
 
-function renderExpiration( {
+function PurchaseMetaExpiration( {
 	purchase,
 	site,
 	siteSlug,
