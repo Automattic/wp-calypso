@@ -63,9 +63,10 @@ export const getSubscribedLists = createSelector(
 		sortBy(
 			filter( state.reader.lists.items, ( item ) => {
 				// Is the user subscribed to this list?
-				return includes( state.reader.lists.subscribedLists, item.ID );
+				return state.reader.lists.subscribedLists.includes( item.ID );
 			} ),
-			'slug'
+			// Enable case-insensitive sort by title
+			( item ) => item.title?.toLowerCase()
 		),
 	( state ) => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
 );
