@@ -23,6 +23,7 @@ import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import './style.scss';
 
 const ANALYTICS_UI_LOCATION = 'domain_step';
+const NUMBER_OF_VISIBLE_DOMAINS = 10;
 
 const DomainDetails: React.FunctionComponent = () => {
 	const { domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
@@ -77,7 +78,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }
 					itemType={ ITEM_TYPE_BUTTON }
-					quantity={ 10 }
+					quantity={ NUMBER_OF_VISIBLE_DOMAINS }
 				/>
 			</div>
 		</div>
