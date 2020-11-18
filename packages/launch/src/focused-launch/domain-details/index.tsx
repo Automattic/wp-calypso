@@ -11,6 +11,7 @@ import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
 import { Title, SubTitle, BackButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, chevronLeft } from '@wordpress/icons';
+import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
@@ -33,6 +34,11 @@ const DomainDetails: React.FunctionComponent = () => {
 
 	const goBack = () => {
 		history.goBack();
+	};
+
+	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+		onDomainSelect( suggestion );
+		goBack();
 	};
 
 	const trackDomainSearchInteraction = ( query: string ) => {
@@ -64,7 +70,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ domain?.domain_name || currentDomainName }
 					existingSubdomain={ currentDomainName }
-					onDomainSelect={ onDomainSelect }
+					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
