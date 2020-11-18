@@ -355,5 +355,3 @@ function load_coming_soon() {
 	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_coming_soon' );
-
-// Adding a single line here to trigger a build.
