@@ -148,7 +148,12 @@ const Desktop = {
 
 		debug( 'Sending logged-in = ' + status );
 
-		window.electron.send( 'user-login-status', status, user(), oAuthToken.getToken() );
+		window.electron.send(
+			'user-login-status',
+			status,
+			{ id: user().data.ID },
+			oAuthToken.getToken()
+		);
 	},
 
 	onToggleNotifications: function () {
