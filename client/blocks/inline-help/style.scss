@@ -61,6 +61,8 @@
 	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
+	width: 40px;
+	height: 40px;
 
 	&::before {
 		width: 28px;
@@ -81,10 +83,10 @@
 
 	.gridicon {
 		fill: var( --color-primary );
-		margin: 0;
+		margin: -3px 0 0 -3px;
 		top: 0;
-		height: 36px;
-		width: 36px;
+		height: 42px;
+		width: 42px;
 
 		> use:first-child,
 		> g:first-child {
