@@ -64,21 +64,10 @@ export default function PurchaseMeta( {
 	const moment = useLocalizedMoment();
 
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
-	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
-	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
-	const hasLoadedSites = ! useSelector( isRequestingSites );
-	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
-
 	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
 	const owner = useSelector( ( state ) => getUser( state, purchase?.userId ) ) || null;
 
-	const hideAutoRenew =
-		purchase &&
-		shouldShowOfferResetFlow() &&
-		JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
-		! isRenewable( purchase );
-
-	const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
+	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
 	if ( isDataLoading || ! purchaseId ) {
 		return <PurchaseMetaPlaceholder />;
@@ -100,9 +89,6 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					translate={ translate }
 					moment={ moment }
-					isAutorenewalEnabled={ isAutorenewalEnabled }
-					isProductOwner={ isProductOwner }
-					hideAutoRenew={ hideAutoRenew }
 					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
@@ -115,29 +101,20 @@ export default function PurchaseMeta( {
 					moment={ moment }
 				/>
 			</ul>
-			<RenewErrorMessage
-				isJetpack={ isJetpack }
-				purchase={ purchase }
-				translate={ translate }
-				site={ site }
-			/>
+			<RenewErrorMessage purchase={ purchase } translate={ translate } site={ site } />
 		</>
 	);
 }
 
 PurchaseMeta.propTypes = {
-	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
-	purchase: PropTypes.object,
-	site: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func,
 	getEditPaymentMethodUrlFor: PropTypes.func,
 };
 
 PurchaseMeta.defaultProps = {
-	hasLoadedSites: false,
 	hasLoadedPurchasesFromServer: false,
 	purchaseId: false,
 	getManagePurchaseUrlFor: managePurchase,
@@ -376,10 +353,12 @@ function PurchaseMetaPaymentDetails( {
 	);
 }
 
-function RenewErrorMessage( { isJetpack, purchase, translate, site } ) {
+function RenewErrorMessage( { purchase, translate, site } ) {
 	if ( site ) {
 		return null;
 	}
+
+	const isJetpack = purchase && ( isJetpackPlan( purchase ) || isJetpackProduct( purchase ) );
 
 	if ( isJetpack ) {
 		return (
@@ -434,12 +413,17 @@ function PurchaseMetaExpiration( {
 	siteSlug,
 	translate,
 	moment,
-	isAutorenewalEnabled,
-	isProductOwner,
-	hideAutoRenew,
 	getEditPaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
+	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
+	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
+	const hideAutoRenew =
+		purchase &&
+		shouldShowOfferResetFlow() &&
+		JETPACK_LEGACY_PLANS.includes( purchase.productSlug ) &&
+		! isRenewable( purchase );
+
 	if ( isDomainTransfer( purchase ) ) {
 		return null;
 	}
