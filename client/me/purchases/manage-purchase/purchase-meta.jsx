@@ -4,7 +4,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
 
@@ -509,4 +509,4 @@ function renderExpiration( {
 	);
 }
 
-export default connect( () => {} )( localize( withLocalizedMoment( PurchaseMeta ) ) );
+export default localize( withLocalizedMoment( PurchaseMeta ) );
