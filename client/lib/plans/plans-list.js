@@ -1555,6 +1555,7 @@ export const PLANS_LIST = {
 		getProductId: () => 1040,
 		getStoreSlug: () => constants.PLAN_P2_PLUS,
 		getPathSlug: () => 'p2-plus',
+		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
 };
 
