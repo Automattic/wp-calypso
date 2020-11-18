@@ -50,7 +50,7 @@ const DomainDetails: React.FunctionComponent = () => {
 	};
 
 	return (
-		<div>
+		<div className="focused-launch-container">
 			<div className="focused-launch-domain-details__header">
 				<div className="focused-launch-domain-details__back-link">
 					<BackButton onClick={ goBack }>
