@@ -14,6 +14,10 @@ import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
+	const fetchSite = () => ( {
+		type: 'FETCH_SITE' as const,
+	} );
+
 	const fetchNewSite = () => ( {
 		type: 'FETCH_NEW_SITE' as const,
 	} );
@@ -150,6 +154,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		saveSiteTitle,
 		receiveSiteTitle,
 		fetchNewSite,
+		fetchSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
 		resetNewSiteFailed,
@@ -169,6 +174,7 @@ export type ActionCreators = ReturnType< typeof createActions >;
 export type Action =
 	| ReturnType<
 			| ActionCreators[ 'fetchNewSite' ]
+			| ActionCreators[ 'fetchSite' ]
 			| ActionCreators[ 'receiveSiteDomains' ]
 			| ActionCreators[ 'receiveNewSite' ]
 			| ActionCreators[ 'receiveSiteTitle' ]

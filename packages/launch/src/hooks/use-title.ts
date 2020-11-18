@@ -15,12 +15,6 @@ export function useTitle() {
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
 	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( title );
 
-	// watch get site (as opposed  to getSiteTitle) because the underlying resolver belongs to getSite
-	const isLoading: boolean =
-		useSelect( ( select ) =>
-			select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ siteId ] )
-		) || typeof title === 'undefined';
-
 	useEffect( () => {
 		setLocalStateTitle( title );
 	}, [ title ] );
@@ -46,6 +40,5 @@ export function useTitle() {
 		},
 		isSiteTitleStepVisible,
 		showSiteTitleStep,
-		isLoading,
 	};
 }

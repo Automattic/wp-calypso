@@ -14,10 +14,7 @@ export function useSite() {
 	const { siteId } = React.useContext( LaunchContext );
 	const site = useSelect( ( select ) => select( SITE_STORE ).getSite( siteId ) );
 	const launchStatus = useSelect( ( select ) => select( SITE_STORE ).isLaunched( siteId ) );
-
-	const isLoading: boolean = useSelect( ( select ) =>
-		select( 'core/data' ).isResolving( SITE_STORE, 'getSite', [ siteId ] )
-	);
+	const isLoading = useSelect( ( select ) => select( SITE_STORE ).isFetchingSiteDetails() );
 
 	return {
 		sitePlan: site?.plan,
@@ -25,6 +22,6 @@ export function useSite() {
 		launchStatus,
 		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
 		selectedFeatures: site?.options?.selected_features,
-		isLoading,
+		isLoadingSite: !! isLoading,
 	};
 }
