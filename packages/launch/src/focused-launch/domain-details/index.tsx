@@ -4,19 +4,17 @@
  * External dependencies
  */
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
-import type { DomainSuggestions } from '@automattic/data-stores';
-import { Title, SubTitle } from '@automattic/onboarding';
+import { Title, SubTitle, BackButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { Icon, chevronLeft } from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
-import { Route } from '../route';
 import { useSite, useDomainSearch, useDomainSelection } from '../../hooks';
 import { LAUNCH_STORE } from '../../stores';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
@@ -31,6 +29,11 @@ const DomainDetails: React.FunctionComponent = () => {
 	const domainSearch = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
+	const history = useHistory();
+
+	const goBack = () => {
+		history.goBack();
+	};
 
 	const trackDomainSearchInteraction = ( query: string ) => {
 		recordTracksEvent( 'calypso_newsite_domain_search_blur', {
@@ -44,9 +47,10 @@ const DomainDetails: React.FunctionComponent = () => {
 		<div>
 			<div className="focused-launch-domain-details__header">
 				<div className="focused-launch-domain-details__back-link">
-					<Link to={ Route.Summary }>
-						<Icon icon={ chevronLeft } /> <span>{ __( 'Go back', __i18n_text_domain__ ) }</span>
-					</Link>
+					<BackButton onClick={ goBack }>
+						<Icon icon={ chevronLeft } />
+						<span>{ __( 'Go back', __i18n_text_domain__ ) }</span>
+					</BackButton>
 				</div>
 				<Title>{ __( 'Choose a domain', __i18n_text_domain__ ) }</Title>
 				<SubTitle>

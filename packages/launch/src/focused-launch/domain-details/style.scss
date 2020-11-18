@@ -6,13 +6,13 @@
     @include break-medium {
         margin-bottom: 64px;
     }
-}
 
-.focused-launch-domain-details__back-link {
-    a {
-        display: flex;
-        align-items: center;
-        color: var( --studio-black );
-        margin-bottom: 16px;
+    .focused-launch-domain-details__back-link {
+        button.action-buttons__back {
+            color: var( --studio-black );
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
     }
 }
