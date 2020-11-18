@@ -118,49 +118,6 @@ class PurchaseMeta extends Component {
 		} );
 	}
 
-	renderPaymentInfo() {
-		const { purchase, translate, moment } = this.props;
-		const payment = purchase?.payment;
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			return translate( 'Included with plan' );
-		}
-
-		if ( hasPaymentMethod( purchase ) ) {
-			let paymentInfo = null;
-
-			if ( isPaidWithCredits( purchase ) ) {
-				return translate( 'Credits' );
-			}
-
-			if (
-				( isExpired( purchase ) || isExpiring( purchase ) ) &&
-				! isPaidWithCredits( purchase )
-			) {
-				return translate( 'None' );
-			}
-
-			if ( isPaidWithCreditCard( purchase ) ) {
-				paymentInfo = payment.creditCard.number;
-			} else if ( isPaidWithPayPalDirect( purchase ) ) {
-				paymentInfo = translate( 'expiring %(cardExpiry)s', {
-					args: {
-						cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
-					},
-				} );
-			}
-
-			return (
-				<>
-					<PaymentLogo type={ paymentLogoType( purchase ) } />
-					{ paymentInfo }
-				</>
-			);
-		}
-
-		return translate( 'None' );
-	}
-
 	handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -175,7 +132,7 @@ class PurchaseMeta extends Component {
 		const paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-				<span className="manage-purchase__detail">{ this.renderPaymentInfo() }</span>
+				<span className="manage-purchase__detail">{ renderPaymentInfo( this.props ) }</span>
 			</span>
 		);
 
@@ -465,6 +422,45 @@ function renderOwner( { translate, owner } ) {
 			</span>
 		</li>
 	);
+}
+
+function renderPaymentInfo( { purchase, translate, moment } ) {
+	const payment = purchase?.payment;
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		return translate( 'Included with plan' );
+	}
+
+	if ( hasPaymentMethod( purchase ) ) {
+		let paymentInfo = null;
+
+		if ( isPaidWithCredits( purchase ) ) {
+			return translate( 'Credits' );
+		}
+
+		if ( ( isExpired( purchase ) || isExpiring( purchase ) ) && ! isPaidWithCredits( purchase ) ) {
+			return translate( 'None' );
+		}
+
+		if ( isPaidWithCreditCard( purchase ) ) {
+			paymentInfo = payment.creditCard.number;
+		} else if ( isPaidWithPayPalDirect( purchase ) ) {
+			paymentInfo = translate( 'expiring %(cardExpiry)s', {
+				args: {
+					cardExpiry: moment( payment.expiryDate, 'MM/YY' ).format( 'MMMM YYYY' ),
+				},
+			} );
+		}
+
+		return (
+			<>
+				<PaymentLogo type={ paymentLogoType( purchase ) } />
+				{ paymentInfo }
+			</>
+		);
+	}
+
+	return translate( 'None' );
 }
 
 export default connect( ( state, props ) => {
