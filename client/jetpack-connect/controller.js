@@ -75,6 +75,8 @@ import {
 import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 
 /**
  * Module variables
@@ -144,7 +146,11 @@ export function offerResetRedirects( context, next ) {
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );
 	context.header = <StoreHeader />;
-	context.footer = <StoreFooter />;
+
+	if ( getJetpackCROActiveVersion() !== Iterations.I5 ) {
+		context.footer = <StoreFooter />;
+	}
+
 	next();
 }
 
