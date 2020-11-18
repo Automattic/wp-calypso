@@ -18,8 +18,6 @@ const APP_ARGS = [
 	'--disable-http-cache',
 	'--start-maximized',
 	'--remote-debugging-port=9222',
-	'--disable-setuid-sandbox',
-	'--no-sandbox',
 ];
 
 let BUILT_APP_DIR;
