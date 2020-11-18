@@ -131,6 +131,7 @@ function register_blocks() {
 			'render_callback' => '\A8C\FSE\Earn\PremiumContent\premium_content_container_render',
 			$provides         => array(
 				'premium-content/planId' => 'selectedPlanId',
+				'isPremiumContentChild'  => 'isPremiumContentChild',
 			),
 		)
 	);
@@ -232,6 +233,25 @@ function premium_content_membership_checks() {
 }
 
 /**
+ * Determines if the site has a plan that supports the
+ * Premium Content block. If false, the site requires a
+ * plan upgrade.
+ *
+ * @return bool
+ */
+function premium_content_required_plan_checks() {
+	// For WPCOM sites.
+	if ( defined( 'IS_WPCOM' ) && IS_WPCOM && function_exists( 'has_any_blog_stickers' ) ) {
+		$site_id = get_current_blog_id();
+		return has_any_blog_stickers( array( 'personal-plan', 'premium-plan', 'business-plan', 'ecommerce-plan' ), $site_id );
+	}
+
+	// For Jetpack sites, only Atomic sites (with a business plan
+	// or above) have the block, so no upgrade is required.
+	return true;
+}
+
+/**
  * Determines if the block should be rendered. Returns true
  * if the memberships module is set up, or if it has not been
  * set up but the user is an admin.
@@ -274,8 +294,59 @@ function premium_content_container_render( $attributes, $content ) {
 		return '';
 	}
 
+	// Show upgrade nudge.
+	if (
+		! premium_content_required_plan_checks() &&
+		premium_content_current_user_can_edit()
+	) {
+		$upgrade_nudge = premium_content_render_upgrade_nudge();
+		return $upgrade_nudge . $content;
+	}
+
+	// Stripe connection nudge.
+	if (
+		! premium_content_membership_checks() &&
+		premium_content_current_user_can_edit()
+	) {
+		$stripe_nudge = premium_content_render_stripe_nudge();
+		return $stripe_nudge . $content;
+	}
+
 	return $content;
 }
+
+/**
+ * Server-side rendering for the upgrade nudge.
+ *
+ * @return string Final content to render.
+ */
+function premium_content_render_upgrade_nudge() {
+	$required_plan = ( defined( 'IS_WPCOM' ) && IS_WPCOM ) ? 'personal-bundle' : 'jetpack_personal';
+
+	if ( function_exists( 'jetpack_require_lib' ) ) {
+		jetpack_require_lib( 'components' );
+		return Jetpack_Components::render_upgrade_nudge(
+			array(
+				'plan' => $required_plan,
+			)
+		);
+	}
+	return '';
+}
+
+/**
+ * Server-side rendering for the stripe connection nudge.
+ *
+ * @return string Final content to render.
+ */
+function premium_content_render_stripe_nudge() {
+	if ( function_exists( 'jetpack_require_lib' ) ) {
+		jetpack_require_lib( 'components' );
+		return \Jetpack_Components::render_stripe_nudge( 'premium-content' );
+	}
+	return '';
+}
+
 
 /**
  * Server-side rendering for the `premium-content/logged-out-view` block.
