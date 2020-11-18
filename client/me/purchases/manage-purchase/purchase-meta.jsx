@@ -57,24 +57,6 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 class PurchaseMeta extends Component {
-	static propTypes = {
-		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
-		purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
-		purchase: PropTypes.object,
-		site: PropTypes.object,
-		siteSlug: PropTypes.string.isRequired,
-		getManagePurchaseUrlFor: PropTypes.func,
-		getEditPaymentMethodUrlFor: PropTypes.func,
-	};
-
-	static defaultProps = {
-		hasLoadedSites: false,
-		hasLoadedPurchasesFromServer: false,
-		purchaseId: false,
-		getManagePurchaseUrlFor: managePurchase,
-	};
-
 	render() {
 		const { translate, purchaseId, hasLoadedSites, hasLoadedPurchasesFromServer } = this.props;
 
@@ -100,6 +82,24 @@ class PurchaseMeta extends Component {
 		);
 	}
 }
+
+PurchaseMeta.propTypes = {
+	hasLoadedSites: PropTypes.bool.isRequired,
+	hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
+	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
+	purchase: PropTypes.object,
+	site: PropTypes.object,
+	siteSlug: PropTypes.string.isRequired,
+	getManagePurchaseUrlFor: PropTypes.func,
+	getEditPaymentMethodUrlFor: PropTypes.func,
+};
+
+PurchaseMeta.defaultProps = {
+	hasLoadedSites: false,
+	hasLoadedPurchasesFromServer: false,
+	purchaseId: false,
+	getManagePurchaseUrlFor: managePurchase,
+};
 
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
 	if ( isExpiring( purchase ) ) {
