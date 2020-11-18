@@ -7,6 +7,7 @@ import { addAction } from '@wordpress/hooks';
 import { select, dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import 'a8c-fse-common-data-stores';
+import type { Site } from '@automattic/data-stores';
 
 // Depend on `core/editor` store.
 import '@wordpress/editor';
@@ -50,17 +51,17 @@ function updateEditor() {
 
 	handled = true;
 
-	// Asynchronously load plan data to check if site is on a free or paid plan
+	// Asynchronously load site data to check if site is on a free or paid plan
 	// 'select' function is first returning 'undefined' so we retry every 100ms
-	let currentPlan = select( 'automattic/site' ).getSite( window._currentSiteId )?.plan;
-	const awaitSite = setInterval( () => {
-		currentPlan = select( 'automattic/site' ).getSite( window._currentSiteId )?.plan;
-		if ( ! currentPlan ) {
+	let site: Site.SiteDetails | undefined;
+	const awaitSiteData = setInterval( () => {
+		site = select( 'automattic/site' ).getSite( window._currentSiteId );
+		if ( ! site ) {
 			return;
 		}
-		clearInterval( awaitSite );
+		clearInterval( awaitSiteData );
 	}, 100 );
-	const getIsFreePlan = () => currentPlan?.is_free;
+	const getIsFreePlan = () => site?.plan?.is_free;
 
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
@@ -80,7 +81,7 @@ function updateEditor() {
 			window.top.location.href = launchHref;
 		};
 
-		const handleLaunch = async ( e: Event ) => {
+		const handleLaunch = ( e: Event ) => {
 			// Disable href navigation
 			e.preventDefault();
 
