@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import { times } from 'lodash';
 
 /**
@@ -47,21 +47,22 @@ import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'calypso/components/payment-logo';
 import { CALYPSO_CONTACT, JETPACK_SUPPORT } from 'calypso/lib/url/support';
 import UserItem from 'calypso/components/user';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-function PurchaseMeta( {
-	translate,
+export default function PurchaseMeta( {
 	purchaseId,
 	hasLoadedPurchasesFromServer,
 	siteSlug,
-	moment,
 	getEditPaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
+	const translate = useTranslate();
+	const moment = useLocalizedMoment();
+
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
 	const isAutorenewalEnabled = purchase ? ! isExpiring( purchase ) : null;
@@ -508,5 +509,3 @@ function renderExpiration( {
 		</li>
 	);
 }
-
-export default localize( withLocalizedMoment( PurchaseMeta ) );
