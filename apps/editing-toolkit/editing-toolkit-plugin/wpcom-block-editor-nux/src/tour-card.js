@@ -13,27 +13,44 @@ import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/
 
 // import { useEffect, useState } from '@wordpress/element';
 
-function WelcomeTourCard( { cardIndex, heading, onMinimize, onDismiss } ) {
+function WelcomeTourCard( {
+	cardContent,
+	cardIndex,
+	lastCardIndex,
+	onMinimize,
+	onDismiss,
+	setCurrentCard,
+} ) {
+	const { description, heading, imgSrc } = cardContent;
 	return (
 		<Card className="welcome-tour-card">
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
-				<img
-					alt="Editor Welcome Tour"
-					src="https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px"
-				/>
+				<img alt="Editor Welcome Tour" src={ imgSrc } />
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__card-heading">{ heading }</h2>
-				<p>Learn the basic editor tools so you can edit and build your dream website.</p>
+				<p>{ description }</p>
 			</CardBody>
 			<CardFooter>
 				<div>• • • • • •</div>
 				<div>
-					<Button isTertiary={ true }>No thanks</Button>
-					<Button isPrimary={ true } className="welcome-tour-card__next-btn">
-						Let's start
+					<Button isTertiary={ true } onClick={ () => onDismiss() }>
+						No thanks
 					</Button>
+					{ cardIndex < lastCardIndex ? (
+						<Button
+							className="welcome-tour-card__next-btn"
+							isPrimary={ true }
+							onClick={ () => setCurrentCard( cardIndex + 1 ) }
+						>
+							{ cardIndex === 0 ? "Let's start" : 'Next' }
+						</Button>
+					) : (
+						<Button isPrimary={ true } onClick={ () => onDismiss() }>
+							Done
+						</Button>
+					) }
 				</div>
 			</CardFooter>
 		</Card>
