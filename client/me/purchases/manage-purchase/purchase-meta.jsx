@@ -75,14 +75,12 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	isDataLoading( props ) {
-		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
-	}
-
 	render() {
-		const { translate, purchaseId } = this.props;
+		const { translate, purchaseId, hasLoadedSites, hasLoadedPurchasesFromServer } = this.props;
 
-		if ( this.isDataLoading( this.props ) || ! purchaseId ) {
+		const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
+
+		if ( isDataLoading || ! purchaseId ) {
 			return renderPlaceholder();
 		}
 
