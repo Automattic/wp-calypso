@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 
 /**
@@ -72,7 +72,13 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 				pattern.title = (
 					<PatternTitleContainer title={ originalTitle } description={ description } />
 				);
-				pattern.title.toString = () => originalTitle;
+				// Add simple premium badging for screen readers
+				pattern.title.toString = () =>
+					sprintf(
+						// translators: %s is the title of a block pattern e.g. "Two columns (Premium)". "Premium" is synonymous with "paid"
+						__( '%s (Premium)', 'full-site-editing' ),
+						originalTitle
+					);
 
 				shouldUpdateBlockPatterns = true;
 			}
