@@ -1306,9 +1306,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 
 		step( 'Line height setting is available', async function () {
 			const editor = await GutenbergEditorComponent.Expect( driver );
-			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
-
 			await editor.enterText( 'Foobar' );
+
+			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 			await gSidebarComponent.displayComponentIfNecessary();
 			await gSidebarComponent.chooseBlockSettings();
 
