@@ -12,6 +12,7 @@ import { LAUNCH_STORE } from '../stores';
 export function useDomainSelection() {
 	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
+	const { domain: selectedDomain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	function onDomainSelect( suggestion: DomainSuggestions.DomainSuggestion ) {
 		confirmDomainSelection();
@@ -28,5 +29,6 @@ export function useDomainSelection() {
 	return {
 		onDomainSelect,
 		onExistingSubdomainSelect,
+		selectedDomain,
 	};
 }

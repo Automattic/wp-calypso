@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
 import { Title, SubTitle, BackButton } from '@automattic/onboarding';
@@ -26,10 +26,9 @@ const ANALYTICS_UI_LOCATION = 'domain_step';
 const NUMBER_OF_VISIBLE_DOMAINS = 10;
 
 const DomainDetails: React.FunctionComponent = () => {
-	const { domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
 	const domainSearch = useDomainSearch();
-	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
+	const { onDomainSelect, onExistingSubdomainSelect, selectedDomain } = useDomainSelection();
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 	const history = useHistory();
 
@@ -69,7 +68,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ domain?.domain_name || currentDomainName }
+					currentDomain={ selectedDomain?.domain_name || currentDomainName }
 					existingSubdomain={ currentDomainName }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
