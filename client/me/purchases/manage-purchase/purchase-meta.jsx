@@ -39,10 +39,7 @@ import {
 	getProductFromSlug,
 } from 'calypso/lib/products-values';
 import { getPlan } from 'calypso/lib/plans';
-import {
-	getByPurchaseId,
-	hasLoadedUserPurchasesFromServer,
-} from 'calypso/state/purchases/selectors';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { getUser } from 'calypso/state/users/selectors';
 import { managePurchase } from '../paths';
@@ -512,11 +509,4 @@ function renderExpiration( {
 	);
 }
 
-export default connect( ( state, props ) => {
-	const { hasLoadedPurchasesFromServer } = props;
-
-	return {
-		hasLoadedPurchasesFromServer:
-			hasLoadedPurchasesFromServer ?? hasLoadedUserPurchasesFromServer( state ),
-	};
-} )( localize( withLocalizedMoment( PurchaseMeta ) ) );
+export default connect( () => {} )( localize( withLocalizedMoment( PurchaseMeta ) ) );
