@@ -10,6 +10,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  */
 import PlanItem from './plan-item';
 import { PLANS_STORE } from '../constants';
+import type { CTAVariation, PopularBadgeVariation, CustomTagLinesMap } from './types';
 
 /**
  * Style dependencies
@@ -24,9 +25,9 @@ export interface Props {
 	disabledPlans?: { [ planSlug: string ]: string };
 	locale: string;
 	showTaglines?: boolean;
-	CTAVariation?: 'FULL_WIDTH' | 'NORMAL';
-	popularBadgeVariation: 'ON_TOP' | 'NEXT_TO_NAME';
-	customTagLines?: Record< string, string >;
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation: PopularBadgeVariation;
+	customTagLines?: CustomTagLinesMap;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {

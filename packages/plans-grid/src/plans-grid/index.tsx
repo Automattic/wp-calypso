@@ -13,6 +13,8 @@ import debugFactory from 'debug';
 import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
+import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
+export type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
 
 /**
  * Style dependencies
@@ -35,9 +37,9 @@ export interface Props {
 	isAccordion?: boolean;
 	locale: string;
 	showPlanTaglines?: boolean;
-	CTAVariation?: 'FULL_WIDTH' | 'NORMAL';
-	popularBadgeVariation?: 'ON_TOP' | 'NEXT_TO_NAME';
-	customTagLines?: Record< string, string >;
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation?: PopularBadgeVariation;
+	customTagLines?: CustomTagLinesMap;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {

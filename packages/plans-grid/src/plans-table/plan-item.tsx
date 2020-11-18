@@ -7,6 +7,7 @@ import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import type { CTAVariation, PopularBadgeVariation } from './types';
 
 /**
  * Internal dependencies
@@ -49,8 +50,8 @@ export interface Props {
 	onToggleExpandAll?: () => void;
 	allPlansExpanded: boolean;
 	disabledLabel?: string;
-	CTAVariation: 'FULL_WIDTH' | 'NORMAL';
-	popularBadgeVariation: 'ON_TOP' | 'NEXT_TO_NAME';
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation?: PopularBadgeVariation;
 }
 
 // NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
