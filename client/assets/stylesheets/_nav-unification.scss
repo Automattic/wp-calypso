@@ -40,6 +40,10 @@
 		padding: 0 24px;
 		font-size: $nav-unification-masterbar-font-size;
 		margin-top: -1px; // temp!
+
+		&:hover {
+			background: #23282d;
+		}
 	}
 
 	// client/layout/masterbar/style.scss

@@ -23,7 +23,7 @@
 
 	--masterbar-height: 40px;
 
-	--color-sidebar-submenu-background: #3c434a;
+	--color-sidebar-submenu-background: #32373c;
 	--color-sidebar-submenu-text: #ffffff;
 	--color-sidebar-submenu-hover-background: transparent;
 	--color-sidebar-submenu-hover-text: #ffffff;
@@ -151,11 +151,15 @@ $font-size: rem( 14px );
 		.sidebar__expandable-content {
 			background: var( --color-sidebar-submenu-background );
 			padding: 7px 0 8px;
-			padding-left: 24px;
+			padding-left: 56px;
 
 			.sidebar__menu-item--child {
 				&:nth-of-type( 1 ) {
 					font-weight: 600;
+
+					.sidebar__menu-link {
+						color: var( --color-sidebar-text );
+					}
 				}
 			}
 
@@ -164,8 +168,7 @@ $font-size: rem( 14px );
 				/* stylelint-disable-next-line scales/font-size */
 				font-size: rem( 13px );
 				line-height: 1.4;
-				//font-weight: 400;
-				color: var( --color-sidebar-submenu-text );
+				color: #b5bcc2;
 
 				&:hover,
 				&:focus {
@@ -178,6 +181,12 @@ $font-size: rem( 14px );
 				background-color: var( --color-sidebar-submenu-selected-background );
 				color: var( --color-sidebar-submenu-selected-text );
 				font-weight: 600;
+
+				&:hover,
+				&:focus {
+					background-color: var( --color-sidebar-submenu-hover-background );
+					color: var( --color-sidebar-submenu-hover-text );
+				}
 			}
 
 			.sidebar__menu-link-text {
@@ -558,6 +567,7 @@ $font-size: rem( 14px );
 				bottom: auto;
 				position: absolute;
 				left: var( --sidebar-width-max );
+				padding-left: 24px;
 				width: 160px;
 				box-shadow: 0 3px 30px rgba( 25, 30, 35, 0.2 );
 
