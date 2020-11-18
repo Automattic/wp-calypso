@@ -27,7 +27,7 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 	// Explicitly select the free button on jetpack without needing `host` above.
 	async selectFreePlanJetpack() {
-		const freePlanButton = By.css( '.jetpack-free-card-alt__main a.button' );
+		const freePlanButton = By.css( '[data-e2e-product-slug="free"] a' );
 		await driverHelper.scrollIntoView( this.driver, freePlanButton );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanButton );
 	}
