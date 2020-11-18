@@ -816,5 +816,13 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		}
 	}
 
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
+	}
 })
 
