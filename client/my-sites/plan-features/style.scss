@@ -192,6 +192,10 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0;
 	}
 
+	&.is-p2-free {
+		padding-top: 0;
+	}
+
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
 			border-bottom: solid 2px var( --color-plan-blogger );
@@ -336,6 +340,11 @@ $plan-features-sidebar-width: 272px;
 			margin-bottom: 9px;
 		}
 	}
+}
+
+.plan-features__header-title-free {
+	font-size: 32px;
+	line-height: 38px;
 }
 
 .segmented-control.is-customer-type-toggle {
