@@ -1,0 +1,111 @@
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+.focused-launch-success {
+	padding: 0 20px 120px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.focused-launch-success__wrapper {
+	width: 100%;
+	max-width: 420px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+
+	.onboarding-title {
+		margin-bottom: 12px;
+	}
+
+	.onboarding-subtitle {
+		margin-bottom: 32px;
+	}
+}
+
+.focused-launch-success__wordpress-icon {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.focused-launch-success__confetti {
+	width: 100%;
+	max-width: 356px;
+	margin-bottom: -20px;
+}
+
+.focused-launch-success__url-wrapper,
+.focused-launch-success__url-copy-button {
+	// stylelint-disable-next-line scales/radii
+	border-radius: 4px;
+	border: 1px solid var( --studio-gray-5 );
+}
+
+.focused-launch-success__url-wrapper {
+	display: flex;
+	align-items: center;
+	padding: 6px 6px 6px 16px;
+	width: 100%;
+	margin-bottom: 24px;
+
+	@include break-small {
+		width: auto;
+		max-width: 100%;
+		margin-bottom: 32px;
+	}
+}
+
+.focused-launch-success__url-field {
+	@include onboarding-small-text();
+	color: var( --studio-gray-60 );
+	flex-grow: 0;
+	flex-shrink: 1;
+	min-width: 0;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.focused-launch-success__url-link {
+	fill: var( --studio-gray-50 );
+	flex-grow: 0;
+	flex-shrink: 0;
+	margin-left: 4px;
+	margin-right: 16px;
+	font-size: 0;
+	line-height: 1;
+
+	@include break-small {
+		margin-right: 24px;
+	}
+}
+
+.focused-launch-success__url-copy-button {
+	@include onboarding-small-text();
+	color: var( --studio-gray-60 );
+
+	flex-grow: 0;
+	flex-shrink: 0;
+
+	// Add a variable flex-gap to the left of the button
+	margin-left: auto;
+}
+
+.focused-launch-success__continue-editing-button {
+	// @TODO: refactor to common variable in onboarding
+	// see https://github.com/Automattic/wp-calypso/issues/47181
+	background-color: #117ac9;
+	width: 100%;
+	margin-bottom: 20px;
+
+	@include break-small {
+		width: auto;
+	}
+}
+
+.focused-launch-success__go-back-button {
+	color: var( --studio-gray-50 );
+}

@@ -129,6 +129,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
+							{ /* @TODO: should use <Subtitle/> once https://github.com/Automattic/wp-calypso/issues/47418 is solved */ }
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
 								{ createInterpolateElement(
@@ -448,6 +449,15 @@ const Summary: React.FunctionComponent = () => {
 
 	const { locale } = useContext( LaunchContext );
 
+	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
+
+	// When the summary view is active, the modal should be dismissible, and
+	// the modal title should be visible
+	useEffect( () => {
+		setModalDismissible();
+		showModalTitle();
+	}, [ setModalDismissible, showModalTitle ] );
+
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
 	useEffect( () => {
@@ -547,6 +557,9 @@ const Summary: React.FunctionComponent = () => {
 					forwardStepIndex: activeSteps.length > 1,
 				} )
 			) }
+
+			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
+			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
 		</div>
 	);
 };

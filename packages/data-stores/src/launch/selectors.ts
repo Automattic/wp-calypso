@@ -61,3 +61,12 @@ export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefin
 
 // Check if site title step should be displayed
 export const isSiteTitleStepVisible = ( state: State ): boolean => state.isSiteTitleStepVisible;
+
+// Check if launch modal can be dismissed
+export const isModalDismissible = ( state: State ): boolean => state.isModalDismissible;
+
+// Check if launch modal title should be visible
+export const isModalTitleVisible = ( state: State ): boolean => state.isModalTitleVisible;
+
+// Check if launch modal can be dismissed
+export const isFocusedLaunchOpen = ( state: State ): boolean => state.isFocusedLaunchOpen;
