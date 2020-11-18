@@ -18,6 +18,7 @@
 		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
 		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
 		"prepack": "yarn run clean && yarn run build",
+		"prepare": "yarn run build",
 		"download": "node bin/download.js",
 		"test": "yarn jest"
 	},
