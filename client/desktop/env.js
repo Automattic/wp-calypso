@@ -42,6 +42,10 @@ app.setPath( 'userData', appData );
 // Default value of false deprecated in Electron v9
 app.allowRendererProcessReuse = true;
 
+if ( process.platform === 'linux' ) {
+	app.disableHardwareAcceleration();
+}
+
 // Force sandbox: true for all BrowserWindow instances
 app.enableSandbox();
 
