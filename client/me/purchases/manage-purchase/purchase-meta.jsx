@@ -75,60 +75,6 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	renderRenewErrorMessage() {
-		const { isJetpack, purchase, translate, site } = this.props;
-
-		if ( site ) {
-			return null;
-		}
-
-		if ( isJetpack ) {
-			return (
-				<div className="manage-purchase__footnotes">
-					{ translate(
-						'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
-							'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
-							'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
-						{
-							args: {
-								purchaseName: getName( purchase ),
-								siteSlug: purchase.domain,
-							},
-							components: {
-								supportPageLink: (
-									<a
-										href={
-											JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
-										}
-									/>
-								),
-							},
-						}
-					) }
-				</div>
-			);
-		}
-
-		return (
-			<div className="manage-purchase__footnotes">
-				{ translate(
-					'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
-						'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
-						'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
-					{
-						args: {
-							purchaseName: getName( purchase ),
-							siteSlug: purchase.domain,
-						},
-						components: {
-							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
-						},
-					}
-				) }
-			</div>
-		);
-	}
-
 	renderExpiration() {
 		const {
 			purchase,
@@ -230,7 +176,7 @@ class PurchaseMeta extends Component {
 					{ this.renderExpiration() }
 					{ renderPaymentDetails( this.props ) }
 				</ul>
-				{ this.renderRenewErrorMessage() }
+				{ renderRenewErrorMessage( this.props ) }
 			</>
 		);
 	}
@@ -466,6 +412,58 @@ function renderPaymentDetails( {
 				{ paymentDetails }
 			</a>
 		</li>
+	);
+}
+
+function renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) {
+	if ( site ) {
+		return null;
+	}
+
+	if ( isJetpack ) {
+		return (
+			<div className="manage-purchase__footnotes">
+				{ translate(
+					'%(purchaseName)s expired on %(siteSlug)s, and the site is no longer connected to WordPress.com. ' +
+						'To renew this purchase, please reconnect %(siteSlug)s to your WordPress.com account, then complete your purchase. ' +
+						'Now sure how to reconnect? {{supportPageLink}}Here are the instructions{{/supportPageLink}}.',
+					{
+						args: {
+							purchaseName: getName( purchase ),
+							siteSlug: purchase.domain,
+						},
+						components: {
+							supportPageLink: (
+								<a
+									href={
+										JETPACK_SUPPORT + 'reconnecting-reinstalling-jetpack/#reconnecting-jetpack'
+									}
+								/>
+							),
+						},
+					}
+				) }
+			</div>
+		);
+	}
+
+	return (
+		<div className="manage-purchase__footnotes">
+			{ translate(
+				'You are the owner of %(purchaseName)s but because you are no longer a user on %(siteSlug)s, ' +
+					'renewing it will require staff assistance. Please {{contactSupportLink}}contact support{{/contactSupportLink}}, ' +
+					'and consider transferring this purchase to another active user on %(siteSlug)s to avoid this issue in the future.',
+				{
+					args: {
+						purchaseName: getName( purchase ),
+						siteSlug: purchase.domain,
+					},
+					components: {
+						contactSupportLink: <a href={ CALYPSO_CONTACT } />,
+					},
+				}
+			) }
+		</div>
 	);
 }
 
