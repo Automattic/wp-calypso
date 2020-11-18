@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() );
-	const [ localeSlug ] = React.useState( i18n.getLocaleSlug() );
+	const localeSlug = i18n.getLocaleSlug();
 
 	React.useEffect( () => {
 		const onChange = () => {
