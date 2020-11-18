@@ -75,95 +75,6 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	renderExpiration() {
-		const {
-			purchase,
-			site,
-			siteSlug,
-			translate,
-			moment,
-			isAutorenewalEnabled,
-			isProductOwner,
-			hideAutoRenew,
-			getEditPaymentMethodUrlFor,
-			getManagePurchaseUrlFor,
-		} = this.props;
-
-		if ( isDomainTransfer( purchase ) ) {
-			return null;
-		}
-
-		if (
-			( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
-			! isExpired( purchase )
-		) {
-			const dateSpan = <span className="manage-purchase__detail-date-span" />;
-			const subsRenewText = isAutorenewalEnabled
-				? translate( 'Auto-renew is ON' )
-				: translate( 'Auto-renew is OFF' );
-			const subsBillingText =
-				isAutorenewalEnabled && ! hideAutoRenew
-					? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
-							args: {
-								renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
-							},
-							components: {
-								dateSpan,
-							},
-					  } )
-					: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
-							args: {
-								expireDate: moment( purchase.expiryDate ).format( 'LL' ),
-							},
-							components: {
-								dateSpan,
-							},
-					  } );
-			return (
-				<li>
-					<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
-					{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
-					<span
-						className={ classNames( 'manage-purchase__detail', {
-							'is-expiring': isCloseToExpiration( purchase ),
-						} ) }
-					>
-						{ subsBillingText }
-					</span>
-					{ site && ! hideAutoRenew && isProductOwner && (
-						<span className="manage-purchase__detail">
-							<AutoRenewToggle
-								planName={ site.plan.product_name_short }
-								siteDomain={ site.domain }
-								siteSlug={ site.slug }
-								purchase={ purchase }
-								toggleSource="manage-purchase"
-								getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
-							/>
-						</span>
-					) }
-				</li>
-			);
-		}
-
-		return (
-			<li>
-				<em className="manage-purchase__detail-label">
-					{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
-				</em>
-				<span className="manage-purchase__detail">
-					{ renderRenewsOrExpiresOn( {
-						moment,
-						purchase,
-						siteSlug,
-						translate,
-						getManagePurchaseUrlFor,
-					} ) }
-				</span>
-			</li>
-		);
-	}
-
 	isDataLoading( props ) {
 		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
 	}
@@ -183,7 +94,7 @@ class PurchaseMeta extends Component {
 						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
 						<span className="manage-purchase__detail">{ renderPrice( this.props ) }</span>
 					</li>
-					{ this.renderExpiration() }
+					{ renderExpiration( this.props ) }
 					{ renderPaymentDetails( this.props ) }
 				</ul>
 				{ renderRenewErrorMessage( this.props ) }
@@ -474,6 +385,93 @@ function renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) {
 				}
 			) }
 		</div>
+	);
+}
+
+function renderExpiration( {
+	purchase,
+	site,
+	siteSlug,
+	translate,
+	moment,
+	isAutorenewalEnabled,
+	isProductOwner,
+	hideAutoRenew,
+	getEditPaymentMethodUrlFor,
+	getManagePurchaseUrlFor,
+} ) {
+	if ( isDomainTransfer( purchase ) ) {
+		return null;
+	}
+
+	if (
+		( isDomainRegistration( purchase ) || isPlan( purchase ) || isGoogleApps( purchase ) ) &&
+		! isExpired( purchase )
+	) {
+		const dateSpan = <span className="manage-purchase__detail-date-span" />;
+		const subsRenewText = isAutorenewalEnabled
+			? translate( 'Auto-renew is ON' )
+			: translate( 'Auto-renew is OFF' );
+		const subsBillingText =
+			isAutorenewalEnabled && ! hideAutoRenew
+				? translate( 'You will be billed on {{dateSpan}}%(renewDate)s{{/dateSpan}}', {
+						args: {
+							renewDate: purchase.renewDate && moment( purchase.renewDate ).format( 'LL' ),
+						},
+						components: {
+							dateSpan,
+						},
+				  } )
+				: translate( 'Expires on {{dateSpan}}%(expireDate)s{{/dateSpan}}', {
+						args: {
+							expireDate: moment( purchase.expiryDate ).format( 'LL' ),
+						},
+						components: {
+							dateSpan,
+						},
+				  } );
+		return (
+			<li>
+				<em className="manage-purchase__detail-label">{ translate( 'Subscription Renewal' ) }</em>
+				{ ! hideAutoRenew && <span className="manage-purchase__detail">{ subsRenewText }</span> }
+				<span
+					className={ classNames( 'manage-purchase__detail', {
+						'is-expiring': isCloseToExpiration( purchase ),
+					} ) }
+				>
+					{ subsBillingText }
+				</span>
+				{ site && ! hideAutoRenew && isProductOwner && (
+					<span className="manage-purchase__detail">
+						<AutoRenewToggle
+							planName={ site.plan.product_name_short }
+							siteDomain={ site.domain }
+							siteSlug={ site.slug }
+							purchase={ purchase }
+							toggleSource="manage-purchase"
+							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+						/>
+					</span>
+				) }
+			</li>
+		);
+	}
+
+	return (
+		<li>
+			<em className="manage-purchase__detail-label">
+				{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
+			</em>
+			<span className="manage-purchase__detail">
+				{ renderRenewsOrExpiresOn( {
+					moment,
+					purchase,
+					siteSlug,
+					translate,
+					getManagePurchaseUrlFor,
+				} ) }
+			</span>
+		</li>
 	);
 }
 
