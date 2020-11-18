@@ -76,9 +76,9 @@ class PurchaseMeta extends Component {
 	};
 
 	renderRenewErrorMessage() {
-		const { isJetpack, purchase, translate } = this.props;
+		const { isJetpack, purchase, translate, site } = this.props;
 
-		if ( this.props.site ) {
+		if ( site ) {
 			return null;
 		}
 
@@ -92,7 +92,7 @@ class PurchaseMeta extends Component {
 						{
 							args: {
 								purchaseName: getName( purchase ),
-								siteSlug: this.props.purchase.domain,
+								siteSlug: purchase.domain,
 							},
 							components: {
 								supportPageLink: (
@@ -118,7 +118,7 @@ class PurchaseMeta extends Component {
 					{
 						args: {
 							purchaseName: getName( purchase ),
-							siteSlug: this.props.purchase.domain,
+							siteSlug: purchase.domain,
 						},
 						components: {
 							contactSupportLink: <a href={ CALYPSO_CONTACT } />,
