@@ -58,7 +58,23 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 class PurchaseMeta extends Component {
 	render() {
-		const { translate, purchaseId, hasLoadedSites, hasLoadedPurchasesFromServer } = this.props;
+		const {
+			translate,
+			purchaseId,
+			hasLoadedSites,
+			hasLoadedPurchasesFromServer,
+			owner,
+			isJetpack,
+			purchase,
+			site,
+			siteSlug,
+			moment,
+			isAutorenewalEnabled,
+			isProductOwner,
+			hideAutoRenew,
+			getEditPaymentMethodUrlFor,
+			getManagePurchaseUrlFor,
+		} = this.props;
 
 		const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
 
@@ -69,15 +85,35 @@ class PurchaseMeta extends Component {
 		return (
 			<>
 				<ul className="manage-purchase__meta">
-					{ renderOwner( this.props ) }
+					{ renderOwner( { translate, owner } ) }
 					<li>
 						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
-						<span className="manage-purchase__detail">{ renderPrice( this.props ) }</span>
+						<span className="manage-purchase__detail">
+							{ renderPrice( { purchase, translate } ) }
+						</span>
 					</li>
-					{ renderExpiration( this.props ) }
-					{ renderPaymentDetails( this.props ) }
+					{ renderExpiration( {
+						purchase,
+						site,
+						siteSlug,
+						translate,
+						moment,
+						isAutorenewalEnabled,
+						isProductOwner,
+						hideAutoRenew,
+						getEditPaymentMethodUrlFor,
+						getManagePurchaseUrlFor,
+					} ) }
+					{ renderPaymentDetails( {
+						purchase,
+						translate,
+						getEditPaymentMethodUrlFor,
+						siteSlug,
+						site,
+						moment,
+					} ) }
 				</ul>
-				{ renderRenewErrorMessage( this.props ) }
+				{ renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) }
 			</>
 		);
 	}
