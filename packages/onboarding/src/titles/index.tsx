@@ -16,8 +16,5 @@ export const Title: React.FunctionComponent< TitlesProps > = ( { className, chil
 );
 
 export const SubTitle: React.FunctionComponent< TitlesProps > = ( { className, children } ) => (
-	<h2 className={ classnames( 'onboarding-subtitle', className ) }>
-		{ className }
-		{ children }
-	</h2>
+	<h2 className={ classnames( 'onboarding-subtitle', className ) }>{ children }</h2>
 );
