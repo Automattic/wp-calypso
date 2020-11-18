@@ -42,6 +42,6 @@
 		"selenium-webdriver": "4.0.0-alpha.1"
 	},
 	"dependencies": {
-		"keytar": "6.0.1"
+		"keytar": "7.1.0"
 	}
 }
