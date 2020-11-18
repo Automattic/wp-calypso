@@ -5,6 +5,7 @@ import './public-path';
  * Internal dependencies
  */
 import './style-tour.scss';
+import SlideControl from './slide-control';
 
 /**
  * External dependencies
@@ -33,7 +34,13 @@ function WelcomeTourCard( {
 				<p>{ description }</p>
 			</CardBody>
 			<CardFooter>
-				<div>• • • • • •</div>
+				{ /* TODO: revist naming for this component */ }
+				<SlideControl
+					className=""
+					currentPage={ cardIndex }
+					numberOfPages={ lastCardIndex + 1 }
+					setCurrentPage={ setCurrentCard }
+				/>
 				<div>
 					<Button isTertiary={ true } onClick={ () => onDismiss() }>
 						No thanks
