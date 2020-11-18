@@ -34,7 +34,9 @@ function LaunchWpcomNuxTour() {
 }
 
 function WelcomeTourFrame() {
+	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
+	const [ currentCard, setCurrentCard ] = useState( 0 );
 	// TODO: replace with wp.data
 	const [ isNuxEnabled, setIsNuxEnabled ] = useState( true );
 	const dismissWpcomNuxTour = () => {
@@ -47,20 +49,18 @@ function WelcomeTourFrame() {
 		return null;
 	}
 
-	const cardContent = getTourContent();
-
 	return (
 		<div className="wpcom-editor-welcome-tour-container">
 			{ ! isMinimized ? (
-				cardContent.map( ( card, index ) => (
-					<WelcomeTourCard
-						cardIndex={ index }
-						heading={ card.heading }
-						key={ card.heading }
-						onDismiss={ dismissWpcomNuxTour }
-						onMinimize={ setIsMinimized }
-					/>
-				) )
+				<WelcomeTourCard
+					cardContent={ cardContent[ currentCard ] }
+					cardIndex={ currentCard }
+					key={ currentCard }
+					lastCardIndex={ cardContent.length - 1 }
+					onDismiss={ dismissWpcomNuxTour }
+					onMinimize={ setIsMinimized }
+					setCurrentCard={ setCurrentCard }
+				/>
 			) : (
 				// <WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
 				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
