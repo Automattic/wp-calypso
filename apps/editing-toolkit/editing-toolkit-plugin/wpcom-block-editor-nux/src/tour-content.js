@@ -21,14 +21,22 @@ function getTourContent() {
 			),
 			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px',
 		},
-		// {
-		// 	heading: __( 'Everything is a block', 'full-site-editing' ),
-		// 	description: __(
-		// 		'Edit your homepage, add the pages you need, and change your site’s look and feel.',
-		// 		'full-site-editing'
-		// 	),
-		// 	imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px',
-		// },
+		{
+			heading: __( 'Everything is a block', 'full-site-editing' ),
+			description: __(
+				'Edit your homepage, add the pages you need, and change your site’s look and feel.',
+				'full-site-editing'
+			),
+			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1.jpg?resize=400px',
+		},
+		{
+			heading: __( 'Click a block to change it', 'full-site-editing' ),
+			description: __(
+				'Use the toolbar to change the appearance of a selected block. Try making it bold.',
+				'full-site-editing'
+			),
+			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-3.jpg?resize=400px',
+		},
 	];
 }
 
