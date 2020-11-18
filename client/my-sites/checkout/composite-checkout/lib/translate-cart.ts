@@ -39,6 +39,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		total_cost_display,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
+		sub_total_with_taxes_display,
 		savings_total_display,
 		savings_total_integer,
 		currency,
@@ -92,7 +93,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 					args: {
 						// Clamp the credits display value to the total
 						discountAmount: doesPurchaseHaveFullCredits( serverCart )
-							? sub_total_display
+							? sub_total_with_taxes_display
 							: credits_display,
 					},
 				} )
