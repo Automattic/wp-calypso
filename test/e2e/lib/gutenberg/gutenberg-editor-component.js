@@ -354,7 +354,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
 
 		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
 		);
 
 		let insertedBlockSelector = By.css(
