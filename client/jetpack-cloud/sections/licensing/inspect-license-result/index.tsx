@@ -16,6 +16,7 @@ import {
 	getInspectionResult,
 	isInspecting as isInspectingSelector,
 	getInspectionError,
+	getInspectedLicenseAuthToken,
 } from 'calypso/state/jetpack-licensing/selectors';
 
 /**
@@ -25,6 +26,7 @@ import './style.scss';
 
 const InspectLicenseResult: React.FC = () => {
 	const licenseKey = useSelector( getInspectedLicenseKey );
+	const authToken = useSelector( getInspectedLicenseAuthToken );
 	const result = useSelector( getInspectionResult );
 	const error = useSelector( getInspectionError );
 	const isInspecting = useSelector( isInspectingSelector );
@@ -35,7 +37,7 @@ const InspectLicenseResult: React.FC = () => {
 
 	return (
 		<>
-			<QueryJetpackInspectLicense licenseKey={ licenseKey } />
+			<QueryJetpackInspectLicense licenseKey={ licenseKey } authToken={ authToken } />
 			<Card className="inspect-license-result">
 				<CardHeading>{ licenseKey }</CardHeading>
 

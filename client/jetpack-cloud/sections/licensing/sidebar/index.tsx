@@ -47,8 +47,7 @@ class JetpackCloudLicensingSidebar extends Component {
 				<SidebarRegion>
 					<SidebarMenu>
 						<SidebarItem
-							materialIcon="confirmation_number"
-							materialIconStyle="filled"
+							icon="next-page"
 							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
