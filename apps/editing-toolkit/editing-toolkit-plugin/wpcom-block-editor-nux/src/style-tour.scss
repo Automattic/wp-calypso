@@ -30,6 +30,16 @@
 .wpcom-editor-welcome-tour__resume-btn-text {
 	margin-right: 60px;
 }
+.wpcom-editor-welcome-tour-card-frame {
+	position: relative;
+
+	// TODO update markup/css  if this isn't ok
+	.components-guide__page-control {
+		bottom: 0;
+		left: 16px;
+		position: absolute;
+	}
+}
 
 .welcome-tour-card {
 	max-width: 400px;
