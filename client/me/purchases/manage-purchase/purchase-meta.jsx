@@ -115,7 +115,12 @@ export default function PurchaseMeta( {
 					moment,
 				} ) }
 			</ul>
-			{ renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) }
+			<RenewErrorMessage
+				isJetpack={ isJetpack }
+				purchase={ purchase }
+				translate={ translate }
+				site={ site }
+			/>
 		</>
 	);
 }
@@ -371,7 +376,7 @@ function renderPaymentDetails( {
 	);
 }
 
-function renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) {
+function RenewErrorMessage( { isJetpack, purchase, translate, site } ) {
 	if ( site ) {
 		return null;
 	}
