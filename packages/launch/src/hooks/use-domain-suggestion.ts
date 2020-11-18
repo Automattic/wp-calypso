@@ -11,7 +11,7 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import { useDomainSearch } from './';
 
 export function useDomainSuggestion(): DomainSuggestions.DomainSuggestion | undefined {
-	const domainSearch = useDomainSearch();
+	const { domainSearch } = useDomainSearch();
 
 	const suggestion = useSelect(
 		( select ) => {

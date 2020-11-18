@@ -93,7 +93,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 
 // Props in common between all summary steps + a few props from <DomainPicker> +
 // the remaining extra props
-type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
+type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean; isLoading: boolean } & Pick<
 		React.ComponentProps< typeof DomainPicker >,
 		| 'existingSubdomain'
 		| 'currentDomain'
@@ -112,6 +112,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	onDomainSelect,
 	onExistingSubdomainSelect,
 	locale,
+	isLoading,
 } ) => {
 	return (
 		<SummaryStep
@@ -173,6 +174,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 									</p>
 								</>
 							}
+							areDependenciesLoading={ isLoading }
 							existingSubdomain={ existingSubdomain }
 							currentDomain={ currentDomain }
 							onDomainSelect={ onDomainSelect }
@@ -437,7 +439,7 @@ const Summary: React.FunctionComponent = () => {
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
-	const domainSearch = useDomainSearch();
+	const { domainSearch, isLoading } = useDomainSearch();
 
 	const site = useSite();
 
@@ -467,7 +469,7 @@ const Summary: React.FunctionComponent = () => {
 		<SiteTitleStep
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
-			value={ title }
+			value={ title || '' }
 			onChange={ updateTitle }
 			onBlur={ saveTitle }
 		/>
@@ -482,6 +484,7 @@ const Summary: React.FunctionComponent = () => {
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			onDomainSelect={ setDomain }
+			isLoading={ isLoading }
 			/** NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if

@@ -10,10 +10,10 @@ import { LAUNCH_STORE } from '../stores';
 import { useSite, useTitle } from './';
 import { isDefaultSiteTitle } from '../utils';
 
-export function useDomainSearch(): string {
+export function useDomainSearch(): { domainSearch: string; isLoading: boolean } {
 	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { title } = useTitle();
-	const { currentDomainName } = useSite();
+	const { currentDomainName, isLoadingSite } = useSite();
 
 	let search = domainSearch.trim() || title;
 
@@ -21,5 +21,8 @@ export function useDomainSearch(): string {
 		search = currentDomainName?.split( '.' )[ 0 ] ?? '';
 	}
 
-	return search;
+	return {
+		domainSearch: search,
+		isLoading: isLoadingSite,
+	};
 }

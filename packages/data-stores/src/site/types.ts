@@ -76,7 +76,7 @@ export interface SiteDetailsPlan {
 
 export interface SiteDetails {
 	ID: number;
-	name: string;
+	name: string | undefined;
 	description: string;
 	URL: string;
 	launch_status: string;
