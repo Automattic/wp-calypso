@@ -18,9 +18,7 @@ export default class JetpackComPricingPage extends AsyncBaseContainer {
 	}
 
 	async buyJetpackPlan( planSlug ) {
-		const planCTA = By.css(
-			`[data-e2e-product-slug="${ planSlug }"] .jetpack-product-card-alt__button`
-		);
+		const planCTA = By.css( `[data-e2e-product-slug="${ planSlug }"]` );
 		return await driverHelper.clickWhenClickable( this.driver, planCTA );
 	}
 }
