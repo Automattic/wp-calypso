@@ -10,12 +10,12 @@ import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useHistory } from 'react-router-dom';
-import { BackButton } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
  */
 import { LAUNCH_STORE } from '../../stores';
+import GoBackButton from '../go-back-button';
 
 import './style.scss';
 
@@ -39,7 +39,9 @@ const PlanDetails: React.FunctionComponent = () => {
 
 	return (
 		<div>
-			<BackButton onClick={ goBackToSummary }>{ __( 'Go back', __i18n_text_domain__ ) }</BackButton>
+			<div className="focused-launch-plan-details__back-button-wrapper">
+				<GoBackButton onClick={ goBackToSummary } />
+			</div>
 			<div className="focused-launch-plan-details__header">
 				<div>
 					<Title>{ __( 'Select a plan', __i18n_text_domain__ ) }</Title>
