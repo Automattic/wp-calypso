@@ -31,7 +31,9 @@ const BlackFriday2020Banner: React.FC = () => {
 
 				<img
 					src={ `${ banner }` }
-					alt={ translate( 'Use code JETBLACK at checkout through November 30.' ) }
+					alt={ translate(
+						'Black Friday Sale! Use code JETBLACK at checkout through November 30.'
+					) }
 				/>
 			</picture>
 		</div>

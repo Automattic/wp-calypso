@@ -52,14 +52,16 @@ const Header: React.FC< HeaderProps > = ( { urlQueryArgs } ) => {
 		);
 
 	// Black Friday 2020 promotion; runs Nov 20-30 automatically. Safe to remove after Dec 1
-	const promoStartDate = moment( '2020-11-20', 'YYYY-MM-DD h:mm:ss a' );
-	const promoEndDate = moment( '2020-11-30 11:59:59 pm', 'YYYY-MM-DD h:mm:ss a' );
+	// The banner should go live at November 20, 00:00:00 UTC and then go dark on November 30, 23:59:59 UTC
+	const promoStartDateUTC = moment.utc( '2020-11-20', 'YYYY-MM-DD HH:mm:ss' );
+	const promoEndDateUTC = moment.utc( '2020-11-30 23:59:59', 'YYYY-MM-DD HH:mm:ss' );
 	const today = moment();
+	const todayUTC = moment.utc( today );
 
 	// Use query param `?bf=true` to preview the banner outside of Black Friday: https://cloud.jetpack.com/pricing?bf=true
-	const hasPromoQueryParam = urlQueryArgs?.bf && urlQueryArgs.bf === 'true' ? true : false;
+	const hasPromoQueryParam = urlQueryArgs?.bf === 'true';
 	const isWithinPromoDate =
-		moment( today ).isBetween( promoStartDate, promoEndDate ) || hasPromoQueryParam;
+		todayUTC.isBetween( promoStartDateUTC, promoEndDateUTC ) || hasPromoQueryParam;
 
 	return (
 		<>
