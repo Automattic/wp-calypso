@@ -84,18 +84,14 @@ class Layout extends Component {
 		}
 
 		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
-		if ( this.props.navUnificationVariation === 'treatment' ) {
-			config.enable( 'nav-unification' );
-
+		if ( config.isEnabled( 'nav-unification' ) ) {
 			window.addEventListener( 'scroll', scrollCallback );
 			window.addEventListener( 'resize', scrollCallback );
-		} else {
-			config.disable( 'nav-unification' );
 		}
 	}
 
 	componentWillUnmount() {
-		if ( this.props.navUnificationVariation === 'treatment' ) {
+		if ( config.isEnabled( 'nav-unification' ) ) {
 			window.removeEventListener( 'scroll', scrollCallback );
 			window.removeEventListener( 'resize', scrollCallback );
 		}
@@ -178,6 +174,12 @@ class Layout extends Component {
 
 			return optionalProps;
 		};
+
+		if ( this.props.navUnificationVariation === 'treatment' ) {
+			config.enable( 'nav-unification' );
+		} else {
+			config.disable( 'nav-unification' );
+		}
 
 		const { shouldShowAppBanner } = this.props;
 		return (
