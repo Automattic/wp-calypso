@@ -18,3 +18,8 @@ export function getInspectionResult( state ) {
 export function getInspectionError( state ) {
 	return state.jetpackLicensing.inspectLicense.error;
 }
+
+// TODO remove this once we have an auth token API for licensing.
+export function getInspectedLicenseAuthToken( state ) {
+	return state.jetpackLicensing.inspectLicense.authToken;
+}

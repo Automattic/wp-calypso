@@ -12,15 +12,15 @@ import { isInspecting } from 'calypso/state/jetpack-licensing/selectors';
 import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
 import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 
-export const setInspectedLicenseKey = ( licenseKey ) => ( dispatch, getState ) => {
+export const setInspectedLicenseKey = ( licenseKey, authToken ) => ( dispatch, getState ) => {
 	if ( isInspecting( getState() ) ) {
 		return;
 	}
 
-	dispatch( { type: JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE, licenseKey } );
+	dispatch( { type: JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE, licenseKey, authToken } );
 };
 
-export const inspectLicense = ( licenseKey ) => ( dispatch, getState ) => {
+export const inspectLicense = ( licenseKey, authToken ) => ( dispatch, getState ) => {
 	if ( isInspecting( getState() ) ) {
 		return;
 	}
@@ -31,7 +31,7 @@ export const inspectLicense = ( licenseKey ) => ( dispatch, getState ) => {
 	} );
 
 	// Create a fresh instance as licensing endpoints use a different token.
-	wpcom = wpcomUndocumented( 'TBD token goes here', wpcomXhrWrapper );
+	const wpcom = wpcomUndocumented( authToken, wpcomXhrWrapper );
 
 	wpcom
 		.undocumented()
@@ -41,7 +41,7 @@ export const inspectLicense = ( licenseKey ) => ( dispatch, getState ) => {
 				dispatch( {
 					type: JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_SUCCESS,
 					licenseKey,
-					license: response,
+					license: JSON.stringify( response ),
 				} ),
 			( error ) => {
 				dispatch( {

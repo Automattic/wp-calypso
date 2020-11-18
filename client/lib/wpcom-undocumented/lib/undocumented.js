@@ -2536,7 +2536,7 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 };
 
 Undocumented.prototype.inspectJetpackLicense = function ( licenseKey ) {
-	return this.wpcom.req.post(
+	return this.wpcom.req.get(
 		{
 			apiNamespace: 'wpcom/v2',
 			path: '/jetpack-licensing/license',
