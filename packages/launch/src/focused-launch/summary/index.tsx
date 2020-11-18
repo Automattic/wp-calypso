@@ -93,7 +93,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 
 // Props in common between all summary steps + a few props from <DomainPicker> +
 // the remaining extra props
-type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
+type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean; isLoading: boolean } & Pick<
 		React.ComponentProps< typeof DomainPicker >,
 		| 'existingSubdomain'
 		| 'currentDomain'
@@ -101,7 +101,7 @@ type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean } & Pick<
 		| 'onDomainSelect'
 		| 'onExistingSubdomainSelect'
 		| 'locale'
-	> & { isLoading: boolean };
+	>;
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	stepIndex,
