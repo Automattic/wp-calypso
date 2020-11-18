@@ -25,4 +25,5 @@ export const TASK_RENEW_EXPIRED_PLAN = 'home-task-renew-expired-plan';
 export const TASK_RENEW_EXPIRING_PLAN = 'home-task-renew-expiring-plan';
 export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_SITE_SETUP_CHECKLIST_ECOMMERCE = 'home-task-site-setup-checklist-ecommerce';
+export const TASK_SITE_SETUP_CHECKLIST_PODCASTING = 'home-task-site-setup-checklist-podcasting';
 export const TASK_WEBINARS = 'home-task-webinars';
