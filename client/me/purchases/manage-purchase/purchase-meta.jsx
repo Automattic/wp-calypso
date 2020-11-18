@@ -75,49 +75,6 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	renderPrice() {
-		const { purchase, translate } = this.props;
-		const { priceText, currencyCode, productSlug } = purchase;
-		const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
-		let period = translate( 'year' );
-
-		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
-			return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
-				args: { priceText, currencyCode },
-				components: {
-					period: <span className="manage-purchase__time-period" />,
-				},
-			} );
-		}
-
-		if ( isIncludedWithPlan( purchase ) ) {
-			return translate( 'Free with Plan' );
-		}
-
-		if ( plan && plan.term ) {
-			switch ( plan.term ) {
-				case TERM_BIENNIALLY:
-					period = translate( 'two years' );
-					break;
-
-				case TERM_MONTHLY:
-					period = translate( 'month' );
-					break;
-			}
-		}
-
-		return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
-			args: {
-				priceText,
-				currencyCode,
-				period,
-			},
-			components: {
-				period: <span className="manage-purchase__time-period" />,
-			},
-		} );
-	}
-
 	handleEditPaymentMethodClick = () => {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
@@ -307,7 +264,7 @@ class PurchaseMeta extends Component {
 					{ renderOwner( this.props ) }
 					<li>
 						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
-						<span className="manage-purchase__detail">{ this.renderPrice() }</span>
+						<span className="manage-purchase__detail">{ renderPrice( this.props ) }</span>
 					</li>
 					{ this.renderExpiration() }
 					{ this.renderPaymentDetails() }
@@ -461,6 +418,48 @@ function renderPaymentInfo( { purchase, translate, moment } ) {
 	}
 
 	return translate( 'None' );
+}
+
+function renderPrice( { purchase, translate } ) {
+	const { priceText, currencyCode, productSlug } = purchase;
+	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
+	let period = translate( 'year' );
+
+	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+		return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
+			args: { priceText, currencyCode },
+			components: {
+				period: <span className="manage-purchase__time-period" />,
+			},
+		} );
+	}
+
+	if ( isIncludedWithPlan( purchase ) ) {
+		return translate( 'Free with Plan' );
+	}
+
+	if ( plan && plan.term ) {
+		switch ( plan.term ) {
+			case TERM_BIENNIALLY:
+				period = translate( 'two years' );
+				break;
+
+			case TERM_MONTHLY:
+				period = translate( 'month' );
+				break;
+		}
+	}
+
+	return translate( '%(priceText)s %(currencyCode)s {{period}}/ %(period)s{{/period}}', {
+		args: {
+			priceText,
+			currencyCode,
+			period,
+		},
+		components: {
+			period: <span className="manage-purchase__time-period" />,
+		},
+	} );
 }
 
 export default connect( ( state, props ) => {
