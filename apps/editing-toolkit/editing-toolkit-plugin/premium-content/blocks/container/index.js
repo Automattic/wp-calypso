@@ -70,6 +70,10 @@ const settings = {
 			type: 'boolean',
 			default: false,
 		},
+		isPremiumContentChild: {
+			type: 'boolean',
+			default: true,
+		},
 	},
 	/**
 	 * This is the display title for your block, which can be translated with `i18n` functions.
@@ -155,6 +159,7 @@ const settings = {
 	providesContext: {
 		'premium-content/planId': 'selectedPlanId',
 		'premium-content/isPreview': 'isPreview',
+		isPremiumContentChild: 'isPremiumContentChild',
 	},
 };
 
