@@ -52,18 +52,7 @@ export function useHasPaidPlanFromPath() {
 }
 
 export function useNewSiteVisibility(): Site.Visibility {
-	const currentSlug = useSelectedPlan()?.storeSlug;
-	const isEcommerce = useSelect( ( select ) =>
-		select( PLANS_STORE ).isPlanEcommerce( currentSlug )
-	);
-
-	if ( isEcommerce ) {
-		return Site.Visibility.PublicIndexed;
-	} else if ( isEnabled( 'coming-soon-v2' ) ) {
-		return Site.Visibility.PublicNotIndexed;
-	}
-
-	return Site.Visibility.Private;
+	return isEnabled( 'coming-soon-v2' ) ? Site.Visibility.PublicNotIndexed : Site.Visibility.Private;
 }
 
 export function useShouldRedirectToEditorAfterCheckout() {
