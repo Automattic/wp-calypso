@@ -64,6 +64,9 @@ export class SignupProcessingScreen extends Component {
 
 	componentDidMount() {
 		const { flowName, localeSlug } = this.props;
+		if ( ! localeSlug ) {
+			return;
+		}
 		const locale = localeSlug.split( /[-_]/ )[ 0 ];
 		if ( flowName !== 'onboarding' || ! [ 'en', 'ja' ].includes( locale ) ) {
 			return;
