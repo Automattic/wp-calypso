@@ -75,12 +75,12 @@ class PurchaseMeta extends Component {
 		getManagePurchaseUrlFor: managePurchase,
 	};
 
-	handleEditPaymentMethodClick = () => {
-		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
-	};
-
 	renderPaymentDetails() {
-		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug } = this.props;
+		const { purchase, translate, getEditPaymentMethodUrlFor, siteSlug, site, moment } = this.props;
+
+		const handleEditPaymentMethodClick = () => {
+			recordTracksEvent( 'calypso_purchases_edit_payment_method' );
+		};
 
 		if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
 			return null;
@@ -89,7 +89,9 @@ class PurchaseMeta extends Component {
 		const paymentDetails = (
 			<span>
 				<em className="manage-purchase__detail-label">{ translate( 'Payment method' ) }</em>
-				<span className="manage-purchase__detail">{ renderPaymentInfo( this.props ) }</span>
+				<span className="manage-purchase__detail">
+					{ renderPaymentInfo( { purchase, translate, moment } ) }
+				</span>
 			</span>
 		);
 
@@ -97,7 +99,7 @@ class PurchaseMeta extends Component {
 			! canEditPaymentDetails( purchase ) ||
 			! isPaidWithCreditCard( purchase ) ||
 			! cardProcessorSupportsUpdates( purchase ) ||
-			! this.props.site
+			! site
 		) {
 			return <li>{ paymentDetails }</li>;
 		}
@@ -106,7 +108,7 @@ class PurchaseMeta extends Component {
 			<li>
 				<a
 					href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
-					onClick={ this.handleEditPaymentMethodClick }
+					onClick={ handleEditPaymentMethodClick }
 				>
 					{ paymentDetails }
 				</a>
