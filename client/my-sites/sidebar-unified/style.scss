@@ -194,11 +194,11 @@ $font-size: rem( 14px );
 			opacity: 0.6;
 		}
 
-		.sidebar__menu-item-parent {
-			&.selected {
-				.sidebar__menu-link {
-					background: var( --color-sidebar-menu-selected-background );
-					color: white;
+		// .sidebar__menu-item-parent {
+		// 	&.selected {
+		// 		// .sidebar__menu-link {
+		// 		// 	background: var( --color-sidebar-menu-selected-background );
+		// 		// 	color: white;
 
 		// 		// 	.sidebar__menu-icon {
 		// 		// 		color: white;
@@ -208,12 +208,12 @@ $font-size: rem( 14px );
 						opacity: 1;
 					}
 
-					&::after {
-						display: block;
-					}
-				}
-			}
-		}
+		// 		// 	&::after {
+		// 		// 		display: block;
+		// 		// 	}
+		// 		// }
+		// 	}
+		// }
 
 		.sidebar__menu,
 		.sidebar__menu-item-parent,
