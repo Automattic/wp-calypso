@@ -16,6 +16,7 @@
 			"calypso/*": [ "./*" ]
 		}
 	},
+	"references": [ { "path": "../packages" } ],
 	"include": [ "**/*", "../build-tools/**" ],
 	"exclude": [
 		"../**/node_modules/**/*",
