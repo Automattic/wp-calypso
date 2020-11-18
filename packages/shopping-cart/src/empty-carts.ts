@@ -18,6 +18,8 @@ export const emptyResponseCart: ResponseCart = {
 	coupon_savings_total_display: '0',
 	savings_total_integer: 0,
 	savings_total_display: '0',
+	sub_total_with_taxes_integer: 0,
+	sub_total_with_taxes_display: '0',
 	sub_total_integer: 0,
 	sub_total_display: '0',
 	currency: 'USD',
