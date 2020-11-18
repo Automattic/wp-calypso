@@ -4,9 +4,10 @@
 import { __ } from '@wordpress/i18n';
 import domReady from '@wordpress/dom-ready';
 import { addAction } from '@wordpress/hooks';
-import { dispatch } from '@wordpress/data';
+import { select, dispatch } from '@wordpress/data';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import 'a8c-fse-common-data-stores';
+import type { Site } from '@automattic/data-stores';
 
 // Depend on `core/editor` store.
 import '@wordpress/editor';
@@ -50,6 +51,18 @@ function updateEditor() {
 
 	handled = true;
 
+	// Asynchronously load site data to check if site is on a free or paid plan
+	// 'select' function is first returning 'undefined' so we retry every 100ms
+	let site: Site.SiteDetails | undefined;
+	const awaitSiteData = setInterval( () => {
+		site = select( 'automattic/site' ).getSite( window._currentSiteId );
+		if ( ! site ) {
+			return;
+		}
+		clearInterval( awaitSiteData );
+	}, 100 );
+	const getIsFreePlan = () => site?.plan?.is_free;
+
 	const awaitSettingsBar = setInterval( () => {
 		const settingsBar = document.querySelector( '.edit-post-header__settings' );
 		if ( ! settingsBar ) {
@@ -82,7 +95,7 @@ function updateEditor() {
 			 * the control launch flow gets replaced by the "Step by Step" launch flow,
 			 * displayed in a modal on top of the editor (no redirect needed)
 			 */
-			const shouldOpenStepByStepLaunch = isGutenboarding;
+			const shouldOpenStepByStepLaunch = isGutenboarding && getIsFreePlan();
 
 			// This currently comes from a feature flag, but should eventually be
 			// replaced with A/B testing logic

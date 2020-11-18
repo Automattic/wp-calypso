@@ -129,6 +129,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
+							{ /* @TODO: should use <Subtitle/> once https://github.com/Automattic/wp-calypso/issues/47418 is solved */ }
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
 								{ createInterpolateElement(
@@ -221,15 +222,15 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							<ul className="focused-launch-summary__side-commentary-list">
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Stand out with a unique domain' ) }
+									{ __( 'Stand out with a unique domain', __i18n_text_domain__ ) }
 								</li>
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Easy to remember and easy to share' ) }
+									{ __( 'Easy to remember and easy to share', __i18n_text_domain__ ) }
 								</li>
 								<li className="focused-launch-summary__side-commentary-list-item">
 									<Icon icon={ check } />
-									{ __( 'Builds brand recognition and trust' ) }
+									{ __( 'Builds brand recognition and trust', __i18n_text_domain__ ) }
 								</li>
 							</ul>
 						</>
@@ -411,15 +412,15 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<ul className="focused-launch-summary__side-commentary-list">
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Advanced tools and customization' ) }
+								{ __( 'Advanced tools and customization', __i18n_text_domain__ ) }
 							</li>
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Unlimited premium themes' ) }
+								{ __( 'Unlimited premium themes', __i18n_text_domain__ ) }
 							</li>
 							<li className="focused-launch-summary__side-commentary-list-item">
 								<Icon icon={ check } />
-								{ __( 'Accept payments' ) }
+								{ __( 'Accept payments', __i18n_text_domain__ ) }
 							</li>
 						</ul>
 					</>
@@ -447,6 +448,15 @@ const Summary: React.FunctionComponent = () => {
 	const site = useSite();
 
 	const { locale } = useContext( LaunchContext );
+
+	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
+
+	// When the summary view is active, the modal should be dismissible, and
+	// the modal title should be visible
+	useEffect( () => {
+		setModalDismissible();
+		showModalTitle();
+	}, [ setModalDismissible, showModalTitle ] );
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
@@ -547,6 +557,9 @@ const Summary: React.FunctionComponent = () => {
 					forwardStepIndex: activeSteps.length > 1,
 				} )
 			) }
+
+			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
+			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
 		</div>
 	);
 };
