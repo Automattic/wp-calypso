@@ -1,26 +1,3 @@
-.purchases-site {
-	margin-bottom: 24px;
-
-	.site-icon {
-		display: inline-block;
-		margin-right: 12px;
-		vertical-align: middle;
-	}
-}
-
-.purchases-site__slug {
-	color: var( --color-neutral );
-	font-size: $font-body-extra-small;
-}
-
-.purchases-site__slug {
-	white-space: nowrap;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		line-height: 15px;
-	}
-}
-
 .concierge-banner {
 	& .action-card__button-container {
 		text-align: left;

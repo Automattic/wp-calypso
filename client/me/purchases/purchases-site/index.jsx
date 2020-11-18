@@ -18,7 +18,6 @@ import { JETPACK_PLANS } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import QuerySites from 'calypso/components/data/query-sites';
 import PurchaseItem from '../purchase-item';
-import PurchaseSiteHeader from './header';
 import PurchaseReconnectNotice from './reconnect-notice';
 import { managePurchase } from '../paths';
 
@@ -28,7 +27,6 @@ import { managePurchase } from '../paths';
 import './style.scss';
 
 const PurchasesSite = ( {
-	showHeader = true,
 	getManagePurchaseUrlFor = managePurchase,
 	hasLoadedSite,
 	isPlaceholder,
@@ -36,42 +34,13 @@ const PurchasesSite = ( {
 	siteId,
 	purchases,
 	name,
-	domain,
 	slug,
 } ) => {
-	let items;
-
 	const isJetpack = ! isPlaceholder && some( purchases, ( purchase ) => isJetpackPlan( purchase ) );
-
-	if ( isPlaceholder ) {
-		items = times( 2, ( index ) => <PurchaseItem isPlaceholder key={ index } /> );
-	} else {
-		items = purchases.map( ( purchase ) => (
-			<PurchaseItem
-				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-				key={ purchase.id }
-				slug={ slug }
-				isDisconnectedSite={ ! site }
-				purchase={ purchase }
-				isJetpack={ isJetpack }
-			/>
-		) );
-	}
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
 			<QuerySites siteId={ siteId } />
-
-			{ ( showHeader || isPlaceholder ) && (
-				<PurchaseSiteHeader
-					siteId={ siteId }
-					name={ name }
-					domain={ domain }
-					isPlaceholder={ isPlaceholder }
-				/>
-			) }
-
-			{ items }
 
 			<AsyncLoad
 				require="calypso/blocks/product-plan-overlap-notices"
@@ -81,6 +50,15 @@ const PurchasesSite = ( {
 				siteId={ siteId }
 			/>
 
+			<Items
+				isJetpack={ isJetpack }
+				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+				isPlaceholder={ isPlaceholder }
+				site={ site }
+				purchases={ purchases }
+				slug={ slug }
+			/>
+
 			{ ! isPlaceholder && hasLoadedSite && ! site && (
 				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
 			) }
@@ -88,14 +66,30 @@ const PurchasesSite = ( {
 	);
 };
 
+const Items = ( { isJetpack, getManagePurchaseUrlFor, isPlaceholder, site, purchases, slug } ) => {
+	if ( isPlaceholder ) {
+		return times( 2, ( index ) => <PurchaseItem isPlaceholder key={ index } /> );
+	}
+
+	return purchases.map( ( purchase ) => (
+		<PurchaseItem
+			getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+			key={ purchase.id }
+			slug={ slug }
+			isDisconnectedSite={ ! site }
+			purchase={ purchase }
+			isJetpack={ isJetpack }
+			site={ site }
+		/>
+	) );
+};
+
 PurchasesSite.propTypes = {
-	showHeader: PropTypes.bool,
 	getManagePurchaseUrlFor: PropTypes.func,
 	isPlaceholder: PropTypes.bool,
 	siteId: PropTypes.number,
 	purchases: PropTypes.array,
 	name: PropTypes.string,
-	domain: PropTypes.string,
 	slug: PropTypes.string,
 };
 

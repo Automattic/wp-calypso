@@ -51,7 +51,6 @@ function SubscriptionsContent( {
 	if ( purchases.length ) {
 		return (
 			<PurchasesSite
-				showHeader={ false }
 				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				key={ selectedSite.ID }
 				siteId={ selectedSite.ID }

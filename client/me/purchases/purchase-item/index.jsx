@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { CompactCard, ProductIcon } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 import {
 	getDisplayName,
 	isExpired,
@@ -23,20 +23,11 @@ import {
 	showCreditCardExpiringWarning,
 	getPartnerName,
 } from 'calypso/lib/purchases';
-import {
-	isDomainProduct,
-	isDomainTransfer,
-	isGoogleApps,
-	isPlan,
-	isTheme,
-	isJetpackProduct,
-	isConciergeSession,
-} from 'calypso/lib/products-values';
+import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
 import Notice from 'calypso/components/notice';
-import Gridicon from 'calypso/components/gridicon';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { getPlanClass, getPlanTermLabel } from 'calypso/lib/plans';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 /**
  * Style dependencies
@@ -137,59 +128,8 @@ class PurchaseItem extends Component {
 		return null;
 	}
 
-	placeholder() {
-		return (
-			<span className="purchase-item__wrapper">
-				<div className="purchase-item__plan-icon" />
-				<div className="purchase-item__details">
-					<div className="purchase-item__title" />
-					<div className="purchase-item__purchase-type" />
-					<div className="purchase-item__purchase-date" />
-				</div>
-			</span>
-		);
-	}
-
 	scrollToTop() {
 		window.scrollTo( 0, 0 );
-	}
-
-	renderIcon() {
-		const { purchase } = this.props;
-
-		if ( ! purchase ) {
-			return null;
-		}
-
-		if ( isPlan( purchase ) || isJetpackProduct( purchase ) ) {
-			return (
-				<div className="purchase-item__plan-icon">
-					<ProductIcon
-						slug={ purchase.productSlug }
-						className={ getPlanClass( purchase.productSlug ) }
-					/>
-				</div>
-			);
-		}
-
-		let icon;
-		if ( isDomainProduct( purchase ) || isDomainTransfer( purchase ) ) {
-			icon = 'domains';
-		} else if ( isTheme( purchase ) ) {
-			icon = 'themes';
-		} else if ( isGoogleApps( purchase ) ) {
-			icon = 'mail';
-		}
-
-		if ( ! icon ) {
-			return null;
-		}
-
-		return (
-			<div className="purchase-item__plan-icon">
-				<Gridicon icon={ icon } size={ 24 } />
-			</div>
-		);
 	}
 
 	getLabelText() {
@@ -201,62 +141,70 @@ class PurchaseItem extends Component {
 					partnerName: getPartnerName( purchase ),
 				},
 			} );
-		} else if ( purchase && purchase.productSlug ) {
-			return getPlanTermLabel( purchase.productSlug, translate );
 		}
 
 		return null;
 	}
 
-	render() {
-		const { isPlaceholder, isDisconnectedSite, purchase, isJetpack } = this.props;
+	renderPurhaseItemContent = () => {
+		const { isPlaceholder, purchase, site } = this.props;
+		const label = this.getLabelText();
 		const classes = classNames(
-			'purchase-item',
+			'purchase-item__wrapper',
 			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
 			{ 'is-placeholder': isPlaceholder },
 			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
 		);
 
-		const label = this.getLabelText();
-
-		let content;
 		if ( isPlaceholder ) {
-			content = this.placeholder();
-		} else {
-			content = (
-				<span className="purchase-item__wrapper">
-					{ this.renderIcon() }
-					<div className="purchase-item__details">
-						<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
-						<div className="purchase-item__purchase-type">{ purchaseType( purchase ) }</div>
-						{ label && <div className="purchase-item__term-label">{ label }</div> }
-						{ ! isPartnerPurchase( purchase ) && (
-							<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
-						) }
-					</div>
-				</span>
-			);
+			return <>Loading...</>;
 		}
+
+		return (
+			<div className={ classes }>
+				<SiteIcon site={ site } />
+
+				<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
+				<div className="purchase-item__purchase-type">
+					{ purchaseType( purchase ) + ' for ' + site.name + ' (' + site.URL + ')' }
+				</div>
+				{ label && <div className="purchase-item__term-label">{ label }</div> }
+				{ ! isPartnerPurchase( purchase ) && (
+					<div className="purchase-item__purchase-date">{ this.renewsOrExpiresOn() }</div>
+				) }
+			</div>
+		);
+	};
+
+	render() {
+		const {
+			isPlaceholder,
+			isDisconnectedSite,
+			getManagePurchaseUrlFor,
+			purchase,
+			slug,
+			isJetpack,
+		} = this.props;
 
 		let onClick;
 		let href;
-		if ( ! isPlaceholder && this.props.getManagePurchaseUrlFor ) {
+		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
 				onClick = this.scrollToTop;
-				href = this.props.getManagePurchaseUrlFor( this.props.slug, this.props.purchase.id );
+				href = getManagePurchaseUrlFor( slug, purchase.id );
 			}
 		}
 
 		return (
 			<CompactCard
-				className={ classes }
+				className="purchase-item"
 				data-e2e-connected-site={ ! isDisconnectedSite }
 				href={ href }
 				onClick={ onClick }
 			>
-				{ content }
+				{ this.renderPurhaseItemContent() }
 			</CompactCard>
 		);
 	}
