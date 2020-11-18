@@ -49,7 +49,10 @@ function FullCreditsSubmitButton( { disabled, onClick } ) {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ responseCart.sub_total_display } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ responseCart.sub_total_with_taxes_display }
+			/>
 		</Button>
 	);
 }
