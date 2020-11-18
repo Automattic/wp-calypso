@@ -27,7 +27,7 @@
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
 		"chai": "3.5.0",
-		"electron": "8.3.0",
+		"electron": "11.0.0",
 		"electron-builder": "^22.4.0",
 		"electron-chromedriver": "4.2.0",
 		"electron-mocha": "8.0.0",
