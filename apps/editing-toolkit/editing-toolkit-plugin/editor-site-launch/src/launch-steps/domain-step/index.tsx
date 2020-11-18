@@ -22,15 +22,9 @@ import './styles.scss';
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
-	const { domainSearch } = useDomainSearch();
+	const { domainSearch, setDomainSearch } = useDomainSearch();
 
-	const {
-		setDomain,
-		unsetDomain,
-		setDomainSearch,
-		unsetPlan,
-		confirmDomainSelection,
-	} = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
 		confirmDomainSelection();

@@ -5,7 +5,7 @@
  */
 import * as React from 'react';
 import { useHistory } from 'react-router-dom';
-import { useDispatch } from '@wordpress/data';
+
 import { __ } from '@wordpress/i18n';
 import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
 import { Title, SubTitle, BackButton } from '@automattic/onboarding';
@@ -17,7 +17,6 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  * Internal dependencies
  */
 import { useSite, useDomainSearch, useDomainSelection } from '../../hooks';
-import { LAUNCH_STORE } from '../../stores';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
@@ -27,9 +26,8 @@ const NUMBER_OF_VISIBLE_DOMAINS = 10;
 
 const DomainDetails: React.FunctionComponent = () => {
 	const { currentDomainName } = useSite();
-	const { domainSearch } = useDomainSearch();
+	const { domainSearch, setDomainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, selectedDomain } = useDomainSelection();
-	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 	const history = useHistory();
 
 	const goBack = () => {
