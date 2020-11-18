@@ -3,7 +3,7 @@
  */
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { times } from 'lodash';
@@ -56,67 +56,63 @@ import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-class PurchaseMeta extends Component {
-	render() {
-		const {
-			translate,
-			purchaseId,
-			hasLoadedSites,
-			hasLoadedPurchasesFromServer,
-			owner,
-			isJetpack,
-			purchase,
-			site,
-			siteSlug,
-			moment,
-			isAutorenewalEnabled,
-			isProductOwner,
-			hideAutoRenew,
-			getEditPaymentMethodUrlFor,
-			getManagePurchaseUrlFor,
-		} = this.props;
+function PurchaseMeta( {
+	translate,
+	purchaseId,
+	hasLoadedSites,
+	hasLoadedPurchasesFromServer,
+	owner,
+	isJetpack,
+	purchase,
+	site,
+	siteSlug,
+	moment,
+	isAutorenewalEnabled,
+	isProductOwner,
+	hideAutoRenew,
+	getEditPaymentMethodUrlFor,
+	getManagePurchaseUrlFor,
+} ) {
+	const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
 
-		const isDataLoading = ! hasLoadedSites || ! hasLoadedPurchasesFromServer;
-
-		if ( isDataLoading || ! purchaseId ) {
-			return renderPlaceholder();
-		}
-
-		return (
-			<>
-				<ul className="manage-purchase__meta">
-					{ renderOwner( { translate, owner } ) }
-					<li>
-						<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
-						<span className="manage-purchase__detail">
-							{ renderPrice( { purchase, translate } ) }
-						</span>
-					</li>
-					{ renderExpiration( {
-						purchase,
-						site,
-						siteSlug,
-						translate,
-						moment,
-						isAutorenewalEnabled,
-						isProductOwner,
-						hideAutoRenew,
-						getEditPaymentMethodUrlFor,
-						getManagePurchaseUrlFor,
-					} ) }
-					{ renderPaymentDetails( {
-						purchase,
-						translate,
-						getEditPaymentMethodUrlFor,
-						siteSlug,
-						site,
-						moment,
-					} ) }
-				</ul>
-				{ renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) }
-			</>
-		);
+	if ( isDataLoading || ! purchaseId ) {
+		return renderPlaceholder();
 	}
+
+	return (
+		<>
+			<ul className="manage-purchase__meta">
+				{ renderOwner( { translate, owner } ) }
+				<li>
+					<em className="manage-purchase__detail-label">{ translate( 'Price' ) }</em>
+					<span className="manage-purchase__detail">
+						{ renderPrice( { purchase, translate } ) }
+					</span>
+				</li>
+				{ renderExpiration( {
+					purchase,
+					site,
+					siteSlug,
+					translate,
+					moment,
+					isAutorenewalEnabled,
+					isProductOwner,
+					hideAutoRenew,
+					getEditPaymentMethodUrlFor,
+					getManagePurchaseUrlFor,
+				} ) }
+				{ renderPaymentDetails( {
+					purchase,
+					translate,
+					getEditPaymentMethodUrlFor,
+					siteSlug,
+					site,
+					moment,
+				} ) }
+			</ul>
+			{ renderRenewErrorMessage( { isJetpack, purchase, translate, site } ) }
+		</>
+	);
 }
 
 PurchaseMeta.propTypes = {
