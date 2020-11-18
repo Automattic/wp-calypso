@@ -79,12 +79,14 @@ class PurchaseMeta extends Component {
 		const {
 			purchase,
 			site,
+			siteSlug,
 			translate,
 			moment,
 			isAutorenewalEnabled,
 			isProductOwner,
 			hideAutoRenew,
 			getEditPaymentMethodUrlFor,
+			getManagePurchaseUrlFor,
 		} = this.props;
 
 		if ( isDomainTransfer( purchase ) ) {
@@ -147,9 +149,17 @@ class PurchaseMeta extends Component {
 		return (
 			<li>
 				<em className="manage-purchase__detail-label">
-					{ renderRenewsOrExpiresOnLabel( this.props ) }
+					{ renderRenewsOrExpiresOnLabel( { purchase, translate } ) }
 				</em>
-				<span className="manage-purchase__detail">{ renderRenewsOrExpiresOn( this.props ) }</span>
+				<span className="manage-purchase__detail">
+					{ renderRenewsOrExpiresOn( {
+						moment,
+						purchase,
+						siteSlug,
+						translate,
+						getManagePurchaseUrlFor,
+					} ) }
+				</span>
 			</li>
 		);
 	}
