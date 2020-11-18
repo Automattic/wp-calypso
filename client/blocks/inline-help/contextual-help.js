@@ -1446,17 +1446,6 @@ const getVideosForSection = () => ( {
 let videosForSection = getVideosForSection();
 
 const getToursForSection = () => ( {
-	'post-editor': [
-		{
-			type: RESULT_TOUR,
-			tour: 'simplePaymentsTour',
-			key: 'tour:simplePaymentsTour',
-			title: translate( 'Collect Payments and Donations' ),
-			description: translate(
-				'It’s easy to add a button that can collect payments or donations. See how!'
-			),
-		},
-	],
 	media: [
 		{
 			type: RESULT_TOUR,
