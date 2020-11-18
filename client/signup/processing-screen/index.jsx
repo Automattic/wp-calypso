@@ -63,13 +63,14 @@ export class SignupProcessingScreen extends Component {
 	}
 
 	componentDidMount() {
-		const { flowName } = this.props;
-		if ( flowName !== 'onboarding' ) {
+		const { flowName, localeSlug } = this.props;
+		const locale = localeSlug.split( /[-_]/ )[ 0 ];
+		if ( flowName !== 'onboarding' || ! [ 'en', 'ja' ].includes( locale ) ) {
 			return;
 		}
 		addHotJarScript();
 		if ( window && window.hj ) {
-			window.hj( 'trigger', 'bizx_questionnaire' );
+			window.hj( 'trigger', 'bizx_questionnaire_' + locale );
 		}
 	}
 
