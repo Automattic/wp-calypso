@@ -74,10 +74,39 @@ const isEnabled = ( data ) => ( /** @type {string} */ feature ) =>
 const enabledFeatures = ( data ) => () =>
 	Object.keys( data.features ).filter( ( feature ) => !! data.features[ feature ] );
 
+/**
+ * Enables a specific feature.
+ *
+ * @param {string} feature Feature name
+ * @param {object} data the json environment configuration to use for getting config values
+ * @api public
+ */
+const enable = ( data ) => ( feature ) => {
+	if ( data.features ) {
+		data.features[ feature ] = true;
+	}
+};
+
+/**
+ * Disables a specific feature.
+ *
+ * @param {string} feature Feature name
+ * @param {object} data the json environment configuration to use for getting config values
+ * @api public
+ */
+
+const disable = ( data ) => ( feature ) => {
+	if ( data.features ) {
+		data.features[ feature ] = false;
+	}
+};
+
 module.exports = ( data ) => {
 	const configApi = config( data );
 	configApi.isEnabled = isEnabled( data );
 	configApi.enabledFeatures = enabledFeatures( data );
+	configApi.enable = enable( data );
+	configApi.disable = disable( data );
 
 	return configApi;
 };

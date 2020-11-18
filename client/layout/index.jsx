@@ -84,13 +84,12 @@ class Layout extends Component {
 
 		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
 		if ( this.props.navUnificationVariation === 'treatment' ) {
-			// Hacky way to set a feature-flag.
-			window.configData.features[ 'nav-unification' ] = true;
+			config.enable( 'nav-unification' );
 
 			window.addEventListener( 'scroll', scrollCallback );
 			window.addEventListener( 'resize', scrollCallback );
 		} else {
-			window.configData.features[ 'nav-unification' ] = false;
+			config.disable( 'nav-unification' );
 		}
 	}
 
