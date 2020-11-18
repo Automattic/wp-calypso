@@ -52,7 +52,7 @@ class PurchasesList extends Component {
 			return true;
 		}
 
-		return ! this.props.sites.length;
+		return ! this.props.sites.length && ! this.props.subscriptions.length;
 	}
 
 	renderConciergeBanner() {
