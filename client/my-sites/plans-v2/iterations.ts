@@ -4,6 +4,8 @@
 import ProductsGridAlt from './products-grid-alt';
 import ProductsGridAlt2 from './products-grid-alt-2';
 import ProductsGridI5 from './products-grid-i5';
+import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
+import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
 
 import SelectorPageAlt from './selector-alt';
 import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans-v2/abtest';
@@ -40,6 +42,14 @@ export function getGridComponent(): React.FC< ProductsGridProps > | undefined {
 		[ Iterations.V1 ]: ProductsGridAlt,
 		[ Iterations.V2 ]: ProductsGridAlt2,
 		[ Iterations.I5 ]: ProductsGridI5,
+	}[ getIteration() as Iterations ];
+}
+
+export function getFaqComponent(): React.FC | undefined {
+	return {
+		[ Iterations.V1 ]: JetpackFAQ,
+		[ Iterations.V2 ]: JetpackFAQ,
+		[ Iterations.I5 ]: JetpackFAQi5,
 	}[ getIteration() as Iterations ];
 }
 
