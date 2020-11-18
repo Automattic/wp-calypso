@@ -52,7 +52,7 @@ function showAppWindow() {
 	} );
 
 	mainWindow.webContents.on( 'did-finish-load', function () {
-		mainWindow.webContents.send( 'app-config', Config, Settings.isDebug(), System.getDetails() );
+		mainWindow.webContents.send( 'app-config', System.getDetails() );
 
 		ipc.on( 'mce-contextmenu', function ( ev ) {
 			mainWindow.webContents.send( 'mce-contextmenu', ev );

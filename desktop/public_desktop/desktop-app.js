@@ -138,7 +138,7 @@ try {
 		window.electron.receive( 'is-calypso-response', document.getElementById( 'wpcom' ) !== null );
 	} );
 
-	window.electron.receive( 'app-config', function ( event, config, debug, details ) {
+	window.electron.receive( 'app-config', function ( _, details ) {
 		// if this is the first run, and on the login page, show Windows and Mac users a pin app reminder
 		if ( details.firstRun && document.querySelectorAll( '.logged-out-auth' ).length > 0 ) {
 			if ( details.platform === 'windows' || details.platform === 'darwin' ) {
