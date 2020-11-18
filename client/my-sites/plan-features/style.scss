@@ -196,6 +196,10 @@ $plan-features-sidebar-width: 272px;
 		padding-top: 0;
 	}
 
+	&.is-p2-free, &.is-p2-plus {
+		padding-left: 24px;
+	}
+
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
 			border-bottom: solid 2px var( --color-plan-blogger );
