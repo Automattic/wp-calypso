@@ -155,10 +155,10 @@ $font-size: rem( 14px );
 			&.selected {
 				.sidebar__menu-link {
 					background: var( --color-sidebar-menu-selected-background );
-					color: white;
+					color: var( --color-sidebar-menu-selected-text );
 
 					.sidebar__menu-icon {
-						color: white;
+						color: var( --color-sidebar-menu-selected-text );
 					}
 
 					img.sidebar__menu-icon {
