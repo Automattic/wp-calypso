@@ -14,7 +14,7 @@ import { reloadCart } from 'calypso/lib/cart/actions';
 
 class HeaderCart extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
+		cart: PropTypes.object.isRequired,
 		selectedSite: PropTypes.object.isRequired,
 		currentRoute: PropTypes.string,
 	};
