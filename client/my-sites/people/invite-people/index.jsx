@@ -30,7 +30,6 @@ import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import EmptyContent from 'calypso/components/empty-content';
@@ -52,7 +51,11 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
-import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
+import {
+	getInviteLinksForSite,
+	getErrors as getValidationErrors,
+	getSuccess as getValidationSuccess,
+} from 'calypso/state/invites/selectors';
 import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -75,12 +78,25 @@ class InvitePeople extends React.Component {
 	static displayName = 'InvitePeople';
 
 	componentDidMount() {
-		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
 		InvitesSentStore.on( 'change', this.refreshFormState );
 	}
 
+	componentDidUpdate( prevProps ) {
+		const { validationSuccess, validationErrors } = this.props;
+
+		if (
+			this.state.role &&
+			( prevProps.validationSuccess !== validationSuccess ||
+				prevProps.validationErrors !== validationErrors )
+		) {
+			this.refreshValidation(
+				validationSuccess[ this.state.role ],
+				validationErrors[ this.state.role ]
+			);
+		}
+	}
+
 	componentWillUnmount() {
-		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
@@ -167,7 +183,7 @@ class InvitePeople extends React.Component {
 			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
 		} );
-		createInviteValidation( this.props.siteId, filteredTokens, role );
+		this.props.createInviteValidation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
 			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
@@ -181,7 +197,7 @@ class InvitePeople extends React.Component {
 	onRoleChange = ( event ) => {
 		const role = event.target.value;
 		this.setState( { role } );
-		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
+		this.props.createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
 	onExternalChange = ( event ) => {
@@ -189,11 +205,7 @@ class InvitePeople extends React.Component {
 		this.setState( { isExternal } );
 	};
 
-	refreshValidation = () => {
-		const errors =
-			InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {};
-		const success =
-			InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [];
+	refreshValidation = ( success = {}, errors = {} ) => {
 		const errorsKeys = Object.keys( errors );
 		const errorToDisplay =
 			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
@@ -720,6 +732,8 @@ const connectComponent = connect(
 			inviteLinks: getInviteLinksForSite( state, siteId ),
 			siteRoles: getSiteRoles( state, siteId ),
 			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
+			validationErrors: getValidationErrors( state, siteId ),
+			validationSuccess: getValidationSuccess( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {
@@ -729,6 +743,7 @@ const connectComponent = connect(
 				activateModule,
 				generateInviteLinks,
 				disableInviteLinks,
+				createInviteValidation,
 			},
 			dispatch
 		),

@@ -170,3 +170,12 @@ export function isDeletingAnyInvite( state, siteId ) {
 		-1 !== indexOf( values( get( state, [ 'invites', 'deleting', siteId ], {} ) ), 'requesting' )
 	);
 }
+
+const DEFAULT_ERRORS = {};
+const DEFAULT_SUCCESS = {};
+
+export const getErrors = ( state, siteId ) =>
+	state.invites?.validation.errors[ siteId ] ?? DEFAULT_ERRORS;
+
+export const getSuccess = ( state, siteId ) =>
+	state.invites?.validation.success[ siteId ] ?? DEFAULT_SUCCESS;
