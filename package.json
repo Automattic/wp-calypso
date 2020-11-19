@@ -164,6 +164,7 @@
 		"@automattic/color-studio": "^2.3.0",
 		"@automattic/components": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/languages": "^1.0.0",
 		"@automattic/typography": "^1.0.0",
 		"@automattic/viewport": "^1.0.0",
