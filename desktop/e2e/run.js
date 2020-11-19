@@ -19,6 +19,7 @@ const APP_ARGS = [
 	'--start-maximized',
 	'--remote-debugging-port=9222',
 	'--disable-dev-shm-usage',
+	'--disable-setuid-sandbox',
 ];
 
 let BUILT_APP_DIR;
