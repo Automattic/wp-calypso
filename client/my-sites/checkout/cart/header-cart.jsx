@@ -3,6 +3,7 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -42,7 +43,6 @@ class HeaderCart extends React.Component {
 
 		return (
 			<PopoverCart
-				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
 				visible={ this.state.isPopoverCartVisible }
 				pinned={ false }
@@ -54,4 +54,4 @@ class HeaderCart extends React.Component {
 	}
 }
 
-export default HeaderCart;
+export default withShoppingCart( HeaderCart );
