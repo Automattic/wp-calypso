@@ -12,7 +12,7 @@ namespace A8C\FSE\Coming_soon;
  *
  * @return boolean
  */
-function show_coming_soon_page() {
+function should_show_coming_soon_page() {
 	global $post;
 
 	// Handle the case where we are not rendering a post.
@@ -125,7 +125,7 @@ add_action( 'wpmu_new_blog', __NAMESPACE__ . '\add_option_to_new_site', 10, 6 );
  * the redirect.
  */
 function coming_soon_page() {
-	if ( ! show_coming_soon_page() ) {
+	if ( ! should_show_coming_soon_page() ) {
 		return;
 	}
 
