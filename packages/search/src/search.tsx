@@ -54,6 +54,7 @@ type Props = {
 	hideClose: boolean;
 	hideOpenIcon: boolean;
 	inputLabel?: string;
+	openIconSide?: 'left' | 'right';
 	maxLength?: number;
 	minLength?: number;
 	onBlur?: ( event: FocusEvent< HTMLInputElement > ) => void;
@@ -103,6 +104,7 @@ class Search extends React.Component< Props, State > {
 		onSearchChange: noop,
 		onSearchOpen: noop,
 		onSearchClose: noop,
+		openIconSide: 'left',
 		//undefined value for overlayStyling is an optimization that will
 		//disable overlay scrolling calculation when no overlay is provided.
 		overlayStyling: undefined,
@@ -130,7 +132,7 @@ class Search extends React.Component< Props, State > {
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => {
+	): void => {
 		event.preventDefault();
 		this.setState( {
 			keyword: '',
@@ -145,7 +147,7 @@ class Search extends React.Component< Props, State > {
 		event:
 			| MouseEvent< HTMLButtonElement | HTMLInputElement >
 			| KeyboardEvent< HTMLButtonElement | HTMLInputElement >
-	) => {
+	): void => {
 		event.preventDefault();
 
 		if ( this.props.disabled ) {
@@ -174,7 +176,7 @@ class Search extends React.Component< Props, State > {
 	closeListener = keyListener( this.closeSearch );
 	openListener = keyListener( this.openSearch );
 
-	componentDidUpdate( _: Props, prevState: State ) {
+	componentDidUpdate( _: Props, prevState: State ): void {
 		this.scrollOverlay();
 		// Focus if the search box was opened
 		if ( this.state.isOpen && ! prevState.isOpen ) {
@@ -201,7 +203,7 @@ class Search extends React.Component< Props, State > {
 		this.props.onSearchChange( this.state.keyword );
 	}
 
-	scrollOverlay = () => {
+	scrollOverlay = (): void => {
 		this.overlay &&
 			window.requestAnimationFrame( () => {
 				if ( this.overlay.current && this.searchInput.current ) {
@@ -213,7 +215,9 @@ class Search extends React.Component< Props, State > {
 	//This is fix for IE11. Does not work on Edge.
 	//On IE11 scrollLeft value for input is always 0.
 	//We are calculating it manually using TextRange object.
-	getScrollLeft = ( inputElement: HTMLInputElement & { createTextRange?: any } ) => {
+	getScrollLeft = (
+		inputElement: HTMLInputElement & { createTextRange?: () => Range }
+	): number => {
 		//TextRange is IE11 specific so this checks if we are not on IE11.
 		if ( ! inputElement.createTextRange ) {
 			return inputElement.scrollLeft;
@@ -231,17 +235,17 @@ class Search extends React.Component< Props, State > {
 		return scrollLeft;
 	};
 
-	focus = () => {
+	focus = (): void => {
 		// if we call focus before the element has been entirely synced up with the DOM, we stand a decent chance of
 		// causing the browser to scroll somewhere odd. Instead, defer the focus until a future turn of the event loop.
 		setTimeout( () => this.searchInput.current?.focus(), 0 );
 	};
 
-	blur = () => this.searchInput.current?.blur();
+	blur = (): void => this.searchInput.current?.blur();
 
-	clear = () => this.setState( { keyword: '' } );
+	clear = (): void => this.setState( { keyword: '' } );
 
-	onBlur = ( event: FocusEvent< HTMLInputElement > ) => {
+	onBlur = ( event: FocusEvent< HTMLInputElement > ): void => {
 		if ( this.props.onBlur ) {
 			this.props.onBlur( event );
 		}
@@ -249,13 +253,13 @@ class Search extends React.Component< Props, State > {
 		this.setState( { hasFocus: false } );
 	};
 
-	onChange = ( event: ChangeEvent< HTMLInputElement > ) => {
+	onChange = ( event: ChangeEvent< HTMLInputElement > ): void => {
 		this.setState( {
 			keyword: event.target?.value ?? this.state.keyword,
 		} );
 	};
 
-	keyUp = ( event: KeyboardEvent< HTMLInputElement > ) => {
+	keyUp = ( event: KeyboardEvent< HTMLInputElement > ): void => {
 		if ( event.key === 'Enter' && window.innerWidth < 480 ) {
 			//dismiss soft keyboards
 			this.blur();
@@ -271,7 +275,7 @@ class Search extends React.Component< Props, State > {
 		this.scrollOverlay();
 	};
 
-	keyDown = ( event: KeyboardEvent< HTMLInputElement > ) => {
+	keyDown = ( event: KeyboardEvent< HTMLInputElement > ): void => {
 		this.scrollOverlay();
 
 		if (
@@ -287,7 +291,7 @@ class Search extends React.Component< Props, State > {
 
 	// Puts the cursor at end of the text when starting
 	// with `initialValue` set.
-	onFocus = () => {
+	onFocus = (): void => {
 		this.setState( { hasFocus: true } );
 		this.props.onSearchOpen();
 
@@ -303,11 +307,12 @@ class Search extends React.Component< Props, State > {
 		}
 	};
 
-	handleSubmit = ( event: FormEvent ) => {
+	handleSubmit = ( event: FormEvent ): void => {
 		event.preventDefault();
+		event.stopPropagation();
 	};
 
-	render() {
+	render(): JSX.Element {
 		const searchValue = this.state.keyword;
 		const placeholder = this.props.placeholder || __( 'Search…' );
 		const inputLabel = this.props.inputLabel;
@@ -331,10 +336,12 @@ class Search extends React.Component< Props, State > {
 		const fadeClass = classNames( 'search-component__input-fade', this.props.dir );
 		const inputClass = classNames( 'search-component__input', this.props.dir );
 
+		const shouldRenderRightOpenIcon = this.props.openIconSide === 'right' && ! this.state.keyword;
+
 		return (
 			<div dir={ this.props.dir } className={ searchClass } role="search">
 				<Spinner />
-				{ this.renderOpenIcon() }
+				{ this.props.openIconSide === 'left' && this.renderOpenIcon() }
 				<form className={ fadeClass } action="." onSubmit={ this.handleSubmit }>
 					<input
 						type="search"
@@ -363,12 +370,12 @@ class Search extends React.Component< Props, State > {
 					/>
 					{ this.renderStylingDiv() }
 				</form>
-				{ this.closeButton() }
+				{ shouldRenderRightOpenIcon ? this.renderOpenIcon() : this.closeButton() }
 			</div>
 		);
 	}
 
-	renderOpenIcon() {
+	renderOpenIcon(): JSX.Element {
 		const enableOpenIcon = this.props.pinned && ! this.state.isOpen;
 
 		return (
@@ -389,7 +396,7 @@ class Search extends React.Component< Props, State > {
 		);
 	}
 
-	renderStylingDiv() {
+	renderStylingDiv(): JSX.Element | null {
 		if ( typeof this.props.overlayStyling === 'function' ) {
 			return (
 				<div className="search-component__text-overlay" ref={ this.overlay }>
@@ -400,7 +407,7 @@ class Search extends React.Component< Props, State > {
 		return null;
 	}
 
-	closeButton() {
+	closeButton(): JSX.Element | null {
 		if ( ! this.props.hideClose && ( this.state.keyword || this.state.isOpen ) ) {
 			return (
 				<Button
