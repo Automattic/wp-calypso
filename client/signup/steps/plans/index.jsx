@@ -31,6 +31,7 @@ import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
+import { isPersonal } from 'calypso/lib/products-values';
 
 /**
  * Style dependencies
@@ -79,7 +80,11 @@ export class PlansStep extends Component {
 		this.props.submitSignupStep( step, {
 			cartItem,
 		} );
-		this.props.goToNextStep();
+		if ( flowName === 'onboarding-secure-your-brand' && isPersonal( cartItem ) ) {
+			this.props.goToNextStep( 'onboarding' );
+		} else {
+			this.props.goToNextStep();
+		}
 	};
 
 	getDomainName() {
