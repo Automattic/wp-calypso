@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -11,6 +12,7 @@ import { addQueryArgs } from '@wordpress/url';
 import { useSite } from './';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
+import { Route } from '../focused-launch/route';
 
 export const useOnLaunch = () => {
 	const { siteId } = React.useContext( LaunchContext );
@@ -21,6 +23,8 @@ export const useOnLaunch = () => {
 	);
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
+
+	const history = useHistory();
 
 	React.useEffect( () => {
 		if ( launchStatus ) {
@@ -70,7 +74,9 @@ export const useOnLaunch = () => {
 				go();
 				return;
 			}
-			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
+			history
+				? history.push( Route.Success )
+				: ( window.top.location.href = `https://wordpress.com/home/${ siteId }` );
 		}
-	}, [ launchStatus ] );
+	}, [ launchStatus ] ); // eslint-disable-line react-hooks/exhaustive-deps
 };
