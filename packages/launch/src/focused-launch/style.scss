@@ -1,3 +1,12 @@
+
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+
 .focused-launch-container {
-    padding: 0 10px;
+	padding: 0 20px;
+
+	@include break-medium {
+		padding: 0 10px;
+	}
 }
