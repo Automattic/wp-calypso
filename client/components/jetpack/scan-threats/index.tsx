@@ -161,47 +161,61 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 			<h1 className="scan-threats scan__header">{ translate( 'Your site may be at risk' ) }</h1>
 			<p>
 				{ translate(
-					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threat with {{strong}}%(siteName)s{{/strong}}.',
-					'The scan found {{strong}}%(threatCount)s{{/strong}} potential threats with {{strong}}%(siteName)s{{/strong}}.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threat on {{strong}}%(siteName)s{{/strong}}. Please review the threat and take action.',
+					'Jetpack Scan found {{strong}}%(threatCount)s{{/strong}} potential threats on {{strong}}%(siteName)s{{/strong}}. Please review each threat and take action.',
 					{
 						args: {
 							siteName: site.name,
 							threatCount: numberFormat( threats.length, 0 ),
 						},
-						components: { strong: <strong /> },
-						comment:
-							'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site.',
-						count: threats.length,
-					}
-				) }
-				<br />
-				{ translate(
-					'Please review them below and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
-					{
 						components: {
-							a: (
-								<a
-									href={ contactSupportUrl( site.URL ) }
-									rel="noopener noreferrer"
-									target="_blank"
-								/>
-							),
+							strong: <strong />,
 						},
-						comment: 'The {{a}} tag is a link that goes to a contact support page.',
+						comment:
+							'%(threatCount)s represents the number of threats currently identified on the site, and $(siteName)s is the name of the site. The {{a}} tag is a link that goes to a contact support page.',
+						count: threats.length,
 					}
 				) }
 			</p>
 			<div className="scan-threats__threats">
 				<div className="scan-threats__buttons">
 					{ hasFixableThreats && (
-						<Button
-							primary
-							className="scan-threats__fix-all-threats-button"
-							onClick={ openFixAllThreatsDialog }
-							disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
-						>
-							{ translate( 'Fix all' ) }
-						</Button>
+						<>
+							<p>
+								{ translate(
+									'Jetpack can auto fix 1 found threat.',
+									'Jetpack can auto fix %(fixableCount)s of %(threatCount)s found threats.',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+											threatCount: numberFormat( threats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats, %(threatCount)s represents the number of threats currently identified on the site',
+										count: allFixableThreats.length,
+									}
+								) }
+							</p>
+							<Button
+								primary
+								className="scan-threats__fix-all-threats-button"
+								onClick={ openFixAllThreatsDialog }
+								disabled={ ! hasFixableThreats || updatingThreats.length > 0 }
+							>
+								{ translate(
+									'Auto fix %(fixableCount)s threat',
+									'Auto fix %(fixableCount)s threats',
+									{
+										args: {
+											fixableCount: numberFormat( allFixableThreats.length, 0 ),
+										},
+										comment:
+											'%(fixableCount)s represents the number of auto fixable threats on the site',
+										count: allFixableThreats.length,
+									}
+								) }
+							</Button>
+						</>
 					) }
 				</div>
 				{ threats.map( ( threat ) => (
@@ -219,16 +233,21 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 
 			{ ! error && (
 				<div className="scan-threats__rerun">
-					{ translate(
-						'If you have manually fixed any of the threats listed above, you can {{button}}run a manual scan now{{/button}} or wait for Jetpack to scan your site later today.',
-						{
-							components: {
-								button: (
-									<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
-								),
-							},
-						}
-					) }
+					<p className="scan-threats__rerun-help">
+						{ translate(
+							'If you have manually fixed any of the threats above, you can {{button}}run a scan now{{/button}} or wait for Jetpack to scan your site later today.',
+							{
+								components: {
+									button: (
+										<Button className="scan-threats__run-scan-button" onClick={ dispatchScanRun } />
+									),
+								},
+							}
+						) }
+					</p>
+					<Button className="scan-threats__run-scan-main-button" onClick={ dispatchScanRun }>
+						{ translate( 'Scan again' ) }
+					</Button>
 				</div>
 			) }
 
