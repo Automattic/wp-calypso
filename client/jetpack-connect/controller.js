@@ -4,7 +4,7 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, some, dropRight } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal Dependencies
@@ -22,8 +22,7 @@ import SearchPurchase from './search';
 import StoreHeader from './store-header';
 import StoreFooter from './store-footer';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'calypso/lib/i18n-utils';
-import switchLocale from 'calypso/lib/i18n-utils/switch-locale';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import {
@@ -353,30 +352,5 @@ export function sso( context, next ) {
 			ssoNonce={ context.params.ssoNonce }
 		/>
 	);
-	next();
-}
-
-/**
- * Checks for a locale fragment at the end of context.path
- * and switches to that locale if the user is logged out.
- * If the user is logged in we remove the fragment and defer to the user's settings.
- *
- * @param {object} context -- Middleware context
- * @param {Function} next -- Call next middleware in chain
- */
-export function setLoggedOutLocale( context, next ) {
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	const locale = getLocaleFromPath( context.path );
-
-	if ( ! locale ) {
-		return next();
-	}
-
-	if ( isLoggedIn ) {
-		page.redirect( dropRight( getPathParts( context.path ) ).join( '/' ) );
-	} else {
-		switchLocale( locale );
-	}
-
 	next();
 }
