@@ -524,8 +524,6 @@ class ManagePurchase extends Component {
 			siteSlug,
 			hasLoadedPurchasesFromServer,
 			getManagePurchaseUrlFor,
-			getAddCardDetailsPathFor,
-			getAddPaymentMethodUrlFor,
 			getEditCardDetailsPathFor,
 		} = this.props;
 
@@ -548,9 +546,7 @@ class ManagePurchase extends Component {
 						siteSlug={ siteSlug }
 						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getAddCardDetailsPathFor={ getAddCardDetailsPathFor }
 						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
