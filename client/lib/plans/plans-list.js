@@ -1526,7 +1526,8 @@ export const PLANS_LIST = {
 		getTitle: () => i18n.translate( 'P2+' ),
 		getDescription: () =>
 			i18n.translate(
-				'Supercharge your P2 site and take it to next level! [placeholder, text needs updating]'
+				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
+				plansDescriptionHeadingComponent
 			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
@@ -1562,7 +1563,11 @@ export const PLANS_LIST = {
 
 PLANS_LIST[ constants.PLAN_P2_FREE ] = {
 	...PLANS_LIST[ constants.PLAN_FREE ],
-	getDescription: () => i18n.translate( 'P2 Free description' ),
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
+			plansDescriptionHeadingComponent
+		),
 	getTitle: () => i18n.translate( 'P2 Free' ),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
