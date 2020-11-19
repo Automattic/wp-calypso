@@ -51,6 +51,7 @@
 	"sections": {
 		"activity": true,
 		"backup": true,
+		"checkout": true,
 		"jetpack-cloud-auth": true,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
