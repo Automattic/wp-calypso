@@ -18,6 +18,7 @@ const APP_ARGS = [
 	'--disable-http-cache',
 	'--start-maximized',
 	'--remote-debugging-port=9222',
+	'--disable-dev-shm-usage',
 ];
 
 let BUILT_APP_DIR;
