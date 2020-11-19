@@ -1531,12 +1531,13 @@ export const PLANS_LIST = {
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
-			constants.FEATURE_P2_TEST,
-			constants.FEATURE_P2_MENTIONS,
-			constants.FEATURE_P2_NO_ADS,
-			constants.FEATURE_EMAIL_LIVE_CHAT_SUPPORT_BUSINESS_DAYS,
-			constants.FEATURE_13GB_STORAGE,
-			constants.FEATURE_P2_VIDEO,
+			constants.FEATURE_P2_13GB_STORAGE,
+			constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
+			constants.FEATURE_P2_ADVANCED_SEARCH,
+			constants.FEATURE_P2_VIDEO_SHARING,
+			constants.FEATURE_P2_MORE_FILE_TYPES,
+			constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+			constants.FEATURE_P2_ACTIVITY_OVERVIEW,
 		],
 
 		// TODO: update this once we put P2+ in the signup.
@@ -1565,9 +1566,11 @@ PLANS_LIST[ constants.PLAN_P2_FREE ] = {
 	getTitle: () => i18n.translate( 'P2 Free' ),
 	getPlanCompareFeatures: () => [
 		// pay attention to ordering, shared features should align on /plan page
-		constants.FEATURE_P2_TEST,
-		constants.FEATURE_P2_MENTIONS,
-		constants.FEATURE_P2_NO_ADS,
+		constants.FEATURE_P2_3GB_STORAGE,
+		constants.FEATURE_P2_UNLIMITED_USERS,
+		constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		constants.FEATURE_P2_SIMPLE_SEARCH,
+		constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
 	],
 };
 
