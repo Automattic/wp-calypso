@@ -10,7 +10,6 @@ import { get, some, dropRight } from 'lodash';
  * Internal Dependencies
  */
 import { recordPageView } from 'calypso/lib/analytics/page-view';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import config from 'calypso/config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
@@ -19,12 +18,9 @@ import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
-import Plans from './plans';
-import PlansLanding from './plans-landing';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
 import StoreFooter from './store-footer';
-import { addQueryArgs, sectionify } from 'calypso/lib/route';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'calypso/lib/i18n-utils';
 import switchLocale from 'calypso/lib/i18n-utils/switch-locale';
@@ -35,7 +31,6 @@ import {
 	CALYPSO_PLANS_PAGE,
 	CALYPSO_REDIRECTION_PAGE,
 	JETPACK_ADMIN_PATH,
-	JPC_PATH_PLANS,
 } from './constants';
 import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
@@ -356,47 +351,6 @@ export function sso( context, next ) {
 			path={ context.path }
 			siteId={ context.params.siteId }
 			ssoNonce={ context.params.ssoNonce }
-		/>
-	);
-	next();
-}
-
-export function plansLanding( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
-	recordTracksEvent( 'calypso_plans_view' );
-	recordPageView( analyticsBasePath, analyticsPageTitle );
-
-	context.primary = (
-		<PlansLanding
-			context={ context }
-			interval={ context.params.interval }
-			url={ context.query.site }
-		/>
-	);
-	next();
-}
-
-export function plansSelection( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
-	recordTracksEvent( 'calypso_plans_view' );
-	recordPageView( analyticsBasePath, analyticsPageTitle );
-
-	context.primary = (
-		<Plans
-			basePlansPath={
-				context.query.redirect
-					? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
-					: JPC_PATH_PLANS
-			}
-			context={ context }
-			interval={ context.params.interval }
-			queryRedirect={ context.query.redirect }
 		/>
 	);
 	next();

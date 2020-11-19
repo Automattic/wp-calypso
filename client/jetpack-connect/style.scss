@@ -683,10 +683,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	.jetpack-connect__happychat-button {
 		text-align: center;
 	}
-
-	.plans-skip-button {
-		margin-bottom: 32px;
-	}
 }
 
 .jetpack-connect__plans.placeholder {
@@ -820,7 +816,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
  **/
 .layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ),
 .layout.is-section-purchase-product {
-
 	&.layout {
 		position: relative;
 		min-height: calc( 100% - #{$colophon-height} );
@@ -932,7 +927,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.logged-out-form__footer,
 	.login__form-footer {
-
 		.button.is-primary {
 			box-shadow: none;
 		}
@@ -1078,7 +1072,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.signup-form__social,
 		.login__form-social {
-
 			.social-buttons__button {
 				border-color: var( --studio-pink-50 );
 				color: var( --studio-pink-50 );
