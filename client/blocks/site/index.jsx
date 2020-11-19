@@ -19,7 +19,7 @@ import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-import isEditingToolkitPluginActive from 'calypso/state/selectors/is-editing-toolkit-plugin-active';
+import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 /**
  * Style dependencies
  */
@@ -98,7 +98,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { isEditingToolkitActive, isSiteUnlaunched, site, translate } = this.props;
+		const { isAtomicAndEditingToolkitDeactivated, isSiteUnlaunched, site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -169,7 +169,7 @@ class Site extends React.Component {
 									: translate( 'Private' ) }
 							</span>
 						) }
-						{ isPublicComingSoon && isEditingToolkitActive && (
+						{ isPublicComingSoon && ! isAtomicAndEditingToolkitDeactivated && (
 							<span className="site__badge site__badge-coming-soon">
 								{ translate( 'Coming Soon' ) }
 							</span>
@@ -206,7 +206,10 @@ function mapStateToProps( state, ownProps ) {
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
-		isEditingToolkitActive: isEditingToolkitPluginActive( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+			state,
+			siteId
+		),
 	};
 }
 

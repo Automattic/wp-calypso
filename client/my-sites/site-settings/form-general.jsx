@@ -48,7 +48,7 @@ import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
-import isEditingToolkitPluginActive from 'calypso/state/selectors/is-editing-toolkit-plugin-active';
+import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 export class SiteSettingsFormGeneral extends Component {
@@ -413,7 +413,7 @@ export class SiteSettingsFormGeneral extends Component {
 	visibilityOptionsComingSoonV2() {
 		const {
 			fields,
-			isEditingToolkitActive,
+			isAtomicAndEditingToolkitDeactivated,
 			isRequestingSettings,
 			isWPForTeamsSite,
 			eventTracker,
@@ -430,7 +430,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 		const isAnyComingSoonEnabled =
 			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
-		const isComingSoonDisabled = isRequestingSettings || ! isEditingToolkitActive;
+		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
 		const comingSoonFormLabelClasses = classNames(
 			'site-settings__visibility-label is-coming-soon',
 			{
@@ -439,49 +439,34 @@ export class SiteSettingsFormGeneral extends Component {
 		);
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && (
-					<>
-						<FormLabel className={ comingSoonFormLabelClasses }>
-							<FormRadio
-								name="blog_public"
-								value="0"
-								checked={ isAnyComingSoonEnabled }
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public: 0,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 1,
-									} )
-								}
-								disabled={ isComingSoonDisabled }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-								label={ translate( 'Coming Soon' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation
-							className={ classNames( { 'is-coming-soon-disabled': isComingSoonDisabled } ) }
-						>
-							{ ! isEditingToolkitActive
-								? translate(
-										'Coming Soon functionality is available by installing and activating the WordPress.com Editing Toolkit Plugin. {{a}}Learn more{{/a}}.',
-										{
-											components: {
-												a: (
-													<a
-														href="https://wordpress.org/plugins/full-site-editing/"
-														target="_blank"
-														rel="noopener noreferrer"
-													/>
-												),
-											},
-										}
-								  )
-								: translate(
-										'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-								  ) }
-						</FormSettingExplanation>
-					</>
-				) }
+				{ ! isNonAtomicJetpackSite &&
+					! isWPForTeamsSite &&
+					! isAtomicAndEditingToolkitDeactivated && (
+						<>
+							<FormLabel className={ comingSoonFormLabelClasses }>
+								<FormRadio
+									name="blog_public"
+									value="0"
+									checked={ isAnyComingSoonEnabled }
+									onChange={ () =>
+										this.handleVisibilityOptionChange( {
+											blog_public: 0,
+											wpcom_coming_soon: 0,
+											wpcom_public_coming_soon: 1,
+										} )
+									}
+									disabled={ isComingSoonDisabled }
+									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+									label={ translate( 'Coming Soon' ) }
+								/>
+							</FormLabel>
+							<FormSettingExplanation>
+								{ translate(
+									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+								) }
+							</FormSettingExplanation>
+						</>
+					) }
 				{ ! isNonAtomicJetpackSite && (
 					<FormLabel className="site-settings__visibility-label is-public">
 						<FormRadio
@@ -539,7 +524,10 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched }
+								checked={
+									( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
+									( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
+								}
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
@@ -847,7 +835,10 @@ const connectComponent = connect(
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			isEditingToolkitActive: isEditingToolkitPluginActive( state, siteId ),
+			isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+				state,
+				siteId
+			),
 		};
 	},
 	mapDispatchToProps,
