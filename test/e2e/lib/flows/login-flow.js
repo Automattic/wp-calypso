@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
-
-/**
  * Internal dependencies
  */
 import LoginPage from '../pages/login-page.js';
@@ -56,7 +51,7 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
 		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
