@@ -20,10 +20,19 @@ import FocusedLaunchSummaryItem, {
  * Internal dependencies
  */
 import { Route } from '../route';
-import { useTitle, useDomainSearch, useSiteDomains, useSite, usePlans } from '../../hooks';
+import {
+	useTitle,
+	useDomainSearch,
+	useSiteDomains,
+	useDomainSelection,
+	useSite,
+	usePlans,
+} from '../../hooks';
+
 import { LAUNCH_STORE } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
+import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
 
@@ -181,8 +190,8 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							onExistingSubdomainSelect={ onExistingSubdomainSelect }
 							initialDomainSearch={ initialDomainSearch }
 							showSearchField={ false }
-							analyticsFlowId="focused-launch"
-							analyticsUiAlgo="focused_launch_domain_picker"
+							analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
+							analyticsUiAlgo="summary_domain_step"
 							quantity={ 3 }
 							quantityExpanded={ 3 }
 							itemType="individual-item"
@@ -437,8 +446,8 @@ const Summary: React.FunctionComponent = () => {
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 
 	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
-	const { setDomain, unsetDomain } = useDispatch( LAUNCH_STORE );
 	const { domainSearch, isLoading } = useDomainSearch();
 
 	const site = useSite();
@@ -483,14 +492,14 @@ const Summary: React.FunctionComponent = () => {
 			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
-			onDomainSelect={ setDomain }
 			isLoading={ isLoading }
+			onDomainSelect={ onDomainSelect }
 			/** NOTE: this makes the assumption that the user has a free domain,
 			 * thus when they click the free domain, we just remove the value from the store
 			 * this is a valid strategy in this context because they won't even see this step if
 			 * they already have a paid domain
 			 * */
-			onExistingSubdomainSelect={ unsetDomain }
+			onExistingSubdomainSelect={ onExistingSubdomainSelect }
 			locale={ locale }
 		/>
 	);

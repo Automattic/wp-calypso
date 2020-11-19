@@ -38,6 +38,7 @@
 		{ "path": "../components" },
 		{ "path": "../onboarding" },
 		{ "path": "../domain-picker" },
-		{ "path": "../plans-grid" }
+		{ "path": "../plans-grid" },
+		{ "path": "../calypso-analytics" }
 	]
 }
