@@ -37,7 +37,6 @@ class PopoverCart extends React.Component {
 		shoppingCartManager: PropTypes.object.isRequired,
 		selectedSite: PropTypes.oneOfType( [ PropTypes.object, PropTypes.bool ] ).isRequired,
 		onToggle: PropTypes.func.isRequired,
-		closeSectionNavMobilePanel: PropTypes.func,
 		visible: PropTypes.bool.isRequired,
 		pinned: PropTypes.bool.isRequired,
 		compact: PropTypes.bool,
@@ -70,7 +69,6 @@ class PopoverCart extends React.Component {
 	}
 
 	onToggle = () => {
-		this.props.closeSectionNavMobilePanel?.();
 		this.props.onToggle();
 	};
 
