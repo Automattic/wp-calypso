@@ -18,6 +18,7 @@ class QueryJetpackPlugins extends Component {
 			PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired
 		).isRequired,
 		isRequestingForSites: PropTypes.bool,
+		forceRefresh: PropTypes.bool,
 		fetchPlugins: PropTypes.func,
 	};
 
@@ -28,7 +29,10 @@ class QueryJetpackPlugins extends Component {
 	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( isEqual( nextProps.siteIds, this.props.siteIds ) ) {
+		if (
+			isEqual( nextProps.siteIds, this.props.siteIds ) ||
+			nextProps.forceRefresh === this.props.forceRefresh
+		) {
 			return;
 		}
 		this.refresh( nextProps.isRequestingForSites, nextProps.siteIds );
