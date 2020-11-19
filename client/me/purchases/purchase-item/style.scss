@@ -102,13 +102,28 @@
 	display: inline-block;
 }
 
+a.purchase-item__site-name {
+	color: var( --color-neutral-50 );
+	text-decoration: underline;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
 .purchase-item__payment-method {
 	display: none;
 
 	@include breakpoint-deprecated( '>960px' ) {
-		display: block;
+		display: flex;
+		align-items: center;
 		font-size: $font-body-small;
 		color: var( --color-neutral-80 );
 		flex: 0 0 120px;
 	}
+}
+
+.purchase-item__payment-method-card {
+	width: 40px;
+	margin-right: 4px;
 }

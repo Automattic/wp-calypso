@@ -28,6 +28,8 @@ import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-value
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import SiteIcon from 'calypso/blocks/site-icon';
+import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
+import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 
 /**
  * Style dependencies
@@ -163,19 +165,28 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site } = this.props;
+		const { purchase, site, translate, slug } = this.props;
 
 		if ( ! purchase ) {
-			//Add site-level condition
+			// Add site-level condition
 			return purchaseType( purchase );
 		}
 
-		return (
-			<>
-				{ purchaseType( purchase ) } for{ ' ' }
-				<span className="purchase-item__site-name">{ site.name }</span>
-			</>
-		);
+		return translate( '%(purchaseType)s for {{link}}%(site)s{{/link}}', {
+			args: {
+				purchaseType: purchaseType( purchase ),
+				site: site.name,
+			},
+			components: {
+				link: (
+					<a
+						href={ getPurchaseListUrlFor( slug ) }
+						className="purchase-item__site-name"
+						title="View subscriptions for Site"
+					/>
+				),
+			},
+		} );
 	}
 
 	getPaymentMethod() {
@@ -183,7 +194,16 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) ) {
 			if ( purchase.payment.type === 'credit_card' ) {
-				return purchase.payment.creditCard.type + ' **** ' + purchase.payment.creditCard.number;
+				return (
+					<>
+						<img
+							src={ getPaymentMethodImageURL( purchase.payment.creditCard.type ) }
+							alt={ purchase.payment.creditCard.type }
+							className="purchase-item__payment-method-card"
+						/>
+						**** { purchase.payment.creditCard.number }
+					</>
+				);
 			}
 		}
 
