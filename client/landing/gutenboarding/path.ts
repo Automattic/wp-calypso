@@ -96,3 +96,9 @@ export function useCurrentStep() {
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
+
+// Returns true if the url has a `?anchor_podcast`, which is used
+// to trigger the Anchor.fm steps.
+export function useAnchorFmQueryParam() {
+	return new URLSearchParams( useLocation().search ).has( 'anchor_podcast' );
+}

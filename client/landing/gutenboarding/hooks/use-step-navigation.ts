@@ -8,7 +8,7 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep, StepType } from '../path';
+import { Step, usePath, useCurrentStep, StepType, useAnchorFmQueryParam } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
@@ -34,23 +34,27 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	let steps: StepType[];
 
 	// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
-	steps = hasSiteTitle()
-		? [
-				Step.IntentGathering,
-				Step.Domains,
-				Step.DesignSelection,
-				Step.Style,
-				Step.Features,
-				Step.Plans,
-		  ]
-		: [
-				Step.IntentGathering,
-				Step.DesignSelection,
-				Step.Style,
-				Step.Domains,
-				Step.Features,
-				Step.Plans,
-		  ];
+	if ( useAnchorFmQueryParam() ) {
+		steps = [];
+	} else if ( hasSiteTitle() ) {
+		steps = [
+			Step.IntentGathering,
+			Step.Domains,
+			Step.DesignSelection,
+			Step.Style,
+			Step.Features,
+			Step.Plans,
+	  ];
+	} else {
+		steps = [
+			Step.IntentGathering,
+			Step.DesignSelection,
+			Step.Style,
+			Step.Domains,
+			Step.Features,
+			Step.Plans,
+	  ];
+	}
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
