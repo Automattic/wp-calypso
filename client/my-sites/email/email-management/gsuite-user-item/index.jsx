@@ -54,6 +54,7 @@ function GSuiteUserItem( props ) {
 		return (
 			<ExternalLink
 				icon
+				className="gsuite-user-item__manage-link"
 				href={ getLoginLink() }
 				onClick={ props.onClick }
 				target="_blank"
