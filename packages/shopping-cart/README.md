@@ -37,7 +37,7 @@ This is a React hook that can be used in any child component under [ShoppingCart
 
 ## withShoppingCart
 
-A React HOC (higher order component) that can be used to inject the `ShoppingCartManager` into another component as a prop called `shoppingCartManager`.
+A React HOC (higher order component) that can be used to inject the `ShoppingCartManager` into another component as a prop called `shoppingCartManager`. For convenience, since the most common use-case for accessing this package is to get a copy of the cart, it also adds a prop called `cart`, which is equal to `shoppingCartManager.responseCart`.
 
 ## createRequestCartProduct
 
