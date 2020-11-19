@@ -1,4 +1,5 @@
-.color-scheme.is-aquatic {
+.color-scheme.is-aquatic,
+.color-scheme.is-aquatic .is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-blue-50 );
 	--color-primary-rgb: var( --studio-blue-50-rgb );
@@ -120,4 +121,9 @@
 	--color-sidebar-menu-hover-background: var( --studio-blue-50 );
 	--color-sidebar-menu-hover-background-rgb: var( --studio-blue-50-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-white );
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --studio-blue-80 );
+	--color-sidebar-submenu-text: var( --studio-white );
+	--color-sidebar-submenu-hover-text: var( --studio-yellow-20 );
 }
