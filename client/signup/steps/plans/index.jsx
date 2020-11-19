@@ -10,6 +10,7 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import { Button } from '@automattic/components';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -32,6 +33,7 @@ import { getUrlParts } from 'calypso/lib/url/url-parts';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 import { isPersonal } from 'calypso/lib/products-values';
+import { abtest } from 'calypso/lib/abtest';
 
 /**
  * Style dependencies
@@ -80,12 +82,25 @@ export class PlansStep extends Component {
 		this.props.submitSignupStep( step, {
 			cartItem,
 		} );
-		if ( flowName === 'onboarding-secure-your-brand' && isPersonal( cartItem ) ) {
+
+		// The last step of onboarding-secure-your-brand flow is the secure-your-brand upsell. It should not be visible
+		// if the plan is Personal or the user is in the control group
+		if (
+			flowName === 'onboarding-secure-your-brand' &&
+			( isPersonal( cartItem ) ||
+				'test' !== abtest( 'secureYourBrand', this.getGeoLocationFromCookie() ) )
+		) {
 			this.props.goToNextStep( 'onboarding' );
 		} else {
 			this.props.goToNextStep();
 		}
 	};
+
+	getGeoLocationFromCookie() {
+		const cookies = cookie.parse( document.cookie );
+
+		return cookies.country_code;
+	}
 
 	getDomainName() {
 		return (
