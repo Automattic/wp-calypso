@@ -41,7 +41,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.8.7 =
-*
+* Launch: open launch modal in editor only for free sites created in New Onboarding (https://github.com/Automattic/wp-calypso/pull/47514)
+* Focused Launch: add launch success view (https://github.com/Automattic/wp-calypso/pull/47404)
+* Premium Content: Use snackbar for error and success messages (https://github.com/Automattic/wp-calypso/pull/47477)
 
 = 2.8.6 =
 * Premium Content: Compatibility fix for Gutenberg >= 9.3.0 (https://github.com/Automattic/wp-calypso/pull/47467)
