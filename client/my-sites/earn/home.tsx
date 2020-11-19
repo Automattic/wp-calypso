@@ -219,7 +219,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'money',
 			actions: {
 				cta,
@@ -268,7 +267,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'heart-outline',
 			actions: {
 				cta,
@@ -333,7 +331,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'bookmark-outline',
 			actions: {
 				cta,
@@ -383,7 +380,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			badge: translate( 'New' ),
 			icon: 'mail',
 			actions: {
 				cta,
@@ -501,7 +497,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			align: 'right',
 		},
 		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. Turn your website into a reliable source of income with payments and ads.'
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}{{b}}Watch our tutorial videos to get started{{/b}}{{/a}}.',
+			{
+				components: {
+					a: <a href="https://wordpress.com/LINK" target="_blank" rel="noopener noreferrer" />,
+					b: <strong />,
+				},
+			}
 		),
 	} );
 
