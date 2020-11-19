@@ -3,10 +3,10 @@
  */
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS, JETPACK_SECURITY_PLANS } from 'calypso/lib/plans/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { SELECTOR_PLANS_ALT_V1, SELECTOR_PLANS_ALT_V2, SELECTOR_PLANS_I5 } from '../constants';
 import { getJetpackDescriptionWithOptions, slugToSelectorProduct } from '../utils';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Type dependencies

@@ -11,8 +11,8 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans-v2/utils';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { getPathToDetails } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import Notice from 'calypso/components/notice';

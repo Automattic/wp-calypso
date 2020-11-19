@@ -60,7 +60,7 @@ import {
 	FEATURE_PRODUCT_SEARCH_V2,
 	FEATURE_CRM_V2,
 } from 'calypso/lib/plans/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { buildCardFeaturesFromItem } from './utils';
 import { getJetpackCrmPrice, getJetpackCrmCurrency } from './iterations';
 

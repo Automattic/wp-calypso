@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import plansV2 from 'calypso/my-sites/plans-v2';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import * as controller from './controller';
 
 /**
@@ -10,6 +10,6 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
-	plansV2( `/:locale/pricing`, controller.jetpackPricingContext );
-	plansV2( `/pricing`, controller.jetpackPricingContext );
+	jetpackPlans( `/:locale/pricing`, controller.jetpackPricingContext );
+	jetpackPlans( `/pricing`, controller.jetpackPricingContext );
 }

@@ -31,8 +31,8 @@ import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans-v2/utils';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { getPathToDetails } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {

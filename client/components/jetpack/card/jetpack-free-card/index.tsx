@@ -18,7 +18,7 @@ import { addQueryArgs } from 'calypso/lib/route';
 /**
  * Type dependencies
  */
-import type { JetpackFreeProps } from 'calypso/my-sites/plans-v2/types';
+import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies

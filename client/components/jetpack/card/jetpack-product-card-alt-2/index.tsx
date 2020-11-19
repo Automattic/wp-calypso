@@ -13,7 +13,7 @@ import { Button, ProductIcon } from '@automattic/components';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { durationToText } from 'calypso/my-sites/plans-v2/utils';
+import { durationToText } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import InfoPopover from 'calypso/components/info-popover';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { preventWidows } from 'calypso/lib/formatting';
@@ -25,7 +25,7 @@ import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies

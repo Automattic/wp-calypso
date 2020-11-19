@@ -88,7 +88,7 @@ import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import {
 	currentUserHasFlag,
 	getCurrentUser,

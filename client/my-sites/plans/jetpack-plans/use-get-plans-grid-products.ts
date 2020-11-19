@@ -20,11 +20,11 @@ import {
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import {
 	OPTIONS_JETPACK_BACKUP,
 	OPTIONS_JETPACK_BACKUP_MONTHLY,
-} from 'calypso/my-sites/plans-v2/constants';
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';

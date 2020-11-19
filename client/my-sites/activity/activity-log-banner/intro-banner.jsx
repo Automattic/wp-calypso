@@ -16,7 +16,7 @@ import DismissibleCard from 'calypso/blocks/dismissible-card';
 import ExternalLink from 'calypso/components/external-link';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { FEATURE_JETPACK_ESSENTIAL, PLAN_PERSONAL } from 'calypso/lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { isFreePlan } from 'calypso/lib/plans';

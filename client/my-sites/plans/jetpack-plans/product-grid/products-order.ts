@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,

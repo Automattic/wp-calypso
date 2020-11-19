@@ -8,7 +8,7 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans-v2/constants';
+import { PLAN_COMPARISON_PAGE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import Gridicon from 'calypso/components/gridicon';
 
 /**

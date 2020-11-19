@@ -23,7 +23,7 @@ import {
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 } from 'calypso/lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Internal dependencies

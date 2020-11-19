@@ -9,7 +9,7 @@ import type {
 	SelectorProductFeaturesItem,
 	SelectorProductFeaturesSection,
 	SelectorProductFeatures,
-} from 'calypso/my-sites/plans-v2/types';
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export type ProductCardFeaturesItem = SelectorProductFeaturesItem;
 export type ProductCardFeaturesSection = SelectorProductFeaturesSection;
