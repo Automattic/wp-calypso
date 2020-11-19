@@ -39,10 +39,6 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 			await driverManager.ensureNotLoggedIn( driver );
 		} );
 
-		step( 'FAILING Test', function () {
-			assert.strictEqual( true, false, 'This should fail on purpose' );
-		} );
-
 		step( 'Can visit Gutenboarding page and see Onboarding block', async function () {
 			const page = await NewPage.Visit( driver );
 			const blockExists = await page.waitForBlock();
