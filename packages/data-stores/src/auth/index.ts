@@ -17,7 +17,7 @@ import type { DispatchFromMap, SelectFromMap } from '../mapped-types';
 import { controls as wpcomRequestControls } from '../wpcom-request-controls';
 
 export * from './types';
-export { State };
+export type { State };
 
 let isRegistered = false;
 export function register( config: ActionsConfig ): typeof STORE_KEY {

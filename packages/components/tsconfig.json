@@ -7,7 +7,7 @@
 		"jsx": "react",
 		"declaration": true,
 		"declarationDir": "dist/types",
-		"outDir": "dist/types",
+		"outDir": "dist/esm",
 		"isolatedModules": true,
 
 		"strict": true,
