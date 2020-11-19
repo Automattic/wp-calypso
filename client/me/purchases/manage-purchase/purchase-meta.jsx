@@ -54,11 +54,11 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export default function PurchaseMeta( {
-	purchaseId,
-	hasLoadedPurchasesFromServer,
+	purchaseId = false,
+	hasLoadedPurchasesFromServer = false,
 	siteSlug,
 	getEditPaymentMethodUrlFor,
-	getManagePurchaseUrlFor,
+	getManagePurchaseUrlFor = managePurchase,
 } ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
@@ -112,12 +112,6 @@ PurchaseMeta.propTypes = {
 	siteSlug: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func,
 	getEditPaymentMethodUrlFor: PropTypes.func,
-};
-
-PurchaseMeta.defaultProps = {
-	hasLoadedPurchasesFromServer: false,
-	purchaseId: false,
-	getManagePurchaseUrlFor: managePurchase,
 };
 
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
