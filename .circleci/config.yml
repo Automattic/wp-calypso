@@ -1098,6 +1098,8 @@ workflows:
               only:
                 - master
                 - trunk
+                - release/*
+                - desktop/release/*
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
