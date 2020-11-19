@@ -90,15 +90,15 @@ const ThreatItem: React.FC< Props > = ( {
 				<>
 					<p className="threat-description__section-text">
 						{ translate(
-							'Jetpack Scan cannot automatically fix this threat. Consider resolving the threat manually. Check WordPress, your theme, and plugins are up to date. ' +
-								'You may also consider removing the offending code, plugin or theme from your site.'
+							'Jetpack Scan cannot automatically fix this threat. We suggest that you resolve the threat manually: ' +
+								'ensure that WordPress, your theme, and all of your plugins are up to date, and remove ' +
+								'the offending code, theme, or plugin from your site.'
 						) }
 					</p>
 					<p className="threat-description__section-text">
 						{ translate(
-							'For further help, we recommend our partners {{strong}}Codeable{{/strong}}. Their pricing ranges from $70-120/hour, with no obligation to hire. ' +
-								'Codeable is a WordPress-exclusive freelancer marketplace with a community of 530+ highly vetted security experts. ' +
-								'Get a free, no obligation estimate for resolving this threat.',
+							'If you need more help on resolving this threat, we recommend {{strong}}Codeable{{/strong}}, a WordPress freelancer marketplace of 530+ highly vetted security experts. ' +
+								'Pricing ranges from $70-120/hour, and you can get a free estimate with no obligation to hire.',
 							{
 								components: {
 									strong: <strong />,
