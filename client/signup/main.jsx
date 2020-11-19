@@ -239,7 +239,7 @@ class Signup extends React.Component {
 		}
 
 		if ( ! this.state.controllerHasReset && ! isEqual( this.props.progress, progress ) ) {
-			this.updateShouldShowLoadingScreen( progress );
+			this.updateShouldShowLoadingScreen( progress, flowName );
 		}
 		if ( isReskinned ) {
 			this.addCssClassToBodyForReskinnedFlow();
@@ -349,13 +349,20 @@ class Signup extends React.Component {
 		}
 	}
 
-	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
-		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
+	updateShouldShowLoadingScreen = (
+		progress = this.props.progress,
+		flowName = this.props.flowName
+	) => {
+		const hasInvalidSteps = !! getFirstInvalidStep( flowName, progress );
+		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress, flowName );
 		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
-		if ( ! this.isEveryStepSubmitted( progress ) ) {
+		if ( ! this.isEveryStepSubmitted( progress, flowName ) ) {
 			this.goToFirstInvalidStep( progress );
+		}
+
+		if ( ! startLoadingScreen && this.state.shouldShowLoadingScreen ) {
+			this.setState( { shouldShowLoadingScreen: false } );
 		}
 
 		if ( startLoadingScreen ) {
@@ -367,7 +374,7 @@ class Signup extends React.Component {
 				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
 			}
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isWPForTeamsFlow( flowName ) ) {
 				addLoadingScreenClassNamesToBody();
 
 				// We have to add the P2 signup class name as well because it gets removed in the 'users' step.
@@ -378,7 +385,7 @@ class Signup extends React.Component {
 		if ( hasInvalidSteps ) {
 			this.setState( { shouldShowLoadingScreen: false } );
 
-			if ( isWPForTeamsFlow( this.props.flowName ) ) {
+			if ( isWPForTeamsFlow( flowName ) ) {
 				removeLoadingScreenClassNamesFromBody();
 			}
 		}
@@ -564,7 +571,7 @@ class Signup extends React.Component {
 		const nextStepSection = ( nextProgressItem && nextProgressItem.stepSectionName ) || '';
 
 		if ( nextFlowName !== this.props.flowName ) {
-			this.setState( { previousFlowName: this.props.flowName } );
+			this.setState( { previousFlowName: this.props.flowName, shouldShowLoadingScreen: false } );
 		}
 
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
