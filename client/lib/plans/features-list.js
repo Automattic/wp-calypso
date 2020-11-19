@@ -1561,27 +1561,91 @@ export const FEATURES_LIST = {
 		getTitle: () => i18n.translate( 'Spelling correction' ),
 	},
 
-	[ constants.FEATURE_P2_TEST ]: {
-		getSlug: () => constants.FEATURE_P2_TEST,
-		getTitle: () => i18n.translate( 'Testing p2 feature' ),
+	[ constants.FEATURE_P2_3GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_3GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}3GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
 		getDescription: () => i18n.translate( 'Some description' ),
 	},
 
-	[ constants.FEATURE_P2_MENTIONS ]: {
-		getSlug: () => constants.FEATURE_P2_MENTIONS,
-		getTitle: () => i18n.translate( 'Mentions' ),
+	[ constants.FEATURE_P2_UNLIMITED_USERS ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
 		getDescription: () => i18n.translate( 'Some description' ),
 	},
 
-	[ constants.FEATURE_P2_NO_ADS ]: {
-		getSlug: () => constants.FEATURE_P2_NO_ADS,
-		getTitle: () => i18n.translate( 'See no ads!' ),
+	[ constants.FEATURE_P2_UNLIMITED_POSTS_PAGES ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited posts and pages' ),
 		getDescription: () => i18n.translate( 'Some description' ),
 	},
 
-	[ constants.FEATURE_P2_VIDEO ]: {
-		getSlug: () => constants.FEATURE_P2_VIDEO,
-		getTitle: () => i18n.translate( 'Upload videos' ),
+	[ constants.FEATURE_P2_SIMPLE_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_SIMPLE_SEARCH,
+		getTitle: () => i18n.translate( 'Simple search' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOMIZATION_OPTIONS ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
+		getTitle: () => i18n.translate( 'Customization options' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_13GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_13GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}13GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
+		getTitle: () => i18n.translate( 'Unlimited free viewers' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_ADVANCED_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_ADVANCED_SEARCH,
+		getTitle: () => i18n.translate( 'Advanced search' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_VIDEO_SHARING ]: {
+		getSlug: () => constants.FEATURE_P2_VIDEO_SHARING,
+		getTitle: () => i18n.translate( 'Easy video sharing' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_MORE_FILE_TYPES ]: {
+		getSlug: () => constants.FEATURE_P2_MORE_FILE_TYPES,
+		getTitle: () => i18n.translate( 'More file types' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT ]: {
+		getSlug: () => constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+		getTitle: () => i18n.translate( 'Priority chat and email support' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_ACTIVITY_OVERVIEW ]: {
+		getSlug: () => constants.FEATURE_P2_ACTIVITY_OVERVIEW,
+		getTitle: () => i18n.translate( 'Activity overview panel' ),
+		getDescription: () => i18n.translate( 'Some description' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOM_DOMAIN ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOM_DOMAIN,
+		getTitle: () => i18n.translate( 'Custom domain' ),
 		getDescription: () => i18n.translate( 'Some description' ),
 	},
 };
