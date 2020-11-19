@@ -4,22 +4,22 @@
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
 /**
- * Get an Intl.Collator() for the current user's locale to enable localized sorting.
+ * Get an Intl.Collator() for the current locale to enable localized sorting.
  *
  * @param {object} state Redux state
  * @returns {object} Intl.Collator
  */
-const getCurrentUserIntlCollator = ( state ) => {
-	const currentUserLocaleSlug = getCurrentLocaleSlug( state );
+const getCurrentIntlCollator = ( state ) => {
+	const currentLocaleSlug = getCurrentLocaleSlug( state );
 
 	// Backup locale in case the user's locale isn't supported
 	const sortLocales = [ 'en' ];
 
-	if ( currentUserLocaleSlug ) {
-		sortLocales.unshift( currentUserLocaleSlug );
+	if ( currentLocaleSlug ) {
+		sortLocales.unshift( currentLocaleSlug );
 	}
 
 	return new Intl.Collator( sortLocales );
 };
 
-export default getCurrentUserIntlCollator;
+export default getCurrentIntlCollator;

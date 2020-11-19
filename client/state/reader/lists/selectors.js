@@ -8,7 +8,7 @@ import { filter, find, has, includes } from 'lodash';
  */
 import { withoutHttp } from 'calypso/lib/url';
 import createSelector from 'calypso/lib/create-selector';
-import getCurrentUserIntlCollator from 'calypso/state/selectors/get-current-user-intl-collator';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';
 
 /**
@@ -61,7 +61,7 @@ export function isUpdatingList( state ) {
  */
 export const getSubscribedLists = createSelector(
 	( state ) => {
-		const collator = getCurrentUserIntlCollator( state );
+		const collator = getCurrentIntlCollator( state );
 
 		return filter( Object.values( state.reader.lists.items ), ( item ) => {
 			// Is the user subscribed to this list?
