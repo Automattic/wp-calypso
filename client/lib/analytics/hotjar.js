@@ -45,3 +45,15 @@ export function addHotJarScript() {
 
 	hotJarScriptLoaded = true;
 }
+
+export function addHotJarUserAttributes( userId, userAttributes ) {
+	if ( ! hotJarScriptLoaded ) {
+		return;
+	}
+	if ( ! userId || ! userAttributes ) {
+		return;
+	}
+	if ( window && window.hj ) {
+		window.hj( 'identify', userId, userAttributes );
+	}
+}

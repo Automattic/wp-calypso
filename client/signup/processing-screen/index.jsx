@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
+import { addHotJarScript, addHotJarUserAttributes } from 'calypso/lib/analytics/hotjar';
 
 /**
  * Internal dependencies
@@ -62,8 +62,8 @@ export class SignupProcessingScreen extends Component {
 		} );
 	}
 
-	componentDidMount() {
-		const { flowName, localeSlug } = this.props;
+	triggerHotJarSurvey() {
+		const { flowName, localeSlug, hasPaidDomain, selectedPlan } = this.props;
 		if ( ! localeSlug ) {
 			return;
 		}
@@ -72,9 +72,15 @@ export class SignupProcessingScreen extends Component {
 			return;
 		}
 		addHotJarScript();
+		const randomUserId = String( Math.floor( Math.random() * 10e10 ) );
+		addHotJarUserAttributes( randomUserId, { hasPaidDomain, selectedPlan } );
 		if ( window && window.hj ) {
 			window.hj( 'trigger', 'bizx_questionnaire_' + locale );
 		}
+	}
+
+	componentDidMount() {
+		this.triggerHotJarSurvey();
 	}
 
 	render() {

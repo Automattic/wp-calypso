@@ -607,10 +607,10 @@ class Signup extends React.Component {
 			return <P2SignupProcessingScreen />;
 		}
 
+		const domainItem = get( this.props, 'signupDependencies.domainItem', false );
+		const selectedPlan = get( this.props, 'signupDependencies.cartItem.product_slug', false );
+		const hasPaidDomain = isDomainRegistration( domainItem );
 		if ( this.props.isReskinned ) {
-			const domainItem = get( this.props, 'signupDependencies.domainItem', false );
-			const hasPaidDomain = isDomainRegistration( domainItem );
-
 			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
 		}
 
@@ -618,6 +618,8 @@ class Signup extends React.Component {
 			<SignupProcessingScreen
 				flowName={ this.props.flowName }
 				localeSlug={ this.props.localeSlug }
+				hasPaidDomain={ hasPaidDomain }
+				selectedPlan={ selectedPlan }
 			/>
 		);
 	}
