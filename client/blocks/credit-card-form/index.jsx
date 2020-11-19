@@ -56,7 +56,6 @@ export function CreditCardForm( {
 	saveStoredCard = null,
 	siteSlug = undefined,
 	successCallback,
-	showUsedForExistingPurchasesInfo = false,
 	autoFocus = true,
 	heading = undefined,
 	onCancel = undefined,
@@ -183,10 +182,6 @@ export function CreditCardForm( {
 						<TosText translate={ translate } />
 					</p>
 				</div>
-				<UsedForExistingPurchasesInfo
-					translate={ translate }
-					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
-				/>
 
 				<SaveButton
 					translate={ translate }
@@ -214,7 +209,6 @@ CreditCardForm.propTypes = {
 	saveStoredCard: PropTypes.func,
 	siteSlug: PropTypes.string,
 	successCallback: PropTypes.func.isRequired,
-	showUsedForExistingPurchasesInfo: PropTypes.bool,
 	autoFocus: PropTypes.bool,
 	heading: PropTypes.string,
 	onCancel: PropTypes.func,
@@ -261,19 +255,6 @@ function TosText( { translate } ) {
 				),
 			},
 		}
-	);
-}
-
-function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchasesInfo } ) {
-	if ( ! showUsedForExistingPurchasesInfo ) {
-		return null;
-	}
-
-	return (
-		<div className="credit-card-form__card-terms">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
-		</div>
 	);
 }
 
