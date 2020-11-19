@@ -34,7 +34,7 @@ import {
 import RecordsDetails from './records-details';
 import { addItems } from 'calypso/lib/cart/actions';
 import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isJetpackCloudProd } from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -688,12 +688,12 @@ export function checkout(
 	if ( ! siteSlug ) {
 		path = `/jetpack/connect/${ productsString }`;
 	} else {
-		path = isJetpackCloud()
+		path = isJetpackCloudProd()
 			? `/checkout/${ siteSlug }/${ productsString }`
 			: `/checkout/${ siteSlug }`;
 	}
 
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloudProd() ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
 		addItems( productsArray.map( jetpackProductItem ) );
