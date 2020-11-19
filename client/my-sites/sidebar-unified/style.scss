@@ -13,6 +13,7 @@
 	--color-sidebar-menu-hover-background-rgb: rgb( var( --color-sidebar-menu-hover-background ) );
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
+	--color-sidebar-menu-selected-text: white;
 	--color-sidebar-border: #333333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
@@ -154,10 +155,10 @@ $font-size: rem( 14px );
 			&.selected {
 				.sidebar__menu-link {
 					background: var( --color-sidebar-menu-selected-background );
-					color: white;
+					color: var( --color-sidebar-menu-selected-text );
 
 					.sidebar__menu-icon {
-						color: white;
+						color: var( --color-sidebar-menu-selected-text );
 					}
 
 					img.sidebar__menu-icon {
@@ -223,10 +224,10 @@ $font-size: rem( 14px );
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
-				color: white;
+				color: var( --color-sidebar-menu-selected-text );
 
 				.sidebar__menu-icon {
-					color: #fff;
+					color: var( --color-sidebar-menu-selected-text );
 				}
 				img.sidebar__menu-icon {
 					opacity: 1;
