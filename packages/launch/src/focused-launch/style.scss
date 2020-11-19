@@ -10,3 +10,15 @@
 		padding: 0 10px;
 	}
 }
+
+.focused-launch-details__back-button-wrapper {
+	margin-bottom: 24px;
+}
+
+.focused-launch-details__header {
+	margin-bottom: 30px;
+
+    @include break-medium {
+        margin-bottom: 55px;
+    }
+}

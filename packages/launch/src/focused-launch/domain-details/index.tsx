@@ -33,7 +33,7 @@ const DomainDetails: React.FunctionComponent = () => {
 		history.goBack();
 	};
 
-	const handleDomainSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
+	const handleSelect = ( suggestion: DomainSuggestions.DomainSuggestion ) => {
 		onDomainSelect( suggestion );
 		goBack();
 	};
@@ -48,23 +48,23 @@ const DomainDetails: React.FunctionComponent = () => {
 
 	return (
 		<div className="focused-launch-container">
-			<div className="focused-launch-domain-details__header">
-				<div className="focused-launch-plan-details__back-button-wrapper">
-					<GoBackButton onClick={ goBack } />
-				</div>
+			<div className="focused-launch-details__back-button-wrapper">
+				<GoBackButton onClick={ goBack } />
+			</div>
+			<div className="focused-launch-details__header">
 				<Title>{ __( 'Choose a domain', __i18n_text_domain__ ) }</Title>
 				<SubTitle>
 					{ __( 'Free for the first year with any paid plan.', __i18n_text_domain__ ) }
 				</SubTitle>
 			</div>
-			<div className="focused-launch-domain-details__body">
+			<div className="focused-launch-details__body">
 				<DomainPicker
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ selectedDomain?.domain_name || currentDomainName }
 					existingSubdomain={ currentDomainName }
-					onDomainSelect={ handleDomainSelect }
+					onDomainSelect={ handleSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
