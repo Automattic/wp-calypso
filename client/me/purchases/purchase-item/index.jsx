@@ -46,8 +46,17 @@ class PurchaseItem extends Component {
 		);
 	}
 
-	renewsOrExpiresOn() {
+	getStatus() {
 		const { purchase, translate, moment } = this.props;
+		const expiry = moment( purchase.expiryDate );
+
+		if ( purchase && isPartnerPurchase( purchase ) ) {
+			return translate( 'Managed by %(partnerName)s', {
+				args: {
+					partnerName: getPartnerName( purchase ),
+				},
+			} );
+		}
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
@@ -80,8 +89,6 @@ class PurchaseItem extends Component {
 				},
 			} );
 		}
-
-		const expiry = moment( purchase.expiryDate );
 
 		if ( isExpiring( purchase ) ) {
 			if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
@@ -117,14 +124,14 @@ class PurchaseItem extends Component {
 		}
 
 		if ( isExpired( purchase ) ) {
+			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
+			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
+
 			if ( isConciergeSession( purchase ) ) {
 				return translate( 'Session used on %s', {
 					args: expiry.format( 'LL' ),
 				} );
 			}
-
-			const expiredToday = moment().diff( expiry, 'hours' ) < 24;
-			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
 
 			return (
 				<span className="purchase-item__is-error">
@@ -169,20 +176,6 @@ class PurchaseItem extends Component {
 				<span className="purchase-item__site-name">{ site.name }</span>
 			</>
 		);
-	}
-
-	getStatus() {
-		const { purchase, translate } = this.props;
-
-		if ( purchase && isPartnerPurchase( purchase ) ) {
-			return translate( 'This plan is managed by %(partnerName)s.', {
-				args: {
-					partnerName: getPartnerName( purchase ),
-				},
-			} );
-		}
-
-		return this.renewsOrExpiresOn();
 	}
 
 	getPaymentMethod() {
