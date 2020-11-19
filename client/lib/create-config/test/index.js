@@ -71,4 +71,64 @@ describe( 'index', () => {
 			} );
 		} );
 	} );
+
+	describe( 'config utilities', () => {
+		let config;
+
+		beforeEach( () => {
+			config = createConfig( {
+				features: {
+					flagA: false,
+					flagB: false,
+					flagC: true,
+				},
+			} );
+		} );
+
+		afterEach( () => {
+			config = null;
+		} );
+
+		describe( 'isEnabled', () => {
+			test( 'it correctly reports status of features', () => {
+				expect( config.isEnabled( 'flagA' ) ).to.be.false;
+				expect( config.isEnabled( 'flagC' ) ).to.be.true;
+			} );
+
+			test( 'it defaults to "false" when feature is not defined', () => {
+				expect( config.isEnabled( 'flagXYZ' ) ).to.be.false;
+			} );
+		} );
+
+		describe( 'enable', () => {
+			test( 'it can enable features which are not yet set', () => {
+				config.enable( 'flagD' );
+				config.enable( 'flagE' );
+				expect( config.isEnabled( 'flagD' ) ).to.be.true;
+				expect( config.isEnabled( 'flagE' ) ).to.be.true;
+			} );
+
+			test( 'it can toggle existing features to enable them', () => {
+				config.enable( 'flagA' );
+				expect( config.isEnabled( 'flagA' ) ).to.be.true;
+			} );
+		} );
+
+		describe( 'disable', () => {
+			test( 'it can toggle existing features to disable them', () => {
+				config.disable( 'flagC' );
+				expect( config.isEnabled( 'flagC' ) ).to.be.false;
+			} );
+
+			test( 'it retains existing disable setting for features that are already disabled', () => {
+				config.disable( 'flagA' );
+				expect( config.isEnabled( 'flagA' ) ).to.be.false;
+			} );
+
+			test( 'it will handle setting new features to a initial disabled state', () => {
+				config.disable( 'flagZXY' );
+				expect( config.isEnabled( 'flagZXY' ) ).to.be.false;
+			} );
+		} );
+	} );
 } );
