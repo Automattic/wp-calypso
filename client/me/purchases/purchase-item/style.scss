@@ -33,8 +33,8 @@
 }
 
 .purchase-item__information {
-	padding-right: 8px;
-	flex: 1 1 200px;
+	margin-right: 16px;
+	flex: 1 1 250px;
 	
 	@include breakpoint-deprecated( '>960px' ) {
 		flex: 1 1 500px;
@@ -43,23 +43,57 @@
 
 .purchase-item__title {
 	color: var( --color-neutral-80 );
+	overflow: hidden;
 }
 
 .purchase-item__purchase-type {
 	font-size: $font-body-small;
 	color: var( --color-neutral-50 );
-	line-height: 1.2em;
+	line-height: 1.4em;
 }
 
 .purchase-item__status {
 	font-size: $font-body-small;
 	color: var( --color-neutral-80 );
+	line-height: 1.2em;
 	margin: 16px 16px 0 36px;
 	flex: 1 1 200px;
 
 	@include breakpoint-deprecated( '>960px' ) {
 		flex: 0 1 300px;
 		margin: 0 16px 0 0;
+	}
+
+
+	.purchase-item__is-error, 
+	.purchase-item__is-warning {
+		color: var( --color-error-50 );
+		position: relative;
+		display: inline-block;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			&::after {
+				content: '';
+				display: block;
+				width: 8px;
+				height: 8px;
+				position: absolute;
+				top: calc( 50% - 4px );
+				left: -16px;
+				background: var( --color-error-50 );
+				border-radius: 100%;
+			}
+		}
+	}
+
+	.purchase-item__is-warning {
+		color: var( --color-warning-50 );
+
+		@include breakpoint-deprecated( '>960px' ) {
+			&::after {
+				background: var( --color-warning-50 );
+			}
+		}
 	}
 }
 

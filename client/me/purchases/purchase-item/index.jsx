@@ -20,11 +20,11 @@ import {
 	isRecentMonthlyPurchase,
 	isRenewing,
 	purchaseType,
-	showCreditCardExpiringWarning,
+	creditCardExpiresBeforeSubscription,
+	creditCardHasAlreadyExpired,
 	getPartnerName,
 } from 'calypso/lib/purchases';
 import { isDomainTransfer, isConciergeSession } from 'calypso/lib/products-values';
-import Notice from 'calypso/components/notice';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 import SiteIcon from 'calypso/blocks/site-icon';
@@ -49,17 +49,26 @@ class PurchaseItem extends Component {
 	renewsOrExpiresOn() {
 		const { purchase, translate, moment } = this.props;
 
-		if ( showCreditCardExpiringWarning( purchase ) ) {
-			return (
-				<Notice isCompact status="is-error" icon="notice">
-					{ translate( 'Credit card expiring soon' ) }
-					{ this.trackImpression( 'credit-card-expiring' ) }
-				</Notice>
-			);
-		}
-
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
+
+			if ( creditCardHasAlreadyExpired( purchase ) ) {
+				return (
+					<span className="purchase-item__is-error">
+						{ translate( 'Credit card expired' ) }
+						{ this.trackImpression( 'credit-card-expiring' ) }
+					</span>
+				);
+			}
+
+			if ( creditCardExpiresBeforeSubscription( purchase ) ) {
+				return (
+					<span className="purchase-item__is-error">
+						{ translate( 'Credit card expiring soon' ) }
+						{ this.trackImpression( 'credit-card-expiring' ) }
+					</span>
+				);
+			}
 
 			return translate( 'Renews at %(amount)s on {{span}}%(date)s{{/span}}', {
 				args: {
@@ -75,19 +84,27 @@ class PurchaseItem extends Component {
 		const expiry = moment( purchase.expiryDate );
 
 		if ( isExpiring( purchase ) ) {
-			if ( expiry < moment().add( 30, 'days' ) ) {
-				const status = isRecentMonthlyPurchase( purchase ) ? 'is-info' : 'is-error';
+			if ( expiry < moment().add( 30, 'days' ) && ! isRecentMonthlyPurchase( purchase ) ) {
+				const expiryClass =
+					expiry < moment().add( 7, 'days' )
+						? 'purchase-item__is-error'
+						: 'purchase-item__is-warning';
+
 				return (
-					<Notice isCompact status={ status } icon="notice">
-						{ translate( 'Expires %(timeUntilExpiry)s', {
+					<span className={ expiryClass }>
+						{ translate( 'Expires %(timeUntilExpiry)s on {{span}}%(date)s{{/span}}', {
 							args: {
 								timeUntilExpiry: expiry.fromNow(),
+								date: expiry.format( 'LL' ),
+							},
+							components: {
+								span: <span className="purchase-item__date" />,
 							},
 							context:
 								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
 						{ this.trackImpression( 'purchase-expiring' ) }
-					</Notice>
+					</span>
 				);
 			}
 
@@ -110,7 +127,7 @@ class PurchaseItem extends Component {
 			const expiredText = expiredToday ? expiry.format( '[today]' ) : expiry.fromNow();
 
 			return (
-				<Notice isCompact status="is-error" icon="notice">
+				<span className="purchase-item__is-error">
 					{ translate( 'Expired %(timeSinceExpiry)s', {
 						args: {
 							timeSinceExpiry: expiredText,
@@ -119,7 +136,7 @@ class PurchaseItem extends Component {
 							'timeSinceExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 					} ) }
 					{ this.trackImpression( 'purchase-expired' ) }
-				</Notice>
+				</span>
 			);
 		}
 
