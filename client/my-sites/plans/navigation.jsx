@@ -98,15 +98,26 @@ class PlansNavigation extends React.Component {
 	};
 }
 
-function CartToggleButton( { site, toggleCartVisibility, cartVisible, path } ) {
+function CartToggleButton( {
+	site,
+	toggleCartVisibility,
+	cartVisible,
+	path,
+	closeSectionNavMobilePanel,
+} ) {
 	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
 		return null;
 	}
 
+	const onToggle = () => {
+		closeSectionNavMobilePanel();
+		toggleCartVisibility();
+	};
+
 	return (
 		<PopoverCart
 			selectedSite={ site }
-			onToggle={ toggleCartVisibility }
+			onToggle={ onToggle }
 			pinned={ isMobile() }
 			visible={ cartVisible }
 			path={ path }
