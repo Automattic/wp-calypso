@@ -52,8 +52,7 @@ class PlansNavigation extends React.Component {
 		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const cartToggleButton = this.cartToggleButton();
-		const hasPinnedItems = isMobile() && cartToggleButton != null;
+		const hasPinnedItems = isMobile() && config.isEnabled( 'upgrades/checkout' ) && site;
 
 		return (
 			site && (
@@ -80,7 +79,12 @@ class PlansNavigation extends React.Component {
 							</NavItem>
 						) }
 					</NavTabs>
-					{ cartToggleButton }
+					<CartToggleButton
+						site={ this.props.site }
+						toggleCartVisibility={ this.toggleCartVisibility }
+						cartVisible={ this.state.cartVisible }
+						path={ this.props.path }
+					/>
 				</SectionNav>
 			)
 		);
@@ -93,23 +97,22 @@ class PlansNavigation extends React.Component {
 	onMobileNavPanelOpen = () => {
 		this.setState( { cartVisible: false } );
 	};
+}
 
-	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
-			return null;
-		}
-
-		return (
-			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.site }
-				onToggle={ this.toggleCartVisibility }
-				pinned={ isMobile() }
-				visible={ this.state.cartVisible }
-				path={ this.props.path }
-			/>
-		);
+function CartToggleButton( { site, toggleCartVisibility, cartVisible, path } ) {
+	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
+		return null;
 	}
+
+	return (
+		<PopoverCart
+			selectedSite={ site }
+			onToggle={ toggleCartVisibility }
+			pinned={ isMobile() }
+			visible={ cartVisible }
+			path={ path }
+		/>
+	);
 }
 
 export default connect( ( state ) => {
