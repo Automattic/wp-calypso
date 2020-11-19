@@ -347,8 +347,11 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-title-free {
-	font-size: 32px;
-	line-height: 38px;
+	font-size: 2rem;
+	line-height: 1.5;
+	font-weight: 400;
+	color: var( --color-neutral-70 );
+	padding-bottom: 32px;
 }
 
 .segmented-control.is-customer-type-toggle {
