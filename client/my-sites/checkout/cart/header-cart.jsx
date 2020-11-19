@@ -9,6 +9,7 @@ import React from 'react';
  */
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
+import { reloadCart } from 'calypso/lib/cart/actions';
 
 class HeaderCart extends React.Component {
 	static propTypes = {
@@ -29,18 +30,21 @@ class HeaderCart extends React.Component {
 		} );
 	};
 
+	componentDidMount() {
+		reloadCart();
+	}
+
 	render() {
 		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;
-		let isVisible = this.state.isPopoverCartVisible;
 		if ( isCartEmpty ) {
-			isVisible = false;
+			return null;
 		}
 
 		return (
 			<PopoverCart
 				cart={ this.props.cart }
 				selectedSite={ this.props.selectedSite }
-				visible={ isVisible }
+				visible={ this.state.isPopoverCartVisible }
 				pinned={ false }
 				path={ this.props.currentRoute }
 				onToggle={ this.togglePopoverCart }
