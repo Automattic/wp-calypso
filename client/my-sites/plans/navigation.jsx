@@ -22,7 +22,6 @@ import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		shouldShowMyPlan: PropTypes.bool,
