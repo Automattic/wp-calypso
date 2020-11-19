@@ -29,6 +29,13 @@ class Block_Patterns_From_API {
 	private $patterns_cache_key;
 
 	/**
+	 * Whether or not to exclude patterns that require wide or full alignment support
+	 *
+	 * @var bool
+	 */
+	private $skip_full_width_patterns = false;
+
+	/**
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
@@ -42,6 +49,10 @@ class Block_Patterns_From_API {
 				)
 			)
 		);
+
+		if ( ! get_theme_support( 'align-wide' ) ) {
+			$this->skip_full_width_patterns = true;
+		}
 
 		$this->register_patterns();
 	}
@@ -88,18 +99,20 @@ class Block_Patterns_From_API {
 		}
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
-			register_block_pattern(
-				Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
-				array(
-					'title'         => $pattern['title'],
-					'description'   => $pattern['title'],
-					'content'       => $pattern['html'],
-					'viewportWidth' => 1280,
-					'categories'    => array_keys(
-						$pattern['categories']
-					),
-				)
-			);
+			if ( $this->can_register_pattern( $pattern ) ) {
+				register_block_pattern(
+					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
+					array(
+						'title'         => $pattern['title'],
+						'description'   => $pattern['title'],
+						'content'       => $pattern['html'],
+						'viewportWidth' => 1280,
+						'categories'    => array_keys(
+							$pattern['categories']
+						),
+					)
+				);
+			}
 		}
 	}
 
@@ -147,5 +160,19 @@ class Block_Patterns_From_API {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
+	}
+
+	/**
+	 * Check that the pattern is allowed to be registered.
+	 *
+	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
+	 *
+	 * @return bool
+	 */
+	private function can_register_pattern( $pattern ) {
+		if ( $this->skip_full_width_patterns && in_array( 'requires_align_wide', array_keys( $pattern['tags'] ), true ) ) {
+			return false;
+		}
+		return true;
 	}
 }
