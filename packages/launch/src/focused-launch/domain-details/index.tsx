@@ -22,7 +22,6 @@ import GoBackButton from '../go-back-button';
 import './style.scss';
 
 const ANALYTICS_UI_LOCATION = 'domain_step';
-const NUMBER_OF_VISIBLE_DOMAINS = 10;
 
 const DomainDetails: React.FunctionComponent = () => {
 	const { currentDomainName } = useSite();
@@ -72,7 +71,6 @@ const DomainDetails: React.FunctionComponent = () => {
 					segregateFreeAndPaid
 					locale={ document.documentElement.lang }
 					itemType={ ITEM_TYPE_BUTTON }
-					quantity={ NUMBER_OF_VISIBLE_DOMAINS }
 				/>
 			</div>
 		</div>
