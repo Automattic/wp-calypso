@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
+import page from 'page';
 
 /**
  * Internal dependencies
@@ -161,10 +162,6 @@ class PurchaseItem extends Component {
 		return null;
 	}
 
-	scrollToTop() {
-		window.scrollTo( 0, 0 );
-	}
-
 	getPurchaseType() {
 		const { purchase, site, translate, slug } = this.props;
 
@@ -173,17 +170,24 @@ class PurchaseItem extends Component {
 			return purchaseType( purchase );
 		}
 
-		return translate( '%(purchaseType)s for {{link}}%(site)s{{/link}}', {
+		return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
 			args: {
 				purchaseType: purchaseType( purchase ),
 				site: site.name,
 			},
 			components: {
-				link: (
-					<a
-						href={ getPurchaseListUrlFor( slug ) }
+				button: (
+					<button
 						className="purchase-item__site-name"
-						title="View subscriptions for Site"
+						onClick={ ( event ) => {
+							event.preventDefault();
+							page( getPurchaseListUrlFor( slug ) );
+						} }
+						title={ translate( 'View subscriptions for %(siteName)s', {
+							args: {
+								siteName: site.name,
+							},
+						} ) }
 					/>
 				),
 			},
@@ -263,11 +267,14 @@ class PurchaseItem extends Component {
 
 		let onClick;
 		let href;
+
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
-				onClick = this.scrollToTop;
+				onClick = () => {
+					window.scrollTo( 0, 0 );
+				};
 				href = getManagePurchaseUrlFor( slug, purchase.id );
 			}
 		}

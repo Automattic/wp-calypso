@@ -102,12 +102,17 @@
 	display: inline-block;
 }
 
-a.purchase-item__site-name {
+.purchase-item__site-name {
 	color: var( --color-neutral-50 );
 	text-decoration: underline;
 
 	&:hover {
 		text-decoration: none;
+		cursor: pointer;
+	}
+
+	&:focus {
+		outline: thin dotted;
 	}
 }
 
