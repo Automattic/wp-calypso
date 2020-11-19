@@ -413,6 +413,7 @@ export class SiteSettingsFormGeneral extends Component {
 	visibilityOptionsComingSoonV2() {
 		const {
 			fields,
+			isEditingToolkitActive,
 			isRequestingSettings,
 			isWPForTeamsSite,
 			eventTracker,
@@ -429,9 +430,7 @@ export class SiteSettingsFormGeneral extends Component {
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
 		const isAnyComingSoonEnabled =
 			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
-		const isEditingToolkitActiveOnAtomicSite =
-			! isNonAtomicJetpackSite && this.props.isEditingToolkitPluginActive;
-		const isComingSoonDisabled = isRequestingSettings || ! isEditingToolkitActiveOnAtomicSite;
+		const isComingSoonDisabled = isRequestingSettings || ! isEditingToolkitActive;
 		const comingSoonFormLabelClasses = classNames(
 			'site-settings__visibility-label is-coming-soon',
 			{
@@ -462,7 +461,7 @@ export class SiteSettingsFormGeneral extends Component {
 						<FormSettingExplanation
 							className={ classNames( { 'is-coming-soon-disabled': isComingSoonDisabled } ) }
 						>
-							{ ! isEditingToolkitActiveOnAtomicSite
+							{ ! isEditingToolkitActive
 								? translate(
 										'Coming Soon functionality is available by installing and activating the WordPress.com Editing Toolkit Plugin. {{a}}Learn more{{/a}}.',
 										{
@@ -848,7 +847,7 @@ const connectComponent = connect(
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			isEditingToolkitPluginActive: isEditingToolkitPluginActive( state, siteId ),
+			isEditingToolkitActive: isEditingToolkitPluginActive( state, siteId ),
 		};
 	},
 	mapDispatchToProps,
