@@ -20,6 +20,7 @@ const APP_ARGS = [
 	'--remote-debugging-port=9222',
 	'--disable-dev-shm-usage',
 	'--disable-setuid-sandbox',
+	'--no-sandbox',
 ];
 
 let BUILT_APP_DIR;
