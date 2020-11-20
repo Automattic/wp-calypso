@@ -35,6 +35,7 @@ export default function useShoppingCartManager( {
 		cartKey,
 		setCart,
 	] );
+	const previousCartKey = useRef< string | number | undefined >();
 	const getServerCart = useCallback( () => getCart( String( cartKey ) ), [ cartKey, getCart ] );
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
@@ -44,6 +45,19 @@ export default function useShoppingCartManager( {
 	const cacheStatus: CacheStatus = hookState.cacheStatus;
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
+
+	useEffect( () => {
+		if ( ! cartKey ) {
+			return;
+		}
+		if ( cartKey !== previousCartKey.current ) {
+			debug(
+				`cart key "${ cartKey }" has changed from "${ previousCartKey.current }"; re-initializing cart`
+			);
+			hookDispatch( { type: 'CART_RELOAD' } );
+		}
+		previousCartKey.current = cartKey;
+	}, [ cartKey, hookDispatch ] );
 
 	useInitializeCartFromServer( cacheStatus, cartKey, getServerCart, setServerCart, hookDispatch );
 
