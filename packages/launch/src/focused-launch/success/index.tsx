@@ -48,8 +48,8 @@ const Success: React.FunctionComponent = () => {
 		<div className="focused-launch-success">
 			<div className="focused-launch-success__wrapper">
 				<Confetti className="focused-launch-success__confetti" />
-				<Title>{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
-				<SubTitle>
+				<Title tagName="h2">{ __( 'Hooray!', __i18n_text_domain__ ) }</Title>
+				<SubTitle tagName="h3">
 					{ __(
 						"Congratulations, your website is now live. We're excited to watch you grow with WordPress.",
 						__i18n_text_domain__
