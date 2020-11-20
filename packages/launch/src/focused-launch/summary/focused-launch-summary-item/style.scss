@@ -1,7 +1,6 @@
 @import '~@automattic/typography/styles/variables';
 @import '~@automattic/onboarding/styles/variables';
-
-$accent-blue: #117ac9;
+@import '../../../variables';
 
 .focused-launch-summary__item {
 	background-color: var( --studio-white );
@@ -53,15 +52,15 @@ $accent-blue: #117ac9;
 	}
 
 	&.is-selected {
-		border: 2px solid $accent-blue;
-		color: $accent-blue;
+		border: 2px solid $focused-launch-accent-blue;
+		color: $focused-launch-accent-blue;
 
 		.focused-launch-summary-item__price-cost {
-			color: $accent-blue;
+			color: $focused-launch-accent-blue;
 			opacity: 0.68;
 		}
 		.focused-launch-summary-item__leading-side-label {
-			color: $accent-blue;
+			color: $focused-launch-accent-blue;
 		}
 	}
 
@@ -73,7 +72,7 @@ $accent-blue: #117ac9;
 	&:not( .is-readonly ) {
 		cursor: pointer;
 		&:hover {
-			border: 2px solid $accent-blue;
+			border: 2px solid $focused-launch-accent-blue;
 		}
 	}
 

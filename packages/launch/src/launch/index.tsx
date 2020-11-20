@@ -54,12 +54,10 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			isDismissible={ isModalDismissible }
 		>
-			<div className="launch__focused-modal-wrapper ">
-				<div className="launch__focused-modal-body">
-					<LaunchContext.Provider value={ { siteId, locale, redirectTo } }>
-						<FocusedLaunch />
-					</LaunchContext.Provider>
-				</div>
+			<div className="launch__focused-modal-body">
+				<LaunchContext.Provider value={ { siteId, locale, redirectTo } }>
+					<FocusedLaunch />
+				</LaunchContext.Provider>
 			</div>
 		</Modal>
 	);
