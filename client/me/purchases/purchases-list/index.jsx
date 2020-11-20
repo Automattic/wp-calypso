@@ -45,6 +45,7 @@ import {
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
 import titles from 'calypso/me/purchases/titles';
+import PurchasesListHeader from './purchases-list-header';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -117,6 +118,8 @@ class PurchasesList extends Component {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
+
+					<PurchasesListHeader showSite={ true } />
 
 					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
 						<PurchasesSite

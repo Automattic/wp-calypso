@@ -20,6 +20,7 @@ import { CompactCard } from '@automattic/components';
 import EmptyContent from 'calypso/components/empty-content';
 import './style.scss';
 import { Purchase } from 'calypso/lib/purchases/types';
+import PurchasesListHeader from 'calypso/me/purchases/purchases-list/purchases-list-header';
 
 function SubscriptionsContent( {
 	isFetchingPurchases,
@@ -55,6 +56,8 @@ function SubscriptionsContent( {
 	if ( purchases.length ) {
 		return (
 			<div className="subscriptions__list">
+				<PurchasesListHeader showSite={ false } />
+
 				<PurchasesSite
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					key={ selectedSite.ID }

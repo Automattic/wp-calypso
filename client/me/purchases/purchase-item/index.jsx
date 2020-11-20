@@ -35,7 +35,7 @@ import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/style.scss';
 
 const eventProperties = ( warning ) => ( { warning, position: 'purchase-list' } );
 
@@ -175,6 +175,7 @@ class PurchaseItem extends Component {
 						<button
 							className="purchase-item__site-name"
 							onClick={ ( event ) => {
+								event.stopPropagation();
 								event.preventDefault();
 								page( getPurchaseListUrlFor( slug ) );
 							} }
@@ -222,21 +223,23 @@ class PurchaseItem extends Component {
 		const { purchase, site, showSite } = this.props; // playa
 
 		return (
-			<div className="purchase-item__wrapper">
+			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
-					<div className="purchase-item__site-icon">
+					<div className="purchase-item__site purchases-layout__site">
 						<SiteIcon site={ site } size={ 24 } />
 					</div>
 				) }
 
-				<div className="purchase-item__information">
+				<div className="purchase-item__information purchases-layout__information">
 					<div className="purchase-item__title">{ getDisplayName( purchase ) }</div>
 					<div className="purchase-item__purchase-type">{ this.getPurchaseType() }</div>
 				</div>
 
-				<div className="purchase-item__status">{ this.getStatus() }</div>
+				<div className="purchase-item__status purchases-layout__status">{ this.getStatus() }</div>
 
-				<div className="purchase-item__payment-method">{ this.getPaymentMethod() }</div>
+				<div className="purchase-item__payment-method purchases-layout__payment-method">
+					{ this.getPaymentMethod() }
+				</div>
 			</div>
 		);
 	};
@@ -256,9 +259,12 @@ class PurchaseItem extends Component {
 
 		if ( isPlaceholder ) {
 			return (
-				<CompactCard className="purchase-item__placeholder-wrapper">
-					<div className="purchase-item__placeholder" />
-				</CompactCard>
+				<>
+					<CompactCard className="purchase-item__placeholder-wrapper purchases-list-header" />
+					<CompactCard>
+						<div className="purchase-item__placeholder" />
+					</CompactCard>
+				</>
 			);
 		}
 
