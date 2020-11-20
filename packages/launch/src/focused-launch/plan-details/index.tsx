@@ -38,7 +38,7 @@ const PlanDetails: React.FunctionComponent = () => {
 	};
 
 	return (
-		<div className="focused-launch-container">
+		<div className="focused-launch-container focused-launch-container--wide">
 			<div className="focused-launch-details__back-button-wrapper">
 				<GoBackButton onClick={ goBack } />
 			</div>
