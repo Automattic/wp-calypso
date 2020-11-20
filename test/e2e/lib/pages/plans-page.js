@@ -98,7 +98,7 @@ export default class PlansPage extends AsyncBaseContainer {
 	async selectJetpackSecurity() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			by.css( '[data-e2e-product-slug="jetpack_security_daily"] .jetpack-product-card-alt__button' )
+			by.css( '[data-e2e-product-slug="jetpack_security_daily"] .button' )
 		);
 	}
 }
