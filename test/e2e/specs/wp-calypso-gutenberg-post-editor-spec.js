@@ -282,22 +282,43 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see the Earn blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
-					true,
-					'Earn (Jetpack) blocks are not present'
-				);
+
+				// With deepEqual we're also testing the sort order they're shown in the
+				// inserter. If that's not desirable, we can use the sameMembers matcher.
+				assert.deepEqual( await gEditorComponent.getShownBlockInserterItems(), [
+					'Donations',
+					'OpenTable',
+					'Payments',
+					'Pay with PayPal',
+					'Premium Content',
+					'Pricing Table',
+				] );
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can see the Grow blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
-					true,
-					'Grow (Jetpack) blocks are not present'
-				);
+
+				assert.deepEqual( await gEditorComponent.getShownBlockInserterItems(), [
+					'Business Hours',
+					'Calendly',
+					'Form',
+					'Contact Info',
+					'Mailchimp',
+					'Revue',
+					'Subscription Form',
+					'Click to Tweet',
+					'Logos',
+					'Contact Form',
+					'RSVP Form',
+					'Registration Form',
+					'Appointment Form',
+					'Feedback Form',
+					'WhatsApp Button',
+				] );
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
