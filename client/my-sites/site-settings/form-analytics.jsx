@@ -130,7 +130,7 @@ export class GoogleAnalyticsForm extends Component {
 					siteIsJetpack
 						? translate( "Monitor your site's views, clicks, and other important metrics" )
 						: translate(
-								"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+								"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 						  )
 				}
 				event={ 'google_analytics_settings' }
@@ -181,7 +181,7 @@ export class GoogleAnalyticsForm extends Component {
 
 						<FormFieldset>
 							<FormLabel htmlFor="wgaCode">
-								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Google Analytics Measurement ID', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="wgaCode"
@@ -206,7 +206,7 @@ export class GoogleAnalyticsForm extends Component {
 							{ ! this.state.isCodeValid && (
 								<FormTextValidation
 									isError={ true }
-									text={ translate( 'Invalid Google Analytics Tracking ID.' ) }
+									text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 								/>
 							) }
 							<ExternalLink
@@ -215,7 +215,7 @@ export class GoogleAnalyticsForm extends Component {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ translate( 'Where can I find my Tracking ID?' ) }
+								{ translate( 'Where can I find my Measurement ID?' ) }
 							</ExternalLink>
 						</FormFieldset>
 						{ siteIsJetpack && (
