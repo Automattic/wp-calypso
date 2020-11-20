@@ -86,13 +86,12 @@ export class PlansStep extends Component {
 		// The last step of onboarding-secure-your-brand flow is the secure-your-brand upsell. It should not be visible
 		// if the plan is Personal or the user is in the control group
 		if (
-			flowName === 'onboarding-secure-your-brand' &&
-			( isPersonal( cartItem ) ||
-				'test' !== abtest( 'secureYourBrand', this.getGeoLocationFromCookie() ) )
+			isPersonal( cartItem ) ||
+			'test' !== abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
 		) {
-			this.props.goToNextStep( 'onboarding' );
-		} else {
 			this.props.goToNextStep();
+		} else {
+			this.props.goToNextStep( 'onboarding-secure-your-brand' );
 		}
 	};
 

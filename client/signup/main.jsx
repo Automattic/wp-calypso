@@ -546,10 +546,10 @@ class Signup extends React.Component {
 
 		// redirect the user to the next step
 		scrollPromise.then( () => {
-			if ( ! this.isEveryStepSubmitted() ) {
+			if ( ! this.isEveryStepSubmitted( this.props.progress, flowName ) ) {
 				page( getStepUrl( flowName, stepName, stepSectionName, this.props.locale ) );
-			} else if ( this.isEveryStepSubmitted() ) {
-				this.goToFirstInvalidStep();
+			} else if ( this.isEveryStepSubmitted( this.props.progress, flowName ) ) {
+				this.goToFirstInvalidStep( this.props.progress, flowName );
 			}
 		} );
 	};
@@ -570,11 +570,11 @@ class Signup extends React.Component {
 		this.goToStep( nextStepName, nextStepSection, nextFlowName );
 	};
 
-	goToFirstInvalidStep = ( progress = this.props.progress ) => {
-		const firstInvalidStep = getFirstInvalidStep( this.props.flowName, progress );
+	goToFirstInvalidStep = ( progress = this.props.progress, flowName = this.props.flowName ) => {
+		const firstInvalidStep = getFirstInvalidStep( flowName, progress );
 
 		if ( firstInvalidStep ) {
-			recordSignupInvalidStep( this.props.flowName, this.props.stepName );
+			recordSignupInvalidStep( flowName, this.props.stepName );
 
 			if ( firstInvalidStep.stepName === this.props.stepName ) {
 				// No need to redirect
@@ -583,13 +583,13 @@ class Signup extends React.Component {
 			}
 
 			debug( `Navigating to the first invalid step: ${ firstInvalidStep.stepName }` );
-			page( getStepUrl( this.props.flowName, firstInvalidStep.stepName, this.props.locale ) );
+			page( getStepUrl( flowName, firstInvalidStep.stepName, this.props.locale ) );
 		}
 	};
 
-	isEveryStepSubmitted = ( progress = this.props.progress ) => {
-		const flowSteps = flows.getFlow( this.props.flowName ).steps;
-		const completedSteps = getCompletedSteps( this.props.flowName, progress );
+	isEveryStepSubmitted = ( progress = this.props.progress, flowName = this.props.flowName ) => {
+		const flowSteps = flows.getFlow( flowName ).steps;
+		const completedSteps = getCompletedSteps( flowName, progress );
 		return flowSteps.length === completedSteps.length;
 	};
 
