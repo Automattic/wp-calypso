@@ -5,12 +5,7 @@
 @import '~@automattic/typography/styles/variables';
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
-
-$padding-h-mobile: 20px;
-$padding-h-small: 32px;
-$padding-h-medium: 48px;
-$padding-h-large: 60px;
-$padding-h-wide: 80px;
+@import '../variables';
 
 // =============================================================================
 // Override <Modal> styles
@@ -26,7 +21,7 @@ body.has-focused-launch-modal {
 	}
 
 	.components-modal__header {
-		padding: 0 $padding-h-mobile;
+		padding: 0 $launch-padding-h-mobile;
 		margin: 0;
 
 		.components-modal__icon-container {
@@ -116,27 +111,27 @@ body.has-focused-launch-modal {
 	min-width: 0;
 	// Fill the page's height without showing scrollbars, if they're not needed
 	min-height: calc( 100% - #{$onboarding-header-height} );
-	padding: 24px $padding-h-mobile;
+	padding: 24px $launch-padding-h-mobile;
 
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;
 
 	@include break-small {
-		padding: 24px $padding-h-small 48px;
+		padding: 24px $launch-padding-h-small 48px;
 	}
 
 	@include break-medium {
 		border-bottom: none;
-		padding: 24px $padding-h-medium 60px;
+		padding: 24px $launch-padding-h-medium 60px;
 	}
 
 	@include break-large {
-		padding: 32px $padding-h-large 72px;
+		padding: 32px $launch-padding-h-large 72px;
 	}
 
 	@include break-large {
-		padding: 32px $padding-h-wide 80px;
+		padding: 32px $launch-padding-h-wide 80px;
 	}
 
 	// Direct children of this element are the different modal views
