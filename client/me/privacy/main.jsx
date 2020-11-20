@@ -31,8 +31,6 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
 
-import { localizeUrl as libLocalizeUrl } from 'calypso/lib/i18n-utils';
-
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
 /* eslint-disable react/prefer-es6-class */
@@ -87,7 +85,7 @@ const Privacy = createReactClass( {
 		);
 
 		const cookiePolicyLink = (
-			<ExternalLink href={ libLocalizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
+			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
 		);
 		const privacyPolicyLink = (
 			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy' ) } target="_blank" />
