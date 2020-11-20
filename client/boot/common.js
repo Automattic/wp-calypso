@@ -52,7 +52,7 @@ import userFactory from 'calypso/lib/user';
 import { getUrlParts, isOutsideCalypso } from 'calypso/lib/url';
 import { setStore } from 'calypso/state/redux-store';
 import { requestUnseenStatus } from 'calypso/state/reader-ui/seen-posts/actions';
-import isJetpackCloud, { isJetpackCloudProd } from 'calypso/lib/jetpack/is-jetpack-cloud';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { inJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { getLanguageSlugs } from 'calypso/lib/i18n-utils/utils';
 
@@ -127,7 +127,7 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
-		if ( isJetpackCloud() && ! isJetpackCloudProd() ) {
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
 			loggedOutRoutes.push( '/jetpack/connect' );
 		}
 

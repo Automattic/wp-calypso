@@ -10,8 +10,6 @@ const jetpackCloudEnvironments = [
 	'jetpack-cloud-production',
 ];
 
-export const isJetpackCloudProd = (): boolean => 'jetpack-cloud-production' === config( 'env_id' );
-
 const isJetpackCloud = (): boolean => jetpackCloudEnvironments.includes( config( 'env_id' ) );
 
 export default isJetpackCloud;
