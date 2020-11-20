@@ -2,25 +2,20 @@
 
 This project uses [yarn v1](https://classic.yarnpkg.com/lang/en/) to manage its dependencies. It uses `yarn workspaces` functionallity and [lerna](https://github.com/lerna/lerna) to manage the monorepo.
 
-
 ## Working with sub-packages
 
 In this context, a 'sub-package' is any package of the monorepo. That includes `./packages/*`, `./client` and `./apps/*`.
 
 With `yarn`, there are two different modes to work with a sub-package:
 
-*Option 1:*
-
-Go to the directory that contains the package and run regular yarn commands. Example:
+**Option 1**: Go to the directory that contains the package and run regular yarn commands. Example:
 
 ```
 cd packages/calypso-analytics
 yarn add ...
 ```
 
-*Option 2:*
-
-Run `yarn` commands in teh root of the project, but prepend `workspace <packageName>`. Example
+**Option 2**: Run `yarn` commands in teh root of the project, but prepend `workspace <packageName>`. Example
 
 ```
 yarn workspace @automattic/calypso-analytics add...
@@ -28,11 +23,7 @@ yarn workspace @automattic/calypso-analytics add...
 
 Both options are equivalent, is a matter of personal preference. For the rest of this guide, the examples will follow Option 1.
 
-
-
-
 ## Common tasks
-
 
 ### Add a new dependency
 
@@ -63,7 +54,6 @@ yarn add @automattic/my-awesome-polyfill@1.0.0
 ```
 
 That's it! Don't forget to [publish the package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/monorepo.md#publishing) after merging your PR!
-
 
 ### Delete a dependency
 
@@ -96,7 +86,6 @@ yarn upgrade <package>
 Note that this won't change the required range of `sinon` (i.e. it won't modify `package.json`). Instead, it will try to update `sinon` and any of its dependencies to the highest version that satisfies the specified range.
 For example, if we declare a dependency on `sinon@^7.5.0` it may update sinon to `7.5.1`, but never to `8.0.0`.
 
-
 ### Update a dependency to a new range
 
 Run
@@ -110,7 +99,6 @@ yarn upgrade <package>@^<semver-range>
 
 As before, it will update `sinon` and all its dependencies. But in this case, it _will_ change the required range (i.e. it will modify `package.json`)
 
-
 ### List oudated dependencies
 
 Run
@@ -121,7 +109,6 @@ yarn outdated
 
 Note that the output includes which sub-package has the dependency. It is possible that the same dependency is present in many sub-packages (or even in the root project).
 
-
 ### List duplicated dependencies
 
 Run
@@ -131,7 +118,6 @@ npx yarn-deduplicate --list
 ```
 
 It is recommended to run this command after adding a new dependency and fix potential duplications with `npx yarn-deduplicate --package <duplicated-package>`
-
 
 ## Differences with `npm`
 

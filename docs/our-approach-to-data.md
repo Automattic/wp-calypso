@@ -1,5 +1,4 @@
-Our Approach to Data
-====================
+# Our Approach to Data
 
 Throughout Calypso's development, our approach to handling data has evolved to allow us to better adapt to the scale at which the application has grown. These shifts have not been ubiquitously adopted throughout the codebase, so you'll occasionally encounter legacy code which is not consistent with our current recommendations. The purpose of this document is to outline a history of these approaches such that you as the developer can understand the differences between each. Furthermore, it seeks to prescribe our current set of recommendations with regard to data management.
 
@@ -11,7 +10,7 @@ There have been three major "eras" of data management throughout the lifetime of
 
 Our original approach to managing data took an object-oriented approach, wherein an instance of the store would inherit the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter). Typically, a single instance of each object store was shared across the entire application. The instance was responsible for storing data, but included conveniences to automatically fetch data upon the first request. Used in combination with the [`data-observe` mixin](../client/lib/mixins/data-observe), a developer could monitor an instance of the store passed as a prop to a React component to automatically re-render its contents if the store emitted a `change` event.
 
-__Identifying characteristics:__
+**Identifying characteristics:**
 
 - Module directories in `lib`, suffixed with `-list`
 - Index file exports a common shared instance of the object prototype
@@ -23,7 +22,7 @@ __Identifying characteristics:__
 
 Facebook's [Flux architecture](https://facebook.github.io/flux/) is a pattern that encourages a [unidirectional data flow](https://facebook.github.io/flux/img/overview/flux-simple-f8-diagram-explained-1300w.png) in which stores can only be manipulated via actions dispatched by a global dispatcher object. The raw data is never exposed by the store module, and as such, data can only be accessed by using helper ("getter") methods from the exported object. Much like the event emitter object approach, a Flux store module inherits from the [`EventEmitter` interface](https://nodejs.org/api/events.html#events_class_eventemitter), though a Flux store should only ever emit a `change` event (this was common but not as strictly enforced in our emitter objects). Stores subscribe to the dispatcher and listen for actions it is concerned with. Action creators are responsible for dispatching these actions. As an example, it is common to have an action creator that triggers a fetch for data - this action creator would dispatch a `FETCH_` prefixed "view" action upon the initial request, then subsequently a `RECEIVE_` prefixed "server" action upon receiving the data. Any store in the application could react to one or both of these action types.
 
-__Identifying characteristics:__
+**Identifying characteristics:**
 
 - Module directories in `lib`
 - Modules include `actions.js` and at least one store (named or suffixed `store.js`)
@@ -32,7 +31,7 @@ __Identifying characteristics:__
 - Stores export a number of helper getter functions for accessing known data
 - Stores subscribe to the Dispatcher, manipulating data in response to action types it is concerned with
 
-__Advantages:__
+**Advantages:**
 
 - Stores can be specialized to their specific needs since dispatched actions are run against all subscribing stores
 - There is a single entry point by which data can enter the store. This is easier to manage as an application scales
@@ -48,12 +47,12 @@ __Advantages:__
 - While Flux Stores are responsible for maintaining own state, Redux reducers are composable functions that manipulate specific parts of the global state "tree"
 - Since state is the [single source of truth](https://redux.js.org/introduction/three-principles#single-source-of-truth) for the entire application, reducers tend to be much simpler and more transparent than Flux stores
 
-__Identifying characteristics:__
+**Identifying characteristics:**
 
 - Files exist within the `state` directory, mirroring the structure of the global tree
 - React bindings use [`react-redux`](https://github.com/reactjs/react-redux) `connect`
 
-__Advantages:__
+**Advantages:**
 
 - An arguably simpler abstraction to the same problems addressed by Facebook’s Flux implementation
 - Better suited for server-side rendering, as the singleton nature of Flux stores exposes the risk of leaking session data between requests
@@ -66,19 +65,18 @@ This era builds upon the previous, using the same selectors, reducers and action
 
 See [the Modularized State documentation](./modularized-state.md) for more details on how it works and how to implement it in new portions of state.
 
-__Identifying characteristics:__
+**Identifying characteristics:**
 
 - Modularized reducers are not imported in the root reducer (`client/state/reducer`)
 - Modularized reducers use `withStorageKey` to persist their state separately
 - Modularized portions of state include an `init` module that registers the reducer as a side effect
 - Action creators and selectors for a modularized portion of state import the `init` module
 
-__Advantages:__
+**Advantages:**
 
 - Preserves most of the advantages of Redux, with the tradeoff that action creators and selectors need to import the `init` file for the portions of state they touch
 - Significantly reduces the amount of code required to boot Calypso, improving loading performance
 - More scalable approach, as Redux state continues to grow
-
 
 ## Current Recommendations
 
@@ -219,7 +217,7 @@ function PostsList( { posts } ) {
 
 export default connect( ( state, ownProps ) => {
 	return {
-		posts: getSitePosts( ownProps.siteId )
+		posts: getSitePosts( ownProps.siteId ),
 	};
 } )( PostsList );
 ```
@@ -236,25 +234,25 @@ In the example above we only pass the first argument, `mapStateToProps`. As anot
 
 ```jsx
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { localize } from 'i18n-calypso';
 
-const PostDeleteButton = ( { delete, label, translate } ) => (
-  <button onClick={ delete }>
-    { translate( 'Delete %s', {
-      args: [ label ]
-    } ) }
-  </button>
+const PostDeleteButton = ( { deleteHandler, label, translate } ) => (
+	<button onClick={ deleteHandler }>
+		{ translate( 'Delete %s', {
+			args: [ label ],
+		} ) }
+	</button>
 );
 
 export default connect(
 	( state, ownProps ) => {
 		return {
-			label: getSitePost( ownProps.siteId, ownProps.postId ).title
+			label: getSitePost( ownProps.siteId, ownProps.postId ).title,
 		};
 	},
 	( dispatch, ownProps ) => {
 		return {
-			delete: () => dispatch( deleteSitePost( ownProps.siteId, ownProps.postId ) )
+			deleteHandler: () => dispatch( deleteSitePost( ownProps.siteId, ownProps.postId ) ),
 		};
 	}
 )( localize( PostDeleteButton ) );
@@ -287,7 +285,7 @@ A selector is simply a convenience function for retrieving data out of the globa
 let posts = getSitePosts( state, siteId );
 
 // Navigating the state tree
-let posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
+posts = state.sites.sitePosts[ siteId ].map( ( postId ) => state.posts.items[ postId ] );
 ```
 
 In addition, following our modularized state approach (see [`client/state/README.md`](https://github.com/Automattic/wp-calypso/blob/HEAD/client/state/README.md) for more details), we make sure to initialize the relevant portion of state by importing its `init` module. This is best handled in a dedicated selector module, rather than in individual connected components.
@@ -303,7 +301,7 @@ What are a few common use-cases for selectors?
 - Resolving references: A [normalized state tree](#data-normalization) is ideal from the standpoint of minimizing redundancy and synchronization concerns, but is not as developer-friendly to use. Selectors can be helpful in restoring convenient access to useful objects.
 - Derived data: A normalized state tree avoids storing duplicated data. However, it can be useful to request a value which is calculated based on state data. For example, it might be valuable to retrieve the hostname for a site, which can be calculated based on its URL property.
 - Filtering data: You can use a selector to return a subset of a state tree value. For example, a `getJetpackSites` selector could return an array of all known sites filtered to only those which are Jetpack-enabled.
- - __Side-note:__ In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with Calypso's `lib/create-selector` or `lib/tree-select`).
+- **Side-note:** In this case, you could achieve a similar effect with a reducer function aggregating an array of Jetpack site IDs. If you were to take this route, you'd probably want a complementary selector anyways. Caching concerns on selectors can be overcome by using memoization techniques (for example, with Calypso's `lib/create-selector` or `lib/tree-select`).
 
 ### UI State
 
