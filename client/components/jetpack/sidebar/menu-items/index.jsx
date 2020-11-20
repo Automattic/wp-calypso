@@ -87,6 +87,17 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
 				</SidebarItem>
 			) }
+			<SidebarItem
+				tipTarget="jetpack-search"
+				icon={ showIcons ? 'search' : undefined }
+				label={ translate( 'Search', {
+					comment: 'Jetpack sidebar menu item',
+				} ) }
+				link={ `/jetpack-search/${ siteSlug }` }
+				onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
+				selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
+				expandSection={ expandSection }
+			/>
 		</>
 	);
 };
