@@ -4,8 +4,8 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -19,10 +19,13 @@ import {
 	purchasesRoot,
 } from 'calypso/me/purchases/paths.js';
 import SectionNav from 'calypso/components/section-nav';
-import config from 'calypso/config';
-import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
+import { isEnabled } from 'calypso/config';
+import Search from 'calypso/components/search';
+import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
-const PurchasesNavigation = ( { section, translate } ) => {
+export default function PurchasesNavigation( { section } ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	let text = translate( 'Billing History' );
 
 	if ( section === 'purchases' ) {
@@ -48,12 +51,24 @@ const PurchasesNavigation = ( { section, translate } ) => {
 					{ translate( 'Payment Methods' ) }
 				</NavItem>
 
-				{ config.isEnabled( 'async-payments' ) && (
+				{ isEnabled( 'async-payments' ) && (
 					<NavItem path={ pendingPayments } selected={ section === 'pending' }>
 						{ translate( 'Pending Payments' ) }
 					</NavItem>
 				) }
 			</NavTabs>
+
+			{ section === 'billing' && (
+				<Search
+					pinned
+					fitsContainer
+					onSearch={ ( term ) => {
+						dispatch( setQuery( 'past', term ) );
+					} }
+					placeholder={ translate( 'Search all receipts…' ) }
+					analyticsGroup="Billing"
+				/>
+			) }
 		</SectionNav>
 	);
 };
@@ -61,7 +76,3 @@ const PurchasesNavigation = ( { section, translate } ) => {
 PurchasesNavigation.propTypes = {
 	section: PropTypes.string.isRequired,
 };
-
-export default connect( ( state ) => ( {
-	pastTransactions: getPastBillingTransactions( state ),
-} ) )( localize( PurchasesNavigation ) );
