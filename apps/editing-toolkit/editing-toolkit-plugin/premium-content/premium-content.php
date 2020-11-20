@@ -133,6 +133,12 @@ function register_blocks() {
 				'premium-content/planId' => 'selectedPlanId',
 				'isPremiumContentChild'  => 'isPremiumContentChild',
 			),
+			'attributes'      => array(
+				'isPremiumContentChild' => array(
+					'type'    => 'boolean',
+					'default' => true,
+				),
+			),
 		)
 	);
 	register_block_type(
@@ -346,7 +352,6 @@ function premium_content_render_stripe_nudge() {
 	}
 	return '';
 }
-
 
 /**
  * Server-side rendering for the `premium-content/logged-out-view` block.
