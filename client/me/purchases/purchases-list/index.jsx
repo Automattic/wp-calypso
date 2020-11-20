@@ -106,18 +106,19 @@ class PurchasesList extends Component {
 	}
 
 	render() {
+		const { purchases, sites, translate, userId, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && purchases.length ) {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
+					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
@@ -131,12 +132,8 @@ class PurchasesList extends Component {
 			);
 		}
 
-		if (
-			this.props.hasLoadedUserPurchasesFromServer &&
-			! this.props.purchases.length &&
-			! this.props.subscriptions.length
-		) {
-			if ( ! this.props.sites.length ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && ! purchases.length && ! subscriptions.length ) {
+			if ( ! sites.length ) {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
@@ -152,12 +149,12 @@ class PurchasesList extends Component {
 
 					<CompactCard className="purchases-list__no-content">
 						<EmptyContent
-							title={ this.props.translate( 'Looking to upgrade?' ) }
-							line={ this.props.translate(
+							title={ translate( 'Looking to upgrade?' ) }
+							line={ translate(
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade now' ) }
+							action={ translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>
@@ -168,7 +165,7 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list is-wide-layout">
-				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryUserPurchases userId={ userId } />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
@@ -223,20 +222,10 @@ class PurchaseItem extends Component {
 	}
 
 	renderPurhaseItemContent = () => {
-		const { isPlaceholder, purchase, site } = this.props;
-		const classes = classNames(
-			'purchase-item__wrapper',
-			{ 'is-expired': purchase && 'expired' === purchase.expiryStatus },
-			{ 'is-placeholder': isPlaceholder },
-			{ 'is-included-with-plan': purchase && isIncludedWithPlan( purchase ) }
-		);
-
-		if ( isPlaceholder ) {
-			return <>Loading...</>;
-		}
+		const { purchase, site } = this.props; // playa
 
 		return (
-			<div className={ classes }>
+			<div className="purchase-item__wrapper">
 				{ true && ( // check prop to inlude site info
 					<div className="purchase-item__site-icon">
 						<SiteIcon site={ site } size={ 24 } />
@@ -267,6 +256,14 @@ class PurchaseItem extends Component {
 
 		let onClick;
 		let href;
+
+		if ( isPlaceholder ) {
+			return (
+				<CompactCard className="purchase-item__placeholder-wrapper">
+					<div className="purchase-item__placeholder" />
+				</CompactCard>
+			);
+		}
 
 		if ( ! isPlaceholder && getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.

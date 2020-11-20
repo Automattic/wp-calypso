@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import { some, times } from 'lodash';
+import { some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -68,7 +68,7 @@ const PurchasesSite = ( {
 
 const Items = ( { isJetpack, getManagePurchaseUrlFor, isPlaceholder, site, purchases, slug } ) => {
 	if ( isPlaceholder ) {
-		return times( 2, ( index ) => <PurchaseItem isPlaceholder key={ index } /> );
+		return <PurchaseItem isPlaceholder />;
 	}
 
 	return purchases.map( ( purchase ) => (

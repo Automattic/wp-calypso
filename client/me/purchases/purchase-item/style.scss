@@ -23,6 +23,16 @@
 	}
 }
 
+.purchase-itemitem__placeholder-wrapper {
+	padding: 16px;
+}
+
+.purchase-item__placeholder {
+	display: block;
+	height: 40px;
+	@include placeholder();
+}
+
 .purchase-item__site-icon {
 	flex: 0 0 36px;
 
