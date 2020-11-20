@@ -33,7 +33,7 @@ export default function getContactDetailsType( responseCart: ResponseCart ): Con
 		return 'gsuite';
 	}
 
-	if ( isPurchaseFree || isFullCredits ) {
+	if ( isPurchaseFree && ! isFullCredits ) {
 		return 'none';
 	}
 
