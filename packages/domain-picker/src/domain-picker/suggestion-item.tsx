@@ -11,6 +11,7 @@ import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
+import { useLocalizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -58,6 +59,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	selected,
 	type = ITEM_TYPE_RADIO,
 } ) => {
+	const localizeUrl = useLocalizeUrl();
+
 	const isMobile = useViewportMatch( 'small', '<' );
 
 	const dotPos = domain.indexOf( '.' );
@@ -162,9 +165,9 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 										<a
 											target="_blank"
 											rel="noreferrer"
-											href="https://wordpress.com/support/https-ssl"
+											href={ localizeUrl( 'https://wordpress.com/support/https-ssl' ) }
 										/>
-									), // TODO Wrap this in `localizeUrl` from lib/i18n-utils
+									),
 								}
 							) }
 						</InfoTooltip>

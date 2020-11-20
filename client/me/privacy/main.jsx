@@ -7,7 +7,7 @@ import { flowRight as compose } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-
+import { withLocalizeUrl } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
@@ -20,7 +20,6 @@ import FormToggle from 'calypso/components/forms/form-toggle';
 import Main from 'calypso/components/main';
 import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
 import { protectForm } from 'calypso/lib/protect-form';
-import { localizeUrl } from 'calypso/lib/i18n-utils';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
 import SectionHeader from 'calypso/components/section-header';
@@ -31,6 +30,8 @@ import { requestHttpData, getHttpData } from 'calypso/state/data-layer/http-data
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
+
+import { localizeUrl as libLocalizeUrl } from 'calypso/lib/i18n-utils';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
@@ -77,7 +78,7 @@ const Privacy = createReactClass( {
 	},
 
 	render() {
-		const { markChanged, translate, userSettings } = this.props;
+		const { markChanged, translate, userSettings, localizeUrl } = this.props;
 
 		const isSubmitButtonDisabled = ! userSettings.hasUnsavedSettings() || this.getDisabledState();
 
@@ -86,7 +87,7 @@ const Privacy = createReactClass( {
 		);
 
 		const cookiePolicyLink = (
-			<ExternalLink href={ localizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
+			<ExternalLink href={ libLocalizeUrl( 'https://automattic.com/cookies' ) } target="_blank" />
 		);
 		const privacyPolicyLink = (
 			<ExternalLink href={ localizeUrl( 'https://automattic.com/privacy' ) } target="_blank" />
@@ -233,6 +234,7 @@ const dpaRequestState = ( request ) => {
 
 export default compose(
 	localize,
+	withLocalizeUrl,
 	protectForm,
 	connect(
 		() => ( {
