@@ -162,35 +162,34 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site, translate, slug } = this.props;
+		const { purchase, site, translate, slug, showSite } = this.props;
 
-		if ( ! purchase ) {
-			// Add site-level condition
-			return purchaseType( purchase );
+		if ( showSite ) {
+			return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
+				args: {
+					purchaseType: purchaseType( purchase ),
+					site: site.name,
+				},
+				components: {
+					button: (
+						<button
+							className="purchase-item__site-name"
+							onClick={ ( event ) => {
+								event.preventDefault();
+								page( getPurchaseListUrlFor( slug ) );
+							} }
+							title={ translate( 'View subscriptions for %(siteName)s', {
+								args: {
+									siteName: site.name,
+								},
+							} ) }
+						/>
+					),
+				},
+			} );
 		}
 
-		return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
-			args: {
-				purchaseType: purchaseType( purchase ),
-				site: site.name,
-			},
-			components: {
-				button: (
-					<button
-						className="purchase-item__site-name"
-						onClick={ ( event ) => {
-							event.preventDefault();
-							page( getPurchaseListUrlFor( slug ) );
-						} }
-						title={ translate( 'View subscriptions for %(siteName)s', {
-							args: {
-								siteName: site.name,
-							},
-						} ) }
-					/>
-				),
-			},
-		} );
+		return purchaseType( purchase );
 	}
 
 	getPaymentMethod() {
@@ -222,11 +221,11 @@ class PurchaseItem extends Component {
 	}
 
 	renderPurhaseItemContent = () => {
-		const { purchase, site } = this.props; // playa
+		const { purchase, site, showSite } = this.props; // playa
 
 		return (
 			<div className="purchase-item__wrapper">
-				{ true && ( // check prop to inlude site info
+				{ showSite && (
 					<div className="purchase-item__site-icon">
 						<SiteIcon site={ site } size={ 24 } />
 					</div>

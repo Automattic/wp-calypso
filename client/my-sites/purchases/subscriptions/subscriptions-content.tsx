@@ -58,6 +58,7 @@ function SubscriptionsContent( {
 				domain={ selectedSite.domain }
 				slug={ selectedSite.slug }
 				purchases={ purchases }
+				showSite={ false }
 			/>
 		);
 	}

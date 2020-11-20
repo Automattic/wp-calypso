@@ -35,8 +35,13 @@ const PurchasesSite = ( {
 	purchases,
 	name,
 	slug,
+	showSite,
 } ) => {
 	const isJetpack = ! isPlaceholder && some( purchases, ( purchase ) => isJetpackPlan( purchase ) );
+
+	if ( isPlaceholder ) {
+		return <PurchaseItem isPlaceholder />;
+	}
 
 	return (
 		<div className={ classNames( 'purchases-site', { 'is-placeholder': isPlaceholder } ) }>
@@ -50,38 +55,24 @@ const PurchasesSite = ( {
 				siteId={ siteId }
 			/>
 
-			<Items
-				isJetpack={ isJetpack }
-				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-				isPlaceholder={ isPlaceholder }
-				site={ site }
-				purchases={ purchases }
-				slug={ slug }
-			/>
+			{ purchases.map( ( purchase ) => (
+				<PurchaseItem
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					key={ purchase.id }
+					slug={ slug }
+					isDisconnectedSite={ ! site }
+					purchase={ purchase }
+					isJetpack={ isJetpack }
+					site={ site }
+					showSite={ showSite }
+				/>
+			) ) }
 
 			{ ! isPlaceholder && hasLoadedSite && ! site && (
 				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
 			) }
 		</div>
 	);
-};
-
-const Items = ( { isJetpack, getManagePurchaseUrlFor, isPlaceholder, site, purchases, slug } ) => {
-	if ( isPlaceholder ) {
-		return <PurchaseItem isPlaceholder />;
-	}
-
-	return purchases.map( ( purchase ) => (
-		<PurchaseItem
-			getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-			key={ purchase.id }
-			slug={ slug }
-			isDisconnectedSite={ ! site }
-			purchase={ purchase }
-			isJetpack={ isJetpack }
-			site={ site }
-		/>
-	) );
 };
 
 PurchasesSite.propTypes = {

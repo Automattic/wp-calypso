@@ -126,13 +126,18 @@ class PurchasesList extends Component {
 							domain={ site.domain }
 							slug={ site.slug }
 							purchases={ site.purchases }
+							showSite={ true }
 						/>
 					) ) }
 				</>
 			);
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && ! purchases.length && ! subscriptions.length ) {
+		if (
+			this.props.hasLoadedUserPurchasesFromServer &&
+			! purchases.length &&
+			! subscriptions.length
+		) {
 			if ( ! sites.length ) {
 				return (
 					<Main>
