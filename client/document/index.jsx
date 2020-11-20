@@ -60,7 +60,7 @@ class Document extends React.Component {
 			requestFrom,
 			useTranslationChunks,
 			target,
-			features,
+			featuresHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -159,7 +159,7 @@ class Document extends React.Component {
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
 							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
-							{ features && <FeaturesHelper /> }
+							{ featuresHelper && <FeaturesHelper /> }
 						</EnvironmentBadge>
 					) }
 
