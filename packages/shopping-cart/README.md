@@ -45,6 +45,6 @@ A helper function that creates a `RequestCartProduct`, which can then be passed 
 
 It takes one argument, an object which contains some or all of the properties in a `RequestCartProduct`, but must contain at least `product_slug` and `product_id`. The remaining properties, if not set, will be filled with the default values.
 
-## emptyResponseCart
+## getEmptyResponseCart
 
-An empty but valid `ResponseCart` object. Useful for tests where we need to mock the shopping cart response.
+A function that returns an empty but valid `ResponseCart` object. Useful for tests where we need to mock the shopping cart response.

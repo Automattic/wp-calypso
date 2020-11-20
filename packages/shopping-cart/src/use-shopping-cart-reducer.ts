@@ -19,9 +19,10 @@ import {
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
 import { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
-import { emptyResponseCart } from './empty-carts';
+import { getEmptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );
+const emptyResponseCart = getEmptyResponseCart();
 
 export default function useShoppingCartReducer(): [
 	ShoppingCartState,

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { emptyResponseCart } from './empty-carts';
+import { getEmptyResponseCart } from './empty-carts';
 import { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 let lastUUID = 100;
+const emptyResponseCart = getEmptyResponseCart();
 
 function convertResponseCartProductToRequestCartProduct(
 	product: ResponseCartProduct | RequestCartProduct
