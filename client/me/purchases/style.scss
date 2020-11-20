@@ -52,6 +52,14 @@
 	padding-top: 11px;
 	padding-bottom: 12px;
 	font-size: 0.875rem;
+
+	.purchases-layout__status {
+		display: none;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			display: block;
+		}
+	}
 }
 
 .purchase-item,
