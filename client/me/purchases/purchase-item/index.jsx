@@ -212,9 +212,7 @@ class PurchaseItem extends Component {
 			return (
 				<>
 					<img src={ imgSrc } alt={ altText } className={ className } />
-					{ purchase.payment.type === 'credit_card' && (
-						<>**** { purchase.payment.creditCard.number }</>
-					) }
+					{ purchase.payment.type === 'credit_card' && purchase.payment.creditCard.number }
 				</>
 			);
 		}

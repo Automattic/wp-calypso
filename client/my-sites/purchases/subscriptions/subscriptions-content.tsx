@@ -44,28 +44,38 @@ function SubscriptionsContent( {
 
 	// If there is a selected site but no site data, show the placeholder
 	if ( ! selectedSite?.ID ) {
-		return <PurchasesSite isPlaceholder />;
+		return (
+			<div className="subscriptions__list">
+				<PurchasesSite isPlaceholder />
+			</div>
+		);
 	}
 
 	// If there are purchases, show them
 	if ( purchases.length ) {
 		return (
-			<PurchasesSite
-				getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-				key={ selectedSite.ID }
-				siteId={ selectedSite.ID }
-				name={ selectedSite.name }
-				domain={ selectedSite.domain }
-				slug={ selectedSite.slug }
-				purchases={ purchases }
-				showSite={ false }
-			/>
+			<div className="subscriptions__list">
+				<PurchasesSite
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					key={ selectedSite.ID }
+					siteId={ selectedSite.ID }
+					name={ selectedSite.name }
+					domain={ selectedSite.domain }
+					slug={ selectedSite.slug }
+					purchases={ purchases }
+					showSite={ false }
+				/>
+			</div>
 		);
 	}
 
 	// If we are loading purchases, show the placeholder
 	if ( ! hasLoadedPurchases || isFetchingPurchases ) {
-		return <PurchasesSite isPlaceholder />;
+		return (
+			<div className="subscriptions__list">
+				<PurchasesSite isPlaceholder />
+			</div>
+		);
 	}
 
 	// If there is selected site data but no purchases, show the "no purchases" page
@@ -94,7 +104,7 @@ function NoPurchasesMessage() {
 	const selectedSite = useSelector( ( state ) => getSelectedSite( state ) );
 	const translate = useTranslate();
 	return (
-		<CompactCard className="subscriptions__list--empty">
+		<CompactCard className="subscriptions__list">
 			<EmptyContent
 				title={ translate( 'Looking to upgrade?' ) }
 				line={ translate( 'You have made no purchases for this site.' ) }
