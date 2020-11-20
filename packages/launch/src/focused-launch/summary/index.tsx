@@ -352,26 +352,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<div>
 							<FocusedLaunchSummaryItem
 								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-								readOnly={ hasPaidDomain || selectedPaidDomain }
-								onClick={ () => defaultFreePlan && setPlan( defaultFreePlan ) }
-								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
-							>
-								<LeadingContentSide
-									label={
-										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-										sprintf( __( '%s Plan', __i18n_text_domain__ ), defaultFreePlan?.title ?? '' )
-									}
-								/>
-								<TrailingContentSide
-									nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
-								>
-									{ hasPaidDomain || selectedPaidDomain
-										? __( 'Not available with your domain selection', __i18n_text_domain__ )
-										: __( 'Free', __i18n_text_domain__ ) }
-								</TrailingContentSide>
-							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem
-								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 								onClick={ () => paidPlan && setPlan( paidPlan ) }
 								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
 							>
@@ -390,6 +370,26 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											__( '/mo', __i18n_text_domain__ )
 										}
 									</span>
+								</TrailingContentSide>
+							</FocusedLaunchSummaryItem>
+							<FocusedLaunchSummaryItem
+								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
+								readOnly={ hasPaidDomain || selectedPaidDomain }
+								onClick={ () => defaultFreePlan && setPlan( defaultFreePlan ) }
+								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
+							>
+								<LeadingContentSide
+									label={
+										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+										sprintf( __( '%s Plan', __i18n_text_domain__ ), defaultFreePlan?.title ?? '' )
+									}
+								/>
+								<TrailingContentSide
+									nodeType={ hasPaidDomain || selectedPaidDomain ? 'WARNING' : 'PRICE' }
+								>
+									{ hasPaidDomain || selectedPaidDomain
+										? __( 'Not available with your domain selection', __i18n_text_domain__ )
+										: __( 'Free', __i18n_text_domain__ ) }
 								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 						</div>
