@@ -294,7 +294,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	async addBlock( title ) {
 		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
 		let blockClass = kebabCase( title.toLowerCase() );
-		let hasChildBlocks = false;
+		const initsWithChildFocus = false;
 		let ariaLabel;
 		let prefix = '';
 		switch ( title ) {
@@ -324,7 +324,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 			case 'Pricing Table':
 				prefix = 'coblocks-';
-				hasChildBlocks = false;
 				break;
 			case 'Logos':
 				prefix = 'coblocks-';
@@ -351,7 +350,6 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				break;
 			case 'Contact Info':
 				prefix = 'jetpack-';
-				hasChildBlocks = true;
 				break;
 			case 'Slideshow':
 				prefix = 'jetpack-';
@@ -376,7 +374,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		let insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
-				hasChildBlocks ? 'has-child-selected' : 'is-selected'
+				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
 			}[aria-label*='${ selectorAriaLabel }']`
 		);
 
@@ -398,9 +396,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
-		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+
+		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
 
 	/**
