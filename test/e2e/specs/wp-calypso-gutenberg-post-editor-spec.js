@@ -282,17 +282,19 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see the Earn blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
 
-				// With deepEqual we're also testing the sort order they're shown in the
-				// inserter. If that's not desirable, we can use the sameMembers matcher.
-				assert.deepEqual( await gEditorComponent.getShownBlockInserterItems(), [
-					'Donations',
-					'OpenTable',
-					'Payments',
-					'Pay with PayPal',
-					'Premium Content',
-					'Pricing Table',
-				] );
+				assert.strictEqual(
+					[
+						'Donations',
+						'OpenTable',
+						'Payments',
+						'Pay with PayPal',
+						'Premium Content',
+						'Pricing Table',
+					].every( ( v ) => shownItems.includes( v ) ),
+					true
+				);
 
 				await gEditorComponent.closeBlockInserter();
 			} );
@@ -300,24 +302,28 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see the Grow blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
 
-				assert.deepEqual( await gEditorComponent.getShownBlockInserterItems(), [
-					'Business Hours',
-					'Calendly',
-					'Form',
-					'Contact Info',
-					'Mailchimp',
-					'Revue',
-					'Subscription Form',
-					'Click to Tweet',
-					'Logos',
-					'Contact Form',
-					'RSVP Form',
-					'Registration Form',
-					'Appointment Form',
-					'Feedback Form',
-					'WhatsApp Button',
-				] );
+				assert.strictEqual(
+					[
+						'Business Hours',
+						'Calendly',
+						'Form',
+						'Contact Info',
+						'Mailchimp',
+						'Revue',
+						'Subscription Form',
+						'Click to Tweet',
+						'Logos',
+						'Contact Form',
+						'RSVP Form',
+						'Registration Form',
+						'Appointment Form',
+						'Feedback Form',
+						'WhatsApp Button',
+					].every( ( v ) => shownItems.includes( v ) ),
+					true
+				);
 
 				await gEditorComponent.closeBlockInserter();
 			} );
