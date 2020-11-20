@@ -4,7 +4,7 @@
 import React, { useMemo, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Icon, wordpress } from '@wordpress/icons';
-import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
+import type { RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { useTranslate } from 'i18n-calypso';
@@ -20,6 +20,7 @@ import type { SiteData } from 'calypso/state/ui/selectors/site-data';
 import userFactory from 'calypso/lib/user';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import wp from 'calypso/lib/wp';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 /**
  * Style dependencies
@@ -27,10 +28,6 @@ import wp from 'calypso/lib/wp';
 import './style.scss';
 
 const wpcom = wp.undocumented();
-
-const wpcomGetCart = ( cartKey: string ) => wpcom.getCart( cartKey );
-const wpcomSetCart = ( cartKey: string, requestCart: RequestCart ) =>
-	wpcom.setCart( cartKey, requestCart );
 
 function fetchStripeConfigurationWpcom( args: Record< string, unknown > ) {
 	return fetchStripeConfiguration( args, wpcom );
@@ -86,7 +83,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 				shouldCloseOnClickOutside={ false }
 				icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			>
-				<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
+				<CalypsoShoppingCartProvider cartKey={ cartKey }>
 					<StripeHookProvider
 						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 						locale={ props.locale }
@@ -98,7 +95,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 							productAliasFromUrl={ commaSeparatedProductSlugs }
 						/>
 					</StripeHookProvider>
-				</ShoppingCartProvider>
+				</CalypsoShoppingCartProvider>
 			</Modal>
 		)
 	);
