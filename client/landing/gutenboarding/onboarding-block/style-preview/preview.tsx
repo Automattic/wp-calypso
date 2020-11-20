@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -55,7 +55,7 @@ interface Props {
 	viewport: Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
-	const { i18nLocale } = useI18n();
+	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
 	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
@@ -73,7 +73,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
 				const url = addQueryArgs( templateUrl, {
-					language: i18nLocale,
+					language,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
@@ -105,7 +105,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[ i18nLocale, selectedDesign ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ language, selectedDesign ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {
