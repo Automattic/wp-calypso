@@ -35,7 +35,6 @@
 
 .payment-method-details__number {
 	color: var( --color-neutral-80 );
-	font-weight: 600;
 	display: block;
 	margin-right: 8px;
 
@@ -44,9 +43,14 @@
 	}
 }
 
+.payment-method-details__expiration-date {
+	font-style: italic;
+}
+
 .payment-method-details__name {
 	color: var( --color-neutral-50 );
 	display: block;
+	font-size: 0.875rem;
 }
 
 

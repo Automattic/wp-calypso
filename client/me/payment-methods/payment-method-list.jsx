@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Button, CompactCard } from '@automattic/components';
 import config from 'calypso/config';
 import PaymentMethod from './payment-method';
 import PaymentMethodDelete from './payment-method-delete';
@@ -34,15 +34,15 @@ class PaymentMethodList extends Component {
 	renderPaymentMethods( cards ) {
 		if ( this.props.isFetching && ! this.props.hasLoadedFromServer ) {
 			return (
-				<Card className="payment-method-list__loader">
+				<CompactCard className="payment-method-list__loader">
 					<div className="payment-method-list__loading-placeholder-card loading-placeholder__content" />
 					<div className="payment-method-list__loading-placeholder-details loading-placeholder__content" />
-				</Card>
+				</CompactCard>
 			);
 		}
 
 		if ( ! cards.length ) {
-			return <Card>{ this.props.translate( 'You have no saved cards.' ) }</Card>;
+			return <CompactCard>{ this.props.translate( 'You have no saved cards.' ) }</CompactCard>;
 		}
 
 		return cards.map( ( card ) => {

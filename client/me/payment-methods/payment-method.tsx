@@ -7,7 +7,7 @@ import React, { FunctionComponent, ComponentProps } from 'react';
  * Internal dependencies
  */
 import PaymentMethodDetails from './payment-method-details';
-import { Card } from '@automattic/components';
+import { CompactCard } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -20,11 +20,11 @@ interface Props {
 
 const PaymentMethod: FunctionComponent< Props > = ( { card, children } ) => {
 	return (
-		<Card className="payment-method__wrapper">
+		<CompactCard className="payment-method__wrapper">
 			<div className="payment-method">
 				{ card ? <PaymentMethodDetails { ...card } /> : children }
 			</div>
-		</Card>
+		</CompactCard>
 	);
 };
 
