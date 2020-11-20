@@ -24,7 +24,12 @@ class Unlocked extends React.Component {
 	};
 
 	componentDidUpdate( prevProps ) {
-		if ( this.state.sent && prevProps.isCancelingTransfer && ! this.props.isCancelingTransfer ) {
+		if (
+			this.state.sent &&
+			prevProps.isCancelingTransfer &&
+			! this.props.isCancelingTransfer &&
+			! this.props.isDomainPendingTransfer
+		) {
 			// eslint-disable-next-line react/no-did-update-set-state
 			this.setState( {
 				sent: false,
@@ -224,9 +229,11 @@ export default connect(
 		const domainInfo = getDomainWapiInfoByDomainName( state, selectedDomainName );
 		const isRequestingTransferCode = !! domainInfo.isRequestingTransferCode;
 		const isCancelingTransfer = !! domainInfo.isCancelingTransfer;
+		const isDomainPendingTransfer = !! domainInfo.data?.pendingTransfer;
 
 		return {
 			isCancelingTransfer,
+			isDomainPendingTransfer,
 			isSubmitting: isRequestingTransferCode || isCancelingTransfer,
 		};
 	},
