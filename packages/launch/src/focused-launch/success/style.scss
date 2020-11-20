@@ -1,5 +1,6 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
+@import '../variables';
 
 .focused-launch-success {
 	padding: 0 20px 120px;
@@ -95,9 +96,7 @@
 }
 
 .focused-launch-success__continue-editing-button {
-	// @TODO: refactor to common variable in onboarding
-	// see https://github.com/Automattic/wp-calypso/issues/47181
-	background-color: #117ac9;
+	background-color: $focused-launch-accent-blue;
 	width: 100%;
 	margin-bottom: 20px;
 
