@@ -276,5 +276,6 @@ nocache_headers();
 			</div>
 		</div>
 		<?php wp_footer(); ?>
+		<!-- WordPress.com Editing Toolkit Plugin - Coming Soon -->
 	</body>
 </html>
