@@ -25,7 +25,7 @@ export default function useOnSignup() {
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const visibility = useNewSiteVisibility();
-	const anchorFmSignup = useAnchorFmQueryParam();
+	const isAnchorFmSignup = useAnchorFmQueryParam();
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
@@ -35,7 +35,7 @@ export default function useOnSignup() {
 	);
 
 	React.useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username && ! newSite && ! anchorFmSignup ) {
+		if ( newUser && newUser.bearerToken && newUser.username && ! newSite && ! isAnchorFmSignup ) {
 			handleCreateSite( newUser.username, newUser.bearerToken, visibility );
 		}
 	}, [ newSite, newUser, locale, handleCreateSite, visibility ] );
