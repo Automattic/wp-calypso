@@ -72,7 +72,6 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( {
 
 type CommonStepProps = {
 	stepIndex?: number;
-	highlighted: boolean;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -84,11 +83,10 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 	value,
 	onChange,
 	onBlur,
-	highlighted,
 } ) => {
 	return (
 		<SummaryStep
-			highlighted={ highlighted }
+			highlighted
 			input={
 				<TextControl
 					className="focused-launch-summary__input"
@@ -131,11 +129,11 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	onExistingSubdomainSelect,
 	locale,
 	isLoading,
-	highlighted,
 } ) => {
+	const { title } = useTitle();
 	return (
 		<SummaryStep
-			highlighted={ highlighted }
+			highlighted={ !! title }
 			input={
 				hasPaidDomain ? (
 					<>
@@ -277,11 +275,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	hasPaidPlan = false,
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
-	highlighted,
 } ) => {
 	const { setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
 
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+
+	const hasSelectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).hasSelectedDomain() );
 
 	const onceSelectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
 
@@ -313,7 +312,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	return (
 		<SummaryStep
-			highlighted={ highlighted }
+			highlighted={ hasSelectedDomain }
 			input={
 				hasPaidPlan ? (
 					<>
@@ -507,7 +506,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 type StepIndexRenderFunction = ( renderOptions: {
 	stepIndex: number;
 	forwardStepIndex: boolean;
-	highlighted: boolean;
 } ) => ReactNode;
 
 const Summary: React.FunctionComponent = () => {
@@ -553,26 +551,17 @@ const Summary: React.FunctionComponent = () => {
 	};
 
 	// Prepare Steps
-	const renderSiteTitleStep: StepIndexRenderFunction = ( {
-		stepIndex,
-		forwardStepIndex,
-		highlighted,
-	} ) => (
+	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<SiteTitleStep
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			value={ title || '' }
 			onChange={ updateTitle }
 			onBlur={ saveTitle }
-			highlighted={ highlighted }
 		/>
 	);
 
-	const renderDomainStep: StepIndexRenderFunction = ( {
-		stepIndex,
-		forwardStepIndex,
-		highlighted,
-	} ) => (
+	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
@@ -589,22 +578,16 @@ const Summary: React.FunctionComponent = () => {
 			 * */
 			onExistingSubdomainSelect={ onExistingSubdomainSelect }
 			locale={ locale }
-			highlighted={ highlighted }
 		/>
 	);
 
-	const renderPlanStep: StepIndexRenderFunction = ( {
-		stepIndex,
-		forwardStepIndex,
-		highlighted,
-	} ) => (
+	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
 			hasPaidPlan={ hasPaidPlan }
 			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
 			hasPaidDomain={ hasPaidDomain }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
-			highlighted={ highlighted }
 		/>
 	);
 
@@ -617,9 +600,6 @@ const Summary: React.FunctionComponent = () => {
 	isSiteTitleStepVisible && activeSteps.push( renderSiteTitleStep );
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
-
-	// for now, highlight all the steps until we figure out a way to determine to highlight which step when
-	const highlightedSteps = [ renderSiteTitleStep, renderDomainStep, renderPlanStep ];
 
 	return (
 		<div className="focused-launch-container">
@@ -646,7 +626,6 @@ const Summary: React.FunctionComponent = () => {
 				disabledStepRenderer( {
 					stepIndex: disabledStepIndex + 1,
 					forwardStepIndex: false,
-					highlighted: highlightedSteps.indexOf( disabledStepRenderer ) > -1,
 				} )
 			) }
 			{ activeSteps.map( ( activeStepRenderer, activeStepIndex ) =>
@@ -654,7 +633,6 @@ const Summary: React.FunctionComponent = () => {
 				activeStepRenderer( {
 					stepIndex: activeStepIndex + 1,
 					forwardStepIndex: activeSteps.length > 1,
-					highlighted: highlightedSteps.indexOf( activeStepRenderer ) > -1,
 				} )
 			) }
 

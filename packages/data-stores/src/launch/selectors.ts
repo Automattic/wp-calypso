@@ -7,6 +7,8 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
+import { STORE_KEY as LAUNCH_STORE } from './constants';
+
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
@@ -34,6 +36,16 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  * @param state State
  */
 export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
+// Check if a domain has been explicitly selected (including free subdomain)
+
+/**
+ * Check if the user has selected a domain, including explicitly selecting the subdomain
+ * This is useful for step/flow completion in the context of highlighting steps or enabling Launch button
+ *
+ * @param state State
+ */
+export const hasSelectedDomain = ( state: State ): boolean =>
+	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
 
 // Completion status of steps is derived from the state of the launch flow
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
@@ -49,7 +61,7 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean =
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
-		return !! getSelectedDomain( state ) || state.confirmedDomainSelection;
+		return select( LAUNCH_STORE ).hasSelectedDomain();
 	}
 	return false;
 };
