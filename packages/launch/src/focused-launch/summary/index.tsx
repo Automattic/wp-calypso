@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import React, { ReactNode, useContext, useEffect } from 'react';
-import DomainPicker from '@automattic/domain-picker';
+import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -496,7 +496,7 @@ const Summary: React.FunctionComponent = () => {
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ siteSubdomain?.domain }
-			currentDomain={ selectedDomain?.domain_name ?? sitePrimaryDomain?.domain }
+			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain || '' ) }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }

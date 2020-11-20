@@ -68,7 +68,7 @@ export interface Props {
 	/** Called when the user leaves the search box */
 	onDomainSearchBlur?: ( value: string ) => void;
 
-	currentDomain?: string;
+	currentDomain?: DomainSuggestion;
 
 	isCheckingDomainAvailability?: boolean;
 
@@ -125,10 +125,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
-
 	// keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
+	const [ persistentSelectedDomain, setPersistentSelectedDomain ] = useState<
+		DomainSuggestion | undefined
+	>();
 
 	const domainSuggestionVendor = useSelect( ( select ) =>
 		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
@@ -146,6 +148,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		isExpanded ? quantityExpanded : quantity
 	);
 
+	const isValidCurrentDomain =
+		currentDomain?.domain_name !== existingSubdomain && currentDomain?.domain_name !== '';
+	const persistentDomainIsInSuggestions = domainSuggestions?.some(
+		( suggestion ) => suggestion.domain_name === persistentSelectedDomain?.domain_name
+	);
+
+	if ( isValidCurrentDomain && persistentSelectedDomain && ! persistentDomainIsInSuggestions ) {
+		// Append our currently selected domain to the suggestions so it's persistently visible to the user.
+		domainSuggestions?.push( persistentSelectedDomain );
+	}
+
 	const domainAvailabilities = useDomainAvailabilities();
 
 	const onDomainSearchBlurValue = ( event: React.FormEvent< HTMLInputElement > ) => {
@@ -153,6 +166,16 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			onDomainSearchBlur( event.currentTarget.value );
 		}
 	};
+
+	useEffect( () => {
+		const currentDomainIsInSuggestions = domainSuggestions?.some(
+			( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
+		);
+
+		if ( ! currentDomainIsInSuggestions && isValidCurrentDomain ) {
+			setPersistentSelectedDomain( currentDomain );
+		}
+	}, [ currentDomain, domainSuggestions, isValidCurrentDomain ] );
 
 	// Reset expansion state after every search
 	useEffect( () => {
@@ -271,7 +294,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onRender={ () =>
 											handleItemRender( existingSubdomain, `${ baseRailcarId }${ 0 }`, 0, false )
 										}
-										selected={ currentDomain === existingSubdomain }
+										selected={ currentDomain?.domain_name === existingSubdomain }
 										onSelect={ () => {
 											onExistingSubdomainSelect?.( existingSubdomain );
 										} }
@@ -302,7 +325,8 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												domain={ suggestion.domain_name }
 												cost={ suggestion.cost }
 												isLoading={
-													currentDomain === suggestion.domain_name && isCheckingDomainAvailability
+													currentDomain?.domain_name === suggestion.domain_name &&
+													isCheckingDomainAvailability
 												}
 												hstsRequired={ suggestion.hsts_required }
 												isFree={ suggestion.is_free }
@@ -319,7 +343,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												onSelect={ () => {
 													onDomainSelect( suggestion );
 												} }
-												selected={ currentDomain === suggestion.domain_name }
+												selected={ currentDomain?.domain_name === suggestion.domain_name }
 												type={ itemType }
 											/>
 										);
