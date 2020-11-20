@@ -13,6 +13,7 @@ import React, { FunctionComponent, useMemo, useState, useEffect } from 'react';
 import { Button, Card } from '@automattic/components';
 import { ConnectionStatus, StatusState } from './connection-status';
 import { FormMode, FormState, INITIAL_FORM_ERRORS, INITIAL_FORM_STATE, validate } from './form';
+import Verification from './verification';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -112,16 +113,15 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 
 	const currentStep = useMemo( (): Step => {
 		if ( statusState === StatusState.Connected ) {
-			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
-			// Verification pushed to future
-		} /* else if ( 'pending' === formSubmissionStatus ) {
-			return State.Verification;
-		} */ else if (
-			undefined === host
-		) {
+			if ( 'edit' === action ) {
+				if ( 'pending' === formSubmissionStatus ) {
+					return Step.Verification;
+				}
+				return Step.ConnectedEdit;
+			}
+			return Step.Connected;
+		} else if ( undefined === host ) {
 			return Step.HostSelection;
-		} else if ( 'pending' === formSubmissionStatus ) {
-			return Step.Verification;
 		}
 		return Step.Credentials;
 	}, [ action, formSubmissionStatus, host, statusState ] );
@@ -287,8 +287,17 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			case Step.HostSelection:
 				return <HostSelection />;
 			case Step.Credentials:
-			case Step.Verification:
 				return renderCredentialsForm( false );
+			case Step.Verification:
+				return (
+					<Verification
+						formSubmissionError={ formSubmissionError }
+						formSubmissionStatus={ formSubmissionStatus }
+						onFinishUp={ () => {
+							/* TODO @azabani */
+						} }
+					/>
+				);
 			case Step.Connected:
 				return (
 					<div>
