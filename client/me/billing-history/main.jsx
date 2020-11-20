@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
 import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import BillingHistoryTable from './billing-history-table';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -40,7 +40,7 @@ const BillingHistory = ( { translate } ) => (
 
 		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
-		<PurchasesHeader section={ 'billing' } />
+		<PurchasesNavigation section={ 'billing' } />
 		<BillingHistoryList />
 	</Main>
 );

@@ -10,7 +10,7 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calyspo/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -118,7 +118,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
-			<PurchasesHeader section={ 'memberships' } />
+			<PurchasesNavigation section={ 'memberships' } />
 			{ content }
 		</Main>
 	);

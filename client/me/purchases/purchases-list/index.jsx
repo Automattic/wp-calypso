@@ -16,7 +16,7 @@ import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PurchasesHeader from './header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import PurchasesSite from '../purchases-site';
 import MembershipSite from '../membership-site';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -146,7 +146,7 @@ class PurchasesList extends Component {
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
 						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-						<PurchasesHeader section="purchases" />
+						<PurchasesNavigation section="purchases" />
 						<NoSitesMessage />
 					</Main>
 				);
@@ -179,7 +179,7 @@ class PurchasesList extends Component {
 				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-				<PurchasesHeader section="purchases" />
+				<PurchasesNavigation section="purchases" />
 				{ content }
 				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />
