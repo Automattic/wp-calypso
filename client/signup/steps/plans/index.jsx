@@ -10,7 +10,6 @@ import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { parse as parseQs } from 'qs';
 import { Button } from '@automattic/components';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -87,20 +86,13 @@ export class PlansStep extends Component {
 		// if the plan is Personal or the user is in the control group
 		if (
 			flowName === 'onboarding-secure-your-brand' &&
-			( isPersonal( cartItem ) ||
-				'test' !== abtest( 'secureYourBrand', this.getGeoLocationFromCookie() ) )
+			( isPersonal( cartItem ) || 'test' !== abtest( 'secureYourBrand' ) )
 		) {
 			this.props.goToNextStep( 'onboarding' );
 		} else {
 			this.props.goToNextStep();
 		}
 	};
-
-	getGeoLocationFromCookie() {
-		const cookies = cookie.parse( document.cookie );
-
-		return cookies.country_code;
-	}
 
 	getDomainName() {
 		return (
