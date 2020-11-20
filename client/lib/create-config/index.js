@@ -59,11 +59,10 @@ const config = ( data ) => ( key ) => {
  * Checks whether a specific feature is enabled.
  *
  * @param {object} data the json environment configuration to use for getting config values
- * curried param {string} feature Feature name
- * @returns {boolean} True when feature is enabled.
+ * @returns {(feature: string) => boolean} A function that takes a feature name and returns true when the feature is enabled.
  * @public
  */
-const isEnabled = ( data ) => ( feature ) =>
+const isEnabled = ( data ) => ( /** @type {string} */ feature ) =>
 	( data.features && !! data.features[ feature ] ) || false;
 
 module.exports = ( data ) => {
