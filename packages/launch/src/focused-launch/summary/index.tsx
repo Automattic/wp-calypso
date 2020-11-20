@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { Title } from '@automattic/onboarding';
+import { SubTitle, Title } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
@@ -130,8 +130,10 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
-							{ /* @TODO: should use <Subtitle/> once https://github.com/Automattic/wp-calypso/issues/47418 is solved */ }
-							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+							<SubTitle
+								tagName="p"
+								className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only"
+							>
 								<Icon icon={ bulb } />
 								{ createInterpolateElement(
 									__(
@@ -142,7 +144,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 										strong: <strong />,
 									}
 								) }
-							</p>
+							</SubTitle>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
 							<LeadingContentSide label={ currentDomain || '' } />
@@ -518,12 +520,12 @@ const Summary: React.FunctionComponent = () => {
 	return (
 		<div className="focused-launch-summary__container">
 			<div className="focused-launch-summary__section">
-				<Title>
+				<Title tagName="h2">
 					{ hasPaidDomain && hasPaidPlan
 						? __( "You're ready to launch", __i18n_text_domain__ )
 						: __( "You're almost there", __i18n_text_domain__ ) }
 				</Title>
-				<p className="focused-launch-summary__caption">
+				<SubTitle tagName="p" className="focused-launch-summary__caption">
 					{ hasPaidDomain && hasPaidPlan
 						? __(
 								"You're good to go! Launch your site and share your site address.",
@@ -533,7 +535,7 @@ const Summary: React.FunctionComponent = () => {
 								'Prepare for launch! Confirm a few final things before you take it live.',
 								__i18n_text_domain__
 						  ) }
-				</p>
+				</SubTitle>
 			</div>
 			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
 				// Disabled steps don't show the step index
