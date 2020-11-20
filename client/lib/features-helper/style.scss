@@ -4,7 +4,7 @@
 
 .features-helper__feature-header {
 	margin-top: 15px;
-    margin-bottom: 10px;
+	margin-bottom: 10px;
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -18,11 +18,11 @@
 }
 
 .features-helper__feature-item-enabled {
-    color: var( --studio-green-70 );
+	color: var( --studio-green-70 );
 }
 
 .features-helper__feature-item-disabled {
-    color: var( --studio-red-70 );
+	color: var( --studio-red-70 );
 }
 
 .environment.is-features:hover .features-helper__current-features.card {
