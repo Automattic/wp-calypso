@@ -10,7 +10,7 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
 import { noop } from 'lodash';
-import { ShoppingCartProvider, emptyResponseCart } from '@automattic/shopping-cart';
+import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -24,6 +24,8 @@ jest.mock( 'lib/wp', () => ( {
 		getSitePlans: () => {},
 	} ),
 } ) );
+
+const emptyResponseCart = getEmptyResponseCart();
 
 function getCart() {
 	return Promise.resolve( emptyResponseCart );
