@@ -30,7 +30,7 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
