@@ -14,6 +14,13 @@
 	align-items: center;
 	width: 100%;
 
+	.focused-launch-summary-item__leading-side {
+		flex-shrink: 0;
+		margin-right: 8px;
+		display: inline-flex;
+		align-items: center;
+	}
+
 	.focused-launch-summary-item__leading-side-badge {
 		margin-left: 10px;
 		display: inline-block;
@@ -78,6 +85,7 @@
 
 	.focused-launch-summary-item__warning-note {
 		color: $focused-launch-warning;
+		text-align: right;
 	}
 
 	* {
