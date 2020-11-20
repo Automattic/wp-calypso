@@ -24,7 +24,6 @@ import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
 import { isCredits } from 'calypso/lib/products-values';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
-import { reloadCart } from 'calypso/lib/cart/actions';
 
 /**
  * Style dependencies
@@ -50,7 +49,7 @@ class PopoverCart extends React.Component {
 	hasUnmounted = false;
 
 	componentDidMount() {
-		reloadCart();
+		this.props.shoppingCartManager.reloadFromServer();
 	}
 
 	componentWillUnmount() {
