@@ -128,7 +128,10 @@ object BuildBaseImages : BuildType({
 			schedulingPolicy = daily {
 				hour = 0
 			}
-			branchFilter = "+:master"
+			branchFilter = """
+				+:master
+				+:trunk
+			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
@@ -573,7 +576,7 @@ object CheckCodeStyle : BuildType({
 				if [ "%teamcity.build.branch.is_default%" = "true" ] || [ "%calypso.run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
 				fi
 				echo "Files to lint:"
 				echo ${'$'}FILES_TO_LINT
@@ -638,7 +641,7 @@ object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"
 	url = "git@github.com:Automattic/wp-calypso.git"
 	pushUrl = "git@github.com:Automattic/wp-calypso.git"
-	branch = "refs/heads/master"
+	branch = "refs/heads/trunk"
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {

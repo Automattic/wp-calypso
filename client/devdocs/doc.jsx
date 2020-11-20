@@ -96,7 +96,7 @@ export default class extends React.Component {
 
 	renderBody() {
 		const editURL = encodeURI(
-			'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path
+			'https://github.com/Automattic/wp-calypso/edit/trunk/' + this.props.path
 		);
 		const { body, error } = this.state;
 

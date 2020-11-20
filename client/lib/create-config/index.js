@@ -38,8 +38,8 @@ const config = ( data ) => ( key ) => {
 	// display console error only in a browser
 	// (not in tests, for example)
 	if ( 'undefined' !== typeof window ) {
+		// eslint-disable-next-line no-console
 		console.error(
-			//eslint-disable-line no-console
 			'%cCore Error: ' +
 				'%cCould not find config value for key %c${ key }%c. ' +
 				'Please make sure that if you need it then it has a default value assigned in ' +
@@ -58,12 +58,11 @@ const config = ( data ) => ( key ) => {
 /**
  * Checks whether a specific feature is enabled.
  *
- * @param {string} feature Feature name
  * @param {object} data the json environment configuration to use for getting config values
- * @returns {boolean} True when feature is enabled.
- * @api public
+ * @returns {(feature: string) => boolean} A function that takes a feature name and returns true when the feature is enabled.
+ * @public
  */
-const isEnabled = ( data ) => ( feature ) =>
+const isEnabled = ( data ) => ( /** @type {string} */ feature ) =>
 	( data.features && !! data.features[ feature ] ) || false;
 
 /**
