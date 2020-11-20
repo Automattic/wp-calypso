@@ -2,16 +2,14 @@
 @import '~@automattic/onboarding/styles/mixins';
 @import '../variables';
 
-.focused-launch-success {
-	padding: 0 20px 120px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.focused-launch-success__wrapper {
-	width: 100%;
+// Override some of the .focused-launch-container styles,
+// to make the contents of success view centered in the middle of the page
+.focused-launch-container.focused-launch-success__wrapper {
 	max-width: 420px;
+	padding-bottom: 100px;
+	flex-grow: 0;
+	margin: 0;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
