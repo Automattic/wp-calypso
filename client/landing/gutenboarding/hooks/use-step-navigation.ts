@@ -35,7 +35,11 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// If anchor_podcast param...
 	if ( useAnchorFmQueryParam() ) {
-		steps = [];
+		steps = [
+			Step.IntentGathering,
+			Step.DesignSelection,
+			Step.Style,
+		];
 	// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
 	} else if ( hasSiteTitle() ) {
 		steps = [

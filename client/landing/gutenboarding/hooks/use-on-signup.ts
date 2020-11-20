@@ -12,6 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useNewSiteVisibility } from './use-selected-plan';
+import { useAnchorFmQueryParam } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -24,6 +25,7 @@ export default function useOnSignup() {
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const visibility = useNewSiteVisibility();
+	const anchorFmSignup = useAnchorFmQueryParam();
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
@@ -33,7 +35,7 @@ export default function useOnSignup() {
 	);
 
 	React.useEffect( () => {
-		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
+		if ( newUser && newUser.bearerToken && newUser.username && ! newSite && ! anchorFmSignup ) {
 			handleCreateSite( newUser.username, newUser.bearerToken, visibility );
 		}
 	}, [ newSite, newUser, locale, handleCreateSite, visibility ] );
