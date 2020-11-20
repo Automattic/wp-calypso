@@ -76,6 +76,15 @@ function renderDevHelpers( reduxStore ) {
 			} );
 		}
 	}
+
+	if ( config.isEnabled( 'features-helper' ) ) {
+		const featureHelperEl = document.querySelector( '.environment.is-features' );
+		if ( featureHelperEl ) {
+			asyncRequire( 'lib/features-helper', ( featureHelper ) => {
+				featureHelper( featureHelperEl );
+			} );
+		}
+	}
 }
 
 export const configureReduxStore = ( currentUser, reduxStore ) => {

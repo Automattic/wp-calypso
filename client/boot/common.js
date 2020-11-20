@@ -397,6 +397,14 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			prefHelper( document.querySelector( '.environment.is-prefs' ), reduxStore );
 		} );
 	}
+	if (
+		config.isEnabled( 'dev/features-helper' ) &&
+		document.querySelector( '.environment.is-features' )
+	) {
+		asyncRequire( 'lib/features-helper', ( featureHelper ) => {
+			featureHelper( document.querySelector( '.environment.is-features' ) );
+		} );
+	}
 };
 
 function renderLayout( reduxStore ) {
