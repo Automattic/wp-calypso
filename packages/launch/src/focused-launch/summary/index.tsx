@@ -453,7 +453,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const site = useSite();
 
-	const { locale } = useContext( LaunchContext );
+	const { locale, redirectTo } = useContext( LaunchContext );
 
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
@@ -473,6 +473,17 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const hasPaidPlan = site.isPaidPlan;
+
+	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
+		const helpHref = ( event.target as HTMLAnchorElement ).getAttribute( 'href' );
+
+		if ( ! helpHref ) {
+			return;
+		}
+
+		redirectTo( helpHref );
+		event.preventDefault();
+	};
 
 	// Prepare Steps
 	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
@@ -565,7 +576,9 @@ const Summary: React.FunctionComponent = () => {
 
 				<div className="focused-launch-summary__ask-for-help">
 					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
-					<a href="/help">{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }</a>
+					<a href="/help" onClick={ onAskForHelpClick }>
+						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
+					</a>
 				</div>
 			</div>
 		</div>
