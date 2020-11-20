@@ -91,7 +91,7 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<LocaleProvider localeSlug={ contextLocaleData?.[ '' ]?.localeSlug ?? 'en' }>
+			<LocaleProvider localeSlug={ contextLocaleData?.[ '' ]?.localeSlug ?? DEFAULT_LOCALE_SLUG }>
 				<I18nProvider localeData={ contextLocaleData }>
 					{ localeDataLoaded ? children : null }
 				</I18nProvider>
