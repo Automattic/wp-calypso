@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { SubTitle, Title } from '@automattic/onboarding';
+import { ActionButtons, Title, SubTitle } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
@@ -557,8 +557,17 @@ const Summary: React.FunctionComponent = () => {
 				} )
 			) }
 
-			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
-			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+			<div className="focused-launch-summary__actions-wrapper">
+				<ActionButtons className="focused-launch-summary__launch-action-bar">
+					{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
+					<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+				</ActionButtons>
+
+				<div className="focused-launch-summary__ask-for-help">
+					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
+					<a href="/help">{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }</a>
+				</div>
+			</div>
 		</div>
 	);
 };
