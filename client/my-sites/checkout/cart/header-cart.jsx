@@ -10,7 +10,6 @@ import { withShoppingCart } from '@automattic/shopping-cart';
  */
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
-import { reloadCart } from 'calypso/lib/cart/actions';
 
 class HeaderCart extends React.Component {
 	static propTypes = {
@@ -32,7 +31,7 @@ class HeaderCart extends React.Component {
 	};
 
 	componentDidMount() {
-		reloadCart();
+		this.props.shoppingCartManager.reloadFromServer();
 	}
 
 	render() {
