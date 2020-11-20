@@ -108,6 +108,10 @@
 	color: var( --studio-gray-50 );
 }
 
+.focused-launch-container .action-buttons:not( .is-sticky ) {
+	margin-left: 0;
+}
+
 .focused-launch-summary__launch-button {
 	flex: 1;
 
