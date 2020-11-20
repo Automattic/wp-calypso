@@ -64,6 +64,10 @@ function shoppingCartReducer(
 		action.type !== 'FETCH_INITIAL_RESPONSE_CART' &&
 		action.type !== 'RAISE_ERROR'
 	) {
+		if ( action.type === 'CART_RELOAD' ) {
+			debug( 'cart has not yet loaded; ignoring reload action', action );
+			return state;
+		}
 		debug( 'cart has not yet loaded; queuing requested action', action );
 		return {
 			...state,
