@@ -29,13 +29,6 @@ class Block_Patterns_From_API {
 	private $patterns_cache_key;
 
 	/**
-	 * Whether or not to exclude patterns that require wide or full alignment support
-	 *
-	 * @var bool
-	 */
-	private $skip_full_width_patterns = false;
-
-	/**
 	 * Block_Patterns constructor.
 	 */
 	private function __construct() {
@@ -49,10 +42,6 @@ class Block_Patterns_From_API {
 				)
 			)
 		);
-
-		if ( ! get_theme_support( 'align-wide' ) ) {
-			$this->skip_full_width_patterns = true;
-		}
 
 		$this->register_patterns();
 	}
@@ -165,14 +154,30 @@ class Block_Patterns_From_API {
 	/**
 	 * Check that the pattern is allowed to be registered.
 	 *
+	 * Checks for tags with a prefix of `requires-` in the slug, and then attempts to match
+	 * the remainder of the slug to a theme feature.
+	 *
+	 * For example, to prevent patterns that depend on wide or full-width block alignment support
+	 * from being registered in sites where the active theme does not have `align-wide` support,
+	 * we can add the `requires-align-wide` tag to the pattern. This function will then match
+	 * against that tag slug, and then return `false`.
+	 *
 	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
 	 *
 	 * @return bool
 	 */
 	private function can_register_pattern( $pattern ) {
-		if ( $this->skip_full_width_patterns && in_array( 'requires_align_wide', array_keys( $pattern['tags'] ), true ) ) {
-			return false;
+
+		foreach ( $pattern['tags'] as $tag_slug => $value ) {
+			// Match against tags with a non-translated slug beginning with `requires-`.
+			$split_slug = preg_split( '/^requires-/', $tag_slug );
+
+			// If the theme does not support the matched feature, then skip registering the pattern.
+			if ( $split_slug[1] && false === get_theme_support( $split_slug[1] ) ) {
+				return false;
+			}
 		}
+
 		return true;
 	}
 }
