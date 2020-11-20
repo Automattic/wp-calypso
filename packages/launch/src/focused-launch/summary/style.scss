@@ -128,3 +128,9 @@
 		flex: 0.6;
 	}
 }
+
+.focused-launch-summary__details-link {
+	display: block;
+	margin-top: 14px;
+	color: var( --studio-gray-60 );
+}

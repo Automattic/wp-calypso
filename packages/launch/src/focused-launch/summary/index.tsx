@@ -196,7 +196,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							itemType="individual-item"
 							locale={ locale }
 						/>
-						<Link to={ Route.DomainDetails }>
+						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -385,7 +385,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 						</div>
-						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
+							{ __( 'View all plans', __i18n_text_domain__ ) }
+						</Link>
 					</>
 				)
 			}
