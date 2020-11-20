@@ -368,8 +368,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
 
+		// TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.0 on production.
+		const deprectedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprectedInserterBlockItemSelector }`
 		);
 
 		let insertedBlockSelector = By.css(
