@@ -5,11 +5,12 @@
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
 	"types": "dist/types/index.d.ts",
+	"calypso:src": "index.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__shopping-cart*\"",
-		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [

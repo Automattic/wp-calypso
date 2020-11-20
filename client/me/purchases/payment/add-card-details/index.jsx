@@ -11,7 +11,6 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
  * Internal Dependencies
  */
 import CreditCardForm from 'calypso/blocks/credit-card-form';
-import CreditCardFormLoadingPlaceholder from 'calypso/blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -27,6 +26,10 @@ import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-us
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function AddCardDetails( props ) {
 	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
@@ -43,10 +46,7 @@ function AddCardDetails( props ) {
 			<Fragment>
 				<QueryUserPurchases userId={ props.userId } />
 
-				<CreditCardFormLoadingPlaceholder
-					title={ titles.addCardDetails }
-					isFullWidth={ props.isFullWidth }
-				/>
+				<PaymentMethodLoader title={ titles.addCardDetails } />
 			</Fragment>
 		);
 	}
@@ -77,20 +77,27 @@ function AddCardDetails( props ) {
 				{ titles.addCardDetails }
 			</HeaderCake>
 
-			<StripeHookProvider
-				locale={ props.locale }
-				configurationArgs={ { needs_intent: true } }
-				fetchStripeConfiguration={ getStripeConfiguration }
-			>
-				<CreditCardForm
-					apiParams={ { purchaseId: props.purchase.id } }
-					createCardToken={ createCardUpdateToken }
-					purchase={ props.purchase }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					siteSlug={ props.siteSlug }
-					successCallback={ successCallback }
-				/>
-			</StripeHookProvider>
+			<Layout>
+				<Column type="main">
+					<StripeHookProvider
+						locale={ props.locale }
+						configurationArgs={ { needs_intent: true } }
+						fetchStripeConfiguration={ getStripeConfiguration }
+					>
+						<CreditCardForm
+							apiParams={ { purchaseId: props.purchase.id } }
+							createCardToken={ createCardUpdateToken }
+							purchase={ props.purchase }
+							recordFormSubmitEvent={ recordFormSubmitEvent }
+							siteSlug={ props.siteSlug }
+							successCallback={ successCallback }
+						/>
+					</StripeHookProvider>
+				</Column>
+				<Column type="sidebar">
+					<PaymentMethodSidebar purchase={ props.purchase } />
+				</Column>
+			</Layout>
 		</Fragment>
 	);
 }

@@ -37,7 +37,7 @@ const JetpackFreeCardAlt: React.FC< JetpackFreeProps > = ( { siteId, urlQueryArg
 		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
 
 	return (
-		<div className="jetpack-free-card-i5 jetpack-product-card-i5">
+		<div className="jetpack-free-card-i5 jetpack-product-card-i5" data-e2e-product-slug="free">
 			<header className="jetpack-free-card-i5__header">
 				<h3 className="jetpack-free-card-i5__title">{ translate( 'Jetpack Free' ) }</h3>
 				<p className="jetpack-free-card-i5__subheadline">

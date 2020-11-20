@@ -85,7 +85,7 @@ describe( 'selectors', () => {
 			expect( subscribedLists ).toEqual( [] );
 		} );
 
-		test( 'should retrieve items in a-z slug order', () => {
+		test( 'should retrieve items in title order', () => {
 			const subscribedLists = getSubscribedLists( {
 				reader: {
 					lists: {
@@ -93,10 +93,12 @@ describe( 'selectors', () => {
 							123: {
 								ID: 123,
 								slug: 'bananas',
+								title: 'def',
 							},
 							456: {
 								ID: 456,
 								slug: 'ants',
+								title: 'abc',
 							},
 						},
 						subscribedLists: [ 123, 456 ],
@@ -105,8 +107,8 @@ describe( 'selectors', () => {
 			} );
 
 			expect( subscribedLists ).toEqual( [
-				{ ID: 456, slug: 'ants' },
-				{ ID: 123, slug: 'bananas' },
+				{ ID: 456, slug: 'ants', title: 'abc' },
+				{ ID: 123, slug: 'bananas', title: 'def' },
 			] );
 		} );
 	} );

@@ -1,0 +1,25 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+
+.focused-launch-container {
+	width: 100%;
+	max-width: 980px;
+	margin: 0 auto;
+}
+
+.focused-launch-container.focused-launch-container--wide {
+	max-width: 1280px;
+}
+
+.focused-launch-details__back-button-wrapper {
+	margin-bottom: 24px;
+}
+
+.focused-launch-details__header {
+	margin-bottom: 30px;
+
+	@include break-medium {
+		margin-bottom: 55px;
+	}
+}

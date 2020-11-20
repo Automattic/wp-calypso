@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { startsWith, flowRight as compose } from 'lodash';
+import { startsWith, flowRight as compose, some } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -116,10 +116,14 @@ class Layout extends Component {
 
 		const exemptedSections = [ 'jetpack-connect', 'happychat', 'devdocs', 'help' ];
 		const exemptedRoutes = [ '/log-in/jetpack', '/me/account/closed' ];
+		const exemptedRoutesStartingWith = [ '/start/p2' ];
 
 		return (
 			! exemptedSections.includes( this.props.sectionName ) &&
-			! exemptedRoutes.includes( this.props.currentRoute )
+			! exemptedRoutes.includes( this.props.currentRoute ) &&
+			! some( exemptedRoutesStartingWith, ( startsWithString ) =>
+				this.props.currentRoute?.startsWith( startsWithString )
+			)
 		);
 	}
 

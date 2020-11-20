@@ -5,6 +5,11 @@
 @import '~@automattic/typography/styles/variables';
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
+@import '../variables';
+
+// =============================================================================
+// Override <Modal> styles
+// =============================================================================
 
 body.has-focused-launch-modal {
 	overflow: hidden;
@@ -16,7 +21,8 @@ body.has-focused-launch-modal {
 	}
 
 	.components-modal__header {
-		margin: 0 0 20px;
+		padding: 0 $launch-padding-h-mobile;
+		margin: 0;
 
 		.components-modal__icon-container {
 			margin-right: 12px;
@@ -25,9 +31,9 @@ body.has-focused-launch-modal {
 		@include break-medium {
 			border-bottom: none;
 
-			.components-modal__icon-container,
+			// Make sure that the modal title can still be read by screen readers
 			.components-modal__header-heading {
-				display: none;
+				@include onboarding-screen-reader-text();
 			}
 		}
 	}
@@ -45,34 +51,16 @@ body.has-focused-launch-modal {
 		// the modal header overlaps the scrollbar on Chrome.
 		overflow: auto;
 	}
-}
 
-.launch__focused-modal-wrapper {
-	position: relative;
-	flex-grow: 1;
-	min-width: 0;
-	display: flex;
-	flex-direction: column;
-	height: 100%;
-}
+	&.launch__focused-modal--hide-title {
+		.components-modal__header {
+			border-bottom: none;
+		}
 
-.launch__focused-modal-header {
-	justify-content: space-between;
-	display: flex;
-}
-
-.launch__focused-modal-header-wp-logo {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 60px;
-	height: 60px;
-}
-
-.launch__focused-modal-body {
-	width: 100%;
-	max-width: 1440px;
-	margin: 10px auto;
+		.components-modal__header-heading {
+			@include onboarding-screen-reader-text();
+		}
+	}
 }
 
 .launch__focused-modal-close-button.components-button.is-link {
@@ -110,5 +98,44 @@ body.has-focused-launch-modal {
 		// Vertically align icon
 		display: flex;
 		align-items: center;
+	}
+}
+
+// =============================================================================
+// Modal content styles
+// =============================================================================
+
+.launch__focused-modal-body {
+	position: relative;
+	width: 100%;
+	min-width: 0;
+	// Fill the page's height without showing scrollbars, if they're not needed
+	min-height: calc( 100% - #{$onboarding-header-height} );
+	padding: 24px $launch-padding-h-mobile;
+
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+
+	@include break-small {
+		padding: 24px $launch-padding-h-small 48px;
+	}
+
+	@include break-medium {
+		border-bottom: none;
+		padding: 24px $launch-padding-h-medium 60px;
+	}
+
+	@include break-large {
+		padding: 32px $launch-padding-h-large 72px;
+	}
+
+	@include break-large {
+		padding: 32px $launch-padding-h-wide 80px;
+	}
+
+	// Direct children of this element are the different modal views
+	& > * {
+		flex: 1;
 	}
 }

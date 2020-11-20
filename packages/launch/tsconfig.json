@@ -33,9 +33,12 @@
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
+		{ "path": "../react-i18n" },
 		{ "path": "../data-stores" },
-		{ "path": "../domain-picker" },
+		{ "path": "../components" },
 		{ "path": "../onboarding" },
-		{ "path": "../react-i18n" }
+		{ "path": "../domain-picker" },
+		{ "path": "../plans-grid" },
+		{ "path": "../calypso-analytics" }
 	]
 }

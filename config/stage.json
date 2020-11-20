@@ -15,8 +15,9 @@
 	"rebrand_cities_prefix": "rebrandcitiestestsite",
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
-		"async-payments": false,
 		"ad-tracking": false,
+		"anchor-fm": false,
+		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
@@ -113,6 +114,7 @@
 		"perfmon": true,
 		"persist-redux": true,
 		"plans/personal-plan": true,
+		"post-editor/checkout-overlay": true,
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": true,

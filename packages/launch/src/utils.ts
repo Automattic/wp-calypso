@@ -12,7 +12,7 @@ export const isDefaultSiteTitle = ( {
 	currentSiteTitle = '',
 	exact = false,
 }: {
-	currentSiteTitle: string;
+	currentSiteTitle: string | undefined;
 	exact?: boolean;
 } ): boolean =>
 	exact

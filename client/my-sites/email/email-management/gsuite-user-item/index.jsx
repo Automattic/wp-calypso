@@ -8,6 +8,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import Badge from 'calypso/components/badge';
 import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import PendingGSuiteTosNoticeDialog from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice-dialog';
@@ -20,24 +21,40 @@ import './style.scss';
 function GSuiteUserItem( props ) {
 	const translate = useTranslate();
 	const [ dialogVisible, setDialogVisible ] = useState( false );
-	const onFixClickHandler = ( e ) => {
-		e.preventDefault();
+
+	const onFixClickHandler = ( event ) => {
+		event.preventDefault();
+
 		setDialogVisible( true );
 	};
+
 	const onCloseClickHandler = () => {
 		setDialogVisible( false );
 	};
 
 	const getLoginLink = () => {
 		const { email, domain } = props.user;
+
 		return `https://accounts.google.com/AccountChooser?Email=${ email }&service=CPanel&continue=https://admin.google.com/a/${ domain }`;
 	};
 
-	const renderManage = () => {
+	const renderBadge = () => {
+		if ( ! props.user.is_admin ) {
+			return;
+		}
+
+		return (
+			<Badge type="info">
+				{ translate( 'Admin', { context: 'Noun: A user role displayed in a badge' } ) }
+			</Badge>
+		);
+	};
+
+	const renderManageLink = () => {
 		return (
 			<ExternalLink
 				icon
-				className="gsuite-user-item"
+				className="gsuite-user-item__manage-link"
 				href={ getLoginLink() }
 				onClick={ props.onClick }
 				target="_blank"
@@ -48,19 +65,22 @@ function GSuiteUserItem( props ) {
 		);
 	};
 
-	const renderFix = () => {
+	const renderFinishSetupButton = () => {
+		const { siteSlug, user } = props;
+
 		return (
 			<Fragment>
-				<Button className="gsuite-user-item__fix" compact={ true } onClick={ onFixClickHandler }>
+				<Button compact={ true } onClick={ onFixClickHandler }>
 					{ translate( 'Finish Setup' ) }
 				</Button>
-				{ props.siteSlug && (
+
+				{ siteSlug && (
 					<PendingGSuiteTosNoticeDialog
-						domainName={ props.user.domain }
+						domainName={ user.domain }
 						onClose={ onCloseClickHandler }
 						section={ 'gsuite-users-manage-user' }
-						siteSlug={ props.siteSlug }
-						user={ props.user.email }
+						siteSlug={ siteSlug }
+						user={ user.email }
 						visible={ dialogVisible }
 					/>
 				) }
@@ -70,15 +90,21 @@ function GSuiteUserItem( props ) {
 
 	return (
 		<li>
-			<span className="gsuite-user-item__email">{ props.user.email }</span>
-			{ props.user.agreed_to_terms ? renderManage() : renderFix() }
+			<div className="gsuite-user-item__email">
+				<strong>{ props.user.email }</strong>
+
+				{ renderBadge() }
+			</div>
+
+			{ props.user.agreed_to_terms ? renderManageLink() : renderFinishSetupButton() }
 		</li>
 	);
 }
 
 GSuiteUserItem.propTypes = {
-	user: PropTypes.object.isRequired,
 	onClick: PropTypes.func,
+	siteSlug: PropTypes.string,
+	user: PropTypes.object.isRequired,
 };
 
 export default GSuiteUserItem;

@@ -23,6 +23,9 @@ import titles from 'calypso/me/purchases/titles';
 import { paymentMethods } from 'calypso/me/purchases/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
@@ -36,19 +39,26 @@ function AddCreditCard( props ) {
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider
-				configurationArgs={ { needs_intent: true } }
-				locale={ props.locale }
-				fetchStripeConfiguration={ getStripeConfiguration }
-			>
-				<CreditCardForm
-					createCardToken={ createAddCardToken }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					saveStoredCard={ props.addStoredCard }
-					successCallback={ goToPaymentMethods }
-					showUsedForExistingPurchasesInfo={ true }
-				/>
-			</StripeHookProvider>
+
+			<Layout>
+				<Column type="main">
+					<StripeHookProvider
+						configurationArgs={ { needs_intent: true } }
+						locale={ props.locale }
+						fetchStripeConfiguration={ getStripeConfiguration }
+					>
+						<CreditCardForm
+							createCardToken={ createAddCardToken }
+							recordFormSubmitEvent={ recordFormSubmitEvent }
+							saveStoredCard={ props.addStoredCard }
+							successCallback={ goToPaymentMethods }
+						/>
+					</StripeHookProvider>
+				</Column>
+				<Column type="sidebar">
+					<PaymentMethodSidebar />
+				</Column>
+			</Layout>
 		</Main>
 	);
 }

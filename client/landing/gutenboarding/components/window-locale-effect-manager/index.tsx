@@ -4,9 +4,11 @@
 import { switchWebpackCSS } from '../../../../lib/i18n-utils/switch-locale';
 import { useI18n } from '@automattic/react-i18n';
 import * as React from 'react';
+import { useLocale } from '@automattic/i18n-utils';
 
 export const WindowLocaleEffectManager: React.FunctionComponent = () => {
-	const { __, isRTL, i18nLocale } = useI18n();
+	const { __, isRTL } = useI18n();
+	const locale = useLocale();
 
 	// Some languages may need to set an html lang attribute that is different from their slug
 	let lang = __( 'html_lang_attribute' );
@@ -14,7 +16,7 @@ export const WindowLocaleEffectManager: React.FunctionComponent = () => {
 	// Some languages don't have the translation for html_lang_attribute
 	// or maybe we are dealing with the default `en` locale. Return the general purpose locale slug
 	if ( lang === 'html_lang_attribute' ) {
-		lang = i18nLocale;
+		lang = locale;
 	}
 
 	React.useEffect( () => {

@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { get, mapValues, pick, reduce, reduceRight } from 'lodash';
+import { get, mapValues, pick, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
@@ -55,8 +55,7 @@ export function addReducer( origReducer, reducers ) {
 			//   })
 			// })
 			// ```
-			newReducer = reduceRight(
-				restKeys,
+			newReducer = restKeys.reduceRight(
 				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
 				setupReducerPersistence( reducer )
 			);

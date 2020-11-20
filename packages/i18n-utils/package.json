@@ -4,6 +4,7 @@
 	"description": "WordPress.com i18n utils",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"types": "dist/types/index.d.ts",
 	"sideEffects": false,
 	"license": "GPL-2.0-or-later",
@@ -14,14 +15,20 @@
 	},
 	"author": "Automattic Inc.",
 	"scripts": {
-		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch",
 		"download": "node bin/download.js",
 		"test": "yarn jest"
 	},
 	"dependencies": {
-		"i18n-calypso": "^5.0.0"
+		"@wordpress/compose": "^3.19.3",
+		"react": "^16.12.0"
+	},
+	"devDependencies": {
+		"@testing-library/jest-dom": "^5.11.6",
+		"@testing-library/react": "^11.2.0",
+		"@testing-library/react-hooks": "^3.4.2"
 	}
 }

@@ -16,7 +16,7 @@ export default class CardHeadingExample extends PureComponent {
 	render() {
 		return (
 			<Card>
-				<CardHeading>This is a default CardHeading</CardHeading>
+				<CardHeading>This is a default CardHeading at 20px</CardHeading>
 				<CardHeading tagName="h1" size={ 54 }>
 					This is a CardHeading, H1 at 54px
 				</CardHeading>
@@ -32,8 +32,8 @@ export default class CardHeadingExample extends PureComponent {
 				<CardHeading tagName="h5" size={ 24 }>
 					This is a CardHeading, H5 at 24px
 				</CardHeading>
-				<CardHeading tagName="h6" size={ 20 }>
-					This is a CardHeading, H6 at 20px
+				<CardHeading tagName="h6" isBold={ true } size={ 16 }>
+					This is a CardHeading, H6 at 16px
 				</CardHeading>
 			</Card>
 		);

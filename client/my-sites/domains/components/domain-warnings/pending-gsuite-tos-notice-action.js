@@ -13,10 +13,13 @@ import PendingGSuiteTosNoticeDialog from './pending-gsuite-tos-notice-dialog';
 
 function PendingGSuiteTosNoticeAction( props ) {
 	const [ dialogVisible, setDialogVisible ] = useState( false );
-	const onFixClickHandler = ( e ) => {
-		e.preventDefault();
+
+	const onFixClickHandler = ( event ) => {
+		event.preventDefault();
+
 		setDialogVisible( true );
 	};
+
 	const onCloseClickHandler = () => {
 		setDialogVisible( false );
 	};
@@ -28,6 +31,7 @@ function PendingGSuiteTosNoticeAction( props ) {
 			<Button primary={ true } compact={ props.isCompact } onClick={ onFixClickHandler }>
 				{ props.cta || translate( 'Finish Setup' ) }
 			</Button>
+
 			<PendingGSuiteTosNoticeDialog
 				domainName={ props.domainName }
 				onClose={ onCloseClickHandler }
@@ -42,9 +46,7 @@ function PendingGSuiteTosNoticeAction( props ) {
 
 PendingGSuiteTosNoticeAction.propTypes = {
 	domainName: PropTypes.string.isRequired,
-	isMultipleDomains: PropTypes.bool.isRequired,
 	section: PropTypes.string.isRequired,
-	severity: PropTypes.string.isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	user: PropTypes.string.isRequired,
 	cta: PropTypes.string,

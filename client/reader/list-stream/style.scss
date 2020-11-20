@@ -51,7 +51,18 @@
 
 .list-stream__header-title {
 	color: var( --color-neutral-70 );
+	display: flex;
 	font-size: $font-body;
+
+	.gridicon {
+		color: var( --color-text-subtle );
+		height: 14px;
+	}
+}
+
+.list-stream__header-title-privacy {
+	margin-left: 2px;
+	margin-top: 1px;
 }
 
 .list-stream__header-description {
@@ -123,10 +134,6 @@
 
 .list-stream__header-edit {
 	margin-left: auto;
-
-	.list-stream__header-action-label {
-		display: none;
-	}
 
 	.list-stream__header-action-icon .gridicon {
 		fill: var( --color-neutral-light );
