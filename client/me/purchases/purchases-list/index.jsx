@@ -97,7 +97,7 @@ class PurchasesList extends Component {
 	renderMembershipSubscriptions() {
 		const { subscriptions } = this.props;
 
-		if ( ! subscriptions.length ) {
+		if ( ! subscriptions.length || this.isDataLoading() ) {
 			return null;
 		}
 

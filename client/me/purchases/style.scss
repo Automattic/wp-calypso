@@ -51,10 +51,11 @@
 	padding-right: 42px;
 	padding-top: 11px;
 	padding-bottom: 12px;
-	font-size: 0.875em;
+	font-size: 0.875rem;
 }
 
-.purchase-item {
+.purchase-item,
+.membership-item {
 	&:hover {
 		background: var( --color-neutral-0 );
 	}

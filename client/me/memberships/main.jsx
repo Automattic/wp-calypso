@@ -26,7 +26,7 @@ import FormattedHeader from 'calypso/components/formatted-header';
 /**
  * Style dependencies
  */
-import './main.scss';
+import './style.scss';
 
 /**
  * Image dependencies

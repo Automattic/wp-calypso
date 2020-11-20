@@ -1,5 +1,37 @@
-.membership-site {
-	margin-bottom: 24px;
+.memberships__list-subscription {
+	display:flex;
+	flex-direction: row;
+}
+
+.memberships__service-name {
+	strong {
+		font-weight: normal;
+	}
+
+	small {
+		color: var( --color-neutral-light );
+		display: block;
+		font-size: $font-body-extra-small;
+		font-style: italic;
+	}
+}
+
+.memberships__list-sub {
+	font-size: $font-body-extra-small;
+	margin: 4px 0 0;
+	color: var( --color-neutral-light );
+}
+
+.memberships__list-date {
+	flex-basis: 170px;
+}
+
+.memberships__list-renewal-price {
+	flex-basis: 100px;
+}
+
+.memberships__service-description {
+	flex-grow: 1;
 }
 
 .membership-site__header {
