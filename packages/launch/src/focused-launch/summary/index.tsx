@@ -141,15 +141,17 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							</Tooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
-								{ createInterpolateElement(
-									__(
-										'<strong>Unique domains</strong> help build brand trust',
-										__i18n_text_domain__
-									),
-									{
-										strong: <strong />,
-									}
-								) }
+								<span>
+									{ createInterpolateElement(
+										__(
+											'<strong>Unique domains</strong> help build brand trust',
+											__i18n_text_domain__
+										),
+										{
+											strong: <strong />,
+										}
+									) }
+								</span>
 							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
@@ -170,15 +172,17 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 									</label>
 									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 										<Icon icon={ bulb } />
-										{ createInterpolateElement(
-											__(
-												'<strong>46.9%</strong> of registered domains are <strong>.com</strong>',
-												__i18n_text_domain__
-											),
-											{
-												strong: <strong />,
-											}
-										) }
+										<span>
+											{ createInterpolateElement(
+												__(
+													'<strong>46.9%</strong> of registered domains are <strong>.com</strong>',
+													__i18n_text_domain__
+												),
+												{
+													strong: <strong />,
+												}
+											) }
+										</span>
 									</p>
 								</>
 							}
@@ -303,15 +307,17 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							</Tooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
-								{ createInterpolateElement(
-									__(
-										'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
-										__i18n_text_domain__
-									),
-									{
-										strong: <strong />,
-									}
-								) }
+								<span>
+									{ createInterpolateElement(
+										__(
+											'More than <strong>38%</strong> of the internet uses <strong>WordPress</strong>',
+											__i18n_text_domain__
+										),
+										{
+											strong: <strong />,
+										}
+									) }
+								</span>
 							</p>
 						</label>
 						<div>
@@ -331,15 +337,17 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</label>
 						<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 							<Icon icon={ bulb } />
-							{ createInterpolateElement(
-								__(
-									'Grow your business with <strong>WordPress Business</strong>',
-									__i18n_text_domain__
-								),
-								{
-									strong: <strong />,
-								}
-							) }
+							<span>
+								{ createInterpolateElement(
+									__(
+										'Grow your business with <strong>WordPress Business</strong>',
+										__i18n_text_domain__
+									),
+									{
+										strong: <strong />,
+									}
+								) }
+							</span>
 						</p>
 						<div>
 							<FocusedLaunchSummaryItem
