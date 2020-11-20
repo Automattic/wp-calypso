@@ -130,10 +130,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								{ info }
 							</Tooltip>
-							<SubTitle
-								tagName="p"
-								className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only"
-							>
+							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
 								{ createInterpolateElement(
 									__(
@@ -144,7 +141,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 										strong: <strong />,
 									}
 								) }
-							</SubTitle>
+							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
 							<LeadingContentSide label={ currentDomain || '' } />
