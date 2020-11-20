@@ -2,9 +2,10 @@
  * External dependencies
  */
 import React from 'react';
-import { connect } from 'react-redux';
 import { get } from 'lodash';
 import { getCurrencyObject } from '@automattic/format-currency';
+import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -26,11 +27,7 @@ import {
 	isDomainProduct,
 } from 'calypso/lib/products-values';
 import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
-import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
 import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
-import { removeItem } from 'calypso/lib/cart/actions';
-import { localize } from 'i18n-calypso';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
 
 export class CartItem extends React.Component {
@@ -42,7 +39,7 @@ export class CartItem extends React.Component {
 			'Product ID',
 			this.props.cartItem.product_id
 		);
-		removeItem( this.props.cartItem, this.props.domainsWithPlansOnly );
+		this.props.shoppingCartManager.removeProductFromCart( this.props.cartItem.uuid );
 	};
 
 	price() {
@@ -359,6 +356,4 @@ export class CartItem extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	domainsWithPlansOnly: currentUserHasFlag( state, DOMAINS_WITH_PLANS_ONLY ),
-} ) )( localize( withLocalizedMoment( CartItem ) ) );
+export default withShoppingCart( localize( withLocalizedMoment( CartItem ) ) );
