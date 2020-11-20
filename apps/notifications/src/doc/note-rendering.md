@@ -51,7 +51,7 @@ The result of this function (a string enhanced with HTML tag information) is the
 
 Local development of Calypso logic for rendering notifications can take place making use of the Calypso dev server, as any changes made to `src/apps/notifications` will be reflected in the Calypso local development environment automatically.
 
-However, as notifications can also be viewed in an iframe on non-Calypso sites using the masterbar (see <https://github.com/Automattic/wp-calypso/edit/master/apps/notifications/README.md>), any changes to the notifications sub-application should also be tested on a sandboxed WP.com site. To do this, run the following commands:
+However, as notifications can also be viewed in an iframe on non-Calypso sites using the masterbar (see <https://github.com/Automattic/wp-calypso/edit/trunk/apps/notifications/README.md>), any changes to the notifications sub-application should also be tested on a sandboxed WP.com site. To do this, run the following commands:
 
 ```bash
 # Builds files and places them in `apps/notifications/dist`

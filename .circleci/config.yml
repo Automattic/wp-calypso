@@ -1197,19 +1197,19 @@ workflows:
 
   e2e-full-suite-edge-scheduled:
     jobs:
-    - setup
-    - test-e2e-canary:
-        name: test-e2e-full-suite-edge
-        requires:
-        - setup
-        test-flags: '-g'
-        env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-full-suite-edge
+          requires:
+            - setup
+          test-flags: '-g'
+          env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
     triggers:
-    - schedule:
-        cron: '30 8 * * *'
-        filters:
-          branches:
-            only: master
+      - schedule:
+          cron: '30 8 * * *'
+          filters:
+            branches:
+              only: trunk
 
   e2e-jetpack-be-scheduled:
     jobs:
