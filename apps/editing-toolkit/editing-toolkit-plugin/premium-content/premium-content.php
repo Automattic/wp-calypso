@@ -347,16 +347,13 @@ function premium_content_render_upgrade_nudge() {
  */
 function premium_content_render_stripe_nudge() {
 	if ( function_exists( 'jetpack_require_lib' ) ) {
-		// TODO: Build stripe url.
-		$stripe_connect_url = '';
-
 		jetpack_require_lib( 'components' );
 		return \Jetpack_Components::render_component(
 			'stripe-nudge',
 			array(
 				'blockName'        => 'premium-content',
 				'postId'           => $post_id,
-				'stripeConnectUrl' => $stripe_connect_url,
+				'stripeConnectUrl' => null,
 			)
 		);
 	}
