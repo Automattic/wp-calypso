@@ -524,7 +524,7 @@ const Summary: React.FunctionComponent = () => {
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
 	return (
-		<div className="focused-launch-summary__container">
+		<div className="focused-launch-container">
 			<div className="focused-launch-summary__section">
 				<Title tagName="h2">
 					{ hasPaidDomain && hasPaidPlan
