@@ -8,7 +8,8 @@
 	max-width: 420px;
 	padding-bottom: 100px;
 	flex-grow: 0;
-	margin: 0;
+	// Auto in all directions, as a flex child, makes this element centered
+	margin: auto;
 
 	display: flex;
 	flex-direction: column;
