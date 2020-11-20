@@ -164,7 +164,8 @@ class Site extends React.Component {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && ( // Coming Soon v1
 							<span className="site__badge site__badge-private">
-								{ this.props.site.is_coming_soon || isPrivateAndUnlaunched
+								{ ( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
+								! isAtomicAndEditingToolkitDeactivated
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
 							</span>
