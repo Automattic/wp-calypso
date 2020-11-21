@@ -120,7 +120,7 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 			<FormattedHeader
 				brandFont
 				className="payment-methods__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ translate( 'Purchases' ) }
 				align="left"
 			/>
 
