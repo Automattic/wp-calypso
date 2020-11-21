@@ -77,11 +77,10 @@ const enabledFeatures = ( data ) => () =>
 /**
  * Enables a specific feature.
  *
- * @param {string} feature Feature name
  * @param {object} data the json environment configuration to use for getting config values
- * @api public
+ * @public
  */
-const enable = ( data ) => ( feature ) => {
+const enable = ( data ) => ( /** @type {string} */ feature ) => {
 	if ( data.features ) {
 		data.features[ feature ] = true;
 	}
@@ -90,12 +89,11 @@ const enable = ( data ) => ( feature ) => {
 /**
  * Disables a specific feature.
  *
- * @param {string} feature Feature name
  * @param {object} data the json environment configuration to use for getting config values
- * @api public
+ * @public
  */
 
-const disable = ( data ) => ( feature ) => {
+const disable = ( data ) => ( /** @type {string} */ feature ) => {
 	if ( data.features ) {
 		data.features[ feature ] = false;
 	}
