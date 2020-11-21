@@ -69,7 +69,7 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 			<FormattedHeader
 				brandFont
 				className="payment-methods__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ translate( 'Purchases' ) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Payment Methods' } siteSlug={ siteSlug } />

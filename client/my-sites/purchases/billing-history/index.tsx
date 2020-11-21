@@ -74,7 +74,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			<FormattedHeader
 				brandFont
 				className="billing-history__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ translate( 'Purchases' ) }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
@@ -125,7 +125,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 			<FormattedHeader
 				brandFont
 				className="billing-history__page-heading"
-				headerText={ translate( 'Billing' ) }
+				headerText={ translate( 'Purchases' ) }
 				align="left"
 			/>
 
