@@ -38,7 +38,7 @@ function noSites( context, analyticsPath ) {
 	context.primary = (
 		<Main className="purchases__no-site is-wide-layout">
 			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
-			<PurchasesNavigation section={ 'purchases' } />
+			<PurchasesNavigation section={ 'activeUpgrades' } />
 			<NoSitesMessage />
 		</Main>
 	);
