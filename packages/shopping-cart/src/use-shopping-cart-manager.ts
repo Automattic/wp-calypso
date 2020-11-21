@@ -116,7 +116,8 @@ export default function useShoppingCartManager( {
 
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
-	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+	const isPendingUpdate =
+		hookState.queuedActions.length > 0 || cacheStatus !== 'valid' || ! cartKey;
 
 	const responseCartWithoutTempProducts = useMemo(
 		() => convertTempResponseCartToResponseCart( responseCart ),
