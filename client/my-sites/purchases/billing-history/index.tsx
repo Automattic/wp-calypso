@@ -25,6 +25,7 @@ import {
 } from 'calypso/me/purchases/billing-history/receipt';
 import FormattedHeader from 'calypso/components/formatted-header';
 import { getReceiptUrlFor, getBillingHistoryUrlFor } from '../paths';
+import titles from 'calypso/me/purchases/titles';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
@@ -68,13 +69,13 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	return (
 		<Main className="purchases billing-history is-wide-layout">
 			<MySitesSidebarNavigation />
-			<DocumentHead title={ translate( 'Billing History' ) } />
+			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker path="/purchases/billing-history" title="Billing History" />
 			<QueryBillingTransactions />
 			<FormattedHeader
 				brandFont
 				className="billing-history__page-heading"
-				headerText={ translate( 'Purchases' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
@@ -95,7 +96,13 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
+export function ReceiptView( {
+	siteSlug,
+	receiptId,
+}: {
+	siteSlug: string;
+	receiptId: number;
+} ): JSX.Element {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
 	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );
@@ -116,7 +123,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 
 	return (
 		<Main className="purchases billing-history is-wide-layout">
-			<DocumentHead title={ translate( 'Billing History' ) } />
+			<DocumentHead title={ titles.billingHistory } />
 			<PageViewTracker
 				path="/purchases/billing-history/:site/:receipt"
 				title="Billing History > Receipt"
@@ -125,7 +132,7 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 			<FormattedHeader
 				brandFont
 				className="billing-history__page-heading"
-				headerText={ translate( 'Purchases' ) }
+				headerText={ titles.sectionTitle }
 				align="left"
 			/>
 

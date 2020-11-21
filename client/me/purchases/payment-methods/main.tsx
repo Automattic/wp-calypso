@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -23,11 +22,9 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import './style.scss';
 
 export default function PaymentMethods(): JSX.Element {
-	const translate = useTranslate();
-
 	return (
 		<Main className="payment-methods__main is-wide-layout">
-			<DocumentHead title={ translate( 'Payment Methods' ) } />
+			<DocumentHead title={ titles.paymentMethods } />
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
 			<MeSidebarNavigation />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
