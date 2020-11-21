@@ -13,6 +13,6 @@ export default {
 	changePaymentMethod: i18n.translate( 'Change Payment Method' ),
 	addCardDetails: i18n.translate( 'Add Credit Card' ),
 	managePurchase: i18n.translate( 'Purchase Settings' ),
-	sectionTitle: i18n.translate( 'Manage Purchases' ),
-	purchases: i18n.translate( 'Purchases' ),
+	sectionTitle: i18n.translate( 'Purchases' ),
+	purchases: i18n.translate( 'Active Upgrades' ),
 };
