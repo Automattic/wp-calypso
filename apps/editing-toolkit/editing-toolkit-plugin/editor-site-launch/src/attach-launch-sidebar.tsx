@@ -6,6 +6,7 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { LaunchContext } from '@automattic/launch';
+import { LocaleProvider } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -41,9 +42,11 @@ registerPlugin( 'a8c-editor-site-launch', {
 		}
 
 		return (
-			<LaunchContext.Provider value={ { siteId: window._currentSiteId } }>
-				<LaunchModal onClose={ closeSidebar } />
-			</LaunchContext.Provider>
+			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale }>
+				<LaunchContext.Provider value={ { siteId: window._currentSiteId } }>
+					<LaunchModal onClose={ closeSidebar } />
+				</LaunchContext.Provider>
+			</LocaleProvider>
 		);
 	},
 } );
