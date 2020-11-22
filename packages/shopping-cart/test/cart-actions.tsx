@@ -15,7 +15,7 @@ import { useShoppingCart, ShoppingCartProvider } from '../index';
 import { emptyResponseCart } from '../src/empty-carts';
 import { RequestCartProduct, ResponseCartProduct, RequestCart, ResponseCart } from '../src/types';
 
-const planWithoutDomain = {
+const planOne = {
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
@@ -47,6 +47,38 @@ const planWithoutDomain = {
 	included_domain_purchase_amount: 0,
 };
 
+const planTwo = {
+	product_name: 'WordPress.com Business',
+	product_slug: 'business-bundle',
+	currency: 'BRL',
+	extra: {
+		context: 'signup',
+	},
+	free_trial: false,
+	meta: '',
+	product_id: 1010,
+	volume: 1,
+	item_original_cost_integer: 14400,
+	item_original_cost_display: 'R$144',
+	item_subtotal_integer: 14400,
+	item_subtotal_display: 'R$144',
+	product_cost_integer: 14400,
+	product_cost_display: 'R$144',
+	item_subtotal_monthly_cost_display: 'R$144',
+	item_subtotal_monthly_cost_integer: 14400,
+	item_original_subtotal_integer: 14400,
+	item_original_subtotal_display: 'R$144',
+	is_domain_registration: false,
+	is_bundled: false,
+	is_sale_coupon_applied: false,
+	months_per_bill_period: null,
+	uuid: 'product002',
+	cost: 144,
+	price: 144,
+	product_type: 'test',
+	included_domain_purchase_amount: 0,
+};
+
 const mainCartKey = '1';
 
 async function getCart( cartKey: string ) {
@@ -59,7 +91,9 @@ async function getCart( cartKey: string ) {
 function createProduct( productProps: RequestCartProduct ): ResponseCartProduct {
 	switch ( productProps.product_id ) {
 		case 1009:
-			return planWithoutDomain;
+			return planOne;
+		case 1010:
+			return planTwo;
 	}
 	throw new Error( 'Unknown product' );
 }
@@ -111,7 +145,7 @@ describe( 'useShoppingCart', () => {
 		const TestComponent = () => {
 			const { addProductsToCart } = useShoppingCart();
 			const onClick = () => {
-				addProductsToCart( [ planWithoutDomain ] ).then( () => markUpdateComplete() );
+				addProductsToCart( [ planOne ] ).then( () => markUpdateComplete() );
 			};
 			return (
 				<div>
@@ -129,9 +163,7 @@ describe( 'useShoppingCart', () => {
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent(
-				planWithoutDomain.product_name
-			);
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -158,7 +190,7 @@ describe( 'useShoppingCart', () => {
 			};
 			return (
 				<div>
-					<ProductList initialProducts={ [ planWithoutDomain ] } />
+					<ProductList initialProducts={ [ planOne ] } />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
@@ -171,11 +203,11 @@ describe( 'useShoppingCart', () => {
 				</MockProvider>
 			);
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByText( planWithoutDomain.product_name ) ).toBeInTheDocument();
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
 			await act( async () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
-			expect( screen.queryByText( planWithoutDomain.product_name ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
@@ -186,7 +218,52 @@ describe( 'useShoppingCart', () => {
 			);
 
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
-			expect( screen.getByText( planWithoutDomain.product_name ) ).toBeInTheDocument();
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'replaceProductsInCart', () => {
+		const TestComponent = () => {
+			const { replaceProductsInCart } = useShoppingCart();
+			const onClick = () => {
+				replaceProductsInCart( [ planTwo ] ).then( () => markUpdateComplete() );
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planOne ] } />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'replaces a product in the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
+			expect( screen.getByText( planTwo.product_name ) ).toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
 			await act( async () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 				expect( markUpdateComplete ).not.toHaveBeenCalled();
