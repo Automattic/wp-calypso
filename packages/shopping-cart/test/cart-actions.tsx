@@ -136,7 +136,7 @@ function ProductList( {
 			hasAddedCoupon.current = true;
 			applyCoupon( initialCoupon );
 		}
-	}, [ addProductsToCart, applyCoupon, initialProducts, initialCoupon ] );
+	}, [ applyCoupon, initialCoupon ] );
 	if ( responseCart.products.length === 0 ) {
 		return null;
 	}
@@ -478,6 +478,50 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
 			expect( screen.getByText( locationText ) ).toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'reloadFromServer', () => {
+		const TestComponent = () => {
+			const { reloadFromServer } = useShoppingCart();
+			const onClick = () => {
+				reloadFromServer().then( () => markUpdateComplete() );
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planOne ] } />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'reloads the cart from the server', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planOne.product_name ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
