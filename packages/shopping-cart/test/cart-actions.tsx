@@ -93,12 +93,18 @@ function MockProvider( { children } ) {
 	);
 }
 
-describe( 'addProductsToCart', () => {
-	it( 'adds a product to the cart', async () => {
+describe( 'useShoppingCart', () => {
+	const markUpdateComplete = jest.fn();
+
+	beforeEach( () => {
+		markUpdateComplete.mockClear();
+	} );
+
+	describe( 'addProductsToCart', () => {
 		const TestComponent = () => {
 			const { addProductsToCart } = useShoppingCart();
 			const onClick = () => {
-				addProductsToCart( [ planWithoutDomain ] );
+				addProductsToCart( [ planWithoutDomain ] ).then( () => markUpdateComplete() );
 			};
 			return (
 				<div>
@@ -108,15 +114,29 @@ describe( 'addProductsToCart', () => {
 			);
 		};
 
-		render(
-			<MockProvider>
-				<TestComponent />
-			</MockProvider>
-		);
-		fireEvent.click( screen.getByText( 'Click me' ) );
-		await waitFor( () => screen.getByTestId( 'product-list' ) );
-		expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent(
-			planWithoutDomain.product_name
-		);
+		it( 'adds a product to the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent(
+				planWithoutDomain.product_name
+			);
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			expect( markUpdateComplete ).not.toHaveBeenCalled();
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
 	} );
 } );
