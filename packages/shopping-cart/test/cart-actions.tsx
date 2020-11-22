@@ -111,15 +111,28 @@ async function setCart( cartKey: string, newCart: RequestCart ): Promise< Respon
 	throw new Error( 'Unknown cart key' );
 }
 
-function ProductList( { initialProducts }: { initialProducts?: RequestCartProduct[] } ) {
-	const { responseCart, addProductsToCart } = useShoppingCart();
-	const hasAdded = useRef( false );
+function ProductList( {
+	initialProducts,
+	initialCoupon,
+}: {
+	initialProducts?: RequestCartProduct[];
+	initialCoupon?: string;
+} ) {
+	const { responseCart, addProductsToCart, applyCoupon } = useShoppingCart();
+	const hasAddedProduct = useRef( false );
 	useEffect( () => {
-		if ( initialProducts && ! hasAdded.current ) {
-			hasAdded.current = true;
+		if ( initialProducts && ! hasAddedProduct.current ) {
+			hasAddedProduct.current = true;
 			addProductsToCart( initialProducts );
 		}
 	}, [ addProductsToCart, initialProducts ] );
+	const hasAddedCoupon = useRef( false );
+	useEffect( () => {
+		if ( initialCoupon && ! hasAddedCoupon.current ) {
+			hasAddedCoupon.current = true;
+			applyCoupon( initialCoupon );
+		}
+	}, [ addProductsToCart, applyCoupon, initialProducts, initialCoupon ] );
 	if ( responseCart.products.length === 0 ) {
 		return null;
 	}
@@ -361,6 +374,50 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
 			expect( screen.getByText( 'Coupon: ABCD' ) ).toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'removeCoupon', () => {
+		const TestComponent = () => {
+			const { removeCoupon } = useShoppingCart();
+			const onClick = () => {
+				removeCoupon().then( () => markUpdateComplete() );
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planOne ] } initialCoupon="ABCD" />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'removes a coupon from the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( 'Coupon: ABCD' ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.queryByText( 'Coupon: ABCD' ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
