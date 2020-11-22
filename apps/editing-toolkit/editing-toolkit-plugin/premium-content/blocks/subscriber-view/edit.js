@@ -34,10 +34,14 @@ function Edit( { hasInnerBlocks, parentClientId, isSelected } ) {
 						templateInsertUpdatesSelection={ false }
 						template={ [
 							[
+								'core/heading',
+								{ content: __( 'Subscriber Content', 'full-site-editing' ), level: 3 },
+							],
+							[
 								'core/paragraph',
 								{
-									placeholder: __(
-										'Insert the piece of content you want your visitors to see after they subscribe.',
+									content: __(
+										'Add content here that will only be visible to your subscribers.',
 										'full-site-editing'
 									),
 								},
