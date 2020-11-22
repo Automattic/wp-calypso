@@ -24,6 +24,7 @@ import type {
 	ApplyCouponToCart,
 	RemoveProductFromCart,
 	UpdateTaxLocationInCart,
+	CartValidCallback,
 } from './types';
 import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
@@ -44,7 +45,7 @@ export default function useShoppingCartManager( {
 	const previousCartKey = useRef< string | number | undefined >();
 	const getServerCart = useCallback( () => getCart( String( cartKey ) ), [ cartKey, getCart ] );
 
-	const cartValidCallback = useRef< undefined | ( () => void ) >();
+	const cartValidCallbacks = useRef< CartValidCallback[] >( [] );
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
 
@@ -76,7 +77,7 @@ export default function useShoppingCartManager( {
 		( action ) => {
 			return new Promise< void >( ( resolve ) => {
 				hookDispatch( action );
-				cartValidCallback.current = resolve;
+				cartValidCallbacks.current.push( resolve );
 			} );
 		},
 		[ hookDispatch ]
@@ -142,14 +143,14 @@ export default function useShoppingCartManager( {
 	}
 
 	useEffect( () => {
-		if ( ! cartValidCallback.current ) {
+		if ( cartValidCallbacks.current.length === 0 ) {
 			return;
 		}
-		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallback exists` );
+		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallbacks exist` );
 		if ( hookState.queuedActions.length === 0 && cacheStatus === 'valid' ) {
-			debug( 'calling cartValidCallback' );
-			cartValidCallback.current();
-			cartValidCallback.current = undefined;
+			debug( 'calling cartValidCallbacks' );
+			cartValidCallbacks.current.forEach( ( callback ) => callback() );
+			cartValidCallbacks.current = [];
 		}
 	}, [ hookState.queuedActions, cacheStatus ] );
 

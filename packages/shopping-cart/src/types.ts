@@ -107,3 +107,5 @@ export type ShoppingCartState = {
 	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
 };
+
+export type CartValidCallback = () => void;
