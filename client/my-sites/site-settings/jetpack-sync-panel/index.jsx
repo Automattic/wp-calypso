@@ -198,7 +198,7 @@ class JetpackSyncPanel extends React.Component {
 export default connect(
 	( state ) => {
 		const site = getSelectedSite( state ),
-			siteId = site.ID;
+			siteid = site.ID;
 		return {
 			site,
 			siteId,
