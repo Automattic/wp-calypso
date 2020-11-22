@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import formatCurrency from '@automattic/format-currency';
 
@@ -72,6 +72,33 @@ const MemberShipType = ( { subscription } ) => {
 		  } );
 };
 
+const Icon = ( { subscription } ) => {
+	const subscriptionUrl = subscription.site_url.substring( 7 );
+	const [ hasError, setErrors ] = useState( false );
+	const [ site, setSite ] = useState( null );
+
+	async function fetchData() {
+		const data = await fetch(
+			'https://public-api.wordpress.com/rest/v1.1/sites/' + subscriptionUrl
+		);
+
+		data
+			.json()
+			.then( ( data ) => setSite( data ) )
+			.catch( ( err ) => setErrors( err ) );
+	}
+
+	useEffect( () => {
+		fetchData();
+	} );
+
+	if ( site && ! hasError ) {
+		return <img src={ site.icon.ico } width="24" height="24" alt="" />;
+	}
+
+	return <SiteIcon size={ 24 } />;
+};
+
 export default function MembershipItem( {
 	subscription,
 }: {
@@ -85,7 +112,7 @@ export default function MembershipItem( {
 		>
 			<div className="membership-item__wrapper purchases-layout__wrapper">
 				<div className="membership-item__site purchases-layout__site">
-					<SiteIcon size={ 24 } />
+					<Icon subscription={ subscription } />
 				</div>
 
 				<div className="membership-item__information purchase-item__information purchases-layout__information">
