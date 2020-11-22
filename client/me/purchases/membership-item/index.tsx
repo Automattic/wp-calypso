@@ -76,6 +76,7 @@ const Icon = ( { subscription } ) => {
 	const subscriptionUrl = subscription.site_url.substring( 7 );
 	const [ hasError, setErrors ] = useState( false );
 	const [ site, setSite ] = useState( null );
+	const [ loadData, setLoadData ] = useState( true );
 
 	async function fetchData() {
 		const data = await fetch(
@@ -84,12 +85,17 @@ const Icon = ( { subscription } ) => {
 
 		data
 			.json()
-			.then( ( data ) => setSite( data ) )
+			.then( ( data ) => {
+				setSite( data );
+				setLoadData( false );
+			} )
 			.catch( ( err ) => setErrors( err ) );
 	}
 
 	useEffect( () => {
-		fetchData();
+		if ( loadData ) {
+			fetchData();
+		}
 	} );
 
 	if ( site && ! hasError ) {
