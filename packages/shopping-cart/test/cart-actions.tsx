@@ -106,6 +106,10 @@ async function setCart( cartKey: string, newCart: RequestCart ): Promise< Respon
 			products: newCart.products.map( createProduct ),
 			coupon: newCart.coupon,
 			is_coupon_applied: !! newCart.coupon,
+			tax: {
+				display_taxes: !! newCart.tax?.location.postal_code,
+				location: newCart.tax?.location,
+			},
 		};
 	}
 	throw new Error( 'Unknown cart key' );
@@ -137,9 +141,16 @@ function ProductList( {
 		return null;
 	}
 	const coupon = responseCart.is_coupon_applied ? <div>Coupon: { responseCart.coupon }</div> : null;
+	const location = responseCart.tax.location.postal_code ? (
+		<div>
+			Location: { responseCart.tax.location.postal_code },{ ' ' }
+			{ responseCart.tax.location.country_code }, { responseCart.tax.location.subdivision_code }
+		</div>
+	) : null;
 	return (
 		<ul data-testid="product-list">
 			{ coupon }
+			{ location }
 			{ responseCart.products.map( ( product ) => {
 				return (
 					<li key={ product.uuid }>
@@ -418,6 +429,55 @@ describe( 'useShoppingCart', () => {
 				fireEvent.click( screen.getByText( 'Click me' ) );
 			} );
 			expect( screen.queryByText( 'Coupon: ABCD' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'updateLocation', () => {
+		const TestComponent = () => {
+			const { updateLocation } = useShoppingCart();
+			const onClick = () => {
+				updateLocation( {
+					countryCode: 'US',
+					postalCode: '10001',
+					subdivisionCode: 'NY',
+				} ).then( () => markUpdateComplete() );
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planOne ] } initialCoupon="ABCD" />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'adds a location to the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			const locationText = 'Location: 10001, US, NY';
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.queryByText( locationText ) ).not.toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.getByText( locationText ) ).toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
