@@ -110,8 +110,6 @@ class PurchaseItem extends Component {
 							components: {
 								span: <span className="purchase-item__date" />,
 							},
-							context:
-								'timeUntilExpiry is of the form "[number] [time-period] ago" i.e. "3 days ago"',
 						} ) }
 						{ this.trackImpression( 'purchase-expiring' ) }
 					</span>
