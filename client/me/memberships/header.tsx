@@ -22,13 +22,13 @@ export default function MembershipSiteHeader( {
 	domain: string;
 } ): JSX.Element {
 	return (
-		<CompactCard className="membership-site__header">
-			<div className="membership-site__icon">
+		<CompactCard className="memberships__header">
+			<div className="memberships__icon">
 				<Gridicon icon="globe" />
 			</div>
-			<div className="membership-site__info">
-				<div className="membership-site__title">{ name }</div>
-				<div className="membership-site__domain">{ domain }</div>
+			<div className="memberships__info">
+				<div className="memberships__title">{ name }</div>
+				<div className="memberships__domain">{ domain }</div>
 			</div>
 		</CompactCard>
 	);
