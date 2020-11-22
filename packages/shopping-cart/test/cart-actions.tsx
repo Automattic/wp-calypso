@@ -120,7 +120,12 @@ function ProductList( { initialProducts }: { initialProducts?: RequestCartProduc
 	return (
 		<ul data-testid="product-list">
 			{ responseCart.products.map( ( product ) => {
-				return <li key={ product.uuid }>{ product.product_name }</li>;
+				return (
+					<li key={ product.uuid }>
+						<span>{ product.product_slug }</span>
+						<span>{ product.product_name }</span>
+					</li>
+				);
 			} ) }
 		</ul>
 	);
@@ -241,7 +246,7 @@ describe( 'useShoppingCart', () => {
 			);
 		};
 
-		it( 'replaces a product in the cart', async () => {
+		it( 'replaces all products in the cart', async () => {
 			render(
 				<MockProvider>
 					<TestComponent />
@@ -254,6 +259,56 @@ describe( 'useShoppingCart', () => {
 			} );
 			expect( screen.queryByText( planOne.product_name ) ).not.toBeInTheDocument();
 			expect( screen.getByText( planTwo.product_name ) ).toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'replaceProductInCart', () => {
+		const TestComponent = () => {
+			const { replaceProductInCart, responseCart } = useShoppingCart();
+			const onClick = () => {
+				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
+				if ( uuid ) {
+					replaceProductInCart( uuid, { product_id: planTwo.product_id } ).then( () =>
+						markUpdateComplete()
+					);
+				}
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planOne ] } />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'updates a product in the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planOne.product_slug ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.queryByText( planOne.product_slug ) ).not.toBeInTheDocument();
+			expect( screen.getByText( planTwo.product_slug ) ).toBeInTheDocument();
 		} );
 
 		it( 'returns a Promise that resolves after the update completes', async () => {
