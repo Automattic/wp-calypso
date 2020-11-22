@@ -26,6 +26,15 @@ export const getSelectedDomain = ( state: State ): DomainSuggestions.DomainSugge
 	state.domain;
 export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state.plan;
 
+/**
+ * Returns the last paid plan the user has picked.
+ * If they revert to a free plan,
+ * this is useful if you want to recommend their once-picked paid plan
+ *
+ * @param state State
+ */
+export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
+
 // Completion status of steps is derived from the state of the launch flow
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
@@ -58,3 +67,15 @@ export const isFlowStarted = ( state: State ): boolean =>
 // Get first incomplete step
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
+
+// Check if site title step should be displayed
+export const isSiteTitleStepVisible = ( state: State ): boolean => state.isSiteTitleStepVisible;
+
+// Check if launch modal can be dismissed
+export const isModalDismissible = ( state: State ): boolean => state.isModalDismissible;
+
+// Check if launch modal title should be visible
+export const isModalTitleVisible = ( state: State ): boolean => state.isModalTitleVisible;
+
+// Check if launch modal can be dismissed
+export const isFocusedLaunchOpen = ( state: State ): boolean => state.isFocusedLaunchOpen;

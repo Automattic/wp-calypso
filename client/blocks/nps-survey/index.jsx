@@ -21,7 +21,10 @@ import {
 } from 'calypso/state/nps-survey/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
-import { hasAnsweredNpsSurvey, isAvailableForConciergeSession } from 'calypso/state/nps-survey/selectors';
+import {
+	hasAnsweredNpsSurvey,
+	isAvailableForConciergeSession,
+} from 'calypso/state/nps-survey/selectors';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';

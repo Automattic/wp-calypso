@@ -96,9 +96,9 @@ class DomainToPlanNudge extends Component {
 }
 
 export default connect( ( state, props ) => {
-	const siteId = props.siteId || getSelectedSiteId( state ),
-		productSlug = PLAN_PERSONAL,
-		productId = getPlan( PLAN_PERSONAL ).getProductId();
+	const siteId = props.siteId || getSelectedSiteId( state );
+	const productSlug = PLAN_PERSONAL;
+	const productId = getPlan( PLAN_PERSONAL ).getProductId();
 
 	return {
 		isEligible: isEligibleForDomainToPaidPlanUpsell( state, siteId ),

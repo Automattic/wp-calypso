@@ -36,7 +36,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const props = {
 	translate: identity,

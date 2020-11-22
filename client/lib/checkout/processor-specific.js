@@ -9,20 +9,28 @@ import { CPF, CNPJ } from 'cpf_cnpj';
 /**
  * Internal dependencies
  */
-import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'lib/checkout/constants';
-import { isPaymentMethodEnabled } from 'lib/cart-values';
-import CartStore from 'lib/cart/store';
+import { PAYMENT_PROCESSOR_COUNTRIES_FIELDS } from 'calypso/lib/checkout/constants';
+import CartStore from 'calypso/lib/cart/store';
+import isPaymentMethodEnabled from 'calypso/my-sites/checkout/composite-checkout/lib/is-payment-method-enabled';
+import { translateWpcomPaymentMethodToCheckoutPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 /**
  * Returns whether we should Ebanx credit card processing for a particular country
  *
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @param {import('@automattic/shopping-cart').ResponseCart} [cart] - The shopping cart
  * @returns {boolean} Whether the country code requires ebanx payment processing
  */
-export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' ) {
+export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '', cart = null ) {
+	if ( ! cart ) {
+		cart = CartStore.get();
+	}
 	return (
 		! isUndefined( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ] ) &&
-		isPaymentMethodEnabled( CartStore.get(), 'ebanx' )
+		isPaymentMethodEnabled(
+			'ebanx',
+			cart.allowed_payment_methods.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
+		)
 	);
 }
 
@@ -30,11 +38,12 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '' )
  * Returns whether
  *
  * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
+ * @param {import('@automattic/shopping-cart').ResponseCart} [cart] - The shopping cart
  * @returns {boolean} Whether the country requires additional fields
  */
-export function shouldRenderAdditionalCountryFields( countryCode = '' ) {
+export function shouldRenderAdditionalCountryFields( countryCode = '', cart = null ) {
 	return (
-		isEbanxCreditCardProcessingEnabledForCountry( countryCode ) &&
+		isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart ) &&
 		! isEmpty( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ].fields )
 	);
 }

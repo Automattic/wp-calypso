@@ -1,9 +1,4 @@
 /** @jest-environment jsdom */
-
-jest.mock( 'lib/plans/config', () => ( {
-	shouldShowOfferResetFlow: () => false,
-} ) );
-
 jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );

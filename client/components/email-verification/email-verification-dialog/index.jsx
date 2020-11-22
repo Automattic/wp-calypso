@@ -14,7 +14,10 @@ import { connect } from 'react-redux';
 import { Dialog, Button } from '@automattic/components';
 import Spinner from 'calypso/components/spinner';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
-import { verifyEmail, resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
+import {
+	verifyEmail,
+	resetVerifyEmailState,
+} from 'calypso/state/current-user/email-verification/actions';
 
 /**
  * Style dependencies

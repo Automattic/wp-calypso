@@ -91,7 +91,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 		padding-left: 8px;
 	}
 
-	.editor-sharing__publicize-message {
+	.publicize-message {
 		margin-top: 0;
 
 		.editor-sharing__message-heading {
@@ -100,7 +100,7 @@ $section-border: solid 1px var( --color-neutral-5 );
 			padding: 11.5px 0;
 		}
 
-		.editor-sharing__message-input {
+		.publicize-message__input {
 			margin: 0;
 
 			&.form-textarea {
@@ -147,9 +147,13 @@ $section-border: solid 1px var( --color-neutral-5 );
 	}
 }
 
-.post-share__service .form-toggle__wrapper {
+.post-share__service .components-toggle-control {
 	flex: 0 0 24px;
 	margin-left: auto;
+
+	.components-base-control__field {
+		margin-bottom: 0;
+	}
 }
 
 .post-share__service-account-social-logo {

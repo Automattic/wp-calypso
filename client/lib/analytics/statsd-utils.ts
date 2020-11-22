@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 function generateUrl( featureSlug: string, eventType: string, eventValue: string ) {
 	const slug = featureSlug.replace( /[.:-]/g, '_' );

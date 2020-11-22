@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
+import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import { useSelectedPlan } from '../../hooks/use-selected-plan';
 import { usePath, Step } from '../../path';
 import Link from '../link';

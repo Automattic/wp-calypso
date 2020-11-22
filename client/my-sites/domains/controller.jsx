@@ -42,7 +42,6 @@ import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { addItem } from 'calypso/lib/cart/actions';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
 import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
-import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -275,23 +274,11 @@ const jetpackNoDomainsWarning = ( context, next ) => {
 	}
 };
 
-const wpForTeamsNoDomainsRedirect = ( context, next ) => {
-	const state = context.store.getState();
-	const selectedSite = getSelectedSite( state );
-
-	if ( selectedSite && isSiteWPForTeams( state, selectedSite.ID ) ) {
-		return page.redirect( '/' );
-	}
-
-	next();
-};
-
 export default {
 	domainsAddHeader,
 	domainsAddRedirectHeader,
 	domainSearch,
 	jetpackNoDomainsWarning,
-	wpForTeamsNoDomainsRedirect,
 	siteRedirect,
 	mapDomain,
 	googleAppsWithRegistration,

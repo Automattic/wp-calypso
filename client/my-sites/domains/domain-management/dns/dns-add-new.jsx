@@ -14,7 +14,6 @@ import ARecord from './a-record';
 import CnameRecord from './cname-record';
 import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSelect from 'calypso/components/forms/form-select';
 import MxRecord from './mx-record';
@@ -202,11 +201,11 @@ class DnsAddNew extends React.Component {
 					</FormSelect>
 				</FormFieldset>
 				{ this.recordFields() }
-				<FormFooter>
+				<div>
 					<FormButton disabled={ isSubmitDisabled } onClick={ this.onAddDnsRecord }>
 						{ translate( 'Add new DNS record' ) }
 					</FormButton>
-				</FormFooter>
+				</div>
 			</form>
 		);
 	}

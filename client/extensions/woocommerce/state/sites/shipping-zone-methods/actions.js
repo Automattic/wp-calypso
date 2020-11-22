@@ -19,7 +19,7 @@ import {
 } from 'woocommerce/state/action-types';
 import { areShippingZoneMethodsLoaded, areShippingZoneMethodsLoading } from './selectors';
 import { fetchShippingZoneMethodSettings } from 'woocommerce/woocommerce-services/state/shipping-zone-method-settings/actions';
-import config from 'config';
+import config from 'calypso/config';
 
 export const fetchShippingZoneMethodsSuccess = ( siteId, zoneId, data ) => {
 	return {

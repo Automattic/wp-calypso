@@ -16,16 +16,12 @@ import site from './lib/mock-site';
 /**
  * Internal dependencies
  */
+import Dispatcher from 'calypso/dispatcher';
+import EmailFollowersStore from 'calypso/lib/email-followers/store';
+
 const options = { siteId: site.ID };
 
 describe( 'Email Followers Store', () => {
-	let Dispatcher, EmailFollowersStore;
-
-	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		EmailFollowersStore = require( 'lib/email-followers/store' );
-	} );
-
 	test( 'Store should be an object', () => {
 		assert.isObject( EmailFollowersStore );
 	} );
@@ -47,11 +43,10 @@ describe( 'Email Followers Store', () => {
 		} );
 
 		test( 'Fetching more email followers should update the array in the store', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
+			const followers = EmailFollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.fetchedMoreFollowers );
-			followersAgain = EmailFollowersStore.getFollowers( options );
+			const followersAgain = EmailFollowersStore.getFollowers( options );
 			assert.equal( followersAgain.length, 4 );
 		} );
 
@@ -72,25 +67,21 @@ describe( 'Email Followers Store', () => {
 			Dispatcher.handleServerAction( actions.fetchedFollowers );
 		} );
 		test( 'Should remove a single follower.', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAgain;
-
+			const followers = EmailFollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
 			Dispatcher.handleServerAction( actions.removeFollowerSuccess );
-			followersAgain = EmailFollowersStore.getFollowers( options );
+			const followersAgain = EmailFollowersStore.getFollowers( options );
 			assert.equal( followersAgain.length, 1 );
 		} );
 		test( 'Should restore a single follower on removal error.', () => {
-			let followers = EmailFollowersStore.getFollowers( options ),
-				followersAfterRemove,
-				followersAfterError;
+			const followers = EmailFollowersStore.getFollowers( options );
 			assert.equal( followers.length, 2 );
 			Dispatcher.handleServerAction( actions.removeFollower );
-			followersAfterRemove = EmailFollowersStore.getFollowers( options );
+			const followersAfterRemove = EmailFollowersStore.getFollowers( options );
 			assert.equal( followersAfterRemove.length, 1 );
 			Dispatcher.handleServerAction( actions.removeFollowerError );
-			followersAfterError = EmailFollowersStore.getFollowers( options );
+			const followersAfterError = EmailFollowersStore.getFollowers( options );
 			assert.equal( followersAfterError.length, 2 );
 		} );
 	} );

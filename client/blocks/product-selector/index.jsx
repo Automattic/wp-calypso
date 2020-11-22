@@ -25,7 +25,10 @@ import QueryProductsList from 'calypso/components/data/query-products-list';
 import ProductExpiration from 'calypso/components/product-expiration';
 import { extractProductSlugs, filterByProductSlugs } from './utils';
 import { getAvailableProductsBySiteId } from 'calypso/state/sites/products/selectors';
-import { getAvailableProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
+import {
+	getAvailableProductsList,
+	isProductsListFetching,
+} from 'calypso/state/products-list/selectors';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSitePlanSlug, isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
@@ -561,7 +564,8 @@ export class ProductSelector extends Component {
 				? addQueryArgs( { site: selectedSiteSlug }, product.link.url )
 				: product.link.url;
 
-			let purchase, isCurrent;
+			let purchase;
+			let isCurrent;
 			if ( this.currentPlanIncludesProduct( product ) ) {
 				purchase = this.getPurchaseByCurrentPlan();
 				isCurrent = currentPlanInSelectedTimeframe;

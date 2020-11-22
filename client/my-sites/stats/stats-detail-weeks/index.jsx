@@ -38,7 +38,10 @@ const StatsPostDetailWeeks = ( props ) => {
 	const noData = ! stats;
 	const infoIcon = opened ? 'info' : 'info-outline';
 	const isLoading = isRequesting && noData;
-	let tableHeader, tableRows, tableBody, highest;
+	let tableHeader;
+	let tableRows;
+	let tableBody;
+	let highest;
 
 	const classes = {
 		'is-loading': isLoading,

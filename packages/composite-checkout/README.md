@@ -29,7 +29,6 @@ Most components of this package require being inside a [CheckoutProvider](#check
 
 - [createApplePayMethod](#createApplePayMethod)
 - [createExistingCardMethod](#createExistingCardMethod)
-- [createFullCreditsMethod](#createFullCreditsMethod)
 - [createPayPalMethod](#createpaypalmethod)
 - [createStripeMethod](#createStripeMethod)
 
@@ -147,6 +146,12 @@ A generic button component that is used internally for almost all buttons (like 
 The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
+
+### CheckoutCheckIcon
+
+An icon that is displayed for each complete step.
+
+Requires an `id` prop, which is a string that is used to construct the SVG `id`.
 
 ### CheckoutErrorBoundary
 
@@ -298,6 +303,31 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
+### PaymentLogo
+
+Renders a logo for a credit card.
+
+Takes two props:
+
+- `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+- `isSummary: boolean`. If true, will display a more compact version of the logo.
+
+### RadioButton
+
+Renders a radio button wrapper for payment methods or other similar boxes.
+
+Props:
+
+- `name: string`
+- `id: string`
+- `label: React.ReactNode`
+- `disabled?: boolean`
+- `checked?: boolean`
+- `value: string`
+- `onChange?: () => void`
+- `ariaLabel: string`
+- `children?: React.ReactNode`
+
 ### PaymentProcessorResponseType
 
 An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).
@@ -349,16 +379,6 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `cardExpiry: string`. The card's expiry date. Used for display only.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
 - `last4: string`. The card's last four digits. Used for display only.
-
-### createFullCreditsMethod
-
-Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
-- `label?: React.ReactNode`. An optional label React element to use in the payment method.
-- `buttonText?: string`. An optional string to display in the payment button.
 
 ### createPayPalMethod
 

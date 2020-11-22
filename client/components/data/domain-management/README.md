@@ -21,7 +21,6 @@ class MyComponent extends React.Component {
 				component={ MyChildComponent }
 				context={ context }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 			/>
 		);
@@ -36,8 +35,6 @@ Currently we have both Flux and Redux mixed. Props for loading data:
 - `needsCart` - Loads the `CartStore` (Flux)
 - `needsContactDetails` - Loads Contact Details for current user (Redux)
 - `needsDomains` - Loads domain for currently selected site (Redux)
-- `needsDomainInfo` - Loads `WapiDomainInfoStore` (Flux)
-- `needsNameservers` - Loads `NameserversStore` (Flux)
 - `needsPlans` - Loads plans for given site (Redux)
 - `needsProductsList` - Loads products list (Redux)
 - `needsUsers` - Loads `UsersStore` (Flux)

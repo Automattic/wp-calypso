@@ -18,7 +18,7 @@ import {
 	isJetpackSite,
 } from 'calypso/state/sites/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { setSelectedSiteId, setSection, setAllSitesSelected } from 'calypso/state/ui/actions';
+import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
 import NavigationComponent from 'calypso/my-sites/navigation';
@@ -57,10 +57,11 @@ import {
 } from 'calypso/my-sites/email/paths';
 import SitesComponent from 'calypso/my-sites/sites';
 import { warningNotice } from 'calypso/state/notices/actions';
-import { makeLayout, render as clientRender } from 'calypso/controller';
+import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import EmptyContentComponent from 'calypso/components/empty-content';
 import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -99,7 +100,7 @@ function createNavigation( context ) {
 }
 
 function renderEmptySites( context ) {
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( NoSitesMessage );
 
@@ -113,7 +114,7 @@ function renderNoVisibleSites( context ) {
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( EmptyContentComponent, {
 		title: i18n.translate(
@@ -485,7 +486,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	context.store.dispatch( setSection( { group: 'sites' } ) );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = createSitesComponent( context );
 	next();
@@ -501,4 +502,53 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
+ * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
+ *
+ * If you need to prevent navigation to pages for the P2 project in general,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		! config.isEnabled( 'p2/p2-plus' ) &&
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID )
+	) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
+ *
+ * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWPForTeams( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }

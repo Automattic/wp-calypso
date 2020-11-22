@@ -9,13 +9,13 @@ import page from 'page';
  */
 import OAuthLogin from './login';
 import ConnectComponent from './connect';
-import { getToken } from 'lib/oauth-token';
-import wpcom from 'lib/wp';
-import config from 'config';
+import { getToken } from 'calypso/lib/oauth-token';
+import wpcom from 'calypso/lib/wp';
+import config from 'calypso/config';
 import store from 'store';
-import userFactory from 'lib/user';
-import Main from 'components/main';
-import PulsingDot from 'components/pulsing-dot';
+import userFactory from 'calypso/lib/user';
+import Main from 'calypso/components/main';
+import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies

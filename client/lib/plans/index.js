@@ -40,6 +40,10 @@ import {
 } from './constants';
 import { PLANS_LIST } from './plans-list';
 
+/**
+ * @typedef { import('./types').Plan } Plan
+ */
+
 export function getPlans() {
 	return PLANS_LIST;
 }
@@ -61,13 +65,14 @@ export function getPlan( planKey ) {
  * Find a plan by its path slug
  *
  * @param {string} pathSlug Path slug
- * @param {string?} group Group to search in
- * @returns {object} The plan
+ * @param {string} [group] Group to search in
+ * @returns {Plan|undefined} The plan
  */
 export function getPlanByPathSlug( pathSlug, group ) {
-	return Object.values( PLANS_LIST )
-		.filter( ( p ) => ( group ? p.group === group : true ) )
-		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
+	/** @type {Plan[]} */
+	let plans = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
@@ -295,6 +300,10 @@ export function isSecurityRealTimePlan( planSlug ) {
 
 export function isCompletePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isWpComPlan( planSlug ) {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
 }
 
 export function isWpComBusinessPlan( planSlug ) {

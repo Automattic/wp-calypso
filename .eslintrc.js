@@ -49,7 +49,15 @@ module.exports = {
 			// eslint-disable-next-line inclusive-language/use-inclusive-words
 			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
-			files: [ '*.md.js', '*.md.javascript', '*.md.cjs', '*.md.ejs', '*.md.jsx' ],
+			files: [
+				'*.md.js',
+				'*.md.javascript',
+				'*.md.cjs',
+				'*.md.ejs',
+				'*.md.jsx',
+				'*.md.tsx',
+				'*.md.ts',
+			],
 			rules: {
 				// These are ok for examples
 				'import/no-extraneous-dependencies': 'off',
@@ -64,15 +72,29 @@ module.exports = {
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+				'jsdoc/require-param': 'off',
+				'jsdoc/check-param-names': 'off',
 			},
 		},
 		{
-			// Eventually the whole repo should follow this rule. This is the list of the folders we have
-			// already cleaned up. Once we have cleaned all repo, this override should dissapear and the rule
-			// should be enabled as a regular `rule`.
 			files: [ 'packages/**/*' ],
 			rules: {
-				'import/no-extraneous-dependencies': 'error',
+				// These two rules are to ensure packages don't import form calypso by accident to avoid circular deps.
+				'no-restricted-imports': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
+				'no-restricted-modules': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
 			},
 		},
 		{
@@ -201,6 +223,10 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		'no-path-concat': 'error',
+
+		'one-var': [ 'error', 'never' ],
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
@@ -346,7 +372,6 @@ module.exports = {
 				],
 			},
 		],
-		// Disabled for now until we finish the migration
 		'wpcalypso/no-package-relative-imports': [
 			'error',
 			{

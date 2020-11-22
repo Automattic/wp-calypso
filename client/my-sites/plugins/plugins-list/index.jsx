@@ -33,7 +33,8 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
-	let i, prop;
+	let i;
+	let prop;
 
 	for ( i = 0; i < propArr.length; i++ ) {
 		prop = propArr[ i ];
@@ -294,9 +295,10 @@ export const PluginsList = createReactClass( {
 	},
 
 	getConfirmationText() {
-		const pluginsList = {},
-			sitesList = {};
-		let pluginName, siteName;
+		const pluginsList = {};
+		const sitesList = {};
+		let pluginName;
+		let siteName;
 		const { plugins, translate } = this.props;
 
 		plugins.filter( this.isSelected ).forEach( ( plugin ) => {

@@ -1,0 +1,182 @@
+/*
+WP Admin Unthemed definitions:
+
+$text-color: #fff !default;
+$base-color: #23282d !default;
+$icon-color: hsl( hue( $base-color ), 7%, 95% ) !default;
+$highlight-color: #0073aa !default;
+$notification-color: #d54e21 !default;
+
+WP Admin Ectoplasm Definition:
+
+$base-color: #523f6d;
+$icon-color: #ece6f6;
+$highlight-color: #a3b745;
+$notification-color: #d46f15;
+
+Created this definition in color-studio to generate 0-100 shades:
+    {
+      name: 'Ectoplasm Green',
+      default: 50,
+      specs: {
+        hue_start: 70,
+        hue_end: 72,
+        hue_curve: 'easeOutSine',
+        sat_steps: [
+          8, 27, 56, 80, 100, 100, 100, 100, 100, 100, 100, 100
+        ],
+        lum_steps: [
+          96, 96, 95, 94, 87, 75.1, 61.6, 49, 40.5, 31, 20, 11
+        ]
+      }
+    }
+*/
+
+.color-scheme.is-ectoplasm,
+.color-scheme.is-ectoplasm .is-nav-unification {
+	/* Variables used in Calypso Ectoplasm */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #523f6d; /* Direct from wp-admin */
+	--theme-base-color-rgb: 82, 63, 109; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #cbc5d3; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-background-color: #413256; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #ece6f6; /* Direct from wp-admin */
+	--theme-highlight-color: #a3b745; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 163, 183, 69; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #d46f15; /* Direct from wp-admin */
+
+	--ectoplasm-green-0: #f2f5e1;
+	--ectoplasm-green-5: #e9f5b3;
+	--ectoplasm-green-10: #daf26b;
+	--ectoplasm-green-20: #cdf030;
+	--ectoplasm-green-30: #b5de00;
+	--ectoplasm-green-40: #9bc000;
+	--ectoplasm-green-50: #7f9d00;
+	--ectoplasm-green-60: #647d00;
+	--ectoplasm-green-70: #536700;
+	--ectoplasm-green-80: #3f4f00;
+	--ectoplasm-green-90: #293300;
+	--ectoplasm-green-100: #161c00;
+	--ectoplasm-green: #7f9d00;
+	--ectoplasm-green-0-rgb: 242, 245, 225;
+	--ectoplasm-green-5-rgb: 233, 245, 179;
+	--ectoplasm-green-10-rgb: 218, 242, 107;
+	--ectoplasm-green-20-rgb: 205, 240, 48;
+	--ectoplasm-green-30-rgb: 181, 222, 0;
+	--ectoplasm-green-40-rgb: 155, 192, 0;
+	--ectoplasm-green-50-rgb: 127, 157, 0;
+	--ectoplasm-green-60-rgb: 100, 125, 0;
+	--ectoplasm-green-70-rgb: 83, 103, 0;
+	--ectoplasm-green-80-rgb: 63, 79, 0;
+	--ectoplasm-green-90-rgb: 41, 51, 0;
+	--ectoplasm-green-100-rgb: 22, 28, 0;
+	--ectoplasm-green-rgb: 127, 157, 0;
+
+	/* Primary */
+	--color-primary: var( --theme-highlight-color );
+	--color-primary-rgb: var( --theme-highlight-color-rgb );
+	--color-primary-dark: var( --ectoplasm-green-70 );
+	--color-primary-dark-rgb: var( --ectoplasm-green-70-rgb );
+	--color-primary-light: var( --ectoplasm-green-30 );
+	--color-primary-light-rgb: var( --ectoplasm-green-30-rgb );
+	--color-primary-0: var( --ectoplasm-green-0 );
+	--color-primary-0-rgb: var( --ectoplasm-green-0-rgb );
+	--color-primary-5: var( --ectoplasm-green-5 );
+	--color-primary-5-rgb: var( --ectoplasm-green-5-rgb );
+	--color-primary-10: var( --ectoplasm-green-10 );
+	--color-primary-10-rgb: var( --ectoplasm-green-10-rgb );
+	--color-primary-20: var( --ectoplasm-green-20 );
+	--color-primary-20-rgb: var( --ectoplasm-green-20-rgb );
+	--color-primary-30: var( --ectoplasm-green-30 );
+	--color-primary-30-rgb: var( --ectoplasm-green-30-rgb );
+	--color-primary-40: var( --ectoplasm-green-40 );
+	--color-primary-40-rgb: var( --ectoplasm-green-40-rgb );
+	--color-primary-50: var( --ectoplasm-green-50 );
+	--color-primary-50-rgb: var( --ectoplasm-green-50-rgb );
+	--color-primary-60: var( --ectoplasm-green-60 );
+	--color-primary-60-rgb: var( --ectoplasm-green-60-rgb );
+	--color-primary-70: var( --ectoplasm-green-70 );
+	--color-primary-70-rgb: var( --ectoplasm-green-70-rgb );
+	--color-primary-80: var( --ectoplasm-green-80 );
+	--color-primary-80-rgb: var( --ectoplasm-green-80-rgb );
+	--color-primary-90: var( --ectoplasm-green-90 );
+	--color-primary-90-rgb: var( --ectoplasm-green-90-rgb );
+	--color-primary-100: var( --ectoplasm-green-100 );
+	--color-primary-100-rgb: var( --ectoplasm-green-100-rgb );
+
+	/* Accent */
+	--color-accent: var( --theme-highlight-color );
+	--color-accent-rgb: var( --theme-highlight-color-rgb );
+	--color-accent-dark: var( --ectoplasm-green-70 );
+	--color-accent-dark-rgb: var( --ectoplasm-green-70-rgb );
+	--color-accent-light: var( --ectoplasm-green-30 );
+	--color-accent-light-rgb: var( --ectoplasm-green-30-rgb );
+	--color-accent-0: var( --ectoplasm-green-0 );
+	--color-accent-0-rgb: var( --ectoplasm-green-0-rgb );
+	--color-accent-5: var( --ectoplasm-green-5 );
+	--color-accent-5-rgb: var( --ectoplasm-green-5-rgb );
+	--color-accent-10: var( --ectoplasm-green-10 );
+	--color-accent-10-rgb: var( --ectoplasm-green-10-rgb );
+	--color-accent-20: var( --ectoplasm-green-20 );
+	--color-accent-20-rgb: var( --ectoplasm-green-20-rgb );
+	--color-accent-30: var( --ectoplasm-green-30 );
+	--color-accent-30-rgb: var( --ectoplasm-green-30-rgb );
+	--color-accent-40: var( --ectoplasm-green-40 );
+	--color-accent-40-rgb: var( --ectoplasm-green-40-rgb );
+	--color-accent-50: var( --ectoplasm-green-50 );
+	--color-accent-50-rgb: var( --ectoplasm-green-50-rgb );
+	--color-accent-60: var( --ectoplasm-green-60 );
+	--color-accent-60-rgb: var( --ectoplasm-green-60-rgb );
+	--color-accent-70: var( --ectoplasm-green-70 );
+	--color-accent-70-rgb: var( --ectoplasm-green-70-rgb );
+	--color-accent-80: var( --ectoplasm-green-80 );
+	--color-accent-80-rgb: var( --ectoplasm-green-80-rgb );
+	--color-accent-90: var( --ectoplasm-green-90 );
+	--color-accent-90-rgb: var( --ectoplasm-green-90-rgb );
+	--color-accent-100: var( --ectoplasm-green-100 );
+	--color-accent-100-rgb: var( --ectoplasm-green-100-rgb );
+
+	/* Masterbar */
+	--color-masterbar-background: var( --theme-base-color );
+	--color-masterbar-border: var( --theme-submenu-background-color );
+	--color-masterbar-text: var( --studio-white );
+	--color-masterbar-unread-dot-background: var( --theme-notification-color );
+
+	--color-masterbar-item-hover-background: var( --theme-submenu-background-color );
+	--color-masterbar-item-active-background: var( --theme-submenu-background-color );
+	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
+	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-60 );
+
+	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-60 );
+	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
+	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
+
+	/* Sidebar */
+	--color-sidebar-background: var( --theme-base-color );
+	--color-sidebar-background-rgb: var( --theme-base-color-rgb );
+	--color-sidebar-border: var( --theme-submenu-background-color );
+	--color-sidebar-text: var( --theme-text-color );
+	--color-sidebar-text-rgb: var( --theme-text-color-rgb );
+	--color-sidebar-text-alternative: var( --theme-text-color );
+	--color-sidebar-gridicon-fill: var( --theme-icon-color );
+
+	/* Sidebar Selected */
+	--color-sidebar-menu-selected-background: var( --theme-highlight-color );
+	--color-sidebar-menu-selected-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-selected-text: var( --theme-text-color );
+	--color-sidebar-menu-selected-text-rgb: var( --theme-text-color-rgb );
+
+	/* Sidebar Hover */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
+	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
+}

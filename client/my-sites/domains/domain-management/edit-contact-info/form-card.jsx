@@ -180,9 +180,9 @@ class EditContactInfoFormCard extends React.Component {
 	}
 
 	renderBackupEmail() {
-		const { email } = this.getContactFormFieldValues(),
-			wpcomEmail = this.props.currentUser.email,
-			strong = <strong />;
+		const { email } = this.getContactFormFieldValues();
+		const wpcomEmail = this.props.currentUser.email;
+		const strong = <strong />;
 
 		return (
 			<p>

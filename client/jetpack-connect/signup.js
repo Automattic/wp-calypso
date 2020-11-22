@@ -22,37 +22,37 @@ import { Button, Card } from '@wordpress/components';
  */
 import AuthFormHeader from './auth-form-header';
 import HelpButton from './help-button';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import SignupForm from 'blocks/signup-form';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import { addQueryArgs } from 'lib/route';
+import SignupForm from 'calypso/blocks/signup-form';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import { addQueryArgs } from 'calypso/lib/route';
 import { authQueryPropTypes } from './utils';
 import {
 	errorNotice as errorNoticeAction,
 	warningNotice as warningNoticeAction,
-} from 'state/notices/actions';
-import { isEnabled } from 'config';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { sendEmailLogin as sendEmailLoginAction } from 'state/auth/actions';
+} from 'calypso/state/notices/actions';
+import { isEnabled } from 'calypso/config';
+import { login } from 'calypso/lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { sendEmailLogin as sendEmailLoginAction } from 'calypso/state/auth/actions';
 import {
 	createAccount as createAccountAction,
 	createSocialAccount as createSocialAccountAction,
-} from 'state/jetpack-connect/actions';
-import LoginBlock from 'blocks/login';
-import Gridicon from 'components/gridicon';
-import { decodeEntities } from 'lib/formatting';
+} from 'calypso/state/jetpack-connect/actions';
+import LoginBlock from 'calypso/blocks/login';
+import Gridicon from 'calypso/components/gridicon';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	getRequestError,
 	getLastCheckedUsernameOrEmail,
 	getAuthAccountType,
 	getRedirectToOriginal,
-} from 'state/login/selectors';
-import { resetAuthAccountType as resetAuthAccountTypeAction } from 'state/login/actions';
-import FormattedHeader from 'components/formatted-header';
+} from 'calypso/state/login/selectors';
+import { resetAuthAccountType as resetAuthAccountTypeAction } from 'calypso/state/login/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
 import wooDnaConfig from './woo-dna-config';
 
 const debug = debugFactory( 'calypso:jetpack-connect:authorize-form' );
@@ -336,7 +336,9 @@ export class JetpackSignup extends Component {
 			loginSocialConnect,
 			loginTwoFactorAuthType,
 		} = this.state;
-		let header, subHeader, content;
+		let header;
+		let subHeader;
+		let content;
 		const footerLinks = [];
 		const email = signUpUsernameOrEmail || usernameOrEmail || authQuery.userEmail;
 		const wooDna = this.getWooDnaConfig();

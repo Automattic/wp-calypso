@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import getThemes from 'lib/signup/themes';
-import ThemesList from 'components/themes-list';
+import getThemes from 'calypso/lib/signup/themes';
+import ThemesList from 'calypso/components/themes-list';
 
 /**
  * Style dependencies

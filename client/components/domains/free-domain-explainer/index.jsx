@@ -45,19 +45,25 @@ class FreeDomainExplainer extends React.Component {
 	}
 
 	render() {
-		const { translate, isReskinned } = this.props;
+		const { translate, isReskinned, locale } = this.props;
 		const { TextWrapper } = this;
 
 		return (
 			<div className="free-domain-explainer card is-compact">
 				<header>
 					<h1 className="free-domain-explainer__title">
-						{ translate( 'Get a free one-year domain registration with any paid plan.' ) }
+						{ locale === 'en'
+							? translate( 'Get a free one-year domain registration with any paid annual plan.' )
+							: translate( 'Get a free one-year domain registration with any paid plan.' ) }
 					</h1>
 					<TextWrapper className="free-domain-explainer__subtitle">
-						{ translate(
-							"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
-						) }
+						{ locale === 'en'
+							? translate(
+									"We'll pay the registration fees for your new domain when you choose an annual plan during the next step."
+							  )
+							: translate(
+									"We'll pay the registration fees for your new domain when you choose a paid plan during the next step."
+							  ) }
 					</TextWrapper>
 					<TextWrapper className="free-domain-explainer__subtitle">
 						{ translate( "You can claim your free custom domain later if you aren't ready yet." ) }

@@ -21,6 +21,7 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'calypso/state/ui/actions';
@@ -44,6 +45,8 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import config from 'calypso/config';
 import EditorDocumentHead from 'calypso/post-editor/editor-document-head';
@@ -56,7 +59,7 @@ import { REASON_BLOCK_EDITOR_UNKOWN_IFRAME_LOAD_FAILURE } from 'calypso/state/de
 import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
-import type { CartData } from 'calypso/client/blocks/editor-checkout-modal';
+import type { RequestCart } from '@automattic/shopping-cart';
 
 /**
  * Types
@@ -94,7 +97,7 @@ interface State {
 	multiple?: any;
 	postUrl?: T.URL;
 	previewUrl: T.URL;
-	cartData?: CartData;
+	cartData?: RequestCart;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -121,7 +124,7 @@ enum EditorActions {
 	GetCloseButtonUrl = 'getCloseButtonUrl',
 	LogError = 'logError',
 	GetGutenboardingStatus = 'getGutenboardingStatus',
-	ToggleInlineHelp = 'toggleInlineHelp',
+	ToggleInlineHelpButton = 'toggleInlineHelpButton',
 	GetNavSidebarLabels = 'getNavSidebarLabels',
 	GetCalypsoUrlInfo = 'getCalypsoUrlInfo',
 	TrackPerformance = 'trackPerformance',
@@ -369,26 +372,31 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.GetGutenboardingStatus === action ) {
-			const isGutenboarding =
-				this.props.siteCreationFlow === 'gutenboarding' && this.props.isSiteUnlaunched;
-			const frankenflowUrl = `${ window.location.origin }/start/new-launch?siteSlug=${ this.props.siteSlug }&source=editor`;
-			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' );
-			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' );
-			const isPersistentLaunchButton = config.isEnabled( 'gutenboarding/persistent-launch-button' );
+			const isGutenboarding = this.props.siteCreationFlow === 'gutenboarding';
+			const isSiteUnlaunched = this.props.isSiteUnlaunched;
+			const launchUrl = `${ window.location.origin }/start/launch-site?siteSlug=${ this.props.siteSlug }`;
+			const isNewLaunchMobile = config.isEnabled( 'gutenboarding/new-launch-mobile' ); // TODO: remove after ETK 2.8.6 is released
+			const isExperimental = config.isEnabled( 'gutenboarding/feature-picker' ); // TODO: remove after ETK 2.8.6 is released
+			const isPersistentLaunchButton = config.isEnabled( 'create/persistent-launch-button' ); // TODO: remove after ETK 2.8.6 is released
+			const isFocusedLaunchFlow = config.isEnabled( 'create/focused-launch-flow' );
 
 			ports[ 0 ].postMessage( {
 				isGutenboarding,
-				frankenflowUrl,
+				isSiteUnlaunched,
+				launchUrl,
 				isNewLaunchMobile,
 				isExperimental,
 				isPersistentLaunchButton,
+				isFocusedLaunchFlow,
 			} );
 		}
 
-		if ( EditorActions.ToggleInlineHelp === action ) {
+		if ( EditorActions.ToggleInlineHelpButton === action ) {
 			const inlineHelp = window.top.document.querySelector( '#wpcom > .layout > .inline-help' );
-			const { hidden } = payload;
-			inlineHelp.hidden = hidden;
+
+			if ( inlineHelp ) {
+				inlineHelp.hidden = payload.hidden;
+			}
 		}
 
 		if ( EditorActions.GetNavSidebarLabels === action ) {
@@ -443,8 +451,14 @@ class CalypsoifyIframe extends Component<
 	};
 
 	handlePostStatusChange = ( status: string ) => {
-		if ( this.props.creatingNewHomepage && 'publish' === status ) {
+		const { creatingNewHomepage, editedPostId, isSiteWPForTeams, siteUrl } = this.props;
+
+		if ( creatingNewHomepage && 'publish' === status ) {
 			this.setFrontPage();
+		}
+
+		if ( isSiteWPForTeams && editedPostId && siteUrl && 'publish' === status ) {
+			top.location.href = addQueryArgs( { p: editedPostId }, siteUrl );
 		}
 	};
 
@@ -691,7 +705,7 @@ class CalypsoifyIframe extends Component<
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
 		const isCheckoutOverlayEnabled = config.isEnabled( 'post-editor/checkout-overlay' );
-		const isLaunchOverlayEnabled = config.isEnabled( 'post-editor/launch-overlay' );
+		const isFocusedLaunchCalypsoEnabled = config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 		return (
 			<Fragment>
@@ -738,7 +752,9 @@ class CalypsoifyIframe extends Component<
 						isOpen
 					/>
 				) }
-				{ isLaunchOverlayEnabled && <AsyncLoad require="calypso/blocks/editor-launch-modal" /> }
+				{ isFocusedLaunchCalypsoEnabled && (
+					<AsyncLoad require="calypso/blocks/editor-launch-modal" />
+				) }
 				<EditorRevisionsDialog loadRevision={ this.loadRevision } />
 				<WebPreview
 					externalUrl={ postUrl }
@@ -771,6 +787,7 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
+	const plan = getCurrentPlan( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -806,7 +823,10 @@ const mapStateToProps = (
 	const iframeUrl = addQueryArgs( queryArgs, siteAdminUrl );
 
 	// Prevents the iframe from loading using a cached frame nonce.
-	const shouldLoadIframe = ! isRequestingSite( state, siteId );
+	const shouldLoadIframe =
+		! isRequestingSite( state, siteId ) ||
+		// Temporarily disable iframe loading for faster dev
+		config.isEnabled( 'create/focused-launch-flow-calypso' );
 
 	const { url: closeUrl, label: closeLabel } = getEditorCloseConfig(
 		state,
@@ -822,11 +842,13 @@ const mapStateToProps = (
 		editedPostId: getEditorPostId( state ),
 		frameNonce: getSiteOption( state, siteId, 'frame_nonce' ) || '',
 		iframeUrl,
+		isSiteWPForTeams: isSiteWPForTeams( state, siteId ),
 		postTypeTrashUrl,
 		shouldLoadIframe,
 		siteAdminUrl,
 		siteId,
 		siteSlug,
+		siteUrl: getSiteUrl( state, siteId ),
 		customizerUrl: getCustomizerUrl( state, siteId ),
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
 		getTemplateEditorUrl: partial(
@@ -841,6 +863,7 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
+		plan,
 	};
 };
 

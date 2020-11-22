@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+import { createElement } from 'react';
 import { translate } from 'i18n-calypso';
 
 /**
@@ -18,8 +19,13 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
 	PRODUCT_JETPACK_CRM,
 	PRODUCT_JETPACK_CRM_MONTHLY,
+	PRODUCT_JETPACK_ANTI_SPAM,
+	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	JETPACK_BACKUP_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
+
 import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
@@ -48,9 +54,15 @@ import {
 	FEATURE_CRM_TRACK_TRANSACTIONS,
 	FEATURE_CRM_NO_CONTACT_LIMITS,
 	FEATURE_CRM_PRIORITY_SUPPORT,
+	FEATURE_PRODUCT_BACKUP_DAILY_V2,
+	FEATURE_PRODUCT_BACKUP_REALTIME_V2,
+	FEATURE_SEARCH_V2,
+	FEATURE_PRODUCT_SEARCH_V2,
+	FEATURE_CRM_V2,
 } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { buildCardFeaturesFromItem } from './utils';
+import { getJetpackCrmPrice, getJetpackCrmCurrency } from './iterations';
 
 /**
  * Type dependencies
@@ -289,11 +301,30 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	iconSlug: [ 'v1', 'v2' ].includes( getJetpackCROActiveVersion() )
 		? 'jetpack_crm_dark'
 		: 'jetpack_crm',
-	displayName: translate( 'Jetpack CRM' ),
-	shortName: translate( 'CRM', {
-		comment: 'Short name of the Jetpack CRM',
-	} ),
+	displayName:
+		{
+			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
+				components: {
+					em: createElement( 'em' ),
+				},
+			} ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] || translate( 'Jetpack CRM' ),
+
+	shortName:
+		{
+			v2: translate( 'Jetpack CRM ' ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'CRM', {
+			comment: 'Short name of the Jetpack CRM',
+		} ),
 	tagline: translate( 'Manage contacts effortlessly' ),
+	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
+	// available via the API). Rather like a third-party product.
+	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
+	displayPrice: getJetpackCrmPrice(),
+	displayCurrency: getJetpackCrmCurrency(),
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
@@ -319,6 +350,7 @@ export const EXTERNAL_PRODUCT_CRM_MONTHLY: SelectorProduct = {
 	...EXTERNAL_PRODUCT_CRM,
 	productSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 	term: TERM_MONTHLY,
+	displayTerm: getJetpackCROActiveVersion() === 'v2' ? TERM_ANNUALLY : undefined,
 	subtypes: [],
 	costProductSlug: PRODUCT_JETPACK_CRM_MONTHLY,
 };
@@ -404,6 +436,35 @@ export const SELECTOR_PLANS_ALT_V2 = [
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 ];
+
+export const SELECTOR_PLANS_I5 = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+
+export const FEATURE_TO_PRODUCT_ALT_V2: Record< string, string > = {
+	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: PRODUCT_JETPACK_BACKUP_DAILY,
+	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: PRODUCT_JETPACK_BACKUP_REALTIME,
+	[ FEATURE_PRODUCT_SCAN_V2 ]: PRODUCT_JETPACK_SCAN,
+	[ FEATURE_PRODUCT_ANTISPAM_V2 ]: PRODUCT_JETPACK_ANTI_SPAM,
+	[ FEATURE_SEARCH_V2 ]: PRODUCT_JETPACK_SEARCH,
+	[ FEATURE_PRODUCT_SEARCH_V2 ]: PRODUCT_JETPACK_SEARCH,
+	[ FEATURE_CRM_V2 ]: PRODUCT_JETPACK_CRM,
+};
+
+export const FEATURE_TO_MONTHLY_PRODUCT_ALT_V2: Record< string, string > = {
+	[ FEATURE_PRODUCT_BACKUP_DAILY_V2 ]: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	[ FEATURE_PRODUCT_BACKUP_REALTIME_V2 ]: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	[ FEATURE_PRODUCT_SCAN_V2 ]: PRODUCT_JETPACK_SCAN_MONTHLY,
+	[ FEATURE_PRODUCT_ANTISPAM_V2 ]: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	[ FEATURE_SEARCH_V2 ]: PRODUCT_JETPACK_SEARCH_MONTHLY,
+	[ FEATURE_PRODUCT_SEARCH_V2 ]: PRODUCT_JETPACK_SEARCH_MONTHLY,
+	[ FEATURE_CRM_V2 ]: PRODUCT_JETPACK_CRM_MONTHLY,
+};
 
 export const DAILY_PLAN_TO_REALTIME_PLAN: Record< string, JetpackRealtimePlan > = {
 	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,

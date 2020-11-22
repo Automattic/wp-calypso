@@ -318,7 +318,7 @@ class Pages extends Component {
 		return (
 			<div id="pages" className="pages__page-list">
 				<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				{ this.renderListEnd() }
 			</div>
@@ -357,7 +357,7 @@ class Pages extends Component {
 				{ showBlogPostsPage && (
 					<BlogPostsPage key="blog-posts-page" site={ site } pages={ pages } />
 				) }
-				{ this.renderSectionHeader() }
+				{ site && this.renderSectionHeader() }
 				{ rows }
 				<InfiniteScroll nextPageMethod={ this.fetchPages } />
 				{ this.renderListEnd() }

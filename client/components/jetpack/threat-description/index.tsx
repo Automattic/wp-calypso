@@ -24,11 +24,34 @@ export interface Props {
 	context?: object;
 	diff?: string;
 	filename?: string;
+	isFixable: bool;
 }
 
 class ThreatDescription extends React.PureComponent< Props > {
 	renderTextOrNode( content: string | TranslateResult | ReactNode ) {
-		return <p className="threat-description__section-text">{ content }</p>;
+		return <>{ content }</>;
+	}
+
+	renderFixTitle() {
+		const { status, isFixable } = this.props;
+
+		switch ( status ) {
+			case 'fixed':
+				return translate( 'How did Jetpack fix it?' );
+				break;
+
+			case 'current':
+				if ( isFixable ) {
+					return translate( 'How will we fix it?' );
+				} else {
+					return translate( 'Resolving the threat' );
+				}
+				break;
+
+			default:
+				return translate( 'How we will fix it?' );
+				break;
+		}
 	}
 
 	renderFilename(): ReactNode | null {
@@ -57,17 +80,7 @@ class ThreatDescription extends React.PureComponent< Props > {
 				<p className="threat-description__section-title">
 					<strong>{ translate( 'What was the problem?' ) }</strong>
 				</p>
-				{ this.renderTextOrNode( problem ) }
-				{ fix && (
-					<p className="threat-description__section-title">
-						<strong>
-							{ status === 'fixed'
-								? translate( 'How did Jetpack fix it?' )
-								: translate( 'How we will fix it?' ) }
-						</strong>
-					</p>
-				) }
-				{ fix && this.renderTextOrNode( fix ) }
+				{ this.renderTextOrNode( <p className="threat-description__section-text">{ problem }</p> ) }
 				{ ( filename || context || diff ) && (
 					<p className="threat-description__section-title">
 						<strong>{ translate( 'The technical details' ) }</strong>
@@ -76,6 +89,12 @@ class ThreatDescription extends React.PureComponent< Props > {
 				{ this.renderFilename() }
 				{ context && <MarkedLines context={ context } /> }
 				{ diff && <DiffViewer diff={ diff } /> }
+				{ fix && (
+					<p className="threat-description__section-title threat-description__section-title-fix">
+						<strong>{ this.renderFixTitle() }</strong>
+					</p>
+				) }
+				{ fix && this.renderTextOrNode( fix ) }
 				{ children }
 			</div>
 		);

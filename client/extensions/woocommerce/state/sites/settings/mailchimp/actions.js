@@ -10,7 +10,7 @@ import { get } from 'lodash';
  */
 import request from 'woocommerce/state/sites/request';
 import { mailChimpSettings } from './selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,

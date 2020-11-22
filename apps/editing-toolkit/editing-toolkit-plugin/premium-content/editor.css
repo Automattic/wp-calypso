@@ -123,6 +123,13 @@
 	border-width: 4px;
 }
 
+.connect-stripe.has-icon.has-text svg {
+	margin-right: 0;
+}
+.connect-stripe.has-icon.has-text {
+	font-weight: normal;
+}
+
 /* Subscribe/Login buttons */
 
 .wp-block-buttons .wp-block[data-type='jetpack/recurring-payments'] {
@@ -141,4 +148,8 @@
 /* https://github.com/Automattic/wp-calypso/issues/44332 */
 .wp-block-premium-content-container .jetpack-block-nudge {
 	display: none;
+}
+
+.wp-block-premium-content-login-button {
+	display: inline-block;
 }

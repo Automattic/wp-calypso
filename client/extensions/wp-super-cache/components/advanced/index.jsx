@@ -21,7 +21,7 @@ import Miscellaneous from './miscellaneous';
 import QueryStatus from '../data/query-status';
 import RejectedUserAgents from './rejected-user-agents';
 import WrapSettingsForm from '../wrap-settings-form';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getStatus } from '../../state/status/selectors';
 
 const AdvancedTab = ( {

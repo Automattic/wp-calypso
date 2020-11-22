@@ -111,7 +111,7 @@ export function PurchaseDetails( {
 				onError={ logPurchasesError }
 			>
 				<ManagePurchase
-					cardTitle={ translate( 'Subscription settings' ) }
+					cardTitle={ translate( 'Purchase Settings' ) }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					showHeader={ false }
@@ -257,7 +257,7 @@ export function PurchaseCancelDomain( {
 			<FormattedHeader
 				brandFont
 				className="purchases__page-heading"
-				headerText={ translate( 'Cancel domain' ) }
+				headerText={ translate( 'Billing' ) }
 				align="left"
 			/>
 

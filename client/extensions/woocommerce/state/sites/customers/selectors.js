@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 function getCustomerSearchStatus( state, siteId, searchTerm ) {
 	return state?.extensions?.woocommerce?.sites[ siteId ]?.customers.isSearching[ searchTerm ];

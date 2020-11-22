@@ -124,9 +124,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		const button = (
 			<PendingGSuiteTosNoticeAction
 				domainName={ domainName }
-				isMultipleDomains={ false }
 				section={ this.props.section }
-				severity={ null }
 				siteSlug={ this.props.siteSlug }
 				user={ users[ 0 ] }
 				isCompact={ false }
@@ -150,6 +148,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 						}
 					) }
 				</p>
+
 				{ button }
 			</>
 		);
@@ -182,9 +181,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				<NoticeAction>
 					<PendingGSuiteTosNoticeAction
 						domainName={ domainName }
-						isMultipleDomains={ false }
 						section={ this.props.section }
-						severity={ severity }
 						siteSlug={ this.props.siteSlug }
 						user={ users[ 0 ] }
 					/>
@@ -210,17 +207,17 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 						args: { exclamation },
 					}
 				) }
+
 				<ul>
 					{ this.props.domains.map(
 						( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
 							return (
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ domainName } </strong>
+
 									<PendingGSuiteTosNoticeAction
 										domainName={ domainName }
-										isMultipleDomains={ true }
 										section={ this.props.section }
-										severity={ severity }
 										siteSlug={ this.props.siteSlug }
 										user={ users[ 0 ] }
 									/>

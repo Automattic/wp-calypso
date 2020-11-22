@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -30,36 +29,28 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const makePath = usePath();
 	const history = useHistory();
 	const currentStep = useCurrentStep();
-	const { i18nLocale } = useI18n();
+	const locale = useLocale();
 
-	// If the user enters a site title on Intent Capture step we are showing Domains step next.
-	// Else, we're showing Domains step before Plans step.
 	let steps: StepType[];
 
+	// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
 	steps = hasSiteTitle()
-		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
-		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
-
-	// When feature picker experiment is enabled, if site title is skipped, we're showing Domains step before Features step.
-	if ( isEnabled( 'gutenboarding/feature-picker' ) ) {
-		steps = hasSiteTitle()
-			? [
-					Step.IntentGathering,
-					Step.Domains,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Features,
-					Step.Plans,
-			  ]
-			: [
-					Step.IntentGathering,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Domains,
-					Step.Features,
-					Step.Plans,
-			  ];
-	}
+		? [
+				Step.IntentGathering,
+				Step.Domains,
+				Step.DesignSelection,
+				Step.Style,
+				Step.Features,
+				Step.Plans,
+		  ]
+		: [
+				Step.IntentGathering,
+				Step.DesignSelection,
+				Step.Style,
+				Step.Domains,
+				Step.Features,
+				Step.Plans,
+		  ];
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -68,7 +59,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, i18nLocale, undefined, newSiteVisibility )
+			? createSite( currentUser.username, locale, undefined, newSiteVisibility )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

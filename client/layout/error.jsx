@@ -9,10 +9,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import EmptyContent from 'components/empty-content';
-import { makeLayout, render as clientRender } from 'controller';
-import { SECTION_SET } from 'state/action-types';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import EmptyContent from 'calypso/components/empty-content';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { SECTION_SET } from 'calypso/state/action-types';
 
 /**
  * Module variables

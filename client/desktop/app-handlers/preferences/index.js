@@ -6,8 +6,8 @@ const { dialog, ipcMain: ipc } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const log = require( 'desktop/lib/logger' )( 'preferences' );
-const Settings = require( 'desktop/lib/settings' );
+const log = require( 'calypso/desktop/lib/logger' )( 'preferences' );
+const Settings = require( 'calypso/desktop/lib/settings' );
 
 function promptForRestart( title, message ) {
 	// Warn user they need to restart the app

@@ -73,4 +73,8 @@
 	margin-left: 1px;
 	font-size: $font-body-small;
 	min-width: 10px;
+
+	&:empty {
+		display: none;
+	}
 }

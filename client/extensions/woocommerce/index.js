@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import config from 'config';
+import config from 'calypso/config';
 import page from 'page';
 import React from 'react';
 import { translate } from 'i18n-calypso';
@@ -12,8 +12,8 @@ import { translate } from 'i18n-calypso';
  */
 import App from './app';
 import Dashboard from './app/dashboard';
-import EmptyContent from 'components/empty-content';
-import { navigation, siteSelection, sites } from 'my-sites/controller';
+import EmptyContent from 'calypso/components/empty-content';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import installActionHandlers from './state/data-layer';
 import reducer from './state/reducer';
 import Order from './app/order';
@@ -37,7 +37,7 @@ import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
 import { tracksStore } from './lib/analytics';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 /**
  * Style dependencies

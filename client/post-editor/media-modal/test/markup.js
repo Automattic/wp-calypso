@@ -11,17 +11,14 @@ import ReactDomServer from 'react-dom/server';
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
+import markup from '../markup';
 
 describe( 'markup', () => {
-	let sandbox, markup, site;
+	let sandbox;
+	const site = {};
 
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
-
-	beforeAll( () => {
-		markup = require( '../markup' );
-		site = {};
-	} );
 
 	beforeEach( () => {
 		sandbox.restore();
@@ -215,14 +212,13 @@ describe( 'markup', () => {
 			} );
 
 			test( "should attempt to find the site's thumbnail width if a size is specified", () => {
-				let value;
 				const siteWithWidth = {
 					options: {
 						image_large_width: 200,
 					},
 				};
 
-				value = markup.mimeTypes.image(
+				const value = markup.mimeTypes.image(
 					siteWithWidth,
 					{
 						ID: 1,
@@ -241,10 +237,9 @@ describe( 'markup', () => {
 			} );
 
 			test( "should attempt to find the media's own thumbnail width if a size is specified", () => {
-				let value;
 				const jetpackSite = { jetpack: true };
 
-				value = markup.mimeTypes.image(
+				const value = markup.mimeTypes.image(
 					jetpackSite,
 					{
 						ID: 1,

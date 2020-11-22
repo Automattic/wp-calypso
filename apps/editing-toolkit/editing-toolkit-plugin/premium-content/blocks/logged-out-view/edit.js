@@ -30,6 +30,7 @@ function Edit( { parentClientId, isSelected } ) {
 					{ stripeNudge }
 					<InnerBlocks
 						templateLock={ false }
+						templateInsertUpdatesSelection={ false }
 						template={ [
 							[
 								'core/heading',

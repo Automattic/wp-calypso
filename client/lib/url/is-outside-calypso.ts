@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, isExternal } from 'lib/url';
-import { URL as URLString } from 'types';
+import { getUrlParts, isExternal } from 'calypso/lib/url';
+import { URL as URLString } from 'calypso/types';
 
 export default function isOutsideCalypso( url: URLString ): boolean {
 	if ( isExternal( url ) ) {

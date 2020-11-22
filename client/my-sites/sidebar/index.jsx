@@ -3,7 +3,7 @@
  */
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { memoize } from 'lodash';
@@ -316,8 +316,8 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let activityLink = '/activity-log' + siteSuffix,
-			activityLabel = translate( 'Activity' );
+		let activityLink = '/activity-log' + siteSuffix;
+		let activityLabel = translate( 'Activity' );
 
 		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
 			activityLink += '?group=rewind';
@@ -458,14 +458,14 @@ export class MySitesSidebar extends Component {
 
 	design() {
 		const {
-				path,
-				site,
-				translate,
-				canUserEditThemeOptions,
-				showCustomizerLink,
-				showSiteEditor,
-			} = this.props,
-			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
+			path,
+			site,
+			translate,
+			canUserEditThemeOptions,
+			showCustomizerLink,
+			showSiteEditor,
+		} = this.props;
+		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
@@ -481,7 +481,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			<ul>
+			<Fragment>
 				{ showCustomizerLink && (
 					<SidebarItem
 						label={ translate( 'Customize' ) }
@@ -510,7 +510,7 @@ export class MySitesSidebar extends Component {
 					forceInternalLink
 					expandSection={ this.expandDesignSection }
 				/>
-			</ul>
+			</Fragment>
 		);
 	}
 
@@ -582,37 +582,39 @@ export class MySitesSidebar extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<ExpandableSidebarMenu
-				onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
-				expanded={ this.props.isPlanSectionOpen }
-				title={
-					<>
-						<span className="menu-link-text" data-e2e-sidebar="Plan">
-							{ this.props.translate( 'Plan', { context: 'noun' } ) }
-						</span>
-						{ displayPlanName && (
-							<span className="sidebar__menu-link-secondary-text">
-								{ this.props.site?.plan.product_name_short }
+			<li>
+				<ExpandableSidebarMenu
+					onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
+					expanded={ this.props.isPlanSectionOpen }
+					title={
+						<>
+							<span className="menu-link-text" data-e2e-sidebar="Plan">
+								{ this.props.translate( 'Plan', { context: 'noun' } ) }
 							</span>
-						) }
-					</>
-				}
-				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
-			>
-				{ this.plans() }
-				<SidebarItem
-					label={ this.props.translate( 'Billing' ) }
-					tipTarget="purchases"
-					selected={ itemLinkMatches( '/purchases', this.props.path ) }
-					link={
-						this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
+							{ displayPlanName && (
+								<span className="sidebar__menu-link-secondary-text">
+									{ this.props.site?.plan.product_name_short }
+								</span>
+							) }
+						</>
 					}
-					onNavigate={ this.trackPurchasesClick }
-					preloadSectionName="site-purchases"
-					forceInternalLink
-					expandSection={ this.expandPlanSection }
-				/>
-			</ExpandableSidebarMenu>
+					customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
+				>
+					{ this.plans() }
+					<SidebarItem
+						label={ this.props.translate( 'Billing' ) }
+						tipTarget="purchases"
+						selected={ itemLinkMatches( '/purchases', this.props.path ) }
+						link={
+							this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
+						}
+						onNavigate={ this.trackPurchasesClick }
+						preloadSectionName="site-purchases"
+						forceInternalLink
+						expandSection={ this.expandPlanSection }
+					/>
+				</ExpandableSidebarMenu>
+			</li>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
@@ -849,19 +851,17 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarMenu className="sidebar__wp-admin">
-				<ul>
-					<li data-tip-target="wpadmin">
-						<ExternalLink
-							className="sidebar__menu-link"
-							href={ adminUrl }
-							icon
-							onClick={ this.trackWpadminClick }
-						>
-							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
-							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-						</ExternalLink>
-					</li>
-				</ul>
+				<li data-tip-target="wpadmin">
+					<ExternalLink
+						className="sidebar__menu-link"
+						href={ adminUrl }
+						icon
+						onClick={ this.trackWpadminClick }
+					>
+						<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
+						<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+					</ExternalLink>
+				</li>
 			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -910,15 +910,13 @@ export class MySitesSidebar extends Component {
 		if ( this.props.isDomainOnly ) {
 			return (
 				<SidebarMenu>
-					<ul>
-						<SidebarItem
-							selected={ itemLinkMatches( '/domains', this.props.path ) }
-							label={ this.props.translate( 'Settings' ) }
-							link={ '/domains/manage' + this.props.siteSuffix }
-							onNavigate={ this.trackDomainSettingsClick }
-							tipTarget="settings"
-						/>
-					</ul>
+					<SidebarItem
+						selected={ itemLinkMatches( '/domains', this.props.path ) }
+						label={ this.props.translate( 'Settings' ) }
+						link={ '/domains/manage' + this.props.siteSuffix }
+						onNavigate={ this.trackDomainSettingsClick }
+						tipTarget="settings"
+					/>
 				</SidebarMenu>
 			);
 		}
@@ -939,12 +937,10 @@ export class MySitesSidebar extends Component {
 				<QuerySitePurchases siteId={ this.props.siteId } />
 
 				<SidebarMenu>
-					<ul>
-						{ this.customerHome() }
-						{ this.stats() }
-						{ this.planMenu() }
-						{ this.store() }
-					</ul>
+					{ this.customerHome() }
+					{ this.stats() }
+					{ this.planMenu() }
+					{ this.store() }
 				</SidebarMenu>
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
@@ -997,12 +993,10 @@ export class MySitesSidebar extends Component {
 						title={ this.props.translate( 'Manage' ) }
 						materialIcon="settings"
 					>
-						<ul>
-							{ this.hosting() }
-							{ this.upgrades() }
-							{ this.users() }
-							{ this.siteSettings() }
-						</ul>
+						{ this.hosting() }
+						{ this.upgrades() }
+						{ this.users() }
+						{ this.siteSettings() }
 					</ExpandableSidebarMenu>
 				) }
 

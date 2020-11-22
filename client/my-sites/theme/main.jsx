@@ -345,7 +345,11 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
-					<AsyncLoad require="calypso/blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						placeholder={ null }
+						messagePath="calypso:theme:admin_notices"
+					/>
 				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
@@ -664,7 +668,8 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
-		let pageUpsellBanner, previewUpsellBanner;
+		let pageUpsellBanner;
+		let previewUpsellBanner;
 		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
 		const hasWpOrgThemeUpsellBanner =

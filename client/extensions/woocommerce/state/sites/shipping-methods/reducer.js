@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST,
 	WOOCOMMERCE_SHIPPING_METHODS_REQUEST_SUCCESS,

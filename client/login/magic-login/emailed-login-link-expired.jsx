@@ -10,16 +10,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import { addQueryArgs } from 'lib/route';
-import EmptyContent from 'components/empty-content';
-import RedirectWhenLoggedIn from 'components/redirect-when-logged-in';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
+import EmptyContent from 'calypso/components/empty-content';
+import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import {
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 const nativeLoginUrl = login( { isNative: true, twoFactorAuthType: 'link' } );
 

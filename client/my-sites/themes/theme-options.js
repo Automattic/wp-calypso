@@ -199,8 +199,8 @@ function getAllThemeOptions() {
 }
 export const connectOptions = connect(
 	( state, { siteId, origin = siteId } ) => {
-		let mapGetUrl = identity,
-			mapHideForTheme = identity;
+		let mapGetUrl = identity;
+		let mapHideForTheme = identity;
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {

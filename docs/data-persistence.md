@@ -136,7 +136,7 @@ from changing data shapes, as described below.
 As time passes, the shape of our data will change very drastically in our Redux store and in each subtree. If we now
 persist state, we run into the issue of our persisted data shape no longer matching what the Redux store expects.
 
-As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running master, first
+As a developer, this case is extremely easy to hit. If Redux persistence is enabled and we are running trunk, first
 allow  state to be persisted to the browser and then switch to another git branch that contains minor refactors for an
 existing sub-tree. What happens when a selector reaches for a data property that doesn't exist or has been renamed?
 Errors!

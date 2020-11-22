@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
+import { isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'calypso/lib/analytics/utils';
 
 import {
 	debug,

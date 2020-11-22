@@ -22,7 +22,7 @@ class DomainMainPlaceholder extends React.Component {
 	render() {
 		return (
 			<Main className="domain__main-placeholder">
-				<Header onClick={ this.props.goBack } />
+				<Header onClick={ this.props.goBack } backHref={ this.props.backHref } />
 				<VerticalNav>
 					<CompactCard className="domain__main-placeholder-card">
 						<p />

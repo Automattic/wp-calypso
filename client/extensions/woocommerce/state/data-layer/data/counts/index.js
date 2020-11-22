@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	fetchCountsFailure,

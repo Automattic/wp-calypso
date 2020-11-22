@@ -21,11 +21,6 @@ import { POST_STATUSES } from 'calypso/state/posts/constants';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { mapPostStatus } from 'calypso/lib/route';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 class PostsMain extends React.Component {
 	getAnalyticsPath() {
 		const { siteId, statusSlug, author } = this.props;

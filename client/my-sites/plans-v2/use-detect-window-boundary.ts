@@ -1,29 +1,28 @@
 /**
  * External dependencies
  */
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { throttle } from 'lodash';
 
+export const THROTTLE_RATE = 50;
+
 /**
- * Returns whether `elementRef` has touched/crossed the upper Window's boundary.
+ * Returns whether an element has touched/crossed the upper Window's boundary.
  *
- * @param {MutableRefObject} elementRef Reference to an HTMLElement
  * @param {number} offsetY Add offset in the Y axis for the detection
- * @returns {boolean} Whether the element crossed the upper boundary
+ * @returns a tuple with the ref element, and boolean whether border has crossed
  */
-const useDetectWindowBoundary = (
-	elementRef: MutableRefObject< HTMLDivElement | null >,
-	offsetY = 0
-) => {
+const useDetectWindowBoundary = ( offsetY = 0 ) => {
+	const elementRef = useRef< HTMLDivElement >( null );
+
 	// Indicates whether the elementRef has crossed the upper window boundary
 	const [ borderCrossed, setBorderCrossed ] = useState( false );
-	// Stores the initial position of the element in the Y axis. We need this to put the
-	// element back in its place when the scroll bar reaches this point a not when the scroll
-	// bar reaches the top of the page (0 in the Y axis).
+
+	// Stores the position of the element in the Y axis.relative to the viewport top.
 	const initialTopPos = useRef< number | null >( null );
 
-	const addStickyClass = useRef< ( this: Window, e: Event ) => void >(
-		throttle( () => {
+	useEffect( () => {
+		const addStickyClass = throttle( () => {
 			if ( ! elementRef || ! elementRef.current ) {
 				return;
 			}
@@ -35,16 +34,14 @@ const useDetectWindowBoundary = (
 			}
 
 			setBorderCrossed( window.pageYOffset + offsetY > initialTopPos.current );
-		}, 50 )
-	);
+		}, THROTTLE_RATE );
 
-	useEffect( () => {
-		const { current: addStickyClassFn } = addStickyClass;
-		window.addEventListener( 'scroll', addStickyClassFn );
-		return () => window.removeEventListener( 'scroll', addStickyClassFn );
-	}, [ elementRef ] );
+		window.addEventListener( 'scroll', addStickyClass );
 
-	return borderCrossed;
+		return () => window.removeEventListener( 'scroll', addStickyClass );
+	}, [ elementRef.current, offsetY ] );
+
+	return [ elementRef, borderCrossed ];
 };
 
 export default useDetectWindowBoundary;

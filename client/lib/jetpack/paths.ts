@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { addQueryArgs } from 'lib/url';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
+import { addQueryArgs } from 'calypso/lib/url';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 const backupBasePath = () => '/backup';
 export const backupPath = ( siteSlug?: string, query = {} ) => {

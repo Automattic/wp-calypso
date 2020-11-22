@@ -9,7 +9,7 @@ import { bootApp } from './common';
 /**
  * Style dependencies
  */
-import 'assets/stylesheets/style.scss';
+import 'calypso/assets/stylesheets/style.scss';
 
 window.AppBoot = () => {
 	bootApp( 'Calypso' );

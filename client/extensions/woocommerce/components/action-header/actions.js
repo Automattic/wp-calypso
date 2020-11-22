@@ -11,10 +11,10 @@ import { debounce } from 'lodash';
 /**
  * Internal Dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
 import { Button } from '@automattic/components';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
 
 class ActionButtons extends Component {
 	static propTypes = {

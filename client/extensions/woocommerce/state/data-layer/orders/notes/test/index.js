@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { createNote, fetchNotes } from 'woocommerce/state/sites/orders/notes/actions';
 import { create, fetch } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'handlers', () => {
 	describe( '#fetch', () => {

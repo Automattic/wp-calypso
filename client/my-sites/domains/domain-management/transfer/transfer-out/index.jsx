@@ -3,7 +3,7 @@
  */
 import page from 'page';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -25,6 +25,9 @@ import SelectIpsTag from './select-ips-tag.jsx';
 import TransferProhibited from './transfer-prohibited.jsx';
 import TransferLock from './transfer-lock.jsx';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import QueryDomainInfo from 'calypso/components/data/query-domain-info';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
+
 /**
  * Style dependencies
  */
@@ -69,11 +72,17 @@ class Transfer extends React.Component {
 
 	render() {
 		if ( this.isDataLoading() ) {
-			return <DomainMainPlaceholder goBack={ this.goToEdit } />;
+			return (
+				<Fragment>
+					<QueryDomainInfo domainName={ this.props.selectedDomainName } />
+					<DomainMainPlaceholder goBack={ this.goToEdit } />
+				</Fragment>
+			);
 		}
 
 		return (
 			<Main>
+				<QueryDomainInfo domainName={ this.props.selectedDomainName } />
 				<Header onClick={ this.goToEdit } selectedDomainName={ this.props.selectedDomainName }>
 					{ this.props.translate( 'Transfer Domain' ) }
 				</Header>
@@ -97,6 +106,7 @@ class Transfer extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
+export default connect( ( state, { selectedDomainName } ) => ( {
 	currentRoute: getCurrentRoute( state ),
+	wapiDomainInfo: getDomainWapiInfoByDomainName( state, selectedDomainName ),
 } ) )( localize( Transfer ) );

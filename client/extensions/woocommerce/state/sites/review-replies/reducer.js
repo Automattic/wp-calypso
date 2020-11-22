@@ -7,7 +7,7 @@ import { reject, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,
 	WOOCOMMERCE_REVIEW_REPLY_CREATED,

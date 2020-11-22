@@ -6,8 +6,8 @@
  * Internal dependencies
  */
 import { determineUrlType } from '../url-type';
+import runTests from './common/url-type.skip';
 
 describe( 'determineUrlType', () => {
-	const runTests = require( './common/url-type.skip' );
 	runTests( determineUrlType );
 } );

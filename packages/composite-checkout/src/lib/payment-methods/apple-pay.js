@@ -136,21 +136,23 @@ const PAYMENT_REQUEST_OPTIONS = {
 
 function usePaymentRequestOptions( stripeConfiguration ) {
 	const [ items, total ] = useLineItems();
-	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
+	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = items.reduce(
 		( firstCurrency, item ) => firstCurrency || item.amount.currency,
 		null
 	);
-	const paymentRequestOptions = useMemo(
-		() => ( {
-			country: countryCode,
-			currency: currency && currency.toLowerCase(),
-			displayItems: getDisplayItemsForLineItems( items ),
+	const paymentRequestOptions = useMemo( () => {
+		if ( ! currency || ! total.amount.value ) {
+			return null;
+		}
+		return {
+			country,
+			currency: currency?.toLowerCase(),
 			total: getPaymentRequestTotalFromTotal( total ),
+			displayItems: getDisplayItemsForLineItems( items ),
 			...PAYMENT_REQUEST_OPTIONS,
-		} ),
-		[ countryCode, currency, items, total ]
-	);
+		};
+	}, [ country, currency, items, total ] );
 	return paymentRequestOptions;
 }
 
@@ -171,7 +173,7 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 
 	useEffect( () => {
 		let isSubscribed = true;
-		if ( ! stripe ) {
+		if ( ! stripe || ! paymentRequestOptions ) {
 			return;
 		}
 		const request = stripe.paymentRequest( paymentRequestOptions );

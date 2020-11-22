@@ -9,23 +9,11 @@ import { startsWith } from 'lodash';
  */
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
-const blocksByType = {};
-export function getBlockByType( type ) {
-	return blocksByType[ type ];
-}
-
-function assignBlockType( type, block ) {
-	blocksByType[ type ] = block;
-}
-
 export const Strong = ( { children } ) => <strong>{ children }</strong>;
-assignBlockType( 'b', Strong );
 
 export const Emphasis = ( { children } ) => <em>{ children }</em>;
-assignBlockType( 'i', Emphasis );
 
 export const Preformatted = ( { children } ) => <pre>{ children }</pre>;
-assignBlockType( 'pre', Preformatted );
 
 export const Link = ( { content, onClick, children } ) => {
 	const { url: originalUrl, activity, section, intent } = content;
@@ -52,15 +40,12 @@ export const Link = ( { content, onClick, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'a', Link );
-assignBlockType( 'link', Link );
 
 export const FilePath = ( { children } ) => (
 	<div>
 		<code>{ children }</code>
 	</div>
 );
-assignBlockType( 'filepath', FilePath );
 
 export const Post = ( { content, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
@@ -78,7 +63,6 @@ export const Post = ( { content, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'post', Post );
 
 export const Comment = ( { content, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
@@ -94,7 +78,6 @@ export const Comment = ( { content, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'comment', Comment );
 
 export const Person = ( { content, onClick, meta, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
@@ -114,7 +97,6 @@ export const Person = ( { content, onClick, meta, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'person', Person );
 
 export const Plugin = ( { content, onClick, meta, children } ) => {
 	// Don't render links to WordPress.com inside Jetpack Cloud
@@ -134,7 +116,6 @@ export const Plugin = ( { content, onClick, meta, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'plugin', Plugin );
 
 export const Theme = ( { content, onClick, meta, children } ) => {
 	const { themeUri, themeSlug, siteSlug } = content;
@@ -173,4 +154,3 @@ export const Theme = ( { content, onClick, meta, children } ) => {
 		</a>
 	);
 };
-assignBlockType( 'theme', Theme );

@@ -12,6 +12,7 @@ import { Icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import PlanItem from '../plans-accordion-item';
+import PlanItemPlaceholder from '../plans-accordion-item/plans-item-placeholder';
 import { PLANS_STORE, WPCOM_FEATURES_STORE } from '../constants';
 
 /**
@@ -34,6 +35,7 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
+	locale: string;
 }
 
 const PlansTable: React.FunctionComponent< Props > = ( {
@@ -43,9 +45,13 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	onPickDomainClick,
 	currentDomain,
 	disabledPlans,
+	locale,
 } ) => {
 	const supportedPlans = useSelect( ( select ) => select( PLANS_STORE ).getSupportedPlans() );
-	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const prices = useSelect( ( select ) => select( PLANS_STORE ).getPrices( locale ) );
+
+	const isLoading = ! supportedPlans?.length;
+	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
 	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
@@ -65,9 +71,9 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const otherPlans = supportedPlans.filter( ( plan ) => plan.storeSlug !== primaryPlan.storeSlug );
 
 	// Handle toggling of all plan items
-	const defaultOpenPlans = [ primaryPlan.storeSlug ];
+	const defaultOpenPlans = [ primaryPlan?.storeSlug ];
 	const [ openPlans, setOpenPlans ] = useState( defaultOpenPlans );
-	const allPlansOpened = openPlans.length >= supportedPlans.length;
+	const allPlansOpened = isLoading ? false : openPlans.length >= supportedPlans.length;
 
 	const handleToggle = ( slug: string, isOpen: boolean ) => {
 		setOpenPlans( isOpen ? [ ...openPlans, slug ] : openPlans.filter( ( s ) => s !== slug ) );
@@ -82,36 +88,40 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	return (
 		<div className="plans-accordion">
 			<div className="plans-accordion__plan-item-group">
-				{ primaryPlan && (
-					<>
-						{ recommendedPlan && (
-							<div className="plans-accordion__recommend-hint">
-								<Icon icon={ tip } size={ 16 } />
-								<span>
-									{
-										// translators: tooltip explaining why a particular plan has been recommended
-										__( 'Based on the features you selected.', __i18n_text_domain__ )
-									}
-								</span>
-							</div>
-						) }
-						<PlanItem
-							key={ primaryPlan.storeSlug }
-							slug={ primaryPlan.storeSlug }
-							name={ primaryPlan?.title.toString() }
-							description={ primaryPlan?.description.toString() }
-							features={ primaryPlan.features ?? [] }
-							price={ prices[ primaryPlan.storeSlug ] }
-							domain={ currentDomain }
-							badge={ badge }
-							isFree={ primaryPlan.isFree }
-							isOpen
-							isPrimary
-							isSelected={ primaryPlan.storeSlug === selectedPlanSlug }
-							onSelect={ onPlanSelect }
-							onPickDomainClick={ onPickDomainClick }
-						></PlanItem>
-					</>
+				{ isLoading ? (
+					<PlanItemPlaceholder isOpen isPrimary></PlanItemPlaceholder>
+				) : (
+					primaryPlan && (
+						<>
+							{ recommendedPlan && (
+								<div className="plans-accordion__recommend-hint">
+									<Icon icon={ tip } size={ 16 } />
+									<span>
+										{
+											// translators: tooltip explaining why a particular plan has been recommended
+											__( 'Based on the features you selected.', __i18n_text_domain__ )
+										}
+									</span>
+								</div>
+							) }
+							<PlanItem
+								key={ primaryPlan.storeSlug }
+								slug={ primaryPlan.storeSlug }
+								name={ primaryPlan?.title.toString() }
+								description={ primaryPlan?.description.toString() }
+								features={ primaryPlan.features ?? [] }
+								price={ prices[ primaryPlan.storeSlug ] }
+								domain={ currentDomain }
+								badge={ badge }
+								isFree={ primaryPlan.isFree }
+								isOpen
+								isPrimary
+								isSelected={ primaryPlan.storeSlug === selectedPlanSlug }
+								onSelect={ onPlanSelect }
+								onPickDomainClick={ onPickDomainClick }
+							></PlanItem>
+						</>
+					)
 				) }
 			</div>
 
@@ -124,26 +134,30 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 			</div>
 
 			<div className="plans-accordion__plan-item-group">
-				{ otherPlans.map( ( plan ) => (
-					<PlanItem
-						key={ plan.storeSlug }
-						slug={ plan.storeSlug }
-						name={ plan?.title.toString() }
-						description={ plan?.description.toString() }
-						features={ plan.features ?? [] }
-						price={ prices[ plan.storeSlug ] }
-						domain={ currentDomain }
-						isFree={ plan.isFree }
-						isOpen={
-							openPlans.indexOf( plan.storeSlug ) > -1 && ! disabledPlans?.[ plan.storeSlug ]
-						}
-						isSelected={ plan.storeSlug === selectedPlanSlug }
-						onSelect={ onPlanSelect }
-						onPickDomainClick={ onPickDomainClick }
-						onToggle={ handleToggle }
-						disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
-					></PlanItem>
-				) ) }
+				{ isLoading
+					? placeholderPlans.map( ( placeholder ) => (
+							<PlanItemPlaceholder key={ placeholder }></PlanItemPlaceholder>
+					  ) )
+					: otherPlans.map( ( plan ) => (
+							<PlanItem
+								key={ plan.storeSlug }
+								slug={ plan.storeSlug }
+								name={ plan?.title.toString() }
+								description={ plan?.description.toString() }
+								features={ plan.features ?? [] }
+								price={ prices[ plan.storeSlug ] }
+								domain={ currentDomain }
+								isFree={ plan.isFree }
+								isOpen={
+									openPlans.indexOf( plan.storeSlug ) > -1 && ! disabledPlans?.[ plan.storeSlug ]
+								}
+								isSelected={ plan.storeSlug === selectedPlanSlug }
+								onSelect={ onPlanSelect }
+								onPickDomainClick={ onPickDomainClick }
+								onToggle={ handleToggle }
+								disabledLabel={ disabledPlans?.[ plan.storeSlug ] }
+							></PlanItem>
+					  ) ) }
 			</div>
 		</div>
 	);

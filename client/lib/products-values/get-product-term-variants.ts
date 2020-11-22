@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { TERMS_LIST } from 'lib/plans/constants';
-import { PRODUCTS_LIST } from 'lib/products-values/products-list';
+import { TERMS_LIST } from 'calypso/lib/plans/constants';
+import { PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 
 /**
  * Type dependencies

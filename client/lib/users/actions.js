@@ -9,9 +9,9 @@ const debug = debugFactory( 'calypso:users:actions' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import UsersStore from 'lib/users/store';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import UsersStore from 'calypso/lib/users/store';
 
 export function fetchUsers( fetchOptions ) {
 	const paginationData = UsersStore.getPaginationData( fetchOptions );
@@ -103,8 +103,8 @@ export function deleteUser( siteId, userId, reassignUserId ) {
 
 export function updateUser( siteId, userId, attributes ) {
 	debug( 'updateUser', userId );
-	const user = UsersStore.getUser( siteId, userId ),
-		updatedUser = Object.assign( user, attributes );
+	const user = UsersStore.getUser( siteId, userId );
+	const updatedUser = Object.assign( user, attributes );
 
 	if ( ! user ) {
 		return;

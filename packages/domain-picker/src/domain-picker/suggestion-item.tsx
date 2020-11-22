@@ -10,6 +10,7 @@ import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
 import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -17,6 +18,14 @@ import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import InfoTooltip from '../info-tooltip';
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
+
+export const ITEM_TYPE_RADIO = 'radio';
+export const ITEM_TYPE_BUTTON = 'button';
+export const ITEM_TYPE_INDIVIDUAL_ITEM = 'individual-item';
+export type SUGGESTION_ITEM_TYPE =
+	| typeof ITEM_TYPE_RADIO
+	| typeof ITEM_TYPE_BUTTON
+	| typeof ITEM_TYPE_INDIVIDUAL_ITEM;
 
 interface Props {
 	isUnavailable?: boolean;
@@ -31,6 +40,7 @@ interface Props {
 	onRender: () => void;
 	onSelect: ( domain: string ) => void;
 	selected?: boolean;
+	type?: SUGGESTION_ITEM_TYPE;
 }
 
 const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
@@ -46,6 +56,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	onSelect,
 	onRender,
 	selected,
+	type = ITEM_TYPE_RADIO,
 } ) => {
 	const isMobile = useViewportMatch( 'small', '<' );
 
@@ -57,6 +68,25 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
 	const labelId = uuid();
+
+	const freeDomainLabel =
+		type === ITEM_TYPE_INDIVIDUAL_ITEM
+			? __( 'Default', __i18n_text_domain__ )
+			: __( 'Free', __i18n_text_domain__ );
+
+	const firstYearIncludedInPaid = isMobile
+		? __( 'Included in paid plans', __i18n_text_domain__ )
+		: createInterpolateElement(
+				__( '<strong>First year included</strong> in paid plans', __i18n_text_domain__ ),
+				{
+					strong: <strong />,
+				}
+		  );
+
+	const paidIncludedDomainLabel =
+		type === ITEM_TYPE_INDIVIDUAL_ITEM
+			? firstYearIncludedInPaid
+			: __( 'Included in plans', __i18n_text_domain__ );
 
 	useEffect( () => {
 		// Only record TrainTracks render event when the domain name and railcarId change.
@@ -81,25 +111,30 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 
 	return (
 		<label
-			className={ classnames( 'domain-picker__suggestion-item', {
-				'is-free': isFree,
-				'is-selected': selected,
-				'is-unavailable': isUnavailable,
-			} ) }
-		>
-			{ isLoading ? (
-				<Spinner />
-			) : (
-				<input
-					aria-labelledby={ labelId }
-					className="domain-picker__suggestion-radio-button"
-					type="radio"
-					disabled={ isUnavailable }
-					name="domain-picker-suggestion-option"
-					onChange={ onDomainSelect }
-					checked={ selected && ! isUnavailable }
-				/>
+			className={ classnames(
+				'domain-picker__suggestion-item',
+				{
+					'is-free': isFree,
+					'is-selected': selected,
+					'is-unavailable': isUnavailable,
+				},
+				`type-${ type }`
 			) }
+		>
+			{ [ ITEM_TYPE_RADIO, ITEM_TYPE_INDIVIDUAL_ITEM ].indexOf( type ) > -1 &&
+				( isLoading ? (
+					<Spinner />
+				) : (
+					<input
+						aria-labelledby={ labelId }
+						className="domain-picker__suggestion-radio-button"
+						type="radio"
+						disabled={ isUnavailable }
+						name="domain-picker-suggestion-option"
+						onChange={ onDomainSelect }
+						checked={ selected && ! isUnavailable }
+					/>
+				) ) }
 			<div className="domain-picker__suggestion-item-name">
 				<div className="domain-picker__suggestion-item-name-inner">
 					<span className="domain-picker__domain-name">{ domainName }</span>
@@ -140,7 +175,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</div>
 					) }
 				</div>
-				{ isExistingSubdomain && (
+				{ isExistingSubdomain && type !== ITEM_TYPE_INDIVIDUAL_ITEM && (
 					<div className="domain-picker__change-subdomain-tip">
 						{ __(
 							'You can change your free subdomain later under Domain Settings.',
@@ -155,12 +190,12 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				} ) }
 			>
 				{ isUnavailable && __( 'Unavailable', __i18n_text_domain__ ) }
-				{ isFree && ! isUnavailable && __( 'Free', __i18n_text_domain__ ) }
+				{ isFree && ! isUnavailable && freeDomainLabel }
 				{ ! isFree && ! isUnavailable && (
 					<>
 						<span className="domain-picker__price-inclusive">
 							{ /* Intentional whitespace to get the spacing around the text right */ }{ ' ' }
-							{ __( 'Included in plans', __i18n_text_domain__ ) }{ ' ' }
+							{ paidIncludedDomainLabel }{ ' ' }
 						</span>
 						<span className="domain-picker__price-cost">
 							{
@@ -171,6 +206,26 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					</>
 				) }
 			</div>
+			{ type === ITEM_TYPE_BUTTON &&
+				( isLoading ? (
+					<Spinner />
+				) : (
+					<div className="domain-picker__action">
+						<Button
+							isSecondary
+							aria-labelledby={ labelId }
+							className={ classnames( 'domain-picker__suggestion-select-button', {
+								'is-selected': selected && ! isUnavailable,
+							} ) }
+							disabled={ isUnavailable }
+							onClick={ onDomainSelect }
+						>
+							{ selected && ! isUnavailable
+								? __( 'Selected', __i18n_text_domain__ )
+								: __( 'Select', __i18n_text_domain__ ) }
+						</Button>
+					</div>
+				) ) }
 		</label>
 	);
 };

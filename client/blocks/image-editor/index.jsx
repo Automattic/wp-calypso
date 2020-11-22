@@ -108,10 +108,10 @@ class ImageEditor extends React.Component {
 	updateFileInfo = ( media ) => {
 		const { site } = this.props;
 
-		let src,
-			fileName = 'default',
-			mimeType = 'image/png',
-			title = 'default';
+		let src;
+		let fileName = 'default';
+		let mimeType = 'image/png';
+		let title = 'default';
 
 		if ( media ) {
 			src =

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 import {
 	ZONINATOR_REQUEST_ERROR,

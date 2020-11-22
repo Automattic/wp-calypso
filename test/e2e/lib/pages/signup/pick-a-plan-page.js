@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import { By } from 'selenium-webdriver';
 
@@ -23,15 +22,6 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 	}
 
 	async selectFreePlan() {
-		// During signup, we used to no longer display the Free plan, so we have to click the "Skip" button
-		const skipButtonSelector = By.css( '.plans-skip-button button' );
-		const skipButtonDisplayed = await driverHelper.isElementPresent(
-			this.driver,
-			skipButtonSelector
-		);
-		if ( skipButtonDisplayed === true ) {
-			return await driverHelper.clickWhenClickable( this.driver, skipButtonSelector );
-		}
 		return await this._selectPlan( 'free' );
 	}
 

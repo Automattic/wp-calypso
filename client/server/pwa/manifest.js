@@ -6,7 +6,7 @@ import querystring from 'querystring';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 const getWordPressOptions = ( environmentUrlSuffix ) => ( {
 	gcm_sender_id: '87234302238',
@@ -72,7 +72,7 @@ const buildManifest = ( { branchName } ) => {
 	// then this can be safely removed.
 	const environmentUrlOptions = { source: 'pwa' };
 
-	if ( branchName && 'master' !== branchName ) {
+	if ( branchName && 'trunk' !== branchName ) {
 		environmentUrlOptions.branch = branchName;
 	}
 

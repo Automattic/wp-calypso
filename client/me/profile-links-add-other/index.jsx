@@ -105,7 +105,7 @@ class ProfileLinksAddOther extends React.Component {
 						'Please enter the URL and description of the site you want to add to your profile.'
 					) }
 				</p>
-				<FormFieldset>
+				<FormFieldset className="profile-links-add-other__fieldset">
 					<FormTextInput
 						className="profile-links-add-other__value"
 						placeholder={ this.props.translate( 'Enter a URL' ) }

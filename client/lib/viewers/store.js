@@ -9,15 +9,15 @@ const debug = debugFactory( 'calypso:viewers:store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
-let _fetchingViewers = {},
-	_viewersBySite = {},
-	_totalViewers = {},
-	_numViewersFetched = {},
-	_viewersCurrentPage = {},
-	_removingFromSite = {};
+const _fetchingViewers = {};
+const _viewersBySite = {};
+const _totalViewers = {};
+const _numViewersFetched = {};
+const _viewersCurrentPage = {};
+const _removingFromSite = {};
 
 const ViewersStore = {
 	// This data may help with infinite scrolling

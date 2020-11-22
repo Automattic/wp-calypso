@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import {
+	TempResponseCart,
 	ResponseCart,
 	RequestCart,
 	RequestCartProduct,
@@ -57,12 +58,13 @@ export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
  * cache status.
  *
  *   - 'fresh': Page has loaded and no requests have been sent.
+ *   - 'fresh-pending': Page has loaded and we are waiting for the initial request.
  *   - 'invalid': Local cart data has been edited.
  *   - 'valid': Local cart has been reloaded from the server.
  *   - 'pending': Request has been sent, awaiting response.
  *   - 'error': Something went wrong.
  */
-export type CacheStatus = 'fresh' | 'valid' | 'invalid' | 'pending' | 'error';
+export type CacheStatus = 'fresh' | 'fresh-pending' | 'valid' | 'invalid' | 'pending' | 'error';
 
 /**
  * Possible states re. coupon submission.
@@ -97,20 +99,8 @@ export type ShoppingCartAction =
 
 export type ShoppingCartError = 'GET_SERVER_CART_ERROR' | 'SET_SERVER_CART_ERROR';
 
-/**
- *     * responseCart
- *         Stored shopping cart endpoint response. We manipulate this
- *         directly and pass it back to the endpoint on update events.
- *     * couponStatus
- *         Used to determine whether to render coupon input fields and
- *         coupon-related error messages.
- *     * cacheStatus
- *         Used to determine whether we need to re-validate the cart on
- *         the backend. We can't use responseCart directly to decide this
- *         in e.g. useEffect because this causes an infinite loop.
- */
 export type ShoppingCartState = {
-	responseCart: ResponseCart;
+	responseCart: TempResponseCart;
 	couponStatus: CouponStatus;
 	cacheStatus: CacheStatus;
 	loadingError?: string;

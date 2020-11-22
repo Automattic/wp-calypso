@@ -6,19 +6,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { sortBy } from 'lodash';
-import warn from 'lib/warn';
+import warn from 'calypso/lib/warn';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import { areProductsLoading, getAllProducts } from 'woocommerce/state/sites/products/selectors';
 import { getAllProductCategories } from 'woocommerce/state/sites/product-categories/selectors';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Search from 'components/search';
+import Search from 'calypso/components/search';
 
 function categoryContainsString( category, textString ) {
 	const matchString = textString.trim().toLocaleLowerCase();

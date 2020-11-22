@@ -4,7 +4,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Gridicon from 'calypso/components/gridicon';
-import { clamp, inRange, range, round } from 'lodash';
+import { inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -147,7 +147,10 @@ export default class PlanFeaturesScroller extends PureComponent {
 				let index = 0;
 
 				if ( planCount > visibleCount ) {
-					index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
+					index = Math.min(
+						Math.max( round( initialSelectedIndex - visibleCount / 2 ), minIndex ),
+						maxIndex
+					);
 				}
 
 				this.scrollBy( index );

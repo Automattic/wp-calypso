@@ -65,6 +65,7 @@ export const fromApi = ( {
 		status = '',
 		rewind_id = '',
 		context = '',
+		current_entry = '',
 	} = {},
 } ) => ( {
 	errorCode: error_code,
@@ -74,6 +75,7 @@ export const fromApi = ( {
 	status,
 	rewindId: rewind_id,
 	context,
+	currentEntry: current_entry,
 } );
 
 export const updateProgress = ( { siteId, restoreId, timestamp }, data ) =>

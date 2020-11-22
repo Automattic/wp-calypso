@@ -13,7 +13,7 @@ export default function AccountLevelPurchaseLinks() {
 	const translate = useTranslate();
 	return (
 		<>
-			<CompactCard href="/me/purchases">{ translate( 'View all subscriptions' ) }</CompactCard>
+			<CompactCard href="/me/purchases">{ translate( 'View all purchases' ) }</CompactCard>
 		</>
 	);
 }

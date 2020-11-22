@@ -32,11 +32,6 @@ import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import FormattedHeader from 'calypso/components/formatted-header';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
 /* eslint-disable react/prefer-es6-class */
@@ -135,24 +130,22 @@ const Privacy = createReactClass( {
 								) }
 							</p>
 							<hr />
-							<p>
-								<FormToggle
-									id="tracks_opt_out"
-									checked={ isSendingTracksEvent }
-									onChange={ this.updateTracksOptOut }
-								>
-									{ translate(
-										'Share information with our analytics tool about your use of services while ' +
-											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
-											'{{/cookiePolicyLink}}.',
-										{
-											components: {
-												cookiePolicyLink,
-											},
-										}
-									) }
-								</FormToggle>
-							</p>
+							<FormToggle
+								id="tracks_opt_out"
+								checked={ isSendingTracksEvent }
+								onChange={ this.updateTracksOptOut }
+							>
+								{ translate(
+									'Share information with our analytics tool about your use of services while ' +
+										'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
+										'{{/cookiePolicyLink}}.',
+									{
+										components: {
+											cookiePolicyLink,
+										},
+									}
+								) }
+							</FormToggle>
 						</FormFieldset>
 
 						<FormButton
@@ -198,7 +191,7 @@ const Privacy = createReactClass( {
 							) }
 						</strong>
 					</p>
-					<Button primary className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
+					<Button className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
 						{ translate( 'Request a DPA', {
 							comment:
 								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',

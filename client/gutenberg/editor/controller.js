@@ -22,7 +22,6 @@ import {
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'calypso/config';
 import { Placeholder } from './placeholder';
 
@@ -103,16 +102,18 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
 	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
+		! isJetpack || // If the site is not Jetpack (Atomic or self hosted) then it's a simple site and users are always authenticated.
+		( isJetpack && isSSOEnabled( state, siteId ) ) || // Assume we can authenticate with SSO
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 

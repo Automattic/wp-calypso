@@ -4,34 +4,33 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { startCase } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import AutomatticLogo from 'components/automattic-logo';
-import DocumentHead from 'components/data/document-head';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import TranslatorInvite from 'components/translator-invite';
-import LoginBlock from 'blocks/login';
-import { isCrowdsignalOAuth2Client } from 'lib/oauth2-clients';
+import AutomatticLogo from 'calypso/components/automattic-logo';
+import DocumentHead from 'calypso/components/data/document-head';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import TranslatorInvite from 'calypso/components/translator-invite';
+import LoginBlock from 'calypso/blocks/login';
+import { isCrowdsignalOAuth2Client } from 'calypso/lib/oauth2-clients';
 import LoginLinks from './login-links';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import PrivateSite from './private-site';
-import { localizeUrl } from 'lib/i18n-utils';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	recordPageViewWithClientId as recordPageView,
 	recordTracksEventWithClientId as recordTracksEvent,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 /**
  * Style dependencies
@@ -80,8 +79,10 @@ export class Login extends React.Component {
 		let title = 'Login';
 
 		if ( twoFactorAuthType ) {
+			const authTypeTitle =
+				twoFactorAuthType.charAt( 0 ).toUpperCase() + twoFactorAuthType.slice( 1 );
 			url += `/${ twoFactorAuthType }`;
-			title += ` > Two-Step Authentication > ${ startCase( twoFactorAuthType ) }`;
+			title += ` > Two-Step Authentication > ${ authTypeTitle }`;
 		}
 
 		if ( socialConnect ) {

@@ -1,5 +1,4 @@
 module.exports = {
-	rootDir: __dirname,
+	preset: '../../test/packages/jest-preset.js',
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/.eslintrc.*', '!**/examples/**' ],
-	cacheDirectory: '<rootDir>/../../.cache/jest',
 };

@@ -21,12 +21,12 @@ function isCustomizeEnabled() {
 }
 
 function getEditCSSLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin =
-			adminUrl +
-			'customize.php?return=' +
-			encodeURIComponent( window.location.href ) +
-			'&section=jetpack_custom_css';
+	const adminUrl = selectedSite.URL + '/wp-admin/';
+	const customizerInAdmin =
+		adminUrl +
+		'customize.php?return=' +
+		encodeURIComponent( window.location.href ) +
+		'&section=jetpack_custom_css';
 
 	return isCustomizeEnabled() ? '/customize/custom-css/' + selectedSite.slug : customizerInAdmin;
 }

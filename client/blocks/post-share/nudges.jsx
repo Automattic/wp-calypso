@@ -14,7 +14,10 @@ import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSitePlanRawPrice, getPlanDiscountedRawPrice } from 'calypso/state/sites/plans/selectors';
+import {
+	getSitePlanRawPrice,
+	getPlanDiscountedRawPrice,
+} from 'calypso/state/sites/plans/selectors';
 
 export const UpgradeToPremiumNudgePure = ( props ) => {
 	const { price, planSlug, translate, userCurrency, canUserUpgrade, isJetpack } = props;

@@ -24,7 +24,7 @@ import {
 	productsRequest,
 	receivedProducts,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	WOOCOMMERCE_API_REQUEST,
 	WOOCOMMERCE_PRODUCTS_REQUEST_FAILURE,

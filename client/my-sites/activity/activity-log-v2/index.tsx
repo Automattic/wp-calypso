@@ -29,6 +29,7 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Main from 'calypso/components/main';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
@@ -46,12 +47,14 @@ const ActivityLogV2: FunctionComponent = () => {
 	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
 	const siteIsOnFreePlan = useSelector(
 		( state ) =>
+			siteId &&
 			isFreePlan( get( getCurrentPlan( state, siteId ), 'productSlug' ) ) &&
 			! isVipSite( state, siteId )
 	);
-	const siteHasBackupPurchase = useSelector( ( state ) =>
-		siteHasBackupProductPurchase( state, siteId )
+	const siteHasBackupPurchase = useSelector(
+		( state ) => siteId && siteHasBackupProductPurchase( state, siteId )
 	);
+	const settingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	const showUpgrade = siteIsOnFreePlan && ! siteHasBackupPurchase;
 	const showFilter = ! showUpgrade;
@@ -96,7 +99,7 @@ const ActivityLogV2: FunctionComponent = () => {
 			<DocumentHead title={ translate( 'Activity log' ) } />
 			<SidebarNavigation />
 			<PageViewTracker path="/activity-log/:site" title="Activity log" />
-			<TimeMismatchWarning siteId={ siteId } />
+			{ settingsUrl && <TimeMismatchWarning siteId={ siteId } settingsUrl={ settingsUrl } /> }
 			{ isJetpackCloud() ? (
 				jetpackCloudHeader
 			) : (

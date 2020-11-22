@@ -6,61 +6,78 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import config from 'calypso/config';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { requestSite } from 'calypso/state/sites/actions';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { canCurrentUserUseCustomerHome, getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 
 export default function () {
-	const user = userFactory();
-	const isLoggedOut = ! user.get();
-	if ( isLoggedOut ) {
-		setupLoggedOut();
-	} else {
-		setupLoggedIn();
-	}
-}
-
-function setupLoggedOut() {
-	if ( config.isEnabled( 'desktop' ) ) {
-		page( '/', () => {
-			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/authorize' );
-			} else {
-				page.redirect( '/log-in' );
-			}
-		} );
-	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
-		page( '/', () => {
-			page.redirect( '/devdocs/start' );
-		} );
-	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
-		page( '/', () => {
-			if ( config.isEnabled( 'oauth' ) ) {
-				page.redirect( '/connect' );
-			}
-		} );
-	}
-}
-
-function setupLoggedIn() {
 	page( '/', ( context ) => {
-		const state = context.store.getState();
-		const primarySiteId = getPrimarySiteId( state );
-		const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
-		const siteSlug = getSiteSlug( state, primarySiteId );
-		let redirectPath = siteSlug && isCustomerHomeEnabled ? `/home/${ siteSlug }` : '/read';
-
-		if ( isJetpackSite( state, primarySiteId ) && ! isAtomicSite( state, primarySiteId ) ) {
-			redirectPath = `/stats/${ siteSlug }`;
+		const isLoggedIn = isUserLoggedIn( context.store.getState() );
+		if ( isLoggedIn ) {
+			handleLoggedIn( context );
+		} else {
+			handleLoggedOut( context );
 		}
-
-		if ( context.querystring ) {
-			redirectPath += `?${ context.querystring }`;
-		}
-
-		page.redirect( redirectPath );
 	} );
+}
+
+function handleLoggedOut() {
+	if ( config.isEnabled( 'desktop' ) ) {
+		if ( config.isEnabled( 'oauth' ) ) {
+			page.redirect( config( 'login_url' ) );
+		} else {
+			page.redirect( '/log-in' );
+		}
+	} else if ( config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
+		page.redirect( '/devdocs/start' );
+	} else if ( config.isEnabled( 'jetpack-cloud' ) ) {
+		if ( config.isEnabled( 'oauth' ) ) {
+			page.redirect( '/connect' );
+		}
+	}
+}
+
+// Helper thunk that ensures that the requested site info is fetched into Redux state before we
+// continue working with it.
+// The `siteSelection` handler in `my-sites/controller` contains similar code.
+const waitForSite = ( siteId ) => async ( dispatch, getState ) => {
+	if ( getSite( getState(), siteId ) ) {
+		return;
+	}
+
+	try {
+		await dispatch( requestSite( siteId ) );
+	} catch {
+		// if the fetching of site info fails, return gracefully and proceed to redirect to Reader
+	}
+};
+
+async function handleLoggedIn( context ) {
+	// determine the primary site ID (it's a property of "current user" object) and then
+	// ensure that the primary site info is loaded into Redux before proceeding.
+	const primarySiteId = getPrimarySiteId( context.store.getState() );
+	await context.store.dispatch( waitForSite( primarySiteId ) );
+
+	const state = context.store.getState();
+	const siteSlug = getSiteSlug( state, primarySiteId );
+	const isCustomerHomeEnabled = canCurrentUserUseCustomerHome( state, primarySiteId );
+
+	let redirectPath;
+
+	if ( ! siteSlug ) {
+		// there is no primary site or the site info couldn't be fetched. Redirect to Reader.
+		redirectPath = '/read';
+	} else if ( isCustomerHomeEnabled ) {
+		redirectPath = `/home/${ siteSlug }`;
+	} else {
+		redirectPath = `/stats/${ siteSlug }`;
+	}
+
+	if ( context.querystring ) {
+		redirectPath += `?${ context.querystring }`;
+	}
+
+	page.redirect( redirectPath );
 }

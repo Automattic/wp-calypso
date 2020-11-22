@@ -6,23 +6,15 @@ import { TranslateResult, useTranslate } from 'i18n-calypso';
 /**
  * Image assets
  */
-import creditCardAmexImage from 'assets/images/upgrades/cc-amex.svg';
-import creditCardAmexDisabledImage from 'assets/images/upgrades/cc-amex-disabled.svg';
-import creditCardDinersImage from 'assets/images/upgrades/cc-diners.svg';
-import creditCardDinersDisabledImage from 'assets/images/upgrades/cc-diners-disabled.svg';
-import creditCardDiscoverImage from 'assets/images/upgrades/cc-discover.svg';
-import creditCardDiscoverDisabledImage from 'assets/images/upgrades/cc-discover-disabled.svg';
-import creditCardJCBImage from 'assets/images/upgrades/cc-jcb.svg';
-import creditCardJCBDisabledImage from 'assets/images/upgrades/cc-jcb-disabled.svg';
-import creditCardMasterCardImage from 'assets/images/upgrades/cc-mastercard.svg';
-import creditCardMasterCardDisabledImage from 'assets/images/upgrades/cc-mastercard-disabled.svg';
-import creditCardPlaceholderImage from 'assets/images/upgrades/cc-placeholder.svg';
-import creditCardUnionPayImage from 'assets/images/upgrades/cc-unionpay.svg';
-import creditCardUnionPayDisabledImage from 'assets/images/upgrades/cc-unionpay-disabled.svg';
-import creditCardVisaImage from 'assets/images/upgrades/cc-visa.svg';
-import creditCardVisaDisabledImage from 'assets/images/upgrades/cc-visa-disabled.svg';
-import payPalDisabledImage from 'assets/images/upgrades/paypal-disabled.svg';
-import payPalImage from 'assets/images/upgrades/paypal.svg';
+import creditCardAmexImage from 'calypso/assets/images/upgrades/cc-amex.svg';
+import creditCardDinersImage from 'calypso/assets/images/upgrades/cc-diners.svg';
+import creditCardDiscoverImage from 'calypso/assets/images/upgrades/cc-discover.svg';
+import creditCardJCBImage from 'calypso/assets/images/upgrades/cc-jcb.svg';
+import creditCardMasterCardImage from 'calypso/assets/images/upgrades/cc-mastercard.svg';
+import creditCardPlaceholderImage from 'calypso/assets/images/upgrades/cc-placeholder.svg';
+import creditCardUnionPayImage from 'calypso/assets/images/upgrades/cc-unionpay.svg';
+import creditCardVisaImage from 'calypso/assets/images/upgrades/cc-visa.svg';
+import payPalImage from 'calypso/assets/images/upgrades/paypal.svg';
 
 export const PARTNER_PAYPAL_EXPRESS = 'paypal_express';
 export const PAYMENT_AGREEMENTS_PARTNERS = [ PARTNER_PAYPAL_EXPRESS ];
@@ -58,24 +50,12 @@ const CREDIT_CARD_SELECTED_PATHS: ImagePathsMap = {
 	paypal: payPalImage,
 };
 
-const CREDIT_CARD_DISABLED_PATHS: ImagePathsMap = {
-	amex: creditCardAmexDisabledImage,
-	diners: creditCardDinersDisabledImage,
-	discover: creditCardDiscoverDisabledImage,
-	jcb: creditCardJCBDisabledImage,
-	mastercard: creditCardMasterCardDisabledImage,
-	unionpay: creditCardUnionPayDisabledImage,
-	visa: creditCardVisaDisabledImage,
-	paypal_express: payPalDisabledImage,
-	paypal: payPalDisabledImage,
-};
-
 const CREDIT_CARD_DEFAULT_PATH = creditCardPlaceholderImage;
 
-export const getPaymentMethodImageURL = ( type: string, selected?: boolean ): string => {
-	const paths = selected ? CREDIT_CARD_SELECTED_PATHS : CREDIT_CARD_DISABLED_PATHS;
+export const getPaymentMethodImageURL = ( type: string ): string => {
+	const paths = CREDIT_CARD_SELECTED_PATHS;
 	const imagePath: string = paths[ type ] || CREDIT_CARD_DEFAULT_PATH;
-	return `url(${ imagePath })`;
+	return `${ imagePath }`;
 };
 
 export const getPaymentMethodSummary = ( {

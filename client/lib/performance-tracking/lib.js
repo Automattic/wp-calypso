@@ -14,6 +14,7 @@ import {
 	getCurrentUserSiteCount,
 	getCurrentUserVisibleSiteCount,
 	getCurrentUserCountryCode,
+	isCurrentUserBootstrapped,
 } from 'calypso/state/current-user/selectors';
 
 /**
@@ -30,6 +31,7 @@ const buildDefaultCollector = ( state ) => {
 	const sitesCount = getCurrentUserSiteCount( state );
 	const sitesVisibleCount = getCurrentUserVisibleSiteCount( state );
 	const userCountryCode = getCurrentUserCountryCode( state );
+	const userBootstrapped = isCurrentUserBootstrapped( state );
 
 	return ( report ) => {
 		report.data.set( 'siteId', siteId );
@@ -39,6 +41,7 @@ const buildDefaultCollector = ( state ) => {
 		report.data.set( 'sitesCount', sitesCount );
 		report.data.set( 'sitesVisibleCount', sitesVisibleCount );
 		report.data.set( 'userCountryCode', userCountryCode );
+		report.data.set( 'userBootstrapped', userBootstrapped );
 	};
 };
 

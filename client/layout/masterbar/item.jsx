@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import { isFunction, noop } from 'lodash';
-import Gridicon from 'components/gridicon';
-import TranslatableString from 'components/translatable/proptype';
+import Gridicon from 'calypso/components/gridicon';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 class MasterbarItem extends Component {
 	static propTypes = {

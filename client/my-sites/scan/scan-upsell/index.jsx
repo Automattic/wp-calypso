@@ -9,6 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import DocumentHead from 'calypso/components/data/document-head';
+import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
 import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
@@ -84,11 +85,13 @@ function ScanUpsellBody() {
 }
 
 function renderUpsell( reason ) {
-	if ( 'multisite_not_supported' === reason ) {
-		return <ScanMultisiteBody />;
-	}
-	if ( 'vp_active_on_site' === reason ) {
-		return <ScanVPActiveBody />;
+	switch ( reason ) {
+		case 'vp_active_on_site':
+			return <ScanVPActiveBody />;
+		case 'multisite_not_supported':
+			return <ScanMultisiteBody />;
+		case 'no_connected_jetpack':
+			return <JetpackDisconnected />;
 	}
 	return <ScanUpsellBody />;
 }

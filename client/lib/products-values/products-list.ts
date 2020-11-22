@@ -26,7 +26,7 @@ import {
 	FEATURE_FILTERING_V2,
 	FEATURE_LANGUAGE_SUPPORT_V2,
 	FEATURE_SPELLING_CORRECTION_V2,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Type dependencies

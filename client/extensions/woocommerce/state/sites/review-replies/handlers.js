@@ -9,11 +9,11 @@ import { translate } from 'i18n-calypso';
  */
 import { changeReviewStatus } from 'woocommerce/state/sites/reviews/actions';
 import { clearReviewReplyEdits } from 'woocommerce/state/ui/review-replies/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { fetchReviewReplies } from 'woocommerce/state/sites/review-replies/actions';
 import { getReview } from 'woocommerce/state/sites/reviews/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import request from 'woocommerce/state/sites/http-request';
 import {
 	WOOCOMMERCE_REVIEW_REPLIES_UPDATED,

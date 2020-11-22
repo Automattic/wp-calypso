@@ -61,6 +61,25 @@ function is_homepage_title_hidden() {
 }
 
 /**
+ * Detects if the site is using Gutenberg 9.2 or above, which contains a bug in the
+ * interface package, causing some "slider" blocks (such as Jetpack's Slideshow) to
+ * incorrectly calculate their width as 33554400px when set at full width.
+ *
+ * @see https://github.com/WordPress/gutenberg/pull/26552
+ *
+ * @return bool True if the site needs a temporary fix for the incorrect slider width.
+ */
+function needs_slider_width_workaround() {
+	if (
+		( defined( 'GUTENBERG_DEVELOPMENT_MODE' ) && GUTENBERG_DEVELOPMENT_MODE ) ||
+		( defined( 'GUTENBERG_VERSION' ) && version_compare( GUTENBERG_VERSION, '9.2', '>=' ) )
+	) {
+		return true;
+	}
+	return false;
+}
+
+/**
  * Detects if assets for the common module should be loaded.
  *
  * It should return true if any of the features added to the common module need
@@ -72,7 +91,7 @@ function is_homepage_title_hidden() {
  * @return bool True if the common module assets should be loaded.
  */
 function should_load_assets() {
-	return (bool) is_homepage_title_hidden();
+	return (bool) is_homepage_title_hidden() || needs_slider_width_workaround();
 }
 
 /**
@@ -128,19 +147,33 @@ add_action( 'enqueue_block_editor_assets', __NAMESPACE__ . '\enqueue_script_and_
  * users had been utilizing the feature. With the 8.6 release, though, line-height
  * was turned off by default unless the theme supported it. As a result, users
  * suddenly were no longer able to access the settings they previously had access
- * to. This filter turns the setting on for all wpcom users regardless of theme.
- *
- * Note: we use a priority of 11 so that this filter runs after the one which
- * turns off custom line height depending on theme support.
+ * to. This turns the setting on for all wpcom users regardless of theme.
  *
  * @see https://github.com/WordPress/gutenberg/pull/23904
- *
- * @param array $settings The associative array of Gutenberg editor settings with
- *                        line-height sometimes disabled based on theme support.
- * @return array Gutenberg editor settings with line-height setting always enabled.
  **/
-function wpcom_gutenberg_enable_custom_line_height( $settings ) {
-	$settings['enableCustomLineHeight'] = true;
-	return $settings;
+function wpcom_gutenberg_enable_custom_line_height() {
+	add_theme_support( 'custom-line-height' );
 }
-add_filter( 'block_editor_settings', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom_line_height', 11 );
+add_action( 'after_setup_theme', __NAMESPACE__ . '\wpcom_gutenberg_enable_custom_line_height' );
+
+/**
+ * Returns ISO 639 conforming locale string.
+ *
+ * @param string $language a language tag to be converted e.g. "en_US".
+ * @return string ISO 639 locale string e.g. "en"
+ */
+function get_iso_639_locale( $language ) {
+	$language = strtolower( $language );
+
+	if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
+		$language = str_replace( '_', '-', $language );
+	} else {
+		$language = preg_replace( '/([-_].*)$/i', '', $language );
+	}
+
+	if ( empty( $language ) ) {
+		return 'en';
+	}
+
+	return $language;
+}

@@ -72,7 +72,7 @@ class SectionNavigation extends PureComponent {
 	};
 
 	render() {
-		var demoSections = {};
+		const demoSections = {};
 
 		forEach(
 			omit( this.props, 'isolated', 'uniqueInstance', 'readmeFilePath' ),
@@ -136,15 +136,15 @@ class SectionNavigation extends PureComponent {
 	}
 
 	getSelectedText = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			text = this.props[ section ][ selected ];
+		const selected = this.state[ section + 'SelectedIndex' ];
+		const text = this.props[ section ][ selected ];
 
 		return 'object' === typeof text ? text.name : text;
 	};
 
 	getSelectedCount = ( section ) => {
-		var selected = this.state[ section + 'SelectedIndex' ],
-			selectedItem = this.props[ section ][ selected ];
+		const selected = this.state[ section + 'SelectedIndex' ];
+		const selectedItem = this.props[ section ][ selected ];
 
 		return 'object' === typeof selectedItem ? selectedItem.count || null : null;
 	};
@@ -160,7 +160,7 @@ class SectionNavigation extends PureComponent {
 
 	handleNavItemClick = ( section, index ) => {
 		return function () {
-			var stateUpdate = {};
+			const stateUpdate = {};
 
 			stateUpdate[ section + 'SelectedIndex' ] = index;
 			this.setState( stateUpdate );

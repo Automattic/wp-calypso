@@ -6,7 +6,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 // Enable/disable ad-tracking
 // These should not be put in the json config as they must not differ across environments
@@ -22,7 +22,7 @@ export const isExperianEnabled = true;
 export const isOutbrainEnabled = true;
 export const isPinterestEnabled = true;
 export const isIconMediaEnabled = false;
-export const isTwitterEnabled = false;
+export const isTwitterEnabled = true;
 export const isLinkedinEnabled = false;
 export const isCriteoEnabled = false;
 export const isPandoraEnabled = false;

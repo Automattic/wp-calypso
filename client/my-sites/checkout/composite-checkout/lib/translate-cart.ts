@@ -2,11 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import {
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-} from '@automattic/shopping-cart';
+import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -21,10 +17,11 @@ import {
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	WPCOMPaymentMethodClass,
-} from '../types/backend/payment-method';
+} from './translate-payment-method-names';
 import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
 import { isRenewal } from 'calypso/lib/cart-values/cart-items';
+import doesValueExist from './does-value-exist';
+import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -42,6 +39,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		total_cost_display,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
+		sub_total_with_taxes_display,
 		savings_total_display,
 		savings_total_integer,
 		currency,
@@ -91,7 +89,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			currency: currency,
 			value: credits_integer,
 			displayValue: String(
-				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+				translate( '- %(discountAmount)s', {
+					args: {
+						// Clamp the credits display value to the total
+						discountAmount: doesPurchaseHaveFullCredits( serverCart )
+							? sub_total_with_taxes_display
+							: credits_display,
+					},
+				} )
 			),
 		},
 		wpcom_meta: {
@@ -133,6 +138,13 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+
+	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
+		.map( readWPCOMPaymentMethodClass )
+		.filter( doesValueExist )
+		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
+
 	return {
 		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
@@ -141,17 +153,12 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
-		allowedPaymentMethods: allowed_payment_methods
-			.map( readWPCOMPaymentMethodClass )
-			.filter( ( Boolean as WPCOMPaymentMethodClass ) as ExcludesNull )
-			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod ),
+		allowedPaymentMethods,
 		couponCode: coupon,
 	};
 }
 
-type ExcludesNull = < T >( x: T | null ) => x is T;
-
-function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
 	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
 		return false;
@@ -161,7 +168,7 @@ function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartPr
 
 // Convert a backend cart item to a checkout cart item
 function translateReponseCartProductToWPCOMCartItem(
-	serverCartItem: ResponseCartProduct | TempResponseCartProduct
+	serverCartItem: ResponseCartProduct
 ): WPCOMCartItem {
 	const {
 		product_id,
@@ -174,6 +181,8 @@ function translateReponseCartProductToWPCOMCartItem(
 		item_subtotal_monthly_cost_integer,
 		item_original_subtotal_display,
 		item_original_subtotal_integer,
+		related_monthly_plan_cost_display,
+		related_monthly_plan_cost_integer,
 		is_sale_coupon_applied,
 		months_per_bill_period,
 		item_subtotal_display,
@@ -254,6 +263,8 @@ function translateReponseCartProductToWPCOMCartItem(
 			months_per_bill_period,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',
+			related_monthly_plan_cost_integer: related_monthly_plan_cost_integer || 0,
+			related_monthly_plan_cost_display: related_monthly_plan_cost_display || '',
 		},
 	};
 }

@@ -6,8 +6,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { ACCEPTED_USPS_ORIGIN_COUNTRIES } from 'woocommerce/woocommerce-services/state/shipping-label/constants';
 import getAddressValues from 'woocommerce/woocommerce-services/lib/utils/get-address-values';
 import { getForm } from 'woocommerce/woocommerce-services/state/shipping-label/selectors';

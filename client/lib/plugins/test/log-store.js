@@ -1,16 +1,15 @@
 /**
+ * External dependencies
+ */
+import Dispatcher from 'calypso/dispatcher';
+
+/**
  * Internal dependencies
  */
 import actions from './fixtures/actions';
+import LogStore from '../log-store';
 
 describe( 'Plugins Log Store', () => {
-	let Dispatcher, LogStore;
-
-	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		LogStore = require( '../log-store' );
-	} );
-
 	test( 'logs an update error', () => {
 		const initialErrors = LogStore.getErrors().length;
 		Dispatcher.handleServerAction( actions.updatedPluginError );

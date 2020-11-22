@@ -9,13 +9,13 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import { domainRegistration } from 'lib/cart-values/cart-items';
-import StepWrapper from 'signup/step-wrapper';
-import { submitSignupStep } from 'state/signup/progress/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import { getAvailableProductsList } from 'state/products-list/selectors';
-import { getDomainProductSlug } from 'lib/domains';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
+import { getDomainProductSlug } from 'calypso/lib/domains';
 import SiteOrDomainChoice from './choice';
 import DomainImage from './domain-image';
 import NewSiteImage from './new-site-image';

@@ -7,7 +7,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'calypso/lib/mixins/emitter';
 
 const debug = debugFactory( 'calypso:notices' );
 
@@ -146,8 +146,8 @@ const notices = {
 		if ( ! notice.container ) {
 			return;
 		}
-		const containerList = list[ notice.container ],
-			index = containerList.indexOf( notice );
+		const containerList = list[ notice.container ];
+		const index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
 			return;

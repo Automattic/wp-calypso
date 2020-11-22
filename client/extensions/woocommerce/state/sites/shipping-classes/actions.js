@@ -7,7 +7,7 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 
-import { errorNotice, removeNotice } from 'state/notices/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,

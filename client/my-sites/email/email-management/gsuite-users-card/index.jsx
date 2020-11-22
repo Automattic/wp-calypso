@@ -62,9 +62,11 @@ class GSuiteUsersCard extends React.Component {
 	renderDomainWithGSuite( domainName, users ) {
 		// The product name is same for all users as product license is associated to domain
 		// Hence a snapshot of the product name from the first user is sufficient
-		const license = users[ 0 ].product_name;
-		// This ensures display consistency if the API is not ready yet
-		const label = license ? `${ license }: ${ domainName }` : domainName;
+		const productName = users[ 0 ].product_name;
+
+		// Shows at least the domain name if the list of G Suite users has not been retrieved from the API yet
+		const label = productName ? `${ productName }: ${ domainName }` : domainName;
+
 		return (
 			<div key={ `google-apps-user-${ domainName }` } className="gsuite-users-card__container">
 				<SectionHeader label={ label }>
@@ -79,6 +81,7 @@ class GSuiteUsersCard extends React.Component {
 						</Button>
 					) }
 				</SectionHeader>
+
 				<CompactCard className="gsuite-users-card__user-list">
 					<ul className="gsuite-users-card__user-list-inner">
 						{ users.map( ( user, index ) => this.renderUser( user, index ) ) }
@@ -98,13 +101,13 @@ class GSuiteUsersCard extends React.Component {
 
 	renderUser( user, index ) {
 		if ( user.error ) {
-			let status = 'is-warning',
-				text = user.error,
-				supportLink = (
-					<a href={ CALYPSO_CONTACT }>
-						<strong>{ this.props.translate( 'Please contact support' ) }</strong>
-					</a>
-				);
+			let status = 'is-warning';
+			let text = user.error;
+			let supportLink = (
+				<a href={ CALYPSO_CONTACT }>
+					<strong>{ this.props.translate( 'Please contact support' ) }</strong>
+				</a>
+			);
 
 			const domain = find( this.props.domains, { name: user.domain } );
 			const subscribedDate = get( domain, 'googleAppsSubscription.subscribedDate', false );

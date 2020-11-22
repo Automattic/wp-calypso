@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import config from 'config';
+import config from 'calypso/config';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -25,17 +25,17 @@ import {
 	areSettingsGeneralLoaded,
 	getStoreLocation,
 } from 'woocommerce/state/sites/settings/general/selectors';
-import Count from 'components/count';
+import Count from 'calypso/components/count';
 import { fetchCounts } from 'woocommerce/state/sites/data/counts/actions';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getSetStoreAddressDuringInitialSetup } from 'woocommerce/state/sites/setup-choices/selectors';
-import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
+import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { isStoreManagementSupportedInCalypsoForCountry } from 'woocommerce/lib/countries';
-import Sidebar from 'layout/sidebar';
-import SidebarItem from 'layout/sidebar/item';
-import SidebarMenu from 'layout/sidebar/menu';
-import SidebarSeparator from 'layout/sidebar/separator';
+import Sidebar from 'calypso/layout/sidebar';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import SidebarMenu from 'calypso/layout/sidebar/menu';
+import SidebarSeparator from 'calypso/layout/sidebar/separator';
 import StoreGroundControl from './store-ground-control';
 import QuerySettingsGeneral from 'woocommerce/components/query-settings-general';
 
@@ -251,15 +251,13 @@ class StoreSidebar extends Component {
 			<Sidebar className="store-sidebar__sidebar">
 				<StoreGroundControl site={ site } />
 				<SidebarMenu>
-					<ul>
-						{ this.dashboard() }
-						{ showAllSidebarItems && this.products() }
-						{ showAllSidebarItems && this.orders() }
-						{ showAllSidebarItems && this.promotions() }
-						{ showAllSidebarItems && this.reviews() }
-						{ showAllSidebarItems && <SidebarSeparator /> }
-						{ showAllSidebarItems && this.settings() }
-					</ul>
+					{ this.dashboard() }
+					{ showAllSidebarItems && this.products() }
+					{ showAllSidebarItems && this.orders() }
+					{ showAllSidebarItems && this.promotions() }
+					{ showAllSidebarItems && this.reviews() }
+					{ showAllSidebarItems && <SidebarSeparator /> }
+					{ showAllSidebarItems && this.settings() }
 				</SidebarMenu>
 				{ shouldLoadSettings && <QuerySettingsGeneral siteId={ siteId } /> }
 			</Sidebar>

@@ -14,9 +14,9 @@ import React from 'react';
  * Internal dependencies
  */
 import { EditorMediaModal } from '../';
-import accept from 'lib/accept';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { useSandbox } from 'test-helpers/use-sinon';
+import accept from 'calypso/lib/accept';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'component-closest', () => {} );
 jest.mock(
@@ -28,17 +28,19 @@ jest.mock(
 	{ virtual: true }
 );
 jest.mock( 'post-editor/media-modal/detail', () => ( {
-	default: require( 'components/empty-component' ),
+	default: require( 'calypso/components/empty-component' ),
 } ) );
-jest.mock( 'post-editor/media-modal/gallery', () => require( 'components/empty-component' ) );
+jest.mock( 'post-editor/media-modal/gallery', () =>
+	require( 'calypso/components/empty-component' )
+);
 jest.mock( 'post-editor/media-modal/markup', () => ( {
 	get: ( x ) => x,
 } ) );
 jest.mock( 'post-editor/media-modal/secondary-actions', () =>
-	require( 'components/empty-component' )
+	require( 'calypso/components/empty-component' )
 );
 jest.mock( 'lib/accept', () => require( 'sinon' ).stub().callsArgWithAsync( 1, true ) );
-jest.mock( 'my-sites/media-library', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/media-library', () => require( 'calypso/components/empty-component' ) );
 
 /**
  * Module variables
@@ -53,7 +55,12 @@ const DUMMY_VIDEO_MEDIA = [
 ];
 
 describe( 'EditorMediaModal', () => {
-	let spy, deleteMedia, onClose, setMediaLibrarySelectedItems, changeMediaSource, baseProps;
+	let spy;
+	let deleteMedia;
+	let onClose;
+	let setMediaLibrarySelectedItems;
+	let changeMediaSource;
+	let baseProps;
 
 	useSandbox( ( sandbox ) => {
 		spy = sandbox.spy();

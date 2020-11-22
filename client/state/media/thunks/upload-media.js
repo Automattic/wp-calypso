@@ -7,10 +7,6 @@ import { castArray, noop, zip } from 'lodash';
  * Internal dependencies
  */
 import {
-	dispatchFluxReceiveMediaItemError,
-	dispatchFluxReceiveMediaItemSuccess,
-} from 'calypso/state/media/utils/flux-adapter';
-import {
 	receiveMedia,
 	successMediaItemRequest,
 	failMediaItemRequest,
@@ -72,8 +68,6 @@ export const uploadMedia = (
 				transientId: transientMedia.ID,
 			};
 
-			dispatchFluxReceiveMediaItemSuccess( transientMedia.ID, siteId, uploadedMedia );
-
 			dispatch( successMediaItemRequest( siteId, transientMedia.ID ) );
 			dispatch( receiveMedia( siteId, uploadedMediaWithTransientId, found ) );
 
@@ -82,8 +76,6 @@ export const uploadMedia = (
 			onItemUploaded( uploadedMediaWithTransientId, file );
 			uploadedItems.push( uploadedMediaWithTransientId );
 		} catch ( error ) {
-			dispatchFluxReceiveMediaItemError( transientMedia.ID, siteId, error );
-
 			dispatch( failMediaItemRequest( siteId, transientMedia.ID, error ) );
 			onItemFailure( file );
 		}

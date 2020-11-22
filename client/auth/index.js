@@ -7,9 +7,9 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default () => {
 	// Always enable the /oauth-login route and redirect to /log-in if `oauth` is disabled

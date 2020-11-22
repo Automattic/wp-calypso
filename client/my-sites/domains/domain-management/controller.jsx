@@ -212,7 +212,6 @@ export default {
 				component={ DomainManagement.NameServers }
 				context={ pageContext }
 				needsDomains
-				needsNameservers
 				selectedDomainName={ pageContext.params.domain }
 			/>
 		);
@@ -267,7 +266,6 @@ export default {
 				component={ DomainManagement.Transfer }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -283,7 +281,6 @@ export default {
 				component={ DomainManagement.TransferToOtherSite }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -299,7 +296,6 @@ export default {
 				component={ DomainManagement.TransferToOtherUser }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>
@@ -315,7 +311,6 @@ export default {
 				component={ DomainManagement.TransferOut }
 				context={ pageContext }
 				needsDomains
-				needsDomainInfo
 				needsUsers
 				selectedDomainName={ pageContext.params.domain }
 			/>

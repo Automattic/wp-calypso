@@ -7,8 +7,8 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import PulsingDot from 'components/pulsing-dot';
+import Main from 'calypso/components/main';
+import PulsingDot from 'calypso/components/pulsing-dot';
 
 /**
  * Style dependencies

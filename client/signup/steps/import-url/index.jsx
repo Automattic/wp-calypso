@@ -10,20 +10,23 @@ import { flow, get, includes, invoke } from 'lodash';
  * Internal dependencies
  */
 import { Button, ScreenReaderText } from '@automattic/components';
-import ExampleDomainBrowser from 'components/domains/example-domain-browser';
-import ExternalLink from 'components/external-link';
-import StepWrapper from 'signup/step-wrapper';
-import FormButton from 'components/forms/form-button';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import { setImportOriginSiteDetails, setNuxUrlInputValue } from 'state/importer-nux/actions';
-import { getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import { validateImportUrl } from 'lib/importer/url-validation';
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import wpcom from 'lib/wp';
-import { saveSignupStep } from 'state/signup/progress/actions';
-import { suggestDomainFromImportUrl } from 'lib/importer/utils';
+import ExampleDomainBrowser from 'calypso/components/domains/example-domain-browser';
+import ExternalLink from 'calypso/components/external-link';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import FormButton from 'calypso/components/forms/form-button';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import {
+	setImportOriginSiteDetails,
+	setNuxUrlInputValue,
+} from 'calypso/state/importer-nux/actions';
+import { getNuxUrlInputValue } from 'calypso/state/importer-nux/temp-selectors';
+import { validateImportUrl } from 'calypso/lib/importer/url-validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import wpcom from 'calypso/lib/wp';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { suggestDomainFromImportUrl } from 'calypso/lib/importer/utils';
 
 /**
  * Style dependencies

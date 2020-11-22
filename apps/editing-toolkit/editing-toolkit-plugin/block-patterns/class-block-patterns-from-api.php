@@ -38,7 +38,7 @@ class Block_Patterns_From_API {
 				array(
 					'block_patterns',
 					PLUGIN_VERSION,
-					$this->get_iso_639_locale(),
+					$this->get_block_patterns_locale(),
 				)
 			)
 		);
@@ -118,7 +118,7 @@ class Block_Patterns_From_API {
 					array(
 						'tags' => 'pattern',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_iso_639_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
 			);
 
@@ -141,25 +141,11 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Returns ISO 639 conforming locale string.
-	 *
-	 * @return string ISO 639 locale string
+	 * Get the locale to be used for fetching block patterns
 	 */
-	private function get_iso_639_locale() {
+	private function get_block_patterns_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
-		$language = strtolower( $language );
-
-		if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
-			$language = str_replace( '_', '-', $language );
-		} else {
-			$language = preg_replace( '/([-_].*)$/i', '', $language );
-		}
-
-		if ( empty( $language ) ) {
-			return 'en';
-		}
-
-		return $language;
+		return \A8C\FSE\Common\get_iso_639_locale( $language );
 	}
 }

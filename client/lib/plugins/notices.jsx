@@ -8,11 +8,11 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginsActions from 'lib/plugins/actions';
-import { filterNotices } from 'lib/plugins/utils';
-import versionCompare from 'lib/version-compare';
+import notices from 'calypso/notices';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import { filterNotices } from 'calypso/lib/plugins/utils';
+import versionCompare from 'calypso/lib/version-compare';
 
 function getCombination( translateArg ) {
 	return (
@@ -103,13 +103,13 @@ export default {
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
 			const sampleLog =
-					logNotices.completed[ 0 ].status === 'inProgress'
-						? logNotices.completed[ 0 ]
-						: logNotices.completed[ logNotices.completed.length - 1 ],
-				// the dismiss button would overlap the link to the settings page when activating
-				showDismiss =
-					sampleLog.action !== 'ACTIVATE_PLUGIN' ||
-					! get( sampleLog, 'plugin.wp_admin_settings_page_url' );
+				logNotices.completed[ 0 ].status === 'inProgress'
+					? logNotices.completed[ 0 ]
+					: logNotices.completed[ logNotices.completed.length - 1 ];
+			// the dismiss button would overlap the link to the settings page when activating
+			const showDismiss =
+				sampleLog.action !== 'ACTIVATE_PLUGIN' ||
+				! get( sampleLog, 'plugin.wp_admin_settings_page_url' );
 
 			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
 				button: this.getSuccessButton( logNotices.completed ),
@@ -121,9 +121,9 @@ export default {
 	},
 
 	getMessage( logs, messageFunction, typeFilter ) {
-		const sampleLog = logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ],
-			translateArg = getTranslateArg( logs, sampleLog, typeFilter ),
-			combination = getCombination( translateArg );
+		const sampleLog = logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ];
+		const translateArg = getTranslateArg( logs, sampleLog, typeFilter );
+		const combination = getCombination( translateArg );
 		return messageFunction( sampleLog.action, combination, translateArg, sampleLog );
 	},
 
@@ -568,11 +568,11 @@ export default {
 
 	erroredAndCompletedMessage( logNotices ) {
 		const completedMessage = this.getMessage(
-				logNotices.completed,
-				this.successMessage,
-				'completed'
-			),
-			errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
+			logNotices.completed,
+			this.successMessage,
+			'completed'
+		);
+		const errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	},
 

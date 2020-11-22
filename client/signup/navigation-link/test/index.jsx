@@ -9,14 +9,14 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { NavigationLink } from '../';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 jest.mock( 'signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
 } ) );
 
-const signupUtils = require( 'signup/utils' );
+const signupUtils = require( 'calypso/signup/utils' );
 const { getStepUrl, getFilteredSteps } = signupUtils;
 
 describe( 'NavigationLink', () => {

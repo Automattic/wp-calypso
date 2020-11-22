@@ -10,7 +10,6 @@ import page from 'page';
  * Internal Dependencies
  */
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
-import { setSection } from 'calypso/state/ui/actions';
 import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
@@ -21,6 +20,7 @@ import CheckoutThankYouComponent from './checkout-thank-you';
 import UpsellNudge from './upsell-nudge';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { getRememberedCoupon } from 'calypso/lib/cart/actions';
+import { setSectionMiddleware } from 'calypso/controller';
 import { sites } from 'calypso/my-sites/controller';
 import CartData from 'calypso/components/data/cart';
 import userFactory from 'calypso/lib/user';
@@ -63,7 +63,7 @@ export function checkout( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Checkout' ) ) );
 
-	context.store.dispatch( setSection( { name: 'checkout' } ) );
+	setSectionMiddleware( { name: 'checkout' } )( context );
 
 	// NOTE: `context.query.code` is deprecated in favor of `context.query.coupon`.
 	const couponCode = context.query.coupon || context.query.code || getRememberedCoupon();
@@ -93,16 +93,10 @@ export function checkout( context, next ) {
 				purchaseId={ purchaseId }
 				selectedFeature={ feature }
 				couponCode={ couponCode }
-				isComingFromSignup={ !! context.query.signup }
-				isComingFromGutenboarding={ !! context.query.preLaunch }
-				isGutenboardingCreate={ !! context.query.isGutenboardingCreate }
 				isComingFromUpsell={ !! context.query.upgrade }
 				plan={ plan }
 				selectedSite={ selectedSite }
-				reduxStore={ context.store }
 				redirectTo={ context.query.redirect_to }
-				upgradeIntent={ context.query.intent }
-				clearTransaction={ false }
 				isLoggedOutCart={ isLoggedOutCart }
 				isNoSiteCart={ isNoSiteCart }
 			/>
@@ -116,7 +110,7 @@ export function checkoutPending( context, next ) {
 	const orderId = Number( context.params.orderId );
 	const siteSlug = context.params.site;
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
+	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
 	context.primary = (
 		<CheckoutPendingComponent
@@ -137,7 +131,7 @@ export function checkoutThankYou( context, next ) {
 	const selectedSite = getSelectedSite( state );
 	const displayMode = get( context, 'query.d' );
 
-	context.store.dispatch( setSection( { name: 'checkout-thank-you' } ) );
+	setSectionMiddleware( { name: 'checkout-thank-you' } )( context );
 
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 	context.store.dispatch( setTitle( i18n.translate( 'Thank You' ) ) );
@@ -161,7 +155,7 @@ export function checkoutThankYou( context, next ) {
 
 export function gsuiteNudge( context, next ) {
 	const { domain, site, receiptId } = context.params;
-	context.store.dispatch( setSection( { name: 'gsuite-nudge' } ) );
+	setSectionMiddleware( { name: 'gsuite-nudge' } )( context );
 
 	const state = context.store.getState();
 	const selectedSite =
@@ -195,7 +189,8 @@ export function gsuiteNudge( context, next ) {
 export function upsellNudge( context, next ) {
 	const { receiptId, site } = context.params;
 
-	let upsellType, upgradeItem;
+	let upsellType;
+	let upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
 		upsellType = 'concierge-quickstart-session';
@@ -208,7 +203,7 @@ export function upsellNudge( context, next ) {
 		upgradeItem = context.params.upgradeItem;
 	}
 
-	context.store.dispatch( setSection( { name: upsellType } ) );
+	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
 		<CheckoutContainer

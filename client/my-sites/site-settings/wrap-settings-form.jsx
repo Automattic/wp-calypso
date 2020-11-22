@@ -164,8 +164,8 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		handleRadio = ( event ) => {
-			const currentTargetName = event.currentTarget.name,
-				currentTargetValue = event.currentTarget.value;
+			const currentTargetName = event.currentTarget.name;
+			const currentTargetValue = event.currentTarget.value;
 
 			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );

@@ -193,13 +193,24 @@ export default {
 		localeTargets: [ 'en' ],
 	},
 	jetpackConversionRateOptimization: {
-		datestamp: '20201020',
+		datestamp: '20201115',
 		variations: {
 			'v0 - Offer Reset': 0, // Offer Reset
-			'v1 - 3 cols layout': 100, // first Offer Reset iteration (3 layout columns + simpler cards)
+			'v1 - 3 cols layout': 0, // first Offer Reset iteration (3 layout columns + simpler cards)
 			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
+			'i5 - Saas table design': 100, // third Offer Reset iteration (Saas table design)
 		},
-		defaultVariation: 'v1 - 3 cols layout',
+		defaultVariation: 'i5 - Saas table design',
 		allowExistingUsers: true,
+	},
+	secureYourBrand: {
+		datestamp: '20201026',
+		variations: {
+			test: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
 	},
 };

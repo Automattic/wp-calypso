@@ -6,8 +6,8 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import notices from 'notices';
+import wpcom from 'calypso/lib/wp';
+import notices from 'calypso/notices';
 
 const debug = debugFactory( 'calypso:purchases:actions' );
 

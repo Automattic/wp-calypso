@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { format, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
+import { format, getUrlParts, getUrlFromParts, determineUrlType } from 'calypso/lib/url';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;

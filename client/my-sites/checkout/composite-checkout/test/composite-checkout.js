@@ -12,12 +12,12 @@ import { Provider as ReduxProvider } from 'react-redux';
 import '@testing-library/jest-dom/extend-expect';
 import { render, act, fireEvent } from '@testing-library/react';
 import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
 import CompositeCheckout from '../composite-checkout';
-import { StripeHookProvider } from 'calypso/lib/stripe';
 
 /**
  * Mocked dependencies
@@ -30,6 +30,8 @@ import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
+
+jest.mock( 'components/data/query-experiments' );
 
 const domainProduct = {
 	product_name: '.cash Domain',
@@ -141,7 +143,7 @@ describe( 'CompositeCheckout', () => {
 				location: {},
 			},
 			temporary: false,
-			allowed_payment_methods: [ 'WPCOM_Billing_Stripe_Payment_Method' ],
+			allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 			savings_total_integer: 0,
 			savings_total_display: 'R$0',
 			total_tax_integer: 700,
@@ -167,18 +169,7 @@ describe( 'CompositeCheckout', () => {
 		const store = applyMiddleware( thunk )( createStore )( () => {
 			return {
 				plans: {
-					items: [
-						{
-							product_id: 1009,
-							product_name: 'Plan',
-							meta: null,
-							prices: {},
-							path_slug: 'personal',
-							product_slug: 'personal-bundle',
-							product_type: 'bundle',
-							currency_code: 'USD',
-						},
-					],
+					items: [],
 				},
 				sites: { items: {} },
 				siteSettings: { items: {} },
@@ -246,8 +237,6 @@ describe( 'CompositeCheckout', () => {
 						<CompositeCheckout
 							siteSlug={ 'foo.com' }
 							getStoredCards={ async () => [] }
-							allowedPaymentMethods={ [ 'paypal' ] }
-							onlyLoadPaymentMethods={ [ 'paypal', 'full-credits', 'free-purchase' ] }
 							overrideCountryList={ countryList }
 							{ ...additionalProps }
 						/>
@@ -333,7 +322,12 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'renders the full credits payment method option when full credits are available', async () => {
 		let renderResult;
-		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
+		const cartChanges = {
+			sub_total_integer: 0,
+			sub_total_display: '0',
+			credits_integer: 15600,
+			credits_display: 'R$156',
+		};
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
@@ -343,7 +337,12 @@ describe( 'CompositeCheckout', () => {
 
 	it( 'does not render the other payment method options when full credits are available', async () => {
 		let renderResult;
-		const cartChanges = { credits_integer: 15600, credits_display: 'R$156' };
+		const cartChanges = {
+			sub_total_integer: 0,
+			sub_total_display: '0',
+			credits_integer: 15600,
+			credits_display: 'R$156',
+		};
 		await act( async () => {
 			renderResult = render( <MyCheckout cartChanges={ cartChanges } />, container );
 		} );
@@ -373,6 +372,10 @@ describe( 'CompositeCheckout', () => {
 	it( 'does not render the full credits payment method option when full credits are available but the purchase is free', async () => {
 		let renderResult;
 		const cartChanges = {
+			sub_total_integer: 0,
+			sub_total_display: '0',
+			total_tax_integer: 0,
+			total_tax_display: 'R$0',
 			total_cost_integer: 0,
 			total_cost_display: '0',
 			credits_integer: 15600,
@@ -804,11 +807,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		currency: requestCurrency,
 		credits_integer: 0,
 		credits_display: '0',
-		allowed_payment_methods: [
-			'WPCOM_Billing_Stripe_Payment_Method',
-			'WPCOM_Billing_Ebanx',
-			'WPCOM_Billing_Web_Payment',
-		],
+		allowed_payment_methods: [ 'WPCOM_Billing_PayPal_Express' ],
 		coupon_savings_total_display: requestCoupon ? 'R$10' : 'R$0',
 		coupon_savings_total_integer: requestCoupon ? 1000 : 0,
 		savings_total_display: requestCoupon ? 'R$10' : 'R$0',

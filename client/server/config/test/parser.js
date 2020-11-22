@@ -1,19 +1,70 @@
-jest.mock( 'fs' );
+/**
+ * External dependencies
+ */
+import mockFs from 'mock-fs';
+import parser from 'calypso/config/parser';
+
+function setValidSecrets() {
+	mockFs( {
+		'/valid-path/secrets.json': JSON.stringify( {
+			secret: 'very',
+		} ),
+		'/valid-path/empty-secrets.json': JSON.stringify( {
+			secret: 'fromempty',
+		} ),
+	} );
+}
+
+function setValidEnvFiles() {
+	mockFs( {
+		'/valid-path/_shared.json': JSON.stringify( {
+			shared_only: 'shared',
+			myenv_override: 'shared',
+			features: {
+				enabledFeature1: true,
+				disabledFeature1: false,
+				enabledFeature2: true,
+				disabledFeature2: false,
+			},
+		} ),
+		'/valid-path/myenv.json': JSON.stringify( {
+			myenv_only: 'myenv',
+			myenv_override: 'myenv',
+			myenvlocal_override: 'myenv',
+		} ),
+		'/valid-path/myenv.local.json': JSON.stringify( {
+			myenvlocal_only: 'myenvlocal',
+			myenvlocal_override: 'myenvlocal',
+		} ),
+	} );
+}
+
+function setEmptySecrets() {
+	mockFs( {
+		'/valid-path/empty-secrets.json': JSON.stringify( {
+			secret: 'fromempty',
+		} ),
+		'/valid-path/_shared.json': JSON.stringify( {
+			features: {
+				'wpcom-user-bootstrap': true,
+			},
+		} ),
+	} );
+}
 
 describe( 'parser', () => {
-	let parser;
+	afterEach( () => {
+		mockFs.restore();
+	} );
 
 	test( 'should return empty objects for an invalid path', () => {
-		parser = require( 'config/parser' );
-
 		const data = parser( '/invalid-path' );
 
 		expect( data ).toEqual( { serverData: {}, clientData: {} } );
 	} );
 
 	test( 'server should have secrets and client should not', () => {
-		require( 'fs' ).__setValidSecrets();
-		parser = require( 'config/parser' );
+		setValidSecrets();
 
 		const data = parser( '/valid-path' );
 
@@ -22,8 +73,7 @@ describe( 'parser', () => {
 	} );
 
 	test( 'should cascade configs', () => {
-		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		setValidEnvFiles();
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -43,8 +93,7 @@ describe( 'parser', () => {
 	} );
 
 	test( 'should override enabled feature when disabledFeatures set', () => {
-		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		setValidEnvFiles();
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -55,8 +104,7 @@ describe( 'parser', () => {
 	} );
 
 	test( 'should override disabled feature when enabledFeatures set', () => {
-		require( 'fs' ).__setValidEnvFiles();
-		parser = require( 'config/parser' );
+		setValidEnvFiles();
 
 		const { serverData: data } = parser( '/valid-path', {
 			env: 'myenv',
@@ -67,11 +115,10 @@ describe( 'parser', () => {
 	} );
 
 	test( 'should explicitly set user-bootstrapping to false if there are no real secrets', () => {
-		require( 'fs' ).__setEmptySecrets();
+		setEmptySecrets();
 		const errorSpy = jest.fn();
 		global.console = { error: errorSpy };
 
-		parser = require( 'config/parser' );
 		const { serverData, clientData } = parser( '/valid-path' );
 
 		expect( serverData.features[ 'wpcom-user-bootstrap' ] ).toBe( false );

@@ -11,7 +11,7 @@ import { useTranslate } from 'i18n-calypso';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
-import { useLocalizedMoment } from 'components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 
 function getPromotionTypeText( promotionType, translate ) {
 	switch ( promotionType ) {

@@ -22,7 +22,12 @@ import {
 } from 'calypso/state/analytics/actions';
 import { disconnect } from 'calypso/state/jetpack/connection/actions';
 import { setAllSitesSelected, navigate } from 'calypso/state/ui/actions';
-import { successNotice, errorNotice, infoNotice, removeNotice } from 'calypso/state/notices/actions';
+import {
+	successNotice,
+	errorNotice,
+	infoNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
 import { getPlanClass } from 'calypso/lib/plans';
 import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'calypso/state/sites/selectors';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';

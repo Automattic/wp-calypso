@@ -63,7 +63,7 @@ const JetpackFreeCardAlt = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
 	];
 
 	return (
-		<div className="jetpack-free-card-alt">
+		<div className="jetpack-free-card-alt" data-e2e-product-slug="free">
 			<div className="jetpack-free-card-alt__main">
 				<header>
 					<h2>{ translate( 'Jetpack Free' ) }</h2>

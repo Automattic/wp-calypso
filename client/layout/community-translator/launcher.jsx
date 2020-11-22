@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import i18n, { localize } from 'i18n-calypso';
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { addQueryArgs } from '@wordpress/url';
@@ -14,24 +14,24 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import translator, { trackTranslatorStatus } from 'lib/translator-jumpstart';
+import config from 'calypso/config';
+import translator, { trackTranslatorStatus } from 'calypso/lib/translator-jumpstart';
 import localStorageHelper from 'store';
 import { Button, Dialog } from '@automattic/components';
-import { bumpStat } from 'lib/analytics/mc';
-import { TranslationScanner } from 'lib/i18n-utils/translation-scanner';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { TranslationScanner } from 'calypso/lib/i18n-utils/translation-scanner';
 import {
 	getLanguageEmpathyModeActive,
 	toggleLanguageEmpathyMode,
-} from 'lib/i18n-utils/empathy-mode';
-import getUserSettings from 'state/selectors/get-user-settings';
-import getOriginalUserSetting from 'state/selectors/get-original-user-setting';
-import { setLocale } from 'state/ui/language/actions';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import QueryUserSettings from 'components/data/query-user-settings';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+} from 'calypso/lib/i18n-utils/empathy-mode';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import getOriginalUserSetting from 'calypso/state/selectors/get-original-user-setting';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 
 /**
  * Style dependencies

@@ -6,6 +6,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
 import { Button } from '@wordpress/components';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -23,7 +24,8 @@ import Link from '../link';
 import './style.scss';
 
 const Header: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
+	const locale = useLocale();
 	const currentStep = useCurrentStep();
 
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
@@ -53,7 +55,7 @@ const Header: React.FunctionComponent = () => {
 				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
 					<Link to={ Step.LanguageModal }>
 						<span>{ __( 'Site Language' ) } </span>
-						<span className="gutenboarding__header-site-language-badge">{ i18nLocale }</span>
+						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
 					</Link>
 				</div>
 			);

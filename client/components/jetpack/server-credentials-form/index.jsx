@@ -157,7 +157,7 @@ const ServerCredentialsForm = ( {
 					className="server-credentials-form__private-key"
 				/>
 				<FormSettingExplanation>
-					{ translate( 'Only non-encrypted private keys are supported.' ) }
+					{ translate( 'Encrypted private keys with a passphrase are not supported.' ) }
 				</FormSettingExplanation>
 			</FormFieldset>
 

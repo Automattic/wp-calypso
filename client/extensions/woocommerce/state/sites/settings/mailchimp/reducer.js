@@ -6,7 +6,7 @@ import { keys } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_FAILURE,
 	WOOCOMMERCE_MAILCHIMP_API_KEY_SUBMIT_SUCCESS,

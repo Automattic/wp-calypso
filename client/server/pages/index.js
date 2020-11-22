@@ -57,7 +57,7 @@ const debug = debugFactory( 'calypso:pages' );
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
+const staticFiles = [ { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -160,6 +160,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		manifests: request.getAssets().manifests,
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
+		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
@@ -269,7 +270,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, start;
+	let redirectUrl;
+	let start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -720,7 +722,7 @@ export default function pages() {
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
+				// default export of it. See build-tools/webpack/sections-loader.js
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.

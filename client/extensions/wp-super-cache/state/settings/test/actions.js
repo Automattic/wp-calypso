@@ -20,8 +20,8 @@ import {
 	WP_SUPER_CACHE_SAVE_SETTINGS_SUCCESS,
 } from '../../action-types';
 import { receiveSettings, requestSettings, restoreSettings, saveSettings } from '../actions';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

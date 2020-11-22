@@ -8,8 +8,8 @@ import { assert } from 'chai';
  */
 import actionsData from './fixtures/actions';
 import actionsSpies from './mocks/actions';
-import Dispatcher from 'dispatcher';
-import PluginsListsStore from 'lib/plugins/wporg-data/list-store';
+import Dispatcher from 'calypso/dispatcher';
+import PluginsListsStore from 'calypso/lib/plugins/wporg-data/list-store';
 
 jest.mock( 'config', () => ( {
 	isEnabled: () => true,
@@ -90,9 +90,8 @@ describe( 'WPORG Plugins Lists Store', () => {
 		} );
 
 		test( 'should be populated after the processing a list fetched event', () => {
-			let newPlugins;
 			Dispatcher.handleServerAction( actionsData.fetchedNewPluginsList );
-			newPlugins = PluginsListsStore.getFullList( 'new' );
+			const newPlugins = PluginsListsStore.getFullList( 'new' );
 			assert.isArray( newPlugins.list );
 			assert.lengthOf( newPlugins.list, 1 );
 		} );
@@ -144,10 +143,9 @@ describe( 'WPORG Plugins Lists Store', () => {
 		} );
 
 		test( 'should be populated after the processing a search list fetched event', () => {
-			let searchPlugins;
 			PluginsListsStore.getSearchList( 'test' );
 			Dispatcher.handleServerAction( actionsData.fetchedSearchPluginsList );
-			searchPlugins = PluginsListsStore.getSearchList( 'test' );
+			const searchPlugins = PluginsListsStore.getSearchList( 'test' );
 			assert.isArray( searchPlugins.list );
 			assert.lengthOf( searchPlugins.list, 1 );
 		} );

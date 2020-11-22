@@ -1,5 +1,7 @@
 ## TinyMCE
 
+**Note: This is a legacy component that is no longer in use, and is in the process of being removed.**
+
 The `<TinyMCE />` React component is a wrapper around the [TinyMCE](http://www.tinymce.com/) WYWIWYG editor. This folder also contains all of the TinyMCE plugins currently in use by the Calypso project. TinyMCE is relied upon by the editor page, and its implementation is heavily influenced by its usage there. Many plugins and styles have been adapted for use in Calypso from the core WordPress project.
 
 ## Upgrading `tinymce`

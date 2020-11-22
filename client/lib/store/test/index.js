@@ -8,7 +8,7 @@ import { spy, stub } from 'sinon';
  * Internal dependencies
  */
 import { createReducerStore } from './../index';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 describe( 'index', () => {
 	const reducer = ( state ) => {
@@ -34,16 +34,16 @@ describe( 'index', () => {
 	} );
 
 	test( 'should have passed state object as a state', () => {
-		const state = { test: 1 },
-			store = createReducerStore( reducer, state );
+		const state = { test: 1 };
+		const store = createReducerStore( reducer, state );
 
 		expect( store.get() ).to.be.equal( state );
 	} );
 
 	test( 'should call reducer when action is triggered', () => {
-		const state = { test: 2 },
-			reducerStub = stub().returns( state ),
-			store = createReducerStore( reducerStub, state );
+		const state = { test: 2 };
+		const reducerStub = stub().returns( state );
+		const store = createReducerStore( reducerStub, state );
 
 		Dispatcher.handleViewAction( {
 			type: 'anything',
@@ -54,9 +54,9 @@ describe( 'index', () => {
 	} );
 
 	test( 'should not trigger change event when reducer does not change state', () => {
-		const state = {},
-			store = createReducerStore( reducer, state ),
-			callbackSpy = spy();
+		const state = {};
+		const store = createReducerStore( reducer, state );
+		const callbackSpy = spy();
 
 		store.on( 'change', callbackSpy );
 
@@ -69,9 +69,9 @@ describe( 'index', () => {
 	} );
 
 	test( 'should trigger change event when reducer changes state', () => {
-		const state = { test: 3 },
-			store = createReducerStore( () => ( { test: 4 } ), state ),
-			callbackSpy = spy();
+		const state = { test: 3 };
+		const store = createReducerStore( () => ( { test: 4 } ), state );
+		const callbackSpy = spy();
 
 		store.on( 'change', callbackSpy );
 
@@ -84,23 +84,23 @@ describe( 'index', () => {
 	} );
 
 	test( 'should trigger change event only for actions specified in reducer', () => {
-		const TEST = 'test',
-			VALUE = 'value',
-			state = { test: 3 },
-			store = createReducerStore( ( oldState, payload ) => {
-				const {
-					action: { type, key },
-				} = payload;
+		const TEST = 'test';
+		const VALUE = 'value';
+		const state = { test: 3 };
+		const store = createReducerStore( ( oldState, payload ) => {
+			const {
+				action: { type, key },
+			} = payload;
 
-				if ( type === TEST ) {
-					return {
-						test: key,
-					};
-				}
+			if ( type === TEST ) {
+				return {
+					test: key,
+				};
+			}
 
-				return oldState;
-			}, state ),
-			callbackSpy = spy();
+			return oldState;
+		}, state );
+		const callbackSpy = spy();
 
 		store.on( 'change', callbackSpy );
 

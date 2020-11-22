@@ -4,6 +4,7 @@
 	"description": "Utility to facilitate the monitoring of a popup window close action.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": false,
 	"keywords": [
 		"wordpress",
@@ -29,8 +30,8 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"lodash": "^4.17.15"

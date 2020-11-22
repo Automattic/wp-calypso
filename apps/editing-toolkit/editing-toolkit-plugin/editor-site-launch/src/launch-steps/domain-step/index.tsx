@@ -14,22 +14,17 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite, useDomainSearch } from '../../hooks';
+import { useSite, useDomainSearch } from '@automattic/launch';
+
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { currentDomainName } = useSite();
-	const domainSearch = useDomainSearch();
+	const { domainSearch, setDomainSearch } = useDomainSearch();
 
-	const {
-		setDomain,
-		unsetDomain,
-		setDomainSearch,
-		unsetPlan,
-		confirmDomainSelection,
-	} = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
 		confirmDomainSelection();
@@ -85,6 +80,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
+					locale={ document.documentElement.lang }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">

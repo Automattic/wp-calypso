@@ -53,7 +53,6 @@
 		margin-bottom: 4px;
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: $font-title-large;
 			line-height: 40px;
 		}
 	}
@@ -65,7 +64,6 @@
 		color: var( --color-text );
 
 		@include breakpoint-deprecated( '>800px' ) {
-			font-size: $font-title-small;
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
@@ -78,8 +76,8 @@
 		font-size: $font-body-small;
 	}
 
-	.task__skip {
-		margin: auto 16px;
+	.task__action {
+		margin-right: 16px;
 	}
 
 	.spinner {
@@ -92,6 +90,21 @@
 
 	&.is-loading > *:not( .spinner ) {
 		visibility: hidden;
+	}
+
+	&.is-urgent {
+		background: var( --color-neutral-80 );
+		color: var( --color-neutral-0 );
+
+		.task__badge {
+			background: var( --color-neutral-0 );
+			color: var( --color-text );
+		}
+
+		.task__description,
+		.task__skip {
+			color: var( --color-neutral-0 );
+		}
 	}
 }
 

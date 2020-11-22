@@ -302,7 +302,7 @@ $plan-features-sidebar-width: 272px;
 	font-size: $font-body-extra-small;
 	line-height: 20px;
 	height: 20px;
-	border-radius: 10px;
+	border-radius: 10px; /* stylelint-disable-line */
 	color: var( --color-text-inverted );
 	background: var( --color-success );
 	font-weight: 400;
@@ -498,6 +498,8 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__item-info {
+	display: flex;
+	flex-direction: column;
 	flex: 1 0 0;
 	width: 100%;
 }
@@ -590,14 +592,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 .plan-features--signup {
 	margin: 0 auto;
-
-	.jetpack-connect__plans & {
-		width: auto;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 1000px;
-		}
-	}
 
 	.signup__steps & {
 		width: auto;
@@ -720,12 +714,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px var( --color-neutral-5 );
-	}
-
-	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
-		@include breakpoint-deprecated( '<660px' ) {
-			padding-top: 0;
-		}
 	}
 
 	.plan-features__header-price-group-prices {
@@ -928,7 +916,7 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 	}
 
 	tr:last-child .plan-features__table-item {
-		border-radius: 0 0 5px 5px;
+		border-radius: 0 0 5px 5px; /* stylelint-disable-line */
 	}
 
 	.plan-features__actions {
@@ -1000,7 +988,7 @@ button.plan-features__scroll-button {
 	padding: 0;
 	background-color: var( --color-neutral );
 	border: 0;
-	border-radius: 15px;
+	border-radius: 15px; /* stylelint-disable-line */
 	color: var( --color-text-inverted );
 	cursor: pointer;
 
@@ -1085,5 +1073,41 @@ button.plan-features__scroll-button {
 @include breakpoint-deprecated( '<480px' ) {
 	.plan-features__upgrade-launch-dialog .dialog__content p {
 		padding: 0 20px;
+	}
+}
+
+.plans-wrapper.is-monthly-pricing {
+	.plan-pill {
+		top: 10px;
+		bottom: unset;
+		right: 14px;
+		left: unset;
+		padding: 4px 10px;
+		border-radius: 10px; /* stylelint-disable-line */
+		text-transform: none;
+		background-color: var( --color-neutral-100 );
+	}
+
+	.plan-features__item-annual-plan {
+		font-size: 0.6rem; /* stylelint-disable-line */
+		text-transform: uppercase;
+	}
+
+	.plan-features__item-info.is-annual-plan-feature {
+		&.is-available {
+			.plan-features__item-annual-plan {
+				color: var( --color-success );
+			}
+		}
+
+		&:not( .is-available ) {
+			.plan-features__item-annual-plan {
+				color: var( --color-error );
+			}
+			.plan-features__item-title {
+				text-decoration: line-through;
+				color: var( --color-neutral-30 );
+			}
+		}
 	}
 }

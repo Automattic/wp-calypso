@@ -2,7 +2,6 @@
  * External dependencies
  */
 import assert from 'assert';
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 
 /**

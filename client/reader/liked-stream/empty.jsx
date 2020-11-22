@@ -32,23 +32,23 @@ class TagEmptyContent extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read"
-				>
-					{ this.props.translate( 'Back to Following' ) }
-				</a>
-			),
-			secondaryAction = isDiscoverEnabled() ? (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore' ) }
-				</a>
-			) : null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read"
+			>
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		);
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore' ) }
+			</a>
+		) : null;
 
 		return (
 			<EmptyContent

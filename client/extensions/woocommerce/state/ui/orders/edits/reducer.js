@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { merge, omit, uniqueId } from 'lodash';
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Internal dependencies

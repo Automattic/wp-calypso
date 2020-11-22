@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import type { PLANS_LIST } from './plans-data';
+import type { plansProductSlugs } from './constants';
 
-export type PlanSlug = keyof typeof PLANS_LIST;
+export type PlanSlug = typeof plansProductSlugs[ number ];
 
 export type PlanAction = {
 	type: string;
@@ -19,6 +19,8 @@ export interface Plan {
 	features: string[];
 	isPopular?: boolean;
 	isFree?: boolean;
+	featuresSlugs?: Record< string, boolean >;
+	storage?: string;
 }
 
 /**
@@ -28,7 +30,7 @@ export interface Plan {
 export interface APIPlan {
 	product_id: number;
 	product_name: string;
-	meta: object;
+	meta: Record< string, unknown >;
 	prices: {
 		AUD: number;
 		BRL: number;
@@ -84,6 +86,34 @@ export interface APIPlan {
 	price: string;
 	formatted_price: string;
 	raw_price: number;
-	tagline: object;
+	tagline: Record< string, unknown >;
 	currency_code: string;
 }
+
+export type APIPlanProduct = {
+	plan_id: number;
+};
+
+export type APIPlanDetail = {
+	short_name: string;
+	tagline: string;
+	products: Array< APIPlanProduct >;
+	nonlocalized_short_name: string;
+	highlighted_features: Array< string >;
+	features: Array< string >;
+	storage?: string;
+};
+
+export type PlanFeature = {
+	id?: string;
+	description?: string;
+	name: string;
+	type?: string;
+	data?: Array< boolean | string >;
+};
+
+export type PlanFeatureType = {
+	id: string;
+	name: string;
+	features: Array< string >;
+};

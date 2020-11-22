@@ -2,12 +2,13 @@
  * External dependencies
  */
 import uaParser from 'ua-parser-js';
+import { v4 as uuidv4 } from 'uuid';
 
 /**
  * Internal dependencies
  */
-import { getLogger } from 'server/lib/logger';
-import config from 'config';
+import { getLogger } from 'calypso/server/lib/logger';
+import config from 'calypso/config';
 
 const NS_TO_MS = 1e-6;
 
@@ -22,6 +23,8 @@ const parseUA = ( rawUA ) => {
 
 const logRequest = ( req, res, options ) => {
 	const { requestStart, env, version } = options;
+
+	const message = res.finished ? 'request finished' : 'request closed';
 
 	const fields = {
 		method: req.method,
@@ -40,7 +43,7 @@ const logRequest = ( req, res, options ) => {
 		referrer: req.get( 'referer' ),
 	};
 
-	req.logger.info( fields );
+	req.logger.info( fields, message );
 };
 
 export default () => {
@@ -49,9 +52,11 @@ export default () => {
 	const version = process.env.COMMIT_SHA;
 
 	return ( req, res, next ) => {
-		req.logger = logger;
+		req.logger = logger.child( {
+			reqId: uuidv4(),
+		} );
 		const requestStart = process.hrtime.bigint();
-		res.on( 'finish', () => logRequest( req, res, { requestStart, env, version } ) );
+		res.on( 'close', () => logRequest( req, res, { requestStart, env, version } ) );
 		next();
 	};
 };

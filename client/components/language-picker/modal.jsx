@@ -36,7 +36,11 @@ import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-lan
 import { getLanguageGroupByCountryCode, getLanguageGroupById } from './utils';
 import { LANGUAGE_GROUPS, DEFAULT_LANGUAGE_GROUP } from './constants';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-import { getLanguage, isDefaultLocale, isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
+import {
+	getLanguage,
+	isDefaultLocale,
+	isTranslatedIncompletely,
+} from 'calypso/lib/i18n-utils/utils';
 import { requestGeoLocation } from 'calypso/state/data-getters';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 

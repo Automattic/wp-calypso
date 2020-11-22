@@ -4,13 +4,12 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
-import { isEnabled } from 'config';
 import { fontPairings } from '../../constants';
 import type { Viewport } from './types';
 
@@ -56,13 +55,13 @@ interface Props {
 	viewport: Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
+	const language = useLocale();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( ( select ) =>
+	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
-	const language = useLangRouteParam();
 
 	React.useEffect(
 		() => {
@@ -73,19 +72,14 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
-				let url = addQueryArgs( templateUrl, {
-					language: language,
+				const url = addQueryArgs( templateUrl, {
+					language,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
 				} );
-				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
-					url = addQueryArgs( url, {
-						vertical: siteVertical?.label,
-					} );
-				}
 
 				let resp;
 
@@ -111,7 +105,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[ language, selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ language, selectedDesign ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {

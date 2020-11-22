@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import {
 	createPayPalMethod,
 	createAlipayMethod,
@@ -18,8 +18,6 @@ import {
 	createSofortPaymentMethodStore,
 	createEpsMethod,
 	createEpsPaymentMethodStore,
-	createFullCreditsMethod,
-	createFreePaymentMethod,
 	createApplePayMethod,
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
@@ -27,12 +25,6 @@ import {
 /**
  * Internal dependencies
  */
-import {
-	WordPressCreditsLabel,
-	WordPressCreditsSummary,
-	WordPressFreePurchaseLabel,
-	WordPressFreePurchaseSummary,
-} from './payment-method-helpers';
 import { createWeChatMethod, createWeChatPaymentMethodStore } from './payment-methods/wechat';
 import {
 	createCreditCardPaymentMethodStore,
@@ -50,32 +42,21 @@ import {
 	createNetBankingPaymentMethodStore,
 	createNetBankingMethod,
 } from './payment-methods/netbanking';
+import { createFullCreditsMethod } from './payment-methods/full-credits';
+import { createFreePaymentMethod } from './payment-methods/free-purchase';
 
-function useCreatePayPal( { onlyLoadPaymentMethods } ) {
-	const shouldLoadPayPalMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'paypal' )
-		: true;
-	const paypalMethod = useMemo( () => {
-		if ( ! shouldLoadPayPalMethod ) {
-			return null;
-		}
-		return createPayPalMethod();
-	}, [ shouldLoadPayPalMethod ] );
+function useCreatePayPal() {
+	const paypalMethod = useMemo( createPayPalMethod, [] );
 	return paypalMethod;
 }
 
 function useCreateCreditCard( {
-	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
 } ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isStripeMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'card' )
-		: true;
-	const shouldLoadStripeMethod = isStripeMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
 	const stripeMethod = useMemo(
 		() =>
@@ -91,18 +72,8 @@ function useCreateCreditCard( {
 	return stripeMethod;
 }
 
-function useCreateAlipay( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'alipay' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateAlipay( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createAlipayPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -117,16 +88,8 @@ function useCreateAlipay( {
 	);
 }
 
-function useCreateP24( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods ? onlyLoadPaymentMethods.includes( 'p24' ) : true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateP24( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createP24PaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -142,17 +105,12 @@ function useCreateP24( {
 }
 
 function useCreateBancontact( {
-	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
 } ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'bancontact' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createBancontactPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -167,18 +125,8 @@ function useCreateBancontact( {
 	);
 }
 
-function useCreateGiropay( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'giropay' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateGiropay( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createGiropayPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -194,18 +142,13 @@ function useCreateGiropay( {
 }
 
 function useCreateWeChat( {
-	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
 	siteSlug,
 } ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'wechat' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createWeChatPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -221,18 +164,8 @@ function useCreateWeChat( {
 	);
 }
 
-function useCreateIdeal( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'ideal' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateIdeal( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createIdealPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -247,18 +180,8 @@ function useCreateIdeal( {
 	);
 }
 
-function useCreateSofort( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'sofort' )
-		: true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateSofort( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createSofortPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -273,16 +196,8 @@ function useCreateSofort( {
 	);
 }
 
-function useCreateEps( {
-	onlyLoadPaymentMethods,
-	isStripeLoading,
-	stripeLoadingError,
-	stripeConfiguration,
-	stripe,
-} ) {
-	// If this PM is allowed by props, allowed by the cart, stripe is not loading, and there is no stripe error, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods ? onlyLoadPaymentMethods.includes( 'eps' ) : true;
-	const shouldLoad = isMethodAllowed && ! isStripeLoading && ! stripeLoadingError;
+function useCreateEps( { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } ) {
+	const shouldLoad = ! isStripeLoading && ! stripeLoadingError;
 	const paymentMethodStore = useMemo( () => createEpsPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
@@ -297,96 +212,48 @@ function useCreateEps( {
 	);
 }
 
-function useCreateNetbanking( { onlyLoadPaymentMethods } ) {
-	// If this PM is allowed by props and allowed by the cart, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'netbanking' )
-		: true;
-	const shouldLoad = isMethodAllowed;
+function useCreateNetbanking() {
 	const paymentMethodStore = useMemo( () => createNetBankingPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
-			shouldLoad
-				? createNetBankingMethod( {
-						store: paymentMethodStore,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
+			createNetBankingMethod( {
+				store: paymentMethodStore,
+			} ),
+		[ paymentMethodStore ]
 	);
 }
 
-function useCreateIdWallet( { onlyLoadPaymentMethods } ) {
-	// If this PM is allowed by props and allowed by the cart, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'id_wallet' )
-		: true;
-	const shouldLoad = isMethodAllowed;
+function useCreateIdWallet() {
 	const paymentMethodStore = useMemo( () => createIdWalletPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
-			shouldLoad
-				? createIdWalletMethod( {
-						store: paymentMethodStore,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
+			createIdWalletMethod( {
+				store: paymentMethodStore,
+			} ),
+		[ paymentMethodStore ]
 	);
 }
 
-function useCreateEbanxTef( { onlyLoadPaymentMethods } ) {
-	// If this PM is allowed by props and allowed by the cart, then create the PM.
-	const isMethodAllowed = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'ebanx-tef' )
-		: true;
-	const shouldLoad = isMethodAllowed;
+function useCreateEbanxTef() {
 	const paymentMethodStore = useMemo( () => createEbanxTefPaymentMethodStore(), [] );
 	return useMemo(
 		() =>
-			shouldLoad
-				? createEbanxTefMethod( {
-						store: paymentMethodStore,
-				  } )
-				: null,
-		[ shouldLoad, paymentMethodStore ]
+			createEbanxTefMethod( {
+				store: paymentMethodStore,
+			} ),
+		[ paymentMethodStore ]
 	);
 }
 
-function useCreateFullCredits( { onlyLoadPaymentMethods, credits } ) {
-	const shouldLoadFullCreditsMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'full-credits' )
-		: true;
-	const fullCreditsPaymentMethod = useMemo( () => {
-		if ( ! shouldLoadFullCreditsMethod ) {
-			return null;
-		}
-		return createFullCreditsMethod();
-	}, [ shouldLoadFullCreditsMethod ] );
-	if ( fullCreditsPaymentMethod ) {
-		fullCreditsPaymentMethod.label = <WordPressCreditsLabel credits={ credits } />;
-		fullCreditsPaymentMethod.inactiveContent = <WordPressCreditsSummary />;
-	}
-	return fullCreditsPaymentMethod;
+function useCreateFullCredits() {
+	return useMemo( () => createFullCreditsMethod(), [] );
 }
 
-function useCreateFree( { onlyLoadPaymentMethods } ) {
-	const shouldLoadFreePaymentMethod = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'free-purchase' )
-		: true;
-	const freePaymentMethod = useMemo( () => {
-		if ( ! shouldLoadFreePaymentMethod ) {
-			return null;
-		}
-		return createFreePaymentMethod();
-	}, [ shouldLoadFreePaymentMethod ] );
-	if ( freePaymentMethod ) {
-		freePaymentMethod.label = <WordPressFreePurchaseLabel />;
-		freePaymentMethod.inactiveContent = <WordPressFreePurchaseSummary />;
-	}
-	return freePaymentMethod;
+function useCreateFree() {
+	return useMemo( createFreePaymentMethod, [] );
 }
 
 function useCreateApplePay( {
-	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
@@ -394,12 +261,9 @@ function useCreateApplePay( {
 	isApplePayAvailable,
 	isApplePayLoading,
 } ) {
-	const shouldLoadApplePay = onlyLoadPaymentMethods?.includes( 'apple-pay' ) ?? true;
-
 	const isStripeReady = ! isStripeLoading && ! stripeLoadingError && stripe && stripeConfiguration;
 
-	const shouldCreateApplePayMethod =
-		shouldLoadApplePay && isStripeReady && ! isApplePayLoading && isApplePayAvailable;
+	const shouldCreateApplePayMethod = isStripeReady && ! isApplePayLoading && isApplePayAvailable;
 
 	const applePayMethod = useMemo( () => {
 		return shouldCreateApplePayMethod ? createApplePayMethod( stripe, stripeConfiguration ) : null;
@@ -408,14 +272,8 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
-function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeConfiguration } ) {
-	const shouldLoadExistingCardsMethods = onlyLoadPaymentMethods
-		? onlyLoadPaymentMethods.includes( 'existingCard' )
-		: true;
+function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
 	const existingCardMethods = useMemo( () => {
-		if ( ! shouldLoadExistingCardsMethods ) {
-			return [];
-		}
 		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
 				id: `existingCard-${ storedDetails.stored_details_id }`,
@@ -429,28 +287,23 @@ function useCreateExistingCards( { onlyLoadPaymentMethods, storedCards, stripeCo
 				stripeConfiguration,
 			} )
 		);
-	}, [ stripeConfiguration, storedCards, shouldLoadExistingCardsMethods ] );
+	}, [ stripeConfiguration, storedCards ] );
 	return existingCardMethods;
 }
 
 export default function useCreatePaymentMethods( {
-	onlyLoadPaymentMethods,
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
-	credits,
 	isApplePayAvailable,
 	isApplePayLoading,
 	storedCards,
 	siteSlug,
 } ) {
-	const paypalMethod = useCreatePayPal( {
-		onlyLoadPaymentMethods,
-	} );
+	const paypalMethod = useCreatePayPal();
 
 	const idealMethod = useCreateIdeal( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -458,7 +311,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const alipayMethod = useCreateAlipay( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -466,7 +318,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const p24Method = useCreateP24( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -474,7 +325,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const bancontactMethod = useCreateBancontact( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -482,7 +332,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const giropayMethod = useCreateGiropay( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -490,21 +339,19 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const epsMethod = useCreateEps( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 	} );
 
-	const ebanxTefMethod = useCreateEbanxTef( { onlyLoadPaymentMethods } );
+	const ebanxTefMethod = useCreateEbanxTef();
 
-	const idWalletMethod = useCreateIdWallet( { onlyLoadPaymentMethods } );
+	const idWalletMethod = useCreateIdWallet();
 
-	const netbankingMethod = useCreateNetbanking( { onlyLoadPaymentMethods } );
+	const netbankingMethod = useCreateNetbanking();
 
 	const sofortMethod = useCreateSofort( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -512,7 +359,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const wechatMethod = useCreateWeChat( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -521,22 +367,17 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const stripeMethod = useCreateCreditCard( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
 	} );
 
-	const fullCreditsPaymentMethod = useCreateFullCredits( {
-		onlyLoadPaymentMethods,
-		credits,
-	} );
+	const fullCreditsPaymentMethod = useCreateFullCredits();
 
-	const freePaymentMethod = useCreateFree( { onlyLoadPaymentMethods } );
+	const freePaymentMethod = useCreateFree();
 
 	const applePayMethod = useCreateApplePay( {
-		onlyLoadPaymentMethods,
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
@@ -546,7 +387,6 @@ export default function useCreatePaymentMethods( {
 	} );
 
 	const existingCardMethods = useCreateExistingCards( {
-		onlyLoadPaymentMethods,
 		storedCards,
 		stripeConfiguration,
 	} );

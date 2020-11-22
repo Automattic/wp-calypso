@@ -13,8 +13,8 @@ import {
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getMediaItem from 'calypso/state/selectors/get-media-item';
-import { dispatchFluxUpdateMediaItem } from 'calypso/state/media/utils/flux-adapter';
 import { assign } from 'lodash';
+import { receiveMedia } from 'calypso/state/media/actions';
 
 const fetch = ( action ) => {
 	if ( ! ( 'file' in action.params || 'atTime' in action.params ) ) {
@@ -54,7 +54,7 @@ const onSuccess = ( action, { poster: posterUrl } ) => ( dispatch, getState ) =>
 		},
 	} );
 
-	dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
+	dispatch( receiveMedia( siteId, updatedMediaItem ) );
 };
 
 const onError = () => showError();

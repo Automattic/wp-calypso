@@ -33,7 +33,9 @@ jest.mock( 'my-sites/plugins/plugin-list-header', () =>
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', () => {
-		let renderedPluginsList, plugins, props;
+		let renderedPluginsList;
+		let plugins;
+		let props;
 
 		beforeAll( () => {
 			plugins = [

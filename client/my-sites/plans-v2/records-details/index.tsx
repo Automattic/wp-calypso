@@ -3,12 +3,13 @@
  */
 import { useTranslate, numberFormat } from 'i18n-calypso';
 import { isFinite } from 'lodash';
-import React, { FunctionComponent } from 'react';
-import { useSelector } from 'react-redux';
+import React, { FunctionComponent, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import useItemPrice from '../use-item-price';
 import { slugToSelectorProduct, durationToText } from '../utils';
 import InfoPopover from 'calypso/components/info-popover';
@@ -43,6 +44,18 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 		selectorProduct?.monthlyProductSlug
 	);
 
+	const dispatch = useDispatch();
+	const onOpenPopover = useCallback(
+		() =>
+			dispatch(
+				recordTracksEvent( 'calypso_plans_infopopover_open', {
+					site_id: siteId || undefined,
+					item_slug: 'jetpack-search-record-count',
+				} )
+			),
+		[ dispatch, siteId ]
+	);
+
 	if ( ! selectorProduct || ! currencyCode || ! siteId || isFetching ) {
 		return null;
 	}
@@ -74,7 +87,7 @@ const RecordsDetails: FunctionComponent< Props > = ( { productSlug } ) => {
 						comment: '%(recordCount)s is the number of search records of the site',
 					}
 				) }
-				<InfoPopover>
+				<InfoPopover onOpen={ onOpenPopover }>
 					{ preventWidows(
 						translate(
 							'Records are all posts, pages, custom post types and other types of content indexed by Jetpack Search. {{link}}Learn more.{{/link}}',

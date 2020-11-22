@@ -2,23 +2,23 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import { Placeholder, Button, ExternalLink, withNotices, Spinner } from '@wordpress/components';
+import { Placeholder, Spinner, ToolbarGroup, ToolbarButton } from '@wordpress/components';
+import { BlockControls } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
 import { withSelect, withDispatch } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import formatCurrency from '@automattic/format-currency';
+import apiFetch from '@wordpress/api-fetch';
 
 /**
  * Internal dependencies
  */
-import Tabs from './tabs';
 import Blocks from './blocks';
 import Controls from './controls';
 import Inspector from './inspector';
-import StripeNudge from './stripe-nudge';
 import Context from './context';
-import apiFetch from '@wordpress/api-fetch';
+import { flashIcon } from './icons';
 import { isPriceValid, minimumTransactionAmountForCurrency } from '.';
 
 /**
@@ -64,7 +64,6 @@ const defaultString = null;
 /**
  * Block edit function
  *
- * @typedef { import('@wordpress/components').withNotices.Props } NoticeProps
  * @typedef { import('./').Attributes } Attributes
  * @typedef {object} OwnProps
  * @property { boolean } isSelected
@@ -72,11 +71,10 @@ const defaultString = null;
  * @property { string } clientId
  * @property { Attributes } attributes
  * @property { (attributes: object<Attributes>) => void } setAttributes
- * @property { ?object } noticeUI
  * @property { number } postId
  * @property { () => void } selectBlock
  *
- * @typedef { NoticeProps & OwnProps } Props
+ * @typedef { OwnProps } Props
  *
  * @param { Props } props
  */
@@ -88,9 +86,9 @@ function Edit( props ) {
 	const [ connectURL, setConnectURL ] = useState( defaultString );
 	const [ apiState, setApiState ] = useState( API_STATE_LOADING );
 	const [ shouldUpgrade, setShouldUpgrade ] = useState( false );
-	const [ upgradeURL, setUpgradeURL ] = useState( '' );
 	// @ts-ignore needed in some upgrade flows - depending how we implement this
 	const [ siteSlug, setSiteSlug ] = useState( '' ); // eslint-disable-line
+	const { isPreview } = props.attributes;
 
 	/**
 	 * Hook to save a new plan.
@@ -207,6 +205,10 @@ function Edit( props ) {
 	const { isSelected, className } = props;
 
 	useEffect( () => {
+		if ( isPreview ) {
+			return;
+		}
+
 		const origin = getQueryArg( window.location.href, 'origin' );
 		const path = addQueryArgs( '/wpcom/v2/memberships/status', {
 			source: origin === 'https://wordpress.com' ? 'gutenberg-wpcom' : 'gutenberg',
@@ -233,7 +235,6 @@ function Edit( props ) {
 
 				setConnectURL( result.connect_url );
 				setShouldUpgrade( result.should_upgrade_to_access_memberships );
-				setUpgradeURL( result.upgrade_url );
 				setSiteSlug( result.site_slug );
 
 				if (
@@ -280,10 +281,9 @@ function Edit( props ) {
 		setTimeout( () => props.selectBlock(), 1000 );
 	}, [] );
 
-	if ( apiState === API_STATE_LOADING ) {
+	if ( apiState === API_STATE_LOADING && ! isPreview ) {
 		return (
 			<div className={ className } ref={ wrapperRef }>
-				{ props.noticeUI }
 				<Placeholder
 					icon="lock"
 					label={ __( 'Premium Content', 'full-site-editing' ) }
@@ -295,76 +295,75 @@ function Edit( props ) {
 		);
 	}
 
-	if ( shouldUpgrade ) {
-		return (
-			<div className={ className } ref={ wrapperRef }>
-				{ props.noticeUI }
-				<Placeholder
-					icon="lock"
-					label={ __( 'Premium Content', 'full-site-editing' ) }
-					instructions={ __(
-						"You'll need to upgrade your plan to use the Premium Content block.",
-						'full-site-editing'
-					) }
-				>
-					<Button
-						/**
-						 * @see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/42883
-						 */
-						// @ts-ignore isSecondary is missing from the type definition
-						isSecondary
-						isLarge
-						href={ upgradeURL }
-						target="_blank"
-						className="premium-content-block-nudge__button plan-nudge__button"
-					>
-						{ __( 'Upgrade Your Plan', 'full-site-editing' ) }
-					</Button>
-					<div className="membership-button__disclaimer">
-						<ExternalLink href="https://wordpress.com/support/premium-content-block/">
-							{ __( 'Read more about Premium Content and related fees.', 'full-site-editing' ) }
-						</ExternalLink>
-					</div>
-				</Placeholder>
-			</div>
-		);
-	}
+	const shouldShowConnectButton = () => {
+		if ( ! shouldUpgrade && apiState !== API_STATE_CONNECTED && connectURL ) {
+			return true;
+		}
 
-	let stripeNudge = null;
-
-	if ( ! shouldUpgrade && apiState !== API_STATE_CONNECTED && connectURL ) {
-		const stripeConnectUrl = getConnectUrl( props, connectURL );
-
-		stripeNudge = <StripeNudge { ...props } stripeConnectUrl={ stripeConnectUrl } />;
-	}
+		return false;
+	};
 
 	return (
-		<div className={ className } ref={ wrapperRef }>
-			{ props.noticeUI }
-			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
-				<Controls
-					{ ...props }
-					plans={ products }
-					selectedPlanId={ props.attributes.selectedPlanId }
-					onSelected={ selectPlan }
-					getPlanDescription={ getPlanDescription }
-				/>
-			) }
-			{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
-				<Inspector { ...props } savePlan={ savePlan } siteSlug={ siteSlug } />
-			) }
-			{ ( isSelected || selectedInnerBlock ) && (
-				<Tabs { ...props } tabs={ tabs } selectedTab={ selectedTab } onSelected={ selectTab } />
-			) }
-			<Context.Provider
-				value={ {
-					selectedTab,
-					stripeNudge,
-				} }
-			>
-				<Blocks />
-			</Context.Provider>
-		</div>
+		<>
+			<BlockControls>
+				{ shouldShowConnectButton() && (
+					<ToolbarGroup>
+						<ToolbarButton
+							icon={ flashIcon }
+							onClick={ ( e ) => {
+								props.autosaveAndRedirect( e, getConnectUrl( props, connectURL ) );
+							} }
+							className="connect-stripe components-tab-button"
+						>
+							{ __( 'Connect Stripe', 'full-site-editing' ) }
+						</ToolbarButton>
+					</ToolbarGroup>
+				) }
+
+				<ToolbarGroup>
+					<ToolbarButton
+						onClick={ () => {
+							selectTab( tabs[ 1 ] );
+						} }
+						className="components-tab-button"
+						isPressed={ selectedTab.className === 'wp-premium-content-logged-out-view' }
+					>
+						<span>{ __( 'Visitor View', 'full-site-editing' ) }</span>
+					</ToolbarButton>
+					<ToolbarButton
+						onClick={ () => {
+							selectTab( tabs[ 0 ] );
+						} }
+						className="components-tab-button"
+						isPressed={ selectedTab.className !== 'wp-premium-content-logged-out-view' }
+					>
+						<span>{ __( 'Subscriber View', 'full-site-editing' ) }</span>
+					</ToolbarButton>
+				</ToolbarGroup>
+			</BlockControls>
+
+			<div className={ className } ref={ wrapperRef }>
+				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
+					<Controls
+						{ ...props }
+						plans={ products }
+						selectedPlanId={ props.attributes.selectedPlanId }
+						onSelected={ selectPlan }
+						getPlanDescription={ getPlanDescription }
+					/>
+				) }
+				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
+					<Inspector { ...props } savePlan={ savePlan } siteSlug={ siteSlug } />
+				) }
+				<Context.Provider
+					value={ {
+						selectedTab,
+					} }
+				>
+					<Blocks />
+				</Context.Provider>
+			</div>
+		</>
 	);
 }
 
@@ -409,9 +408,7 @@ function useOutsideAlerter( ref, callback ) {
  * @returns { void }
  */
 function onError( props, message ) {
-	const { noticeOperations } = props;
-	noticeOperations.removeAllNotices();
-	noticeOperations.createErrorNotice( message );
+	props.createErrorNotice( message, { type: 'snackbar' } );
 }
 
 /**
@@ -420,9 +417,7 @@ function onError( props, message ) {
  * @returns { void }
  */
 function onSuccess( props, message ) {
-	const { noticeOperations } = props;
-	noticeOperations.removeAllNotices();
-	noticeOperations.createNotice( { status: 'info', content: message } );
+	props.createSuccessNotice( message, { type: 'snackbar' } );
 }
 
 /**
@@ -466,14 +461,22 @@ export default compose( [
 			postId: getCurrentPostId(),
 		};
 	} ),
-	withNotices,
 	withDispatch( ( dispatch, ownProps ) => {
 		const blockEditor = dispatch( 'core/block-editor' );
+		const notices = dispatch( 'core/notices' );
 		return {
 			selectBlock() {
 				// @ts-ignore difficult to type via JSDoc
 				blockEditor.selectBlock( ownProps.clientId );
 			},
+			autosaveAndRedirect: async ( event, stripeConnectUrl ) => {
+				event.preventDefault(); // Don't follow the href before autosaving
+				await dispatch( 'core/editor' ).savePost();
+				// Using window.top to escape from the editor iframe on WordPress.com
+				window.top.location.href = stripeConnectUrl;
+			},
+			createErrorNotice: notices.createErrorNotice,
+			createSuccessNotice: notices.createSuccessNotice,
 		};
 	} ),
 ] )( Edit );

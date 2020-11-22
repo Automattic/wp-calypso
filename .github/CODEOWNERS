@@ -48,7 +48,6 @@
 /client/lib/cart-values/ @Automattic/shilling
 /client/lib/checkout/ @Automattic/shilling
 /client/lib/siftscience/ @Automattic/payments
-/client/lib/simple-payments/ @Automattic/payments
 /client/lib/store-transactions/ @Automattic/payments
 /client/lib/stripe/ @Automattic/payments
 /client/lib/transaction/ @Automattic/payments
@@ -63,10 +62,11 @@
 /client/state/order-transactions/ @Automattic/payments
 /client/state/plans/ @Automattic/payments
 /client/state/receipts/ @Automattic/payments
-/client/state/simple-payments/ @Automattic/payments
 /client/state/stored-cards/ @Automattic/payments
 /client/state/sites/plans/ @Automattic/payments
 /packages/composite-checkout/ @Automattic/shilling
+/packages/calypso-stripe/ @Automattic/shilling
+/packages/shopping-cart/ @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/reader

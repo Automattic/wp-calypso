@@ -132,6 +132,7 @@ function getWebpackConfig(
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

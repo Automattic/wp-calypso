@@ -11,7 +11,6 @@ export const PLAN_ECOMMERCE = 'ecommerce-bundle';
 export const STORE_KEY = 'automattic/onboard/plans';
 
 export const DEFAULT_PAID_PLAN = PLAN_PREMIUM;
-
 interface Currency {
 	format: 'SYMBOL_THEN_AMOUNT' | 'AMOUNT_THEN_SYMBOL';
 	symbol: string;
@@ -19,6 +18,16 @@ interface Currency {
 }
 
 export const plansOrder = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
+
+export const plansPaths = [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ];
+
+export const plansProductSlugs = [
+	PLAN_FREE,
+	PLAN_PERSONAL,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+	PLAN_ECOMMERCE,
+];
 
 // salvaged from https://opengrok.a8c.com/source/raw/trunk/wp-content/admin-plugins/wpcom-billing/store-price.php
 // with html entities resolved to symbols

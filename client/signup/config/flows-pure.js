@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
+import { isEnabled } from 'calypso/config';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -122,6 +122,13 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
+		'onboarding-secure-your-brand': {
+			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
+			destination: getSignupDestination,
+			description: 'Onboarding flow with an additional step to upsell domains',
+			lastModified: '2020-10-08',
+			showRecaptcha: true,
+		},
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
@@ -252,6 +259,7 @@ export function generateFlows( {
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+			showRecaptcha: true,
 		};
 	}
 
@@ -361,6 +369,7 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+		showRecaptcha: true,
 	};
 
 	flows[ 'plan-no-domain' ] = {

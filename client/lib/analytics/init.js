@@ -25,7 +25,7 @@ export async function initializeAnalytics( currentUser, superProps ) {
 	if ( 'object' === typeof currentUser && user && getTracksAnonymousUserId() ) {
 		const mod = await import(
 			/* webpackChunkName: "lib-analytics-ad-tracking-record-alias-in-floodlight" */
-			'lib/analytics/ad-tracking/record-alias-in-floodlight'
+			'calypso/lib/analytics/ad-tracking/record-alias-in-floodlight'
 		);
 		const { recordAliasInFloodlight } = mod;
 		debug( 'recordAliasInFloodlight', user );

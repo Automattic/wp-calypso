@@ -5,22 +5,25 @@
  */
 import request from 'superagent';
 import supertest from 'supertest';
-import unmodifiedConfig from 'config';
+import unmodifiedConfig from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'api', () => {
-	let app, config, localRequest, sandbox;
+	let app;
+	let config;
+	let localRequest;
+	let sandbox;
 
 	useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );
 
 	beforeAll( () => {
-		config = require( 'config' );
+		config = require( 'calypso/config' );
 		sandbox.stub( config, 'isEnabled' ).withArgs( 'oauth' ).returns( true );
-		app = require( '../' )();
+		app = require( '../' ).default();
 		localRequest = supertest( app );
 	} );
 
@@ -66,10 +69,11 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a login error with a bad login', function () {
 			return new Promise( ( done ) => {
-				const end = sandbox.stub( request.Request.prototype, 'end' ),
-					response = { error: 'invalid_request' };
+				const end = sandbox.stub( request.Request.prototype, 'end' );
+				const response = { error: 'invalid_request' };
 
 				end.callsArgWithAsync( 0, { status: 400 }, { body: response } );
 
@@ -80,6 +84,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a 400 needs_2fa if the user has 2FA enabled', function () {
 			return new Promise( ( done ) => {
 				const response = {
@@ -98,10 +103,11 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a successful login', function () {
 			return new Promise( ( done ) => {
-				const response = { access_token: '1234' },
-					end = sandbox.stub( request.Request.prototype, 'end' );
+				const response = { access_token: '1234' };
+				const end = sandbox.stub( request.Request.prototype, 'end' );
 
 				end.callsArgWithAsync( 0, null, { body: response } );
 
@@ -112,6 +118,7 @@ describe( 'api', () => {
 			} );
 		} );
 
+		/* eslint-disable-next-line jest/expect-expect */
 		test( 'should return a 408 with no connection', function () {
 			return new Promise( ( done ) => {
 				const response = {

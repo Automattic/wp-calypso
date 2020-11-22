@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { ReactElement, useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
@@ -15,6 +15,7 @@ import { getPathToDetails, checkout } from './utils';
 import QueryProducts from './query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
+import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { managePurchase } from 'calypso/me/purchases/paths';
@@ -22,29 +23,32 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import ProductsGridAlt from './products-grid-alt';
+import { getGridComponent, showFilterBarInSelector } from './iterations';
 
 /**
  * Type dependencies
  */
 import type { Duration, SelectorPageProps, SelectorProduct, PurchaseCallback } from './types';
+import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
-const SelectorPageAlt = ( {
+const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
 	urlQueryArgs,
 	header,
 	footer,
-}: SelectorPageProps ): ReactElement => {
+}: SelectorPageProps ) => {
 	const dispatch = useDispatch();
 
 	const siteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const siteSlugState = useSelector( ( state ) => getSelectedSiteSlug( state ) ) || '';
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
+
+	const Grid = useMemo( () => getGridComponent(), [] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );
@@ -76,7 +80,15 @@ const SelectorPageAlt = ( {
 					duration: currentDuration,
 				} )
 			);
-			checkout( siteSlug, getYearlyPlanByMonthly( product.productSlug ), urlQueryArgs );
+
+			const { productSlug: slug } = product;
+			const yearlyItem = isJetpackPlan( slug )
+				? getYearlyPlanByMonthly( slug )
+				: getProductYearlyVariant( slug as ProductSlug );
+
+			if ( yearlyItem ) {
+				checkout( siteSlug, yearlyItem, urlQueryArgs );
+			}
 			return;
 		}
 
@@ -139,18 +151,23 @@ const SelectorPageAlt = ( {
 
 			{ header }
 
-			<PlansFilterBar
-				showDiscountMessage
-				showDurations
-				onDurationChange={ trackDurationChange }
-				duration={ currentDuration }
-			/>
+			{ showFilterBarInSelector() && (
+				<PlansFilterBar
+					showDiscountMessage
+					showDurations
+					onDurationChange={ trackDurationChange }
+					duration={ currentDuration }
+				/>
+			) }
 
-			<ProductsGridAlt
-				duration={ currentDuration }
-				onSelectProduct={ selectProduct }
-				urlQueryArgs={ urlQueryArgs }
-			/>
+			{ Grid && (
+				<Grid
+					duration={ currentDuration }
+					onSelectProduct={ selectProduct }
+					urlQueryArgs={ urlQueryArgs }
+					{ ...( ! showFilterBarInSelector() && { onDurationChange: trackDurationChange } ) }
+				/>
+			) }
 
 			<QueryProductsList />
 			<QueryProducts />

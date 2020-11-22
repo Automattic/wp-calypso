@@ -198,16 +198,6 @@
 }
 
 // -------- Search --------
-.section-nav {
-	.search {
-		overflow: hidden;
-	}
-
-	.search.is-expanded-to-container {
-		height: 50px;
-
-		@include breakpoint-deprecated( '<480px' ) {
-			height: 46px;
-		}
-	}
+.section-nav .search {
+	overflow: hidden;
 }

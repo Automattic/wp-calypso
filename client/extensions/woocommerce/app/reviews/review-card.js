@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -11,17 +11,17 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
+import AutoDirection from 'calypso/components/auto-direction';
 import { Button, Card } from '@automattic/components';
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import Gravatar from './gravatar';
-import humanDate from 'lib/human-date';
-import Rating from 'components/rating';
+import humanDate from 'calypso/lib/human-date';
+import Rating from 'calypso/components/rating';
 import ReviewActionsBar from './review-actions-bar';
 import ReviewReplies from './review-replies';
-import { stripHTML, decodeEntities } from 'lib/formatting';
+import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 
 class ReviewCard extends Component {
 	static propTypes = {

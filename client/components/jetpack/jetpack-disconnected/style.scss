@@ -1,0 +1,18 @@
+.jetpack-disconnected__icon-header {
+	text-align: center;
+
+	img {
+		height: 72px;
+		width: auto;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		text-align: start;
+	}
+}
+
+.jetpack-disconnected__paragraph {
+	display: block;
+
+	margin-bottom: 1.5rem;
+}

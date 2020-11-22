@@ -2,29 +2,26 @@
  * External dependencies
  */
 import React from 'react';
+import FocusedLaunchModal from '@automattic/launch';
+import noop from 'lodash/noop';
+import { connect } from 'react-redux';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
-/**
- * Internal dependencies
- */
-import Launch from '@automattic/launch';
+interface Props {
+	siteId: number;
+	locale: string;
+}
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
-const EditorLaunchModal: React.FunctionComponent = () => {
-	const [ isClosed, setIsClosed ] = React.useState( false );
-
-	const handleClose = () => {
-		setIsClosed( true );
-	};
-
-	return (
-		<div className="editor-launch-modal" hidden={ isClosed }>
-			<Launch onClose={ handleClose }></Launch>
-		</div>
-	);
+const EditorLaunchModal: React.FunctionComponent< Props > = ( { siteId, locale } ) => {
+	return <FocusedLaunchModal onClose={ noop } siteId={ siteId } locale={ locale } />;
 };
 
-export default EditorLaunchModal;
+export default connect( ( state ) => {
+	const siteId = getSelectedSiteId( state ) as number;
+	const locale = getCurrentUserLocale( state );
+	return {
+		siteId,
+		locale,
+	};
+} )( EditorLaunchModal );

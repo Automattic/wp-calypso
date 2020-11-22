@@ -15,7 +15,7 @@ import 'prismjs/components/prism-scss';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import searchSelectors from './selectors';
 
 const loadSearchIndex = once( async () => {
@@ -116,13 +116,13 @@ function makeSnippet( doc, query ) {
 	// find up to 4 matches in the document and extract snippets to be joined together
 	// TODO: detect when snippets overlap and merge them.
 	while ( ( match = termRegex.exec( doc.body ) ) !== null && snippets.length < 4 ) {
-		const matchStr = match[ 1 ],
-			index = match.index + 1,
-			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
-			after = doc.body.substring(
-				index + matchStr.length,
-				index + matchStr.length + SNIPPET_PAD_LENGTH
-			);
+		const matchStr = match[ 1 ];
+		const index = match.index + 1;
+		const before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index );
+		const after = doc.body.substring(
+			index + matchStr.length,
+			index + matchStr.length + SNIPPET_PAD_LENGTH
+		);
 
 		snippets.push( before + '<mark>' + matchStr + '</mark>' + after );
 	}

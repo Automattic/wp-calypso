@@ -6,9 +6,9 @@ const { app, Menu } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const appQuit = require( 'desktop/lib/app-quit' );
-const menuSetter = require( 'desktop/lib/menu-setter' );
-const log = require( 'desktop/lib/logger' )( 'platform:mac' );
+const appQuit = require( 'calypso/desktop/lib/app-quit' );
+const menuSetter = require( 'calypso/desktop/lib/menu-setter' );
+const log = require( 'calypso/desktop/lib/logger' )( 'platform:mac' );
 
 function MacPlatform( mainWindow ) {
 	this.window = mainWindow;
@@ -39,7 +39,7 @@ function MacPlatform( mainWindow ) {
 			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
 			mainWindow.hide();
-			mainWindow.webContents.send( 'close-notifications-panel' );
+			mainWindow.webContents.send( 'notifications-panel-show', false );
 		}
 	} );
 }

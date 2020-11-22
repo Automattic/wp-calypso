@@ -12,10 +12,10 @@ import { Card, Button } from '@automattic/components';
 /**
  * Image dependencies
  */
-import conversationsImage from 'assets/images/reader/reader-conversations.png';
-import discoverImage from 'assets/images/reader/reader-discover.png';
-import mobileImage from 'assets/images/reader/reader-mobile.png';
-import notificationsImage from 'assets/images/reader/reader-notifications.png';
+import conversationsImage from 'calypso/assets/images/reader/reader-conversations.png';
+import discoverImage from 'calypso/assets/images/reader/reader-discover.png';
+import mobileImage from 'calypso/assets/images/reader/reader-mobile.png';
+import notificationsImage from 'calypso/assets/images/reader/reader-notifications.png';
 
 class ReaderLandingStepContent extends PureComponent {
 	render() {

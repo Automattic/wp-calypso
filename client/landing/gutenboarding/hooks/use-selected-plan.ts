@@ -3,6 +3,7 @@
  */
 import { Site } from '@automattic/data-stores';
 import { useSelect } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 export function usePlanFromPath() {
 	const planPath = usePlanRouteParam();
@@ -19,6 +20,10 @@ export function usePlanFromPath() {
 }
 
 export function useSelectedPlan() {
+	const locale = useLocale();
+	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
+	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( locale ) );
+
 	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const selectedPlan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
 

@@ -10,8 +10,8 @@ import React from 'react';
  */
 import DocService from './service';
 import Error from './error';
-import DocumentHead from 'components/data/document-head';
-import highlight from 'lib/highlight';
+import DocumentHead from 'calypso/components/data/document-head';
+import highlight from 'calypso/lib/highlight';
 
 export default class extends React.Component {
 	static displayName = 'SingleDocument';
@@ -96,7 +96,7 @@ export default class extends React.Component {
 
 	renderBody() {
 		const editURL = encodeURI(
-			'https://github.com/Automattic/wp-calypso/edit/master/' + this.props.path
+			'https://github.com/Automattic/wp-calypso/edit/trunk/' + this.props.path
 		);
 		const { body, error } = this.state;
 

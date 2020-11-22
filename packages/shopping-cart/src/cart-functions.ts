@@ -1,25 +1,26 @@
 /**
  * Internal dependencies
  */
-import { emptyResponseCart } from './shopping-cart-endpoint';
+import { emptyResponseCart } from './empty-carts';
+import { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
 	RequestCart,
 	RequestCartProduct,
 	ResponseCart,
 	ResponseCartProduct,
-	TempResponseCartProduct,
 } from './types';
 
 let lastUUID = 100;
 
 function convertResponseCartProductToRequestCartProduct(
-	product: ResponseCartProduct | TempResponseCartProduct
+	product: ResponseCartProduct | RequestCartProduct
 ): RequestCartProduct {
-	const { product_slug, meta, product_id, extra } = product;
+	const { product_slug, meta, product_id, extra, volume } = product;
 	return {
 		product_slug,
 		meta,
+		volume,
 		product_id,
 		extra,
 	};
@@ -32,7 +33,7 @@ export function convertResponseCartToRequestCart( {
 	coupon,
 	is_coupon_applied,
 	tax,
-}: ResponseCart ): RequestCart {
+}: TempResponseCart ): RequestCart {
 	let requestCartTax = null;
 	if ( tax.location.country_code || tax.location.postal_code || tax.location.subdivision_code ) {
 		requestCartTax = {
@@ -55,19 +56,35 @@ export function convertResponseCartToRequestCart( {
 	};
 }
 
+export function convertTempResponseCartToResponseCart( cart: TempResponseCart ): ResponseCart {
+	return {
+		...cart,
+		products: cart.products.filter( isValidResponseCartProduct ),
+	};
+}
+
+function isValidResponseCartProduct(
+	product: RequestCartProduct | ResponseCartProduct
+): product is ResponseCartProduct {
+	return 'uuid' in product;
+}
+
 export function removeItemFromResponseCart(
-	cart: ResponseCart,
+	cart: TempResponseCart,
 	uuidToRemove: string
-): ResponseCart {
+): TempResponseCart {
 	return {
 		...cart,
 		products: cart.products.filter( ( product ) => {
-			return product.uuid !== uuidToRemove;
+			return isValidResponseCartProduct( product ) ? product.uuid !== uuidToRemove : true;
 		} ),
 	};
 }
 
-export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string ): ResponseCart {
+export function addCouponToResponseCart(
+	cart: TempResponseCart,
+	couponToAdd: string
+): TempResponseCart {
 	return {
 		...cart,
 		coupon: couponToAdd,
@@ -75,7 +92,7 @@ export function addCouponToResponseCart( cart: ResponseCart, couponToAdd: string
 	};
 }
 
-export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart {
+export function removeCouponFromResponseCart( cart: TempResponseCart ): TempResponseCart {
 	return {
 		...cart,
 		coupon: '',
@@ -84,9 +101,9 @@ export function removeCouponFromResponseCart( cart: ResponseCart ): ResponseCart
 }
 
 export function addLocationToResponseCart(
-	cart: ResponseCart,
+	cart: TempResponseCart,
 	location: CartLocation
-): ResponseCart {
+): TempResponseCart {
 	return {
 		...cart,
 		tax: {
@@ -101,7 +118,7 @@ export function addLocationToResponseCart(
 }
 
 export function doesCartLocationDifferFromResponseCartLocation(
-	cart: ResponseCart,
+	cart: TempResponseCart,
 	location: CartLocation
 ): boolean {
 	const { countryCode, postalCode, subdivisionCode } = location;
@@ -126,10 +143,14 @@ export function convertRawResponseCartToResponseCart(
 	}
 
 	// If tax.location is an empty PHP associative array, it will be JSON serialized to [] but we need {}
-	const taxLocation =
-		rawResponseCart.tax?.location && Array.isArray( rawResponseCart.tax.location )
-			? rawResponseCart.tax.location
-			: {};
+	let taxLocation = {};
+	if ( rawResponseCart.tax?.location ) {
+		if ( Array.isArray( rawResponseCart.tax.location ) ) {
+			taxLocation = {};
+		} else {
+			taxLocation = rawResponseCart.tax.location;
+		}
+	}
 
 	const rawProducts =
 		rawResponseCart.products?.length && Array.isArray( rawResponseCart.products )
@@ -154,40 +175,34 @@ export function convertRawResponseCartToResponseCart(
 }
 
 export function addItemsToResponseCart(
-	responseCart: ResponseCart,
+	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
-): ResponseCart {
-	const responseCartProducts: TempResponseCartProduct[] = products.map(
-		convertRequestCartProductToResponseCartProduct
-	);
+): TempResponseCart {
 	return {
 		...responseCart,
-		products: [ ...responseCart.products, ...responseCartProducts ],
+		products: [ ...responseCart.products, ...products ],
 	};
 }
 
 export function replaceAllItemsInResponseCart(
-	responseCart: ResponseCart,
+	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
-): ResponseCart {
-	const responseCartProducts: TempResponseCartProduct[] = products.map(
-		convertRequestCartProductToResponseCartProduct
-	);
+): TempResponseCart {
 	return {
 		...responseCart,
-		products: [ ...responseCartProducts ],
+		products: [ ...products ],
 	};
 }
 
 export function replaceItemInResponseCart(
-	cart: ResponseCart,
+	cart: TempResponseCart,
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
-): ResponseCart {
+): TempResponseCart {
 	return {
 		...cart,
 		products: cart.products.map( ( item ) => {
-			if ( item.uuid === uuidToReplace ) {
+			if ( isValidResponseCartProduct( item ) && item.uuid === uuidToReplace ) {
 				return { ...item, ...productPropertiesToChange };
 			}
 			return item;
@@ -195,38 +210,17 @@ export function replaceItemInResponseCart(
 	};
 }
 
-function convertRequestCartProductToResponseCartProduct(
-	product: RequestCartProduct
-): TempResponseCartProduct {
-	const { product_slug, product_id, meta, extra } = product;
-	return {
-		product_name: '',
-		product_slug,
-		product_id,
-		currency: null,
-		item_original_cost_display: null,
-		item_original_cost_integer: null,
-		item_subtotal_monthly_cost_display: null,
-		item_subtotal_monthly_cost_integer: null,
-		item_original_subtotal_display: null,
-		item_original_subtotal_integer: null,
-		product_cost_integer: null,
-		product_cost_display: null,
-		item_subtotal_integer: null,
-		item_subtotal_display: null,
-		is_domain_registration: null,
-		is_bundled: null,
-		months_per_bill_period: null,
-		meta,
-		volume: 1,
-		extra,
-		uuid: 'calypso-shopping-cart-endpoint-uuid-' + lastUUID++,
-		cost: null,
-		price: null,
-		product_type: null,
-		included_domain_purchase_amount: null,
-		is_renewal: undefined,
-		is_sale_coupon_applied: false,
-		subscription_id: undefined,
-	};
+export function doesResponseCartContainProductMatching(
+	responseCart: TempResponseCart,
+	productProperties: Partial< ResponseCartProduct >
+): boolean {
+	return responseCart.products.some( ( product ) => {
+		return (
+			isValidResponseCartProduct( product ) &&
+			Object.keys( productProperties ).every( ( key ) => {
+				const typedKey = key as keyof ResponseCartProduct;
+				return product[ typedKey ] === productProperties[ typedKey ];
+			} )
+		);
+	} );
 }

@@ -4,6 +4,7 @@
 	"description": "A suite of components to generate previews for a post for both social and search engines",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -34,8 +35,8 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile && copy-assets"
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.11.1",

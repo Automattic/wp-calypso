@@ -9,9 +9,9 @@ const debug = debugFactory( 'calypso:email-followers-actions' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import EmailFollowersStore from 'lib/email-followers/store';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import EmailFollowersStore from 'calypso/lib/email-followers/store';
 
 const EmailFollowersActions = {
 	fetchFollowers: ( fetchOptions, silentUpdate = false ) => {

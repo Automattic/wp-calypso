@@ -157,7 +157,6 @@ class ReaderSiteNotificationSettings extends Component {
 						<FormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
-							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 							id="reader-site-notification-settings__notifications"
 						>
 							{ translate( 'Notify me of new posts' ) }

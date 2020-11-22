@@ -9,8 +9,8 @@ const debug = debugFactory( 'calypso:password-generator' );
 /**
  * Internal dependencies
  */
-import makeEmitter from 'lib/mixins/emitter';
-import wp from 'lib/wp';
+import makeEmitter from 'calypso/lib/mixins/emitter';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 
@@ -94,12 +94,12 @@ AccountPasswordData.prototype.getValidationFailures = function () {
 };
 
 AccountPasswordData.prototype.generate = function () {
-	let i,
-		length = random( 12, 35 ),
-		chars = map( this.charsets, function ( charset ) {
-			// Ensure one character from each character set is in the password
-			return sample( charset );
-		} );
+	let i;
+	const length = random( 12, 35 );
+	const chars = map( this.charsets, function ( charset ) {
+		// Ensure one character from each character set is in the password
+		return sample( charset );
+	} );
 
 	for ( i = 0; i < length; i++ ) {
 		if ( 0 === i % 4 ) {

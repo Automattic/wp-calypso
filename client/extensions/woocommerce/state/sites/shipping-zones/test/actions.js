@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchShippingZones } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST,
 	WOOCOMMERCE_SHIPPING_ZONES_REQUEST_SUCCESS,

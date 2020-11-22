@@ -7,18 +7,18 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { recordPurchase } from 'lib/analytics/record-purchase';
-import { hasFreeTrial, getDomainRegistrations } from 'lib/cart-values/cart-items';
-import { getTld } from 'lib/domains';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { hasFreeTrial, getDomainRegistrations } from 'calypso/lib/cart-values/cart-items';
+import { getTld } from 'calypso/lib/domains';
 import {
 	INPUT_VALIDATION,
 	MODAL_AUTHORIZATION,
 	RECEIVED_AUTHORIZATION_RESPONSE,
 	REDIRECTING_FOR_AUTHORIZATION,
 	RECEIVED_WPCOM_RESPONSE,
-} from 'lib/store-transactions/step-types';
+} from 'calypso/lib/store-transactions/step-types';
 
 const debug = debugFactory( 'calypso:checkout:payment' );
 

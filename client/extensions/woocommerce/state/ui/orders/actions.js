@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	WOOCOMMERCE_UI_ORDERS_CLEAR_EDIT,
 	WOOCOMMERCE_UI_ORDERS_EDIT,
