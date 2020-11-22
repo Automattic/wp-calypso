@@ -84,8 +84,8 @@ Once you know what the first small piece of your feature will be, follow this ge
    - Don’t be afraid to change, [squash](http://gitready.com/advanced/2009/02/10/squashing-commits-with-rebase.html), and rearrange commits or to force push - `git push -f origin fix/something-broken`. Keep in mind, however, that if other people are committing on the same branch then you can mess up their history. You are perfectly safe if you are the only one pushing commits to that branch.
    - Squash minor commits such as typo fixes or [fixes to previous commits](http://fle.github.io/git-tip-keep-your-branch-clean-with-fixup-and-autosquash.html) in the pull request.
 4. If you end up needing more than a few commits, consider splitting the pull request into separate components. Discuss in the new pull request and in the comments why the branch was broken apart and any changes that may have taken place that necessitated the split. Our goal is to catch early in the review process those pull requests that attempt to do too much.
-5. When you feel that you are ready for a formal review or for merging into `master` make sure you check this list and our [merge checklist](../docs/merge-checklist.md).
-   - Make sure your branch merges cleanly and consider rebasing against `master` to keep the branch history short and clean.
+5. When you feel that you are ready for a formal review or for merging into `trunk` make sure you check this list and our [merge checklist](../docs/merge-checklist.md).
+   - Make sure your branch merges cleanly and consider rebasing against `trunk` to keep the branch history short and clean.
    - If there are visual changes, add before and after screenshots in the pull request comments.
    - Add unit tests, or at a minimum, provide helpful instructions for the reviewer so they can test your changes. This will help speed up the review process.
    - Ensure that your commit messages are [meaningful](http://robots.thoughtbot.com/5-useful-tips-for-a-better-commit-message).

@@ -25,7 +25,7 @@ For larger features, keeping branches small requires hiding work-in-progress (WI
 
 While it is tempting to merge from `trunk` into your branch frequently, this leads to a messy history because each merge creates a merge commit. When working by yourself, it is best to use `git pull --rebase trunk`, but if you're pushing to a shared repo, it is best to not do any merging or rebasing until the feature is ready for final testing, and then do a [rebase](https://github.com/edx/edx-platform/wiki/How-to-Rebase-a-Pull-Request) at the very end. This is one reason why it is important to open pull requests whenever you have working code.
 
-If you have a Pull Request branch that cannot be merged into `master` due to a conflict (this can happen for long-running Pull Request discussions), it's still best to rebase the branch (rather than merge) and resolve any conflicts on your local copy.
+If you have a Pull Request branch that cannot be merged into `trunk` due to a conflict (this can happen for long-running Pull Request discussions), it's still best to rebase the branch (rather than merge) and resolve any conflicts on your local copy.
 
 Once you have resolved any conflicts locally you can update the Pull Request with `git push --force-with-lease` (note: we prefer using `--force-with-lease` over `--force` to help protect remote commits).
 
