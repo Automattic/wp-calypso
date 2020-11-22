@@ -4,9 +4,9 @@ import '@automattic/calypso-polyfills';
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import '@testing-library/jest-dom/extend-expect';
-import { screen, render, waitFor, fireEvent } from '@testing-library/react';
+import { screen, act, render, waitFor, fireEvent } from '@testing-library/react';
 
 /**
  * Internal dependencies
@@ -71,8 +71,15 @@ async function setCart( cartKey: string, newCart: RequestCart ): Promise< Respon
 	throw new Error( 'Unknown cart key' );
 }
 
-function ProductList() {
-	const { responseCart } = useShoppingCart();
+function ProductList( { initialProducts }: { initialProducts?: RequestCartProduct[] } ) {
+	const { responseCart, addProductsToCart } = useShoppingCart();
+	const hasAdded = useRef( false );
+	useEffect( () => {
+		if ( initialProducts && ! hasAdded.current ) {
+			hasAdded.current = true;
+			addProductsToCart( initialProducts );
+		}
+	}, [ addProductsToCart, initialProducts ] );
 	if ( responseCart.products.length === 0 ) {
 		return null;
 	}
@@ -136,6 +143,54 @@ describe( 'useShoppingCart', () => {
 			fireEvent.click( screen.getByText( 'Click me' ) );
 			expect( markUpdateComplete ).not.toHaveBeenCalled();
 			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( markUpdateComplete ).toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'removeProductFromCart', () => {
+		const TestComponent = () => {
+			const { removeProductFromCart, responseCart } = useShoppingCart();
+			const onClick = () => {
+				const uuid = responseCart.products.length ? responseCart.products[ 0 ].uuid : null;
+				if ( uuid ) {
+					removeProductFromCart( uuid ).then( () => markUpdateComplete() );
+				}
+			};
+			return (
+				<div>
+					<ProductList initialProducts={ [ planWithoutDomain ] } />
+					<button onClick={ onClick }>Click me</button>
+				</div>
+			);
+		};
+
+		it( 'removes a product from the cart', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planWithoutDomain.product_name ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+			} );
+			expect( screen.queryByText( planWithoutDomain.product_name ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'returns a Promise that resolves after the update completes', async () => {
+			render(
+				<MockProvider>
+					<TestComponent />
+				</MockProvider>
+			);
+
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByText( planWithoutDomain.product_name ) ).toBeInTheDocument();
+			await act( async () => {
+				fireEvent.click( screen.getByText( 'Click me' ) );
+				expect( markUpdateComplete ).not.toHaveBeenCalled();
+			} );
 			expect( markUpdateComplete ).toHaveBeenCalled();
 		} );
 	} );
