@@ -16,11 +16,20 @@ import { CreditCardForm } from '../';
 import { getParamsForApi } from '../helpers';
 import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
 
+jest.mock( '@automattic/calypso-stripe', () => ( {
+	useStripe: () => ( {
+		stripe: {},
+		stripeConfiguration: {},
+		setStripeError: () => {},
+		isStripeLoading: false,
+		stripeLoadingError: {},
+	} ),
+} ) );
+
 describe( 'Credit Card Form', () => {
 	const defaultProps = {
 		translate: identity,
 		countriesList: [],
-		createCardToken: noop,
 		recordFormSubmitEvent: noop,
 		successCallback: noop,
 	};

@@ -191,7 +191,6 @@ export function CreditCardForm( {
 
 CreditCardForm.propTypes = {
 	apiParams: PropTypes.object,
-	createCardToken: PropTypes.func.isRequired,
 	countriesList: PropTypes.array.isRequired,
 	initialValues: PropTypes.object,
 	purchase: PropTypes.object,
