@@ -118,7 +118,6 @@
 		"reader": true,
 		"reader/full-errors": false,
 		"reader/seen-posts": false,
-		"reader/user-mention-suggestions": false,
 		"republicize": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
