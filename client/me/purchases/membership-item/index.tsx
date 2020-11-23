@@ -23,18 +23,22 @@ const MembershipTerms = ( { subscription }: { subscription: MembershipSubscripti
 	const moment = useLocalizedMoment();
 
 	if ( subscription.end_date === null ) {
-		return translate( 'Never expires' );
+		return <>{ translate( 'Never expires' ) }</>;
 	}
 
-	return translate( 'Renews at %(amount)s on %(date)s', {
-		args: {
-			amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
-			date: moment( subscription.end_date ).format( 'LL' ),
-		},
-	} );
+	return (
+		<>
+			{ translate( 'Renews at %(amount)s on %(date)s', {
+				args: {
+					amount: formatCurrency( Number( subscription.renewal_price ), subscription.currency ),
+					date: moment( subscription.end_date ).format( 'LL' ),
+				},
+			} ) }
+		</>
+	);
 };
 
-const SiteLink = ( { subscription } ) => {
+const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
 
 	return (
@@ -56,31 +60,40 @@ const SiteLink = ( { subscription } ) => {
 	);
 };
 
-const MemberShipType = ( { subscription } ) => {
+const MembershipType = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
 
-	return subscription.end_date === null
-		? translate( 'Purchased from {{site}}{{/site}}', {
+	if ( subscription.end_date === null ) {
+		return (
+			<>
+				{ translate( 'Purchased from {{site}}{{/site}}', {
+					components: {
+						site: <SiteLink subscription={ subscription } />,
+					},
+				} ) }
+			</>
+		);
+	}
+
+	return (
+		<>
+			{ translate( 'Subscription to {{site}}{{/site}}', {
 				components: {
 					site: <SiteLink subscription={ subscription } />,
 				},
-		  } )
-		: translate( 'Subscription to {{site}}{{/site}}', {
-				components: {
-					site: <SiteLink subscription={ subscription } />,
-				},
-		  } );
+			} ) }
+		</>
+	);
 };
 
-const Icon = ( { subscription } ) => {
-	const subscriptionUrl = subscription.site_url.substring( 7 );
+const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
 	const [ site, setSite ] = useState( null );
 	const [ loadData, setLoadData ] = useState( true );
 
 	async function fetchData() {
 		const data = await fetch(
-			'https://public-api.wordpress.com/rest/v1.1/sites/' + subscriptionUrl
+			'https://public-api.wordpress.com/rest/v1.1/sites/' + subscription.site_id
 		);
 
 		data
@@ -126,7 +139,7 @@ export default function MembershipItem( {
 				<div className="membership-item__information purchase-item__information purchases-layout__information">
 					<div className="membership-item__title purchase-item__title">{ subscription.title }</div>
 					<div className="membership-item__purchase-type purchase-item__purchase-type">
-						<MemberShipType subscription={ subscription } />
+						<MembershipType subscription={ subscription } />
 					</div>
 				</div>
 
