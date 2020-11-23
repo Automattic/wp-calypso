@@ -241,7 +241,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						className="domain-picker__error-retry-btn"
 						onClick={ retryDomainSuggestionRequest }
 					>
-						Retry
+						{ __( 'Retry', __i18n_text_domain__ ) }
 					</Button>
 				</div>
 			) }
