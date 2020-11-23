@@ -23,7 +23,7 @@ class RecoveryPhone extends Component {
 				title={ translate( 'Recovery SMS number', {
 					comment: 'Account security',
 				} ) }
-				subtitle={ phone ? phone.numberFull : translate( 'Not set' ) }
+				subtitle={ phone ? <span dir="ltr">{ phone.numberFull }</span> : translate( 'Not set' ) }
 				hasValue={ !! phone }
 				disabled={ disabled }
 				onSave={ this.onSave }
