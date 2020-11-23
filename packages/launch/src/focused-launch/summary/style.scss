@@ -176,7 +176,7 @@ $commentary-column-gap-wide: 100px;
 
 .focused-launch-summary__ask-for-help {
 	// to make scrolling space for sticky action bar
-	margin-bottom: 80px;
+	margin-bottom: $onboarding-footer-height;
 
 	@include break-small {
 		margin-bottom: 0;
