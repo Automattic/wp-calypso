@@ -12,7 +12,6 @@ import i18n from 'i18n-calypso';
 import userSettings from 'calypso/lib/user-settings';
 import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 import AccountComponent from 'calypso/me/account/main';
-import username from 'calypso/lib/username';
 
 export function account( context, next ) {
 	let showNoticeInitially = false;
@@ -29,7 +28,6 @@ export function account( context, next ) {
 	context.primary = React.createElement( AccountComponent, {
 		userSettings: userSettings,
 		path: context.path,
-		username: username,
 		showNoticeInitially: showNoticeInitially,
 	} );
 	next();

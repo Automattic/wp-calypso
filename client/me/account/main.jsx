@@ -59,6 +59,8 @@ import {
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
 import FormattedHeader from 'calypso/components/formatted-header';
+import wpcom from 'calypso/lib/wp';
+import user from 'calypso/lib/user';
 
 /**
  * Style dependencies
@@ -77,17 +79,16 @@ const Account = createReactClass( {
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings', 'username' ) ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
-		username: PropTypes.object.isRequired,
 		showNoticeInitially: PropTypes.bool,
 	},
 
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
-		this.props.username.clearValidation();
+		this.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
@@ -185,9 +186,52 @@ const Account = createReactClass( {
 	},
 
 	validateUsername() {
+		const { translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
+
 		debug( 'Validating username ' + username );
-		this.props.username.validate( username );
+
+		if ( username === user().get().username ) {
+			this.setState( { validation: false } );
+			return;
+		}
+
+		if ( username.length < 4 ) {
+			this.setState( {
+				validation: {
+					error: 'invalid_input',
+					message: translate( 'Usernames must be at least 4 characters.' ),
+				},
+			} );
+			return;
+		}
+		if ( ! /^[a-z0-9]+$/.test( username ) ) {
+			this.setState( {
+				validation: {
+					error: 'invalid_input',
+					message: translate( 'Usernames can only contain lowercase letters (a-z) and numbers.' ),
+				},
+			} );
+			return;
+		}
+
+		const self = this;
+
+		wpcom
+			.undocumented()
+			.me()
+			.validateUsername( username, function ( error, data ) {
+				if ( error ) {
+					self.setState( { validation: error } );
+				} else {
+					self.setState( {
+						validation: {
+							...data,
+							validatedUsername: username,
+						},
+					} );
+				}
+			} );
 	},
 
 	hasEmailValidationError() {
@@ -383,7 +427,7 @@ const Account = createReactClass( {
 			usernameAction: null,
 		} );
 
-		this.props.username.clearValidation();
+		this.clearValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
@@ -396,10 +440,10 @@ const Account = createReactClass( {
 		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, ( error ) => {
+		this.changeUsername( username, action, ( error ) => {
 			this.setState( { submittingForm: false } );
 			if ( error ) {
-				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
+				this.props.errorNotice( this.getValidationFailureMessage() );
 			} else {
 				this.props.markSaved();
 
@@ -408,6 +452,40 @@ const Account = createReactClass( {
 				window.location.reload();
 			}
 		} );
+	},
+
+	changeUsername( username, action, cb ) {
+		wpcom
+			.undocumented()
+			.me()
+			.changeUsername( username, action, function ( error, data ) {
+				if ( error ) {
+					this.setState( { validation: error } );
+					return;
+				}
+				user().fetch();
+				cb( error, data );
+			} );
+	},
+
+	isUsernameValid() {
+		return this.state.validation?.success === true;
+	},
+
+	getValidationFailureMessage() {
+		return this.state.validation?.message ?? null;
+	},
+
+	getAllowedActions() {
+		return this.state.validation?.allowed_actions ?? {};
+	},
+
+	getValidatedUsername() {
+		return this.state.validation?.validatedUsername ?? null;
+	},
+
+	clearValidation() {
+		this.setState( { validation: false } );
 	},
 
 	onSiteSelect( siteId ) {
@@ -462,44 +540,44 @@ const Account = createReactClass( {
 	},
 
 	renderUsernameValidation() {
-		const { translate, username, userSettings } = this.props;
+		const { translate, userSettings } = this.props;
 
 		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
 			return null;
 		}
 
-		if ( username.isUsernameValid() ) {
+		if ( this.isUsernameValid() ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-success"
 					text={ translate( '%(username)s is a valid username.', {
 						args: {
-							username: username.getValidatedUsername(),
+							username: this.getValidatedUsername(),
 						},
 					} ) }
 				/>
 			);
-		} else if ( null !== username.getValidationFailureMessage() ) {
+		} else if ( null !== this.getValidationFailureMessage() ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ username.getValidationFailureMessage() }
+					text={ this.getValidationFailureMessage() }
 				/>
 			);
 		}
 	},
 
 	renderUsernameConfirmNotice() {
-		const { translate, username } = this.props;
+		const { translate } = this.props;
 		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
 		const status = usernameMatch ? 'is-success' : 'is-error';
 		const text = usernameMatch
 			? translate( 'Thanks for confirming your new username!' )
 			: translate( 'Please re-enter your new username to confirm it.' );
 
-		if ( ! username.isUsernameValid() ) {
+		if ( ! this.isUsernameValid() ) {
 			return null;
 		}
 
@@ -661,8 +739,8 @@ const Account = createReactClass( {
 	},
 
 	renderBlogActionFields() {
-		const { translate, username } = this.props;
-		const actions = username.getAllowedActions();
+		const { translate } = this.props;
+		const actions = this.getAllowedActions();
 
 		/*
 		 * If there are no actions or if there is only one action,
@@ -698,11 +776,11 @@ const Account = createReactClass( {
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { currentUserDisplayName, currentUserName, translate, username } = this.props;
+		const { currentUserDisplayName, currentUserName, translate } = this.props;
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
-			! username.isUsernameValid() ||
+			! this.isUsernameValid() ||
 			this.state.submittingForm;
 
 		return (
