@@ -34,9 +34,7 @@ function render_fallback_coming_soon_page() {
 		define( 'GRAVATAR_HOVERCARDS__DISABLE', true );
 	}
 
-	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
-	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
-	// Disable WP scripts, social og meta, cookie banner.
+	// Disable WP scripts, likes, social og meta, cookie banner.
 	remove_action( 'wp_enqueue_scripts', 'wpcom_actionbar_enqueue_scripts', 101 );
 	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
 	remove_action( 'wp_print_styles', 'print_emoji_styles' );
@@ -46,6 +44,9 @@ function render_fallback_coming_soon_page() {
 	remove_action( 'wp_footer', 'stats_footer', 101 );
 	add_filter( 'jetpack_disable_eu_cookie_law_widget', '__return_true', 1 );
 	add_filter( 'jetpack_enable_opengraph', '__return_false', 1 );
+	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
+	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
+	
 	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), PLUGIN_VERSION );
 
 	include __DIR__ . '/fallback-coming-soon-page.php';
