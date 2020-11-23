@@ -23,6 +23,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
+import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 
 /**
  * Types
@@ -65,6 +66,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
 	};
 
+	const handleCanvaClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
+	};
+
 	const handleFindYourExpertClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
 	};
@@ -95,6 +100,22 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						target="_blank"
 					>
 						{ translate( 'Create a logo' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Create beautiful designs and graphics for your website' ) }
+					description={ translate(
+						"Everyone can create professional designs with Canva. It's a free and drag-and-drop tool for creating images, cover images, and more."
+					) }
+					imagePath={ canvaLogo }
+				>
+					<Button
+						onClick={ handleCanvaClick }
+						href="https://wp.me/logo-makerffffff"
+						target="_blank"
+					>
+						{ translate( 'Create custom images with Canva' ) }
 					</Button>
 				</MarketingToolsFeature>
 
