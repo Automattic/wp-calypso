@@ -54,7 +54,7 @@ const PlansTable: React.FunctionComponent< Props > = ( {
 	const placeholderPlans = [ 1, 2, 3, 4 ];
 
 	// Primary plan
-	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan() );
+	const popularPlan = useSelect( ( select ) => select( PLANS_STORE ).getDefaultPaidPlan( locale ) );
 	const recommendedPlanSlug = useSelect( ( select ) =>
 		select( WPCOM_FEATURES_STORE ).getRecommendedPlanSlug( selectedFeatures )
 	);
