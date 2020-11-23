@@ -55,7 +55,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'podcasting_category_id',
 	'publicize_permanently_disabled',
 	'show_on_front',
-	'signup_is_store',
 	'site_segment',
 	'software_version',
 	'timezone',
