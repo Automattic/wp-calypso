@@ -111,7 +111,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
 			context.params
 		);
-		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
