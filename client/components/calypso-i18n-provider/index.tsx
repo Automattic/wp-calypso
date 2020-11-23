@@ -28,7 +28,7 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	}, [] );
 
 	return (
-		<LocaleProvider localeSlug={ localeSlug || i18nDefaultLocaleSlug }>
+		<LocaleProvider localeSlug={ localeSlug || config( 'i18n_default_locale_slug' ) }>
 			<I18nProvider localeData={ localeData }>{ children }</I18nProvider>
 		</LocaleProvider>
 	);
