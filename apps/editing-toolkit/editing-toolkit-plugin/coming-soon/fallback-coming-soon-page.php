@@ -60,11 +60,9 @@ function get_wpcom_redirect_to() {
  * @return string The login URL
  */
 function get_login_url() {
-	$redirect_to = get_wpcom_redirect_to();
-
 	// If we're on WPCOM use a WordPress.com login URL.
 	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . $redirect_to );
+		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . get_wpcom_redirect_to() );
 	}
 
 	return site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
