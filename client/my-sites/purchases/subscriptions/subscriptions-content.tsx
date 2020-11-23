@@ -60,17 +60,15 @@ function SubscriptionsContent( {
 	if ( purchases.length ) {
 		return (
 			<div className="subscriptions__list">
-				<PurchasesListHeader showSite={ false } />
+				<PurchasesListHeader />
 
 				<PurchasesSite
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					key={ selectedSite.ID }
 					siteId={ selectedSite.ID }
 					name={ selectedSite.name }
-					domain={ selectedSite.domain }
 					slug={ selectedSite.slug }
 					purchases={ purchases }
-					showSite={ false }
 				/>
 			</div>
 		);

@@ -35,7 +35,7 @@ const PurchasesSite = ( {
 	purchases,
 	name,
 	slug,
-	showSite,
+	showSite = false,
 } ) => {
 	const isJetpack = ! isPlaceholder && some( purchases, ( purchase ) => isJetpackPlan( purchase ) );
 
@@ -78,9 +78,10 @@ const PurchasesSite = ( {
 PurchasesSite.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func,
 	isPlaceholder: PropTypes.bool,
-	siteId: PropTypes.number,
-	purchases: PropTypes.array,
 	name: PropTypes.string,
+	purchases: PropTypes.array,
+	showSite: PropTypes.bool,
+	siteId: PropTypes.number,
 	slug: PropTypes.string,
 };
 

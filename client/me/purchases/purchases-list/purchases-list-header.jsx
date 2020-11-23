@@ -14,7 +14,7 @@ import { CompactCard } from '@automattic/components';
  */
 import 'calypso/me/purchases/style.scss';
 
-const PurchasesListHeader = ( { showSite } ) => {
+const PurchasesListHeader = ( { showSite = false } ) => {
 	const translate = useTranslate();
 
 	return (

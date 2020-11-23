@@ -126,7 +126,6 @@ class PurchasesList extends Component {
 							key={ site.id }
 							siteId={ site.id }
 							name={ site.name }
-							domain={ site.domain }
 							slug={ site.slug }
 							purchases={ site.purchases }
 							showSite={ true }

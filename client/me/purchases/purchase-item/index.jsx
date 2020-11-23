@@ -291,12 +291,13 @@ class PurchaseItem extends Component {
 }
 
 PurchaseItem.propTypes = {
-	isPlaceholder: PropTypes.bool,
-	isDisconnectedSite: PropTypes.bool,
-	purchase: PropTypes.object,
-	slug: PropTypes.string,
-	isJetpack: PropTypes.bool,
 	getManagePurchaseUrlFor: PropTypes.func,
+	isDisconnectedSite: PropTypes.bool,
+	isJetpack: PropTypes.bool,
+	isPlaceholder: PropTypes.bool,
+	purchase: PropTypes.object,
+	showSite: PropTypes.bool,
+	slug: PropTypes.string,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );
