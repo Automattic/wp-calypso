@@ -194,7 +194,10 @@ $plan-features-sidebar-width: 272px;
 
 	&.is-p2-free,
 	&.is-p2-plus {
-		padding-left: 24px;
+		padding-left: 12px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding-left: 24px;
+		}
 	}
 
 	&.is-p2-plus {
