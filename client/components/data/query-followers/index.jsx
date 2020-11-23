@@ -3,6 +3,10 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
+
+/**
+ * WordPress dependencies
+ */
 import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
