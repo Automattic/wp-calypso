@@ -10,6 +10,8 @@ import {
 	FOLLOWER_REMOVE_SUCCESS,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/followers/init';
+
 /**
  * Returns an action object used in signalling that followers for the site
  * have been requested..

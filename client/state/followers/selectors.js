@@ -4,6 +4,8 @@
 
 import { getSerializedQuery } from 'calypso/state/followers/utils';
 
+import 'calypso/state/followers/init';
+
 /**
  * Returns a list of followers for the given Query.
  *

@@ -12,6 +12,8 @@ const debug = debugFactory( 'calypso:followers-actions' );
 import wpcom from 'calypso/lib/wp';
 import { requestFollowers, requestFollowersSuccess, requestFollowersFailure } from '../actions';
 
+import 'calypso/state/followers/init';
+
 /**
  * Request followers for a given site.
  *
