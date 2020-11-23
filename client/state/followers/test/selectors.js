@@ -3,7 +3,7 @@
  */
 import {
 	getFollowersForQuery,
-	getIsFetchingFollowersForQuery,
+	isFetchingFollowersForQuery,
 	getTotalFollowersForQuery,
 } from '../selectors';
 import { getSerializedQuery } from '../utils';
@@ -53,7 +53,7 @@ describe( 'selctors', () => {
 		} );
 	} );
 
-	describe( '#getIsFetchingFollowersForQuery', () => {
+	describe( '#isFetchingFollowersForQuery', () => {
 		test( 'should return true if currently fetching', () => {
 			const serializedQuery = getSerializedQuery( { siteId: 555 } );
 			const state = {
@@ -63,7 +63,7 @@ describe( 'selctors', () => {
 					},
 				},
 			};
-			expect( getIsFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( true );
+			expect( isFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( true );
 		} );
 
 		test( 'should return false if not currently fetching', () => {
@@ -75,7 +75,7 @@ describe( 'selctors', () => {
 					},
 				},
 			};
-			expect( getIsFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( false );
+			expect( isFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( false );
 		} );
 	} );
 

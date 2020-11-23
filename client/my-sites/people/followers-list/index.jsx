@@ -27,7 +27,7 @@ import { preventWidows } from 'calypso/lib/formatting';
 import QueryFollowers from 'calypso/components/data/query-followers';
 import {
 	getFollowersForQuery,
-	getIsFetchingFollowersForQuery,
+	isFetchingFollowersForQuery,
 	getTotalFollowersForQuery,
 } from 'calypso/state/followers/selectors';
 import { removeFollower } from 'calypso/state/followers/thunks';
@@ -268,7 +268,7 @@ class Followers extends Component {
 const mapStateToProps = ( state, ownProps ) => {
 	return {
 		followers: getFollowersForQuery( state, ownProps.query ),
-		fetching: getIsFetchingFollowersForQuery( state, ownProps.query ),
+		fetching: isFetchingFollowersForQuery( state, ownProps.query ),
 		totalFollowers: getTotalFollowersForQuery( state, ownProps.query ),
 	};
 };
