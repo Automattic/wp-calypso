@@ -49,11 +49,19 @@ class InviteAccept extends React.Component {
 		matchEmailError: false,
 	};
 
+	mounted = false;
+
 	componentDidMount() {
+		this.mounted = true;
+
 		// The site ID and invite key are required, so only fetch if set
 		if ( this.props.siteId && this.props.inviteKey ) {
 			this.fetchInvite();
 		}
+	}
+
+	componentWillUnmount() {
+		this.mounted = false;
 	}
 
 	async fetchInvite() {
@@ -68,14 +76,22 @@ class InviteAccept extends React.Component {
 				authKey: this.props.authKey,
 			};
 
-			this.setState( { invite } );
+			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
-			this.setState( { error } );
+			this.handleFetchInvite( error );
 
 			recordTracksEvent( 'calypso_invite_validation_failure', {
 				error: error.error,
 			} );
 		}
+	}
+
+	handleFetchInvite( error, invite ) {
+		if ( ! this.mounted ) {
+			return;
+		}
+
+		this.setState( { error, invite } );
 	}
 
 	isMatchEmailError = () => {
@@ -244,9 +260,7 @@ class InviteAccept extends React.Component {
 	}
 }
 
-export default connect(
-	( state ) => ( {
-		user: getCurrentUser( state ),
-	} ),
-	{ successNotice, infoNotice }
-)( localize( InviteAccept ) );
+export default connect( ( state ) => ( { user: getCurrentUser( state ) } ), {
+	successNotice,
+	infoNotice,
+} )( localize( InviteAccept ) );
