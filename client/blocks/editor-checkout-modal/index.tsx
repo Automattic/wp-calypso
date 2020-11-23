@@ -46,7 +46,7 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal = ( props: Props ) => {
-	const { site, isOpen, onClose, cartData } = props;
+	const { site, isOpen, onClose, cartData, isEcommerce } = props;
 	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
 
 	const user = userFactory();
@@ -82,29 +82,31 @@ const EditorCheckoutModal = ( props: Props ) => {
 		: cartData.products.map( ( product ) => product.product_slug );
 	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
 
-	return hasEmptyCart ? null : (
-		<Modal
-			open={ isOpen }
-			overlayClassName="editor-checkout-modal"
-			onRequestClose={ onClose }
-			title=""
-			shouldCloseOnClickOutside={ false }
-			icon={ <Icon icon={ wordpress } size={ 36 } /> }
-		>
-			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
-				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ props.locale }
-				>
-					<CompositeCheckout
-						isInEditor
-						siteId={ site.ID }
-						siteSlug={ site.slug }
-						productAliasFromUrl={ commaSeparatedProductSlugs }
-					/>
-				</StripeHookProvider>
-			</ShoppingCartProvider>
-		</Modal>
+	return (
+		isOpen && (
+			<Modal
+				open={ isOpen }
+				overlayClassName="editor-checkout-modal"
+				onRequestClose={ onClose }
+				title=""
+				shouldCloseOnClickOutside={ false }
+				icon={ <Icon icon={ wordpress } size={ 36 } /> }
+			>
+				<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ props.locale }
+					>
+						<CompositeCheckout
+							isInEditor={ ! isEcommerce }
+							siteId={ site.ID }
+							siteSlug={ site.slug }
+							productAliasFromUrl={ commaSeparatedProductSlugs }
+						/>
+					</StripeHookProvider>
+				</ShoppingCartProvider>
+			</Modal>
+		)
 	);
 };
 
@@ -114,12 +116,14 @@ type Props = {
 	onClose: () => void;
 	isOpen: boolean;
 	locale: string | undefined;
+	isEcommerce: boolean;
 };
 
 EditorCheckoutModal.defaultProps = {
 	isOpen: false,
 	onClose: () => null,
 	cartData: {},
+	isEcommerce: false,
 };
 
 export default connect( ( state ) => ( {

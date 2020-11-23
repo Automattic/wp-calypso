@@ -21,7 +21,6 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'calypso/state/ui/actions';
@@ -98,6 +97,7 @@ interface State {
 	postUrl?: T.URL;
 	previewUrl: T.URL;
 	cartData?: RequestCart;
+	isEcommerce: boolean;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -142,6 +142,7 @@ class CalypsoifyIframe extends Component<
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 		cartData: {},
+		isEcommerce: false,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -290,7 +291,11 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
-			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
+			this.setState( {
+				isCheckoutModalVisible: true,
+				cartData: { products: payload.products },
+				isEcommerce: payload.isEcommerce,
+			} );
 		}
 
 		if ( EditorActions.GetCheckoutModalStatus === action ) {
@@ -701,6 +706,7 @@ class CalypsoifyIframe extends Component<
 			editedPost,
 			currentIFrameUrl,
 			cartData,
+			isEcommerce,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
@@ -743,13 +749,14 @@ class CalypsoifyIframe extends Component<
 					source=""
 					visible={ isMediaModalVisible }
 				/>
-				{ isCheckoutOverlayEnabled && isCheckoutModalVisible && (
+				{ isCheckoutOverlayEnabled && (
 					<AsyncLoad
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
 						cartData={ cartData }
 						placeholder={ null }
-						isOpen
+						isOpen={ isCheckoutModalVisible }
+						isEcommerce={ isEcommerce }
 					/>
 				) }
 				{ isFocusedLaunchCalypsoEnabled && (
@@ -787,7 +794,6 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
-	const plan = getCurrentPlan( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -863,7 +869,6 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
-		plan,
 	};
 };
 
