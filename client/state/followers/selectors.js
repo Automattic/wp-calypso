@@ -22,7 +22,7 @@ export const getFollowersForQuery = ( state, query ) => {
 
 export const isFetchingFollowersForQuery = ( state, query ) => {
 	const serializedQuery = getSerializedQuery( query );
-	return state.followers?.queryRequests[ serializedQuery ];
+	return state.followers?.queryRequests[ serializedQuery ] ?? false;
 };
 
 export const getTotalFollowersForQuery = ( state, query ) => {

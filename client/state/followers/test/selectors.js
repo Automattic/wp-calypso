@@ -77,6 +77,12 @@ describe( 'selctors', () => {
 			};
 			expect( isFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( false );
 		} );
+
+		test( 'should return false if no data is available', () => {
+			const state = { followers: { queryRequests: {} } };
+
+			expect( isFetchingFollowersForQuery( state, { siteId: 555 } ) ).toBe( false );
+		} );
 	} );
 
 	describe( '#getTotalFollowersForQuery', () => {
@@ -92,6 +98,12 @@ describe( 'selctors', () => {
 				},
 			};
 			expect( getTotalFollowersForQuery( state, { siteId: 555 } ) ).toBe( 5 );
+		} );
+
+		test( "should return `undefined` if there's no data", () => {
+			const state = { followers: { queries: {} } };
+
+			expect( getTotalFollowersForQuery( state, { siteId: 555 } ) ).toBeUndefined();
 		} );
 	} );
 } );
