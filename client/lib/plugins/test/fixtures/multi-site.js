@@ -49,7 +49,6 @@ export default {
 		jetpack_version: '3.7.0-dev',
 		login_url: 'http://example.com/site2/wp-login.php',
 		main_network_site: 'http://example.com',
-		permalink_structure: '/%year%/%monthnum%/%day%/%postname%/',
 		post_formats: [],
 		show_on_front: 'posts',
 		software_version: '4.2-RC4-32277',

@@ -51,7 +51,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'jetpack_frame_nonce',
 	'jetpack_version',
 	'main_network_site',
-	'permalink_structure',
 	'page_on_front',
 	'page_for_posts',
 	'podcasting_archive',
