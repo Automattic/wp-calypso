@@ -7,6 +7,7 @@ import React, { Component, useState } from 'react';
 import deterministicStringify from 'fast-json-stable-stringify';
 import { omit } from 'lodash';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -35,7 +36,6 @@ import { removeFollower } from 'calypso/state/followers/thunks';
  * Stylesheet dependencies
  */
 import './style.scss';
-import { connect } from 'react-redux';
 
 const MAX_FOLLOWERS = 1000;
 
