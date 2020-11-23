@@ -24,7 +24,7 @@ import {
 	useDomainSelection,
 	useSite,
 	usePlans,
-	useOnLaunch,
+	useCart,
 } from '../../hooks';
 import FocusedLaunchSummaryItem, {
 	LeadingContentSide,
@@ -502,7 +502,7 @@ const Summary: React.FunctionComponent = () => {
 	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 
-	const { launchedSite } = useDispatch( SITE_STORE );
+	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
@@ -512,9 +512,8 @@ const Summary: React.FunctionComponent = () => {
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
 	const { locale, siteId, redirectTo } = React.useContext( LaunchContext );
-	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	useOnLaunch();
+	const { goToCheckout } = useCart();
 
 	// When the summary view is active, the modal should be dismissible, and
 	// the modal title should be visible
@@ -532,11 +531,10 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const handleLaunch = () => {
-		setIsLaunching( true );
-
-		// @TODO: replace with 'launcheSite' action
-		// this won't actually launch the site. it is the success action dispatch after lunch
-		launchedSite( siteId );
+		launchSite( siteId );
+		if ( selectedPlan && ! selectedPlan?.isFree ) {
+			goToCheckout();
+		}
 	};
 
 	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
@@ -637,7 +635,7 @@ const Summary: React.FunctionComponent = () => {
 				<ActionButtons className="focused-launch-summary__launch-action-bar">
 					<NextButton
 						className="focused-launch-summary__launch-button"
-						disabled={ ! title || ! hasSelectedDomain || ! selectedPlan || isLaunching }
+						disabled={ ! title || ! hasSelectedDomain || ! selectedPlan }
 						onClick={ handleLaunch }
 					>
 						{ __( 'Launch your site', __i18n_text_domain__ ) }

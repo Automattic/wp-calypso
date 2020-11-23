@@ -16,7 +16,7 @@ import { getPlanProduct, getDomainProduct } from '../utils';
 // Hook used exclusively in Step-by-step launch flow
 export const useOnLaunch = () => {
 	const { siteId, flow } = React.useContext( LaunchContext );
-	const { launchStatus } = useSite();
+
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const isEcommercePlan = useSelect( ( select ) =>
 		select( PLANS_STORE ).isPlanEcommerce( plan?.storeSlug )
@@ -24,8 +24,10 @@ export const useOnLaunch = () => {
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
+	const { isLaunched } = useSite();
+
 	React.useEffect( () => {
-		if ( launchStatus ) {
+		if ( isLaunched ) {
 			if ( plan && ! plan?.isFree ) {
 				const planProduct = getPlanProduct( plan, flow );
 				const domainProduct = domain && getDomainProduct( domain, flow );
@@ -60,5 +62,5 @@ export const useOnLaunch = () => {
 			}
 			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
 		}
-	}, [ launchStatus ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ isLaunched ] ); // eslint-disable-line react-hooks/exhaustive-deps
 };
