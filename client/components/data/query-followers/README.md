@@ -4,7 +4,7 @@
 
 ## Usage
 
-Render the component, passing `query`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
+Render the component, passing `query`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state. This component will refresh data from the latest every 30 seconds.
 
 ```jsx
 import React from 'react';
@@ -38,23 +38,3 @@ export default function FollowersList( { siteId } ) {
 </table>
 
 A bunch of query params to filter the API response. See the [API documentation](https://developer.wordpress.com/docs/api/1.1/get/sites/%24site/stats/followers/) for a detailed list of options.
-
-### `refresh`
-
-<table>
-	<tr><th>Type</th><td>Boolean</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td>`false`</td></tr>
-</table>
-
-If set to `true` the component will refetch data in a given interval.
-
-### `refreshInterval`
-
-<table>
-	<tr><th>Type</th><td>Boolean</td></tr>
-	<tr><th>Required</th><td>No</td></tr>
-	<tr><th>Default</th><td>`30000` (30 seconds)</td></tr>
-</table>
-
-If `refresh` is true this reflects the interval in which a refresh should happen.

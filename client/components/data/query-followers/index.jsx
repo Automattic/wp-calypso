@@ -18,12 +18,7 @@ class QueryFollowers extends React.Component {
 	componentDidMount() {
 		this.props.fetchFollowers( this.props.query );
 
-		if ( this.props.refresh ) {
-			this.interval = setInterval(
-				() => this.refreshFollowers(),
-				this.props.refreshInterval || REFRESH_INTERVAL
-			);
-		}
+		this.interval = setInterval( () => this.refreshFollowers(), REFRESH_INTERVAL );
 	}
 
 	componentDidUpdate( prevProps ) {
