@@ -6,6 +6,7 @@ import './public-path';
  */
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
+import TourAnimation from './tour-animation';
 import './style-tour.scss';
 
 /**
@@ -50,22 +51,25 @@ function WelcomeTourFrame() {
 	}
 
 	return (
-		<div className="wpcom-editor-welcome-tour-container">
-			{ ! isMinimized ? (
-				<WelcomeTourCard
-					cardContent={ cardContent[ currentCard ] }
-					cardIndex={ currentCard }
-					key={ currentCard }
-					lastCardIndex={ cardContent.length - 1 }
-					onDismiss={ dismissWpcomNuxTour }
-					onMinimize={ setIsMinimized }
-					setCurrentCard={ setCurrentCard }
-				/>
-			) : (
-				// <WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
-				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
-			) }
-		</div>
+		<>
+			<TourAnimation cardAnimation={ cardContent[ currentCard ].animation }></TourAnimation>
+			<div className="wpcom-editor-welcome-tour-container">
+				{ ! isMinimized ? (
+					<WelcomeTourCard
+						cardContent={ cardContent[ currentCard ] }
+						cardIndex={ currentCard }
+						key={ currentCard }
+						lastCardIndex={ cardContent.length - 1 }
+						onDismiss={ dismissWpcomNuxTour }
+						onMinimize={ setIsMinimized }
+						setCurrentCard={ setCurrentCard }
+					/>
+				) : (
+					// <WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
+					<WelcomeTourMinimized onMaximize={ setIsMinimized } />
+				) }
+			</div>
+		</>
 	);
 }
 
