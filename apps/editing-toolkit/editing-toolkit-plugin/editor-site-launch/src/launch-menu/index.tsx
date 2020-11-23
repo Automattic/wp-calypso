@@ -3,7 +3,7 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
@@ -19,6 +19,7 @@ interface Props {
 }
 
 const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => {
+	const { __ } = useI18n();
 	const { step: currentStep } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
