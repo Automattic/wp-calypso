@@ -104,7 +104,6 @@ If your package requires compilation, the `package.json` `prepare` script should
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
-
 ## Running Tests
 
 To run all of the package tests:

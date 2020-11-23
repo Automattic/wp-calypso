@@ -12,7 +12,7 @@ Example:
 First, display a `jsx` code block to show an example of usage, including import statements and a React component.
 
 ```jsx
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 import { Button } from '@automattic/components';
 
 export default function RockOnButton() {
