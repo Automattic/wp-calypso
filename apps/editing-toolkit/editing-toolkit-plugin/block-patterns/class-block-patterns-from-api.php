@@ -88,18 +88,20 @@ class Block_Patterns_From_API {
 		}
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
-			register_block_pattern(
-				Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
-				array(
-					'title'         => $pattern['title'],
-					'description'   => $pattern['title'],
-					'content'       => $pattern['html'],
-					'viewportWidth' => 1280,
-					'categories'    => array_keys(
-						$pattern['categories']
-					),
-				)
-			);
+			if ( $this->can_register_pattern( $pattern ) ) {
+				register_block_pattern(
+					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
+					array(
+						'title'         => $pattern['title'],
+						'description'   => $pattern['title'],
+						'content'       => $pattern['html'],
+						'viewportWidth' => 1280,
+						'categories'    => array_keys(
+							$pattern['categories']
+						),
+					)
+				);
+			}
 		}
 	}
 
@@ -147,5 +149,35 @@ class Block_Patterns_From_API {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
 		return \A8C\FSE\Common\get_iso_639_locale( $language );
+	}
+
+	/**
+	 * Check that the pattern is allowed to be registered.
+	 *
+	 * Checks for tags with a prefix of `requires-` in the slug, and then attempts to match
+	 * the remainder of the slug to a theme feature.
+	 *
+	 * For example, to prevent patterns that depend on wide or full-width block alignment support
+	 * from being registered in sites where the active theme does not have `align-wide` support,
+	 * we can add the `requires-align-wide` tag to the pattern. This function will then match
+	 * against that tag slug, and then return `false`.
+	 *
+	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
+	 *
+	 * @return bool
+	 */
+	private function can_register_pattern( $pattern ) {
+
+		foreach ( $pattern['tags'] as $tag_slug => $value ) {
+			// Match against tags with a non-translated slug beginning with `requires-`.
+			$split_slug = preg_split( '/^requires-/', $tag_slug );
+
+			// If the theme does not support the matched feature, then skip registering the pattern.
+			if ( $split_slug[1] && false === get_theme_support( $split_slug[1] ) ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
