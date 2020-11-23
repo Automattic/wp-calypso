@@ -23,7 +23,7 @@ export const requestFollowers = ( query ) => ( {
 
 /**
  * Returns an action object used in signalling that a request for followers
- * was successfull.
+ * was successful.
  *
  * @param {object} query params which were sent to the API
  * @param {object} data API response object
