@@ -18,7 +18,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -68,8 +68,6 @@ function EditCardDetails( props ) {
 		page( props.getManagePurchaseUrlFor( props.siteSlug, id ) );
 	};
 
-	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
-
 	return (
 		<Fragment>
 			<TrackPurchasePageView
@@ -94,7 +92,6 @@ function EditCardDetails( props ) {
 					>
 						<CreditCardForm
 							apiParams={ { purchaseId: props.purchase.id } }
-							createCardToken={ createCardUpdateToken }
 							initialValues={ props.card }
 							purchase={ props.purchase }
 							recordFormSubmitEvent={ recordFormSubmitEvent }
