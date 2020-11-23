@@ -1,7 +1,13 @@
 /**
+ * External dependencies
+ */
+import { apiFetch } from '@wordpress/data-controls';
+import { addQueryArgs } from '@wordpress/url';
+
+/**
  * Internal dependencies
  */
-import { getLocalizedLanguageNames } from '../resolvers';
+import { getLocalizedLanguageNames, LANGUAGE_NAMES_URL } from '../resolvers';
 import { setLocalizedLanguageNames } from '../actions';
 
 describe( 'i18n resolvers', () => {
@@ -9,19 +15,20 @@ describe( 'i18n resolvers', () => {
 		it( 'should set the localized language names', () => {
 			const iter = getLocalizedLanguageNames( 'en-us' );
 
-			expect( iter.next().value ).toEqual( {
-				type: 'API_FETCH',
-				request: expect.objectContaining( {
+			expect( iter.next().value ).toEqual(
+				apiFetch( {
+					url: addQueryArgs( LANGUAGE_NAMES_URL, { _locale: 'en-us' } ),
 					mode: 'cors',
-					url: expect.stringContaining( 'language-names?_locale=en-us' ),
-				} ),
-			} );
+				} )
+			);
 
 			const localizedLanguageNames = Symbol( 'localizedLanguageNames' );
 
 			expect( iter.next( localizedLanguageNames ).value ).toEqual(
 				setLocalizedLanguageNames( 'en-us', localizedLanguageNames )
 			);
+
+			expect( iter.next().done ).toBeTruthy();
 		} );
 	} );
 } );

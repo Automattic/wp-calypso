@@ -7,11 +7,11 @@ import { addQueryArgs } from '@wordpress/url';
 
 import { setLocalizedLanguageNames } from './actions';
 
-export function* getLocalizedLanguageNames( locale: string ) {
-	const url = 'https://public-api.wordpress.com/wpcom/v2/i18n/language-names';
+export const LANGUAGE_NAMES_URL = 'https://public-api.wordpress.com/wpcom/v2/i18n/language-names';
 
+export function* getLocalizedLanguageNames( locale: string ) {
 	const localizedLanguageNames = yield apiFetch( {
-		url: addQueryArgs( url, { _locale: locale } ),
+		url: addQueryArgs( LANGUAGE_NAMES_URL, { _locale: locale } ),
 		mode: 'cors',
 	} as APIFetchOptions );
 
