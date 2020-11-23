@@ -1,11 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
-	MEMBERSHIPS_SETTINGS,
-	MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
-	NOTICE_CREATE,
-} from 'calypso/state/action-types';
+import { MEMBERSHIPS_SETTINGS, NOTICE_CREATE } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
 
 import 'calypso/state/data-layer/wpcom/sites/memberships';
@@ -35,10 +31,7 @@ export const requestDisconnectStripeAccount = (
 		return wpcom.req
 			.get( `/me/connected_account/stripe/${ connectedAccountId }/disconnect` )
 			.then( () => {
-				dispatch( {
-					siteId,
-					type: MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_DISCONNECT_SUCCESS,
-				} );
+				dispatch( requestSettings( siteId ) );
 				dispatch( {
 					type: NOTICE_CREATE,
 					notice: {
