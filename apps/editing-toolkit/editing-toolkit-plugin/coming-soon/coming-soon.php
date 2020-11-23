@@ -19,10 +19,15 @@ function should_show_coming_soon_page() {
 
 	$should_show = ( (int) get_option( 'wpcom_public_coming_soon' ) === 1 );
 
+	// Everyone from Administrator to Subscriber will be able to see the site.
+	// See https://wordpress.org/support/article/roles-and-capabilities/ for all roles and capabilities.
+	// We can update to `edit_post` to be stricter, or open it up as an editable feature.
 	if ( is_user_logged_in() && current_user_can( 'read' ) ) {
 		$should_show = false;
 	}
 
+	// Allow folks to hook into this method to set their own rules.
+	// We'll use to on WordPress.com to check further user privileges.
 	return apply_filters( 'a8c_show_coming_soon_page', $should_show );
 }
 
@@ -46,6 +51,7 @@ function render_fallback_coming_soon_page() {
 	add_filter( 'jetpack_enable_opengraph', '__return_false', 1 );
 	add_filter( 'wpcom_disable_logged_out_follow', '__return_true', 10, 1 ); // Disable follow actionbar.
 	add_filter( 'wpl_is_enabled_sitewide', '__return_false', 10, 1 ); // Disable likes.
+	add_filter( 'jetpack_implode_frontend_css', '__return_false', 99 ); // Jetpack "implodes" all registered CSS files into one file.
 
 	wp_enqueue_style( 'recoleta-font', '//s1.wp.com/i/fonts/recoleta/css/400.min.css', array(), PLUGIN_VERSION );
 
