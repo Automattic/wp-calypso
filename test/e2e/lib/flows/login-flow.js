@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { By } from 'selenium-webdriver';
-
-/**
  * Internal dependencies
  */
 import LoginPage from '../pages/login-page.js';
@@ -20,7 +15,6 @@ import SidebarComponent from '../components/sidebar-component.js';
 import NavBarComponent from '../components/nav-bar-component.js';
 
 import * as dataHelper from '../data-helper';
-import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager';
 import * as loginCookieHelper from '../login-cookie-helper';
 import PagesPage from '../pages/pages-page';
@@ -57,7 +51,7 @@ export default class LoginFlow {
 		}
 	}
 
-	async login( { emailSSO = false, jetpackSSO = false, useFreshLogin = false } = {} ) {
+	async login( { emailSSO = false, jetpackSSO = false } = {} ) {
 		await driverManager.ensureNotLoggedIn( this.driver );
 
 		// Disabling re-use of cookies as latest versions of Chrome don't currently support it.
@@ -77,8 +71,8 @@ export default class LoginFlow {
 
 		console.log( 'Logging in as ' + this.account.username );
 
-		let loginURL = this.account.loginURL,
-			loginPage;
+		let loginURL = this.account.loginURL;
+		let loginPage;
 
 		if ( host !== 'WPCOM' && this.account.legacyAccountName !== 'jetpackConnectUser' ) {
 			loginURL = `http://${ dataHelper.getJetpackSiteName() }/wp-admin`;

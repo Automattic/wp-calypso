@@ -43,7 +43,8 @@ class SecurityCheckupAccountRecoveryEmail extends React.Component {
 			);
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! accountRecoveryEmail ) {
 			icon = getWarningIcon();

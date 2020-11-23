@@ -15,8 +15,12 @@
 
 	li {
 		border-top: 1px solid var( --color-neutral-0 );
+		display: flex;
 		padding: 20px 24px;
-		@include clear-fix;
+
+		@include breakpoint-deprecated( '<480px' ) {
+			flex-direction: column;
+		}
 
 		&:first-of-type {
 			border-top: none;

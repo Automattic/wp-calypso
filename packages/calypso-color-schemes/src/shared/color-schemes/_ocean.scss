@@ -1,38 +1,79 @@
-.color-scheme.is-ocean {
-	/* Theme Properties */
-	--color-primary: var( --studio-blue-50 );
-	--color-primary-rgb: var( --studio-blue-50-rgb );
-	--color-primary-dark: var( --studio-blue-70 );
-	--color-primary-dark-rgb: var( --studio-blue-70-rgb );
-	--color-primary-light: var( --studio-blue-30 );
-	--color-primary-light-rgb: var( --studio-blue-30-rgb );
-	--color-primary-0: var( --studio-blue-0 );
-	--color-primary-0-rgb: var( --studio-blue-0-rgb );
-	--color-primary-5: var( --studio-blue-5 );
-	--color-primary-5-rgb: var( --studio-blue-5-rgb );
-	--color-primary-10: var( --studio-blue-10 );
-	--color-primary-10-rgb: var( --studio-blue-10-rgb );
-	--color-primary-20: var( --studio-blue-20 );
-	--color-primary-20-rgb: var( --studio-blue-20-rgb );
-	--color-primary-30: var( --studio-blue-30 );
-	--color-primary-30-rgb: var( --studio-blue-30-rgb );
-	--color-primary-40: var( --studio-blue-40 );
-	--color-primary-40-rgb: var( --studio-blue-40-rgb );
-	--color-primary-50: var( --studio-blue-50 );
-	--color-primary-50-rgb: var( --studio-blue-50-rgb );
-	--color-primary-60: var( --studio-blue-60 );
-	--color-primary-60-rgb: var( --studio-blue-60-rgb );
-	--color-primary-70: var( --studio-blue-70 );
-	--color-primary-70-rgb: var( --studio-blue-70-rgb );
-	--color-primary-80: var( --studio-blue-80 );
-	--color-primary-80-rgb: var( --studio-blue-80-rgb );
-	--color-primary-90: var( --studio-blue-90 );
-	--color-primary-90-rgb: var( --studio-blue-90-rgb );
-	--color-primary-100: var( --studio-blue-100 );
-	--color-primary-100-rgb: var( --studio-blue-100-rgb );
+/*
+Ocean is a color scheme ported from wp-admin.
 
-	--color-accent: var( --studio-celadon-50 );
-	--color-accent-rgb: var( --studio-celadon-50-rgb );
+WP Admin Unthemed definitions:
+
+$text-color: #fff !default;
+$base-color: #23282d !default;
+$icon-color: hsl( hue( $base-color ), 7%, 95% ) !default;
+$highlight-color: #0073aa !default;
+$notification-color: #d54e21 !default;
+
+WP Admin Ocean Definition:
+
+$base-color: #738e96;
+$icon-color: #f2fcff;
+$highlight-color: #9ebaa0;
+$notification-color: #aa9d88;
+$low-contrast-theme: "true";
+
+Used Studio-celadon for primary+accent colors.
+  - WP Highlight color Hue: 193.71
+  - Celadon Hue range: 160-170
+  - Wordpress Blue hue range: 197 - 205
+Wordpress Blue is technically a closer hue but looked worse, in my
+opinion.  Celadon seems to match the ocean colors better.
+*/
+
+.color-scheme.is-ocean,
+.color-scheme.is-ocean .is-nav-unification {
+	/* Variables used in Calypso Ectoplasm */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255; /* Manual conversion */
+	--theme-base-color: #738e96; /* Direct from wp-admin */
+	--theme-base-color-rgb: 115, 142, 150; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-submenu-text-color: #d5dde0; /* mix( $base-color, $text-color, 30% ) */
+	--theme-submenu-background-color: #627c83; /* darken( $base-color, 7% ), computed: http://scg.ar-ch.org/ */
+	--theme-icon-color: #f2fcff; /* Direct from wp-admin */
+	--theme-highlight-color: #9ebaa0; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 158, 186, 160; /* Manually computed https://www.rapidtables.com/convert/color/hex-to-rgb.html */
+	--theme-notification-color: #aa9d88; /* Direct from wp-admin */
+
+	/* Primary */
+	--color-primary: var( --theme-highlight-color );
+	--color-primary-rgb: var( --theme-highlight-color-rgb );
+	--color-primary-dark: var( --studio-celadon-70 );
+	--color-primary-dark-rgb: var( --studio-celadon-70-rgb );
+	--color-primary-light: var( --studio-celadon-30 );
+	--color-primary-light-rgb: var( --studio-celadon-30-rgb );
+	--color-primary-0: var( --studio-celadon-0 );
+	--color-primary-0-rgb: var( --studio-celadon-0-rgb );
+	--color-primary-5: var( --studio-celadon-5 );
+	--color-primary-5-rgb: var( --studio-celadon-5-rgb );
+	--color-primary-10: var( --studio-celadon-10 );
+	--color-primary-10-rgb: var( --studio-celadon-10-rgb );
+	--color-primary-20: var( --studio-celadon-20 );
+	--color-primary-20-rgb: var( --studio-celadon-20-rgb );
+	--color-primary-30: var( --studio-celadon-30 );
+	--color-primary-30-rgb: var( --studio-celadon-30-rgb );
+	--color-primary-40: var( --studio-celadon-40 );
+	--color-primary-40-rgb: var( --studio-celadon-40-rgb );
+	--color-primary-50: var( --studio-celadon-50 );
+	--color-primary-50-rgb: var( --studio-celadon-50-rgb );
+	--color-primary-60: var( --studio-celadon-60 );
+	--color-primary-60-rgb: var( --studio-celadon-60-rgb );
+	--color-primary-70: var( --studio-celadon-70 );
+	--color-primary-70-rgb: var( --studio-celadon-70-rgb );
+	--color-primary-80: var( --studio-celadon-80 );
+	--color-primary-80-rgb: var( --studio-celadon-80-rgb );
+	--color-primary-90: var( --studio-celadon-90 );
+	--color-primary-90-rgb: var( --studio-celadon-90-rgb );
+	--color-primary-100: var( --studio-celadon-100 );
+	--color-primary-100-rgb: var( --studio-celadon-100-rgb );
+
+	/* Accent */
+	--color-accent: var( --theme-highlight-color );
+	--color-accent-rgb: var( --theme-highlight-color-rgb );
 	--color-accent-dark: var( --studio-celadon-70 );
 	--color-accent-dark-rgb: var( --studio-celadon-70-rgb );
 	--color-accent-light: var( --studio-celadon-30 );
@@ -62,62 +103,46 @@
 	--color-accent-100: var( --studio-celadon-100 );
 	--color-accent-100-rgb: var( --studio-celadon-100-rgb );
 
-	--color-link: var( --studio-celadon-50 );
-	--color-link-rgb: var( --studio-celadon-50-rgb );
-	--color-link-dark: var( --studio-celadon-70 );
-	--color-link-dark-rgb: var( --studio-celadon-70-rgb );
-	--color-link-light: var( --studio-celadon-30 );
-	--color-link-light-rgb: var( --studio-celadon-30-rgb );
-	--color-link-0: var( --studio-celadon-0 );
-	--color-link-0-rgb: var( --studio-celadon-0-rgb );
-	--color-link-5: var( --studio-celadon-5 );
-	--color-link-5-rgb: var( --studio-celadon-5-rgb );
-	--color-link-10: var( --studio-celadon-10 );
-	--color-link-10-rgb: var( --studio-celadon-10-rgb );
-	--color-link-20: var( --studio-celadon-20 );
-	--color-link-20-rgb: var( --studio-celadon-20-rgb );
-	--color-link-30: var( --studio-celadon-30 );
-	--color-link-30-rgb: var( --studio-celadon-30-rgb );
-	--color-link-40: var( --studio-celadon-40 );
-	--color-link-40-rgb: var( --studio-celadon-40-rgb );
-	--color-link-50: var( --studio-celadon-50 );
-	--color-link-50-rgb: var( --studio-celadon-50-rgb );
-	--color-link-60: var( --studio-celadon-60 );
-	--color-link-60-rgb: var( --studio-celadon-60-rgb );
-	--color-link-70: var( --studio-celadon-70 );
-	--color-link-70-rgb: var( --studio-celadon-70-rgb );
-	--color-link-80: var( --studio-celadon-80 );
-	--color-link-80-rgb: var( --studio-celadon-80-rgb );
-	--color-link-90: var( --studio-celadon-90 );
-	--color-link-90-rgb: var( --studio-celadon-90-rgb );
-	--color-link-100: var( --studio-celadon-100 );
-	--color-link-100-rgb: var( --studio-celadon-100-rgb );
-
-	/* Component Properties */
-	--color-masterbar-background: var( --studio-blue-80 );
-	--color-masterbar-border: var( --studio-blue-80 );
+	/* Masterbar */
+	--color-masterbar-background: var( --theme-base-color );
+	--color-masterbar-border: var( --theme-submenu-background-color );
 	--color-masterbar-text: var( --studio-white );
-	--color-masterbar-item-hover-background: var( --studio-blue-90 );
-	--color-masterbar-item-active-background: var( --studio-blue-100 );
+	--color-masterbar-unread-dot-background: var( --theme-notification-color );
+
+	--color-masterbar-item-hover-background: var( --theme-submenu-background-color );
+	--color-masterbar-item-active-background: var( --theme-submenu-background-color );
 	--color-masterbar-item-new-editor-background: var( --studio-gray-50 );
 	--color-masterbar-item-new-editor-hover-background: var( --studio-gray-60 );
-	--color-masterbar-unread-dot-background: var( --color-accent-30 );
+
 	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-60 );
 	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
 
-	--color-sidebar-background: var( --studio-blue-60 );
-	--color-sidebar-background-rgb: var( --studio-blue-60-rgb );
-	--color-sidebar-border: var( --studio-blue-70 );
-	--color-sidebar-text: var( --studio-white );
-	--color-sidebar-text-rgb: var( --studio-white-rgb );
-	--color-sidebar-text-alternative: var( --studio-blue-5 );
-	--color-sidebar-gridicon-fill: var( --studio-blue-5 );
-	--color-sidebar-menu-selected-background: var( --studio-yellow-20 );
-	--color-sidebar-menu-selected-background-rgb: var( --studio-yellow-20-rgb );
-	--color-sidebar-menu-selected-text: var( --studio-blue-90 );
-	--color-sidebar-menu-selected-text-rgb: var( --studio-blue-90-rgb );
-	--color-sidebar-menu-hover-background: var( --studio-blue-50 );
-	--color-sidebar-menu-hover-background-rgb: var( --studio-blue-50-rgb );
-	--color-sidebar-menu-hover-text: var( --studio-white );
+	/* Sidebar */
+	--color-sidebar-background: var( --theme-base-color );
+	--color-sidebar-background-rgb: var( --theme-base-color-rgb );
+	--color-sidebar-border: var( --theme-submenu-background-color );
+	--color-sidebar-text: var( --theme-text-color );
+	--color-sidebar-text-rgb: var( --theme-text-color-rgb );
+	--color-sidebar-text-alternative: var( --theme-text-color );
+	--color-sidebar-gridicon-fill: var( --theme-icon-color );
+
+	/* Sidebar Selected */
+	--color-sidebar-menu-selected-background: var( --theme-highlight-color );
+	--color-sidebar-menu-selected-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-selected-text: var( --theme-text-color );
+	--color-sidebar-menu-selected-text-rgb: var( --theme-text-color-rgb );
+
+	/* Sidebar Hover */
+	--color-sidebar-menu-hover-background: var( --theme-highlight-color );
+	--color-sidebar-menu-hover-background-rgb: var( --theme-highlight-color-rgb );
+	--color-sidebar-menu-hover-text: var( --theme-text-color );
+
+	/* Sidebar Hover - Nav unification */
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --theme-submenu-background-color );
+	--color-sidebar-submenu-text: var( --theme-submenu-text-color );
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: var( --theme-highlight-color );
 }

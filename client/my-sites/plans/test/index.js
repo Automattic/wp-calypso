@@ -18,9 +18,6 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'lib/plans/config', () => ( {
-	shouldShowOfferResetFlow: jest.fn( () => false ),
-} ) );
 jest.mock( 'my-sites/plans-v2', () => jest.fn() );
 
 /**
@@ -46,7 +43,6 @@ import {
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import plansV2 from 'calypso/my-sites/plans-v2';
 
 import router from '../index';
@@ -137,12 +133,7 @@ describe( 'Sets all routes', () => {
 } );
 
 describe( 'Loads Jetpack plan page', () => {
-	it( 'Does not load plans-v2 if A/B test returns false', () => {
-		router();
-		expect( plansV2 ).not.toHaveBeenCalled();
-	} );
-	it( 'Loads plans-v2 if A/B test returns true', () => {
-		shouldShowOfferResetFlow.mockReturnValueOnce( true );
+	it( 'Loads plans-v2', () => {
 		router();
 		expect( plansV2 ).toHaveBeenCalledWith(
 			'/plans',

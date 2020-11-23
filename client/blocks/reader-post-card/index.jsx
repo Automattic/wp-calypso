@@ -70,8 +70,8 @@ class ReaderPostCard extends React.Component {
 	};
 
 	handleCardClick = ( event ) => {
-		const rootNode = ReactDom.findDOMNode( this ),
-			selection = window.getSelection && window.getSelection();
+		const rootNode = ReactDom.findDOMNode( this );
+		const selection = window.getSelection && window.getSelection();
 
 		// if the click has modifier or was not primary, ignore it
 		if ( event.button > 0 || event.metaKey || event.controlKey || event.shiftKey || event.altKey ) {

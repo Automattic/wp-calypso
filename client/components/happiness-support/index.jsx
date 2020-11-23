@@ -105,8 +105,8 @@ export class HappinessSupport extends Component {
 	}
 
 	renderContactButton() {
-		let url = CALYPSO_CONTACT,
-			target = '';
+		let url = CALYPSO_CONTACT;
+		let target = '';
 
 		if ( this.props.isJetpack ) {
 			url = JETPACK_CONTACT_SUPPORT;

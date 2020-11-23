@@ -8,11 +8,13 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-describe( 'scroll-to', () => {
-	let scrollTo;
+/**
+ * Internal dependencies
+ */
+import scrollTo from '../';
 
+describe( 'scroll-to', () => {
 	beforeAll( () => {
-		scrollTo = require( '..' );
 		sinon.stub( window, 'scrollTo' );
 	} );
 

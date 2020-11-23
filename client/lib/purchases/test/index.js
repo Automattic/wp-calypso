@@ -19,7 +19,8 @@ import {
 	handleRenewMultiplePurchasesClick,
 } from '../index';
 
-import {
+import data from './data';
+const {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,
 	DOMAIN_PURCHASE_EXPIRED,
@@ -31,7 +32,7 @@ import {
 	SITE_REDIRECT_PURCHASE_EXPIRED,
 	PLAN_PURCHASE_WITH_CREDITS,
 	PLAN_PURCHASE_WITH_PAYPAL,
-} from './data';
+} = data;
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );

@@ -104,13 +104,12 @@ const PlansFilterBar = ( {
 	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
 	const masterbarDefaultHeight = isCloud ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
 
-	const barRef = useRef< HTMLDivElement | null >( null );
 	const isMasterbarVisible = useSelector( masterbarIsVisible );
 	// if we can find the masterbar in the DOM, get its height directly from the element.
 	const masterbarHeight =
 		document.querySelector( masterbarSelector )?.offsetHeight || masterbarDefaultHeight;
 	const masterbarOffset = isMasterbarVisible || isCloud ? masterbarHeight : 0;
-	const hasCrossed = useDetectWindowBoundary( barRef, masterbarOffset );
+	const [ barRef, hasCrossed ] = useDetectWindowBoundary( masterbarOffset );
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>

@@ -58,13 +58,25 @@ export interface CreateSiteParams {
 		font_base?: string;
 		use_patterns?: boolean;
 		selected_features?: string[];
-		wpcom_public_coming_soon?: boolean;
+		wpcom_public_coming_soon?: number;
 	};
+}
+
+export interface SiteDetailsPlan {
+	product_id: number;
+	product_slug: string;
+	product_name: string;
+	product_name_short: string;
+	product_name_short_with_suffix: string;
+	expired: boolean;
+	billing_period: string;
+	user_is_owner: boolean;
+	is_free: boolean;
 }
 
 export interface SiteDetails {
 	ID: number;
-	name: string;
+	name: string | undefined;
 	description: string;
 	URL: string;
 	launch_status: string;
@@ -72,9 +84,7 @@ export interface SiteDetails {
 		created_at: string;
 		selected_features?: string[];
 	};
-	plan?: {
-		is_free: boolean;
-	};
+	plan?: SiteDetailsPlan;
 }
 
 export interface SiteError {

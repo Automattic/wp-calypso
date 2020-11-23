@@ -44,7 +44,8 @@ class SecurityCheckupTwoFactorAuthentication extends React.Component {
 			);
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( hasTwoStepSmsEnabled ) {
 			icon = getOKIcon();

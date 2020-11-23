@@ -2,13 +2,7 @@
  * WordPress dependencies
  */
 import { useEffect, useState, useRef } from '@wordpress/element';
-import {
-	Placeholder,
-	withNotices,
-	Spinner,
-	ToolbarGroup,
-	ToolbarButton,
-} from '@wordpress/components';
+import { Placeholder, Spinner, ToolbarGroup, ToolbarButton } from '@wordpress/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { __, sprintf } from '@wordpress/i18n';
 import { compose } from '@wordpress/compose';
@@ -70,7 +64,6 @@ const defaultString = null;
 /**
  * Block edit function
  *
- * @typedef { import('@wordpress/components').withNotices.Props } NoticeProps
  * @typedef { import('./').Attributes } Attributes
  * @typedef {object} OwnProps
  * @property { boolean } isSelected
@@ -78,11 +71,10 @@ const defaultString = null;
  * @property { string } clientId
  * @property { Attributes } attributes
  * @property { (attributes: object<Attributes>) => void } setAttributes
- * @property { ?object } noticeUI
  * @property { number } postId
  * @property { () => void } selectBlock
  *
- * @typedef { NoticeProps & OwnProps } Props
+ * @typedef { OwnProps } Props
  *
  * @param { Props } props
  */
@@ -292,7 +284,6 @@ function Edit( props ) {
 	if ( apiState === API_STATE_LOADING && ! isPreview ) {
 		return (
 			<div className={ className } ref={ wrapperRef }>
-				{ props.noticeUI }
 				<Placeholder
 					icon="lock"
 					label={ __( 'Premium Content', 'full-site-editing' ) }
@@ -352,8 +343,6 @@ function Edit( props ) {
 			</BlockControls>
 
 			<div className={ className } ref={ wrapperRef }>
-				{ props.noticeUI }
-
 				{ ( isSelected || selectedInnerBlock ) && apiState === API_STATE_CONNECTED && (
 					<Controls
 						{ ...props }
@@ -419,9 +408,7 @@ function useOutsideAlerter( ref, callback ) {
  * @returns { void }
  */
 function onError( props, message ) {
-	const { noticeOperations } = props;
-	noticeOperations.removeAllNotices();
-	noticeOperations.createErrorNotice( message );
+	props.createErrorNotice( message, { type: 'snackbar' } );
 }
 
 /**
@@ -430,9 +417,7 @@ function onError( props, message ) {
  * @returns { void }
  */
 function onSuccess( props, message ) {
-	const { noticeOperations } = props;
-	noticeOperations.removeAllNotices();
-	noticeOperations.createNotice( { status: 'info', content: message } );
+	props.createSuccessNotice( message, { type: 'snackbar' } );
 }
 
 /**
@@ -476,9 +461,9 @@ export default compose( [
 			postId: getCurrentPostId(),
 		};
 	} ),
-	withNotices,
 	withDispatch( ( dispatch, ownProps ) => {
 		const blockEditor = dispatch( 'core/block-editor' );
+		const notices = dispatch( 'core/notices' );
 		return {
 			selectBlock() {
 				// @ts-ignore difficult to type via JSDoc
@@ -490,6 +475,8 @@ export default compose( [
 				// Using window.top to escape from the editor iframe on WordPress.com
 				window.top.location.href = stripeConnectUrl;
 			},
+			createErrorNotice: notices.createErrorNotice,
+			createSuccessNotice: notices.createSuccessNotice,
 		};
 	} ),
 ] )( Edit );

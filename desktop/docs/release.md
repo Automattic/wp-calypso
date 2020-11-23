@@ -19,6 +19,7 @@ make package
 ```
 
 **Notes:**
+
 - `make build` will by default only create a distributable package for your current host system.
 - All packages are saved to the `./release` directory.
 - We are using CircleCI for creating release builds. For advanced configuration use cases please check the [`.circleci/config.yml`](../.circleci/config.yml)

@@ -10,7 +10,7 @@ This idea was pulled from WordPress core, for more background & technical detail
 
 ```js
 import { Button, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'components/gridicons';
+import Gridicon from 'calypso/components/gridicons';
 
 function ScreenReaderTextExample() {
 	return (

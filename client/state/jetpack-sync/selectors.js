@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get, reduce } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/jetpack-sync/init';
 
 /**
  * Returns a sync status object by site ID.
@@ -81,8 +85,8 @@ function isImmediateFullSync( state, siteId ) {
  * @returns {number}         The percentage of sync completed, expressed as an integer
  */
 function getImmediateSyncProgressPercentage( state, siteId ) {
-	const syncStatus = getSyncStatus( state, siteId ),
-		progress = get( syncStatus, 'progress' );
+	const syncStatus = getSyncStatus( state, siteId );
+	const progress = get( syncStatus, 'progress' );
 
 	if ( ! progress ) {
 		return 0;
@@ -135,12 +139,12 @@ function getSyncProgressPercentage( state, siteId ) {
 		return getImmediateSyncProgressPercentage( state, siteId );
 	}
 
-	const syncStatus = getSyncStatus( state, siteId ),
-		queued = get( syncStatus, 'queue' ),
-		sent = get( syncStatus, 'sent' ),
-		total = get( syncStatus, 'total' ),
-		queuedMultiplier = 0.1,
-		sentMultiplier = 0.9;
+	const syncStatus = getSyncStatus( state, siteId );
+	const queued = get( syncStatus, 'queue' );
+	const sent = get( syncStatus, 'sent' );
+	const total = get( syncStatus, 'total' );
+	const queuedMultiplier = 0.1;
+	const sentMultiplier = 0.9;
 
 	if ( isPendingSyncStart( state, siteId ) || ! queued || ! sent || ! total ) {
 		return 0;

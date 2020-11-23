@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { map, noop, reverse, sortBy } from 'lodash';
+import { map, noop, sortBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -48,7 +48,7 @@ class EditorMediaModalGalleryEdit extends React.Component {
 		}
 
 		const orders = {
-			[ translate( 'Reverse order' ) ]: reverse( [ ...settings.items ] ),
+			[ translate( 'Reverse order' ) ]: [ ...settings.items ].reverse(),
 			[ translate( 'Order alphabetically' ) ]: sortBy( settings.items, 'title' ),
 			[ translate( 'Order chronologically' ) ]: sortBy( settings.items, 'date' ),
 		};

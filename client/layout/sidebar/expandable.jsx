@@ -13,6 +13,7 @@ import TranslatableString from 'calypso/components/translatable/proptype';
 import ExpandableSidebarHeading from './expandable-heading';
 import SidebarMenu from 'calypso/layout/sidebar/menu';
 import { hasTouch } from 'calypso/lib/touch-detect';
+import HoverIntent from 'calypso/lib/hover-intent';
 import config from 'calypso/config';
 
 const isTouch = hasTouch();
@@ -57,11 +58,12 @@ export const ExpandableSidebarMenu = ( {
 	...props
 } ) => {
 	let { expanded } = props;
+	const menu = React.createRef(); // Needed for HoverIntent.
 	const submenu = useRef();
 	const [ submenuHovered, setSubmenuHovered ] = useState( false );
 
 	if ( submenu.current ) {
-		// Sets flyout to expand towards bottom
+		// Sets flyout to expand towards bottom.
 		submenu.current.style.bottom = 'auto';
 		submenu.current.style.top = 0;
 	}
@@ -77,7 +79,7 @@ export const ExpandableSidebarMenu = ( {
 	} );
 
 	const onEnter = () => {
-		if ( expanded || isTouch ) {
+		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
@@ -85,7 +87,7 @@ export const ExpandableSidebarMenu = ( {
 	};
 
 	const onLeave = () => {
-		if ( expanded || isTouch ) {
+		if ( expanded || isTouch || ! config.isEnabled( 'nav-unification' ) ) {
 			return;
 		}
 
@@ -96,40 +98,44 @@ export const ExpandableSidebarMenu = ( {
 
 	useLayoutEffect( () => {
 		if ( submenuHovered && offScreen( submenu.current ) ) {
-			// Sets flyout to expand towards top
+			// Sets flyout to expand towards top.
 			submenu.current.style.bottom = 0;
 			submenu.current.style.top = 'auto';
 		}
 	}, [ submenuHovered ] );
 
 	return (
-		<SidebarMenu
-			className={ classes }
-			onMouseEnter={ config.isEnabled( 'nav-unification' ) ? () => onEnter() : null }
-			onMouseLeave={ config.isEnabled( 'nav-unification' ) ? () => onLeave() : null }
+		<HoverIntent
+			onMouseOver={ () => onEnter() }
+			onMouseOut={ () => onLeave() }
+			sensitivity={ 7 }
+			interval={ 90 }
+			timeout={ 200 }
 		>
-			<ExpandableSidebarHeading
-				title={ title }
-				count={ count }
-				onClick={ onClick }
-				customIcon={ customIcon }
-				icon={ icon }
-				materialIcon={ materialIcon }
-				materialIconStyle={ materialIconStyle }
-				expanded={ expanded }
-				menuId={ menuId }
-				{ ...props }
-			/>
-			<li
-				role="region"
-				ref={ submenu }
-				id={ menuId }
-				className="sidebar__expandable-content"
-				hidden={ ! expanded }
-			>
-				<ul>{ children }</ul>
-			</li>
-		</SidebarMenu>
+			<SidebarMenu ref={ menu } className={ classes }>
+				<ExpandableSidebarHeading
+					title={ title }
+					count={ count }
+					onClick={ onClick }
+					customIcon={ customIcon }
+					icon={ icon }
+					materialIcon={ materialIcon }
+					materialIconStyle={ materialIconStyle }
+					expanded={ expanded }
+					menuId={ menuId }
+					{ ...props }
+				/>
+				<li
+					role="region"
+					ref={ submenu }
+					id={ menuId }
+					className="sidebar__expandable-content"
+					hidden={ ! expanded }
+				>
+					<ul>{ children }</ul>
+				</li>
+			</SidebarMenu>
+		</HoverIntent>
 	);
 };
 

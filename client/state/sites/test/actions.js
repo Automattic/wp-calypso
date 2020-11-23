@@ -34,7 +34,8 @@ import { useSandbox } from 'calypso/test-helpers/use-sinon';
 describe( 'actions', () => {
 	const mySitesPath =
 		'/rest/v1.1/me/sites?site_visibility=all&include_domain_only=true&site_activity=active';
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

@@ -300,7 +300,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			return null;
 		}
 
-		let title, progressBarProps;
+		let title;
+		let progressBarProps;
 		if ( isRecommended ) {
 			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
 			progressBarProps = {

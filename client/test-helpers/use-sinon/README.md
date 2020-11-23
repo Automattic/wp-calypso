@@ -30,8 +30,8 @@ import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 describe( 'my time dependent test', function () {
 	let clock;
-	const aLongTimeAgo = Date.parse( '1976-09-15T010:00:00Z' ).valueOf(),
-		yearInMillis = 1000 * 60 * 60 * 24 * 365;
+	const aLongTimeAgo = Date.parse( '1976-09-15T010:00:00Z' ).valueOf();
+	const yearInMillis = 1000 * 60 * 60 * 24 * 365;
 
 	useFakeTimers( aLongTimeAgo, ( newClock ) => {
 		clock = newClock;

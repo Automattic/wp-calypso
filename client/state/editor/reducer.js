@@ -21,7 +21,6 @@ import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/sta
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
-import contactForm from './contact-form/reducer';
 import saveBlockers from './save-blockers/reducer';
 import rawContent from './raw-content/reducer';
 
@@ -123,7 +122,6 @@ const combinedReducer = combineReducers( {
 	imageEditor,
 	videoEditor,
 	lastDraft,
-	contactForm,
 	saveBlockers,
 	rawContent,
 } );

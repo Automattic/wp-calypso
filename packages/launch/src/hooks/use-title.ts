@@ -7,19 +7,25 @@ import { useContext, useEffect, useState } from 'react';
 /**
  * Internal dependencies
  */
-import { SITE_STORE } from '../stores';
+import { SITE_STORE, LAUNCH_STORE } from '../stores';
 import LaunchContext from '../context';
 
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
-	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
+	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( title );
 
 	useEffect( () => {
-		setLocalStateTitle( title || '' );
+		setLocalStateTitle( title );
 	}, [ title ] );
 
 	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;
+
+	const isSiteTitleStepVisible = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).isSiteTitleStepVisible()
+	);
+
+	const showSiteTitleStep = useDispatch( LAUNCH_STORE ).showSiteTitleStep;
 
 	return {
 		title: localStateTitle,
@@ -32,5 +38,7 @@ export function useTitle() {
 			}
 			saveSiteTitle( siteId, localStateTitle );
 		},
+		isSiteTitleStepVisible,
+		showSiteTitleStep,
 	};
 }

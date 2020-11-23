@@ -29,8 +29,8 @@ const SharingServiceAction = ( {
 	recordTracksEvent,
 	path,
 } ) => {
-	let warning = false,
-		label;
+	let warning = false;
+	let label;
 
 	const isPending = 'unknown' === status || isDisconnecting || isRefreshing || isConnecting;
 	const onClick = ( event ) => {

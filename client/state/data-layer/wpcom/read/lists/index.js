@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -57,11 +58,10 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 						} ),
 					];
 				}
-				// NOTE: Add better handling for unexpected response format here.
-				errorNotice( translate( 'List could not be created, please try again later.' ) );
+				errorNotice( translate( 'Unable to create new list.' ) );
 			},
 			onError: ( action, error ) => [
-				errorNotice( String( error ) ),
+				errorNotice( translate( 'Unable to create new list.' ) ),
 				handleReaderListRequestFailure( error ),
 			],
 		} ),
@@ -81,7 +81,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onSuccess: ( action, { list } ) => {
 				return receiveFollowList( list );
 			},
-			onError: ( action, error ) => [ errorNotice( String( error ) ) ],
+			onError: () => [ errorNotice( translate( 'Unable to follow list.' ) ) ],
 		} ),
 	],
 	[ READER_LIST_REQUEST ]: [
@@ -96,10 +96,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, { list } ) => receiveReaderList( { list } ),
-			onError: ( action, error ) => [
-				errorNotice( String( error ) ),
-				handleReaderListRequestFailure( error ),
-			],
+			onError: ( action, error ) => [ handleReaderListRequestFailure( error ) ],
 		} ),
 	],
 	[ READER_LIST_UNFOLLOW ]: [
@@ -117,7 +114,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 			onSuccess: ( action, { list } ) => {
 				return receiveUnfollowList( list );
 			},
-			onError: ( action, error ) => [ errorNotice( String( error ) ) ],
+			onError: () => [ errorNotice( translate( 'Unable to unfollow list.' ) ) ],
 		} ),
 	],
 	[ READER_LIST_UPDATE ]: [
@@ -140,7 +137,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 				} ),
 			],
 			onError: ( action, error ) => [
-				errorNotice( String( error ) ),
+				errorNotice( translate( 'Unable to update list.' ) ),
 				handleUpdateListDetailsError( error, action.list ),
 			],
 		} ),
@@ -157,7 +154,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/index.js', {
 					action
 				),
 			onSuccess: ( action, apiResponse ) => receiveLists( apiResponse?.lists ),
-			onError: ( action, error ) => errorNotice( String( error ) ),
+			onError: () => noop,
 		} ),
 	],
 } );

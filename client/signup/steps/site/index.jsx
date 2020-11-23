@@ -39,8 +39,8 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class Site extends React.Component {
 	static displayName = 'Site';
@@ -204,10 +204,10 @@ class Site extends React.Component {
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: window.location.href,
+		} );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;

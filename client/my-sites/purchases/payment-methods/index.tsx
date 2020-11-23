@@ -16,7 +16,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import FormattedHeader from 'calypso/components/formatted-header';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
-import CreditCards from 'calypso/me/purchases/credit-cards';
+import PaymentMethodList from 'calypso/me/payment-methods/payment-method-list';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
@@ -28,6 +28,9 @@ import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-lev
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from 'calypso/config';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 
 function useLogPaymentMethodsError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -47,12 +50,12 @@ function useLogPaymentMethodsError( message: string ) {
 				} )
 			);
 		},
-		[ reduxDispatch ]
+		[ reduxDispatch, message ]
 	);
 }
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
-export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
+export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
 	const logPaymentMethodsError = useLogPaymentMethodsError(
 		'site level payment methods load error'
@@ -75,13 +78,13 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ) {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
-				<CreditCards addPaymentMethodUrl={ getAddNewPaymentMethod( siteSlug ) } />
+				<PaymentMethodList addPaymentMethodUrl={ getAddNewPaymentMethod( siteSlug ) } />
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
 }
 
-export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
+export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
 	const createAddCardToken = ( ...args: unknown[] ) => createCardToken( 'card_add', ...args );
 	const goToBillingHistory = () => page( getPaymentMethodsUrlFor( siteSlug ) );
@@ -110,19 +113,26 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ) {
 				onError={ logPaymentMethodsError }
 			>
 				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-				<StripeHookProvider
-					locale={ locale }
-					configurationArgs={ { needs_intent: true } }
-					fetchStripeConfiguration={ getStripeConfiguration }
-				>
-					<CreditCardForm
-						createCardToken={ createAddCardToken }
-						recordFormSubmitEvent={ recordFormSubmitEvent }
-						saveStoredCard={ saveStoredCard }
-						successCallback={ goToBillingHistory }
-						showUsedForExistingPurchasesInfo={ true }
-					/>
-				</StripeHookProvider>
+				<Layout>
+					<Column type="main">
+						<StripeHookProvider
+							locale={ locale }
+							configurationArgs={ { needs_intent: true } }
+							fetchStripeConfiguration={ getStripeConfiguration }
+						>
+							<CreditCardForm
+								createCardToken={ createAddCardToken }
+								recordFormSubmitEvent={ recordFormSubmitEvent }
+								saveStoredCard={ saveStoredCard }
+								successCallback={ goToBillingHistory }
+								showUsedForExistingPurchasesInfo={ true }
+							/>
+						</StripeHookProvider>
+					</Column>
+					<Column type="sidebar">
+						<PaymentMethodSidebar />
+					</Column>
+				</Layout>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);

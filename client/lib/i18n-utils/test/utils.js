@@ -20,6 +20,64 @@ import {
 	isMagnificentLocale,
 } from 'calypso/lib/i18n-utils';
 
+jest.mock( 'config', () => ( key ) => {
+	if ( 'i18n_default_locale_slug' === key ) {
+		return 'en';
+	}
+
+	if ( 'support_site_locales' === key ) {
+		return [ 'en', 'es', 'de', 'ja', 'pt-br' ];
+	}
+
+	if ( 'forum_locales' === key ) {
+		return [ 'en', 'es', 'de', 'ja', 'pt-br', 'th' ];
+	}
+
+	if ( 'magnificent_non_en_locales' === key ) {
+		return [
+			'es',
+			'pt-br',
+			'de',
+			'fr',
+			'he',
+			'ja',
+			'it',
+			'nl',
+			'ru',
+			'tr',
+			'id',
+			'zh-cn',
+			'zh-tw',
+			'ko',
+			'ar',
+			'sv',
+		];
+	}
+
+	if ( 'jetpack_com_locales' === key ) {
+		return [
+			'en',
+			'ar',
+			'de',
+			'es',
+			'fr',
+			'he',
+			'id',
+			'it',
+			'ja',
+			'ko',
+			'nl',
+			'pt-br',
+			'ro',
+			'ru',
+			'sv',
+			'tr',
+			'zh-cn',
+			'zh-tw',
+		];
+	}
+} );
+
 // Mock only the getLocaleSlug function from i18n-calypso, and use
 // original references for all the other functions
 function mockFunctions() {
@@ -32,14 +90,6 @@ jest.mock( 'i18n-calypso', () => mockFunctions() );
 const { getLocaleSlug } = jest.requireMock( 'i18n-calypso' );
 
 describe( 'utils', () => {
-	// todo: remove once all usage is moved over to the @automattic/i18n-utils package version
-	describe( '#localizeUrl', () => {
-		test( 'localizeUrl is still provided by client/lib/i18n-utisl', () => {
-			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
-				'https://de.wordpress.com/'
-			);
-		} );
-	} );
 	describe( '#isDefaultLocale', () => {
 		test( 'should return false when a non-default locale provided', () => {
 			expect( isDefaultLocale( 'fr' ) ).toEqual( false );
@@ -191,6 +241,25 @@ describe( 'utils', () => {
 
 		test( 'should return true for languages not in the exception list', () => {
 			expect( canBeTranslated( 'de' ) ).toEqual( true );
+		} );
+	} );
+
+	describe( '#localizeUrl', () => {
+		test( 'localizeUrl is still provided by client/lib/i18n-utils', () => {
+			expect( localizeUrl( 'https://wordpress.com/', 'de' ) ).toEqual(
+				'https://de.wordpress.com/'
+			);
+		} );
+
+		test( 'client/lib/i18n-utils/localizeUrl still uses getLocaleSlug', () => {
+			getLocaleSlug.mockImplementationOnce( () => 'en' );
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
+				'https://wordpress.com/support/'
+			);
+			getLocaleSlug.mockImplementationOnce( () => 'de' );
+			expect( localizeUrl( 'https://en.support.wordpress.com/' ) ).toEqual(
+				'https://wordpress.com/de/support/'
+			);
 		} );
 	} );
 

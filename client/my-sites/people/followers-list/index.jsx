@@ -54,13 +54,13 @@ const Followers = localize(
 		}
 
 		fetchNextPage = () => {
-			const actions = 'email' === this.props.type ? EmailFollowersActions : FollowersActions,
-				store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore,
-				paginationData = store.getPaginationData( this.props.fetchOptions ),
-				analyticsAction =
-					'email' === this.props.type
-						? 'Fetched more email followers with infinite list'
-						: 'Fetched more followers with infinite list';
+			const actions = 'email' === this.props.type ? EmailFollowersActions : FollowersActions;
+			const store = 'email' === this.props.type ? EmailFollowersStore : FollowersStore;
+			const paginationData = store.getPaginationData( this.props.fetchOptions );
+			const analyticsAction =
+				'email' === this.props.type
+					? 'Fetched more email followers with infinite list'
+					: 'Fetched more followers with infinite list';
 
 			let page = this.props.currentPage + 1;
 			if ( paginationData && paginationData.followersCurrentPage ) {
@@ -156,11 +156,11 @@ const Followers = localize(
 		}
 
 		render() {
-			const key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) ),
-				listClass = classNames( {
-					'bulk-editing': this.state.bulkEditing,
-					'people-invites__invites-list': true,
-				} );
+			const key = deterministicStringify( omit( this.props.fetchOptions, [ 'max', 'page' ] ) );
+			const listClass = classNames( {
+				'bulk-editing': this.state.bulkEditing,
+				'people-invites__invites-list': true,
+			} );
 
 			if ( this.noFollowerSearchResults() ) {
 				return (

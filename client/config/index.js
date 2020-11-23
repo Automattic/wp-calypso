@@ -73,3 +73,4 @@ const configApi = createConfig( configData );
 
 export default configApi;
 export const isEnabled = configApi.isEnabled;
+export const enabledFeatures = configApi.enabledFeatures;

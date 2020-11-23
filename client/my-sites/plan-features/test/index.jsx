@@ -7,19 +7,6 @@ jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
-
 jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 	getSitePlanRawPrice: jest.fn(),

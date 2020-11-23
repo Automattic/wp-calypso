@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -25,10 +26,10 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@wordpress/compose": "1.x.x - 3.x.x",

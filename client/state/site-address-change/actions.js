@@ -24,6 +24,8 @@ import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
 import { requestSite } from 'calypso/state/sites/actions';
 import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
 
+import 'calypso/state/site-address-change/init';
+
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {
 	return wpcom.undocumented().getRequestSiteAddressChangeNonce( siteId );

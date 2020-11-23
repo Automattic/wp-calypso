@@ -13,6 +13,8 @@ import debugFactory from 'debug';
 import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
+import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
+export type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
 
 /**
  * Style dependencies
@@ -32,7 +34,12 @@ export interface Props {
 	onPickDomainClick?: () => void;
 	currentDomain?: DomainSuggestions.DomainSuggestion;
 	disabledPlans?: { [ planSlug: string ]: string };
-	isExperimental?: boolean;
+	isAccordion?: boolean;
+	locale: string;
+	showPlanTaglines?: boolean;
+	CTAVariation?: CTAVariation;
+	popularBadgeVariation?: PopularBadgeVariation;
+	customTagLines?: CustomTagLinesMap;
 }
 
 const PlansGrid: React.FunctionComponent< Props > = ( {
@@ -43,11 +50,14 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	onPlanSelect,
 	onPickDomainClick,
 	disabledPlans,
-	isExperimental,
+	isAccordion,
+	locale,
+	showPlanTaglines = false,
+	CTAVariation = 'NORMAL',
+	popularBadgeVariation = 'ON_TOP',
+	customTagLines,
 } ) => {
-	// Note: isExperimental prop would be always false until "gutenboarding/feature-picker" feature flag is enabled
-	// and Gutenboarding flow is started with ?latest query param
-	isExperimental && debug( 'PlansGrid experimental version is active' );
+	isAccordion && debug( 'PlansGrid accordion version is active' );
 
 	return (
 		<div className="plans-grid">
@@ -55,7 +65,7 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__table">
 				<div className="plans-grid__table-container">
-					{ isExperimental ? (
+					{ isAccordion ? (
 						<PlansAccordion
 							selectedFeatures={ selectedFeatures }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
@@ -63,14 +73,20 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
+							locale={ locale }
 						></PlansAccordion>
 					) : (
 						<PlansTable
+							popularBadgeVariation={ popularBadgeVariation }
+							CTAVariation={ CTAVariation }
 							selectedPlanSlug={ currentPlan?.storeSlug ?? '' }
 							onPlanSelect={ onPlanSelect }
+							customTagLines={ customTagLines }
 							currentDomain={ currentDomain }
 							onPickDomainClick={ onPickDomainClick }
 							disabledPlans={ disabledPlans }
+							locale={ locale }
+							showTaglines={ showPlanTaglines }
 						></PlansTable>
 					) }
 				</div>
@@ -78,10 +94,10 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 
 			<div className="plans-grid__details">
 				<div className="plans-grid__details-heading">
-					<Title>{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
+					<Title tagName="h2">{ __( 'Detailed comparison', __i18n_text_domain__ ) }</Title>
 				</div>
 				<div className="plans-grid__details-container">
-					<PlansDetails onSelect={ onPlanSelect } />
+					<PlansDetails onSelect={ onPlanSelect } locale={ locale } />
 				</div>
 			</div>
 		</div>

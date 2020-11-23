@@ -80,7 +80,9 @@ describe( 'logged-out', () => {
 					'https://i1.wp.com/theme.wordpress.com/wp-content/themes/pub/karuna/screenshot.png',
 			},
 		];
-		let layout, store, initialState;
+		let layout;
+		let store;
+		let initialState;
 
 		beforeAll( () => {
 			store = createReduxStore();

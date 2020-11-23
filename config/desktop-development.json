@@ -16,9 +16,10 @@
 	"rebrand_cities_prefix": "rebrandcitiesdevelopmentsite",
 	"readerFollowingSource": "desktop",
 	"features": {
-		"async-payments": false,
 		"ad-tracking": true,
 		"always_use_logout_url": true,
+		"anchor-fm": false,
+		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
 		"comments/filters-in-posts": true,

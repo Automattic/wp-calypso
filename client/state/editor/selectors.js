@@ -10,13 +10,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
 import { getEditedPost, getSitePost } from 'calypso/state/posts/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
-import {
-	isPublished,
-	isBackDatedPublished,
-	isFutureDated,
-	getPreviewURL,
-} from 'calypso/state/posts/utils';
+import { getPreviewURL } from 'calypso/state/posts/utils';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -163,43 +157,6 @@ export function isEditorIframeLoaded( state ) {
 
 export function getEditorIframePort( state ) {
 	return state.editor.iframePort;
-}
-
-export function getEditorPublishButtonStatus( state ) {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const currentPost = getSitePost( state, siteId, postId );
-	const editedPost = getEditedPost( state, siteId, postId );
-	const canUserPublishPosts = canCurrentUser( state, siteId, 'publish_posts' );
-
-	// Return `null` (means "unknown") if the site or the post to edit is not available.
-	// Typically happens when async-loading them is in progress.
-	if ( ! siteId || ! editedPost ) {
-		return null;
-	}
-
-	if (
-		( isPublished( currentPost ) &&
-			! isBackDatedPublished( currentPost ) &&
-			! isFutureDated( editedPost ) ) ||
-		( currentPost && currentPost.status === 'future' && isFutureDated( editedPost ) )
-	) {
-		return 'update';
-	}
-
-	if ( isFutureDated( editedPost ) ) {
-		return 'schedule';
-	}
-
-	if ( canUserPublishPosts ) {
-		return 'publish';
-	}
-
-	if ( currentPost && currentPost.status === 'pending' ) {
-		return 'update';
-	}
-
-	return 'requestReview';
 }
 
 export function getEditorInitialRawContent( state ) {

@@ -197,10 +197,8 @@ function getNewSiteParams( {
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
 		newSiteParams.options.wpcom_public_coming_soon = 1;
-		newSiteParams.options.wpcom_coming_soon = 0;
 		newSiteParams.public = Visibility.PublicNotIndexed;
 	} else {
-		newSiteParams.options.wpcom_public_coming_soon = 0;
 		newSiteParams.options.wpcom_coming_soon = 1;
 		newSiteParams.public = Visibility.Private;
 	}
@@ -616,16 +614,15 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
 		data.options.wpcom_public_coming_soon = 1;
-		data.options.wpcom_coming_soon = 0;
 		data.public = Visibility.PublicNotIndexed;
 	} else {
-		data.options.wpcom_public_coming_soon = 0;
 		data.options.wpcom_coming_soon = 1;
 		data.public = Visibility.Private;
 	}
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
@@ -662,7 +659,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	};
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );

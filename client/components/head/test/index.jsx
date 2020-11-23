@@ -7,14 +7,9 @@
  */
 import { shallow } from 'enzyme';
 import React from 'react';
+import Head from '../';
 
 describe( 'Head', () => {
-	let Head;
-
-	beforeAll( () => {
-		Head = require( '../' );
-	} );
-
 	test( 'should render default title', () => {
 		const wrapper = shallow( <Head /> );
 

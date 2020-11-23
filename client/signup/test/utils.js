@@ -27,7 +27,7 @@ jest.mock( 'lib/user', () => () => ( {
 } ) );
 
 jest.mock( 'signup/config/flows-pure', () => ( {
-	generateFlows: () => require( './fixtures/flows' ),
+	generateFlows: () => require( './fixtures/flows' ).default,
 } ) );
 
 describe( 'utils', () => {

@@ -2,13 +2,15 @@
 
 exports[`GSuiteUserItem renders user item finish setup button correctly 1`] = `
 <li>
-  <span
+  <div
     className="gsuite-user-item__email"
   >
-    foo@bar.buzz
-  </span>
+    <strong>
+      foo@bar.buzz
+    </strong>
+  </div>
   <button
-    className="button gsuite-user-item__fix is-compact"
+    className="button is-compact"
     onClick={[Function]}
     type="button"
   >
@@ -19,13 +21,15 @@ exports[`GSuiteUserItem renders user item finish setup button correctly 1`] = `
 
 exports[`GSuiteUserItem renders user item with manage correctly 1`] = `
 <li>
-  <span
+  <div
     className="gsuite-user-item__email"
   >
-    foo@bar.buzz
-  </span>
+    <strong>
+      foo@bar.buzz
+    </strong>
+  </div>
   <a
-    className="external-link gsuite-user-item has-icon"
+    className="external-link gsuite-user-item__manage-link has-icon"
     href="https://accounts.google.com/AccountChooser?Email=foo@bar.buzz&service=CPanel&continue=https://admin.google.com/a/bar.buzz"
     onClick={[Function]}
     rel="external noopener noreferrer"

@@ -62,6 +62,7 @@ import {
 } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { buildCardFeaturesFromItem } from './utils';
+import { getJetpackCrmPrice, getJetpackCrmCurrency } from './iterations';
 
 /**
  * Type dependencies
@@ -301,25 +302,29 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 		? 'jetpack_crm_dark'
 		: 'jetpack_crm',
 	displayName:
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Jetpack CRM' ),
+		{
+			v2: translate( 'Jetpack CRM {{em}}Entrepreneur{{/em}}', {
+				components: {
+					em: createElement( 'em' ),
+				},
+			} ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] || translate( 'Jetpack CRM' ),
+
 	shortName:
-		getJetpackCROActiveVersion() === 'v2'
-			? translate( 'Jetpack CRM ' )
-			: translate( 'CRM', {
-					comment: 'Short name of the Jetpack CRM',
-			  } ),
+		{
+			v2: translate( 'Jetpack CRM ' ),
+			i5: translate( 'CRM Entrepreneur' ),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'CRM', {
+			comment: 'Short name of the Jetpack CRM',
+		} ),
 	tagline: translate( 'Manage contacts effortlessly' ),
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-	displayPrice: getJetpackCROActiveVersion() === 'v2' ? 17 : undefined,
-	displayCurrency: getJetpackCROActiveVersion() === 'v2' ? 'USD' : undefined,
+	displayPrice: getJetpackCrmPrice(),
+	displayCurrency: getJetpackCrmCurrency(),
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),
@@ -424,6 +429,15 @@ export const SELECTOR_PLANS_ALT_V1 = [
 ];
 
 export const SELECTOR_PLANS_ALT_V2 = [
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+];
+
+export const SELECTOR_PLANS_I5 = [
 	PLAN_JETPACK_SECURITY_DAILY,
 	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 	PLAN_JETPACK_SECURITY_REALTIME,

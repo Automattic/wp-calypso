@@ -57,6 +57,20 @@ export const isFetchingSite: Reducer< boolean | undefined, Action > = ( state = 
 	return state;
 };
 
+export const isFetchingSiteDetails: Reducer< boolean | undefined, Action > = (
+	state = false,
+	action
+) => {
+	switch ( action.type ) {
+		case 'FETCH_SITE':
+			return true;
+		case 'RECEIVE_SITE':
+		case 'RECEIVE_SITE_FAILED':
+			return false;
+	}
+	return state;
+};
+
 export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Action > = (
 	state = {},
 	action
@@ -103,7 +117,13 @@ const newSite = combineReducers( {
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite, sites, launchStatus, sitesDomains } );
+const reducer = combineReducers( {
+	isFetchingSiteDetails,
+	newSite,
+	sites,
+	launchStatus,
+	sitesDomains,
+} );
 
 export type State = ReturnType< typeof reducer >;
 

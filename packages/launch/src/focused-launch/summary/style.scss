@@ -26,8 +26,15 @@
 .focused-launch-summary__mobile-commentary {
 	font-size: 0.875rem;
 	color: var( --studio-gray-60 );
+	display: flex;
+	align-items: flex-start;
 	svg {
 		vertical-align: bottom;
+		fill: var( --studio-gray-20 );
+		margin-right: 3px;
+
+		// compensate for the gap in the svg top
+		margin-top: -1px;
 	}
 }
 
@@ -45,18 +52,11 @@
 }
 
 .focused-launch-summary__section {
-	// maybe use @include onboarding-block-margin;
-	margin: 0 20px 40px;
-
-	@include break-medium {
-		margin: 0 10px 40px;
-	}
+	margin-bottom: 40px;
 }
 
 .focused-launch-summary__caption {
 	margin: 12px 0;
-	font-size: 1rem;
-	color: #50575e;
 }
 
 .focused-launch-summary__step {
@@ -74,7 +74,7 @@
 }
 
 // by default: highlight all steps when nothing is in focus
-.focused-launch-summary__container:not( :focus-within ) {
+.focused-launch-container:not( :focus-within ) {
 	.focused-launch-summary__step {
 		opacity: 1;
 	}
@@ -96,7 +96,6 @@
 			display: block;
 			height: 18px;
 		}
-		margin-left: 10px;
 		border-left: 1px solid #eee;
 		display: flex;
 		flex-direction: column;

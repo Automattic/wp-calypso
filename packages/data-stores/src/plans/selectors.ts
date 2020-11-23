@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import { select } from '@wordpress/data';
+
+/**
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
@@ -13,8 +18,12 @@ export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
 	return state.plans[ slug ] ?? undefined;
 };
 
-export const getDefaultPaidPlan = ( state: State ): Plan => {
-	return state.plans[ DEFAULT_PAID_PLAN ] ?? undefined;
+export const getDefaultPaidPlan = ( _: State, locale: string ): Plan => {
+	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ DEFAULT_PAID_PLAN ];
+};
+
+export const getDefaultFreePlan = ( _: State, locale: string ): Plan => {
+	return select( STORE_KEY ).getPlansDetails( locale )?.plans[ PLAN_FREE ];
 };
 
 export const getSupportedPlans = ( state: State ): Plan[] => {
@@ -39,7 +48,7 @@ export const getPlansPaths = ( state: State ) => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 };
 
-export const getPrices = ( state: State ) => state.prices;
+export const getPrices = ( state: State, _: string ) => state.prices; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
 	return planSlug === PLAN_ECOMMERCE;

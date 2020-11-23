@@ -1,8 +1,0 @@
-.credit-cards__no-results {
-	display: block;
-	color: var( --color-text-subtle );
-
-	@include breakpoint-deprecated( '<480px' ) {
-		padding: 8px;
-	}
-}

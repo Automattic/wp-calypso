@@ -38,7 +38,7 @@ class Block_Patterns_From_API {
 				array(
 					'block_patterns',
 					PLUGIN_VERSION,
-					$this->get_iso_639_locale(),
+					$this->get_block_patterns_locale(),
 				)
 			)
 		);
@@ -88,18 +88,20 @@ class Block_Patterns_From_API {
 		}
 
 		foreach ( (array) $this->get_patterns() as $pattern ) {
-			register_block_pattern(
-				Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
-				array(
-					'title'         => $pattern['title'],
-					'description'   => $pattern['title'],
-					'content'       => $pattern['html'],
-					'viewportWidth' => 1280,
-					'categories'    => array_keys(
-						$pattern['categories']
-					),
-				)
-			);
+			if ( $this->can_register_pattern( $pattern ) ) {
+				register_block_pattern(
+					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
+					array(
+						'title'         => $pattern['title'],
+						'description'   => $pattern['title'],
+						'content'       => $pattern['html'],
+						'viewportWidth' => 1280,
+						'categories'    => array_keys(
+							$pattern['categories']
+						),
+					)
+				);
+			}
 		}
 	}
 
@@ -118,7 +120,7 @@ class Block_Patterns_From_API {
 					array(
 						'tags' => 'pattern',
 					),
-					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_iso_639_locale()
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
 			);
 
@@ -141,25 +143,41 @@ class Block_Patterns_From_API {
 	}
 
 	/**
-	 * Returns ISO 639 conforming locale string.
-	 *
-	 * @return string ISO 639 locale string
+	 * Get the locale to be used for fetching block patterns
 	 */
-	private function get_iso_639_locale() {
+	private function get_block_patterns_locale() {
 		// Make sure to get blog locale, not user locale.
 		$language = function_exists( 'get_blog_lang_code' ) ? get_blog_lang_code() : get_locale();
-		$language = strtolower( $language );
+		return \A8C\FSE\Common\get_iso_639_locale( $language );
+	}
 
-		if ( in_array( $language, array( 'pt_br', 'pt-br', 'zh_tw', 'zh-tw', 'zh_cn', 'zh-cn' ), true ) ) {
-			$language = str_replace( '_', '-', $language );
-		} else {
-			$language = preg_replace( '/([-_].*)$/i', '', $language );
+	/**
+	 * Check that the pattern is allowed to be registered.
+	 *
+	 * Checks for tags with a prefix of `requires-` in the slug, and then attempts to match
+	 * the remainder of the slug to a theme feature.
+	 *
+	 * For example, to prevent patterns that depend on wide or full-width block alignment support
+	 * from being registered in sites where the active theme does not have `align-wide` support,
+	 * we can add the `requires-align-wide` tag to the pattern. This function will then match
+	 * against that tag slug, and then return `false`.
+	 *
+	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
+	 *
+	 * @return bool
+	 */
+	private function can_register_pattern( $pattern ) {
+
+		foreach ( $pattern['tags'] as $tag_slug => $value ) {
+			// Match against tags with a non-translated slug beginning with `requires-`.
+			$split_slug = preg_split( '/^requires-/', $tag_slug );
+
+			// If the theme does not support the matched feature, then skip registering the pattern.
+			if ( $split_slug[1] && false === get_theme_support( $split_slug[1] ) ) {
+				return false;
+			}
 		}
 
-		if ( empty( $language ) ) {
-			return 'en';
-		}
-
-		return $language;
+		return true;
 	}
 }

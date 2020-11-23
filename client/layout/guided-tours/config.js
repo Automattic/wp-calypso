@@ -4,8 +4,6 @@
 import main from 'calypso/layout/guided-tours/tours/main-tour/meta';
 import tutorialSitePreview from 'calypso/layout/guided-tours/tours/tutorial-site-preview-tour/meta';
 import gdocsIntegrationTour from 'calypso/layout/guided-tours/tours/gdocs-integration-tour/meta';
-import simplePaymentsTour from 'calypso/layout/guided-tours/tours/simple-payments-tour/meta';
-import editorBasicsTour from 'calypso/layout/guided-tours/tours/editor-basics-tour/meta';
 import marketingConnectionsTour from 'calypso/layout/guided-tours/tours/marketing-connections-tour/meta';
 import mediaBasicsTour from 'calypso/layout/guided-tours/tours/media-basics-tour/meta';
 import checklistSiteTitle from 'calypso/layout/guided-tours/tours/checklist-site-title-tour/meta';
@@ -31,10 +29,8 @@ export default {
 	jetpackSiteAccelerator,
 	jetpackVideoHosting,
 	main,
-	editorBasicsTour,
 	marketingConnectionsTour,
 	mediaBasicsTour,
 	tutorialSitePreview,
 	gdocsIntegrationTour,
-	simplePaymentsTour,
 };

@@ -39,7 +39,6 @@ import Collection from 'calypso/devdocs/design/search-collection';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import Count from 'calypso/components/count/docs/example';
 import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
-import CreditCard from 'calypso/components/credit-card/docs/example';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
@@ -56,6 +55,7 @@ import FeatureGate from 'calypso/components/feature-example/docs/example';
 import FilePickers from 'calypso/components/file-picker/docs/example';
 import FocusableExample from 'calypso/components/focusable/docs/example';
 import FoldableCard from 'calypso/components/foldable-card/docs/example';
+import FoldableFAQ from 'calypso/components/foldable-faq/docs/example';
 import FormattedDate from 'calypso/components/formatted-date/docs/example';
 import FormattedHeader from 'calypso/components/formatted-header/docs/example';
 import FormFields from 'calypso/components/forms/docs/example';
@@ -89,7 +89,6 @@ import Notices from 'calypso/components/notice/docs/example';
 import PaginationExample from 'calypso/components/pagination/docs/example';
 import PaymentLogo from 'calypso/components/payment-logo/docs/example';
 import PieChart from 'calypso/components/pie-chart/docs/example';
-import PlansSkipButton from 'calypso/components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'calypso/components/podcast-indicator/docs/example';
 import Popovers from 'calypso/components/popover/docs/example';
 import ProductCard from 'calypso/components/product-card/docs/example';
@@ -202,7 +201,6 @@ export default class DesignAssets extends React.Component {
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
-					<CreditCard readmeFilePath="credit-card" />
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
@@ -219,6 +217,7 @@ export default class DesignAssets extends React.Component {
 					<FilePickers readmeFilePath="file-picker" />
 					<FocusableExample readmeFilePath="focusable" />
 					<FoldableCard readmeFilePath="foldable-card" />
+					<FoldableFAQ readmeFilePath="foldable-faq" />
 					<FormattedDate readmeFilePath="formatted-date" />
 					<FormattedHeader readmeFilePath="formatted-header" />
 					<FormFields searchKeywords="input textbox textarea radio" readmeFilePath="forms" />
@@ -252,7 +251,6 @@ export default class DesignAssets extends React.Component {
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
-					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProductCard readmeFilePath="product-card" />

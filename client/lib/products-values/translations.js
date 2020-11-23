@@ -8,41 +8,35 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
+			'Backup {{em}}Real-time{{/em}}',
+			{
+				components: {
+					em: createElement( 'em' ),
+				},
+			}
+		),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
@@ -87,9 +81,17 @@ export const getJetpackProductsDisplayNames = () => {
 		</>
 	);
 	const search =
-		currentCROvariant === 'v2' ? translate( 'Jetpack Site Search' ) : translate( 'Jetpack Search' );
-	const scan = translate( 'Jetpack Scan' );
-	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
+		{
+			v2: translate( 'Jetpack Site Search' ),
+			i5: translate( 'Site Search' ),
+		}[ currentCROvariant ] || translate( 'Jetpack Search' );
+	const scan = currentCROvariant === 'i5' ? translate( 'Scan' ) : translate( 'Jetpack Scan' );
+	const antiSpam =
+		currentCROvariant === 'i5' ? (
+			translate( 'Anti-spam' )
+		) : (
+			<>{ translate( 'Jetpack Anti-spam' ) }</>
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -128,7 +130,10 @@ export const getJetpackProductsCallToAction = () => {
 		</>
 	);
 	const search =
-		currentCROvariant === 'v1' ? translate( 'Get Jetpack Search' ) : translate( 'Get Search' );
+		{
+			v1: translate( 'Get Jetpack Search' ),
+			i5: translate( 'Get Site Search' ),
+		}[ currentCROvariant ] || translate( 'Get Search' );
 	const scan =
 		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
 	const antiSpam =
@@ -205,21 +210,36 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const backupDailyDescription = translate(
-		'Never lose a word, image, page, or time worrying about your site.'
-	);
+	const backupDailyDescription =
+		{
+			i5: translate(
+				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const searchDescription = translate(
-		'Help your site visitors find answers instantly so they keep reading and buying.'
-	);
+	const searchDescription =
+		{
+			i5: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
+
 	const scanDescription = translate(
-		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
-	const antiSpamDescription = translate(
-		'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
-	);
+	const antiSpamDescription =
+		{
+			i5: translate(
+				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate(
+			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,

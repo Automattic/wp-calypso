@@ -101,6 +101,31 @@ export const enableExperimental = () =>
 		type: 'ENABLE_EXPERIMENTAL',
 	} as const );
 
+export const showSiteTitleStep = () =>
+	( {
+		type: 'SHOW_SITE_TITLE_STEP',
+	} as const );
+
+export const setModalDismissible = () =>
+	( {
+		type: 'SET_MODAL_DISMISSIBLE',
+	} as const );
+
+export const unsetModalDismissible = () =>
+	( {
+		type: 'UNSET_MODAL_DISMISSIBLE',
+	} as const );
+
+export const showModalTitle = () =>
+	( {
+		type: 'SHOW_MODAL_TITLE',
+	} as const );
+
+export const hideModalTitle = () =>
+	( {
+		type: 'HIDE_MODAL_TITLE',
+	} as const );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -116,4 +141,9 @@ export type LaunchAction = ReturnType<
 	| typeof enableExperimental
 	| typeof setSidebarFullscreen
 	| typeof unsetSidebarFullscreen
+	| typeof showSiteTitleStep
+	| typeof setModalDismissible
+	| typeof unsetModalDismissible
+	| typeof showModalTitle
+	| typeof hideModalTitle
 >;

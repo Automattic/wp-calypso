@@ -19,7 +19,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
  * Internal dependencies
  */
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
-import { paymentMethodClassName } from 'calypso/lib/cart-values';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -113,7 +113,9 @@ function ButtonContents( { formStatus, total } ) {
 
 function getPaymentPartner( { cart, contactCountryCode } ) {
 	const isEbanxAvailable = Boolean(
-		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
+		cart?.allowed_payment_methods?.includes(
+			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+		)
 	);
 
 	let paymentPartner = 'stripe';

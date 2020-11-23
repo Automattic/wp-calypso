@@ -593,14 +593,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 .plan-features--signup {
 	margin: 0 auto;
 
-	.jetpack-connect__plans & {
-		width: auto;
-
-		@include breakpoint-deprecated( '>660px' ) {
-			max-width: 1000px;
-		}
-	}
-
 	.signup__steps & {
 		width: auto;
 
@@ -722,12 +714,6 @@ body.is-section-signup #primary .segmented-control.is-customer-type-toggle {
 
 	.plan-features__row:last-of-type .plan-features__table-item {
 		border-bottom: solid 1px var( --color-neutral-5 );
-	}
-
-	.jetpack-connect__hide-plan-icons .jetpack-connect__plans & .plan-features__pricing {
-		@include breakpoint-deprecated( '<660px' ) {
-			padding-top: 0;
-		}
 	}
 
 	.plan-features__header-price-group-prices {

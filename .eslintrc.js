@@ -49,7 +49,15 @@ module.exports = {
 			// eslint-disable-next-line inclusive-language/use-inclusive-words
 			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
 			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
-			files: [ '*.md.js', '*.md.javascript', '*.md.cjs', '*.md.ejs', '*.md.jsx' ],
+			files: [
+				'*.md.js',
+				'*.md.javascript',
+				'*.md.cjs',
+				'*.md.ejs',
+				'*.md.jsx',
+				'*.md.tsx',
+				'*.md.ts',
+			],
 			rules: {
 				// These are ok for examples
 				'import/no-extraneous-dependencies': 'off',
@@ -64,6 +72,9 @@ module.exports = {
 				'react/react-in-jsx-scope': 'off',
 				'wpcalypso/import-docblock': 'off',
 				'wpcalypso/jsx-classname-namespace': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+				'jsdoc/require-param': 'off',
+				'jsdoc/check-param-names': 'off',
 			},
 		},
 		{
@@ -214,6 +225,8 @@ module.exports = {
 		camelcase: 'off',
 
 		'no-path-concat': 'error',
+
+		'one-var': [ 'error', 'never' ],
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',

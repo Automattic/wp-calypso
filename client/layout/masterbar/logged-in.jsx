@@ -151,16 +151,16 @@ class MasterbarLoggedIn extends React.Component {
 
 	renderMySites() {
 		const {
-				domainOnlySite,
-				hasMoreThanOneSite,
-				siteSlug,
-				translate,
-				isCustomerHomeEnabled,
-				section,
-			} = this.props,
-			homeUrl = isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug );
+			domainOnlySite,
+			hasMoreThanOneSite,
+			siteSlug,
+			translate,
+			isCustomerHomeEnabled,
+			section,
+		} = this.props;
+		const homeUrl = isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
 		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {

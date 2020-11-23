@@ -197,8 +197,8 @@ class InviteAccept extends React.Component {
 			return;
 		}
 
-		let props,
-			actionText = this.props.translate( 'Switch Accounts' );
+		let props;
+		let actionText = this.props.translate( 'Switch Accounts' );
 
 		if ( ! user ) {
 			actionText = this.props.translate( 'Sign In' );

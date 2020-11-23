@@ -30,9 +30,9 @@ function replaceSearchUrl( newValue, sort ) {
 
 const exported = {
 	search: function ( context, next ) {
-		const basePath = '/read/search',
-			fullAnalyticsPageTitle = analyticsPageTitle + ' > Search',
-			mcKey = 'search';
+		const basePath = '/read/search';
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Search';
+		const mcKey = 'search';
 
 		const { sort = 'relevance', q, show = SEARCH_TYPES.POSTS } = context.query;
 		const searchSlug = q;

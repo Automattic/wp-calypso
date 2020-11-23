@@ -30,7 +30,7 @@ First thing is to enable your new feature in Calypso. We'll do that by opening `
 "hello-world": true
 ```
 
-Feature flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
+Feature flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `trunk,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
 
 ### 2. Set up folder structure
 

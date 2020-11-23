@@ -143,6 +143,14 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 		[ dispatch, siteId ]
 	);
 
+	// We should only display the decimal amount for USD prices
+	let displayPrice;
+	if ( 'USD' === currencyCode ) {
+		displayPrice = isDiscounted ? discountedPrice : originalPrice;
+	} else {
+		displayPrice = Math.floor( isDiscounted ? discountedPrice : originalPrice );
+	}
+
 	return (
 		<div
 			className={ classNames( className, 'jetpack-product-card-alt-2', {
@@ -189,13 +197,7 @@ const JetpackProductCardAlt2: FunctionComponent< Props > = ( {
 							{ currencyCode && originalPrice ? (
 								<>
 									<span className="jetpack-product-card-alt-2__raw-price">
-										<PlanPrice
-											rawPrice={ Math.floor(
-												( isDiscounted ? discountedPrice : originalPrice ) as number
-											) }
-											discounted
-											currencyCode={ currencyCode }
-										/>
+										<PlanPrice rawPrice={ displayPrice } discounted currencyCode={ currencyCode } />
 										{ searchRecordsDetails && (
 											<InfoPopover
 												className="jetpack-product-card-alt-2__search-price-popover"

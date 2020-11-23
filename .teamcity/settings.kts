@@ -8,7 +8,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.pullRequests
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.dockerRegistry
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.DockerCommandStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.githubConnection
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.schedule
@@ -42,7 +41,7 @@ version = "2020.1"
 project {
 
 	vcsRoot(WpCalypso)
-
+	subProject(WpDesktop)
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
@@ -94,23 +93,30 @@ object BuildBaseImages : BuildType({
 		script {
 			name = "Build docker images"
 			scriptContent = """
+				set -e
+				set -x
+
 				VERSION="%build.number%"
-				BUILDER_IMAGE_NAME="registry.a8c.com/calypso/base"
-				CI_IMAGE_NAME="registry.a8c.com/calypso/ci"
-				BUILDER_IMAGE="${'$'}{BUILDER_IMAGE_NAME}:${'$'}{VERSION}"
-				CI_IMAGE="${'$'}{CI_IMAGE_NAME}:${'$'}{VERSION}"
+				REGISTRY="registry.a8c.com/calypso"
 
-				docker build -f Dockerfile.base --no-cache --target builder -t "${'$'}BUILDER_IMAGE" .
-				docker build -f Dockerfile.base --target ci -t "${'$'}CI_IMAGE" .
+				function build {
+					imageName="${'$'}1"
+					buildArgs="${'$'}2"
 
-				docker tag "${'$'}BUILDER_IMAGE" "${'$'}{BUILDER_IMAGE_NAME}:latest"
-				docker tag "${'$'}CI_IMAGE" "${'$'}{CI_IMAGE_NAME}:latest"
+					imageVersioned="${'$'}{REGISTRY}/${'$'}{imageName}:${'$'}{VERSION}"
+					imageLatest="${'$'}{REGISTRY}/${'$'}{imageName}:latest"
 
-				docker push "${'$'}CI_IMAGE"
-				docker push "${'$'}{CI_IMAGE_NAME}:latest"
+					# Using eval because buildArgs is a single word and we need to expand it to multiple args
+					eval docker build -f Dockerfile.base "${'$'}{buildArgs}" -t "${'$'}{imageVersioned}" .
+					docker tag "${'$'}{imageVersioned}" "${'$'}{imageLatest}"
+					docker push "${'$'}{imageVersioned}"
+					docker push "${'$'}{imageLatest}"
+				}
 
-				docker push "${'$'}BUILDER_IMAGE"
-				docker push "${'$'}{BUILDER_IMAGE_NAME}:latest"
+				build "base" "--no-cache --target builder"
+				build "ci" "--target ci"
+				build "ci-desktop" "--target ci-desktop"
+				build "ci-e2e" "--target builder"
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerRunParameters = "-u %env.UID%"
@@ -122,7 +128,10 @@ object BuildBaseImages : BuildType({
 			schedulingPolicy = daily {
 				hour = 0
 			}
-			branchFilter = "+:master"
+			branchFilter = """
+				+:master
+				+:trunk
+			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
@@ -189,7 +198,6 @@ object BuildDockerImage : BuildType({
 		}
 	}
 })
-
 
 object RunAllUnitTests : BuildType({
 	name = "Run unit tests"
@@ -437,25 +445,6 @@ object RunAllUnitTests : BuildType({
 			dockerRunParameters = "-u %env.UID%"
 		}
 		script {
-			name = "Build media-library storybook"
-			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
-			scriptContent = """
-				set -e
-				export HOME="/calypso"
-				export NODE_ENV="production"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
-
-				yarn media-library:storybook:start --ci --smoke-test -h localhost
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerPull = true
-			dockerImage = "%docker_image%"
-			dockerRunParameters = "-u %env.UID%"
-		}
-		script {
 			name = "Build search storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
@@ -587,7 +576,7 @@ object CheckCodeStyle : BuildType({
 				if [ "%teamcity.build.branch.is_default%" = "true" ] || [ "%calypso.run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
 				fi
 				echo "Files to lint:"
 				echo ${'$'}FILES_TO_LINT
@@ -652,11 +641,191 @@ object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"
 	url = "git@github.com:Automattic/wp-calypso.git"
 	pushUrl = "git@github.com:Automattic/wp-calypso.git"
-	branch = "refs/heads/master"
+	branch = "refs/heads/trunk"
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
 		uploadedKey = "Sergio TeamCity"
+	}
+})
+
+object WpDesktop : Project({
+	name = "Desktop"
+	buildType(WpDesktop_DesktopE2ETests)
+
+	params {
+		text("docker_image_dekstop", "registry.a8c.com/calypso/ci-desktop:latest", label = "Docker image", description = "Docker image to use for the run", allowEmpty = true)
+		password("CALYPSO_SECRETS_ENCRYPTION_KEY", "credentialsJSON:ff451a7d-df79-4635-b6e8-cbd6ec18ddd8", description = "password for encrypting/decrypting certificates and general secrets for the wp-desktop and simplenote-electron repo", display = ParameterDisplay.HIDDEN)
+		password("E2EGUTENBERGUSER", "credentialsJSON:27ca9d7b-c6b5-4e84-94d5-ea43879d8184", display = ParameterDisplay.HIDDEN)
+		password("E2EPASSWORD", "credentialsJSON:2c4425c4-07d2-414c-9f18-b64da307bdf2", display = ParameterDisplay.HIDDEN)
+	}
+})
+
+object WpDesktop_DesktopE2ETests : BuildType({
+	name = "Desktop e2e tests"
+	description = "Run wp-desktop e2e tests in Linux"
+
+	artifactRules = """
+		desktop/release => release
+		desktop/e2e/logs => logs
+		desktop/e2e/screenshots => screenshots
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				set -e
+
+				export CHROMEDRIVER_SKIP_DOWNLOAD=true
+				export PUPPETEER_SKIP_DOWNLOAD=true
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Restore mtime to maximize cache hits
+				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
+
+				# Decript certs
+				openssl aes-256-cbc -md md5 -d -in desktop/resource/calypso/secrets.json.enc -out config/secrets.json -k "%CALYPSO_SECRETS_ENCRYPTION_KEY%"
+
+				# Install modules
+				yarn install
+				yarn run build-desktop:install-app-deps
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build Calypso source"
+			scriptContent = """
+				set -e
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Build desktop
+				yarn run build-desktop:source
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Build app (linux)"
+			scriptContent = """
+				set -e
+
+				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+				export USE_HARD_LINKS=false
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Build app
+				yarn run build-desktop:app
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Run tests (linux)"
+			scriptContent = """
+				set -e
+
+				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
+				export E2EPASSWORD="%E2EPASSWORD%"
+				export DISPLAY=:99
+				export CI=true
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				# Start framebuffer
+				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
+
+				# Run tests
+				yarn run test-desktop:e2e
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 15
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "junit")
+			param("xmlReportParsing.reportDirs", "desktop/e2e/result.xml")
+		}
+		perfmon {
+		}
+		pullRequests {
+			vcsRootExtId = "${WpCalypso.id}"
+			provider = github {
+				authType = token {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+				filterAuthorRole = PullRequests.GitHubRoleFilter.EVERYBODY
+			}
+		}
+		commitStatusPublisher {
+			vcsRootExtId = "${WpCalypso.id}"
+			publisher = github {
+				githubUrl = "https://api.github.com"
+				authType = personalToken {
+					token = "credentialsJSON:57e22787-e451-48ed-9fea-b9bf30775b36"
+				}
+			}
+		}
+
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#wp-desktop-calypso-e2e"
+				messageFormat = verboseMessageFormat {
+					addBranch = true
+					maximumNumberOfChanges = 10
+				}
+			}
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = true
+			firstSuccessAfterFailure = true
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		vcs {
+			branchFilter = """
+				+:*
+				-:pull*
+			""".trimIndent()
+		}
 	}
 })
 

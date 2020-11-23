@@ -34,7 +34,7 @@ class QueryReaderFeed extends Component {
 }
 
 QueryReaderFeed.propTypes = {
-	feedId: PropTypes.number,
+	feedId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.string ] ),
 	shouldFeedBeFetched: PropTypes.bool,
 	requestFeed: PropTypes.func,
 };

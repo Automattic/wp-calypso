@@ -21,7 +21,6 @@ import {
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import plansV2 from 'calypso/my-sites/plans-v2';
 
 const trackedPage = ( url, ...rest ) => {
@@ -89,13 +88,11 @@ export default function () {
 		navigation,
 		plans
 	);
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2(
-			'/plans',
-			siteSelection,
-			wpForTeamsP2PlusNotSupportedRedirect,
-			redirectToPlansIfNotJetpack,
-			navigation
-		);
-	}
+	plansV2(
+		'/plans',
+		siteSelection,
+		wpForTeamsP2PlusNotSupportedRedirect,
+		redirectToPlansIfNotJetpack,
+		navigation
+	);
 }

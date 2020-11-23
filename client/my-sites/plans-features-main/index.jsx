@@ -38,7 +38,6 @@ import { getJetpackProducts } from 'calypso/lib/products-values/translations';
 import JetpackFAQ from './jetpack-faq';
 import PlansFeaturesMainProductsHeader from './products-header';
 import WpcomFAQ from './wpcom-faq';
-import CartData from 'calypso/components/data/cart';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
@@ -58,7 +57,6 @@ import {
 } from 'calypso/lib/plans';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
 import { Button } from '@automattic/components';
-import PaymentMethods from 'calypso/blocks/payment-methods';
 import ProductSelector from 'calypso/blocks/product-selector';
 import FormattedHeader from 'calypso/components/formatted-header';
 import HappychatConnection from 'calypso/components/happychat/connection-connected';
@@ -458,10 +456,6 @@ export class PlansFeaturesMain extends Component {
 				/>
 				{ this.getPlanFeatures( { isMonthlyPricingTest } ) }
 				{ this.renderProductsSelector() }
-
-				<CartData>
-					<PaymentMethods />
-				</CartData>
 				{ this.mayRenderFAQ() }
 			</div>
 		);

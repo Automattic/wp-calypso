@@ -35,7 +35,9 @@ const TickIcon = <Icon icon={ check } size={ 17 } />;
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const planPrices = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
+	);
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
@@ -43,7 +45,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const { title } = useTitle();
 	const { currentDomainName } = useSite();
 	const domainSuggestion = useDomainSuggestion();
-	const domainSearch = useDomainSearch();
+	const { domainSearch } = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 

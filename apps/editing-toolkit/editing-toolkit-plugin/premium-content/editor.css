@@ -149,3 +149,7 @@
 .wp-block-premium-content-container .jetpack-block-nudge {
 	display: none;
 }
+
+.wp-block-premium-content-login-button {
+	display: inline-block;
+}

@@ -189,7 +189,7 @@ const buildApp = ( environment ) => {
 				}[ key ] )
 		);
 
-		appFactory = require( '../index' );
+		appFactory = require( '../index' ).default;
 	} );
 	const app = appFactory();
 
@@ -644,7 +644,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const { request } = await app.run();
 		const staticUrls = request.context.app.staticUrls;
 		expect( staticUrls ).toEqual( {
-			'editor.css': '/calypso/editor.css?v=hash',
 			'tinymce/skins/wordpress/wp-content.css':
 				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
 		} );
@@ -943,7 +942,8 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	} );
 
 	describe( 'for authenticated users', () => {
-		let theStore, theAction;
+		let theStore;
+		let theAction;
 
 		beforeEach( () => {
 			theStore = {

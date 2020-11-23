@@ -6,17 +6,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CartData from 'calypso/components/data/cart';
-import PaymentMethods from 'calypso/blocks/payment-methods';
-import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
+import { getFaqComponent } from 'calypso/my-sites/plans-v2/iterations';
 
-export default function StoreFooter() {
-	return (
-		<>
-			<CartData>
-				<PaymentMethods />
-			</CartData>
-			<JetpackFAQ />
-		</>
-	);
-}
+const StoreFooter: React.FC = () => {
+	const JetpackFAQComponent = getFaqComponent();
+
+	if ( JetpackFAQComponent ) {
+		return <JetpackFAQComponent />;
+	}
+
+	return null;
+};
+
+export default StoreFooter;

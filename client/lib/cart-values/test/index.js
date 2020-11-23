@@ -15,7 +15,10 @@ jest.mock( 'lib/user', () => () => {} );
 
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;
-	let DOMAIN_REGISTRATION_PRODUCT, FR_DOMAIN_REGISTRATION_PRODUCT, PREMIUM_PRODUCT, THEME_PRODUCT;
+	let DOMAIN_REGISTRATION_PRODUCT;
+	let FR_DOMAIN_REGISTRATION_PRODUCT;
+	let PREMIUM_PRODUCT;
+	let THEME_PRODUCT;
 
 	beforeAll( () => {
 		DOMAIN_REGISTRATION_PRODUCT = cartItems.domainRegistration( {
@@ -46,12 +49,12 @@ describe( 'index', () => {
 
 		describe( 'cartItems.addCartItem( cartItem )', () => {
 			test( 'should add the cartItem to the products array', () => {
-				const initialCart = cartValues.emptyCart( TEST_BLOG_ID ),
-					newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart ),
-					expectedCart = {
-						blog_id: TEST_BLOG_ID,
-						products: [ PREMIUM_PRODUCT ],
-					};
+				const initialCart = cartValues.emptyCart( TEST_BLOG_ID );
+				const newCart = cartItems.addCartItem( PREMIUM_PRODUCT )( initialCart );
+				const expectedCart = {
+					blog_id: TEST_BLOG_ID,
+					products: [ PREMIUM_PRODUCT ],
+				};
 
 				assert.deepEqual( newCart, expectedCart );
 			} );
@@ -93,13 +96,13 @@ describe( 'index', () => {
 	describe( 'cartItems.hasTld( cart, tld )', () => {
 		test( 'should return a boolean that says whether a domain with the tld is in the cart items', () => {
 			const cartWithFrTld = {
-					blog_id: TEST_BLOG_ID,
-					products: [ FR_DOMAIN_REGISTRATION_PRODUCT ],
-				},
-				cartWithoutFrTld = {
-					blog_id: TEST_BLOG_ID,
-					products: [ DOMAIN_REGISTRATION_PRODUCT ],
-				};
+				blog_id: TEST_BLOG_ID,
+				products: [ FR_DOMAIN_REGISTRATION_PRODUCT ],
+			};
+			const cartWithoutFrTld = {
+				blog_id: TEST_BLOG_ID,
+				products: [ DOMAIN_REGISTRATION_PRODUCT ],
+			};
 
 			assert( cartItems.hasTld( cartWithFrTld, 'fr' ) );
 			assert( ! cartItems.hasTld( cartWithoutFrTld, 'fr' ) );
@@ -141,43 +144,43 @@ describe( 'index', () => {
 
 	describe( 'setTaxCountryCode( countryCode )', () => {
 		test( 'should set the country code', () => {
-			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxCountryCode( 'TEST' )( initialCart );
+			const initialCart = cartValues.emptyCart();
+			const newCart = cartValues.setTaxCountryCode( 'TEST' )( initialCart );
 
 			assert.equal( 'TEST', newCart.tax.location.country_code );
 		} );
 
 		test( 'should clear the countryCode', () => {
-			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxCountryCode( null )( initialCart );
+			const initialCart = cartValues.emptyCart();
+			const newCart = cartValues.setTaxCountryCode( null )( initialCart );
 
 			assert.equal( null, newCart.tax.location.country_code );
 		} );
 
 		test( 'should preserve other values', () => {
 			const initialCart = {
-					other: 1,
-					tax: {
-						other: 2,
-						location: {
-							other: 3,
-							country_code: 'JA',
-							postal_code: '88888',
-						},
+				other: 1,
+				tax: {
+					other: 2,
+					location: {
+						other: 3,
+						country_code: 'JA',
+						postal_code: '88888',
 					},
 				},
-				newCart = cartValues.setTaxCountryCode( 'RU' )( initialCart ),
-				expectedCart = {
-					other: 1,
-					tax: {
-						other: 2,
-						location: {
-							other: 3,
-							country_code: 'RU',
-							postal_code: '88888',
-						},
+			};
+			const newCart = cartValues.setTaxCountryCode( 'RU' )( initialCart );
+			const expectedCart = {
+				other: 1,
+				tax: {
+					other: 2,
+					location: {
+						other: 3,
+						country_code: 'RU',
+						postal_code: '88888',
 					},
-				};
+				},
+			};
 
 			assert.deepEqual( newCart, expectedCart );
 		} );
@@ -185,43 +188,43 @@ describe( 'index', () => {
 
 	describe( 'setTaxPostalCode( postalCode )', () => {
 		test( 'should set the postal code', () => {
-			const initialCart = cartValues.emptyCart(),
-				newCart = cartValues.setTaxPostalCode( 'TEST' )( initialCart );
+			const initialCart = cartValues.emptyCart();
+			const newCart = cartValues.setTaxPostalCode( 'TEST' )( initialCart );
 
 			assert.equal( 'TEST', newCart.tax.location.postal_code );
 		} );
 
 		test( 'should clear the postal code', () => {
-			const initialCart = { tax: { location: { postal_code: '4321' } } },
-				newCart = cartValues.setTaxPostalCode( null )( initialCart );
+			const initialCart = { tax: { location: { postal_code: '4321' } } };
+			const newCart = cartValues.setTaxPostalCode( null )( initialCart );
 
 			assert.equal( null, newCart.tax.location.postal_code );
 		} );
 
 		test( 'should preserve other values', () => {
 			const initialCart = {
-					other: 1,
-					tax: {
-						other: 2,
-						location: {
-							other: 3,
-							country_code: 'AI',
-							postal_code: 'clearMe',
-						},
+				other: 1,
+				tax: {
+					other: 2,
+					location: {
+						other: 3,
+						country_code: 'AI',
+						postal_code: 'clearMe',
 					},
 				},
-				newCart = cartValues.setTaxPostalCode( '99999' )( initialCart ),
-				expectedCart = {
-					other: 1,
-					tax: {
-						other: 2,
-						location: {
-							other: 3,
-							country_code: 'AI',
-							postal_code: '99999',
-						},
+			};
+			const newCart = cartValues.setTaxPostalCode( '99999' )( initialCart );
+			const expectedCart = {
+				other: 1,
+				tax: {
+					other: 2,
+					location: {
+						other: 3,
+						country_code: 'AI',
+						postal_code: '99999',
 					},
-				};
+				},
+			};
 
 			assert.deepEqual( newCart, expectedCart );
 		} );

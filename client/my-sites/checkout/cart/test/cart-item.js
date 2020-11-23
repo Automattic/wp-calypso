@@ -82,7 +82,8 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'monthlyPrice', () => {
-		let myTranslate, instance;
+		let myTranslate;
+		let instance;
 		beforeEach( () => {
 			myTranslate = jest.fn( identity );
 			instance = new CartItem( {

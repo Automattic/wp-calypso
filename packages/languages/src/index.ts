@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import values from 'lodash/values';
-
-/**
  * Internal dependencies
  */
 import data from './languages-meta.json';
@@ -25,6 +20,6 @@ type SubLanguage = BaseLanguage & { parentLangSlug: string };
 
 export type Language = BaseLanguage | SubLanguage;
 
-const languages: Language[] = values( data );
+const languages: Language[] = Object.values( data );
 
 export default languages;

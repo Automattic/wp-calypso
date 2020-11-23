@@ -19,26 +19,26 @@ describe( 'Plugins Utils', () => {
 		} );
 
 		test( 'normalizePluginData should normalise the plugin data', () => {
-			const plugin = { name: '&lt;a href=&quot;http://google.com&quot;&gt;google&lt;/a&gt;' },
-				decodedPlugin = { name: '<a href="http://google.com">google</a>' };
+			const plugin = { name: '&lt;a href=&quot;http://google.com&quot;&gt;google&lt;/a&gt;' };
+			const decodedPlugin = { name: '<a href="http://google.com">google</a>' };
 			assert.notEqual( decodedPlugin, PluginUtils.normalizePluginData( plugin ) );
 		} );
 
 		test( 'should add the author name to the plugins object', () => {
-			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' ),
-				normalizedPlugin = PluginUtils.normalizePluginData( plugin );
+			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' );
+			const normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			assert.equal( normalizedPlugin.author_name, 'Automattic' );
 		} );
 
 		test( 'should add the author url to the plugins object', () => {
-			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' ),
-				normalizedPlugin = PluginUtils.normalizePluginData( plugin );
+			const plugin = JSON.parse( '{"author":"<a href=\\"http://jetpack.me\\">Automattic</a>"}' );
+			const normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			assert.equal( normalizedPlugin.author_url, 'http://jetpack.me' );
 		} );
 
 		test( 'should get the best possible icon if available', () => {
-			const plugin = { icons: { '1x': '1x test icon', '2x': '2x test icon' } },
-				normalizedPlugin = PluginUtils.normalizePluginData( plugin );
+			const plugin = { icons: { '1x': '1x test icon', '2x': '2x test icon' } };
+			const normalizedPlugin = PluginUtils.normalizePluginData( plugin );
 			assert.equal( normalizedPlugin.icon, '2x test icon' );
 		} );
 	} );
@@ -92,9 +92,9 @@ describe( 'Plugins Utils', () => {
 	describe( 'extractScreenshots', () => {
 		test( 'should extract the screenshot data from the .org api response', () => {
 			const screenshotData = JSON.parse(
-					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
-				),
-				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
+				'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
+			);
+			const extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isArray( extractedScreenshotData );
 			assert.equal( extractedScreenshotData[ 0 ].url, 'http://url-toscreenshot.com/' );
 			assert.equal( extractedScreenshotData[ 0 ].caption, 'Caption!' );
@@ -102,9 +102,9 @@ describe( 'Plugins Utils', () => {
 
 		test( 'should extract the screenshot data from the .org api response with removed items', () => {
 			const screenshotData = JSON.parse(
-					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
-				),
-				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
+				'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li><li><a href=\\"http://jetpack.me\\"><img src=\\"http://url-toscreenshot.com\\" /></a><p>Caption!</p></li></ul>"}'
+			);
+			const extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isArray( extractedScreenshotData );
 			assert.equal( extractedScreenshotData[ 0 ].url, 'http://url-toscreenshot.com/' );
 			assert.equal( extractedScreenshotData[ 0 ].caption, 'Caption!' );
@@ -112,15 +112,15 @@ describe( 'Plugins Utils', () => {
 
 		test( 'should extract the screenshot data from the .org api response but if no screenshots urls then return null', () => {
 			const screenshotData = JSON.parse(
-					'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li></ul>"}'
-				),
-				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
+				'{"screenshots":"<ul><li><a href=\\"http://jetpack.me\\"><img /></a><p>Caption!</p></li></ul>"}'
+			);
+			const extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isNull( extractedScreenshotData );
 		} );
 
 		test( 'should return null if screenshots is empty string', () => {
-			const screenshotData = JSON.parse( '{"screenshots":""}' ),
-				extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
+			const screenshotData = JSON.parse( '{"screenshots":""}' );
+			const extractedScreenshotData = PluginUtils.extractScreenshots( screenshotData.screenshots );
 			assert.isNull( extractedScreenshotData );
 		} );
 
@@ -143,12 +143,12 @@ describe( 'Plugins Utils', () => {
 
 		test( 'should provide an ordered compatibility list', () => {
 			const compatibility = {
-					'1.1.3': {},
-					'01.1.4': {},
-					10.3: {},
-					1.5: {},
-				},
-				orderedCompatibility = PluginUtils.normalizeCompatibilityList( compatibility );
+				'1.1.3': {},
+				'01.1.4': {},
+				10.3: {},
+				1.5: {},
+			};
+			const orderedCompatibility = PluginUtils.normalizeCompatibilityList( compatibility );
 			assert.equal( orderedCompatibility.length, 4 );
 			assert.deepEqual( orderedCompatibility, [ '1.1.3', '1.1.4', '1.5', '10.3' ] );
 		} );
