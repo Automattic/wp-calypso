@@ -34,6 +34,10 @@ class People extends React.Component {
 			case 'team':
 				return <TeamList site={ site } search={ search } />;
 			case 'followers':
+				/* We're using the `key` prop here to make sure a fresh instance
+				   is mounted in case a user changes their site. That way we don't
+				   have to deal with resetting internal state. Same goes for email
+				   followers. */
 				return <FollowersList key={ `people-followers-${ site.ID }` } site={ site } />;
 			case 'email-followers':
 				return (
