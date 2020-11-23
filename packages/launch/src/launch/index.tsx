@@ -1,12 +1,12 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
 import classNames from 'classnames';
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -14,32 +14,35 @@ import { useSelect } from '@wordpress/data';
 import FocusedLaunch from '../focused-launch';
 import LaunchContext from '../context';
 import { LAUNCH_STORE } from '../stores';
+import { FOCUSED_LAUNCH_FLOW_ID } from '../constants';
 import './styles.scss';
 
 interface Props {
-	onClose: () => void;
 	siteId: number;
 	locale: string;
 	redirectTo?: ( url: string ) => void;
+	openCheckout: ( siteId: number | string, isEcommerce?: boolean ) => void;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
-	onClose,
 	siteId,
 	locale,
 	redirectTo = ( url: string ) => {
 		// Won't work if trying to redirect the parent frame
 		window.location.href = url;
 	},
+	openCheckout,
 } ) => {
 	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
 	const isModalTitleVisible = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).isModalTitleVisible()
 	);
 
-	const onModalRequestClose = useCallback( () => {
-		isModalDismissible && onClose();
-	}, [ isModalDismissible, onClose ] );
+	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+
+	const onModalRequestClose = () => {
+		closeFocusedLaunch();
+	};
 
 	return (
 		<Modal
@@ -55,7 +58,9 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 			isDismissible={ isModalDismissible }
 		>
 			<div className="launch__focused-modal-body">
-				<LaunchContext.Provider value={ { siteId, locale, redirectTo } }>
+				<LaunchContext.Provider
+					value={ { siteId, locale, redirectTo, openCheckout, flow: FOCUSED_LAUNCH_FLOW_ID } }
+				>
 					<FocusedLaunch />
 				</LaunchContext.Provider>
 			</div>

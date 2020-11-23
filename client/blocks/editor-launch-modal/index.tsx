@@ -14,7 +14,14 @@ interface Props {
 }
 
 const EditorLaunchModal: React.FunctionComponent< Props > = ( { siteId, locale } ) => {
-	return <FocusedLaunchModal onClose={ noop } siteId={ siteId } locale={ locale } />;
+	return (
+		<FocusedLaunchModal
+			onClose={ noop }
+			siteId={ siteId }
+			locale={ locale }
+			openCheckout={ noop }
+		/>
+	);
 };
 
 export default connect( ( state ) => {

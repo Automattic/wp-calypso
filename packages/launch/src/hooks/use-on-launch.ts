@@ -2,7 +2,6 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -12,10 +11,11 @@ import { addQueryArgs } from '@wordpress/url';
 import { useSite } from './';
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
-import { Route } from '../focused-launch/route';
+import { getPlanProduct, getDomainProduct } from '../utils';
 
+// Hook used exclusively in Step-by-step launch flow
 export const useOnLaunch = () => {
-	const { siteId } = React.useContext( LaunchContext );
+	const { siteId, flow } = React.useContext( LaunchContext );
 	const { launchStatus } = useSite();
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const isEcommercePlan = useSelect( ( select ) =>
@@ -24,27 +24,11 @@ export const useOnLaunch = () => {
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
-	const history = useHistory();
-
 	React.useEffect( () => {
 		if ( launchStatus ) {
 			if ( plan && ! plan?.isFree ) {
-				const planProduct = {
-					product_id: plan.productId,
-					product_slug: plan.storeSlug,
-					extra: {
-						source: 'gutenboarding',
-					},
-				};
-				const domainProduct = {
-					meta: domain?.domain_name,
-					product_id: domain?.product_id,
-					extra: {
-						privacy_available: domain?.supports_privacy,
-						privacy: domain?.supports_privacy,
-						source: 'gutenboarding',
-					},
-				};
+				const planProduct = getPlanProduct( plan, flow );
+				const domainProduct = domain && getDomainProduct( domain, flow );
 
 				const go = async () => {
 					const cart = await getCart( siteId );
@@ -74,9 +58,7 @@ export const useOnLaunch = () => {
 				go();
 				return;
 			}
-			history
-				? history.push( Route.Success )
-				: ( window.top.location.href = `https://wordpress.com/home/${ siteId }` );
+			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
 		}
 	}, [ launchStatus ] ); // eslint-disable-line react-hooks/exhaustive-deps
 };
