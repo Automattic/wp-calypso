@@ -331,7 +331,7 @@ function premium_content_render_upgrade_nudge() {
 
 	if ( function_exists( 'jetpack_require_lib' ) ) {
 		jetpack_require_lib( 'components' );
-		return Jetpack_Components::render_upgrade_nudge(
+		return \Jetpack_Components::render_upgrade_nudge(
 			array(
 				'plan' => $required_plan,
 			)
@@ -352,7 +352,7 @@ function premium_content_render_stripe_nudge() {
 			'stripe-nudge',
 			array(
 				'blockName'        => 'premium-content',
-				'postId'           => $post_id,
+				'postId'           => get_the_ID(),
 				'stripeConnectUrl' => null,
 			)
 		);
@@ -403,7 +403,10 @@ function premium_content_block_logged_out_view_render( $attributes, $content, $b
  * @return string Final content to render.
  */
 function premium_content_block_subscriber_view_render( $attributes, $content, $block = null ) {
-	if ( ! premium_content_pre_render_checks() ) {
+	if (
+		! premium_content_pre_render_checks() ||
+		premium_content_should_render_frontend_preview()
+	) {
 		return '';
 	}
 
