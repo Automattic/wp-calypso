@@ -13,7 +13,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import { USER_STORE } from '../../stores/user';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
-import { useLangRouteParam, usePath, Step, useCurrentStep, useAnchorFmQueryParam } from '../../path';
+import { useLangRouteParam, usePath, Step, useCurrentStep } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
 import './style.scss';
 import SignupFormHeader from './header';
@@ -43,7 +43,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
-	const isAnchorFmSignup = useAnchorFmQueryParam();
+	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
 
 	const closeModal = () => {
 		clearErrors();

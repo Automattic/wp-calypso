@@ -210,6 +210,16 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
+const podcastId: Reducer< string, OnboardAction > = ( state = '', action ) => {
+	if ( action.type === 'SET_PODCAST_ID' ) {
+		return action.podcastId;
+	}
+	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+		return '';
+	}
+	return state;
+};
+
 const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SITE_VERTICAL' ) {
 		return action.siteVertical;
@@ -253,6 +263,7 @@ const reducer = combineReducers( {
 	selectedDesign,
 	selectedSite,
 	siteTitle,
+	podcastId,
 	siteVertical,
 	showSignupDialog,
 	plan,

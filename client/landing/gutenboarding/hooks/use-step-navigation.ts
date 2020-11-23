@@ -8,7 +8,7 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep, StepType, useAnchorFmQueryParam } from '../path';
+import { Step, usePath, useCurrentStep, StepType } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
@@ -25,6 +25,7 @@ import useSignup from './use-signup';
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
 
 	const makePath = usePath();
 	const history = useHistory();
@@ -34,7 +35,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	let steps: StepType[];
 
 	// If anchor_podcast param...
-	if ( useAnchorFmQueryParam() ) {
+	if ( isAnchorFmSignup ) {
 		steps = [
 			Step.IntentGathering,
 			Step.DesignSelection,
@@ -84,9 +85,11 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// Don't show the mandatory Plans step:
 	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step)
+	// - if this is an Anchor.fm signup
 	// - if a plan has been selected using the PlansModal but only if there is no Features step
 	if (
 		hasPaidPlanFromPath ||
+		isAnchorFmSignup ||
 		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
 	) {
 		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );

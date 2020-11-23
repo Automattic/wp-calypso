@@ -97,8 +97,8 @@ export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
 
-// Returns true if the url has a `?anchor_podcast`, which is used
-// to trigger the Anchor.fm steps.
+// Returns podcastId value if url has a `?anchor_podcast`, which is used
+// for sites created by Anchor.fm users.
 export function useAnchorFmQueryParam() {
-	return new URLSearchParams( useLocation().search ).has( 'anchor_podcast' );
+	return new URLSearchParams( useLocation().search ).get( 'anchor_podcast' ) || '';
 }

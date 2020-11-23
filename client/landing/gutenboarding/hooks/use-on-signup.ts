@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
 
 /**
@@ -25,7 +25,12 @@ export default function useOnSignup() {
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const visibility = useNewSiteVisibility();
-	const isAnchorFmSignup = useAnchorFmQueryParam();
+	const anchorFmPodcastId = useAnchorFmQueryParam();
+	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
+
+	React.useEffect( () => {
+		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
+	}, [] );
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
