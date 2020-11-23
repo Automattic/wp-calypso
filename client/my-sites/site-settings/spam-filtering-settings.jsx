@@ -68,7 +68,10 @@ const SpamFilteringSettings = ( {
 		return null;
 	}
 
-	if ( ! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) ) {
+	if (
+		! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) &&
+		! akismetActive
+	) {
 		return (
 			<UpsellNudge
 				title={ translate( 'Automatically clear spam from comments and forms' ) }
