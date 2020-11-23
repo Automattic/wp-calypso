@@ -56,7 +56,6 @@ export const SITE_REQUEST_OPTIONS = [
 	'publicize_permanently_disabled',
 	'show_on_front',
 	'signup_is_store',
-	'site_goals',
 	'site_segment',
 	'software_version',
 	'timezone',
