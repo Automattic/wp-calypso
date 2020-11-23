@@ -45,6 +45,7 @@ This plugin is experimental, so we don't provide any support for it outside of w
 * Focused Launch: add launch success view (https://github.com/Automattic/wp-calypso/pull/47404)
 * Premium Content: Use snackbar for error and success messages (https://github.com/Automattic/wp-calypso/pull/47477)
 * Coming soon: only show the coming soon page for singular, archive and search posts (https://github.com/Automattic/wp-calypso/pull/47563)
+* Patterns: Support skipping registering patterns with a requires-align-wide tag (https://github.com/Automattic/wp-calypso/pull/47571)
 
 = 2.8.6 =
 * Premium Content: Compatibility fix for Gutenberg >= 9.3.0 (https://github.com/Automattic/wp-calypso/pull/47467)
