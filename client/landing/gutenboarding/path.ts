@@ -26,6 +26,7 @@ export const Step = {
 	DomainsModal: 'domains-modal',
 	PlansModal: 'plans-modal',
 	LanguageModal: 'language-modal',
+	Import: 'import',
 } as const;
 
 // We remove falsey `steps` with `.filter( Boolean )` as they'd mess up our |-separated route pattern.

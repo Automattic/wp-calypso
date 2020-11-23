@@ -7,6 +7,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
 import config from 'calypso/config';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -35,7 +36,9 @@ const AcquireIntent: React.FunctionComponent = () => {
 
 	const siteTitleRef = React.useRef< HTMLInputElement >();
 
-	const { skipSiteVertical, setDomainSearch, setSiteTitle } = useDispatch( STORE_KEY );
+	const { skipSiteVertical, setDomainSearch, setSiteTitle, startImportFlow } = useDispatch(
+		STORE_KEY
+	);
 
 	const [ isSiteTitleActive, setIsSiteTitleActive ] = React.useState( false );
 
@@ -80,6 +83,10 @@ const AcquireIntent: React.FunctionComponent = () => {
 		setSiteTitle( '' );
 		recordSiteTitleSkip();
 		goNext();
+	};
+
+	const handleImport = () => {
+		startImportFlow();
 	};
 
 	// declare UI elements here to avoid duplication when returning for mobile/desktop layouts
@@ -153,6 +160,12 @@ const AcquireIntent: React.FunctionComponent = () => {
 					<div className="acquire-intent__footer">{ nextStepButton }</div>
 				</>
 			) }
+			<div className="acquire-intent__import">
+				{ __( 'Already have a website?' ) }
+				<Button isLink onClick={ handleImport }>
+					{ __( 'Import your content' ) }
+				</Button>
+			</div>
 		</div>
 	);
 };

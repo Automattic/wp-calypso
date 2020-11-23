@@ -210,6 +210,15 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const startImportFlow = () => ( {
+	type: 'IMPORTING_START' as const,
+} );
+
+export const setImportUrl = ( url: string ) => ( {
+	type: 'SET_IMPORT_URL' as const,
+	url,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -233,4 +242,6 @@ export type OnboardAction = ReturnType<
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
+	| typeof startImportFlow
+	| typeof setImportUrl
 >;
