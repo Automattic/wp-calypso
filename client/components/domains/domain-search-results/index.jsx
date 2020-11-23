@@ -24,7 +24,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { hideSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 /**
  * Style dependencies
  */
@@ -240,6 +240,7 @@ class DomainSearchResults extends React.Component {
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let unavailableOffer;
+		let domainSkipSuggestion;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			suggestionCount = (
@@ -313,6 +314,13 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 			}
+
+			domainSkipSuggestion = (
+				<DomainSkipSuggestion
+					selectedSiteSlug={ this.props.selectedSite.slug }
+					onButtonClick={ this.props.onSkip }
+				/>
+			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
@@ -325,6 +333,7 @@ class DomainSearchResults extends React.Component {
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
+				{ domainSkipSuggestion }
 			</div>
 		);
 	}
