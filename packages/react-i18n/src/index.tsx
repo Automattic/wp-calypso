@@ -11,7 +11,6 @@ export interface I18nReact {
 	_nx: I18n[ '_nx' ];
 	_x: I18n[ '_x' ];
 	isRTL: I18n[ 'isRTL' ];
-	i18nLocale: string;
 }
 
 const I18nContext = React.createContext< I18nReact >( makeContextValue() );
@@ -69,10 +68,8 @@ export const withI18n = createHigherOrderComponent< I18nReact >( ( InnerComponen
  * @returns The context value with bound translation functions
  */
 function makeContextValue( localeData?: LocaleData ): I18nReact {
-	const i18nLocale = localeData?.[ '' ]?.localeSlug ?? 'en';
-
 	if ( ! localeData ) {
-		return { __, _n, _nx, _x, isRTL, i18nLocale };
+		return { __, _n, _nx, _x, isRTL };
 	}
 
 	const i18n = createI18n( localeData );
@@ -83,6 +80,5 @@ function makeContextValue( localeData?: LocaleData ): I18nReact {
 		_nx: i18n._nx.bind( i18n ),
 		_x: i18n._x.bind( i18n ),
 		isRTL: i18n.isRTL.bind( i18n ),
-		i18nLocale,
 	};
 }
