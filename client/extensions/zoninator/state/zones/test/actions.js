@@ -90,12 +90,11 @@ describe( 'actions', () => {
 
 	describe( '#addZone()', () => {
 		test( 'should return an action object', () => {
-			const action = addZone( siteId, siteSlug, 'form', zones[ 1 ] );
+			const action = addZone( siteId, siteSlug, zones[ 1 ] );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_ADD_ZONE,
 				data: zones[ 1 ],
-				form: 'form',
 				siteId,
 				siteSlug,
 			} );
@@ -104,12 +103,11 @@ describe( 'actions', () => {
 
 	describe( '#saveZone', () => {
 		test( 'should return an action object', () => {
-			const action = saveZone( siteId, zones[ 1 ].id, 'form', zones[ 1 ] );
+			const action = saveZone( siteId, zones[ 1 ].id, zones[ 1 ] );
 
 			expect( action ).to.deep.equal( {
 				type: ZONINATOR_SAVE_ZONE,
 				data: zones[ 1 ],
-				form: 'form',
 				zoneId: 1,
 				siteId,
 			} );
