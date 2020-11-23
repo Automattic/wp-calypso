@@ -1524,34 +1524,59 @@ export const PLANS_LIST = {
 		group: constants.GROUP_WPCOM,
 		type: constants.TYPE_P2_PLUS,
 		getTitle: () => i18n.translate( 'P2+' ),
-		getDescription: () => i18n.translate( 'Some long description' ),
+		getDescription: () =>
+			i18n.translate(
+				'{{strong}}Best for professionals:{{/strong}} Enhance your P2 with more space for audio and video, advanced search, an activity overview panel, and priority customer support.',
+				plansDescriptionHeadingComponent
+			),
 		getShortDescription: () => i18n.translate( 'Some short description' ),
 		getPlanCompareFeatures: () => [
 			// pay attention to ordering, shared features should align on /plan page
-			constants.FEATURE_EMAIL_SUPPORT,
-			constants.FEATURE_BASIC_DESIGN,
-			constants.FEATURE_13GB_STORAGE,
-			constants.FEATURE_NO_ADS,
+			constants.FEATURE_P2_13GB_STORAGE,
+			constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
+			constants.FEATURE_P2_ADVANCED_SEARCH,
+			constants.FEATURE_P2_VIDEO_SHARING,
+			constants.FEATURE_P2_MORE_FILE_TYPES,
+			constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+			constants.FEATURE_P2_ACTIVITY_OVERVIEW,
 		],
+
+		// TODO: update this once we put P2+ in the signup.
 		getSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
-		getBlogSignupFeatures: () => [
-			constants.FEATURE_EMAIL_SUPPORT_SIGNUP,
-			constants.FEATURE_ALL_FREE_FEATURES,
-		],
-		getPortfolioSignupFeatures: () => [ constants.FEATURE_EMAIL_SUPPORT_SIGNUP ],
+
+		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
 		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
 		getInferiorHiddenFeatures: () => [],
-		getAudience: () => i18n.translate( 'Best for P2ers' ),
-		getBlogAudience: () => i18n.translate( 'Best for P2ers' ),
-		getPortfolioAudience: () => i18n.translate( 'Best for P2ers' ),
-		getStoreAudience: () => i18n.translate( 'Best for P2ers' ),
+
+		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
+		getAudience: () => i18n.translate( 'Best for bloggers' ),
+
 		...getMonthlyTimeframe(),
 		availableFor: ( plan ) => includes( [ constants.PLAN_FREE ], plan ), //TODO: only for P2 sites.
 		getProductId: () => 1040,
 		getStoreSlug: () => constants.PLAN_P2_PLUS,
 		getPathSlug: () => 'p2-plus',
+		getBillingTimeFrame: () => translate( 'per user per month' ),
 	},
+};
+
+PLANS_LIST[ constants.PLAN_P2_FREE ] = {
+	...PLANS_LIST[ constants.PLAN_FREE ],
+	getDescription: () =>
+		i18n.translate(
+			'{{strong}}Best for small groups:{{/strong}} All the features needed to share, discuss, review, and collaborate with your team in one spot, without interruptions.',
+			plansDescriptionHeadingComponent
+		),
+	getTitle: () => i18n.translate( 'P2 Free' ),
+	getPlanCompareFeatures: () => [
+		// pay attention to ordering, shared features should align on /plan page
+		constants.FEATURE_P2_3GB_STORAGE,
+		constants.FEATURE_P2_UNLIMITED_USERS,
+		constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		constants.FEATURE_P2_SIMPLE_SEARCH,
+		constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
+	],
 };
 
 export const PLANS_CONSTANTS_LIST = Object.keys( PLANS_LIST );

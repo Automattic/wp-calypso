@@ -75,6 +75,8 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 	FEATURE_BUSINESS_ONBOARDING,
+	TYPE_P2_PLUS,
+	TYPE_FREE,
 } from 'calypso/lib/plans/constants';
 import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
@@ -811,7 +813,9 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 	( planMatches( currentPlan, { type: TYPE_PERSONAL, group: GROUP_WPCOM } ) &&
 		planMatches( plan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) ) ||
 	( planMatches( currentPlan, { type: TYPE_PREMIUM, group: GROUP_WPCOM } ) &&
-		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) );
+		planMatches( plan, { type: TYPE_BUSINESS, group: GROUP_WPCOM } ) ) ||
+	( planMatches( currentPlan, { type: TYPE_FREE, group: GROUP_WPCOM } ) &&
+		planMatches( plan, { type: TYPE_P2_PLUS, group: GROUP_WPCOM } ) );
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
