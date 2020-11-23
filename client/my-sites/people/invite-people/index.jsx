@@ -53,8 +53,8 @@ import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 import {
 	getInviteLinksForSite,
-	getErrors as getValidationErrors,
-	getSuccess as getValidationSuccess,
+	getValidationErrors,
+	getValidationSuccesses,
 } from 'calypso/state/invites/selectors';
 import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import FormSelect from 'calypso/components/forms/form-select';
@@ -733,7 +733,7 @@ const connectComponent = connect(
 			siteRoles: getSiteRoles( state, siteId ),
 			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
 			validationErrors: getValidationErrors( state, siteId ),
-			validationSuccess: getValidationSuccess( state, siteId ),
+			validationSuccess: getValidationSuccesses( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {

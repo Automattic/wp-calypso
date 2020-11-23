@@ -174,8 +174,8 @@ export function isDeletingAnyInvite( state, siteId ) {
 const DEFAULT_ERRORS = {};
 const DEFAULT_SUCCESS = {};
 
-export const getErrors = ( state, siteId ) =>
+export const getValidationErrors = ( state, siteId ) =>
 	state.invites?.validation.errors[ siteId ] ?? DEFAULT_ERRORS;
 
-export const getSuccess = ( state, siteId ) =>
+export const getValidationSuccesses = ( state, siteId ) =>
 	state.invites?.validation.success[ siteId ] ?? DEFAULT_SUCCESS;
