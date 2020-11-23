@@ -1,3 +1,6 @@
+/*** THIS MUST BE THE FIRST THING EVALUATED IN THIS SCRIPT *****/
+import './public-path';
+
 /**
  * External dependencies
  */

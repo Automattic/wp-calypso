@@ -23,6 +23,7 @@ function WelcomeTourCard( {
 	setCurrentCard,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
+
 	return (
 		<Card className="welcome-tour-card">
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
