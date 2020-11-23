@@ -2,19 +2,12 @@
  * External dependencies
  */
 
-import { fromJS } from 'immutable';
 import { mapValues } from 'lodash';
 
 /**
- * Internal dependencies
+ * Internal Dependencies
  */
-import { action as ActionTypes } from 'calypso/lib/invites/constants';
 import { decodeEntities } from 'calypso/lib/formatting';
-
-const initialState = fromJS( {
-	list: {},
-	errors: {},
-} );
 
 function filterObjectProperties( object ) {
 	return mapValues( object, ( value ) => {
@@ -26,7 +19,7 @@ function filterObjectProperties( object ) {
 	} );
 }
 
-function normalizeInvite( data ) {
+export default function normalizeInvite( data ) {
 	return {
 		inviteKey: data.invite.invite_slug,
 		date: data.invite.invite_date,
@@ -40,19 +33,3 @@ function normalizeInvite( data ) {
 		knownUser: data.invite.meta.known,
 	};
 }
-
-const reducer = ( state = initialState, payload ) => {
-	const { action } = payload;
-	switch ( action.type ) {
-		case ActionTypes.RECEIVE_INVITE:
-			return state.setIn(
-				[ 'list', action.siteId, action.inviteKey ],
-				normalizeInvite( action.data )
-			);
-		case ActionTypes.RECEIVE_INVITE_ERROR:
-			return state.setIn( [ 'errors', action.siteId, action.inviteKey ], action.error );
-	}
-	return state;
-};
-
-export { initialState, reducer };
