@@ -192,10 +192,6 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0;
 	}
 
-	&.is-p2-free {
-		padding-top: 0;
-	}
-
 	&.is-p2-free,
 	&.is-p2-plus {
 		padding-left: 24px;
@@ -352,11 +348,18 @@ $plan-features-sidebar-width: 272px;
 }
 
 .plan-features__header-title-free {
-	font-size: 2rem;
+	font-size: 1.5rem;
 	line-height: 1.5;
 	font-weight: 400;
 	color: var( --color-neutral-70 );
-	padding-bottom: 32px;
+	padding-bottom: 8px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: 2rem;
+	}
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		padding-bottom: 32px;
+	}
 }
 
 .segmented-control.is-customer-type-toggle {
