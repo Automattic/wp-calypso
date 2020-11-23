@@ -28,7 +28,7 @@ export const requestFollowers = ( query ) => ( {
  * @param {object} query params which were sent to the API
  * @param {object} data API response object
  */
-export const successRequestFollowers = ( query, data ) => ( {
+export const requestFollowersSuccess = ( query, data ) => ( {
 	type: FOLLOWERS_RECEIVE,
 	query,
 	data,
@@ -41,7 +41,7 @@ export const successRequestFollowers = ( query, data ) => ( {
  * @param {object} query params which were sent to the API
  * @param {object} error contains the error response
  */
-export const failRequestFollowers = ( query, error ) => ( {
+export const requestFollowersFailure = ( query, error ) => ( {
 	type: FOLLOWERS_REQUEST_ERROR,
 	query,
 	error,

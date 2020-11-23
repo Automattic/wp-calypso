@@ -10,7 +10,7 @@ const debug = debugFactory( 'calypso:followers-actions' );
  * Internal dependencies
  */
 import wpcom from 'calypso/lib/wp';
-import { requestFollowers, successRequestFollowers, failRequestFollowers } from '../actions';
+import { requestFollowers, requestFollowersSuccess, requestFollowersFailure } from '../actions';
 
 /**
  * Request followers for a given site.
@@ -28,8 +28,8 @@ function fetchFollowers( query, silentUpdate = false ) {
 		wpcom
 			.site( query.siteId )
 			.statsFollowers( query )
-			.then( ( data ) => dispatch( successRequestFollowers( query, data ) ) )
-			.catch( ( error ) => dispatch( failRequestFollowers( query, error ) ) );
+			.then( ( data ) => dispatch( requestFollowersSuccess( query, data ) ) )
+			.catch( ( error ) => dispatch( requestFollowersFailure( query, error ) ) );
 	};
 }
 
