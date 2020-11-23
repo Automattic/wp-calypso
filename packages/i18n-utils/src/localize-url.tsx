@@ -150,7 +150,7 @@ export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string
 }
 
 export const withLocalizeUrl = createHigherOrderComponent< {
-	localizeUrl: ( fullUrl: string, locale?: Locale ) => string;
+	localizeUrl: ReturnType< typeof useLocalizeUrl >;
 } >( ( InnerComponent ) => {
 	return ( props ) => {
 		const localizeUrl = useLocalizeUrl();
