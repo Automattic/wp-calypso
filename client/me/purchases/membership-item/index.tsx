@@ -110,6 +110,8 @@ export default function MembershipItem( {
 }: {
 	subscription: MembershipSubscription;
 } ): JSX.Element {
+	const translate = useTranslate();
+
 	return (
 		<CompactCard
 			className="membership-item"
@@ -132,7 +134,9 @@ export default function MembershipItem( {
 					<MembershipTerms subscription={ subscription } />
 				</div>
 
-				<div className="membership-item__payment-method purchase-item__payment-method purchases-layout__payment-method" />
+				<div className="membership-item__payment-method purchase-item__payment-method purchases-layout__payment-method">
+					{ translate( 'Credit card' ) }
+				</div>
 			</div>
 		</CompactCard>
 	);
