@@ -86,7 +86,7 @@ class InviteAccept extends React.Component {
 		}
 	}
 
-	handleFetchInvite( error, invite ) {
+	handleFetchInvite( error, invite = false ) {
 		if ( ! this.mounted ) {
 			return;
 		}
