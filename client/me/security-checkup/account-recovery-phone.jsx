@@ -55,10 +55,10 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 				'You still need to verify your recovery SMS number: {{strong}}%(recoveryPhoneNumber)s{{/strong}}',
 				{
 					args: {
-						recoveryPhoneNumber: '\u200e' + accountRecoveryPhone.numberFull,
+						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
-						strong: <strong />,
+						strong: <strong dir="ltr" />,
 					},
 				}
 			);
@@ -68,10 +68,10 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 				'You have set {{strong}}%(recoveryPhoneNumber)s{{/strong}} as your recovery SMS number.',
 				{
 					args: {
-						recoveryPhoneNumber: '\u200e' + accountRecoveryPhone.numberFull,
+						recoveryPhoneNumber: accountRecoveryPhone.numberFull,
 					},
 					components: {
-						strong: <strong />,
+						strong: <strong dir="ltr" />,
 					},
 				}
 			);
