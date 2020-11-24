@@ -117,13 +117,14 @@ const Desktop = {
 		}
 	},
 
+	// window event
 	onUnseenCountUpdated: function ( event ) {
 		const { unseenCount } = event.detail;
 		debug( `Sending unseen count: ${ unseenCount }` );
 		window.electron.send( 'unread-notices-count', unseenCount );
 	},
 
-	onNotificationClicked: function ( _, notification ) {
+	onNotificationClicked: function ( notification ) {
 		debug( `Notification ${ notification.id } clicked` );
 
 		const { id, type } = notification;
@@ -162,7 +163,7 @@ const Desktop = {
 		this.toggleNotificationsPanel();
 	},
 
-	onNotificationsPanelShow: function ( _, show ) {
+	onNotificationsPanelShow: function ( show ) {
 		const isOpen = isNotificationsOpen( this.store.getState() );
 
 		if ( show ) {
@@ -213,6 +214,7 @@ const Desktop = {
 		this.navigate( '/help' );
 	},
 
+	// window event
 	onCannotOpenEditor: function ( event ) {
 		const { site, reason, editorUrl, wpAdminLoginUrl } = event.detail;
 		debug( 'Received window event: unable to load editor for site: ', site.URL );
@@ -232,6 +234,7 @@ const Desktop = {
 		window.electron.send( 'cannot-use-editor', payload );
 	},
 
+	// window event
 	onViewPostClicked: function ( event ) {
 		const { url } = event.detail;
 		debug( `Received window event: "View Post" clicked for URL: ${ url }` );
@@ -239,7 +242,7 @@ const Desktop = {
 		window.electron.send( 'view-post-clicked', url );
 	},
 
-	onActivateJetpackSiteModule: function ( event, info ) {
+	onActivateJetpackSiteModule: function ( info ) {
 		const { siteId, option } = info;
 		debug( `User enabling option '${ option }' for siteId ${ siteId }` );
 
@@ -263,7 +266,7 @@ const Desktop = {
 		this.store.dispatch( activateModule( siteId, option ) );
 	},
 
-	onRequestSite: function ( event, siteId ) {
+	onRequestSite: function ( siteId ) {
 		debug( 'Refreshing redux state for siteId: ', siteId );
 
 		const response = NOTIFY_DESKTOP_DID_REQUEST_SITE;
@@ -283,7 +286,7 @@ const Desktop = {
 		this.store.dispatch( requestSite( siteId ) );
 	},
 
-	onNavigate: function ( event, url ) {
+	onNavigate: function ( url ) {
 		debug( 'Navigating to URL: ', url );
 
 		if ( url ) {
@@ -291,6 +294,7 @@ const Desktop = {
 		}
 	},
 
+	// window event
 	onSendToPrinter: function ( event ) {
 		const { title, contents } = event.detail;
 		this.print( title, contents );

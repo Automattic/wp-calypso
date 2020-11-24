@@ -42,10 +42,11 @@ const receiveChannels = [
 				ipcRenderer.send( channel, ...args );
 			}
 		},
-		receive: ( channel, callback ) => {
+		receive: ( channel, onReceived ) => {
 			if ( receiveChannels.includes( channel ) ) {
 				// exclude event with sender info
-				ipcRenderer.on( channel, ( _, ...args ) => callback( ...args ) );
+				const callback = ( _, ...args ) => onReceived( ...args );
+				ipcRenderer.on( channel, callback );
 			}
 		},
 		logger: ( namespace, options ) => {
