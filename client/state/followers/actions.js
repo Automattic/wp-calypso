@@ -10,6 +10,7 @@ import {
 	FOLLOWER_REMOVE_SUCCESS,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/data-layer/wpcom/followers';
 import 'calypso/state/followers/init';
 
 /**
@@ -17,10 +18,12 @@ import 'calypso/state/followers/init';
  * have been requested..
  *
  * @param {object} query Params to be sent to the API
+ * @param {boolean} silentUpdate Used to indicate whether to show loading state in the UI
  */
-export const requestFollowers = ( query ) => ( {
+export const requestFollowers = ( query, silentUpdate = false ) => ( {
 	type: FOLLOWERS_REQUEST,
 	query,
+	silentUpdate,
 } );
 
 /**

@@ -30,7 +30,7 @@ import {
 	isFetchingFollowersForQuery,
 	getTotalFollowersForQuery,
 } from 'calypso/state/followers/selectors';
-import { removeFollower } from 'calypso/state/followers/thunks';
+import { requestRemoveFollower } from 'calypso/state/followers/actions';
 
 /**
  * Stylesheet dependencies
@@ -81,7 +81,7 @@ class Followers extends Component {
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
-					this.props.removeFollower( this.props.site.ID, follower );
+					this.props.requestRemoveFollower( this.props.site.ID, follower );
 				} else {
 					gaRecordEvent(
 						'People',
@@ -273,7 +273,9 @@ const mapStateToProps = ( state, ownProps ) => {
 	};
 };
 
-const ConnectedFollowers = connect( mapStateToProps, { removeFollower } )( localize( Followers ) );
+const ConnectedFollowers = connect( mapStateToProps, { requestRemoveFollower } )(
+	localize( Followers )
+);
 
 const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 	const [ currentPage, setCurrentPage ] = useState( 1 );

@@ -84,7 +84,9 @@ export function queryRequests( state = {}, action ) {
 		case FOLLOWERS_REQUEST:
 		case FOLLOWERS_REQUEST_ERROR: {
 			const serializedQuery = getSerializedQuery( action.query );
-			return Object.assign( {}, state, { [ serializedQuery ]: FOLLOWERS_REQUEST === action.type } );
+			return Object.assign( {}, state, {
+				[ serializedQuery ]: FOLLOWERS_REQUEST === action.type && ! action.silentUpdate,
+			} );
 		}
 	}
 	return state;
