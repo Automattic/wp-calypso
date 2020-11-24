@@ -87,9 +87,9 @@ class Block_Patterns_From_API {
 			register_block_pattern_category( $slug, array( 'label' => $label ) );
 		}
 
-<<<<<<< HEAD
-		foreach ( (array) $this->get_patterns() as $pattern ) {
+		foreach ( (array) $block_patterns as $pattern ) {
 			if ( $this->can_register_pattern( $pattern ) ) {
+				$is_premium = in_array( 'premium_block_pattern', array_keys( $pattern['tags'] ), true );
 				register_block_pattern(
 					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
 					array(
@@ -100,40 +100,10 @@ class Block_Patterns_From_API {
 						'categories'    => array_keys(
 							$pattern['categories']
 						),
+						'isPremium'     => $is_premium,
 					)
 				);
 			}
-||||||| parent of 9ea7973807... Add support for WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE constant to override the source site for testing patterns in development
-		foreach ( (array) $this->get_patterns() as $pattern ) {
-			register_block_pattern(
-				Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
-				array(
-					'title'         => $pattern['title'],
-					'description'   => $pattern['title'],
-					'content'       => $pattern['html'],
-					'viewportWidth' => 1280,
-					'categories'    => array_keys(
-						$pattern['categories']
-					),
-				)
-			);
-=======
-		foreach ( (array) $block_patterns as $pattern ) {
-			$is_premium = in_array( 'premium_block_pattern', array_keys( $pattern['tags'] ), true ) ? true : false;
-			register_block_pattern(
-				Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
-				array(
-					'title'         => $pattern['title'],
-					'description'   => $pattern['title'],
-					'content'       => $pattern['html'],
-					'viewportWidth' => 1280,
-					'categories'    => array_keys(
-						$pattern['categories']
-					),
-					'isPremium'     => $is_premium,
-				)
-			);
->>>>>>> 9ea7973807... Add support for WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE constant to override the source site for testing patterns in development
 		}
 	}
 
@@ -239,3 +209,4 @@ class Block_Patterns_From_API {
 		return true;
 	}
 }
+
