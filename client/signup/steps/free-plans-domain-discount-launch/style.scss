@@ -1,0 +1,44 @@
+.free-plans-domain-discount-launch__step-secton-wrapper {
+    .free-plans-domain-discount-launch {
+        .free-plans-domain-discount-launch__card {
+            padding: 0;
+            .form-fieldset {
+                margin-bottom: 0;
+            }
+        }
+        .free-plans-domain-discount-launch__domain-radio {
+            box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
+            cursor: pointer;
+            margin-bottom: 0;
+            padding: 16px 40px 22px 36px;
+            .free-plans-domain-discount-launch__domain-radio-label {
+                display: flex;
+                justify-content: space-between;
+                font-size: $font-body;
+            }
+            .free-plans-domain-discount-launch__domain-radio-label-domain-wrapper {
+                margin-left: 30px;
+            }
+        }
+        .free-plans-domain-discount-launch__placeholder {
+            box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
+            margin-bottom: 0;
+            padding: 16px 40px 22px 36px;
+            .free-plans-domain-discount-launch__placeholder-animation {
+                animation: loading-fade 1.6s ease-in-out infinite;
+                background-color: var( --color-neutral-10 );
+                color: transparent;
+                min-height: 44px;
+            }
+        }
+        .free-plans-domain-discount-launch__buttons {
+            padding: 20px;
+            text-align: center;
+            .button {
+                font-size: $font-body;
+                font-weight: bold;
+                min-width: 340px;
+            }
+        }
+    }
+}
