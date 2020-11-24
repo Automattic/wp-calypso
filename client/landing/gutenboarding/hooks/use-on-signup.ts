@@ -26,7 +26,9 @@ export default function useOnSignup() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const visibility = useNewSiteVisibility();
 	const anchorFmPodcastId = useAnchorFmQueryParam();
-	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
+	const isAnchorFmSignup = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedPodcastId()
+	);
 
 	React.useEffect( () => {
 		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );

@@ -186,7 +186,7 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 export const setPodcastId = ( podcastId: string ) => ( {
 	type: 'SET_PODCAST_ID' as const,
 	podcastId,
-})
+} );
 
 export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
 	type: 'SET_SITE_VERTICAL' as const,

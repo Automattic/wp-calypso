@@ -25,7 +25,9 @@ import useSignup from './use-signup';
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
+	const isAnchorFmSignup = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedPodcastId()
+	);
 
 	const makePath = usePath();
 	const history = useHistory();
@@ -36,12 +38,8 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// If anchor_podcast param...
 	if ( isAnchorFmSignup ) {
-		steps = [
-			Step.IntentGathering,
-			Step.DesignSelection,
-			Step.Style,
-		];
-	// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
+		steps = [ Step.IntentGathering, Step.DesignSelection, Step.Style ];
+		// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.
 	} else if ( hasSiteTitle() ) {
 		steps = [
 			Step.IntentGathering,
@@ -50,7 +48,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 			Step.Style,
 			Step.Features,
 			Step.Plans,
-	  ];
+		];
 	} else {
 		steps = [
 			Step.IntentGathering,
@@ -59,7 +57,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 			Step.Domains,
 			Step.Features,
 			Step.Plans,
-	  ];
+		];
 	}
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store

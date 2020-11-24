@@ -27,10 +27,18 @@ export default function useOnSignup() {
 
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();
-	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
+	const isAnchorFmSignup = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedPodcastId()
+	);
 
 	React.useEffect( () => {
-		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate && ! isAnchorFmSignup ) {
+		if (
+			! isCreatingSite &&
+			! newSite &&
+			currentUser &&
+			shouldTriggerCreate &&
+			! isAnchorFmSignup
+		) {
 			createSite( currentUser.username, locale, undefined, visibility );
 		}
 	}, [
