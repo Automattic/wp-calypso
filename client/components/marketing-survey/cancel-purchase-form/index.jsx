@@ -14,6 +14,7 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 import config from 'calypso/config';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
+import SpinnerButton from 'calypso/components/spinner-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -697,13 +698,16 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.downgradeClick,
 			isPrimary: true,
 		};
-		const remove = {
-			action: 'remove',
-			disabled,
-			label: translate( 'Remove Now' ),
-			onClick: this.onSubmit,
-			isPrimary: true,
-		};
+		const remove = (
+			<SpinnerButton
+				action="remove"
+				text="Remove Now"
+				loading={ this.props.disableButtons }
+				loadingText="Removing..."
+				onClick={ this.onSubmit }
+				isPrimary={ true }
+			/>
+		);
 
 		const firstButtons =
 			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
