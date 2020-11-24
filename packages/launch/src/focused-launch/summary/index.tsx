@@ -531,8 +531,12 @@ const Summary: React.FunctionComponent = () => {
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
+	// Allow changing site title when it's the default value or when it's an empty string.
 	useEffect( () => {
-		if ( ! isSiteTitleStepVisible && isDefaultSiteTitle( { currentSiteTitle: title } ) ) {
+		if (
+			! isSiteTitleStepVisible &&
+			( title === '' || isDefaultSiteTitle( { currentSiteTitle: title } ) )
+		) {
 			showSiteTitleStep();
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
