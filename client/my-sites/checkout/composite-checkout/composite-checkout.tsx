@@ -2,7 +2,7 @@
  * External dependencies
  */
 import page from 'page';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useEffect } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
