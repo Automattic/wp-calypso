@@ -57,7 +57,6 @@ import {
 } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { buildCardFeaturesFromItem } from './utils';
-import { getJetpackCrmPrice, getJetpackCrmCurrency } from './iterations';
 
 /**
  * Type dependencies
@@ -241,6 +240,10 @@ export const OPTION_PRODUCT_BACKUP_MONTHLY: SelectorProduct = {
 } );
 
 // Jetpack CRM
+
+const CRM_ENTREPRENEUR_PRICE = 17;
+const CRM_ENTREPRENEUR_CURRENCY = 'USD';
+
 export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	productSlug: PRODUCT_JETPACK_CRM,
 	term: TERM_ANNUALLY,
@@ -273,8 +276,8 @@ export const EXTERNAL_PRODUCT_CRM: SelectorProduct = {
 	// Jetpack CRM isn't considered as a product like others for the time being (and therefore not
 	// available via the API). Rather like a third-party product.
 	// See pricing in https://jetpackcrm.com/pricing/ (only available in USD)
-	displayPrice: getJetpackCrmPrice(),
-	displayCurrency: getJetpackCrmCurrency(),
+	displayPrice: getJetpackCROActiveVersion() === 'v1' ? undefined : CRM_ENTREPRENEUR_PRICE,
+	displayCurrency: getJetpackCROActiveVersion() === 'v1' ? undefined : CRM_ENTREPRENEUR_CURRENCY,
 	description: translate(
 		'The most simple and powerful WordPress CRM. Improve customer relationships and increase profits.'
 	),

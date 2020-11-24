@@ -6,7 +6,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import * as constants from './constants';
 import { getSelectorComponent } from './iterations';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -16,9 +15,6 @@ import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
  * Type dependencies
  */
 import type { Duration, QueryArgs } from './types';
-
-// FIXME - Prevent JS error: `Cannot access 'Iterations' before initialization`
-constants;
 
 export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, next ) => {
 	// Get the selected site's current plan term, and set it as default duration
