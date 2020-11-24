@@ -6,8 +6,7 @@ import type { APIFetchOptions } from '@wordpress/api-fetch';
 import { addQueryArgs } from '@wordpress/url';
 
 import { setLocalizedLanguageNames } from './actions';
-
-export const LANGUAGE_NAMES_URL = 'https://public-api.wordpress.com/wpcom/v2/i18n/language-names';
+import { LANGUAGE_NAMES_URL } from './constants';
 
 export function* getLocalizedLanguageNames( locale: string ) {
 	const localizedLanguageNames = yield apiFetch( {

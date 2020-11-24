@@ -7,8 +7,9 @@ import { addQueryArgs } from '@wordpress/url';
 /**
  * Internal dependencies
  */
-import { getLocalizedLanguageNames, LANGUAGE_NAMES_URL } from '../resolvers';
+import { getLocalizedLanguageNames } from '../resolvers';
 import { setLocalizedLanguageNames } from '../actions';
+import { LANGUAGE_NAMES_URL } from '../constants';
 
 describe( 'i18n resolvers', () => {
 	describe( 'getLocalizedLanguageNames', () => {
