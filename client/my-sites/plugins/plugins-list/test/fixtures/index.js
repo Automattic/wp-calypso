@@ -35,8 +35,6 @@ export const sites = [
 				quote: 'Quote',
 				image: 'Image',
 			},
-			default_likes_enabled: true,
-			default_sharing_status: false,
 			default_comment_status: true,
 			default_ping_status: true,
 			software_version: '4.0-beta2-20140728',
