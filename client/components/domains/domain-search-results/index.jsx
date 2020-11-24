@@ -54,6 +54,8 @@ class DomainSearchResults extends React.Component {
 		onClickMapping: PropTypes.func,
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
+		showSkipButton: PropTypes.bool,
+		onSkip: PropTypes.func,
 		isSignupStep: PropTypes.bool,
 		showStrikedOutPrice: PropTypes.bool,
 		railcarId: PropTypes.string,
@@ -333,7 +335,7 @@ class DomainSearchResults extends React.Component {
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
-				{ domainSkipSuggestion }
+				{ this.props.showSkipButton && domainSkipSuggestion }
 			</div>
 		);
 	}
