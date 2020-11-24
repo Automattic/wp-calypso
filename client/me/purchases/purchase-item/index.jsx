@@ -218,7 +218,7 @@ class PurchaseItem extends Component {
 	}
 
 	renderPurhaseItemContent = () => {
-		const { purchase, site, showSite } = this.props; // playa
+		const { purchase, site, showSite } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
