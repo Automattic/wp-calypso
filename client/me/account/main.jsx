@@ -74,6 +74,8 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
  */
 const debug = debugFactory( 'calypso:me:account' );
 
+const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
+
 /* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
@@ -88,7 +90,7 @@ const Account = createReactClass( {
 
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
-		this.clearValidation();
+		this.clearUsernameValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
@@ -185,7 +187,7 @@ const Account = createReactClass( {
 		this.setState( { userLoginConfirm: event.target.value } );
 	},
 
-	validateUsername() {
+	async validateUsername() {
 		const { translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
 
@@ -205,7 +207,8 @@ const Account = createReactClass( {
 			} );
 			return;
 		}
-		if ( ! /^[a-z0-9]+$/.test( username ) ) {
+
+		if ( ! ALLOWED_USERNAME_CHARACTERS_REGEX.test( username ) ) {
 			this.setState( {
 				validation: {
 					error: 'invalid_input',
@@ -215,23 +218,13 @@ const Account = createReactClass( {
 			return;
 		}
 
-		const self = this;
+		try {
+			const response = await wpcom.undocumented().me().validateUsername( username );
 
-		wpcom
-			.undocumented()
-			.me()
-			.validateUsername( username, function ( error, data ) {
-				if ( error ) {
-					self.setState( { validation: error } );
-				} else {
-					self.setState( {
-						validation: {
-							...data,
-							validatedUsername: username,
-						},
-					} );
-				}
-			} );
+			this.setState( { validation: { ...response, validatedUsername: username } } );
+		} catch ( error ) {
+			this.setState( { validation: error } );
+		}
 	},
 
 	hasEmailValidationError() {
@@ -427,7 +420,7 @@ const Account = createReactClass( {
 			usernameAction: null,
 		} );
 
-		this.clearValidation();
+		this.clearUsernameValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
@@ -435,44 +428,34 @@ const Account = createReactClass( {
 		}
 	},
 
-	submitUsernameForm() {
+	async submitUsernameForm() {
 		const username = this.getUserSetting( 'user_login' );
-		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
+		const action = this.state.usernameAction ? this.state.usernameAction : 'none';
 
 		this.setState( { submittingForm: true } );
-		this.changeUsername( username, action, ( error ) => {
+
+		try {
+			await wpcom.undocumented().me().changeUsername( username, action );
 			this.setState( { submittingForm: false } );
-			if ( error ) {
-				this.props.errorNotice( this.getValidationFailureMessage() );
-			} else {
-				this.props.markSaved();
 
-				// We reload here to refresh cookies, user object, and user settings.
-				// @TODO: Do not require reload here.
-				window.location.reload();
-			}
-		} );
-	},
+			// await user().fetch();
 
-	changeUsername( username, action, cb ) {
-		wpcom
-			.undocumented()
-			.me()
-			.changeUsername( username, action, function ( error, data ) {
-				if ( error ) {
-					this.setState( { validation: error } );
-					return;
-				}
-				user().fetch();
-				cb( error, data );
-			} );
+			this.props.markSaved();
+
+			// We reload here to refresh cookies, user object, and user settings.
+			// @TODO: Do not require reload here.
+			window.location.reload();
+		} catch ( error ) {
+			this.setState( { submittingForm: false, validation: error } );
+			this.props.errorNotice( error.message );
+		}
 	},
 
 	isUsernameValid() {
 		return this.state.validation?.success === true;
 	},
 
-	getValidationFailureMessage() {
+	getUsernameValidationFailureMessage() {
 		return this.state.validation?.message ?? null;
 	},
 
@@ -484,7 +467,7 @@ const Account = createReactClass( {
 		return this.state.validation?.validatedUsername ?? null;
 	},
 
-	clearValidation() {
+	clearUsernameValidation() {
 		this.setState( { validation: false } );
 	},
 
@@ -558,12 +541,12 @@ const Account = createReactClass( {
 					} ) }
 				/>
 			);
-		} else if ( null !== this.getValidationFailureMessage() ) {
+		} else if ( null !== this.getUsernameValidationFailureMessage() ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ this.getValidationFailureMessage() }
+					text={ this.getUsernameValidationFailureMessage() }
 				/>
 			);
 		}
