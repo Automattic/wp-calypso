@@ -20,12 +20,7 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import {
-	sendInvites,
-	createInviteValidation,
-	generateInviteLinks,
-	disableInviteLinks,
-} from 'calypso/lib/invites/actions';
+import { sendInvites, generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
@@ -51,11 +46,7 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import QuerySiteInvites from 'calypso/components/data/query-site-invites';
-import {
-	getInviteLinksForSite,
-	getValidationErrors,
-	getValidationSuccesses,
-} from 'calypso/state/invites/selectors';
+import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
 import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import FormSelect from 'calypso/components/forms/form-select';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -63,6 +54,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import SectionHeader from 'calypso/components/section-header';
 import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -79,21 +71,6 @@ class InvitePeople extends React.Component {
 
 	componentDidMount() {
 		InvitesSentStore.on( 'change', this.refreshFormState );
-	}
-
-	componentDidUpdate( prevProps ) {
-		const { validationSuccess, validationErrors } = this.props;
-
-		if (
-			this.state.role &&
-			( prevProps.validationSuccess !== validationSuccess ||
-				prevProps.validationErrors !== validationErrors )
-		) {
-			this.refreshValidation(
-				validationSuccess[ this.state.role ],
-				validationErrors[ this.state.role ]
-			);
-		}
 	}
 
 	componentWillUnmount() {
@@ -183,7 +160,7 @@ class InvitePeople extends React.Component {
 			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
 		} );
-		this.props.createInviteValidation( this.props.siteId, filteredTokens, role );
+		this.validateInvitation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
 			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
@@ -197,7 +174,7 @@ class InvitePeople extends React.Component {
 	onRoleChange = ( event ) => {
 		const role = event.target.value;
 		this.setState( { role } );
-		this.props.createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
+		this.validateInvitation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
 	onExternalChange = ( event ) => {
@@ -205,7 +182,21 @@ class InvitePeople extends React.Component {
 		this.setState( { isExternal } );
 	};
 
-	refreshValidation = ( success = {}, errors = {} ) => {
+	async validateInvitation( siteId, usernamesOrEmails, role ) {
+		try {
+			const { success, errors } = await wpcom
+				.undocumented()
+				.createInviteValidation( siteId, usernamesOrEmails, role );
+
+			this.refreshValidation( success, errors );
+
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_success' );
+		} catch ( error ) {
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_failed' );
+		}
+	}
+
+	refreshValidation = ( success = [], errors = {} ) => {
 		const errorsKeys = Object.keys( errors );
 		const errorToDisplay =
 			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
@@ -732,8 +723,6 @@ const connectComponent = connect(
 			inviteLinks: getInviteLinksForSite( state, siteId ),
 			siteRoles: getSiteRoles( state, siteId ),
 			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
-			validationErrors: getValidationErrors( state, siteId ),
-			validationSuccess: getValidationSuccesses( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {
@@ -743,7 +732,6 @@ const connectComponent = connect(
 				activateModule,
 				generateInviteLinks,
 				disableInviteLinks,
-				createInviteValidation,
 			},
 			dispatch
 		),

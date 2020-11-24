@@ -23,7 +23,6 @@ import {
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
-	RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
 } from 'calypso/state/action-types';
 import { inviteItemsSchema, inviteLinksSchema } from './schema';
 
@@ -259,32 +258,6 @@ export function deleting( state = {}, action ) {
 	return state;
 }
 
-const initialState = {
-	success: {},
-	errors: {},
-};
-
-export function validation( state = initialState, action ) {
-	switch ( action.type ) {
-		case RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS: {
-			return {
-				success: {
-					[ action.siteId ]: {
-						[ action.role ]: action.data?.success ?? [],
-					},
-				},
-				errors: {
-					[ action.siteId ]: {
-						[ action.role ]: action.data?.errors ?? {},
-					},
-				},
-			};
-		}
-	}
-
-	return state;
-}
-
 const combinedReducer = combineReducers( {
 	requesting,
 	items,
@@ -292,7 +265,6 @@ const combinedReducer = combineReducers( {
 	requestingResend,
 	deleting,
 	links,
-	validation,
 } );
 
 export default withStorageKey( 'invites', combinedReducer );

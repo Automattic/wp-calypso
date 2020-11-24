@@ -17,7 +17,6 @@ import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { acceptedNotice } from 'calypso/my-sites/invites/utils';
 import { requestSites, receiveSites } from 'calypso/state/sites/actions';
 import { requestSiteInvites } from 'calypso/state/invites/actions';
-import { RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS } from 'calypso/state/action-types';
 
 /**
  * Module variables
@@ -193,15 +192,3 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId, i
 			} );
 	};
 }
-
-export const createInviteValidation = ( siteId, usernamesOrEmails, role ) => ( dispatch ) => {
-	wpcom.undocumented().createInviteValidation( siteId, usernamesOrEmails, role, ( error, data ) => {
-		dispatch( { type: RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS, siteId, role, data } );
-
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_create_validation_failed' );
-		} else {
-			recordTracksEvent( 'calypso_invite_create_validation_success' );
-		}
-	} );
-};
