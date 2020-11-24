@@ -62,13 +62,22 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const newSiteVisibility = useNewSiteVisibility();
 	const { onSignupDialogOpen } = useSignup();
-	const handleSiteCreation = () =>
-		currentUser
-			? createSite( currentUser.username, locale, undefined, newSiteVisibility )
-			: onSignupDialogOpen();
+	const handleSiteCreation = () => {
+		if ( currentUser ) {
+			return createSite( currentUser.username, locale, undefined, newSiteVisibility );
+		}
+		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
+		// XXX TODO Test: Does this break non-anchor gutenboarding?
+		if ( newUser && newUser.username !== undefined ) {
+			return createSite( newUser.username, locale, undefined, newSiteVisibility );
+		}
+		return onSignupDialogOpen();
+	};
 
 	// Logic necessary to skip Domains or Plans steps
 	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
