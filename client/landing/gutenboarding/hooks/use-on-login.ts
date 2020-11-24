@@ -27,8 +27,8 @@ export default function useOnSignup() {
 
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();
-	const isAnchorFmSignup = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedPodcastId()
+	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getIsAnchorFmSignup()
 	);
 
 	React.useEffect( () => {

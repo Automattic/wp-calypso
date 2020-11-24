@@ -25,8 +25,8 @@ import useSignup from './use-signup';
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedPodcastId()
+	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getIsAnchorFmSignup()
 	);
 
 	const makePath = usePath();
