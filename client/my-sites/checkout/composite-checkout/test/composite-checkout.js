@@ -819,7 +819,7 @@ async function mockSetCartEndpoint( _, requestCart ) {
 		sub_total_display: 'R$149',
 		sub_total_integer: totalInteger - taxInteger,
 		coupon: requestCoupon,
-		is_coupon_applied: true,
+		is_coupon_applied: !! requestCoupon,
 		coupon_discounts_integer: [],
 		tax: { location: {}, display_taxes: true },
 	};
