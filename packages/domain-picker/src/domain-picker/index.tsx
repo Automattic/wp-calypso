@@ -72,7 +72,7 @@ export interface Props {
 
 	isCheckingDomainAvailability?: boolean;
 
-	existingSubdomain?: string;
+	existingSubdomain?: DomainSuggestion;
 
 	/* this makes the domain picker in loading state */
 	areDependenciesLoading?: boolean;
@@ -148,13 +148,17 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		isExpanded ? quantityExpanded : quantity
 	);
 
-	const isValidTld =
-		currentDomain?.domain_name !== existingSubdomain && currentDomain?.domain_name !== '';
-	const persistentDomainIsInSuggestions = domainSuggestions?.some(
-		( suggestion ) => suggestion.domain_name === persistentSelectedDomain?.domain_name
+	// Make a complete list of suggestions with the subdomain, only so we can check if the persistently selected domain is in there
+	const domainSuggestionsWithSubdomain =
+		existingSubdomain && Array.isArray( domainSuggestions )
+			? [ existingSubdomain, ...domainSuggestions ]
+			: domainSuggestions;
+
+	const persistentSelectedDomainIsInSuggestions = domainSuggestionsWithSubdomain?.some(
+		( suggestion ) => suggestion?.domain_name === persistentSelectedDomain?.domain_name
 	);
 
-	if ( persistentSelectedDomain && ! persistentDomainIsInSuggestions ) {
+	if ( persistentSelectedDomain && ! persistentSelectedDomainIsInSuggestions ) {
 		// Append our currently selected domain to the suggestions so it's persistently visible to the user.
 		domainSuggestions?.push( persistentSelectedDomain );
 	}
@@ -168,14 +172,14 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	};
 
 	useEffect( () => {
-		const currentDomainIsInSuggestions = domainSuggestions?.some(
+		const currentDomainIsInSuggestions = domainSuggestionsWithSubdomain?.some(
 			( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
 		);
 
-		if ( ! currentDomainIsInSuggestions && isValidTld ) {
+		if ( ! currentDomainIsInSuggestions ) {
 			setPersistentSelectedDomain( currentDomain );
 		}
-	}, [ currentDomain, domainSuggestions, isValidTld ] );
+	}, [ currentDomain, domainSuggestionsWithSubdomain ] );
 
 	// Reset expansion state after every search
 	useEffect( () => {
@@ -229,8 +233,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
 
-	/* if we know the existing domain while the suggestions are loading, we need one less placeholder */
-	const neededPlaceholdersCount = quantity - ( existingSubdomain ? 1 : 0 );
+	// If we know the existing domain while the suggestions are loading, we need one less placeholder
+	const neededPlaceholdersCount =
+		( persistentSelectedDomain ? quantity + 1 : quantity ) - ( existingSubdomain ? 1 : 0 );
 
 	return (
 		<div className="domain-picker">
@@ -283,20 +288,25 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
-								{ existingSubdomain && (
+								{ existingSubdomain?.domain_name && (
 									<SuggestionItem
-										key={ existingSubdomain }
-										domain={ existingSubdomain }
+										key={ existingSubdomain?.domain_name }
+										domain={ existingSubdomain?.domain_name }
 										cost="Free"
 										isFree
 										isExistingSubdomain
 										railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
 										onRender={ () =>
-											handleItemRender( existingSubdomain, `${ baseRailcarId }${ 0 }`, 0, false )
+											handleItemRender(
+												existingSubdomain?.domain_name,
+												`${ baseRailcarId }${ 0 }`,
+												0,
+												false
+											)
 										}
-										selected={ currentDomain?.domain_name === existingSubdomain }
+										selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
 										onSelect={ () => {
-											onExistingSubdomainSelect?.( existingSubdomain );
+											onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
 										} }
 										type={ itemType }
 									/>
@@ -310,7 +320,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ ( ! areDependenciesLoading &&
 									domainSuggestions?.map( ( suggestion, i ) => {
-										const index = existingSubdomain ? i + 1 : i;
+										const index = existingSubdomain?.domain_name ? i + 1 : i;
 										const isRecommended = index === 1;
 										const availabilityStatus =
 											domainAvailabilities[ suggestion?.domain_name ]?.status;
