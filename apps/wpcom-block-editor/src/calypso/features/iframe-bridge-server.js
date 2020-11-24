@@ -10,7 +10,7 @@ import { createBlock, parse } from '@wordpress/blocks';
 import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
-import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
+import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/edit-post';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,

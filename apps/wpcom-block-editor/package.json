@@ -32,6 +32,7 @@
 		"@wordpress/compose": "^3.19.3",
 		"@wordpress/data": "^4.22.3",
 		"@wordpress/dom-ready": "^2.10.0",
+		"@wordpress/edit-post": "^3.25.4",
 		"@wordpress/editor": "^9.20.6",
 		"@wordpress/edit-site": "^1.15.6",
 		"@wordpress/element": "^2.16.0",
