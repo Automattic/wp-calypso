@@ -26,5 +26,8 @@
 	},
 	"devDependencies": {
 		"babel-eslint": "^10.1.0"
+	},
+	"scripts": {
+		"test": "jest"
 	}
 }

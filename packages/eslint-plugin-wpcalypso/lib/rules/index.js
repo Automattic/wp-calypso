@@ -12,4 +12,5 @@ module.exports = {
 	'post-message-no-wildcard-targets': require( './post-message-no-wildcard-targets' ),
 	'redux-no-bound-selectors': require( './redux-no-bound-selectors' ),
 	'no-package-relative-imports': require( './no-package-relative-imports' ),
+	'wp-no-unsafe-features.js': require( './wp-no-unsafe-features' ),
 };
