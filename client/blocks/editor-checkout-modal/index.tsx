@@ -46,7 +46,7 @@ function removeHashFromUrl(): void {
 }
 
 const EditorCheckoutModal = ( props: Props ) => {
-	const { site, isOpen, onClose, cartData, isEcommerce } = props;
+	const { site, isOpen, onClose, cartData } = props;
 	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
 
 	const user = userFactory();
@@ -98,7 +98,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 						locale={ props.locale }
 					>
 						<CompositeCheckout
-							isInEditor={ ! isEcommerce }
+							isInEditor
 							siteId={ site.ID }
 							siteSlug={ site.slug }
 							productAliasFromUrl={ commaSeparatedProductSlugs }
@@ -116,14 +116,12 @@ type Props = {
 	onClose: () => void;
 	isOpen: boolean;
 	locale: string | undefined;
-	isEcommerce: boolean;
 };
 
 EditorCheckoutModal.defaultProps = {
 	isOpen: false,
 	onClose: () => null,
 	cartData: {},
-	isEcommerce: false,
 };
 
 export default connect( ( state ) => ( {

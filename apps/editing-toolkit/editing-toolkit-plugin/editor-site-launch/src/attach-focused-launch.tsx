@@ -34,7 +34,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 		const handleCheckout = ( siteId = currentSiteId, isEcommerce = false ) => {
 			// open checkout modal assuming the cart is already updated
 			if ( hasAction( HOOK_OPEN_CHECKOUT_MODAL ) ) {
-				doAction( HOOK_OPEN_CHECKOUT_MODAL, { isEcommerce } );
+				doAction( HOOK_OPEN_CHECKOUT_MODAL );
 				return;
 			}
 

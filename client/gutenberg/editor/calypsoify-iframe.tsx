@@ -97,7 +97,6 @@ interface State {
 	postUrl?: T.URL;
 	previewUrl: T.URL;
 	cartData?: RequestCart;
-	isEcommerce: boolean;
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
 
@@ -142,7 +141,6 @@ class CalypsoifyIframe extends Component<
 		previewUrl: 'about:blank',
 		currentIFrameUrl: '',
 		cartData: {},
-		isEcommerce: false,
 	};
 
 	iframeRef: React.RefObject< HTMLIFrameElement > = React.createRef();
@@ -291,11 +289,7 @@ class CalypsoifyIframe extends Component<
 		}
 
 		if ( EditorActions.OpenCheckoutModal === action ) {
-			this.setState( {
-				isCheckoutModalVisible: true,
-				cartData: { products: payload.products },
-				isEcommerce: payload.isEcommerce,
-			} );
+			this.setState( { isCheckoutModalVisible: true, cartData: payload } );
 		}
 
 		if ( EditorActions.GetCheckoutModalStatus === action ) {
@@ -706,7 +700,6 @@ class CalypsoifyIframe extends Component<
 			editedPost,
 			currentIFrameUrl,
 			cartData,
-			isEcommerce,
 		} = this.state;
 
 		const isUsingClassicBlock = !! classicBlockEditorId;
@@ -756,7 +749,6 @@ class CalypsoifyIframe extends Component<
 						cartData={ cartData }
 						placeholder={ null }
 						isOpen={ isCheckoutModalVisible }
-						isEcommerce={ isEcommerce }
 					/>
 				) }
 				{ isFocusedLaunchCalypsoEnabled && (
