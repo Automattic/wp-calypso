@@ -26,4 +26,3 @@ export const TASK_RENEW_EXPIRING_PLAN = 'home-task-renew-expiring-plan';
 export const TASK_SITE_SETUP_CHECKLIST = 'home-task-site-setup-checklist';
 export const TASK_SITE_SETUP_CHECKLIST_ECOMMERCE = 'home-task-site-setup-checklist-ecommerce';
 export const TASK_WEBINARS = 'home-task-webinars';
-export const TASK_WP_COURSES = 'home-task-wp-courses';
