@@ -15,6 +15,7 @@ import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -35,7 +36,7 @@ export class PluginActivateToggle extends Component {
 			return;
 		}
 
-		PluginsActions.togglePluginActivation( site, plugin );
+		this.props.togglePluginActivation( site.ID, plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 		if ( plugin.active ) {
@@ -148,4 +149,5 @@ PluginActivateToggle.defaultProps = {
 export default connect( null, {
 	recordGoogleEvent,
 	recordTracksEvent,
+	togglePluginActivation,
 } )( localize( PluginActivateToggle ) );
