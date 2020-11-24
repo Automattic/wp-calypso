@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -23,20 +23,23 @@ const JetpackFAQi5: React.FC = () => {
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 
-	const onFaqToggle = ( faqArgs: { id: string; isExpanded: boolean; height: number } ) => {
-		const { id, isExpanded } = faqArgs;
-		const tracksArgs = {
-			site_id: siteId,
-			faq_id: id,
-		};
-		if ( isExpanded ) {
-			// FAQ opened
-			dispatch( recordTracksEvent( 'calypso_plans_faq_open', tracksArgs ) );
-		} else {
-			// FAQ closed
-			dispatch( recordTracksEvent( 'calypso_plans_faq_closed', tracksArgs ) );
-		}
-	};
+	const onFaqToggle = useCallback(
+		( faqArgs: { id: string; isExpanded: boolean; height: number } ) => {
+			const { id, isExpanded } = faqArgs;
+			const tracksArgs = {
+				site_id: siteId,
+				faq_id: id,
+			};
+			if ( isExpanded ) {
+				// FAQ opened
+				dispatch( recordTracksEvent( 'calypso_plans_faq_open', tracksArgs ) );
+			} else {
+				// FAQ closed
+				dispatch( recordTracksEvent( 'calypso_plans_faq_closed', tracksArgs ) );
+			}
+		},
+		[ dispatch ]
+	);
 
 	return (
 		<>
