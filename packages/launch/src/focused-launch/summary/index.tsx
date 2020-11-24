@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import { SubTitle, Title } from '@automattic/onboarding';
+import { ActionButtons, Title, SubTitle } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
@@ -200,7 +200,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							itemType="individual-item"
 							locale={ locale }
 						/>
-						<Link to={ Route.DomainDetails }>
+						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -438,7 +438,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
 						</div>
-						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
+							{ __( 'View all plans', __i18n_text_domain__ ) }
+						</Link>
 					</>
 				)
 			}
@@ -504,7 +506,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const site = useSite();
 
-	const { locale } = useContext( LaunchContext );
+	const { locale, redirectTo } = useContext( LaunchContext );
 
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
@@ -524,6 +526,17 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const hasPaidPlan = site.isPaidPlan;
+
+	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
+		const helpHref = ( event.target as HTMLAnchorElement ).getAttribute( 'href' );
+
+		if ( ! helpHref ) {
+			return;
+		}
+
+		redirectTo( helpHref );
+		event.preventDefault();
+	};
 
 	// Prepare Steps
 	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
@@ -608,8 +621,19 @@ const Summary: React.FunctionComponent = () => {
 				} )
 			) }
 
-			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
-			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+			<div className="focused-launch-summary__actions-wrapper">
+				<ActionButtons className="focused-launch-summary__launch-action-bar">
+					{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
+					<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+				</ActionButtons>
+
+				<div className="focused-launch-summary__ask-for-help">
+					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
+					<a href="/help" onClick={ onAskForHelpClick }>
+						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
+					</a>
+				</div>
+			</div>
 		</div>
 	);
 };
