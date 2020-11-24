@@ -63,7 +63,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
 					currentDomain={ selectedDomain || mockDomainSuggestion( currentDomainName || '' ) }
-					existingSubdomain={ currentDomainName }
+					existingSubdomain={ mockDomainSuggestion( currentDomainName ) }
 					onDomainSelect={ handleSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
