@@ -145,7 +145,7 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
 				onDomainSearchBlur={ trackDomainSearchInteraction }
-				currentDomain={ domain?.domain_name }
+				currentDomain={ domain }
 				isCheckingDomainAvailability={ isCheckingDomainAvailability }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
