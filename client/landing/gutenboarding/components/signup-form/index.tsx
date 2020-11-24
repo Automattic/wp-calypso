@@ -43,7 +43,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
-	const isAnchorFmSignup = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedPodcastId() );
+	const isAnchorFmSignup = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedPodcastId()
+	);
 
 	const closeModal = () => {
 		clearErrors();
@@ -164,7 +166,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
-	const modalTitle = isAnchorFmSignup ? 'Create your podcast site with WordPress.com' : 'Save your progress';
+	const modalTitle = isAnchorFmSignup
+		? 'Create your podcast site with WordPress.com'
+		: 'Save your progress';
 
 	return (
 		<Modal
