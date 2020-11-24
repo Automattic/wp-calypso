@@ -7,22 +7,14 @@ import page from 'page';
  * Internal dependencies
  */
 import { makeLayout, render as clientRender } from 'calypso/controller/index.web';
-import { productSelect, productDetails, productUpsell } from './controller';
+import { productSelect } from './controller';
 
-const trackedPage = ( url: string, ...rest: PageJS.Callback[] ) => {
-	page( url, ...rest, makeLayout, clientRender );
-};
-
-export default function ( rootUrl: string, ...rest: PageJS.Callback[] ) {
-	trackedPage( `${ rootUrl }/:duration?/:site?`, ...rest, productSelect( rootUrl ) );
-	trackedPage(
-		`${ rootUrl }/:product/:duration/details/:site?`,
+export default function ( rootUrl: string, ...rest: PageJS.Callback[] ): void {
+	page(
+		`${ rootUrl }/:duration?/:site?`,
 		...rest,
-		productDetails( rootUrl )
-	);
-	trackedPage(
-		`${ rootUrl }/:product/:duration/additions/:site?`,
-		...rest,
-		productUpsell( rootUrl )
+		productSelect( rootUrl ),
+		makeLayout,
+		clientRender
 	);
 }

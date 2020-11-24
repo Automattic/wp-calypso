@@ -73,11 +73,8 @@ import InfoPopover from 'calypso/components/info-popover/docs/example';
 import InlineSupportLink from 'calypso/components/inline-support-link/docs/example';
 import InputChrono from 'calypso/components/input-chrono/docs/example';
 import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/example';
-import JetpackBundleCard from 'calypso/components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
-import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card/docs/example';
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card/docs/example';
 import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-product-slide-out-card/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
@@ -234,12 +231,9 @@ export default class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
-					<JetpackBundleCard readmeFilePath="jetpack-bundle-card" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
-					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
-					<JetpackProductCard readmeFilePath="jetpack-product-card" />
 					<JetpackProductSlideOutCard readmeFilePath="jetpack-product-slide-out-card" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />

@@ -12,8 +12,6 @@ export const getJetpackCROActiveVersion = (): string => {
 	const currentVariant = abtest( 'jetpackConversionRateOptimization' );
 
 	switch ( currentVariant ) {
-		case 'v0 - Offer Reset':
-			return 'v0';
 		case 'v1 - 3 cols layout':
 			return 'v1';
 		case 'v2 - slide outs':

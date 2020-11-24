@@ -21,10 +21,6 @@ import {
 	PRODUCT_JETPACK_CRM_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
-import {
-	OPTIONS_JETPACK_BACKUP,
-	OPTIONS_JETPACK_BACKUP_MONTHLY,
-} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSiteProducts from 'calypso/state/sites/selectors/get-site-products';
 import { slugToSelectorProduct } from './utils';
@@ -65,16 +61,8 @@ const useSelectorPageProducts = ( siteId: number | null ) => {
 
 	const backupProductsToShow = [];
 	const currentCROvariant = getJetpackCROActiveVersion();
-	// In v0 (Offer Reset), we show the Backup product the site owns or the Jetpack Backup option card.
-	if ( currentCROvariant === 'v0' ) {
-		if (
-			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
-		) {
-			backupProductsToShow.push( OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY );
-		}
-
-		// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
-	} else if ( currentCROvariant === 'v1' ) {
+	// In v1, we show the Backup product the site owns or Jetpack Backup Daily.
+	if ( currentCROvariant === 'v1' ) {
 		if (
 			! ownedProducts.some( ( ownedProduct ) => JETPACK_BACKUP_PRODUCTS.includes( ownedProduct ) )
 		) {

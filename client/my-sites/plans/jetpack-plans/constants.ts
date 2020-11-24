@@ -8,9 +8,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import {
-	JETPACK_SCAN_PRODUCTS,
-	JETPACK_ANTI_SPAM_PRODUCTS,
-	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SCAN,
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -23,9 +20,7 @@ import {
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
 	PRODUCT_JETPACK_SEARCH,
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	JETPACK_BACKUP_PRODUCTS,
 } from 'calypso/lib/products-values/constants';
-
 import {
 	PLAN_JETPACK_COMPLETE,
 	PLAN_JETPACK_COMPLETE_MONTHLY,
@@ -67,14 +62,11 @@ import { getJetpackCrmPrice, getJetpackCrmCurrency } from './iterations';
 /**
  * Type dependencies
  */
-import type { JetpackRealtimePlan } from 'calypso/lib/plans/types';
-import type { SelectorProduct, SelectorProductSlug, ProductType } from './types';
+import type { SelectorProduct, SelectorProductSlug } from './types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
 export const SECURITY = 'security';
-
-// TODO: update before offer reset launch
 export const PLAN_COMPARISON_PAGE = 'https://jetpack.com/features/comparison/';
 
 /**
@@ -91,48 +83,6 @@ export const MORE_FEATURES_LINK = {
 Object.defineProperties( MORE_FEATURES_LINK, {
 	label: {
 		get: () => translate( 'See all features' ),
-	},
-} );
-
-/*
- * Options displayed in the Product Type filter in the Plans page.
- */
-export const PRODUCT_TYPE_OPTIONS = {
-	[ SECURITY ]: {
-		id: SECURITY,
-		label: translate( 'Security' ),
-	},
-	[ PERFORMANCE ]: {
-		id: PERFORMANCE,
-		label: translate( 'Performance' ),
-	},
-	[ ALL ]: {
-		id: ALL,
-		label: translate( 'All' ),
-	},
-};
-
-/**
- * Define properties with translatable strings getters.
- */
-Object.defineProperties( PRODUCT_TYPE_OPTIONS, {
-	[ SECURITY ]: {
-		get: () => ( {
-			id: SECURITY,
-			label: translate( 'Security' ),
-		} ),
-	},
-	[ PERFORMANCE ]: {
-		get: () => ( {
-			id: PERFORMANCE,
-			label: translate( 'Performance' ),
-		} ),
-	},
-	[ ALL ]: {
-		get: () => ( {
-			id: ALL,
-			label: translate( 'All' ),
-		} ),
 	},
 } );
 
@@ -373,53 +323,8 @@ export const EXTERNAL_PRODUCTS_SLUG_MAP: Record< string, SelectorProduct > = {
 };
 
 /**
- * Provides categorization of products for filters.
- */
-const PRODUCTS_TYPE_SECURITY = [
-	OPTIONS_JETPACK_BACKUP,
-	OPTIONS_JETPACK_BACKUP_MONTHLY,
-	...JETPACK_BACKUP_PRODUCTS,
-	...JETPACK_SCAN_PRODUCTS,
-	...JETPACK_ANTI_SPAM_PRODUCTS,
-	OPTIONS_JETPACK_SECURITY,
-	OPTIONS_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-	PLAN_JETPACK_SECURITY_REALTIME,
-	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-];
-
-const PRODUCTS_TYPE_PERFORMANCE = [
-	...JETPACK_SEARCH_PRODUCTS,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
-];
-
-export const PRODUCTS_TYPES: Record< ProductType, string[] > = {
-	[ SECURITY ]: PRODUCTS_TYPE_SECURITY,
-	[ PERFORMANCE ]: PRODUCTS_TYPE_PERFORMANCE,
-	[ ALL ]: [ ...PRODUCTS_TYPE_SECURITY, ...PRODUCTS_TYPE_PERFORMANCE, ...EXTERNAL_PRODUCTS_LIST ],
-};
-
-/**
  * Constants that contain products including option and regular types.
  */
-export const SELECTOR_PRODUCTS = [
-	OPTIONS_JETPACK_BACKUP,
-	OPTIONS_JETPACK_BACKUP_MONTHLY,
-	...JETPACK_SCAN_PRODUCTS,
-	...JETPACK_ANTI_SPAM_PRODUCTS,
-	...JETPACK_SEARCH_PRODUCTS,
-];
-
-export const SELECTOR_PLANS = [
-	OPTIONS_JETPACK_SECURITY,
-	OPTIONS_JETPACK_SECURITY_MONTHLY,
-	PLAN_JETPACK_COMPLETE,
-	PLAN_JETPACK_COMPLETE_MONTHLY,
-];
 
 export const SELECTOR_PLANS_ALT_V1 = [
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -466,20 +371,6 @@ export const FEATURE_TO_MONTHLY_PRODUCT_ALT_V2: Record< string, string > = {
 	[ FEATURE_CRM_V2 ]: PRODUCT_JETPACK_CRM_MONTHLY,
 };
 
-export const DAILY_PLAN_TO_REALTIME_PLAN: Record< string, JetpackRealtimePlan > = {
-	[ PLAN_JETPACK_SECURITY_DAILY ]: PLAN_JETPACK_SECURITY_REALTIME,
-	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-};
-
-/**
- * List of plans and products that can be upgraded from daily to real-time
- * through an upgrade nudge.
- */
-export const UPGRADEABLE_WITH_NUDGE = [
-	PLAN_JETPACK_SECURITY_DAILY,
-	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
-];
-
 /*
  * Matrix of allowed upsells between products (not plans or bundles).
  */
@@ -491,9 +382,6 @@ export const UPSELL_PRODUCT_MATRIX: Record< string, string > = {
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_SCAN,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_SCAN_MONTHLY,
 };
-
-export const JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS =
-	'jetpack-offer-reset-upgrade-nudge-dismiss';
 
 /**
  * Array of product slugs that get the highlight treatment.

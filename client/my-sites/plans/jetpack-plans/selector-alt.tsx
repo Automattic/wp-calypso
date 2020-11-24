@@ -152,12 +152,7 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 			{ header }
 
 			{ showFilterBarInSelector() && (
-				<PlansFilterBar
-					showDiscountMessage
-					showDurations
-					onDurationChange={ trackDurationChange }
-					duration={ currentDuration }
-				/>
+				<PlansFilterBar onDurationChange={ trackDurationChange } duration={ currentDuration } />
 			) }
 
 			{ Grid && (

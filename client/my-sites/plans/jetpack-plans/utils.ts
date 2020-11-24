@@ -12,7 +12,6 @@ import React, { createElement, Fragment } from 'react';
 import createSelector from 'calypso/lib/create-selector';
 import { getFeatureByKey, getFeatureCategoryByKey } from 'calypso/lib/plans/features-list';
 import {
-	DAILY_PLAN_TO_REALTIME_PLAN,
 	DAILY_PRODUCTS,
 	EXTERNAL_PRODUCTS_LIST,
 	EXTERNAL_PRODUCTS_SLUG_MAP,
@@ -20,16 +19,10 @@ import {
 	ITEM_TYPE_PRODUCT,
 	ITEM_TYPE_BUNDLE,
 	ITEM_TYPE_PLAN,
-	OPTIONS_JETPACK_BACKUP,
-	OPTIONS_JETPACK_BACKUP_MONTHLY,
-	OPTIONS_JETPACK_SECURITY,
-	OPTIONS_JETPACK_SECURITY_MONTHLY,
 	OPTIONS_SLUG_MAP,
 	PRODUCTS_WITH_OPTIONS,
 	REALTIME_PRODUCTS,
 	SUBTYPE_TO_OPTION,
-	UPGRADEABLE_WITH_NUDGE,
-	UPSELL_PRODUCT_MATRIX,
 } from './constants';
 import RecordsDetails from './records-details';
 import { addItems } from 'calypso/lib/cart/actions';
@@ -53,7 +46,6 @@ import {
 import {
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_PRODUCT_PRICE_MATRIX,
-	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_PRODUCTS_BY_TERM,
 } from 'calypso/lib/products-values/constants';
 import {
@@ -88,7 +80,6 @@ import type {
 	QueryArgs,
 } from './types';
 import type {
-	JetpackRealtimePlan,
 	JetpackPlanSlugs,
 	Plan,
 	JetpackPlanCardFeature,
@@ -297,27 +288,6 @@ export function productButtonLabelAlt(
 
 export function slugIsFeaturedProduct( productSlug: string ): boolean {
 	return FEATURED_PRODUCTS.includes( productSlug );
-}
-
-export function productBadgeLabel(
-	product: SelectorProduct,
-	isOwned: boolean,
-	highlight: boolean,
-	currentPlan?: SitePlan | null
-): TranslateResult | undefined {
-	if ( isOwned ) {
-		return slugIsJetpackPlanSlug( product.productSlug )
-			? translate( 'Your plan' )
-			: translate( 'You own this' );
-	}
-
-	if ( currentPlan && planHasFeature( currentPlan.product_slug, product.productSlug ) ) {
-		return translate( 'Included in your plan' );
-	}
-
-	if ( highlight && slugIsFeaturedProduct( product.productSlug ) ) {
-		return translate( 'Best Value' );
-	}
 }
 
 export function productBadgeLabelAlt(
@@ -607,36 +577,6 @@ export function slugToSelectorProduct( slug: string ): SelectorProduct | null {
 }
 
 /**
- * Returns an item slug that represents the real-time version of a daily one.
- *
- * @param slug string
- * @returns string | null
- */
-export function getRealtimeFromDaily( slug: string ): JetpackRealtimePlan | null {
-	return DAILY_PLAN_TO_REALTIME_PLAN[ slug ];
-}
-
-/**
- * Returns whether an item is upgradeable by a nudge.
- *
- * @param slug string
- * @returns boolean | null
- */
-export function isUpgradeable( slug: string ): boolean {
-	return UPGRADEABLE_WITH_NUDGE.includes( slug );
-}
-
-/**
- * Returns an upsell product, if any, for the slug.
- *
- * @param slug string
- * @returns boolean | null
- */
-export function getProductUpsell( slug: string ): string | null {
-	return UPSELL_PRODUCT_MATRIX[ slug ];
-}
-
-/**
  * Returns the slug of an option product given a real product/plan slug.
  *
  * @param slug string
@@ -644,27 +584,6 @@ export function getProductUpsell( slug: string ): string | null {
  */
 export function getOptionFromSlug( slug: string ): string | null {
 	return SUBTYPE_TO_OPTION[ slug ];
-}
-
-/**
- * Returns all options, both yearly and monthly, given a slug. If the slug
- * has no related to option, it returns an empty array.
- * e.g. jetpack_security_daily -> [ jetpack_security_monthly, jetpack_security ]
- * e.g. jetpack_scan -> []
- *
- * @param slug string
- * @returns string[]
- */
-export function getAllOptionsFromSlug( slug: string ): string[] {
-	if ( JETPACK_BACKUP_PRODUCTS.includes( slug ) ) {
-		return [ OPTIONS_JETPACK_BACKUP, OPTIONS_JETPACK_BACKUP_MONTHLY ];
-	}
-
-	if ( JETPACK_SECURITY_PLANS.includes( slug ) ) {
-		return [ OPTIONS_JETPACK_SECURITY, OPTIONS_JETPACK_SECURITY_MONTHLY ];
-	}
-
-	return [];
 }
 
 /**
@@ -704,30 +623,6 @@ export function checkout(
 }
 
 /**
- * Returns a URL of the format `rootUrl/?duration/?siteSlug`. In most cases, `rootUrl` will
- * be either '/jetpack/connect/plans' or '/plans'. The result will most likely look like
- * '/plans/monthly/site-slug', '/plans/site-slug', or just '/plans'.
- *
- * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
- * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
- * @param {Duration} duration Monthly or annual
- * @param {string} siteSlug (optional) The slug of the selected site
- *
- * @returns {string} The path to the Selector page
- */
-export function getPathToSelector(
-	rootUrl: string,
-	urlQueryArgs: QueryArgs,
-	duration?: Duration,
-	siteSlug?: string
-): string {
-	const strDuration = duration ? durationToString( duration ) : null;
-	const path = [ rootUrl, strDuration, siteSlug ].filter( Boolean ).join( '/' );
-
-	return addQueryArgs( urlQueryArgs, path );
-}
-
-/**
  * Returns a URL of the format `rootUrl/productSlug/duration/details/?siteSlug` that
  * points to the Details page.
  *
@@ -748,33 +643,6 @@ export function getPathToDetails(
 ): string {
 	const strDuration = durationToString( duration );
 	const path = [ rootUrl, productSlug, strDuration, 'details', siteSlug ]
-		.filter( Boolean )
-		.join( '/' );
-
-	return addQueryArgs( urlQueryArgs, path );
-}
-
-/**
- * Returns a URL of the format `rootUrl/productSlug/duration/additions/?siteSlug` that
- * points to the Upsell page.
- *
- * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
- * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
- * @param {string} productSlug Slug of the product
- * @param {Duration} duration Monthly or annual
- * @param {string} siteSlug (optional) The slug of the selected site
- *
- * @returns {string} The path to the Upsell page
- */
-export function getPathToUpsell(
-	rootUrl: string,
-	urlQueryArgs: QueryArgs,
-	productSlug: string,
-	duration: Duration,
-	siteSlug?: string
-): string {
-	const strDuration = durationToString( duration );
-	const path = [ rootUrl, productSlug, strDuration, 'additions', siteSlug ]
 		.filter( Boolean )
 		.join( '/' );
 

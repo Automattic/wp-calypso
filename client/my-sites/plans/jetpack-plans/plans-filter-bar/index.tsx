@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -18,12 +18,10 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 } from 'calypso/lib/plans/constants';
 import SegmentedControl from 'calypso/components/segmented-control';
-import SelectDropdown from 'calypso/components/select-dropdown';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import { masterbarIsVisible } from 'calypso/state/ui/selectors';
 import { getJetpackCROActiveVersion } from '../abtest';
-import { PRODUCT_TYPE_OPTIONS } from '../constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import { getHighestAnnualDiscount } from '../utils';
 
@@ -90,15 +88,7 @@ const DiscountMessage = () => {
 	);
 };
 
-const PlansFilterBar = ( {
-	showDiscountMessage,
-	showDurations,
-	showProductTypes,
-	duration,
-	productType,
-	onDurationChange,
-	onProductTypeChange,
-}: Props ) => {
+const PlansFilterBar = ( { duration, onDurationChange }: Props ) => {
 	const translate = useTranslate();
 	const isCloud = isJetpackCloud();
 	const masterbarSelector = isCloud ? '.jpcom-masterbar' : '.masterbar';
@@ -113,37 +103,22 @@ const PlansFilterBar = ( {
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			{ showProductTypes && (
-				<SelectDropdown selectedText={ productType && PRODUCT_TYPE_OPTIONS[ productType ].label }>
-					{ Object.values( PRODUCT_TYPE_OPTIONS ).map( ( option ) => (
-						<SelectDropdown.Item
-							key={ option.id }
-							selected={ productType === option.id }
-							onClick={ () => onProductTypeChange?.( option.id ) }
-						>
-							{ option.label }
-						</SelectDropdown.Item>
-					) ) }
-				</SelectDropdown>
-			) }
-			{ showDurations && (
-				<SegmentedControl primary={ true }>
-					<SegmentedControl.Item
-						onClick={ () => onDurationChange?.( TERM_MONTHLY ) }
-						selected={ duration === TERM_MONTHLY }
-					>
-						{ translate( 'Monthly' ) }
-					</SegmentedControl.Item>
+			<SegmentedControl primary={ true }>
+				<SegmentedControl.Item
+					onClick={ () => onDurationChange?.( TERM_MONTHLY ) }
+					selected={ duration === TERM_MONTHLY }
+				>
+					{ translate( 'Monthly' ) }
+				</SegmentedControl.Item>
 
-					<SegmentedControl.Item
-						onClick={ () => onDurationChange?.( TERM_ANNUALLY ) }
-						selected={ duration === TERM_ANNUALLY }
-					>
-						{ translate( 'Yearly' ) }
-					</SegmentedControl.Item>
-				</SegmentedControl>
-			) }
-			{ showDiscountMessage && <DiscountMessage /> }
+				<SegmentedControl.Item
+					onClick={ () => onDurationChange?.( TERM_ANNUALLY ) }
+					selected={ duration === TERM_ANNUALLY }
+				>
+					{ translate( 'Yearly' ) }
+				</SegmentedControl.Item>
+			</SegmentedControl>
+			<DiscountMessage />
 		</div>
 	);
 };
