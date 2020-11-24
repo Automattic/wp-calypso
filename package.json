@@ -42,7 +42,8 @@
 			"unreleased Firefox versions",
 			"unreleased FirefoxAndroid versions",
 			"unreleased Edge versions",
-			"unreleased Opera versions"
+			"unreleased Opera versions",
+			"safari 13"
 		],
 		"server": [
 			"current node"
