@@ -495,8 +495,8 @@ const Summary: React.FunctionComponent = () => {
 		<DomainStep
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
-			existingSubdomain={ siteSubdomain?.domain }
-			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain || '' ) }
+			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
+			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain ) }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
