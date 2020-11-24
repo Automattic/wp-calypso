@@ -1,7 +1,13 @@
 // eslint-disable-next-line wpcalypso/import-docblock
 import type { DomainSuggestions } from '@automattic/data-stores';
 
-export function mockDomainSuggestion( domainName: string ): DomainSuggestions.DomainSuggestion {
+export function mockDomainSuggestion(
+	domainName: string | undefined
+): DomainSuggestions.DomainSuggestion | undefined {
+	if ( ! domainName ) {
+		return undefined;
+	}
+
 	return {
 		domain_name: domainName,
 		relevance: 1,
