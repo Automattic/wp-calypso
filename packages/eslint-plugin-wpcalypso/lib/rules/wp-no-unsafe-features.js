@@ -54,7 +54,7 @@ function makeReporter( { allowedImports, context } ) {
 			return;
 		}
 
-		const allowedImportNames = allowedImports[ sourceModule ] ?? [];
+		const allowedImportNames = allowedImports[ sourceModule ] || [];
 
 		node.specifiers.forEach( ( specifierNode ) => {
 			if ( specifierNode.type !== 'ImportSpecifier' ) {
