@@ -877,7 +877,9 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
+			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
+			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
 		}
 	}
 
