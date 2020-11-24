@@ -1,4 +1,5 @@
-.color-scheme.is-classic-dark {
+.color-scheme.is-classic-dark,
+.color-scheme.is-classic-dark .is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-gray-90 );
 	--color-primary-rgb: var( --studio-gray-90-rgb );
