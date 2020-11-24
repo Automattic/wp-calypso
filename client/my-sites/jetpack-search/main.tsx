@@ -16,20 +16,20 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { getSitePlan } from 'calypso/state/sites/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+//import { getSitePlan } from 'calypso/state/sites/selectors';
+import { /*getSelectedSiteId, */ getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 
 /**
  * Asset dependencies
  */
-import JetpackScanSVG from 'calypso/assets/images/illustrations/jetpack-scan.svg';
+import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
 export default function JetpackSearchUpsell(): ReactElement {
 	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
-	const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
+	//const siteId = useSelector( getSelectedSiteId );
+	//const { product_slug: planSlug } = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	return (
 		<Main className="jetpack-search">
@@ -45,18 +45,21 @@ export default function JetpackSearchUpsell(): ReactElement {
 			/>
 
 			<PromoCard
-				title={ translate( 'Speedy search for whizzy people.' ) }
-				image={ { path: JetpackScanSVG } }
+				title={ translate( 'Finely-tuned search for your site.' ) }
+				image={ { path: JetpackSearchSVG } }
 				isPrimary
 			>
-				<p>{ translate( 'Jetpack Search brings you a free panda.' ) }</p>
-				<p>You're on the { planSlug } plan. Great!</p>
+				<p>
+					{ translate(
+						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+					) }
+				</p>
 
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Upgrade' ),
+						text: translate( 'Get Jetpack Search' ),
 						action: {
-							url: `/checkout/${ siteSlug }/business`,
+							url: `/checkout/${ siteSlug }/jetpack_search_monthly`,
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
