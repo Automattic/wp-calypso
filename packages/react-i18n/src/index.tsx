@@ -2,7 +2,8 @@
  * External dependencies
  */
 import * as React from 'react';
-import { createI18n, I18n, LocaleData, __, _n, _nx, _x, isRTL } from '@wordpress/i18n';
+
+import defaultI18n, { createI18n, I18n, LocaleData } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { createHooks, addAction as globalAddAction } from '@wordpress/hooks';
 import type { addFilter, removeFilter, hasFilter, applyFilters } from '@wordpress/hooks';
@@ -14,7 +15,7 @@ export interface I18nReact {
 	_x: I18n[ '_x' ];
 	isRTL: I18n[ 'isRTL' ];
 	localeData?: LocaleData;
-	hasTranslation: ( singular: string, context?: string ) => boolean;
+	hasTranslation?: ( singular: string, context?: string ) => boolean;
 	addFilter: typeof addFilter;
 	removeFilter: typeof removeFilter;
 }
@@ -171,13 +172,10 @@ function hasTranslation( localeData: LocaleData, singular: string, context?: str
  * @returns The context value with bound translation functions
  */
 function makeContextValue( localeData?: LocaleData, filters?: I18nFilters ): I18nReact {
-	if ( ! localeData ) {
-		return { __, _n, _nx, _x, isRTL };
-	}
-
-	const i18n = createI18n( localeData );
-	const boundHasTranslation = ( singular: string, context?: string ) =>
-		hasTranslation( localeData || {}, singular, context );
+	const i18n = localeData ? createI18n( localeData ) : defaultI18n;
+	const boundHasTranslation = localeData
+		? ( singular: string, context?: string ) => hasTranslation( localeData, singular, context )
+		: undefined;
 
 	const { addFilter, removeFilter, hasFilter, applyFilters } = filters ?? createHooks();
 	const i18nFunctionFilters = { addFilter, removeFilter, hasFilter, applyFilters };
