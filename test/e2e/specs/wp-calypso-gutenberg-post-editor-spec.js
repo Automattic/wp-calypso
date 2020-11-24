@@ -82,7 +82,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const errorShown = await gEditorComponent.errorDisplayed();
 			return assert.strictEqual(
 				errorShown,
-				false,
+				true,
 				'There is an error shown on the Gutenberg editor page!'
 			);
 		} );
