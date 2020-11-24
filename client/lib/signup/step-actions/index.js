@@ -13,6 +13,7 @@ import {
 	omitBy,
 	pick,
 	startsWith,
+	has,
 } from 'lodash';
 import cookie from 'cookie';
 
@@ -859,14 +860,20 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 }
 
 export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
+	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
+	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
 	const { submitSignupStep } = nextProps;
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
 	const isNotRegistration = domainItem && ! isDomainRegistration( domainItem );
-	const planDoesNotSupportUpsell = isPersonal( cartItem );
+	const planDoesNotSupportUpsell = ! cartItem || isPersonal( cartItem );
 	const cookies = cookie.parse( document.cookie );
 	const isUs = cookies?.country_code === 'US';
+
+	if ( ! hasDomain || ! hasPlan ) {
+		return;
+	}
 
 	if (
 		isNotRegistration ||
