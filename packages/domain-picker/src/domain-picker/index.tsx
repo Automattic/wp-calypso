@@ -148,13 +148,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		isExpanded ? quantityExpanded : quantity
 	);
 
-	const isValidCurrentDomain =
+	const isValidTld =
 		currentDomain?.domain_name !== existingSubdomain && currentDomain?.domain_name !== '';
 	const persistentDomainIsInSuggestions = domainSuggestions?.some(
 		( suggestion ) => suggestion.domain_name === persistentSelectedDomain?.domain_name
 	);
 
-	if ( isValidCurrentDomain && persistentSelectedDomain && ! persistentDomainIsInSuggestions ) {
+	if ( persistentSelectedDomain && ! persistentDomainIsInSuggestions ) {
 		// Append our currently selected domain to the suggestions so it's persistently visible to the user.
 		domainSuggestions?.push( persistentSelectedDomain );
 	}
@@ -172,10 +172,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
 		);
 
-		if ( ! currentDomainIsInSuggestions && isValidCurrentDomain ) {
+		if ( ! currentDomainIsInSuggestions && isValidTld ) {
 			setPersistentSelectedDomain( currentDomain );
 		}
-	}, [ currentDomain, domainSuggestions, isValidCurrentDomain ] );
+	}, [ currentDomain, domainSuggestions, isValidTld ] );
 
 	// Reset expansion state after every search
 	useEffect( () => {
