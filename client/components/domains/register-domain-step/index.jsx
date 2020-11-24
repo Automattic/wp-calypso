@@ -151,6 +151,8 @@ class RegisterDomainStep extends React.Component {
 		recordFiltersReset: PropTypes.func.isRequired,
 		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
+		showSkipButton: PropTypes.bool,
+		onSkip: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -165,6 +167,8 @@ class RegisterDomainStep extends React.Component {
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
 		showExampleSuggestions: false,
+		onSkip: noop,
+		showSkipButton: false,
 	};
 
 	constructor( props ) {
@@ -1343,6 +1347,8 @@ class RegisterDomainStep extends React.Component {
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
+				onSkip={ this.props.onSkip }
+				showSkipButton={ this.props.showSkipButton }
 			>
 				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
 
