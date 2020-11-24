@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import DomainPicker from '@automattic/domain-picker';
+import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -74,8 +74,8 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ domain?.domain_name || currentDomainName }
-					existingSubdomain={ currentDomainName }
+					currentDomain={ domain || mockDomainSuggestion( currentDomainName ) }
+					existingSubdomain={ mockDomainSuggestion( currentDomainName ) }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
