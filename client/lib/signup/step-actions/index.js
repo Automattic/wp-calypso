@@ -14,6 +14,7 @@ import {
 	pick,
 	startsWith,
 } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -24,7 +25,7 @@ import config from 'calypso/config';
 import wpcom from 'calypso/lib/wp';
 import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
 import user from 'calypso/lib/user';
-import { getSavedVariations } from 'calypso/lib/abtest';
+import { abtest, getSavedVariations } from 'calypso/lib/abtest';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
@@ -66,7 +67,7 @@ import SignupCart from 'calypso/lib/signup/cart';
 import flows from 'calypso/signup/config/flows';
 import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
-
+import { isDomainRegistration, isPersonal } from 'calypso/lib/products-values';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 
 /**
@@ -853,6 +854,29 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep } = nextProps;
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
+	const isNotRegistration = domainItem && ! isDomainRegistration( domainItem );
+	const planDoesNotSupportUpsell = isPersonal( cartItem );
+	const cookies = cookie.parse( document.cookie );
+	const isUs = cookies?.country_code === 'US';
+
+	if (
+		isNotRegistration ||
+		skipSecureYourBrand ||
+		planDoesNotSupportUpsell ||
+		isUs ||
+		'test' !== abtest( 'secureYourBrand' )
+	) {
+		const domainUpsellItems = null;
+		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
 		flows.excludeStep( stepName );
 	}
 }

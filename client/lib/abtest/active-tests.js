@@ -204,13 +204,12 @@ export default {
 		allowExistingUsers: true,
 	},
 	secureYourBrand: {
-		datestamp: '20201026',
+		datestamp: '20201124',
 		variations: {
-			test: 0,
-			control: 100,
+			test: 50,
+			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		countryCodeTargets: [ 'US' ],
 	},
 };

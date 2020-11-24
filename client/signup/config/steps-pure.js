@@ -36,6 +36,7 @@ export function generateSteps( {
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
+	isSecureYourBrandFulfilled = noop,
 } = {} ) {
 	return {
 		survey: {
@@ -327,6 +328,7 @@ export function generateSteps( {
 			stepName: 'secure-your-brand',
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainUpsellItems' ],
+			fulfilledStepCallback: isSecureYourBrandFulfilled,
 		},
 
 		'domains-store': {
