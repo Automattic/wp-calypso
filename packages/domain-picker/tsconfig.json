@@ -35,6 +35,7 @@
 	"references": [
 		{ "path": "../data-stores" },
 		{ "path": "../calypso-analytics" },
-		{ "path": "../react-i18n" }
+		{ "path": "../react-i18n" },
+		{ "path": "../i18n-utils" }
 	]
 }
