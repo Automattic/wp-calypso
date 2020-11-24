@@ -32,7 +32,7 @@ export default function useOnSignup() {
 
 	React.useEffect( () => {
 		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
-	}, [ anchorFmPodcastId ] );
+	}, [] );
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
