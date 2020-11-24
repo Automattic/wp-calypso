@@ -275,7 +275,9 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
 
-	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = useState< Plan | null | undefined >( null );
+	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = useState< Plan | undefined >();
+
+	const isPlanSelected = ( plan: Plan ) => plan && plan.storeSlug === selectedPlan?.storeSlug;
 
 	const sitePlan = useSite().sitePlan;
 
@@ -361,7 +363,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 							<FocusedLaunchSummaryItem
 								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 								onClick={ () => defaultPaidPlan && setPlan( defaultPaidPlan ) }
-								isSelected={ selectedPlan?.storeSlug === defaultPaidPlan?.storeSlug }
+								isSelected={ isPlanSelected( defaultPaidPlan ) }
 							>
 								<LeadingContentSide
 									label={
@@ -387,7 +389,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 								<FocusedLaunchSummaryItem
 									isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 									onClick={ () => nonDefaultPaidPlan && setPlan( nonDefaultPaidPlan ) }
-									isSelected={ selectedPlan?.storeSlug === nonDefaultPaidPlan?.storeSlug }
+									isSelected={ isPlanSelected( nonDefaultPaidPlan ) }
 								>
 									<LeadingContentSide
 										label={
