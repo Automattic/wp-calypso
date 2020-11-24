@@ -23,14 +23,6 @@
 	&.is-large .site-selector__sites {
 		border-top: 1px solid var( --color-neutral-10 );
 	}
-
-	.site.is-loading {
-		.site-icon,
-		.site__title,
-		.site__domain {
-			background-color: var( --color-neutral-0 );
-		}
-	}
 }
 
 // Styles for Site elements within the Selector
@@ -46,9 +38,7 @@
 		.site__domain {
 			color: var( --color-sidebar-menu-selected-text );
 			&::after {
-				@include long-content-fade(
-					$color: var( --color-sidebar-menu-selected-background-rgb )
-				);
+				@include long-content-fade( $color: var( --color-sidebar-menu-selected-background-rgb ) );
 			}
 		}
 
@@ -102,7 +92,8 @@
 	position: absolute;
 
 	// ensure sufficient selector specificity for .search.is-open, too
-	&, &.is-open {
+	&,
+	&.is-open {
 		width: auto;
 	}
 
