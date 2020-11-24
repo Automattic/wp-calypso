@@ -32,7 +32,7 @@ export default function useOnSignup() {
 
 	React.useEffect( () => {
 		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
-	}, [] );
+	}, [ anchorFmPodcastId ] );
 
 	const handleCreateSite = React.useCallback(
 		( username: string, bearerToken?: string, isPublicSite?: number ) => {
@@ -45,5 +45,5 @@ export default function useOnSignup() {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite && ! isAnchorFmSignup ) {
 			handleCreateSite( newUser.username, newUser.bearerToken, visibility );
 		}
-	}, [ newSite, newUser, locale, handleCreateSite, visibility ] );
+	}, [ newSite, newUser, locale, handleCreateSite, visibility, isAnchorFmSignup ] );
 }

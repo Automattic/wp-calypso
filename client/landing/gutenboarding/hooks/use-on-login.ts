@@ -49,5 +49,6 @@ export default function useOnSignup() {
 		locale,
 		shouldTriggerCreate,
 		visibility,
+		isAnchorFmSignup,
 	] );
 }
