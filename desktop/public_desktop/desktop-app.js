@@ -1,6 +1,3 @@
-'use strict';
-/* global electron */
-
 let startApp = function () {
 	document.location.replace( '/desktop/hey.html' );
 };
@@ -44,7 +41,7 @@ function startDesktopApp() {
 
 		if ( notIcon ) {
 			notIcon.addEventListener( 'click', function () {
-				electron.ipcRenderer.send( 'unread-notices-count', 0 );
+				window.electron.send( 'unread-notices-count', 0 );
 			} );
 		}
 	}
@@ -73,7 +70,7 @@ function startDesktopApp() {
 		) {
 			window.history.back();
 		} else if ( ev.keyCode === 73 && ev.shiftKey === true && ev.ctrlKey === true ) {
-			electron.ipcRenderer.send( 'toggle-dev-tools' );
+			window.electron.send( 'toggle-dev-tools' );
 		}
 	}
 
@@ -83,8 +80,7 @@ function startDesktopApp() {
 		}
 	}
 
-	// Uses the logger object instantiated by preload.js
-	log = logger( 'desktop:renderer:browser' ); // eslint-disable-line no-undef
+	log = window.electron.logger( 'desktop:renderer:browser' ); // eslint-disable-line no-undef
 
 	// Everything is ready, start Calypso
 	log.info( 'Received app configuration, starting in browser' );
@@ -118,7 +114,8 @@ function startDesktopApp() {
 			}
 		} );
 
-		document.documentElement.classList.add( 'build-' + electron.getBuild() );
+		const build = window.electron.config.build;
+		document.documentElement.classList.add( 'build-' + build );
 
 		if ( navigator.onLine ) {
 			startCalypso();
@@ -137,11 +134,11 @@ function startDesktopApp() {
 // Wrap this in an exception handler. If it fails then it means Electron is not present, and we are in a browser
 // This will then cause the browser to redirect to hey.html
 try {
-	electron.ipcRenderer.on( 'is-calypso', function () {
-		electron.ipcRenderer.send( 'is-calypso-response', document.getElementById( 'wpcom' ) !== null );
+	window.electron.receive( 'is-calypso', function () {
+		window.electron.receive( 'is-calypso-response', document.getElementById( 'wpcom' ) !== null );
 	} );
 
-	electron.ipcRenderer.on( 'app-config', function ( event, config, debug, details ) {
+	window.electron.receive( 'app-config', function ( _, details ) {
 		// if this is the first run, and on the login page, show Windows and Mac users a pin app reminder
 		if ( details.firstRun && document.querySelectorAll( '.logged-out-auth' ).length > 0 ) {
 			if ( details.platform === 'windows' || details.platform === 'darwin' ) {
@@ -182,7 +179,7 @@ try {
 		}
 	} );
 } catch ( e ) {
-	console.log( 'Failed to initialize calypso', e.message );
+	log.error( 'Failed to initialize calypso', e.message );
 }
 
 startDesktopApp();

@@ -18,9 +18,10 @@
 		"useContentSize": true,
 		"width": 900,
 		"webPreferences": {
-			"overlayScrollbars": false,
+			"contextIsolation": true,
+			"enableRemoteModule": false,
 			"nodeIntegration": false,
-			"contextIsolation": false
+			"overlayScrollbars": false
 		}
 	},
 	"preferencesWindow": {
@@ -58,6 +59,8 @@
 		"transparent": true,
 		"width": "full",
 		"webPreferences": {
+			"contextIsolation": true,
+			"enableRemoteModule": false,
 			"nodeIntegration": false
 		},
 		"wpDragAndDropDisabled": true
