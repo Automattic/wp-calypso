@@ -296,7 +296,7 @@ export function updatePlugin( siteId, plugin ) {
 				data,
 				error,
 			} );
-			dispatch( recordEvent( 'calypso_plugin_updated', plugin, site, error ) );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, siteId, error ) );
 		};
 
 		const successCallback = ( data ) => {
@@ -317,24 +317,50 @@ export function updatePlugin( siteId, plugin ) {
 }
 
 export function enableAutoupdatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ENABLE_AUTOUPDATE_PLUGIN,
 			siteId,
 			pluginId,
 		};
+
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST } );
+
+		// @TODO: Remove when this flux action is completely reduxified
+		Dispatcher.handleViewAction( {
+			type: 'ENABLE_AUTOUPDATE_PLUGIN',
+			action: 'ENABLE_AUTOUPDATE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const afterEnableAutoupdateCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
+				action: 'ENABLE_AUTOUPDATE_PLUGIN',
+				site,
+				plugin,
+				data,
+				error,
+			} );
+			recordEvent( 'calypso_plugin_autoupdate_enabled', plugin, siteId, error );
+		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
+			afterEnableAutoupdateCallback( undefined, data );
 			if ( data.update ) {
-				updatePlugin( siteId, data )( dispatch );
+				dispatch( updatePlugin( siteId, data ) );
 			}
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE, error } );
+			afterEnableAutoupdateCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
