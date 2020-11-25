@@ -38,7 +38,6 @@ import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import ui from './ui/reducer';
-import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 
@@ -71,7 +70,6 @@ const reducers = {
 	storedCards,
 	support,
 	ui,
-	userProfileLinks,
 	userSettings,
 	users,
 };
