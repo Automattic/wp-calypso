@@ -9,7 +9,10 @@ module.exports = {
 			noUnsafeFeatures: 'Usage of `{{feature}}` from `{{source}}` is not allowed',
 		},
 		docs: {
-			description: 'Forbid unsafe features',
+			description: 'Prevent usage of unsafe `@wordpress/*` features',
+			category: 'possible-errors',
+			url:
+				'https://github.com/Automattic/wp-calypso/blob/trunk/packages/eslint-plugin-wpcalypso/docs/rules/wp-no-unsafe-features.md',
 		},
 		schema: [
 			{
