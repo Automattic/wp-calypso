@@ -19,7 +19,6 @@ import {
 	trashPost,
 	deletePost,
 	restorePost,
-	updatePostMetadata,
 	deletePostMetadata,
 } from '../actions';
 import {
@@ -579,43 +578,6 @@ describe( 'actions', () => {
 					} );
 					done();
 				} );
-			} );
-		} );
-	} );
-
-	describe( '#updateMetadata()', () => {
-		const siteId = 1;
-		const postId = 2;
-
-		test( 'should dispatch a post edit with a new metadata value', () => {
-			const action = updatePostMetadata( siteId, postId, 'foo', 'bar' );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [ { key: 'foo', value: 'bar', operation: 'update' } ],
-				},
-			} );
-		} );
-
-		test( 'accepts an object of key value pairs', () => {
-			const action = updatePostMetadata( siteId, postId, {
-				foo: 'bar',
-				baz: 'qux',
-			} );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [
-						{ key: 'foo', value: 'bar', operation: 'update' },
-						{ key: 'baz', value: 'qux', operation: 'update' },
-					],
-				},
 			} );
 		} );
 	} );
