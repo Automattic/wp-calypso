@@ -16,41 +16,17 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import {
-	getSelectedSite,
-	getSelectedSiteId,
-	getSelectedSiteSlug,
-} from 'calypso/state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
-import JetpackSearchUpsell from './upsell';
-import { isJetpackSearch } from 'calypso/lib/products-values';
-import { planHasJetpackSearch } from 'calypso/lib/plans';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
 
 /**
  * Asset dependencies
  */
 import JetpackSearchSVG from 'calypso/assets/images/illustrations/jetpack-search.svg';
 
-export default function JetpackSearchMain(): ReactElement {
-	const site = useSelector( getSelectedSite );
+export default function JetpackSearchUpsell(): ReactElement {
+	const onUpgradeClick = useTrackCallback( undefined, 'calypso_jetpack_search_upsell' );
 	const siteSlug = useSelector( getSelectedSiteSlug );
-	const siteId = useSelector( getSelectedSiteId );
-	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
-	const hasSearchProduct =
-		useSelector( ( state ) => getSitePurchases( state, siteId ) ).find( checkForSearchProduct ) ||
-		planHasJetpackSearch( site.plan?.product_slug );
-	const isLoading = useSelector( isFetchingSitePurchases );
-	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
-
-	if ( isLoading ) {
-		// need placeholder
-		return <p>loading...</p>;
-	}
-
-	if ( ! hasSearchProduct ) {
-		return <JetpackSearchUpsell />;
-	}
 
 	return (
 		<Main className="jetpack-search">
@@ -66,18 +42,22 @@ export default function JetpackSearchMain(): ReactElement {
 			/>
 
 			<PromoCard
-				title={ translate( 'Jetpack Search is active on your site.' ) }
+				title={ translate( 'Finely-tuned search for your site.' ) }
 				image={ { path: JetpackSearchSVG } }
 				isPrimary
 			>
-				<p>{ translate( 'Your visitors are getting our fastest search experience.' ) }</p>
+				<p>
+					{ translate(
+						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+					) }
+				</p>
 
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Settings' ),
+						text: translate( 'Get Jetpack Search' ),
 						action: {
-							url: `/settings/performance/${ siteSlug }`,
-							onClick: onSettingsClick,
+							url: `/checkout/${ siteSlug }/jetpack_search_monthly`,
+							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
 					} }
