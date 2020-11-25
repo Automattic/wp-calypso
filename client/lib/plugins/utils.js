@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { assign, filter, map, pick, sortBy, transform } from 'lodash';
+import { assign, filter, map, pick, sortBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -146,7 +146,9 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( assign( plugin, pluginData ) );
 
-	return transform( plugin, function ( returnData, item, key ) {
+	return Object.keys( plugin ).reduce( ( returnData, key ) => {
+		const item = plugin[ key ];
+
 		switch ( key ) {
 			case 'short_description':
 			case 'description':
@@ -198,7 +200,9 @@ export function normalizePluginData( plugin, pluginData ) {
 			default:
 				returnData[ key ] = item;
 		}
-	} );
+
+		return returnData;
+	}, {} );
 }
 
 export function normalizePluginsList( pluginsList ) {
