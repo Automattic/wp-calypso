@@ -12,6 +12,11 @@ interface LaunchContext {
 	flow: string;
 }
 
+const defaultRedirectTo = ( url: string ) => {
+	// Won't work if trying to redirect the parent frame
+	window.location.href = url;
+};
+
 const LaunchContext = React.createContext< LaunchContext >( {
 	siteId: 0,
 	locale: 'en',
@@ -20,11 +25,13 @@ const LaunchContext = React.createContext< LaunchContext >( {
 		window.location.href = url;
 	},
 	openCheckout: ( siteId, isEcommerce ) => {
-		window.top.location.href = addQueryArgs( `https://wordpress.com/checkout/${ siteId }`, {
-			preLaunch: 1,
-			// Redirect to My Home after checkout only if the selected plan is not eCommerce
-			...( ! isEcommerce && { redirect_to: `/home/${ siteId }` } ),
-		} );
+		defaultRedirectTo(
+			addQueryArgs( `https://wordpress.com/checkout/${ siteId }`, {
+				preLaunch: 1,
+				// Redirect to My Home after checkout only if the selected plan is not eCommerce
+				...( ! isEcommerce && { redirect_to: `/home/${ siteId }` } ),
+			} )
+		);
 	},
 	flow: 'launch',
 } );
