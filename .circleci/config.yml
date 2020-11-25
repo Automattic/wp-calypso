@@ -1102,10 +1102,14 @@ workflows:
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
-      # Use TeamCity to run Linux build
-      # - wp-desktop-linux:
-      #     requires:
-      #       - wp-desktop-source
+      # Even though a TeamCity Linux job is ran against trunk,
+      # we should continue to periodically validate the Circle
+      # job to ensure CircleCI continues to work on all
+      # platforms since the application is deployed via CircleCI.
+      # This also provides a benchmark and fallback for TeamCity.
+      - wp-desktop-linux:
+          requires:
+            - wp-desktop-source
       - wp-desktop-windows:
           requires:
             - wp-desktop-source
