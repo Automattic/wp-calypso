@@ -15,6 +15,20 @@ Based on these guidelines, unstable features are prohibited. Experimental featur
 
 ### Configuration
 
+The rule can be configured via `allowedImports`.
+This should be an object where the keys are import package names and the values are arrays of allowed experimental imports.
+
+#### Example configuration:
+
+```json
+{
+	"wpcalypso/wp-no-unsafe-features": [
+		"error",
+		{ "allowedImports": { "@wordpress/block-editor": [ "__experimentalBlock" ] } }
+	]
+}
+```
+
 ### Forbidden
 
 ```js
