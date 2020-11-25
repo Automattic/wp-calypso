@@ -23,9 +23,13 @@ import {
 } from 'calypso/state/ui/selectors';
 import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
 import JetpackSearchUpsell from './upsell';
+import JetpackSearchPlaceholder from './placeholder';
 import { isJetpackSearch } from 'calypso/lib/products-values';
 import { planHasJetpackSearch } from 'calypso/lib/plans';
-import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import {
+	getSitePurchases,
+	hasLoadedSitePurchasesFromServer,
+} from 'calypso/state/purchases/selectors';
 
 /**
  * Asset dependencies
@@ -37,15 +41,14 @@ export default function JetpackSearchMain(): ReactElement {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
 	const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
+	const sitePurchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
 	const hasSearchProduct =
-		useSelector( ( state ) => getSitePurchases( state, siteId ) ).find( checkForSearchProduct ) ||
-		planHasJetpackSearch( site.plan?.product_slug );
-	const isLoading = useSelector( isFetchingSitePurchases );
+		sitePurchases.find( checkForSearchProduct ) || planHasJetpackSearch( site.plan?.product_slug );
+	const hasLoadedSitePurchases = useSelector( hasLoadedSitePurchasesFromServer );
 	const onSettingsClick = useTrackCallback( undefined, 'calypso_jetpack_search_settings' );
 
-	if ( isLoading ) {
-		// need placeholder
-		return <p>loading...</p>;
+	if ( ! hasLoadedSitePurchases ) {
+		return <JetpackSearchPlaceholder />;
 	}
 
 	if ( ! hasSearchProduct ) {
