@@ -374,6 +374,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			case 'Star Rating':
 				blockSettings = { prefix: 'jetpack-', blockClass: 'rating-star' };
 				break;
+			case 'Premium Content':
+				blockClass = 'premium-content-container';
+				break;
 		}
 
 		return { ...defaultSettings, ...blockSettings };
