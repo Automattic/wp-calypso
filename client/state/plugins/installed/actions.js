@@ -69,7 +69,7 @@ export function activatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
-		// TODO: Remove when this flux action is completely reduxified
+		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'ACTIVATE_PLUGIN',
 			action: 'ACTIVATE_PLUGIN',
@@ -78,7 +78,7 @@ export function activatePlugin( siteId, plugin ) {
 		} );
 
 		const afterActivationCallback = ( error, data ) => {
-			// TODO: Remove when this flux action is completely reduxified
+			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ACTIVATED_PLUGIN',
 				action: 'ACTIVATE_PLUGIN',
@@ -151,7 +151,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
-		// TODO: Remove when this flux action is completely reduxified
+		// @TODO: Remove when this flux action is completely reduxified
 		Dispatcher.handleViewAction( {
 			type: 'DEACTIVATE_PLUGIN',
 			action: 'DEACTIVATE_PLUGIN',
@@ -160,7 +160,7 @@ export function deactivatePlugin( siteId, plugin ) {
 		} );
 
 		const afterDeactivationCallback = ( error, data ) => {
-			// TODO: Remove when this flux action is completely reduxified
+			// @TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DEACTIVATED_PLUGIN',
 				action: 'DEACTIVATE_PLUGIN',
