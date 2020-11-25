@@ -260,7 +260,7 @@ function premium_content_required_plan_checks() {
 /**
  * Determines if the block should be rendered. Returns true
  * if the memberships module is set up, or if it has not been
- * set up but the user is an admin.
+ * set up but the user can edit the post.
  *
  * @return bool Whether the block should be rendered.
  */
@@ -274,15 +274,15 @@ function premium_content_pre_render_checks() {
 /**
  * Determines if the a preview of the block with disconnected
  * buttons should be shown on the frontend. Returns true
- * if the memberships module is not set up, but the user is
- * an admin.
+ * user can edit the post, but the site requires an upgrade
+ * or Stripe connection in order to support the block.
  *
  * @return bool Whether the frontend preview should be shown
  */
 function premium_content_should_render_frontend_preview() {
 	return (
-		! premium_content_membership_checks() &&
-		premium_content_current_user_can_edit()
+		premium_content_current_user_can_edit() &&
+		( ! premium_content_membership_checks() || ! premium_content_required_plan_checks() )
 	);
 }
 
