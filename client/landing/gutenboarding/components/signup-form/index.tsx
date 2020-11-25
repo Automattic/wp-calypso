@@ -173,6 +173,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const modalTitle = isAnchorFmSignup
 		? 'Create your podcast site with WordPress.com'
 		: 'Save your progress';
+	const modalsubTitle = isAnchorFmSignup
+		? 'Create a WordPress.com account and start creating your free site.'
+		: 'Enter an email and password to save your progress and continue.'
 
 	return (
 		<Modal
@@ -193,7 +196,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 				<form onSubmit={ handleSignUp }>
 					<fieldset className="signup-form__fieldset">
 						<legend className="signup-form__legend">
-							<p>{ __( 'Enter an email and password to save your progress and continue.' ) }</p>
+							<p>{ __( modalsubTitle ) }</p>
 						</legend>
 
 						<TextControl
