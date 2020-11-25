@@ -779,6 +779,25 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
+export function isFreePlansDomainUpselFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep, isPaidPlan } = nextProps;
+	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
+	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+
+	if ( ! hasDomain || ! hasPlan ) {
+		return;
+	}
+
+	// @todo figure out if the user has a paid domain
+	if ( isPaidPlan || domainItem || cartItem || 'test' !== abtest( 'freePlansDomainUpsell' ) ) {
+		const domainUpsellItems = null;
+		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
+		flows.excludeStep( stepName );
+	}
+}
+
 export function isSiteTypeFulfilled( stepName, defaultDependencies, nextProps ) {
 	if ( isEmpty( nextProps.initialContext && nextProps.initialContext.query ) ) {
 		return;
