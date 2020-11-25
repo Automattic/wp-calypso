@@ -14,7 +14,6 @@ import { getCurrencyDefaults } from '@automattic/format-currency';
 import config from 'calypso/config';
 import { submitSurvey } from 'calypso/lib/purchases/actions';
 import { Dialog, Button } from '@automattic/components';
-import SpinnerButton from 'calypso/components/spinner-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLegend from 'calypso/components/forms/form-legend';
 import FormLabel from 'calypso/components/forms/form-label';
@@ -699,14 +698,15 @@ class CancelPurchaseForm extends React.Component {
 			isPrimary: true,
 		};
 		const remove = (
-			<SpinnerButton
-				action="remove"
-				text="Remove Now"
-				loading={ this.props.disableButtons }
-				loadingText="Removing..."
+			<Button
+				disabled={ this.props.disableButtons }
+				busy={ this.props.disableButtons }
 				onClick={ this.onSubmit }
-				isPrimary={ true }
-			/>
+				primary
+				data-e2e-button="remove"
+			>
+				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+			</Button>
 		);
 
 		const firstButtons =
