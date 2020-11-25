@@ -21,7 +21,7 @@ function isFeatureSupported( feature, browsers ) {
 
 		if ( ! featureMinVersions[ featureBrowser ] ) {
 			// No browser entry, which means no version of the browser supports the feature.
-			featureRange = `>=999999`;
+			featureRange = '>=999999';
 		} else {
 			featureRange = `>=${ featureMinVersions[ featureBrowser ] }`;
 		}
