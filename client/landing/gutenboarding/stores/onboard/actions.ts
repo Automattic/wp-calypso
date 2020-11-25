@@ -87,6 +87,10 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
+			...( ! isEnabled( 'coming-soon-v2' ) &&
+				visibility === Site.Visibility.Private && {
+					wpcom_coming_soon: 1,
+				} ),
 			...( isEnabled( 'coming-soon-v2' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
 					wpcom_public_coming_soon: 1,
