@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
@@ -21,7 +21,7 @@ import { LAUNCH_STORE, SITE_STORE } from '../../stores';
 import './style.scss';
 
 const Success: React.FunctionComponent = () => {
-	const { redirectTo, siteId } = useContext( LaunchContext );
+	const { redirectTo, siteId } = React.useContext( LaunchContext );
 
 	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
 
@@ -29,16 +29,16 @@ const Success: React.FunctionComponent = () => {
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
 
-	const [ displayedSiteUrl, setDisplayedSiteUrl ] = useState( '' );
-	const [ hasCopied, setHasCopied ] = useState( false );
+	const [ displayedSiteUrl, setDisplayedSiteUrl ] = React.useState( '' );
+	const [ hasCopied, setHasCopied ] = React.useState( false );
 
-	useEffect( () => {
+	React.useEffect( () => {
 		setDisplayedSiteUrl( `https://${ sitePrimaryDomain?.domain }` );
 	}, [ sitePrimaryDomain ] );
 
 	// When in the Success view, the user can't dismiss the modal anymore,
 	// and the modal title is hidden
-	useEffect( () => {
+	React.useEffect( () => {
 		unsetModalDismissible();
 		hideModalTitle();
 	}, [ unsetModalDismissible, hideModalTitle ] );
