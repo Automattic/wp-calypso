@@ -125,9 +125,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
-	// keep domain query in local state to allow free editing of the input value while the modal is open
+	// Keep domain query in local state to allow free editing of the input value while the modal is open
 	const [ domainSearch, setDomainSearch ] = useState< string >( initialDomainSearch );
 	const [ domainCategory, setDomainCategory ] = useState< string | undefined >();
+	// Keep the users selected domain in local state so we can always show it to the user.
 	const [ persistentSelectedDomain, setPersistentSelectedDomain ] = useState<
 		DomainSuggestion | undefined
 	>();
@@ -233,7 +234,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
 
-	// If we know the existing domain while the suggestions are loading, we need one less placeholder
+	// If we know the existing domain while the suggestions are loading, we need one less placeholder although the persistent domain is in addition to the quantity.
 	const neededPlaceholdersCount =
 		( persistentSelectedDomain ? quantity + 1 : quantity ) - ( existingSubdomain ? 1 : 0 );
 
