@@ -8,7 +8,6 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
  * Style dependencies
@@ -23,6 +22,7 @@ interface FAQProps {
 	icon?: string;
 	iconSize?: number;
 	expanded?: boolean;
+	onToggle?: ( callbackArgs: { id: string; isExpanded: boolean; height: number } ) => void;
 }
 
 const ICON_SIZE = 24;
@@ -35,29 +35,35 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 	icon = 'chevron-right',
 	iconSize = ICON_SIZE,
 	expanded = false,
+	onToggle,
 } ) => {
+	const firstRender = useRef< boolean >( true );
 	const answerRef = useRef< HTMLDivElement | null >( null );
 
 	const [ isExpanded, setIsExpanded ] = useState( expanded );
 	const [ height, setHeight ] = useState( 0 );
-
-	const trackProps = { faq_id: id };
-	const trackOpenFaq = useTrackCallback( undefined, 'calypso_plans_faq_open', trackProps );
-	const trackCloseFaq = useTrackCallback( undefined, 'calypso_plans_faq_closed', trackProps );
 
 	const toggleAnswer = useCallback( () => {
 		setIsExpanded( ( isExpanded ) => ! isExpanded );
 	}, [ setIsExpanded ] );
 
 	useLayoutEffect( () => {
-		if ( isExpanded ) {
-			setHeight( answerRef?.current?.scrollHeight || 250 );
-			trackOpenFaq();
-		} else {
-			setHeight( 0 );
-			trackCloseFaq();
+		const targetHeight = isExpanded ? answerRef?.current?.scrollHeight ?? 250 : 0;
+		setHeight( targetHeight );
+
+		// Run onToggle callback only when isExpanded changes, not on first render(mount).
+		if ( firstRender.current ) {
+			firstRender.current = false;
+			return;
 		}
-	}, [ isExpanded, trackCloseFaq, trackOpenFaq ] );
+
+		const callbackArgs = {
+			id,
+			isExpanded,
+			height: targetHeight,
+		};
+		onToggle && onToggle( callbackArgs );
+	}, [ id, isExpanded, onToggle ] );
 
 	return (
 		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
