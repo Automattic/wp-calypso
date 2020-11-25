@@ -177,7 +177,7 @@ const DetailsPage = ( {
 				brandFont
 			/>
 			<PlansFilterBar showDurations duration={ duration } onDurationChange={ onDurationChange } />
-			<div className="plans-v2__columns">
+			<div className="jetpack-plans__columns">
 				{ isLoading ? (
 					<>
 						<ProductCardPlaceholder className="details__column" />

@@ -28,7 +28,7 @@ const StandardPlansHeader = () => (
 );
 const ConnectFlowPlansHeader = () => (
 	<>
-		<div className="plans-v2__heading">
+		<div className="jetpack-plans__heading">
 			<FormattedHeader
 				headerText={ translate( 'Explore our Jetpack plans' ) }
 				subHeaderText={ translate( "Now that you're set up, pick a plan that fits your needs." ) }

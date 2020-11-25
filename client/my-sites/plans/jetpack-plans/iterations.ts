@@ -8,7 +8,7 @@ import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
 import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
 
 import SelectorPageAlt from './selector-alt';
-import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 
 /**
  * Type dependencies

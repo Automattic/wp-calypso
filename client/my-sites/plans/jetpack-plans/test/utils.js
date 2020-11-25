@@ -17,7 +17,7 @@ import {
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
-import { getHighestAnnualDiscount } from 'calypso/my-sites/plans-v2/utils';
+import { getHighestAnnualDiscount } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 let mockProductPrices;
 

@@ -2,7 +2,7 @@
 @import '~@wordpress/base-styles/mixins';
 
 @include break-medium {
-	.plans-v2__columns {
+	.jetpack-plans__columns {
 		display: flex;
 
 		margin-bottom: 24px;
@@ -27,7 +27,7 @@
 	}
 }
 
-.plans-v2__columns .formatted-header__title {
+.jetpack-plans__columns .formatted-header__title {
 	font-size: 1.25rem;
 	color: var( --studio-color-gray-70 );
 }
@@ -224,6 +224,6 @@
 	font-size: 0.75rem;
 }
 
-.plans-v2__heading {
+.jetpack-plans__heading {
 	padding: 1rem 0;
 }

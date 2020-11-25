@@ -195,7 +195,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 				onDurationChange={ trackDurationChange }
 				duration={ currentDuration }
 			/>
-			<div className="plans-v2__columns">
+			<div className="jetpack-plans__columns">
 				<PlansColumn
 					duration={ currentDuration }
 					onPlanClick={ selectProduct }

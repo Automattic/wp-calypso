@@ -15,8 +15,8 @@ import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-
 import { planHasFeature } from 'calypso/lib/plans';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/products-list';
 import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
-import useItemPrice from 'calypso/my-sites/plans-v2/use-item-price';
-import { durationToText, productBadgeLabelAlt } from 'calypso/my-sites/plans-v2/utils';
+import useItemPrice from 'calypso/my-sites/plans/jetpack-plans/use-item-price';
+import { durationToText, productBadgeLabelAlt } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
@@ -26,7 +26,11 @@ import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
  * Type dependencies
  */
 import type { JetpackProductSlug } from 'calypso/lib/products-values/types';
-import type { Duration, PurchaseCallback, SelectorProduct } from 'calypso/my-sites/plans-v2/types';
+import type {
+	Duration,
+	PurchaseCallback,
+	SelectorProduct,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 
 type Props = {
 	product: SelectorProduct;

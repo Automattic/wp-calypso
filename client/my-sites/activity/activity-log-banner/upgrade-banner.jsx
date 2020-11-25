@@ -15,7 +15,7 @@ import {
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
 	PLAN_PERSONAL,
 } from 'calypso/lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Style dependencies
