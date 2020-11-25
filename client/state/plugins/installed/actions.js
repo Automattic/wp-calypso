@@ -575,7 +575,7 @@ export function fetchPlugins( siteIds ) {
 
 				data.plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
-						updatePlugin( siteId, plugin )( dispatch );
+						dispatch( updatePlugin( siteId, plugin ) );
 					}
 				} );
 			};
