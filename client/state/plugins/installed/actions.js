@@ -77,7 +77,7 @@ export function activatePlugin( siteId, plugin ) {
 			plugin,
 		} );
 
-		const afterActivationCallback = ( data, error ) => {
+		const afterActivationCallback = ( error, data ) => {
 			// TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_ACTIVATED_PLUGIN',
@@ -119,7 +119,7 @@ export function activatePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
 
-			afterActivationCallback( data, undefined );
+			afterActivationCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
@@ -129,7 +129,7 @@ export function activatePlugin( siteId, plugin ) {
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
 
-			afterActivationCallback( undefined, error );
+			afterActivationCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -159,7 +159,7 @@ export function deactivatePlugin( siteId, plugin ) {
 			plugin,
 		} );
 
-		const afterDeactivationCallback = ( data, error ) => {
+		const afterDeactivationCallback = ( error, data ) => {
 			// TODO: Remove when this flux action is completely reduxified
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_DEACTIVATED_PLUGIN',
@@ -196,7 +196,7 @@ export function deactivatePlugin( siteId, plugin ) {
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
-			afterDeactivationCallback( data, undefined );
+			afterDeactivationCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
@@ -205,7 +205,7 @@ export function deactivatePlugin( siteId, plugin ) {
 				successCallback( plugin );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
-			afterDeactivationCallback( undefined, error );
+			afterDeactivationCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
