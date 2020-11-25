@@ -38,7 +38,7 @@ const JetpackFAQi5: React.FC = () => {
 				dispatch( recordTracksEvent( 'calypso_plans_faq_closed', tracksArgs ) );
 			}
 		},
-		[ dispatch ]
+		[ siteId, dispatch ]
 	);
 
 	return (

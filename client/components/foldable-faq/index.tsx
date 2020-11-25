@@ -63,7 +63,7 @@ const FoldableFAQ: React.FC< FAQProps > = ( {
 			height: targetHeight,
 		};
 		onToggle && onToggle( callbackArgs );
-	}, [ isExpanded, onToggle ] );
+	}, [ id, isExpanded, onToggle ] );
 
 	return (
 		<div className={ classNames( 'foldable-faq', className, { 'is-expanded': isExpanded } ) }>
