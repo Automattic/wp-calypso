@@ -866,7 +866,7 @@ export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextP
 	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
 	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
 	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
-	const isNotRegistration = domainItem && ! isDomainRegistration( domainItem );
+	const isNotRegistration = ! ( domainItem && isDomainRegistration( domainItem ) );
 	const planDoesNotSupportUpsell = ! cartItem || isPersonal( cartItem );
 	const cookies = cookie.parse( document.cookie );
 	const isUs = cookies?.country_code === 'US';
