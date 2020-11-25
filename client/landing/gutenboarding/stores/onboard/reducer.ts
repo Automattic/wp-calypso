@@ -212,7 +212,8 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 
 const anchorFmPodcastId: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	if ( action.type === 'SET_ANCHORFM_PODCAST_ID' ) {
-		return action.anchorFmPodcastId;
+		// Check the id for non-numeric characters
+		return /\D/.test( action.anchorFmPodcastId ) ? '' : action.anchorFmPodcastId;
 	}
 	if ( action.type === 'RESET_ONBOARD_STORE' ) {
 		return '';
