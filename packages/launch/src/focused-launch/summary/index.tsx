@@ -604,6 +604,15 @@ const Summary: React.FunctionComponent = () => {
 	( hasPaidDomain ? disabledSteps : activeSteps ).push( renderDomainStep );
 	( hasPaidPlan ? disabledSteps : activeSteps ).push( renderPlanStep );
 
+	/*
+	 * Enable the launch button if:
+	 * - the site title input is not empty
+	 * - there is a purchased or selected domain
+	 * - there is a purchased or selected plan
+	 */
+	const isReadyToLaunch =
+		title && ( hasPaidDomain || hasSelectedDomain ) && ( hasPaidPlan || selectedPlan );
+
 	return (
 		<div className="focused-launch-container">
 			<div className="focused-launch-summary__section">
@@ -635,12 +644,11 @@ const Summary: React.FunctionComponent = () => {
 					forwardStepIndex: activeSteps.length > 1,
 				} )
 			) }
-
 			<div className="focused-launch-summary__actions-wrapper">
 				<ActionButtons className="focused-launch-summary__launch-action-bar">
 					<NextButton
 						className="focused-launch-summary__launch-button"
-						disabled={ ! title || ! hasSelectedDomain || ! selectedPlan }
+						disabled={ ! isReadyToLaunch }
 						onClick={ handleLaunch }
 					>
 						{ __( 'Launch your site', __i18n_text_domain__ ) }
