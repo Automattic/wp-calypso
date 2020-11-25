@@ -70,17 +70,6 @@ const getRejectedPromise = ( errorToPass ) => {
 };
 
 /**
- * Return plugin id depending if the site is a jetpack site
- *
- * @param {object} site - site object
- * @param {object} plugin - plugin object
- * @returns {string} plugin if
- */
-const getPluginId = ( site, plugin ) => {
-	return site.jetpack ? plugin.id : plugin.slug;
-};
-
-/**
  * Return a SitePlugin instance used to handle the plugin
  *
  * @param {object} site - site object
@@ -336,110 +325,6 @@ const PluginsActions = {
 			.then( remove )
 			.then( ( responseData ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', responseData ) )
 			.catch( ( error ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
-	},
-
-	activatePlugin: ( site, plugin ) => {
-		Dispatcher.handleViewAction( {
-			type: 'ACTIVATE_PLUGIN',
-			action: 'ACTIVATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const pluginId = getPluginId( site, plugin );
-		const pluginHandler = getPluginHandler( site, pluginId );
-		const activate = pluginHandler.activate.bind( pluginHandler );
-
-		queueSitePluginAction( activate, site.ID, pluginId, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_ACTIVATED_PLUGIN',
-				action: 'ACTIVATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-
-			// Sometime data can be empty or the plugin always
-			// return the active state even when the error is empty.
-			// Activation error is ok, because it means the plugin is already active
-			if (
-				( error && error.error !== 'activation_error' ) ||
-				( ! ( data && data.active ) && ! error )
-			) {
-				bumpStat( 'calypso_plugin_activated', 'failed' );
-				recordTracksEvent( 'calypso_plugin_activated_error', {
-					error: error && error.error ? error.error : 'Undefined activation error',
-					site: site.ID,
-					plugin: plugin.slug,
-				} );
-
-				return;
-			}
-
-			bumpStat( 'calypso_plugin_activated', 'succeeded' );
-			recordTracksEvent( 'calypso_plugin_activated_success', {
-				site: site.ID,
-				plugin: plugin.slug,
-			} );
-		} );
-	},
-
-	deactivatePlugin: ( site, plugin ) => {
-		Dispatcher.handleViewAction( {
-			type: 'DEACTIVATE_PLUGIN',
-			action: 'DEACTIVATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const pluginId = getPluginId( site, plugin );
-		const pluginHandler = getPluginHandler( site, pluginId );
-		const deactivate = pluginHandler.deactivate.bind( pluginHandler );
-
-		// make the API Request
-		queueSitePluginAction( deactivate, site.ID, pluginId, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_DEACTIVATED_PLUGIN',
-				action: 'DEACTIVATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-
-			// Sometime data can be empty or the plugin always
-			// return the active state even when the error is empty.
-			// Activation error is ok, because it means the plugin is already active
-			if ( error && error.error !== 'deactivation_error' ) {
-				bumpStat( 'calypso_plugin_deactivated', 'failed' );
-				recordTracksEvent( 'calypso_plugin_deactivated_error', {
-					error: error.error ? error.error : 'Undefined deactivation error',
-					site: site.ID,
-					plugin: plugin.slug,
-				} );
-
-				return;
-			}
-			bumpStat( 'calypso_plugin_deactivated', 'succeeded' );
-			recordTracksEvent( 'calypso_plugin_deactivated_success', {
-				site: site.ID,
-				plugin: plugin.slug,
-			} );
-		} );
-	},
-
-	togglePluginActivation: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) ) {
-			return;
-		}
-
-		debug( 'togglePluginActivation', site, plugin );
-		if ( ! plugin.active ) {
-			PluginsActions.activatePlugin( site, plugin );
-		} else {
-			PluginsActions.deactivatePlugin( site, plugin );
-		}
 	},
 
 	enableAutoUpdatesPlugin: ( site, plugin ) => {

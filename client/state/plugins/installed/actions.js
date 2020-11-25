@@ -1,11 +1,8 @@
 /**
- * External dependencies
- */
-import wpcom from 'calypso/lib/wp';
-
-/**
  * Internal dependencies
  */
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
 import {
 	PLUGINS_RECEIVE,
 	PLUGINS_REQUEST,
@@ -42,6 +39,9 @@ import {
 	INSTALL_PLUGIN,
 	REMOVE_PLUGIN,
 } from './constants';
+import { getSite } from 'calypso/state/sites/selectors';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 
 import 'calypso/state/plugins/init';
 
@@ -58,7 +58,9 @@ const getPluginHandler = ( siteId, pluginId ) => {
 };
 
 export function activatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: ACTIVATE_PLUGIN,
@@ -67,8 +69,57 @@ export function activatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST } );
 
+		// @TODO: Remove when this flux action is completely reduxified
+		Dispatcher.handleViewAction( {
+			type: 'ACTIVATE_PLUGIN',
+			action: 'ACTIVATE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const afterActivationCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_ACTIVATED_PLUGIN',
+				action: 'ACTIVATE_PLUGIN',
+				site,
+				plugin,
+				data,
+				error,
+			} );
+
+			// Sometime data can be empty or the plugin always
+			// return the active state even when the error is empty.
+			// Activation error is ok, because it means the plugin is already active
+			if (
+				( error && error.error !== 'activation_error' ) ||
+				( ! ( data && data.active ) && ! error )
+			) {
+				dispatch( bumpStat( 'calypso_plugin_activated', 'failed' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_plugin_activated_error', {
+						error: error && error.error ? error.error : 'Undefined activation error',
+						site: siteId,
+						plugin: plugin.slug,
+					} )
+				);
+
+				return;
+			}
+
+			dispatch( bumpStat( 'calypso_plugin_activated', 'succeeded' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_plugin_activated_success', {
+					site: siteId,
+					plugin: plugin.slug,
+				} )
+			);
+		};
+
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_SUCCESS, data } );
+
+			afterActivationCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
@@ -77,6 +128,8 @@ export function activatePlugin( siteId, plugin ) {
 				successCallback( plugin );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_ACTIVATE_REQUEST_FAILURE, error } );
+
+			afterActivationCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
@@ -87,7 +140,9 @@ export function activatePlugin( siteId, plugin ) {
 }
 
 export function deactivatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DEACTIVATE_PLUGIN,
@@ -96,8 +151,52 @@ export function deactivatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST } );
 
+		// @TODO: Remove when this flux action is completely reduxified
+		Dispatcher.handleViewAction( {
+			type: 'DEACTIVATE_PLUGIN',
+			action: 'DEACTIVATE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const afterDeactivationCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_DEACTIVATED_PLUGIN',
+				action: 'DEACTIVATE_PLUGIN',
+				site,
+				plugin,
+				data,
+				error,
+			} );
+
+			// Sometime data can be empty or the plugin always
+			// return the active state even when the error is empty.
+			// Activation error is ok, because it means the plugin is already active
+			if ( error && error.error !== 'deactivation_error' ) {
+				dispatch( bumpStat( 'calypso_plugin_deactivated', 'failed' ) );
+				dispatch(
+					recordTracksEvent( 'calypso_plugin_deactivated_error', {
+						error: error.error ? error.error : 'Undefined deactivation error',
+						site: siteId,
+						plugin: plugin.slug,
+					} )
+				);
+
+				return;
+			}
+			dispatch( bumpStat( 'calypso_plugin_deactivated', 'succeeded' ) );
+			dispatch(
+				recordTracksEvent( 'calypso_plugin_deactivated_success', {
+					site: siteId,
+					plugin: plugin.slug,
+				} )
+			);
+		};
+
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_SUCCESS, data } );
+			afterDeactivationCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
@@ -106,12 +205,27 @@ export function deactivatePlugin( siteId, plugin ) {
 				successCallback( plugin );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_DEACTIVATE_REQUEST_FAILURE, error } );
+			afterDeactivationCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
 			.deactivate()
 			.then( successCallback )
 			.catch( errorCallback );
+	};
+}
+
+export function togglePluginActivation( siteId, plugin ) {
+	return ( dispatch, getState ) => {
+		if ( ! canCurrentUser( getState(), siteId, 'manage_options' ) ) {
+			return;
+		}
+
+		if ( ! plugin.active ) {
+			dispatch( activatePlugin( siteId, plugin ) );
+		} else {
+			dispatch( deactivatePlugin( siteId, plugin ) );
+		}
 	};
 }
 
