@@ -8,6 +8,7 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -49,6 +50,8 @@ const EditorCheckoutModal = ( props: Props ) => {
 	const { site, isOpen, onClose, cartData } = props;
 	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
 
+	const translate = useTranslate();
+
 	const user = userFactory();
 	const isLoggedOutCart = ! user?.get();
 	const waitForOtherCartUpdates = false;
@@ -88,7 +91,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 				open={ isOpen }
 				overlayClassName="editor-checkout-modal"
 				onRequestClose={ onClose }
-				title=""
+				title={ translate( 'Checkout modal' ) }
 				shouldCloseOnClickOutside={ false }
 				icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			>
