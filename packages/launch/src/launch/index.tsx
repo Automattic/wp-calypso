@@ -40,10 +40,6 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
-	const onModalRequestClose = () => {
-		closeFocusedLaunch();
-	};
-
 	return (
 		<Modal
 			open={ true }
@@ -52,10 +48,12 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 			} ) }
 			overlayClassName="launch__focused-modal-overlay"
 			bodyOpenClassName="has-focused-launch-modal"
-			onRequestClose={ onModalRequestClose }
+			onRequestClose={ closeFocusedLaunch }
 			title={ __( 'Complete setup', __i18n_text_domain__ ) }
 			icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			isDismissible={ isModalDismissible }
+			shouldCloseOnEsc={ isModalDismissible }
+			shouldCloseOnClickOutside={ isModalDismissible }
 		>
 			<div className="launch__focused-modal-body">
 				<LaunchContext.Provider
