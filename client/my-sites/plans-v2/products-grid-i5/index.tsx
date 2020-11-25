@@ -149,7 +149,11 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						</li>
 					) ) }
 				</ul>
-				<div className="products-grid-i5__more">
+				<div
+					className={ classNames( 'products-grid-i5__more', {
+						'is-detached': isPlanRowWrapping,
+					} ) }
+				>
 					<MoreInfoBox
 						headline={ translate( 'Need more info?' ) }
 						buttonLabel={ translate( 'Compare all product bundles' ) }
