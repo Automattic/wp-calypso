@@ -1092,10 +1092,21 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source
+      - wp-desktop-source:
+          filters:
+            branches:
+              only:
+                - trunk
+                - release/*
+                - desktop/*
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
+      # Even though a TeamCity Linux job is ran against trunk,
+      # we should continue to periodically validate the Circle
+      # job to ensure CircleCI continues to work on all
+      # platforms since the application is deployed via CircleCI.
+      # This also provides a benchmark and fallback for TeamCity.
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
