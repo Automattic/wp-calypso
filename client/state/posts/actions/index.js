@@ -1,4 +1,3 @@
-export { autosave } from 'calypso/state/posts/actions/autosave';
 export { deletePost } from 'calypso/state/posts/actions/delete-post';
 export { editPost } from 'calypso/state/posts/actions/edit-post';
 export { receivePost } from 'calypso/state/posts/actions/receive-post';
