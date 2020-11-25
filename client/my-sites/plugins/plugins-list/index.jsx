@@ -26,7 +26,12 @@ import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { activatePlugin, deactivatePlugin } from 'calypso/state/plugins/installed/actions';
+import {
+	activatePlugin,
+	deactivatePlugin,
+	disableAutoupdatePlugin,
+	enableAutoupdatePlugin,
+} from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -290,12 +295,12 @@ export const PluginsList = createReactClass( {
 	},
 
 	setAutoupdateSelected() {
-		this.doActionOverSelected( 'enablingAutoupdates', PluginsActions.enableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
 	},
 
 	unsetAutoupdateSelected() {
-		this.doActionOverSelected( 'disablingAutoupdates', PluginsActions.disableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	},
 
@@ -568,6 +573,8 @@ export default connect(
 	{
 		activatePlugin,
 		deactivatePlugin,
+		disableAutoupdatePlugin,
+		enableAutoupdatePlugin,
 		recordGoogleEvent,
 		warningNotice,
 	}
