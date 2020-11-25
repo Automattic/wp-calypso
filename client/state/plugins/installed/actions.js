@@ -421,6 +421,24 @@ export function disableAutoupdatePlugin( siteId, plugin ) {
 	};
 }
 
+export function togglePluginAutoUpdate( siteId, plugin ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
+		const canManage = canCurrentUser( state, siteId, 'manage_options' );
+
+		if ( ! canManage || ! site.canAutoupdateFiles ) {
+			return;
+		}
+
+		if ( ! plugin.autoupdate ) {
+			dispatch( enableAutoupdatePlugin( siteId, plugin ) );
+		} else {
+			dispatch( disableAutoupdatePlugin( siteId, plugin ) );
+		}
+	};
+}
+
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 	return ( dispatch ) => {
 		const pluginId = plugin.id;
