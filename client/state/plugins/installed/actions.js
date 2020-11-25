@@ -57,6 +57,39 @@ const getPluginHandler = ( siteId, pluginId ) => {
 	return siteHandler.plugin( pluginId );
 };
 
+/**
+ * Helper thunk for recording tracks events and bumping stats for plugin events.
+ * Useful to record events and bump stats by following a certain naming pattern.
+ *
+ * @param {string} eventType The type of event
+ * @param {object} plugin    The plugin object
+ * @param {number} siteId    ID of the site
+ * @param {object} error     Error object
+ * @returns {Function}       Action thunk
+ */
+const recordEvent = ( eventType, plugin, siteId, error ) => {
+	return ( dispatch ) => {
+		if ( error ) {
+			dispatch(
+				recordTracksEvent( eventType + '_error', {
+					site: siteId,
+					plugin: plugin.slug,
+					error: error.error,
+				} )
+			);
+			dispatch( bumpStat( eventType, 'failed' ) );
+			return;
+		}
+		dispatch(
+			recordTracksEvent( eventType + '_success', {
+				site: siteId,
+				plugin: plugin.slug,
+			} )
+		);
+		dispatch( bumpStat( eventType, 'succeeded' ) );
+	};
+};
+
 export function activatePlugin( siteId, plugin ) {
 	return ( dispatch, getState ) => {
 		const state = getState();
@@ -230,11 +263,13 @@ export function togglePluginActivation( siteId, plugin ) {
 }
 
 export function updatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		if ( ! plugin.update ) {
 			return Promise.reject( 'Error: Plugin already up-to-date.' );
 		}
 
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: UPDATE_PLUGIN,
@@ -243,12 +278,35 @@ export function updatePlugin( siteId, plugin ) {
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST } );
 
+		// @TODO: Remove when this flux action is completely reduxified
+		Dispatcher.handleViewAction( {
+			type: 'UPDATE_PLUGIN',
+			action: 'UPDATE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const afterUpdateCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_UPDATED_PLUGIN',
+				action: 'UPDATE_PLUGIN',
+				site,
+				plugin,
+				data,
+				error,
+			} );
+			dispatch( recordEvent( 'calypso_plugin_updated', plugin, site, error ) );
+		};
+
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
+			afterUpdateCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_FAILURE, error } );
+			afterUpdateCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
