@@ -206,8 +206,8 @@ export default {
 	secureYourBrand: {
 		datestamp: '20201119',
 		variations: {
-			test: 50,
-			control: 50,
+			test: 90,
+			control: 10,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,

@@ -327,12 +327,13 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
+		this.props.goToNextStep();
 
-		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
-			this.props.goToNextStep( 'onboarding-secure-your-brand' );
-		} else {
-			this.props.goToNextStep();
-		}
+		// if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
+		// 	this.props.goToNextStep( 'onboarding-secure-your-brand' );
+		// } else {
+		// 	this.props.goToNextStep();
+		// }
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );

@@ -589,7 +589,9 @@ class Signup extends React.Component {
 
 	isEveryStepSubmitted = ( progress = this.props.progress, flowName = this.props.flowName ) => {
 		const flowSteps = flows.getFlow( flowName ).steps;
-		const completedSteps = getCompletedSteps( flowName, progress );
+		const completedSteps = getCompletedSteps( flowName, progress, {
+			shouldMatchFlowName: true,
+		} );
 		return flowSteps.length === completedSteps.length;
 	};
 
