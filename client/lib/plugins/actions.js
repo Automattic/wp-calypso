@@ -327,62 +327,6 @@ const PluginsActions = {
 			.catch( ( error ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
 	},
 
-	enableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-		Dispatcher.handleViewAction( {
-			type: 'ENABLE_AUTOUPDATE_PLUGIN',
-			action: 'ENABLE_AUTOUPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const boundEnableAU = getPluginBoundMethod( site, plugin.id, 'enableAutoupdate' );
-		queueSitePluginAction( boundEnableAU, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-				action: 'ENABLE_AUTOUPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_autoupdate_enabled', plugin, site, error );
-
-			if ( plugin.update && ! error ) {
-				PluginsActions.updatePlugin( site, plugin );
-			}
-		} );
-	},
-
-	disableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'DISABLE_AUTOUPDATE_PLUGIN',
-			action: 'DISABLE_AUTOUPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		// make the API Request
-		const disableAA = getPluginBoundMethod( site, plugin.id, 'disableAutoupdate' );
-		queueSitePluginAction( disableAA, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-				action: 'DISABLE_AUTOUPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_autoupdate_disabled', plugin, site, error );
-		} );
-	},
-
 	removePluginUpdateInfo: ( site, plugin ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGINS_UPDATE_INFO',

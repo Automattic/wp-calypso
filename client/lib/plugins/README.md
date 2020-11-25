@@ -156,13 +156,13 @@ This action has been migrated to Redux. Please use to the `deactivatePlugin` Red
 
 Enable AutoUpdates for a plugin on a site.
 
-#### PluginsActions.enableAutoUpdatesPlugin( site, plugin );
+This action has been migrated to Redux. Please use to the `enableAutoupdatePlugin` Redux action.
 
 ---
 
 Disable AutoUpdates for a plugin on a site.
 
-#### PluginsActions.disableAutoUpdatesPlugin( site, plugin );
+This action has been migrated to Redux. Please use to the `disableAutoupdatePlugin` Redux action.
 
 ---
 
