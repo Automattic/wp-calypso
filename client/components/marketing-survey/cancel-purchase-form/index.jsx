@@ -697,13 +697,17 @@ class CancelPurchaseForm extends React.Component {
 			onClick: this.downgradeClick,
 			isPrimary: true,
 		};
-		const remove = {
-			action: 'remove',
-			disabled,
-			label: translate( 'Remove Now' ),
-			onClick: this.onSubmit,
-			isPrimary: true,
-		};
+		const remove = (
+			<Button
+				disabled={ this.props.disableButtons }
+				busy={ this.props.disableButtons }
+				onClick={ this.onSubmit }
+				primary
+				data-e2e-button="remove"
+			>
+				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+			</Button>
+		);
 
 		const firstButtons =
 			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
