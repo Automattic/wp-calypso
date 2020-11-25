@@ -153,18 +153,18 @@
 <script>
 	function Preferences( settings ) {
 		this.setValues( settings );
-		this.updateProxyView( settings.getSetting( 'proxy-type' ) );
+		this.updateProxyView( settings[ 'proxy-type' ] );
 	}
 
 	Preferences.prototype.setValues = function( settings ) {
 		var inputs = document.querySelectorAll( 'input[type=checkbox]' );
 
 		for ( var i = 0; i < inputs.length; i++ ) {
-			inputs[i].checked = settings.getSetting( inputs[i].getAttribute( 'name' ) );
+			inputs[i].checked = settings[ inputs[i].getAttribute( 'name' ) ];
 		}
 
 		[ 'proxy-url', 'proxy-port', 'proxy-pac' ].forEach( function( item ) {
-			document.querySelector( 'input[name=' + item + ']' ).value = settings.getSetting( item );
+			document.querySelector( 'input[name=' + item + ']' ).value = settings[ item ];
 		} );
 
 		if ( navigator.platform === 'Win32' ) {
@@ -175,8 +175,8 @@
 			document.querySelector( '.option-notifications' ).style.display = 'none';
 		}
 
-		this.setSelect( 'select[name=proxy-type]', settings.getSetting( 'proxy-type' ) );
-		this.setSelect( 'select[name=release-channel]', settings.getSetting( 'release-channel' ) );
+		this.setSelect( 'select[name=proxy-type]', settings[ 'proxy-type' ] );
+		this.setSelect( 'select[name=release-channel]', settings[ 'release-channel' ] );
 	};
 
 	Preferences.prototype.setSelect = function( item, value ) {
@@ -207,8 +207,8 @@
 	};
 
 	Preferences.prototype.save = function( name, value ) {
-		ipc.send( 'preferences-changed', { name: name, value: value } );
-		ipc.send( 'preferences-changed-' + name, value );
+		window.electron.send( 'preferences-changed', { name: name, value: value } );
+		window.electron.send( 'preferences-changed-' + name, value );
 	};
 
 	Preferences.prototype.updateProxyView = function( proxyType ) {
@@ -250,9 +250,7 @@
 		return document.querySelector( 'select[name=proxy-type]' ).value
 	};
 
-	var electron = require( 'electron' );
-	var ipc = electron.ipcRenderer;
-	var pref = new Preferences( electron.remote.getGlobal( 'desktop' ).settings );
+	var pref = new Preferences ( window.electron.preferences );
 
 	pref.monitorChanges();
 </script>

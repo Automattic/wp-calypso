@@ -3,11 +3,11 @@
 /**
  * External dependencies
  */
-import { SubTitle, Title } from '@automattic/onboarding';
+import { ActionButtons, Title, SubTitle } from '@automattic/onboarding';
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext, useEffect } from 'react';
+import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { Link } from 'react-router-dom';
@@ -29,7 +29,7 @@ import {
 	usePlans,
 } from '../../hooks';
 
-import { LAUNCH_STORE } from '../../stores';
+import { LAUNCH_STORE, Plan } from '../../stores';
 import LaunchContext from '../../context';
 import { isDefaultSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
@@ -200,7 +200,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							itemType="individual-item"
 							locale={ locale }
 						/>
-						<Link to={ Route.DomainDetails }>
+						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
 						</Link>
 					</>
@@ -275,6 +275,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
 
+	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = 
+        
+        < Plan | undefined >();
+
+	const isPlanSelected = ( plan: Plan ) => plan && plan.storeSlug === selectedPlan?.storeSlug;
+
 	const sitePlan = useSite().sitePlan;
 
 	useEffect( () => {
@@ -286,8 +292,14 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 		}
 	}, [ selectedPaidDomain, selectedPlan, unsetPlan ] );
 
-	// if the user picks (or ever picked) up a paid plan from the detailed plan page, show it, otherwise show premium plan
-	const paidPlan = onceSelectedPaidPlan || defaultPaidPlan;
+	// if the user picks a non-default paid plan, we need to keep track of it
+	// this allows us to keep showing it when they change their mind, we don't want
+	// it to disappear once they pick the default paid plan
+	useEffect( () => {
+		if ( onceSelectedPaidPlan !== defaultPaidPlan ) {
+			setNonDefaultPaidPlan( onceSelectedPaidPlan );
+		}
+	}, [ onceSelectedPaidPlan, defaultPaidPlan ] );
 
 	return (
 		<SummaryStep
@@ -352,6 +364,63 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						<div>
 							<FocusedLaunchSummaryItem
 								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
+								onClick={ () => defaultPaidPlan && setPlan( defaultPaidPlan ) }
+								isSelected={ isPlanSelected( defaultPaidPlan ) }
+							>
+								<LeadingContentSide
+									label={
+										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+										sprintf( __( '%s Plan', __i18n_text_domain__ ), defaultPaidPlan?.title ?? '' )
+									}
+									badgeText={
+										defaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
+									}
+								/>
+								<TrailingContentSide nodeType="PRICE">
+									<span>{ defaultPaidPlan && planPrices[ defaultPaidPlan?.storeSlug ] }</span>
+									<span>
+										{
+											// translators: /mo is short for "per-month"
+											__( '/mo', __i18n_text_domain__ )
+										}
+									</span>
+								</TrailingContentSide>
+							</FocusedLaunchSummaryItem>
+
+							{ nonDefaultPaidPlan && (
+								<FocusedLaunchSummaryItem
+									isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
+									onClick={ () => nonDefaultPaidPlan && setPlan( nonDefaultPaidPlan ) }
+									isSelected={ isPlanSelected( nonDefaultPaidPlan ) }
+								>
+									<LeadingContentSide
+										label={
+											/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
+											sprintf(
+												__( '%s Plan', __i18n_text_domain__ ),
+												nonDefaultPaidPlan?.title ?? ''
+											)
+										}
+										badgeText={
+											nonDefaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
+										}
+									/>
+									<TrailingContentSide nodeType="PRICE">
+										<span>
+											{ nonDefaultPaidPlan && planPrices[ nonDefaultPaidPlan?.storeSlug ] }
+										</span>
+										<span>
+											{
+												// translators: /mo is short for "per-month"
+												__( '/mo', __i18n_text_domain__ )
+											}
+										</span>
+									</TrailingContentSide>
+								</FocusedLaunchSummaryItem>
+							) }
+
+							<FocusedLaunchSummaryItem
+								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 								readOnly={ hasPaidDomain || selectedPaidDomain }
 								onClick={ () => defaultFreePlan && setPlan( defaultFreePlan ) }
 								isSelected={ ! ( hasPaidDomain || selectedPaidDomain ) && selectedPlan?.isFree }
@@ -370,30 +439,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 										: __( 'Free', __i18n_text_domain__ ) }
 								</TrailingContentSide>
 							</FocusedLaunchSummaryItem>
-							<FocusedLaunchSummaryItem
-								isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-								onClick={ () => paidPlan && setPlan( paidPlan ) }
-								isSelected={ selectedPlan?.storeSlug === paidPlan?.storeSlug }
-							>
-								<LeadingContentSide
-									label={
-										/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-										sprintf( __( '%s Plan', __i18n_text_domain__ ), paidPlan?.title ?? '' )
-									}
-									badgeText={ paidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
-								/>
-								<TrailingContentSide nodeType="PRICE">
-									<span>{ paidPlan && planPrices[ paidPlan?.storeSlug ] }</span>
-									<span>
-										{
-											// translators: /mo is short for "per-month"
-											__( '/mo', __i18n_text_domain__ )
-										}
-									</span>
-								</TrailingContentSide>
-							</FocusedLaunchSummaryItem>
 						</div>
-						<Link to={ Route.PlanDetails }>{ __( 'View all plans', __i18n_text_domain__ ) }</Link>
+						<Link to={ Route.PlanDetails } className="focused-launch-summary__details-link">
+							{ __( 'View all plans', __i18n_text_domain__ ) }
+						</Link>
 					</>
 				)
 			}
@@ -459,7 +508,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const site = useSite();
 
-	const { locale } = useContext( LaunchContext );
+	const { locale, redirectTo } = useContext( LaunchContext );
 
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
@@ -479,6 +528,17 @@ const Summary: React.FunctionComponent = () => {
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
 
 	const hasPaidPlan = site.isPaidPlan;
+
+	const onAskForHelpClick = ( event: React.MouseEvent< HTMLAnchorElement, MouseEvent > ) => {
+		const helpHref = ( event.target as HTMLAnchorElement ).getAttribute( 'href' );
+
+		if ( ! helpHref ) {
+			return;
+		}
+
+		redirectTo( helpHref );
+		event.preventDefault();
+	};
 
 	// Prepare Steps
 	const renderSiteTitleStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
@@ -563,8 +623,19 @@ const Summary: React.FunctionComponent = () => {
 				} )
 			) }
 
-			{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
-			<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+			<div className="focused-launch-summary__actions-wrapper">
+				<ActionButtons className="focused-launch-summary__launch-action-bar">
+					{ /* @TODO: placeholder for https://github.com/Automattic/wp-calypso/issues/47392 */ }
+					<Link to={ Route.Success }>{ __( 'Launch your site', __i18n_text_domain__ ) }</Link>
+				</ActionButtons>
+
+				<div className="focused-launch-summary__ask-for-help">
+					<p>{ __( 'Questions? Our experts can assist.', __i18n_text_domain__ ) }</p>
+					<a href="/help" onClick={ onAskForHelpClick }>
+						{ __( 'Ask a Happiness Engineer', __i18n_text_domain__ ) }
+					</a>
+				</div>
+			</div>
 		</div>
 	);
 };

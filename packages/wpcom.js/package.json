@@ -39,7 +39,7 @@
 		"./src/lib/util/fs.js": "./src/lib/util/fs-browser.js"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"debug": "^4.1.1",
 		"qs": "^6.5.2"
 	},

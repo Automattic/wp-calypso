@@ -43,6 +43,8 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import LayoutLoader from './loader';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { withCurrentRoute } from 'calypso/components/route';
+import QueryExperiments from 'calypso/components/data/query-experiments';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Style dependencies
@@ -80,6 +82,8 @@ class Layout extends Component {
 					.classList.add( `is-${ this.props.colorSchemePreference }` );
 			}
 		}
+
+		// This code should be removed when the nav-unification project has been rolled out to 100% of the customers.
 		if ( config.isEnabled( 'nav-unification' ) ) {
 			window.addEventListener( 'scroll', scrollCallback );
 			window.addEventListener( 'resize', scrollCallback );
@@ -158,7 +162,7 @@ class Layout extends Component {
 				config.isEnabled( 'woocommerce/onboarding-oauth' ) &&
 				isWooOAuth2Client( this.props.oauth2Client ) &&
 				this.props.wccomFrom,
-			'is-nav-unification': config.isEnabled( 'nav-unification' ),
+			'is-nav-unification': this.props.navUnificationVariation === 'treatment',
 		} );
 
 		const optionalBodyProps = () => {
@@ -171,9 +175,16 @@ class Layout extends Component {
 			return optionalProps;
 		};
 
+		if ( this.props.navUnificationVariation === 'treatment' ) {
+			config.enable( 'nav-unification' );
+		} else {
+			config.disable( 'nav-unification' );
+		}
+
 		const { shouldShowAppBanner } = this.props;
 		return (
 			<div className={ sectionClass }>
+				<QueryExperiments />
 				<BodySectionCssClass
 					group={ this.props.sectionGroup }
 					section={ this.props.sectionName }
@@ -314,6 +325,7 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
+			navUnificationVariation: getVariationForUser( state, 'nav_unification' ),
 		};
 	} )
 )( Layout );

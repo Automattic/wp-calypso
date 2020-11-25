@@ -19,7 +19,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^3.19.3",
 		"debug": "^4.0.0",

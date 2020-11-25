@@ -130,7 +130,6 @@
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/seen-posts": true,
-		"reader/user-mention-suggestions": true,
 		"recommend-plugins": true,
 		"republicize": true,
 		"rum-tracking/logstash": true,
