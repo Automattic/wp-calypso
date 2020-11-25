@@ -95,7 +95,7 @@ hasTranslation( 'post', 'verb' );
 
 #### Available Filters
 
-**preTranslation**
+##### preTranslation
 
 Modify the input arguments before the translation lookup.
 
@@ -105,7 +105,7 @@ _Parameters_
 - _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
 - _filters_ `object`: `@automattic/react-i18n` context filters object.
 
-**postTranslation**
+##### postTranslation
 
 Modify the result of the translate function.
 
