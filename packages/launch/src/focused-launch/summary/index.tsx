@@ -537,7 +537,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const handleLaunch = () => {
 		launchSite( siteId );
-		if ( selectedPlan && ! selectedPlan?.isFree ) {
+		if ( selectedDomain || ( selectedPlan && ! selectedPlan?.isFree ) ) {
 			goToCheckout();
 		}
 	};
