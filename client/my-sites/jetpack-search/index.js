@@ -6,7 +6,7 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { jetpackSearchIndex } from 'calypso/my-sites/jetpack-search/controller';
+import { jetpackSearchMain } from 'calypso/my-sites/jetpack-search/controller';
 import { jetpackSearchMainPath } from './paths';
 import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
@@ -17,7 +17,7 @@ export default function () {
 		jetpackSearchMainPath( ':site' ),
 		siteSelection,
 		navigation,
-		jetpackSearchIndex,
+		jetpackSearchMain,
 		makeLayout,
 		clientRender
 	);

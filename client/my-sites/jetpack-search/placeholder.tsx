@@ -37,15 +37,8 @@ export default function JetpackSearchPlaceholder(): ReactElement {
 				brandFont
 			/>
 
-			<PromoCard
-				title={ translate( 'Jetpack Search is active on your site.' ) }
-				image={ { path: JetpackSearchSVG } }
-				isPrimary
-			>
-				<p className="jetpack-search__placeholder-description">
-					{ translate( 'Your visitors are getting our fastest search experience.' ) }
-				</p>
-
+			<PromoCard title={ 'Placeholder' } image={ { path: JetpackSearchSVG } } isPrimary>
+				<p className="jetpack-search__placeholder-description">Placeholder</p>
 				<button className="jetpack-search__placeholder-button">Placeholder</button>
 			</PromoCard>
 

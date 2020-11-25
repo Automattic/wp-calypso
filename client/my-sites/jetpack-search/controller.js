@@ -6,10 +6,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackSearchIndex from './main';
+import JetpackSearchMain from './main';
 
 /* handles /jetpack-search/:site, see `jetpackSearchMainPath` */
-export function jetpackSearchIndex( context, next ) {
-	context.primary = <JetpackSearchIndex />;
+export function jetpackSearchMain( context, next ) {
+	context.primary = <JetpackSearchMain />;
 	next();
 }
