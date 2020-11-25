@@ -24,10 +24,10 @@ export const useOnLaunch = () => {
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
-	const { isLaunched } = useSite();
+	const { isSiteLaunched } = useSite();
 
 	React.useEffect( () => {
-		if ( isLaunched ) {
+		if ( isSiteLaunched ) {
 			if ( plan && ! plan?.isFree ) {
 				const planProduct = getPlanProduct( plan, flow );
 				const domainProduct = domain && getDomainProduct( domain, flow );
@@ -62,5 +62,5 @@ export const useOnLaunch = () => {
 			}
 			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
 		}
-	}, [ isLaunched ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ isSiteLaunched ] ); // eslint-disable-line react-hooks/exhaustive-deps
 };

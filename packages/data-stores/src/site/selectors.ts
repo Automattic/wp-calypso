@@ -32,8 +32,8 @@ export const getSite = ( state: State, siteId: number ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
-export const isLaunched = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ]?.isLaunched;
+export const isSiteLaunched = ( state: State, siteId: number ) => {
+	return state.launchStatus[ siteId ]?.isSiteLaunched;
 };
 
 export const isSiteLaunching = ( state: State, siteId: number ) => {

@@ -102,14 +102,14 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 };
 
 export const launchStatus: Reducer<
-	{ [ key: number ]: { isLaunched: boolean; isSiteLaunching: boolean } },
+	{ [ key: number ]: { isSiteLaunched: boolean; isSiteLaunching: boolean } },
 	Action
 > = ( state = {}, action ) => {
 	if ( action.type === 'LAUNCH_SITE_START' ) {
-		return { ...state, [ action.siteId ]: { isLaunched: false, isSiteLaunching: true } };
+		return { ...state, [ action.siteId ]: { isSiteLaunched: false, isSiteLaunching: true } };
 	}
 	if ( action.type === 'LAUNCH_SITE_COMPLETE' ) {
-		return { ...state, [ action.siteId ]: { isLaunched: true, isSiteLaunching: false } };
+		return { ...state, [ action.siteId ]: { isSiteLaunched: true, isSiteLaunching: false } };
 	}
 	return state;
 };

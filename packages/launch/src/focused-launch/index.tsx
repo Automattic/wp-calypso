@@ -17,17 +17,17 @@ import Success from './success';
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { isLaunched, isSiteLaunching } = useSite();
+	const { isSiteLaunched, isSiteLaunching } = useSite();
 
 	React.useEffect( () => {
-		if ( isLaunched || isSiteLaunching ) {
+		if ( isSiteLaunched || isSiteLaunching ) {
 			document.body.classList.add( 'is-focused-launch-complete' );
 		}
-	}, [ isLaunched, isSiteLaunching ] );
+	}, [ isSiteLaunched, isSiteLaunching ] );
 
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
-			{ ( isLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
+			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>
 					<DomainDetails />
