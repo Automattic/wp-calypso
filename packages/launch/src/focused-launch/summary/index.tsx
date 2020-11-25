@@ -333,7 +333,12 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</label>
 						<div>
 							<FocusedLaunchSummaryItem readOnly={ true }>
-								<LeadingContentSide label={ sitePlan?.product_name_short_with_suffix } />
+								<LeadingContentSide
+									label={
+										/* translators: Purchased plan label where %s is the WordPress.com plan name (eg: Personal, Premium, Business) */
+										sprintf( __( '%s Plan', __i18n_text_domain__ ), sitePlan?.product_name_short )
+									}
+								/>
 								<TrailingContentSide nodeType="PRICE">
 									<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 								</TrailingContentSide>
