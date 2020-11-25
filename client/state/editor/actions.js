@@ -236,10 +236,6 @@ export function editorReset( options ) {
 	};
 }
 
-export function editorSetLoadingError( loadingError ) {
-	return editorReset( { loadingError } );
-}
-
 export function editorLoadingErrorReset() {
 	return {
 		type: EDITOR_LOADING_ERROR_RESET,
