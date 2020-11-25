@@ -164,7 +164,7 @@ export const getTask = (
 				title: translate( 'Welcome to your podcast site!' ),
 				label: translate( 'Continue building your site' ),
 				description: translate(
-					"Now that you've created your site, we'll guide you through completing a few additional steps to finish building your site"
+					"Now that you've created your site, we'll guide you through completing a few additional steps to finish building your site."
 				),
 				isSkippable: true,
 				isSkippableText: translate( 'Dismiss' ),
