@@ -19,7 +19,6 @@ import {
 	trashPost,
 	deletePost,
 	restorePost,
-	deletePostMetadata,
 } from '../actions';
 import {
 	POST_DELETE,
@@ -578,40 +577,6 @@ describe( 'actions', () => {
 					} );
 					done();
 				} );
-			} );
-		} );
-	} );
-
-	describe( '#deleteMetadata()', () => {
-		const siteId = 1;
-		const postId = 2;
-
-		test( 'should dispatch a post edit with a deleted metadata', () => {
-			const action = deletePostMetadata( siteId, postId, 'foo' );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [ { key: 'foo', operation: 'delete' } ],
-				},
-			} );
-		} );
-
-		test( 'should accept an array of metadata keys to delete', () => {
-			const action = deletePostMetadata( siteId, postId, [ 'foo', 'bar' ] );
-
-			expect( action ).to.eql( {
-				type: 'POST_EDIT',
-				siteId,
-				postId,
-				post: {
-					metadata: [
-						{ key: 'foo', operation: 'delete' },
-						{ key: 'bar', operation: 'delete' },
-					],
-				},
 			} );
 		} );
 	} );

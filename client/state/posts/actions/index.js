@@ -1,6 +1,5 @@
 export { autosave } from 'calypso/state/posts/actions/autosave';
 export { deletePost } from 'calypso/state/posts/actions/delete-post';
-export { deletePostMetadata } from 'calypso/state/posts/actions/delete-post-metadata';
 export { editPost } from 'calypso/state/posts/actions/edit-post';
 export { receivePost } from 'calypso/state/posts/actions/receive-post';
 export { receivePosts } from 'calypso/state/posts/actions/receive-posts';
