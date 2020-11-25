@@ -1,3 +1,5 @@
+
+<!-- eslint-disable wp-no-unsafe-features -->
 # wp-no-unsafe-features
 
 ## Rule details
@@ -18,7 +20,7 @@ Based on these guidelines, unstable features are prohibited. Experimental featur
 The rule can be configured via `allowedImports`.
 This should be an object where the keys are import package names and the values are arrays of allowed experimental imports.
 
-#### Example configuration:
+#### Example configuration
 
 ```json
 {
