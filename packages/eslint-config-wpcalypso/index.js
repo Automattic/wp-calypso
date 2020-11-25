@@ -143,6 +143,8 @@ module.exports = {
 		'wpcalypso/jsx-gridicon-size': 'error',
 		'wpcalypso/jsx-classname-namespace': 'error',
 		'wpcalypso/redux-no-bound-selectors': 'error',
+		'wpcalypso/wp-no-unsafe-features': 'error',
+
 		yoda: 'off',
 
 		// Ensure our codebases use inclusive language
