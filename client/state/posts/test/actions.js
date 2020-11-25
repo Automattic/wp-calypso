@@ -19,11 +19,9 @@ import {
 	trashPost,
 	deletePost,
 	restorePost,
-	addTermForPost,
 	updatePostMetadata,
 	deletePostMetadata,
 } from '../actions';
-import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -582,74 +580,6 @@ describe( 'actions', () => {
 					done();
 				} );
 			} );
-		} );
-	} );
-
-	describe( 'addTermForPost()', () => {
-		const postObject = {
-			ID: 841,
-			site_ID: 2916284,
-			global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-			title: 'Hello World',
-		};
-		const getState = () => {
-			return {
-				posts: {
-					items: {
-						'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-					},
-					queries: {
-						2916284: new PostQueryManager( {
-							items: { 841: postObject },
-						} ),
-					},
-					edits: {},
-				},
-			};
-		};
-
-		test( 'should dispatch a POST_EDIT event with the new term', () => {
-			addTermForPost(
-				2916284,
-				'jetpack-portfolio',
-				{ ID: 123, name: 'ribs' },
-				841
-			)( spy, getState );
-			expect( spy ).to.have.been.calledWith( {
-				post: {
-					terms: {
-						'jetpack-portfolio': [
-							{
-								ID: 123,
-								name: 'ribs',
-							},
-						],
-					},
-				},
-				postId: 841,
-				siteId: 2916284,
-				type: POST_EDIT,
-			} );
-		} );
-
-		test( 'should not dispatch anything if no post', () => {
-			addTermForPost(
-				2916284,
-				'jetpack-portfolio',
-				{ ID: 123, name: 'ribs' },
-				3434
-			)( spy, getState );
-			expect( spy ).not.to.have.been.called;
-		} );
-
-		test( 'should not dispatch anything if no term', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', null, 841 )( spy, getState );
-			expect( spy ).not.to.have.been.called;
-		} );
-
-		test( 'should not dispatch anything if the term is temporary', () => {
-			addTermForPost( 2916284, 'jetpack-portfolio', { id: 'temporary' }, 841 )( spy, getState );
-			expect( spy ).not.to.have.been.called;
 		} );
 	} );
 

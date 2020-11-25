@@ -1,4 +1,3 @@
-export { addTermForPost } from 'calypso/state/posts/actions/add-term-for-post';
 export { autosave } from 'calypso/state/posts/actions/autosave';
 export { deletePost } from 'calypso/state/posts/actions/delete-post';
 export { deletePostMetadata } from 'calypso/state/posts/actions/delete-post-metadata';
