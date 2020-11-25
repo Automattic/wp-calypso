@@ -5,5 +5,8 @@
 	"testsPort": 4005,
 	"mappings": {
 		"wp-content/plugins/editing-toolkit-plugin/vendor": "../../vendor"
+	},
+	"config": {
+		"WP_TESTS_EMAIL": "admin@example.org"
 	}
 }
