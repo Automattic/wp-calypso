@@ -9,7 +9,8 @@ import * as controller from './controller';
  */
 import './style.scss';
 
-export default function () {
+export default function (): void {
 	jetpackPlans( `/:locale/pricing`, controller.jetpackPricingContext );
 	jetpackPlans( `/pricing`, controller.jetpackPricingContext );
+	jetpackPlans( `/plans`, controller.jetpackPricingContext );
 }
