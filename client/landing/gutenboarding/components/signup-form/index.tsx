@@ -43,6 +43,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
+	const anchorFmPodcastId = useSelect( ( select ) =>
+		select( ONBOARD_STORE ).getSelectedPodcastId()
+	);
 	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getIsAnchorFmSignup()
 	);
@@ -161,8 +164,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
+	const anchorFmParameter = isAnchorFmSignup ? `&anchor_podcast=${anchorFmPodcastId}` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
+		`${ window.location.origin }/new${ isAnchorFmSignup ? makePath( Step.IntentGathering ) : makePath( Step.CreateSite ) }?new${ anchorFmParameter }`
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;

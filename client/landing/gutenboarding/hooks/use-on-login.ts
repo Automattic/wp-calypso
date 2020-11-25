@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { useDispatch, useSelect, dispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
 
 /**
@@ -12,7 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useNewSiteVisibility } from './use-selected-plan';
-import { useNewQueryParam } from '../path';
+import { useNewQueryParam, useAnchorFmQueryParam } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -27,9 +27,12 @@ export default function useOnSignup() {
 
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();
-	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getIsAnchorFmSignup()
-	);
+	const anchorFmPodcastId = useAnchorFmQueryParam();
+	const isAnchorFmSignup: boolean = anchorFmPodcastId !== '';
+
+	React.useEffect( () => {
+		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
+	}, [] );
 
 	React.useEffect( () => {
 		if (
