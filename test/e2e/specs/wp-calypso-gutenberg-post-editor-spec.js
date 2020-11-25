@@ -924,6 +924,27 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 				} );
 
+				step( 'Can see the Line Height setting for the paragraph', async function () {
+					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+					// Give focus to the first paragraph block found
+					await driverHelper.clickWhenClickable(
+						driver,
+						By.css( 'p.block-editor-rich-text__editable:first-of-type' )
+					);
+
+					await gSidebarComponent.displayComponentIfNecessary();
+
+					await gSidebarComponent.chooseBlockSettings();
+
+					const lineHeighSettingPresent = await driverHelper.isElementPresent(
+						driver,
+						By.css( '.block-editor-line-height-control' )
+					);
+
+					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
+				} );
+
 				step(
 					'Can set the new title and update it, and link to the updated post',
 					async function () {
@@ -1295,28 +1316,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			const content = await editor.getContent();
 			assert.strictEqual( title, originalTitle, 'The restored post title is not correct' );
 			assert.strictEqual( content, originalContent, 'The restored post content is not correct' );
-		} );
-	} );
-
-	describe( 'Settings @parallel', function () {
-		step( 'Can log in', async function () {
-			const loginFlow = new LoginFlow( driver, gutenbergUser );
-			await loginFlow.loginAndStartNewPost( null, true );
-		} );
-
-		step( 'Line height setting is available', async function () {
-			const editor = await GutenbergEditorComponent.Expect( driver );
-			await editor.enterText( 'Foobar' );
-
-			const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
-			await gSidebarComponent.displayComponentIfNecessary();
-			await gSidebarComponent.chooseBlockSettings();
-
-			const lineHeighSettingPresent = await driverHelper.isElementPresent(
-				driver,
-				By.css( '.block-editor-line-height-control' )
-			);
-			assert.strictEqual( lineHeighSettingPresent, true, 'Line height setting not found' );
 		} );
 	} );
 } );
