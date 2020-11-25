@@ -13,6 +13,10 @@ import FocusedLaunchModal from '@automattic/launch';
  */
 import { LAUNCH_STORE } from './stores';
 
+const redirectParentWindow = ( url: string ) => {
+	window.top.location.href = url;
+};
+
 const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
@@ -43,7 +47,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				// Redirect to My Home after checkout only if the selected plan is not eCommerce
 				...( ! isEcommerce && { redirect_to: `/home/${ siteId }` } ),
 			} );
-			window.top.location.href = checkoutUrl;
+			redirectParentWindow( checkoutUrl );
 		};
 
 		return (
@@ -54,7 +58,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				redirectTo={ ( url: string ) => {
 					const origin = 'https://wordpress.com';
 					const path = url.startsWith( '/' ) ? url : `/${ url }`;
-					window.top.location.href = `${ origin }${ path }`;
+					redirectParentWindow( `${ origin }${ path }` );
 				} }
 			/>
 		);
