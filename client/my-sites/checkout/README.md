@@ -22,7 +22,7 @@ A significant amount of the shopping cart workflow takes place through hooks in 
 
 These diagrams show how the WordPress APIs are connected to these workflows as well as the important interactions.
 
-### Get Cart 
+### Get Cart
 
 ![Display cart](docs/get-cart.svg)
 
