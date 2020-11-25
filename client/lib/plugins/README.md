@@ -2,6 +2,8 @@
 
 Plugins uses a [flux](https://facebook.github.io/flux/docs/overview.html#content) approach to managing plugins data in calypso.
 
+**Note: usage of the plugins store is discouraged, please use the Redux version instead**
+
 ## Plugins Store
 
 The Plugins Store is responsible for keeping each site's plugin list up to date. Initially it loads the data and request it as it gets updated. This store also listens to any actions relevant to keep the data up to date such as the plugin update/activate/deactivate etc.
@@ -169,29 +171,3 @@ This action has been migrated to Redux. Please use the `disableAutoupdatePlugin`
 Toggle AutoUpdates for a plugin on a site.
 
 This action has been migrated to Redux. Please use the `togglePluginAutoUpdate` Redux action.
-
-## Example Component Code
-
-```jsx
-/**
- * External dependencies
- */
-import React from 'react';
-
-/**
- * Internal dependencies
- */
-import PluginsActions from 'calypso/lib/plugins/actions';
-
-export default class extends React.Component {
-	static displayName = 'yourComponent';
-
-	updatePlugin = () => {
-		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
-	};
-
-	render() {
-		return <button onClick={ this.updatePlugin }>Update { this.props.plugin.name }</button>;
-	}
-}
-```
