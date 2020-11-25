@@ -17,6 +17,10 @@ class RequireChunkCallbackPlugin {
 		compiler.hooks.thisCompilation.tap( PLUGIN_NAME, ( compilation ) => {
 			const { mainTemplate } = compilation;
 
+			const chunkIdToURL = webpack.RuntimeGlobals
+				? webpack.RuntimeGlobals.getChunkScriptFilename
+				: 'jsonpScriptSrc';
+
 			mainTemplate.hooks.localVars.tap( PLUGIN_NAME, ( source ) => {
 				return Template.asString( [
 					source,
@@ -50,7 +54,7 @@ class RequireChunkCallbackPlugin {
 
 						RequireChunkCallback.prototype.getInstalledChunks = function() {
 							return Object.keys( installedChunks ).map( function( chunkId ) {
-								return jsonpScriptSrc( chunkId )
+								return ${ chunkIdToURL }( chunkId )
 									.replace( __webpack_require__.p, '' )
 									.replace( /\\.js$/, '' );
 							} );
@@ -74,7 +78,7 @@ class RequireChunkCallbackPlugin {
 					`requireChunkCallback.trigger( {
 						chunkId: chunkId,
 						publicPath: __webpack_require__.p,
-						scriptSrc: jsonpScriptSrc( chunkId )
+						scriptSrc: ${ chunkIdToURL }( chunkId )
 					}, promises )`,
 				] );
 			} );
