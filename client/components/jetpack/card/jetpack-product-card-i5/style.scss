@@ -1,6 +1,7 @@
 .jetpack-product-card-i5 {
 	position: relative;
 
+	box-sizing: border-box;
 	height: 100%;
 
 	background: var( --color-surface );
@@ -8,7 +9,7 @@
 	border-radius: 8px;
 	box-shadow: 0px 4px 24px rgba( 0, 0, 0, 0.05 );
 
-	&.is-featured {
+	&.is-featured.is-aligned {
 		position: relative;
 		top: 8px;
 		z-index: 1;
