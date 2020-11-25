@@ -31,7 +31,7 @@ export default function useOnSignup() {
 	);
 
 	React.useEffect( () => {
-		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
+		dispatch( ONBOARD_STORE ).setAnchorFmPodcastId( anchorFmPodcastId );
 	}, [] );
 
 	const handleCreateSite = React.useCallback(

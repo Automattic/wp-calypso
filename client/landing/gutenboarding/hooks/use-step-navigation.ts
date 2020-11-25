@@ -36,7 +36,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	let steps: StepType[];
 
-	// If anchor_podcast param...
+	// If anchor_podcast param, show Intent Gathering, Design, and Style steps.
 	if ( isAnchorFmSignup ) {
 		steps = [ Step.IntentGathering, Step.DesignSelection, Step.Style ];
 		// If site title is skipped, we're showing Domains step before Features step. If not, we are showing Domains step next.

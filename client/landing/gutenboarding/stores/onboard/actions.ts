@@ -183,9 +183,9 @@ export const setSiteTitle = ( siteTitle: string ) => ( {
 	siteTitle,
 } );
 
-export const setPodcastId = ( podcastId: string ) => ( {
-	type: 'SET_PODCAST_ID' as const,
-	podcastId,
+export const setAnchorFmPodcastId = ( anchorFmPodcastId: string ) => ( {
+	type: 'SET_ANCHORFM_PODCAST_ID' as const,
+	anchorFmPodcastId,
 } );
 
 export const setSiteVertical = ( siteVertical: SiteVertical ) => ( {
@@ -230,7 +230,7 @@ export type OnboardAction = ReturnType<
 	| typeof setSelectedSite
 	| typeof setShowSignupDialog
 	| typeof setSiteTitle
-	| typeof setPodcastId
+	| typeof setAnchorFmPodcastId
 	| typeof setSiteVertical
 	| typeof skipSiteVertical
 	| typeof togglePageLayout

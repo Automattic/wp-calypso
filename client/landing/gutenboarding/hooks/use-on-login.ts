@@ -31,7 +31,7 @@ export default function useOnSignup() {
 	const isAnchorFmSignup: boolean = anchorFmPodcastId !== '';
 
 	React.useEffect( () => {
-		dispatch( ONBOARD_STORE ).setPodcastId( anchorFmPodcastId );
+		dispatch( ONBOARD_STORE ).setAnchorFmPodcastId( anchorFmPodcastId );
 	}, [] );
 
 	React.useEffect( () => {

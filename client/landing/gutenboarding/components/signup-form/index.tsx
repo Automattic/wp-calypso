@@ -44,7 +44,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
 	const anchorFmPodcastId = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getSelectedPodcastId()
+		select( ONBOARD_STORE ).getAnchorFmPodcastId()
 	);
 	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getIsAnchorFmSignup()
