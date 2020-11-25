@@ -26,13 +26,9 @@ const options = [
 ];
 
 new RuleTester( {
-	// parser: require.resolve( 'babel-eslint' ),
 	parserOptions: {
 		ecmaVersion: '2015',
 		sourceType: 'module',
-		// 	ecmaFeatures: {
-		// 		jsx: true,
-		// 	},
 	},
 } ).run( 'wp-no-unsafe-features', rule, {
 	valid: [
