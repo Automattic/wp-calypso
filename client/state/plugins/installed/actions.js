@@ -354,7 +354,7 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS, data } );
 			afterEnableAutoupdateCallback( undefined, data );
 			if ( data.update ) {
-				dispatch( updatePlugin( siteId, data ) );
+				updatePlugin( siteId, data )( dispatch, getState );
 			}
 		};
 
@@ -562,7 +562,7 @@ export function removePlugin( siteId, plugin ) {
 }
 
 export function fetchPlugins( siteIds ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
 		return siteIds.map( ( siteId ) => {
 			const defaultAction = {
 				siteId,
@@ -575,7 +575,7 @@ export function fetchPlugins( siteIds ) {
 
 				data.plugins.map( ( plugin ) => {
 					if ( plugin.update && plugin.autoupdate ) {
-						dispatch( updatePlugin( siteId, plugin ) );
+						updatePlugin( siteId, plugin )( dispatch, getState );
 					}
 				} );
 			};
