@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import Debug from 'debug';
 
 /**
  * Internal dependencies
@@ -24,7 +25,11 @@ import { isJetpackBackupSlug } from 'calypso/lib/products-values';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
 
+const debug = new Debug( 'calypso:my-sites:backup:controller' );
+
 export function showUpsellIfNoBackup( context, next ) {
+	debug( 'controller: showUpsellIfNoBackup', context.params );
+
 	const UpsellComponent = isJetpackCloud() ? BackupUpsell : WPCOMBackupUpsell;
 	context.primary = (
 		<>
@@ -50,6 +55,8 @@ export function showUpsellIfNoBackup( context, next ) {
 }
 
 export function showJetpackIsDisconnected( context, next ) {
+	debug( 'controller: showJetpackIsDisconnected', context.params );
+
 	const JetpackConnectionFailed = isJetpackCloud() ? (
 		<BackupUpsell reason="no_connected_jetpack" />
 	) : (
@@ -65,6 +72,8 @@ export function showJetpackIsDisconnected( context, next ) {
 }
 
 export function showUnavailableForVaultPressSites( context, next ) {
+	debug( 'controller: showUnavailableForVaultPressSites', context.params );
+
 	const message = isJetpackCloud() ? (
 		<BackupUpsell reason="vp_active_on_site" />
 	) : (
@@ -79,6 +88,8 @@ export function showUnavailableForVaultPressSites( context, next ) {
 }
 
 export function showUnavailableForMultisites( context, next ) {
+	debug( 'controller: showUnavailableForMultisites', context.params );
+
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	if ( isJetpackSiteMultiSite( state, siteId ) ) {
@@ -94,6 +105,8 @@ export function showUnavailableForMultisites( context, next ) {
 
 /* handles /backup/:site, see `backupMainPath` */
 export function backups( context, next ) {
+	debug( 'controller: backups', context.params );
+
 	// When a user visits `/backup`, we don't want to carry over any filter
 	// selection that could've happened in the Activity Log, otherwise,
 	// the app will render the `SearchResults` component instead of the
@@ -113,6 +126,8 @@ export function backups( context, next ) {
 
 /* handles /backup/:site/download/:rewindId, see `backupDownloadPath` */
 export function backupDownload( context, next ) {
+	debug( 'controller: backupDownload', context.params );
+
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.DOWNLOAD } />
 	);
@@ -121,6 +136,8 @@ export function backupDownload( context, next ) {
 
 /* handles /backup/:site/restore/:rewindId, see `backupRestorePath` */
 export function backupRestore( context, next ) {
+	debug( 'controller: backupRestore', context.params );
+
 	context.primary = (
 		<BackupRewindFlow rewindId={ context.params.rewindId } purpose={ RewindFlowPurpose.RESTORE } />
 	);
