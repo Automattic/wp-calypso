@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import { defer } from 'lodash';
 
 /**
@@ -16,7 +15,6 @@ import wpcom from 'calypso/lib/wp';
 /**
  * Module vars
  */
-const debug = debugFactory( 'calypso:my-sites:plugins:actions' );
 let _actionsQueueBySite = {};
 
 const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
@@ -151,40 +149,6 @@ const PluginsActions = {
 		} else {
 			wpcom.site( site.ID ).wpcomPluginsList( receivePluginsDispatcher );
 		}
-	},
-
-	updatePlugin: ( site, plugin ) => {
-		debug( 'updatePlugin', site, plugin );
-
-		// There doesn't seem to be anything to update
-		if ( ! plugin.update ) {
-			return;
-		}
-
-		// Site isn't able to update Files.
-		if ( ! site.canUpdateFiles ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'UPDATE_PLUGIN',
-			action: 'UPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const boundUpdate = getPluginBoundMethod( site, plugin.id, 'updateVersion' );
-		queueSitePluginAction( boundUpdate, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_UPDATED_PLUGIN',
-				action: 'UPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_updated', plugin, site, error );
-		} );
 	},
 
 	installPlugin: ( site, plugin ) => {

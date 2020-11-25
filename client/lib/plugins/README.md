@@ -132,43 +132,43 @@ Triggers api call to fetch the site data.
 
 Update a plugin on a site.
 
-#### PluginsActions.updatePlugin( site, plugin );
+This action has been migrated to Redux. Please use the `updatePlugin` Redux action.
 
 ---
 
 Toggle a plugin active state on a site.
 
-This action has been migrated to Redux. Please use to the `togglePluginActivation` Redux action.
+This action has been migrated to Redux. Please use the `togglePluginActivation` Redux action.
 
 ---
 
 Activate a plugin on a site.
 
-This action has been migrated to Redux. Please use to the `activatePlugin` Redux action.
+This action has been migrated to Redux. Please use the `activatePlugin` Redux action.
 
 ---
 
 Deactivate a plugin on a site.
 
-This action has been migrated to Redux. Please use to the `deactivatePlugin` Redux action.
+This action has been migrated to Redux. Please use the `deactivatePlugin` Redux action.
 
 ---
 
 Enable AutoUpdates for a plugin on a site.
 
-This action has been migrated to Redux. Please use to the `enableAutoupdatePlugin` Redux action.
+This action has been migrated to Redux. Please use the `enableAutoupdatePlugin` Redux action.
 
 ---
 
 Disable AutoUpdates for a plugin on a site.
 
-This action has been migrated to Redux. Please use to the `disableAutoupdatePlugin` Redux action.
+This action has been migrated to Redux. Please use the `disableAutoupdatePlugin` Redux action.
 
 ---
 
 Toggle AutoUpdates for a plugin on a site.
 
-This action has been migrated to Redux. Please use to the `togglePluginAutoUpdate` Redux action.
+This action has been migrated to Redux. Please use the `togglePluginAutoUpdate` Redux action.
 
 ## Example Component Code
 
