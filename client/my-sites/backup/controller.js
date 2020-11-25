@@ -14,6 +14,7 @@ import WPCOMBackupUpsell from './wpcom-backup-upsell';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import FormattedHeader from 'calypso/components/formatted-header';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { setFilter } from 'calypso/state/activity-log/actions';
 import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
@@ -93,6 +94,17 @@ export function showUnavailableForMultisites( context, next ) {
 
 /* handles /backup/:site, see `backupMainPath` */
 export function backups( context, next ) {
+	// When a user visits `/backup`, we don't want to carry over any filter
+	// selection that could've happened in the Activity Log, otherwise,
+	// the app will render the `SearchResults` component instead of the
+	// `BackupStatus`.
+	const state = context.store.getState();
+	const siteId = getSelectedSiteId( state );
+	context.store.dispatch( {
+		...setFilter( siteId, {} ),
+		meta: { skipUrlUpdate: true },
+	} );
+
 	const { date } = context.query;
 
 	context.primary = <BackupsPage queryDate={ date } />;
