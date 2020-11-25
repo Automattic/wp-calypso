@@ -391,5 +391,10 @@ module.exports = {
 
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
+
+		'wpcalypso/wp-no-unsafe-features': [
+			'error',
+			{ allowedImports: { '@wordpress/block-editor': [ '__experimentalBlock' ] } },
+		],
 	},
 };
