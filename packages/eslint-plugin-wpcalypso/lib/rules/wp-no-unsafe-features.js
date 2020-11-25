@@ -39,12 +39,7 @@ module.exports = {
 			( context.options && context.options[ 0 ] && context.options[ 0 ].allowedImports ) || {};
 		const reporter = makeReporter( { allowedImports, context } );
 
-		return {
-			ImportDeclaration: reporter,
-			// ExportNamedDeclaration: reporter,
-			// ExportAllDeclaration: reporter,
-			// ImportExpression: reporter,
-		};
+		return { ImportDeclaration: reporter };
 	},
 };
 
