@@ -4,6 +4,7 @@
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
   the build (ESM or CJS) instead of both that are done by default
+- Add more target ECMAScript versions to Terser config and switch dependencies
 
 ## 6.4.0
 
