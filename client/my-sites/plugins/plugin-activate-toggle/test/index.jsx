@@ -19,7 +19,6 @@ import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-t
 jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )
 );
-jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
 
 describe( 'PluginActivateToggle', () => {
 	const mockedProps = {
