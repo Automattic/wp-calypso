@@ -371,21 +371,47 @@ export function enableAutoupdatePlugin( siteId, plugin ) {
 }
 
 export function disableAutoupdatePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: DISABLE_AUTOUPDATE_PLUGIN,
 			siteId,
 			pluginId,
 		};
+
 		dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST } );
+
+		// @TODO: Remove when this flux action is completely reduxified
+		Dispatcher.handleViewAction( {
+			type: 'DISABLE_AUTOUPDATE_PLUGIN',
+			action: 'DISABLE_AUTOUPDATE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const afterDisableAutoupdateCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
+				action: 'DISABLE_AUTOUPDATE_PLUGIN',
+				site,
+				plugin,
+				data,
+				error,
+			} );
+			recordEvent( 'calypso_plugin_autoupdate_disabled', plugin, siteId, error );
+		};
 
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS, data } );
+			afterDisableAutoupdateCallback( undefined, data );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE, error } );
+			afterDisableAutoupdateCallback( error, undefined );
 		};
 
 		return getPluginHandler( siteId, pluginId )
