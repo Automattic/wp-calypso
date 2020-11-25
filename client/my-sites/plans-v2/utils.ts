@@ -69,6 +69,7 @@ import { getJetpackProductDescription } from 'calypso/lib/products-values/get-je
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans-v2/constants';
+import config from 'calypso/config';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getProductCost } from 'calypso/state/products-list/selectors/get-product-cost';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
@@ -688,12 +689,13 @@ export function checkout(
 	if ( ! siteSlug ) {
 		path = `/jetpack/connect/${ productsString }`;
 	} else {
-		path = isJetpackCloud()
-			? `/checkout/${ siteSlug }/${ productsString }`
-			: `/checkout/${ siteSlug }`;
+		path =
+			isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
+				? `/checkout/${ siteSlug }/${ productsString }`
+				: `/checkout/${ siteSlug }`;
 	}
 
-	if ( isJetpackCloud() ) {
+	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
 		addItems( productsArray.map( jetpackProductItem ) );

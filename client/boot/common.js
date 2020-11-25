@@ -127,6 +127,10 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			loggedOutRoutes.push( '/jetpack/connect' );
+		}
+
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
 			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
