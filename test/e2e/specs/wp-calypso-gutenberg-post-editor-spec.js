@@ -934,7 +934,6 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 					);
 
 					await gSidebarComponent.displayComponentIfNecessary();
-
 					await gSidebarComponent.chooseBlockSettings();
 
 					const lineHeighSettingPresent = await driverHelper.isElementPresent(
