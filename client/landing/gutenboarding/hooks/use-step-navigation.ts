@@ -73,8 +73,8 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
 		// XXX TODO Test: Does this break non-anchor gutenboarding?
-		if ( newUser && newUser.bearerToken && newUser.username !== undefined ) {
-			return createSite( newUser.username, locale, newUser.bearerToken, newSiteVisibility );
+		if ( newUser && newUser.username !== undefined ) {
+			return createSite( newUser.username, locale, undefined, newSiteVisibility );
 		}
 		return onSignupDialogOpen();
 	};
