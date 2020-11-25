@@ -383,18 +383,6 @@ const PluginsActions = {
 		} );
 	},
 
-	togglePluginAutoUpdate: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-
-		if ( ! plugin.autoupdate ) {
-			PluginsActions.enableAutoUpdatesPlugin( site, plugin );
-		} else {
-			PluginsActions.disableAutoUpdatesPlugin( site, plugin );
-		}
-	},
-
 	removePluginUpdateInfo: ( site, plugin ) => {
 		Dispatcher.handleViewAction( {
 			type: 'REMOVE_PLUGINS_UPDATE_INFO',

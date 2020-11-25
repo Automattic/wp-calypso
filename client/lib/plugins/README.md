@@ -168,7 +168,7 @@ Disable AutoUpdates for a plugin on a site.
 
 Toggle AutoUpdates for a plugin on a site.
 
-#### PluginsActions.togglePluginAutoUpdate( site, plugin );
+This action has been migrated to Redux. Please use to the `togglePluginAutoUpdate` Redux action.
 
 ## Example Component Code
 
