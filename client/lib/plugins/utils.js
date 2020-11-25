@@ -146,9 +146,7 @@ export function normalizeCompatibilityList( compatibilityList ) {
 export function normalizePluginData( plugin, pluginData ) {
 	plugin = getAllowedPluginData( assign( plugin, pluginData ) );
 
-	return Object.keys( plugin ).reduce( ( returnData, key ) => {
-		const item = plugin[ key ];
-
+	return Object.entries( plugin ).reduce( ( returnData, [ key, item ] ) => {
 		switch ( key ) {
 			case 'short_description':
 			case 'description':

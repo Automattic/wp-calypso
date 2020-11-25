@@ -141,10 +141,8 @@ export class SiteNotice extends React.Component {
 
 		const { site, currencyCode, productsList, translate } = this.props;
 
-		const priceAndSaleInfo = Object.keys( productsList ).reduce(
-			function ( result, key ) {
-				const value = productsList[ key ];
-
+		const priceAndSaleInfo = Object.entries( productsList ).reduce(
+			function ( result, [ key, value ] ) {
 				if ( value.is_domain_registration && value.available ) {
 					const regularPrice = getUnformattedDomainPrice( key, productsList );
 					const minRegularPrice = get( result, 'minRegularPrice', regularPrice );
