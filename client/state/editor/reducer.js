@@ -7,9 +7,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import {
-	EDITOR_AUTOSAVE,
-	EDITOR_AUTOSAVE_SUCCESS,
-	EDITOR_AUTOSAVE_FAILURE,
 	EDITOR_AUTOSAVE_RESET,
 	EDITOR_IFRAME_LOADED,
 	EDITOR_RESET,
@@ -85,27 +82,11 @@ export const iframePort = withoutPersistence( ( state = null, action ) => {
 	return state;
 } );
 
-export function isAutosaving( state = false, action ) {
-	switch ( action.type ) {
-		case EDITOR_AUTOSAVE:
-			return true;
-		case EDITOR_RESET:
-		case EDITOR_AUTOSAVE_RESET:
-		case EDITOR_AUTOSAVE_SUCCESS:
-		case EDITOR_AUTOSAVE_FAILURE:
-			return false;
-	}
-
-	return state;
-}
-
 function autosavePreviewUrl( state = null, action ) {
 	switch ( action.type ) {
 		case EDITOR_RESET:
 		case EDITOR_AUTOSAVE_RESET:
 			return null;
-		case EDITOR_AUTOSAVE_SUCCESS:
-			return action.autosave.preview_URL;
 	}
 
 	return state;
@@ -117,7 +98,6 @@ const combinedReducer = combineReducers( {
 	isLoading,
 	isIframeLoaded,
 	iframePort,
-	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,
 	videoEditor,
