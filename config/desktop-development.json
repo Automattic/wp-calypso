@@ -22,7 +22,6 @@
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": false,
-		"coming-soon-v2": true,
 		"comments/filters-in-posts": true,
 		"comments/moderation-tools-in-posts": true,
 		"comments/management/threaded-view": false,
