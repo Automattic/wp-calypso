@@ -15,7 +15,7 @@ import 'calypso/state/followers/init';
 
 /**
  * Returns an action object used in signalling that followers for the site
- * have been requested..
+ * have been requested.
  *
  * @param {object} query Params to be sent to the API
  * @param {boolean} silentUpdate Used to indicate whether to show loading state in the UI
