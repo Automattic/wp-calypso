@@ -77,7 +77,7 @@ export const isTwoFactorEnabled = ( state ) => state.login.twoFactorAuth != null
  * @returns {boolean}         Whether a request to authenticate 2FA is being made.
  */
 export const isRequestingTwoFactorAuth = ( state ) => {
-	return state.login.isRequestingTwoFactorAuth ?? false;
+	return state.login.isRequestingTwoFactorAuth;
 };
 
 /**
