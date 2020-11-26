@@ -30,6 +30,7 @@ import {
 	getTotalFollowersForQuery,
 } from 'calypso/state/followers/selectors';
 import { requestRemoveFollower } from 'calypso/state/followers/actions';
+import { addQueryArgs } from 'calypso/lib/url';
 
 const MAX_FOLLOWERS = 1000;
 
@@ -231,12 +232,13 @@ class Followers extends Component {
 			followers = this.renderPlaceholders();
 		}
 
-		const downloadListLink =
-			this.props.query.type === 'email' && !! this.props.site
-				? 'https://dashboard.wordpress.com/wp-admin/index.php?page=stats&blog=' +
-				  this.props.site.ID +
-				  '&blog_subscribers=csv&type=email'
-				: null;
+		const canDownloadCsv = this.props.query.type === 'email' && !! this.props.site;
+		const downloadListLink = canDownloadCsv
+			? addQueryArgs(
+					{ page: 'stats', blog: this.props.site.ID, blog_subscribers: 'csv', type: 'email' },
+					'https://dashboard.wordpress.com/wp-admin/index.php'
+			  )
+			: null;
 
 		return (
 			<>
