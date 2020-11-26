@@ -143,7 +143,7 @@ module.exports = {
 		'wpcalypso/jsx-gridicon-size': 'error',
 		'wpcalypso/jsx-classname-namespace': 'error',
 		'wpcalypso/redux-no-bound-selectors': 'error',
-		'wpcalypso/wp-no-unsafe-features': 'error',
+		'wpcalypso/no-unsafe-wp-apis': 'error',
 
 		yoda: 'off',
 
