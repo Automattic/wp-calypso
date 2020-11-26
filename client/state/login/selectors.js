@@ -141,7 +141,7 @@ export const getRequestError = ( state ) => {
  * @returns {?object}         Notice for the request.
  */
 export const getRequestNotice = ( state ) => {
-	return state.login.requestNotice ?? null;
+	return state.login.requestNotice;
 };
 
 /**
