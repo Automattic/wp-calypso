@@ -13,7 +13,7 @@ import ConversationFollowButton from './button';
 import { isFollowingReaderConversation } from 'calypso/state/reader/conversations/selectors';
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { getTracksPropertiesForPost } from 'calypso/reader/stats';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies

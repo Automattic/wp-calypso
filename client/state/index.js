@@ -57,6 +57,7 @@ export function createReduxStore( initialState, reducer = initialReducer ) {
 		isBrowser && require( './happychat/middleware-calypso.js' ).default,
 		dynamicMiddlewares,
 		isBrowser && require( './analytics/middleware.js' ).analyticsMiddleware,
+		isBrowser && require( './reader/analytics/middleware.js' ).readerAnalyticsMiddleware,
 		isBrowser && require( './lib/middleware.js' ).default,
 		isAudioSupported && require( './audio/middleware.js' ).default,
 		isDesktop && require( './desktop/middleware.js' ).default,
