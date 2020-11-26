@@ -96,10 +96,11 @@ export function removeFromSiteRequests( state = {}, action ) {
 	switch ( action.type ) {
 		case FOLLOWER_REMOVE_ERROR:
 		case FOLLOWER_REMOVE_REQUEST:
-		case FOLLOWER_REMOVE_SUCCESS:
+		case FOLLOWER_REMOVE_SUCCESS: {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: FOLLOWER_REMOVE_REQUEST === action.type,
 			} );
+		}
 	}
 	return state;
 }
