@@ -25,7 +25,7 @@ export default class MyPlanPage extends AsyncBaseContainer {
 	async isSecurityPlan() {
 		return await driverHelper.isEventuallyPresentAndDisplayed(
 			this.driver,
-			By.css( '.is-jetpack-security-v2' )
+			By.css( '[data-e2e-product-slug="jetpack_security_daily"]' )
 		);
 	}
 }
