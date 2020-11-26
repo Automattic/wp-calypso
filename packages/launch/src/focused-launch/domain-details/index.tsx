@@ -62,7 +62,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ selectedDomain || mockDomainSuggestion( currentDomainName || '' ) }
+					currentDomain={ selectedDomain || mockDomainSuggestion( currentDomainName ) }
 					existingSubdomain={ mockDomainSuggestion( currentDomainName ) }
 					onDomainSelect={ handleSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
