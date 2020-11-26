@@ -171,18 +171,6 @@ export const getTask = (
 				isSkippable: true,
 			};
 			break;
-		case CHECKLIST_KNOWN_TASKS.PODCAST_SITE_LAUNCHED:
-			taskData = {
-				title: translate( 'Welcome to your podcast site!' ),
-				label: translate( 'Continue building your site' ),
-				description: translate(
-					"Now that you've created your site, we'll guide you through completing a few additional steps to finish building your site."
-				),
-				isSkippable: true,
-				isSkippableText: translate( 'Dismiss' ),
-				actionText: translate( 'Continue' ),
-			};
-			break;
 		case CHECKLIST_KNOWN_TASKS.SITE_LAUNCHED:
 			taskData = {
 				timing: 1,
