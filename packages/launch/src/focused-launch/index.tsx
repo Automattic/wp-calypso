@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,20 +14,33 @@ import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
+import { LAUNCH_STORE } from '../stores';
 
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
+	const shouldDisplaySuccessView = useSelect( ( select ) =>
+		select( LAUNCH_STORE ).shouldDisplaySuccessView()
+	);
+
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
+	const { showSuccessView } = useDispatch( LAUNCH_STORE );
+
 	React.useEffect( () => {
+		if ( isSiteLaunched ) {
+			showSuccessView();
+		}
 		if ( isSiteLaunched || isSiteLaunching ) {
 			document.body.classList.add( 'is-focused-launch-complete' );
 		}
-	}, [ isSiteLaunched, isSiteLaunching ] );
+	}, [ isSiteLaunched, isSiteLaunching, showSuccessView ] );
 
 	return (
-		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
+		<Router
+			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
+			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
+		>
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>

@@ -84,5 +84,9 @@ export const isModalDismissible = ( state: State ): boolean => state.isModalDism
 // Check if launch modal title should be visible
 export const isModalTitleVisible = ( state: State ): boolean => state.isModalTitleVisible;
 
+// Check if launch Success view should be displayed (user didn't dismissed the Success View modal)
+export const shouldDisplaySuccessView = ( state: State ): boolean => state.shouldDisplaySuccessView;
+
 // Check if launch modal can be dismissed
-export const isFocusedLaunchOpen = ( state: State ): boolean => state.isFocusedLaunchOpen;
+export const isFocusedLaunchOpen = ( state: State ): boolean =>
+	state.isFocusedLaunchOpen || select( LAUNCH_STORE ).shouldDisplaySuccessView();

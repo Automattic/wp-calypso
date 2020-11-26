@@ -27,7 +27,12 @@ const Success: React.FunctionComponent = () => {
 
 	const isSiteLaunching = useSelect( ( select ) => select( SITE_STORE ).isSiteLaunching( siteId ) );
 
-	const { unsetModalDismissible, hideModalTitle, closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+	const {
+		unsetModalDismissible,
+		hideModalTitle,
+		closeFocusedLaunch,
+		hideSuccessView,
+	} = useDispatch( LAUNCH_STORE );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
 
@@ -45,7 +50,13 @@ const Success: React.FunctionComponent = () => {
 		hideModalTitle();
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
+	const continueEditing = () => {
+		hideSuccessView();
+		closeFocusedLaunch();
+	};
+
 	const redirectToHome = () => {
+		hideSuccessView();
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
 
@@ -89,7 +100,7 @@ const Success: React.FunctionComponent = () => {
 
 					{ /* @TODO: at the moment this only works when the modal is in the block editor. */ }
 					<NextButton
-						onClick={ closeFocusedLaunch }
+						onClick={ continueEditing }
 						className="focused-launch-success__continue-editing-button"
 					>
 						{ __( 'Continue Editing', __i18n_text_domain__ ) }

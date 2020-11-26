@@ -116,6 +116,16 @@ export const hideModalTitle = () =>
 		type: 'HIDE_MODAL_TITLE',
 	} as const );
 
+export const showSuccessView = () =>
+	( {
+		type: 'SHOW_SUCCESS_VIEW',
+	} as const );
+
+export const hideSuccessView = () =>
+	( {
+		type: 'HIDE_SUCCESS_VIEW',
+	} as const );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -136,4 +146,6 @@ export type LaunchAction = ReturnType<
 	| typeof unsetModalDismissible
 	| typeof showModalTitle
 	| typeof hideModalTitle
+	| typeof showSuccessView
+	| typeof hideSuccessView
 >;

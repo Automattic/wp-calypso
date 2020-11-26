@@ -143,6 +143,18 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 	return state;
 };
 
+const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'SHOW_SUCCESS_VIEW' ) {
+		return true;
+	}
+
+	if ( action.type === 'HIDE_SUCCESS_VIEW' ) {
+		return false;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	domain,
@@ -157,6 +169,7 @@ const reducer = combineReducers( {
 	isSiteTitleStepVisible,
 	isModalDismissible,
 	isModalTitleVisible,
+	shouldDisplaySuccessView,
 } );
 
 export type State = ReturnType< typeof reducer >;
