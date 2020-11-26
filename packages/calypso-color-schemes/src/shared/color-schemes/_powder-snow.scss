@@ -121,4 +121,10 @@
 	--color-sidebar-menu-hover-background: var( --color-surface );
 	--color-sidebar-menu-hover-background-rgb: var( --studio-white-rgb );
 	--color-sidebar-menu-hover-text: var( --studio-blue-60 );
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --studio-gray-10 );
+	--color-sidebar-submenu-text: var( --studio-gray-80 );
+	--color-sidebar-submenu-hover-text: var( --studio-blue-60 );
+	--color-sidebar-submenu-selected-text: var( --studio-gray-80 );
 }
