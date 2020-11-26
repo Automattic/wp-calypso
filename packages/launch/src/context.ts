@@ -8,7 +8,7 @@ interface LaunchContext {
 	siteId: number;
 	locale: string;
 	redirectTo: ( url: string ) => void;
-	openCheckout: ( siteId: number | string, isEcommerce?: boolean ) => void;
+	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
 	flow: string;
 }
 

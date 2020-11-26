@@ -21,7 +21,7 @@ interface Props {
 	siteId: number;
 	locale: string;
 	redirectTo: ( path: string ) => void;
-	openCheckout: ( siteId: number | string, isEcommerce?: boolean ) => void;
+	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
