@@ -927,6 +927,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				step( 'Can see the Line Height setting for the paragraph', async function () {
 					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
 
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
 					// Give focus to the first paragraph block found
 					await driverHelper.clickWhenClickable(
 						driver,
@@ -940,6 +943,9 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 						driver,
 						By.css( '.block-editor-line-height-control' )
 					);
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
 
 					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
 				} );
