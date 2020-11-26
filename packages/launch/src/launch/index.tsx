@@ -20,17 +20,14 @@ import './styles.scss';
 interface Props {
 	siteId: number;
 	locale: string;
-	redirectTo?: ( url: string ) => void;
+	redirectTo: ( path: string ) => void;
 	openCheckout: ( siteId: number | string, isEcommerce?: boolean ) => void;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	siteId,
 	locale,
-	redirectTo = ( url: string ) => {
-		// Won't work if trying to redirect the parent frame
-		window.location.href = url;
-	},
+	redirectTo,
 	openCheckout,
 } ) => {
 	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );

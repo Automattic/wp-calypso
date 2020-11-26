@@ -15,7 +15,7 @@ import { getPlanProduct, getDomainProduct } from '../utils';
 
 // Hook used exclusively in Step-by-step launch flow
 export const useOnLaunch = () => {
-	const { siteId, flow } = React.useContext( LaunchContext );
+	const { siteId, flow, redirectTo } = React.useContext( LaunchContext );
 
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const isEcommercePlan = useSelect( ( select ) =>
@@ -47,20 +47,20 @@ export const useOnLaunch = () => {
 					// 	: `block-editor%2Fpage%2F${ newSite.site_slug }%2Fhome`;
 					// window.location.href = `https://wordpress.com/checkout/${ siteId }?preLaunch=1&isGutenboardingCreate=1&redirect_to=%2F${ editorUrl }`;
 
-					const checkoutUrl = addQueryArgs( `https://wordpress.com/checkout/${ siteId }`, {
+					const checkoutUrl = addQueryArgs( `/checkout/${ siteId }`, {
 						preLaunch: 1,
 						// Redirect to My Home after checkout only if the selected plan is not eCommerce
 						...( ! isEcommercePlan && { redirect_to: `/home/${ siteId }` } ),
 					} );
 
-					window.top.location.href = checkoutUrl;
+					redirectTo( checkoutUrl );
 				};
 
 				// TODO: record tracks event
 				go();
 				return;
 			}
-			window.top.location.href = `https://wordpress.com/home/${ siteId }`;
+			redirectTo( `/home/${ siteId }` );
 		}
 	}, [ isSiteLaunched ] ); // eslint-disable-line react-hooks/exhaustive-deps
 };

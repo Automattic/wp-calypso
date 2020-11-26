@@ -12,10 +12,7 @@ import FocusedLaunchModal from '@automattic/launch';
  * Internal dependencies
  */
 import { LAUNCH_STORE } from './stores';
-
-const redirectParentWindow = ( url: string ) => {
-	window.top.location.href = url;
-};
+import { redirectParentWindow, redirectToWpcomPath } from './utils';
 
 const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
 
@@ -55,11 +52,7 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 				siteId={ currentSiteId }
 				openCheckout={ handleCheckout }
 				locale={ document.documentElement.lang }
-				redirectTo={ ( url: string ) => {
-					const origin = 'https://wordpress.com';
-					const path = url.startsWith( '/' ) ? url : `/${ url }`;
-					redirectParentWindow( `${ origin }${ path }` );
-				} }
+				redirectTo={ redirectToWpcomPath }
 			/>
 		);
 	},

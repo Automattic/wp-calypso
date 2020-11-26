@@ -20,13 +20,10 @@ const defaultRedirectTo = ( url: string ) => {
 const LaunchContext = React.createContext< LaunchContext >( {
 	siteId: 0,
 	locale: 'en',
-	redirectTo: ( url: string ) => {
-		// Won't work if trying to redirect the parent frame
-		window.location.href = url;
-	},
+	redirectTo: defaultRedirectTo,
 	openCheckout: ( siteId, isEcommerce ) => {
 		defaultRedirectTo(
-			addQueryArgs( `https://wordpress.com/checkout/${ siteId }`, {
+			addQueryArgs( `/checkout/${ siteId }`, {
 				preLaunch: 1,
 				// Redirect to My Home after checkout only if the selected plan is not eCommerce
 				...( ! isEcommerce && { redirect_to: `/home/${ siteId }` } ),

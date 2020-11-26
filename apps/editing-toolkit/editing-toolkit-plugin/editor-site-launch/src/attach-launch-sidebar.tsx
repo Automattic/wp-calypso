@@ -14,6 +14,7 @@ import { LocaleProvider } from '@automattic/i18n-utils';
 import LaunchModal from './launch-modal';
 import { LAUNCH_STORE } from './stores';
 import { FLOW_ID } from './constants';
+import { redirectToWpcomPath } from './utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,7 +45,13 @@ registerPlugin( 'a8c-editor-site-launch', {
 
 		return (
 			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale }>
-				<LaunchContext.Provider value={ { siteId: window._currentSiteId, flow: FLOW_ID } }>
+				<LaunchContext.Provider
+					value={ {
+						siteId: window._currentSiteId,
+						flow: FLOW_ID,
+						redirectTo: redirectToWpcomPath,
+					} }
+				>
 					<LaunchModal onClose={ closeSidebar } />
 				</LaunchContext.Provider>
 			</LocaleProvider>
