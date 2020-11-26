@@ -271,5 +271,4 @@ export const getSocialAccountLinkAuthInfo = ( state ) =>
  * @param  {object}   state  Global state tree
  * @returns {?string}         Email address or username.
  */
-export const getLastCheckedUsernameOrEmail = ( state ) =>
-	state.login.lastCheckedUsernameOrEmail ?? null;
+export const getLastCheckedUsernameOrEmail = ( state ) => state.login.lastCheckedUsernameOrEmail;
