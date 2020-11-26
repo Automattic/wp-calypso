@@ -54,9 +54,11 @@ export default function JetpackSearchUpsell(): ReactElement {
 
 				<PromoCardCTA
 					cta={ {
-						text: translate( 'Get Jetpack Search' ),
+						text: translate( 'Upgrade to Jetpack Search' ),
 						action: {
-							url: `/checkout/${ siteSlug }/jetpack_search_monthly`,
+							url:
+								'https://jetpack.com/upgrade/search/?utm_campaign=my-sites-jetpack-search&utm_source=calypso&site=' +
+								siteSlug,
 							onClick: onUpgradeClick,
 							selfTarget: true,
 						},
