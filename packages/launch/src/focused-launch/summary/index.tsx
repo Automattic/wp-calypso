@@ -137,7 +137,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 									__i18n_text_domain__
 								) }
 							>
-								{ info }
+								<span>{ info }</span>
 							</Tooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
@@ -313,7 +313,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									__i18n_text_domain__
 								) }
 							>
-								{ info }
+								<span>{ info }</span>
 							</Tooltip>
 							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
 								<Icon icon={ bulb } />
