@@ -76,6 +76,10 @@ class InviteAccept extends React.Component {
 				authKey: this.props.authKey,
 			};
 
+			// Replace the plain invite key with the strengthened key
+			// from the url: invite key + secret
+			invite.inviteKey = this.props.inviteKey;
+
 			this.handleFetchInvite( false, invite );
 		} catch ( error ) {
 			this.handleFetchInvite( error );
