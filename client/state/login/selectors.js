@@ -193,7 +193,7 @@ export const getAuthAccountType = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?boolean}         Error for the request.
  */
-export const isSocialAccountCreating = ( state ) => state.login.socialAccount?.isCreating ?? null;
+export const isSocialAccountCreating = ( state ) => state.login.socialAccount.isCreating;
 
 /**
  * Gets Username of the created social account
@@ -202,7 +202,7 @@ export const isSocialAccountCreating = ( state ) => state.login.socialAccount?.i
  * @returns {?string}         Username of the created social account
  */
 export const getCreatedSocialAccountUsername = ( state ) =>
-	state.login.socialAccount?.username ?? null;
+	state.login.socialAccount.username ?? null;
 
 /**
  * Gets Bearer token of the created social account
@@ -211,7 +211,7 @@ export const getCreatedSocialAccountUsername = ( state ) =>
  * @returns {?string}         Bearer token of the created social account
  */
 export const getCreatedSocialAccountBearerToken = ( state ) =>
-	state.login.socialAccount?.bearerToken ?? null;
+	state.login.socialAccount.bearerToken ?? null;
 
 /**
  * Gets error for the create social account request.
@@ -220,7 +220,7 @@ export const getCreatedSocialAccountBearerToken = ( state ) =>
  * @returns {?object}         Error for the create social account request.
  */
 export const getCreateSocialAccountError = ( state ) =>
-	state.login.socialAccount?.createError ?? null;
+	state.login.socialAccount.createError ?? null;
 
 /**
  * Gets error for the get social account request.
@@ -229,7 +229,7 @@ export const getCreateSocialAccountError = ( state ) =>
  * @returns {?object}         Error for the get social account request.
  */
 export const getRequestSocialAccountError = ( state ) =>
-	state.login.socialAccount?.requestError ?? null;
+	state.login.socialAccount.requestError ?? null;
 
 /**
  * Gets social account linking status
