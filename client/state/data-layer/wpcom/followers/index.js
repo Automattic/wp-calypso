@@ -39,7 +39,7 @@ const removeFollower = ( action ) => {
 		http(
 			{
 				method: 'POST',
-				path: `sites/${ siteId }/followers/${ follower.ID }/delete`,
+				path: `/sites/${ siteId }/followers/${ follower.ID }/delete`,
 				apiVersion: '1.1',
 			},
 			action
