@@ -12,6 +12,7 @@ import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/compon
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -110,7 +111,6 @@ type DomainStepProps = CommonStepProps & { hasPaidDomain?: boolean; isLoading: b
 		| 'initialDomainSearch'
 		| 'onDomainSelect'
 		| 'onExistingSubdomainSelect'
-		| 'locale'
 	>;
 
 const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
@@ -121,9 +121,10 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	hasPaidDomain,
 	onDomainSelect,
 	onExistingSubdomainSelect,
-	locale,
 	isLoading,
 } ) => {
+	const locale = useLocale();
+
 	return (
 		<SummaryStep
 			input={
@@ -516,7 +517,7 @@ const Summary: React.FunctionComponent = () => {
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
-	const { locale, siteId, redirectTo } = React.useContext( LaunchContext );
+	const { siteId, redirectTo } = React.useContext( LaunchContext );
 
 	const { goToCheckout } = useCart();
 
@@ -580,7 +581,6 @@ const Summary: React.FunctionComponent = () => {
 			 * they already have a paid domain
 			 * */
 			onExistingSubdomainSelect={ onExistingSubdomainSelect }
-			locale={ locale }
 		/>
 	);
 

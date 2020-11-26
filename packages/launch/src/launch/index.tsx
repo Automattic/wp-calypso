@@ -2,11 +2,12 @@
  * External dependencies
  */
 import * as React from 'react';
+import classNames from 'classnames';
 import { __ } from '@wordpress/i18n';
 import { Modal } from '@wordpress/components';
 import { Icon, wordpress } from '@wordpress/icons';
-import classNames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { LocaleProvider } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -18,17 +19,17 @@ import { FOCUSED_LAUNCH_FLOW_ID } from '../constants';
 import './styles.scss';
 
 interface Props {
+	locale?: string;
 	siteId: number;
-	locale: string;
-	redirectTo: ( path: string ) => void;
 	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
+	redirectTo: ( path: string ) => void;
 }
 
 const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
+	locale = 'en',
 	siteId,
-	locale,
-	redirectTo,
 	openCheckout,
+	redirectTo,
 } ) => {
 	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
 	const isModalTitleVisible = useSelect( ( select ) =>
@@ -38,28 +39,30 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
 	return (
-		<Modal
-			open={ true }
-			className={ classNames( 'launch__focused-modal', {
-				'launch__focused-modal--hide-title': ! isModalTitleVisible,
-			} ) }
-			overlayClassName="launch__focused-modal-overlay"
-			bodyOpenClassName="has-focused-launch-modal"
-			onRequestClose={ closeFocusedLaunch }
-			title={ __( 'Complete setup', __i18n_text_domain__ ) }
-			icon={ <Icon icon={ wordpress } size={ 36 } /> }
-			isDismissible={ isModalDismissible }
-			shouldCloseOnEsc={ isModalDismissible }
-			shouldCloseOnClickOutside={ isModalDismissible }
-		>
-			<div className="launch__focused-modal-body">
-				<LaunchContext.Provider
-					value={ { siteId, locale, redirectTo, openCheckout, flow: FOCUSED_LAUNCH_FLOW_ID } }
-				>
-					<FocusedLaunch />
-				</LaunchContext.Provider>
-			</div>
-		</Modal>
+		<LocaleProvider localeSlug={ locale }>
+			<Modal
+				open={ true }
+				className={ classNames( 'launch__focused-modal', {
+					'launch__focused-modal--hide-title': ! isModalTitleVisible,
+				} ) }
+				overlayClassName="launch__focused-modal-overlay"
+				bodyOpenClassName="has-focused-launch-modal"
+				onRequestClose={ closeFocusedLaunch }
+				title={ __( 'Complete setup', __i18n_text_domain__ ) }
+				icon={ <Icon icon={ wordpress } size={ 36 } /> }
+				isDismissible={ isModalDismissible }
+				shouldCloseOnEsc={ isModalDismissible }
+				shouldCloseOnClickOutside={ isModalDismissible }
+			>
+				<div className="launch__focused-modal-body">
+					<LaunchContext.Provider
+						value={ { siteId, redirectTo, openCheckout, flow: FOCUSED_LAUNCH_FLOW_ID } }
+					>
+						<FocusedLaunch />
+					</LaunchContext.Provider>
+				</div>
+			</Modal>
+		</LocaleProvider>
 	);
 };
 

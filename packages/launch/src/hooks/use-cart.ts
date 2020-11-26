@@ -21,8 +21,9 @@ export function useCart() {
 
 	const { getCart, setCart } = useDispatch( SITE_STORE );
 
-	// this can be extracted to an action creator on the Launch data-store
 	const goToCheckout = async () => {
+		// setting the cart with Launch products can be extracted
+		// to an action creator on the Launch data-store
 		const planProduct = plan && getPlanProduct( plan, flow );
 		const domainProduct = domain && getDomainProduct( domain, flow );
 
@@ -31,6 +32,8 @@ export function useCart() {
 			...cart,
 			products: [ planProduct, domainProduct ],
 		} );
+
+		// open checkout modal or redirect to /checkout only after the cart is updated
 		openCheckout( siteId, isEcommercePlan );
 	};
 

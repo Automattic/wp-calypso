@@ -6,7 +6,6 @@ import { addQueryArgs } from '@wordpress/url';
 
 interface LaunchContext {
 	siteId: number;
-	locale: string;
 	redirectTo: ( url: string ) => void;
 	openCheckout: ( siteId: number, isEcommerce?: boolean ) => void;
 	flow: string;
@@ -19,7 +18,6 @@ const defaultRedirectTo = ( url: string ) => {
 
 const LaunchContext = React.createContext< LaunchContext >( {
 	siteId: 0,
-	locale: 'en',
 	redirectTo: defaultRedirectTo,
 	openCheckout: ( siteId, isEcommerce ) => {
 		defaultRedirectTo(
