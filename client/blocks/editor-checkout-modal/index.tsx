@@ -91,7 +91,7 @@ const EditorCheckoutModal = ( props: Props ) => {
 				open={ isOpen }
 				overlayClassName="editor-checkout-modal"
 				onRequestClose={ onClose }
-				title={ translate( 'Checkout modal' ) }
+				title={ String( translate( 'Checkout modal' ) ) }
 				shouldCloseOnClickOutside={ false }
 				icon={ <Icon icon={ wordpress } size={ 36 } /> }
 			>
