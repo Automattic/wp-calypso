@@ -27,12 +27,12 @@ import FormLabel from 'calypso/components/forms/form-label';
 
 const DOMAIN_DISCOUNT_PERCENTAGE = 20;
 
-function handleUpgradeButtonClick( props, selectedDomain ) {
+function handleUpgradeButtonClick( props, selectedDomain, domainUpsellItems ) {
 	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
+	if ( ! domainUpsellItems ) {
+		return;
+	}
 
-	const domainUpsellItems = [
-		domainRegistration( { productSlug: 'domain_reg', domain: selectedDomain } ),
-	];
 	const step = {
 		stepName,
 		stepSectionName,
@@ -145,6 +145,12 @@ function RecommendedDomains( props ) {
 	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
 	const domain = getDomainName( siteSlug );
 	const productData = secureYourBrand.product_data;
+	const domainUpsellItems = productData
+		?.filter( ( product ) => product.domain === selectedDomain )
+		?.map( ( product ) =>
+			domainRegistration( { domain: product.domain, productSlug: product.product_slug } )
+		);
+
 	useEffect( () => {
 		if ( productData && ! selectedDomain ) {
 			setSelectedDomain( productData[ 0 ].domain );
@@ -181,7 +187,12 @@ function RecommendedDomains( props ) {
 					<Button
 						busy={ isLoading }
 						primary
-						onClick={ handleUpgradeButtonClick.bind( this, props, selectedDomain ) }
+						onClick={ handleUpgradeButtonClick.bind(
+							this,
+							props,
+							selectedDomain,
+							domainUpsellItems
+						) }
 					>
 						{ isLoading ? '' : translate( 'Use %s', { args: [ selectedDomain ] } ) }
 					</Button>
