@@ -18,9 +18,9 @@ import { JPC_PATH_BASE } from 'calypso/jetpack-connect/constants';
 /**
  * Type dependencies
  */
-import type { QueryArgs } from 'calypso/my-sites/plans-v2/types';
+import type { QueryArgs } from 'calypso/my-sites/plans/jetpack-plans/types';
 
-interface JetpackFreeCardButton {
+interface JetpackFreeCardButtonProps {
 	className?: string;
 	label?: TranslateResult;
 	primary?: boolean;
@@ -28,7 +28,7 @@ interface JetpackFreeCardButton {
 	urlQueryArgs: QueryArgs;
 }
 
-const JetpackFreeCardButton: FC< JetpackFreeCardButton > = ( {
+const JetpackFreeCardButton: FC< JetpackFreeCardButtonProps > = ( {
 	className,
 	label,
 	primary = false,
@@ -41,14 +41,14 @@ const JetpackFreeCardButton: FC< JetpackFreeCardButton > = ( {
 		site_id: siteId || undefined,
 	} );
 
-	// Jetpack Connect flow uses `url` instead of `site` for a site URL
+	// Jetpack Connect flow uses `url` instead of `site` as the query parameter for a site URL
 	const { site: url, ...restQueryArgs } = urlQueryArgs;
 	const startHref = isJetpackCloud()
 		? addQueryArgs( { url, ...restQueryArgs }, `https://wordpress.com${ JPC_PATH_BASE }` )
 		: wpAdminUrl || JPC_PATH_BASE;
 	return (
 		<Button primary={ primary } className={ className } href={ startHref } onClick={ onClickTrack }>
-			{ label ? label : translate( 'Start for free' ) }
+			{ label || translate( 'Start for free' ) }
 		</Button>
 	);
 };
