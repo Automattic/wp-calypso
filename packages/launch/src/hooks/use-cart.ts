@@ -11,7 +11,7 @@ import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { getPlanProduct, getDomainProduct } from '../utils';
 
-export function useCart() {
+export function useCart(): { goToCheckout: () => Promise< void > } {
 	const { siteId, flow, openCheckout } = React.useContext( LaunchContext );
 
 	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );

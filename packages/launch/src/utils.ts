@@ -21,7 +21,15 @@ export const isDefaultSiteTitle = ( {
 		? currentSiteTitle === DEFAULT_SITE_NAME
 		: new RegExp( DEFAULT_SITE_NAME, 'i' ).test( currentSiteTitle );
 
-export const getPlanProduct = ( plan: Plans.Plan, flow: string ) => ( {
+type PlanProduct = {
+	product_id: number;
+	product_slug: string;
+	extra: {
+		source: string;
+	};
+};
+
+export const getPlanProduct = ( plan: Plans.Plan, flow: string ): PlanProduct => ( {
 	product_id: plan.productId,
 	product_slug: plan.storeSlug,
 	extra: {
@@ -29,7 +37,20 @@ export const getPlanProduct = ( plan: Plans.Plan, flow: string ) => ( {
 	},
 } );
 
-export const getDomainProduct = ( domain: DomainSuggestions.DomainSuggestion, flow: string ) => ( {
+type DomainProduct = {
+	meta: string;
+	product_id: number;
+	extra: {
+		privacy_available: boolean;
+		privacy: boolean;
+		source: string;
+	};
+};
+
+export const getDomainProduct = (
+	domain: DomainSuggestions.DomainSuggestion,
+	flow: string
+): DomainProduct => ( {
 	meta: domain?.domain_name,
 	product_id: domain?.product_id,
 	extra: {
