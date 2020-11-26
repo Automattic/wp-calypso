@@ -26,9 +26,11 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 } from '../selectors';
+import reducer from '../reducer';
 
+// Initialize empty state from a missing previous state and a no-op.
 const EMPTY_STATE = {
-	login: {},
+	login: reducer( undefined, { type: 'NOOP' } ),
 };
 
 describe( 'selectors', () => {
