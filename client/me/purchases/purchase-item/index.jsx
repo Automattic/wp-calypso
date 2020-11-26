@@ -242,25 +242,30 @@ class PurchaseItem extends Component {
 		const { purchase } = this.props;
 
 		if ( isRenewing( purchase ) ) {
-			const imgSrc =
-				purchase.payment.type === 'credit_card'
-					? getPaymentMethodImageURL( purchase.payment.creditCard.type )
-					: payPalImage;
-			const altText =
-				purchase.payment.type === 'credit_card'
-					? purchase.payment.creditCard.type
-					: purchase.payment.type;
-			const className =
-				purchase.payment.type === 'credit_card'
-					? 'purchase-item__payment-method-card'
-					: 'purchase-item__paypal';
+			if ( purchase.payment.type === 'credit_card' ) {
+				return (
+					<>
+						<img
+							src={ getPaymentMethodImageURL( purchase.payment.creditCard.type ) }
+							alt={ purchase.payment.creditCard.type }
+							className="purchase-item__payment-method-card"
+						/>
+						{ purchase.payment.type === 'credit_card' && purchase.payment.creditCard.number }
+					</>
+				);
+			}
 
-			return (
-				<>
-					<img src={ imgSrc } alt={ altText } className={ className } />
-					{ purchase.payment.type === 'credit_card' && purchase.payment.creditCard.number }
-				</>
-			);
+			if ( purchase.payment.type === 'paypal' ) {
+				return (
+					<img
+						src={ payPalImage }
+						alt={ purchase.payment.type }
+						className="purchase-item__paypal"
+					/>
+				);
+			}
+
+			return null;
 		}
 	}
 
