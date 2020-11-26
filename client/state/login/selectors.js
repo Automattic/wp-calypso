@@ -237,8 +237,7 @@ export const getRequestSocialAccountError = ( state ) =>
  * @param  {object}   state  Global state tree
  * @returns {?boolean}         Boolean describing social account linking status
  */
-export const getSocialAccountIsLinking = ( state ) =>
-	state.login.socialAccountLink?.isLinking ?? null;
+export const getSocialAccountIsLinking = ( state ) => state.login.socialAccountLink.isLinking;
 
 /**
  * Gets social account linking email
@@ -246,7 +245,7 @@ export const getSocialAccountIsLinking = ( state ) =>
  * @param  {object}   state  Global state tree
  * @returns {?string}         wpcom email that is being linked
  */
-export const getSocialAccountLinkEmail = ( state ) => state.login.socialAccountLink?.email ?? null;
+export const getSocialAccountLinkEmail = ( state ) => state.login.socialAccountLink.email ?? null;
 
 /**
  * Gets social account linking service
@@ -255,7 +254,7 @@ export const getSocialAccountLinkEmail = ( state ) => state.login.socialAccountL
  * @returns {?string}         service name that is being linked
  */
 export const getSocialAccountLinkService = ( state ) =>
-	state.login.socialAccountLink?.authInfo?.service ?? null;
+	state.login.socialAccountLink.authInfo?.service ?? null;
 
 /**
  * Gets the auth information of the social account to be linked.
@@ -264,7 +263,7 @@ export const getSocialAccountLinkService = ( state ) =>
  * @returns {?string}         Email address of the social account.
  */
 export const getSocialAccountLinkAuthInfo = ( state ) =>
-	state.login.socialAccountLink?.authInfo ?? null;
+	state.login.socialAccountLink.authInfo ?? null;
 
 /**
  * Gets the last username/email that was checked.
