@@ -596,7 +596,7 @@ export function getOptionFromSlug( slug: string ): string | null {
 export function checkout(
 	siteSlug: string,
 	products: string | string[],
-	urlQueryArgs: QueryArgs
+	urlQueryArgs: QueryArgs = {}
 ): void {
 	const productsArray = isArray( products ) ? products : [ products ];
 	const productsString = productsArray.join( ',' );
@@ -620,33 +620,6 @@ export function checkout(
 		addItems( productsArray.map( jetpackProductItem ) );
 		page.redirect( addQueryArgs( urlQueryArgs, path ) );
 	}
-}
-
-/**
- * Returns a URL of the format `rootUrl/productSlug/duration/details/?siteSlug` that
- * points to the Details page.
- *
- * @param {string} rootUrl Base URL that relates to the current flow (WordPress.com vs Jetpack Connect).
- * @param {QueryArgs} urlQueryArgs URL query params appended to url (ie. for affiliate tracking, or whatever), or {} if none.
- * @param {string} productSlug Slug of the product
- * @param {Duration} duration Monthly or annual
- * @param {string} siteSlug (optional) The slug of the selected site
- *
- * @returns {string} The path to the Details page
- */
-export function getPathToDetails(
-	rootUrl: string,
-	urlQueryArgs: QueryArgs,
-	productSlug: string,
-	duration: Duration,
-	siteSlug?: string
-): string {
-	const strDuration = durationToString( duration );
-	const path = [ rootUrl, productSlug, strDuration, 'details', siteSlug ]
-		.filter( Boolean )
-		.join( '/' );
-
-	return addQueryArgs( urlQueryArgs, path );
 }
 
 /**

@@ -54,6 +54,10 @@ import {
 	FEATURE_SEARCH_V2,
 	FEATURE_PRODUCT_SEARCH_V2,
 	FEATURE_CRM_V2,
+	FEATURE_GOOGLE_ANALYTICS,
+	FEATURE_ADVANCED_SEO,
+	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
+	FEATURE_ACTIVITY_LOG,
 } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { buildCardFeaturesFromItem } from './utils';
@@ -62,6 +66,7 @@ import { buildCardFeaturesFromItem } from './utils';
  * Type dependencies
  */
 import type { SelectorProduct, SelectorProductSlug } from './types';
+import type { JetpackPlanSlugs } from 'calypso/lib/plans/types';
 
 export const ALL = 'all';
 export const PERFORMANCE = 'performance';
@@ -384,6 +389,16 @@ export const UPSELL_PRODUCT_MATRIX: Record< string, string > = {
 	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: PRODUCT_JETPACK_SCAN_MONTHLY,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: PRODUCT_JETPACK_SCAN,
 	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: PRODUCT_JETPACK_SCAN_MONTHLY,
+};
+
+/**
+ * Matrix of products upsold by specific features.
+ */
+export const PRODUCT_UPSELLS_BY_FEATURE: Record< string, JetpackPlanSlugs > = {
+	[ FEATURE_GOOGLE_ANALYTICS ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	[ FEATURE_ADVANCED_SEO ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	[ FEATURE_ACTIVITY_LOG ]: PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
 };
 
 /**

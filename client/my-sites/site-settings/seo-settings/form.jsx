@@ -11,8 +11,7 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
 import Notice from 'calypso/components/notice';
@@ -48,7 +47,6 @@ import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
 } from 'calypso/lib/plans/constants';
 import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
@@ -308,7 +306,7 @@ export class SeoForm extends React.Component {
 			? {
 					title: translate( 'Boost your search engine ranking' ),
 					feature: FEATURE_SEO_PREVIEW_TOOLS,
-					href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+					href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 			  }
 			: {
 					title: translate(
