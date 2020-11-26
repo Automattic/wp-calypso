@@ -100,14 +100,15 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 
 const SiteSetupList = ( {
 	emailVerificationStatus,
+	firstIncompleteTask,
 	isEmailUnverified,
+	isPodcastingSite,
 	menusUrl,
 	siteId,
 	siteSlug,
 	tasks,
 	taskUrls,
 	userEmail,
-	firstIncompleteTask,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -171,6 +172,7 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
+				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
@@ -298,13 +300,14 @@ export default connect( ( state ) => {
 
 	return {
 		emailVerificationStatus,
+		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
-		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 	};
 } )( SiteSetupList );

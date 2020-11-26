@@ -19,8 +19,6 @@ export const CHECKLIST_KNOWN_TASKS = {
 	EMAIL_VERIFIED: 'email_verified',
 	BLOGNAME_SET: 'blogname_set',
 	MOBILE_APP_INSTALLED: 'mobile_app_installed',
-	// TODO: Confirm task ID for podcast site launched
-	PODCAST_SITE_LAUNCHED: 'podcast_site_launched',
 	SITE_LAUNCHED: 'site_launched',
 	FRONT_PAGE_UPDATED: 'front_page_updated',
 	SITE_MENU_UPDATED: 'site_menu_updated',
