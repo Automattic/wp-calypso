@@ -33,6 +33,7 @@ import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -279,15 +280,27 @@ class PurchaseItem extends Component {
 		}
 	}
 
+	getSiteIcon = () => {
+		const { site, isDisconnectedSite } = this.props;
+
+		if ( isDisconnectedSite ) {
+			return (
+				<div className="purchase-item__disconnected-icon">
+					<Gridicon icon="block" size={ Math.round( 36 / 1.8 ) } />
+				</div>
+			);
+		}
+
+		return <SiteIcon site={ site } size={ 36 } />;
+	};
+
 	renderPurhaseItemContent = () => {
-		const { purchase, site, showSite } = this.props;
+		const { purchase, showSite } = this.props;
 
 		return (
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
-					<div className="purchase-item__site purchases-layout__site">
-						<SiteIcon site={ site } size={ 36 } />
-					</div>
+					<div className="purchase-item__site purchases-layout__site">{ this.getSiteIcon() }</div>
 				) }
 
 				<div className="purchase-item__information purchases-layout__information">

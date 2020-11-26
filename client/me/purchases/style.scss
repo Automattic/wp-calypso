@@ -100,6 +100,20 @@
 	}
 }
 
+.purchase-item__disconnected-icon {
+	display: flex;
+	width: 36px;
+	height: 36px;
+	border-radius: 2px;
+	background: var( --color-error-50 );
+	align-items: center;
+	justify-content: center;
+
+	.gridicon {
+		fill: var( --color-surface );
+	}
+}
+
 .purchase-item__title {
 	color: var( --color-neutral-80 );
 	overflow: hidden;
@@ -132,7 +146,7 @@
 .purchase-item__status {
 	font-size: $font-body-small;
 	color: var( --color-neutral-80 );
-	line-height: 1.2em;
+	line-height: 1.3em;
 
 	.purchase-item__is-error, 
 	.purchase-item__is-warning {
