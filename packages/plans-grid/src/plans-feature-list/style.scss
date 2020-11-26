@@ -44,17 +44,20 @@ ul.plans-feature-list__item-group {
 
 	// the tick
 	& > svg path {
-		fill: var( --studio-green-40 );
-		stroke: var( --studio-green-40 );
+		fill: var( --studio-gray-100 );
+		stroke: var( --studio-gray-100 );
 	}
 
 	&--disabled-message {
-		font-weight: bold;
-		color: var( --studio-orange-40 );
-
 		& > svg path {
 			fill: var( --studio-orange-40 );
 			stroke: var( --studio-orange-40 );
+		}
+
+		& > span {
+			font-weight: bold;
+			color: var( --studio-orange-40 );
+			text-decoration: line-through;
 		}
 	}
 }
