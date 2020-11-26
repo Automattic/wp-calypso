@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import * as React from 'react';
 import { __ } from '@wordpress/i18n';
 import { Title, SubTitle, NextButton, BackButton } from '@automattic/onboarding';
 import { Icon, external } from '@wordpress/icons';
