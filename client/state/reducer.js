@@ -31,7 +31,6 @@ import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import selectedEditor from './selected-editor/reducer';
-import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
 import storedCards from './stored-cards/reducer';
@@ -62,7 +61,6 @@ const reducers = {
 	notices,
 	notificationsUnseenCount,
 	selectedEditor,
-	siteKeyrings,
 	siteRoles,
 	sites,
 	storedCards,

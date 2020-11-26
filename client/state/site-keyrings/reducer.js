@@ -1,7 +1,12 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import { siteKeyrings as siteKeyringsSchema } from './schema';
 import {
 	SITE_KEYRINGS_REQUEST,
@@ -137,8 +142,10 @@ const items = withSchemaValidation( siteKeyringsSchema, ( state = {}, action ) =
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 	requesting,
 	saveRequests,
 } );
+
+export default withStorageKey( 'siteKeyrings', combinedReducer );
