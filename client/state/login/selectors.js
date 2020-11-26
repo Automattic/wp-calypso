@@ -131,7 +131,7 @@ export const isRequesting = ( state ) => {
  * @returns {?object}         Error for the request.
  */
 export const getRequestError = ( state ) => {
-	return state.login.requestError ?? null;
+	return state.login.requestError;
 };
 
 /**
