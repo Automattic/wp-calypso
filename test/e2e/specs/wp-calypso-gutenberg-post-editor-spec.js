@@ -284,16 +284,18 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
 				const shownItems = await gEditorComponent.getShownBlockInserterItems();
 
-				assert.strictEqual(
-					[
-						'Donations',
-						'OpenTable',
-						'Payments',
-						'Pay with PayPal',
-						'Premium Content',
-						'Pricing Table',
-					].every( ( v ) => shownItems.includes( v ) ),
-					true
+				[
+					'Donations',
+					'OpenTable',
+					'Payments',
+					'Pay with PayPal',
+					'Premium Content',
+					'Pricing Table',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
 
 				await gEditorComponent.closeBlockInserter();
@@ -304,25 +306,27 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
 				const shownItems = await gEditorComponent.getShownBlockInserterItems();
 
-				assert.strictEqual(
-					[
-						'Business Hours',
-						'Calendly',
-						'Form',
-						'Contact Info',
-						'Mailchimp',
-						'Revue',
-						'Subscription Form',
-						'Click to Tweet',
-						'Logos',
-						'Contact Form',
-						'RSVP Form',
-						'Registration Form',
-						'Appointment Form',
-						'Feedback Form',
-						'WhatsApp Button',
-					].every( ( v ) => shownItems.includes( v ) ),
-					true
+				[
+					'Business Hours',
+					'Calendly',
+					'Form',
+					'Contact Info',
+					'Mailchimp',
+					'Revue',
+					'Subscription Form',
+					'Click to Tweet',
+					'Logos',
+					'Contact Form',
+					'RSVP Form',
+					'Registration Form',
+					'Appointment Form',
+					'Feedback Form',
+					'WhatsApp Button',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
 
 				await gEditorComponent.closeBlockInserter();
