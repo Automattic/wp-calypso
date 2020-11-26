@@ -69,11 +69,7 @@ export const getTwoFactorPushPollSuccess = ( state ) =>
  * @param  {object}   state  Global state tree
  * @returns {boolean}        Whether 2FA is enabled
  */
-export const isTwoFactorEnabled = ( state ) => {
-	const twoFactorAuth = state.login.twoFactorAuth;
-
-	return !! ( twoFactorAuth && Object.keys( twoFactorAuth ).length );
-};
+export const isTwoFactorEnabled = ( state ) => state.login.twoFactorAuth != null;
 
 /**
  * Determines whether a request to authenticate 2FA is being made.
