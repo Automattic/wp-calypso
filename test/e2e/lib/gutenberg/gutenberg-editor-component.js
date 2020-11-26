@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { By, Key, until } from 'selenium-webdriver';
+import { By, Key, until, webdriver } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -285,7 +285,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
 				)
 			)
-			.then( ( els ) => Promise.all( els.map( ( el ) => el.getAttribute( 'innerText' ) ) ) );
+			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
 	}
 
 	/**
