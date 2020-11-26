@@ -44,7 +44,7 @@ jest.mock( 'config', () => {
 
 	const config = () => 'development';
 
-	config.isEnabled = jest.fn( ( key ) => key === 'persist-redux' && persistReduxEnabled );
+	config.isEnabled = jest.fn( () => persistReduxEnabled );
 	config.isEnabled.enablePersistRedux = () => ( persistReduxEnabled = true );
 	config.isEnabled.disablePersistRedux = () => ( persistReduxEnabled = false );
 
@@ -62,64 +62,7 @@ jest.mock( 'lib/user/support-user-interop', () => ( {
 
 describe( 'initial-state', () => {
 	describe( 'getInitialState', () => {
-		describe( 'persist-redux disabled', () => {
-			describe( 'with recently persisted data and initial server data', () => {
-				let state;
-				let consoleErrorSpy;
-				let getStoredItemSpy;
-
-				const savedState = {
-					'redux-state-123456789': {
-						currentUser: { id: 123456789 },
-						postTypes: {
-							items: {
-								2916284: {
-									post: { name: 'post', label: 'Posts' },
-									page: { name: 'page', label: 'Pages' },
-								},
-							},
-						},
-						_timestamp: Date.now(),
-					},
-				};
-
-				const serverState = { currentUser: { id: 123456789 } };
-
-				beforeAll( async () => {
-					window.initialReduxState = serverState;
-					consoleErrorSpy = jest.spyOn( global.console, 'error' );
-					getStoredItemSpy = jest
-						.spyOn( browserStorage, 'getAllStoredItems' )
-						.mockResolvedValue( savedState );
-					await loadAllState();
-					state = getInitialState( initialReducer );
-				} );
-
-				afterAll( () => {
-					window.initialReduxState = null;
-					consoleErrorSpy.mockRestore();
-					getStoredItemSpy.mockRestore();
-				} );
-
-				test( 'builds initial state without errors', () => {
-					expect( consoleErrorSpy ).not.toHaveBeenCalled();
-				} );
-
-				test( 'does not build initial state using IndexedDB state', () => {
-					expect( state ).not.toHaveProperty( 'postTypes' );
-				} );
-
-				test( 'does not add timestamp to initial state', () => {
-					expect( state._timestamp ).toBeUndefined();
-				} );
-
-				test( 'builds initial state using server state', () => {
-					expect( state.currentUser.id ).toBe( 123456789 );
-				} );
-			} );
-		} );
-
-		describe( 'persist-redux enabled', () => {
+		describe( 'retrieve persisted state from the cached client data', () => {
 			describe( 'switched user', () => {
 				describe( 'with recently persisted data and initial server data', () => {
 					let state;
