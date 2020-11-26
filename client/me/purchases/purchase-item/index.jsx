@@ -114,7 +114,17 @@ class PurchaseItem extends Component {
 			if ( creditCardExpiresBeforeSubscription( purchase ) ) {
 				return (
 					<span className="purchase-item__is-error">
-						{ translate( 'Credit card expiring soon' ) }
+						{ translate(
+							'Credit card expires before your next renewal on {{span}}%(date)s{{/span}}',
+							{
+								args: {
+									date: renewDate.format( 'LL' ),
+								},
+								components: {
+									span: <span className="purchase-item__date" />,
+								},
+							}
+						) }
 						{ this.trackImpression( 'credit-card-expiring' ) }
 					</span>
 				);
