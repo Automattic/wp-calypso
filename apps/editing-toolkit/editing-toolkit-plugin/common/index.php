@@ -1,6 +1,6 @@
 <?php
 /**
- * File for various functionality which needs to be added to Simple and Atomic
+ * File for arbitrary functionality which needs to be added to Simple and Atomic
  * sites. The code in this file is always loaded in the block editor.
  *
  * Currently, this module may not be the best place if you need to load
