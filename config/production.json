@@ -105,7 +105,6 @@
 		"nps-survey/devdocs": false,
 		"nps-survey/dev-trigger": false,
 		"perfmon": true,
-		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
 		"post-editor/author-selector": true,

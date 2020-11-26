@@ -84,7 +84,6 @@
 		"nav-unification": false,
 		"network-connection": true,
 		"perfmon": false,
-		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/image-editor": true,
 		"press-this": true,

@@ -41,7 +41,6 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": false,
-		"persist-redux": true,
 		"site-indicator": false,
 		"support-user": true
 	},

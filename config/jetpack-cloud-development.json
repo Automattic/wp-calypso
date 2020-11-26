@@ -44,7 +44,6 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": true,
-		"persist-redux": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
 		"support-user": true
