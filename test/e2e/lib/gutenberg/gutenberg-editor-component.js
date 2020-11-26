@@ -288,86 +288,103 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			.then( ( els ) => Promise.all( els.map( ( el ) => el.getAttribute( 'innerText' ) ) ) );
 	}
 
-	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
-	async addBlock( title ) {
-		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( title.toLowerCase() );
-		const initsWithChildFocus = false;
-		let ariaLabel;
-		let prefix = '';
+	/**
+	 * @typedef {Object} BlockSelectorSettings
+	 * @property {string} title The block title as it appears in the inserter
+	 * @property {string} blockClass The suffix that's part of a wrapper CSS class that's used to select the block button in the inserter.
+	 * Calcualted from the title if not present.
+	 * @property {string} prefix Also used to build the CSS class that's used t o select the block in the inserter.
+	 * @property {string} ariaLabel The aria label text used to select the block element wrapper in the editor. Calculated from the title if not present.
+	 * @property {boolean} initsWithChildFocus Whether or not the block gives focus to its first child upon being created/rendered in the editor.
+	 */
+
+	/**
+	 * Returns an object with settings to be used to select the block button in
+	 * the inserter or the actual block in the editor. This is used by @see {@link addBlock}
+	 * to translate the title of a block into something it can use to select/find them.
+	 *
+	 * NOTE: In the future it'd be nice to return the actual block class (in `lib/gutenberg/blocks`) and move those attributes
+	 * there instead of creating yet another value object, like it's being done now. We might then rethink or remove
+	 * the @see {@link insertBlock} function, too.
+	 *
+	 * @param {string} title The block title.
+	 * @returns {BlockSelectorSettings} the selector settings for the given block, to be used by {@link addBlock}.
+	 */
+	getBlockSelectorSettings( title ) {
+		const defaultSettings = {
+			title: title.charAt( 0 ).toUpperCase() + title.slice( 1 ), // Capitalize block name
+			blockClass: kebabCase( title.toLowerCase() ),
+			initsWithChildFocus: false,
+		};
+
+		let blockSettings;
+
 		switch ( title ) {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				ariaLabel = 'Block: Embed';
-				prefix = 'embed-';
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
 				break;
 			case 'Form':
-				prefix = 'jetpack-';
-				blockClass = 'contact-form';
+				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
 				break;
 			case 'Simple Payments':
 			case 'Pay with PayPal':
-				ariaLabel = 'Block: Pay with PayPal';
-				prefix = 'jetpack-';
-				blockClass = 'simple-payments';
+				blockSettings = {
+					ariaLabel: 'Block: Pay with PayPal',
+					prefix: 'jetpack-',
+					blockClass: 'simple-payments',
+				};
 				break;
 			case 'Markdown':
-				prefix = 'jetpack-';
+				blockSettings = { prefix: 'jetpack-' };
 				break;
 			case 'Buttons':
 			case 'Click to Tweet':
 			case 'Hero':
-				prefix = 'coblocks-';
-				break;
 			case 'Pricing Table':
-				prefix = 'coblocks-';
-				break;
-			case 'Logos':
-				prefix = 'coblocks-';
-				blockClass = 'logos';
-				break;
-			case 'Dynamic HR':
-				prefix = 'coblocks-';
-				blockClass = 'dynamic-separator';
-				break;
-			case 'Heading':
-				break;
-			case 'Layout Grid':
-				prefix = 'jetpack-';
-				break;
-			case 'Blog Posts':
-				prefix = 'a8c-';
-				break;
-			case 'Subscription Form':
-				prefix = 'jetpack-';
-				blockClass = 'subscriptions';
-				break;
-			case 'Tiled Gallery':
-				prefix = 'jetpack-';
-				break;
-			case 'Contact Info':
-				prefix = 'jetpack-';
-				break;
-			case 'Slideshow':
-				prefix = 'jetpack-';
-				break;
-			case 'Star Rating':
-				prefix = 'jetpack-';
-				blockClass = 'rating-star';
+				blockSettings = { prefix: 'coblocks-' };
 				break;
 			case 'Masonry':
-				prefix = 'coblocks-';
-				blockClass = 'gallery-masonry';
+				blockSettings = { prefix: 'coblocks-', blockClass: 'gallery-masonry' };
+				break;
+			case 'Logos':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'logos' };
+				break;
+			case 'Dynamic HR':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'dynamic-separator' };
+				break;
+			case 'Blog Posts':
+				blockSettings = { prefix: 'a8c-' };
+				break;
+			case 'Subscription Form':
+				blockSettings = { prefix: 'jetpack', blockClass: 'subscriptions' };
+				break;
+			case 'Layout Grid':
+			case 'Tiled Gallery':
+			case 'Contact Info':
+			case 'Slideshow':
+				blockSettings = { prefix: 'jetpack-' };
+				break;
+			case 'Star Rating':
+				blockSettings = { prefix: 'jetpack-', blockClass: 'rating-star' };
 				break;
 		}
+
+		return { ...defaultSettings, ...blockSettings };
+	}
+	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
+	async addBlock( title ) {
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockSelectorSettings(
+			title
+		);
 
 		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
 
 		// TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.0 on production.
-		const deprectedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprectedInserterBlockItemSelector }`
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
 
 		let insertedBlockSelector = By.css(
