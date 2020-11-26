@@ -30,7 +30,6 @@ import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
-import postFormats from './post-formats/reducer';
 import selectedEditor from './selected-editor/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
@@ -62,7 +61,6 @@ const reducers = {
 	mySites,
 	notices,
 	notificationsUnseenCount,
-	postFormats,
 	selectedEditor,
 	siteKeyrings,
 	siteRoles,
