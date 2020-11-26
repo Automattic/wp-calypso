@@ -87,6 +87,15 @@ describe( 'streams', () => {
 					},
 				},
 				{
+					stream: 'p2',
+					expected: {
+						method: 'GET',
+						path: '/read/following/p2',
+						apiVersion: '1.2',
+						query,
+					},
+				},
+				{
 					stream: 'conversations',
 					expected: {
 						method: 'GET',

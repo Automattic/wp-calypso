@@ -118,6 +118,10 @@ const streamApis = {
 		path: ( { streamKey } ) => `/read/sites/${ streamKeySuffix( streamKey ) }/featured`,
 		dateProperty: 'date',
 	},
+	p2: {
+		path: () => '/read/following/p2',
+		dateProperty: 'date',
+	},
 	a8c: {
 		path: () => '/read/a8c',
 		dateProperty: 'date',
