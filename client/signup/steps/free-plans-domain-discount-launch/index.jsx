@@ -15,6 +15,7 @@ import { Button, Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
 import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
 import Badge from 'calypso/components/badge';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -25,6 +26,37 @@ import FormRadio from 'calypso/components/forms/form-radio';
 import FormLabel from 'calypso/components/forms/form-label';
 
 const DOMAIN_DISCOUNT_PERCENTAGE = 20;
+
+function handleUpgradeButtonClick( props, selectedDomain ) {
+	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
+
+	const domainUpsellItems = [
+		domainRegistration( { productSlug: 'domain_reg', domain: selectedDomain } ),
+	];
+	const step = {
+		stepName,
+		stepSectionName,
+		domainUpsellItems,
+		...additionalStepData,
+	};
+
+	submitSignupStep( step, { domainUpsellItems } );
+	goToNextStep();
+}
+
+function handleSkipButtonClick( props ) {
+	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
+
+	const step = {
+		stepName,
+		stepSectionName,
+		domainUpsellItems: null,
+		...additionalStepData,
+	};
+
+	submitSignupStep( step, { domainUpsellItems: null } );
+	goToNextStep();
+}
 
 export default function FreePlansDomainDiscountLaunchStep( props ) {
 	const translate = useTranslate();
@@ -146,12 +178,22 @@ function RecommendedDomains( props ) {
 					</FormFieldset>
 				) }
 				<div className="free-plans-domain-discount-launch__buttons">
-					<Button busy={ isLoading } primary onClick={ () => this.handleSkipButtonClick() }>
+					<Button
+						busy={ isLoading }
+						primary
+						onClick={ handleUpgradeButtonClick.bind( this, props, selectedDomain ) }
+					>
 						{ isLoading ? '' : translate( 'Use %s', { args: [ selectedDomain ] } ) }
 					</Button>
 				</div>
 			</Card>
-			<Button compact borderless plain className="free-plans-domain-discount-launch__continue-link">
+			<Button
+				compact
+				borderless
+				plain
+				className="free-plans-domain-discount-launch__continue-link"
+				onClick={ handleSkipButtonClick.bind( this, props ) }
+			>
 				{ translate( 'No thanks, continue to %s', {
 					args: [ siteSlug ],
 				} ) }
