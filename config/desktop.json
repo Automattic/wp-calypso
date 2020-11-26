@@ -18,6 +18,7 @@
 		"async-payments": false,
 		"blogger-plan": false,
 		"catch-js-errors": false,
+		"coming-soon-v2": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
 		"current-site/stale-cart-notice": true,

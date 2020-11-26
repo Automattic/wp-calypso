@@ -24,6 +24,7 @@
 		"comments/management/threaded-view": false,
 		"calypsoify/plugins": true,
 		"catch-js-errors": true,
+		"coming-soon-v2": true,
 		"create/persistent-launch-button": true,
 		"current-site/domain-warning": true,
 		"current-site/notice": true,
