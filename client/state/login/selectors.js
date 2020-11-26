@@ -10,9 +10,7 @@ import 'calypso/state/login/init';
  * @param  {object}   state  Global state tree
  * @returns {?number}         The user ID.
  */
-export const getTwoFactorUserId = ( state ) => {
-	return state.login.twoFactorAuth?.user_id ?? null;
-};
+export const getTwoFactorUserId = ( state ) => state.login.twoFactorAuth?.user_id ?? null;
 
 /**
  * Retrieve the actual nonce for the two factor authentication process.
@@ -22,9 +20,8 @@ export const getTwoFactorUserId = ( state ) => {
  * @param	{string}	nonceType nonce's type
  * @returns {?string}         The nonce.
  */
-export const getTwoFactorAuthNonce = ( state, nonceType ) => {
-	return state.login.twoFactorAuth[ `two_step_nonce_${ nonceType }` ] ?? null;
-};
+export const getTwoFactorAuthNonce = ( state, nonceType ) =>
+	state.login.twoFactorAuth[ `two_step_nonce_${ nonceType }` ] ?? null;
 
 /**
  * Retrieve the type of notification sent for the two factor authentication process.
@@ -33,9 +30,8 @@ export const getTwoFactorAuthNonce = ( state, nonceType ) => {
  * @param  {object}   state  Global state tree
  * @returns {?string}         The type of 2FA notification. enum: 'sms', 'push', 'none'.
  */
-export const getTwoFactorNotificationSent = ( state ) => {
-	return state.login.twoFactorAuth?.two_step_notification_sent ?? null;
-};
+export const getTwoFactorNotificationSent = ( state ) =>
+	state.login.twoFactorAuth?.two_step_notification_sent ?? null;
 
 /**
  * Retrieve a token to be used for push notification auth polling
@@ -76,9 +72,7 @@ export const isTwoFactorEnabled = ( state ) => state.login.twoFactorAuth != null
  * @param  {object}   state  Global state tree
  * @returns {boolean}         Whether a request to authenticate 2FA is being made.
  */
-export const isRequestingTwoFactorAuth = ( state ) => {
-	return state.login.isRequestingTwoFactorAuth;
-};
+export const isRequestingTwoFactorAuth = ( state ) => state.login.isRequestingTwoFactorAuth;
 
 /**
  * Returns the error for a request to authenticate 2FA.
@@ -86,9 +80,7 @@ export const isRequestingTwoFactorAuth = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?string}         Error for the request.
  */
-export const getTwoFactorAuthRequestError = ( state ) => {
-	return state.login.twoFactorAuthRequestError;
-};
+export const getTwoFactorAuthRequestError = ( state ) => state.login.twoFactorAuthRequestError;
 
 /**
  * Retrieves the supported auth types for the current login.
@@ -97,9 +89,8 @@ export const getTwoFactorAuthRequestError = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?Array}          The supported auth types (of `authenticator`, `sms`, `push` ).
  */
-export const getTwoFactorSupportedAuthTypes = ( state ) => {
-	return state.login.twoFactorAuth?.two_step_supported_auth_types ?? null;
-};
+export const getTwoFactorSupportedAuthTypes = ( state ) =>
+	state.login.twoFactorAuth?.two_step_supported_auth_types ?? null;
 
 /**
  * Determines whether an auth type is supported for the current login.
@@ -120,9 +111,7 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
  * @param  {object}   state  Global state tree
  * @returns {boolean}         Whether a login request is in-progress.
  */
-export const isRequesting = ( state ) => {
-	return state.login.isRequesting;
-};
+export const isRequesting = ( state ) => state.login.isRequesting;
 
 /**
  * Returns the error for a login request.
@@ -130,9 +119,7 @@ export const isRequesting = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?object}         Error for the request.
  */
-export const getRequestError = ( state ) => {
-	return state.login.requestError;
-};
+export const getRequestError = ( state ) => state.login.requestError;
 
 /**
  * Returns the notice for a login request.
@@ -140,9 +127,7 @@ export const getRequestError = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?object}         Notice for the request.
  */
-export const getRequestNotice = ( state ) => {
-	return state.login.requestNotice;
-};
+export const getRequestNotice = ( state ) => state.login.requestNotice;
 
 /**
  * Retrieves the last redirect url provided in the query parameters of any login page. This url must be sanitized by the
@@ -152,9 +137,7 @@ export const getRequestNotice = ( state ) => {
  * @returns {?string}         Url to redirect the user to upon successful login
  * @see getRedirectToSanitized for the sanitized version
  */
-export const getRedirectToOriginal = ( state ) => {
-	return state.login.redirectTo.original ?? null;
-};
+export const getRedirectToOriginal = ( state ) => state.login.redirectTo.original ?? null;
 
 /**
  * Retrieves the last redirect url provided in the query parameters of any login page that was sanitized by the API
@@ -163,9 +146,7 @@ export const getRedirectToOriginal = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?string}         Url to redirect the user to upon successful login
  */
-export const getRedirectToSanitized = ( state ) => {
-	return state.login.redirectTo.sanitized ?? null;
-};
+export const getRedirectToSanitized = ( state ) => state.login.redirectTo.sanitized ?? null;
 
 /**
  * Retrieves whether the login form should be disabled due to actions.
@@ -173,9 +154,7 @@ export const getRedirectToSanitized = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {boolean}         Login form disabled flag
  */
-export const isFormDisabled = ( state ) => {
-	return state.login.isFormDisabled;
-};
+export const isFormDisabled = ( state ) => state.login.isFormDisabled;
 
 /**
  * Retrieves the authentication account type.
@@ -183,9 +162,7 @@ export const isFormDisabled = ( state ) => {
  * @param  {object}   state  Global state tree
  * @returns {?string}        Authentication account type (e.g. 'regular', 'passwordless' ...)
  */
-export const getAuthAccountType = ( state ) => {
-	return state.login.authAccountType;
-};
+export const getAuthAccountType = ( state ) => state.login.authAccountType;
 
 /**
  * Tells us if we're in a process of creating a social account
