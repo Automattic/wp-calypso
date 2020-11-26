@@ -2,7 +2,6 @@ export { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-curren
 export { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 export { editedPostHasContent } from 'calypso/state/posts/selectors/edited-post-has-content';
 export { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
-export { getEditedPostSlug } from 'calypso/state/posts/selectors/get-edited-post-slug';
 export { getEditedPostValue } from 'calypso/state/posts/selectors/get-edited-post-value';
 export { getNormalizedPost } from 'calypso/state/posts/selectors/get-normalized-post';
 export { getPost } from 'calypso/state/posts/selectors/get-post';
