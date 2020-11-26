@@ -249,7 +249,7 @@ class PurchaseItem extends Component {
 			const altText =
 				purchase.payment.type === 'credit_card'
 					? purchase.payment.creditCard.type
-					: purchase.payment.typ;
+					: purchase.payment.type;
 			const className =
 				purchase.payment.type === 'credit_card'
 					? 'purchase-item__payment-method-card'
