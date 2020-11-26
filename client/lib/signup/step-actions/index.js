@@ -388,6 +388,32 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
+export function addDomainUpsellToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const slug = siteSlug || dependencies.siteSlug;
+	const { domainUpsellItems } = stepProvidedItems;
+
+	if ( isEmpty( domainUpsellItems ) ) {
+		defer( callback );
+		return;
+	}
+
+	processItemCart(
+		stepProvidedDependencies,
+		domainUpsellItems,
+		callback,
+		reduxStore,
+		slug,
+		null,
+		null
+	);
+}
 function processItemCart(
 	providedDependencies,
 	newCartItems,

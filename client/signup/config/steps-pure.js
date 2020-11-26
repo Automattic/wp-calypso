@@ -22,6 +22,7 @@ import {
 
 export function generateSteps( {
 	addPlanToCart = noop,
+	addDomainUpsellToCart = noop,
 	createAccount = noop,
 	createSite = noop,
 	createWpForTeamsSite = noop,
@@ -117,6 +118,7 @@ export function generateSteps( {
 
 		'free-plans-domain-discount-launch': {
 			stepName: 'free-plans-domain-discount-launch',
+			apiRequestFunction: addDomainUpsellToCart,
 			fulfilledStepCallback: isFreePlansDomainUpselFulfilled,
 			dependencies: [ 'domainItem', 'cartItem', 'siteSlug' ],
 			providesDependencies: [ 'domainUpsellItems' ],
