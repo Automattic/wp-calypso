@@ -250,6 +250,7 @@ export class UpsellNudge extends React.Component {
 
 		return true;
 	};
+	
 
 	handleOneClickUpsellComplete = () => {
 		this.props.handleCheckoutCompleteRedirect( true );
