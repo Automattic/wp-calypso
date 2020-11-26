@@ -174,7 +174,7 @@ export const getRedirectToSanitized = ( state ) => {
  * @returns {boolean}         Login form disabled flag
  */
 export const isFormDisabled = ( state ) => {
-	return state.login.isFormDisabled ?? false;
+	return state.login.isFormDisabled;
 };
 
 /**
