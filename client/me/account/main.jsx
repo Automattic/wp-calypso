@@ -220,9 +220,12 @@ const Account = createReactClass( {
 		}
 
 		try {
-			const response = await wpcom.undocumented().me().validateUsername( username );
+			const { success, allowed_actions } = await wpcom
+				.undocumented()
+				.me()
+				.validateUsername( username );
 
-			this.setState( { validation: { ...response, validatedUsername: username } } );
+			this.setState( { validation: { success, allowed_actions, validatedUsername: username } } );
 		} catch ( error ) {
 			this.setState( { validation: error } );
 		}
