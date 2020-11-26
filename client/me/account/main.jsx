@@ -75,6 +75,7 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
 const debug = debugFactory( 'calypso:me:account' );
 
 const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
+const USERNAME_MIN_LENGTH = 4;
 
 /* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
@@ -198,7 +199,7 @@ const Account = createReactClass( {
 			return;
 		}
 
-		if ( username.length < 4 ) {
+		if ( username.length < USERNAME_MIN_LENGTH ) {
 			this.setState( {
 				validation: {
 					error: 'invalid_input',
@@ -437,8 +438,6 @@ const Account = createReactClass( {
 		try {
 			await wpcom.undocumented().me().changeUsername( username, action );
 			this.setState( { submittingForm: false } );
-
-			// await user().fetch();
 
 			this.props.markSaved();
 
