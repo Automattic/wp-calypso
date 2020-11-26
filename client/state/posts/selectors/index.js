@@ -28,7 +28,6 @@ export { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
 export { getSitePostsByTerm } from 'calypso/state/posts/selectors/get-site-posts-by-term';
 export { isEditedPostDirty } from 'calypso/state/posts/selectors/is-edited-post-dirty';
 export { isEditedPostPasswordProtected } from 'calypso/state/posts/selectors/is-edited-post-password-protected';
-export { isEditedPostPasswordProtectedWithValidPassword } from 'calypso/state/posts/selectors/is-edited-post-password-protected-with-valid-password';
 export { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 export { isPostPublished } from 'calypso/state/posts/selectors/is-post-published';
 export { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
