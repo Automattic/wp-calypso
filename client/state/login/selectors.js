@@ -88,7 +88,7 @@ export const isRequestingTwoFactorAuth = ( state ) => {
  * @returns {?string}         Error for the request.
  */
 export const getTwoFactorAuthRequestError = ( state ) => {
-	return state.login.twoFactorAuthRequestError ?? null;
+	return state.login.twoFactorAuthRequestError;
 };
 
 /**
