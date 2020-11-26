@@ -15,7 +15,7 @@ import {
 } from 'calypso/state/action-types';
 import { getSerializedQuery } from 'calypso/state/followers/utils';
 
-describe.skip( '#items()', () => {
+describe( '#items()', () => {
 	test( 'should key followers by id', () => {
 		const state = items( null, {
 			type: FOLLOWERS_RECEIVE,
@@ -26,7 +26,7 @@ describe.skip( '#items()', () => {
 				],
 			},
 		} );
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			1: { ID: 1, avatar: 'url', avatar_URL: 'url' },
 			2: { ID: 2, avatar: 'url', avatar_URL: 'url' },
 		} );
@@ -39,7 +39,7 @@ describe.skip( '#items()', () => {
 				subscribers: [ { ID: 4, avatar: 'url' } ],
 			},
 		} );
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			3: { ID: 3, avatar: 'url', avatar_URL: 'url' },
 			4: { ID: 4, avatar: 'url', avatar_URL: 'url' },
 		} );
@@ -52,7 +52,7 @@ describe.skip( '#items()', () => {
 				subscribers: [ { ID: 3, avatar: 'updated-url' } ],
 			},
 		} );
-		expect( state ).to.eql( { 3: { ID: 3, avatar: 'updated-url', avatar_URL: 'updated-url' } } );
+		expect( state ).toEqual( { 3: { ID: 3, avatar: 'updated-url', avatar_URL: 'updated-url' } } );
 	} );
 	test( 'should remove a follower from the state', () => {
 		const original = deepFreeze( {
@@ -63,10 +63,10 @@ describe.skip( '#items()', () => {
 			type: FOLLOWER_REMOVE_SUCCESS,
 			follower: { ID: 4 },
 		} );
-		expect( state ).to.eql( { 3: { ID: 3, avatar: 'url', avatar_URL: 'url' } } );
+		expect( state ).toEqual( { 3: { ID: 3, avatar: 'url', avatar_URL: 'url' } } );
 	} );
 } );
-describe.skip( '#queries()', () => {
+describe( '#queries()', () => {
 	test( 'should only store the follower ids, total, and last page for a query', () => {
 		const query = { siteId: 1 };
 		const serializedQuery = getSerializedQuery( query );
@@ -82,7 +82,7 @@ describe.skip( '#queries()', () => {
 				pages: 1,
 			},
 		} );
-		expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 1, 2 ], total: 1, lastPage: 1 } } );
+		expect( state ).toEqual( { [ serializedQuery ]: { ids: [ 1, 2 ], total: 1, lastPage: 1 } } );
 	} );
 	test( 'should create a separate closure for different queries', () => {
 		const query1 = { siteId: 1 };
@@ -101,7 +101,7 @@ describe.skip( '#queries()', () => {
 				pages: 1,
 			},
 		} );
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			[ serializedQuery1 ]: { ids: [ 1 ], total: 1, lastPage: 1 },
 			[ serializedQuery2 ]: { ids: [ 1 ], total: 1, lastPage: 1 },
 		} );
@@ -119,7 +119,7 @@ describe.skip( '#queries()', () => {
 				pages: 1,
 			},
 		} );
-		expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 3, 4 ], total: 2, lastPage: 1 } } );
+		expect( state ).toEqual( { [ serializedQuery ]: { ids: [ 3, 4 ], total: 2, lastPage: 1 } } );
 	} );
 	test( 'should not repeat ids within the same query', () => {
 		const query = { siteId: 1 };
@@ -134,7 +134,7 @@ describe.skip( '#queries()', () => {
 				pages: 1,
 			},
 		} );
-		expect( state ).to.eql( { [ serializedQuery ]: { ids: [ 1 ], total: 1, lastPage: 1 } } );
+		expect( state ).toEqual( { [ serializedQuery ]: { ids: [ 1 ], total: 1, lastPage: 1 } } );
 	} );
 	test( 'should remove an id and update totals for all queries', () => {
 		const query1 = { siteId: 1 };
@@ -149,7 +149,7 @@ describe.skip( '#queries()', () => {
 			type: FOLLOWER_REMOVE_SUCCESS,
 			follower: { ID: 2 },
 		} );
-		expect( state ).to.eql( {
+		expect( state ).toEqual( {
 			[ serializedQuery1 ]: { ids: [ 1, 3 ], total: 100, lastPage: 1 },
 			[ serializedQuery2 ]: { ids: [ 6 ], total: 1, lastPage: 1 },
 		} );
@@ -170,7 +170,7 @@ describe( '#queryRequests', () => {
 		} );
 	} );
 
-	test( 'should return `true` for the given actions', () => {
+	test( 'should return `true` for the given action', () => {
 		const siteId = 123456;
 		const query = { siteId };
 
