@@ -303,8 +303,9 @@ jobs:
       - prepare
       - run:
           name: Extract strings
-          working_directory: wp-babel-makepot
-          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+          command: |
+            yarn run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
