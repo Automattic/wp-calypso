@@ -103,19 +103,3 @@
 		width: auto;
 	}
 }
-
-.focused-launch-success__go-back-button {
-	color: var( --studio-gray-50 );
-}
-
-.focused-launch-container .action-buttons:not( .is-sticky ) {
-	margin-left: 0;
-}
-
-.focused-launch-summary__launch-button {
-	flex: 1;
-
-	@include break-small {
-		flex: 0;
-	}
-}

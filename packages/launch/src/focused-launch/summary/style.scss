@@ -199,6 +199,14 @@ $commentary-column-gap-wide: 100px;
 		margin-left: 0;
 	}
 
+	.focused-launch-summary__launch-button {
+		flex: 1;
+
+		@include break-small {
+			flex: 0;
+		}
+	}
+
 	@include break-small {
 		flex-shrink: 0;
 		margin-right: 8px;
