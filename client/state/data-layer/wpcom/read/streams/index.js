@@ -197,6 +197,7 @@ export function requestPage( action ) {
 		: {};
 
 	const fetchCount = pageHandle ? PER_FETCH : INITIAL_FETCH;
+	// eslint-disable-next-line no-extra-boolean-cast
 	const number = !! gap ? PER_GAP : fetchCount;
 
 	return http( {
