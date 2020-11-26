@@ -1,5 +1,5 @@
-
 <!-- eslint-disable wp-no-unsafe-features -->
+
 # wp-no-unsafe-features
 
 ## Rule details
@@ -33,27 +33,16 @@ This should be an object where the keys are import package names and the values 
 
 ### Forbidden
 
+Unstable and experimental features are prohibited:
+
 ```js
 import { __unstableFeature, __experimentalFeature } from '@wordpress/package';
 ```
 
 ### Allowed
 
-```js
-const getFavoriteSites = ( state ) =>
-	state.favoriteSiteIds.map( ( siteId ) => getSite( state, siteId ) );
-```
+Other features are allowed:
 
 ```js
-class MyComponent extends Component {
-	setFoo( foo ) {
-		this.setState( { foo }, ( state ) => {
-			this.markDone( state.bar );
-		} );
-	}
-}
-```
-
-```js
-export default connect( partialRight( mapState, 'foo' ) )( MyComponent );
+import { registerBlockType } from '@wordpress/blocks';
 ```
