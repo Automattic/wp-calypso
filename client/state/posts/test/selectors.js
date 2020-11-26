@@ -15,7 +15,6 @@ import {
 	getSitePosts,
 	getSitePost,
 	getPostsForQuery,
-	isPostPublished,
 	isRequestingPostsForQuery,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
@@ -41,7 +40,6 @@ describe( 'selectors', () => {
 		getNormalizedPost.memoizedSelector.cache.clear();
 		getPostsForQuery.memoizedSelector.cache.clear();
 		getPostsForQueryIgnoringPage.memoizedSelector.cache.clear();
-		isPostPublished.memoizedSelector.cache.clear();
 	} );
 
 	describe( '#getPost()', () => {
@@ -2469,153 +2467,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( previewUrl ).to.equal( 'https://example.com/post-url?other_arg=1&preview=true' );
-		} );
-	} );
-
-	describe( 'isPostPublished()', () => {
-		test( 'should return null if the post is not known', () => {
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.null;
-		} );
-
-		test( 'should return true if the post status is publish', () => {
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {
-							2916284: new PostQueryManager( {
-								items: {
-									841: {
-										ID: 841,
-										site_ID: 2916284,
-										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										status: 'publish',
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.true;
-		} );
-
-		test( 'should return true if the post status is private', () => {
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {
-							2916284: new PostQueryManager( {
-								items: {
-									841: {
-										ID: 841,
-										site_ID: 2916284,
-										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										status: 'private',
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.true;
-		} );
-
-		test( 'should return false if the post status is draft', () => {
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {
-							2916284: new PostQueryManager( {
-								items: {
-									841: {
-										ID: 841,
-										site_ID: 2916284,
-										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										status: 'draft',
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.false;
-		} );
-
-		test( 'should return false if the post status is future and date is in future', () => {
-			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() + tenMinutes;
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {
-							2916284: new PostQueryManager( {
-								items: {
-									841: {
-										ID: 841,
-										site_ID: 2916284,
-										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										status: 'future',
-										date: postDate,
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.false;
-		} );
-
-		test( 'should return true if the post status is future and date is in past', () => {
-			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() - tenMinutes;
-			const isPublished = isPostPublished(
-				{
-					posts: {
-						queries: {
-							2916284: new PostQueryManager( {
-								items: {
-									841: {
-										ID: 841,
-										site_ID: 2916284,
-										global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-										status: 'future',
-										date: postDate,
-									},
-								},
-							} ),
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( isPublished ).to.be.true;
 		} );
 	} );
 
