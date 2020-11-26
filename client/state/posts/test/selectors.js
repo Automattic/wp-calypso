@@ -22,7 +22,6 @@ import {
 	isPostsLastPageForQuery,
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQueryIgnoringPage,
-	isEditedPostPasswordProtected,
 	getEditedPost,
 	getPostEdits,
 	getEditedPostValue,
@@ -1523,123 +1522,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( editedPostValue ).to.be.true;
-		} );
-	} );
-
-	describe( 'isEditedPostPasswordProtected()', () => {
-		test( 'should return false if the post does not exist', () => {
-			const protectedPost = isEditedPostPasswordProtected(
-				{
-					posts: {
-						items: {},
-						queries: {},
-						edits: {},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( protectedPost ).to.be.false;
-		} );
-
-		test( 'should return false if post password is a zero length string', () => {
-			const postObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				password: 'secret',
-			};
-			const protectedPost = isEditedPostPasswordProtected(
-				{
-					posts: {
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-						},
-						queries: {
-							2916284: new PostQueryManager( {
-								items: { 841: postObject },
-							} ),
-						},
-						edits: {
-							2916284: {
-								841: [ { password: '' } ],
-							},
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( protectedPost ).to.be.false;
-		} );
-
-		test( 'should return true if post password is a non-zero length string', () => {
-			const postObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				password: '',
-			};
-			const protectedPost = isEditedPostPasswordProtected(
-				{
-					posts: {
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-						},
-						queries: {
-							2916284: new PostQueryManager( {
-								items: { 841: postObject },
-							} ),
-						},
-						edits: {
-							2916284: {
-								841: [ { password: 'secret' } ],
-							},
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( protectedPost ).to.be.true;
-		} );
-
-		test( 'should return true if post password is whitespace only', () => {
-			const postObject = {
-				ID: 841,
-				site_ID: 2916284,
-				global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64',
-				title: 'Hello World',
-				password: '',
-			};
-			const protectedPost = isEditedPostPasswordProtected(
-				{
-					posts: {
-						items: {
-							'3d097cb7c5473c169bba0eb8e3c6cb64': [ 2916284, 841 ],
-						},
-						queries: {
-							2916284: new PostQueryManager( {
-								items: { 841: postObject },
-							} ),
-						},
-						edits: {
-							2916284: {
-								841: [ { password: ' ' } ],
-							},
-						},
-					},
-				},
-				2916284,
-				841
-			);
-
-			expect( protectedPost ).to.be.true;
 		} );
 	} );
 
