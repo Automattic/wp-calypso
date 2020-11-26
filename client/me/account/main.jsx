@@ -195,13 +195,13 @@ const Account = createReactClass( {
 		debug( 'Validating username ' + username );
 
 		if ( username === user().get().username ) {
-			this.setState( { validation: false } );
+			this.setState( { validationResult: false } );
 			return;
 		}
 
 		if ( username.length < USERNAME_MIN_LENGTH ) {
 			this.setState( {
-				validation: {
+				validationResult: {
 					error: 'invalid_input',
 					message: translate( 'Usernames must be at least 4 characters.' ),
 				},
@@ -211,7 +211,7 @@ const Account = createReactClass( {
 
 		if ( ! ALLOWED_USERNAME_CHARACTERS_REGEX.test( username ) ) {
 			this.setState( {
-				validation: {
+				validationResult: {
 					error: 'invalid_input',
 					message: translate( 'Usernames can only contain lowercase letters (a-z) and numbers.' ),
 				},
@@ -225,9 +225,11 @@ const Account = createReactClass( {
 				.me()
 				.validateUsername( username );
 
-			this.setState( { validation: { success, allowed_actions, validatedUsername: username } } );
+			this.setState( {
+				validationResult: { success, allowed_actions, validatedUsername: username },
+			} );
 		} catch ( error ) {
-			this.setState( { validation: error } );
+			this.setState( { validationResult: error } );
 		}
 	},
 
@@ -448,29 +450,29 @@ const Account = createReactClass( {
 			// @TODO: Do not require reload here.
 			window.location.reload();
 		} catch ( error ) {
-			this.setState( { submittingForm: false, validation: error } );
+			this.setState( { submittingForm: false, validationResult: error } );
 			this.props.errorNotice( error.message );
 		}
 	},
 
 	isUsernameValid() {
-		return this.state.validation?.success === true;
+		return this.state.validationResult?.success === true;
 	},
 
 	getUsernameValidationFailureMessage() {
-		return this.state.validation?.message ?? null;
+		return this.state.validationResult?.message ?? null;
 	},
 
 	getAllowedActions() {
-		return this.state.validation?.allowed_actions ?? {};
+		return this.state.validationResult?.allowed_actions ?? {};
 	},
 
 	getValidatedUsername() {
-		return this.state.validation?.validatedUsername ?? null;
+		return this.state.validationResult?.validatedUsername ?? null;
 	},
 
 	clearUsernameValidation() {
-		this.setState( { validation: false } );
+		this.setState( { validationResult: false } );
 	},
 
 	onSiteSelect( siteId ) {
