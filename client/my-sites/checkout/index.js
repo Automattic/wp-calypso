@@ -19,7 +19,6 @@ import { makeLayout, redirectLoggedOut, render as clientRender } from 'calypso/c
 import { noSite, siteSelection } from 'calypso/my-sites/controller';
 import config from 'calypso/config';
 import userFactory from 'calypso/lib/user';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export default function () {
 	SiftScience.recordUser();
@@ -157,7 +156,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', isJetpackCloud() ? '/pricing' : '/plans' );
+	page( '/checkout', '/plans' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
