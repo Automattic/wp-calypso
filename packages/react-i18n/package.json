@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/react-i18n",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "React bindings for @wordpress/i18n",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -33,6 +33,7 @@
 	},
 	"dependencies": {
 		"@wordpress/compose": "1.x.x - 3.x.x",
+		"@wordpress/hooks": "^2.9.0",
 		"@wordpress/i18n": "^3.14.0",
 		"tslib": "^1.10.0"
 	},
