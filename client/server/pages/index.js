@@ -45,6 +45,7 @@ import { logSectionResponse } from './analytics';
 import analytics from 'calypso/server/lib/analytics';
 import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
 import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
@@ -636,7 +637,7 @@ export default function pages() {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else {
+				} else if ( ! isJetpackCloud() ) {
 					res.redirect( 'https://wordpress.com/pricing' );
 				}
 			} else {
