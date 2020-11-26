@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { By, Key, until, webdriver } from 'selenium-webdriver';
+
+import webdriver, { By, Key, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
