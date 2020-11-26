@@ -121,7 +121,7 @@ export const isTwoFactorAuthTypeSupported = ( state, type ) => {
  * @returns {boolean}         Whether a login request is in-progress.
  */
 export const isRequesting = ( state ) => {
-	return state.login.isRequesting ?? false;
+	return state.login.isRequesting;
 };
 
 /**
