@@ -194,6 +194,7 @@ PurchasesList.propTypes = {
 	subscriptions: PropTypes.array,
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
+	name: PropTypes.string,
 };
 
 export default connect(

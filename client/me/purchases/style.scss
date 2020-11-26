@@ -73,6 +73,16 @@
 	}
 }
 
+.purchase-item--disconnected {
+	&.card.is-compact {
+		padding-right: 48px;
+	}
+
+	&:hover {
+		background: var( --color-surface );
+	}
+}
+
 .purchase-item__placeholder {
 	display: block;
 	height: 40px;
@@ -97,9 +107,13 @@
 	line-height: 1.4em;
 }
 
-.purchase-item__site-name {
+.purchase-item__link {
 	color: var( --color-neutral-50 );
 	text-decoration: underline;
+
+	&.purchase-item__link--error {
+		color: var( --color-error-50 );
+	}
 
 	&:hover {
 		text-decoration: none;

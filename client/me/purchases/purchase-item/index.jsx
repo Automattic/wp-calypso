@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
+import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -31,6 +32,7 @@ import SiteIcon from 'calypso/blocks/site-icon';
 import { getPurchaseListUrlFor } from 'calypso/my-sites/purchases/paths';
 import { getPaymentMethodImageURL } from 'calypso/lib/checkout/payment-methods';
 import payPalImage from 'calypso/assets/images/upgrades/paypal-full.svg';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 
 /**
  * Style dependencies
@@ -50,7 +52,7 @@ class PurchaseItem extends Component {
 	}
 
 	getStatus() {
-		const { purchase, translate, moment } = this.props;
+		const { purchase, translate, moment, name, isJetpack, isDisconnectedSite } = this.props;
 		const expiry = moment( purchase.expiryDate );
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
@@ -59,6 +61,42 @@ class PurchaseItem extends Component {
 					partnerName: getPartnerName( purchase ),
 				},
 			} );
+		}
+
+		if ( isDisconnectedSite ) {
+			if ( isJetpack ) {
+				return (
+					<span className="purchase-item__is-error">
+						{ translate( 'Disconnected from WordPress.com' ) }
+					</span>
+				);
+			}
+
+			return (
+				<span className="purchase-item__is-error">
+					{ translate(
+						'You no longer have access to this site and its purchases. {{button}}Contact support{{/button}}',
+						{
+							args: {
+								site: name,
+							},
+							components: {
+								button: (
+									<button
+										className="purchase-item__link purchase-item__link--error"
+										onClick={ ( event ) => {
+											event.stopPropagation();
+											event.preventDefault();
+											page( CALYPSO_CONTACT );
+										} }
+										title={ translate( 'Contact Support' ) }
+									/>
+								),
+							},
+						}
+					) }
+				</span>
+			);
 		}
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
@@ -160,9 +198,9 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site, translate, slug, showSite } = this.props;
+		const { purchase, site, translate, slug, showSite, isDisconnectedSite, name } = this.props;
 
-		if ( showSite ) {
+		if ( showSite && site ) {
 			return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
 				args: {
 					purchaseType: purchaseType( purchase ),
@@ -171,7 +209,7 @@ class PurchaseItem extends Component {
 				components: {
 					button: (
 						<button
-							className="purchase-item__site-name"
+							className="purchase-item__link"
 							onClick={ ( event ) => {
 								event.stopPropagation();
 								event.preventDefault();
@@ -184,6 +222,15 @@ class PurchaseItem extends Component {
 							} ) }
 						/>
 					),
+				},
+			} );
+		}
+
+		if ( isDisconnectedSite ) {
+			return translate( '%(purchaseType)s for %(site)s', {
+				args: {
+					purchaseType: purchaseType( purchase ),
+					site: name,
 				},
 			} );
 		}
@@ -255,6 +302,10 @@ class PurchaseItem extends Component {
 		let onClick;
 		let href;
 
+		const classes = classNames( 'purchase-item', {
+			'purchase-item--disconnected': isDisconnectedSite,
+		} );
+
 		if ( isPlaceholder ) {
 			return (
 				<>
@@ -279,7 +330,7 @@ class PurchaseItem extends Component {
 
 		return (
 			<CompactCard
-				className="purchase-item"
+				className={ classes }
 				data-e2e-connected-site={ ! isDisconnectedSite }
 				href={ href }
 				onClick={ onClick }

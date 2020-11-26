@@ -12,13 +12,12 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import AsyncLoad from 'calypso/components/async-load';
-import { getSite, isRequestingSite } from 'calypso/state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { isJetpackPlan } from 'calypso/lib/products-values';
 import { JETPACK_PLANS } from 'calypso/lib/plans/constants';
 import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import QuerySites from 'calypso/components/data/query-sites';
 import PurchaseItem from '../purchase-item';
-import PurchaseReconnectNotice from './reconnect-notice';
 import { managePurchase } from '../paths';
 
 /**
@@ -28,7 +27,6 @@ import './style.scss';
 
 const PurchasesSite = ( {
 	getManagePurchaseUrlFor = managePurchase,
-	hasLoadedSite,
 	isPlaceholder,
 	site,
 	siteId,
@@ -65,12 +63,9 @@ const PurchasesSite = ( {
 					isJetpack={ isJetpack }
 					site={ site }
 					showSite={ showSite }
+					name={ name }
 				/>
 			) ) }
-
-			{ ! isPlaceholder && hasLoadedSite && ! site && (
-				<PurchaseReconnectNotice isJetpack={ isJetpack } name={ name } />
-			) }
 		</div>
 	);
 };
@@ -87,5 +82,4 @@ PurchasesSite.propTypes = {
 
 export default connect( ( state, { siteId } ) => ( {
 	site: getSite( state, siteId ),
-	hasLoadedSite: ! isRequestingSite( state, siteId ),
 } ) )( PurchasesSite );
