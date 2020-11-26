@@ -43,7 +43,7 @@ const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) 
 
 	return (
 		<button
-			className="membership-item__site-name purchase-item__site-name"
+			className="membership-item__site-name purchase-item__link"
 			onClick={ ( event ) => {
 				event.stopPropagation();
 				event.preventDefault();
@@ -112,7 +112,7 @@ const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	} );
 
 	if ( site && ! hasError ) {
-		return <img src={ site.icon.ico } width="24" height="24" alt="" />;
+		return <img src={ site.icon.ico } width="36" height="36" alt="" />;
 	}
 
 	return <SiteIcon size={ 24 } />;

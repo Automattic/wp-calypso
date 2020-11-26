@@ -286,7 +286,7 @@ class PurchaseItem extends Component {
 			<div className="purchase-item__wrapper purchases-layout__wrapper">
 				{ showSite && (
 					<div className="purchase-item__site purchases-layout__site">
-						<SiteIcon site={ site } size={ 24 } />
+						<SiteIcon site={ site } size={ 36 } />
 					</div>
 				) }
 

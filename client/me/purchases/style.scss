@@ -12,7 +12,7 @@
 }
 
 .purchases-layout__site {
-	flex: 0 0 36px;
+	flex: 0 0 52px;
 }
 
 .purchases-layout__information {
@@ -20,12 +20,12 @@
 	flex: 1 1 250px;
 	
 	@include breakpoint-deprecated( '>960px' ) {
-		flex: 1 1 500px;
+		flex: 1 1 462px;
 	}
 }
 
 .purchases-layout__status {
-	margin: 16px 16px 0 36px;
+	margin: 16px 16px 0 52px;
 	flex: 1 1 200px;
 
 	@include breakpoint-deprecated( '>960px' ) {
@@ -40,7 +40,7 @@
 	@include breakpoint-deprecated( '>960px' ) {
 		display: flex;
 		align-items: center;
-		flex: 0 0 120px;
+		flex: 0 0 140px;
 	}
 }
 
@@ -49,8 +49,6 @@
 ================================================== */
 .purchases-list-header.card {
 	padding-right: 48px;
-	padding-top: 11px;
-	padding-bottom: 12px;
 	font-size: 0.875rem;
 
 	.purchases-layout__status {
@@ -91,8 +89,14 @@
 
 .purchase-item__site {
 	.site-icon {
-		width: 24px;
-		height: 24px;
+		border-radius: 2px;
+	}
+
+	.site-icon, 
+	.site-icon__img {
+		border-radius: 2px;
+		width: 36px;
+		height: 36px;
 	}
 }
 
