@@ -67,7 +67,6 @@ import { getJetpackProductTagline } from 'calypso/lib/products-values/get-jetpac
 import { getJetpackProductCallToAction } from 'calypso/lib/products-values/get-jetpack-product-call-to-action';
 import { getJetpackProductDescription } from 'calypso/lib/products-values/get-jetpack-product-description';
 import { getJetpackProductShortName } from 'calypso/lib/products-values/get-jetpack-product-short-name';
-import config from 'calypso/config';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import { MORE_FEATURES_LINK } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { addQueryArgs } from 'calypso/lib/route';
@@ -689,13 +688,12 @@ export function checkout(
 	if ( ! siteSlug ) {
 		path = `/jetpack/connect/${ productsString }`;
 	} else {
-		path =
-			isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
-				? `/checkout/${ siteSlug }/${ productsString }`
-				: `/checkout/${ siteSlug }`;
+		path = isJetpackCloud()
+			? `/checkout/${ siteSlug }/${ productsString }`
+			: `/checkout/${ siteSlug }`;
 	}
 
-	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
+	if ( isJetpackCloud() ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
 		addItems( productsArray.map( jetpackProductItem ) );
