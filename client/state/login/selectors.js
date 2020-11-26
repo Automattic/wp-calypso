@@ -153,7 +153,7 @@ export const getRequestNotice = ( state ) => {
  * @see getRedirectToSanitized for the sanitized version
  */
 export const getRedirectToOriginal = ( state ) => {
-	return state.login.redirectTo?.original ?? null;
+	return state.login.redirectTo.original ?? null;
 };
 
 /**
@@ -164,7 +164,7 @@ export const getRedirectToOriginal = ( state ) => {
  * @returns {?string}         Url to redirect the user to upon successful login
  */
 export const getRedirectToSanitized = ( state ) => {
-	return state.login.redirectTo?.sanitized ?? null;
+	return state.login.redirectTo.sanitized ?? null;
 };
 
 /**
