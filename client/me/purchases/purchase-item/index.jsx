@@ -113,7 +113,7 @@ class PurchaseItem extends Component {
 
 			if ( creditCardExpiresBeforeSubscription( purchase ) ) {
 				return (
-					<span className="purchase-item__is-error">
+					<span className="purchase-item__is-warning">
 						{ translate(
 							'Credit card expires before your next renewal on {{span}}%(date)s{{/span}}',
 							{
