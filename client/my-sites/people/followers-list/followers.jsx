@@ -261,12 +261,10 @@ class Followers extends Component {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => {
-	return {
-		followers: getFollowersForQuery( state, ownProps.query ),
-		fetching: isFetchingFollowersForQuery( state, ownProps.query ),
-		totalFollowers: getTotalFollowersForQuery( state, ownProps.query ),
-	};
-};
+const mapStateToProps = ( state, { query } ) => ( {
+	followers: getFollowersForQuery( state, query ),
+	fetching: isFetchingFollowersForQuery( state, query ),
+	totalFollowers: getTotalFollowersForQuery( state, query ),
+} );
 
 export default connect( mapStateToProps, { requestRemoveFollower } )( localize( Followers ) );
