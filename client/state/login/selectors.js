@@ -184,7 +184,7 @@ export const isFormDisabled = ( state ) => {
  * @returns {?string}        Authentication account type (e.g. 'regular', 'passwordless' ...)
  */
 export const getAuthAccountType = ( state ) => {
-	return state.login.authAccountType ?? null;
+	return state.login.authAccountType;
 };
 
 /**
