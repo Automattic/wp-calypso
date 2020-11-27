@@ -45,13 +45,13 @@ $animation-frame: 100px;
 	}
 }
 
-@keyframes pulse2 {
-	0% {
-		transform: scale( 0, 0 );
-	}
+// @keyframes pulse2 {
+// 	0% {
+// 		transform: scale( 0, 0 );
+// 	}
 
-	100% {
-		transform: scale( 1, 1 );
-		border: 2px solid var( --color-primary-light );
-	}
-}
+// 	100% {
+// 		transform: scale( 1, 1 );
+// 		border: 2px solid var( --color-primary-light );
+// 	}
+// }
