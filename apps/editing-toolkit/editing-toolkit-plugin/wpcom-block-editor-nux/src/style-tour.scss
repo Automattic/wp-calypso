@@ -3,7 +3,7 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/z-index';
 
-.wpcom-editor-welcome-tour-container {
+.wpcom-editor-welcome-tour-frame {
 	background-color: $white;
 	border-radius: 4px;
 	bottom: 40px;
@@ -50,6 +50,19 @@
 	max-width: 400px;
 	.components-card__footer {
 		border-top: none;
+	.components-guide__page-control {
+		margin: 0;
+
+		.components-button {
+			min-width: auto;
+			&.has-icon {
+				padding: 3px;
+			}
+		}
+
+		li {
+			margin-bottom: 0;
+		}
 	}
 }
 

@@ -48,7 +48,7 @@ function WelcomeTourFrame() {
 	}
 
 	return (
-		<div className="wpcom-editor-welcome-tour-container">
+		<div className="wpcom-editor-welcome-tour-frame">
 			{ ! isMinimized ? (
 				<WelcomeTourCard
 					cardContent={ cardContent[ currentCard ] }
