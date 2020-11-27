@@ -25,16 +25,16 @@ const FocusedLaunch: React.FunctionComponent = () => {
 
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
-	const { showSuccessView } = useDispatch( LAUNCH_STORE );
+	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
 
 	React.useEffect( () => {
 		if ( isSiteLaunched ) {
-			showSuccessView();
+			enablePersistentSuccessView();
 		}
 		if ( isSiteLaunched || isSiteLaunching ) {
 			document.body.classList.add( 'is-focused-launch-complete' );
 		}
-	}, [ isSiteLaunched, isSiteLaunching, showSuccessView ] );
+	}, [ isSiteLaunched, isSiteLaunching, enablePersistentSuccessView ] );
 
 	return (
 		<Router

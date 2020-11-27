@@ -144,11 +144,11 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 };
 
 const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
-	if ( action.type === 'SHOW_SUCCESS_VIEW' ) {
+	if ( action.type === 'ENABLE_SUCCESS_VIEW' ) {
 		return true;
 	}
 
-	if ( action.type === 'HIDE_SUCCESS_VIEW' ) {
+	if ( action.type === 'DISABLE_SUCCESS_VIEW' ) {
 		return false;
 	}
 
