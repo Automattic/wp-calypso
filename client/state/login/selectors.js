@@ -21,7 +21,7 @@ export const getTwoFactorUserId = ( state ) => state.login.twoFactorAuth?.user_i
  * @returns {?string}         The nonce.
  */
 export const getTwoFactorAuthNonce = ( state, nonceType ) =>
-	state.login.twoFactorAuth[ `two_step_nonce_${ nonceType }` ] ?? null;
+	state.login.twoFactorAuth?.[ `two_step_nonce_${ nonceType }` ] ?? null;
 
 /**
  * Retrieve the type of notification sent for the two factor authentication process.
