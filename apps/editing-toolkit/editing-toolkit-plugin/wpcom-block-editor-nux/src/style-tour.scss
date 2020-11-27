@@ -20,8 +20,8 @@
 
 .wpcom-editor-welcome-tour__resume-btn {
 	border-radius: 4px;
-	box-shadow: 0px 2px 6px rgba( 60, 66, 87, 0.08 ), 0px 0px 0px 1px rgba( 60, 66, 87, 0.16 ),
-		0px 1px 1px rgba( 0, 0, 0, 0.08 );
+	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
+		0 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
 	color: $black;
 
@@ -37,7 +37,12 @@
 	.components-guide__page-control {
 		bottom: 0;
 		left: 16px;
+		margin: 0;
 		position: absolute;
+
+		li {
+			margin-bottom: 0;
+		}
 	}
 }
 

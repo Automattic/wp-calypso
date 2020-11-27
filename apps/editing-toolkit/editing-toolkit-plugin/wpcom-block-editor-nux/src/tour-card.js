@@ -26,7 +26,7 @@ function WelcomeTourCard( {
 	const { description, heading, imgSrc } = cardContent;
 
 	return (
-		<Card className="welcome-tour-card">
+		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img alt="Editor Welcome Tour" src={ imgSrc } />
@@ -48,11 +48,7 @@ function WelcomeTourCard( {
 							No thanks
 						</Button>
 					) : (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isTertiary={ true }
-							onClick={ () => setCurrentCard( cardIndex - 1 ) }
-						>
+						<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
 							Back
 						</Button>
 					) }
@@ -65,7 +61,11 @@ function WelcomeTourCard( {
 							{ cardIndex === 0 ? "Let's start" : 'Next' }
 						</Button>
 					) : (
-						<Button isPrimary={ true } onClick={ () => onDismiss() }>
+						<Button
+							className="welcome-tour-card__next-btn"
+							isPrimary={ true }
+							onClick={ () => onDismiss() }
+						>
 							Done
 						</Button>
 					) }
@@ -82,10 +82,10 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 				<Button
 					isPrimary
 					icon={ minimize }
-					iconSize={ 14 }
+					iconSize={ 24 }
 					onClick={ () => onMinimize( true ) }
 				></Button>
-				<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
+				<Button isPrimary icon="no-alt" iconSize={ 24 } onClick={ () => onDismiss() }></Button>
 			</Flex>
 		</div>
 	);
