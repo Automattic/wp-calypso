@@ -156,7 +156,7 @@ const ProductsGridAlt2: React.FC< ProductsGridProps > = ( {
 					/>
 				) ) }
 
-				{ showJetpackFreeCard && siteId && (
+				{ showJetpackFreeCard && (
 					<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 				) }
 			</div>
