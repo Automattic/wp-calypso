@@ -403,7 +403,7 @@ export function addDomainUpsellToCart(
 		defer( callback );
 		return;
 	}
-
+	// @todo try to create the cart insteed of process it like that, something is veery off with SignupCart.addToCart
 	processItemCart(
 		stepProvidedDependencies,
 		domainUpsellItems,
@@ -816,7 +816,6 @@ export function isFreePlansDomainUpselFulfilled( stepName, defaultDependencies, 
 		return;
 	}
 
-	// @todo figure out if the user has a paid domain
 	if ( isPaidPlan || domainItem || cartItem || 'test' !== abtest( 'freePlansDomainUpsell' ) ) {
 		const domainUpsellItems = null;
 		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
