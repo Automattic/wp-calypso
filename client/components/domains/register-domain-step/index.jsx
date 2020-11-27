@@ -670,8 +670,15 @@ class RegisterDomainStep extends React.Component {
 			),
 			( value, key ) => snakeCase( key )
 		);
+
+		/**
+		 * If promoTlds is set we want to make sure only those TLDs will be suggested
+		 * so we set the filter to those or filter the existing tld filter just in case
+		 */
 		if ( promoTlds ) {
-			if ( filtersForAPI?.tlds?.length === 0 ) {
+			if ( filtersForAPI?.tlds?.length > 0 ) {
+				filtersForAPI.tlds = filtersForAPI.tlds.filter( ( tld ) => promoTlds.includes( tld ) );
+			} else {
 				filtersForAPI.tlds = promoTlds;
 			}
 		}
