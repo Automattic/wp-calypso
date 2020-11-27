@@ -48,7 +48,7 @@ export default function PaginationControl( { currentPage, numberOfPages, setCurr
 }
 
 const DotIcon = ( { isSelected } ) => (
-	<SVG width="6" height="6" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<Circle cx="3" cy="3" r="3" fill={ isSelected ? '#419ECD' : '#E1E3E6' } />
+	<SVG width="8" height="8" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<Circle cx="4" cy="4" r="4" fill={ isSelected ? '#419ECD' : '#E1E3E6' } />
 	</SVG>
 );

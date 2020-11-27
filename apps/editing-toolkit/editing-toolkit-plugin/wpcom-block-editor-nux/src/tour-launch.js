@@ -6,14 +6,16 @@ import './public-path';
  */
 import WelcomeTourCard from './tour-card';
 import getTourContent from './tour-content';
-import maximize from './icons/maximize';
 import './style-tour.scss';
 
 /**
  * External dependencies
  */
-import { Button, Flex } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Icon, chevronUp } from '@wordpress/icons';
+// TODO: fix issue with expand icon not found.  Probably to do with old icon lib version
+// https://github.com/WordPress/gutenberg/tree/master/packages/icons/src/library
+
 import { createPortal, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 
@@ -48,7 +50,7 @@ function WelcomeTourFrame() {
 	}
 
 	return (
-		<div className="wpcom-editor-welcome-tour-frame">
+		<div className="wpcom-editor-welcome-tour-container">
 			{ ! isMinimized ? (
 				<WelcomeTourCard
 					cardContent={ cardContent[ currentCard ] }
@@ -68,12 +70,16 @@ function WelcomeTourFrame() {
 
 function WelcomeTourMinimized( { onMaximize } ) {
 	return (
-		<Button onClick={ () => onMaximize( false ) } className="wpcom-editor-welcome-tour__resume-btn">
-			<Flex gap={ 13 }>
-				<p>Click to resume tutorial</p>
-				<Icon icon={ maximize } size={ 24 } />
-			</Flex>
-		</Button>
+		<div className="wpcom-editor-welcome-tour__minimized-container">
+			<Button
+				onClick={ () => onMaximize( false ) }
+				className="wpcom-editor-welcome-tour__resume-btn"
+			>
+				<p className="wpcom-editor-welcome-tour__resume-btn-text"> Click to resume tutorial</p>
+				<Icon icon={ chevronUp } size={ 16 } />
+				{ /* TODO: expand icon is throwing an error <Icon icon={ expand } size={ 16 } /> */ }
+			</Button>
+		</div>
 	);
 }
 
