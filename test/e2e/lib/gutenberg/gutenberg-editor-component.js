@@ -363,7 +363,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				blockSettings = { prefix: 'a8c-' };
 				break;
 			case 'Subscription Form':
-				blockSettings = { prefix: 'jetpack', blockClass: 'subscriptions' };
+				blockSettings = { prefix: 'jetpack-', blockClass: 'subscriptions' };
 				break;
 			case 'Layout Grid':
 			case 'Tiled Gallery':
