@@ -209,7 +209,7 @@ export class ReaderSidebar extends React.Component {
 					} ) }
 				/>
 
-				{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
