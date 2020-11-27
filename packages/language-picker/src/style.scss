@@ -17,7 +17,6 @@
 
 	.language-picker-component__title {
 		font-size: 2rem;
-		white-space: nowrap;
 		padding: 0 10px 12px;
 
 		@include break-small() {
@@ -62,17 +61,18 @@
 			}
 		}
 
-		&-desktop {
-			.search-component {
+		.search-component.is-open {
+			border-radius: 2px;
+			box-shadow: 0 0 0 1px var( --color-primary );
+
+			.search-component__input {
 				border-radius: 2px;
-				box-shadow: 0 0 0 1px var( --color-primary );
-
-				.search-component__input {
-					border-radius: 2px;
-				}
 			}
+		}
 
+		&-desktop {
 			display: none;
+
 			@include break-small() {
 				display: block;
 				width: 240px;
