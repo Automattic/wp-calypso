@@ -311,7 +311,7 @@ jobs:
           when: always
           command: |
             git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
       - store-artifacts-and-test-results
       - run:
