@@ -23,17 +23,12 @@ $commentary-column-gap-wide: 100px;
 	}
 }
 
-.focused-launch-summary__mobile-only {
-	@include break-medium {
-		display: none;
-	}
-}
-
 .focused-launch-summary__mobile-commentary {
-	font-size: 0.875rem;
-	color: var( --studio-gray-60 );
 	display: flex;
 	align-items: flex-start;
+	font-size: $font-body-small;
+	color: var( --studio-gray-60 );
+
 	svg {
 		vertical-align: bottom;
 		fill: var( --studio-gray-20 );
@@ -41,6 +36,10 @@ $commentary-column-gap-wide: 100px;
 
 		// compensate for the gap in the svg top
 		margin-top: -1px;
+	}
+
+	@include break-medium {
+		display: none;
 	}
 }
 
