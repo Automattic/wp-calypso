@@ -14,18 +14,19 @@ import './style-tour.scss';
 import { Button } from '@wordpress/components';
 import { Icon, chevronUp } from '@wordpress/icons';
 // TODO: fix issue with expand icon not found.  Probably to do with old icon lib version
+// https://github.com/WordPress/gutenberg/tree/master/packages/icons/src/library
 
 import { createPortal, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 
 function LaunchWpcomNuxTour() {
-	// Create parent for welcome tour portal
+	// Create parent div for welcome tour portal
 	const portalParent = document.createElement( 'div' );
 	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 	useEffect( () => {
 		document.body.appendChild( portalParent );
 		return () => {
-			// TODO: figure out how to unmount as this is not running when modal is closed
+			// TODO: figure out how to unmount the LaunchWpcomNuxTour as this is not running when modal is closed
 			document.body.removeChild( portalParent );
 		};
 	} );
@@ -37,11 +38,10 @@ function WelcomeTourFrame() {
 	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCard, setCurrentCard ] = useState( 0 );
-	// TODO: replace with wp.data
+	// TODO: replace isNuxEnabled with wp.data
 	const [ isNuxEnabled, setIsNuxEnabled ] = useState( true );
 	const dismissWpcomNuxTour = () => {
 		// TODO recordTracksEvent
-		// setWpcomNuxStatus( { isNuxEnabled: false } );
 		setIsNuxEnabled( false );
 	};
 
@@ -62,7 +62,6 @@ function WelcomeTourFrame() {
 					setCurrentCard={ setCurrentCard }
 				/>
 			) : (
-				// <WelcomeTourCard onDismiss={ dismissWpcomNuxTour } onMinimize={ setIsMinimized } />
 				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
 			) }
 		</div>
@@ -78,7 +77,7 @@ function WelcomeTourMinimized( { onMaximize } ) {
 			>
 				<p className="wpcom-editor-welcome-tour__resume-btn-text"> Click to resume tutorial</p>
 				<Icon icon={ chevronUp } size={ 16 } />
-				{ /* expand icon is throwing an error <Icon icon={ expand } size={ 16 } /> */ }
+				{ /* TODO: expand icon is throwing an error <Icon icon={ expand } size={ 16 } /> */ }
 			</Button>
 		</div>
 	);
@@ -86,7 +85,6 @@ function WelcomeTourMinimized( { onMaximize } ) {
 
 export default LaunchWpcomNuxTour;
 
-// TODO rename to nuxtour?
 registerPlugin( 'wpcom-block-editor-nux', {
 	render: () => <LaunchWpcomNuxTour />,
 } );
