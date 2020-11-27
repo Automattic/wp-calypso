@@ -100,7 +100,6 @@
 		"nav-unification": false,
 		"network-connection": true,
 		"perfmon": true,
-		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
 		"post-editor/html-toolbar": true,

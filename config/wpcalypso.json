@@ -119,7 +119,6 @@
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
 		"perfmon": true,
-		"persist-redux": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
 		"post-editor/html-toolbar": true,

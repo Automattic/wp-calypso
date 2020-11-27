@@ -46,7 +46,7 @@ function deserialize( state, reducer ) {
 }
 
 function shouldPersist() {
-	return config.isEnabled( 'persist-redux' ) && ! isSupportSession();
+	return ! isSupportSession();
 }
 
 /**
