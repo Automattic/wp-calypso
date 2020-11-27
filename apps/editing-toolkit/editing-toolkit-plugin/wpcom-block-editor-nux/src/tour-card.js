@@ -12,6 +12,7 @@ import minimize from './icons/minimize';
  * External dependencies
  */
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
+import { close } from '@wordpress/icons';
 
 // import { useEffect, useState } from '@wordpress/element';
 
@@ -85,7 +86,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 					iconSize={ 24 }
 					onClick={ () => onMinimize( true ) }
 				></Button>
-				<Button isPrimary icon="no-alt" iconSize={ 24 } onClick={ () => onDismiss() }></Button>
+				<Button isPrimary icon={ close } iconSize={ 24 } onClick={ () => onDismiss() }></Button>
 			</Flex>
 		</div>
 	);
