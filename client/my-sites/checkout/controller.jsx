@@ -17,6 +17,14 @@ import CheckoutContainer from './checkout/checkout-container';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
+<<<<<<< HEAD
+=======
+import UpsellNudge, {
+	PLAN_UPGRADE_UPSELL,
+	CONCIERGE_SUPPORT_SESSION,
+	CONCIERGE_QUICKSTART_SESSION,
+} from './upsell-nudge';
+>>>>>>> Dynamically resolve product slug based on the upsell type and upgraded item if applicable
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { getRememberedCoupon } from 'calypso/lib/cart/actions';
 import { setSectionMiddleware } from 'calypso/controller';
