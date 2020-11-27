@@ -1,5 +1,3 @@
-<!-- eslint-disable wpcalypso/no-unsafe-wp-apis -->
-
 # Prevent unsafe API usage (no-unsafe-wp-apis)
 
 Prevent unsafe APIs from `@wordpress/*` packages from being imported.
@@ -18,6 +16,7 @@ See the [documentation](https://github.com/WordPress/gutenberg/blob/master/docs/
 Examples of **incorrect** code for this rule:
 
 ```js
+/* eslint-disable wpcalypso/no-unsafe-wp-apis */
 import { __experimentalFeature } from '@wordpress/foo';
 import { __unstableFeature } from '@wordpress/bar';
 ```
@@ -33,7 +32,7 @@ import { registerBlockType } from '@wordpress/blocks';
 The rule can be configured via an object.
 This should be an object where the keys are import package names and the values are arrays of allowed unsafe imports.
 
-#### Example configuration
+## Example configuration
 
 ```json
 {
