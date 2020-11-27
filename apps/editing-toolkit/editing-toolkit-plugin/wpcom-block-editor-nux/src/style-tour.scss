@@ -12,10 +12,14 @@
 	position: fixed;
 }
 
-.welcome-tour-card__heading,
-.welcome-tour-card__subheading {
-	font-size: $big-font-size;
-	padding: $grid-unit-05 $grid-unit-20;
+.welcome-tour-card__heading {
+	font-size: 1.25rem;
+	margin: 0.5rem 0;
+}
+
+.welcome-tour-card__description {
+	font-size: 0.875rem;
+	line-height: 1.5rem;
 }
 
 .wpcom-editor-welcome-tour__resume-btn {
@@ -36,7 +40,7 @@
 	// TODO update markup/css  if this isn't ok
 	.components-guide__page-control {
 		bottom: 0;
-		left: 16px;
+		left: $grid-unit-20;
 		margin: 0;
 		position: absolute;
 
@@ -48,8 +52,13 @@
 
 .welcome-tour-card {
 	max-width: 400px;
+
+	.components-card__body,
 	.components-card__footer {
 		border-top: none;
+		padding: $grid-unit-15 !important;
+	}
+
 	.components-guide__page-control {
 		margin: 0;
 
@@ -68,14 +77,15 @@
 
 .welcome-tour-card__overlay-controls {
 	left: 0;
-	padding: 12px;
+	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+
 	.components-button {
 		background: $dark-gray-700;
 	}
 }
 
 .welcome-tour-card__next-btn {
-	margin-left: 10px;
+	margin-left: $grid-unit-15;
 }
