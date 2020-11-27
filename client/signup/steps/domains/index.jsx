@@ -492,7 +492,7 @@ class DomainsStep extends React.Component {
 				onAddDomain={ this.handleAddDomain }
 				products={ this.props.productsList }
 				basePath={ this.props.path }
-				trueNamePromoTlds={ trueNamePromoTlds }
+				promoTlds={ trueNamePromoTlds }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
 				useYourDomainUrl={ this.getUseYourDomainUrl() }

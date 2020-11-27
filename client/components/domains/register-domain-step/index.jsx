@@ -154,7 +154,7 @@ class RegisterDomainStep extends React.Component {
 		isReskinned: PropTypes.bool,
 		showSkipButton: PropTypes.bool,
 		onSkip: PropTypes.func,
-		trueNamePromoTlds: PropTypes.array,
+		promoTlds: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -244,6 +244,7 @@ class RegisterDomainStep extends React.Component {
 				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
 			premiumDomains: {},
+			promoTldsAdded: false,
 			searchResults: null,
 			showAvailabilityNotice: false,
 			showSuggestionNotice: false,
@@ -661,13 +662,20 @@ class RegisterDomainStep extends React.Component {
 
 	getActiveFiltersForAPI() {
 		const { filters } = this.state;
-		return mapKeys(
+		const { promoTlds } = this.props;
+		const filtersForAPI = mapKeys(
 			pickBy(
 				filters,
 				( value ) => isNumberString( value ) || value === true || Array.isArray( value )
 			),
 			( value, key ) => snakeCase( key )
 		);
+		if ( promoTlds ) {
+			if ( filtersForAPI?.tlds?.length === 0 ) {
+				filtersForAPI.tlds = promoTlds;
+			}
+		}
+		return filtersForAPI;
 	}
 
 	toggleTldInFilter = ( event ) => {
@@ -762,16 +770,16 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
-		const { trueNamePromoTlds } = this.props;
+		const { promoTlds } = this.props;
 		return getAvailableTlds( { vendor, search: domain } )
 			.then( ( availableTlds ) => {
 				let filteredAvailableTlds = availableTlds;
-				if ( trueNamePromoTlds ) {
-					filteredAvailableTlds = availableTlds.filter( ( tld ) =>
-						trueNamePromoTlds.includes( tld )
-					);
+				if ( promoTlds ) {
+					filteredAvailableTlds = availableTlds.filter( ( tld ) => promoTlds.includes( tld ) );
 				}
-				this.setState( { availableTlds: filteredAvailableTlds } );
+				this.setState( {
+					availableTlds: filteredAvailableTlds,
+				} );
 			} )
 			.catch( noop );
 	};
@@ -835,11 +843,8 @@ class RegisterDomainStep extends React.Component {
 			return;
 		}
 
-		if (
-			this.props.trueNamePromoTlds &&
-			! this.props.trueNamePromoTlds.includes( getTld( domain ) )
-		) {
-			// We don't want to run an availability check if trueNamePromoTlds are set
+		if ( this.props.promoTlds && ! this.props.promoTlds.includes( getTld( domain ) ) ) {
+			// We don't want to run an availability check if promoTlds are set
 			// and the searched domain is not one of those TLDs
 			return;
 		}
