@@ -7,6 +7,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { ActionButtons, BackButton } from '@automattic/onboarding';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
 import { I18N_STORE } from '../../stores/i18n';
+import { USER_STORE } from '../../stores/user';
 
 /**
  * WordPress dependencies
@@ -24,11 +25,17 @@ import languages from '@automattic/languages';
  */
 import './style.scss';
 
+const LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE = 'en';
+
 const LanguageStep: React.FunctionComponent = () => {
-	const { __, i18nLocale } = useI18n();
+	const { __ } = useI18n();
+
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const localizedLanguageNames = useSelect( ( select ) =>
-		select( I18N_STORE ).getLocalizedLanguageNames( i18nLocale )
+		select( I18N_STORE ).getLocalizedLanguageNames(
+			currentUser?.language ?? LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE
+		)
 	);
 
 	const history = useHistory();
