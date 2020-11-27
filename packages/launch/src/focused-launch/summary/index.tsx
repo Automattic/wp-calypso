@@ -139,7 +139,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							>
 								<span>{ info }</span>
 							</Tooltip>
-							<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+							<p className="focused-launch-summary__mobile-commentary">
 								<Icon icon={ bulb } />
 								<span>
 									{ createInterpolateElement(
@@ -170,7 +170,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 										{ stepIndex && `${ stepIndex }. ` }
 										{ __( 'Confirm your domain', __i18n_text_domain__ ) }
 									</label>
-									<p className="focused-launch-summary__mobile-commentary focused-launch-summary__mobile-only">
+									<p className="focused-launch-summary__mobile-commentary">
 										<Icon icon={ bulb } />
 										<span>
 											{ createInterpolateElement(
