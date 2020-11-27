@@ -6,6 +6,7 @@ import './public-path';
  */
 import './style-tour.scss';
 import PaginationControl from './pagination';
+import minimize from './icons/minimize';
 
 /**
  * External dependencies
@@ -78,7 +79,12 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 	return (
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
-				<Button isPrimary icon="pets" iconSize={ 14 } onClick={ () => onMinimize( true ) }></Button>
+				<Button
+					isPrimary
+					icon={ minimize }
+					iconSize={ 14 }
+					onClick={ () => onMinimize( true ) }
+				></Button>
 				<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
 			</Flex>
 		</div>
