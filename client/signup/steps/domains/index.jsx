@@ -502,8 +502,8 @@ class DomainsStep extends React.Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ includeWordPressDotCom }
-				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
+				includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
+				includeDotBlogSubdomain={ trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }
