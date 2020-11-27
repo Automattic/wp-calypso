@@ -50,7 +50,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( id ).toStrictEqual( 123456 );
+			expect( id ).toBe( 123456 );
 		} );
 	} );
 
@@ -73,7 +73,7 @@ describe( 'selectors', () => {
 				'push'
 			);
 
-			expect( nonce ).toStrictEqual( 'abcdef123456' );
+			expect( nonce ).toBe( 'abcdef123456' );
 		} );
 
 		test( 'should return the two factor auth nonce for sms if there is such', () => {
@@ -88,13 +88,13 @@ describe( 'selectors', () => {
 				'sms'
 			);
 
-			expect( nonce ).toStrictEqual( 'abcdef123456' );
+			expect( nonce ).toBe( 'abcdef123456' );
 		} );
 	} );
 
 	describe( 'isRequestingTwoFactorAuth', () => {
 		test( 'should return false by default', () => {
-			expect( isRequestingTwoFactorAuth( EMPTY_STATE ) ).toBeFalsy();
+			expect( isRequestingTwoFactorAuth( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true if the request is in progress', () => {
@@ -104,7 +104,7 @@ describe( 'selectors', () => {
 						isRequestingTwoFactorAuth: true,
 					},
 				} )
-			).toBeTruthy();
+			).toBe( true );
 		} );
 
 		test( 'should return false if the request is not in progress', () => {
@@ -114,7 +114,7 @@ describe( 'selectors', () => {
 						isRequestingTwoFactorAuth: false,
 					},
 				} )
-			).toBeFalsy();
+			).toBe( false );
 		} );
 	} );
 
@@ -166,29 +166,29 @@ describe( 'selectors', () => {
 						twoFactorAuthRequestError: 'some error',
 					},
 				} )
-			).toStrictEqual( 'some error' );
+			).toBe( 'some error' );
 		} );
 	} );
 
 	describe( 'isRequesting()', () => {
 		test( 'should return false if there is no information yet', () => {
-			expect( isRequesting( EMPTY_STATE ) ).toBeFalsy();
+			expect( isRequesting( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true/false depending on the state of the request', () => {
-			expect( isRequesting( { login: { isRequesting: false } } ) ).toBeFalsy();
-			expect( isRequesting( { login: { isRequesting: true } } ) ).toBeTruthy();
+			expect( isRequesting( { login: { isRequesting: false } } ) ).toBe( false );
+			expect( isRequesting( { login: { isRequesting: true } } ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'isFormDisabled()', () => {
 		test( 'should return false if there is no information yet', () => {
-			expect( isFormDisabled( EMPTY_STATE ) ).toBeFalsy();
+			expect( isFormDisabled( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true/false depending on the state of the request', () => {
-			expect( isFormDisabled( { login: { isFormDisabled: false } } ) ).toBeFalsy();
-			expect( isFormDisabled( { login: { isFormDisabled: true } } ) ).toBeTruthy();
+			expect( isFormDisabled( { login: { isFormDisabled: false } } ) ).toBe( false );
+			expect( isFormDisabled( { login: { isFormDisabled: true } } ) ).toBe( true );
 		} );
 	} );
 
@@ -196,7 +196,7 @@ describe( 'selectors', () => {
 		test( 'should return false if there is no two factor information yet', () => {
 			const twoFactorEnabled = isTwoFactorEnabled( EMPTY_STATE );
 
-			expect( twoFactorEnabled ).toBeFalsy();
+			expect( twoFactorEnabled ).toBe( false );
 		} );
 
 		test( 'should return true if the request was successful and two-factor auth is enabled', () => {
@@ -209,7 +209,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( twoFactorEnabled ).toBeTruthy();
+			expect( twoFactorEnabled ).toBe( true );
 		} );
 	} );
 
@@ -245,11 +245,11 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return false when the supported auth type does not exist in the state', () => {
-			expect( isTwoFactorAuthTypeSupported( state, 'unknown' ) ).toBeFalsy();
+			expect( isTwoFactorAuthTypeSupported( state, 'unknown' ) ).toBe( false );
 		} );
 
 		test( 'should return true when the supported auth type exists in the state', () => {
-			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).toBeTruthy();
+			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).toBe( true );
 		} );
 	} );
 
@@ -268,13 +268,13 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).toEqual( token );
+			).toBe( token );
 		} );
 	} );
 
 	describe( 'getTwoFactorPushPollInProgress()', () => {
 		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollInProgress( EMPTY_STATE ) ).toBeFalsy();
+			expect( getTwoFactorPushPollInProgress( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return polling progresss status', () => {
@@ -287,13 +287,13 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).toEqual( inProgress );
+			).toBe( inProgress );
 		} );
 	} );
 
 	describe( 'getTwoFactorPushPollSuccess()', () => {
 		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollSuccess( EMPTY_STATE ) ).toBeFalsy();
+			expect( getTwoFactorPushPollSuccess( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return push polling success status', () => {
@@ -306,7 +306,7 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).toEqual( success );
+			).toBe( success );
 		} );
 	} );
 
@@ -369,7 +369,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).toEqual( true );
+			).toBe( true );
 		} );
 	} );
 
@@ -383,7 +383,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).toEqual( 'test@hello.world' );
+			).toBe( 'test@hello.world' );
 		} );
 	} );
 
@@ -397,7 +397,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).toEqual( 'google' );
+			).toBe( 'google' );
 		} );
 	} );
 } );
