@@ -155,7 +155,7 @@ yarn test:js:update-snapshots
 
 ### Writing Tests
 
-The tests make use of the 3rd party [React Testing Library](https://testing-library.com/docs/react-testing-library/). This library helps to promote healthy testing practices by encouraging testing of the component _interface_ rather than its internal APIs (ie: implementation details).
+The tests make use of the 3rd party [React Testing Library](https://testing-library.com/docs/react-testing-library/). This library promotes healthy testing practices by encouraging testing of the component _interface_ rather than its internal APIs (ie: implementation details).
 
 When writing tests try to approach them **from the perspective of how a user would interact with your component**. Approaching tests in this fashion provides greater confidence that tests will capture true component behaviors and avoids the need for costly refactoring should the component's implementation need to change.
 
