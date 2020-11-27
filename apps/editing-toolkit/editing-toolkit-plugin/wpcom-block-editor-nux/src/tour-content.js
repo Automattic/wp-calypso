@@ -6,6 +6,14 @@ import './public-path';
  */
 import { __ } from '@wordpress/i18n';
 
+import welcome from './images/welcome.png';
+import allBlocks from './images/all_blocks.gif';
+import addBlock from './images/add_block.gif';
+import makeBold from './images/make_bold.gif';
+import undo from './images/undo.gif';
+import moveBlock from './images/move_block.gif';
+import finish from './images/finish.png';
+
 /**
  * This function returns a collection of NUX Tour slide data
  *
@@ -14,23 +22,31 @@ import { __ } from '@wordpress/i18n';
 function getTourContent() {
 	return [
 		{
-			heading: __( 'Learn the basics', 'full-site-editing' ),
+			heading: __( 'Welcome to Wordpress', 'full-site-editing' ),
 			description: __(
-				'Take the tour to learn the fundamentals of the WordPress editor.',
+				'Continue on with this short tour to learn the fundamentals of the WordPress editor.',
 				'full-site-editing'
 			),
-			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-0-2.jpg?resize=400px',
+			imgSrc: welcome,
 			animation: null,
 		},
 		{
 			heading: __( 'Everything is a block', 'full-site-editing' ),
 			description: __(
-				'In the WordPress Editor paragraphs, images, and videos, are all blocks.',
+				'In the WordPress Editor paragraphs, images, and videos are all blocks.',
 				'full-site-editing'
 			),
-			imgSrc:
-				'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-1-blocks-1.gif?resize=400px',
+			imgSrc: allBlocks,
 			animation: null,
+		},
+		{
+			heading: __( 'Adding a new block', 'full-site-editing' ),
+			description: __(
+				'Click + to open the inserter. Then click the block you want to add.',
+				'full-site-editing'
+			),
+			imgSrc: addBlock,
+			animation: 'block-inserter',
 		},
 		{
 			heading: __( 'Click a block to change it', 'full-site-editing' ),
@@ -38,26 +54,16 @@ function getTourContent() {
 				'Use the toolbar to change the appearance of a selected block. Try making it bold.',
 				'full-site-editing'
 			),
-			imgSrc:
-				'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-2-make-bold-1.gif?resize=400px',
+			imgSrc: makeBold,
 			animation: null,
 		},
 		{
 			heading: __( 'More Options', 'full-site-editing' ),
 			description: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
+			// TODO get More Options gif from Jon
 			imgSrc:
 				'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-3-more_options.gif?resize=400px',
 			animation: null,
-		},
-		{
-			heading: __( 'Adding a new block', 'full-site-editing' ),
-			description: __(
-				'Click the add button to open the inserter. Then click the block you want to add.',
-				'full-site-editing'
-			),
-			imgSrc:
-				'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-4-add_block_zoomed.gif?resize=400px',
-			animation: 'block-inserter',
 		},
 		{
 			heading: __( 'Undo any mistake', 'full-site-editing' ),
@@ -65,16 +71,25 @@ function getTourContent() {
 				"Simply click the Undo button if you've made a mistake.",
 				'full-site-editing'
 			),
-			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-3.jpg?resize=400px',
+			imgSrc: undo,
+			animation: 'undo-button',
+		},
+		{
+			heading: __( 'Drag & drop', 'full-site-editing' ),
+			description: __(
+				'To move blocks around simply click and drag the handle around.',
+				'full-site-editing'
+			),
+			imgSrc: moveBlock,
 			animation: 'undo-button',
 		},
 		{
 			heading: __( 'Congratulations!', 'full-site-editing' ),
 			description: __(
-				"You've now learned the basics and are on your way to building your website!",
+				'You’ve now learned the basics. Remember, your site is always private until you decide to launch. <a>TODO:Restart tour</a>.',
 				'full-site-editing'
 			),
-			imgSrc: 'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-3.jpg?resize=400px',
+			imgSrc: finish,
 			animation: 'block-inserter',
 		},
 	];
