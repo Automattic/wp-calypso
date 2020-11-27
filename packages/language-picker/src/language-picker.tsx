@@ -62,7 +62,7 @@ const findBestDefaultLanguageGroupId = (
 			const sharedTerritories = intersection( lg.subTerritories, selectedLanguage.territories );
 
 			if ( sharedTerritories.length > 0 ) {
-				return lg;
+				return true;
 			}
 
 			return false;
@@ -132,6 +132,12 @@ function LanguagePicker< TLanguage extends Language >( {
 
 	const selectControlOptions = languageGroups.map( ( lg ) => ( { key: lg.id, name: lg.name() } ) );
 
+	const handleSearchClose = React.useCallback( () => {
+		setFilter( findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, filter ) );
+	}, [ selectedLanguage, languageGroups, filter ] );
+
+	const searchPlaceholder = __( 'Search languages…' );
+
 	return (
 		<Flex className="language-picker-component" align="left">
 			<FlexBlock className="language-picker-component__heading">
@@ -159,12 +165,8 @@ function LanguagePicker< TLanguage extends Language >( {
 						onSearch={ setSearch }
 						pinned
 						fitsContainer
-						placeholder={ __( 'Search languages…' ) }
-						onSearchClose={ () =>
-							setFilter(
-								findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, filter )
-							)
-						}
+						placeholder={ searchPlaceholder }
+						onSearchClose={ handleSearchClose }
 					/>
 				</div>
 				<div className="language-picker-component__search-desktop">
@@ -172,12 +174,8 @@ function LanguagePicker< TLanguage extends Language >( {
 						openIconSide="right"
 						onSearch={ setSearch }
 						compact
-						placeholder={ __( 'Search languages…' ) }
-						onSearchClose={ () =>
-							setFilter(
-								findBestDefaultLanguageGroupId( selectedLanguage, languageGroups, filter )
-							)
-						}
+						placeholder={ searchPlaceholder }
+						onSearchClose={ handleSearchClose }
 					/>
 				</div>
 			</FlexBlock>
