@@ -361,7 +361,7 @@ export class UserStep extends Component {
 		const stepAfterRedirect =
 			getNextStepName( this.props.flowName, this.props.stepName ) ||
 			getPreviousStepName( this.props.flowName, this.props.stepName );
-		const queryArgs = new URLSearchParams( this.props.initialContext.query );
+		const queryArgs = new URLSearchParams( this.props?.initialContext?.query );
 		const queryArgsString = queryArgs.toString() ? '?' + queryArgs.toString() : '';
 
 		return (
