@@ -21,7 +21,6 @@ import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-	TERM_ANNUALLY,
 } from 'calypso/lib/plans/constants';
 import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
@@ -31,8 +30,7 @@ import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
 import QueryMediaStorage from 'calypso/components/data/query-media-storage';
 import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {
@@ -138,13 +136,7 @@ class MediaSettingsPerformance extends Component {
 					event={ 'jetpack_video_settings' }
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
 					showIcon={ true }
-					href={ getPathToDetails(
-						'/plans',
-						{},
-						OPTIONS_JETPACK_SECURITY,
-						TERM_ANNUALLY,
-						siteSlug
-					) }
+					href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ] }` }
 				/>
 			)
 		);

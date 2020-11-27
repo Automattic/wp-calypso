@@ -47,22 +47,6 @@ export interface ProductsGridProps {
 	onDurationChange?: DurationChangeCallback;
 }
 
-export interface DetailsPageProps extends BasePageProps {
-	duration?: Duration;
-	productSlug: string;
-	siteSlug?: string;
-}
-
-export interface UpsellPageProps extends BasePageProps {
-	duration?: Duration;
-	productSlug: string;
-	siteSlug?: string;
-}
-
-export interface WithRedirectToSelectorProps extends BasePageProps {
-	duration: Duration;
-}
-
 export interface JetpackFreeProps {
 	urlQueryArgs: QueryArgs;
 	siteId: number | null;
@@ -126,9 +110,4 @@ export interface SelectorProduct extends SelectorProductCost {
 	displayTerm?: Duration;
 	displayPrice?: number;
 	displayCurrency?: string;
-}
-
-export interface AvailableProductData {
-	product_slug: string;
-	cost: number;
 }

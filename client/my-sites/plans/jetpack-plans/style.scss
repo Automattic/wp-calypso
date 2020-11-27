@@ -1,38 +1,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
 
-@include break-medium {
-	.jetpack-plans__columns {
-		display: flex;
-
-		margin-bottom: 24px;
-
-		& > .plans-column,
-		& > .details__column {
-			flex-basis: 50%;
-			flex-grow: 0;
-			align-self: flex-start;
-		}
-
-		& > .products-column,
-		& > .details__column:not( :first-of-type ) {
-			margin-left: 24px;
-		}
-		.formatted-header {
-			margin-top: 40px;
-		}
-		.plan-price {
-			font-size: $font-title-medium;
-		}
-	}
-}
-
-.jetpack-plans__columns .formatted-header__title {
-	font-size: 1.25rem;
-	color: var( --studio-color-gray-70 );
-}
-
-.selector__main,
 .selector-alt__main {
 	position: relative;
 }
@@ -53,7 +21,6 @@
 	}
 }
 
-.selector__divider,
 .selector-alt__divider {
 	margin: 40px 0;
 
@@ -65,94 +32,8 @@
 	}
 }
 
-/**
- * Upsell
- */
-
-.upsell.main {
-	padding-bottom: 0;
-	margin-bottom: 24px;
-}
-
-.upsell__header-placeholder {
-	@include placeholder( --color-neutral-10 );
-
-	min-height: 220px;
-	margin: 24px 0;
-}
-
-.upsell__product-card-placeholder {
-	@include placeholder( --color-neutral-10 );
-
-	min-height: 540px;
-}
-
-.upsell__header {
-	text-align: center;
-
-	background-color: var( --color-surface );
-
-	padding: 16px;
-	margin: 24px 0;
-
-	box-shadow: 0 0 0 1px var( --color-border-subtle );
-}
-
-.upsell__subheader {
-	font-style: italic;
-
-	max-width: 500px;
-	margin: 0 auto 8px;
-}
-
-.upsell__saved-amount {
-	color: var( --studio-jetpack-green-40 );
-}
-
-.upsell__icons {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	margin: 24px 0;
-}
-
-.upsell__plus-icon {
-	margin: 0 8px;
-}
-
-.upsell__product-icon {
-	width: 40px;
-	height: 40px;
-
-	filter: grayscale( 1 );
-}
-
-@include break-medium {
-	.upsell__product-card {
-		background-color: var( --color-surface );
-
-		padding: 16px;
-
-		box-shadow: 0 0 0 1px var( --color-border-subtle );
-
-		.jetpack-product-card {
-			margin: 40px auto 16px;
-			max-width: 508px;
-		}
-	}
-}
-
-/**
- * Details
- */
-
-.details__main .formatted-header {
-	margin-top: 32px;
-
-	@include break-medium {
-		margin-top: 40px;
-	}
+.jetpack-plans__heading {
+	padding: 1rem 0;
 }
 
 /**
@@ -222,8 +103,4 @@
 .records-details__timeframe {
 	margin-top: -4px;
 	font-size: 0.75rem;
-}
-
-.jetpack-plans__heading {
-	padding: 1rem 0;
 }

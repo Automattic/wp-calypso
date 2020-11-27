@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from './plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from './constants';
-import { getPathToDetails, checkout } from './utils';
+import { checkout } from './utils';
 import QueryProducts from './query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
@@ -104,20 +104,6 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 			return;
 		}
 
-		if ( product.subtypes.length ) {
-			dispatch(
-				recordTracksEvent( 'calypso_product_subtypes_click', {
-					site_id: siteId || undefined,
-					product_slug: product.productSlug,
-					duration: currentDuration,
-				} )
-			);
-			page(
-				getPathToDetails( rootUrl, urlQueryArgs, product.productSlug, currentDuration, siteSlug )
-			);
-			return;
-		}
-
 		dispatch(
 			recordTracksEvent( 'calypso_product_checkout_click', {
 				site_id: siteId || undefined,
@@ -152,12 +138,7 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 			{ header }
 
 			{ showFilterBarInSelector() && (
-				<PlansFilterBar
-					showDiscountMessage
-					showDurations
-					onDurationChange={ trackDurationChange }
-					duration={ currentDuration }
-				/>
+				<PlansFilterBar onDurationChange={ trackDurationChange } duration={ currentDuration } />
 			) }
 
 			{ Grid && (

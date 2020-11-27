@@ -60,22 +60,3 @@ export function getFaqComponent(): React.FC | undefined {
 export function showFilterBarInSelector(): boolean {
 	return [ Iterations.V1, Iterations.V2 ].includes( getIteration() as Iterations );
 }
-
-/**
- * Jetpack CRM
- */
-export function getJetpackCrmPrice(): number | undefined {
-	return {
-		[ Iterations.V1 ]: undefined,
-		[ Iterations.V2 ]: 17,
-		[ Iterations.I5 ]: 17,
-	}[ getIteration() as Iterations ];
-}
-
-export function getJetpackCrmCurrency(): string | undefined {
-	return {
-		[ Iterations.V1 ]: undefined,
-		[ Iterations.V2 ]: 'USD',
-		[ Iterations.I5 ]: 'USD',
-	}[ getIteration() as Iterations ];
-}
