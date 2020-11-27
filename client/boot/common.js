@@ -350,12 +350,9 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 			//see server/pages/index for prod redirect
 			if ( '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
-				if ( queryFor && 'jetpack' === queryFor ) {
-					window.location =
-						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans';
-				} else {
+				if ( queryFor && 'jetpack' !== queryFor ) {
 					// pricing page is outside of Calypso, needs a full page load
-					window.location = 'https://wordpress.com/pricing';
+					window.location = `https://wordpress.com/pricing/${ context.querystring }`;
 				}
 				return;
 			}
