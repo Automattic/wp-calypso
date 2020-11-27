@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -46,8 +47,8 @@
 		"ts-loader": "^8.0.8"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist && tsc --build --clean",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile && tsc --build && copy-assets"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

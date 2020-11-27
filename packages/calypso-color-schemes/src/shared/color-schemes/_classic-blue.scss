@@ -1,4 +1,5 @@
-.color-scheme.is-classic-blue {
+.color-scheme.is-classic-blue,
+.color-scheme.is-classic-blue .is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-blue-50 );
 	--color-primary-rgb: var( --studio-blue-50-rgb );
@@ -74,7 +75,7 @@
 	--color-masterbar-toggle-drafts-editor-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-hover-background: var( --studio-gray-40 );
 	--color-masterbar-toggle-drafts-editor-border: var( --studio-gray-10 );
-	
+
 	--color-sidebar-background: var( --studio-gray-5 );
 	--color-sidebar-background-rgb: var( --studio-gray-5-rgb );
 	--color-sidebar-border: var( --studio-gray-10 );

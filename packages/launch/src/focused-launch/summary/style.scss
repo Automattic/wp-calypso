@@ -6,6 +6,12 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
 
+$commentary-column-width-medium: 280px;
+$commentary-column-width-large: 320px;
+$commentary-column-gap-small: 40px;
+$commentary-column-gap-large: 80px;
+$commentary-column-gap-wide: 100px;
+
 .focused-launch-summary__input {
 	.components-text-control__input {
 		font-size: 1rem;
@@ -26,8 +32,15 @@
 .focused-launch-summary__mobile-commentary {
 	font-size: 0.875rem;
 	color: var( --studio-gray-60 );
+	display: flex;
+	align-items: flex-start;
 	svg {
 		vertical-align: bottom;
+		fill: var( --studio-gray-20 );
+		margin-right: 3px;
+
+		// compensate for the gap in the svg top
+		margin-top: -1px;
 	}
 }
 
@@ -37,6 +50,10 @@
 	font-size: 1.25rem;
 	color: var( --studio-gray-90 );
 	line-height: 24px;
+
+	@include break-medium {
+		margin-bottom: 12px;
+	}
 }
 
 .focused-launch-summary__info-icon {
@@ -45,36 +62,31 @@
 }
 
 .focused-launch-summary__section {
-	// maybe use @include onboarding-block-margin;
-	margin: 0 20px 40px;
-
-	@include break-medium {
-		margin: 0 10px 40px;
-	}
+	margin-bottom: 40px;
 }
 
 .focused-launch-summary__caption {
 	margin: 12px 0;
-	font-size: 1rem;
-	color: #50575e;
 }
 
 .focused-launch-summary__step {
 	display: flex;
+	gap: $commentary-column-gap-small;
+	justify-content: space-between;
 	opacity: 0.5;
 	transition: opacity 0.5s ease-in-out;
 
-	@include break-medium {
-		gap: 50px;
+	@include break-large {
+		gap: $commentary-column-gap-large;
 	}
 
-	@include break-large {
-		gap: 100px;
+	@include break-wide {
+		gap: $commentary-column-gap-wide;
 	}
 }
 
 // by default: highlight all steps when nothing is in focus
-.focused-launch-summary__container:not( :focus-within ) {
+.focused-launch-container:not( :focus-within ) {
 	.focused-launch-summary__step {
 		opacity: 1;
 	}
@@ -96,13 +108,13 @@
 			display: block;
 			height: 18px;
 		}
-		margin-left: 10px;
 		border-left: 1px solid #eee;
 		display: flex;
 		flex-direction: column;
-		flex: 0.4;
-		padding: 0 42.5px;
-		max-width: 350px;
+		padding-left: 40px;
+		width: $commentary-column-width-medium;
+		flex-grow: 0;
+		flex-shrink: 0;
 
 		&-title {
 			font-size: 1.25rem;
@@ -127,20 +139,69 @@
 			margin-right: 12px;
 		}
 	}
-}
 
-.focused-launch-summary__data-input {
-	flex: 1;
-
-	@include break-medium {
-		flex: 0.6;
+	@include break-large {
+		width: $commentary-column-width-large;
 	}
 }
 
-.onboarding-title {
-	@include onboarding-font-recoleta;
+.focused-launch-summary__data-input {
+	flex-grow: 1;
+	flex-shrink: 1;
+}
 
-	font-size: 2.25rem;
-	line-height: 40px;
-	color: #101517;
+.focused-launch-summary__details-link {
+	display: block;
+	margin-top: 14px;
+	color: var( --studio-gray-60 );
+}
+
+.focused-launch-summary__actions-wrapper {
+	@include break-small {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	@include break-medium {
+		flex-direction: column-reverse;
+		align-items: flex-start;
+		gap: 20px;
+		width: calc( 100% - #{$commentary-column-width-medium + $commentary-column-gap-small} );
+	}
+
+	@include break-large {
+		flex-direction: row;
+		align-items: center;
+		width: calc( 100% - #{$commentary-column-width-large + $commentary-column-gap-large} );
+	}
+
+	@include break-wide {
+		width: calc( 100% - #{$commentary-column-width-large + $commentary-column-gap-wide} );
+	}
+}
+
+.focused-launch-summary__ask-for-help {
+	// to make scrolling space for sticky action bar
+	margin-bottom: $onboarding-footer-height;
+
+	@include break-small {
+		margin-bottom: 0;
+	}
+
+	> * {
+		margin: 0;
+	}
+}
+
+.focused-launch-summary__launch-action-bar {
+	// Overrides original component styles
+	&.action-buttons:not( .is-sticky ) {
+		margin-left: 0;
+	}
+
+	@include break-small {
+		flex-shrink: 0;
+		margin-right: 8px;
+	}
 }

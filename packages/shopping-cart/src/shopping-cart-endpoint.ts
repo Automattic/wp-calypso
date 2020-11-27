@@ -64,6 +64,8 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	coupon_savings_total_display: string;
 	savings_total_integer: number;
 	savings_total_display: string;
+	sub_total_with_taxes_integer: number;
+	sub_total_with_taxes_display: string;
 	sub_total_integer: number;
 	sub_total_display: string;
 	currency: string;

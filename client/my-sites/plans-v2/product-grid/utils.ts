@@ -94,3 +94,5 @@ export const getProductsToDisplay = ( {
 export const isConnectionFlow = (): boolean =>
 	/jetpack\/connect\/plans/.test( window.location.href ) ||
 	/source=jetpack-connect-plans/.test( window.location.href );
+
+export const isConnectStore = (): boolean => /jetpack\/connect\/store/.test( window.location.href );

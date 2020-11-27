@@ -632,99 +632,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 	}
 }
 
-.jetpack-connect__plans {
-	.plan-features__header-figure {
-		height: 32px;
-		width: 32px;
-	}
-
-	.plan-features__header-timeframe {
-		height: 20px;
-		margin-top: 11px;
-	}
-
-	.plan-features .plan-price.is-original {
-		align-self: center;
-		margin-top: 6px;
-	}
-
-	.plan-features .plan-price.is-original .plan-price__currency-symbol,
-	.plan-features .plan-price.is-original .plan-price__fraction {
-		font-size: 1rem;
-	}
-
-	.plan-features .plan-price.is-discounted {
-		display: block;
-		margin-right: 0;
-		font-size: $font-title-medium;
-	}
-
-	.plan-pill {
-		left: 50%;
-		transform: translateX( -50% );
-	}
-
-	.formatted-header,
-	.formatted-header.is-without-subhead {
-		margin-bottom: 8px;
-	}
-
-	.formatted-header a {
-		color: var( --color-neutral-20 );
-		text-decoration: underline;
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-20 );
-			text-decoration: underline;
-		}
-	}
-
-	.jetpack-connect__happychat-button {
-		text-align: center;
-	}
-
-	.plans-skip-button {
-		margin-bottom: 32px;
-	}
-}
-
-.jetpack-connect__plans.placeholder {
-	.placeholder-text,
-	.jetpack-connect-plans-placeholder__plans-content {
-		@include placeholder();
-	}
-	.jetpack-connect-plans-placeholder__plans-content {
-		min-height: 400px;
-	}
-
-	.plan-features--signup .plan-price.is-original::before {
-		border-top: 0;
-	}
-
-	.plan-features__actions-buttons {
-		margin-top: 16px;
-	}
-
-	.plan-features__item {
-		.placeholder-text {
-			margin: 0 auto;
-		}
-	}
-}
-
-.jetpack-connect__hide-plan-icons {
-	.jetpack-connect__plans {
-		.plans-wrapper {
-			padding-bottom: 0;
-		}
-
-		.plan-features__graphic {
-			display: none;
-		}
-	}
-}
-
 .jetpack-connect__credentials-submit {
 	transition: none;
 
@@ -820,7 +727,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
  **/
 .layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ),
 .layout.is-section-purchase-product {
-
 	&.layout {
 		position: relative;
 		min-height: calc( 100% - #{$colophon-height} );
@@ -932,7 +838,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.logged-out-form__footer,
 	.login__form-footer {
-
 		.button.is-primary {
 			box-shadow: none;
 		}
@@ -1078,7 +983,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.signup-form__social,
 		.login__form-social {
-
 			.social-buttons__button {
 				border-color: var( --studio-pink-50 );
 				color: var( --studio-pink-50 );

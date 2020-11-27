@@ -39,6 +39,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		total_cost_display,
 		coupon_savings_total_display,
 		coupon_savings_total_integer,
+		sub_total_with_taxes_display,
 		savings_total_display,
 		savings_total_integer,
 		currency,
@@ -50,8 +51,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		coupon,
 		tax,
 	} = serverCart;
-
-	const isFullCredits = doesPurchaseHaveFullCredits( serverCart );
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
@@ -90,7 +89,14 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 			currency: currency,
 			value: credits_integer,
 			displayValue: String(
-				translate( '- %(discountAmount)s', { args: { discountAmount: credits_display } } )
+				translate( '- %(discountAmount)s', {
+					args: {
+						// Clamp the credits display value to the total
+						discountAmount: doesPurchaseHaveFullCredits( serverCart )
+							? sub_total_with_taxes_display
+							: credits_display,
+					},
+				} )
 			),
 		},
 		wpcom_meta: {
@@ -143,7 +149,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
-		total: isFullCredits ? subtotalItem : totalItem,
+		total: totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,

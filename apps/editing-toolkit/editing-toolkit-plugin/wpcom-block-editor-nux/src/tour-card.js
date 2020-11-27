@@ -5,12 +5,14 @@ import './public-path';
  * Internal dependencies
  */
 import './style-tour.scss';
-import SlideControl from './slide-control';
+import PaginationControl from './pagination';
+import minimize from './icons/minimize';
 
 /**
  * External dependencies
  */
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
+import { close } from '@wordpress/icons';
 
 // import { useEffect, useState } from '@wordpress/element';
 
@@ -25,18 +27,18 @@ function WelcomeTourCard( {
 	const { description, heading, imgSrc } = cardContent;
 
 	return (
-		<Card className="welcome-tour-card">
+		<Card className="welcome-tour-card" isElevated>
 			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
 			<CardMedia>
 				<img alt="Editor Welcome Tour" src={ imgSrc } />
 			</CardMedia>
 			<CardBody>
-				<h2 className="welcome-tour-card__card-heading">{ heading }</h2>
-				<p>{ description }</p>
+				<h2 className="welcome-tour-card__heading">{ heading }</h2>
+				<p className="welcome-tour-card__description">{ description }</p>
+				{ /* TODO: add conditional "Restart tour" functionality for last slide" */ }
 			</CardBody>
 			<CardFooter>
-				{ /* TODO: revist naming for this component */ }
-				<SlideControl
+				<PaginationControl
 					className=""
 					currentPage={ cardIndex }
 					numberOfPages={ lastCardIndex + 1 }
@@ -48,11 +50,7 @@ function WelcomeTourCard( {
 							No thanks
 						</Button>
 					) : (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isTertiary={ true }
-							onClick={ () => setCurrentCard( cardIndex - 1 ) }
-						>
+						<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
 							Back
 						</Button>
 					) }
@@ -65,7 +63,11 @@ function WelcomeTourCard( {
 							{ cardIndex === 0 ? "Let's start" : 'Next' }
 						</Button>
 					) : (
-						<Button isPrimary={ true } onClick={ () => onDismiss() }>
+						<Button
+							className="welcome-tour-card__next-btn"
+							isPrimary={ true }
+							onClick={ () => onDismiss() }
+						>
 							Done
 						</Button>
 					) }
@@ -79,8 +81,13 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 	return (
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
-				<Button isPrimary icon="pets" iconSize={ 14 } onClick={ () => onMinimize( true ) }></Button>
-				<Button isPrimary icon="no-alt" iconSize={ 14 } onClick={ () => onDismiss() }></Button>
+				<Button
+					isPrimary
+					icon={ minimize }
+					iconSize={ 24 }
+					onClick={ () => onMinimize( true ) }
+				></Button>
+				<Button isPrimary icon={ close } iconSize={ 24 } onClick={ () => onDismiss() }></Button>
 			</Flex>
 		</div>
 	);

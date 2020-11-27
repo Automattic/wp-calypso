@@ -1560,6 +1560,108 @@ export const FEATURES_LIST = {
 		getSlug: () => constants.FEATURE_SPELLING_CORRECTION_V2,
 		getTitle: () => i18n.translate( 'Spelling correction' ),
 	},
+
+	[ constants.FEATURE_P2_3GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_3GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}3GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () =>
+			i18n.translate( 'Upload images and documents and share them with your team.' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_USERS ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_USERS,
+		getTitle: () => i18n.translate( 'Unlimited users' ),
+		getDescription: () => i18n.translate( 'Invite as many people as you need to your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_POSTS_PAGES ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_POSTS_PAGES,
+		getTitle: () => i18n.translate( 'Unlimited posts and pages' ),
+		getDescription: () =>
+			i18n.translate( 'Communicate as often as you want, with full access to your archive.' ),
+	},
+
+	[ constants.FEATURE_P2_SIMPLE_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_SIMPLE_SEARCH,
+		getTitle: () => i18n.translate( 'Simple search' ),
+		getDescription: () => i18n.translate( 'Easily find what you’re looking for.' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOMIZATION_OPTIONS ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOMIZATION_OPTIONS,
+		getTitle: () => i18n.translate( 'Customization options' ),
+		getDescription: () =>
+			i18n.translate( 'Make your team feel at home with some easy customization options.' ),
+	},
+
+	[ constants.FEATURE_P2_13GB_STORAGE ]: {
+		getSlug: () => constants.FEATURE_P2_13GB_STORAGE,
+		getTitle: () =>
+			i18n.translate( '{{strong}}13GB{{/strong}} storage space', {
+				components: {
+					strong: <strong />,
+				},
+			} ),
+		getDescription: () => i18n.translate( 'Upload more files to your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS ]: {
+		getSlug: () => constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
+		getTitle: () => i18n.translate( 'Unlimited free viewers' ),
+		getDescription: () =>
+			i18n.translate( 'Viewers can read and comment posts, but can’t publish new ones.' ),
+	},
+
+	[ constants.FEATURE_P2_ADVANCED_SEARCH ]: {
+		getSlug: () => constants.FEATURE_P2_ADVANCED_SEARCH,
+		getTitle: () => i18n.translate( 'Advanced search' ),
+		getDescription: () =>
+			i18n.translate(
+				'A faster and more powerful search engine to make finding what you’re looking for easier.'
+			),
+	},
+
+	[ constants.FEATURE_P2_VIDEO_SHARING ]: {
+		getSlug: () => constants.FEATURE_P2_VIDEO_SHARING,
+		getTitle: () => i18n.translate( 'Easy video sharing' ),
+		getDescription: () =>
+			i18n.translate(
+				'Upload videos directly to your P2 for your team to see, without depending on external services.'
+			),
+	},
+
+	[ constants.FEATURE_P2_MORE_FILE_TYPES ]: {
+		getSlug: () => constants.FEATURE_P2_MORE_FILE_TYPES,
+		getTitle: () => i18n.translate( 'More file types' ),
+		getDescription: () => i18n.translate( 'Upload videos, audio, .zip and .key files.' ),
+	},
+
+	[ constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT ]: {
+		getSlug: () => constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
+		getTitle: () => i18n.translate( 'Priority chat and email support' ),
+		getDescription: () =>
+			i18n.translate(
+				'Live chat is available 24 hours a day from Monday through Friday. You can also email us any day of the week for personalized support.'
+			),
+	},
+
+	[ constants.FEATURE_P2_ACTIVITY_OVERVIEW ]: {
+		getSlug: () => constants.FEATURE_P2_ACTIVITY_OVERVIEW,
+		getTitle: () => i18n.translate( 'Activity overview panel' ),
+		getDescription: () =>
+			i18n.translate( 'A complete record of everything that happens on your P2.' ),
+	},
+
+	[ constants.FEATURE_P2_CUSTOM_DOMAIN ]: {
+		getSlug: () => constants.FEATURE_P2_CUSTOM_DOMAIN,
+		getTitle: () => i18n.translate( 'Custom domain' ),
+		getDescription: () => i18n.translate( 'Make your P2 more memorable using your own domain.' ),
+	},
 };
 
 export const getPlanFeaturesObject = ( planFeaturesList ) => {

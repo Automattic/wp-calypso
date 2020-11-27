@@ -85,7 +85,6 @@
 		"press-this": false,
 		"reader": true,
 		"reader/full-errors": false,
-		"reader/user-mention-suggestions": false,
 		"republicize": true,
 		"settings/security/monitor": true,
 		"settings/theme-setup": false,

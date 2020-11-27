@@ -185,7 +185,7 @@ class ScanPage extends Component< Props > {
 				) }
 				<p>
 					{ translate(
-						'We will send you an email once the scan completes, in the meantime feel ' +
+						'We will send you an email if security threats are found. In the meantime feel ' +
 							'free to continue to use your site as normal, you can check back on ' +
 							'progress at any time.'
 					) }

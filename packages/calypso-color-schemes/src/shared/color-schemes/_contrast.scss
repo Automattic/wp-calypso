@@ -1,4 +1,5 @@
-.color-scheme.is-contrast {
+.color-scheme.is-contrast,
+.color-scheme.is-contrast .is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-gray-80 );
 	--color-primary-rgb: var( --studio-gray-80-rgb );

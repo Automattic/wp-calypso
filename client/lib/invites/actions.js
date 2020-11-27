@@ -23,32 +23,6 @@ import { requestSiteInvites } from 'calypso/state/invites/actions';
  */
 const debug = new Debug( 'calypso:invites-actions' );
 
-export function fetchInvite( siteId, inviteKey ) {
-	debug( 'fetchInvite', siteId, inviteKey );
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_INVITE,
-		siteId,
-		inviteKey,
-	} );
-
-	wpcom.undocumented().getInvite( siteId, inviteKey, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error ? ActionTypes.RECEIVE_INVITE_ERROR : ActionTypes.RECEIVE_INVITE,
-			siteId,
-			inviteKey,
-			data,
-			error,
-		} );
-
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_validation_failure', {
-				error: error.error,
-			} );
-		}
-	} );
-}
-
 export function createAccount( userData, invite, callback ) {
 	const send_verification_email = userData.email !== invite.sentTo;
 

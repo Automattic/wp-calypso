@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -14,6 +14,7 @@ import { useMobileBreakpoint } from '@automattic/viewport-react';
 import { JETPACK_PRODUCTS_BY_TERM } from 'calypso/lib/products-values/constants';
 import { JETPACK_RESET_PLANS_BY_TERM } from 'calypso/lib/plans/constants';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { isConnectStore } from 'calypso/my-sites/plans-v2/product-grid/utils';
 import { TERM_MONTHLY, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 import useDetectWindowBoundary from '../use-detect-window-boundary';
 import { getHighestAnnualDiscount } from '../utils';
@@ -86,7 +87,10 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	duration,
 	onDurationChange,
 } ) => {
-	const windowBoundaryOffset = isJetpackCloud() ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
+	const isInConnectStore = useMemo( isConnectStore, [] );
+	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
+	const windowBoundaryOffset =
+		isInJetpackCloud || isInConnectStore ? CLOUD_MASTERBAR_HEIGHT : CALYPSO_MASTERBAR_HEIGHT;
 	const [ barRef, hasCrossed ] = useDetectWindowBoundary( windowBoundaryOffset );
 
 	const [ durationChecked, setDurationChecked ] = useState(

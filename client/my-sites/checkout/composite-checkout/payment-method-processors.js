@@ -317,9 +317,9 @@ export async function fullCreditsProcessor(
 			...submitData,
 			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			// this data is intentionally empty so we do not charge taxes
-			country: null,
-			postalCode: null,
+			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
+			postalCode: submitData.postalCode || getPostalCode(),
+			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
 		},
 		wpcomTransaction,
 		transactionOptions

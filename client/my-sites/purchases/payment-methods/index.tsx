@@ -28,6 +28,9 @@ import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-lev
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from 'calypso/config';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 
 function useLogPaymentMethodsError( message: string ) {
 	const reduxDispatch = useDispatch();
@@ -110,19 +113,26 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 				onError={ logPaymentMethodsError }
 			>
 				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-				<StripeHookProvider
-					locale={ locale }
-					configurationArgs={ { needs_intent: true } }
-					fetchStripeConfiguration={ getStripeConfiguration }
-				>
-					<CreditCardForm
-						createCardToken={ createAddCardToken }
-						recordFormSubmitEvent={ recordFormSubmitEvent }
-						saveStoredCard={ saveStoredCard }
-						successCallback={ goToBillingHistory }
-						showUsedForExistingPurchasesInfo={ true }
-					/>
-				</StripeHookProvider>
+				<Layout>
+					<Column type="main">
+						<StripeHookProvider
+							locale={ locale }
+							configurationArgs={ { needs_intent: true } }
+							fetchStripeConfiguration={ getStripeConfiguration }
+						>
+							<CreditCardForm
+								createCardToken={ createAddCardToken }
+								recordFormSubmitEvent={ recordFormSubmitEvent }
+								saveStoredCard={ saveStoredCard }
+								successCallback={ goToBillingHistory }
+								showUsedForExistingPurchasesInfo={ true }
+							/>
+						</StripeHookProvider>
+					</Column>
+					<Column type="sidebar">
+						<PaymentMethodSidebar />
+					</Column>
+				</Layout>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);

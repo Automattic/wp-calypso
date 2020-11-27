@@ -42,12 +42,12 @@ jobs:
         env:
           ICFY_SECRET: ${{ secrets.ICFY_SECRET }}
         run: |
-          ANCESTOR_SHA1=$(git merge-base HEAD origin/master)
+          ANCESTOR_SHA1=$(git merge-base HEAD origin/trunk)
           CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          curl -X POST --globoff                                                                 \
-            "http://api.iscalypsofastyet.com:5000/submit-stats?from=github&secret=$ICFY_SECRET"  \
-            -H 'Cache-Control: no-cache'                                                         \
-            -H 'Content-Type: application/json'                                                  \
+          curl -X POST --globoff                                                       \
+            "http://iscalypsofastyet.com/submit-stats?from=github&secret=$ICFY_SECRET" \
+            -H 'Cache-Control: no-cache'                                               \
+            -H 'Content-Type: application/json'                                        \
             -d '{
                   "payload": {
                     "branch": "'"$CURRENT_BRANCH"'",

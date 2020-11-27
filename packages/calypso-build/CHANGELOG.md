@@ -1,6 +1,6 @@
 # Changelog
 
-## master (6.5.0)
+## trunk (6.5.0)
 
 - Added `--esm` and `--cjs` options to `copy-assets` and `transpile` to do only one kind of
   the build (ESM or CJS) instead of both that are done by default

@@ -3,7 +3,7 @@
  */
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const makePath = usePath();
 	const history = useHistory();
 	const currentStep = useCurrentStep();
-	const { i18nLocale } = useI18n();
+	const locale = useLocale();
 
 	let steps: StepType[];
 
@@ -59,7 +59,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, i18nLocale, undefined, newSiteVisibility )
+			? createSite( currentUser.username, locale, undefined, newSiteVisibility )
 			: onSignupDialogOpen();
 
 	// Logic necessary to skip Domains or Plans steps

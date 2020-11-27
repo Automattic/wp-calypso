@@ -65,7 +65,7 @@ class PopoverCart extends React.Component {
 	}
 
 	onToggle = () => {
-		this.props.closeSectionNavMobilePanel();
+		this.props.closeSectionNavMobilePanel?.();
 		this.props.onToggle();
 	};
 
