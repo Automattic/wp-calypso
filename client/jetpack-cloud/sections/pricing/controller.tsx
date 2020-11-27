@@ -13,7 +13,7 @@ import JetpackComFooter from './jpcom-footer';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 
-export function jetpackPricingContext( context: PageJS.Context, next: () => any ) {
+export function jetpackPricingContext( context: PageJS.Context, next: () => void ): void {
 	const urlQueryArgs = context.query;
 	const { locale } = context.params;
 
