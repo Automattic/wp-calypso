@@ -33,8 +33,9 @@ function WelcomeTourCard( {
 				<img alt="Editor Welcome Tour" src={ imgSrc } />
 			</CardMedia>
 			<CardBody>
-				<h2 className="welcome-tour-card__card-heading">{ heading }</h2>
-				<p>{ description }</p>
+				<h2 className="welcome-tour-card__heading">{ heading }</h2>
+				<p className="welcome-tour-card__description">{ description }</p>
+				{ /* TODO: add conditional "Restart tour" functionality for last slide" */ }
 			</CardBody>
 			<CardFooter>
 				<PaginationControl
