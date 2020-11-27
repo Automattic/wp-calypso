@@ -75,32 +75,26 @@ export const getTask = (
 	let taskData = {};
 	switch ( task.id ) {
 		case CHECKLIST_KNOWN_TASKS.START_SITE_SETUP:
-			taskData = isPodcastingSite
-				? {
-						title: translate( 'Welcome to your podcast site!' ),
-						label: translate( 'Continue building your site' ),
-						description: translate(
-							"Now that you've created your site, we'll guide you through completing a few additional steps to finish building your site."
-						),
-						isSkippable: true,
-						isSkippableText: translate( 'Dismiss' ),
-						actionText: translate( 'Continue' ),
-				  }
-				: {
-						timing: 1,
-						label: translate( 'Site created' ),
-						title: translate( 'Your site has been created!' ),
-						description: translate(
-							"Next, we'll guide you through setting up and launching your site."
-						),
-						actionText: translate( 'Get started' ),
-						...( ! task.isCompleted && {
-							actionDispatch: requestSiteChecklistTaskUpdate,
-							actionDispatchArgs: [ siteId, task.id ],
-						} ),
-						actionAdvanceToNext: true,
-						completeOnView: true,
-				  };
+			taskData = {
+				timing: 1,
+				label: translate( 'Site created' ),
+				title: translate( 'Your site has been created!' ),
+				description: translate(
+					"Next, we'll guide you through setting up and launching your site."
+				),
+				actionText: translate( 'Get started' ),
+				...( ! task.isCompleted && {
+					actionDispatch: requestSiteChecklistTaskUpdate,
+					actionDispatchArgs: [ siteId, task.id ],
+				} ),
+				actionAdvanceToNext: true,
+				completeOnView: true,
+			};
+
+			// Change the task title for podcasting sites.
+			if ( isPodcastingSite ) {
+				taskData.title = translate( 'Welcome to your podcast site!' );
+			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {

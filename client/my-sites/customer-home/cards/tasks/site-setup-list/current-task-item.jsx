@@ -20,15 +20,11 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 					</Badge>
 				) : (
 					<div className="site-setup-list__task-timing task__timing">
-						{ currentTask.timing && (
-							<>
-								<Gridicon icon="time" size={ 18 } />
-								{ translate( '%d minute', '%d minutes', {
-									count: currentTask.timing,
-									args: [ currentTask.timing ],
-								} ) }
-							</>
-						) }
+						<Gridicon icon="time" size={ 18 } />
+						{ translate( '%d minute', '%d minutes', {
+							count: currentTask.timing,
+							args: [ currentTask.timing ],
+						} ) }
 					</div>
 				) }
 				{ ! useAccordionLayout && (
@@ -56,7 +52,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 							className="site-setup-list__task-skip task__skip is-link"
 							onClick={ () => skipTask() }
 						>
-							{ currentTask.isSkippableText || translate( 'Skip for now' ) }
+							{ translate( 'Skip for now' ) }
 						</Button>
 					) }
 				</div>
