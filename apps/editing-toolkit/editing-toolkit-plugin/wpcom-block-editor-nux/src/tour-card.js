@@ -5,7 +5,7 @@ import './public-path';
  * Internal dependencies
  */
 import './style-tour.scss';
-import SlideControl from './slide-control';
+import PaginationControl from './pagination';
 
 /**
  * External dependencies
@@ -35,8 +35,7 @@ function WelcomeTourCard( {
 				<p>{ description }</p>
 			</CardBody>
 			<CardFooter>
-				{ /* TODO: revist naming for this component */ }
-				<SlideControl
+				<PaginationControl
 					className=""
 					currentPage={ cardIndex }
 					numberOfPages={ lastCardIndex + 1 }

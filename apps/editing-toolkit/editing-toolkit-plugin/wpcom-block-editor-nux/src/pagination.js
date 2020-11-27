@@ -18,7 +18,7 @@ import { Button } from '@wordpress/components';
  * Note that it is styled by .components-guide-* styling that already exists from using the Guide package elsewhere
  * TODO: make this into WP package?
  */
-export default function PageControl( { currentPage, numberOfPages, setCurrentPage } ) {
+export default function PaginationControl( { currentPage, numberOfPages, setCurrentPage } ) {
 	return (
 		<ul
 			className="components-guide__page-control"
@@ -32,7 +32,7 @@ export default function PageControl( { currentPage, numberOfPages, setCurrentPag
 				>
 					<Button
 						key={ page }
-						icon={ <PageControlIcon isSelected={ page === currentPage } /> }
+						icon={ <DotIcon isSelected={ page === currentPage } /> }
 						aria-label={ sprintf(
 							/* translators: 1: current page number 2: total number of pages */
 							__( 'Page %1$d of %2$d', 'full-site-editing' ),
@@ -47,7 +47,7 @@ export default function PageControl( { currentPage, numberOfPages, setCurrentPag
 	);
 }
 
-const PageControlIcon = ( { isSelected } ) => (
+const DotIcon = ( { isSelected } ) => (
 	<SVG width="8" height="8" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<Circle cx="4" cy="4" r="4" fill={ isSelected ? '#419ECD' : '#E1E3E6' } />
 	</SVG>
