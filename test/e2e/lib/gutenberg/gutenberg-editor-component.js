@@ -170,7 +170,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='Options']//button[. = 'Code editor']" )
+			By.xpath(
+				"//div[@aria-label='Options']//button[text()='Code editor']|//button[./span='Code editor']"
+			)
 		);
 
 		// Wait for the code editor element.
