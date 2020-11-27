@@ -34,7 +34,6 @@ import selectedEditor from './selected-editor/reducer';
 import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
-import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import ui from './ui/reducer';
 import userSettings from './user-settings/reducer';
@@ -65,7 +64,6 @@ const reducers = {
 	siteKeyrings,
 	siteRoles,
 	sites,
-	storedCards,
 	support,
 	ui,
 	userSettings,

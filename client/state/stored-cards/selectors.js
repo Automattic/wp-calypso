@@ -8,6 +8,8 @@ import { groupBy } from 'lodash';
  */
 import { isPaymentAgreement, isCreditCard } from 'calypso/lib/checkout/payment-methods';
 
+import 'calypso/state/stored-cards/init';
+
 /**
  * Return user's stored cards from state object
  *
