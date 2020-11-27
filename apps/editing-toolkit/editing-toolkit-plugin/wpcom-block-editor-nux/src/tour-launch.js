@@ -68,15 +68,12 @@ function WelcomeTourFrame() {
 
 function WelcomeTourMinimized( { onMaximize } ) {
 	return (
-		<div className="wpcom-editor-welcome-tour__minimized-container">
-			<Button
-				onClick={ () => onMaximize( false ) }
-				className="wpcom-editor-welcome-tour__resume-btn"
-			>
-				<p className="wpcom-editor-welcome-tour__resume-btn-text"> Click to resume tutorial</p>
-					<Icon icon={ maximize } size={ 22 } />
-			</Button>
-		</div>
+		<Button onClick={ () => onMaximize( false ) } className="wpcom-editor-welcome-tour__resume-btn">
+			<Flex gap={ 13 }>
+				<p>Click to resume tutorial</p>
+				<Icon icon={ maximize } size={ 24 } />
+			</Flex>
+		</Button>
 	);
 }
 

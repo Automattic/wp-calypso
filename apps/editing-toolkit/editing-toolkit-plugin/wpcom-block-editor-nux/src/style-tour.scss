@@ -5,7 +5,7 @@
 
 .wpcom-editor-welcome-tour-container {
 	background-color: $white;
-	border-radius: 2px;
+	border-radius: 4px;
 	bottom: 40px;
 	display: inline;
 	left: 40px;
@@ -18,18 +18,18 @@
 	padding: $grid-unit-05 $grid-unit-20;
 }
 
-.wpcom-editor-welcome-tour__minimized-container {
-	border-radius: 2px;
-}
-
 .wpcom-editor-welcome-tour__resume-btn {
+	border-radius: 4px;
+	box-shadow: 0px 2px 6px rgba( 60, 66, 87, 0.08 ), 0px 0px 0px 1px rgba( 60, 66, 87, 0.16 ),
+		0px 1px 1px rgba( 0, 0, 0, 0.08 );
 	background-color: $white;
-	border: 1px solid $light-gray-900;
+	color: $black;
+
+	&.components-button {
+		height: 44px;
+	}
 }
 
-.wpcom-editor-welcome-tour__resume-btn-text {
-	margin-right: 60px;
-}
 .wpcom-editor-welcome-tour-card-frame {
 	position: relative;
 
