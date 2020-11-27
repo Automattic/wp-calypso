@@ -8,6 +8,7 @@ import { invoke } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { READER_ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
+import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 
 const eventServices = {
 	tracks: ( { name, properties } ) => recordTracksEvent( name, properties ),
@@ -15,8 +16,13 @@ const eventServices = {
 
 const dispatcher = ( action ) => {
 	const analyticsMeta = action.meta.analytics;
+	const followsCount = action.meta.followsCount;
+
 	analyticsMeta.forEach( ( { type, payload } ) => {
 		const { service = 'tracks', ...params } = payload;
+		if ( followsCount ) {
+			params.properties = Object.assign( { subscription_count: followsCount }, params.properties );
+		}
 
 		switch ( type ) {
 			case READER_ANALYTICS_EVENT_RECORD:
@@ -28,7 +34,7 @@ const dispatcher = ( action ) => {
 export const readerAnalyticsMiddleware = ( store ) => ( next ) => ( action ) => {
 	switch ( action.type ) {
 		case READER_ANALYTICS_EVENT_RECORD:
-			console.log( store.getState() );
+			action.meta.followsCount = getReaderFollowsCount( store.getState() );
 			dispatcher( action );
 			return;
 	}
