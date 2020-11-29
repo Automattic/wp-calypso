@@ -461,6 +461,12 @@ const sections = [
 			},
 		],
 	},
+	{
+		name: 'jetpack-search',
+		paths: [ '/jetpack-search' ],
+		module: 'calypso/my-sites/jetpack-search',
+		group: 'sites',
+	},
 ];
 
 for ( const extension of require( './extensions' ) ) {

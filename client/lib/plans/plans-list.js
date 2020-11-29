@@ -1546,7 +1546,11 @@ export const PLANS_LIST = {
 
 		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
-		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_AUDIO_UPLOADS,
+			constants.FEATURE_JETPACK_SEARCH,
+			constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		],
 		getInferiorHiddenFeatures: () => [],
 
 		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
