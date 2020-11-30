@@ -9,7 +9,6 @@ const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
  * Internal Dependencies
  */
-import userUtils from 'calypso/lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 import { getUrlParts } from 'calypso/lib/url';
 
@@ -29,7 +28,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return userUtils.getLocaleSlug() === 'en';
+	return false;
 }
 
 export function isDiscoverPost( post ) {
