@@ -99,7 +99,7 @@ object BuildBaseImages : BuildType({
 				VERSION="%build.number%"
 				REGISTRY="registry.a8c.com/calypso"
 
-				build() {
+				function build {
 					imageName="${'$'}1"
 					buildArgs="${'$'}2"
 
