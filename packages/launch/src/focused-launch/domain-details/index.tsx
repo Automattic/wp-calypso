@@ -7,7 +7,7 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { __ } from '@wordpress/i18n';
-import DomainPicker, { ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
+import DomainPicker, { mockDomainSuggestion, ITEM_TYPE_BUTTON } from '@automattic/domain-picker';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -62,8 +62,8 @@ const DomainDetails: React.FunctionComponent = () => {
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ selectedDomain?.domain_name || currentDomainName }
-					existingSubdomain={ currentDomainName }
+					currentDomain={ selectedDomain || mockDomainSuggestion( currentDomainName ) }
+					existingSubdomain={ mockDomainSuggestion( currentDomainName ) }
 					onDomainSelect={ handleSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
