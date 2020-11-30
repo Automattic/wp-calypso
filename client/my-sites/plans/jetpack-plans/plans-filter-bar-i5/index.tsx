@@ -87,6 +87,7 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	duration,
 	onDurationChange,
 } ) => {
+	const translate = useTranslate();
 	const isInConnectStore = useMemo( isConnectStore, [] );
 	const isInJetpackCloud = useMemo( isJetpackCloud, [] );
 	const windowBoundaryOffset =
@@ -109,13 +110,15 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 					checked: durationChecked,
 				} ) }
 			>
-				<span className="plans-filter-bar-i5__toggle-off-label">Bill monthly</span>
+				<span className="plans-filter-bar-i5__toggle-off-label">
+					{ translate( 'Bill monthly' ) }
+				</span>
 				<ToggleControl
 					className="plans-filter-bar-i5__toggle-control"
 					checked={ durationChecked }
 					onChange={ () => setDurationChecked( ( prevState ) => ! prevState ) }
 				/>
-				<span className="plans-filter-bar-i5__toggle-on-label">Bill yearly</span>
+				<span className="plans-filter-bar-i5__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
 			</div>
 			{ showDiscountMessage && <DiscountMessage primary={ durationChecked } /> }
 		</div>
