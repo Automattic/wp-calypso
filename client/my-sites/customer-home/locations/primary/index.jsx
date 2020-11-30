@@ -16,7 +16,7 @@ import Renew from 'calypso/my-sites/customer-home/cards/tasks/renew';
 import SiteSetupList from 'calypso/my-sites/customer-home/cards/tasks/site-setup-list';
 import SiteSetupListEcommerce from 'calypso/my-sites/customer-home/cards/tasks/site-setup-checklist-ecommerce';
 import Webinars from 'calypso/my-sites/customer-home/cards/tasks/webinars';
-import WpCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
+import WPCourses from 'calypso/my-sites/customer-home/cards/tasks/wp-courses';
 import CelebrateSiteCreation from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-creation';
 import CelebrateSiteLaunch from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-launch';
 import CelebrateSiteMigration from 'calypso/my-sites/customer-home/cards/notices/celebrate-site-migration';
@@ -61,7 +61,7 @@ const cardComponents = {
 	[ TASK_SITE_SETUP_CHECKLIST ]: SiteSetupList,
 	[ TASK_SITE_SETUP_CHECKLIST_ECOMMERCE ]: SiteSetupListEcommerce,
 	[ TASK_WEBINARS ]: Webinars,
-	[ TASK_WP_COURSES ]: WpCourses,
+	[ TASK_WP_COURSES ]: WPCourses,
 };
 
 const Primary = ( { cards, trackCards } ) => {
