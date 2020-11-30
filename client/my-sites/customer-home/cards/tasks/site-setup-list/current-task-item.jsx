@@ -19,7 +19,7 @@ const CurrentTaskItem = ( { currentTask, skipTask, startTask, useAccordionLayout
 						{ translate( 'Complete' ) }
 					</Badge>
 				) }
-				{ currentTask.timing && ! currentTask.isCompleted && ! currentTask.hideLabel && (
+				{ currentTask.timing && ! currentTask.isCompleted && (
 					<div className="site-setup-list__task-timing task__timing">
 						<Gridicon icon="time" size={ 18 } />
 						{ translate( '%d minute', '%d minutes', {
