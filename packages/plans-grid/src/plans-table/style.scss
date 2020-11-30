@@ -228,6 +228,10 @@
 		color: var( --studio-gray-90 );
 		text-decoration: line-through;
 
+		span {
+			opacity: 0.5;
+		}
+
 		&:hover {
 			color: inherit;
 		}
