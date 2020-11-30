@@ -8,8 +8,8 @@ import { createI18n } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
+import config from 'calypso/config';
+import userFactory from 'calypso/lib/user';
 
 const placeholderOriginalString = "I don't understand";
 
@@ -46,18 +46,14 @@ const I18nEmpathyManager: React.FunctionComponent = () => {
 
 		const placeholder = __( "I don't understand" );
 
-		if ( ! addFilter || ! removeFilter ) {
+		if ( ! hasTranslation ) {
 			return;
 		}
 
 		addFilter(
-			'translation',
-			'i18n-empathy-mode',
-			(
-				translation: string,
-				originalArgs: ( string | number )[],
-				fnName: '__' | '_n' | '_nx' | '_x'
-			) => {
+			'postTranslation',
+			'calypso/i18n-empathy-mode',
+			( translation: string, originalArgs: string[], fnName: '__' | '_n' | '_nx' | '_x' ) => {
 				const [ singular ] = originalArgs;
 				let context;
 
@@ -83,7 +79,9 @@ const I18nEmpathyManager: React.FunctionComponent = () => {
 			}
 		);
 
-		return () => removeFilter( 'translation', 'i18n-empathy-mode' );
+		return () => {
+			removeFilter( 'postTranslation', 'calypso/i18n-empathy-mode' );
+		};
 	}, [ localeData ] );
 
 	return null;

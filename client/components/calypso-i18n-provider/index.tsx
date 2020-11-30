@@ -9,7 +9,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import I18nEmpathyManager from 'components/i18n-empathy-manager';
+import I18nEmpathyManager from 'calypso/components/i18n-empathy-manager';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() );
