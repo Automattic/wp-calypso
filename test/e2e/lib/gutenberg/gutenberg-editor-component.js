@@ -296,7 +296,7 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	 * @property {string} title The block title as it appears in the inserter
 	 * @property {string} blockClass The suffix that's part of a wrapper CSS class that's used to select the block button in the inserter.
 	 * Calcualted from the title if not present.
-	 * @property {string} prefix Also used to build the CSS class that's used t o select the block in the inserter.
+	 * @property {string} prefix Also used to build the CSS class that's used to select the block in the inserter.
 	 * @property {string} ariaLabel The aria label text used to select the block element wrapper in the editor. Calculated from the title if not present.
 	 * @property {boolean} initsWithChildFocus Whether or not the block gives focus to its first child upon being created/rendered in the editor.
 	 */
