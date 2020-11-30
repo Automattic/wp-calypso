@@ -261,7 +261,7 @@ class PurchaseItem extends Component {
 							alt={ purchase.payment.creditCard.type }
 							className="purchase-item__payment-method-card"
 						/>
-						{ purchase.payment.type === 'credit_card' && purchase.payment.creditCard.number }
+						{ purchase.payment.creditCard.number }
 					</>
 				);
 			}
