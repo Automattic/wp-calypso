@@ -59,6 +59,7 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPlan,
+	isComplete,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainMapping,
@@ -259,7 +260,7 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) ) {
+		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
 			return null;
 		}
 
