@@ -540,7 +540,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_INSTALL_REQUEST,
@@ -551,7 +551,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin install request success action when request completes', () => {
-			const response = installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -564,7 +567,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_FAILURE,
@@ -609,7 +612,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_REMOVE_REQUEST,
@@ -620,7 +623,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin remove request success action when request completes', () => {
-			const response = removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			const response = removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_REMOVE_REQUEST_SUCCESS,
@@ -632,7 +638,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = removePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = removePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_REMOVE_REQUEST_FAILURE,
