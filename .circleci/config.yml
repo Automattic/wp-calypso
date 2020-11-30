@@ -769,7 +769,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
@@ -835,7 +835,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
@@ -918,7 +918,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+            If ( -Not $(git diff --name-only origin/master...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
 
 
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
@@ -989,7 +989,7 @@ workflows:
       - prime-calypso-live:
           filters:
             branches:
-              ignore: trunk
+              ignore: master
       - build-notifications:
           requires:
             - setup
@@ -1063,8 +1063,8 @@ workflows:
           filters:
             branches:
               ignore:
-                # Do not spin up calypso.live for `trunk`
-                - trunk
+                # Do not spin up calypso.live for `master`
+                - master
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
       #      - test-e2e-canary:
@@ -1156,7 +1156,7 @@ workflows:
           filters:
             branches:
               only:
-                - trunk
+                - master
 
   e2e-full-suite-scheduled:
     jobs:
@@ -1169,7 +1169,7 @@ workflows:
           cron: '0 3,15 * * *'
           filters:
             branches:
-              only: trunk
+              only: master
 
   e2e-canary-scheduled:
     jobs:
@@ -1193,23 +1193,23 @@ workflows:
           cron: '0 12 * * *'
           filters:
             branches:
-              only: trunk
+              only: master
 
   e2e-full-suite-edge-scheduled:
     jobs:
-      - setup
-      - test-e2e-canary:
-          name: test-e2e-full-suite-edge
-          requires:
-            - setup
-          test-flags: '-g'
-          env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+    - setup
+    - test-e2e-canary:
+        name: test-e2e-full-suite-edge
+        requires:
+        - setup
+        test-flags: '-g'
+        env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
     triggers:
-      - schedule:
-          cron: '30 8 * * *'
-          filters:
-            branches:
-              only: trunk
+    - schedule:
+        cron: '30 8 * * *'
+        filters:
+          branches:
+            only: master
 
   e2e-jetpack-be-scheduled:
     jobs:
@@ -1227,7 +1227,7 @@ workflows:
           cron: '0 7 * * *'
           filters:
             branches:
-              only: trunk
+              only: master
 
   # Temporarily disabling these scheduled test runs
   #  e2e-jetpack-scheduled:
@@ -1246,7 +1246,7 @@ workflows:
   #        cron: "0 1,13 * * *"
   #        filters:
   #          branches:
-  #            only: trunk
+  #            only: master
 
   e2e-canary-i18n-monthly:
     jobs:
@@ -1259,13 +1259,13 @@ workflows:
           test-flags: '-i'
           filters:
             branches:
-              only: trunk
+              only: master
     triggers:
       - schedule:
           cron: '40 15 19 * *'
           filters:
             branches:
-              only: trunk
+              only: master
 
   e2e-canary-i18n-nightly:
     jobs:
@@ -1278,11 +1278,11 @@ workflows:
           test-flags: '-I'
           filters:
             branches:
-              only: trunk
+              only: master
     triggers:
       - schedule:
           cron: '46 4 * * *'
           filters:
             branches:
-              only: trunk
+              only: master
 # vi: sts=2 ts=2 sw=2 et
