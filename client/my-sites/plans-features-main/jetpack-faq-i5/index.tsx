@@ -44,7 +44,7 @@ const JetpackFAQi5: React.FC = () => {
 	return (
 		<>
 			<section className="jetpack-faq-i5">
-				<h2 className="jetpack-faq-i5__heading">Frequently Asked Questions</h2>
+				<h2 className="jetpack-faq-i5__heading">{ translate( 'Frequently Asked Questions' ) }</h2>
 
 				<FoldableFAQ
 					id="faq-1"
