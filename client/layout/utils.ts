@@ -37,7 +37,7 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 		secondaryEl !== null &&
 		secondaryElHeight !== undefined &&
 		masterbarHeight !== undefined &&
-		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
+		window.innerWidth > 660 && // Run only for desktop viewports.
 		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
 	) {
 		// Throttle scroll event
