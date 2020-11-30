@@ -49,7 +49,8 @@
 		"oauth": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"support-user": true
+		"support-user": true,
+		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
 	"sections": {

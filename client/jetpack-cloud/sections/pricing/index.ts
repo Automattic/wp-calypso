@@ -1,9 +1,11 @@
 /**
  * Internal dependencies
  */
+import { jetpackPricingContext } from './controller';
 import config from 'calypso/config';
+import userFactory from 'calypso/lib/user';
+import { siteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
-import * as controller from './controller';
 
 /**
  * Style dependencies
@@ -11,10 +13,22 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function (): void {
-	jetpackPlans( `/:locale/pricing`, controller.jetpackPricingContext );
-	jetpackPlans( `/pricing`, controller.jetpackPricingContext );
+	const user = userFactory();
+	const isLoggedOut = ! user.get();
 
-	if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		jetpackPlans( `/plans`, controller.jetpackPricingContext );
+	jetpackPlans( `/:locale/pricing`, jetpackPricingContext );
+
+	if ( isLoggedOut ) {
+		jetpackPlans( `/pricing`, jetpackPricingContext );
+
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			jetpackPlans( `/plans`, jetpackPricingContext );
+		}
+	} else {
+		jetpackPlans( `/pricing/:site?`, siteSelection, jetpackPricingContext );
+
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			jetpackPlans( `/plans/:site?`, siteSelection, jetpackPricingContext );
+		}
 	}
 }
