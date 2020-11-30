@@ -3,7 +3,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import * as React from 'react';
 import { SVG, Rect, Circle } from '@wordpress/components';
 
 const Confetti: React.FunctionComponent< { className?: string } > = ( { className } ) => (

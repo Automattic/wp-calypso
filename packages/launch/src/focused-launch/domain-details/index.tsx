@@ -11,6 +11,7 @@ import DomainPicker, { mockDomainSuggestion, ITEM_TYPE_BUTTON } from '@automatti
 import { Title, SubTitle } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -24,6 +25,8 @@ import './style.scss';
 const ANALYTICS_UI_LOCATION = 'domain_step';
 
 const DomainDetails: React.FunctionComponent = () => {
+	const locale = useLocale();
+
 	const { currentDomainName } = useSite();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
 	const { onDomainSelect, onExistingSubdomainSelect, selectedDomain } = useDomainSelection();
@@ -69,7 +72,7 @@ const DomainDetails: React.FunctionComponent = () => {
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
 					analyticsUiAlgo={ ANALYTICS_UI_LOCATION }
 					segregateFreeAndPaid
-					locale={ document.documentElement.lang }
+					locale={ locale }
 					itemType={ ITEM_TYPE_BUTTON }
 				/>
 			</div>

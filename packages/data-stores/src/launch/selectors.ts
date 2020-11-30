@@ -7,6 +7,8 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
+import { STORE_KEY as LAUNCH_STORE } from './constants';
+
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
@@ -35,7 +37,12 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  */
 export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
 
+// Check if a domain has been explicitly selected (including free subdomain)
+export const hasSelectedDomain = ( state: State ): boolean =>
+	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
+
 // Completion status of steps is derived from the state of the launch flow
+// Warning: because it's using getEntityRecord it works only inside the editor
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
 		return !! getSelectedPlan( state );
@@ -49,7 +56,7 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean =
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
-		return !! getSelectedDomain( state ) || state.confirmedDomainSelection;
+		return select( LAUNCH_STORE ).hasSelectedDomain();
 	}
 	return false;
 };

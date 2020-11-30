@@ -14,7 +14,6 @@ import PlansTable from '../plans-table';
 import PlansAccordion from '../plans-accordion';
 import PlansDetails from '../plans-details';
 import type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
-export type { CTAVariation, CustomTagLinesMap, PopularBadgeVariation } from '../plans-table/types';
 
 /**
  * Style dependencies
