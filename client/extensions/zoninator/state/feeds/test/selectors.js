@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getFeed, isRequestingFeed } from '../selectors';
+import { getFeed, isRequestingFeed, isSavingFeed } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 1234;
@@ -142,6 +142,82 @@ describe( 'selectors', () => {
 			const feed = getFeed( state, primarySiteId, primaryZoneId );
 
 			expect( feed ).to.deep.equal( primaryFeed );
+		} );
+	} );
+
+	describe( 'isSavingFeed()', () => {
+		test( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: undefined,
+					},
+				},
+			};
+
+			const isRequesting = isSavingFeed( state, primarySiteId, primaryZoneId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return false if the site is not attached', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: {
+							saving: {
+								[ primarySiteId ]: {
+									[ primaryZoneId ]: true,
+								},
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingFeed( state, secondarySiteId, secondaryZoneId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return false if the feed is not being saved', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: {
+							saving: {
+								[ primarySiteId ]: {
+									[ primaryZoneId ]: false,
+								},
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingFeed( state, primarySiteId, primaryZoneId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return true if the feed is being saved', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						feeds: {
+							saving: {
+								[ primarySiteId ]: {
+									[ primaryZoneId ]: true,
+								},
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingFeed( state, primarySiteId, primaryZoneId );
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 } );

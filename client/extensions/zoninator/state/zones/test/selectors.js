@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getZone, getZones, isRequestingZones } from '../selectors';
+import { getZone, getZones, isRequestingZones, isSavingZone } from '../selectors';
 
 describe( 'selectors', () => {
 	const primarySiteId = 123456;
@@ -199,6 +199,76 @@ describe( 'selectors', () => {
 			const zone = getZone( state, primarySiteId, 1 );
 
 			expect( zone ).to.deep.equal( primaryZones[ 1 ] );
+		} );
+	} );
+
+	describe( 'isSavingZone()', () => {
+		test( 'should return false if no state exists', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: undefined,
+					},
+				},
+			};
+
+			const isRequesting = isSavingZone( state, primarySiteId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return false if the site is not attached', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: {
+							saving: {
+								[ primarySiteId ]: true,
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingZone( state, secondarySiteId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return false if the zone is not being saved', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: {
+							saving: {
+								[ primarySiteId ]: false,
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingZone( state, primarySiteId );
+
+			expect( isRequesting ).to.be.false;
+		} );
+
+		test( 'should return true if the zone is being saved', () => {
+			const state = {
+				extensions: {
+					zoninator: {
+						zones: {
+							saving: {
+								[ primarySiteId ]: true,
+							},
+						},
+					},
+				},
+			};
+
+			const isRequesting = isSavingZone( state, primarySiteId );
+
+			expect( isRequesting ).to.be.true;
 		} );
 	} );
 } );
