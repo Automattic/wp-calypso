@@ -33,7 +33,6 @@ import { unseenCount as notificationsUnseenCount } from './notifications';
 import selectedEditor from './selected-editor/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
-import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
 import ui from './ui/reducer';
 import userSettings from './user-settings/reducer';
@@ -63,7 +62,6 @@ const reducers = {
 	selectedEditor,
 	siteRoles,
 	sites,
-	storedCards,
 	support,
 	ui,
 	userSettings,
