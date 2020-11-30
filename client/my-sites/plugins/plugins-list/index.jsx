@@ -26,6 +26,7 @@ import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { activatePlugin, deactivatePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -226,7 +227,7 @@ export const PluginsList = createReactClass( {
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 	},
 
-	doActionOverSelected( actionName, action ) {
+	doActionOverSelected( actionName, action, siteIdOnly = false ) {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
@@ -237,7 +238,11 @@ export const PluginsList = createReactClass( {
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
 			.map( ( p ) => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( ( site ) => action( site, site.plugin ) );
+			.forEach( ( site ) => {
+				// Our Redux actions only need a site ID instead of an entire site object
+				const siteArg = siteIdOnly ? site.ID : site;
+				return action( siteArg, site.plugin );
+			} );
 	},
 
 	pluginHasUpdate( plugin ) {
@@ -260,12 +265,12 @@ export const PluginsList = createReactClass( {
 	},
 
 	activateSelected() {
-		this.doActionOverSelected( 'activating', PluginsActions.activatePlugin );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
 	},
 
 	deactivateSelected() {
-		this.doActionOverSelected( 'deactivating', PluginsActions.deactivatePlugin );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
 	},
 
@@ -274,7 +279,7 @@ export const PluginsList = createReactClass( {
 
 		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
 			waitForDeactivate = true;
-			PluginsActions.deactivatePlugin( site, plugin );
+			this.props.deactivatePlugin( site, plugin, true );
 		} );
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
@@ -561,6 +566,8 @@ export default connect(
 		};
 	},
 	{
+		activatePlugin,
+		deactivatePlugin,
 		recordGoogleEvent,
 		warningNotice,
 	}

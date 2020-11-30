@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -921,6 +922,32 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 						originalBlogPostTitle,
 						'The blog post title shown was unexpected'
 					);
+				} );
+
+				step( 'Can see the Line Height setting for the paragraph', async function () {
+					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					// Give focus to the first paragraph block found
+					await driverHelper.clickWhenClickable(
+						driver,
+						By.css( 'p.block-editor-rich-text__editable:first-of-type' )
+					);
+
+					await gSidebarComponent.displayComponentIfNecessary();
+					await gSidebarComponent.chooseBlockSettings();
+
+					const lineHeighSettingPresent = await driverHelper.isElementPresent(
+						driver,
+						By.css( '.block-editor-line-height-control' )
+					);
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
 				} );
 
 				step(

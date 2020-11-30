@@ -8,7 +8,7 @@ import {
 	SIDEBAR_TOGGLE_VISIBILITY,
 	NOTIFICATIONS_PANEL_TOGGLE,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import actionLog from './action-log/reducer';
 import checkout from './checkout/reducer';
 import language from './language/reducer';
@@ -111,4 +111,4 @@ const reducer = combineReducers( {
 	siteSelectionInitialized,
 } );
 
-export default reducer;
+export default withStorageKey( 'ui', reducer );

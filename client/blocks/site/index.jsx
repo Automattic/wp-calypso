@@ -19,7 +19,7 @@ import SiteIndicator from 'calypso/my-sites/site-indicator';
 import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
-
+import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
 /**
  * Style dependencies
  */
@@ -98,7 +98,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { isSiteUnlaunched, site, translate } = this.props;
+		const { isAtomicAndEditingToolkitDeactivated, isSiteUnlaunched, site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -164,12 +164,13 @@ class Site extends React.Component {
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
 						{ this.props.site.is_private && ( // Coming Soon v1
 							<span className="site__badge site__badge-private">
-								{ this.props.site.is_coming_soon || isPrivateAndUnlaunched
+								{ ( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
+								! isAtomicAndEditingToolkitDeactivated
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
 							</span>
 						) }
-						{ isPublicComingSoon && ( // Coming Soon v2
+						{ isPublicComingSoon && ! isAtomicAndEditingToolkitDeactivated && (
 							<span className="site__badge site__badge-coming-soon">
 								{ translate( 'Coming Soon' ) }
 							</span>
@@ -206,6 +207,10 @@ function mapStateToProps( state, ownProps ) {
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
+		isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+			state,
+			siteId
+		),
 	};
 }
 

@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { useCallback } from 'react';
+
+/**
  * Internal dependencies
  */
 import { useLocale } from './locale-context';
@@ -132,10 +137,13 @@ export function localizeUrl( fullUrl: string, locale: Locale ): string {
 export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string {
 	const providerLocale = useLocale();
 
-	return ( fullUrl: string, locale?: Locale ) => {
-		if ( locale ) {
-			return localizeUrl( fullUrl, locale );
-		}
-		return localizeUrl( fullUrl, providerLocale );
-	};
+	return useCallback(
+		( fullUrl: string, locale?: Locale ) => {
+			if ( locale ) {
+				return localizeUrl( fullUrl, locale );
+			}
+			return localizeUrl( fullUrl, providerLocale );
+		},
+		[ providerLocale ]
+	);
 }

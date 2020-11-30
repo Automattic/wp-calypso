@@ -3,7 +3,6 @@
  */
 
 import { ChecklistSiteTitleTour } from './tours/checklist-site-title-tour';
-import { EditorBasicsTour } from './tours/editor-basics-tour';
 import { GDocsIntegrationTour } from './tours/gdocs-integration-tour';
 import { JetpackBackupsRewindTour } from './tours/jetpack-backups-rewind-tour';
 import { JetpackChecklistTour } from './tours/jetpack-checklist-tour';
@@ -22,7 +21,6 @@ import combineTours from './config-elements/combine-tours';
 
 export default combineTours( {
 	checklistSiteTitle: ChecklistSiteTitleTour,
-	editorBasicsTour: EditorBasicsTour,
 	gdocsIntegrationTour: GDocsIntegrationTour,
 	jetpackBackupsRewind: JetpackBackupsRewindTour,
 	jetpackChecklistTour: JetpackChecklistTour,

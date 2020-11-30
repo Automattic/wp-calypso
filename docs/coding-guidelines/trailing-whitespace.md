@@ -8,6 +8,6 @@ It can be easy to leave whitespace at the end of lines by mistake. If you use Su
 “trim_trailing_whitespace_on_save”: true
 ```
 
-If you use Coda2 you can use the Whiteout plugin: http://erikhinterbichler.com/apps/white-out/
+If you use Coda2 you can use the Whiteout plugin: <http://erikhinterbichler.com/apps/white-out/>
 
 When touching code that does not have trailing whitespace trimmed, make a separate commit that does the stripping before starting to make changes. This makes it easier to follow changes when looking at the history.

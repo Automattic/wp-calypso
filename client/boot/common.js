@@ -127,6 +127,10 @@ const oauthTokenMiddleware = () => {
 			'/connect',
 		];
 
+		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
+			loggedOutRoutes.push( '/jetpack/connect', '/plans' );
+		}
+
 		if ( isJetpackCloud() && config.isEnabled( 'jetpack/pricing-page' ) ) {
 			loggedOutRoutes.push( '/pricing' );
 			getLanguageSlugs().forEach( ( slug ) => loggedOutRoutes.push( `/${ slug }/pricing` ) );
@@ -344,7 +348,7 @@ const setupMiddlewares = ( currentUser, reduxStore ) => {
 		// Dead-end the sections the user can't access when logged out
 		page( '*', function ( context, next ) {
 			//see server/pages/index for prod redirect
-			if ( '/plans' === context.pathname ) {
+			if ( ! config.isEnabled( 'jetpack-cloud/connect' ) && '/plans' === context.pathname ) {
 				const queryFor = context.query && context.query.for;
 				if ( queryFor && 'jetpack' === queryFor ) {
 					window.location =
@@ -445,7 +449,6 @@ const boot = ( currentUser, registerRoutes ) => {
 function waitForCookieAuth( user ) {
 	const timeoutMs = 1500;
 	const loggedIn = user.get() !== false;
-	const ipc = require( 'electron' ).ipcRenderer;
 
 	const promiseTimeout = ( ms, promise ) => {
 		const timeout = new Promise( ( _, reject ) => {
@@ -462,12 +465,16 @@ function waitForCookieAuth( user ) {
 		return new Promise( function ( resolve ) {
 			const sendUserAuth = () => {
 				debug( 'Sending user info to desktop...' );
-				ipc.send( 'user-auth', user, getToken() );
+				window.electron.send(
+					'user-auth',
+					{ id: user.data.ID, username: user.data.username },
+					getToken()
+				);
 			};
 
 			if ( loggedIn ) {
 				debug( 'Desktop user logged in, waiting on cookie authentication...' );
-				ipc.on( 'cookie-auth-complete', function () {
+				window.electron.receive( 'cookie-auth-complete', function () {
 					debug( 'Desktop cookies set, rendering main layout...' );
 					resolve();
 				} );

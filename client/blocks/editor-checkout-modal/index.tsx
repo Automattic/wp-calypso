@@ -8,6 +8,7 @@ import { Icon, wordpress } from '@wordpress/icons';
 import { ShoppingCartProvider, RequestCart } from '@automattic/shopping-cart';
 import { Modal } from '@wordpress/components';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -49,6 +50,8 @@ const EditorCheckoutModal = ( props: Props ) => {
 	const { site, isOpen, onClose, cartData } = props;
 	const hasEmptyCart = ! cartData.products || cartData.products.length < 1;
 
+	const translate = useTranslate();
+
 	const user = userFactory();
 	const isLoggedOutCart = ! user?.get();
 	const waitForOtherCartUpdates = false;
@@ -82,29 +85,31 @@ const EditorCheckoutModal = ( props: Props ) => {
 		: cartData.products.map( ( product ) => product.product_slug );
 	const commaSeparatedProductSlugs = productSlugs?.join( ',' ) || null;
 
-	return hasEmptyCart ? null : (
-		<Modal
-			open={ isOpen }
-			overlayClassName="editor-checkout-modal"
-			onRequestClose={ onClose }
-			title=""
-			shouldCloseOnClickOutside={ false }
-			icon={ <Icon icon={ wordpress } size={ 36 } /> }
-		>
-			<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
-				<StripeHookProvider
-					fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
-					locale={ props.locale }
-				>
-					<CompositeCheckout
-						isInEditor
-						siteId={ site.ID }
-						siteSlug={ site.slug }
-						productAliasFromUrl={ commaSeparatedProductSlugs }
-					/>
-				</StripeHookProvider>
-			</ShoppingCartProvider>
-		</Modal>
+	return (
+		isOpen && (
+			<Modal
+				open={ isOpen }
+				overlayClassName="editor-checkout-modal"
+				onRequestClose={ onClose }
+				title={ String( translate( 'Checkout modal' ) ) }
+				shouldCloseOnClickOutside={ false }
+				icon={ <Icon icon={ wordpress } size={ 36 } /> }
+			>
+				<ShoppingCartProvider cartKey={ cartKey } getCart={ wpcomGetCart } setCart={ wpcomSetCart }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ props.locale }
+					>
+						<CompositeCheckout
+							isInEditor
+							siteId={ site.ID }
+							siteSlug={ site.slug }
+							productAliasFromUrl={ commaSeparatedProductSlugs }
+						/>
+					</StripeHookProvider>
+				</ShoppingCartProvider>
+			</Modal>
+		)
 	);
 };
 

@@ -11,11 +11,13 @@ import * as Verticals from './verticals';
 import * as Launch from './launch';
 import * as WPCOMFeatures from './wpcom-features';
 import * as VerticalsTemplates from './verticals-templates';
+import * as I18n from './i18n';
 
 export {
 	Auth,
 	User,
 	DomainSuggestions,
+	I18n,
 	Site,
 	Verticals,
 	VerticalsTemplates,

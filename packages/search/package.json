@@ -29,7 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
 		"@wordpress/icons": "^2.4.0",

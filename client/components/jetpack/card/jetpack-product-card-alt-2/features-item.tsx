@@ -14,18 +14,18 @@ import Gridicon from 'calypso/components/gridicon';
 import FeaturesProductSlideOut from './features-product-slide-out';
 import InfoPopover from 'calypso/components/info-popover';
 import { preventWidows } from 'calypso/lib/formatting';
-import { slugToSelectorProduct } from 'calypso/my-sites/plans-v2/utils';
+import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
 import {
 	FEATURE_TO_PRODUCT_ALT_V2,
 	FEATURE_TO_MONTHLY_PRODUCT_ALT_V2,
-} from 'calypso/my-sites/plans-v2/constants';
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 /**
  * Type dependencies
  */
 import type { ProductCardFeaturesItem } from './types';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export type Props = {
 	item: ProductCardFeaturesItem;

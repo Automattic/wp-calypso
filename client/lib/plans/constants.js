@@ -50,6 +50,7 @@ export const PLAN_WPCOM_ENTERPRISE = 'wpcom-enterprise';
 export const PLAN_CHARGEBACK = 'chargeback';
 export const PLAN_VIP = 'vip';
 export const PLAN_P2_PLUS = 'wp_p2_plus_monthly';
+export const PLAN_P2_FREE = 'p2_free_plan'; // Not a real plan; it's a renamed WP.com Free for the P2 project.
 
 export const PLAN_BUSINESS_ONBOARDING_EXPIRE = '2021-07-31T00:00:00+00:00';
 export const PLAN_BUSINESS_2Y_ONBOARDING_EXPIRE = '2022-07-31T00:00:00+00:00';
@@ -310,6 +311,21 @@ export const FEATURE_ADVANCED_STATS_V2 = 'advanced-stats-v2';
 export const FEATURE_FILTERING_V2 = 'filtering-v2';
 export const FEATURE_LANGUAGE_SUPPORT_V2 = 'language-support-v2';
 export const FEATURE_SPELLING_CORRECTION_V2 = 'spelling-correction-v2';
+
+// P2 project features
+export const FEATURE_P2_3GB_STORAGE = 'p2-3gb-storage';
+export const FEATURE_P2_UNLIMITED_USERS = 'p2-unlimited-users';
+export const FEATURE_P2_UNLIMITED_POSTS_PAGES = 'p2-unlimited-posts-pages';
+export const FEATURE_P2_SIMPLE_SEARCH = 'p2-simple-search';
+export const FEATURE_P2_CUSTOMIZATION_OPTIONS = 'p2-customization-options';
+export const FEATURE_P2_13GB_STORAGE = 'p2-13gb-storage';
+export const FEATURE_P2_UNLIMITED_FREE_VIEWERS = 'p2-unlimited-free-viewers';
+export const FEATURE_P2_ADVANCED_SEARCH = 'p2-advanced-search';
+export const FEATURE_P2_VIDEO_SHARING = 'p2-video-sharing';
+export const FEATURE_P2_MORE_FILE_TYPES = 'p2-more-file-types';
+export const FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT = 'p2-priority-chat-email-support';
+export const FEATURE_P2_ACTIVITY_OVERVIEW = 'p2-activity-overview';
+export const FEATURE_P2_CUSTOM_DOMAIN = 'p2-custom-domain';
 
 // Meta grouping constants
 export const GROUP_WPCOM = 'GROUP_WPCOM';

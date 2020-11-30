@@ -3,6 +3,8 @@
  */
 import { NAVIGATE } from 'calypso/state/action-types';
 
+import 'calypso/state/ui/init';
+
 /**
  * Returns an action object signalling navigation to the given path.
  *

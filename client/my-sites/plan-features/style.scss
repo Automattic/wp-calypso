@@ -192,6 +192,18 @@ $plan-features-sidebar-width: 272px;
 		padding: 12px 12px 0;
 	}
 
+	&.is-p2-free,
+	&.is-p2-plus {
+		padding-left: 12px;
+		@include breakpoint-deprecated( '>1040px' ) {
+			padding-left: 24px;
+		}
+	}
+
+	&.is-p2-plus {
+		border-bottom-color: var( --p2-color-link );
+	}
+
 	.plans-features-main__group.is-wpcom & {
 		&.is-blogger-plan {
 			border-bottom: solid 2px var( --color-plan-blogger );
@@ -335,6 +347,21 @@ $plan-features-sidebar-width: 272px;
 		@include breakpoint-deprecated( '<960px' ) {
 			margin-bottom: 9px;
 		}
+	}
+}
+
+.plan-features__header-title-free {
+	font-size: 1.5rem;
+	line-height: 1.5;
+	font-weight: 400;
+	color: var( --color-neutral-70 );
+	padding-bottom: 8px;
+
+	@include breakpoint-deprecated( '>960px' ) {
+		font-size: 2rem;
+	}
+	@media ( min-width: $plan-features-sidebar-width + 480px ) {
+		padding-bottom: 32px;
 	}
 }
 

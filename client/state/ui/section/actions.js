@@ -3,6 +3,8 @@
  */
 import { SECTION_SET, SECTION_LOADING_SET } from 'calypso/state/action-types';
 
+import 'calypso/state/ui/init';
+
 export function setSection( section, options = {} ) {
 	const action = {
 		...options,

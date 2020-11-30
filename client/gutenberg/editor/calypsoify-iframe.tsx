@@ -21,7 +21,6 @@ import {
 	isJetpackSite,
 	getSite,
 } from 'calypso/state/sites/selectors';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getEnabledFilters, getDisabledDataSources, mediaCalypsoToGutenberg } from './media-utils';
 import { replaceHistory, navigate } from 'calypso/state/ui/actions';
@@ -743,13 +742,13 @@ class CalypsoifyIframe extends Component<
 					source=""
 					visible={ isMediaModalVisible }
 				/>
-				{ isCheckoutOverlayEnabled && isCheckoutModalVisible && (
+				{ isCheckoutOverlayEnabled && (
 					<AsyncLoad
 						require="calypso/blocks/editor-checkout-modal"
 						onClose={ this.closeCheckoutModal }
 						cartData={ cartData }
 						placeholder={ null }
-						isOpen
+						isOpen={ isCheckoutModalVisible }
 					/>
 				) }
 				{ isFocusedLaunchCalypsoEnabled && (
@@ -787,7 +786,6 @@ const mapStateToProps = (
 	const currentRoute = getCurrentRoute( state );
 	const postTypeTrashUrl = getPostTypeTrashUrl( state, postType );
 	const siteOption = isJetpackSite( state, siteId ) ? 'jetpack_frame_nonce' : 'frame_nonce';
-	const plan = getCurrentPlan( state, siteId );
 
 	let queryArgs = pickBy( {
 		post: postId,
@@ -863,7 +861,6 @@ const mapStateToProps = (
 		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 		site: getSite( state, siteId ),
 		parentPostId,
-		plan,
 	};
 };
 

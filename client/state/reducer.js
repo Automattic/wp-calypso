@@ -19,7 +19,6 @@ import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import experiments from './experiments/reducer';
-import gsuiteUsers from './gsuite-users/reducer';
 import happychat from './happychat/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
@@ -30,15 +29,10 @@ import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
-import postFormats from './post-formats/reducer';
 import selectedEditor from './selected-editor/reducer';
-import siteKeyrings from './site-keyrings/reducer';
 import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
-import storedCards from './stored-cards/reducer';
 import support from './support/reducer';
-import ui from './ui/reducer';
-import userProfileLinks from './profile-links/reducer';
 import userSettings from './user-settings/reducer';
 import users from './users/reducer';
 
@@ -51,7 +45,6 @@ const reducers = {
 	dataRequests,
 	documentHead,
 	experiments,
-	gsuiteUsers,
 	happychat,
 	httpData,
 	i18n,
@@ -63,15 +56,10 @@ const reducers = {
 	mySites,
 	notices,
 	notificationsUnseenCount,
-	postFormats,
 	selectedEditor,
-	siteKeyrings,
 	siteRoles,
 	sites,
-	storedCards,
 	support,
-	ui,
-	userProfileLinks,
 	userSettings,
 	users,
 };

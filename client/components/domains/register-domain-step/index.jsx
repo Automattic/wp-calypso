@@ -40,6 +40,7 @@ import {
 	getFixedDomainSearch,
 	getAvailableTlds,
 	getDomainSuggestionSearch,
+	getTld,
 } from 'calypso/lib/domains';
 import { domainAvailability } from 'calypso/lib/domains/constants';
 import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
@@ -151,6 +152,9 @@ class RegisterDomainStep extends React.Component {
 		recordFiltersReset: PropTypes.func.isRequired,
 		vertical: PropTypes.string,
 		isReskinned: PropTypes.bool,
+		showSkipButton: PropTypes.bool,
+		onSkip: PropTypes.func,
+		promoTlds: PropTypes.array,
 	};
 
 	static defaultProps = {
@@ -165,6 +169,8 @@ class RegisterDomainStep extends React.Component {
 		onSave: noop,
 		vendor: getSuggestionsVendor(),
 		showExampleSuggestions: false,
+		onSkip: noop,
+		showSkipButton: false,
 	};
 
 	constructor( props ) {
@@ -238,6 +244,7 @@ class RegisterDomainStep extends React.Component {
 				( props.includeWordPressDotCom || props.includeDotBlogSubdomain ) && loadingResults,
 			pageNumber: 1,
 			premiumDomains: {},
+			promoTldsAdded: false,
 			searchResults: null,
 			showAvailabilityNotice: false,
 			showSuggestionNotice: false,
@@ -655,13 +662,27 @@ class RegisterDomainStep extends React.Component {
 
 	getActiveFiltersForAPI() {
 		const { filters } = this.state;
-		return mapKeys(
+		const { promoTlds } = this.props;
+		const filtersForAPI = mapKeys(
 			pickBy(
 				filters,
 				( value ) => isNumberString( value ) || value === true || Array.isArray( value )
 			),
 			( value, key ) => snakeCase( key )
 		);
+
+		/**
+		 * If promoTlds is set we want to make sure only those TLDs will be suggested
+		 * so we set the filter to those or filter the existing tld filter just in case
+		 */
+		if ( promoTlds ) {
+			if ( filtersForAPI?.tlds?.length > 0 ) {
+				filtersForAPI.tlds = filtersForAPI.tlds.filter( ( tld ) => promoTlds.includes( tld ) );
+			} else {
+				filtersForAPI.tlds = promoTlds;
+			}
+		}
+		return filtersForAPI;
 	}
 
 	toggleTldInFilter = ( event ) => {
@@ -756,9 +777,16 @@ class RegisterDomainStep extends React.Component {
 	};
 
 	getAvailableTlds = ( domain = undefined, vendor = undefined ) => {
+		const { promoTlds } = this.props;
 		return getAvailableTlds( { vendor, search: domain } )
 			.then( ( availableTlds ) => {
-				this.setState( { availableTlds } );
+				let filteredAvailableTlds = availableTlds;
+				if ( promoTlds ) {
+					filteredAvailableTlds = availableTlds.filter( ( tld ) => promoTlds.includes( tld ) );
+				}
+				this.setState( {
+					availableTlds: filteredAvailableTlds,
+				} );
 			} )
 			.catch( noop );
 	};
@@ -819,6 +847,12 @@ class RegisterDomainStep extends React.Component {
 		}
 		if ( this.props.isSignupStep && domain.match( /\.wordpress\.com$/ ) ) {
 			this.setState( { lastDomainStatus: null, lastDomainIsTransferrable: false } );
+			return;
+		}
+
+		if ( this.props.promoTlds && ! this.props.promoTlds.includes( getTld( domain ) ) ) {
+			// We don't want to run an availability check if promoTlds are set
+			// and the searched domain is not one of those TLDs
 			return;
 		}
 
@@ -1343,6 +1377,8 @@ class RegisterDomainStep extends React.Component {
 				cart={ this.props.cart }
 				pendingCheckSuggestion={ this.state.pendingCheckSuggestion }
 				unavailableDomains={ this.state.unavailableDomains }
+				onSkip={ this.props.onSkip }
+				showSkipButton={ this.props.showSkipButton }
 			>
 				{ hasResults && isFreeDomainExplainerVisible && this.renderFreeDomainExplainer() }
 

@@ -42,6 +42,7 @@
 		{ "path": "../../packages/onboarding" },
 		{ "path": "../../packages/launch" },
 		{ "path": "../../packages/plans-grid" },
-		{ "path": "../../packages/react-i18n" }
+		{ "path": "../../packages/react-i18n" },
+		{ "path": "../../packages/i18n-utils" }
 	]
 }

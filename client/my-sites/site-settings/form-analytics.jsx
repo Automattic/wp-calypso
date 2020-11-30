@@ -33,8 +33,10 @@ import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans-v2/utils';
+import {
+	OPTIONS_JETPACK_SECURITY,
+	PRODUCT_UPSELLS_BY_FEATURE,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 const validateGoogleAnalyticsCode = ( code ) =>
 	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
@@ -121,7 +123,7 @@ export class GoogleAnalyticsForm extends Component {
 			  } );
 
 		const href = siteIsJetpack
-			? getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, site.slug )
+			? `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`
 			: null;
 
 		const nudge = (

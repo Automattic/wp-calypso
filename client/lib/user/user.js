@@ -229,9 +229,7 @@ User.prototype.clear = async function () {
 	 */
 	this.data = false;
 	store.clearAll();
-	if ( config.isEnabled( 'persist-redux' ) ) {
-		await clearStorage();
-	}
+	await clearStorage();
 };
 
 /**
