@@ -108,6 +108,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"reader": true,
+		"reader/list-management": true,
 		"reader/seen-posts": true,
 		"republicize": true,
 		"safari-idb-mitigation": true,
