@@ -117,11 +117,17 @@ class Site extends React.Component {
 			'is-compact': this.props.compact,
 		} );
 
-		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
-		const isPublicComingSoon =
-			isEnabled( 'coming-soon-v2' ) && ! site.is_private && this.props.site.is_coming_soon;
+		// We show public coming soon badge only when the site is not private and the editing toolkit is available.
+		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
+		const shouldPublicShowComingSoonSiteBadge =
+			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
+
+		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
 		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
 		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
+		const shouldShowPrivateByDefaultComingSoonBadge =
+			( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
+			! isAtomicAndEditingToolkitDeactivated;
 
 		return (
 			<div className={ siteClass }>
@@ -162,15 +168,14 @@ class Site extends React.Component {
 								: site.domain }
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						{ this.props.site.is_private && ( // Coming Soon v1
+						{ this.props.site.is_private && (
 							<span className="site__badge site__badge-private">
-								{ ( this.props.site.is_coming_soon || isPrivateAndUnlaunched ) &&
-								! isAtomicAndEditingToolkitDeactivated
+								{ shouldShowPrivateByDefaultComingSoonBadge
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
 							</span>
 						) }
-						{ isPublicComingSoon && ! isAtomicAndEditingToolkitDeactivated && (
+						{ shouldPublicShowComingSoonSiteBadge && (
 							<span className="site__badge site__badge-coming-soon">
 								{ translate( 'Coming Soon' ) }
 							</span>
