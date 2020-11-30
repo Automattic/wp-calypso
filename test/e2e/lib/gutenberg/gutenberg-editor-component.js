@@ -384,23 +384,17 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 			title
 		);
 
-		// TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.0 on production.
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
 		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
 			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
 
-		let insertedBlockSelector = By.css(
+		const insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
 				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
 			}[aria-label*='${ ariaLabel }']`
 		);
-
-		// @TODO: Remove this condition when Gutenberg v9.1 is deployed for all sites.
-		if ( title === 'Heading' ) {
-			const deprecatedSelector = insertedBlockSelector.value.replace( ariaLabel, 'Write heading…' );
-			insertedBlockSelector = By.css( `${ insertedBlockSelector.value }, ${ deprecatedSelector }` );
-		}
 
 		await this.openBlockInserterAndSearch( title );
 
