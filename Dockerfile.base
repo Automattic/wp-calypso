@@ -43,8 +43,10 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
-
 RUN chown $UID /calypso
+
+# Set bash as the default shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
 COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
