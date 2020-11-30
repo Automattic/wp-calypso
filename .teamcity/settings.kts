@@ -217,7 +217,11 @@ object RunAllUnitTests : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="test"
 				export CHROMEDRIVER_SKIP_DOWNLOAD=true
@@ -225,7 +229,6 @@ object RunAllUnitTests : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Install modules
@@ -240,13 +243,15 @@ object RunAllUnitTests : BuildType({
 			name = "Prevent uncommited changes"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				set -x
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Prevent uncommited changes
@@ -267,12 +272,15 @@ object RunAllUnitTests : BuildType({
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run type checks
@@ -287,7 +295,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for client"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export HOME="/calypso"
 
@@ -295,7 +307,6 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run client tests
@@ -310,7 +321,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for server"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export HOME="/calypso"
 
@@ -318,7 +333,6 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run server tests
@@ -333,7 +347,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export HOME="/calypso"
 
@@ -341,7 +359,6 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run packages tests
@@ -356,7 +373,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for build tools"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export HOME="/calypso"
 
@@ -364,7 +385,6 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run build-tools tests
@@ -379,7 +399,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for Editing Toolkit"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
 				export HOME="/calypso"
 
@@ -387,7 +411,6 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run Editing Toolkit tests
@@ -403,12 +426,15 @@ object RunAllUnitTests : BuildType({
 			name = "Build artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build o2-blocks
@@ -429,12 +455,15 @@ object RunAllUnitTests : BuildType({
 			name = "Build components storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				yarn components:storybook:start --ci --smoke-test
@@ -448,12 +477,15 @@ object RunAllUnitTests : BuildType({
 			name = "Build search storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				yarn search:storybook:start --ci --smoke-test
@@ -541,7 +573,11 @@ object CheckCodeStyle : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="test"
 				export CHROMEDRIVER_SKIP_DOWNLOAD=true
@@ -549,7 +585,6 @@ object CheckCodeStyle : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Install modules
@@ -564,12 +599,15 @@ object CheckCodeStyle : BuildType({
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Find files to lint
@@ -680,13 +718,15 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				export CHROMEDRIVER_SKIP_DOWNLOAD=true
 				export PUPPETEER_SKIP_DOWNLOAD=true
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Restore mtime to maximize cache hits
@@ -708,10 +748,12 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Build Calypso source"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build desktop
@@ -726,13 +768,15 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Build app (linux)"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build app
@@ -747,7 +791,10 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Run tests (linux)"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
@@ -755,7 +802,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export CI=true
 
 				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Start framebuffer
