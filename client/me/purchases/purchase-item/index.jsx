@@ -210,11 +210,37 @@ class PurchaseItem extends Component {
 
 	getPurchaseType() {
 		const { purchase, site, translate, slug, showSite, isDisconnectedSite, name } = this.props;
+		const productType = purchaseType( purchase );
 
 		if ( showSite && site ) {
-			return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
+			if ( productType ) {
+				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
+					args: {
+						purchaseType: productType,
+						site: site.name,
+					},
+					components: {
+						button: (
+							<button
+								className="purchase-item__link"
+								onClick={ ( event ) => {
+									event.stopPropagation();
+									event.preventDefault();
+									page( getPurchaseListUrlFor( slug ) );
+								} }
+								title={ translate( 'View subscriptions for %(siteName)s', {
+									args: {
+										siteName: site.name,
+									},
+								} ) }
+							/>
+						),
+					},
+				} );
+			}
+
+			return translate( 'for {{button}}%(site)s{{/button}}', {
 				args: {
-					purchaseType: purchaseType( purchase ),
 					site: site.name,
 				},
 				components: {
@@ -240,13 +266,13 @@ class PurchaseItem extends Component {
 		if ( isDisconnectedSite ) {
 			return translate( '%(purchaseType)s for %(site)s', {
 				args: {
-					purchaseType: purchaseType( purchase ),
+					purchaseType: productType,
 					site: name,
 				},
 			} );
 		}
 
-		return purchaseType( purchase );
+		return productType;
 	}
 
 	getPaymentMethod() {
