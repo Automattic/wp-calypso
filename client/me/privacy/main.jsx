@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { withLocalizeUrl } from '@automattic/i18n-utils';
+
 /**
  * Internal dependencies
  */
