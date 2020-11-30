@@ -164,9 +164,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
-	const anchorFmParameter = isAnchorFmSignup ? `&anchor_podcast=${anchorFmPodcastId}` : '';
+	const anchorFmParameter = isAnchorFmSignup ? `&anchor_podcast=${ anchorFmPodcastId }` : '';
 	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/new${ isAnchorFmSignup ? makePath( Step.IntentGathering ) : makePath( Step.CreateSite ) }?new${ anchorFmParameter }`
+		`${ window.location.origin }/new${
+			isAnchorFmSignup ? makePath( Step.IntentGathering ) : makePath( Step.CreateSite )
+		}?new${ anchorFmParameter }`
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
@@ -175,7 +177,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		: 'Save your progress';
 	const modalSubTitle = isAnchorFmSignup
 		? 'Create a WordPress.com account and start creating your free site.'
-		: 'Enter an email and password to save your progress and continue.'
+		: 'Enter an email and password to save your progress and continue.';
 
 	return (
 		<Modal
