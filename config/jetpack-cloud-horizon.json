@@ -47,7 +47,8 @@
 		"layout/support-article-dialog": false,
 		"oauth": false,
 		"site-indicator": false,
-		"support-user": true
+		"support-user": true,
+		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
 	"sections": {

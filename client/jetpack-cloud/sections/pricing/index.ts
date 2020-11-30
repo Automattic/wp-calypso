@@ -1,9 +1,10 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
-import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import * as controller from './controller';
+import config from 'calypso/config';
+import { siteSelection } from 'calypso/my-sites/controller';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
 /**
  * Style dependencies
@@ -11,10 +12,10 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function (): void {
-	jetpackPlans( `/:locale/pricing`, controller.jetpackPricingContext );
-	jetpackPlans( `/pricing`, controller.jetpackPricingContext );
+	jetpackPlans( `/:locale/pricing/:site?`, siteSelection, controller.jetpackPricingContext );
+	jetpackPlans( `/pricing/:site?`, siteSelection, controller.jetpackPricingContext );
 
 	if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
-		jetpackPlans( `/plans`, controller.jetpackPricingContext );
+		jetpackPlans( `/plans/:site?`, siteSelection, controller.jetpackPricingContext );
 	}
 }
