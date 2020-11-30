@@ -94,6 +94,7 @@ export const getTask = (
 			// Change the task title for podcasting sites.
 			if ( isPodcastingSite ) {
 				taskData.title = translate( 'Welcome to your podcast site!' );
+				taskData.hideLabel = true;
 			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
