@@ -9,7 +9,7 @@ import { LocaleProvider, i18nDefaultLocaleSlug } from '@automattic/i18n-utils';
 
 const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 	const [ localeData, setLocaleData ] = React.useState( i18n.getLocale() );
-	const localeSlug = i18n.getLocaleSlug();
+	const [ localeSlug, setLocaleSlug ] = React.useState( i18n.getLocaleSlug() );
 
 	React.useEffect( () => {
 		const onChange = () => {
@@ -18,6 +18,7 @@ const CalypsoI18nProvider: React.FunctionComponent = ( { children } ) => {
 
 			setWpI18nLocaleData( nextLocaleData );
 			setLocaleData( nextLocaleData );
+			setLocaleSlug( i18n.getLocaleSlug() );
 		};
 
 		i18n.on( 'change', onChange );
