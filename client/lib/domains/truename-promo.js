@@ -233,4 +233,4 @@ export const TRUENAME_TLDS = [
 	'wtf',
 	'zone',
 ];
-export const TRUENAME_COUPONS = [ 'AMEXTRUENAME', 'TRUENAME' ];
+export const TRUENAME_COUPONS = [ 'AMEXTRUENAME', 'TRUENAME', 'AMEXTRUENAMEIN' ];
