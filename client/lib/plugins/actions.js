@@ -63,10 +63,6 @@ const getSolvedPromise = ( dataToPass ) => {
 	return new Promise( ( resolve ) => resolve( dataToPass ) );
 };
 
-const getRejectedPromise = ( errorToPass ) => {
-	return new Promise( ( resolve, reject ) => reject( errorToPass ) );
-};
-
 /**
  * Return a SitePlugin instance used to handle the plugin
  *
@@ -149,89 +145,6 @@ const PluginsActions = {
 		} else {
 			wpcom.site( site.ID ).wpcomPluginsList( receivePluginsDispatcher );
 		}
-	},
-
-	installPlugin: ( site, plugin ) => {
-		if ( ! site.canUpdateFiles ) {
-			return getRejectedPromise( "Error: Can't update files on the site" );
-		}
-
-		if ( ! userCan( 'manage_options', site ) ) {
-			return getRejectedPromise( "Error: User can't manage the site" );
-		}
-
-		const install = () => {
-			const bound = getPluginBoundMethod( site, plugin.slug, 'install' );
-			return queueSitePluginActionAsPromise( bound, site.ID, plugin.slug );
-		};
-
-		const update = ( pluginData ) => {
-			const { id } = pluginData;
-			const bound = getPluginBoundMethod( site, id, 'updateVersion' );
-			return queueSitePluginActionAsPromise( bound, site.ID, id );
-		};
-
-		const activate = ( pluginData ) => {
-			const { id } = pluginData;
-			const bound = getPluginBoundMethod( site, id, 'activate' );
-			return queueSitePluginActionAsPromise( bound, site.ID, id );
-		};
-
-		const autoupdate = ( pluginData ) => {
-			const { id } = pluginData;
-			const bound = getPluginBoundMethod( site, id, 'enableAutoupdate' );
-			return queueSitePluginActionAsPromise( bound, site.ID, pluginData.id );
-		};
-
-		const dispatchMessage = ( type, responseData, error ) => {
-			const message = {
-				type: type,
-				action: 'INSTALL_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: responseData,
-				error: error,
-			};
-			if ( 'INSTALL_PLUGIN' === type ) {
-				Dispatcher.handleViewAction( message );
-				return;
-			}
-
-			Dispatcher.handleServerAction( message );
-			recordEvent( 'calypso_plugin_installed', plugin, site, error );
-		};
-
-		const manageSuccess = ( responseData ) => {
-			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', responseData );
-			return responseData;
-		};
-
-		const manageError = ( error ) => {
-			if ( error.name === 'PluginAlreadyInstalledError' ) {
-				if ( site.isMainNetworkSite ) {
-					return update( plugin ).then( autoupdate ).then( manageSuccess ).catch( manageError );
-				}
-
-				return update( plugin )
-					.then( activate )
-					.then( autoupdate )
-					.then( manageSuccess )
-					.catch( manageError );
-			}
-			if ( error.name === 'ActivationErrorError' ) {
-				return update( plugin ).then( autoupdate ).then( manageSuccess ).catch( manageError );
-			}
-
-			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
-			return error;
-		};
-
-		dispatchMessage( 'INSTALL_PLUGIN' );
-		if ( site.isMainNetworkSite ) {
-			return install().then( autoupdate ).then( manageSuccess ).catch( manageError );
-		}
-
-		return install().then( activate ).then( autoupdate ).then( manageSuccess ).catch( manageError );
 	},
 
 	removePlugin: ( site, plugin ) => {
