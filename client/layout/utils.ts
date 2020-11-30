@@ -17,7 +17,7 @@ export function getShouldShowAppBanner( site: any ): boolean {
 
 let lastScrollPosition = 0; // Used for calculating scroll direction.
 let sidebarTop = 0; // Current sidebar top position.
-let pinnedSidebarTop = true;
+let pinnedSidebarTop = true; // We pin sidebar to the top by default.
 let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
