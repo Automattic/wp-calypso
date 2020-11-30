@@ -1,5 +1,5 @@
 #### builder image
-FROM node:12.18.4 as builder
+FROM node:12.19.1 as builder
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -32,7 +32,7 @@ RUN cd / \
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci image
-FROM node:12.18.4 as ci
+FROM node:12.19.1 as ci
 
 ARG node_memory=8192
 ARG UID=1003
