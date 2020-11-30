@@ -331,10 +331,12 @@ function setUpLoggedInRoute( req, res, next ) {
 
 				if ( data.localeSlug ) {
 					req.context.lang = data.localeSlug;
-					req.context.store.dispatch( {
-						type: LOCALE_SET,
-						localeSlug: data.localeSlug,
-						localeVariant: data.localeVariant,
+					import( 'calypso/state/ui/init' ).then( () => {
+						req.context.store.dispatch( {
+							type: LOCALE_SET,
+							localeSlug: data.localeSlug,
+							localeVariant: data.localeVariant,
+						} );
 					} );
 				}
 

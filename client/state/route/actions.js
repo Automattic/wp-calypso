@@ -3,6 +3,8 @@
  */
 import { ROUTE_CLEAR_LAST_NON_EDITOR, ROUTE_SET } from 'calypso/state/action-types';
 
+import 'calypso/state/ui/init';
+
 /**
  * Returns an action object signalling that the current route is to be changed
  *
