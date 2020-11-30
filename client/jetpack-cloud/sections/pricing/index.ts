@@ -12,7 +12,7 @@ import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 import './style.scss';
 
 export default function (): void {
-	jetpackPlans( `/:locale/pricing/:site?`, siteSelection, controller.jetpackPricingContext );
+	jetpackPlans( `/:locale/pricing`, controller.jetpackPricingContext );
 	jetpackPlans( `/pricing/:site?`, siteSelection, controller.jetpackPricingContext );
 
 	if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
