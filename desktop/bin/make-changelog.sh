@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CALYPSO_DIR=$(cd $(dirname $0)/../../ && pwd)
+
 # desktop tags
 function get_desktop_tags() {
   desktop_tags=""
@@ -48,7 +50,7 @@ echo "## What's Changed"
 echo ""
 
 # Fill and sort changelog (final sort in commit-date order)
-git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- desktop/ client/lib/desktop |
+git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag...$current_tag -- "$CALYPSO_DIR/desktop/" "$CALYPSO_DIR/client/lib/desktop" |
   sort -s -k 1,1)
 
 echo "$git_log" | while IFS=$'\r' read change; do
