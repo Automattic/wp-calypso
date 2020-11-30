@@ -391,6 +391,16 @@ export function generateFlows( {
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
 	};
 
+	flows[ 'launch-only' ] = {
+		steps: [ 'launch' ],
+		destination: getLaunchDestination,
+		description:
+			'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain',
+		lastModified: '2020-11-30',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug' ],
+	};
+
 	return flows;
 }
 
