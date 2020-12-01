@@ -44,7 +44,6 @@ import WebPreview from 'calypso/components/web-preview';
 import { editPost, trashPost } from 'calypso/state/posts/actions';
 import { getEditorPostId } from 'calypso/state/editor/selectors';
 import { protectForm, ProtectedFormProps } from 'calypso/lib/protect-form';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import getSiteUrl from 'calypso/state/selectors/get-site-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -60,7 +59,6 @@ import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
 import { fetchMediaItem, getMediaItem } from 'calypso/state/media/thunks';
 import Iframe from './iframe';
 import type { RequestCart } from '@automattic/shopping-cart';
-import versionCompare from 'calypso/lib/version-compare';
 
 /**
  * Types
@@ -804,19 +802,6 @@ const mapStateToProps = (
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
 	} );
-
-	// On some Jetpack sites (9.2+, not Atomic),
-	// Calypsoify is currently broken.
-	// Let's not enable it for them.
-	// Reference: https://github.com/Automattic/jetpack/pull/17939
-	const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
-	const isBrokenJetpack =
-		jetpackVersion &&
-		versionCompare( jetpackVersion, '9.2-alpha', '>=' ) &&
-		! isAtomicSite( state, siteId );
-	if ( isBrokenJetpack ) {
-		queryArgs[ 'calypsoify' ] = 0;
-	}
 
 	// needed for loading the editor in SU sessions
 	if ( wpcom.addSupportParams ) {
