@@ -20,7 +20,6 @@ import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import happychat from './happychat/reducer';
 import i18n from './i18n/reducer';
-import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
@@ -45,7 +44,6 @@ const reducers = {
 	happychat,
 	httpData,
 	i18n,
-	immediateLogin,
 	importerNux,
 	inlineSupportArticle,
 	jitm,
