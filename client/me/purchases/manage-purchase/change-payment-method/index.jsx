@@ -36,7 +36,7 @@ import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
-function EditPaymentMethod( props ) {
+function ChangePaymentMethod( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
 
@@ -111,7 +111,7 @@ function EditPaymentMethod( props ) {
 	);
 }
 
-EditPaymentMethod.propTypes = {
+ChangePaymentMethod.propTypes = {
 	card: PropTypes.object,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
@@ -140,5 +140,5 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 } );
 
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )(
-	EditPaymentMethod
+	ChangePaymentMethod
 );
