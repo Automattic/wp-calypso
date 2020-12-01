@@ -31,13 +31,19 @@ export function useDomainSelection() {
 		unsetDomain();
 	}
 
+	let currentDomain: DomainSuggestions.DomainSuggestion | undefined = undefined;
+
+	if ( selectedDomain ) {
+		currentDomain = selectedDomain;
+	} else if ( confirmedDomainSelection ) {
+		// in the scenario where confirmedDomainSelection is true and selectedDomain is falsey we can assume they've selected the sub-domain
+		currentDomain = mockDomainSuggestion( siteSubdomain?.domain );
+	}
+
 	return {
 		onDomainSelect,
 		onExistingSubdomainSelect,
 		selectedDomain,
-		currentDomain:
-			selectedDomain || confirmedDomainSelection
-				? mockDomainSuggestion( siteSubdomain?.domain )
-				: undefined,
+		currentDomain,
 	};
 }
