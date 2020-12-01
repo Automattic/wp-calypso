@@ -27,6 +27,7 @@ export function useDomainSelection() {
 	}
 
 	function onExistingSubdomainSelect() {
+		confirmDomainSelection();
 		unsetDomain();
 	}
 
