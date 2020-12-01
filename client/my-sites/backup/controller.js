@@ -24,6 +24,8 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackBackupSlug } from 'calypso/lib/products-values';
 import HasVaultPressSwitch from 'calypso/components/jetpack/has-vaultpress-switch';
 import IsJetpackDisconnectedSwitch from 'calypso/components/jetpack/is-jetpack-disconnected-switch';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 
 const debug = new Debug( 'calypso:my-sites:backup:controller' );
 
@@ -68,6 +70,17 @@ export function showJetpackIsDisconnected( context, next ) {
 			falseComponent={ context.primary }
 		/>
 	);
+	next();
+}
+
+export function showNotAuthorizedForNonAdmins( context, next ) {
+	context.primary = (
+		<IsCurrentUserAdminSwitch
+			trueComponent={ context.primary }
+			falseComponent={ <NotAuthorizedPage /> }
+		/>
+	);
+
 	next();
 }
 

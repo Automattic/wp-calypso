@@ -22,6 +22,8 @@ import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanHistoryPlaceholder from 'calypso/components/jetpack/scan-history-placeholder';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { isJetpackScanSlug } from 'calypso/lib/products-values';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
 
 export function showUpsellIfNoScan( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanPlaceholder />, context.primary );
@@ -30,6 +32,17 @@ export function showUpsellIfNoScan( context, next ) {
 
 export function showUpsellIfNoScanHistory( context, next ) {
 	context.primary = scanUpsellSwitcher( <ScanHistoryPlaceholder />, context.primary );
+	next();
+}
+
+export function showNotAuthorizedForNonAdmins( context, next ) {
+	context.primary = (
+		<IsCurrentUserAdminSwitch
+			trueComponent={ context.primary }
+			falseComponent={ <NotAuthorizedPage /> }
+		/>
+	);
+
 	next();
 }
 
