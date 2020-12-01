@@ -25,37 +25,37 @@ $ npm install webpack-rtl-plugin
 Add the plugin to your webpack configuration:
 
 ```js
-const WebpackRTLPlugin = require('webpack-rtl-plugin')
+const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
 
 module.exports = {
-  entry: path.join(__dirname, 'src/index.js'),
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js',
-  },
-  module: {
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: "css-loader",
-            options: {
-              ...,
-            }
-          }
-        ]
-      }
-    ],
-  },
-  plugins: [
-    new MiniCssExtractPlugin({
-        filename: 'style.css',
-    }),
-    new WebpackRTLPlugin(),
-  ],
-}
+	entry: path.join( __dirname, 'src/index.js' ),
+	output: {
+		path: path.resolve( __dirname, 'dist' ),
+		filename: 'bundle.js',
+	},
+	module: {
+		rules: [
+			{
+				test: /\.css$/,
+				use: [
+					MiniCssExtractPlugin.loader,
+					{
+						loader: 'css-loader',
+						options: {
+							/*...,*/
+						},
+					},
+				],
+			},
+		],
+	},
+	plugins: [
+		new MiniCssExtractPlugin( {
+			filename: 'style.css',
+		} ),
+		new WebpackRTLPlugin(),
+	],
+};
 ```
 
 This will create the normal `style.css` and an additionnal `style.rtl.css`.
