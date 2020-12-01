@@ -41,7 +41,6 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 
         // Retrieve the page object.
         const page = await this.LoginFlow.page;
-        await page.waitForSelector( iframe );
 
         // Obtain the main block editor window iframe.
         const handle = await page.$( iframe );
@@ -102,15 +101,9 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 
         // Look for snackbar/toast that appears on successful publishing.
         // Visit the site from that link.
-        // const editorURL = await page.url();
         await frame.waitForSelector( snackBarNotice );
         page.waitForNavigation();
         return await frame.click( snackBarNoticeLinkSelector );
-
-        // const publishedURL = await page.url();
-
-        // Wait for the site-content div to load.
-        // return await page.waitForSelector( 'site-content' );
     });
 
     it( `Can see the Click to Tweet block in our published post`, async function () {

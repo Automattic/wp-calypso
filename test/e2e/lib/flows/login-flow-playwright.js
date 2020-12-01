@@ -82,6 +82,7 @@ export default class LoginFlow {
 
         await page.waitForSelector( newPostButton );
         await page.click( newPostButton );
+        // Editor is loaded once the iframe shows.
         return await page.waitForSelector( iframe );
     }
 }
