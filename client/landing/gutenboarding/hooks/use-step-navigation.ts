@@ -1,14 +1,20 @@
 /**
  * External dependencies
  */
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep } from '../path';
+import {
+	GutenLocationStateType,
+	Step,
+	usePath,
+	useCurrentStep,
+	useAnchorFmPodcastId,
+} from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
@@ -58,8 +64,16 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	const isLastStep = currentStepIndex === steps.length - 1;
 
-	const handleBack = () => history.push( previousStepPath );
-	const handleNext = () => ( isLastStep ? handleSiteCreation() : history.push( nextStepPath ) );
+	// Transfer anchor podcast ID from the query string to the location state, if needed
+	const state = useLocation< GutenLocationStateType >().state ?? {};
+	const anchorFmPodcastId = useAnchorFmPodcastId();
+	if ( anchorFmPodcastId ) {
+		state.anchorFmPodcastId = anchorFmPodcastId;
+	}
+
+	const handleBack = () => history.push( previousStepPath, state );
+	const handleNext = () =>
+		isLastStep ? handleSiteCreation() : history.push( nextStepPath, state );
 
 	return {
 		goBack: handleBack,

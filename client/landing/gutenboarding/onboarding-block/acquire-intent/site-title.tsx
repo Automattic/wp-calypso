@@ -8,7 +8,6 @@ import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
 import config from 'calypso/config';
-import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 
 /**
  * Internal dependencies
@@ -18,6 +17,7 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
+import { useIsAnchorFm } from '../../path';
 
 interface Props {
 	onSubmit: () => void;
@@ -27,9 +27,7 @@ interface Props {
 const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) => {
 	const { __, _x } = useI18n();
 	const { siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
-	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getIsAnchorFmSignup()
-	);
+	const isAnchorFmSignup = useIsAnchorFm();
 	const { setSiteTitle } = useDispatch( STORE_KEY );
 	const [ isTouched, setIsTouched ] = React.useState( false );
 	const showVerticalInput = config.isEnabled( 'gutenboarding/show-vertical-input' );

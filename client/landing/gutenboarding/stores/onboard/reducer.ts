@@ -210,17 +210,6 @@ const siteTitle: Reducer< string, OnboardAction > = ( state = '', action ) => {
 	return state;
 };
 
-const anchorFmPodcastId: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_ANCHORFM_PODCAST_ID' ) {
-		// Check the id for non-numeric characters
-		return /\D/.test( action.anchorFmPodcastId ) ? '' : action.anchorFmPodcastId;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
-	}
-	return state;
-};
-
 const siteVertical: Reducer< SiteVertical | undefined, OnboardAction > = ( state, action ) => {
 	if ( action.type === 'SET_SITE_VERTICAL' ) {
 		return action.siteVertical;
@@ -264,7 +253,6 @@ const reducer = combineReducers( {
 	selectedDesign,
 	selectedSite,
 	siteTitle,
-	anchorFmPodcastId,
 	siteVertical,
 	showSignupDialog,
 	plan,
