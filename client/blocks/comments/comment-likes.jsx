@@ -76,5 +76,5 @@ export default connect(
 	( state, props ) => ( {
 		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
 	} ),
-	{ likeComment, unlikeComment, recordReaderTracksEvent }
+	{ likeComment, recordReaderTracksEvent, unlikeComment }
 )( CommentLikeButtonContainer );
