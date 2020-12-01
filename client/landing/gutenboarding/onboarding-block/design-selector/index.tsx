@@ -31,9 +31,13 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
-		select( ONBOARD_STORE )
-	);
+	const {
+		getSelectedDesign,
+		hasPaidDesign,
+		getRandomizedDesigns,
+		getIsAnchorFmSignup,
+	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const isAnchorFmSignup = getIsAnchorFmSignup();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
@@ -46,7 +50,11 @@ const DesignSelector: React.FunctionComponent = () => {
 				<div className="design-selector__heading">
 					<Title>{ __( 'Choose a design' ) }</Title>
 					<SubTitle>
-						{ __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
+						{ isAnchorFmSignup
+							? __(
+									'Pick a homepage layout for your podcast site. You can customize or change it later.'
+							  )
+							: __( 'Pick your favorite homepage layout. You can customize or change it later.' ) }
 					</SubTitle>
 				</div>
 				<ActionButtons>
