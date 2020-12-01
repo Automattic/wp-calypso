@@ -16,6 +16,7 @@ import { normalizeSettings } from './utils';
 
 import 'calypso/state/data-layer/wpcom/sites/homepage';
 import 'calypso/state/site-settings/init';
+import 'calypso/state/ui/init';
 
 /**
  * Returns an action object to be used in signalling that site settings have been received.

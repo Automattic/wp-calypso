@@ -39,6 +39,7 @@
 		{ "path": "../onboarding" },
 		{ "path": "../domain-picker" },
 		{ "path": "../plans-grid" },
-		{ "path": "../calypso-analytics" }
+		{ "path": "../calypso-analytics" },
+		{ "path": "../i18n-utils" }
 	]
 }

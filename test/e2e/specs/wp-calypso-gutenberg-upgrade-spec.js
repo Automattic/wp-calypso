@@ -42,6 +42,7 @@ import {
 	SubscriptionsBlockComponent,
 	TiledGalleryBlockComponent,
 	YoutubeBlockComponent,
+	PremiumContentBlockComponent,
 } from '../lib/gutenberg/blocks';
 
 let driver;
@@ -300,6 +301,7 @@ describe( `[${ host }] Test Gutenberg upgrade from non-edge to edge across most 
 		SubscriptionsBlockComponent,
 		TiledGalleryBlockComponent,
 		YoutubeBlockComponent,
+		PremiumContentBlockComponent,
 	].forEach( ( blockClass ) => {
 		themedSites.forEach( ( siteName ) => {
 			describe( `Test the ${ blockClass.blockName } block on ${ siteName } @parallel`, function () {

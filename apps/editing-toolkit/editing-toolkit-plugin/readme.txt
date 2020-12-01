@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.8
+Stable tag: 2.8.9
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.9 =
+* Domain Picker: Persistent Domain (https://github.com/Automattic/wp-calypso/pull/47633)
+* Focused Launch: Add Launch your site button (https://github.com/Automattic/wp-calypso/pull/47601)
 
 = 2.8.8 =
 * Coming soon: Show coming soon page when showing posts on front (https://github.com/Automattic/wp-calypso/pull/47661)

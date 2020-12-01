@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getFaqComponent } from 'calypso/my-sites/plans-v2/iterations';
+import { getFaqComponent } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 const StoreFooter: React.FC = () => {
 	const JetpackFAQComponent = getFaqComponent();

@@ -25,6 +25,25 @@ if ( config.isEnabled( 'myFeature' ) ) {
 }
 ```
 
+### config.enable( key )
+
+Enable a feature.
+
+```js
+import config from 'calypso/config';
+
+config.enable( 'myFeature' );
+```
+### config.disable( key )
+
+Disable a feature.
+
+```js
+import config from 'calypso/config';
+
+config.disable( 'myFeature' );
+```
+
 The key should always be a literal string not a variable so that down the road
 we can process the compiled scripts and remove code for disabled features in
 production.

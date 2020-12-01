@@ -123,7 +123,7 @@ export const redirectTo = combineReducers( {
 	} ),
 } );
 
-export const isFormDisabled = withoutPersistence( ( state = null, action ) => {
+export const isFormDisabled = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return true;

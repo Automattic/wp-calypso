@@ -138,19 +138,19 @@ Update a plugin on a site.
 
 Toggle a plugin active state on a site.
 
-#### PluginsActions.togglePluginActivation( site, plugin );
+This action has been migrated to Redux. Please use to the `togglePluginActivation` Redux action.
 
 ---
 
 Activate a plugin on a site.
 
-#### PluginsActions.activatePlugin( site, plugin );
+This action has been migrated to Redux. Please use to the `activatePlugin` Redux action.
 
 ---
 
 Deactivate a plugin on a site.
 
-#### PluginsActions.deactivatePlugin( site, plugin );
+This action has been migrated to Redux. Please use to the `deactivatePlugin` Redux action.
 
 ---
 

@@ -336,4 +336,10 @@
 	--theme-highlight-color: #0073aa; /* Direct from wp-admin */
 	--theme-highlight-color-rgb: 0, 115, 170;
 	--theme-notification-color: #d54e21; /* Direct from wp-admin */
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --studio-blue-0 );
+	--color-sidebar-submenu-text: var( --studio-blue-70 );
+	--color-sidebar-submenu-hover-text: var( --color-accent );
+	--color-sidebar-submenu-selected-text: var( --color-accent );
 }

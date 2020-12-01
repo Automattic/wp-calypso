@@ -10,6 +10,7 @@ import { Plans } from '@automattic/data-stores';
 import PlansGrid from '@automattic/plans-grid';
 import { Title, SubTitle } from '@automattic/onboarding';
 import { useHistory } from 'react-router-dom';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -20,6 +21,7 @@ import GoBackButton from '../go-back-button';
 import './style.scss';
 
 const PlanDetails: React.FunctionComponent = () => {
+	const locale = useLocale();
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const history = useHistory();
@@ -74,7 +76,7 @@ const PlanDetails: React.FunctionComponent = () => {
 							: undefined
 					}
 					CTAVariation="FULL_WIDTH"
-					locale="user"
+					locale={ locale }
 				/>
 			</div>
 		</div>

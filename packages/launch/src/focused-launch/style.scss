@@ -2,6 +2,10 @@
 @import '~@wordpress/base-styles/variables';
 @import '~@wordpress/base-styles/breakpoints';
 
+body.is-focused-launch-complete .editor-gutenberg-launch__launch-button {
+	display: none;
+}
+
 .focused-launch-container {
 	width: 100%;
 	max-width: 980px;

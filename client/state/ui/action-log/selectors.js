@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { findLast, last } from 'lodash';
 
 /**
@@ -9,6 +8,8 @@ import { findLast, last } from 'lodash';
  */
 import createSelector from 'calypso/lib/create-selector';
 import { ROUTE_SET } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Returns a log of actions from certain types that have previously been

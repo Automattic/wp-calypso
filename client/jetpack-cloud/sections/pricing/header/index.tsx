@@ -14,10 +14,10 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from 'calypso/config';
 import { preventWidows } from 'calypso/lib/formatting';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
 // Black Friday 2020 promotion; runs Nov 20-30 automatically. Safe to remove after Dec 1
 import BlackFriday2020Banner from './black-friday-2020-banner';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies

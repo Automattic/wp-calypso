@@ -105,11 +105,9 @@ function auth( window, onAuthorized ) {
 	ipc.on( 'user-auth', async function ( _, user, token ) {
 		log.info( `Handling 'user-auth' IPC event, setting session cookies...` );
 
-		if ( user && user.data ) {
-			const userData = user.data;
-
+		if ( user ) {
 			try {
-				const response = await authorize( userData.username, token );
+				const response = await authorize( user.username, token );
 				await setSessionCookies( window, response );
 				onAuthorized();
 

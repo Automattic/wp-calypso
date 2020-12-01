@@ -9,6 +9,7 @@ import {
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_SAVE_ZONE,
 	ZONINATOR_UPDATE_ZONE,
+	ZONINATOR_UPDATE_ZONE_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../action-types';
 
@@ -16,7 +17,7 @@ import {
  * Returns an action object to indicate that a request has been made to fetch the zones.
  *
  * @param  {number} siteId Site ID
- * @returns {Action}        Action object
+ * @returns {object}        Action object
  */
 export const requestZones = ( siteId ) => ( { type: ZONINATOR_REQUEST_ZONES, siteId } );
 
@@ -24,7 +25,7 @@ export const requestZones = ( siteId ) => ( { type: ZONINATOR_REQUEST_ZONES, sit
  * Returns an action object to indicate that an error was received when fetching the zones.
  *
  * @param  {number} siteId Site ID
- * @returns {Action}        Action object
+ * @returns {object}        Action object
  */
 export const requestError = ( siteId ) => ( { type: ZONINATOR_REQUEST_ERROR, siteId } );
 
@@ -53,19 +54,28 @@ export const updateZone = ( siteId, zoneId, data ) => ( {
 } );
 
 /**
+ * Returns an action object to indicate that a zone saving or creation has failed.
+ *
+ * @param  {number} siteId Site ID
+ * @returns {object}        Action object
+ */
+export const updateZoneError = ( siteId ) => ( {
+	type: ZONINATOR_UPDATE_ZONE_ERROR,
+	siteId,
+} );
+
+/**
  * Returns an action object to indicate that a new zone should be created.
  *
  * @param  {number} siteId   Site ID
  * @param  {string} siteSlug Site slug
- * @param  {string} form     Form name
  * @param  {object} data     Zone details
  * @returns {object}          Action object
  */
-export const addZone = ( siteId, siteSlug, form, data ) => ( {
+export const addZone = ( siteId, siteSlug, data ) => ( {
 	type: ZONINATOR_ADD_ZONE,
 	siteId,
 	siteSlug,
-	form,
 	data,
 } );
 
@@ -74,15 +84,13 @@ export const addZone = ( siteId, siteSlug, form, data ) => ( {
  *
  * @param  {number} siteId Site ID
  * @param  {number} zoneId Zone ID
- * @param  {string} form   Form name
  * @param  {object} data   Zone details
  * @returns {object}        Action object
  */
-export const saveZone = ( siteId, zoneId, form, data ) => ( {
+export const saveZone = ( siteId, zoneId, data ) => ( {
 	type: ZONINATOR_SAVE_ZONE,
 	siteId,
 	zoneId,
-	form,
 	data,
 } );
 

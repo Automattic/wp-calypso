@@ -69,8 +69,8 @@ import {
 import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
 import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
 import { externalRedirect } from 'calypso/lib/route/path';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Module variables

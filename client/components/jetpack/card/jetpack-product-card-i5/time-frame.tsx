@@ -8,13 +8,13 @@ import React from 'react';
  * Internal dependencies
  */
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { durationToText } from 'calypso/my-sites/plans-v2/utils';
+import { durationToText } from 'calypso/my-sites/plans/jetpack-plans/utils';
 
 /**
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration } from 'calypso/my-sites/plans-v2/types';
+import type { Duration } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 interface Props {
 	expiryDate?: Moment;

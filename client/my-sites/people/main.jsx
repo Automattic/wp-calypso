@@ -24,6 +24,7 @@ import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -45,6 +46,7 @@ class People extends React.Component {
 
 	render() {
 		const {
+			isComingSoon,
 			isJetpack,
 			canViewPeople,
 			siteId,
@@ -88,6 +90,7 @@ class People extends React.Component {
 						<PeopleSectionNav
 							isJetpack={ isJetpack }
 							isPrivate={ isPrivate }
+							isComingSoon={ isComingSoon }
 							canViewPeople={ canViewPeople }
 							search={ search }
 							filter={ filter }
@@ -110,5 +113,6 @@ export default connect( ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isPrivate: isPrivateSite( state, siteId ),
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 	};
 } )( localize( People ) );

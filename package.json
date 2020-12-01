@@ -42,14 +42,15 @@
 			"unreleased Firefox versions",
 			"unreleased FirefoxAndroid versions",
 			"unreleased Edge versions",
-			"unreleased Opera versions"
+			"unreleased Opera versions",
+			"safari 13"
 		],
 		"server": [
 			"current node"
 		]
 	},
 	"engines": {
-		"node": "^v12.18.4",
+		"node": "^v12.19.1",
 		"yarn": "^1.22.10"
 	},
 	"scripts": {
@@ -169,12 +170,11 @@
 		"@automattic/typography": "^1.0.0",
 		"@automattic/viewport": "^1.0.0",
 		"@automattic/wp-babel-makepot": "^1.0.0",
-		"@babel/core": "^7.11.1",
-		"@babel/register": "^7.10.5",
+		"@babel/core": "^7.12.3",
+		"@babel/register": "^7.12.1",
 		"@signal-noise/stylelint-scales": "^1.4.0",
 		"@storybook/addon-actions": "^6.0.28",
 		"@storybook/preset-scss": "^1.0.3",
-		"@storybook/preset-typescript": "^3.0.0",
 		"@storybook/react": "^6.0.28",
 		"@types/classnames": "^2.2.10",
 		"@types/cookie": "^0.4.0",

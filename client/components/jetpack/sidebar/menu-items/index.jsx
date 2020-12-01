@@ -22,6 +22,7 @@ import ScanBadge from 'calypso/components/jetpack/scan-badge';
 import SidebarItem from 'calypso/layout/sidebar/item';
 import { isEnabled } from 'calypso/config';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
@@ -86,6 +87,19 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 				>
 					<ScanBadge progress={ scanProgress } numberOfThreatsFound={ scanThreats?.length ?? 0 } />
 				</SidebarItem>
+			) }
+			{ ! isJetpackCloud() && (
+				<SidebarItem
+					tipTarget="jetpack-search"
+					icon={ showIcons ? 'search' : undefined }
+					label={ translate( 'Search', {
+						comment: 'Jetpack sidebar menu item',
+					} ) }
+					link={ `/jetpack-search/${ siteSlug }` }
+					onNavigate={ onNavigate( tracksEventNames.activityClicked ) }
+					selected={ currentPathMatches( `/jetpack-search/${ siteSlug }` ) }
+					expandSection={ expandSection }
+				/>
 			) }
 		</>
 	);

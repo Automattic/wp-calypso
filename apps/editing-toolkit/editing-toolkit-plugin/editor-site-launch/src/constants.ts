@@ -5,5 +5,6 @@ declare global {
 		wpcomEditorSiteLaunch?: {
 			locale?: string;
 		};
+		_currentSiteId: number;
 	}
 }

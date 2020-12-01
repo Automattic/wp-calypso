@@ -29,13 +29,12 @@ jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
 } ) );
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn( () => true ),
-} ) );
 
-jest.mock( 'config/index', () => ( {
-	isEnabled: jest.fn( () => true ),
-} ) );
+jest.mock( 'config', () => {
+	const configMock = () => '';
+	configMock.isEnabled = jest.fn( () => true );
+	return configMock;
+} );
 
 describe( 'MySitesSidebar', () => {
 	describe( 'MySitesSidebar.store()', () => {

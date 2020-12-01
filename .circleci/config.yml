@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:12.18.4
+      - image: cimg/node:12.19.1
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -303,14 +303,15 @@ jobs:
       - prepare
       - run:
           name: Extract strings
-          working_directory: wp-babel-makepot
-          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+          command: |
+            yarn run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
           command: |
             git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
       - store-artifacts-and-test-results
       - run:
@@ -810,7 +811,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:12.18.4-browsers
+      - image: circleci/node:12.19.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:
@@ -1092,10 +1093,21 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source
+      - wp-desktop-source:
+          filters:
+            branches:
+              only:
+                - trunk
+                - release/*
+                - desktop/*
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
+      # Even though a TeamCity Linux job is ran against trunk,
+      # we should continue to periodically validate the Circle
+      # job to ensure CircleCI continues to work on all
+      # platforms since the application is deployed via CircleCI.
+      # This also provides a benchmark and fallback for TeamCity.
       - wp-desktop-linux:
           requires:
             - wp-desktop-source

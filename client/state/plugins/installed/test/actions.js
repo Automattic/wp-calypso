@@ -64,6 +64,23 @@ describe( 'actions', () => {
 		sandbox.stub( console, 'error' );
 	} );
 
+	const getState = () => ( {
+		currentUser: {
+			capabilities: {
+				2916284: {
+					manage_options: true,
+				},
+			},
+		},
+		sites: {
+			items: {
+				2916284: {
+					ID: 2916284,
+				},
+			},
+		},
+	} );
+
 	describe( '#fetchPlugins()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
@@ -151,7 +168,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_ACTIVATE_REQUEST,
@@ -162,7 +179,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin activate request success action when request completes', () => {
-			const response = activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			const response = activatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_ACTIVATE_REQUEST_SUCCESS,
@@ -175,7 +195,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = activatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = activatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_ACTIVATE_REQUEST_FAILURE,
@@ -202,7 +225,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_DEACTIVATE_REQUEST,
@@ -214,7 +237,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch plugin deactivate request success action when request completes', () => {
 			const response = deactivatePlugin( 2916284, { slug: 'akismet', id: 'akismet/akismet' } )(
-				spy
+				spy,
+				getState
 			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
@@ -228,7 +252,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = deactivatePlugin( 2916284, { slug: 'fake', id: 'fake/fake' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_DEACTIVATE_REQUEST_FAILURE,

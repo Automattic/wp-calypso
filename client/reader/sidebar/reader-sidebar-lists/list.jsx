@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
 import { identity, map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -9,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
+import { isEnabled } from 'calypso/config';
 import ListItem from './list-item';
 import ListItemCreateLink from './list-item-create-link';
 
@@ -28,7 +27,7 @@ export class ReaderSidebarListsList extends React.Component {
 
 	renderItems() {
 		const { currentListOwner, currentListSlug, path } = this.props;
-		return map( this.props.lists, function ( list ) {
+		return map( this.props.lists, ( list ) => {
 			return (
 				<ListItem
 					key={ list.ID }
@@ -43,19 +42,10 @@ export class ReaderSidebarListsList extends React.Component {
 
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
-		const { translate, lists } = this.props;
-		if ( ! lists || lists.length === 0 ) {
-			return (
-				<div key="empty" className="sidebar__menu-empty">
-					{ translate( 'Collect sites together by adding a list.' ) }
-				</div>
-			);
-		}
-
 		return (
 			<ul className="sidebar__menu-list">
 				{ this.renderItems() }
-				{ config.isEnabled( 'reader/list-management' ) && (
+				{ isEnabled( 'reader/list-management' ) && (
 					<ListItemCreateLink key="create-item-link" path={ this.props.path } />
 				) }
 			</ul>
@@ -64,4 +54,4 @@ export class ReaderSidebarListsList extends React.Component {
 	}
 }
 
-export default localize( ReaderSidebarListsList );
+export default ReaderSidebarListsList;

@@ -9,7 +9,7 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as constants from './constants';
 
 const WPComGetBillingTimeframe = () => i18n.translate( 'per month, billed annually' );
@@ -1546,7 +1546,11 @@ export const PLANS_LIST = {
 
 		// TODO: no idea about this, copied from the WP.com Premium plan.
 		// Features not displayed but used for checking plan abilities
-		getHiddenFeatures: () => [ constants.FEATURE_AUDIO_UPLOADS ],
+		getHiddenFeatures: () => [
+			constants.FEATURE_AUDIO_UPLOADS,
+			constants.FEATURE_JETPACK_SEARCH,
+			constants.FEATURE_JETPACK_SEARCH_MONTHLY,
+		],
 		getInferiorHiddenFeatures: () => [],
 
 		// TODO: Calypso requires this prop but we probably don't need it. Refactor Calypso?
