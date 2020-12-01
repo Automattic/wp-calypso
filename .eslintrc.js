@@ -392,25 +392,6 @@ module.exports = {
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
 
-		'wpcalypso/no-unsafe-wp-apis': [
-			'error',
-			{
-				'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
-				'@wordpress/components': [
-					'__experimentalAlignmentMatrixControl',
-					'__experimentalBoxControl',
-					'__experimentalInputControl',
-					'__experimentalRadio',
-					'__experimentalRadioGroup',
-					'__experimentalText',
-					'__experimentalToolbarItem',
-					'__experimentalTreeGrid',
-					'__experimentalTreeGridCell',
-					'__experimentalTreeGridRow',
-				],
-				'@wordpress/date': [ '__experimentalGetSettings' ],
-				'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
-			},
-		],
+		'wpcalypso/no-unsafe-wp-apis': 'error',
 	},
 };
