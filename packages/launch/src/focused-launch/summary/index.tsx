@@ -524,7 +524,7 @@ const Summary: React.FunctionComponent = () => {
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
-	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
@@ -586,7 +586,7 @@ const Summary: React.FunctionComponent = () => {
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
-			currentDomain={ selectedDomain }
+			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain ) }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
