@@ -20,12 +20,14 @@ body.has-focused-launch-modal {
 		animation-delay: 1s;
 		// "fill-mode: both" keeps the modal invisible until the animation starts
 		animation-fill-mode: both;
+
+		.launch__focused-modal {
+			animation-delay: inherit;
+		}
 	}
 }
 
 .launch__focused-modal {
-	animation-delay: inherit;
-
 	&.components-modal__frame {
 		transform: none;
 	}
