@@ -617,6 +617,14 @@ export function removePlugin( siteId, plugin ) {
 	};
 }
 
+export function receivePlugins( siteId, plugins ) {
+	return {
+		type: PLUGINS_RECEIVE,
+		data: plugins,
+		siteId,
+	};
+}
+
 export function fetchPlugins( siteIds ) {
 	return ( dispatch, getState ) => {
 		return siteIds.map( ( siteId ) => {
@@ -626,7 +634,7 @@ export function fetchPlugins( siteIds ) {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
 			const receivePluginsDispatchSuccess = ( data ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE, data: data.plugins } );
+				dispatch( receivePlugins( siteId, data.plugins ) );
 				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
 				data.plugins.map( ( plugin ) => {
