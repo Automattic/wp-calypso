@@ -24,7 +24,6 @@ import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
-import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
@@ -49,7 +48,6 @@ const reducers = {
 	importerNux,
 	inlineSupportArticle,
 	jitm,
-	media,
 	mySites,
 	notices,
 	notificationsUnseenCount,
