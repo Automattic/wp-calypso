@@ -452,7 +452,7 @@ export class PluginsBrowser extends Component {
 		const site = siteSlug ? '/' + siteSlug : '';
 
 		return (
-			<Button className="plugins-browser__button" compact href={ '/plugins/manage' + site }>
+			<Button className="plugins-browser__button" href={ '/plugins/manage' + site }>
 				<Gridicon icon="cog" />
 				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
@@ -475,7 +475,6 @@ export class PluginsBrowser extends Component {
 		return (
 			<Button
 				className="plugins-browser__button"
-				compact
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
@@ -497,10 +496,6 @@ export class PluginsBrowser extends Component {
 			<div className="plugins-browser__main">
 				<div className="plugins-browser__main-header">
 					<div className="plugins__header-navigation">{ navigation }</div>
-				</div>
-				<div className="plugins-browser__main-buttons">
-					{ this.renderManageButton() }
-					{ this.renderUploadPluginButton() }
 				</div>
 			</div>
 		);
@@ -571,12 +566,21 @@ export class PluginsBrowser extends Component {
 				{ this.renderPageViewTracker() }
 				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
 				<SidebarNavigation />
-				<FormattedHeader
-					brandFont
-					className="plugins-browser__page-heading"
-					headerText={ this.props.translate( 'Plugin Browser' ) }
-					align="left"
-				/>
+				<div className="plugins-browser__header">
+					<FormattedHeader
+						brandFont
+						className="plugins-browser__page-heading"
+						headerText={ this.props.translate( 'Plugin Browser' ) }
+						align="left"
+						subHeaderText={ this.props.translate(
+							'Plugins are extensions that add useful features to your site.'
+						) }
+					/>
+					<div className="plugins-browser__main-buttons">
+						{ this.renderManageButton() }
+						{ this.renderUploadPluginButton() }
+					</div>
+				</div>
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }

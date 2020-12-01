@@ -1,3 +1,14 @@
+.plugins-browser__header {
+	display: flex;
+	flex: 1 1 auto;
+	justify-content: flex-start;
+	align-items: center;
+
+	.plugins-browser__page-heading {
+		width: 100%;
+	}
+}
+
 .plugins-browser__main-header {
 	background: var( --color-surface );
 	flex-direction: column;
