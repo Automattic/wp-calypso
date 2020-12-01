@@ -3,6 +3,7 @@
  */
 
 import { compact, get } from 'lodash';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -14,6 +15,8 @@ import {
 	processInbound as inboundProcessor,
 	processOutbound as outboundProcessor,
 } from './pipeline';
+
+const debug = debugModule( 'calypso:data-layer:wpcom-http' );
 
 /**
  * Returns the appropriate fetcher in wpcom given the request method
@@ -46,17 +49,29 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		return;
 	}
 
-	const { body, formData, method: rawMethod, onProgress, options, path, query = {} } = action;
+	const {
+		body,
+		formData,
+		expectStreamMode,
+		onStreamRecord,
+		method: rawMethod,
+		onProgress,
+		options,
+		path,
+		query = {},
+	} = action;
 	const { responseType } = options || {};
 
 	const method = rawMethod.toUpperCase();
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData, responseType },
+			{ path, formData, expectStreamMode, onStreamRecord, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {
+				debug( 'callback fn by Req method: error=%o data=%o headers=%o', error, data, headers );
+
 				const {
 					failures,
 					nextData,

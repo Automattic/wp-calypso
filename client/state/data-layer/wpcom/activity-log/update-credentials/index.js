@@ -3,6 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import page from 'page';
+import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -28,6 +29,7 @@ import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-tr
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
+const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
 	undefined !== typeof window
 		? ( path ) => window.open( path, '_blank' )
@@ -70,7 +72,11 @@ export const request = ( action ) => {
 				apiNamespace: 'wpcom/v2',
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
-				body: { credentials },
+				body: { credentials, stream: true },
+				expectStreamMode: true,
+
+				// TODO @azabani make this a requestDispatcher option to fully integrate with wpcom-http
+				onStreamRecord: ( record ) => debug( 'onStreamRecord: record=%o', record ),
 			},
 			{ ...action, noticeId }
 		),
