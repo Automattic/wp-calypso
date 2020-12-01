@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -453,7 +452,6 @@ export class PluginsBrowser extends Component {
 
 		return (
 			<Button className="plugins-browser__button" href={ '/plugins/manage' + site }>
-				<Gridicon icon="cog" />
 				<span className="plugins-browser__button-text">{ translate( 'Manage plugins' ) }</span>
 			</Button>
 		);
@@ -478,7 +476,6 @@ export class PluginsBrowser extends Component {
 				onClick={ this.handleUploadPluginButtonClick }
 				href={ uploadUrl }
 			>
-				<Gridicon icon="cloud-upload" />
 				<span className="plugins-browser__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
