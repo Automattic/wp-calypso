@@ -1,3 +1,8 @@
+/**************************************************************************************************/
+/* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
+/* See pbxNRc-sZ-p2 or visit #a8c-experiments and ask around!
+/**************************************************************************************************/
+
 /**
  * External dependencies
  */

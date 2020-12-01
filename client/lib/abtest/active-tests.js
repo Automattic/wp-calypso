@@ -4,6 +4,11 @@
  * paths here (e.g. `import * from '../../lib/`)
  */
 
+/**************************************************************************************************/
+/* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
+/* See pbxNRc-sZ-p2 or visit #a8c-experiments and ask around!
+/**************************************************************************************************/
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
