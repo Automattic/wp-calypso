@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import { shouldRenderExpiringCreditCard, creditCardHasAlreadyExpired } from 'calypso/lib/purchases';
-import { getEditCardDetailsPath } from 'calypso/me/purchases/utils';
+import { getChangePaymentMethodPath } from 'calypso/me/purchases/utils';
 import { type as domainTypes } from 'calypso/lib/domains/constants';
 
 function ExpiringCreditCard( props ) {
@@ -24,7 +24,7 @@ function ExpiringCreditCard( props ) {
 		return null;
 	}
 
-	const editCardDetailsPath = getEditCardDetailsPath( selectedSite.slug, purchase );
+	const editCardDetailsPath = getChangePaymentMethodPath( selectedSite.slug, purchase );
 
 	let messageText;
 

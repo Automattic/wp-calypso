@@ -155,10 +155,10 @@ export default ( router ) => {
 	);
 
 	router(
-		paths.editPaymentMethod( ':site', ':purchaseId', ':cardId' ),
+		paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
 		sidebar,
 		siteSelection,
-		controller.editPaymentMethod,
+		controller.changePaymentMethod,
 		makeLayout,
 		clientRender
 	);

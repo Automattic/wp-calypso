@@ -9,7 +9,7 @@ import React from 'react';
  */
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
-import EditPaymentMethod from 'calypso/me/purchases/manage-purchase/edit-payment-method';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
 import CancelPurchase from './cancel-purchase';
@@ -192,11 +192,11 @@ export function addPaymentMethod( context, next ) {
 	next();
 }
 
-export function editPaymentMethod( context, next ) {
+export function changePaymentMethod( context, next ) {
 	const state = context.store.getState();
 
 	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/edit/:cardId' );
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
 	}
 
 	setTitle( context, titles.editCardDetails );
@@ -204,7 +204,7 @@ export function editPaymentMethod( context, next ) {
 	context.primary = (
 		<Main className="purchases__edit-payment-method is-wide-layout">
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<EditPaymentMethod
+			<ChangePaymentMethod
 				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }

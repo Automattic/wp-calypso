@@ -12,7 +12,7 @@ import { isEmpty, merge, minBy } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import config from 'calypso/config';
-import { getEditCardDetailsPath } from '../utils';
+import { getChangePaymentMethodPath } from '../utils';
 import {
 	canExplicitRenew,
 	creditCardExpiresBeforeSubscription,
@@ -71,7 +71,7 @@ class PurchaseNotice extends Component {
 
 	static defaultProps = {
 		getManagePurchaseUrlFor: managePurchase,
-		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
+		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
 	};
 
 	state = {

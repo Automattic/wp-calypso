@@ -27,12 +27,12 @@ export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
 export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
 	`/purchases/payment-methods/${ targetSiteSlug }`;
 
-export const getEditPaymentMethodUrlFor = (
+export const getChangePaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number },
 	targetCardId: { id: string | number }
 ) =>
-	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/change/${ targetCardId }`;
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;

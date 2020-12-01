@@ -52,7 +52,7 @@ function EditPaymentMethod( props ) {
 
 				<QueryUserPurchases userId={ props.userId } />
 
-				<PaymentMethodLoader title={ titles.editPaymentMethod } />
+				<PaymentMethodLoader title={ titles.changePaymentMethod } />
 			</Fragment>
 		);
 	}
@@ -82,7 +82,7 @@ function EditPaymentMethod( props ) {
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
-				{ titles.editPaymentMethod }
+				{ titles.changePaymentMethod }
 			</HeaderCake>
 
 			<Layout>
