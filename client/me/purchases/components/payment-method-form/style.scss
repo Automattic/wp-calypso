@@ -1,8 +1,8 @@
-.credit-card-form__content {
+.payment-method-form__content {
 	margin-bottom: 0;
 }
 
-.credit-card-form__card-terms {
+.payment-method-form__card-terms {
 	color: var( --color-text-subtle );
 	margin: 5px 0 0;
 	padding: 0;
@@ -18,7 +18,7 @@
 	}
 }
 
-.credit-card-form__footer {
+.payment-method-form__footer {
 	align-items: center;
 	display: flex;
 
@@ -39,7 +39,7 @@
 	}
 }
 
-.credit-card-form__heading {
+.payment-method-form__heading {
 	font-size: $font-title-small;
 	padding: 0 0 16px;
 }
