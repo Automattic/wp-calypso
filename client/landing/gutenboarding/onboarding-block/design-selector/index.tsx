@@ -62,7 +62,9 @@ const DesignSelector: React.FunctionComponent = () => {
 				</ActionButtons>
 			</div>
 			<div className="design-selector__design-grid">
-				<div className="design-selector__grid">
+				<div
+					className={ isAnchorFmSignup ? 'design-selector__grid-minimal' : 'design-selector__grid' }
+				>
 					{ getRandomizedDesigns().featured.map( ( design ) => (
 						<button
 							key={ design.slug }
