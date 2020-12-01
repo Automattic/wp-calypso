@@ -226,8 +226,8 @@ describe( 'index', () => {
 		} );
 
 		test( 'should send the tracks events', () => {
-			const trackProps = { extra: 'extra' };
-			handleRenewNowClick( purchase, siteSlug, trackProps );
+			const tracksProps = { extra: 'extra' };
+			handleRenewNowClick( purchase, siteSlug, { tracksProps } );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_purchases_renew_now_click', {
 				product_slug: 'personal-bundle',
 				extra: 'extra',
