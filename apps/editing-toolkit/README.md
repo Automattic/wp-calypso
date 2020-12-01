@@ -76,7 +76,7 @@ The output is:
 
 ### Building Individual _Plugins_
 
-You can also build one of the Plugins separately by appending the plugin slug onto the `build` portion of the command. eg:
+You can also build one of the plugins separately by appending the plugin slug onto the `build` portion of the command. eg:
 
 ```sh
 # Builds the `posts-list-block` Plugin only
