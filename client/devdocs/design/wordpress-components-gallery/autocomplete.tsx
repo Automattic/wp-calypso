@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 /**
  * WordPress dependencies
  */
-import { Autocomplete, __experimentalInputControl as InputControl } from '@wordpress/components';
+import { Autocomplete } from '@wordpress/components';
 
 const autocompleters = [
 	{
@@ -41,7 +41,7 @@ const AutocompleteExample = () => {
 		<div>
 			<Autocomplete record={ value } onChange={ setValue } completers={ autocompleters }>
 				{ ( { isExpanded, listBoxId, activeId, onKeyDown } ) => (
-					<InputControl
+					<input
 						onKeyDown={ onKeyDown }
 						aria-autocomplete="list"
 						aria-expanded={ isExpanded }

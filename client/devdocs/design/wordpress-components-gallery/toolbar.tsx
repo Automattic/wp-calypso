@@ -18,15 +18,7 @@ import {
 	more,
 	paragraph,
 } from '@wordpress/icons';
-import {
-	Toolbar,
-	ToolbarButton,
-	ToolbarGroup,
-	DropdownMenu,
-	SVG,
-	Path,
-	__experimentalToolbarItem as ToolbarItem,
-} from '@wordpress/components';
+import { Toolbar, ToolbarButton, ToolbarGroup, SVG, Path } from '@wordpress/components';
 
 function InlineImageIcon() {
 	return (
@@ -41,33 +33,6 @@ const ToolbarExample = () => (
 	<Toolbar label="Options" id="options-toolbar">
 		<ToolbarGroup>
 			<ToolbarButton icon={ paragraph } label="Paragraph" />
-		</ToolbarGroup>
-		<ToolbarGroup>
-			<ToolbarItem>
-				{ ( toggleProps ) => (
-					<DropdownMenu
-						hasArrowIndicator
-						icon={ alignLeft }
-						label="Change text alignment"
-						controls={ [
-							{
-								icon: alignLeft,
-								title: 'Align left',
-								isActive: true,
-							},
-							{
-								icon: alignCenter,
-								title: 'Align center',
-							},
-							{
-								icon: alignRight,
-								title: 'Align right',
-							},
-						] }
-						toggleProps={ toggleProps }
-					/>
-				) }
-			</ToolbarItem>
 		</ToolbarGroup>
 		<ToolbarGroup>
 			<ToolbarButton>Text</ToolbarButton>
