@@ -73,6 +73,9 @@ const TestList = ( { tests, onChangeVariant } ) => (
 	</div>
 );
 
+/**
+ * @deprecated See README
+ */
 export default function injectTestHelper( element ) {
 	ReactDom.render(
 		React.createElement( TestList, {

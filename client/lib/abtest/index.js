@@ -38,6 +38,8 @@ function ABTest( name, geoLocation ) {
  * @param {string} name - The name of the A/B test
  * @param {string} geoLocation - Location of current user
  * @returns {string} - The user's variation
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const abtest = ( name, geoLocation = false ) =>
 	new ABTest( name, geoLocation ).getVariationAndSetAsNeeded();
@@ -47,6 +49,8 @@ export const abtest = ( name, geoLocation = false ) =>
  *
  * @param {string} name - The name of the A/B test
  * @returns {string} - The user's variation or null if the user is not a participant
+ *
+ * @deprecated Use ExPlat. See message at top of file.
  */
 export const getABTestVariation = ( name ) => new ABTest( name ).getVariation();
 
