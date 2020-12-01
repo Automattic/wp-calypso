@@ -73,7 +73,7 @@ export const getSubscribedLists = createSelector(
 	( state ) => [
 		state.reader.lists.items,
 		state.reader.lists.subscribedLists,
-		state.ui.language.localeSlug,
+		state.ui?.language?.localeSlug,
 	]
 );
 
