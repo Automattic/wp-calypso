@@ -192,16 +192,6 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
 	},
-	jetpackConversionRateOptimization: {
-		datestamp: '20201115',
-		variations: {
-			'v1 - 3 cols layout': 0, // first Offer Reset iteration (3 layout columns + simpler cards)
-			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
-			'i5 - Saas table design': 100, // third Offer Reset iteration (Saas table design)
-		},
-		defaultVariation: 'i5 - Saas table design',
-		allowExistingUsers: true,
-	},
 	secureYourBrand: {
 		datestamp: '20201124',
 		variations: {
