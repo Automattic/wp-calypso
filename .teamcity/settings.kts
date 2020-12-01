@@ -90,77 +90,75 @@ object BuildBaseImages : BuildType({
 	}
 
 	steps {
-		steps {
-			dockerCommand {
-				name = "Build base image"
-				commandType = build {
-					source = file {
-						path = "Dockerfile.base"
-					}
-					namesAndTags = """
-						registry.a8c.com/calypso/base:latest
-						registry.a8c.com/calypso/base:%build.number%
-					""".trimIndent()
-					commandArgs = "--no-cache --target builder"
+		dockerCommand {
+			name = "Build base image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
 				}
-				param("dockerImage.platform", "linux")
+				namesAndTags = """
+					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%build.number%
+				""".trimIndent()
+				commandArgs = "--no-cache --target builder"
 			}
-			dockerCommand {
-				name = "Build CI image"
-				commandType = build {
-					source = file {
-						path = "Dockerfile.base"
-					}
-					namesAndTags = """
-						registry.a8c.com/calypso/ci:latest
-						registry.a8c.com/calypso/ci:%build.number%
-					""".trimIndent()
-					commandArgs = "--target ci"
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
 				}
-				param("dockerImage.platform", "linux")
+				namesAndTags = """
+					registry.a8c.com/calypso/ci:latest
+					registry.a8c.com/calypso/ci:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci"
 			}
-			dockerCommand {
-				name = "Build CI Desktop image"
-				commandType = build {
-					source = file {
-						path = "Dockerfile.base"
-					}
-					namesAndTags = """
-						registry.a8c.com/calypso/ci-desktop:latest
-						registry.a8c.com/calypso/ci-desktop:%build.number%
-					""".trimIndent()
-					commandArgs = "--target ci-desktop"
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI Desktop image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
 				}
-				param("dockerImage.platform", "linux")
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-desktop"
 			}
-			dockerCommand {
-				name = "Build CI e2e image"
-				commandType = build {
-					source = file {
-						path = "Dockerfile.base"
-					}
-					namesAndTags = """
-						registry.a8c.com/calypso/ci-e2e:latest
-						registry.a8c.com/calypso/ci-e2e:%build.number%
-					""".trimIndent()
-					commandArgs = "--target ci-e2e"
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI e2e image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
 				}
-				param("dockerImage.platform", "linux")
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-e2e"
 			}
-			dockerCommand {
-				name = "Push images"
-				commandType = push {
-					namesAndTags = """
-						registry.a8c.com/calypso/base:latest
-						registry.a8c.com/calypso/base:%build.number%
-						registry.a8c.com/calypso/ci:latest
-						registry.a8c.com/calypso/ci:%build.number%
-						registry.a8c.com/calypso/ci-desktop:latest
-						registry.a8c.com/calypso/ci-desktop:%build.number%
-						registry.a8c.com/calypso/ci-e2e:latest
-						registry.a8c.com/calypso/ci-e2e:%build.number%
-					""".trimIndent()
-				}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Push images"
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%build.number%
+					registry.a8c.com/calypso/ci:latest
+					registry.a8c.com/calypso/ci:%build.number%
+					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+				""".trimIndent()
 			}
 		}
 	}
