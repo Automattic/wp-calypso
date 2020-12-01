@@ -46,7 +46,7 @@ function AddPaymentMethod( props ) {
 			<Fragment>
 				<QueryUserPurchases userId={ props.userId } />
 
-				<PaymentMethodLoader title={ titles.addCardDetails } />
+				<PaymentMethodLoader title={ titles.addPaymentMethod } />
 			</Fragment>
 		);
 	}
@@ -70,11 +70,11 @@ function AddPaymentMethod( props ) {
 			/>
 			<PageViewTracker
 				path="/me/purchases/:site/:purchaseId/payment/add"
-				title="Purchases > Add Card Details"
+				title="Purchases > Add Payment Method"
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
-				{ titles.addCardDetails }
+				{ titles.addPaymentMethod }
 			</HeaderCake>
 
 			<Layout>
