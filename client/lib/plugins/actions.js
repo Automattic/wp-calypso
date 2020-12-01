@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import debugFactory from 'debug';
 import { defer } from 'lodash';
 
 /**
@@ -16,7 +15,6 @@ import wpcom from 'calypso/lib/wp';
 /**
  * Module vars
  */
-const debug = debugFactory( 'calypso:my-sites:plugins:actions' );
 let _actionsQueueBySite = {};
 
 const queueSitePluginAction = ( action, siteId, pluginId, callback ) => {
@@ -151,40 +149,6 @@ const PluginsActions = {
 		} else {
 			wpcom.site( site.ID ).wpcomPluginsList( receivePluginsDispatcher );
 		}
-	},
-
-	updatePlugin: ( site, plugin ) => {
-		debug( 'updatePlugin', site, plugin );
-
-		// There doesn't seem to be anything to update
-		if ( ! plugin.update ) {
-			return;
-		}
-
-		// Site isn't able to update Files.
-		if ( ! site.canUpdateFiles ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'UPDATE_PLUGIN',
-			action: 'UPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const boundUpdate = getPluginBoundMethod( site, plugin.id, 'updateVersion' );
-		queueSitePluginAction( boundUpdate, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_UPDATED_PLUGIN',
-				action: 'UPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_updated', plugin, site, error );
-		} );
 	},
 
 	installPlugin: ( site, plugin ) => {
@@ -325,74 +289,6 @@ const PluginsActions = {
 			.then( remove )
 			.then( ( responseData ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', responseData ) )
 			.catch( ( error ) => dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error ) );
-	},
-
-	enableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-		Dispatcher.handleViewAction( {
-			type: 'ENABLE_AUTOUPDATE_PLUGIN',
-			action: 'ENABLE_AUTOUPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		const boundEnableAU = getPluginBoundMethod( site, plugin.id, 'enableAutoupdate' );
-		queueSitePluginAction( boundEnableAU, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_ENABLED_AUTOUPDATE_PLUGIN',
-				action: 'ENABLE_AUTOUPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_autoupdate_enabled', plugin, site, error );
-
-			if ( plugin.update && ! error ) {
-				PluginsActions.updatePlugin( site, plugin );
-			}
-		} );
-	},
-
-	disableAutoUpdatesPlugin: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-
-		Dispatcher.handleViewAction( {
-			type: 'DISABLE_AUTOUPDATE_PLUGIN',
-			action: 'DISABLE_AUTOUPDATE_PLUGIN',
-			site: site,
-			plugin: plugin,
-		} );
-
-		// make the API Request
-		const disableAA = getPluginBoundMethod( site, plugin.id, 'disableAutoupdate' );
-		queueSitePluginAction( disableAA, site.ID, plugin.id, ( error, data ) => {
-			Dispatcher.handleServerAction( {
-				type: 'RECEIVE_DISABLED_AUTOUPDATE_PLUGIN',
-				action: 'DISABLE_AUTOUPDATE_PLUGIN',
-				site: site,
-				plugin: plugin,
-				data: data,
-				error: error,
-			} );
-			recordEvent( 'calypso_plugin_autoupdate_disabled', plugin, site, error );
-		} );
-	},
-
-	togglePluginAutoUpdate: ( site, plugin ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.canAutoupdateFiles ) {
-			return;
-		}
-
-		if ( ! plugin.autoupdate ) {
-			PluginsActions.enableAutoUpdatesPlugin( site, plugin );
-		} else {
-			PluginsActions.disableAutoUpdatesPlugin( site, plugin );
-		}
 	},
 
 	removePluginUpdateInfo: ( site, plugin ) => {
