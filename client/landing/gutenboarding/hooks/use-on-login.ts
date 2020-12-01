@@ -18,7 +18,7 @@ import { useNewQueryParam } from '../path';
  * After signup a site is automatically created using the username and bearerToken
  **/
 
-export default function useOnSignup() {
+export default function useOnLogin(): void {
 	const locale = useLocale();
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
