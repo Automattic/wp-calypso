@@ -673,9 +673,9 @@ class ManagePurchase extends Component {
 			isProductOwner,
 		} = this.props;
 
-		let editCardDetailsPath = false;
+		let changePaymentMethodPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
+			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
@@ -716,7 +716,7 @@ class ManagePurchase extends Component {
 						purchase={ purchase }
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
-						editCardDetailsPath={ editCardDetailsPath }
+						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
 						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
