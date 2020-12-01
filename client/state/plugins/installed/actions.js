@@ -627,13 +627,27 @@ export function receiveSitePlugins( siteId, plugins ) {
 
 export function fetchSitePlugins( siteId ) {
 	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const defaultAction = {
 			siteId,
 		};
 		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
+		const afterFetchCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_PLUGINS',
+				action: 'RECEIVE_PLUGINS',
+				site,
+				data,
+				error,
+			} );
+		};
+
 		const receivePluginsDispatchSuccess = ( data ) => {
 			dispatch( receiveSitePlugins( siteId, data.plugins ) );
+			afterFetchCallback( undefined, data );
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
 			data.plugins.map( ( plugin ) => {
@@ -645,6 +659,7 @@ export function fetchSitePlugins( siteId ) {
 
 		const receivePluginsDispatchFail = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
+			afterFetchCallback( error, undefined );
 		};
 
 		return wpcom
