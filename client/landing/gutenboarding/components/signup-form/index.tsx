@@ -173,11 +173,11 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 	const modalTitle = isAnchorFmSignup
-		? __('Create your podcast site with WordPress.com')
-		: __('Save your progress');
+		? __( 'Create your podcast site with WordPress.com' )
+		: __( 'Save your progress' );
 	const modalSubTitle = isAnchorFmSignup
-		? __('Create a WordPress.com account and start creating your free site.')
-		: __('Enter an email and password to save your progress and continue.');
+		? __( 'Create a WordPress.com account and start creating your free site.' )
+		: __( 'Enter an email and password to save your progress and continue.' );
 
 	return (
 		<Modal
