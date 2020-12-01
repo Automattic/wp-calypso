@@ -41,6 +41,7 @@ export const failureMeta = ( error, headers ) => ( { meta: { dataLayer: { error,
 export const progressMeta = ( { total, loaded } ) => ( {
 	meta: { dataLayer: { progress: { total, loaded } } },
 } );
+export const streamRecordMeta = ( streamRecord ) => ( { meta: { dataLayer: { streamRecord } } } );
 
 export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch }, rawAction ) => {
 	const action = processOutbound( rawAction, dispatch );
@@ -53,7 +54,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		body,
 		formData,
 		expectStreamMode,
-		onStreamRecord,
+		onStreamRecord: rawOnStreamRecord,
 		method: rawMethod,
 		onProgress,
 		options,
@@ -61,6 +62,12 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 		query = {},
 	} = action;
 	const { responseType } = options || {};
+
+	const onStreamRecord =
+		rawOnStreamRecord &&
+		( ( record ) => {
+			return dispatch( extendAction( rawOnStreamRecord, streamRecordMeta( record ) ) );
+		} );
 
 	const method = rawMethod.toUpperCase();
 

@@ -3,7 +3,6 @@
  */
 import i18n from 'i18n-calypso';
 import page from 'page';
-import debugModule from 'debug';
 
 /**
  * Internal dependencies
@@ -21,6 +20,8 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
@@ -29,7 +30,6 @@ import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-tr
 
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
-const debug = debugModule( 'calypso:data-layer:update-credentials' );
 const navigateTo =
 	undefined !== typeof window
 		? ( path ) => window.open( path, '_blank' )
@@ -65,6 +65,10 @@ export const request = ( action ) => {
 	} );
 
 	return [
+		{
+			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
+			siteId: action.siteId,
+		},
 		notice,
 		tracksEvent,
 		http(
@@ -74,9 +78,6 @@ export const request = ( action ) => {
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: true },
 				expectStreamMode: true,
-
-				// TODO @azabani make this a requestDispatcher option to fully integrate with wpcom-http
-				onStreamRecord: ( record ) => debug( 'onStreamRecord: record=%o', record ),
 			},
 			{ ...action, noticeId }
 		),
@@ -236,6 +237,12 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	}
 };
 
+export const streamRecord = ( action, record ) => ( {
+	type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
+	siteId: action.siteId,
+	update: record,
+} );
+
 registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.js', {
 	[ JETPACK_CREDENTIALS_UPDATE ]: [
 		primeHappychat,
@@ -243,6 +250,7 @@ registerHandlers( 'state/data-layer/wpcom/activity-log/update-credentials/index.
 			fetch: request,
 			onSuccess: success,
 			onError: failure,
+			onStreamRecord: streamRecord,
 		} ),
 	],
 } );
