@@ -89,6 +89,7 @@
 		"post-editor/image-editor": true,
 		"press-this": true,
 		"publicize-preview": true,
+		"purchases/new-payment-methods": false,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,
