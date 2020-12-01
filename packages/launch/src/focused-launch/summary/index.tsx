@@ -9,7 +9,6 @@ import { ActionButtons, NextButton, SubTitle, Title } from '@automattic/onboardi
 import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
-import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
@@ -55,8 +54,8 @@ const info = (
 );
 
 type SummaryStepProps = {
-	input: ReactNode;
-	commentary?: ReactNode;
+	input: React.ReactNode;
+	commentary?: React.ReactNode;
 	highlighted: boolean;
 };
 
