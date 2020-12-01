@@ -440,7 +440,9 @@ export function togglePluginAutoUpdate( siteId, plugin ) {
 }
 
 function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: INSTALL_PLUGIN,
@@ -465,8 +467,27 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 			return getPluginHandler( siteId, pluginData.id ).enableAutoupdate();
 		};
 
+		const dispatchMessage = ( type, responseData, error ) => {
+			const message = {
+				type,
+				action: 'INSTALL_PLUGIN',
+				site,
+				plugin,
+				data: responseData,
+				error: error,
+			};
+			if ( 'INSTALL_PLUGIN' === type ) {
+				Dispatcher.handleViewAction( message );
+				return;
+			}
+
+			Dispatcher.handleServerAction( message );
+			recordEvent( 'calypso_plugin_installed', plugin, site, error );
+		};
+
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_SUCCESS, data } );
+			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', data );
 		};
 
 		const errorCallback = ( error ) => {
@@ -490,8 +511,11 @@ function installPluginHelper( siteId, plugin, isMainNetworkSite = false ) {
 					.catch( errorCallback );
 			}
 			dispatch( { ...defaultAction, type: PLUGIN_INSTALL_REQUEST_FAILURE, error } );
+			dispatchMessage( 'RECEIVE_INSTALLED_PLUGIN', null, error );
 			return Promise.reject( error );
 		};
+
+		dispatchMessage( 'INSTALL_PLUGIN' );
 
 		if ( isMainNetworkSite ) {
 			return doInstall( plugin )
@@ -517,7 +541,9 @@ export function installPluginOnMultisite( siteId, plugin ) {
 }
 
 export function removePlugin( siteId, plugin ) {
-	return ( dispatch ) => {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
 		const pluginId = plugin.id;
 		const defaultAction = {
 			action: REMOVE_PLUGIN,
@@ -525,6 +551,27 @@ export function removePlugin( siteId, plugin ) {
 			pluginId,
 		};
 		dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST } );
+
+		Dispatcher.handleViewAction( {
+			type: 'REMOVE_PLUGIN',
+			action: 'REMOVE_PLUGIN',
+			site,
+			plugin,
+		} );
+
+		const dispatchMessage = ( type, responseData, error ) => {
+			const message = {
+				type,
+				action: 'REMOVE_PLUGIN',
+				site,
+				plugin,
+				data: responseData,
+				error: error,
+			};
+
+			Dispatcher.handleServerAction( message );
+			recordEvent( 'calypso_plugin_removed', plugin, site, error );
+		};
 
 		const doDeactivate = function ( pluginData ) {
 			if ( pluginData.active ) {
@@ -544,12 +591,14 @@ export function removePlugin( siteId, plugin ) {
 			return getPluginHandler( siteId, pluginData.id ).delete();
 		};
 
-		const successCallback = () => {
+		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_SUCCESS } );
+			dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', data );
 		};
 
 		const errorCallback = ( error ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_REMOVE_REQUEST_FAILURE, error } );
+			dispatchMessage( 'RECEIVE_REMOVE_PLUGIN', null, error );
 			return Promise.reject( error );
 		};
 
