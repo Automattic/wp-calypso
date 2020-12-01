@@ -42,6 +42,7 @@ export type WPCOMCartItem = CheckoutCartItem & {
 		product_slug: string;
 		extra: ResponseCartProductExtra;
 		volume?: number;
+		quantity?: number | null;
 		item_original_cost_display: string;
 		item_original_cost_integer: number;
 		item_subtotal_monthly_cost_display: string;

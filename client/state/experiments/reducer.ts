@@ -9,7 +9,7 @@ import { Action, Reducer } from 'redux';
 import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
 import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
-import { withSchemaValidation } from 'calypso/state/utils';
+import { withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 import { schema } from 'calypso/state/experiments/schema';
 
 /**
@@ -66,4 +66,6 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 	}
 };
 
-export default withSchemaValidation( schema, reducer );
+const validatedReducer = withSchemaValidation( schema, reducer );
+
+export default withStorageKey( 'experiments', validatedReducer );

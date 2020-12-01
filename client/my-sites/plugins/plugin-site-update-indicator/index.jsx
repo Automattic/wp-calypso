@@ -2,6 +2,7 @@
  * External dependencies
  */
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
@@ -12,6 +13,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import Gridicon from 'calypso/components/gridicon';
 import PluginsActions from 'calypso/lib/plugins/actions';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -36,7 +38,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 	updatePlugin = ( ev ) => {
 		ev.stopPropagation();
 
-		PluginsActions.updatePlugin( this.props.site, this.props.plugin );
+		this.props.updatePlugin( this.props.site.ID, this.props.plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 		gaRecordEvent(
 			'Plugins',
@@ -113,4 +115,4 @@ class PluginSiteUpdateIndicator extends React.Component {
 	}
 }
 
-export default localize( PluginSiteUpdateIndicator );
+export default connect( null, { updatePlugin } )( localize( PluginSiteUpdateIndicator ) );

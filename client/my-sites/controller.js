@@ -336,7 +336,7 @@ export function noSite( context, next ) {
  */
 export function siteSelection( context, next ) {
 	const { getState, dispatch } = getStore( context );
-	const siteFragment = context.params.site || context.query.site || getSiteFragment( context.path );
+	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
 	const currentUser = getCurrentUser( getState() );
 	const hasOneSite = currentUser && currentUser.visible_site_count === 1;
