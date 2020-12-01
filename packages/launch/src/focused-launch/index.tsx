@@ -27,14 +27,25 @@ const FocusedLaunch: React.FunctionComponent = () => {
 
 	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
 
+	// Force Success view to be the default view when opening Focused Launch modal.
+	// This is used in case the user opens the Focused Launch modal after launching
+	// the site (e.g. when redirected back after the checkout screen)
 	React.useEffect( () => {
 		if ( isSiteLaunched ) {
 			enablePersistentSuccessView();
 		}
+	}, [ isSiteLaunched, enablePersistentSuccessView ] );
+
+	// This class is used to hide the "Launch" button from the block editor's header
+	// @TODO:
+	//   - if this is a block editor specific feature, move to the LaunchContext
+	//     and only specify when including Focused Launch thorugh Editing Toolkit
+	//   - think about a less hacky way to achieve this (e.g. @wordpress/hooks?)
+	React.useEffect( () => {
 		if ( isSiteLaunched || isSiteLaunching ) {
 			document.body.classList.add( 'is-focused-launch-complete' );
 		}
-	}, [ isSiteLaunched, isSiteLaunching, enablePersistentSuccessView ] );
+	}, [ isSiteLaunched, isSiteLaunching ] );
 
 	return (
 		<Router
