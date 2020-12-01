@@ -125,6 +125,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
+		"purchases/new-payment-methods": false,
 		"reader": true,
 		"reader/full-errors": true,
 		"reader/list-management": true,

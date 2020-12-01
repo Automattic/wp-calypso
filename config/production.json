@@ -112,6 +112,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
+		"purchases/new-payment-methods": false,
 		"push-notifications": true,
 		"reader": true,
 		"reader/full-errors": false,
