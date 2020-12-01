@@ -173,16 +173,16 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
 	const modalTitle = isAnchorFmSignup
-		? 'Create your podcast site with WordPress.com'
-		: 'Save your progress';
+		? __('Create your podcast site with WordPress.com')
+		: __('Save your progress');
 	const modalSubTitle = isAnchorFmSignup
-		? 'Create a WordPress.com account and start creating your free site.'
-		: 'Enter an email and password to save your progress and continue.';
+		? __('Create a WordPress.com account and start creating your free site.')
+		: __('Enter an email and password to save your progress and continue.');
 
 	return (
 		<Modal
 			className={ 'signup-form' }
-			title={ __( modalTitle ) }
+			title={ modalTitle }
 			onRequestClose={ closeModal }
 			focusOnMount={ false }
 			isDismissible={ false }
@@ -193,12 +193,12 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 			<SignupFormHeader onRequestClose={ closeModal } />
 
 			<div className="signup-form__body">
-				<h1 className="signup-form__title">{ __( modalTitle ) }</h1>
+				<h1 className="signup-form__title">{ modalTitle }</h1>
 
 				<form onSubmit={ handleSignUp }>
 					<fieldset className="signup-form__fieldset">
 						<legend className="signup-form__legend">
-							<p>{ __( modalSubTitle ) }</p>
+							<p>{ modalSubTitle }</p>
 						</legend>
 
 						<TextControl
