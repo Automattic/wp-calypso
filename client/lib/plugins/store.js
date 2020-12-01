@@ -17,6 +17,7 @@ import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { getSite } from 'calypso/state/sites/selectors';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 
 const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 
@@ -56,7 +57,7 @@ const _filters = {
 function refreshNetworkSites( site ) {
 	const networkSites = getNetworkSites( reduxGetState(), site.ID );
 	if ( networkSites ) {
-		networkSites.forEach( PluginsActions.fetchSitePlugins );
+		networkSites.forEach( ( networkSite ) => reduxDispatch( fetchSitePlugins( networkSite.ID ) ) );
 	}
 }
 
@@ -185,7 +186,7 @@ const PluginsStore = {
 			return [];
 		}
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
-			PluginsActions.fetchSitePlugins( site );
+			reduxDispatch( fetchSitePlugins( site.ID ) );
 			_fetching[ site.ID ] = true;
 		}
 		if ( ! _pluginsBySite[ site.ID ] ) {
