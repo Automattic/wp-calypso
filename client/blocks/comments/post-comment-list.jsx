@@ -551,5 +551,5 @@ export default connect(
 			} ),
 		};
 	},
-	{ recordReaderTracksEvent, requestPostComments, requestComment, setActiveReply }
+	{ requestComment, requestPostComments, recordReaderTracksEvent, setActiveReply }
 )( PostCommentList );
