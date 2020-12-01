@@ -65,52 +65,59 @@ const DesignSelector: React.FunctionComponent = () => {
 				<div
 					className={ isAnchorFmSignup ? 'design-selector__grid-minimal' : 'design-selector__grid' }
 				>
-					{ getRandomizedDesigns().featured.map( ( design ) => (
-						<button
-							key={ design.slug }
-							className="design-selector__design-option"
-							data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
-							onClick={ () => {
-								setSelectedDesign( design );
+					{ getRandomizedDesigns()
+						.featured.filter(
+							( design ) =>
+								// TODO Add finalized design templates to client/landing/gutenboarding/available-designs-config.json
+								// along with is_anchorfm prop
+								isAnchorFmSignup && design.is_anchorfm
+						)
+						.map( ( design ) => (
+							<button
+								key={ design.slug }
+								className="design-selector__design-option"
+								data-e2e-button={ design.is_premium ? 'paidOption' : 'freeOption' }
+								onClick={ () => {
+									setSelectedDesign( design );
 
-								// Update fonts to the design defaults
-								setFonts( design.fonts );
+									// Update fonts to the design defaults
+									setFonts( design.fonts );
 
-								goNext();
-							} }
-						>
-							<span className="design-selector__image-frame">
-								<img
-									alt=""
-									aria-labelledby={ makeOptionId( design ) }
-									src={ getDesignImageUrl( design ) }
-								/>
-							</span>
-							<span className="design-selector__option-overlay">
-								<span id={ makeOptionId( design ) } className="design-selector__option-meta">
-									<span className="design-selector__option-name">{ design.title }</span>
-									{ design.is_premium && (
-										<Tooltip
-											position="bottom center"
-											text={ __( 'Requires a Personal plan or above' ) }
-										>
-											<div className="design-selector__premium-container">
-												<Badge className="design-selector__premium-badge">
-													<JetpackLogo
-														className="design-selector__premium-badge-logo"
-														size={ 20 }
-													/>
-													<span className="design-selector__premium-badge-text">
-														{ __( 'Premium' ) }
-													</span>
-												</Badge>
-											</div>
-										</Tooltip>
-									) }
+									goNext();
+								} }
+							>
+								<span className="design-selector__image-frame">
+									<img
+										alt=""
+										aria-labelledby={ makeOptionId( design ) }
+										src={ getDesignImageUrl( design ) }
+									/>
 								</span>
-							</span>
-						</button>
-					) ) }
+								<span className="design-selector__option-overlay">
+									<span id={ makeOptionId( design ) } className="design-selector__option-meta">
+										<span className="design-selector__option-name">{ design.title }</span>
+										{ design.is_premium && (
+											<Tooltip
+												position="bottom center"
+												text={ __( 'Requires a Personal plan or above' ) }
+											>
+												<div className="design-selector__premium-container">
+													<Badge className="design-selector__premium-badge">
+														<JetpackLogo
+															className="design-selector__premium-badge-logo"
+															size={ 20 }
+														/>
+														<span className="design-selector__premium-badge-text">
+															{ __( 'Premium' ) }
+														</span>
+													</Badge>
+												</div>
+											</Tooltip>
+										) }
+									</span>
+								</span>
+							</button>
+						) ) }
 				</div>
 			</div>
 		</div>
