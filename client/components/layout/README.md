@@ -30,8 +30,8 @@ function render() {
 
 ## Layout Props
 
-- `likeCount`: the number of likes.
+- `className`: Add a custom classname
 
 ## Columns Props
 
-- `likeCount`: the number of likes.
+- `type`: Pick `main` or `sidebar`.

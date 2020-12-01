@@ -25,7 +25,6 @@ import PlansNavigation from 'calypso/my-sites/plans/navigation';
 import PurchasesListing from './purchases-listing';
 import QuerySites from 'calypso/components/data/query-sites';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import { getPlan } from 'calypso/lib/plans';
 import {
 	JETPACK_LEGACY_PLANS,
@@ -52,7 +51,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';
@@ -177,7 +176,7 @@ class CurrentPlan extends Component {
 		let showExpiryNotice = false;
 		let purchase = null;
 
-		if ( shouldShowOfferResetFlow() && JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
+		if ( JETPACK_LEGACY_PLANS.includes( currentPlanSlug ) ) {
 			purchase = getPurchaseByProductSlug( purchases, currentPlanSlug );
 			showExpiryNotice = purchase && isCloseToExpiration( purchase );
 		}

@@ -41,15 +41,19 @@ describe( 'GSuiteUserItem', () => {
 			const callback = jest.fn( () => {
 				done();
 			} );
+
 			const instance = renderer.create(
 				<GSuiteUserItem
 					onClick={ callback }
 					user={ { email: 'foo@bar.buzz', domain: 'bar.buzz', agreed_to_terms: true } }
 				/>
 			);
-			const link = instance.root.findByProps( { className: 'gsuite-user-item' } );
+
+			const link = instance.root.findByProps( { className: 'gsuite-user-item__manage-link' } );
+
 			// trigger the onClick
 			link.props.onClick( 'buzz' );
+
 			expect( callback ).toHaveBeenCalledWith( 'buzz' );
 		} );
 	} );

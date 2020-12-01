@@ -5,11 +5,12 @@
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
 	"types": "dist/types/public-api.d.ts",
+	"calypso:src": "src/public-api.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__composite-checkout*\"",
-		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [

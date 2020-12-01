@@ -68,7 +68,6 @@ import {
 	isWpComBloggerPlan,
 } from 'calypso/lib/plans';
 import { getTermDuration } from 'calypso/lib/plans/constants';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
@@ -166,11 +165,7 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 		// adding a Jetpack product should replace the cart
 
 		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
-		if ( shouldShowOfferResetFlow() ) {
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
 	return false;

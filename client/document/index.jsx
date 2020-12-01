@@ -16,6 +16,7 @@ import EnvironmentBadge, {
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
+	FeaturesHelper,
 } from 'calypso/components/environment-badge';
 import { chunkCssLinks } from './utils';
 import JetpackLogo from 'calypso/components/jetpack-logo';
@@ -59,6 +60,7 @@ class Document extends React.Component {
 			requestFrom,
 			useTranslationChunks,
 			target,
+			featuresHelper,
 		} = this.props;
 
 		const installedChunks = entrypoint.js
@@ -157,6 +159,7 @@ class Document extends React.Component {
 								<Branch branchName={ branchName } commitChecksum={ commitChecksum } />
 							) }
 							{ devDocs && <DevDocsLink url={ devDocsURL } /> }
+							{ featuresHelper && <FeaturesHelper /> }
 						</EnvironmentBadge>
 					) }
 

@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import {
 	FEATURE_UNLIMITED_PREMIUM_THEMES,
 	PLAN_JETPACK_SECURITY_REALTIME,
@@ -26,9 +25,7 @@ export function getJetpackUpgradeUrlIfPremiumTheme( state, themeId, siteId ) {
 		isThemePremium( state, themeId ) &&
 		! hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES )
 	) {
-		return `/checkout/${ getSiteSlug( state, siteId ) }/${
-			shouldShowOfferResetFlow() ? PLAN_JETPACK_SECURITY_REALTIME : 'professional'
-		}`;
+		return `/checkout/${ getSiteSlug( state, siteId ) }/${ PLAN_JETPACK_SECURITY_REALTIME }`;
 	}
 	return null;
 }

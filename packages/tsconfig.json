@@ -1,0 +1,23 @@
+{
+	"files": [],
+
+	// Reference all TS packages
+	"references": [
+		{ "path": "./browser-data-collector" },
+		{ "path": "./calypso-analytics" },
+		{ "path": "./calypso-stripe" },
+		{ "path": "./components" },
+		{ "path": "./composite-checkout" },
+		{ "path": "./data-stores" },
+		{ "path": "./domain-picker" },
+		{ "path": "./i18n-utils" },
+		{ "path": "./language-picker" },
+		{ "path": "./languages" },
+		{ "path": "./launch" },
+		{ "path": "./onboarding" },
+		{ "path": "./plans-grid" },
+		{ "path": "./react-i18n" },
+		{ "path": "./search" },
+		{ "path": "./shopping-cart" }
+	]
+}

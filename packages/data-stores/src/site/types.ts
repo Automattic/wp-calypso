@@ -67,7 +67,6 @@ export interface SiteDetailsPlan {
 	product_slug: string;
 	product_name: string;
 	product_name_short: string;
-	product_name_short_with_suffix: string;
 	expired: boolean;
 	billing_period: string;
 	user_is_owner: boolean;
@@ -76,7 +75,7 @@ export interface SiteDetailsPlan {
 
 export interface SiteDetails {
 	ID: number;
-	name: string;
+	name: string | undefined;
 	description: string;
 	URL: string;
 	launch_status: string;

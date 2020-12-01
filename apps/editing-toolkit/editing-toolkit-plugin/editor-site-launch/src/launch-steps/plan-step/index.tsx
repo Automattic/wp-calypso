@@ -19,7 +19,6 @@ import './styles.scss';
 const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
-	const { isExperimental } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const { updatePlan, setStep } = useDispatch( LAUNCH_STORE );
 
@@ -68,7 +67,7 @@ const PlanStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 							  }
 							: undefined
 					}
-					isExperimental={ isExperimental }
+					isAccordion
 					selectedFeatures={ selectedFeatures }
 					locale={ window.wpcomEditorSiteLaunch?.locale || 'en' }
 				/>

@@ -3,13 +3,13 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { noop, isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { getAllCartItems } from 'calypso/lib/cart-values/cart-items';
 import PopoverCart from './popover-cart';
+import { reloadCart } from 'calypso/lib/cart/actions';
 
 class HeaderCart extends React.Component {
 	static propTypes = {
@@ -30,8 +30,13 @@ class HeaderCart extends React.Component {
 		} );
 	};
 
+	componentDidMount() {
+		reloadCart();
+	}
+
 	render() {
-		if ( isEmpty( getAllCartItems( this.props.cart ) ) ) {
+		const isCartEmpty = getAllCartItems( this.props.cart ).length === 0;
+		if ( isCartEmpty ) {
 			return null;
 		}
 
@@ -43,7 +48,6 @@ class HeaderCart extends React.Component {
 				pinned={ false }
 				path={ this.props.currentRoute }
 				onToggle={ this.togglePopoverCart }
-				closeSectionNavMobilePanel={ noop }
 				compact
 			/>
 		);

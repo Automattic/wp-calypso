@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.8.4
+ * Version: 2.8.9
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.8.4' );
+define( 'PLUGIN_VERSION', '2.8.9' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -258,24 +258,6 @@ function load_wpcom_block_editor_nux() {
 	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
-
-/**
- * Load editing toolkit block patterns
- */
-function load_local_block_patterns() {
-	if ( apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
-		return;
-	}
-
-	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
-		return;
-	}
-
-	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
-
-	Block_Patterns::get_instance();
-}
-add_action( 'init', __NAMESPACE__ . '\load_local_block_patterns', 20 );
 
 /**
  * Load editing toolkit block patterns from the API

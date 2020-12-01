@@ -19,7 +19,7 @@ import JetpackProductCardFeatures, { Props as FeaturesProps } from './features';
  * Type dependencies
  */
 import type { Moment } from 'moment';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies

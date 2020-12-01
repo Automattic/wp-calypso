@@ -2,7 +2,6 @@ export { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-curren
 export { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
 export { editedPostHasContent } from 'calypso/state/posts/selectors/edited-post-has-content';
 export { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
-export { getEditedPostSlug } from 'calypso/state/posts/selectors/get-edited-post-slug';
 export { getEditedPostValue } from 'calypso/state/posts/selectors/get-edited-post-value';
 export { getNormalizedPost } from 'calypso/state/posts/selectors/get-normalized-post';
 export { getPost } from 'calypso/state/posts/selectors/get-post';
@@ -27,10 +26,7 @@ export { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
 export { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
 export { getSitePostsByTerm } from 'calypso/state/posts/selectors/get-site-posts-by-term';
 export { isEditedPostDirty } from 'calypso/state/posts/selectors/is-edited-post-dirty';
-export { isEditedPostPasswordProtected } from 'calypso/state/posts/selectors/is-edited-post-password-protected';
-export { isEditedPostPasswordProtectedWithValidPassword } from 'calypso/state/posts/selectors/is-edited-post-password-protected-with-valid-password';
 export { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
-export { isPostPublished } from 'calypso/state/posts/selectors/is-post-published';
 export { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
 export { isPostsLastPageForQuery } from 'calypso/state/posts/selectors/is-posts-last-page-for-query';
 export { isRequestingPostsForQuery } from 'calypso/state/posts/selectors/is-requesting-posts-for-query';

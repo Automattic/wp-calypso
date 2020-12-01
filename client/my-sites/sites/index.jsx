@@ -102,6 +102,9 @@ class Sites extends Component {
 			case 'hosting-config':
 				path = translate( 'Hosting Configuration' );
 				break;
+			case 'jetpack-search':
+				path = 'Jetpack Search';
+				break;
 		}
 
 		return translate( 'Select a site to open {{strong}}%(path)s{{/strong}}', {

@@ -2,17 +2,17 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
-import classnames from 'classnames';
-import { useSite, useOnLaunch } from '@automattic/launch';
+import { LaunchContext, useOnLaunch } from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
@@ -24,23 +24,19 @@ interface Props {
 }
 
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
 	);
-	const { launchSite } = useDispatch( LAUNCH_STORE );
-
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	const { isPaidPlan } = useSite();
+	const { launchSite } = useDispatch( SITE_STORE );
 
 	const handleLaunch = () => {
+		launchSite( siteId );
 		setIsLaunching( true );
-		launchSite();
 	};
-
-	if ( isPaidPlan && ! isLaunching ) {
-		handleLaunch();
-	}
 
 	// handle redirects to checkout / my home after launch
 	useOnLaunch();

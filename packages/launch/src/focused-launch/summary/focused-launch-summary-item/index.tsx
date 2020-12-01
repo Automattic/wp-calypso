@@ -1,9 +1,11 @@
 /**
  * External dependencies
  */
-import React, { ReactNode } from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 import './style.scss';
+
+type ReactNode = React.ReactNode;
 
 interface LeadingSideProps {
 	label: ReactNode;

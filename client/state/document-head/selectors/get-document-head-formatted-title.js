@@ -15,6 +15,11 @@ import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-
 import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
+
+/**
  * Returns the formatted document title, based on the currently set title,
  * capped unreadCount, and selected site.
  *

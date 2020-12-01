@@ -8,11 +8,11 @@ import {
 	MEMBERSHIPS_PRODUCT_ADD_FAILURE,
 	MEMBERSHIPS_PRODUCT_UPDATE,
 	MEMBERSHIPS_PRODUCT_UPDATE_FAILURE,
-	NOTICE_CREATE,
 	MEMBERSHIPS_PRODUCT_DELETE,
 	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { membershipProductFromApi } from 'calypso/state/data-layer/wpcom/sites/memberships';
 
 import 'calypso/state/memberships/init';
@@ -57,14 +57,11 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
@@ -73,14 +70,11 @@ export const requestAddProduct = ( siteId, product, noticeText ) => {
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };
@@ -104,14 +98,11 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 			.then( ( newProduct ) => {
 				const membershipProduct = membershipProductFromApi( newProduct.product );
 				dispatch( receiveUpdateProduct( siteId, membershipProduct ) );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return membershipProduct;
 			} )
 			.catch( ( error ) => {
@@ -120,14 +111,11 @@ export const requestUpdateProduct = ( siteId, product, noticeText ) => {
 					siteId,
 					error,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };
@@ -146,14 +134,11 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 				path: `/sites/${ siteId }/memberships/product/${ product.ID }/delete`,
 			} )
 			.then( () => {
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					successNotice( noticeText, {
 						duration: 5000,
-						text: noticeText,
-						status: 'is-success',
-					},
-				} );
+					} )
+				);
 				return product.ID;
 			} )
 			.catch( ( error ) => {
@@ -163,14 +148,11 @@ export const requestDeleteProduct = ( siteId, product, noticeText ) => {
 					error,
 					product,
 				} );
-				dispatch( {
-					type: NOTICE_CREATE,
-					notice: {
+				dispatch(
+					errorNotice( error.message, {
 						duration: 10000,
-						text: error.message,
-						status: 'is-error',
-					},
-				} );
+					} )
+				);
 			} );
 	};
 };

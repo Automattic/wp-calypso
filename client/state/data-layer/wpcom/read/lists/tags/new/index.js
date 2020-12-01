@@ -42,7 +42,7 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/tags/new/index.js', {
 					} ),
 				];
 			},
-			onError: ( action, error ) => errorNotice( String( error ) ),
+			onError: () => errorNotice( translate( 'Unable to add tag to list.' ) ),
 		} ),
 	],
 } );

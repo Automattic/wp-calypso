@@ -1,8 +1,12 @@
 /**
+ * External dependencies
+ */
+import { useCallback } from 'react';
+
+/**
  * Internal dependencies
  */
-import { getLocaleSlug } from 'i18n-calypso';
-
+import { useLocale } from './locale-context';
 import {
 	localesWithBlog,
 	localesWithPrivacyPolicy,
@@ -86,10 +90,7 @@ const urlLocalizationMapping: UrlLocalizationMapping = {
 	'wordpress.com': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 };
 
-export function localizeUrl( fullUrl: string, toLocale?: Locale ): string {
-	const locale =
-		toLocale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() || 'en' : 'en' );
-
+export function localizeUrl( fullUrl: string, locale: Locale ): string {
 	const url = new URL( String( fullUrl ), INVALID_URL );
 
 	// Ignore and passthrough /relative/urls that have no host specified
@@ -131,4 +132,18 @@ export function localizeUrl( fullUrl: string, toLocale?: Locale ): string {
 
 	// Nothing needed to be changed, just return it unmodified.
 	return fullUrl;
+}
+
+export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string {
+	const providerLocale = useLocale();
+
+	return useCallback(
+		( fullUrl: string, locale?: Locale ) => {
+			if ( locale ) {
+				return localizeUrl( fullUrl, locale );
+			}
+			return localizeUrl( fullUrl, providerLocale );
+		},
+		[ providerLocale ]
+	);
 }

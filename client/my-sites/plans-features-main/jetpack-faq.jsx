@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -29,7 +29,9 @@ export const getHelpLink = ( context ) => {
 	);
 };
 
-const JetpackFAQ = ( { translate } ) => {
+const JetpackFAQ = () => {
+	const translate = useTranslate();
+
 	return (
 		<FAQ>
 			<FAQItem
@@ -82,4 +84,4 @@ const JetpackFAQ = ( { translate } ) => {
 	);
 };
 
-export default localize( JetpackFAQ );
+export default JetpackFAQ;

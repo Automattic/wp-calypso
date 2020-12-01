@@ -16,13 +16,7 @@
 			"calypso/*": [ "./*" ]
 		}
 	},
-	"references": [
-		{ "path": "../packages/calypso-analytics" },
-		{ "path": "../packages/components" },
-		{ "path": "../packages/data-stores" },
-		{ "path": "../packages/language-picker" },
-		{ "path": "../packages/react-i18n" }
-	],
+	"references": [ { "path": "../packages" } ],
 	"include": [ "**/*", "../build-tools/**" ],
 	"exclude": [
 		"../**/node_modules/**/*",

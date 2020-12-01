@@ -2,7 +2,6 @@
  * Internal dependencies
  */
 import { combineReducers, withStorageKey } from 'calypso/state/utils';
-import connectedAccounts from './connected-accounts/reducer';
 import productList from './product-list/reducer';
 import subscriptions from './subscriptions/reducer';
 import earnings from './earnings/reducer';
@@ -14,7 +13,6 @@ const reducers = {
 	earnings,
 	subscribers,
 	settings,
-	connectedAccounts,
 	productList,
 };
 

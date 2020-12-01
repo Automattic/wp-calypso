@@ -45,12 +45,8 @@ registerHandlers( 'state/data-layer/wpcom/read/lists/feeds/new/index.js', {
 					} ),
 				];
 			},
-			onError: ( action, error ) => {
-				return errorNotice(
-					translate( 'Could not add feed to list: %(message)s', {
-						args: { message: error?.message },
-					} )
-				);
+			onError: () => {
+				return errorNotice( translate( 'Unable to add feed to list.' ) );
 			},
 		} ),
 	],

@@ -41,6 +41,7 @@ import QueryReaderOrganizations from 'calypso/components/data/query-reader-organ
 import { getReaderOrganizations } from 'calypso/state/reader/organizations/selectors';
 import ReaderSidebarFollowedSites from 'calypso/reader/sidebar/reader-sidebar-followed-sites';
 import SidebarSeparator from 'calypso/layout/sidebar/separator';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -208,7 +209,7 @@ export class ReaderSidebar extends React.Component {
 					} ) }
 				/>
 
-				{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }
@@ -299,7 +300,7 @@ export class ReaderSidebar extends React.Component {
 					} ) }
 				/>
 
-				{ this.props.subscribedLists && this.props.subscribedLists.length > 0 && (
+				{ ( this.props.subscribedLists?.length > 0 || isEnabled( 'reader/list-management' ) ) && (
 					<ReaderSidebarLists
 						lists={ this.props.subscribedLists }
 						path={ path }

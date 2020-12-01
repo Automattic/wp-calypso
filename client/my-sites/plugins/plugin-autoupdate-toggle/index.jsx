@@ -15,6 +15,7 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
@@ -31,7 +32,7 @@ export class PluginAutoUpdateToggle extends Component {
 			return;
 		}
 
-		PluginsActions.togglePluginAutoUpdate( site, plugin );
+		this.props.togglePluginAutoUpdate( site.ID, plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 		if ( plugin.autoupdate ) {
@@ -181,4 +182,5 @@ PluginAutoUpdateToggle.defaultProps = {
 export default connect( null, {
 	recordGoogleEvent,
 	recordTracksEvent,
+	togglePluginAutoUpdate,
 } )( localize( PluginAutoUpdateToggle ) );
