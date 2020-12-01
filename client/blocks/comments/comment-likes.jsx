@@ -1,21 +1,20 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { get, pick } from 'lodash';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import LikeButton from 'calypso/blocks/like-button/button';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { likeComment, unlikeComment } from 'calypso/state/comments/actions';
 import { getCommentLike } from 'calypso/state/comments/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class CommentLikeButtonContainer extends React.Component {
 	constructor() {
@@ -32,10 +31,13 @@ class CommentLikeButtonContainer extends React.Component {
 
 		recordAction( liked ? 'liked_comment' : 'unliked_comment' );
 		recordGaEvent( liked ? 'Clicked Comment Like' : 'Clicked Comment Unlike' );
-		recordTrack( 'calypso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment', {
-			blog_id: this.props.siteId,
-			comment_id: this.props.commentId,
-		} );
+		this.props.recordReaderTracksEvent(
+			'calypso_reader_' + ( liked ? 'liked' : 'unliked' ) + '_comment',
+			{
+				blog_id: this.props.siteId,
+				comment_id: this.props.commentId,
+			}
+		);
 	}
 
 	render() {
@@ -74,12 +76,5 @@ export default connect(
 	( state, props ) => ( {
 		commentLike: getCommentLike( state, props.siteId, props.postId, props.commentId ),
 	} ),
-	( dispatch ) =>
-		bindActionCreators(
-			{
-				likeComment,
-				unlikeComment,
-			},
-			dispatch
-		)
+	{ likeComment, unlikeComment, recordReaderTracksEvent }
 )( CommentLikeButtonContainer );
