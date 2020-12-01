@@ -34,7 +34,7 @@ import FocusedLaunchSummaryItem, {
 } from './focused-launch-summary-item';
 import { LAUNCH_STORE, SITE_STORE, Plan } from '../../stores';
 import LaunchContext from '../../context';
-import { isDefaultSiteTitle } from '../../utils';
+import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
@@ -135,7 +135,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 
 	return (
 		<SummaryStep
-			highlighted={ !! title }
+			highlighted={ isValidSiteTitle( title ) }
 			input={
 				hasPaidDomain ? (
 					<>
@@ -166,7 +166,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
-							<LeadingContentSide label={ currentDomain || '' } />
+							<LeadingContentSide label={ currentDomain?.domain_name || '' } />
 							<TrailingContentSide nodeType="PRICE">
 								<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 							</TrailingContentSide>
@@ -524,8 +524,8 @@ const Summary: React.FunctionComponent = () => {
 	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
 
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
-	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
-	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
+	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
@@ -544,10 +544,7 @@ const Summary: React.FunctionComponent = () => {
 	// step to the user when in this launch flow.
 	// Allow changing site title when it's the default value or when it's an empty string.
 	React.useEffect( () => {
-		if (
-			! isSiteTitleStepVisible &&
-			( title === '' || isDefaultSiteTitle( { currentSiteTitle: title } ) )
-		) {
+		if ( ! isSiteTitleStepVisible && ! isValidSiteTitle( title ) ) {
 			showSiteTitleStep();
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
@@ -586,7 +583,7 @@ const Summary: React.FunctionComponent = () => {
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
-			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain ) }
+			currentDomain={ currentDomain }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }

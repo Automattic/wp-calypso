@@ -16,7 +16,7 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import { useSite, useDomainSearch, useDomainSelection } from '../../hooks';
+import { useDomainSearch, useDomainSelection, useSiteDomains } from '../../hooks';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 import GoBackButton from '../go-back-button';
 
@@ -27,9 +27,9 @@ const ANALYTICS_UI_LOCATION = 'domain_step';
 const DomainDetails: React.FunctionComponent = () => {
 	const locale = useLocale();
 
-	const { currentDomainName } = useSite();
+	const { siteSubdomain } = useSiteDomains();
 	const { domainSearch, setDomainSearch } = useDomainSearch();
-	const { onDomainSelect, onExistingSubdomainSelect, selectedDomain } = useDomainSelection();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const history = useHistory();
 
 	const goBack = () => {
@@ -65,8 +65,8 @@ const DomainDetails: React.FunctionComponent = () => {
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ selectedDomain || mockDomainSuggestion( currentDomainName ) }
-					existingSubdomain={ mockDomainSuggestion( currentDomainName ) }
+					currentDomain={ currentDomain }
+					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
 					onDomainSelect={ handleSelect }
 					onExistingSubdomainSelect={ onExistingSubdomainSelect }
 					analyticsFlowId={ FOCUSED_LAUNCH_FLOW_ID }
