@@ -90,36 +90,78 @@ object BuildBaseImages : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Build docker images"
-			scriptContent = """
-				set -e
-				set -x
-
-				VERSION="%build.number%"
-				REGISTRY="registry.a8c.com/calypso"
-
-				function build {
-					imageName="${'$'}1"
-					buildArgs="${'$'}2"
-
-					imageVersioned="${'$'}{REGISTRY}/${'$'}{imageName}:${'$'}{VERSION}"
-					imageLatest="${'$'}{REGISTRY}/${'$'}{imageName}:latest"
-
-					# Using eval because buildArgs is a single word and we need to expand it to multiple args
-					eval docker build -f Dockerfile.base "${'$'}{buildArgs}" -t "${'$'}{imageVersioned}" .
-					docker tag "${'$'}{imageVersioned}" "${'$'}{imageLatest}"
-					docker push "${'$'}{imageVersioned}"
-					docker push "${'$'}{imageLatest}"
+		steps {
+			dockerCommand {
+				name = "Build base image"
+				commandType = build {
+					source = file {
+						path = "Dockerfile.base"
+					}
+					namesAndTags = """
+						registry.a8c.com/calypso/base:latest
+						registry.a8c.com/calypso/base:%build.number%
+					""".trimIndent()
+					commandArgs = "--no-cache --target builder"
 				}
-
-				build "base" "--no-cache --target builder"
-				build "ci" "--target ci"
-				build "ci-desktop" "--target ci-desktop"
-				build "ci-e2e" "--target builder"
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerRunParameters = "-u %env.UID%"
+				param("dockerImage.platform", "linux")
+			}
+			dockerCommand {
+				name = "Build CI image"
+				commandType = build {
+					source = file {
+						path = "Dockerfile.base"
+					}
+					namesAndTags = """
+						registry.a8c.com/calypso/ci:latest
+						registry.a8c.com/calypso/ci:%build.number%
+					""".trimIndent()
+					commandArgs = "--target ci"
+				}
+				param("dockerImage.platform", "linux")
+			}
+			dockerCommand {
+				name = "Build CI Desktop image"
+				commandType = build {
+					source = file {
+						path = "Dockerfile.base"
+					}
+					namesAndTags = """
+						registry.a8c.com/calypso/ci-desktop:latest
+						registry.a8c.com/calypso/ci-desktop:%build.number%
+					""".trimIndent()
+					commandArgs = "--target ci-desktop"
+				}
+				param("dockerImage.platform", "linux")
+			}
+			dockerCommand {
+				name = "Build CI e2e image"
+				commandType = build {
+					source = file {
+						path = "Dockerfile.base"
+					}
+					namesAndTags = """
+						registry.a8c.com/calypso/ci-e2e:latest
+						registry.a8c.com/calypso/ci-e2e:%build.number%
+					""".trimIndent()
+					commandArgs = "--target ci-e2e"
+				}
+				param("dockerImage.platform", "linux")
+			}
+			dockerCommand {
+				name = "Push images"
+				commandType = push {
+					namesAndTags = """
+						registry.a8c.com/calypso/base:latest
+						registry.a8c.com/calypso/base:%build.number%
+						registry.a8c.com/calypso/ci:latest
+						registry.a8c.com/calypso/ci:%build.number%
+						registry.a8c.com/calypso/ci-desktop:latest
+						registry.a8c.com/calypso/ci-desktop:%build.number%
+						registry.a8c.com/calypso/ci-e2e:latest
+						registry.a8c.com/calypso/ci-e2e:%build.number%
+					""".trimIndent()
+				}
+			}
 		}
 	}
 
