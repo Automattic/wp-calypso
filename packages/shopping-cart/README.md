@@ -37,10 +37,14 @@ This is a React hook that can be used in any child component under [ShoppingCart
 
 ## withShoppingCart
 
-A React HOC (higher order component) that can be used to inject the `ShoppingCartManager` into another component as a prop called `shoppingCartManager`.
+A React HOC (higher order component) that can be used to inject the `ShoppingCartManager` into another component as a prop called `shoppingCartManager`. For convenience, since the most common use-case for accessing this package is to get a copy of the cart, it also adds a prop called `cart`, which is equal to `shoppingCartManager.responseCart`.
 
 ## createRequestCartProduct
 
 A helper function that creates a `RequestCartProduct`, which can then be passed to shopping cart functions like `addProductsToCart()`.
 
 It takes one argument, an object which contains some or all of the properties in a `RequestCartProduct`, but must contain at least `product_slug` and `product_id`. The remaining properties, if not set, will be filled with the default values.
+
+## getEmptyResponseCart
+
+A function that returns an empty but valid `ResponseCart` object. Useful for tests where we need to mock the shopping cart response.
