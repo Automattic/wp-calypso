@@ -166,7 +166,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
-							<LeadingContentSide label={ currentDomain || '' } />
+							<LeadingContentSide label={ currentDomain?.domain_name || '' } />
 							<TrailingContentSide nodeType="PRICE">
 								<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 							</TrailingContentSide>
