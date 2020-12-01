@@ -104,6 +104,7 @@ class CalendarStep extends Component {
 											<ExternalLinkWithTracking
 												icon={ false }
 												href="/webinars"
+												target="_blank"
 												tracksEventName="calypso_concierge_book_view_webinars"
 											/>
 										),
