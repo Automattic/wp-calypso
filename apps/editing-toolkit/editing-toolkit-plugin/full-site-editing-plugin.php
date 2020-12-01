@@ -270,6 +270,18 @@ function load_block_patterns_from_api( $current_screen ) {
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
+ * Load WPCOM Block Patterns Modifications
+ *
+ * This is responsible for modifying how block patterns behave in the editor,
+ * including adding support for premium block patterns. The patterns themselves
+ * are loaded via load_block_patterns_from_api.
+ */
+function load_wpcom_block_patterns_modifications() {
+	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
+
+/**
  * Load Premium Content Block
  */
 function load_premium_content() {
