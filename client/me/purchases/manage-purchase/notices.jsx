@@ -63,7 +63,7 @@ class PurchaseNotice extends Component {
 		purchaseAttachedTo: PropTypes.object,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
-		editCardDetailsPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
+		changePaymentMethodPath: PropTypes.oneOfType( [ PropTypes.string, PropTypes.bool ] ),
 		getManagePurchaseUrlFor: PropTypes.func,
 		getAddPaymentMethodUrlFor: PropTypes.func,
 		isProductOwner: PropTypes.bool,
@@ -188,7 +188,7 @@ class PurchaseNotice extends Component {
 	}
 
 	renderRenewNoticeAction( onClick ) {
-		const { editCardDetailsPath, purchase, translate } = this.props;
+		const { changePaymentMethodPath, purchase, translate } = this.props;
 
 		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.selectedSite ) {
 			return null;
@@ -199,7 +199,7 @@ class PurchaseNotice extends Component {
 			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>
+				<NoticeAction href={ changePaymentMethodPath }>
 					{ config.isEnabled( 'purchases/new-payment-methods' )
 						? translate( 'Add Payment Method' )
 						: translate( 'Add Credit Card' ) }
@@ -821,7 +821,7 @@ class PurchaseNotice extends Component {
 	};
 
 	renderCreditCardExpiringNotice() {
-		const { editCardDetailsPath, purchase, translate } = this.props;
+		const { changePaymentMethodPath, purchase, translate } = this.props;
 
 		if (
 			isExpired( purchase ) ||
@@ -833,8 +833,8 @@ class PurchaseNotice extends Component {
 		}
 
 		if ( creditCardExpiresBeforeSubscription( purchase ) ) {
-			const linkComponent = editCardDetailsPath ? (
-				<a onClick={ this.onClickUpdateCreditCardDetails } href={ editCardDetailsPath } />
+			const linkComponent = changePaymentMethodPath ? (
+				<a onClick={ this.onClickUpdateCreditCardDetails } href={ changePaymentMethodPath } />
 			) : (
 				<span />
 			);

@@ -24,7 +24,7 @@ function ExpiringCreditCard( props ) {
 		return null;
 	}
 
-	const editCardDetailsPath = getChangePaymentMethodPath( selectedSite.slug, purchase );
+	const changePaymentMethodPath = getChangePaymentMethodPath( selectedSite.slug, purchase );
 
 	let messageText;
 
@@ -77,7 +77,7 @@ function ExpiringCreditCard( props ) {
 	return (
 		<div>
 			<p>{ messageText }</p>
-			<Button primary={ true } href={ editCardDetailsPath }>
+			<Button primary={ true } href={ changePaymentMethodPath }>
 				{ translate( 'Add a new credit card' ) }
 			</Button>
 		</div>
