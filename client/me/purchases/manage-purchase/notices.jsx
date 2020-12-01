@@ -199,7 +199,11 @@ class PurchaseNotice extends Component {
 			( ! canExplicitRenew( purchase ) || shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) )
 		) {
 			return (
-				<NoticeAction href={ editCardDetailsPath }>{ translate( 'Add Credit Card' ) }</NoticeAction>
+				<NoticeAction href={ editCardDetailsPath }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? translate( 'Add Payment Method' )
+						: translate( 'Add Credit Card' ) }
+				</NoticeAction>
 			);
 		}
 

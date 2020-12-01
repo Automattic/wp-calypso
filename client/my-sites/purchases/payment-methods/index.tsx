@@ -21,6 +21,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
+import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
@@ -99,8 +100,25 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 	return (
 		<Main className="purchases is-wide-layout">
 			<MySitesSidebarNavigation />
-			<PageViewTracker path="/purchases/add-credit-card" title="Add Credit Card" />
-			<DocumentHead title={ translate( 'Add Credit Card' ) } />
+			<PageViewTracker
+				path={
+					config.isEnabled( 'purchases/new-payment-methods' )
+						? '/purchases/add-payment-method'
+						: '/purchases/add-credit-card'
+				}
+				title={
+					config.isEnabled( 'purchases/new-payment-methods' )
+						? titles.addPaymentMethod
+						: titles.addCreditCard
+				}
+			/>
+			<DocumentHead
+				title={
+					config.isEnabled( 'purchases/new-payment-methods' )
+						? titles.addPaymentMethod
+						: titles.addCreditCard
+				}
+			/>
 			<FormattedHeader
 				brandFont
 				className="payment-methods__page-heading"
@@ -112,7 +130,11 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPaymentMethodsError }
 			>
-				<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
+				<HeaderCake onClick={ goToBillingHistory }>
+					{ config.isEnabled( 'purchases/new-payment-methods' )
+						? titles.addPaymentMethod
+						: titles.addCreditCard }
+				</HeaderCake>
 				<Layout>
 					<Column type="main">
 						<StripeHookProvider
@@ -120,13 +142,23 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 							configurationArgs={ { needs_intent: true } }
 							fetchStripeConfiguration={ getStripeConfiguration }
 						>
-							<CreditCardForm
-								createCardToken={ createAddCardToken }
-								recordFormSubmitEvent={ recordFormSubmitEvent }
-								saveStoredCard={ saveStoredCard }
-								successCallback={ goToBillingHistory }
-								showUsedForExistingPurchasesInfo={ true }
-							/>
+							{ config.isEnabled( 'purchases/new-payment-methods' ) ? (
+								<PaymentMethodForm
+									createCardToken={ createAddCardToken }
+									recordFormSubmitEvent={ recordFormSubmitEvent }
+									saveStoredCard={ saveStoredCard }
+									successCallback={ goToBillingHistory }
+									showUsedForExistingPurchasesInfo={ true }
+								/>
+							) : (
+								<CreditCardForm
+									createCardToken={ createAddCardToken }
+									recordFormSubmitEvent={ recordFormSubmitEvent }
+									saveStoredCard={ saveStoredCard }
+									successCallback={ goToBillingHistory }
+									showUsedForExistingPurchasesInfo={ true }
+								/>
+							) }
 						</StripeHookProvider>
 					</Column>
 					<Column type="sidebar">

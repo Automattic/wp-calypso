@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { addCardDetails, editCardDetails } from './paths';
+import { addCardDetails, editCardDetails, addPaymentMethod, editPaymentMethod } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -9,6 +9,7 @@ import {
 	isPaidWithCreditCard,
 } from 'calypso/lib/purchases';
 import { isDomainTransfer } from 'calypso/lib/products-values';
+import { isEnabled } from 'calypso/config';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -29,8 +30,17 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 			payment: { creditCard },
 		} = purchase;
 
+		if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+			return editPaymentMethod( siteSlug, purchase.id, creditCard.id );
+		}
+
 		return editCardDetails( siteSlug, purchase.id, creditCard.id );
 	}
+
+	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+		return addPaymentMethod( siteSlug, purchase.id );
+	}
+
 	return addCardDetails( siteSlug, purchase.id );
 }
 

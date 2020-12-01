@@ -28,8 +28,20 @@ export default ( router ) => {
 		);
 		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 
+		router(
+			paths.addNewPaymentMethod,
+			sidebar,
+			controller.addNewPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
 		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router( '/payment-methods/add-credit-card', () => {
+			config.isEnabled( 'purchases/new-payment-methods' )
+				? page.redirect( paths.addCreditCard )
+				: page.redirect( paths.addNewPaymentMethod );
+		} );
 	}
 
 	router(
@@ -129,6 +141,24 @@ export default ( router ) => {
 		sidebar,
 		siteSelection,
 		controller.editCardDetails,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		paths.addPaymentMethod( ':site', ':purchaseId' ),
+		sidebar,
+		siteSelection,
+		controller.addPaymentMethod,
+		makeLayout,
+		clientRender
+	);
+
+	router(
+		paths.editPaymentMethod( ':site', ':purchaseId', ':cardId' ),
+		sidebar,
+		siteSelection,
+		controller.editPaymentMethod,
 		makeLayout,
 		clientRender
 	);

@@ -300,6 +300,9 @@ class ManagePurchase extends Component {
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getEditPaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
+			const addPaymentMethodCopy = config.isEnabled( 'purchases/new-payment-methods' )
+				? translate( 'Add Payment Method' )
+				: translate( 'Add Credit Card' );
 
 			if (
 				renewing &&
@@ -313,7 +316,7 @@ class ManagePurchase extends Component {
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
 					{ hasPaymentMethod( purchase )
 						? translate( 'Change Payment Method' )
-						: translate( 'Add Credit Card' ) }
+						: addPaymentMethodCopy }
 				</CompactCard>
 			);
 		}
