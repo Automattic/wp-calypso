@@ -7,6 +7,9 @@ import React from 'react';
 /**
  * Internal Dependencies
  */
+import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
+import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
+import EditPaymentMethod from 'calypso/me/purchases/manage-purchase/edit-payment-method';
 import AddCardDetails from './payment/add-card-details';
 import AddCreditCard from './add-credit-card';
 import CancelPurchase from './cancel-purchase';
@@ -154,6 +157,60 @@ export function managePurchase( context, next ) {
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
+			/>
+		</Main>
+	);
+	next();
+}
+
+export function addNewPaymentMethod( context, next ) {
+	context.primary = <AddNewPaymentMethod />;
+	next();
+}
+
+export function addPaymentMethod( context, next ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/add' );
+	}
+
+	setTitle( context, titles.addPaymentMethod );
+
+	context.primary = (
+		<Main className="purchases__add-payment-method is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<AddPaymentMethod
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+				getManagePurchaseUrlFor={ managePurchaseUrl }
+				purchaseListUrl={ purchasesRoot }
+				isFullWidth={ true }
+			/>
+		</Main>
+	);
+	next();
+}
+
+export function editPaymentMethod( context, next ) {
+	const state = context.store.getState();
+
+	if ( userHasNoSites( state ) ) {
+		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/edit/:cardId' );
+	}
+
+	setTitle( context, titles.editCardDetails );
+
+	context.primary = (
+		<Main className="purchases__edit-payment-method is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<EditPaymentMethod
+				cardId={ context.params.cardId }
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+				getManagePurchaseUrlFor={ managePurchaseUrl }
+				purchaseListUrl={ purchasesRoot }
+				isFullWidth={ true }
 			/>
 		</Main>
 	);
