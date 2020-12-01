@@ -13,6 +13,7 @@ export default function createRequestCartProduct(
 	return {
 		meta: '',
 		volume: 1,
+		quantity: null,
 		extra: {},
 		...properties,
 	};
