@@ -617,7 +617,7 @@ export function removePlugin( siteId, plugin ) {
 	};
 }
 
-export function receivePlugins( siteId, plugins ) {
+export function receiveSitePlugins( siteId, plugins ) {
 	return {
 		type: PLUGINS_RECEIVE,
 		data: plugins,
@@ -625,34 +625,36 @@ export function receivePlugins( siteId, plugins ) {
 	};
 }
 
-export function fetchPlugins( siteIds ) {
+export function fetchSitePlugins( siteId ) {
 	return ( dispatch, getState ) => {
-		return siteIds.map( ( siteId ) => {
-			const defaultAction = {
-				siteId,
-			};
-			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
+		const defaultAction = {
+			siteId,
+		};
+		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
 
-			const receivePluginsDispatchSuccess = ( data ) => {
-				dispatch( receivePlugins( siteId, data.plugins ) );
-				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
+		const receivePluginsDispatchSuccess = ( data ) => {
+			dispatch( receiveSitePlugins( siteId, data.plugins ) );
+			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
 
-				data.plugins.map( ( plugin ) => {
-					if ( plugin.update && plugin.autoupdate ) {
-						updatePlugin( siteId, plugin )( dispatch, getState );
-					}
-				} );
-			};
+			data.plugins.map( ( plugin ) => {
+				if ( plugin.update && plugin.autoupdate ) {
+					updatePlugin( siteId, plugin )( dispatch, getState );
+				}
+			} );
+		};
 
-			const receivePluginsDispatchFail = ( error ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
-			};
+		const receivePluginsDispatchFail = ( error ) => {
+			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
+		};
 
-			return wpcom
-				.site( siteId )
-				.pluginsList()
-				.then( receivePluginsDispatchSuccess )
-				.catch( receivePluginsDispatchFail );
-		} );
+		return wpcom
+			.site( siteId )
+			.pluginsList()
+			.then( receivePluginsDispatchSuccess )
+			.catch( receivePluginsDispatchFail );
 	};
+}
+
+export function fetchPlugins( siteIds ) {
+	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
 }
