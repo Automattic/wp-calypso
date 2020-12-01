@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
 
 /**
  * Returns true if the notifications panel is open.

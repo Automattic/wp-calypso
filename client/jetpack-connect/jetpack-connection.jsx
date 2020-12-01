@@ -78,6 +78,7 @@ const jetpackConnection = ( WrappedComponent ) => {
 				! forceRemoteInstall &&
 				! this.state.redirecting
 			) {
+				debug( `Redirecting to remote_auth ${ this.props.siteHomeUrl }` );
 				this.redirect( 'remote_auth', this.props.siteHomeUrl );
 			}
 
@@ -85,8 +86,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 				const currentPlan = retrievePlan();
 				clearPlan();
 				if ( currentPlan ) {
+					debug( `Redirecting to checkout with ${ currentPlan } plan retrieved from cookies` );
 					this.redirect( 'checkout', url, currentPlan, queryArgs );
 				} else {
+					debug( 'Redirecting to plans_selection' );
 					this.redirect( 'plans_selection', url );
 				}
 			}
@@ -106,8 +109,10 @@ const jetpackConnection = ( WrappedComponent ) => {
 					! isMobileAppFlow &&
 					! skipRemoteInstall
 				) {
+					debug( 'Redirecting to remote_install' );
 					this.redirect( 'remote_install' );
 				} else {
+					debug( 'Redirecting to install_instructions' );
 					this.redirect( 'install_instructions', url );
 				}
 			}

@@ -377,7 +377,7 @@ const webpackConfig = {
 
 		! isDesktop && new ExtractManifestPlugin(),
 	].filter( Boolean ),
-	externals: [ 'electron', 'keytar' ],
+	externals: [ 'keytar' ],
 };
 
 module.exports = webpackConfig;

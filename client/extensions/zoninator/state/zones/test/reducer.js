@@ -8,12 +8,15 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import {
+	ZONINATOR_ADD_ZONE,
 	ZONINATOR_REQUEST_ERROR,
 	ZONINATOR_REQUEST_ZONES,
+	ZONINATOR_SAVE_ZONE,
 	ZONINATOR_UPDATE_ZONE,
+	ZONINATOR_UPDATE_ZONE_ERROR,
 	ZONINATOR_UPDATE_ZONES,
 } from '../../action-types';
-import reducer, { requesting, items } from '../reducer';
+import reducer, { requesting, items, saving } from '../reducer';
 import { DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
@@ -21,7 +24,7 @@ describe( 'reducer', () => {
 	const secondarySiteId = 234567;
 
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'saving' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -260,6 +263,64 @@ describe( 'reducer', () => {
 			} );
 
 			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( 'saving()', () => {
+		it( 'should default to an empty object', () => {
+			const state = saving( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		test( 'should set state to true when creating a new zone', () => {
+			const state = saving( undefined, {
+				type: ZONINATOR_ADD_ZONE,
+				siteId: 123,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: true,
+			} );
+		} );
+
+		test( 'should set state to true when saving zone', () => {
+			const state = saving( undefined, {
+				type: ZONINATOR_SAVE_ZONE,
+				siteId: 123,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: true,
+			} );
+		} );
+
+		test( 'should set state to false when updating zone failed', () => {
+			const initialState = {
+				[ 123 ]: true,
+			};
+			const state = saving( initialState, {
+				type: ZONINATOR_UPDATE_ZONE_ERROR,
+				siteId: 123,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: false,
+			} );
+		} );
+
+		test( 'should set state to false when updating zone', () => {
+			const initialState = {
+				[ 123 ]: true,
+			};
+			const state = saving( initialState, {
+				type: ZONINATOR_UPDATE_ZONE,
+				siteId: 123,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: false,
+			} );
 		} );
 	} );
 } );

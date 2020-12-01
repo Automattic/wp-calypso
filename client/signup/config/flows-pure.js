@@ -115,20 +115,13 @@ export function generateFlows( {
 		},
 
 		onboarding: {
-			steps: [ 'user', 'domains', 'plans' ],
+			steps: [ 'user', 'domains', 'plans', 'secure-your-brand' ],
 			destination: getSignupDestination,
 			description: 'Abridged version of the onboarding flow. Read more in https://wp.me/pau2Xa-Vs.',
-			lastModified: '2020-03-03',
+			lastModified: '2020-11-24',
 			showRecaptcha: true,
 		},
 
-		'onboarding-secure-your-brand': {
-			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
-			destination: getSignupDestination,
-			description: 'Onboarding flow with an additional step to upsell domains',
-			lastModified: '2020-10-08',
-			showRecaptcha: true,
-		},
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
@@ -396,6 +389,16 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+	};
+
+	flows[ 'launch-only' ] = {
+		steps: [ 'launch' ],
+		destination: getLaunchDestination,
+		description:
+			'Launch flow without domain or plan selected, used for sites that already have a paid plan and domain (e.g. via the launch banner in the site preview)',
+		lastModified: '2020-11-30',
+		pageTitle: translate( 'Launch your site' ),
+		providesDependenciesInQuery: [ 'siteSlug' ],
 	};
 
 	return flows;

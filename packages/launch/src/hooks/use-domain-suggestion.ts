@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useSelect } from '@wordpress/data';
+import { useLocale } from '@automattic/i18n-utils';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -11,7 +12,8 @@ import { DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import { useDomainSearch } from './';
 
 export function useDomainSuggestion(): DomainSuggestions.DomainSuggestion | undefined {
-	const domainSearch = useDomainSearch();
+	const locale = useLocale();
+	const { domainSearch } = useDomainSearch();
 
 	const suggestion = useSelect(
 		( select ) => {
@@ -23,8 +25,7 @@ export function useDomainSuggestion(): DomainSuggestions.DomainSuggestion | unde
 				include_wordpressdotcom: false,
 				include_dotblogsubdomain: false,
 				quantity: 1, // this will give the recommended domain only
-				// TODO: support i18n
-				locale: 'en',
+				locale,
 			} );
 		},
 		[ domainSearch ]

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
 import deepFreeze from 'deep-freeze';
 
 /**
@@ -27,13 +26,19 @@ import {
 	getSocialAccountLinkEmail,
 	getSocialAccountLinkService,
 } from '../selectors';
+import reducer from '../reducer';
+
+// Initialize empty state from a missing previous state and a no-op.
+const EMPTY_STATE = {
+	login: reducer( undefined, { type: 'NOOP' } ),
+};
 
 describe( 'selectors', () => {
 	describe( 'getTwoFactorUserId()', () => {
 		test( 'should return null if there is no information yet', () => {
-			const id = getTwoFactorUserId( undefined );
+			const id = getTwoFactorUserId( EMPTY_STATE );
 
-			expect( id ).to.be.null;
+			expect( id ).toBeNull();
 		} );
 
 		test( 'should return the two factor auth ID if there is such', () => {
@@ -45,15 +50,15 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( id ).to.equal( 123456 );
+			expect( id ).toBe( 123456 );
 		} );
 	} );
 
 	describe( 'getTwoFactorAuthNonce()', () => {
 		test( 'should return null if there is no information yet', () => {
-			const id = getTwoFactorUserId( undefined );
+			const id = getTwoFactorUserId( EMPTY_STATE );
 
-			expect( id ).to.be.null;
+			expect( id ).toBeNull();
 		} );
 
 		test( 'should return the two factor auth nonce for push if there is such', () => {
@@ -68,7 +73,7 @@ describe( 'selectors', () => {
 				'push'
 			);
 
-			expect( nonce ).to.equal( 'abcdef123456' );
+			expect( nonce ).toBe( 'abcdef123456' );
 		} );
 
 		test( 'should return the two factor auth nonce for sms if there is such', () => {
@@ -83,13 +88,13 @@ describe( 'selectors', () => {
 				'sms'
 			);
 
-			expect( nonce ).to.equal( 'abcdef123456' );
+			expect( nonce ).toBe( 'abcdef123456' );
 		} );
 	} );
 
 	describe( 'isRequestingTwoFactorAuth', () => {
 		test( 'should return false by default', () => {
-			expect( isRequestingTwoFactorAuth( undefined ) ).to.be.false;
+			expect( isRequestingTwoFactorAuth( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true if the request is in progress', () => {
@@ -99,7 +104,7 @@ describe( 'selectors', () => {
 						isRequestingTwoFactorAuth: true,
 					},
 				} )
-			).to.be.true;
+			).toBe( true );
 		} );
 
 		test( 'should return false if the request is not in progress', () => {
@@ -109,13 +114,13 @@ describe( 'selectors', () => {
 						isRequestingTwoFactorAuth: false,
 					},
 				} )
-			).to.be.false;
+			).toBe( false );
 		} );
 	} );
 
 	describe( 'getRequestError', () => {
 		test( 'should return null by default', () => {
-			expect( getRequestError( undefined ) ).to.be.null;
+			expect( getRequestError( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( 'should return null if there is no error', () => {
@@ -125,7 +130,7 @@ describe( 'selectors', () => {
 						requestError: null,
 					},
 				} )
-			).to.be.null;
+			).toBeNull();
 		} );
 
 		test( 'should return an error object for the request if there is an error', () => {
@@ -135,13 +140,13 @@ describe( 'selectors', () => {
 						requestError: { message: 'some error' },
 					},
 				} )
-			).to.eql( { message: 'some error' } );
+			).toEqual( { message: 'some error' } );
 		} );
 	} );
 
 	describe( 'getTwoFactorAuthRequestError', () => {
 		test( 'should return null by default', () => {
-			expect( getTwoFactorAuthRequestError( undefined ) ).to.be.null;
+			expect( getTwoFactorAuthRequestError( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( 'should return null if there is no error', () => {
@@ -151,7 +156,7 @@ describe( 'selectors', () => {
 						twoFactorAuthRequestError: null,
 					},
 				} )
-			).to.be.null;
+			).toBeNull();
 		} );
 
 		test( 'should return an error for the request if there is an error', () => {
@@ -161,37 +166,37 @@ describe( 'selectors', () => {
 						twoFactorAuthRequestError: 'some error',
 					},
 				} )
-			).to.equal( 'some error' );
+			).toBe( 'some error' );
 		} );
 	} );
 
 	describe( 'isRequesting()', () => {
 		test( 'should return false if there is no information yet', () => {
-			expect( isRequesting( undefined ) ).to.be.false;
+			expect( isRequesting( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true/false depending on the state of the request', () => {
-			expect( isRequesting( { login: { isRequesting: false } } ) ).to.be.false;
-			expect( isRequesting( { login: { isRequesting: true } } ) ).to.be.true;
+			expect( isRequesting( { login: { isRequesting: false } } ) ).toBe( false );
+			expect( isRequesting( { login: { isRequesting: true } } ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'isFormDisabled()', () => {
 		test( 'should return false if there is no information yet', () => {
-			expect( isFormDisabled( undefined ) ).to.be.false;
+			expect( isFormDisabled( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return true/false depending on the state of the request', () => {
-			expect( isFormDisabled( { login: { isFormDisabled: false } } ) ).to.be.false;
-			expect( isFormDisabled( { login: { isFormDisabled: true } } ) ).to.be.true;
+			expect( isFormDisabled( { login: { isFormDisabled: false } } ) ).toBe( false );
+			expect( isFormDisabled( { login: { isFormDisabled: true } } ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'isTwoFactorEnabled()', () => {
 		test( 'should return false if there is no two factor information yet', () => {
-			const twoFactorEnabled = isTwoFactorEnabled( undefined );
+			const twoFactorEnabled = isTwoFactorEnabled( EMPTY_STATE );
 
-			expect( twoFactorEnabled ).to.be.false;
+			expect( twoFactorEnabled ).toBe( false );
 		} );
 
 		test( 'should return true if the request was successful and two-factor auth is enabled', () => {
@@ -204,13 +209,13 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( twoFactorEnabled ).to.be.true;
+			expect( twoFactorEnabled ).toBe( true );
 		} );
 	} );
 
 	describe( 'getTwoFactorSupportedAuthTypes', () => {
 		test( 'should return null if there is no information yet', () => {
-			expect( getTwoFactorSupportedAuthTypes( undefined ) ).to.be.null;
+			expect( getTwoFactorSupportedAuthTypes( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( 'should return the supported auth types if they exist in state', () => {
@@ -222,7 +227,7 @@ describe( 'selectors', () => {
 				},
 			} );
 
-			expect( authTypes ).to.eql( [ 'authenticator', 'sms' ] );
+			expect( authTypes ).toEqual( [ 'authenticator', 'sms' ] );
 		} );
 	} );
 
@@ -236,21 +241,21 @@ describe( 'selectors', () => {
 		} );
 
 		test( 'should return null when the state is not there yet', () => {
-			expect( isTwoFactorAuthTypeSupported( null, 'sms' ) ).to.be.null;
+			expect( isTwoFactorAuthTypeSupported( EMPTY_STATE, 'sms' ) ).toBeNull();
 		} );
 
 		test( 'should return false when the supported auth type does not exist in the state', () => {
-			expect( isTwoFactorAuthTypeSupported( state, 'unknown' ) ).to.be.false;
+			expect( isTwoFactorAuthTypeSupported( state, 'unknown' ) ).toBe( false );
 		} );
 
 		test( 'should return true when the supported auth type exists in the state', () => {
-			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).to.be.true;
+			expect( isTwoFactorAuthTypeSupported( state, 'sms' ) ).toBe( true );
 		} );
 	} );
 
 	describe( 'getTwoFactorPushToken()', () => {
 		test( 'should return null by default', () => {
-			expect( getTwoFactorPushToken( undefined ) ).to.be.null;
+			expect( getTwoFactorPushToken( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( "should return push token when it's set", () => {
@@ -263,13 +268,13 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).to.eql( token );
+			).toBe( token );
 		} );
 	} );
 
 	describe( 'getTwoFactorPushPollInProgress()', () => {
 		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollInProgress( undefined ) ).to.be.false;
+			expect( getTwoFactorPushPollInProgress( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return polling progresss status', () => {
@@ -282,13 +287,13 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).to.eql( inProgress );
+			).toBe( inProgress );
 		} );
 	} );
 
 	describe( 'getTwoFactorPushPollSuccess()', () => {
 		test( 'should return false by default', () => {
-			expect( getTwoFactorPushPollSuccess( undefined ) ).to.be.false;
+			expect( getTwoFactorPushPollSuccess( EMPTY_STATE ) ).toBe( false );
 		} );
 
 		test( 'should return push polling success status', () => {
@@ -301,13 +306,13 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).to.eql( success );
+			).toBe( success );
 		} );
 	} );
 
 	describe( 'getSocialAccountLinkAuthInfo()', () => {
 		test( 'should return null if there is no information yet', () => {
-			expect( getSocialAccountLinkAuthInfo( undefined ) ).to.be.null;
+			expect( getSocialAccountLinkAuthInfo( EMPTY_STATE ) ).toBeNull();
 		} );
 
 		test( 'should return the social account authentication information when available', () => {
@@ -324,7 +329,7 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).to.deep.eql( socialAccountInfo );
+			).toEqual( socialAccountInfo );
 		} );
 	} );
 
@@ -336,7 +341,7 @@ describe( 'selectors', () => {
 						socialAccount: {},
 					},
 				} )
-			).to.be.null;
+			).toBeNull();
 		} );
 
 		test( 'return error object if create error is set', () => {
@@ -350,7 +355,7 @@ describe( 'selectors', () => {
 						},
 					},
 				} )
-			).to.eql( createError );
+			).toEqual( createError );
 		} );
 	} );
 
@@ -364,7 +369,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).to.eql( true );
+			).toBe( true );
 		} );
 	} );
 
@@ -378,7 +383,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).to.eql( 'test@hello.world' );
+			).toBe( 'test@hello.world' );
 		} );
 	} );
 
@@ -392,7 +397,7 @@ describe( 'selectors', () => {
 						socialAccountLink,
 					},
 				} )
-			).to.eql( 'google' );
+			).toBe( 'google' );
 		} );
 	} );
 } );

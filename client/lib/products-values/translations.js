@@ -8,41 +8,35 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
+			'Backup {{em}}Real-time{{/em}}',
+			{
+				components: {
+					em: createElement( 'em' ),
+				},
+			}
+		),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),

@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.4
+Stable tag: 2.8.9
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,34 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.9 =
+* Domain Picker: Persistent Domain (https://github.com/Automattic/wp-calypso/pull/47633)
+* Focused Launch: Add Launch your site button (https://github.com/Automattic/wp-calypso/pull/47601)
+
+= 2.8.8 =
+* Coming soon: Show coming soon page when showing posts on front (https://github.com/Automattic/wp-calypso/pull/47661)
+* Coming soon: Fix login link on coming soon page (https://github.com/Automattic/wp-calypso/pull/47665)
+* Launch: Launch flow can use translations from global translation functions (https://github.com/Automattic/wp-calypso/pull/47352)
+
+= 2.8.7 =
+* Launch: open launch modal in editor only for free sites created in New Onboarding (https://github.com/Automattic/wp-calypso/pull/47514)
+* Focused Launch: add launch success view (https://github.com/Automattic/wp-calypso/pull/47404)
+* Premium Content: Use snackbar for error and success messages (https://github.com/Automattic/wp-calypso/pull/47477)
+* Coming soon: only show the coming soon page for singular, archive and search posts (https://github.com/Automattic/wp-calypso/pull/47563)
+* Patterns: Support skipping registering patterns with a requires-align-wide tag (https://github.com/Automattic/wp-calypso/pull/47571)
+
+= 2.8.6 =
+* Premium Content: Compatibility fix for Gutenberg >= 9.3.0 (https://github.com/Automattic/wp-calypso/pull/47467)
+
+= 2.8.5 =
+* Launch: support i18n in plans grid (https://github.com/Automattic/wp-calypso/pull/47227)
+* Launch: support i18n in domain picker (https://github.com/Automattic/wp-calypso/pull/47178)
+* Premium Content: add block preview for the Premium Content block (https://github.com/Automattic/wp-calypso/pull/47200)
+* Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
+* Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
+* Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
+* Coming soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
 
 = 2.8.4 =
 * Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)

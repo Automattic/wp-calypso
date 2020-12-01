@@ -18,7 +18,6 @@ export { default as ClipboardButtons } from 'calypso/components/forms/clipboard-
 export { default as Collection } from 'calypso/devdocs/design/search-collection';
 export { default as Count } from 'calypso/components/count/docs/example';
 export { default as CountedTextareas } from 'calypso/components/forms/counted-textarea/docs/example';
-export { default as CreditCard } from 'calypso/components/credit-card/docs/example';
 export { default as DatePicker } from 'calypso/components/date-picker/docs/example';
 export { default as DateRange } from 'calypso/components/date-range/docs/example';
 export { default as DiffViewerExample } from 'calypso/components/diff-viewer/docs/example';

@@ -6,12 +6,15 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
 import { doAction, hasAction } from '@wordpress/hooks';
 import { LaunchContext } from '@automattic/launch';
+import { LocaleProvider } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
 import LaunchModal from './launch-modal';
 import { LAUNCH_STORE } from './stores';
+import { FLOW_ID } from './constants';
+import { openCheckout, redirectToWpcomPath } from './utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,9 +44,18 @@ registerPlugin( 'a8c-editor-site-launch', {
 		}
 
 		return (
-			<LaunchContext.Provider value={ { siteId: window._currentSiteId } }>
-				<LaunchModal onClose={ closeSidebar } />
-			</LaunchContext.Provider>
+			<LocaleProvider localeSlug={ window.wpcomEditorSiteLaunch?.locale }>
+				<LaunchContext.Provider
+					value={ {
+						siteId: window._currentSiteId,
+						flow: FLOW_ID,
+						redirectTo: redirectToWpcomPath,
+						openCheckout,
+					} }
+				>
+					<LaunchModal onClose={ closeSidebar } />
+				</LaunchContext.Provider>
+			</LocaleProvider>
 		);
 	},
 } );

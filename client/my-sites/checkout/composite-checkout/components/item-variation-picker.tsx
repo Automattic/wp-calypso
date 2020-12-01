@@ -5,12 +5,12 @@
 import React, { Component, FunctionComponent } from 'react';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
+import { RadioButton } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
 import { WPCOMCartItem } from '../types/checkout-cart';
-import RadioButton from './radio-button';
 import { isWpComPlan, isWpComBusinessPlan } from 'calypso/lib/plans';
 import { isMonthly } from 'calypso/lib/plans/constants';
 
@@ -96,7 +96,7 @@ function ProductVariant( {
 				id={ variantLabel }
 				value={ productSlug }
 				checked={ isChecked }
-				isDisabled={ isDisabled }
+				disabled={ isDisabled }
 				onChange={ () => {
 					! isDisabled &&
 						onChangeItemVariant( selectedItem.wpcom_meta.uuid, productSlug, productId );

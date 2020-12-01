@@ -1,7 +1,6 @@
 export { authorize } from 'calypso/state/jetpack-connect/actions/authorize';
 export { authorizeSSO } from 'calypso/state/jetpack-connect/actions/authorize-sso';
 export { checkUrl } from 'calypso/state/jetpack-connect/actions/check-url';
-export { completeFlow } from 'calypso/state/jetpack-connect/actions/complete-flow';
 export { confirmJetpackInstallStatus } from 'calypso/state/jetpack-connect/actions/confirm-jetpack-install-status';
 export { createAccount } from 'calypso/state/jetpack-connect/actions/create-account';
 export { createSocialAccount } from 'calypso/state/jetpack-connect/actions/create-social-account';

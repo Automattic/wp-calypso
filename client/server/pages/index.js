@@ -160,6 +160,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		manifests: request.getAssets().manifests,
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
+		featuresHelper: !! config.isEnabled( 'dev/features-helper' ),
 		devDocsURL: '/devdocs',
 		store: reduxStore,
 		addEvergreenCheck: target === 'evergreen' && calypsoEnv !== 'development',
@@ -630,17 +631,18 @@ export default function pages() {
 
 		app.get( '/plans', function ( req, res, next ) {
 			if ( ! req.context.isLoggedIn ) {
-				const queryFor = req.query && req.query.for;
+				const queryFor = req.query?.for;
+
 				if ( queryFor && 'jetpack' === queryFor ) {
 					res.redirect(
 						'https://wordpress.com/wp-login.php?redirect_to=https%3A%2F%2Fwordpress.com%2Fplans'
 					);
-				} else {
+				} else if ( ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 					res.redirect( 'https://wordpress.com/pricing' );
 				}
-			} else {
-				next();
 			}
+
+			next();
 		} );
 	}
 

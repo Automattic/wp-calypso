@@ -21,11 +21,30 @@ function get_current_locale() {
 }
 
 /**
- * Returns a redirect URL for post-login flow
+ * Returns request URL for self-hosted and/or Atomic sites (non-WordPress.com sites)
  *
  * @return string The redirect URL
  */
-function get_redirect_to() {
+function original_request_url() {
+	if ( empty( $_SERVER['SERVER_NAME'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
+		return get_marketing_home_url();
+	}
+
+	$origin = ( is_ssl() ? 'https://' : 'http://' ) . sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) );
+
+	if ( ! empty( $_SERVER['SERVER_PORT'] ) && ! in_array( $_SERVER['SERVER_PORT'], array( 80, 443 ), true ) ) {
+		$origin .= ':' . sanitize_text_field( wp_unslash( $_SERVER['SERVER_PORT'] ) );
+	}
+
+	return $origin . strtok( sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ), '?' );
+}
+
+/**
+ * Returns a redirect URL for post-login flow in WordPress.com
+ *
+ * @return string The redirect URL
+ */
+function get_wpcom_redirect_to() {
 	// Redirect to the current URL.
 	// If, for any reason, the superglobals aren't available, set a default redirect.
 	if ( empty( $_SERVER['HTTP_HOST'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
@@ -41,16 +60,12 @@ function get_redirect_to() {
  * @return string The login URL
  */
 function get_login_url() {
-	$redirect_to = get_redirect_to();
-
+	// If we're on WPCOM use a WordPress.com login URL.
 	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . $redirect_to );
+		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . get_wpcom_redirect_to() );
 	}
 
-	$locale              = get_current_locale();
-	$locale_url_fragment = 'en' === $locale ? '' : '/' . $locale;
-
-	return '//wordpress.com/log-in' . $locale_url_fragment . '?redirect_to=' . $redirect_to;
+	return site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
 }
 
 /**
@@ -68,6 +83,8 @@ function get_onboarding_url() {
 
 	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
 }
+
+nocache_headers();
 
 ?>
 <!DOCTYPE html>
@@ -274,5 +291,6 @@ function get_onboarding_url() {
 			</div>
 		</div>
 		<?php wp_footer(); ?>
+		<!-- WordPress.com Editing Toolkit Plugin - Coming Soon -->
 	</body>
 </html>

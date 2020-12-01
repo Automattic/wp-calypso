@@ -16,6 +16,11 @@
 	.list-item__url {
 		font-size: 0.875rem;
 	}
+
+	.follow-button {
+		cursor: default;
+		margin-right: 1em;
+	}
 }
 
 .list-item {
@@ -97,3 +102,34 @@
 	vertical-align: middle;
 }
 
+.list-manage__subscriptions-separator {
+	margin: 1.5em 0;
+}
+.list-manage__subscriptions-header {
+	margin: 1em 0;
+
+	.button {
+		margin-left: 1em;
+		vertical-align: middle;
+	}
+}
+
+.list-manage__item-adder {
+	.list-manage__query-input {
+		@media ( min-width: 480px ) {
+			padding: 12px;
+		}
+	}
+	.search {
+		margin: 0;
+	}
+
+	.list-manage__url-follow {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 13px 0 10px;
+		position: relative;
+		z-index: 1;
+	}
+}

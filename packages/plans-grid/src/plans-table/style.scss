@@ -19,6 +19,18 @@
 	flex-basis: 0;
 	flex-direction: column;
 
+	// in this variation, text isn't the default #444 color
+	&.badge-next-to-name {
+		color: var( --studio-gray-100 );
+	}
+
+	// in this variation, ticks are black-ish
+	.plans-feature-list__item svg path,
+	.plans-feature-list__domain-summary svg path {
+		fill: var( --studio-gray-100 );
+		stroke: var( --studio-gray-100 );
+	}
+
 	@media ( min-width: $break-mobile ) {
 		// to collapse double borders into one
 		+ .plan-item {
@@ -61,6 +73,11 @@
 	}
 }
 
+.plan-item__heading.badge-next-to-name {
+	display: flex;
+	justify-content: space-between;
+}
+
 .plan-item__name {
 	font-weight: 700;
 	font-size: 18px;
@@ -70,6 +87,24 @@
 	@media ( max-width: $break-mobile ) {
 		font-size: 14px;
 	}
+}
+
+.plan-item__badge-next-to-name {
+	height: 20px;
+	background: rgba( 184, 230, 191, 0.64 ); // --studio-green-5 with 0.64 opacity
+
+	/* stylelint-disable-next-line scales/radii */
+	border-radius: 4px;
+
+	color: var( --studio-green-80 );
+	padding: 2px 5px;
+	font-size: $font-body-extra-small;
+}
+
+.plan-item__tagline {
+	color: var( --studio-gray-80 );
+	font-size: $font-body-small;
+	margin: 4px 0;
 }
 
 .plan-item:not( .is-popular ) .plan-item__name {
@@ -181,13 +216,36 @@
 	}
 }
 
-.plan-item__select-button.components-button.is-primary {
+.plan-item__select-button.components-button {
 	padding: 0 24px;
 	height: 40px;
 
 	&:disabled {
+		text-decoration: line-through;
 		opacity: 0.5;
 	}
+
+	&:not( .is-primary ) {
+		color: var( --studio-gray-90 );
+
+		&:hover {
+			color: inherit;
+		}
+	}
+}
+
+.plan-item__select-button.components-button.full-width {
+	width: 100%;
+	justify-content: center;
+	font-size: $font-body-small;
+	// stylelint-disable-next-line scales/radii
+	border-radius: 4px;
+	margin-top: 15px;
+	border: 1px solid var( --studio-gray-5 );
+}
+
+.plan-item__select-button.components-button.is-primary {
+	border: 0;
 
 	svg {
 		margin-left: -8px;

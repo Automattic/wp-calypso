@@ -9,13 +9,15 @@ import { expect } from 'chai';
 import {
 	ZONINATOR_REQUEST_FEED,
 	ZONINATOR_REQUEST_FEED_ERROR,
+	ZONINATOR_SAVE_FEED,
 	ZONINATOR_UPDATE_FEED,
+	ZONINATOR_UPDATE_FEED_ERROR,
 } from '../../action-types';
-import reducer, { items, requesting } from '../reducer';
+import reducer, { items, requesting, saving } from '../reducer';
 
 describe( 'reducer', () => {
 	it( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [ 'requesting', 'items' ] );
+		expect( reducer( undefined, {} ) ).to.have.keys( [ 'items', 'requesting', 'saving' ] );
 	} );
 
 	describe( 'requesting()', () => {
@@ -73,6 +75,66 @@ describe( 'reducer', () => {
 			const state = items( undefined, {} );
 
 			expect( state ).to.deep.equal( {} );
+		} );
+	} );
+
+	describe( 'saving()', () => {
+		it( 'should default to an empty object', () => {
+			const state = saving( undefined, {} );
+
+			expect( state ).to.deep.equal( {} );
+		} );
+
+		test( 'should set state to true when saving feed', () => {
+			const state = saving( undefined, {
+				type: ZONINATOR_SAVE_FEED,
+				siteId: 123,
+				zoneId: 456,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: {
+					[ 456 ]: true,
+				},
+			} );
+		} );
+
+		test( 'should set state to false when updating feed failed', () => {
+			const initialState = {
+				[ 123 ]: {
+					[ 456 ]: true,
+				},
+			};
+			const state = saving( initialState, {
+				type: ZONINATOR_UPDATE_FEED_ERROR,
+				siteId: 123,
+				zoneId: 456,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: {
+					[ 456 ]: false,
+				},
+			} );
+		} );
+
+		test( 'should set state to false when updating feed', () => {
+			const initialState = {
+				[ 123 ]: {
+					[ 456 ]: true,
+				},
+			};
+			const state = saving( initialState, {
+				type: ZONINATOR_UPDATE_FEED,
+				siteId: 123,
+				zoneId: 456,
+			} );
+
+			expect( state ).to.deep.equal( {
+				[ 123 ]: {
+					[ 456 ]: false,
+				},
+			} );
 		} );
 	} );
 } );

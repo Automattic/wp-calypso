@@ -355,7 +355,7 @@ export class OrgCredentialsForm extends Component {
 						<JetpackRemoteInstallNotices noticeType={ this.getError( installError ) } />
 					</div>
 				) }
-				{ ( this.isInvalidCreds() || ! installError ) && (
+				{ ( this.isInvalidCreds() || ! installError ) && this.props.siteToConnect && (
 					<div className="jetpack-connect__site-url-entry-container">
 						{ this.renderHeadersText() }
 						<Card className="jetpack-connect__site-url-input-container">

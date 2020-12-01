@@ -10,7 +10,6 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import FormattedHeader from 'calypso/components/formatted-header';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
 import { getPlan } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
 import {
@@ -83,46 +82,36 @@ class JetpackConnectMainHeader extends Component {
 			};
 		}
 
-		if ( shouldShowOfferResetFlow() ) {
-			if ( JETPACK_RESET_PLANS.includes( type ) ) {
-				const plan = getPlan( type );
+		if ( JETPACK_RESET_PLANS.includes( type ) ) {
+			const plan = getPlan( type );
 
-				if ( plan ) {
-					return {
-						title: translate( 'Get {{name/}}', {
-							components: {
-								name: <>{ plan.getTitle() }</>,
-							},
-							comment: '{{name/}} is the name of a plan',
-						} ),
-						subtitle: plan.getDescription(),
-					};
-				}
+			if ( plan ) {
+				return {
+					title: translate( 'Get {{name/}}', {
+						components: {
+							name: <>{ plan.getTitle() }</>,
+						},
+						comment: '{{name/}} is the name of a plan',
+					} ),
+					subtitle: plan.getDescription(),
+				};
 			}
+		}
 
-			if ( JETPACK_PRODUCTS_LIST.includes( type ) ) {
-				const product = PRODUCTS_LIST[ type ];
+		if ( JETPACK_PRODUCTS_LIST.includes( type ) ) {
+			const product = PRODUCTS_LIST[ type ];
 
-				if ( product ) {
-					return {
-						title: translate( 'Get {{name/}}', {
-							components: {
-								name: <>{ getJetpackProductShortName( product ) }</>,
-							},
-							comment: '{{name/}} is the name of a plan',
-						} ),
-						subtitle: getJetpackProductDescription( product ),
-					};
-				}
+			if ( product ) {
+				return {
+					title: translate( 'Get {{name/}}', {
+						components: {
+							name: <>{ getJetpackProductShortName( product ) }</>,
+						},
+						comment: '{{name/}} is the name of a plan',
+					} ),
+					subtitle: getJetpackProductDescription( product ),
+				};
 			}
-		} else if ( type === 'jetpack_search' ) {
-			return {
-				title: translate( 'Get Jetpack Search' ),
-				subtitle: translate(
-					'Incredibly powerful and customizable, Jetpack Search helps your visitors ' +
-						'instantly find the right content – right when they need it.'
-				),
-			};
 		}
 
 		return {

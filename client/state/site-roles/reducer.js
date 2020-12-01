@@ -2,7 +2,12 @@
  * Internal dependencies
  */
 import { siteRolesSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
@@ -57,7 +62,9 @@ export const items = withSchemaValidation( siteRolesSchema, ( state = {}, action
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	requesting,
 	items,
 } );
+
+export default withStorageKey( 'siteRoles', combinedReducer );

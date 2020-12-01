@@ -46,6 +46,7 @@ import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/sele
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 import { isATEnabled } from 'calypso/lib/automated-transfer';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -422,7 +423,7 @@ export class PluginMeta extends Component {
 
 	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
-		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
+		this.props.updatePlugin( this.props.sites[ 0 ].ID, this.props.sites[ 0 ].plugin );
 
 		gaRecordEvent(
 			'Plugins',
@@ -447,7 +448,7 @@ export class PluginMeta extends Component {
 				'error' !== plugin.update &&
 				plugin.update.new_version
 			) {
-				PluginsActions.updatePlugin( site, plugin );
+				this.props.updatePlugin( site.ID, plugin );
 				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 				recordTracksEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
@@ -589,4 +590,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( PluginMeta ) );
+export default connect( mapStateToProps, { updatePlugin } )( localize( PluginMeta ) );

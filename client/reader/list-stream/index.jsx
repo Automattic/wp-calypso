@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
@@ -89,6 +88,7 @@ class ListStream extends React.Component {
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
+					isPublic={ list?.is_public }
 					icon={
 						<svg
 							className={ listStreamIconClasses }
@@ -109,7 +109,7 @@ class ListStream extends React.Component {
 						</svg>
 					}
 					title={ this.title }
-					description={ list && list.description }
+					description={ list?.description }
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
@@ -129,13 +129,5 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				followList,
-				unfollowList,
-			},
-			dispatch
-		);
-	}
+	{ followList, unfollowList }
 )( localize( ListStream ) );

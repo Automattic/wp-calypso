@@ -6,8 +6,9 @@
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"sideEffects": true,
-	"main": "dist/cjs/index",
-	"module": "dist/esm/index",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/Automattic/wp-calypso.git",
@@ -25,9 +26,9 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"prepublish": "yarn run clean",
-		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {

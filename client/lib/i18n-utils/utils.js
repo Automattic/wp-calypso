@@ -3,6 +3,7 @@
  */
 import { find, isString, map, pickBy, includes } from 'lodash';
 import i18n, { getLocaleSlug } from 'i18n-calypso';
+import { localizeUrl as _localizeUrl } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -10,7 +11,6 @@ import i18n, { getLocaleSlug } from 'i18n-calypso';
 import config from 'calypso/config';
 import languages from '@automattic/languages';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-export { localizeUrl } from '@automattic/i18n-utils';
 
 /**
  * a locale can consist of three component
@@ -155,6 +155,11 @@ export function addLocaleToPath( path, locale ) {
 	const queryString = urlParts.search || '';
 
 	return removeLocaleFromPath( urlParts.pathname ) + `/${ locale }` + queryString;
+}
+
+export function localizeUrl( fullUrl, locale ) {
+	const localeSlug = locale || ( typeof getLocaleSlug === 'function' ? getLocaleSlug() : 'en' );
+	return _localizeUrl( fullUrl, localeSlug );
 }
 
 /**

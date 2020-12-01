@@ -1,5 +1,5 @@
 ARG use_cache=false
-ARG node_version=12.18.4
+ARG node_version=12.19.1
 
 ###################
 FROM node:${node_version} as builder-cache-false
@@ -76,6 +76,7 @@ RUN apk add --no-cache tini
 COPY --from=builder --chown=nobody:nobody /calypso/build /calypso/build
 COPY --from=builder --chown=nobody:nobody /calypso/public /calypso/public
 COPY --from=builder --chown=nobody:nobody /calypso/config /calypso/config
+COPY --from=builder --chown=nobody:nobody /calypso/package.json /calypso/package.json
 
 USER nobody
 ENTRYPOINT ["/sbin/tini", "--"]

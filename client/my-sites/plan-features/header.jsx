@@ -19,7 +19,13 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import PlanPrice from 'calypso/my-sites/plan-price';
 import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import PlanPill from 'calypso/components/plans/plan-pill';
-import { TYPE_FREE, GROUP_WPCOM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import {
+	TYPE_FREE,
+	GROUP_WPCOM,
+	TERM_ANNUALLY,
+	PLAN_P2_FREE,
+	PLAN_P2_PLUS,
+} from 'calypso/lib/plans/constants';
 import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
 import { getYearlyPlanByMonthly, planMatches, getPlanClass, isFreePlan } from 'calypso/lib/plans';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
@@ -30,7 +36,12 @@ import { planLevelsMatch } from 'calypso/lib/plans/index';
 
 export class PlanFeaturesHeader extends Component {
 	render() {
-		const { isInSignup, plansWithScroll } = this.props;
+		const { isInSignup, plansWithScroll, planType } = this.props;
+
+		if ( planType === PLAN_P2_FREE ) {
+			return this.renderPlansHeaderP2Free();
+		}
+
 		// Do not use the signup-specific header, unify plans for the plansWithScroll test
 		if ( plansWithScroll ) {
 			return this.renderPlansHeaderNoTabs();
@@ -53,14 +64,18 @@ export class PlanFeaturesHeader extends Component {
 			translate,
 		} = this.props;
 
-		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ) );
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
+			'is-p2-plus': planType === PLAN_P2_PLUS,
+		} );
 		const isCurrent = this.isPlanCurrent();
 
 		return (
 			<header className={ headerClasses }>
-				<div className="plan-features__header-figure">
-					<ProductIcon slug={ planType } />
-				</div>
+				{ planType !== PLAN_P2_PLUS && (
+					<div className="plan-features__header-figure">
+						<ProductIcon slug={ planType } />
+					</div>
+				) }
 				<div className="plan-features__header-text">
 					<h4 className="plan-features__header-title">{ title }</h4>
 					{ this.getPlanFeaturesPrices() }
@@ -112,6 +127,25 @@ export class PlanFeaturesHeader extends Component {
 					{ this.getIntervalDiscount() }
 				</div>
 			</span>
+		);
+	}
+
+	renderPlansHeaderP2Free() {
+		const { planType, isInSignup, translate } = this.props;
+
+		const headerClasses = classNames( 'plan-features__header', getPlanClass( planType ), {
+			'is-p2-free': true,
+		} );
+		const isCurrent = this.isPlanCurrent();
+
+		return (
+			<header className={ headerClasses }>
+				<div className="plan-features__header-text">
+					<h4 className="plan-features__header-title">P2</h4>
+					<h4 className="plan-features__header-title-free">{ translate( 'Free' ) }</h4>
+				</div>
+				{ ! isInSignup && isCurrent && <PlanPill>{ translate( 'Your Plan' ) }</PlanPill> }
+			</header>
 		);
 	}
 
