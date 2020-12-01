@@ -1,19 +1,15 @@
 /**
  * Internal dependencies
  */
-import { READER_ANALYTICS_EVENT_RECORD } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
 
-const recordEvent = ( service, args ) => ( {
-	type: READER_ANALYTICS_EVENT_RECORD,
-	meta: {
-		analytics: [
-			{
-				type: READER_ANALYTICS_EVENT_RECORD,
-				payload: Object.assign( {}, { service }, args ),
-			},
-		],
-	},
-} );
-
-export const recordReaderTracksEvent = ( name, properties ) =>
-	recordEvent( 'tracks', { name, properties } );
+export const recordReaderTracksEvent = ( name, properties ) => ( dispatch, getState ) => {
+	const followsCount = getReaderFollowsCount( getState() );
+	dispatch(
+		recordTracksEvent( name, {
+			subscription_count: followsCount,
+			...properties,
+		} )
+	);
+};
