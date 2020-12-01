@@ -198,6 +198,11 @@ function getPressThisData( query ) {
 	return url ? { text, url, title, image, embed } : null;
 }
 
+function getAnchorFmData( query ) {
+	const { anchor_podcast, anchor_episode } = query;
+	return anchor_podcast && anchor_episode ? { anchor_podcast, anchor_episode } : null;
+}
+
 export const post = ( context, next ) => {
 	// See post-editor/controller.js for reference.
 
@@ -211,6 +216,7 @@ export const post = ( context, next ) => {
 	const state = context.store.getState();
 	const siteId = getSelectedSiteId( state );
 	const pressThis = getPressThisData( context.query );
+	const anchorFmData = getAnchorFmData( context.query );
 	const fseParentPageId = parseInt( context.query.fse_parent_post, 10 ) || null;
 	const parentPostId = parseInt( context.query.parent_post, 10 ) || null;
 
@@ -227,6 +233,7 @@ export const post = ( context, next ) => {
 			postType={ postType }
 			duplicatePostId={ duplicatePostId }
 			pressThis={ pressThis }
+			anchorFmData={ anchorFmData }
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
