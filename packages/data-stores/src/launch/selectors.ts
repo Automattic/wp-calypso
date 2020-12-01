@@ -47,10 +47,6 @@ export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.pai
 export const hasSelectedDomain = ( state: State ): boolean =>
 	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
 
-// Check if a domain has been explicitly selected (including free subdomain)
-export const hasSelectedDomain = ( state: State ): boolean =>
-	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
-
 // Completion status of steps is derived from the state of the launch flow
 // Warning: because it's using getEntityRecord it works only inside the editor
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
