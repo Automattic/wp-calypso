@@ -21,6 +21,9 @@ export const isDefaultSiteTitle = ( {
 		? currentSiteTitle === DEFAULT_SITE_NAME
 		: new RegExp( DEFAULT_SITE_NAME, 'i' ).test( currentSiteTitle );
 
+export const isValidSiteTitle = ( title?: string ): boolean =>
+	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
+
 type PlanProduct = {
 	product_id: number;
 	product_slug: string;
