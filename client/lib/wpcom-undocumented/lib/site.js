@@ -177,10 +177,6 @@ UndocumentedSite.prototype.removeFollower = function ( followerId, callback ) {
 	);
 };
 
-UndocumentedSite.prototype.fetchFollowers = function ( fetchOptions, callback ) {
-	return this.wpcom.req.get( '/sites/' + this._id + '/followers/', fetchOptions, callback );
-};
-
 UndocumentedSite.prototype.removeEmailFollower = function ( followerId, callback ) {
 	return this.wpcom.req.post(
 		{

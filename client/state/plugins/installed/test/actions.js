@@ -99,7 +99,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when triggered', () => {
-			fetchPlugins( [ 2916284 ] )( spy );
+			fetchPlugins( [ 2916284 ] )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGINS_REQUEST,
@@ -108,7 +108,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugins receive action when request completes', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_RECEIVE,
@@ -119,7 +119,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin request success action when request completes', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_SUCCESS,
@@ -129,7 +129,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const responses = fetchPlugins( [ 77203074 ] )( spy );
+			const responses = fetchPlugins( [ 77203074 ] )( spy, getState );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_FAILURE,
@@ -142,7 +142,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin update request if any site plugins need updating', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy );
+			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
 			return Promise.all( responses ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_UPDATE_REQUEST,
@@ -290,7 +290,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack', update: {} } )( spy );
+			updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack', update: {} } )(
+				spy,
+				getState
+			);
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_UPDATE_REQUEST,
@@ -305,7 +308,7 @@ describe( 'actions', () => {
 				slug: 'jetpack',
 				id: 'jetpack/jetpack',
 				update: {},
-			} )( spy );
+			} )( spy, getState );
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_UPDATE_REQUEST_SUCCESS,
@@ -319,7 +322,8 @@ describe( 'actions', () => {
 
 		test( 'should dispatch fail action when request fails', () => {
 			const response = updatePlugin( site.ID, { slug: 'fake', id: 'fake/fake', update: {} } )(
-				spy
+				spy,
+				getState
 			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
@@ -333,7 +337,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should not dispatch actions when plugin already up-to-date', () => {
-			const response = updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			const response = updatePlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )(
+				spy,
+				getState
+			);
 			// updatePlugin returns a rejected promise here
 			return response.catch( () => {
 				expect( spy.callCount ).to.eql( 0 );
@@ -369,7 +376,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			enableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			enableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
+				spy,
+				getState
+			);
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST,
@@ -383,7 +393,7 @@ describe( 'actions', () => {
 			const response = enableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
-			} )( spy );
+			} )( spy, getState );
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_SUCCESS,
@@ -396,7 +406,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = enableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = enableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_AUTOUPDATE_ENABLE_REQUEST_FAILURE,
@@ -413,7 +426,7 @@ describe( 'actions', () => {
 				slug: 'jetpack',
 				id: 'jetpack/jetpack',
 				update: {},
-			} )( spy );
+			} )( spy, getState );
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_UPDATE_REQUEST,
@@ -449,7 +462,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			disableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			disableAutoupdatePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
+				spy,
+				getState
+			);
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST,
@@ -463,7 +479,7 @@ describe( 'actions', () => {
 			const response = disableAutoupdatePlugin( site.ID, {
 				slug: 'akismet',
 				id: 'akismet/akismet',
-			} )( spy );
+			} )( spy, getState );
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
@@ -476,7 +492,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = disableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = disableAutoupdatePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_AUTOUPDATE_DISABLE_REQUEST_FAILURE,
@@ -521,7 +540,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_INSTALL_REQUEST,
@@ -532,7 +551,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin install request success action when request completes', () => {
-			const response = installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'jetpack', id: 'jetpack/jetpack' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_SUCCESS,
@@ -545,7 +567,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = installPlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_INSTALL_REQUEST_FAILURE,
@@ -590,7 +612,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch request action when triggered', () => {
-			removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGIN_REMOVE_REQUEST,
@@ -601,7 +623,10 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin remove request success action when request completes', () => {
-			const response = removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )( spy );
+			const response = removePlugin( site.ID, { slug: 'akismet', id: 'akismet/akismet' } )(
+				spy,
+				getState
+			);
 			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_REMOVE_REQUEST_SUCCESS,
@@ -613,7 +638,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const response = removePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy );
+			const response = removePlugin( site.ID, { slug: 'fake', id: 'fake/fake' } )( spy, getState );
 			return response.catch( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_REMOVE_REQUEST_FAILURE,

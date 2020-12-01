@@ -6,6 +6,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -20,6 +21,7 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'calypso/lib/plugins/actions';
 import ExternalLink from 'calypso/components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { removePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -55,7 +57,7 @@ class PluginRemoveButton extends React.Component {
 	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
 			PluginsActions.removePluginsNotices( 'completed', 'error' );
-			PluginsActions.removePlugin( this.props.site, this.props.plugin );
+			this.props.removePlugin( this.props.site.ID, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
 				gaRecordEvent(
@@ -212,4 +214,4 @@ class PluginRemoveButton extends React.Component {
 	}
 }
 
-export default localize( PluginRemoveButton );
+export default connect( null, { removePlugin } )( localize( PluginRemoveButton ) );
