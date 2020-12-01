@@ -31,7 +31,7 @@ const Success: React.FunctionComponent = () => {
 		unsetModalDismissible,
 		hideModalTitle,
 		closeFocusedLaunch,
-		hideSuccessView,
+		disablePersistentSuccessView,
 	} = useDispatch( LAUNCH_STORE );
 
 	const { siteSubdomain, sitePrimaryDomain } = useSiteDomains();
@@ -51,12 +51,12 @@ const Success: React.FunctionComponent = () => {
 	}, [ unsetModalDismissible, hideModalTitle ] );
 
 	const continueEditing = () => {
-		hideSuccessView();
+		disablePersistentSuccessView();
 		closeFocusedLaunch();
 	};
 
 	const redirectToHome = () => {
-		hideSuccessView();
+		disablePersistentSuccessView();
 		redirectTo( `/home/${ siteSubdomain?.domain }` );
 	};
 
