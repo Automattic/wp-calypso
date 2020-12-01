@@ -122,6 +122,7 @@ class ManagePurchase extends Component {
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
+		redirectTo: PropTypes.string,
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -183,11 +184,15 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+		const { purchase, siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewNowClick( purchase, siteSlug, options );
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
+		const { siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
