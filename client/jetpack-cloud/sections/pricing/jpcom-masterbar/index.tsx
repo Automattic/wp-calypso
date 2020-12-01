@@ -12,8 +12,8 @@ import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import { Iterations } from 'calypso/my-sites/plans-v2/iterations';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies

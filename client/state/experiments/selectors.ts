@@ -3,6 +3,8 @@
  */
 import type { AppState } from 'calypso/types';
 
+import 'calypso/state/experiments/init';
+
 /**
  * Returns the user's assigned variation for a given experiment
  *

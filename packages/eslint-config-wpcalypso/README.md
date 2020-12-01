@@ -32,9 +32,9 @@ Refer to the [ESLint documentation on Shareable Configs](http://eslint.org/docs/
 
 ## Suggesting Changes
 
-Want to suggest a change to our style guide? [Edit the JavaScript Coding Guidelines on the Automattic/wp-calypso repository](https://github.com/Automattic/wp-calypso/edit/master/docs/coding-guidelines/javascript.md) and submit a pull request.
+Want to suggest a change to our style guide? [Edit the JavaScript Coding Guidelines on the Automattic/wp-calypso repository](https://github.com/Automattic/wp-calypso/edit/trunk/docs/coding-guidelines/javascript.md) and submit a pull request.
 
-Want to revise the ESLint rules used here? [Edit the `index.js` file](https://github.com/Automattic/eslint-config-wpcalypso/edit/master/index.js) and submit a pull request.
+Want to revise the ESLint rules used here? [Edit the `index.js` file](https://github.com/Automattic/eslint-config-wpcalypso/edit/trunk/index.js) and submit a pull request.
 
 ## License
 

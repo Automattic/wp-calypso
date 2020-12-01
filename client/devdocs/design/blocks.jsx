@@ -190,9 +190,7 @@ export default class AppComponents extends React.Component {
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && (
-						<UserMentions readmeFilePath="user-mentions" />
-					) }
+					<UserMentions readmeFilePath="user-mentions" />
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />

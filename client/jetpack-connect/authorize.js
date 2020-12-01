@@ -54,6 +54,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
@@ -622,6 +623,9 @@ export class JetpackAuthorize extends Component {
 			productSlug.includes( 'jetpack' )
 		);
 		if ( jetpackCheckoutSlugs.includes( this.props.selectedPlanSlug ) ) {
+			// Once we decide we want to redirect the user to the checkout page and that there is a
+			// valid plan, we can safely remove it from the session storage
+			clearPlan();
 			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
 		}
 

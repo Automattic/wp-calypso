@@ -14,6 +14,7 @@ export const getState = ( state: State ) => state;
 export const getNewSite = ( state: State ) => state.newSite.data;
 export const getNewSiteError = ( state: State ) => state.newSite.error;
 export const isFetchingSite = ( state: State ) => state.newSite.isFetching;
+export const isFetchingSiteDetails = ( state: State ) => state.isFetchingSiteDetails;
 export const isNewSite = ( state: State ) => !! state.newSite.data;
 
 /**
@@ -31,8 +32,12 @@ export const getSite = ( state: State, siteId: number ) => {
 export const getSiteTitle = ( _: State, siteId: number ) =>
 	select( STORE_KEY ).getSite( siteId )?.name;
 
-export const isLaunched = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ];
+export const isSiteLaunched = ( state: State, siteId: number ) => {
+	return state.launchStatus[ siteId ]?.isSiteLaunched;
+};
+
+export const isSiteLaunching = ( state: State, siteId: number ) => {
+	return state.launchStatus[ siteId ]?.isSiteLaunching;
 };
 
 export const getSiteDomains = ( state: State, siteId: number ) => {

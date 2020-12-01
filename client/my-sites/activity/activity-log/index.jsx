@@ -57,7 +57,6 @@ import {
 	rewindBackup,
 	updateFilter,
 } from 'calypso/state/activity-log/actions';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
 import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
@@ -523,20 +522,7 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { canViewActivityLog, siteId, translate } = this.props;
-
-		if ( ! canViewActivityLog ) {
-			return (
-				<Main>
-					<QuerySitePurchases siteId={ siteId } />
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
+		const { siteId, translate } = this.props;
 
 		const { context, rewindState, siteSettingsUrl } = this.props;
 
@@ -583,7 +569,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
-			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&

@@ -13,10 +13,10 @@ import LaunchContext from '../context';
 export function useTitle() {
 	const { siteId } = useContext( LaunchContext );
 	const title = useSelect( ( select ) => select( SITE_STORE ).getSiteTitle( siteId ) );
-	const [ localStateTitle, setLocalStateTitle ] = useState< string >( title || '' );
+	const [ localStateTitle, setLocalStateTitle ] = useState< string | undefined >( title );
 
 	useEffect( () => {
-		setLocalStateTitle( title || '' );
+		setLocalStateTitle( title );
 	}, [ title ] );
 
 	const saveSiteTitle = useDispatch( SITE_STORE ).saveSiteTitle;

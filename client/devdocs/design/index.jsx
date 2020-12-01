@@ -39,7 +39,6 @@ import Collection from 'calypso/devdocs/design/search-collection';
 import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
 import Count from 'calypso/components/count/docs/example';
 import CountedTextareas from 'calypso/components/forms/counted-textarea/docs/example';
-import CreditCard from 'calypso/components/credit-card/docs/example';
 import DatePicker from 'calypso/components/date-picker/docs/example';
 import DateRange from 'calypso/components/date-range/docs/example';
 import DiffViewerExample from 'calypso/components/diff-viewer/docs/example';
@@ -74,11 +73,8 @@ import InfoPopover from 'calypso/components/info-popover/docs/example';
 import InlineSupportLink from 'calypso/components/inline-support-link/docs/example';
 import InputChrono from 'calypso/components/input-chrono/docs/example';
 import JetpackColophonExample from 'calypso/components/jetpack-colophon/docs/example';
-import JetpackBundleCard from 'calypso/components/jetpack/card/jetpack-bundle-card/docs/example';
 import JetpackHeaderExample from 'calypso/components/jetpack-header/docs/example';
 import JetpackLogoExample from 'calypso/components/jetpack-logo/docs/example';
-import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card/docs/example';
-import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card/docs/example';
 import JetpackProductSlideOutCard from 'calypso/components/jetpack/card/jetpack-product-slide-out-card/docs/example';
 import LanguagePicker from 'calypso/components/language-picker/docs/example';
 import LayoutExample from 'calypso/components/layout/docs/example';
@@ -90,7 +86,6 @@ import Notices from 'calypso/components/notice/docs/example';
 import PaginationExample from 'calypso/components/pagination/docs/example';
 import PaymentLogo from 'calypso/components/payment-logo/docs/example';
 import PieChart from 'calypso/components/pie-chart/docs/example';
-import PlansSkipButton from 'calypso/components/plans/plans-skip-button/docs/example';
 import PodcastIndicator from 'calypso/components/podcast-indicator/docs/example';
 import Popovers from 'calypso/components/popover/docs/example';
 import ProductCard from 'calypso/components/product-card/docs/example';
@@ -203,7 +198,6 @@ export default class DesignAssets extends React.Component {
 					<ClipboardButtons readmeFilePath="forms/clipboard-button" />
 					<Count readmeFilePath="count" />
 					<CountedTextareas readmeFilePath="forms/counted-textarea" />
-					<CreditCard readmeFilePath="credit-card" />
 					<DatePicker readmeFilePath="date-picker" />
 					<DateRange readmeFilePath="date-range" />
 					<DiffViewerExample readmeFilePath="diff-viewer" />
@@ -237,12 +231,9 @@ export default class DesignAssets extends React.Component {
 					<InfoPopover readmeFilePath="info-popover" />
 					<InlineSupportLink readmeFilePath="inline-support-link" />
 					<InputChrono readmeFilePath="input-chrono" />
-					<JetpackBundleCard readmeFilePath="jetpack-bundle-card" />
 					<JetpackColophonExample readmeFilePath="jetpack-colophon" />
 					<JetpackHeaderExample readmeFilePath="jetpack-header" />
 					<JetpackLogoExample readmeFilePath="jetpack-logo" />
-					<JetpackPlanCard readmeFilePath="jetpack-plan-card" />
-					<JetpackProductCard readmeFilePath="jetpack-product-card" />
 					<JetpackProductSlideOutCard readmeFilePath="jetpack-product-slide-out-card" />
 					<LanguagePicker readmeFilePath="language-picker" />
 					<LayoutExample readmeFilePath="layout" />
@@ -254,7 +245,6 @@ export default class DesignAssets extends React.Component {
 					<PaginationExample readmeFilePath="pagination" />
 					<PaymentLogo readmeFilePath="payment-logo" />
 					<PieChart readmeFilePath="pie-chart" />
-					<PlansSkipButton readmeFilePath="plans/plans-skip-button" />
 					<PodcastIndicator readmeFilePath="podcast-indicator" />
 					<Popovers readmeFilePath="popover" />
 					<ProductCard readmeFilePath="product-card" />

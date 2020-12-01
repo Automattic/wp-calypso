@@ -10,27 +10,22 @@ import { useDispatch } from 'react-redux';
  */
 import { Button, Card, Dialog } from '@automattic/components';
 import { deleteReaderList } from 'calypso/state/reader/lists/actions';
-import {
-	READER_LISTS_DELETE_STATE_CONFIRMING,
-	READER_LISTS_DELETE_STATE_DELETED,
-} from './constants';
 
 function ListDelete( { list } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const [ deleteState, setDeleteState ] = React.useState( '' );
+	const [ showDeleteConfirmation, setShowDeleteConfirmation ] = React.useState( false );
 
 	return (
 		<>
-			{ deleteState === '' && (
-				<Card>
-					<p>{ translate( 'Delete the list forever. Be careful - this is not reversible.' ) }</p>
-					<Button primary onClick={ () => setDeleteState( READER_LISTS_DELETE_STATE_CONFIRMING ) }>
-						{ translate( 'Delete list' ) }
-					</Button>
-				</Card>
-			) }
-			{ deleteState === READER_LISTS_DELETE_STATE_CONFIRMING && (
+			<Card>
+				<p>{ translate( 'Delete the list forever. Be careful - this is not reversible.' ) }</p>
+				<Button primary onClick={ () => setShowDeleteConfirmation( true ) }>
+					{ translate( 'Delete list' ) }
+				</Button>
+			</Card>
+
+			{ showDeleteConfirmation && (
 				<Dialog
 					isVisible={ true }
 					buttons={ [
@@ -38,14 +33,10 @@ function ListDelete( { list } ) {
 						{ action: 'delete', label: translate( 'Delete list' ), isPrimary: true },
 					] }
 					onClose={ ( action ) => {
+						setShowDeleteConfirmation( false );
 						if ( action === 'delete' ) {
-							return [
-								dispatch( deleteReaderList( list.ID, list.owner, list.slug ) ),
-								setDeleteState( READER_LISTS_DELETE_STATE_DELETED ),
-							];
+							dispatch( deleteReaderList( list.ID, list.owner, list.slug ) );
 						}
-
-						setDeleteState( '' );
 					} }
 				>
 					<h1>{ translate( 'Are you sure you want to delete this list?' ) }</h1>

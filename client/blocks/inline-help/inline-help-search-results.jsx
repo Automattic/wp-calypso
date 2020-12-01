@@ -151,7 +151,8 @@ function HelpSearchResults( {
 			! isSearching &&
 			! hasAPIResults &&
 			! hasPurchases &&
-			sectionName !== 'purchases'
+			sectionName !== 'purchases' &&
+			sectionName !== 'site-purchases'
 		) {
 			return null;
 		}

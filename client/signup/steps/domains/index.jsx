@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -41,7 +40,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
 import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
 import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
-import { getDomainProductSlug } from 'calypso/lib/domains';
+import { getDomainProductSlug, TRUENAME_COUPONS, TRUENAME_TLDS } from 'calypso/lib/domains';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import { getAvailableProductsList } from 'calypso/state/products-list/selectors';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
@@ -53,7 +52,7 @@ import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { fetchUsernameSuggestion } from 'calypso/state/signup/optional-dependencies/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
 import { hideSitePreview, showSitePreview } from 'calypso/state/signup/preview/actions';
-import { abtest, getABTestVariation } from 'calypso/lib/abtest';
+import { getABTestVariation } from 'calypso/lib/abtest';
 import getSitesItems from 'calypso/state/selectors/get-sites-items';
 import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/selectors';
 import { getStepModuleName } from 'calypso/signup/config/step-components';
@@ -172,21 +171,6 @@ class DomainsStep extends React.Component {
 
 	isEligibleVariantForDomainTest() {
 		return this.showTestCopy;
-	}
-
-	getGeoLocationFromCookie() {
-		const cookies = cookie.parse( document.cookie );
-
-		return cookies.country_code;
-	}
-
-	isEligibleForSecureYourBrandTest( isPurchasingItem ) {
-		return (
-			includes( [ 'onboarding', 'onboarding-secure-your-brand' ], this.props.flowName ) &&
-			isPurchasingItem &&
-			! this.props.skipSecureYourBrand &&
-			'test' === abtest( 'secureYourBrand', this.getGeoLocationFromCookie() )
-		);
 	}
 
 	getMapDomainUrl = () => {
@@ -335,12 +319,7 @@ class DomainsStep extends React.Component {
 		);
 
 		this.props.setDesignType( this.getDesignType() );
-
-		if ( this.isEligibleForSecureYourBrandTest( isPurchasingItem ) ) {
-			this.props.goToNextStep( 'onboarding-secure-your-brand' );
-		} else {
-			this.props.goToNextStep();
-		}
+		this.props.goToNextStep();
 
 		// Start the username suggestion process.
 		siteUrl && this.props.fetchUsernameSuggestion( siteUrl.split( '.' )[ 0 ] );
@@ -500,6 +479,11 @@ class DomainsStep extends React.Component {
 		}
 
 		const isPlanSelectionAvailableInFlow = this.getIsPlanSelectionAvailableLaterInFlow();
+
+		const trueNamePromoTlds = TRUENAME_COUPONS.includes( this.props?.queryObject?.coupon )
+			? TRUENAME_TLDS
+			: null;
+
 		const registerDomainStep = (
 			<RegisterDomainStep
 				key="domainForm"
@@ -508,6 +492,7 @@ class DomainsStep extends React.Component {
 				onAddDomain={ this.handleAddDomain }
 				products={ this.props.productsList }
 				basePath={ this.props.path }
+				promoTlds={ trueNamePromoTlds }
 				mapDomainUrl={ this.getMapDomainUrl() }
 				transferDomainUrl={ this.getTransferDomainUrl() }
 				useYourDomainUrl={ this.getUseYourDomainUrl() }
@@ -517,8 +502,8 @@ class DomainsStep extends React.Component {
 				isDomainOnly={ this.props.isDomainOnly }
 				analyticsSection={ this.getAnalyticsSection() }
 				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ includeWordPressDotCom }
-				includeDotBlogSubdomain={ this.shouldIncludeDotBlogSubdomain() }
+				includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
+				includeDotBlogSubdomain={ trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain() }
 				isSignupStep
 				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
 				showExampleSuggestions={ showExampleSuggestions }

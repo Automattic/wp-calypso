@@ -19,13 +19,11 @@ import SecurityIcon from 'calypso/components/jetpack/security-icon';
 import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
 import ScanThreats from 'calypso/components/jetpack/scan-threats';
 import { Scan, Site } from 'calypso/my-sites/scan/types';
-import EmptyContent from 'calypso/components/empty-content';
 import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
 import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
 import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
@@ -185,7 +183,7 @@ class ScanPage extends Component< Props > {
 				) }
 				<p>
 					{ translate(
-						'We will send you an email once the scan completes, in the meantime feel ' +
+						'We will send you an email if security threats are found. In the meantime feel ' +
 							'free to continue to use your site as normal, you can check back on ' +
 							'progress at any time.'
 					) }
@@ -271,7 +269,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	render() {
-		const { isAdmin, siteId, siteSettingsUrl } = this.props;
+		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
@@ -291,21 +289,12 @@ class ScanPage extends Component< Props > {
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }
-				{ isAdmin && (
-					<>
-						<QueryJetpackScan siteId={ siteId } />
-						<ScanNavigation section={ 'scanner' } />
-						<Card>
-							<div className="scan__content">{ this.renderScanState() }</div>
-						</Card>
-					</>
-				) }
-				{ ! isAdmin && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
-				) }
+
+				<QueryJetpackScan siteId={ siteId } />
+				<ScanNavigation section={ 'scanner' } />
+				<Card>
+					<div className="scan__content">{ this.renderScanState() }</div>
+				</Card>
 			</Main>
 		);
 	}
@@ -327,7 +316,6 @@ export default connect(
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
-		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			site,
@@ -338,7 +326,6 @@ export default connect(
 			isInitialScan,
 			siteSettingsUrl,
 			isRequestingScan,
-			isAdmin,
 		};
 	},
 	{

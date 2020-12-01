@@ -1,0 +1,22 @@
+.payment-method-sidebar__title {
+	margin-top: 0;
+}
+
+.payment-method-sidebar__paragraph {
+	margin-bottom: 0;
+	font-size: 0.875rem;
+}
+
+.payment-method-sidebar__date {
+	color: var( --color-text-subtle );
+}
+
+.payment-method-sidebar__details-card {
+	margin-top: 16px;
+
+	@include breakpoint-deprecated( '>1280px' ) {
+		margin-top: 0;
+
+	}
+
+}

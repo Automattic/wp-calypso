@@ -2,14 +2,15 @@
  * External dependencies
  */
 import * as React from 'react';
-import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
+import { useSelect } from '@wordpress/data';
 import FocusedLaunchModal from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
 import { LAUNCH_STORE } from './stores';
+import { openCheckout, redirectToWpcomPath } from './utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,8 +18,11 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
-		const { isFocusedLaunchOpen } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-		const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+		const currentSiteId = window._currentSiteId;
+
+		const isFocusedLaunchOpen = useSelect( ( select ) =>
+			select( LAUNCH_STORE ).isFocusedLaunchOpen()
+		);
 
 		if ( ! isFocusedLaunchOpen ) {
 			return null;
@@ -26,9 +30,10 @@ registerPlugin( 'a8c-editor-editor-focused-launch', {
 
 		return (
 			<FocusedLaunchModal
-				siteId={ window._currentSiteId }
-				onClose={ closeFocusedLaunch }
-				locale={ document.documentElement.lang }
+				locale={ window.wpcomEditorSiteLaunch?.locale }
+				openCheckout={ openCheckout }
+				redirectTo={ redirectToWpcomPath }
+				siteId={ currentSiteId }
 			/>
 		);
 	},

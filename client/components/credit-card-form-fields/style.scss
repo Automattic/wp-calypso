@@ -1,45 +1,66 @@
 .credit-card-form-fields__extras {
 	display: flex;
 	flex-wrap: wrap;
+	flex-direction: row;
 	justify-content: space-between;
 	margin-left: -15px;
 
-	.credit-card-form-fields__field {
+	.credit-card-form-fields__field,
+	.credit-card-form-fields__cvv-wrapper {
 		flex-basis: calc( 100% - 15px );
 		flex-grow: 1;
-		flex-shrink: 0;
+		flex-shrink: 1;
 		margin-left: 15px;
 	}
 
-	.checkout__country-payment-fields {
+	.credit-card-form-fields__cvv-wrapper {
+		position: relative;
+
+		.credit-card-form-fields__element,
+		.form-text-input {
+			width: calc( 100% - 70px );
+		}
+
+		.credit-card-form-fields__cvv-illustration {
+			position: absolute;
+			top: 26px;
+			right: 0;
+			width: 62px;
+		}
+
+		.credit-card-form-fields__cvv-illustration--local-fields {
+			top: 41px;
+		}
+	}
+
+	.form-select {
+		min-width: auto;
+	}
+
+	.checkout__country-payment-fields,
+	.credit-card-form-fields__cvv-wrapper .cvv {
 		margin-left: 0;
 	}
-
-	@include breakpoint-deprecated( '>480px' ) {
-		.cvv,
-		.expiration-date {
-			flex-basis: calc( 50% - 15px );
-		}
-
-		.country {
-			flex-basis: auto;
-		}
-
-		.postal-code {
-			flex-basis: 8em;
-		}
+	
+	.credit-card-form-fields__cvv-wrapper,
+	.expiration-date,
+	.country,
+	.postal-code {
+		flex-basis: calc( 50% - 15px );
 	}
+	
 }
 
 .credit-card-form-fields {
 	margin-bottom: 15px;
 
-	&__explainer {
-		color: var( --color-text-subtle );
-		font-size: rem( 14px );
-		margin-left: 0.35em;
-		font-weight: normal;
+	input[disabled] {
+		@include placeholder( --color-neutral-20 );
 	}
+}
+
+.credit-card-form-fields__label.form-label {
+	margin-bottom: 0;
 }
 
 .credit-card-form-fields__field {
@@ -66,30 +87,16 @@
 	}
 }
 
-.credit-card-form-fields__cvv-info {
-	.gridicon {
-		margin-bottom: -3px;
-	}
-
-	.popover__inner {
-		align-items: flex-start;
-		display: flex;
-	}
-}
-
-.credit-card-form-fields__cvv-illustration {
-	flex: 0 0 42px;
-	margin-right: 10px;
-}
-
 // Specific for Stripe Elements while we use it in parallel to existing cc fields
 .credit-card-form-fields__element {
-	padding: 12px 14px 3px;
+	padding: 9px 14px;
 	border: 1px solid var( --color-neutral-10 );
 	font-size: $font-body;
 	line-height: 1.5;
-	min-height: 1.5em;
 	margin-top: 5px;
+	height: 40px;
+	box-sizing: border-box;
+	border-radius: 2px;
 
 	&.has-focus {
 		box-shadow: 0 0 0 2px var( --color-primary-10 );

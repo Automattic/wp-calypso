@@ -12,7 +12,6 @@ import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MarketingToolsFeature from './feature';
-import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
 import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -141,8 +140,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolsFeature>
-
-				<MarketingToolsGoogleMyBusinessFeature />
 
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }

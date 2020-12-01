@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -29,7 +30,7 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
@@ -40,10 +41,8 @@
 		"react-dom": "^16.8"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"build:esm": "tsc --build ./tsconfig.json && copy-assets --esm",
-		"build:cjs": "tsc --build ./tsconfig-cjs.json && copy-assets --cjs",
-		"prepare": "yarn run build:esm",
-		"prepack": "yarn run clean && yarn run build:esm && yarn run build:cjs"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

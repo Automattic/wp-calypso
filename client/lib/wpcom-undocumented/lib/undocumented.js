@@ -1702,50 +1702,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 	);
 };
 
-Undocumented.prototype.fetchWapiDomainInfo = function ( domainName, fn ) {
-	return this.wpcom.req.get( '/domains/' + domainName + '/status', fn );
-};
-
-Undocumented.prototype.requestTransferCode = function ( options, fn ) {
-	const { domainName } = options;
-	const data = {
-		domainStatus: JSON.stringify( {
-			command: 'send-code',
-		} ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.cancelTransferRequest = function ( { domainName, declineTransfer }, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( {
-			command: 'cancel-transfer-request',
-			payload: {
-				decline_transfer: declineTransfer,
-			},
-		} ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.acceptTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'accept-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.declineTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'deny-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
 Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUserId, fn ) {
 	return this.wpcom.req.post(
 		'/sites/' + siteId + '/domains/' + domainName + '/transfer-to-user/' + targetUserId,

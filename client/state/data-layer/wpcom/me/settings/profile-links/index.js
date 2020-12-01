@@ -10,8 +10,9 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { USER_PROFILE_LINKS_REQUEST } from 'calypso/state/action-types';
 import { receiveUserProfileLinks } from 'calypso/state/profile-links/actions';
-
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+
+import 'calypso/state/profile-links/init';
 
 /**
  * Dispatches a request to fetch profile links of the current user
@@ -32,8 +33,9 @@ export const requestUserProfileLinks = ( action ) =>
 /**
  * Dispatches a user profile links receive action when the request succeeded.
  *
- * @param   {object} action Redux action
- * @param   {Array}  data   Response from the endpoint
+ * @param   {object} action             Redux action
+ * @param   {Array}  data               Response from the endpoint
+ * @param   {object} data.profile_links Profile links
  * @returns {object} Dispatched user profile links receive action
  */
 export const handleRequestSuccess = ( action, { profile_links } ) =>

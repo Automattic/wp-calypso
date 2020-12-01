@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.8.4",
+	"version": "2.8.9",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -89,12 +89,13 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/launch": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
-		"@babel/core": "^7.11.1",
+		"@babel/core": "^7.12.3",
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
 		"@wordpress/a11y": "^2.11.0",
@@ -144,7 +145,7 @@
 	},
 	"devDependencies": {
 		"@types/wordpress__plugins": "^2.3.6",
-		"@babel/preset-typescript": "^7.10.4",
+		"@babel/preset-typescript": "^7.12.1",
 		"@wordpress/eslint-plugin": "^7.1.0",
 		"babel-jest": "^26.3.0",
 		"webpack": "^4.44.2"

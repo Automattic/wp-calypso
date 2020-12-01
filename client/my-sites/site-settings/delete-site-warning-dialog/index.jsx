@@ -32,10 +32,10 @@ function DeleteSiteWarningDialog( { isVisible, onClose } ) {
 			onClose={ onClose }
 			className="delete-site-warning-dialog"
 		>
-			<h1>{ translate( 'Premium Upgrades' ) }</h1>
+			<h1>{ translate( 'Paid Upgrades' ) }</h1>
 			<p>
 				{ translate(
-					'You have active premium upgrades on your site. ' +
+					'You have active paid upgrades on your site. ' +
 						'Please cancel your upgrades prior to deleting your site.'
 				) }
 			</p>

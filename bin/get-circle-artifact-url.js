@@ -17,10 +17,10 @@ async function getCircleArtifactUrl( pathMatchRegex ) {
 		process.exit( 1 );
 	}
 	try {
-		// Fetch recent successful master builds
+		// Fetch recent successful trunk builds
 		const builds = await httpsGetJsonPromise( {
 			...baseOptions,
-			path: `${ basePath }/tree/master?filter=successful&limit=${ maxBuilds }`,
+			path: `${ basePath }/tree/trunk?filter=successful&limit=${ maxBuilds }`,
 		} );
 
 		const buildNumbersWithArtifacts = builds

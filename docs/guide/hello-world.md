@@ -30,7 +30,7 @@ First thing is to enable your new feature in Calypso. We'll do that by opening `
 "hello-world": true
 ```
 
-Feature flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `master,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
+Feature flags are a great way to enable/disable certain features in specific environments. For example, we can merge our "Hello, World!" code in `trunk,` but hide it behind a feature flag. We have [more documentation on feature flags](../../client/config).
 
 ### 2. Set up folder structure
 
@@ -79,30 +79,23 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender } from 'controller';
-import { navigation, siteSelection } from 'my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { helloWorld } from './controller';
 
 export default () => {
-	page(
-		'/hello-world/:site?',
-		siteSelection,
-		navigation,
-		helloWorld,
-		makeLayout,
-		clientRender
-	);
+	page( '/hello-world/:site?', siteSelection, navigation, helloWorld, makeLayout, clientRender );
 };
 ```
 
-* `page()` will set up the route `/hello-world` and run some functions when it's matched.
-* The `:site?` is because we want to support site specific pages for our hello-world route.
-* Each function is invoked with `context` and `next` arguments.
-* We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
-* Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
-* `helloWorld` is our newly created controller handler.
-* `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
-* `clientRender` renders `Layout` element into DOM.
+- `page()` will set up the route `/hello-world` and run some functions when it's matched.
+- The `:site?` is because we want to support site specific pages for our hello-world route.
+- Each function is invoked with `context` and `next` arguments.
+- We are passing the `siteSelection` function from the main "My Sites" controller, which handles the site selection process.
+- Next, we are passing the `navigation` function, also from the main "My Sites" controller, which inserts the sidebar navigation into `context.secondary`.
+- `helloWorld` is our newly created controller handler.
+- `makeLayout` creates `Layout` element which contains elements from `context.primary` and `context.secondary`.
+- `clientRender` renders `Layout` element into DOM.
 
 You can read more about ES6 modules from Axel Rauschmayer's "[_ECMAScript 6 modules: the final syntax_](http://2ality.com/2014/09/es6-modules-final.html)" as well from _MDN web docs_: [_export_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/export) & [_import_](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import).
 
@@ -115,7 +108,7 @@ if ( config.isEnabled( 'hello-world' ) ) {
 	sections.push( {
 		name: 'hello-world',
 		paths: [ '/hello-world' ],
-		module: 'my-sites/hello-world'
+		module: 'my-sites/hello-world',
 	} );
 }
 ```
@@ -123,24 +116,26 @@ if ( config.isEnabled( 'hello-world' ) ) {
 This checks for our feature in the current environment to figure out whether it needs to register a new section. The section is defined by a name, an array with the relevant paths, and the main module.
 
 You also need to `require` the `config` module at the top of the `client/sections.js` file (in case the `require` statement is not already there):
+
 ```js
-const config = require( 'config' );
+const config = require( 'calypso/config' );
 ```
+
 The `sections.js` module needs to be a CommonJS module that uses `require` calls, because it's run by Node.js. ESM imports won't work there at this moment.
 
 Through the use of the `config` module, we are conditionally loading our section only in development environment. All existing sections in `client/sections.js` will load in all environments.
 
-### Run the server!
+## Run the server!
 
 Restart the server doing:
 
-* `yarn start`
+- `yarn start`
 
 We are ready to load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world)! Your console should respond with `Hello, world?` if everything is working and you should see Calypso's sidebar for "My Sites".
 
-----
+---
 
-# The View
+## The View
 
 Now let's build our main view using a React component. For this task we have two steps:
 
@@ -167,11 +162,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 
-export default class HelloWorld extends React.Component {
-
-};
+export default class HelloWorld extends React.Component {}
 ```
 
 Cool. Let's make the React component render something for us. We'll do that by adding a `render()` method that uses the "Main" component and outputs some markup. Let's add the `render()` method inside of the `React.Component` extension like so:
@@ -252,7 +245,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import HelloWorld from 'my-sites/hello-world/main';
+import HelloWorld from 'calypso/my-sites/hello-world/main';
 ```
 
 Then remove the `console.log` call and enter the following instead:
@@ -268,7 +261,7 @@ In the `Main` constant we are getting our main jsx file for our section. We then
 
 (If you want to see where `context.primary` is used open `client/layout/index.jsx`.)
 
-### Ok, ready?
+## Ok, ready?
 
 Run `yarn start` if it wasn't already running, and load [http://calypso.localhost:3000/hello-world](http://calypso.localhost:3000/hello-world) in your browser. You should see "Hello, World!" on the page next to the sidebar. And since we added `siteSelection` in our initial route setup, changing a site in the sidebar should also work for your hello-world section. Happy _calypsoing_!
 

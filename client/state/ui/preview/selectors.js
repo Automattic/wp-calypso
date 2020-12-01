@@ -1,14 +1,10 @@
 /**
- * External dependencies
- */
-
-// None
-
-/**
  * Internal dependencies
  */
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+
+import 'calypso/state/ui/init';
 
 /**
  * Returns the URL if SitePreview currently has one.

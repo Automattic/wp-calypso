@@ -6,16 +6,16 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
-import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
-import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
+import { getFaqComponent } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
-export default function StoreFooter() {
-	const JetpackFAQComponent = getJetpackCROActiveVersion() === 'i5' ? JetpackFAQi5 : JetpackFAQ;
+const StoreFooter: React.FC = () => {
+	const JetpackFAQComponent = getFaqComponent();
 
-	return (
-		<>
-			<JetpackFAQComponent />
-		</>
-	);
-}
+	if ( JetpackFAQComponent ) {
+		return <JetpackFAQComponent />;
+	}
+
+	return null;
+};
+
+export default StoreFooter;

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-
 import { USER_DEVICES_REQUEST, USER_DEVICES_ADD } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/devices';
+import 'calypso/state/user-devices/init';
 
 /**
  * Returns an action object to signal the request of the user's devices.

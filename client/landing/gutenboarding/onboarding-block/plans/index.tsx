@@ -2,13 +2,13 @@
  * External dependencies
  */
 import * as React from 'react';
-import { isEnabled } from 'calypso/config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@automattic/react-i18n';
 import PlansGrid from '@automattic/plans-grid';
 import type { Plans } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -28,7 +28,8 @@ interface Props {
 }
 
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
-	const { __, i18nLocale: locale } = useI18n();
+	const { __ } = useI18n();
+	const locale = useLocale();
 	const history = useHistory();
 	const makePath = usePath();
 	const { goBack, goNext } = useStepNavigation();
@@ -107,7 +108,7 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
-				isExperimental={ isEnabled( 'gutenboarding/feature-picker' ) }
+				isAccordion
 				selectedFeatures={ selectedFeatures }
 				locale={ locale }
 			/>

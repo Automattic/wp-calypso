@@ -39,7 +39,7 @@ Example:
 Wrapper repo is basically the same Main repo but with parameterized `./run.sh` command which provide variety of ways to run the tests. We set things up this way to make it easy to differentiate build types on Circle CI, for example: [history of WooCommerce e2e test runs](https://circleci.com/build-insights/gh/Automattic/wp-e2e-tests-woocommerce/master).
 
 1. ~~[Main repo](https://github.com/Automattic/wp-e2e-tests) - Retired e2e repo~~
-1. [Canary tests](https://github.com/Automattic/wp-e2e-tests-canary) - `@canary` tagged tests which runs on every Calypso `master` merge
+1. [Canary tests](https://github.com/Automattic/wp-e2e-tests-canary) - `@canary` tagged tests which runs on every Calypso `trunk` merge
 1. ~~[IE11 tests](https://github.com/Automattic/wp-e2e-tests-ie11) - IE11 tests running in Sauce Labs. Triggered by `cron` job~~
 1. ~~[Jetpack stable](https://github.com/Automattic/wp-e2e-tests-jetpack) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses stable Jetpack releases and hosted on Pressable~~
 1. ~~[Jetpack bleeding edge](https://github.com/Automattic/wp-e2e-tests-jetpack-be) - Jetpack centric tests (specs tagged with `@jetpack` tag) which uses 'bleeding edge' Jetpack releases and hosted on Pressable~~

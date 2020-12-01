@@ -18,6 +18,7 @@ import { STORE_KEY } from './constants';
  * @param siteId {number}	The site to look up
  */
 export function* getSite( siteId: number ) {
+	yield dispatch( STORE_KEY ).fetchSite();
 	try {
 		const existingSite = yield wpcomRequest( {
 			path: '/sites/' + encodeURIComponent( siteId ),

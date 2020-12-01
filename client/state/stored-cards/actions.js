@@ -17,6 +17,8 @@ import {
 } from 'calypso/state/action-types';
 import wp from 'calypso/lib/wp';
 
+import 'calypso/state/stored-cards/init';
+
 export const addStoredCard = ( cardData ) => ( dispatch ) => {
 	return wp
 		.undocumented()
