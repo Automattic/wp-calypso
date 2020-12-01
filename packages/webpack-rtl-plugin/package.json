@@ -1,20 +1,20 @@
 {
-	"name": "webpack-rtl-plugin",
+	"name": "@automattic/webpack-rtl-plugin",
 	"version": "2.0.0",
-	"description": "Webpack plugin to produce a rtl css bundle",
+	"description": "Webpack plugin to produce a rtl css bundle. Forked from https://github.com/romainberger/webpack-rtl-plugin",
 	"main": "src/index.js",
-	"scripts": {
-		"test": "rm -rf test/dist* && mocha test/*.js"
+	"author": "Automattic Inc.",
+	"publishConfig": {
+		"access": "public"
 	},
-	"author": "Romain Berger <romain@romainberger.com>",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/romainberger/webpack-rtl-plugin"
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/webpack-rtl-plugin"
 	},
 	"bugs": {
-		"url": "https://github.com/romainberger/webpack-rtl-plugin"
+		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
-	"homepage": "https://github.com/romainberger/webpack-rtl-plugin",
 	"keywords": [
 		"webpack",
 		"css",
@@ -22,17 +22,17 @@
 	],
 	"license": "MIT",
 	"devDependencies": {
-		"chai": "4.2.0",
-		"css-loader": "2.1.1",
-		"mini-css-extract-plugin": "0.5.0",
-		"mocha": "6.0.2",
-		"webpack": "4.29.6"
+		"chai": "^4.2.0",
+		"css-loader": "^2.1.1",
+		"mini-css-extract-plugin": "^0.5.0",
+		"mocha": "^6.0.2",
+		"webpack": "^4.29.6"
 	},
 	"dependencies": {
 		"@romainberger/css-diff": "^1.0.3",
 		"async": "^2.0.0",
-		"cssnano": "4.1.10",
-		"rtlcss": "2.4.0",
-		"webpack-sources": "1.3.0"
+		"cssnano": "^4.1.10",
+		"rtlcss": "^2.4.0",
+		"webpack-sources": "^1.3.0"
 	}
 }
