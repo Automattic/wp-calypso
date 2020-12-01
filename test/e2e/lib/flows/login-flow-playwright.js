@@ -13,8 +13,12 @@ import * as dataHelper from '../data-helper';
 const host = dataHelper.getJetpackHost();
 
 export default class LoginFlow {
-    constructor( browser, accountOrFeatures) {
+    constructor( browser, accountOrFeatures ) {
+        // Reference to an instance of the browser is passed in as a parameter.
         this.browser = browser;
+        // Create a new context, which can be thought of as a new session/window
+        // containing a clean profile.
+        this.context = browser.newContext();
 
         // The following if/else is essentially carried over from the
         // original file.
@@ -45,16 +49,39 @@ export default class LoginFlow {
     async login() {
         console.log( 'Logging in as ' + this.account.username );
 
-        const browser = this.browser;
-        const context = await browser.newContext();
+        // Retrieve the context created in the constructor.
+        const context = await this.context;
+        // Launch a new page/tab in the context.
         const page = await context.newPage();
 
-        // Initialize the LoginPage page object.
+        // Initialize the LoginPage page object with the current page
+        // as the parameter.
         let loginPage;
         loginPage = new LoginPage( page );
 
         // Navigate to the login URL.
-        await page.goto(loginPage.url);
-        return await loginPage.login( this.account.email || this.account.username, this.account.password );
+        await page.goto( loginPage.url );
+        // Perform the login action.
+        await loginPage.login( this.account.email || this.account.username, this.account.password );
+
+        // Upon successful login, assign page as class property.
+        this.page = page;
+    }
+
+    async loginAndStartNewPost() {
+        const newPostButton = 'a.masterbar__item-new';
+        const iframe = '.main > iframe:nth-child(1)'
+
+        // Call the login() function to perform the login steps,
+        // and to obtain the page object.
+        await this.login();
+        
+        const page = this.page;
+
+        console.log( 'Starting new post' );
+
+        await page.waitForSelector( newPostButton );
+        await page.click( newPostButton );
+        return await page.waitForSelector( iframe );
     }
 }

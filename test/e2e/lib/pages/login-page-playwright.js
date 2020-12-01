@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import playwright from 'playwright';
-
-/**
  * Internal dependencies
  */
 import * as dataHelper from '../data-helper';
@@ -25,8 +20,10 @@ export default class LoginPage {
         const passwordSelector = "#password";
         const loginContainer = ".wp-login__container";
         
+        // Retrive the page object.
         const page = this.page;
         
+        // Begin the process of logging in.
         await page.waitForSelector( loginContainer );
         await page.waitForSelector( userNameSelector );
 
@@ -37,11 +34,12 @@ export default class LoginPage {
         await page.fill( passwordSelector, password );
         await page.keyboard.press("Enter");
 
-        // Check if My Home header appears.
-        // Note, I am not fond of this method, as the element does not belong to LoginPage object.
-        // It would be better to check for lack of an element that should be present at 
-        // login page or check that URL string no longer contains wp-login.
-        return await page.waitForSelector( ".customer-home__heading", {visible: true} );
+        // Check if My Home header appears to verify that login was successful.
+        // Note, I am not fond of this method, as the page element specified does not
+        // belong to the Login Page and therefore should have no business being here.
+        // Alternatively it may be better to check for lack of an element that should be 
+        // present at login page or check that URL string no longer contains wp-login.
+        return await page.waitForSelector( ".customer-home__heading", { visible: true } );
     }
 
     static getLoginURL() {
