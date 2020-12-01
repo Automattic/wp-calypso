@@ -137,13 +137,13 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				) ) }
 			<div className="domain-picker__suggestion-item-name">
 				<div className="domain-picker__suggestion-item-name-inner">
-					<span className="domain-picker__domain-name">{ domainName }</span>
 					<span
-						className={ classnames( 'domain-picker__domain-tld', {
+						className={ classnames( 'domain-picker__domain-wrapper', {
 							'with-margin': ! hstsRequired,
 						} ) }
 					>
-						{ domainTld }
+						<span className="domain-picker__domain-sub-domain">{ domainName }</span>
+						<span className="domain-picker__domain-tld">{ domainTld }</span>
 					</span>
 					{ hstsRequired && (
 						<InfoTooltip

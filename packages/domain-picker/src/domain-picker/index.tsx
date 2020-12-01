@@ -253,6 +253,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						onChange={ handleInputChange }
 						onBlur={ onDomainSearchBlurValue }
 						value={ domainSearch }
+						dir="ltr"
 					/>
 				</div>
 			) }
