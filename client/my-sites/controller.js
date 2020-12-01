@@ -251,19 +251,27 @@ function onSelectedSiteAvailable( context, basePath ) {
 		return false;
 	}
 
-	// Update recent sites preference
+	updateRecentSitesPreferences( context );
+
+	return true;
+}
+
+export function updateRecentSitesPreferences( context ) {
+	const state = context.store.getState();
+
 	if ( hasReceivedRemotePreferences( state ) ) {
+		const siteId = getSelectedSite( state )?.ID;
 		const recentSites = getPreference( state, 'recentSites' );
-		if ( selectedSite.ID !== recentSites[ 0 ] ) {
-			//also filter recent sites if not available locally
-			const updatedRecentSites = uniq( [ selectedSite.ID, ...recentSites ] )
+
+		if ( siteId && siteId !== recentSites[ 0 ] ) {
+			// Also filter recent sites if not available locally
+			const updatedRecentSites = uniq( [ siteId, ...recentSites ] )
 				.slice( 0, 5 )
 				.filter( ( recentId ) => !! getSite( state, recentId ) );
+
 			context.store.dispatch( savePreference( 'recentSites', updatedRecentSites ) );
 		}
 	}
-
-	return true;
 }
 
 /**
@@ -369,26 +377,16 @@ export function siteSelection( context, next ) {
 	 */
 	if ( hasOneSite && ! siteFragment ) {
 		const primarySiteId = getPrimarySiteId( getState() );
-
-		const redirectToPrimary = ( primarySiteSlug ) => {
-			const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
-			const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
-			let redirectPath = `${ pathname }${ primarySiteSlug }`;
-			if ( context.querystring ) {
-				redirectPath += `?${ context.querystring }`;
-			}
-			page.redirect( redirectPath );
-		};
-
 		const primarySiteSlug = getSiteSlug( getState(), primarySiteId );
+
 		if ( primarySiteSlug ) {
-			redirectToPrimary( primarySiteSlug );
+			redirectToPrimary( context, primarySiteSlug );
 		} else {
 			// Fetch the primary site by ID and then try to determine its slug again.
 			dispatch( requestSite( primarySiteId ) ).then( () => {
 				const freshPrimarySiteSlug = getSiteSlug( getState(), primarySiteId );
 				if ( freshPrimarySiteSlug ) {
-					redirectToPrimary( freshPrimarySiteSlug );
+					redirectToPrimary( context, freshPrimarySiteSlug );
 				} else {
 					// If the primary site does not exist, skip redirect
 					// and display a useful error notification
@@ -444,6 +442,16 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	}
+}
+
+export function redirectToPrimary( context, primarySiteSlug ) {
+	const pathNameSplit = context.pathname.split( '/no-site' )[ 0 ];
+	const pathname = pathNameSplit.replace( /\/?$/, '/' ); // append trailing slash if not present
+	let redirectPath = `${ pathname }${ primarySiteSlug }`;
+	if ( context.querystring ) {
+		redirectPath += `?${ context.querystring }`;
+	}
+	page.redirect( redirectPath );
 }
 
 export function jetpackModuleActive( moduleId, redirect ) {
