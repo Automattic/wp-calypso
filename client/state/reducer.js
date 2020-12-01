@@ -18,7 +18,6 @@ import atomicTransfer from './atomic-transfer/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
-import experiments from './experiments/reducer';
 import happychat from './happychat/reducer';
 import i18n from './i18n/reducer';
 import immediateLogin from './immediate-login/reducer';
@@ -44,7 +43,6 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	documentHead,
-	experiments,
 	happychat,
 	httpData,
 	i18n,
