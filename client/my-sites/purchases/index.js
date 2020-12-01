@@ -15,7 +15,7 @@ import {
 	purchaseCancel,
 	purchaseCancelDomain,
 	purchaseAddPaymentMethod,
-	purchaseEditPaymentMethod,
+	purchaseChangePaymentMethod,
 	billingHistory,
 	receiptView,
 	paymentMethods,
@@ -74,10 +74,10 @@ export default ( router ) => {
 		clientRender
 	);
 	page(
-		'/purchases/subscriptions/:site/:purchaseId/payment/edit/:cardId',
+		'/purchases/subscriptions/:site/:purchaseId/payment/change/:cardId',
 		siteSelection,
 		navigation,
-		purchaseEditPaymentMethod,
+		purchaseChangePaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -141,7 +141,7 @@ export default ( router ) => {
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) =>
 			page.redirect(
-				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/edit/${ cardId }`
+				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/change/${ cardId }`
 			)
 	);
 };

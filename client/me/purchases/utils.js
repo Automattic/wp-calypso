@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { addCardDetails, editCardDetails, addPaymentMethod, editPaymentMethod } from './paths';
+import { addCardDetails, editCardDetails, addPaymentMethod, changePaymentMethod } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
@@ -24,14 +24,14 @@ function canEditPaymentDetails( purchase ) {
 	);
 }
 
-function getEditCardDetailsPath( siteSlug, purchase ) {
+function getChangePaymentMethodPath( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const {
 			payment: { creditCard },
 		} = purchase;
 
 		if ( isEnabled( 'purchases/new-payment-methods' ) ) {
-			return editPaymentMethod( siteSlug, purchase.id, creditCard.id );
+			return changePaymentMethod( siteSlug, purchase.id, creditCard.id );
 		}
 
 		return editCardDetails( siteSlug, purchase.id, creditCard.id );
@@ -44,4 +44,4 @@ function getEditCardDetailsPath( siteSlug, purchase ) {
 	return addCardDetails( siteSlug, purchase.id );
 }
 
-export { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading };
+export { canEditPaymentDetails, getChangePaymentMethodPath, isDataLoading };

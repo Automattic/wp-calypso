@@ -77,7 +77,7 @@ export function addPaymentMethod( siteName, purchaseId ) {
 	return managePurchase( siteName, purchaseId ) + '/payment-method/add';
 }
 
-export function editPaymentMethod( siteName, purchaseId, cardId ) {
+export function changePaymentMethod( siteName, purchaseId, cardId ) {
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (
 			'undefined' === typeof siteName ||
@@ -87,7 +87,7 @@ export function editPaymentMethod( siteName, purchaseId, cardId ) {
 			throw new Error( 'siteName, purchaseId, and cardId must be provided' );
 		}
 	}
-	return managePurchase( siteName, purchaseId ) + `/payment-method/edit/${ cardId }`;
+	return managePurchase( siteName, purchaseId ) + `/payment-method/change/${ cardId }`;
 }
 
 export const deprecated = {

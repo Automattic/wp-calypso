@@ -24,11 +24,11 @@ import {
 	getManagePurchaseUrlFor,
 	getAddPaymentMethodUrlFor,
 } from './paths';
-import { getEditOrAddPaymentMethodUrlFor } from './utils';
+import { getChangeOrAddPaymentMethodUrlFor } from './utils';
 import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
 import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
 import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
-import EditPaymentMethod from 'calypso/me/purchases/manage-purchase/edit-payment-method';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
@@ -121,7 +121,7 @@ export function PurchaseDetails( {
 					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					getEditPaymentMethodUrlFor={ getEditOrAddPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 			</SiteLevelPurchasesErrorBoundary>
@@ -213,7 +213,7 @@ export function PurchaseAddPaymentMethod( {
 	);
 }
 
-export function PurchaseEditPaymentMethod( {
+export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
 	cardId,
@@ -242,7 +242,7 @@ export function PurchaseEditPaymentMethod( {
 				onError={ logPurchasesError }
 			>
 				{ config.isEnabled( 'purchases/new-payment-methods' ) ? (
-					<EditPaymentMethod
+					<ChangePaymentMethod
 						cardId={ cardId }
 						purchaseId={ purchaseId }
 						siteSlug={ siteSlug }

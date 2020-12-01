@@ -39,7 +39,7 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getEditCardDetailsPath } from '../utils';
+import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -111,7 +111,7 @@ class ManagePurchase extends Component {
 		cardTitle: PropTypes.string,
 		getAddPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
-		getEditPaymentMethodUrlFor: PropTypes.func,
+		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
@@ -133,8 +133,8 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
-		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
+		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
@@ -296,14 +296,14 @@ class ManagePurchase extends Component {
 	};
 
 	renderEditPaymentMethodNavItem() {
-		const { purchase, translate, siteSlug, getEditPaymentMethodUrlFor } = this.props;
+		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
 		if ( ! this.props.site ) {
 			return null;
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditPaymentMethodUrlFor( siteSlug, purchase );
+			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
 			const addPaymentMethodCopy = config.isEnabled( 'purchases/new-payment-methods' )
 				? translate( 'Add Payment Method' )
@@ -588,7 +588,7 @@ class ManagePurchase extends Component {
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 			hasLoadedPurchasesFromServer,
 		} = this.props;
 
@@ -638,7 +638,7 @@ class ManagePurchase extends Component {
 							siteSlug={ siteSlug }
 							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
@@ -674,13 +674,13 @@ class ManagePurchase extends Component {
 			translate,
 			getManagePurchaseUrlFor,
 			getAddPaymentMethodUrlFor,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
 
 		let editCardDetailsPath = false;
 		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getEditPaymentMethodUrlFor( siteSlug, purchase );
+			editCardDetailsPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
