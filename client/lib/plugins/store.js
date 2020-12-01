@@ -280,7 +280,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'AUTOUPDATE_PLUGIN':
 		case 'UPDATE_PLUGIN':
 			PluginsStore.emitChange();
 			break;
@@ -290,7 +289,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'RECEIVE_AUTOUPDATE_PLUGIN':
 		case 'RECEIVE_UPDATED_PLUGIN':
 			if ( action.error ) {
 				debug( 'plugin updating error', action.error );
