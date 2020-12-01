@@ -75,7 +75,7 @@ class Block_Patterns_From_API {
 		$pattern_categories = array();
 		$block_patterns     = $this->get_patterns();
 
-		foreach ( (array) $this->get_patterns() as $pattern ) {
+		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
 				$pattern_categories[ $slug ] = $category['title'];
 			}
@@ -87,18 +87,20 @@ class Block_Patterns_From_API {
 			register_block_pattern_category( $slug, array( 'label' => $label ) );
 		}
 
-		foreach ( (array) $this->get_patterns() as $pattern ) {
+		foreach ( (array) $block_patterns as $pattern ) {
 			if ( $this->can_register_pattern( $pattern ) ) {
+				$is_premium = in_array( 'premium_block_pattern', array_keys( $pattern['tags'] ), true );
 				register_block_pattern(
 					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
-						'description'   => $pattern['title'],
+						'description'   => $pattern['description'],
 						'content'       => $pattern['html'],
 						'viewportWidth' => 1280,
 						'categories'    => array_keys(
 							$pattern['categories']
 						),
+						'isPremium'     => $is_premium,
 					)
 				);
 			}
@@ -111,6 +113,32 @@ class Block_Patterns_From_API {
 	 * @return array
 	 */
 	private function get_patterns() {
+		if ( defined( 'WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE' ) && WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE ) {
+			// Skip caching and request all patterns from a specified source site.
+			// This allows testing patterns in development with immediate feedback
+			// while avoiding polluting the cache. Note that this request gets
+			// all patterns on the source site, not just those with the 'pattern' tag.
+			$request_url = esc_url_raw(
+				add_query_arg(
+					array(
+						'site' => WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE,
+					),
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
+				)
+			);
+
+			if ( function_exists( 'wpcom_json_api_get' ) ) {
+				$response = wpcom_json_api_get( $request_url, $args );
+			} else {
+				$response = wp_remote_get( $request_url, $args );
+			}
+
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return array();
+			}
+			return json_decode( wp_remote_retrieve_body( $response ), true );
+		}
+
 		$block_patterns = wp_cache_get( $this->patterns_cache_key, 'ptk_patterns' );
 
 		// Load fresh data if we don't have any patterns.
@@ -181,3 +209,4 @@ class Block_Patterns_From_API {
 		return true;
 	}
 }
+
