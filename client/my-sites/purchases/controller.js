@@ -89,7 +89,7 @@ export const paymentMethods = ( context, next ) => {
 	next();
 };
 
-export const addCreditCard = ( context, next ) => {
+export const addPaymentMethod = ( context, next ) => {
 	context.primary = <AddNewPaymentMethod siteSlug={ context.params.site } />;
 	next();
 };

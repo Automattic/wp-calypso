@@ -19,10 +19,10 @@ export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 export const getAddPaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number }
-) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
+) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/add`;
 
 export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
-	`/purchases/add-credit-card/${ targetSiteSlug }`;
+	`/purchases/add-payment-method/${ targetSiteSlug }`;
 
 export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
 	`/purchases/payment-methods/${ targetSiteSlug }`;
@@ -32,7 +32,7 @@ export const getChangePaymentMethodUrlFor = (
 	targetPurchase: { id: string | number },
 	targetCardId: { id: string | number }
 ) =>
-	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/change/${ targetCardId }`;
+	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/change/${ targetCardId }`;
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;
