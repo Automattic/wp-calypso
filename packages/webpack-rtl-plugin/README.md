@@ -1,6 +1,6 @@
 # Webpack RTL Plugin
 
-Originally forked from https://github.com/romainberger/webpack-rtl-plugin, commit aca883ad70671a5d2a90c676fe8ea60d42c8759b (tag v2.0.0).
+Originally forked from <https://github.com/romainberger/webpack-rtl-plugin>, commit aca883ad70671a5d2a90c676fe8ea60d42c8759b (tag v2.0.0).
 
 This plugin contains Automattic changes to the original `webpack-rtl-plugin` and is released as `@automattic/webpack-rtl-plugin`.
 
