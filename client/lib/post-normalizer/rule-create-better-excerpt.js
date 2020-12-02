@@ -77,14 +77,14 @@ export function formatExcerpt( content ) {
 	stripLeadingBreaklines( dom );
 
 	// now limit it to the first three elements
-	forEach( dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ), function (
-		element,
-		index
-	) {
-		if ( index >= 3 ) {
-			element.parentNode && element.parentNode.removeChild( element );
+	forEach(
+		dom.querySelectorAll( '#__better_excerpt__ > p, #__better_excerpt__ > br' ),
+		function ( element, index ) {
+			if ( index >= 3 ) {
+				element.parentNode && element.parentNode.removeChild( element );
+			}
 		}
-	} );
+	);
 
 	// trim and replace &nbsp; entities
 	const betterExcerpt = trim( dom.innerHTML.replace( /&nbsp;/g, ' ' ) );

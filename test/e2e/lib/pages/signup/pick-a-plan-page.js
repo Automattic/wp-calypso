@@ -48,7 +48,9 @@ export default class PickAPlanPage extends AsyncBaseContainer {
 
 		if ( level === 'free' ) {
 			if ( ! ( await driverHelper.isElementPresent( this.driver, selector ) ) ) {
-				selector = By.css( '.plans-features-main__banner-content button, .formatted-header__subtitle button' );
+				selector = By.css(
+					'.plans-features-main__banner-content button, .formatted-header__subtitle button'
+				);
 			}
 		}
 		await driverHelper.waitTillPresentAndDisplayed(
