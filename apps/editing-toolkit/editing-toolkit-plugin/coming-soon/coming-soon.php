@@ -13,7 +13,7 @@ namespace A8C\FSE\Coming_soon;
  * @return boolean
  */
 function should_show_coming_soon_page() {
-	if ( ! is_singular() && ! is_archive() && ! is_search() && ! is_front_page() && ! is_home() ) {
+	if ( ! is_singular() && ! is_archive() && ! is_search() && ! is_front_page() && ! is_home() && ! is_404() ) {
 		return false;
 	}
 
