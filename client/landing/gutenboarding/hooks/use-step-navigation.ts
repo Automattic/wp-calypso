@@ -65,15 +65,15 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const isLastStep = currentStepIndex === steps.length - 1;
 
 	// Transfer anchor podcast ID from the query string to the location state, if needed
-	const state = useLocation< GutenLocationStateType >().state ?? {};
+	const locationState = useLocation< GutenLocationStateType >().state ?? {};
 	const anchorFmPodcastId = useAnchorFmPodcastId();
 	if ( anchorFmPodcastId ) {
-		state.anchorFmPodcastId = anchorFmPodcastId;
+		locationState.anchorFmPodcastId = anchorFmPodcastId;
 	}
 
-	const handleBack = () => history.push( previousStepPath, state );
+	const handleBack = () => history.push( previousStepPath, locationState );
 	const handleNext = () =>
-		isLastStep ? handleSiteCreation() : history.push( nextStepPath, state );
+		isLastStep ? handleSiteCreation() : history.push( nextStepPath, locationState );
 
 	return {
 		goBack: handleBack,
