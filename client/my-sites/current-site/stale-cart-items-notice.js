@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useTranslate } from 'i18n-calypso';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -17,57 +17,60 @@ import { getSectionName, getSelectedSiteSlug } from 'calypso/state/ui/selectors'
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 
-class StaleCartItemsNotice extends React.Component {
-	showStaleCartItemsNotice = () => {
+export default function StaleCartItemsNotice() {
+	useShowStaleCartNotice();
+	return null;
+}
+
+function useShowStaleCartNotice() {
+	const selectedSiteSlug = useSelector( getSelectedSiteSlug );
+	const staleCartItemNoticeLastTimeShown = useSelector( ( state ) =>
+		getNoticeLastTimeShown( state, staleCartItemNoticeId )
+	);
+	const sectionName = useSelector( getSectionName );
+	const reduxDispatch = useDispatch();
+	const { responseCart, isPendingUpdate } = useShoppingCart();
+	const translate = useTranslate();
+
+	useEffect( () => {
 		// Don't show on the checkout page?
-		if ( this.props.sectionName === 'upgrades' ) {
+		if ( sectionName === 'upgrades' ) {
 			// Remove any existing stale cart notice
-			this.props.removeNotice( staleCartItemNoticeId );
-			return null;
+			reduxDispatch( removeNotice( staleCartItemNoticeId ) );
+			return;
 		}
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown
 		// in the last 10 minutes (cart abandonment)
 		if (
-			this.props.selectedSiteSlug &&
-			hasStaleItem( this.props.cart ) &&
-			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000 &&
-			this.props.cart.hasLoadedFromServer &&
-			! this.props.cart.hasPendingServerUpdates
+			selectedSiteSlug &&
+			hasStaleItem( responseCart ) &&
+			staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000 &&
+			! isPendingUpdate
 		) {
-			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
+			reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_view' ) );
 
 			// Remove any existing stale cart notice
-			this.props.removeNotice( staleCartItemNoticeId );
+			reduxDispatch( removeNotice( staleCartItemNoticeId ) );
 
-			this.props.infoNotice( this.props.translate( 'Your cart is awaiting payment.' ), {
-				id: staleCartItemNoticeId,
-				button: this.props.translate( 'View your cart' ),
-				href: '/checkout/' + this.props.selectedSiteSlug,
-				onClick: this.clickStaleCartItemsNotice,
-			} );
+			reduxDispatch(
+				infoNotice( translate( 'Your cart is awaiting payment.' ), {
+					id: staleCartItemNoticeId,
+					button: translate( 'View your cart' ),
+					href: '/checkout/' + selectedSiteSlug,
+					onClick: () => {
+						reduxDispatch( recordTracksEvent( 'calypso_cart_abandonment_notice_click' ) );
+					},
+				} )
+			);
 		}
-	};
-
-	clickStaleCartItemsNotice = () => {
-		this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_click' );
-	};
-
-	componentDidMount() {
-		this.props.shoppingCartManager.reloadFromServer();
-	}
-
-	render() {
-		this.showStaleCartItemsNotice();
-		return null;
-	}
+	}, [
+		isPendingUpdate,
+		sectionName,
+		selectedSiteSlug,
+		responseCart,
+		reduxDispatch,
+		translate,
+		staleCartItemNoticeLastTimeShown,
+	] );
 }
-
-export default connect(
-	( state ) => ( {
-		selectedSiteSlug: getSelectedSiteSlug( state ),
-		staleCartItemNoticeLastTimeShown: getNoticeLastTimeShown( state, staleCartItemNoticeId ),
-		sectionName: getSectionName( state ),
-	} ),
-	{ infoNotice, removeNotice, recordTracksEvent }
-)( withShoppingCart( localize( StaleCartItemsNotice ) ) );
