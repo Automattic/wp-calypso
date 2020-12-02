@@ -212,7 +212,6 @@ object BuildDockerImage : BuildType({
 				""".trimIndent()
 				commandArgs = """
 					--pull
-					--build-arg use_cache=true
 					--label com.a8c.image-builder=teamcity
 					--label com.a8c.build-id=%teamcity.build.id%
 				""".trimIndent().replace("\n"," ")
