@@ -109,20 +109,15 @@ export function useIsAnchorFm(): boolean {
 // Returns the anchor podcast id. First looks in "location state",
 // provided by react-router-dom, if not available there, checks the query string.
 export function useAnchorFmPodcastId(): string | null {
-	const { state } = useLocation< GutenLocationStateType >();
-	const idFromQueryString = useAnchorFmQueryParam();
+	const { state, search } = useLocation< GutenLocationStateType >();
+
+	// Use location state if available
 	if ( state && state.anchorFmPodcastId ) {
 		return state.anchorFmPodcastId;
 	}
-	return idFromQueryString;
-}
 
-// Returns podcastId value if url has a `?anchor_podcast`, which is used
-// for sites created by Anchor.fm users.
-// External callers should prefer useAnchorFmPodcastId(), since navigating steps
-// and pressing f5 can remove the query param.
-function useAnchorFmQueryParam(): string | null {
-	const queryParam = new URLSearchParams( useLocation().search ).get( 'anchor_podcast' );
+	// Fall back to looking in query param
+	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
 	if ( queryParam !== null && queryParam !== '' ) {
 		return queryParam;
 	}
