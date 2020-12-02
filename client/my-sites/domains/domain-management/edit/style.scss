@@ -204,6 +204,17 @@
 		margin-top: 0;
 	}
 
+	.domain-types__auto-renew-wrapper {
+		.components-toggle-control {
+			display: flex;
+			justify-content: center;
+		}
+
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
 	.domain-types__auto-renew-placeholder,
 	.domain-types__expires-placeholder {
 		width: 20%;
