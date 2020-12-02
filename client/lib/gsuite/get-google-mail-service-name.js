@@ -4,7 +4,7 @@
 import config from 'calypso/config';
 import { GSUITE_PRODUCT_NAME, GOOGLE_WORKSPACE_PRODUCT_NAME } from 'calypso/lib/gsuite/constants';
 
-export function getGoogleWorkspaceProductName( productName = null ) {
+export function getGoogleMailServiceName( productName = null ) {
 	if ( productName ) {
 		return productName;
 	}
