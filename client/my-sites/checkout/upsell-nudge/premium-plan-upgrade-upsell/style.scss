@@ -1,0 +1,159 @@
+main.premium-plan-upgrade-upsell.main {
+	margin: auto;
+}
+
+.premium-plan-upgrade-upsell {
+	display: flex;
+	flex-direction: column;
+
+	b {
+		font-weight: 700;
+	}
+
+	.card {
+		width: 100%;
+	}
+
+	&__placeholders {
+		display: flex;
+		flex-direction: column;
+
+		.is-placeholder {
+			animation: pulse-light 800ms ease-in-out infinite;
+			background: var( --color-neutral-10 );
+		}
+	}
+
+	&__placeholder-row {
+		height: 40px;
+		flex: 0 0 100%;
+		margin-bottom: 15px;
+	}
+
+	&__placeholder-button {
+		height: 50px;
+		width: 100%;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			width: 80px;
+			height: 40px;
+		}
+	}
+
+	&__placeholder-button-container {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__card-header,
+	&__card-footer {
+		width: 100%;
+	}
+
+	&__card-body {
+		overflow: auto;
+		flex: 1;
+	}
+
+	&__column-pane {
+		display: flex;
+		flex-flow: row;
+	}
+
+	&__column-content {
+		padding-right: 10px;
+		@include breakpoint-deprecated( '<480px' ) {
+			padding-right: 0;
+		}
+	}
+
+	&__column-doodle {
+		width: 120px;
+		flex-shrink: 0;
+		@include breakpoint-deprecated( '<480px' ) {
+			display: none;
+		}
+	}
+
+	&__doodle {
+		margin-top: 85px;
+	}
+
+	&__small-header {
+		font-style: italic;
+		text-align: center;
+	}
+
+	&__header {
+		font-size: $font-title-medium;
+		font-weight: 600;
+		text-align: center;
+		line-height: 1.4;
+		margin-top: 0.7em;
+		margin-bottom: 1em;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-title-small;
+		}
+	}
+	&__sub-header {
+		font-size: $font-title-small;
+		font-weight: normal;
+		text-align: center;
+		line-height: 1.4;
+		margin-top: 5px;
+		margin-bottom: 1.6em;
+
+		@include breakpoint-deprecated( '<660px' ) {
+			font-size: $font-body;
+		}
+	}
+
+	&__checklist {
+		margin: 0 0 0.75em;
+
+		&-item {
+			display: flex;
+			width: 100%;
+			align-items: flex-start;
+			margin-bottom: 1.2em;
+
+			@include breakpoint-deprecated( '<660px' ) {
+				align-items: flex-start;
+			}
+		}
+
+		&-item-icon {
+			width: 18px;
+			fill: var( --studio-jetpack-green-30 );
+			margin-right: 5px;
+		}
+
+		&-item-text {
+			flex: 1;
+		}
+	}
+
+	&__footer &__decline-offer-button {
+		color: var( --color-primary );
+
+		@include breakpoint-deprecated( '<480px' ) {
+			width: 100%;
+		}
+
+		@include breakpoint-deprecated( '>480px' ) {
+			float: left;
+		}
+	}
+
+	&__footer &__accept-offer-button {
+		@include breakpoint-deprecated( '<480px' ) {
+			width: 100%;
+			margin-top: 10px;
+		}
+
+		@include breakpoint-deprecated( '>480px' ) {
+			float: right;
+		}
+	}
+}
