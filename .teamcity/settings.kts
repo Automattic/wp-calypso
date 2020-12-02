@@ -269,6 +269,7 @@ object RunAllUnitTests : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Install modules
@@ -292,6 +293,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Prevent uncommited changes
@@ -321,6 +323,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run type checks
@@ -347,6 +350,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run client tests
@@ -373,6 +377,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run server tests
@@ -399,6 +404,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run packages tests
@@ -425,6 +431,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run build-tools tests
@@ -451,6 +458,7 @@ object RunAllUnitTests : BuildType({
 				unset CALYPSO_ENV
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Run Editing Toolkit tests
@@ -475,6 +483,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="production"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build o2-blocks
@@ -504,6 +513,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="production"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				yarn components:storybook:start --ci --smoke-test
@@ -526,6 +536,7 @@ object RunAllUnitTests : BuildType({
 				export NODE_ENV="production"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				yarn search:storybook:start --ci --smoke-test
@@ -631,6 +642,7 @@ object CheckCodeStyle : BuildType({
 				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Install modules
@@ -654,6 +666,7 @@ object CheckCodeStyle : BuildType({
 				export NODE_ENV="test"
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Find files to lint
@@ -773,6 +786,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export PUPPETEER_SKIP_DOWNLOAD=true
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Restore mtime to maximize cache hits
@@ -800,6 +814,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				set -o pipefail
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build desktop
@@ -823,6 +838,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export USE_HARD_LINKS=false
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Build app
@@ -848,6 +864,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export CI=true
 
 				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
 
 				# Start framebuffer
