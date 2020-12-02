@@ -17,7 +17,7 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 			viewBox="0 0 300 40"
 			xmlSpace="preserve"
 			width="300"
-			transform={ isRTL() ? 'scale(-1,1)' : undefined }
+			style={ isRTL() ? { transform: 'scaleX(-1)' } : undefined }
 		>
 			<rect x="0" width="310" height="50" rx="10" fill="#D8D8D8" />
 			<rect x="8" y="8" width="25" height="25" rx="5" fill="#fff" />
