@@ -290,7 +290,17 @@ add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
  * are loaded via load_block_patterns_from_api.
  */
 function load_wpcom_block_patterns_modifications() {
-	require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+	try {
+		if ( class_exists( '\WPCOM_Experiment' ) ) {
+			$experiment = \WPCOM_Experiment::Instance( 'premium_patterns_inserter_highlight' );
+			// if ( is in variant group ) {
+				require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+			// }
+			return;
+		}
+	} catch ( \ExperimentNotFound $error ) { //
+		// handle experiment not found error
+	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
 
