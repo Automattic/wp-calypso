@@ -135,10 +135,7 @@ class DisconnectJetpack extends PureComponent {
 				)
 			);
 			features.push(
-				translate(
-					'{{icon/}} Daily automated malware scanning with automated resolution',
-					this.getIcon( 'spam' )
-				)
+				translate( '{{icon/}} Real-time automated malware scanning', this.getIcon( 'spam' ) )
 			);
 			features.push(
 				translate( '{{icon/}} Priority WordPress and security support', this.getIcon( 'chat' ) )
