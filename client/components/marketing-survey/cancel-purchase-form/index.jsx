@@ -318,6 +318,12 @@ class CancelPurchaseForm extends React.Component {
 		);
 
 		appendRadioOption(
+			'downgradeToAnotherPlan',
+			translate( "I'd like to downgrade to another plan." ),
+			translate( 'Mind telling us which one?' )
+		);
+
+		appendRadioOption(
 			'onlyNeedFree',
 			translate( 'The plan was too expensive.' ),
 			translate( 'How can we improve our upgrades?' )
