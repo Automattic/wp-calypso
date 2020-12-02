@@ -36,17 +36,6 @@ const FocusedLaunch: React.FunctionComponent = () => {
 		}
 	}, [ isSiteLaunched, enablePersistentSuccessView ] );
 
-	// This class is used to hide the "Launch" button from the block editor's header
-	// @TODO:
-	//   - if this is a block editor specific feature, move to the LaunchContext
-	//     and only specify when including Focused Launch thorugh Editing Toolkit
-	//   - think about a less hacky way to achieve this (e.g. @wordpress/hooks?)
-	React.useEffect( () => {
-		if ( isSiteLaunched || isSiteLaunching ) {
-			document.body.classList.add( 'is-focused-launch-complete' );
-		}
-	}, [ isSiteLaunched, isSiteLaunching ] );
-
 	return (
 		<Router
 			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
