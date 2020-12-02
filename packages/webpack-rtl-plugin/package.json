@@ -1,7 +1,7 @@
 {
 	"name": "@automattic/webpack-rtl-plugin",
 	"version": "2.0.0",
-	"description": "Webpack plugin to produce a rtl css bundle. Forked from https://github.com/romainberger/webpack-rtl-plugin",
+	"description": "Webpack plugin to produce a rtl css bundle.",
 	"main": "src/index.js",
 	"author": "Automattic Inc.",
 	"publishConfig": {
@@ -23,7 +23,7 @@
 	"files": [
 		"src"
 	],
-	"license": "MIT",
+	"license": "GPL-2.0-or-later",
 	"devDependencies": {
 		"css-loader": "^3.4.2",
 		"mini-css-extract-plugin": "^0.5.0",
