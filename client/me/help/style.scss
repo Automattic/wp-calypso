@@ -1,7 +1,10 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .help .upwork-banner {
 	margin: 10px 10px 20px;
 
-	@include breakpoint-deprecated( '>660px' ) {
+	@include break-small {
 		margin: 0 0 24px;
 	}
 }
@@ -46,7 +49,7 @@
 .help__support-link-title {
 	font-size: $font-body;
 	color: var( --color-primary );
-	@include breakpoint-deprecated( '>660px' ) {
+	@include break-small {
 		font-size: $font-title-small;
 	}
 }
@@ -87,7 +90,7 @@
 		box-sizing: border-box;
 		padding: 24px;
 
-		@include breakpoint-deprecated( '>1040px' ) {
+		@include break-huge {
 			padding: 32px;
 		}
 	}
@@ -99,11 +102,16 @@
 	}
 
 	.help__support-session-illustration {
+		display: none;
 		width: 33.33%;
 		align-self: center;
 		flex-shrink: 0;
 		margin-left: auto;
 		text-align: center;
+
+		@include break-large {
+			display: block;
+		}
 	}
 
 	.help__support-session-title {
@@ -112,7 +120,7 @@
 		line-height: 36px;
 		margin-bottom: 4px;
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include break-medium {
 			line-height: 40px;
 		}
 	}
@@ -123,7 +131,7 @@
 		line-height: 24px;
 		color: var( --color-text );
 
-		@include breakpoint-deprecated( '>800px' ) {
+		@include break-medium {
 			line-height: 28px;
 			margin-bottom: 32px;
 		}
