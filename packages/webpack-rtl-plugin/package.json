@@ -20,6 +20,9 @@
 		"css",
 		"rtl"
 	],
+	"files": [
+		"src"
+	],
 	"license": "MIT",
 	"devDependencies": {
 		"css-loader": "^3.4.2",
