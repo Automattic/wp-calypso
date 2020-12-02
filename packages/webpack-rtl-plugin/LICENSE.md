@@ -1,3 +1,5 @@
+webpack-rtl-plugin adapted from [webpack-rtl-plugin](https://github.com/romainberger/webpack-rtl-plugin), released by Romain Berger under the MIT License (MIT):
+
 MIT License
 
 Copyright (c) 2016 Romain Berger
