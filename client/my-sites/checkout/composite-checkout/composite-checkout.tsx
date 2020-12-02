@@ -202,7 +202,6 @@ export default function CompositeCheckout( {
 
 	const {
 		productsForCart,
-		renewalsForCart,
 		isLoading: areCartProductsPreparing,
 		error: cartProductPrepError,
 	} = usePrepareProductsForCart( {
@@ -225,19 +224,16 @@ export default function CompositeCheckout( {
 		loadingError: cartLoadingError,
 		loadingErrorType: cartLoadingErrorType,
 		addProductsToCart,
-		replaceProductsInCart,
 	} = useShoppingCart();
 
 	const isInitialCartLoading = useAddProductsFromUrl( {
 		isLoadingCart,
 		isCartPendingUpdate,
 		productsForCart,
-		renewalsForCart,
 		areCartProductsPreparing,
 		couponCodeFromUrl,
 		applyCoupon,
 		addProductsToCart,
-		replaceProductsInCart,
 	} );
 
 	useRecordCartLoaded( {

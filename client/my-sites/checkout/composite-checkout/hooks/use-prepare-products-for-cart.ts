@@ -28,7 +28,6 @@ const debug = debugFactory( 'calypso:composite-checkout:use-prepare-products-for
 
 interface PreparedProductsForCart {
 	productsForCart: RequestCartProduct[];
-	renewalsForCart: RequestCartProduct[];
 	isLoading: boolean;
 	error: string | null;
 }
@@ -36,7 +35,6 @@ interface PreparedProductsForCart {
 const initialPreparedProductsState = {
 	isLoading: true,
 	productsForCart: [],
-	renewalsForCart: [],
 	error: null,
 };
 
@@ -106,18 +104,13 @@ function preparedProductsReducer(
 	action: PreparedProductsAction
 ): PreparedProductsForCart {
 	switch ( action.type ) {
+		case 'RENEWALS_ADD':
+		// fall through
 		case 'PRODUCTS_ADD':
 			if ( ! state.isLoading ) {
 				return state;
 			}
-			// Note that products and renewals are mutually exclusive; they cannot both be in the cart at the same time
-			return { ...state, productsForCart: action.products, renewalsForCart: [], isLoading: false };
-		case 'RENEWALS_ADD':
-			if ( ! state.isLoading ) {
-				return state;
-			}
-			// Note that products and renewals are mutually exclusive; they cannot both be in the cart at the same time
-			return { ...state, productsForCart: [], renewalsForCart: action.products, isLoading: false };
+			return { ...state, productsForCart: action.products, isLoading: false };
 		case 'PRODUCTS_ADD_ERROR':
 			if ( ! state.isLoading ) {
 				return state;
