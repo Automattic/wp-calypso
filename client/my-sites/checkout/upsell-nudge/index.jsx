@@ -35,7 +35,8 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
-import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { PurchaseModal } from './purchase-modal';
 import { replaceCartWithItems } from 'calypso/lib/cart/actions';
@@ -164,9 +165,23 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'plan-upgrade-upsell':
+			case 'business-plan-upgrade-upsell':
 				return (
-					<PlanUpgradeUpsell
+					<BusinessPlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
+						receiptId={ receiptId }
+						translate={ translate }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+					/>
+				);
+
+			case 'premium-plan-upgrade-upsell':
+				return (
+					<PremiumPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
 						planDiscountedRawPrice={ planDiscountedRawPrice }

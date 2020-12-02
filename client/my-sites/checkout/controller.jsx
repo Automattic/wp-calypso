@@ -195,8 +195,20 @@ export function upsellNudge( context, next ) {
 		upsellType = 'concierge-support-session';
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
-		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
+
+		switch ( upgradeItem ) {
+			case 'business':
+				upsellType = 'business-plan-upgrade-upsell';
+				break;
+
+			case 'premium':
+				upsellType = 'premium-plan-upgrade-upsell';
+				break;
+
+			default:
+				upsellType = 'business-plan-upgrade-upsell';
+		}
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );

@@ -285,6 +285,12 @@ function maybeShowPlanBumpOffer( {
 		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
+
+	if ( hasPersonalPlan( cart ) ) {
+		const upgradeItem = hasMonthlyCartItem( cart ) ? 'premium-monthly' : 'premium';
+		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+	}
+
 	return;
 }
 
