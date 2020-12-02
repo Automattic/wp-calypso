@@ -392,6 +392,13 @@ module.exports = {
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
 
-		'wpcalypso/no-unsafe-wp-apis': 'error',
+		'wpcalypso/no-unsafe-wp-apis': [
+			'error',
+			{
+				'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
+				'@wordpress/date': [ '__experimentalGetSettings' ],
+				'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
+			},
+		],
 	},
 };
