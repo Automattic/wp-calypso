@@ -4,17 +4,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import CartStore from 'calypso/lib/cart/store';
 import { hasStaleItem } from 'calypso/lib/cart-values/cart-items';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
 import { getNoticeLastTimeShown } from 'calypso/state/notices/selectors';
 import { getSectionName, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { reloadCart } from 'calypso/lib/cart/actions';
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 
@@ -29,13 +28,12 @@ class StaleCartItemsNotice extends React.Component {
 
 		// Show a notice if there are stale items in the cart and it hasn't been shown
 		// in the last 10 minutes (cart abandonment)
-		const cart = CartStore.get();
 		if (
 			this.props.selectedSiteSlug &&
-			hasStaleItem( cart ) &&
+			hasStaleItem( this.props.cart ) &&
 			this.props.staleCartItemNoticeLastTimeShown < Date.now() - 10 * 60 * 1000 &&
-			cart.hasLoadedFromServer &&
-			! cart.hasPendingServerUpdates
+			this.props.cart.hasLoadedFromServer &&
+			! this.props.cart.hasPendingServerUpdates
 		) {
 			this.props.recordTracksEvent( 'calypso_cart_abandonment_notice_view' );
 
@@ -56,15 +54,11 @@ class StaleCartItemsNotice extends React.Component {
 	};
 
 	componentDidMount() {
-		reloadCart();
-		CartStore.on( 'change', this.showStaleCartItemsNotice );
-	}
-
-	componentWillUnmount() {
-		CartStore.off( 'change', this.showStaleCartItemsNotice );
+		this.props.shoppingCartManager.reloadFromServer();
 	}
 
 	render() {
+		this.showStaleCartItemsNotice();
 		return null;
 	}
 }
@@ -76,4 +70,4 @@ export default connect(
 		sectionName: getSectionName( state ),
 	} ),
 	{ infoNotice, removeNotice, recordTracksEvent }
-)( localize( StaleCartItemsNotice ) );
+)( withShoppingCart( localize( StaleCartItemsNotice ) ) );
