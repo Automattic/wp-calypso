@@ -75,4 +75,5 @@ export type OptionalUserData = {
 	user_URL: string;
 	username: string;
 	visible_site_count: number;
+	i18n_empathy_mode: boolean;
 };
