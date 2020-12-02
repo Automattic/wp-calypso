@@ -19,7 +19,7 @@ import {
 	billingHistory,
 	receiptView,
 	paymentMethods,
-	addCreditCard,
+	addPaymentMethod,
 } from './controller';
 
 export default ( router ) => {
@@ -66,7 +66,7 @@ export default ( router ) => {
 		clientRender
 	);
 	page(
-		'/purchases/subscriptions/:site/:purchaseId/payment/add',
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
 		siteSelection,
 		navigation,
 		purchaseAddPaymentMethod,
@@ -74,7 +74,7 @@ export default ( router ) => {
 		clientRender
 	);
 	page(
-		'/purchases/subscriptions/:site/:purchaseId/payment/change/:cardId',
+		'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
 		siteSelection,
 		navigation,
 		purchaseChangePaymentMethod,
@@ -110,10 +110,10 @@ export default ( router ) => {
 	);
 
 	page(
-		'/purchases/add-credit-card/:site',
+		'/purchases/add-payment-method/:site',
 		siteSelection,
 		navigation,
-		addCreditCard,
+		addPaymentMethod,
 		makeLayout,
 		clientRender
 	);
@@ -135,13 +135,13 @@ export default ( router ) => {
 	router(
 		'/purchases/:siteName/:purchaseId/payment/add',
 		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/add` )
+			page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/add` )
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) =>
 			page.redirect(
-				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/change/${ cardId }`
+				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/change/${ cardId }`
 			)
 	);
 };
