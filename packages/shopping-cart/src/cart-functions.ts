@@ -184,10 +184,40 @@ function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	return true;
 }
 
+function shouldProductReplaceCart(
+	product: RequestCartProduct,
+	responseCart: TempResponseCart
+): boolean {
+	if ( product.extra?.purchaseType === 'renewal' && product.product_slug !== 'domain_redemption' ) {
+		// adding a renewal replaces the cart unless it is a privacy protection (comment copied from cartItemShouldReplaceCart; is domain_redemption really privacy protection?)
+		return true;
+	}
+
+	if (
+		product.extra?.purchaseType !== 'renewal' &&
+		responseCart.products.some( ( cartProduct ) => cartProduct.extra?.purchaseType === 'renewal' )
+	) {
+		// all items should replace the cart if the cart contains a renewal
+		return true;
+	}
+
+	return false;
+}
+
+function shouldProductsReplaceCart(
+	products: RequestCartProduct[],
+	responseCart: TempResponseCart
+): boolean {
+	return products.some( ( product ) => shouldProductReplaceCart( product, responseCart ) );
+}
+
 export function addItemsToResponseCart(
 	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
 ): TempResponseCart {
+	if ( shouldProductsReplaceCart( products, responseCart ) ) {
+		return replaceAllItemsInResponseCart( responseCart, products );
+	}
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, ...products ],
