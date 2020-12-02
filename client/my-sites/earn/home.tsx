@@ -500,7 +500,13 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}{{b}}Watch our tutorial videos to get started{{/b}}{{/a}}.',
 			{
 				components: {
-					a: <a href="https://wordpress.com/LINK" target="_blank" rel="noopener noreferrer" />,
+					a: (
+						<a
+							href="https://wordpress.com/support/video-tutorials-add-payments-features-to-your-site-with-our-guides/"
+							target="_blank"
+							rel="noopener noreferrer"
+						/>
+					),
 					b: <strong />,
 				},
 			}
