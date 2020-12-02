@@ -262,11 +262,7 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -289,7 +285,6 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
@@ -319,7 +314,6 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
@@ -344,7 +338,6 @@ object RunAllUnitTests : BuildType({
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -371,7 +364,6 @@ object RunAllUnitTests : BuildType({
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -398,7 +390,6 @@ object RunAllUnitTests : BuildType({
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -425,7 +416,6 @@ object RunAllUnitTests : BuildType({
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -452,7 +442,6 @@ object RunAllUnitTests : BuildType({
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -479,7 +468,6 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
@@ -509,7 +497,6 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
@@ -532,7 +519,6 @@ object RunAllUnitTests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="production"
 
 				# Update node
@@ -628,18 +614,8 @@ object CheckCodeStyle : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
-				set -x
 
-				echo ${'$'}PATH
-				set
-				ls /calpyso/.bashrc
-				cat /calpyso/.bashrc
-
-				export HOME="/calypso"
 				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -662,7 +638,6 @@ object CheckCodeStyle : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export HOME="/calypso"
 				export NODE_ENV="test"
 
 				# Update node
@@ -782,9 +757,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				set -o nounset
 				set -o pipefail
 
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
@@ -860,7 +832,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
-				export DISPLAY=:99
 				export CI=true
 
 				# Update node
