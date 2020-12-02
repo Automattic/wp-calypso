@@ -10,9 +10,7 @@ import { times } from 'lodash';
  * Internal dependencies
  */
 import PluginBrowserItem from 'calypso/my-sites/plugins/plugins-browser-item';
-import { Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies
@@ -94,8 +92,11 @@ class PluginsBrowserList extends Component {
 	render() {
 		return (
 			<div className="plugins-browser-list">
-				<SectionHeader label={ this.props.title }>{ this.renderLink() }</SectionHeader>
-				<Card className="plugins-browser-list__elements">{ this.renderViews() }</Card>
+				<div className="plugins-browser-list__section-heading">
+					<h2 className="plugins-browser-list__section-title">{ this.props.title }</h2>
+					{ this.renderLink() }
+				</div>
+				<div className="plugins-browser-list__elements">{ this.renderViews() }</div>
 			</div>
 		);
 	}

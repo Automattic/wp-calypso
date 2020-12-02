@@ -1,7 +1,5 @@
 .plugins-browser-list {
 	margin-bottom: 16px;
-	background: var( --color-surface );
-	box-shadow: 0 1px 2px var( --color-neutral-0 );
 
 	.feature-example & {
 		margin: 0;
@@ -9,8 +7,6 @@
 }
 
 .plugins-browser-list__header {
-	background: var( --color-neutral-0 );
-	border-bottom: 1px solid var( --color-neutral-0 );
 	overflow: hidden; // lazy clearfix
 }
 
@@ -19,7 +15,7 @@
 	display: inline-block;
 	padding: 5px 0;
 	color: var( --color-neutral-70 );
-	font-size: $font-body-extra-small;
+	font-size: $font-body-small;
 	line-height: 1.5;
 
 	&.is-expanded {
@@ -33,12 +29,21 @@
 	}
 }
 
-.button.plugins-browser-list__select-all {
-	float: right;
-}
-
 .plugins-browser-list__elements {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 24px;
 	padding: 0;
 }
+
+.plugins-browser-list__section-heading {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+}
+
+.plugins-browser-list__section-title {
+    font-size: $font-title-small;
+    margin: 16px 0;
+}
+

@@ -11,7 +11,7 @@ import { flowRight as compose, includes } from 'lodash';
  * Internal dependencies
  */
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
-import { Button } from '@automattic/components';
+import { Button, Card } from '@automattic/components';
 import Rating from 'calypso/components/rating';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -111,26 +111,28 @@ class PluginsBrowserListElement extends Component {
 			return this.renderPlaceholder();
 		}
 		return (
-			<li className="plugins-browser-item">
+			<Card className="plugins-browser-item">
 				<a
 					href={ this.getPluginLink() }
 					className="plugins-browser-item__link"
 					onClick={ this.trackPluginLinkClick }
 				>
 					<div className="plugins-browser-item__info">
+						<div className="plugins-browser-item__title-wrapper">
+							<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
+							<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
+						</div>
 						<PluginIcon
 							size={ this.props.iconSize }
 							image={ this.props.plugin.icon }
 							isPlaceholder={ this.props.isPlaceholder }
 						/>
-						<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
-						<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
 						{ this.renderInstalledIn() }
 					</div>
-					<Rating rating={ this.props.plugin.rating } size={ 12 } />
+					<Rating rating={ this.props.plugin.rating } size={ 16 } />
 				</a>
 				{ this.renderUpgradeButton() }
-			</li>
+			</Card>
 		);
 	}
 }

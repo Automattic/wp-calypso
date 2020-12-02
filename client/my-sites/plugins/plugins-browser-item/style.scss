@@ -3,7 +3,6 @@
 	box-sizing: border-box;
 	cursor: pointer;
 	display: block;
-	float: left;
 	margin: 0;
 	position: relative;
 	overflow: hidden;
@@ -14,28 +13,11 @@
 	}
 
 	.plugins-browser-item__link {
-		padding: 16px 16px 48px;
 		display: block;
-	}
-
-	@include breakpoint-deprecated( '>960px' ) {
-		width: 33.33%;
-
-		&:nth-child( 3n + 1 ) {
-			border-left: 0;
-		}
-
-		&:nth-child( n + 4 ) {
-			border-top: 1px solid var( --color-neutral-0 );
-		}
 	}
 
 	@include breakpoint-deprecated( '<960px' ) {
 		width: 100%;
-
-		&:nth-child( n + 2 ) {
-			border-top: 1px solid var( --color-neutral-0 );
-		}
 
 		&.is-empty {
 			display: none;
@@ -55,15 +37,19 @@
 }
 
 .plugins-browser-item__info {
-	overflow: hidden; // lazy clearfix
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+}
+
+.plugins-browser-item__title-wrapper {
+	margin-right: 60px;
 }
 
 .plugins-browser-item__title,
 .plugins-browser-item__author {
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	overflow: hidden;
-	margin-left: 60px;
 
 	.is-placeholder & {
 		color: transparent;
@@ -75,8 +61,7 @@
 .plugins-browser-item__title {
 	color: var( --color-neutral-70 );
 	font-weight: 600;
-	font-size: $font-body;
-	margin-top: 3px;
+	font-size: $font-title-small;
 }
 
 .plugins-browser-item__author {
@@ -90,7 +75,6 @@
 
 .plugins-browser-item .rating {
 	margin-top: 12px;
-	position: absolute;
 }
 
 .plugins-browser-item__installed {
