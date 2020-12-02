@@ -39,7 +39,6 @@ import {
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
 } from 'calypso/state/themes/selectors';
-import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
 
 /**
