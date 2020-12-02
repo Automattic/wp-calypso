@@ -619,7 +619,7 @@ object CheckCodeStyle : BuildType({
 				set -o pipefail
 				set -x
 
-				echo $PATH
+				echo ${'$'}PATH
 				set
 				ls /calpyso/.bashrc
 				cat /calpyso/.bashrc
