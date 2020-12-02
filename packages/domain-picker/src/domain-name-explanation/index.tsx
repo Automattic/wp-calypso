@@ -23,19 +23,23 @@ export const DomainNameExplanationImage: FunctionComponent = () => {
 			<rect x="8" y="8" width="25" height="25" rx="5" fill="#fff" />
 			<rect x="40" y="8" width="25" height="25" rx="5" fill="#fff" />
 			<rect x="72" y="8" width="300" height="25" rx="5" fill="#fff" />
-			<g direction="ltr" transform={ isRTL() ? 'scale(-1,1) translate(-160,0)' : undefined }>
-				<text x="80" y="26" textAnchor={ isRTL() ? 'end' : 'start' }>
-					<tspan fill="#999">
-						<tspan>https://</tspan>
-					</tspan>
-					<tspan fill="#515151" dx="4.5">
-						{
-							/* translators: An example domain name. Used to describe what a domain name is. */
-							__( 'example.com', __i18n_text_domain__ )
-						}
-					</tspan>
-				</text>
-			</g>
+			<text
+				x="80"
+				y="26"
+				direction="ltr"
+				textAnchor={ isRTL() ? 'end' : 'start' }
+				transform={ isRTL() ? 'scale(-1,1) translate(-160,0)' : undefined }
+			>
+				<tspan fill="#999">
+					<tspan>https://</tspan>
+				</tspan>
+				<tspan fill="#515151" dx="4.5">
+					{
+						/* translators: An example domain name. Used to describe what a domain name is. */
+						__( 'example.com', __i18n_text_domain__ )
+					}
+				</tspan>
+			</text>
 		</svg>
 	);
 };
