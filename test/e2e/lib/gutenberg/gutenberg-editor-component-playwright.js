@@ -1,13 +1,3 @@
-/**
- * External dependencies
- */
-import { kebabCase } from 'lodash';
-
-/**
- * Internal dependencies
- */
-import * as dataHelper from '../data-helper';
-
 export default class GutenbergEditorComponent {
     constructor( page ) {
         // Selectors
@@ -21,10 +11,8 @@ export default class GutenbergEditorComponent {
     }
 
     async _init() {
-        const page = this.page;
-
-        await page.waitForSelector( this.editorFrame );
-        const handle = await page.$( this.editorFrame );
+        await this.page.waitForSelector( this.editorFrame );
+        const handle = await this.page.$( this.editorFrame );
         this.frame = await handle.contentFrame();
     }
 

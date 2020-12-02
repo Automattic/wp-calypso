@@ -74,7 +74,7 @@ export default class LoginFlow {
 
     async loginAndStartNewPost() {
         const newPostButton = 'a.masterbar__item-new';
-        const iframe = '.main > iframe:nth-child(1)'
+        const iframe = '.main > iframe:nth-child(1)';
 
         // Call the login() function to perform the login steps,
         // and to obtain the page object.
@@ -88,5 +88,20 @@ export default class LoginFlow {
         await page.click( newPostButton );
         // Editor is loaded once the iframe shows.
         return await page.waitForSelector( iframe );
+    }
+
+    async loginAndSelectMySites() {
+        const navBarSelector = '.masterbar';
+        const mySitesSelector = 'header.masterbar a.masterbar__item';
+        
+        await this.login();
+
+        const page = this.page;
+
+        console.log( 'Selecting My Sites' );
+
+        await page.waitForSelector( navBarSelector );
+        await page.waitForSelector( mySitesSelector );
+        return await page.click( mySitesSelector );
     }
 }

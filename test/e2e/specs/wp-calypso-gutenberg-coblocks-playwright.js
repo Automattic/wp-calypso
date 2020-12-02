@@ -225,4 +225,4 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
 
 after( async function() {
     await browser.close();
-})
+});
