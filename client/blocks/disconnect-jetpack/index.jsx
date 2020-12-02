@@ -130,7 +130,7 @@ class DisconnectJetpack extends PureComponent {
 		) {
 			features.push(
 				translate(
-					'{{icon/}} Daily automated backups (unlimited storage)',
+					'{{icon/}} Real-time automated backups (unlimited storage)',
 					this.getIcon( 'history' )
 				)
 			);
