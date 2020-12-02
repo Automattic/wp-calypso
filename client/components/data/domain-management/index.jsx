@@ -23,6 +23,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import StoreConnection from 'calypso/components/data/store-connection';
 import UsersStore from 'calypso/lib/users/store';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 function getStateFromStores( props ) {
 	return {
@@ -105,19 +106,21 @@ class DomainManagementData extends React.Component {
 				{ selectedSite && needsPlans && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				{ needsProductsList && <QueryProductsList /> }
 
-				<StoreConnection
-					component={ this.props.component }
-					context={ this.props.context }
-					currentUser={ this.props.currentUser }
-					domains={ this.props.domains }
-					getStateFromStores={ getStateFromStores }
-					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-					products={ this.props.productsList }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ selectedSite }
-					sitePlans={ this.props.sitePlans }
-					stores={ stores }
-				/>
+				<CalypsoShoppingCartProvider>
+					<StoreConnection
+						component={ this.props.component }
+						context={ this.props.context }
+						currentUser={ this.props.currentUser }
+						domains={ this.props.domains }
+						getStateFromStores={ getStateFromStores }
+						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
+						products={ this.props.productsList }
+						selectedDomainName={ this.props.selectedDomainName }
+						selectedSite={ selectedSite }
+						sitePlans={ this.props.sitePlans }
+						stores={ stores }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	}

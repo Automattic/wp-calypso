@@ -89,8 +89,6 @@
 		"jetpack/connect/mobile-app-flow": true,
 		"jetpack/connect/woocommerce": true,
 		"jetpack/happychat": true,
-		"jetpack/search-product": true,
-		"jetpack/wpcom-search-product": true,
 		"jetpack/features-section/simple": true,
 		"jetpack/features-section/atomic": true,
 		"jetpack/features-section/jetpack": true,

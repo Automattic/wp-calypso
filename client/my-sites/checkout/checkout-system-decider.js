@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import { ShoppingCartProvider } from '@automattic/shopping-cart';
 import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
@@ -21,14 +20,13 @@ import { logToLogstash } from 'calypso/state/logstash/actions';
 import Recaptcha from 'calypso/signup/recaptcha';
 import getCartKey from './get-cart-key';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
-
-const debug = debugFactory( 'calypso:checkout-system-decider' );
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 
 // Aliasing wpcom functions explicitly bound to wpcom is required here;
 // otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
-const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
-const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
+
+const debug = debugFactory( 'calypso:checkout-system-decider' );
 
 export default function CheckoutSystemDecider( {
 	productAliasFromUrl,
@@ -106,8 +104,7 @@ export default function CheckoutSystemDecider( {
 		}
 	}
 
-	const getCart =
-		isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : wpcomGetCart;
+	const getCart = isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : undefined;
 	debug( 'getCart being controlled by', { isLoggedOutCart, isNoSiteCart, otherCart } );
 
 	return (
@@ -116,7 +113,7 @@ export default function CheckoutSystemDecider( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logCheckoutError }
 			>
-				<ShoppingCartProvider cartKey={ cartKey } getCart={ getCart } setCart={ wpcomSetCart }>
+				<CalypsoShoppingCartProvider cartKey={ cartKey } getCart={ getCart }>
 					<StripeHookProvider
 						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
 						locale={ locale }
@@ -136,7 +133,7 @@ export default function CheckoutSystemDecider( {
 							isNoSiteCart={ isNoSiteCart }
 						/>
 					</StripeHookProvider>
-				</ShoppingCartProvider>
+				</CalypsoShoppingCartProvider>
 			</CheckoutErrorBoundary>
 			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
 		</>

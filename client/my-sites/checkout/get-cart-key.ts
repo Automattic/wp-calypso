@@ -9,10 +9,10 @@ export default function getCartKey( {
 	isNoSiteCart,
 	waitForOtherCartUpdates,
 }: {
-	selectedSite: SiteData;
-	isLoggedOutCart: boolean;
-	isNoSiteCart: boolean;
-	waitForOtherCartUpdates: boolean;
+	selectedSite: SiteData | undefined | null;
+	isLoggedOutCart?: boolean;
+	isNoSiteCart?: boolean;
+	waitForOtherCartUpdates?: boolean;
 } ): string | number | undefined {
 	// We have to monitor the old cart manager in case it's waiting on a
 	// requested change. To prevent race conditions, we will return undefined in

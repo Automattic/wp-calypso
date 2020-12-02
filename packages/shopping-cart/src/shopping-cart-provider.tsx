@@ -19,7 +19,7 @@ export default function ShoppingCartProvider( {
 	cartKey: string | number | null | undefined;
 	setCart: ( cartKey: string, requestCart: RequestCart ) => Promise< ResponseCart >;
 	getCart: ( cartKey: string ) => Promise< ResponseCart >;
-	children: JSX.Element;
+	children: React.ReactNode;
 } ): JSX.Element {
 	const shoppingCartManager = useShoppingCartManager( {
 		cartKey,

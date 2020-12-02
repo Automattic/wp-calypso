@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { emptyResponseCart } from './empty-carts';
+import { getEmptyResponseCart } from './empty-carts';
 import { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
@@ -12,6 +12,7 @@ import type {
 } from './types';
 
 let lastUUID = 100;
+const emptyResponseCart = getEmptyResponseCart();
 
 function convertResponseCartProductToRequestCartProduct(
 	product: ResponseCartProduct | RequestCartProduct
@@ -166,13 +167,21 @@ export function convertRawResponseCartToResponseCart(
 			display_taxes: rawResponseCart.tax?.display_taxes ?? false,
 		},
 		// Add uuid to products returned by the server
-		products: rawProducts.map( ( product ) => {
+		products: rawProducts.filter( isRealProduct ).map( ( product ) => {
 			return {
 				...product,
 				uuid: product.product_slug + lastUUID++,
 			};
 		} ),
 	};
+}
+
+function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
+	// Credits are reported separately, so we do not need to include the pseudo-product in the line items.
+	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
+		return false;
+	}
+	return true;
 }
 
 export function addItemsToResponseCart(

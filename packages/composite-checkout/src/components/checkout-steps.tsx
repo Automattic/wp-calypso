@@ -863,8 +863,7 @@ const StepNumber = styled.div< StepNumberProps & React.HTMLAttributes< HTMLDivEl
 	// Reason: The IE media query needs to not have spaces within brackets otherwise ie11 doesn't read them
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
-		z-index: ${ ( props ) =>
-		props.isComplete ? '0' : '1' };
+		z-index: ${ ( props ) => ( props.isComplete ? '0' : '1' ) };
 	}
 `;
 
@@ -880,9 +879,7 @@ const StepNumberCompleted = styled( StepNumber )`
 	// prettier-ignore
 	@media all and (-ms-high-contrast:none), (-ms-high-contrast:active) {
 		backface-visibility: visible;
-		z-index: ${ (
-		props
-	) => ( props.isComplete ? '1' : '0' ) };
+		z-index: ${ ( props ) => ( props.isComplete ? '1' : '0' ) };
 	}
 
 	svg {
