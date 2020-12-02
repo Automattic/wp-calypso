@@ -1,13 +1,7 @@
 /**
- * External dependencies
- */
-import { defer } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import Dispatcher from 'calypso/dispatcher';
-import { userCan } from 'calypso/lib/site/utils';
 import wpcom from 'calypso/lib/wp';
 
 const PluginsActions = {
@@ -19,18 +13,6 @@ const PluginsActions = {
 	},
 
 	fetchSitePlugins: ( site ) => {
-		if ( ! userCan( 'manage_options', site ) || ! site.jetpack ) {
-			defer( () => {
-				Dispatcher.handleViewAction( {
-					type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
-					action: 'RECEIVE_PLUGINS',
-					site: site,
-				} );
-			} );
-
-			return;
-		}
-
 		const receivePluginsDispatcher = ( error, data ) => {
 			Dispatcher.handleServerAction( {
 				type: 'RECEIVE_PLUGINS',

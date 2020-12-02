@@ -271,12 +271,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'NOT_ALLOWED_TO_RECEIVE_PLUGINS':
-			_fetching[ action.site.ID ] = false;
-			_pluginsBySite[ action.site.ID ] = {};
-			PluginsStore.emitChange();
-			break;
-
 		case 'UPDATE_PLUGIN':
 			PluginsStore.emitChange();
 			break;
