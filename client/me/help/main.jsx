@@ -11,7 +11,7 @@ import { some } from 'lodash';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { Button, CompactCard } from '@automattic/components';
+import { Button, CompactCard, Card } from '@automattic/components';
 import HappinessEngineers from 'calypso/me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
@@ -32,6 +32,11 @@ import { FEATURE_BUSINESS_ONBOARDING } from 'calypso/lib/plans/constants';
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Images
+ */
+import supportSession from 'calypso/assets/images/customer-home/illustration-webinars.svg';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -219,6 +224,51 @@ class Help extends React.PureComponent {
 		);
 	};
 
+	supportSessionCard = () => {
+		return (
+			<Card className="help__support-session-card">
+				<div className="help__support-session-text">
+					<h2 className="help__support-session-title">
+						{ this.props.translate( 'Schedule a support session' ) }
+					</h2>
+					<p className="help__support-session-description">
+						{ this.props.translate(
+							'Quick Start Support Sessions give you a way to talk to one of our Happiness Engineers via a screen share with audio.'
+						) }
+					</p>
+					<div className="help__support-session-actions">
+						<Button
+							className="help__support-session-action"
+							primary
+							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
+							onClick={ this.trackSupportSessionButtonClick() }
+						>
+							Schedule a session
+						</Button>
+						<Button
+							className="help__support-session-action is-link"
+							borderless
+							href={ localizeUrl( 'https://wordpress.com/support/quickstart-support/' ) }
+						>
+							Learn more
+						</Button>
+					</div>
+				</div>
+				<div className="help__support-session-illustration">
+					<img src={ supportSession } alt="" />
+				</div>
+			</Card>
+		);
+	};
+
+	trackSupportSessionButtonClick = () => {
+		//@TODO: What information do we want to track here?
+		const { isBusinessPlanUser } = this.props;
+		recordTracksEvent( 'calypso_help_support_session_card_click', {
+			is_business_plan_user: isBusinessPlanUser,
+		} );
+	};
+
 	trackCoursesButtonClick = () => {
 		const { isBusinessPlanUser } = this.props;
 		recordTracksEvent( 'calypso_help_courses_click', {
@@ -228,7 +278,7 @@ class Help extends React.PureComponent {
 
 	getPlaceholders = () => {
 		return (
-			<Main className="help">
+			<Main className="help" wideLayout>
 				<MeSidebarNavigation />
 				<div className="help-search is-placeholder" />
 				<div className="help__help-teaser-button is-placeholder" />
@@ -246,12 +296,13 @@ class Help extends React.PureComponent {
 		}
 
 		return (
-			<Main className="help">
+			<Main className="help" wideLayout>
 				<PageViewTracker path="/help" title="Help" />
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
 				{ this.getCoursesTeaser() }
+				{ this.supportSessionCard() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
