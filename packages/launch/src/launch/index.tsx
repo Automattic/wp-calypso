@@ -31,13 +31,11 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	openCheckout,
 	redirectTo,
 } ) => {
-	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
-	const isModalTitleVisible = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).isModalTitleVisible()
-	);
-	const shouldDisplaySuccessView = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).shouldDisplaySuccessView()
-	);
+	const {
+		isModalDismissible,
+		isModalTitleVisible,
+		shouldDisplaySuccessView,
+	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 

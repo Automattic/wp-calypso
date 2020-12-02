@@ -19,9 +19,7 @@ import { LAUNCH_STORE } from '../stores';
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const shouldDisplaySuccessView = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).shouldDisplaySuccessView()
-	);
+	const { shouldDisplaySuccessView } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
