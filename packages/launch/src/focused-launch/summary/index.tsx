@@ -74,6 +74,7 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( {
 
 type CommonStepProps = {
 	stepIndex?: number;
+	highlighted?: boolean;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -129,13 +130,13 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	onDomainSelect,
 	onExistingSubdomainSelect,
 	isLoading,
+	highlighted,
 } ) => {
-	const { title } = useTitle();
 	const locale = useLocale();
 
 	return (
 		<SummaryStep
-			highlighted={ isValidSiteTitle( title ) }
+			highlighted={ !! highlighted }
 			input={
 				hasPaidDomain ? (
 					<>
@@ -274,6 +275,7 @@ type PlanStepProps = CommonStepProps & {
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	stepIndex,
+	highlighted,
 	hasPaidPlan = false,
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
@@ -281,8 +283,6 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	const { setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
 
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-
-	const hasSelectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).hasSelectedDomain() );
 
 	const onceSelectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
 
@@ -314,7 +314,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	return (
 		<SummaryStep
-			highlighted={ hasSelectedDomain }
+			highlighted={ !! highlighted }
 			input={
 				hasPaidPlan ? (
 					<>
@@ -580,6 +580,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
+			highlighted={ isValidSiteTitle( title ) }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
@@ -599,6 +600,7 @@ const Summary: React.FunctionComponent = () => {
 
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
+			highlighted={ !! hasSelectedDomain }
 			hasPaidPlan={ hasPaidPlan }
 			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
 			hasPaidDomain={ hasPaidDomain }
