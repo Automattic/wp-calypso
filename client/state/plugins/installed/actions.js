@@ -302,6 +302,13 @@ export function updatePlugin( siteId, plugin ) {
 		const successCallback = ( data ) => {
 			dispatch( { ...defaultAction, type: PLUGIN_UPDATE_REQUEST_SUCCESS, data } );
 			afterUpdateCallback( undefined, data );
+
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleViewAction( {
+				type: 'REMOVE_PLUGINS_UPDATE_INFO',
+				site,
+				plugin,
+			} );
 		};
 
 		const errorCallback = ( error ) => {

@@ -66,8 +66,6 @@
 		"jetpack/features-section/jetpack": true,
 		"jetpack/happychat": true,
 		"jetpack/scan-product": true,
-		"jetpack/search-product": true,
-		"jetpack/wpcom-search-product": true,
 		"jetpack/anti-spam-product": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/backups-restore": true,

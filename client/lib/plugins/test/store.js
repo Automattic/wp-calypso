@@ -181,18 +181,6 @@ describe( 'Plugins Store', () => {
 			} );
 			assert.lengthOf( UpdatedStore, 0 );
 		} );
-
-		test( 'Should not set value of the site if NOT_ALLOWED_TO_RECEIVE_PLUGINS errors', () => {
-			Dispatcher.handleServerAction( actions.fetchedNotAllowed );
-			const UpdatedStore = PluginsStore.getPlugins( { ID: 123 } );
-			assert.isDefined( UpdatedStore );
-			assert.lengthOf( UpdatedStore, 0 );
-		} );
-
-		test( 'Should not be set as "fetching" after NOT_ALLOWED_TO_RECEIVE_PLUGINS is triggered', () => {
-			Dispatcher.handleServerAction( actions.fetchedNotAllowed );
-			assert.isFalse( PluginsStore.isFetchingSite( { ID: 123 } ) );
-		} );
 	} );
 
 	describe( 'Fetch Plugins Again', () => {

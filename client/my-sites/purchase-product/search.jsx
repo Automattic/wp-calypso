@@ -3,7 +3,6 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'calypso/config';
 import { connect } from 'react-redux';
 import { concat, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -94,7 +93,7 @@ export class SearchPurchase extends Component {
 		const { currentUrl } = this.state;
 		const product = this.getProduct();
 
-		if ( config.isEnabled( 'jetpack/wpcom-search-product' ) && status === IS_DOT_COM_GET_SEARCH ) {
+		if ( status === IS_DOT_COM_GET_SEARCH ) {
 			page.redirect( '/checkout/' + urlToSlug( this.state.currentUrl ) + '/' + product );
 		}
 

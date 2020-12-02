@@ -2,7 +2,7 @@
  * External dependencies
  */
 const MiniCssExtractPluginWithRTL = require( '@automattic/mini-css-extract-plugin-with-rtl' );
-const WebpackRTLPlugin = require( 'webpack-rtl-plugin' );
+const WebpackRTLPlugin = require( '@automattic/webpack-rtl-plugin' );
 
 /**
  * Return a webpack loader object containing our styling (Sass -> CSS) stack.

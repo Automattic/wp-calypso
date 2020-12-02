@@ -31,6 +31,7 @@ import {
 	deactivatePlugin,
 	disableAutoupdatePlugin,
 	enableAutoupdatePlugin,
+	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
 
@@ -417,7 +418,7 @@ export const PluginsList = createReactClass( {
 
 	removeSelected( accepted ) {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', PluginsActions.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	},
@@ -577,6 +578,7 @@ export default connect(
 		disableAutoupdatePlugin,
 		enableAutoupdatePlugin,
 		recordGoogleEvent,
+		removePlugin,
 		updatePlugin,
 		warningNotice,
 	}
