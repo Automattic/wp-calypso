@@ -384,6 +384,7 @@ function createRenewalItemToAddToCart(
 	};
 	return {
 		meta,
+		quantity: null,
 		volume: 1,
 		product_slug: productSlug,
 		product_id: parseInt( String( productId ), 10 ),
