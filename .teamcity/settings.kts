@@ -210,7 +210,12 @@ object BuildDockerImage : BuildType({
 					registry.a8c.com/calypso/app:build-%build.number%
 					registry.a8c.com/calypso/app:commit-${WpCalypso.paramRefs.buildVcsNumber}
 				""".trimIndent()
-				commandArgs = "--pull --build-arg use_cache=true"
+				commandArgs = """
+					--pull
+					--build-arg use_cache=true
+					--label com.a8c.image-builder=teamcity
+					--label com.a8c.build-id=%teamcity.build.id%
+				""".trimIndent().replace("\n"," ")
 			}
 			param("dockerImage.platform", "linux")
 		}
