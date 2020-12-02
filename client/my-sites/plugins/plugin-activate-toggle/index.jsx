@@ -12,15 +12,17 @@ import Gridicon from 'calypso/components/gridicon';
  * Internal dependencies
  */
 import PluginsActions from 'calypso/lib/plugins/actions';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const activationActions = [ 'ACTIVATE_PLUGIN', 'DEACTIVATE_PLUGIN' ];
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
@@ -99,16 +101,11 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
-
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-			'ACTIVATE_PLUGIN',
-			'DEACTIVATE_PLUGIN',
-		] );
 
 		if ( plugin && 'jetpack' === plugin.slug ) {
 			return (
@@ -146,8 +143,19 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-	recordTracksEvent,
-	togglePluginActivation,
-} )( localize( PluginActivateToggle ) );
+export default connect(
+	( state, { site, plugin } ) => {
+		const pluginStatus = getStatusForPlugin( state, site.ID, plugin.id );
+		const inProgress =
+			activationActions.includes( pluginStatus?.action ) && 'inProgress' === pluginStatus?.status;
+
+		return {
+			inProgress,
+		};
+	},
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		togglePluginActivation,
+	}
+)( localize( PluginActivateToggle ) );
