@@ -22,26 +22,26 @@ let pinnedSidebarBottom = false;
 let ticking = false; // Used for Scroll event throttling.
 
 export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
-	// Do not run until next requestAnimationFrame.
+	// Run only in browser context and for desktop viewports.
+	if ( typeof window === undefined || window.innerWidth <= 660 ) {
+		return;
+	}
+
+	// Do not run until next requestAnimationFrame or if running out of browser context.
 	if ( ticking ) {
 		return;
 	}
+
+	const windowHeight = window.innerHeight;
 	const content = document.getElementById( 'content' );
 	const contentHeight = document.getElementById( 'content' )?.scrollHeight;
 	const secondaryEl = document.getElementById( 'secondary' ); // Or referred as sidebar.
-	const windowHeight = window?.innerHeight;
 	const secondaryElHeight = secondaryEl?.scrollHeight;
 	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
 
 	// Check whether we need to adjust content height so that scroll events are triggered.
 	// Sidebar has overflow: initial and position:fixed, so content is our only chance for scroll events.
-	if (
-		content &&
-		contentHeight &&
-		masterbarHeight &&
-		secondaryElHeight &&
-		window.innerWidth > 660 // Run only for desktop viewports.
-	) {
+	if ( content && contentHeight && masterbarHeight && secondaryElHeight ) {
 		if ( contentHeight < secondaryElHeight ) {
 			// Adjust the content height so that it matches the sidebar + masterbar vertical scroll estate.
 			content.style.minHeight = secondaryElHeight + masterbarHeight + 'px';
@@ -57,12 +57,10 @@ export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
 	}
 
 	if (
-		typeof window !== undefined &&
 		secondaryEl !== undefined &&
 		secondaryEl !== null &&
 		secondaryElHeight !== undefined &&
 		masterbarHeight !== undefined &&
-		window.innerWidth > 660 && // Run only for desktop viewports.
 		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
 	) {
 		// Throttle scroll event
