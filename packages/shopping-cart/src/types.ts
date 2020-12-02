@@ -37,21 +37,21 @@ export interface ShoppingCartManager {
 export type ReplaceProductInCart = (
 	uuidToReplace: string,
 	productPropertiesToChange: Partial< RequestCartProduct >
-) => void;
+) => Promise< void >;
 
-export type ReloadCartFromServer = () => void;
+export type ReloadCartFromServer = () => Promise< void >;
 
-export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => void;
+export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => Promise< void >;
 
-export type AddProductsToCart = ( products: RequestCartProduct[] ) => void;
+export type AddProductsToCart = ( products: RequestCartProduct[] ) => Promise< void >;
 
-export type RemoveCouponFromCart = () => void;
+export type RemoveCouponFromCart = () => Promise< void >;
 
-export type ApplyCouponToCart = ( couponId: string ) => void;
+export type ApplyCouponToCart = ( couponId: string ) => Promise< void >;
 
-export type RemoveProductFromCart = ( uuidToRemove: string ) => void;
+export type RemoveProductFromCart = ( uuidToRemove: string ) => Promise< void >;
 
-export type UpdateTaxLocationInCart = ( location: CartLocation ) => void;
+export type UpdateTaxLocationInCart = ( location: CartLocation ) => Promise< void >;
 
 /**
  * The custom hook keeps a cached version of the server cart, as well as a
@@ -107,3 +107,5 @@ export type ShoppingCartState = {
 	loadingErrorType?: ShoppingCartError;
 	queuedActions: ShoppingCartAction[];
 };
+
+export type CartValidCallback = () => void;
