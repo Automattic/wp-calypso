@@ -70,6 +70,7 @@
 		"google-my-business": true,
 		"google-drive": true,
 		"google-workspace-migration": false,
+		"google-workspace-product-rename": true,
 		"gutenboarding/alpha-templates": true,
 		"gutenboarding/language-picker": true,
 		"gutenboarding/feature-picker": true,
