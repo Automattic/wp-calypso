@@ -56,6 +56,12 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		( 'rewind__backup_complete_full' !== backup.activityName ||
 			'rewind__backup_only_complete_full' !== backup.activityName );
 
+	// If the activity isn't rewindable but has streams that are,
+	// use one of the streams' rewind ID as the download or restore point
+	const actionableRewindId = backup.activityIsRewindable
+		? backup.rewindId
+		: backup.streams?.find?.( ( a ) => a.activityIsRewindable )?.rewindId;
+
 	return (
 		<>
 			<div className="status-card__message-head">
@@ -71,7 +77,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 				<div className="status-card__title">{ displayDateNoLatest }</div>
 			</div>
 			<div className="status-card__meta">{ meta }</div>
-			<ActionButtons rewindId={ backup.rewindId } />
+			<ActionButtons rewindId={ actionableRewindId } />
 			{ showBackupDetails && (
 				<div className="status-card__realtime-details">
 					<div className="status-card__realtime-details-card">

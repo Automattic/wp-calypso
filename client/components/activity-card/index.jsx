@@ -170,6 +170,13 @@ class ActivityCard extends Component {
 			? this.state.showTopPopoverMenu
 			: this.state.showBottomPopoverMenu;
 
+		// The activity itself may not be rewindable, but at least one of the
+		// streams should be; if this is the case, make sure we send the user
+		// to a valid restore/download point when they click an action button
+		const actionableRewindId = activity.activityIsRewindable
+			? activity.rewindId
+			: activity.streams.find( ( s ) => s.activityIsRewindable )?.rewindId;
+
 		return (
 			<>
 				<Button
@@ -191,7 +198,9 @@ class ActivityCard extends Component {
 					className="activity-card__popover"
 				>
 					<Button
-						href={ ! doesRewindNeedCredentials && backupRestorePath( siteSlug, activity.rewindId ) }
+						href={
+							! doesRewindNeedCredentials && backupRestorePath( siteSlug, actionableRewindId )
+						}
 						className="activity-card__restore-button"
 						disabled={ doesRewindNeedCredentials }
 					>
@@ -216,7 +225,7 @@ class ActivityCard extends Component {
 						borderless
 						compact
 						isPrimary={ false }
-						href={ backupDownloadPath( siteSlug, activity.rewindId ) }
+						href={ backupDownloadPath( siteSlug, actionableRewindId ) }
 						className="activity-card__download-button"
 					>
 						<img
