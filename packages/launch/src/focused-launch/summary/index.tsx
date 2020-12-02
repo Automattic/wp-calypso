@@ -296,7 +296,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	// this allows us to keep showing it when they change their mind, we don't want
 	// it to disappear once they pick the default paid plan
 	React.useEffect( () => {
-		if ( onceSelectedPaidPlan !== defaultPaidPlan ) {
+		if ( defaultPaidPlan && onceSelectedPaidPlan !== defaultPaidPlan ) {
 			setNonDefaultPaidPlan( onceSelectedPaidPlan );
 		}
 	}, [ onceSelectedPaidPlan, defaultPaidPlan ] );
