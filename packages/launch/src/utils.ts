@@ -22,7 +22,7 @@ export const isDefaultSiteTitle = ( {
 		: new RegExp( DEFAULT_SITE_NAME, 'i' ).test( currentSiteTitle );
 
 export const isValidSiteTitle = ( title?: string ): boolean =>
-	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
+	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title, exact: true } );
 
 type PlanProduct = {
 	product_id: number;
