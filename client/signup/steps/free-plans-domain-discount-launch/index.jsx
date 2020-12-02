@@ -25,8 +25,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormLabel from 'calypso/components/forms/form-label';
 
-const DOMAIN_DISCOUNT_PERCENTAGE = 20;
-
 function handleUpgradeButtonClick( props, selectedDomain, domainUpsellItems ) {
 	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
 	if ( ! domainUpsellItems ) {
@@ -95,10 +93,6 @@ function getDomainName( siteSlug ) {
 	return siteSlug.replace( '.wordpress.com', '.blog' );
 }
 
-function getDiscountedCost( originalCost ) {
-	return originalCost * ( 1 - DOMAIN_DISCOUNT_PERCENTAGE / 100 );
-}
-
 function FormattedSuggestion( translate, suggestion, isRecommended ) {
 	const currency = suggestion.currency;
 	return (
@@ -111,18 +105,12 @@ function FormattedSuggestion( translate, suggestion, isRecommended ) {
 			</div>
 			<div>
 				<div>
-					{ translate(
-						'Registration fee: {{strike}}%(discountedCost)s{{/strike}} {{strong}}%(originalCost)s{{/strong}}',
-						{
-							args: {
-								discountedCost: formatCurrency( getDiscountedCost( suggestion.cost ), currency, {
-									stripZeros: true,
-								} ),
-								originalCost: formatCurrency( suggestion.cost, currency, { stripZeros: true } ),
-							},
-							components: { strike: <strike />, strong: <strong /> },
-						}
-					) }
+					{ translate( 'Registration fee: {{strong}}%(originalCost)s{{/strong}}', {
+						args: {
+							originalCost: formatCurrency( suggestion.cost, currency, { stripZeros: true } ),
+						},
+						components: { strike: <strike />, strong: <strong /> },
+					} ) }
 				</div>
 				<small>
 					{ translate( 'Renews at: %(cost)s /year', {
