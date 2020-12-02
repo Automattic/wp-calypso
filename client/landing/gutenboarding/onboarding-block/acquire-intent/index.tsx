@@ -163,7 +163,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 			<div className="acquire-intent__import">
 				{ __( 'Already have a website?' ) }
 				<Button isLink onClick={ handleImport }>
-					{ __( 'Import your content' ) }
+					{ __( 'Import Your Content' ) }
 				</Button>
 			</div>
 		</div>

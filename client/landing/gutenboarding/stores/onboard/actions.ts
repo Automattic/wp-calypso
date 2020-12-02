@@ -214,9 +214,8 @@ export const startImportFlow = () => ( {
 	type: 'IMPORTING_START' as const,
 } );
 
-export const setImportUrl = ( url: string ) => ( {
-	type: 'SET_IMPORT_URL' as const,
-	url,
+export const cancelImportFlow = () => ( {
+	type: 'IMPORTING_CANCEL' as const,
 } );
 
 export type OnboardAction = ReturnType<
@@ -243,5 +242,5 @@ export type OnboardAction = ReturnType<
 	| typeof togglePageLayout
 	| typeof startOnboarding
 	| typeof startImportFlow
-	| typeof setImportUrl
+	| typeof cancelImportFlow
 >;

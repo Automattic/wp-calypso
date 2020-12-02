@@ -244,18 +244,8 @@ const isImporting: Reducer< boolean, OnboardAction > = ( state = false, action )
 	if ( action.type === 'IMPORTING_START' ) {
 		return true;
 	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
+	if ( action.type === 'IMPORTING_CANCEL' || action.type === 'RESET_ONBOARD_STORE' ) {
 		return false;
-	}
-	return state;
-};
-
-const importUrl: Reducer< string, OnboardAction > = ( state = '', action ) => {
-	if ( action.type === 'SET_IMPORT_URL' ) {
-		return action.url;
-	}
-	if ( action.type === 'RESET_ONBOARD_STORE' ) {
-		return '';
 	}
 	return state;
 };
@@ -281,7 +271,6 @@ const reducer = combineReducers( {
 	randomizedDesigns,
 	hasOnboardingStarted,
 	isImporting,
-	importUrl,
 } );
 
 export type State = ReturnType< typeof reducer >;

@@ -7,14 +7,12 @@ import { useI18n } from '@automattic/react-i18n';
 import { Title } from '@automattic/onboarding';
 import { Button, Modal, TextControl } from '@wordpress/components';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { useState } from '@wordpress/element';
-import { validateImportUrl } from 'calypso/lib/importer/url-validation';
-import url from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
+import { IMPORT_STORE } from '../../stores/import';
 
 /**
  * Style dependencies
@@ -25,60 +23,27 @@ const ImportStep: React.FunctionComponent = () => {
 	const { __ } = useI18n();
 
 	const history = useHistory();
-	const { resetOnboardStore, setImportUrl } = useDispatch( STORE_KEY );
-	const { importUrl } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { cancelImportFlow } = useDispatch( STORE_KEY );
 
-	const [ validationError, setValidationError ] = useState( '' );
+	const { validateSiteIsImportable } = useSelect( ( select ) => select( IMPORT_STORE ) );
+	const { importUrl, importableSiteError } = useSelect( ( select ) =>
+		select( IMPORT_STORE ).getState()
+	);
+	const { setImportUrl } = useDispatch( IMPORT_STORE );
 
 	const goBack = () => {
-		resetOnboardStore();
+		cancelImportFlow();
 		history.goBack();
 	};
 
-	const validateUrl = () => {
-		setValidationError( '' );
-
-		const siteUrl = importUrl.trim();
-
-		if ( ! siteUrl ) {
-			setValidationError( 'lol' );
-			return;
-		}
-
-		const { hostname, pathname } = url.parse(
-			siteUrl.startsWith( 'http' ) ? siteUrl : 'https://' + siteUrl
-		);
-
-		if ( ! hostname ) {
-			setValidationError( 'lol' );
-			return;
-		}
-
-		const errorMessage = validateImportUrl( siteUrl );
-
-		if ( errorMessage ) {
-			setValidationError( String( errorMessage ) );
-			return;
-		}
-
-		// normalized URL
-		const urlForImport = hostname + pathname;
-
-		// @TODO: Need to call validateSiteIsImportable() with these args.
-		// (return is just to avoid dealing with lint complaints about unused vars.)
-
-		return {
-			params: {
-				site_url: urlForImport,
-			},
-			site: importUrl,
-			targetSiteUrl: urlForImport,
-		};
+	const checkSite = ( e: React.FormEvent ) => {
+		e.preventDefault();
+		validateSiteIsImportable( importUrl );
 	};
 
 	return (
 		<Modal title="" className="import" onRequestClose={ goBack }>
-			<div className="import__wrapper">
+			<form className="import__wrapper" onSubmit={ checkSite }>
 				<Title>{ __( 'Import your site' ) }</Title>
 				<label htmlFor="import__url-input" className="import__url-label">
 					{ __( 'Enter your site address (URL) below' ) }
@@ -93,11 +58,11 @@ const ImportStep: React.FunctionComponent = () => {
 					placeholder={ __( 'Enter site address' ) }
 					autoCorrect="off"
 				/>
-				{ validationError }
-				<Button className="import__start-import" isPrimary onClick={ validateUrl }>
+				{ importableSiteError?.message }
+				<Button className="import__start-import" isPrimary onClick={ checkSite }>
 					{ __( 'Import site' ) }
 				</Button>
-			</div>
+			</form>
 		</Modal>
 	);
 };
