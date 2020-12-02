@@ -198,17 +198,13 @@ function RecommendedDomains( props ) {
 					</Button>
 				</div>
 			</Card>
-			<Button
-				compact
-				borderless
-				plain
-				className="free-plans-domain-discount-launch__continue-link"
-				onClick={ handleSkipButtonClick.bind( this, props ) }
-			>
-				{ translate( 'No thanks, continue to %s', {
-					args: [ siteSlug ],
-				} ) }
-			</Button>
+			<div className="free-plans-domain-discount-launch__continue-link">
+				<Button compact borderless plain onClick={ handleSkipButtonClick.bind( this, props ) }>
+					{ translate( 'No thanks, continue to %s', {
+						args: [ siteSlug ],
+					} ) }
+				</Button>
+			</div>
 		</div>
 	);
 }

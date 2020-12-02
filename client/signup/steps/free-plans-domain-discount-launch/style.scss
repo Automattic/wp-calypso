@@ -40,5 +40,12 @@
                 min-width: 340px;
             }
         }
+        .free-plans-domain-discount-launch__continue-link {
+            padding: 20px;
+            text-align: center;
+            .button-plain {
+                color: var( --color-surface );
+            }
+        }
     }
 }
