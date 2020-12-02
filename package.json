@@ -276,7 +276,7 @@
 		"photon": "^3.0.0",
 		"postcss-cli": "^6.1.3",
 		"postcss-custom-properties": "^9.1.1",
-		"prettier": "npm:wp-prettier@2.1.1-beta-1",
+		"prettier": "npm:wp-prettier@2.2.1-beta-1",
 		"qs": "^6.9.1",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0",
