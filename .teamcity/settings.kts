@@ -617,6 +617,12 @@ object CheckCodeStyle : BuildType({
 				set -o errexit
 				set -o nounset
 				set -o pipefail
+				set -x
+
+				echo $PATH
+				set
+				ls /calpyso/.bashrc
+				cat /calpyso/.bashrc
 
 				export HOME="/calypso"
 				export NODE_ENV="test"
