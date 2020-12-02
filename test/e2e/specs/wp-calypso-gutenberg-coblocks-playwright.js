@@ -80,7 +80,7 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
             await this.GutenbergEditorComponent._init();
         });
 
-        it( 'Can insert the Dynamic HR block', async function () {
+        it( `Can insert the Dynamic HR block`, async function () {
             const editor = this.GutenbergEditorComponent;
             const blockName = 'Dynamic HR';
 
@@ -114,7 +114,7 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
             await this.GutenbergEditorComponent._init();
         });
 
-        it( 'Can insert the Hero block', async function () {
+        it( `Can insert the Hero block`, async function () {
             const editor = this.GutenbergEditorComponent;
             const blockName = 'Hero';
 
@@ -156,7 +156,7 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
             await this.GutenbergEditorComponent._init();
         });
 
-        it( 'Can insert the Logos block', async function () {
+        it( `Can insert the Logos block`, async function () {
             const editor = this.GutenbergEditorComponent;
             const blockName = 'Logos';
 
@@ -180,11 +180,45 @@ describe( `Calypso Gutenberg Editor: CoBlocks (${ screenSize })`, function () {
             return await editor.visitPublishedPost();
         });
 
-        it( `Can see the Hero block in our published post`, async function () {
-            const logosBlock = '.entry-content .wp-block-coblocks-logos'
+        it( `Can see the Logo block in our published post`, async function () {
+            const logosBlock = '.entry-content .wp-block-coblocks-logos';
             const page = this.LoginFlow.page;
     
             return await page.waitForSelector( logosBlock );
+        });
+    })
+
+    describe( `Insert a Pricing Table block`, async function() {
+        it( `Can log in and start a new post` , async function () {
+            this.LoginFlow = new LoginFlow( browser, gutenbergUser );
+            await this.LoginFlow.loginAndStartNewPost();
+            this.GutenbergEditorComponent = new GutenbergEditorComponent( this.LoginFlow.page );
+            // Fulfills a similar role to the GutenbergEditorComponent.Expect() call of the in-repo file.
+            await this.GutenbergEditorComponent._init();
+        });
+
+        it( `Can insert the Pricing Table block`, async function () {
+            const editor = this.GutenbergEditorComponent;
+            const blockName = 'Pricing Table';
+
+            await editor.openBlockInserter();
+            await editor.searchBlock( blockName );
+            return await editor.addBlock( blockName );
+        });
+
+        it( `Can publish and view content`, async function () {
+            const editor = this.GutenbergEditorComponent;
+
+            await editor.publishPost();
+            await editor.confirmPostPublished();
+            return await editor.visitPublishedPost();
+        });
+
+        it( `Can see the Pricing Table block in our published post`, async function () {
+            const pricingTableBlock = '.entry-content .wp-block-coblocks-pricing-table';
+            const page = this.LoginFlow.page;
+
+            return await page.waitForSelector( pricingTableBlock );
         });
     })
 })
