@@ -9,7 +9,6 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import PlansNavigation from 'calypso/my-sites/plans/navigation';
-import CartData from 'calypso/components/data/cart';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Notice from 'calypso/components/notice';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -21,9 +20,7 @@ import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 const StandardPlansHeader = () => (
 	<>
 		<FormattedHeader headerText={ translate( 'Plans' ) } align="left" brandFont />
-		<CartData>
-			<PlansNavigation path={ '/plans' } />
-		</CartData>
+		<PlansNavigation path={ '/plans' } />
 	</>
 );
 const ConnectFlowPlansHeader = () => (
@@ -36,9 +33,7 @@ const ConnectFlowPlansHeader = () => (
 				brandFont
 			/>
 		</div>
-		<CartData>
-			<PlansNavigation path={ '/plans' } />
-		</CartData>
+		<PlansNavigation path={ '/plans' } />
 	</>
 );
 

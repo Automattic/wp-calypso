@@ -42,6 +42,7 @@ import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { addItem } from 'calypso/lib/cart/actions';
 import { planItem } from 'calypso/lib/cart-values/cart-items';
 import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 const domainsAddHeader = ( context, next ) => {
 	context.getSiteSelectionHeaderText = () => {
@@ -80,9 +81,9 @@ const domainSearch = ( context, next ) => {
 		<Main wideLayout>
 			<PageViewTracker path="/domains/add/:site" title="Domain Search > Domain Registration" />
 			<DocumentHead title={ translate( 'Domain Search' ) } />
-			<CartData>
+			<CalypsoShoppingCartProvider>
 				<DomainSearch basePath={ sectionify( context.path ) } context={ context } />
-			</CartData>
+			</CalypsoShoppingCartProvider>
 		</Main>
 	);
 	next();
