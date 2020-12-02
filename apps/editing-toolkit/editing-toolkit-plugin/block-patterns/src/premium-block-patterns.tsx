@@ -9,7 +9,6 @@ import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordp
 /**
  * Internal dependencies
  */
-import PatternPopover from './components/pattern-popover';
 import './style.scss';
 
 interface PatternTitleProps {
@@ -24,42 +23,15 @@ interface ExperimentalBlockPattern {
 	isPremium: boolean;
 	name: string;
 	title: string;
-	viewportWidth: int;
+	viewportWidth: number;
 }
 
 export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps > = ( {
 	title,
-	description,
 } ) => {
-	const [ showPopover, setShowPopover ] = React.useState( false );
-	const [ isFocussed, setIsFocussed ] = React.useState( false );
-	const ref = React.useRef();
-
-	React.useEffect( () => {
-		// The direct parent is the block-editor-block-patterns-list__item-title
-		// So our grandparent is the actual button that will receive focus, see:
-		// https://github.com/WordPress/gutenberg/blob/master/packages/block-editor/src/components/block-patterns-list/index.js#L15
-		const updateFocus = () =>
-			setIsFocussed(
-				document.hasFocus() && ref.current?.parentElement?.parentElement === document.activeElement
-			);
-
-		updateFocus();
-
-		document.addEventListener( 'focusin', updateFocus );
-		return () => document.removeEventListener( 'focusin', updateFocus );
-	}, [] );
-
 	return (
 		<div>
-			<div
-				className="pattern-title-container"
-				onMouseEnter={ () => setShowPopover( true ) }
-				onMouseLeave={ () => setShowPopover( false ) }
-			></div>
-			{ showPopover || isFocussed ? (
-				<PatternPopover title={ title } description={ description }></PatternPopover>
-			) : null }
+			<div className="pattern-title-container"></div>
 			<span className="premium-pattern-title"> { title } </span>
 		</div>
 	);
@@ -80,11 +52,8 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 
 			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
 				const originalTitle = pattern.title;
-				const description = pattern.description;
 
-				pattern.title = (
-					<PatternTitleContainer title={ originalTitle } description={ description } />
-				);
+				pattern.title = <PatternTitleContainer title={ originalTitle } />;
 				// Add simple premium badging for screen readers
 				pattern.title.toString = () =>
 					sprintf(
