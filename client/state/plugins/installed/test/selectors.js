@@ -304,4 +304,102 @@ describe( 'Installed plugin selectors', () => {
 			expect( selectors.isPluginDoingAction( state, 'site.two', 'akismet/akismet' ) ).to.be.false;
 		} );
 	} );
+
+	describe( 'isPluginActionStatus', () => {
+		test( 'Should get `false` if the requested site is not in the current state', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'no.site',
+					'jetpack/jetpack',
+					DEACTIVATE_PLUGIN,
+					'completed'
+				)
+			).to.be.false;
+		} );
+
+		test( 'Should get `false` if the plugin status for the action does not exist.', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					INSTALL_PLUGIN,
+					'completed'
+				)
+			).to.be.false;
+		} );
+
+		test( 'Should get `false` if the plugin status for the action does not match the status.', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					DEACTIVATE_PLUGIN,
+					'inProgress'
+				)
+			).to.be.false;
+		} );
+
+		test( 'Should get `false` if the plugin status for none of the actions matches the status.', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					[ INSTALL_PLUGIN, ENABLE_AUTOUPDATE_PLUGIN ],
+					'completed'
+				)
+			).to.be.false;
+		} );
+
+		test( 'Should get `true` if the plugin status for the action matches the status.', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					DEACTIVATE_PLUGIN,
+					'completed'
+				)
+			).to.be.true;
+		} );
+
+		test( 'Should get `true` if the plugin status for one of the actions matches the status.', () => {
+			expect(
+				selectors.isPluginActionStatus(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					[ INSTALL_PLUGIN, DEACTIVATE_PLUGIN ],
+					'completed'
+				)
+			).to.be.true;
+		} );
+	} );
+
+	describe( 'isPluginActionInProgress', () => {
+		test( 'Should get `false` if the plugin status for the action is not "inProgress".', () => {
+			expect(
+				selectors.isPluginActionInProgress(
+					state,
+					'site.one',
+					'jetpack/jetpack',
+					DEACTIVATE_PLUGIN
+				)
+			).to.be.false;
+		} );
+
+		test( 'Should get `true` if the plugin status for the action is "inProgress".', () => {
+			expect(
+				selectors.isPluginActionInProgress(
+					state,
+					'site.one',
+					'akismet/akismet',
+					ENABLE_AUTOUPDATE_PLUGIN
+				)
+			).to.be.true;
+		} );
+	} );
 } );
