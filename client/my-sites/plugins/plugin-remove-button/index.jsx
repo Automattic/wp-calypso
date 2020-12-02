@@ -16,12 +16,12 @@ import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import accept from 'calypso/lib/accept';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import PluginsActions from 'calypso/lib/plugins/actions';
 import ExternalLink from 'calypso/components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { removePlugin } from 'calypso/state/plugins/installed/actions';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -162,9 +162,6 @@ class PluginRemoveButton extends React.Component {
 	};
 
 	renderButton = () => {
-		const inProgress = PluginsLog.isInProgressAction( this.props.site.ID, this.props.plugin.slug, [
-			'REMOVE_PLUGIN',
-		] );
 		const disabledInfo = this.getDisabledInfo();
 		const disabled = !! disabledInfo;
 		const label = disabled
@@ -175,7 +172,7 @@ class PluginRemoveButton extends React.Component {
 			: this.props.translate( 'Remove', {
 					context: 'Verb. Presented to user as a label for a button.',
 			  } );
-		if ( inProgress ) {
+		if ( this.props.inProgress ) {
 			return (
 				<span className="plugin-action plugin-remove-button__remove">
 					{ this.props.translate( 'Removing…' ) }
@@ -214,4 +211,9 @@ class PluginRemoveButton extends React.Component {
 	}
 }
 
-export default connect( null, { removePlugin } )( localize( PluginRemoveButton ) );
+export default connect(
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'REMOVE_PLUGIN' ),
+	} ),
+	{ removePlugin }
+)( localize( PluginRemoveButton ) );
