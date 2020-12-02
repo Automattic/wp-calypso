@@ -79,6 +79,16 @@ const planTwo: ResponseCartProduct = {
 	included_domain_purchase_amount: 0,
 };
 
+const renewalOne: ResponseCartProduct = {
+	...planOne,
+	extra: { purchaseType: 'renewal' },
+};
+
+const renewalTwo: ResponseCartProduct = {
+	...planTwo,
+	extra: { purchaseType: 'renewal' },
+};
+
 const mainCartKey = '1';
 
 const emptyResponseCart = getEmptyResponseCart();
@@ -181,23 +191,23 @@ describe( 'useShoppingCart', () => {
 	} );
 
 	describe( 'addProductsToCart', () => {
-		const TestComponent = () => {
+		const TestComponent = ( { initialProducts = undefined, products } ) => {
 			const { addProductsToCart } = useShoppingCart();
 			const onClick = () => {
-				addProductsToCart( [ planOne ] ).then( () => markUpdateComplete() );
+				addProductsToCart( products ).then( () => markUpdateComplete() );
 			};
 			return (
 				<div>
-					<ProductList />
+					<ProductList initialProducts={ initialProducts } />
 					<button onClick={ onClick }>Click me</button>
 				</div>
 			);
 		};
 
-		it( 'adds a product to the cart', async () => {
+		it( 'adds a product to the cart if the cart is empty', async () => {
 			render(
 				<MockProvider>
-					<TestComponent />
+					<TestComponent products={ [ planOne ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
@@ -205,10 +215,60 @@ describe( 'useShoppingCart', () => {
 			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
 		} );
 
+		it( 'adds a product to the cart if the existing products are not renewals and the new products are also', async () => {
+			render(
+				<MockProvider>
+					<TestComponent initialProducts={ [ planTwo ] } products={ [ planOne ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planTwo.product_name );
+		} );
+
+		it( 'adds a product to the cart if the existing products are renewals and the new products are also', async () => {
+			render(
+				<MockProvider>
+					<TestComponent initialProducts={ [ renewalTwo ] } products={ [ renewalOne ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalOne.product_name );
+		} );
+
+		it( 'replaces the cart if the existing products are not renewals and any of the new products is a renewal', async () => {
+			render(
+				<MockProvider>
+					<TestComponent initialProducts={ [ planOne ] } products={ [ renewalTwo ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent( planOne.product_name );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( renewalTwo.product_name );
+		} );
+
+		it( 'replaces the cart if any of the existing products is a renewal and the new products are not', async () => {
+			render(
+				<MockProvider>
+					<TestComponent initialProducts={ [ renewalTwo ] } products={ [ planOne ] } />
+				</MockProvider>
+			);
+			fireEvent.click( screen.getByText( 'Click me' ) );
+			await waitFor( () => screen.getByTestId( 'product-list' ) );
+			expect( screen.getByTestId( 'product-list' ) ).toHaveTextContent( planOne.product_name );
+			expect( screen.getByTestId( 'product-list' ) ).not.toHaveTextContent(
+				renewalTwo.product_name
+			);
+		} );
+
 		it( 'returns a Promise that resolves after the update completes', async () => {
 			render(
 				<MockProvider>
-					<TestComponent />
+					<TestComponent products={ [ planOne ] } />
 				</MockProvider>
 			);
 			fireEvent.click( screen.getByText( 'Click me' ) );
