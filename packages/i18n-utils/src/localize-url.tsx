@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
+import { createHigherOrderComponent } from '@wordpress/compose';
 
 /**
  * Internal dependencies
@@ -147,3 +148,12 @@ export function useLocalizeUrl(): ( fullUrl: string, locale?: Locale ) => string
 		[ providerLocale ]
 	);
 }
+
+export const withLocalizeUrl = createHigherOrderComponent< {
+	localizeUrl: ReturnType< typeof useLocalizeUrl >;
+} >( ( InnerComponent ) => {
+	return ( props ) => {
+		const localizeUrl = useLocalizeUrl();
+		return <InnerComponent localizeUrl={ localizeUrl } { ...props } />;
+	};
+}, 'withLocalizeUrl' );
