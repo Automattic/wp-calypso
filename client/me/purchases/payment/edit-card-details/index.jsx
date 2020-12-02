@@ -10,7 +10,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 /**
  * Internal Dependencies
  */
-import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
@@ -92,7 +92,7 @@ function EditCardDetails( props ) {
 						configurationArgs={ { needs_intent: true } }
 						fetchStripeConfiguration={ getStripeConfiguration }
 					>
-						<PaymentMethodForm
+						<CreditCardForm
 							apiParams={ { purchaseId: props.purchase.id } }
 							createCardToken={ createCardUpdateToken }
 							initialValues={ props.card }
