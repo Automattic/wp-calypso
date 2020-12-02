@@ -43,6 +43,10 @@ export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
 export type StepType = ValuesType< typeof Step >;
 export type StepNameType = keyof typeof Step;
 
+export interface GutenLocationStateType {
+	anchorFmPodcastId?: string;
+}
+
 export function usePath() {
 	const langParam = useLangRouteParam();
 	const planParam = usePlanRouteParam();
@@ -97,8 +101,25 @@ export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
 }
 
-// Returns podcastId value if url has a `?anchor_podcast`, which is used
-// for sites created by Anchor.fm users.
-export function useAnchorFmQueryParam() {
-	return new URLSearchParams( useLocation().search ).get( 'anchor_podcast' ) || '';
+export function useIsAnchorFm(): boolean {
+	const podcastId = useAnchorFmPodcastId();
+	return podcastId !== null && podcastId !== '';
+}
+
+// Returns the anchor podcast id. First looks in "location state",
+// provided by react-router-dom, if not available there, checks the query string.
+export function useAnchorFmPodcastId(): string | null {
+	const { state: locationState, search } = useLocation< GutenLocationStateType >();
+
+	// Use location state if available
+	if ( locationState && locationState.anchorFmPodcastId ) {
+		return locationState.anchorFmPodcastId;
+	}
+
+	// Fall back to looking in query param
+	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
+	if ( queryParam !== null && queryParam !== '' ) {
+		return queryParam;
+	}
+	return null;
 }

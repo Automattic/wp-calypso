@@ -6,15 +6,13 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { Step, StepType } from '../path';
+import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { useHasPaidPlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup: boolean = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getIsAnchorFmSignup()
-	);
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	let steps: StepType[];
 

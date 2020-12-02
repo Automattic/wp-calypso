@@ -18,6 +18,7 @@ import Badge from '../../components/badge';
 import { getDesignImageUrl } from '../../available-designs';
 import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
+import { useIsAnchorFm } from '../../path';
 
 /**
  * Style dependencies
@@ -31,13 +32,10 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const {
-		getSelectedDesign,
-		hasPaidDesign,
-		getRandomizedDesigns,
-		getIsAnchorFmSignup,
-	} = useSelect( ( select ) => select( ONBOARD_STORE ) );
-	const isAnchorFmSignup = getIsAnchorFmSignup();
+	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
+	);
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,

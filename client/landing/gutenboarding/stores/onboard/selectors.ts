@@ -12,8 +12,6 @@ export const getSelectedFeatures = ( state: State ) => state.selectedFeatures;
 export const getSelectedFonts = ( state: State ) => state.selectedFonts;
 export const getSelectedSite = ( state: State ) => state.selectedSite;
 export const getSelectedSiteTitle = ( state: State ) => state.siteTitle;
-export const getAnchorFmPodcastId = ( state: State ): string => state.anchorFmPodcastId;
-export const getIsAnchorFmSignup = ( state: State ): boolean => state.anchorFmPodcastId !== '';
 export const getSelectedVertical = ( state: State ) => state.siteVertical;
 export const getState = ( state: State ) => state;
 export const hasPaidDesign = ( state: State ): boolean => {
