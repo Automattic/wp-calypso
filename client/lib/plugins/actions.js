@@ -47,14 +47,6 @@ const PluginsActions = {
 			wpcom.site( site.ID ).wpcomPluginsList( receivePluginsDispatcher );
 		}
 	},
-
-	removePluginUpdateInfo: ( site, plugin ) => {
-		Dispatcher.handleViewAction( {
-			type: 'REMOVE_PLUGINS_UPDATE_INFO',
-			site: site,
-			plugin: plugin,
-		} );
-	},
 };
 
 export default PluginsActions;

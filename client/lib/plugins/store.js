@@ -23,9 +23,6 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 /*
  * Constants
  */
-// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
-const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
-
 // Stores the plugins of each site.
 const _fetching = {};
 const _pluginsBySite = {};
@@ -302,10 +299,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 					Object.assign( { update: { recentlyUpdated: true } }, action.data )
 				);
 				reduxDispatch( sitePluginUpdated( action.site.ID ) );
-				setTimeout(
-					PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ),
-					_UPDATED_PLUGIN_INFO_TIME_TO_LIVE
-				);
 			}
 			PluginsStore.emitChange();
 			break;
