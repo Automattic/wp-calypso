@@ -80,7 +80,8 @@
 		"predev": "yarn run clean",
 		"sync:newspack-blocks": "./bin/sync-newspack-blocks.sh",
 		"wpcom-sync": "./bin/wpcom-watch-and-sync.sh",
-		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js"
+		"validate-es5": "npx eslint --parser-options=ecmaVersion:5 --no-eslintrc --no-ignore ./editing-toolkit-plugin/*/dist/*.js",
+		"generate-version-bump": "node bin/generate-version-bump.js"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
