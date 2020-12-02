@@ -12,20 +12,20 @@ import { screen, act, render, waitFor, fireEvent } from '@testing-library/react'
  * Internal dependencies
  */
 import { useShoppingCart, ShoppingCartProvider } from '../index';
-import { emptyResponseCart } from '../src/empty-carts';
+import { getEmptyResponseCart } from '../src/empty-carts';
 import { RequestCartProduct, ResponseCartProduct, RequestCart, ResponseCart } from '../src/types';
 
-const planOne = {
+const planOne: ResponseCartProduct = {
 	product_name: 'WordPress.com Personal',
 	product_slug: 'personal-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1009,
 	volume: 1,
+	quantity: null,
 	item_original_cost_integer: 14400,
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
@@ -47,17 +47,17 @@ const planOne = {
 	included_domain_purchase_amount: 0,
 };
 
-const planTwo = {
+const planTwo: ResponseCartProduct = {
 	product_name: 'WordPress.com Business',
 	product_slug: 'business-bundle',
 	currency: 'BRL',
 	extra: {
 		context: 'signup',
 	},
-	free_trial: false,
 	meta: '',
 	product_id: 1010,
 	volume: 1,
+	quantity: null,
 	item_original_cost_integer: 14400,
 	item_original_cost_display: 'R$144',
 	item_subtotal_integer: 14400,
@@ -80,6 +80,8 @@ const planTwo = {
 };
 
 const mainCartKey = '1';
+
+const emptyResponseCart = getEmptyResponseCart();
 
 async function getCart( cartKey: string ) {
 	if ( cartKey === mainCartKey ) {
