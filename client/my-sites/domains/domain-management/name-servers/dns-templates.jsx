@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 import { dnsTemplates } from 'calypso/lib/domains/constants';
 import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
-import { getGoogleWorkspaceProductName } from 'calypso/lib/gsuite';
+import { getGoogleMailServiceName } from 'calypso/lib/gsuite';
 
 class DnsTemplates extends React.Component {
 	constructor( props ) {
@@ -26,11 +26,11 @@ class DnsTemplates extends React.Component {
 			currentProviderCardName: null,
 			templates: [
 				{
-					name: getGoogleWorkspaceProductName(),
+					name: getGoogleMailServiceName(),
 					label: translate(
 						'%(serviceName)s Verification Token - from the TXT record verification',
 						{
-							args: { serviceName: getGoogleWorkspaceProductName() },
+							args: { serviceName: getGoogleMailServiceName() },
 							comment:
 								'%(serviceName)s will be replaced with the name of the service ' +
 								'that this token applies to, for example G Suite or Office 365',

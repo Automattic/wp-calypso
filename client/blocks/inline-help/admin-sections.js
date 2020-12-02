@@ -11,7 +11,7 @@ import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
-import { getGoogleWorkspaceProductName } from 'calypso/lib/gsuite';
+import { getGoogleMailServiceName } from 'calypso/lib/gsuite';
 
 /**
  * Returns admin section items with site-based urls.
@@ -105,11 +105,11 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 		icon: 'plans',
 	},
 	{
-		title: translate( 'Cancel %(googleWorkspaceProduct)s', {
+		title: translate( 'Cancel %(googleMailService)s', {
 			args: {
-				googleWorkspaceProduct: getGoogleWorkspaceProductName(),
+				googleMailService: getGoogleMailServiceName(),
 			},
-			comment: 'googleWorkspaceProduct can be either "G Suite" or "Google Workspace"',
+			comment: '%(googleMailService)s can be either "G Suite" or "Google Workspace"',
 		} ),
 		link: `/me/purchases/${ siteSlug }`,
 		synonyms: [ 'upgrade', 'business', 'professional', 'personal', 'google' ],
