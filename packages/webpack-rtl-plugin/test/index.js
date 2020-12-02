@@ -190,7 +190,7 @@ describe( 'Webpack RTL Plugin', () => {
 			const cssChunk = cssBundleName.split( '.' );
 			const rtlCssChunk = rtlCssBundleName.split( '.' );
 
-			expect( cssChunk[ 1 ] ).not.toEqual( rtlCssChunk[ 1 ] );
+			expect( cssChunk[ 1 ] ).not.toBe( rtlCssChunk[ 1 ] );
 		} );
 	} );
 
@@ -254,7 +254,7 @@ describe( 'Webpack RTL Plugin', () => {
 			const cssChunk = cssBundleName.split( '.' )[ 1 ];
 			const rtlCssChunk = rtlCssBundleName.split( '-' )[ 2 ];
 
-			expect( cssChunk ).not.toEqual( rtlCssChunk );
+			expect( cssChunk ).not.toBe( rtlCssChunk );
 		} );
 	} );
 
@@ -495,7 +495,7 @@ describe( 'Webpack RTL Plugin', () => {
 			const expected = fs
 				.readFileSync( path.join( __dirname, 'rtl-diff-result.css' ), 'utf-8' )
 				.replace( /\r/g, '' );
-			expect( contentRrlCss ).toEqual( expected );
+			expect( contentRrlCss ).toBe( expected );
 		} );
 	} );
 
