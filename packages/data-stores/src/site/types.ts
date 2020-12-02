@@ -59,6 +59,7 @@ export interface CreateSiteParams {
 		use_patterns?: boolean;
 		selected_features?: string[];
 		wpcom_public_coming_soon?: number;
+		this_isnt_here: number;
 	};
 }
 
