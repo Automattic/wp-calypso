@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
 import { getEmptyResponseCart } from './empty-carts';
@@ -11,6 +16,7 @@ import type {
 	ResponseCartProduct,
 } from './types';
 
+const debug = debugFactory( 'shopping-cart:cart-functions' );
 let lastUUID = 100;
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -216,8 +222,10 @@ export function addItemsToResponseCart(
 	products: RequestCartProduct[]
 ): TempResponseCart {
 	if ( shouldProductsReplaceCart( products, responseCart ) ) {
+		debug( 'items should replace response cart', products );
 		return replaceAllItemsInResponseCart( responseCart, products );
 	}
+	debug( 'items should not replace response cart', products );
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, ...products ],
