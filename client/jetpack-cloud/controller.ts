@@ -19,7 +19,15 @@ import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions
  * Type dependencies
  */
 import type { UserData } from 'calypso/lib/user/user';
+import type PageJS from 'page';
 
+/**
+ * Parse site slug from path. If no slug is detected but a `site` query parameter
+ * exists, a redirection to `/:path/:site/` occurs.
+ *
+ * @param {PageJS.Context} context Route context
+ * @returns {string} Site slug
+ */
 const parseSiteFragment = ( context: PageJS.Context ): string | undefined => {
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 
@@ -43,6 +51,13 @@ const parseSiteFragment = ( context: PageJS.Context ): string | undefined => {
 	}
 };
 
+/**
+ * Fetch site data.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {number|string} siteId Site id
+ * @returns {Promise} Promise that resolves with the site id and slug
+ */
 const fetchSite = (
 	context: PageJS.Context,
 	siteId: number | string
@@ -55,6 +70,12 @@ const fetchSite = (
 	} ) );
 };
 
+/**
+ * Store site id in state, and add site to the list of most recent sites.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {number|string} siteId Site id
+ */
 const selectSite = ( context: PageJS.Context, siteId: number ): void => {
 	const { dispatch } = context.store;
 
@@ -62,6 +83,14 @@ const selectSite = ( context: PageJS.Context, siteId: number ): void => {
 	updateRecentSitesPreferences( context );
 };
 
+/**
+ * Handle case when path contains no site slug. If the current user has only
+ * one site, we try to use this site for context. Otherwise, the user must
+ * select one of their sites.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {Function} next Next middleware function
+ */
 const siteSelectionWithoutFragment = ( context: PageJS.Context, next: () => void ): void => {
 	const { getState, dispatch } = context.store;
 	const currentUser = getCurrentUser( getState() ) as UserData;
@@ -93,6 +122,13 @@ const siteSelectionWithoutFragment = ( context: PageJS.Context, next: () => void
 	}
 };
 
+/**
+ * Select site when path contains a site slug.
+ *
+ * @param {string} siteFragment Parsed site slug
+ * @param {PageJS.Context} context Route context
+ * @param {Function} next Next middleware function
+ */
 const siteSelectionWithFragment = (
 	siteFragment: string,
 	context: PageJS.Context,
@@ -122,6 +158,12 @@ const siteSelectionWithFragment = (
 	}
 };
 
+/**
+ * Parse site slug from path and call the proper middleware.
+ *
+ * @param {PageJS.Context} context Route context
+ * @param {Function} next Next middleware function
+ */
 export function cloudSiteSelection( context: PageJS.Context, next: () => void ): void {
 	const siteFragment = parseSiteFragment( context );
 
