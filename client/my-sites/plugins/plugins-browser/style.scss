@@ -47,19 +47,5 @@
 				margin-right: 15px;
 			}
 		}
-
-		.gridicon {
-			margin-right: 0;
-			@include breakpoint-deprecated( '>480px' ) {
-				margin-right: 4px;
-			}
-		}
-
-		.plugins-browser__button-text {
-			display: none;
-			@include breakpoint-deprecated( '>480px' ) {
-				display: inline-block;
-			}
-		}
 	}
 }

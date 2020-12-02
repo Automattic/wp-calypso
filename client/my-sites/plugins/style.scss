@@ -6,6 +6,17 @@
 	white-space: nowrap;
 }
 
+.plugins__header {
+	display: flex;
+	flex: 1 1 auto;
+	justify-content: flex-start;
+	align-items: center;
+
+	.plugins__page-heading {
+		width: 100%;
+	}
+}
+
 .plugins__main-header {
 	background: var( --color-surface );
 	flex-direction: column;
@@ -51,24 +62,6 @@
 		&:last-child {
 			@include breakpoint-deprecated( '<660px' ) {
 				margin-right: 15px;
-			}
-		}
-
-		.gridicon {
-			margin-right: 0;
-			@include breakpoint-deprecated( '>480px' ) {
-				margin-right: 4px;
-			}
-		}
-
-		@include breakpoint-deprecated( '>480px' ) {
-			flex: none;
-		}
-
-		.plugins__button-text {
-			display: none;
-			@include breakpoint-deprecated( '>480px' ) {
-				display: inline-block;
 			}
 		}
 	}

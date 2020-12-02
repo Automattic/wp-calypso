@@ -67,6 +67,7 @@ export class PluginsBrowser extends Component {
 		recommendedPlugins: PropTypes.arrayOf( PropTypes.object ),
 		selectedSite: PropTypes.object,
 		trackPageView: PropTypes.bool,
+		hideHeader: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -548,11 +549,7 @@ export class PluginsBrowser extends Component {
 
 	render() {
 		if ( ! this.props.isRequestingSites && this.props.noPermissionsError ) {
-			return (
-				<NoPermissionsError
-					title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) }
-				/>
-			);
+			return <NoPermissionsError title={ this.props.translate( 'Plugins', { textOnly: true } ) } />;
 		}
 
 		return (
@@ -561,23 +558,25 @@ export class PluginsBrowser extends Component {
 					<QuerySiteRecommendedPlugins siteId={ this.props.selectedSiteId } />
 				) }
 				{ this.renderPageViewTracker() }
-				<DocumentHead title={ this.props.translate( 'Plugin Browser', { textOnly: true } ) } />
+				<DocumentHead title={ this.props.translate( 'Plugins', { textOnly: true } ) } />
 				<SidebarNavigation />
-				<div className="plugins-browser__header">
-					<FormattedHeader
-						brandFont
-						className="plugins-browser__page-heading"
-						headerText={ this.props.translate( 'Plugin Browser' ) }
-						align="left"
-						subHeaderText={ this.props.translate(
-							'Plugins are extensions that add useful features to your site.'
-						) }
-					/>
-					<div className="plugins-browser__main-buttons">
-						{ this.renderManageButton() }
-						{ this.renderUploadPluginButton() }
+				{ ! this.props.hideHeader && (
+					<div className="plugins-browser__header">
+						<FormattedHeader
+							brandFont
+							className="plugins-browser__page-heading"
+							headerText={ this.props.translate( 'Plugins' ) }
+							align="left"
+							subHeaderText={ this.props.translate(
+								'Plugins are extensions that add useful features to your site.'
+							) }
+						/>
+						<div className="plugins-browser__main-buttons">
+							{ this.renderManageButton() }
+							{ this.renderUploadPluginButton() }
+						</div>
 					</div>
-				</div>
+				) }
 				{ this.renderUpgradeNudge() }
 				{ this.getPageHeaderView() }
 				{ this.getPluginBrowserContent() }
