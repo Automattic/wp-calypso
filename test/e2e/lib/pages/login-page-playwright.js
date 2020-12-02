@@ -9,8 +9,7 @@ export default class LoginPage {
     constructor(page) {
         // Accepts an instance of a page object.
         this.page = page;
-        // Instead of passing the URL as parameter to the parent class,
-        // simply set it as an attribute of this class instance.
+        // Set the login URL as an attribute of this page.
         this.url = LoginPage.getLoginURL();
     }
 

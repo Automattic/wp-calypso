@@ -47,15 +47,19 @@ export default class LoginFlow {
     }   
 
     async login() {
+        /* This will be the base method that performs the logins.
+        Functions that perform additional actions on top of logging in
+        such as new post, new page, select people, etc. will call this method
+        as the first call. */
+
         console.log( 'Logging in as ' + this.account.username );
 
-        // Retrieve the context created in the constructor.
+        // Retrieve the browser context (session).
         const context = await this.context;
         // Launch a new page/tab in the context.
         const page = await context.newPage();
 
-        // Initialize the LoginPage page object with the current page
-        // as the parameter.
+        // Initialize the LoginPage page object with the current (empty) page.
         let loginPage;
         loginPage = new LoginPage( page );
 
