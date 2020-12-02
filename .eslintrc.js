@@ -358,10 +358,6 @@ module.exports = {
 					// It's not likely that this will change
 					{ term: 'mastercard', allowPartialMatches: true },
 
-					// The next two are stored in a site's meta so would require a data migration of all sites to fix
-					'comment_whitelist',
-					'blacklist_keys',
-
 					// Depends on https://github.com/Automattic/jetpack/blob/3dae8f80e5020338e84bfc20bb41786f056a2eec/json-endpoints/jetpack/class.wpcom-json-api-get-option-endpoint.php#L38
 					'option_name_not_in_whitelist',
 
