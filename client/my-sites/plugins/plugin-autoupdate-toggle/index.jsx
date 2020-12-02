@@ -10,12 +10,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import PluginsActions from 'calypso/lib/plugins/actions';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
+
+const autoUpdateActions = [ 'ENABLE_AUTOUPDATE_PLUGIN', 'DISABLE_AUTOUPDATE_PLUGIN' ];
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
@@ -137,15 +139,11 @@ export class PluginAutoUpdateToggle extends Component {
 	}
 
 	render() {
-		const { site, plugin, translate, disabled } = this.props;
+		const { inProgress, site, plugin, translate, disabled } = this.props;
 		if ( ! site.jetpack ) {
 			return null;
 		}
 
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-			'ENABLE_AUTOUPDATE_PLUGIN',
-			'DISABLE_AUTOUPDATE_PLUGIN',
-		] );
 		const getDisabledInfo = this.getDisabledInfo();
 		const label = translate( 'Autoupdates', {
 			comment:
@@ -179,8 +177,19 @@ PluginAutoUpdateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-	recordTracksEvent,
-	togglePluginAutoUpdate,
-} )( localize( PluginAutoUpdateToggle ) );
+export default connect(
+	( state, { site, plugin } ) => {
+		const pluginStatus = getStatusForPlugin( state, site.ID, plugin.id );
+		const inProgress =
+			autoUpdateActions.includes( pluginStatus?.action ) && 'inProgress' === pluginStatus?.status;
+
+		return {
+			inProgress,
+		};
+	},
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		togglePluginAutoUpdate,
+	}
+)( localize( PluginAutoUpdateToggle ) );
