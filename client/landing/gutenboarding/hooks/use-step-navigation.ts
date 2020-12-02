@@ -39,7 +39,12 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, locale, undefined, newSiteVisibility )
+			? createSite( {
+					username: currentUser.username,
+					languageSlug: locale,
+					bearerToken: undefined,
+					visibility: newSiteVisibility,
+			  } )
 			: onSignupDialogOpen();
 
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );

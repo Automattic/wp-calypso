@@ -30,7 +30,12 @@ export default function useOnLogin(): void {
 
 	React.useEffect( () => {
 		if ( ! isCreatingSite && ! newSite && currentUser && shouldTriggerCreate ) {
-			createSite( currentUser.username, locale, undefined, visibility );
+			createSite( {
+				username: currentUser.username,
+				languageSlug: locale,
+				bearerToken: undefined,
+				visibility,
+			} );
 		}
 	}, [
 		createSite,
