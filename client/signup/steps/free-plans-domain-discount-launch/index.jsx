@@ -103,7 +103,7 @@ function FormattedSuggestion( translate, suggestion, isRecommended ) {
 				</div>
 				{ isRecommended && <Badge type="success">{ translate( 'Recommended' ) }</Badge> }
 			</div>
-			<div>
+			<div className="free-plans-domain-discount-launch__registration-fee">
 				<div>
 					{ translate( 'Registration fee: {{strong}}%(originalCost)s{{/strong}}', {
 						args: {
