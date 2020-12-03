@@ -12,7 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useNewSiteVisibility } from './use-selected-plan';
-import { useNewQueryParam, useIsAnchorFm } from '../path';
+import { useNewQueryParam, useIsAnchorFm, useAnchorFmPodcastId } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -28,6 +28,7 @@ export default function useOnLogin(): void {
 	const shouldTriggerCreate = useNewQueryParam();
 	const visibility = useNewSiteVisibility();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const anchorFmPodcastId = useAnchorFmPodcastId();
 
 	React.useEffect( () => {
 		if (
@@ -42,6 +43,7 @@ export default function useOnLogin(): void {
 				languageSlug: locale,
 				bearerToken: undefined,
 				visibility,
+				anchorFmPodcastId,
 			} );
 		}
 	}, [

@@ -42,6 +42,7 @@ export interface CreateSiteActionParameters {
 	languageSlug: string;
 	bearerToken?: string;
 	visibility: number;
+	anchorFmPodcastId: string | null;
 }
 
 export function* createSite( {
@@ -51,6 +52,7 @@ export function* createSite( {
 	visibility = isEnabled( 'coming-soon-v2' )
 		? Site.Visibility.PublicNotIndexed
 		: Site.Visibility.Private,
+	anchorFmPodcastId = null,
 }: CreateSiteActionParameters ) {
 	const {
 		domain,
@@ -102,6 +104,9 @@ export function* createSite( {
 				visibility === Site.Visibility.PublicNotIndexed && {
 					wpcom_public_coming_soon: 1,
 				} ),
+			...( anchorFmPodcastId !== null && {
+				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
 	};

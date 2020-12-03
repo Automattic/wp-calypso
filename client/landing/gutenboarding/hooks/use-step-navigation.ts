@@ -41,6 +41,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const anchorFmPodcastId = useAnchorFmPodcastId();
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const newSiteVisibility = useNewSiteVisibility();
@@ -52,6 +53,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				languageSlug: locale,
 				bearerToken: undefined,
 				visibility: newSiteVisibility,
+				anchorFmPodcastId,
 			} );
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
@@ -61,6 +63,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				languageSlug: locale,
 				bearerToken: undefined,
 				visibility: newSiteVisibility,
+				anchorFmPodcastId,
 			} );
 		}
 		return onSignupDialogOpen();
@@ -75,7 +78,6 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 
 	// Transfer anchor podcast ID from the query string to the location state, if needed
 	const locationState = useLocation< GutenLocationStateType >().state ?? {};
-	const anchorFmPodcastId = useAnchorFmPodcastId();
 	if ( anchorFmPodcastId ) {
 		locationState.anchorFmPodcastId = anchorFmPodcastId;
 	}

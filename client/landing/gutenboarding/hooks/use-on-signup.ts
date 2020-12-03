@@ -12,7 +12,7 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { SITE_STORE } from '../stores/site';
 import { useNewSiteVisibility } from './use-selected-plan';
-import { useIsAnchorFm } from '../path';
+import { useIsAnchorFm, useAnchorFmPodcastId } from '../path';
 
 /**
  * After signup a site is automatically created using the username and bearerToken
@@ -26,6 +26,7 @@ export default function useOnSignup() {
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
 	const visibility = useNewSiteVisibility();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const anchorFmPodcastId = useAnchorFmPodcastId();
 
 	const handleCreateSite = React.useCallback(
 		( username: string, isPublicSite: number, bearerToken?: string ) => {
@@ -34,6 +35,7 @@ export default function useOnSignup() {
 				languageSlug: locale,
 				bearerToken,
 				visibility: isPublicSite,
+				anchorFmPodcastId,
 			} );
 		},
 		[ createSite, locale ]
