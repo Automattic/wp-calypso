@@ -207,6 +207,8 @@ class Help extends React.PureComponent {
 	};
 
 	getCoursesTeaser = () => {
+		const { translate } = this.props;
+
 		if ( ! this.props.showCoursesTeaser ) {
 			return null;
 		}
@@ -216,8 +218,8 @@ class Help extends React.PureComponent {
 				onClick={ this.trackCoursesButtonClick }
 				href="https://wordpress.com/webinars"
 				target="_blank"
-				title={ this.props.translate( 'Courses' ) }
-				description={ this.props.translate(
+				title={ translate( 'Courses' ) }
+				description={ translate(
 					'Learn how to make the most of your site with these courses and webinars'
 				) }
 			/>
@@ -225,14 +227,16 @@ class Help extends React.PureComponent {
 	};
 
 	supportSessionCard = () => {
+		const { translate } = this.props;
+
 		return (
 			<Card className="help__support-session-card">
 				<div className="help__support-session-text">
 					<h2 className="help__support-session-title">
-						{ this.props.translate( 'Schedule a support session' ) }
+						{ translate( 'Schedule a support session' ) }
 					</h2>
 					<p className="help__support-session-description">
-						{ this.props.translate(
+						{ translate(
 							'Quick Start Support Sessions give you a way to talk to one of our Happiness Engineers via a screen share with audio.'
 						) }
 					</p>
@@ -243,14 +247,14 @@ class Help extends React.PureComponent {
 							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
 							onClick={ this.trackSupportSessionButtonClick() }
 						>
-							{ this.props.translate( 'Schedule a session' ) }
+							{ translate( 'Schedule a session' ) }
 						</Button>
 						<Button
 							className="help__support-session-action is-link"
 							borderless
 							href={ localizeUrl( 'https://wordpress.com/support/quickstart-support/' ) }
 						>
-							{ this.props.translate( 'Learn more' ) }
+							{ translate( 'Learn more' ) }
 						</Button>
 					</div>
 				</div>
@@ -262,11 +266,7 @@ class Help extends React.PureComponent {
 	};
 
 	trackSupportSessionButtonClick = () => {
-		//@TODO: What information do we want to track here?
-		const { isBusinessPlanUser } = this.props;
-		recordTracksEvent( 'calypso_help_support_session_card_click', {
-			is_business_plan_user: isBusinessPlanUser,
-		} );
+		//@TODO: What information do we want to track?
 	};
 
 	trackCoursesButtonClick = () => {
