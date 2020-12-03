@@ -36,10 +36,10 @@
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/i18n-utils": "^1.0.0",
-		"@wordpress/base-styles": "^2.0.1",
-		"@wordpress/components": "^10.0.5",
-		"@wordpress/compose": "^3.19.3",
-		"@wordpress/icons": "^2.4.0",
+		"@wordpress/base-styles": "^3.3.0",
+		"@wordpress/components": "^12.0.1",
+		"@wordpress/compose": "^3.23.1",
+		"@wordpress/icons": "^2.9.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.20",
 		"tslib": "^1.10.0",
@@ -53,9 +53,9 @@
 		"react-dom": "^16.12.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4.22.3",
-		"@wordpress/element": "^2.16.0",
-		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/data": "^4.26.1",
+		"@wordpress/element": "^2.19.0",
+		"@wordpress/i18n": "^3.17.0",
 		"react": "^16.12.0"
 	},
 	"private": true
