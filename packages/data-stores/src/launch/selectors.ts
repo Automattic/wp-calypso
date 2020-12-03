@@ -36,8 +36,14 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  * @param state State
  */
 export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
-
 // Check if a domain has been explicitly selected (including free subdomain)
+
+/**
+ * Check if the user has selected a domain, including explicitly selecting the subdomain
+ * This is useful for step/flow completion in the context of highlighting steps or enabling Launch button
+ *
+ * @param state State
+ */
 export const hasSelectedDomain = ( state: State ): boolean =>
 	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
 
