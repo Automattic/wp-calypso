@@ -25,8 +25,6 @@ import {
 	SUBTYPE_TO_OPTION,
 } from './constants';
 import RecordsDetails from './records-details';
-import { addItems } from 'calypso/lib/cart/actions';
-import { jetpackProductItem } from 'calypso/lib/cart-values/cart-items';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	TERM_ANNUALLY,
@@ -604,20 +602,13 @@ export function checkout(
 	// If there is not siteSlug, we need to redirect the user to the site selection
 	// step of the flow. Since purchases of multiple products are allowed, we need
 	// to pass all products separated by comma in the URL.
-	let path;
-	if ( ! siteSlug ) {
-		path = `/jetpack/connect/${ productsString }`;
-	} else {
-		path =
-			isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' )
-				? `/checkout/${ siteSlug }/${ productsString }`
-				: `/checkout/${ siteSlug }`;
-	}
+	const path = siteSlug
+		? `/checkout/${ siteSlug }/${ productsString }`
+		: `/jetpack/connect/${ productsString }`;
 
 	if ( isJetpackCloud() && ! config.isEnabled( 'jetpack-cloud/connect' ) ) {
 		window.location.href = addQueryArgs( urlQueryArgs, `https://wordpress.com${ path }` );
 	} else {
-		addItems( productsArray.map( jetpackProductItem ) );
 		page.redirect( addQueryArgs( urlQueryArgs, path ) );
 	}
 }
