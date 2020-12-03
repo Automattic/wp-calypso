@@ -422,7 +422,9 @@ $accent-blue: #117ac9;
 }
 
 .domain-picker__error {
-	margin-top: 24px;
+	&.components-notice {
+		margin: 0;
+	}
 
 	#{&}-message {
 		@include onboarding-medium-text;
