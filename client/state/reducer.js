@@ -21,7 +21,6 @@ import documentHead from './document-head/reducer';
 import i18n from './i18n/reducer';
 import importerNux from './importer-nux/reducer';
 import sites from './sites/reducer';
-import support from './support/reducer';
 import userSettings from './user-settings/reducer';
 
 // Legacy reducers
@@ -36,7 +35,6 @@ const reducers = {
 	i18n,
 	importerNux,
 	sites,
-	support,
 	userSettings,
 };
 

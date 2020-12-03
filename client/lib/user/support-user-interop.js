@@ -9,7 +9,6 @@ import debugModule from 'debug';
 import wpcom from 'calypso/lib/wp';
 import config from '@automattic/calypso-config';
 import { bypassPersistentStorage } from 'calypso/lib/browser-storage';
-import { supportSessionActivate } from 'calypso/state/support/actions';
 import localStorageBypass from 'calypso/lib/local-storage-bypass';
 
 /**
@@ -130,6 +129,9 @@ export async function supportUserBoot() {
 
 	wpcom.setSupportUserToken( user, token, onTokenError );
 
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
+
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;
 	reduxStore.dispatch( supportSessionActivate() );
@@ -146,6 +148,9 @@ export async function supportNextBoot() {
 	// they are safe to share across user sessions.
 	const allowedKeys = [ 'debug' ];
 	localStorageBypass( allowedKeys );
+
+	// This needs to be a dynamic import in order to avoid boot race conditions.
+	const { supportSessionActivate } = await import( 'calypso/state/support/actions' );
 
 	// the boot is performed before the Redux store is created, so we need to wait for a promise
 	const reduxStore = await reduxStoreReady;
