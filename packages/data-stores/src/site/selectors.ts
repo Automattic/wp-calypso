@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { select } from '@wordpress/data';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -53,3 +54,7 @@ export const getSiteSubdomain = ( _: State, siteId: number ) =>
 	select( STORE_KEY )
 		.getSiteDomains( siteId )
 		?.find( ( domain ) => domain.is_subdomain );
+
+export const getCart = ( state: State, siteId: number ): ResponseCart => {
+	return state.cartData[ siteId ];
+};

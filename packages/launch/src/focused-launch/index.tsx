@@ -15,7 +15,7 @@ import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
 import { LAUNCH_STORE } from '../stores';
-import { useDomainSuggestionFromCart } from '../hooks';
+import { useDomainSuggestionFromCart, usePlanFromCart } from '../hooks';
 
 import './style.scss';
 
@@ -38,6 +38,17 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			setDomain( domainSuggestionFromCart );
 		}
 	}, [ selectedDomain, domainSuggestionFromCart, setDomain ] );
+
+	// If there is no selected plan, but there is a plan in cart,
+	// set the plan from cart as the selected plan.
+	const planFromCart = usePlanFromCart();
+	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const { setPlan } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( ! selectedPlan && planFromCart ) {
+			setPlan( planFromCart );
+		}
+	}, [ selectedPlan, planFromCart, setPlan ] );
 
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>

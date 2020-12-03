@@ -167,6 +167,7 @@ export type ResponseCartProductExtra = {
 	purchaseType?: string;
 	includedDomain?: string;
 	privacy?: boolean;
+	privacy_available?: boolean;
 };
 
 export interface GSuiteProductUser {

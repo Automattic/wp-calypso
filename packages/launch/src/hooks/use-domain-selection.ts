@@ -1,36 +1,14 @@
 /**
  * External dependencies
  */
-import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
-import LaunchContext from '../context';
-import { isDomainProduct } from '../utils';
-import type { Product, DomainProduct } from '../utils';
-
-export function useDomainProductFromCart(): DomainProduct | undefined {
-	const { siteId } = React.useContext( LaunchContext );
-	const { getCart } = useDispatch( SITE_STORE );
-
-	const [ domainProductFromCart, setDomainProductFromCart ] = React.useState<
-		DomainProduct | undefined
-	>( undefined );
-
-	React.useEffect( () => {
-		( async function () {
-			const cart = await getCart( siteId );
-			const domainProduct = cart.products?.find( ( item: Product ) => isDomainProduct( item ) );
-			setDomainProductFromCart( domainProduct );
-		} )();
-	}, [ siteId, getCart, setDomainProductFromCart ] );
-
-	return domainProductFromCart;
-}
+import { LAUNCH_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import { useDomainProductFromCart } from './use-cart';
 
 export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestion | undefined {
 	const domainProductFromCart = useDomainProductFromCart();

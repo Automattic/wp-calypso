@@ -3,13 +3,14 @@
  */
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { LAUNCH_STORE, SITE_STORE, PLANS_STORE } from '../stores';
 import LaunchContext from '../context';
-import { getPlanProduct, getDomainProduct } from '../utils';
+import { getPlanProduct, getDomainProduct, isPlanProduct, isDomainProduct } from '../utils';
 
 export function useCart(): { goToCheckout: () => Promise< void > } {
 	const { siteId, flow, openCheckout } = React.useContext( LaunchContext );
@@ -40,4 +41,17 @@ export function useCart(): { goToCheckout: () => Promise< void > } {
 	return {
 		goToCheckout,
 	};
+}
+
+export function useProductsFromCart(): ResponseCartProduct[] | undefined {
+	const { siteId } = React.useContext( LaunchContext );
+	return useSelect( ( select ) => select( SITE_STORE ).getCart( siteId )?.products );
+}
+
+export function usePlanProductFromCart(): ResponseCartProduct | undefined {
+	return useProductsFromCart()?.find( ( item ) => isPlanProduct( item ) );
+}
+
+export function useDomainProductFromCart(): ResponseCartProduct | undefined {
+	return useProductsFromCart()?.find( ( item ) => isDomainProduct( item ) );
 }
