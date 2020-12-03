@@ -23,10 +23,12 @@ import { Button } from '@automattic/components';
 import FoldableCard from 'calypso/components/foldable-card';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { getLanguage } from 'calypso/lib/i18n-utils';
+import SelectOptGroups from 'calypso/components/forms/select-opt-groups';
+import day from 'calypso/assets/images/quick-start/day.svg';
+import night from 'calypso/assets/images/quick-start/night.svg';
 
 const defaultLanguage = getLanguage( config( 'i18n_default_locale_slug' ) ).name;
 
@@ -45,8 +47,11 @@ class CalendarCard extends Component {
 		super( props );
 
 		let closestTimestamp;
+		let selectedTimeGroup;
+		let selectedMorningTime;
+		let selectedEveningTime;
 
-		const { moment, times, date } = this.props;
+		const { moment, times, morningTimes, eveningTimes, date } = this.props;
 
 		// If there are times passed in, pick a sensible default.
 		if ( Array.isArray( times ) && ! isEmpty( times ) ) {
@@ -75,14 +80,95 @@ class CalendarCard extends Component {
 			} );
 		}
 
+		if ( morningTimes.includes( closestTimestamp ) ) {
+			selectedTimeGroup = 'morning';
+			selectedMorningTime = closestTimestamp;
+			selectedEveningTime = eveningTimes[ 0 ];
+		} else {
+			selectedTimeGroup = 'evening';
+			selectedEveningTime = closestTimestamp;
+			selectedMorningTime = morningTimes[ morningTimes.length - 1 ];
+		}
+
 		this.state = {
-			selectedTime: closestTimestamp,
+			selectedTimeGroup,
+			selectedMorningTime,
+			selectedEveningTime,
 		};
 	}
 
 	withTimezone( dateTime ) {
 		const { moment, timezone } = this.props;
 		return moment( dateTime ).tz( timezone );
+	}
+
+	formatTimeDisplay( time ) {
+		const formattedTime = this.withTimezone( time ).format( 'LT' );
+
+		if ( [ '12:00 AM', '00:00' ].includes( formattedTime ) ) {
+			return this.props.translate( 'Midnight' );
+		}
+
+		return formattedTime;
+	}
+
+	getSelectOptGroup( times ) {
+		const { translate } = this.props;
+
+		const earlyMorningOptGroup = {
+			label: translate( 'Early Morning' ),
+			options: [],
+			isEarlyMorningTime: ( hour ) => hour >= 0 && hour < 6,
+		};
+		const morningOptGroup = {
+			label: translate( 'Morning' ),
+			options: [],
+			isMorningTime: ( hour ) => hour >= 6 && hour < 12,
+		};
+		const afternoonOptGroup = {
+			label: translate( 'Afternoon' ),
+			options: [],
+			isAfternoonTime: ( hour ) => hour >= 12 && hour < 18,
+		};
+		const eveningOptGroup = {
+			label: translate( 'Evening' ),
+			options: [],
+		};
+
+		times.forEach( ( time ) => {
+			const hour = this.withTimezone( time ).format( 'HH' );
+
+			if ( earlyMorningOptGroup.isEarlyMorningTime( hour ) ) {
+				earlyMorningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else if ( morningOptGroup.isMorningTime( hour ) ) {
+				morningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else if ( afternoonOptGroup.isAfternoonTime( hour ) ) {
+				afternoonOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			} else {
+				eveningOptGroup.options.push( {
+					label: this.formatTimeDisplay( time ),
+					value: time,
+				} );
+			}
+		} );
+
+		const options = [
+			earlyMorningOptGroup,
+			morningOptGroup,
+			afternoonOptGroup,
+			eveningOptGroup,
+		].filter( ( optGroup ) => optGroup.options.length > 0 );
+
+		return options;
 	}
 
 	/**
@@ -121,11 +207,21 @@ class CalendarCard extends Component {
 	}
 
 	onChange = ( { target } ) => {
-		this.setState( { selectedTime: target.value } );
+		const key =
+			this.state.selectedTimeGroup === 'morning' ? 'selectedMorningTime' : 'selectedEveningTime';
+		this.setState( { [ key ]: target.value } );
 	};
 
 	submitForm = () => {
-		this.props.onSubmit( this.state.selectedTime );
+		const selectedTime =
+			this.state.selectedTimeGroup === 'morning'
+				? this.state.selectedMorningTime
+				: this.state.selectedEveningTime;
+		this.props.onSubmit( selectedTime );
+	};
+
+	handleFilterClick = ( timeGroup ) => {
+		this.setState( { selectedTimeGroup: timeGroup } );
 	};
 
 	render() {
@@ -135,6 +231,10 @@ class CalendarCard extends Component {
 			isDefaultLocale,
 			times,
 			translate,
+			morningTimes,
+			eveningTimes,
+			timezone,
+			moment,
 			// Temporarily harcoding durationInMinutes
 			// appointmentTimespan,
 			// moment,
@@ -142,7 +242,11 @@ class CalendarCard extends Component {
 
 		// Temporarily hardcoded to 30mins.
 		const durationInMinutes = 30; // moment.duration( appointmentTimespan, 'seconds' ).minutes();
+		const userTimezoneAbbr = moment.tz( timezone ).format( 'z' );
 
+		// Moment timezone does not display the abbreviation for some countries(e.g. for Singapore, it shows timezone abbr as +08 ).
+		// Don't display the timezone for such countries.
+		const shouldDisplayTzAbbr = /[a-zA-Z]/g.test( userTimezoneAbbr );
 		const description = isDefaultLocale
 			? translate( 'Sessions are %(durationInMinutes)d minutes long.', {
 					args: { durationInMinutes },
@@ -150,6 +254,24 @@ class CalendarCard extends Component {
 			: translate( 'Sessions are %(durationInMinutes)d minutes long and in %(defaultLanguage)s.', {
 					args: { defaultLanguage, durationInMinutes },
 			  } );
+
+		const isMorningTimeGroupSelected = this.state.selectedTimeGroup === 'morning';
+		let timesForTimeGroup;
+		let btnMorningTitle;
+		let btnEveningTitle;
+		let btnMorningTimeGroup = 'shared__time-group';
+		let btnEveningTimeGroup = 'shared__time-group';
+
+		if ( isMorningTimeGroupSelected ) {
+			timesForTimeGroup = morningTimes;
+			btnMorningTimeGroup += ' is-selected';
+			btnEveningTitle =
+				eveningTimes.length === 0 ? translate( 'No afternoon slots available' ) : '';
+		} else {
+			timesForTimeGroup = eveningTimes;
+			btnEveningTimeGroup += ' is-selected';
+			btnMorningTitle = morningTimes.length === 0 ? translate( 'No morning slots available' ) : '';
+		}
 
 		return (
 			<FoldableCard
@@ -161,22 +283,57 @@ class CalendarCard extends Component {
 				header={ this.renderHeader() }
 			>
 				<FormFieldset>
+					<FormLabel htmlFor="concierge-start-time-group">
+						{ translate( 'Choose time of day' ) }
+					</FormLabel>
+					<Button
+						className={ btnMorningTimeGroup }
+						onClick={ () => this.handleFilterClick( 'morning' ) }
+						disabled={ morningTimes.length === 0 }
+						title={ btnMorningTitle }
+					>
+						<div className="shared__time-group-filter">
+							<img src={ day } alt="" />
+							{ translate( 'Morning' ) }
+						</div>
+					</Button>
+					<Button
+						className={ btnEveningTimeGroup }
+						onClick={ () => this.handleFilterClick( 'evening' ) }
+						disabled={ eveningTimes.length === 0 }
+						title={ btnEveningTitle }
+					>
+						<div className="shared__time-group-filter">
+							<img src={ night } alt="" />
+							<span>{ translate( 'Afternoon' ) }</span>
+						</div>
+					</Button>
+					<br />
+					<br />
+
 					<FormLabel htmlFor="concierge-start-time">
 						{ translate( 'Choose a starting time' ) }
 					</FormLabel>
-					<FormSelect
+					<SelectOptGroups
+						name="concierge-time-groups"
+						optGroups={ this.getSelectOptGroup( timesForTimeGroup ) }
 						id="concierge-start-time"
 						disabled={ disabled }
 						onChange={ this.onChange }
-						value={ this.state.selectedTime }
-					>
-						{ times.map( ( time ) => (
-							<option value={ time } key={ time }>
-								{ this.withTimezone( time ).format( 'LT z' ) }
-							</option>
-						) ) }
-					</FormSelect>
+						value={
+							isMorningTimeGroupSelected
+								? this.state.selectedMorningTime
+								: this.state.selectedEveningTime
+						}
+					/>
 					<FormSettingExplanation>{ description }</FormSettingExplanation>
+					{ shouldDisplayTzAbbr && (
+						<FormSettingExplanation>
+							{ translate( 'All times are in %(userTimezoneAbbr)s timezone.', {
+								args: { userTimezoneAbbr },
+							} ) }
+						</FormSettingExplanation>
+					) }
 				</FormFieldset>
 
 				<FormFieldset>
