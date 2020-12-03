@@ -35,15 +35,15 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 		getJetpackCredentialsUpdateProgress( state, siteId )
 	);
 
-	const stepLabels = {
-		'check jetpack site': translate( 'Checking Jetpack site' ),
-		'check public host': translate( 'Checking public host' ),
-		connect: translate( 'Connecting to server' ),
-		authenticate: translate( 'Authenticating with server' ),
-		'find wordpress': translate( 'Locating WordPress installation' ),
-		'save special paths': translate( 'Saving path settings' ),
-		disconnect: translate( 'Disconnecting' ),
-	};
+	const stepLabels = new Map( [
+		[ 'check jetpack site', translate( 'Checking Jetpack site' ) ],
+		[ 'check public host', translate( 'Checking public host' ) ],
+		[ 'connect', translate( 'Connecting to server' ) ],
+		[ 'authenticate', translate( 'Authenticating with server' ) ],
+		[ 'find wordpress', translate( 'Locating WordPress installation' ) ],
+		[ 'save special paths', translate( 'Saving path settings' ) ],
+		[ 'disconnect', translate( 'Disconnecting' ) ],
+	] );
 
 	return (
 		<div>
@@ -71,7 +71,7 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 					return (
 						<li key={ step.label } className={ classNames( 'verification__step-item', className ) }>
 							<Gridicon icon={ icon } />
-							{ stepLabels[ step.label ] }
+							{ stepLabels.has( step.label ) ? stepLabels.get( step.label ) : step.label }
 						</li>
 					);
 				} ) }
