@@ -35,6 +35,9 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 		getJetpackCredentialsUpdateProgress( state, siteId )
 	);
 
+	// TODO @azabani change this when implementing proper success/failure screens
+	const showFinishUp = false;
+
 	const stepLabels = new Map( [
 		[ 'check jetpack site', translate( 'Checking Jetpack site' ) ],
 		[ 'check public host', translate( 'Checking public host' ) ],
@@ -76,10 +79,7 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 					);
 				} ) }
 			</ul>
-			{ updateProgress.steps.every(
-				( step ) =>
-					! [ Progress.StepState.Waiting, Progress.StepState.Active ].includes( step.state )
-			) && (
+			{ showFinishUp && (
 				<div className="verification__buttons">
 					<Button primary onClick={ onFinishUp }>
 						{ translate( 'Finish up' ) }

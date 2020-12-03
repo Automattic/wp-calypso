@@ -51,11 +51,6 @@ export const primeHappychat = ( { dispatch, getState } ) => {
 };
 
 export const request = ( action ) => {
-	const notice = successNotice( i18n.translate( 'Testing connection…' ), { duration: 30000 } );
-	const {
-		notice: { noticeId },
-	} = notice;
-
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
@@ -69,7 +64,6 @@ export const request = ( action ) => {
 			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 			siteId: action.siteId,
 		},
-		notice,
 		tracksEvent,
 		http(
 			{
@@ -79,7 +73,7 @@ export const request = ( action ) => {
 				body: { credentials, stream: true },
 				expectStreamMode: true,
 			},
-			{ ...action, noticeId }
+			{ ...action }
 		),
 	];
 };
@@ -99,7 +93,6 @@ export const success = ( action, { rewind_state } ) => [
 	},
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
-		id: action.noticeId,
 	} ),
 	recordTracksEvent( 'calypso_rewind_creds_update_success', {
 		site_id: action.siteId,
@@ -133,7 +126,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		return canChat ? dispatch( openChat() ) : navigateTo( '/help' );
 	};
 
-	const baseOptions = { duration: 10000, id: action.noticeId };
+	const baseOptions = { duration: 10000 };
 
 	const announce = ( message, options ) =>
 		dispatch( errorNotice( message, options ? { ...baseOptions, ...options } : baseOptions ) );
