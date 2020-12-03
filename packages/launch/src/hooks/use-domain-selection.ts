@@ -37,14 +37,16 @@ export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestio
 
 	const domainName = domainProductFromCart?.meta;
 
-	const domainSuggestion = useSelect( ( select ) =>
-		domainName
-			? select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainName, {
+	const domainSuggestion = useSelect(
+		( select ) =>
+			void (
+				domainName &&
+				select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainName, {
 					quantity: 1,
 					include_wordpressdotcom: false,
 					include_dotblogsubdomain: false,
-			  } )?.[ 0 ]
-			: undefined
+				} )?.[ 0 ]
+			)
 	);
 
 	return domainSuggestion;
