@@ -144,19 +144,26 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 		after: moment( selectedDate ).startOf( 'day' ).toISOString(),
 	} );
 
-	const backupAttemptsOnDate = useMemo(
-		() =>
-			activityLogs.filter(
-				( activity ) => isActivityBackup( activity ) || isSuccessfulRealtimeBackup( activity )
-			),
-		[ activityLogs ]
-	);
-	const lastBackupAttemptOnDate = backupAttemptsOnDate[ 0 ];
-	const lastSuccessfulBackupOnDate = backupAttemptsOnDate.filter( isSuccessfulRealtimeBackup )[ 0 ];
+	const {
+		backupAttemptsOnDate,
+		lastBackupAttemptOnDate,
+		lastSuccessfulBackupOnDate,
+		lastAttemptWasSuccessful,
+	} = useMemo( () => {
+		const attemptsOnDate = activityLogs.filter(
+			( a ) => isActivityBackup( a ) || isSuccessfulRealtimeBackup( a )
+		);
+
+		return {
+			backupAttemptsOnDate: attemptsOnDate,
+			lastBackupAttemptOnDate: attemptsOnDate[ 0 ],
+			lastSuccessfulBackupOnDate: attemptsOnDate.find( isSuccessfulRealtimeBackup ),
+			lastAttemptWasSuccessful:
+				attemptsOnDate[ 0 ] && isSuccessfulRealtimeBackup( attemptsOnDate[ 0 ] ),
+		};
+	}, [ activityLogs ] );
 
 	const hasPreviousBackup = ! lastBackupBeforeDate.isLoading && lastBackupBeforeDate.backupAttempt;
-	const successfulLastAttempt =
-		lastBackupAttemptOnDate && isSuccessfulRealtimeBackup( lastBackupAttemptOnDate );
 
 	const rawDeltas = useRawBackupDeltas(
 		siteId,
@@ -164,7 +171,7 @@ export const useRealtimeBackupStatus = ( siteId, selectedDate ) => {
 			before: moment( lastBackupAttemptOnDate?.activityTs ),
 			after: moment( lastBackupBeforeDate.backupAttempt?.activityTs ),
 		},
-		!! ( hasPreviousBackup && successfulLastAttempt )
+		!! ( hasPreviousBackup && lastAttemptWasSuccessful )
 	);
 
 	return {
