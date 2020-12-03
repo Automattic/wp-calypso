@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { inspectLicense } from 'calypso/state/jetpack-licensing/actions';
+import { inspectLicense } from 'calypso/state/licensing-portal/actions';
 
 export default function QueryJetpackInspectLicense( { licenseKey, authToken } ) {
 	const dispatch = useDispatch();

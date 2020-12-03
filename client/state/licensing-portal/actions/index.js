@@ -7,8 +7,8 @@ import {
 	JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_FAILURE,
 	JETPACK_LICENSING_INSPECT_LICENSE_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import 'calypso/state/jetpack-licensing/init';
-import { isInspecting } from 'calypso/state/jetpack-licensing/selectors';
+import 'calypso/state/licensing-portal/init';
+import { isInspecting } from 'calypso/state/licensing-portal/selectors';
 import wpcomUndocumented from 'calypso/lib/wpcom-undocumented';
 import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 

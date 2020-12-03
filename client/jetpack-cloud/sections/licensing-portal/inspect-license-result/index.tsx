@@ -17,7 +17,7 @@ import {
 	isInspecting as isInspectingSelector,
 	getInspectionError,
 	getInspectedLicenseAuthToken,
-} from 'calypso/state/jetpack-licensing/selectors';
+} from 'calypso/state/licensing-portal/selectors';
 
 /**
  * Style dependencies

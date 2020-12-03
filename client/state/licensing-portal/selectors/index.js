@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'calypso/state/jetpack-licensing/init';
+import 'calypso/state/licensing-portal/init';
 
 export function getInspectedLicenseKey( state ) {
 	return state.jetpackLicensing.inspectLicense.licenseKey;

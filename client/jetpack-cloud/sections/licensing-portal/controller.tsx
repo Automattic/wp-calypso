@@ -11,8 +11,8 @@ import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 import Header from './header';
 import JetpackComFooter from './jpcom-footer';
-import JetpackCloudLicensingSidebar from 'calypso/jetpack-cloud/sections/licensing/sidebar';
-import InspectLicense from 'calypso/jetpack-cloud/sections/licensing/inspect-licenses';
+import JetpackCloudLicensingSidebar from 'calypso/jetpack-cloud/sections/licensing-portal/sidebar';
+import InspectLicense from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-licenses';
 
 export function jetpackLicensingContext( context: PageJS.Context, next: Function ) {
 	const urlQueryArgs = context.query;
@@ -20,7 +20,7 @@ export function jetpackLicensingContext( context: PageJS.Context, next: Function
 
 	if ( locale ) {
 		context.store.dispatch( setLocale( locale ) );
-		page.redirect( addQueryArgs( urlQueryArgs, `/licenses` ) );
+		page.redirect( addQueryArgs( urlQueryArgs, `/licensing-portal` ) );
 	}
 
 	context.header = <Header />;

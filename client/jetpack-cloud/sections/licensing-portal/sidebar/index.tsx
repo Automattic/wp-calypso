@@ -51,9 +51,9 @@ class JetpackCloudLicensingSidebar extends Component {
 							label={ translate( 'Licenses', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
-							link="/licenses"
+							link="/licensing-portal"
 							onNavigate={ this.onNavigate }
-							selected={ itemLinkMatches( [ '/licenses' ], path ) }
+							selected={ itemLinkMatches( [ '/licensing-portal' ], path ) }
 						/>
 					</SidebarMenu>
 				</SidebarRegion>

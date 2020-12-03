@@ -14,8 +14,8 @@ import FormSettingExplanation from 'calypso/components/forms/form-setting-explan
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import { setInspectedLicenseKey } from 'calypso/state/jetpack-licensing/actions';
-import { isInspecting as isInspectingSelector } from 'calypso/state/jetpack-licensing/selectors';
+import { setInspectedLicenseKey } from 'calypso/state/licensing-portal/actions';
+import { isInspecting as isInspectingSelector } from 'calypso/state/licensing-portal/selectors';
 
 /**
  * Style dependencies

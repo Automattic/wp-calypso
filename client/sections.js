@@ -474,9 +474,9 @@ const sections = [
 		group: 'sites',
 	},
 	{
-		name: 'jetpack-cloud-licensing',
-		paths: [ '/licenses' ],
-		module: 'calypso/jetpack-cloud/sections/licensing',
+		name: 'jetpack-cloud-licensing-portal',
+		paths: [ '/licensing-portal' ],
+		module: 'calypso/jetpack-cloud/sections/licensing-portal',
 		group: 'jetpack-cloud',
 	},
 ];
