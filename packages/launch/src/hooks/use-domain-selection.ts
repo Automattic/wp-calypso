@@ -31,7 +31,7 @@ export function useDomainSelection() {
 		unsetDomain();
 	}
 
-	let currentDomain: DomainSuggestions.DomainSuggestion | undefined = undefined;
+	let currentDomain: DomainSuggestions.DomainSuggestion | undefined;
 
 	if ( selectedDomain ) {
 		currentDomain = selectedDomain;
