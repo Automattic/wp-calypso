@@ -14,7 +14,7 @@ import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
-import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 
 const autoUpdateActions = [ 'ENABLE_AUTOUPDATE_PLUGIN', 'DISABLE_AUTOUPDATE_PLUGIN' ];
@@ -178,15 +178,9 @@ PluginAutoUpdateToggle.defaultProps = {
 };
 
 export default connect(
-	( state, { site, plugin } ) => {
-		const pluginStatus = getStatusForPlugin( state, site.ID, plugin.id );
-		const inProgress =
-			autoUpdateActions.includes( pluginStatus?.action ) && 'inProgress' === pluginStatus?.status;
-
-		return {
-			inProgress,
-		};
-	},
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, autoUpdateActions ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent,

@@ -15,7 +15,7 @@ import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
-import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -144,15 +144,9 @@ PluginActivateToggle.defaultProps = {
 };
 
 export default connect(
-	( state, { site, plugin } ) => {
-		const pluginStatus = getStatusForPlugin( state, site.ID, plugin.id );
-		const inProgress =
-			activationActions.includes( pluginStatus?.action ) && 'inProgress' === pluginStatus?.status;
-
-		return {
-			inProgress,
-		};
-	},
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+	} ),
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
