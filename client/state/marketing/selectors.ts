@@ -19,3 +19,7 @@ export function isTreatmentInMonthlyPricingTest( state: AppState ): boolean {
 		[ 'AR', 'CL', 'CO' ].includes( countryCode || '' )
 	);
 }
+
+export function isTreatmentOneClickTest( state: AppState ): boolean {
+	return 'treatment' === getVariationForUser( state, 'one_click_premium_plan_upgrade' );
+}

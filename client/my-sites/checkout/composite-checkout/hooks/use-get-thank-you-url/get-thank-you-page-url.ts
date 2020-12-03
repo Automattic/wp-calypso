@@ -51,6 +51,7 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult,
 	hideNudge,
 	isInEditor,
+	shouldShowOneClickTreatment,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -67,6 +68,7 @@ export default function getThankYouPageUrl( {
 	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
+	shouldShowOneClickTreatment: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -168,6 +170,7 @@ export default function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge: Boolean( hideNudge ),
+		shouldShowOneClickTreatment,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -286,11 +289,6 @@ function maybeShowPlanBumpOffer( {
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
 
-	if ( hasPersonalPlan( cart ) ) {
-		const upgradeItem = hasMonthlyCartItem( cart ) ? 'premium-monthly' : 'premium';
-		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
-	}
-
 	return;
 }
 
@@ -300,12 +298,14 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
+	shouldShowOneClickTreatment,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
+	shouldShowOneClickTreatment: boolean;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -340,6 +340,13 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
 		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			if ( hasPersonalPlan( cart ) ) {
+				if ( shouldShowOneClickTreatment ) {
+					const upgradeItem = hasMonthlyCartItem( cart ) ? 'premium-monthly' : 'premium';
+					return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+				}
+			}
+
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}
