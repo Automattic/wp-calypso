@@ -18,7 +18,7 @@ import {
 	doesCartLocationDifferFromResponseCartLocation,
 	doesResponseCartContainProductMatching,
 } from './cart-functions';
-import { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
+import type { ResponseCart, ShoppingCartState, ShoppingCartAction, CouponStatus } from './types';
 import { getEmptyResponseCart } from './empty-carts';
 
 const debug = debugFactory( 'shopping-cart:use-shopping-cart-reducer' );

@@ -37,7 +37,12 @@ export default function useOnLogin(): void {
 			shouldTriggerCreate &&
 			! isAnchorFmSignup
 		) {
-			createSite( currentUser.username, locale, undefined, visibility );
+			createSite( {
+				username: currentUser.username,
+				languageSlug: locale,
+				bearerToken: undefined,
+				visibility,
+			} );
 		}
 	}, [
 		createSite,

@@ -1,8 +1,13 @@
 /**
+ * External dependencies
+ */
+import debugFactory from 'debug';
+
+/**
  * Internal dependencies
  */
 import { getEmptyResponseCart } from './empty-carts';
-import { TempResponseCart } from './shopping-cart-endpoint';
+import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
 	RequestCart,
@@ -11,6 +16,7 @@ import type {
 	ResponseCartProduct,
 } from './types';
 
+const debug = debugFactory( 'shopping-cart:cart-functions' );
 let lastUUID = 100;
 const emptyResponseCart = getEmptyResponseCart();
 
@@ -184,10 +190,47 @@ function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	return true;
 }
 
+function shouldProductReplaceCart(
+	product: RequestCartProduct,
+	responseCart: TempResponseCart
+): boolean {
+	const doesCartHaveRenewals = responseCart.products.some(
+		( cartProduct ) => cartProduct.extra?.purchaseType === 'renewal'
+	);
+
+	if (
+		! doesCartHaveRenewals &&
+		product.extra?.purchaseType === 'renewal' &&
+		product.product_slug !== 'domain_redemption'
+	) {
+		// adding a renewal replaces the cart unless it is a privacy protection (comment copied from cartItemShouldReplaceCart; is domain_redemption really privacy protection?)
+		return true;
+	}
+
+	if ( doesCartHaveRenewals && product.extra?.purchaseType !== 'renewal' ) {
+		// all items should replace the cart if the cart contains a renewal
+		return true;
+	}
+
+	return false;
+}
+
+function shouldProductsReplaceCart(
+	products: RequestCartProduct[],
+	responseCart: TempResponseCart
+): boolean {
+	return products.some( ( product ) => shouldProductReplaceCart( product, responseCart ) );
+}
+
 export function addItemsToResponseCart(
 	responseCart: TempResponseCart,
 	products: RequestCartProduct[]
 ): TempResponseCart {
+	if ( shouldProductsReplaceCart( products, responseCart ) ) {
+		debug( 'items should replace response cart', products );
+		return replaceAllItemsInResponseCart( responseCart, products );
+	}
+	debug( 'items should not replace response cart', products );
 	return {
 		...responseCart,
 		products: [ ...responseCart.products, ...products ],

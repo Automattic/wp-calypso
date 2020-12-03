@@ -6,7 +6,7 @@ import { useContext } from 'react';
 /**
  * Internal dependencies
  */
-import { ShoppingCartManager } from './types';
+import type { ShoppingCartManager } from './types';
 import ShoppingCartContext from './shopping-cart-context';
 
 export default function useShoppingCart(): ShoppingCartManager {

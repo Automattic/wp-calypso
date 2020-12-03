@@ -29,7 +29,7 @@ This is a React hook that can be used in any child component under [ShoppingCart
 
 The following actions are also properties. Each one returns a Promise that resolves when the cart is next valid (this may be after several queued actions are complete).
 
-- `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<void>`. A function that requests adding new products to the cart.
+- `addProductsToCart: ( products: RequestCartProduct[] ) => Promise<void>`. A function that requests adding new products to the cart. May cause the cart to be replaced instead, depending on the RequestCartProducts (mostly renewals and non-renewals cannot co-exist in the cart at the same time).
 - `removeProductFromCart: ( uuidToRemove: string ) => Promise<void>`. A function that requests removing a product from the cart.
 - `applyCoupon: ( couponId: string ) => Promise<void>`. A function that requests applying a coupon to the cart (only one coupon can be applied at a time).
 - `removeCoupon: () => Promise<void>`. A function that requests removing a coupon to the cart.

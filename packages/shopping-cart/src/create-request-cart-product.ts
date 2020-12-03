@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RequestCartProduct } from './shopping-cart-endpoint';
+import type { RequestCartProduct } from './shopping-cart-endpoint';
 
 export default function createRequestCartProduct(
 	properties: Partial< RequestCartProduct > &
