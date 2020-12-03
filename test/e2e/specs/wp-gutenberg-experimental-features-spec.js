@@ -24,18 +24,6 @@ const gutenbergUser =
 // warning if an experimental feature has been removed or renamed.
 const EXPERIMENTAL_FEATURES = {
 	'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
-	'@wordpress/components': [
-		'__experimentalAlignmentMatrixControl',
-		'__experimentalBoxControl',
-		'__experimentalInputControl',
-		'__experimentalRadio',
-		'__experimentalRadioGroup',
-		'__experimentalText',
-		'__experimentalToolbarItem',
-		'__experimentalTreeGrid',
-		'__experimentalTreeGridCell',
-		'__experimentalTreeGridRow',
-	],
 	'@wordpress/date': [ '__experimentalGetSettings' ],
 	'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
 };
