@@ -769,6 +769,24 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			dockerImage = "%docker_image_dekstop%"
 			dockerRunParameters = "-u %env.UID%"
 		}
+
+		script {
+			name = "Clean up artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				set -e
+				set -x
+
+				# Delete artifacts if branch is not trunk
+				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
+					rm -fr desktop/release/*
+				fi
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
 	}
 
 	failureConditions {
