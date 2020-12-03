@@ -25,6 +25,7 @@ describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
+		removePluginStatuses: spy(),
 		translate: spy(),
 		togglePluginAutoUpdate: spy(),
 	};
