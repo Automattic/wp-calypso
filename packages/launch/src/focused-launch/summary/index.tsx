@@ -269,37 +269,27 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
 } ) => {
-	const { setPlan, unsetPlan } = useDispatch( LAUNCH_STORE );
+	const { setPlan } = useDispatch( LAUNCH_STORE );
 
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 
-	const onceSelectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
+	const selectedPaidPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getPaidPlan() );
 
 	const { defaultPaidPlan, defaultFreePlan, planPrices } = usePlans();
 
-	const [ nonDefaultPaidPlan, setNonDefaultPaidPlan ] = React.useState< Plan | undefined >();
+	// persist selected plan if it's paid in order to keep displaying it in the
+	const onceSelectedPaidPlan = React.useRef( selectedPaidPlan );
 
 	const isPlanSelected = ( plan: Plan ) => plan && plan.storeSlug === selectedPlan?.storeSlug;
 
-	const sitePlan = useSite().sitePlan;
+	const { sitePlan } = useSite();
 
-	React.useEffect( () => {
-		// To keep the launch store state valid,
-		// unselect the free plan if the user selected a paid domain.
-		// free plans don't support paid domains.
-		if ( selectedPaidDomain && selectedPlan && selectedPlan.isFree ) {
-			unsetPlan();
-		}
-	}, [ selectedPaidDomain, selectedPlan, unsetPlan ] );
-
-	// if the user picks a non-default paid plan, we need to keep track of it
-	// this allows us to keep showing it when they change their mind, we don't want
-	// it to disappear once they pick the default paid plan
-	React.useEffect( () => {
-		if ( defaultPaidPlan && onceSelectedPaidPlan !== defaultPaidPlan ) {
-			setNonDefaultPaidPlan( onceSelectedPaidPlan );
-		}
-	}, [ onceSelectedPaidPlan, defaultPaidPlan ] );
+	const nonDefaultPaidPlan =
+		onceSelectedPaidPlan?.current &&
+		defaultPaidPlan &&
+		onceSelectedPaidPlan?.current?.storeSlug !== defaultPaidPlan?.storeSlug
+			? onceSelectedPaidPlan?.current
+			: undefined;
 
 	return (
 		<SummaryStep
@@ -394,8 +384,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 							{ nonDefaultPaidPlan && (
 								<FocusedLaunchSummaryItem
-									isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-									onClick={ () => nonDefaultPaidPlan && setPlan( nonDefaultPaidPlan ) }
+									onClick={ () => setPlan( nonDefaultPaidPlan ) }
 									isSelected={ isPlanSelected( nonDefaultPaidPlan ) }
 								>
 									<LeadingContentSide
@@ -403,17 +392,15 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 											/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
 											sprintf(
 												__( '%s Plan', __i18n_text_domain__ ),
-												nonDefaultPaidPlan?.title ?? ''
+												nonDefaultPaidPlan.title ?? ''
 											)
 										}
 										badgeText={
-											nonDefaultPaidPlan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
+											nonDefaultPaidPlan.isPopular ? __( 'Popular', __i18n_text_domain__ ) : ''
 										}
 									/>
 									<TrailingContentSide nodeType="PRICE">
-										<span>
-											{ nonDefaultPaidPlan && planPrices[ nonDefaultPaidPlan?.storeSlug ] }
-										</span>
+										<span>{ planPrices[ nonDefaultPaidPlan?.storeSlug ] }</span>
 										<span>
 											{
 												// translators: /mo is short for "per-month"

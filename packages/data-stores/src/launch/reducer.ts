@@ -57,20 +57,6 @@ const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) 
 	return state;
 };
 
-/**
- * To keep track of the last paid plan the user has picked
- * This is useful information as this paid plan can be suggested later
- *
- * @param state the state
- * @param action the action
- */
-const paidPlan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN' && ! action.plan?.isFree ) {
-		return action.plan;
-	}
-	return state;
-};
-
 const isFocusedLaunchOpen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'OPEN_FOCUSED_LAUNCH' ) {
 		return true;
@@ -149,7 +135,6 @@ const reducer = combineReducers( {
 	confirmedDomainSelection,
 	domainSearch,
 	plan,
-	paidPlan,
 	isSidebarOpen,
 	isSidebarFullscreen,
 	isExperimental,
