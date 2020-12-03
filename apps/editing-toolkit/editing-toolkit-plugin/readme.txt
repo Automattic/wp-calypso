@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.10
+Stable tag: 2.8.11
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,10 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.11 =
+* Focused Launch: Add persistent success view after launch (https://github.com/Automattic/wp-calypso/pull/47808)
+* Focused Launch: Implement step highlighting logic (https://github.com/Automattic/wp-calypso/pull/#47503)
 
 = 2.8.10 =
 * Premium Content: Fix selection of payment plans (https://github.com/Automattic/wp-calypso/pull/47944)
