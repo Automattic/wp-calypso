@@ -44,3 +44,19 @@ export function* getSiteDomains( siteId: number ) {
 		yield dispatch( STORE_KEY ).receiveSiteDomains( siteId, result?.domains );
 	} catch ( e ) {}
 }
+
+/**
+ * Get all site domains
+ *
+ * @param siteId {number} The site id
+ */
+export function* getCart( siteId: number ) {
+	try {
+		const result = yield wpcomRequest( {
+			path: '/me/shopping-cart/' + siteId,
+			apiVersion: '1.1',
+			method: 'GET',
+		} );
+		yield dispatch( STORE_KEY ).receiveCart( siteId, result );
+	} catch ( e ) {}
+}

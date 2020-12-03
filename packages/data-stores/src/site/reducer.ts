@@ -3,6 +3,7 @@
  */
 import type { Reducer } from 'redux';
 import { combineReducers } from '@wordpress/data';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -114,6 +115,16 @@ export const launchStatus: Reducer<
 	return state;
 };
 
+export const cartData: Reducer< { [ key: number ]: ResponseCart }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_CART' ) {
+		return { ...state, [ action.siteId ]: action.cartData };
+	}
+	return state;
+};
+
 const newSite = combineReducers( {
 	data: newSiteData,
 	error: newSiteError,
@@ -126,6 +137,7 @@ const reducer = combineReducers( {
 	sites,
 	launchStatus,
 	sitesDomains,
+	cartData,
 } );
 
 export type State = ReturnType< typeof reducer >;

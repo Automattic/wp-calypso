@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import type { RequestCart, ResponseCart } from '@automattic/shopping-cart';
+
+/**
  * Internal dependencies
  */
 import type {
@@ -7,7 +12,6 @@ import type {
 	NewSiteSuccessResponse,
 	SiteDetails,
 	SiteError,
-	Cart,
 	Domain,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
@@ -116,7 +120,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return true;
 	}
 
-	// TODO: move getCart and setCart to a 'cart' data-store
+	// @TODO: decide if we really need this; currently used for setting cart during launch flow
 	function* getCart( siteId: number ) {
 		const success = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -132,7 +136,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		domains,
 	} );
 
-	function* setCart( siteId: number, cartData: Cart ) {
+	// @TODO: setCart action and getCart selector & resolver to a 'cart' data-store
+	function* setCart( siteId: number, cartData: RequestCart ) {
 		const success = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
 			apiVersion: '1.1',
@@ -141,6 +146,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} );
 		return success;
 	}
+
+	const receiveCart = ( siteId: number, cartData: ResponseCart ) => ( {
+		type: 'RECEIVE_CART' as const,
+		siteId,
+		cartData,
+	} );
 
 	function* saveSiteTitle( siteId: number, title: string | undefined ) {
 		try {
@@ -172,6 +183,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSiteStart,
 		launchSiteComplete,
 		getCart,
+		receiveCart,
 		setCart,
 	};
 }
@@ -192,6 +204,7 @@ export type Action =
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteComplete' ]
+			| ActionCreators[ 'receiveCart' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
