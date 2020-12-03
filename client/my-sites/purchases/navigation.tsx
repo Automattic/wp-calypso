@@ -54,7 +54,6 @@ export default function PurchasesNavigation( {
 					onSearch={ ( term ) => {
 						dispatch( setQuery( 'past', term ) );
 					} }
-					initialValue={ null }
 					placeholder={ translate( 'Search all receipts…' ) }
 					analyticsGroup="Billing"
 				/>
