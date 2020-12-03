@@ -2,6 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
+import { parse } from '@wordpress/blocks';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
@@ -37,6 +38,24 @@ export const PatternTitleContainer: React.FunctionComponent< PatternTitleProps >
 	);
 };
 
+function checkIsBlockPremium( block ): boolean {
+	const availableBlocks = window.Jetpack_Editor_Initial_State?.available_blocks;
+
+	const strippedName = block.name.replace( 'jetpack/', '' );
+	if ( strippedName && availableBlocks?.[ strippedName ]?.available === false ) {
+		return true;
+	}
+
+	for ( const i in block.innerBlocks ) {
+		const isPremium = checkIsBlockPremium( block.innerBlocks[ i ] );
+		if ( isPremium ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 export const PremiumBlockPatterns: React.FunctionComponent = () => {
 	const { __experimentalBlockPatterns } = useSelect( ( select ) =>
 		select( 'core/block-editor' ).getSettings()
@@ -50,7 +69,12 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 		__experimentalBlockPatterns.forEach( ( originalPattern: ExperimentalBlockPattern ) => {
 			const pattern = { ...originalPattern };
 
-			if ( pattern.isPremium && typeof pattern.title === 'string' ) {
+			const blocks = parse( pattern.content );
+			const isPremium = blocks ? blocks.some( ( block ) => checkIsBlockPremium( block ) ) : false;
+
+			if ( isPremium && typeof pattern.title === 'string' ) {
+				pattern.isPremium = true;
+
 				const originalTitle = pattern.title;
 
 				pattern.title = <PatternTitleContainer title={ originalTitle } />;
@@ -68,6 +92,7 @@ export const PremiumBlockPatterns: React.FunctionComponent = () => {
 		} );
 
 		if ( shouldUpdateBlockPatterns ) {
+			// TODO: Once updated, set it to never update again?
 			updateSettings( {
 				__experimentalBlockPatterns: updatedPatterns,
 			} );
