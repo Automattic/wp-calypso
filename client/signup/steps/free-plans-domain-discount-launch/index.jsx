@@ -113,7 +113,7 @@ function FormattedSuggestion( translate, suggestion, isRecommended ) {
 					} ) }
 				</div>
 				<small>
-					{ translate( 'Renews at: %(cost)s /year', {
+					{ translate( 'Renews at: %(cost)s / year', {
 						args: { cost: formatCurrency( suggestion.cost, currency, { stripZeros: true } ) },
 					} ) }
 				</small>
