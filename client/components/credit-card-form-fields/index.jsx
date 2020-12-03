@@ -78,7 +78,7 @@ StripeElementErrors.propTypes = {
 	fieldName: PropTypes.string.isRequired,
 };
 
-function CreditCardNumberField( { translate, getErrorMessage } ) {
+function CreditCardNumberField( { translate, getErrorMessage, disabled } ) {
 	const cardNumberLabel = translate( 'Card number', {
 		comment: 'Card number label on credit card form',
 	} );
@@ -93,11 +93,15 @@ function CreditCardNumberField( { translate, getErrorMessage } ) {
 		<div className="credit-card-form-fields__field number">
 			<FormLabel className="credit-card-form-fields__label">
 				{ cardNumberLabel }
-				<CardNumberElementWithValidation
-					fieldName="card_number"
-					getErrorMessage={ getErrorMessage }
-					classes={ elementClasses }
-				/>
+				{ disabled ? (
+					<LoadingField />
+				) : (
+					<CardNumberElementWithValidation
+						fieldName="card_number"
+						getErrorMessage={ getErrorMessage }
+						classes={ elementClasses }
+					/>
+				) }
 			</FormLabel>
 		</div>
 	);
@@ -110,7 +114,7 @@ CreditCardNumberField.propTypes = {
 	card: PropTypes.object.isRequired,
 };
 
-function CreditCardExpiryAndCvvFields( { translate, getErrorMessage } ) {
+function CreditCardExpiryAndCvvFields( { translate, getErrorMessage, disabled } ) {
 	const cvcLabel = translate( 'Security code' );
 
 	const expiryLabel = translate( 'Expiry date' );
@@ -126,22 +130,30 @@ function CreditCardExpiryAndCvvFields( { translate, getErrorMessage } ) {
 			<div className="credit-card-form-fields__field expiration-date">
 				<FormLabel className="credit-card-form-fields__label">
 					{ expiryLabel }
-					<CardExpiryElementWithValidation
-						fieldName="card_expiry"
-						getErrorMessage={ getErrorMessage }
-						classes={ elementClasses }
-					/>
+					{ disabled ? (
+						<LoadingField />
+					) : (
+						<CardExpiryElementWithValidation
+							fieldName="card_expiry"
+							getErrorMessage={ getErrorMessage }
+							classes={ elementClasses }
+						/>
+					) }
 				</FormLabel>
 			</div>
 			<div className="credit-card-form-fields__cvv-wrapper">
 				<div className="credit-card-form-fields__field cvv">
 					<FormLabel className="credit-card-form-fields__label">
 						{ cvcLabel }
-						<CardCvcElementWithValidation
-							fieldName="card_cvc"
-							getErrorMessage={ getErrorMessage }
-							classes={ elementClasses }
-						/>
+						{ disabled ? (
+							<LoadingField />
+						) : (
+							<CardCvcElementWithValidation
+								fieldName="card_cvc"
+								getErrorMessage={ getErrorMessage }
+								classes={ elementClasses }
+							/>
+						) }
 					</FormLabel>
 					<CvvCard />
 				</div>
@@ -156,6 +168,10 @@ CreditCardExpiryAndCvvFields.propTypes = {
 	getErrorMessage: PropTypes.func.isRequired,
 	card: PropTypes.object.isRequired,
 };
+
+function LoadingField() {
+	return <Input disabled={ true } />;
+}
 
 export class CreditCardFormFields extends React.Component {
 	static propTypes = {
@@ -253,6 +269,7 @@ export class CreditCardFormFields extends React.Component {
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
+						disabled={ disabled }
 					/>
 				</div>
 
@@ -262,6 +279,7 @@ export class CreditCardFormFields extends React.Component {
 						createField={ this.createField }
 						getErrorMessage={ this.props.getErrorMessage }
 						card={ this.props.card }
+						disabled={ disabled }
 					/>
 					{ this.createField( 'country', PaymentCountrySelect, {
 						label: translate( 'Country' ),
