@@ -128,7 +128,7 @@ Actions get triggered by views and stores.
 
 Triggers api call to fetch the site data.
 
-#### PluginsActions.fetchSitePlugins( site );
+This action has been migrated to Redux. Please use the `fetchSitePlugins` Redux action.
 
 ---
 

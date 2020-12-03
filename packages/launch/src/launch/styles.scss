@@ -15,6 +15,18 @@ body.has-focused-launch-modal {
 	overflow: hidden;
 }
 
+.launch__focused-modal-overlay {
+	&.launch__focused-modal-overlay--delay-animation-in {
+		animation-delay: 1s;
+		// "fill-mode: both" keeps the modal invisible until the animation starts
+		animation-fill-mode: both;
+
+		.launch__focused-modal {
+			animation-delay: inherit;
+		}
+	}
+}
+
 .launch__focused-modal {
 	&.components-modal__frame {
 		transform: none;

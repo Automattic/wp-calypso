@@ -5808,13 +5808,13 @@
     react "^16.9.0"
     react-dom "^16.9.0"
 
-"@wordpress/env@*":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-1.4.0.tgz#d07b86d075a4b0d23e509a92f40496ee1fde9887"
-  integrity sha512-01sIj2ajMR29aMaL3bjxdso+CMIWMwnEi/e/JdTFd4vaQpt3tSmIEhz8bHvRzeYOGrw5I8yKXPVp9A62SGBlaw==
+"@wordpress/env@^2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@wordpress/env/-/env-2.1.0.tgz#182418a99a572def479ea11db530d7cecb371d97"
+  integrity sha512-ytPfTZLYksLyS9pWRexs3yT+TKkf2wr3IFuoBGxIcPJZGxPBiOUyOPLXOezQiDFetLkyXbsDIeb7cFDojM4KIA==
   dependencies:
     chalk "^4.0.0"
-    copy-dir "^1.2.0"
+    copy-dir "^1.3.0"
     docker-compose "^0.22.2"
     extract-zip "^1.6.7"
     got "^10.7.0"
@@ -10135,7 +10135,7 @@ copy-descriptor@^0.1.0:
   resolved "https://registry.yarnpkg.com/copy-descriptor/-/copy-descriptor-0.1.1.tgz#676f6eb3c39997c2ee1ac3a924fd6124748f578d"
   integrity sha1-Z29us8OZl8LuGsOpJP1hJHSPV40=
 
-copy-dir@^1.2.0:
+copy-dir@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/copy-dir/-/copy-dir-1.3.0.tgz#8c65130e11d8313a6ac2c0578e4c6c6f70b456ba"
   integrity sha512-Q4+qBFnN4bwGwvtXXzbp4P/4iNk0MaiGAzvQ8OiMtlLjkIKjmNN689uVzShSM0908q7GoFHXIPx4zi75ocoaHw==

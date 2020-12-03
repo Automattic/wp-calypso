@@ -325,7 +325,7 @@ export default compose(
 			shouldQueryAllSites: currentRoute && currentRoute !== '/jetpack/connect/authorize',
 			isNewLaunchFlow,
 			isCheckoutFromGutenboarding,
-			navUnificationVariation: getVariationForUser( state, 'nav_unification' ),
+			navUnificationVariation: getVariationForUser( state, 'nav_unification_v2' ),
 		};
 	} )
 )( Layout );

@@ -72,7 +72,6 @@ import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { useProductVariants } from './hooks/product-variants';
 import { translateResponseCartToWPCOMCart } from './lib/translate-cart';
-import useShowAddCouponSuccessMessage from './hooks/use-show-add-coupon-success-message';
 import useCountryList from './hooks/use-country-list';
 import useCachedDomainContactDetails from './hooks/use-cached-domain-contact-details';
 import useActOnceOnStrings from './hooks/use-act-once-on-strings';
@@ -190,14 +189,6 @@ export default function CompositeCheckout( {
 		notices.success( message );
 	}, [] );
 
-	const showAddCouponSuccessMessage = ( couponCode: string ): void => {
-		showSuccessMessage(
-			translate( "The '%(couponCode)s' coupon was successfully applied to your shopping cart.", {
-				args: { couponCode },
-			} )
-		);
-	};
-
 	const countriesList = useCountryList( overrideCountryList || [] );
 
 	const {
@@ -256,12 +247,6 @@ export default function CompositeCheckout( {
 		subtotal,
 		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
-
-	useShowAddCouponSuccessMessage(
-		couponStatus === 'applied',
-		couponItem?.wpcom_meta?.couponCode ?? '',
-		showAddCouponSuccessMessage
-	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,

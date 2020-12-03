@@ -248,7 +248,13 @@ class RegisteredDomainType extends React.Component {
 			/>
 		);
 
-		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
+		return (
+			content && (
+				<WrapDomainStatusButtons className="domain-types__auto-renew-wrapper">
+					{ content }
+				</WrapDomainStatusButtons>
+			)
+		);
 	}
 
 	renderAutoRenew() {

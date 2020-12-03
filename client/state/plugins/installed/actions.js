@@ -617,34 +617,59 @@ export function removePlugin( siteId, plugin ) {
 	};
 }
 
-export function fetchPlugins( siteIds ) {
-	return ( dispatch, getState ) => {
-		return siteIds.map( ( siteId ) => {
-			const defaultAction = {
-				siteId,
-			};
-			dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
-
-			const receivePluginsDispatchSuccess = ( data ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_RECEIVE, data: data.plugins } );
-				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
-
-				data.plugins.map( ( plugin ) => {
-					if ( plugin.update && plugin.autoupdate ) {
-						updatePlugin( siteId, plugin )( dispatch, getState );
-					}
-				} );
-			};
-
-			const receivePluginsDispatchFail = ( error ) => {
-				dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
-			};
-
-			return wpcom
-				.site( siteId )
-				.pluginsList()
-				.then( receivePluginsDispatchSuccess )
-				.catch( receivePluginsDispatchFail );
-		} );
+export function receiveSitePlugins( siteId, plugins ) {
+	return {
+		type: PLUGINS_RECEIVE,
+		data: plugins,
+		siteId,
 	};
+}
+
+export function fetchSitePlugins( siteId ) {
+	return ( dispatch, getState ) => {
+		const state = getState();
+		const site = getSite( state, siteId );
+		const defaultAction = {
+			siteId,
+		};
+		dispatch( { ...defaultAction, type: PLUGINS_REQUEST } );
+
+		const afterFetchCallback = ( error, data ) => {
+			// @TODO: Remove when this flux action is completely reduxified
+			Dispatcher.handleServerAction( {
+				type: 'RECEIVE_PLUGINS',
+				action: 'RECEIVE_PLUGINS',
+				site,
+				data,
+				error,
+			} );
+		};
+
+		const receivePluginsDispatchSuccess = ( data ) => {
+			dispatch( receiveSitePlugins( siteId, data.plugins ) );
+			afterFetchCallback( undefined, data );
+			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_SUCCESS } );
+
+			data.plugins.map( ( plugin ) => {
+				if ( plugin.update && plugin.autoupdate ) {
+					updatePlugin( siteId, plugin )( dispatch, getState );
+				}
+			} );
+		};
+
+		const receivePluginsDispatchFail = ( error ) => {
+			dispatch( { ...defaultAction, type: PLUGINS_REQUEST_FAILURE, error } );
+			afterFetchCallback( error, undefined );
+		};
+
+		return wpcom
+			.site( siteId )
+			.pluginsList()
+			.then( receivePluginsDispatchSuccess )
+			.catch( receivePluginsDispatchFail );
+	};
+}
+
+export function fetchPlugins( siteIds ) {
+	return ( dispatch ) => siteIds.map( ( siteId ) => dispatch( fetchSitePlugins( siteId ) ) );
 }
