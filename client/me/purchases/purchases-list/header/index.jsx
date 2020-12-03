@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -22,9 +21,8 @@ import SectionNav from 'calypso/components/section-nav';
 import { isEnabled } from 'calypso/config';
 import Search from 'calypso/components/search';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
-import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
-const PurchasesHeader = ( { section } ) => {
+export default function PurchasesHeader( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	let text = translate( 'Billing History' );
@@ -72,12 +70,8 @@ const PurchasesHeader = ( { section } ) => {
 			) }
 		</SectionNav>
 	);
-};
+}
 
 PurchasesHeader.propTypes = {
 	section: PropTypes.string.isRequired,
 };
-
-export default connect( ( state ) => ( {
-	pastTransactions: getPastBillingTransactions( state ),
-} ) )( PurchasesHeader );
