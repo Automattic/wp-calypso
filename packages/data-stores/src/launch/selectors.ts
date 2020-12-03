@@ -35,7 +35,9 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  *
  * @param state State
  */
-export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
+export const getPaidPlan = ( state: State ): Plans.Plan | undefined =>
+	state.plan && ! state.plan?.isFree ? state.plan : undefined;
+
 // Check if a domain has been explicitly selected (including free subdomain)
 
 /**
