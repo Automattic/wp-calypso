@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { CardCvcElement, CardExpiryElement, CardNumberElement } from 'react-stripe-elements';
 import { isEmpty, noop } from 'lodash';
 import { localize, useTranslate } from 'i18n-calypso';
-import { useStripe } from '@automattic/calypso-stripe';
+import { useStripe, withStripeProps } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -229,10 +229,16 @@ export class CreditCardFormFields extends React.Component {
 	};
 
 	render() {
-		const { translate, countriesList, autoFocus } = this.props;
+		const { translate, countriesList, autoFocus, isStripeLoading, stripeLoadingError } = this.props;
 		const creditCardFormFieldsExtrasClassNames = classNames( {
 			'credit-card-form-fields__extras': true,
 		} );
+
+		const disabled = isFieldDisabled( {
+			isStripeLoading,
+			stripeLoadingError,
+		} );
+
 		/* eslint-disable jsx-a11y/no-autofocus */
 		return (
 			<div className="credit-card-form-fields">
@@ -263,11 +269,13 @@ export class CreditCardFormFields extends React.Component {
 						countriesList,
 						onChange: noop,
 						onCountrySelected: this.updateFieldValues,
+						disabled,
 					} ) }
 
 					{ this.createField( 'postal-code', Input, {
 						label: translate( 'Postal code' ),
 						placeholder: ' ',
+						disabled,
 					} ) }
 				</div>
 			</div>
@@ -282,7 +290,6 @@ function CardholderNameField( { createField, autoFocus } ) {
 	const disabled = isFieldDisabled( {
 		isStripeLoading,
 		stripeLoadingError,
-		isUsingEbanx: false,
 	} );
 
 	return (
@@ -333,4 +340,4 @@ function CvvCard( { className = '' } ) {
 	);
 }
 
-export default localize( CreditCardFormFields );
+export default withStripeProps( localize( CreditCardFormFields ) );
