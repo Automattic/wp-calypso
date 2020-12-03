@@ -8,7 +8,7 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 import { convertRawResponseCartToResponseCart } from './cart-functions';
-import { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
+import type { ResponseCart, RequestCart, CacheStatus, ShoppingCartAction } from './types';
 
 const debug = debugFactory( 'shopping-cart:use-initialize-cart-from-server' );
 
