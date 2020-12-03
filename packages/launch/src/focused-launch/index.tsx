@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,6 +14,8 @@ import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
+import { LAUNCH_STORE } from '../stores';
+import { useDomainSuggestionFromCart } from '../hooks';
 
 import './style.scss';
 
@@ -24,6 +27,17 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			document.body.classList.add( 'is-focused-launch-complete' );
 		}
 	}, [ isSiteLaunched, isSiteLaunching ] );
+
+	// If there is no selected domain, but there is a domain in cart,
+	// set the domain from cart as the selected domain.
+	const domainSuggestionFromCart = useDomainSuggestionFromCart();
+	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const { setDomain } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( ! selectedDomain && domainSuggestionFromCart ) {
+			setDomain( domainSuggestionFromCart );
+		}
+	}, [ selectedDomain, domainSuggestionFromCart, setDomain ] );
 
 	return (
 		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
