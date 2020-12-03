@@ -16,6 +16,7 @@ import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-valu
 import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import ActivityCard from 'calypso/components/activity-card';
+import { useActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import ActionButtons from '../action-buttons';
 import BackupChanges from '../backup-changes';
 import useGetDisplayDate from '../use-get-display-date';
@@ -56,11 +57,7 @@ const BackupSuccessful = ( { backup, deltas, selectedDate } ) => {
 		( 'rewind__backup_complete_full' !== backup.activityName ||
 			'rewind__backup_only_complete_full' !== backup.activityName );
 
-	// If the activity isn't rewindable but has streams that are,
-	// use one of the streams' rewind ID as the download or restore point
-	const actionableRewindId = backup.activityIsRewindable
-		? backup.rewindId
-		: backup.streams?.find?.( ( a ) => a.activityIsRewindable )?.rewindId;
+	const actionableRewindId = useActionableRewindId( backup );
 
 	return (
 		<>

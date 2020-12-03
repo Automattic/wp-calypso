@@ -25,6 +25,7 @@ import Button from 'calypso/components/forms/form-button';
 import ExternalLink from 'calypso/components/external-link';
 import getAllowRestore from 'calypso/state/selectors/get-allow-restore';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
+import { getActionableRewindId } from 'calypso/lib/jetpack/actionable-rewind-id';
 import Gridicon from 'calypso/components/gridicon';
 import PopoverMenu from 'calypso/components/popover/menu';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
@@ -173,9 +174,7 @@ class ActivityCard extends Component {
 		// The activity itself may not be rewindable, but at least one of the
 		// streams should be; if this is the case, make sure we send the user
 		// to a valid restore/download point when they click an action button
-		const actionableRewindId = activity.activityIsRewindable
-			? activity.rewindId
-			: activity.streams.find( ( s ) => s.activityIsRewindable )?.rewindId;
+		const actionableRewindId = getActionableRewindId( activity );
 
 		return (
 			<>
