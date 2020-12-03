@@ -6,6 +6,7 @@ import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lo
 /**
  * Internal dependencies
  */
+import createSelector from 'calypso/lib/create-selector';
 import {
 	getSite,
 	getSiteTitle,
@@ -185,3 +186,31 @@ export function isPluginActionStatus( state, siteId, pluginId, action, status ) 
 export function isPluginActionInProgress( state, siteId, pluginId, action ) {
 	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
 }
+
+/**
+ * Retrieve all plugin statuses of a certain type.
+ *
+ * @param  {object} state    Global state tree
+ * @param  {string} status   Status of interest
+ * @returns {Array}          Array of plugin status objects
+ */
+export const getPluginStatusesByType = createSelector(
+	( state, status ) => {
+		const statuses = [];
+
+		Object.entries( state.plugins.installed.status ).map( ( [ siteId, siteStatuses ] ) => {
+			Object.entries( siteStatuses ).map( ( [ pluginId, pluginStatus ] ) => {
+				if ( pluginStatus.status === status ) {
+					statuses.push( {
+						...pluginStatus,
+						siteId,
+						pluginId,
+					} );
+				}
+			} );
+		} );
+
+		return statuses;
+	},
+	( state ) => state.plugins.installed.status
+);
