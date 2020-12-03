@@ -517,7 +517,6 @@ type StepIndexRenderFunction = ( renderOptions: {
 
 const Summary: React.FunctionComponent = () => {
 	const hasSelectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).hasSelectedDomain() );
-	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 
 	const { launchSite } = useDispatch( SITE_STORE );
@@ -525,7 +524,12 @@ const Summary: React.FunctionComponent = () => {
 
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
-	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
+	const {
+		onDomainSelect,
+		onExistingSubdomainSelect,
+		currentDomain,
+		selectedDomain,
+	} = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
@@ -578,9 +582,11 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
+	const isDomainStepHighlighted = !! hasSelectedDomain || isValidSiteTitle( title );
+
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
-			highlighted={ isValidSiteTitle( title ) }
+			highlighted={ isDomainStepHighlighted }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
@@ -598,9 +604,11 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
+	const isPlansStepHighlighted = !! hasSelectedDomain || !! selectedPlan;
+
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
-			highlighted={ !! hasSelectedDomain }
+			highlighted={ isPlansStepHighlighted }
 			hasPaidPlan={ hasPaidPlan }
 			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
 			hasPaidDomain={ hasPaidDomain }
