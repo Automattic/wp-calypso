@@ -11,9 +11,9 @@ import Gridicon from 'calypso/components/gridicon';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
@@ -39,7 +39,7 @@ export class PluginActivateToggle extends Component {
 		}
 
 		this.props.togglePluginActivation( site.ID, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error' );
 
 		if ( plugin.active ) {
 			recordGAEvent( 'Plugins', 'Clicked Toggle Deactivate Plugin', 'Plugin Name', plugin.slug );
@@ -150,6 +150,7 @@ export default connect(
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
+		removePluginStatuses,
 		togglePluginActivation,
 	}
 )( localize( PluginActivateToggle ) );

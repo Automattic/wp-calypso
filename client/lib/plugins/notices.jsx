@@ -10,9 +10,10 @@ import i18n from 'i18n-calypso';
  */
 import notices from 'calypso/notices';
 import PluginsLog from 'calypso/lib/plugins/log-store';
-import PluginsActions from 'calypso/lib/plugins/actions';
 import { filterNotices } from 'calypso/lib/plugins/utils';
 import versionCompare from 'calypso/lib/version-compare';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 function getCombination( translateArg ) {
 	return (
@@ -93,13 +94,13 @@ export default {
 
 		if ( logNotices.completed.length > 0 && logNotices.errors.length > 0 ) {
 			notices.warning( this.erroredAndCompletedMessage( logNotices ), {
-				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'completed', 'error' ),
+				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed', 'error' ) ),
 			} );
 		} else if ( logNotices.errors.length > 0 ) {
 			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'error' ), {
 				button: this.getErrorButton( logNotices.errors ),
 				href: this.getErrorHref( logNotices.errors ),
-				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'error' ),
+				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'error' ) ),
 			} );
 		} else if ( logNotices.completed.length > 0 ) {
 			const sampleLog =
@@ -114,7 +115,7 @@ export default {
 			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
 				button: this.getSuccessButton( logNotices.completed ),
 				href: this.getSuccessHref( logNotices.completed ),
-				onRemoveCallback: () => PluginsActions.removePluginsNotices( 'completed' ),
+				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed' ) ),
 				showDismiss,
 			} );
 		}
