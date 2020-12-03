@@ -32,7 +32,7 @@ export const getPlanProduct = ( plan: Plans.Plan, flow: string ): PlanProduct =>
 	},
 } );
 
-type DomainProduct = {
+export type DomainProduct = {
 	meta: string;
 	product_id: number;
 	extra: {
@@ -54,3 +54,12 @@ export const getDomainProduct = (
 		source: flow,
 	},
 } );
+
+export type Product = {
+	product_id: number;
+};
+
+export const isDomainProduct = ( item: Product ): boolean => {
+	const DOMAIN_PRODUCT_ID = 148;
+	return item.product_id === DOMAIN_PRODUCT_ID;
+};
