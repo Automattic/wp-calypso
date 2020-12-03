@@ -1,7 +1,10 @@
 /**
  * Internal dependencies
  */
-import { abtest } from 'calypso/lib/abtest';
+import { getUrlParts } from 'calypso/lib/url/url-parts';
+
+const VERSIONS = [ 'v1', 'v2', 'i5' ];
+const DEFAULT_VERSION = 'i5';
 
 /**
  * Returns the name of the Conversion Rate Optimization test that is currently active.
@@ -9,16 +12,17 @@ import { abtest } from 'calypso/lib/abtest';
  * @returns {string}  The name of the active test.
  */
 export const getJetpackCROActiveVersion = (): string => {
-	const currentVariant = abtest( 'jetpackConversionRateOptimization' );
+	let version;
 
-	switch ( currentVariant ) {
-		case 'v1 - 3 cols layout':
-			return 'v1';
-		case 'v2 - slide outs':
-			return 'v2';
-		case 'i5 - Saas table design':
-			return 'i5';
+	if ( 'undefined' !== typeof window ) {
+		const versionQuery = getUrlParts( window.location.href ).searchParams?.get(
+			'cloud-pricing-page'
+		);
+
+		if ( versionQuery && VERSIONS.includes( versionQuery ) ) {
+			version = versionQuery;
+		}
 	}
 
-	return 'v1';
+	return version || DEFAULT_VERSION;
 };

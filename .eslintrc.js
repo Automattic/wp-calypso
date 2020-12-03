@@ -392,18 +392,6 @@ module.exports = {
 			'error',
 			{
 				'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
-				'@wordpress/components': [
-					'__experimentalAlignmentMatrixControl',
-					'__experimentalBoxControl',
-					'__experimentalInputControl',
-					'__experimentalRadio',
-					'__experimentalRadioGroup',
-					'__experimentalText',
-					'__experimentalToolbarItem',
-					'__experimentalTreeGrid',
-					'__experimentalTreeGridCell',
-					'__experimentalTreeGridRow',
-				],
 				'@wordpress/date': [ '__experimentalGetSettings' ],
 				'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
 			},

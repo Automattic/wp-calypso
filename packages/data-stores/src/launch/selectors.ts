@@ -80,15 +80,3 @@ export const isFlowStarted = ( state: State ): boolean =>
 // Get first incomplete step
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
-
-// Check if site title step should be displayed
-export const isSiteTitleStepVisible = ( state: State ): boolean => state.isSiteTitleStepVisible;
-
-// Check if launch modal can be dismissed
-export const isModalDismissible = ( state: State ): boolean => state.isModalDismissible;
-
-// Check if launch modal title should be visible
-export const isModalTitleVisible = ( state: State ): boolean => state.isModalTitleVisible;
-
-// Check if launch modal can be dismissed
-export const isFocusedLaunchOpen = ( state: State ): boolean => state.isFocusedLaunchOpen;

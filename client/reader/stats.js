@@ -51,6 +51,9 @@ function getLocation( path ) {
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {
 		return 'following_a8c';
 	}
+	if ( path.indexOf( '/read/p2' ) === 0 ) {
+		return 'following_p2';
+	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
 	}

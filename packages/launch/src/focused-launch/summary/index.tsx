@@ -516,12 +516,16 @@ type StepIndexRenderFunction = ( renderOptions: {
 } ) => React.ReactNode;
 
 const Summary: React.FunctionComponent = () => {
-	const hasSelectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).hasSelectedDomain() );
-	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
+	const [ hasSelectedDomain, isSiteTitleStepVisible, selectedDomain, selectedPlan ] = useSelect(
+		( select ) => {
+			const { isSiteTitleStepVisible, domain, plan } = select( LAUNCH_STORE ).getState();
+
+			return [ select( LAUNCH_STORE ).hasSelectedDomain(), isSiteTitleStepVisible, domain, plan ];
+		}
+	);
 
 	const { launchSite } = useDispatch( SITE_STORE );
-	const { setModalDismissible, showModalTitle } = useDispatch( LAUNCH_STORE );
-
+	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
 	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
 	const {
