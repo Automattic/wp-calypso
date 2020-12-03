@@ -26,6 +26,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
+	PLUGIN_NOTICES_REMOVE,
 } from 'calypso/state/action-types';
 
 describe( 'reducer:', () => {
@@ -218,6 +219,39 @@ describe( 'reducer:', () => {
 						status: 'error',
 						action: ACTIVATE_PLUGIN,
 						error: testError,
+					},
+				},
+			} );
+		} );
+
+		test( 'should delete all statuses of the specified types for all sites and plugins', () => {
+			const originalState = deepFreeze( {
+				'one.site': {
+					[ akismet.id ]: {
+						status: 'inProgress',
+						action: ACTIVATE_PLUGIN,
+					},
+					[ jetpack.id ]: {
+						status: 'error',
+						action: ACTIVATE_PLUGIN,
+					},
+				},
+				'another.site': {
+					[ akismet.id ]: {
+						status: 'completed',
+						action: ACTIVATE_PLUGIN,
+					},
+				},
+			} );
+			const state = status( originalState, {
+				type: PLUGIN_NOTICES_REMOVE,
+				statuses: [ 'completed', 'error' ],
+			} );
+			expect( state ).to.eql( {
+				'one.site': {
+					[ akismet.id ]: {
+						status: 'inProgress',
+						action: ACTIVATE_PLUGIN,
 					},
 				},
 			} );
