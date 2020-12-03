@@ -16,9 +16,8 @@ import { CompactCard } from '@automattic/components';
 import Pagination from 'calypso/components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
-import SearchCard from 'calypso/components/search-card';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
-import { setPage, setQuery } from 'calypso/state/billing-transactions/ui/actions';
+import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
 import { getPlanTermLabel } from 'calypso/lib/plans';
@@ -32,10 +31,6 @@ class TransactionsTable extends React.Component {
 
 	onPageClick = ( page ) => {
 		this.props.setPage( this.props.transactionType, page );
-	};
-
-	onSearch = ( terms ) => {
-		this.props.setQuery( this.props.transactionType, terms );
 	};
 
 	render() {
@@ -52,10 +47,6 @@ class TransactionsTable extends React.Component {
 
 		return (
 			<div>
-				<SearchCard
-					placeholder={ this.props.translate( 'Search all receipts…', { textOnly: true } ) }
-					onSearch={ this.onSearch }
-				/>
 				<table className="billing-history__transactions">
 					{ header }
 					<tbody>{ this.renderRows() }</tbody>
@@ -229,6 +220,5 @@ export default connect(
 	},
 	{
 		setPage,
-		setQuery,
 	}
 )( localize( withLocalizedMoment( TransactionsTable ) ) );
