@@ -71,7 +71,7 @@ export default function PurchasesNavigation( { section } ) {
 			) }
 		</SectionNav>
 	);
-};
+}
 
 PurchasesNavigation.propTypes = {
 	section: PropTypes.string.isRequired,
