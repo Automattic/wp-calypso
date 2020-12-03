@@ -3,6 +3,7 @@
  */
 import * as React from 'react';
 import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -13,20 +14,31 @@ import Summary from './summary';
 import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
+import { LAUNCH_STORE } from '../stores';
 
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
+	const { shouldDisplaySuccessView } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
+	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
+
+	// Force Success view to be the default view when opening Focused Launch modal.
+	// This is used in case the user opens the Focused Launch modal after launching
+	// the site (e.g. when redirected back after the checkout screen)
 	React.useEffect( () => {
-		if ( isSiteLaunched || isSiteLaunching ) {
-			document.body.classList.add( 'is-focused-launch-complete' );
+		if ( isSiteLaunched ) {
+			enablePersistentSuccessView();
 		}
-	}, [ isSiteLaunched, isSiteLaunching ] );
+	}, [ isSiteLaunched, enablePersistentSuccessView ] );
 
 	return (
-		<Router initialEntries={ [ FocusedLaunchRoute.Summary ] }>
+		<Router
+			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
+			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
+		>
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>

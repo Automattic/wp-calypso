@@ -31,10 +31,11 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 	openCheckout,
 	redirectTo,
 } ) => {
-	const isModalDismissible = useSelect( ( select ) => select( LAUNCH_STORE ).isModalDismissible() );
-	const isModalTitleVisible = useSelect( ( select ) =>
-		select( LAUNCH_STORE ).isModalTitleVisible()
-	);
+	const {
+		isModalDismissible,
+		isModalTitleVisible,
+		shouldDisplaySuccessView,
+	} = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 
 	const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
 
@@ -45,7 +46,9 @@ const FocusedLaunchModal: React.FunctionComponent< Props > = ( {
 				className={ classNames( 'launch__focused-modal', {
 					'launch__focused-modal--hide-title': ! isModalTitleVisible,
 				} ) }
-				overlayClassName="launch__focused-modal-overlay"
+				overlayClassName={ classNames( 'launch__focused-modal-overlay', {
+					'launch__focused-modal-overlay--delay-animation-in': shouldDisplaySuccessView,
+				} ) }
 				bodyOpenClassName="has-focused-launch-modal"
 				onRequestClose={ closeFocusedLaunch }
 				title={ __( 'Complete setup', __i18n_text_domain__ ) }
