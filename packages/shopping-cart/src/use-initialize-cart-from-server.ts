@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import debugFactory from 'debug';
 
 /**
@@ -19,7 +19,6 @@ export default function useInitializeCartFromServer(
 	setCart: ( arg0: RequestCart ) => Promise< ResponseCart >,
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
-	const previousCartKey = useRef< string | number | undefined >();
 	useEffect( () => {
 		if ( cacheStatus !== 'fresh' ) {
 			debug( 'not initializing cart; cacheStatus is not fresh' );
@@ -29,15 +28,8 @@ export default function useInitializeCartFromServer(
 			debug( 'not initializing cart; no cartKey set' );
 			return;
 		}
-		if ( cartKey === previousCartKey.current ) {
-			debug( 'not initializing cart; cartKey has not changed' );
-			return;
-		}
 
-		debug(
-			`cart key "${ cartKey }" has changed from "${ previousCartKey.current }"; initializing cart`
-		);
-		previousCartKey.current = cartKey;
+		debug( `cart key is "${ cartKey }"; initializing cart` );
 		hookDispatch( { type: 'FETCH_INITIAL_RESPONSE_CART' } );
 
 		getCart()

@@ -26,7 +26,7 @@ import {
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
 } from 'calypso/state/action-types';
-import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import MediaQueryManager from 'calypso/lib/query-manager/media';
 import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
@@ -527,7 +527,7 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	errors,
 	queries,
 	queryRequests,
@@ -535,3 +535,5 @@ export default combineReducers( {
 	transientItems,
 	fetching,
 } );
+
+export default withStorageKey( 'media', combinedReducer );

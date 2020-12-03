@@ -146,7 +146,7 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
 
 	return {
-		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
+		items: products.map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
 		total: totalItem,
@@ -156,14 +156,6 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		allowedPaymentMethods,
 		couponCode: coupon,
 	};
-}
-
-function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
-	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
-	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
-		return false;
-	}
-	return true;
 }
 
 // Convert a backend cart item to a checkout cart item
@@ -192,6 +184,7 @@ function translateReponseCartProductToWPCOMCartItem(
 		meta,
 		extra,
 		volume,
+		quantity,
 		uuid,
 		product_cost_integer,
 		product_cost_display,
@@ -251,6 +244,7 @@ function translateReponseCartProductToWPCOMCartItem(
 			product_slug,
 			extra,
 			volume,
+			quantity,
 			is_domain_registration: is_domain_registration || false,
 			is_bundled: is_bundled || false,
 			item_original_cost_display: itemOriginalCostDisplay,

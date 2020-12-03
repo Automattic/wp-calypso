@@ -3,13 +3,10 @@
  */
 import { find, get } from 'lodash';
 import config from 'calypso/config';
-import Debug from 'debug';
 
-const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import userUtils from 'calypso/lib/user/utils';
 import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
 import { getUrlParts } from 'calypso/lib/url';
 
@@ -29,7 +26,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return userUtils.getLocaleSlug() === 'en';
+	return false;
 }
 
 export function isDiscoverPost( post ) {
@@ -55,6 +52,7 @@ export function getSiteUrl( post ) {
 export function getDiscoverBlogName( post ) {
 	return get( post, 'discover_metadata.attribution.blog_name' );
 }
+
 export function hasSource( post ) {
 	return isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 }

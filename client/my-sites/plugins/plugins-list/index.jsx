@@ -26,7 +26,14 @@ import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import { activatePlugin, deactivatePlugin } from 'calypso/state/plugins/installed/actions';
+import {
+	activatePlugin,
+	deactivatePlugin,
+	disableAutoupdatePlugin,
+	enableAutoupdatePlugin,
+	removePlugin,
+	updatePlugin,
+} from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -254,13 +261,13 @@ export const PluginsList = createReactClass( {
 	updateAllPlugins() {
 		this.removePluginsNotices();
 		this.props.plugins.forEach( ( plugin ) => {
-			plugin.sites.forEach( ( site ) => PluginsActions.updatePlugin( site, site.plugin ) );
+			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
 
 	updateSelected() {
-		this.doActionOverSelected( 'updating', PluginsActions.updatePlugin );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	},
 
@@ -290,12 +297,12 @@ export const PluginsList = createReactClass( {
 	},
 
 	setAutoupdateSelected() {
-		this.doActionOverSelected( 'enablingAutoupdates', PluginsActions.enableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
 	},
 
 	unsetAutoupdateSelected() {
-		this.doActionOverSelected( 'disablingAutoupdates', PluginsActions.disableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	},
 
@@ -411,7 +418,7 @@ export const PluginsList = createReactClass( {
 
 	removeSelected( accepted ) {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', PluginsActions.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	},
@@ -568,7 +575,11 @@ export default connect(
 	{
 		activatePlugin,
 		deactivatePlugin,
+		disableAutoupdatePlugin,
+		enableAutoupdatePlugin,
 		recordGoogleEvent,
+		removePlugin,
+		updatePlugin,
 		warningNotice,
 	}
 )( localize( PluginsList ) );

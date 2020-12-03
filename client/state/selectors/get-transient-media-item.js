@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Retrieves a transient media item by ID for a given site.
  *
  * @param {object} state The current state.

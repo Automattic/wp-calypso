@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -31,7 +30,6 @@ import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import CartData from 'calypso/components/data/cart';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 import { getPlan, isWpComPlan } from 'calypso/lib/plans';
@@ -135,9 +133,7 @@ class Plans extends React.Component {
 						<>
 							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
 							<div id="plans" className="plans plans__has-sidebar">
-								<CartData>
-									<PlansNavigation path={ this.props.context.path } />
-								</CartData>
+								<PlansNavigation path={ this.props.context.path } />
 								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
 									<P2PlansMain
 										selectedPlan={ this.props.selectedPlan }

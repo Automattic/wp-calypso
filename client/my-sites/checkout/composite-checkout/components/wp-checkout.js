@@ -241,7 +241,7 @@ export default function WPCheckout( {
 
 	const updateCartContactDetails = useCallback( () => {
 		// Update tax location in cart
-		const nonTaxPaymentMethods = [ 'full-credits', 'free-purchase' ];
+		const nonTaxPaymentMethods = [ 'free-purchase' ];
 		if ( ! activePaymentMethod || ! contactInfo ) {
 			return;
 		}

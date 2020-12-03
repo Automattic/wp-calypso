@@ -452,9 +452,9 @@ class SiteSettingsFormDiscussion extends Component {
 					{ translate( 'Comment must be manually approved' ) }
 				</FormToggle>
 				<FormToggle
-					checked={ !! fields.comment_whitelist }
+					checked={ !! fields.comment_previously_approved }
 					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'comment_whitelist' ) }
+					onChange={ handleAutosavingToggle( 'comment_previously_approved' ) }
 				>
 					{ translate( 'Comment author must have a previously approved comment' ) }
 				</FormToggle>
@@ -535,8 +535,8 @@ class SiteSettingsFormDiscussion extends Component {
 				<FormTextarea
 					name="disallowed_comment_keys"
 					id="disallowed_comment_keys"
-					value={ fields.blacklist_keys }
-					onChange={ onChangeField( 'blacklist_keys' ) }
+					value={ fields.disallowed_keys }
+					onChange={ onChangeField( 'disallowed_keys' ) }
 					disabled={ isRequestingSettings || isSavingSettings }
 					autoCapitalize="none"
 					onClick={ eventTracker( 'Clicked Disallowed Comments Field' ) }
@@ -669,10 +669,10 @@ const getFormSettings = ( settings ) => {
 		'social_notifications_reblog',
 		'social_notifications_subscribe',
 		'comment_moderation',
-		'comment_whitelist',
+		'comment_previously_approved',
 		'comment_max_links',
 		'moderation_keys',
-		'blacklist_keys',
+		'disallowed_keys',
 		'highlander_comment_form_prompt',
 		'jetpack_comment_form_color_scheme',
 		'subscriptions',

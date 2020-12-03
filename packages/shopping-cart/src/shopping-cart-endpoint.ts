@@ -20,13 +20,7 @@
  */
 export interface RequestCart {
 	products: RequestCartProduct[];
-	tax: null | {
-		location: {
-			country_code: string | undefined;
-			postal_code: string | undefined;
-			subdivision_code: string | undefined;
-		};
-	};
+	tax: RequestCartTaxData;
 	coupon: string;
 	currency: string;
 	locale: string;
@@ -36,6 +30,14 @@ export interface RequestCart {
 	is_update?: boolean;
 }
 
+export type RequestCartTaxData = null | {
+	location: {
+		country_code: string | undefined;
+		postal_code: string | undefined;
+		subdivision_code: string | undefined;
+	};
+};
+
 /**
  * Product item schema for the shopping cart endpoint (request)
  */
@@ -44,6 +46,7 @@ export interface RequestCartProduct {
 	product_id: number;
 	meta: string;
 	volume: number;
+	quantity: number | null;
 	extra: ResponseCartProductExtra;
 }
 
@@ -79,14 +82,16 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	is_signup: boolean;
 	messages?: ResponseCartMessages;
 	cart_generated_at_timestamp: number;
-	tax: {
-		location: {
-			country_code?: string;
-			postal_code?: string;
-			subdivision_code?: string;
-		};
-		display_taxes: boolean;
+	tax: ResponseCartTaxData;
+}
+
+export interface ResponseCartTaxData {
+	location: {
+		country_code?: string;
+		postal_code?: string;
+		subdivision_code?: string;
 	};
+	display_taxes: boolean;
 }
 
 /**
@@ -130,6 +135,7 @@ export interface ResponseCartProduct {
 	meta: string;
 	months_per_bill_period: number | null;
 	volume: number;
+	quantity: number | null;
 	extra: ResponseCartProductExtra;
 	uuid: string;
 	cost: number;

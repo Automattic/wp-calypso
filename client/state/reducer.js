@@ -18,19 +18,15 @@ import atomicTransfer from './atomic-transfer/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
-import experiments from './experiments/reducer';
 import happychat from './happychat/reducer';
 import i18n from './i18n/reducer';
-import immediateLogin from './immediate-login/reducer';
 import importerNux from './importer-nux/reducer';
 import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
-import media from './media/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
 import { unseenCount as notificationsUnseenCount } from './notifications';
 import selectedEditor from './selected-editor/reducer';
-import siteRoles from './site-roles/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
 import userSettings from './user-settings/reducer';
@@ -44,20 +40,16 @@ const reducers = {
 	currentUser,
 	dataRequests,
 	documentHead,
-	experiments,
 	happychat,
 	httpData,
 	i18n,
-	immediateLogin,
 	importerNux,
 	inlineSupportArticle,
 	jitm,
-	media,
 	mySites,
 	notices,
 	notificationsUnseenCount,
 	selectedEditor,
-	siteRoles,
 	sites,
 	support,
 	userSettings,

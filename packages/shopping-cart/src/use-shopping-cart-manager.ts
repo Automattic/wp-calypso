@@ -11,13 +11,20 @@ import type {
 	TempResponseCart,
 	ResponseCart,
 	RequestCartProduct,
-	CartLocation,
 	ShoppingCartManager,
 	ShoppingCartManagerArguments,
 	CacheStatus,
 	CouponStatus,
 	ShoppingCartError,
 	ReplaceProductInCart,
+	ReloadCartFromServer,
+	ReplaceProductsInCart,
+	AddProductsToCart,
+	RemoveCouponFromCart,
+	ApplyCouponToCart,
+	RemoveProductFromCart,
+	UpdateTaxLocationInCart,
+	CartValidCallback,
 } from './types';
 import { convertTempResponseCartToResponseCart } from './cart-functions';
 import useShoppingCartReducer from './use-shopping-cart-reducer';
@@ -35,7 +42,10 @@ export default function useShoppingCartManager( {
 		cartKey,
 		setCart,
 	] );
+	const previousCartKey = useRef< string | number | undefined >();
 	const getServerCart = useCallback( () => getCart( String( cartKey ) ), [ cartKey, getCart ] );
+
+	const cartValidCallbacks = useRef< CartValidCallback[] >( [] );
 
 	const [ hookState, hookDispatch ] = useShoppingCartReducer();
 
@@ -45,64 +55,83 @@ export default function useShoppingCartManager( {
 	const loadingError: string | undefined = hookState.loadingError;
 	const loadingErrorType: ShoppingCartError | undefined = hookState.loadingErrorType;
 
+	useEffect( () => {
+		if ( ! cartKey ) {
+			return;
+		}
+		if ( cartKey !== previousCartKey.current ) {
+			debug(
+				`cart key "${ cartKey }" has changed from "${ previousCartKey.current }"; re-initializing cart`
+			);
+			hookDispatch( { type: 'CART_RELOAD' } );
+		}
+		previousCartKey.current = cartKey;
+	}, [ cartKey, hookDispatch ] );
+
 	useInitializeCartFromServer( cacheStatus, cartKey, getServerCart, setServerCart, hookDispatch );
 
 	// Asynchronously re-validate when the cache is dirty.
 	useCartUpdateAndRevalidate( cacheStatus, responseCart, setServerCart, hookDispatch );
 
-	const addProductsToCart: ( products: RequestCartProduct[] ) => void = useCallback(
-		( products ) => {
-			hookDispatch( { type: 'CART_PRODUCTS_ADD', products } );
+	const dispatchAndWaitForValid = useCallback(
+		( action ) => {
+			return new Promise< void >( ( resolve ) => {
+				hookDispatch( action );
+				cartValidCallbacks.current.push( resolve );
+			} );
 		},
 		[ hookDispatch ]
 	);
 
-	const replaceProductsInCart: ( products: RequestCartProduct[] ) => void = useCallback(
-		( products ) => {
-			hookDispatch( { type: 'CART_PRODUCTS_REPLACE_ALL', products } );
-		},
-		[ hookDispatch ]
+	const addProductsToCart: AddProductsToCart = useCallback(
+		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_ADD', products } ),
+		[ dispatchAndWaitForValid ]
 	);
 
-	const removeProductFromCart: ( uuidToRemove: string ) => void = useCallback(
-		( uuidToRemove ) => {
-			hookDispatch( { type: 'REMOVE_CART_ITEM', uuidToRemove } );
-		},
-		[ hookDispatch ]
+	const replaceProductsInCart: ReplaceProductsInCart = useCallback(
+		( products ) => dispatchAndWaitForValid( { type: 'CART_PRODUCTS_REPLACE_ALL', products } ),
+		[ dispatchAndWaitForValid ]
+	);
+
+	const removeProductFromCart: RemoveProductFromCart = useCallback(
+		( uuidToRemove ) => dispatchAndWaitForValid( { type: 'REMOVE_CART_ITEM', uuidToRemove } ),
+		[ dispatchAndWaitForValid ]
 	);
 
 	const replaceProductInCart: ReplaceProductInCart = useCallback(
-		( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) => {
-			hookDispatch( { type: 'CART_PRODUCT_REPLACE', uuidToReplace, productPropertiesToChange } );
-		},
-		[ hookDispatch ]
+		( uuidToReplace: string, productPropertiesToChange: Partial< RequestCartProduct > ) =>
+			dispatchAndWaitForValid( {
+				type: 'CART_PRODUCT_REPLACE',
+				uuidToReplace,
+				productPropertiesToChange,
+			} ),
+		[ dispatchAndWaitForValid ]
 	);
 
-	const updateLocation: ( arg0: CartLocation ) => void = useCallback(
-		( location ) => {
-			hookDispatch( { type: 'SET_LOCATION', location } );
-		},
-		[ hookDispatch ]
+	const updateLocation: UpdateTaxLocationInCart = useCallback(
+		( location ) => dispatchAndWaitForValid( { type: 'SET_LOCATION', location } ),
+		[ dispatchAndWaitForValid ]
 	);
 
-	const applyCoupon: ( arg0: string ) => void = useCallback(
-		( newCoupon ) => {
-			hookDispatch( { type: 'ADD_COUPON', couponToAdd: newCoupon } );
-		},
-		[ hookDispatch ]
+	const applyCoupon: ApplyCouponToCart = useCallback(
+		( newCoupon ) => dispatchAndWaitForValid( { type: 'ADD_COUPON', couponToAdd: newCoupon } ),
+		[ dispatchAndWaitForValid ]
 	);
 
-	const removeCoupon: () => void = useCallback( () => {
-		hookDispatch( { type: 'REMOVE_COUPON' } );
-	}, [ hookDispatch ] );
+	const removeCoupon: RemoveCouponFromCart = useCallback(
+		() => dispatchAndWaitForValid( { type: 'REMOVE_COUPON' } ),
+		[ dispatchAndWaitForValid ]
+	);
 
-	const reloadFromServer: () => void = useCallback( () => {
-		hookDispatch( { type: 'CART_RELOAD' } );
-	}, [ hookDispatch ] );
+	const reloadFromServer: ReloadCartFromServer = useCallback(
+		() => dispatchAndWaitForValid( { type: 'CART_RELOAD' } ),
+		[ dispatchAndWaitForValid ]
+	);
 
 	const isLoading = cacheStatus === 'fresh' || cacheStatus === 'fresh-pending' || ! cartKey;
 	const loadingErrorForManager = cacheStatus === 'error' ? loadingError : null;
-	const isPendingUpdate = cacheStatus !== 'valid' || ! cartKey;
+	const isPendingUpdate =
+		hookState.queuedActions.length > 0 || cacheStatus !== 'valid' || ! cartKey;
 
 	const responseCartWithoutTempProducts = useMemo(
 		() => convertTempResponseCartToResponseCart( responseCart ),
@@ -112,6 +141,18 @@ export default function useShoppingCartManager( {
 	if ( cacheStatus === 'valid' ) {
 		lastValidResponseCart.current = responseCartWithoutTempProducts;
 	}
+
+	useEffect( () => {
+		if ( cartValidCallbacks.current.length === 0 ) {
+			return;
+		}
+		debug( `cacheStatus changed to ${ cacheStatus } and cartValidCallbacks exist` );
+		if ( hookState.queuedActions.length === 0 && cacheStatus === 'valid' ) {
+			debug( 'calling cartValidCallbacks' );
+			cartValidCallbacks.current.forEach( ( callback ) => callback() );
+			cartValidCallbacks.current = [];
+		}
+	}, [ hookState.queuedActions, cacheStatus ] );
 
 	const shoppingCartManager = useMemo(
 		() => ( {

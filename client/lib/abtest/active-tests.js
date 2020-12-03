@@ -77,15 +77,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	skippableDomainStep: {
-		datestamp: '20290717',
-		variations: {
-			skippable: 0,
-			notSkippable: 100,
-		},
-		defaultVariation: 'notSkippable',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
 		datestamp: '20291029',
 		variations: {

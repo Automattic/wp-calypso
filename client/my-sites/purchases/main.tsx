@@ -116,6 +116,7 @@ export function PurchaseDetails( {
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
 					getEditPaymentMethodUrlFor={ getEditOrAddPaymentMethodUrlFor }

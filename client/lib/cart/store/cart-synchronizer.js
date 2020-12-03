@@ -142,17 +142,18 @@ CartSynchronizer.prototype._processQueuedChanges = function () {
 };
 
 CartSynchronizer.prototype._postToServer = function ( callback ) {
-	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function (
-		error,
-		newValue
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	this._wpcom.setCart(
+		this._cartKey,
+		preprocessCartForServer( this._latestValue ),
+		function ( error, newValue ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, preprocessCartFromServer( newValue ) );
-	} );
+			callback( null, preprocessCartFromServer( newValue ) );
+		}
+	);
 };
 
 CartSynchronizer.prototype._poll = function () {

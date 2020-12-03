@@ -136,6 +136,7 @@ function createTransactionEndpointCartItemFromLineItem(
 		meta: item.wpcom_meta?.meta,
 		currency: item.amount.currency,
 		volume: item.wpcom_meta?.volume ?? 1,
+		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
 	} as WPCOMTransactionEndpointCartItem;
 }
