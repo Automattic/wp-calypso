@@ -13,7 +13,6 @@ import { Card, CardHeader, CardBody, Flex, FlexItem } from '@wordpress/component
  */
 import AnglePickerControlExample from './angle-picker-control';
 import AnimateExample from './animate';
-import AutocompleteExample from './autocomplete';
 import BaseControlExample from './base-control';
 import ButtonExample from './button';
 import ButtonGroupExample from './button-group';
@@ -76,10 +75,6 @@ const WordPressComponentsGallery = () => (
 
 			<ExampleComponent name="Animate">
 				<AnimateExample />
-			</ExampleComponent>
-
-			<ExampleComponent name="Autocomplete">
-				<AutocompleteExample />
 			</ExampleComponent>
 
 			<ExampleComponent name="Base Control">
