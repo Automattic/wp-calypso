@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
 import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
 import LaunchContext from '../context';
 import { isDomainProduct } from '../utils';
-import type { Product, DomainProduct } from '../utils';
+import type { DomainProduct } from '../utils';
 
 export function useDomainProductFromCart(): DomainProduct | undefined {
 	const { siteId } = React.useContext( LaunchContext );
@@ -24,7 +25,9 @@ export function useDomainProductFromCart(): DomainProduct | undefined {
 	React.useEffect( () => {
 		( async function () {
 			const cart = await getCart( siteId );
-			const domainProduct = cart.products?.find( ( item: Product ) => isDomainProduct( item ) );
+			const domainProduct = cart.products?.find( ( item: ResponseCartProduct ) =>
+				isDomainProduct( item )
+			);
 			setDomainProductFromCart( domainProduct );
 		} )();
 	}, [ siteId, getCart, setDomainProductFromCart ] );
