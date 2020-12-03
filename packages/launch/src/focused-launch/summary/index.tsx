@@ -526,14 +526,9 @@ const Summary: React.FunctionComponent = () => {
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
-	const { title, updateTitle, saveTitle, isSiteTitleStepVisible, showSiteTitleStep } = useTitle();
+	const { title, updateTitle, saveTitle } = useTitle();
 	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
-	const {
-		onDomainSelect,
-		onExistingSubdomainSelect,
-		currentDomain,
-		selectedDomain,
-	} = useDomainSelection();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
