@@ -6,6 +6,10 @@ import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
 import type { ValuesType } from 'utility-types';
 
+/**
+ * Internal dependencies
+ */
+import config from 'calypso/config';
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
 const plansPaths = Plans.plansPaths;
@@ -111,6 +115,11 @@ export function useIsAnchorFm(): boolean {
 export function useAnchorFmPodcastId(): string | null {
 	const { state: locationState, search } = useLocation< GutenLocationStateType >();
 	const sanitizePodcastId = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+
+	// Feature flag 'anchor-fm-dev' is required for anchor podcast id to be read
+	if ( ! config.isEnabled( 'anchor-fm-dev' ) ) {
+		return null;
+	}
 
 	// Use location state if available
 	if ( locationState && locationState.anchorFmPodcastId ) {
