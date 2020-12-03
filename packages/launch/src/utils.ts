@@ -2,9 +2,9 @@
  * External dependencies
  */
 import { __ } from '@wordpress/i18n';
-
 import type { Plans, DomainSuggestions } from '@automattic/data-stores';
 import type { ResponseCartProduct } from '@automattic/shopping-cart';
+import { Plans as PlansStore } from '@automattic/data-stores';
 
 const DEFAULT_SITE_NAME = __( 'Site Title', __i18n_text_domain__ );
 
@@ -17,7 +17,7 @@ export const isDefaultSiteTitle = ( {
 export const isValidSiteTitle = ( title?: string ): boolean =>
 	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
 
-type PlanProduct = {
+export type PlanProduct = {
 	product_id: number;
 	product_slug: string;
 	extra: {
@@ -58,4 +58,16 @@ export const getDomainProduct = (
 
 export const isDomainProduct = ( item: ResponseCartProduct ): boolean => {
 	return !! item.is_domain_registration;
+};
+
+export const isPlanProduct = ( item: ResponseCartProduct ): boolean => {
+	return (
+		[
+			PlansStore.PLAN_FREE,
+			PlansStore.PLAN_PERSONAL,
+			PlansStore.PLAN_PREMIUM,
+			PlansStore.PLAN_BUSINESS,
+			PlansStore.PLAN_ECOMMERCE,
+		].indexOf( item.product_slug ) > -1
+	);
 };
