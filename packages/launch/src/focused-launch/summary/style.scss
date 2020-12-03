@@ -83,8 +83,6 @@ $commentary-column-gap-wide: 100px;
 		gap: $commentary-column-gap-wide;
 	}
 
-	// this is unused yet, find the right logic to determine
-	// when a step should be highlighted
 	&.highlighted {
 		opacity: 1;
 	}
