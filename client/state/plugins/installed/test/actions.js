@@ -8,7 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import {
-	fetchPlugins,
+	fetchSitePlugins,
 	activatePlugin,
 	deactivatePlugin,
 	updatePlugin,
@@ -81,7 +81,7 @@ describe( 'actions', () => {
 		},
 	} );
 
-	describe( '#fetchPlugins()', () => {
+	describe( '#fetchSitePlugins()', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()
@@ -99,7 +99,7 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fetch action when triggered', () => {
-			fetchPlugins( [ 2916284 ] )( spy, getState );
+			fetchSitePlugins( 2916284 )( spy, getState );
 
 			expect( spy ).to.have.been.calledWith( {
 				type: PLUGINS_REQUEST,
@@ -108,8 +108,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugins receive action when request completes', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
-			return Promise.all( responses ).then( () => {
+			const response = fetchSitePlugins( 2916284 )( spy, getState );
+			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_RECEIVE,
 					siteId: 2916284,
@@ -119,8 +119,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin request success action when request completes', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
-			return Promise.all( responses ).then( () => {
+			const response = fetchSitePlugins( 2916284 )( spy, getState );
+			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_SUCCESS,
 					siteId: 2916284,
@@ -129,8 +129,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch fail action when request fails', () => {
-			const responses = fetchPlugins( [ 77203074 ] )( spy, getState );
-			return Promise.all( responses ).then( () => {
+			const response = fetchSitePlugins( 77203074 )( spy, getState );
+			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGINS_REQUEST_FAILURE,
 					siteId: 77203074,
@@ -142,8 +142,8 @@ describe( 'actions', () => {
 		} );
 
 		test( 'should dispatch plugin update request if any site plugins need updating', () => {
-			const responses = fetchPlugins( [ 2916284 ] )( spy, getState );
-			return Promise.all( responses ).then( () => {
+			const response = fetchSitePlugins( 2916284 )( spy, getState );
+			return response.then( () => {
 				expect( spy ).to.have.been.calledWith( {
 					type: PLUGIN_UPDATE_REQUEST,
 					action: UPDATE_PLUGIN,
