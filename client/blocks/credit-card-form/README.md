@@ -10,7 +10,6 @@ import CreditCardForm from 'calypso/blocks/credit-card-form';
 function render() {
 	return (
 		<CreditCardForm
-			createCardToken={ createCardToken }
 			initialValues={ initialValues }
 			recordFormSubmitEvent={ noop }
 			saveStoredCard={ saveStoredCard }
@@ -22,7 +21,6 @@ function render() {
 
 ## Props
 
-- `createCardToken`: Function to be executed when a valid form is submitted. It is responsible for a credit card token creation which is the part of the flow.
 - `initialValues`: Optional object containing initial values for the form fields. At the moment only `name` is supported.
 - `purchase`: Optional object representing an existing purchase that the credit card will be used for. If this is passed along with `siteSlug` and if the purchase is up for renewal, the message that is displayed after successfully saving the card will give the user information about renewing the purchase with the new credit card.
 - `recordFormSubmitEvent`: Function to be executed when the user clicks the _Save Card_ button.

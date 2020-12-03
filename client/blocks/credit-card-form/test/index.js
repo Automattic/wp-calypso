@@ -16,11 +16,33 @@ import { CreditCardForm } from '../';
 import { getParamsForApi } from '../helpers';
 import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
 
+jest.mock( '@automattic/calypso-stripe', () => ( {
+	useStripe: () => ( {
+		stripe: {},
+		stripeConfiguration: {},
+		setStripeError: () => {},
+		isStripeLoading: false,
+		stripeLoadingError: {},
+	} ),
+	withStripeProps: ( WrappedComponent ) => {
+		return ( props ) => {
+			const stripeData = {
+				stripe: {},
+				stripeConfiguration: {},
+				setStripeError: () => {},
+				isStripeLoading: false,
+				stripeLoadingError: {},
+			};
+			const newProps = { ...props, ...stripeData };
+			return <WrappedComponent { ...newProps } />;
+		};
+	},
+} ) );
+
 describe( 'Credit Card Form', () => {
 	const defaultProps = {
 		translate: identity,
 		countriesList: [],
-		createCardToken: noop,
 		recordFormSubmitEvent: noop,
 		successCallback: noop,
 	};
@@ -63,15 +85,6 @@ describe( 'Credit Card Form', () => {
 		const child = wrapper.find( CreditCardFormFields );
 		const getErrorMessage = child.prop( 'getErrorMessage' );
 		expect( getErrorMessage( 'number' ) ).toEqual( '' );
-	} );
-
-	test( 'has getErrorMessage return the correct errors', () => {
-		const initialValues = { number: '234' };
-		const props = { ...defaultProps, initialValues };
-		const wrapper = shallow( <CreditCardForm { ...props } /> );
-		const child = wrapper.find( CreditCardFormFields );
-		const getErrorMessage = child.prop( 'getErrorMessage' );
-		expect( getErrorMessage( 'number' )[ 0 ] ).toMatch( /invalid/ );
 	} );
 
 	describe( 'getParamsForApi()', () => {

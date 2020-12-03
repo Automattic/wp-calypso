@@ -21,7 +21,7 @@ import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
-import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import titles from 'calypso/me/purchases/titles';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
@@ -86,7 +86,6 @@ export function PaymentMethods( { siteSlug }: { siteSlug: string } ): JSX.Elemen
 
 export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.Element {
 	const translate = useTranslate();
-	const createAddCardToken = ( ...args: unknown[] ) => createCardToken( 'card_add', ...args );
 	const goToBillingHistory = () => page( getPaymentMethodsUrlFor( siteSlug ) );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 	const reduxDispatch = useDispatch();
@@ -121,7 +120,6 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 							fetchStripeConfiguration={ getStripeConfiguration }
 						>
 							<CreditCardForm
-								createCardToken={ createAddCardToken }
 								recordFormSubmitEvent={ recordFormSubmitEvent }
 								saveStoredCard={ saveStoredCard }
 								successCallback={ goToBillingHistory }
