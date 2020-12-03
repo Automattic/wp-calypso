@@ -270,7 +270,13 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
+		paths: [
+			'/read/feeds/[^\\/]+',
+			'/read/blogs/[^\\/]+',
+			'/read/a8c',
+			'/read/p2',
+			'/recommendations',
+		],
 		module: 'calypso/reader',
 		group: 'reader',
 		trackLoadPerformance: true,

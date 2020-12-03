@@ -16,6 +16,7 @@ import {
 	legacyRedirects,
 	prettyRedirects,
 	readA8C,
+	readFollowingP2,
 	sidebar,
 	updateLastRoute,
 } from './controller';
@@ -95,4 +96,7 @@ export default async function () {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+
+	// new P2 Posts
+	page( '/read/p2', updateLastRoute, sidebar, readFollowingP2, makeLayout, clientRender );
 }
