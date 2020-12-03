@@ -1,6 +1,8 @@
 .free-plans-domain-discount-launch__step-secton-wrapper {
     .free-plans-domain-discount-launch {
-        margin-top: 38px;
+        @media screen and ( min-width: 660px ) {
+            margin-top: 38px;
+        }
         .free-plans-domain-discount-launch__card {
             padding: 0;
             .form-fieldset {
@@ -16,12 +18,16 @@
                 margin: 5px 0;
             }
             .free-plans-domain-discount-launch__domain-radio-label {
-                display: flex;
                 justify-content: space-between;
                 font-size: $font-body;
             }
-            .free-plans-domain-discount-launch__domain-radio-label-domain-wrapper {
-                margin-left: 30px;
+            @media screen and ( min-width: 660px ) {
+                .free-plans-domain-discount-launch__domain-radio-label {
+                    display: flex;
+                }
+                .free-plans-domain-discount-launch__domain-radio-label-domain-wrapper {
+                    margin-left: 30px;
+                }
             }
         }
         .free-plans-domain-discount-launch__placeholder {
