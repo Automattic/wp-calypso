@@ -8,7 +8,7 @@ import React, { useMemo } from 'react';
 /**
  * Internal dependencies
  */
-import JetpackComMasterbar from '../jpcom-masterbar';
+import JetpackComMasterbar from 'calypso/jetpack-cloud/sections/pricing/jpcom-masterbar';
 import FormattedHeader from 'calypso/components/formatted-header';
 import OlarkChat from 'calypso/components/olark-chat';
 import config from 'calypso/config';
@@ -25,34 +25,18 @@ const Header: React.FC = () => {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
 	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
-
-	const title =
-		{
-			[ Iterations.V1 ]: translate( 'Security, performance, and growth tools for WordPress' ),
-			[ Iterations.V2 ]: translate( 'Security, performance, and growth tools for WordPress' ),
-			[ Iterations.I5 ]: translate( 'Security, performance, and growth tools for WordPress' ),
-		}[ iteration ] ?? translate( 'Security, performance, and marketing tools for WordPress' );
-	const tagline =
-		{
-			[ Iterations.V1 ]: '',
-			[ Iterations.V2 ]: '',
-			[ Iterations.I5 ]: '',
-		}[ iteration ] ??
-		translate(
-			'Get everything your site needs, in one package — so you can focus on your business.'
-		);
+	const title = translate( 'Security, performance, and growth tools for WordPress' );
 
 	return (
 		<>
 			{ identity && <OlarkChat { ...{ identity } } /> }
-			<JetpackComMasterbar />
+			<JetpackComMasterbar/>
 			<div className={ classNames( 'header', iteration ) }>
 				<FormattedHeader
 					className="header__main-title"
 					headerText={ preventWidows( title ) }
 					align="center"
 				/>
-				{ tagline && <p>{ tagline }</p> }
 			</div>
 		</>
 	);

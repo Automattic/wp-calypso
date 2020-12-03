@@ -8,4 +8,4 @@ const combinedReducer = combineReducers( {
 	inspectLicense,
 } );
 
-export default withStorageKey( 'jetpackLicensing', combinedReducer );
+export default withStorageKey( 'licensingPortal', combinedReducer );

@@ -10,11 +10,11 @@ import page from 'page';
 import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 import Header from './header';
-import JetpackComFooter from './jpcom-footer';
-import JetpackCloudLicensingSidebar from 'calypso/jetpack-cloud/sections/licensing-portal/sidebar';
+import JetpackComFooter from 'calypso/jetpack-cloud/sections/pricing/jpcom-footer';
+import LicensingPortalSidebar from 'calypso/jetpack-cloud/sections/licensing-portal/sidebar';
 import InspectLicense from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-licenses';
 
-export function jetpackLicensingContext( context: PageJS.Context, next: Function ) {
+export function licensingPortalContext( context: PageJS.Context, next: Function ) {
 	const urlQueryArgs = context.query;
 	const { locale } = context.params;
 
@@ -23,9 +23,9 @@ export function jetpackLicensingContext( context: PageJS.Context, next: Function
 		page.redirect( addQueryArgs( urlQueryArgs, `/licensing-portal` ) );
 	}
 
-	context.header = <Header />;
-	context.secondary = <JetpackCloudLicensingSidebar path={ context.path } />;
-	context.primary = <InspectLicense />;
-	context.footer = <JetpackComFooter />;
+	context.header = <Header/>;
+	context.secondary = <LicensingPortalSidebar path={ context.path }/>;
+	context.primary = <InspectLicense/>;
+	context.footer = <JetpackComFooter/>;
 	next();
 }

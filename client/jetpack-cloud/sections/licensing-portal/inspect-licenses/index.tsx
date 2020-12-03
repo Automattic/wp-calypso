@@ -18,8 +18,8 @@ import './style.scss';
 const InspectLicense: React.FC = () => {
 	return (
 		<Main className="inspect-licenses">
-			<InspectLicenseForm />
-			<InspectLicenseResult result={ JSON.stringify( { foo: 'bar', baz: 'foobarbaz' } ) } />
+			<InspectLicenseForm/>
+			<InspectLicenseResult/>
 		</Main>
 	);
 };

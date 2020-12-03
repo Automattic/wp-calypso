@@ -1,11 +1,11 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
-import { memoize } from 'lodash';
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { memoize } from 'lodash';
+import i18nCalypso, { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -26,11 +26,13 @@ import 'calypso/components/jetpack/sidebar/style.scss';
 // this in the future.
 import 'calypso/jetpack-cloud/style.scss';
 
-class JetpackCloudLicensingSidebar extends Component {
-	static propTypes = {
-		path: PropTypes.string.isRequired,
-	};
+interface Props {
+	path: string;
+	dispatchRecordTracksEvent: Function;
+	translate: Function;
+}
 
+class LicensingPortalSidebar extends Component<Props> {
 	onNavigate = memoize( ( menuItem ) => () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 			menu_item: menuItem,
@@ -48,7 +50,7 @@ class JetpackCloudLicensingSidebar extends Component {
 					<SidebarMenu>
 						<SidebarItem
 							icon="next-page"
-							label={ translate( 'Licenses', {
+							label={ translate( 'Inspect License', {
 								comment: 'Jetpack sidebar navigation item',
 							} ) }
 							link="/licensing-portal"
@@ -64,4 +66,4 @@ class JetpackCloudLicensingSidebar extends Component {
 
 export default connect( null, {
 	dispatchRecordTracksEvent: recordTracksEvent,
-} )( localize( JetpackCloudLicensingSidebar ) );
+} )( localize( LicensingPortalSidebar ) );

@@ -42,11 +42,13 @@ const InspectLicenseResult: React.FC = () => {
 				<CardHeading>{ licenseKey }</CardHeading>
 
 				{ isInspecting && <Spinner /> }
+
 				{ error && (
 					<pre className="inspect-license-result__pre">
 						<code>{ error }</code>
 					</pre>
 				) }
+
 				{ result && (
 					<pre className="inspect-license-result__pre">
 						<code>{ result }</code>

@@ -15,6 +15,6 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
-	page( `/:locale/licensing-portal`, controller.jetpackLicensingContext, makeLayout, clientRender );
-	page( `/licensing-portal`, controller.jetpackLicensingContext, makeLayout, clientRender );
+	page( `/:locale/licensing-portal`, controller.licensingPortalContext, makeLayout, clientRender );
+	page( `/licensing-portal`, controller.licensingPortalContext, makeLayout, clientRender );
 }
