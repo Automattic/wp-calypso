@@ -113,7 +113,8 @@ class Block_Patterns_From_API {
 	 * @return array
 	 */
 	private function get_patterns() {
-		if ( defined( 'WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE' ) && WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE ) {
+		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+		if ( $override_source_site ) {
 			// Skip caching and request all patterns from a specified source site.
 			// This allows testing patterns in development with immediate feedback
 			// while avoiding polluting the cache. Note that this request gets
@@ -121,7 +122,7 @@ class Block_Patterns_From_API {
 			$request_url = esc_url_raw(
 				add_query_arg(
 					array(
-						'site' => WPCOM_PATTERNS_OVERRIDE_SOURCE_SITE,
+						'site' => $override_source_site,
 					),
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
