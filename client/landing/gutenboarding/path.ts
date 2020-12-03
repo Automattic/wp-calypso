@@ -110,16 +110,17 @@ export function useIsAnchorFm(): boolean {
 // provided by react-router-dom, if not available there, checks the query string.
 export function useAnchorFmPodcastId(): string | null {
 	const { state: locationState, search } = useLocation< GutenLocationStateType >();
+	const sanitizePodcastId = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
 
 	// Use location state if available
 	if ( locationState && locationState.anchorFmPodcastId ) {
-		return locationState.anchorFmPodcastId;
+		return sanitizePodcastId(locationState.anchorFmPodcastId);
 	}
 
 	// Fall back to looking in query param
 	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
 	if ( queryParam !== null && queryParam !== '' ) {
-		return queryParam;
+		return sanitizePodcastId(queryParam);
 	}
 	return null;
 }
