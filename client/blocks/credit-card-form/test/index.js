@@ -24,6 +24,19 @@ jest.mock( '@automattic/calypso-stripe', () => ( {
 		isStripeLoading: false,
 		stripeLoadingError: {},
 	} ),
+	withStripeProps: ( WrappedComponent ) => {
+		return ( props ) => {
+			const stripeData = {
+				stripe: {},
+				stripeConfiguration: {},
+				setStripeError: () => {},
+				isStripeLoading: false,
+				stripeLoadingError: {},
+			};
+			const newProps = { ...props, ...stripeData };
+			return <WrappedComponent { ...newProps } />;
+		};
+	},
 } ) );
 
 describe( 'Credit Card Form', () => {
