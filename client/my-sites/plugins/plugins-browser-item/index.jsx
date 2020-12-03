@@ -120,6 +120,9 @@ class PluginsBrowserListElement extends Component {
 					<div className="plugins-browser-item__info">
 						<div className="plugins-browser-item__title-wrapper">
 							<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
+							<div className="plugins-browser-item__description">
+								{ this.props.plugin.short_description }
+							</div>
 							<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
 						</div>
 						<PluginIcon
@@ -129,7 +132,23 @@ class PluginsBrowserListElement extends Component {
 						/>
 						{ this.renderInstalledIn() }
 					</div>
-					<Rating rating={ this.props.plugin.rating } size={ 16 } />
+					<div className="plugins-browser-item__meta">
+						<div className="plugins-browser-item__ratings">
+							<Rating rating={ this.props.plugin.rating } size={ 16 } />
+							{ this.props.plugin.num_ratings > 0 && (
+								<div class="plugins-browser-item__rating-number">
+									({ this.props.plugin.num_ratings })
+								</div>
+							) }
+						</div>
+						{ this.props.plugin.downloaded > 0 && (
+							<div class="plugins-browser-item__downloads">
+								{ this.props.translate( '%(number)s active installs', {
+									args: { number: this.props.plugin.downloaded },
+								} ) }
+							</div>
+						) }
+					</div>
 				</a>
 				{ this.renderUpgradeButton() }
 			</Card>
