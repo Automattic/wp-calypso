@@ -12,17 +12,12 @@ const DEFAULT_SITE_NAME = __( 'Site Title', __i18n_text_domain__ );
 // to change it before launch.
 export const isDefaultSiteTitle = ( {
 	currentSiteTitle = '',
-	exact = false,
 }: {
 	currentSiteTitle: string | undefined;
-	exact?: boolean;
-} ): boolean =>
-	exact
-		? currentSiteTitle === DEFAULT_SITE_NAME
-		: new RegExp( DEFAULT_SITE_NAME, 'i' ).test( currentSiteTitle );
+} ): boolean => currentSiteTitle === DEFAULT_SITE_NAME;
 
 export const isValidSiteTitle = ( title?: string ): boolean =>
-	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title, exact: true } );
+	title !== '' && ! isDefaultSiteTitle( { currentSiteTitle: title } );
 
 type PlanProduct = {
 	product_id: number;

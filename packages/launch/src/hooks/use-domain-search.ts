@@ -25,7 +25,7 @@ export function useDomainSearch(): {
 
 	let search = domainSearch.trim() || title;
 
-	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search, exact: true } ) ) {
+	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search } ) ) {
 		search = siteSubdomain?.domain?.split( '.' )[ 0 ] ?? '';
 	}
 
