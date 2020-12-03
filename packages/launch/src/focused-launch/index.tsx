@@ -46,6 +46,17 @@ const FocusedLaunch: React.FunctionComponent = () => {
 		}
 	}, [ selectedDomain, domainSuggestionFromCart, setDomain ] );
 
+	// If there is no selected domain, but there is a domain in cart,
+	// set the domain from cart as the selected domain.
+	const domainSuggestionFromCart = useDomainSuggestionFromCart();
+	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
+	const { setDomain } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( ! selectedDomain && domainSuggestionFromCart ) {
+			setDomain( domainSuggestionFromCart );
+		}
+	}, [ selectedDomain, domainSuggestionFromCart, setDomain ] );
+
 	return (
 		<Router
 			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
