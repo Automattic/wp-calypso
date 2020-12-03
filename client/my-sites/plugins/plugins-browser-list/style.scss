@@ -24,9 +24,12 @@
 	}
 	.gridicon {
 		float: right;
-		top: 2px;
 		margin-left: 3px;
 	}
+}
+
+.button.plugins-browser-list__select-all {
+	vertical-align: middle;
 }
 
 .plugins-browser-list__elements {
@@ -43,7 +46,6 @@
 }
 
 .plugins-browser-list__section-title {
-    font-size: $font-title-small;
-    margin: 16px 0;
+	font-size: $font-title-small;
+	margin: 16px 0;
 }
-

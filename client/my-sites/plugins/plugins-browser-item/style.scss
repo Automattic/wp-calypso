@@ -13,7 +13,11 @@
 	}
 
 	.plugins-browser-item__link {
-		display: block;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		height: 100%;
+		max-width: 100%;
 		color: inherit;
 	}
 
@@ -41,22 +45,27 @@
 
 .plugins-browser-item__info {
 	display: grid;
-	grid-template-columns: auto 48px;
+	grid-template-columns: calc( 100% - 72px ) 48px;
 	gap: 24px;
+	box-sizing: border-box;
 	padding: 24px;
+	height: 100%;
 	max-width: 100%;
 }
 
 .plugins-browser-item__title,
 .plugins-browser-item__author {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-
 	.is-placeholder & {
 		color: transparent;
 		background-color: var( --color-neutral-0 );
 		animation: loading-fade 1.6s ease-in-out infinite;
 	}
+}
+
+.plugins-browser-item__title-wrapper {
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 }
 
 .plugins-browser-item__title {
@@ -66,13 +75,13 @@
 }
 
 .plugins-browser-item__author {
-	color: var( --color-primary );
 	font-size: $font-body-small;
-	margin-top: 16px;
+	margin-top: auto;
 }
 
 .plugins-browser-item__description {
 	color: var( --color-text-subtle );
+	margin-bottom: 16px;
 }
 
 .plugins-browser-item .plugin-icon {
@@ -100,6 +109,14 @@
 
 .plugins-browser-item__rating-number {
 	color: var( --color-text-subtle );
+}
+
+.plugins-browser-item__secondary-meta {
+	display: flex;
+}
+
+.plugins-browser-item__downloads {
+	margin-right: 16px;
 }
 
 .plugins-browser-item__installed {

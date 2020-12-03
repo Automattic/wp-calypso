@@ -123,7 +123,12 @@ class PluginsBrowserListElement extends Component {
 							<div className="plugins-browser-item__description">
 								{ this.props.plugin.short_description }
 							</div>
-							<div className="plugins-browser-item__author">{ this.props.plugin.author_name }</div>
+							<div className="plugins-browser-item__author">
+								{ this.props.translate( 'By {{a}}%(authorName)s{{/a}}', {
+									args: { authorName: this.props.plugin.author_name },
+									components: { a: <a href={ this.props.plugin.author_url } /> },
+								} ) }
+							</div>
 						</div>
 						<PluginIcon
 							size={ this.props.iconSize }
@@ -136,21 +141,21 @@ class PluginsBrowserListElement extends Component {
 						<div className="plugins-browser-item__ratings">
 							<Rating rating={ this.props.plugin.rating } size={ 16 } />
 							{ this.props.plugin.num_ratings > 0 && (
-								<div class="plugins-browser-item__rating-number">
+								<div className="plugins-browser-item__rating-number">
 									({ this.props.plugin.num_ratings })
 								</div>
 							) }
 						</div>
 						<div className="plugins-browser-item__secondary-meta">
 							{ this.props.plugin.downloaded > 0 && (
-								<div class="plugins-browser-item__downloads">
+								<div className="plugins-browser-item__downloads">
 									{ this.props.translate( '%(number)s active installs', {
 										args: { number: this.props.plugin.downloaded },
 									} ) }
 								</div>
 							) }
 							{ this.props.plugin.last_updated && (
-								<div class="plugins-browser-item__updated">
+								<div className="plugins-browser-item__updated">
 									{ this.props.translate( 'Last updated: %(updated)s', {
 										args: { updated: this.props.plugin.last_updated },
 									} ) }
