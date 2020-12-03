@@ -22,7 +22,6 @@ export function useSite() {
 		isPaidPlan: site && ! site.plan?.is_free, // sometimes plan will not be available: https://github.com/Automattic/wp-calypso/pull/44895
 		isSiteLaunched,
 		isSiteLaunching,
-		currentDomainName: site?.URL && new URL( site?.URL ).hostname,
 		selectedFeatures: site?.options?.selected_features,
 		isLoadingSite: !! isLoading,
 	};

@@ -73,7 +73,7 @@ $commentary-column-gap-wide: 100px;
 	gap: $commentary-column-gap-small;
 	justify-content: space-between;
 	opacity: 0.5;
-	transition: opacity 0.5s ease-in-out;
+	transition: opacity 0.2s ease-in-out;
 
 	@include break-large {
 		gap: $commentary-column-gap-large;
@@ -82,18 +82,10 @@ $commentary-column-gap-wide: 100px;
 	@include break-wide {
 		gap: $commentary-column-gap-wide;
 	}
-}
 
-// by default: highlight all steps when nothing is in focus
-.focused-launch-container:not( :focus-within ) {
-	.focused-launch-summary__step {
+	&.highlighted {
 		opacity: 1;
 	}
-}
-
-// highlight the focused step
-.focused-launch-summary__step:focus-within {
-	opacity: 1;
 }
 
 .focused-launch-summary__side-commentary {

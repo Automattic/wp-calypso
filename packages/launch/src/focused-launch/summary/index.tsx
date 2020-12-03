@@ -10,6 +10,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { createInterpolateElement } from '@wordpress/element';
 import { TextControl, SVG, Path, Tooltip, Circle, Rect } from '@wordpress/components';
 import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
+import classNames from 'classnames';
 import { Icon, check } from '@wordpress/icons';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useLocale } from '@automattic/i18n-utils';
@@ -33,7 +34,7 @@ import FocusedLaunchSummaryItem, {
 } from './focused-launch-summary-item';
 import { LAUNCH_STORE, SITE_STORE, Plan } from '../../stores';
 import LaunchContext from '../../context';
-import { isDefaultSiteTitle } from '../../utils';
+import { isValidSiteTitle } from '../../utils';
 import { FOCUSED_LAUNCH_FLOW_ID } from '../../constants';
 
 import './style.scss';
@@ -55,10 +56,15 @@ const info = (
 type SummaryStepProps = {
 	input: React.ReactNode;
 	commentary?: React.ReactNode;
+	highlighted: boolean;
 };
 
-const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, commentary } ) => (
-	<div className="focused-launch-summary__step">
+const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( {
+	input,
+	commentary,
+	highlighted,
+} ) => (
+	<div className={ classNames( 'focused-launch-summary__step', { highlighted } ) }>
 		<div className="focused-launch-summary__data-input">
 			<div className="focused-launch-summary__section">{ input }</div>
 		</div>
@@ -68,6 +74,7 @@ const SummaryStep: React.FunctionComponent< SummaryStepProps > = ( { input, comm
 
 type CommonStepProps = {
 	stepIndex?: number;
+	highlighted?: boolean;
 };
 
 // Props in common between all summary steps + a few props from <TextControl>
@@ -82,6 +89,7 @@ const SiteTitleStep: React.FunctionComponent< SiteTitleStepProps > = ( {
 } ) => {
 	return (
 		<SummaryStep
+			highlighted
 			input={
 				<TextControl
 					className="focused-launch-summary__input"
@@ -122,11 +130,13 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 	onDomainSelect,
 	onExistingSubdomainSelect,
 	isLoading,
+	highlighted,
 } ) => {
 	const locale = useLocale();
 
 	return (
 		<SummaryStep
+			highlighted={ !! highlighted }
 			input={
 				hasPaidDomain ? (
 					<>
@@ -157,7 +167,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							</p>
 						</label>
 						<FocusedLaunchSummaryItem readOnly>
-							<LeadingContentSide label={ currentDomain || '' } />
+							<LeadingContentSide label={ currentDomain?.domain_name || '' } />
 							<TrailingContentSide nodeType="PRICE">
 								<Icon icon={ check } size={ 18 } /> { __( 'Purchased', __i18n_text_domain__ ) }
 							</TrailingContentSide>
@@ -265,6 +275,7 @@ type PlanStepProps = CommonStepProps & {
 
 const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 	stepIndex,
+	highlighted,
 	hasPaidPlan = false,
 	hasPaidDomain = false,
 	selectedPaidDomain = false,
@@ -303,6 +314,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 
 	return (
 		<SummaryStep
+			highlighted={ !! highlighted }
 			input={
 				hasPaidPlan ? (
 					<>
@@ -514,10 +526,9 @@ const Summary: React.FunctionComponent = () => {
 
 	const { launchSite } = useDispatch( SITE_STORE );
 	const { setModalDismissible, showModalTitle, showSiteTitleStep } = useDispatch( LAUNCH_STORE );
-
 	const { title, updateTitle, saveTitle } = useTitle();
-	const { sitePrimaryDomain, siteSubdomain, hasPaidDomain } = useSiteDomains();
-	const { onDomainSelect, onExistingSubdomainSelect } = useDomainSelection();
+	const { siteSubdomain, hasPaidDomain } = useSiteDomains();
+	const { onDomainSelect, onExistingSubdomainSelect, currentDomain } = useDomainSelection();
 	const { domainSearch, isLoading } = useDomainSearch();
 	const { isPaidPlan: hasPaidPlan } = useSite();
 
@@ -534,8 +545,9 @@ const Summary: React.FunctionComponent = () => {
 
 	// If the user needs to change the site title, always show the site title
 	// step to the user when in this launch flow.
+	// Allow changing site title when it's the default value or when it's an empty string.
 	React.useEffect( () => {
-		if ( ! isSiteTitleStepVisible && isDefaultSiteTitle( { currentSiteTitle: title } ) ) {
+		if ( ! isSiteTitleStepVisible && ! isValidSiteTitle( title ) ) {
 			showSiteTitleStep();
 		}
 	}, [ title, showSiteTitleStep, isSiteTitleStepVisible ] );
@@ -569,12 +581,15 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
+	const isDomainStepHighlighted = !! hasSelectedDomain || isValidSiteTitle( title );
+
 	const renderDomainStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<DomainStep
+			highlighted={ isDomainStepHighlighted }
 			stepIndex={ forwardStepIndex ? stepIndex : undefined }
 			key={ stepIndex }
 			existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
-			currentDomain={ selectedDomain ?? mockDomainSuggestion( sitePrimaryDomain?.domain ) }
+			currentDomain={ currentDomain }
 			initialDomainSearch={ domainSearch }
 			hasPaidDomain={ hasPaidDomain }
 			isLoading={ isLoading }
@@ -588,8 +603,11 @@ const Summary: React.FunctionComponent = () => {
 		/>
 	);
 
+	const isPlansStepHighlighted = !! hasSelectedDomain || !! selectedPlan;
+
 	const renderPlanStep: StepIndexRenderFunction = ( { stepIndex, forwardStepIndex } ) => (
 		<PlanStep
+			highlighted={ isPlansStepHighlighted }
 			hasPaidPlan={ hasPaidPlan }
 			selectedPaidDomain={ selectedDomain && ! selectedDomain.is_free }
 			hasPaidDomain={ hasPaidDomain }
@@ -639,7 +657,10 @@ const Summary: React.FunctionComponent = () => {
 			</div>
 			{ disabledSteps.map( ( disabledStepRenderer, disabledStepIndex ) =>
 				// Disabled steps don't show the step index
-				disabledStepRenderer( { stepIndex: disabledStepIndex + 1, forwardStepIndex: false } )
+				disabledStepRenderer( {
+					stepIndex: disabledStepIndex + 1,
+					forwardStepIndex: false,
+				} )
 			) }
 			{ activeSteps.map( ( activeStepRenderer, activeStepIndex ) =>
 				// Active steps show the step index only if there are at least 2 steps
