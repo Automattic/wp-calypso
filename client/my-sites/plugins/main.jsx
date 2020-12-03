@@ -387,7 +387,7 @@ export class PluginsMain extends Component {
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
 			>
-				<span className="plugins__button-text">{ translate( 'Add plugin' ) }</span>
+				<span className="plugins__button-text">{ translate( 'Browse plugins' ) }</span>
 			</Button>
 		);
 	}
