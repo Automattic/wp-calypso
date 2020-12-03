@@ -141,13 +141,22 @@ class PluginsBrowserListElement extends Component {
 								</div>
 							) }
 						</div>
-						{ this.props.plugin.downloaded > 0 && (
-							<div class="plugins-browser-item__downloads">
-								{ this.props.translate( '%(number)s active installs', {
-									args: { number: this.props.plugin.downloaded },
-								} ) }
-							</div>
-						) }
+						<div className="plugins-browser-item__secondary-meta">
+							{ this.props.plugin.downloaded > 0 && (
+								<div class="plugins-browser-item__downloads">
+									{ this.props.translate( '%(number)s active installs', {
+										args: { number: this.props.plugin.downloaded },
+									} ) }
+								</div>
+							) }
+							{ this.props.plugin.last_updated && (
+								<div class="plugins-browser-item__updated">
+									{ this.props.translate( 'Last updated: %(updated)s', {
+										args: { updated: this.props.plugin.last_updated },
+									} ) }
+								</div>
+							) }
+						</div>
 					</div>
 				</a>
 				{ this.renderUpgradeButton() }
