@@ -544,7 +544,6 @@ export const PluginsList = createReactClass( {
 				progress={ this.state.notices.inProgress.filter(
 					( log ) => log.plugin.slug === plugin.slug
 				) }
-				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
 				onClick={ selectThisPlugin }
