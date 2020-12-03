@@ -25,7 +25,6 @@ import {
 import { isDataLoading } from 'calypso/me/purchases/utils';
 import {
 	getByPurchaseId,
-	hasLoadedSitePurchasesFromServer,
 	hasLoadedUserPurchasesFromServer,
 	getIncludedDomainPurchase,
 } from 'calypso/state/purchases/selectors';
@@ -239,12 +238,9 @@ class CancelPurchase extends React.Component {
 
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
-	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
-		hasLoadedPurchasesFromServer: siteId
-			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		includedDomainPurchase: getIncludedDomainPurchase( state, purchase ),
 		site: getSite( state, purchase ? purchase.siteId : null ),

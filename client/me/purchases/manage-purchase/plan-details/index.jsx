@@ -19,7 +19,6 @@ import PlanBillingPeriod from './billing-period';
 import { isRequestingSites, getSite } from 'calypso/state/sites/selectors';
 import {
 	getByPurchaseId,
-	hasLoadedSitePurchasesFromServer,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
 import { isDataLoading } from 'calypso/me/purchases/utils';
@@ -41,7 +40,7 @@ export class PurchasePlanDetails extends Component {
 		// Connected props
 		purchase: PropTypes.object,
 		hasLoadedSites: PropTypes.bool,
-		hasLoadedPurchasesFromServer: PropTypes.bool,
+		hasLoadedUserPurchasesFromServer: PropTypes.bool,
 		pluginList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				slug: PropTypes.string.isRequired,
@@ -124,16 +123,14 @@ export class PurchasePlanDetails extends Component {
 	}
 }
 
-// hasLoadedSites & hasLoadedPurchasesFromServer are used in isDataLoading
+// hasLoadedSites & hasLoadedUserPurchasesFromServer are used in isDataLoading
 export default connect( ( state, props ) => {
 	const purchase = getByPurchaseId( state, props.purchaseId );
 	const siteId = purchase ? purchase.siteId : null;
 	return {
 		hasLoadedSites: ! isRequestingSites( state ),
 		site: purchase ? getSite( state, purchase.siteId ) : null,
-		hasLoadedPurchasesFromServer: siteId
-			? hasLoadedSitePurchasesFromServer( state )
-			: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 		purchase,
 		pluginList: getPluginsForSite( state, siteId ),
 		siteId,
