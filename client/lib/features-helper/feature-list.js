@@ -15,7 +15,7 @@ const enabledClass = 'features-helper__feature-item-enabled';
 const disabledClass = 'features-helper__feature-item-disabled';
 
 export const FeatureList = React.memo( () => {
-	const currentXLProjects = [ 'anchor-fm', 'nav-unification' ];
+	const currentXLProjects = [ 'anchor-fm-dev', 'nav-unification' ];
 	const enabledFeatures = config.enabledFeatures();
 	return (
 		<>

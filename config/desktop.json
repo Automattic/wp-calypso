@@ -14,7 +14,7 @@
 	"features": {
 		"ad-tracking": true,
 		"always_use_logout_url": true,
-		"anchor-fm": false,
+		"anchor-fm-dev": false,
 		"async-payments": false,
 		"blogger-plan": false,
 		"catch-js-errors": false,
