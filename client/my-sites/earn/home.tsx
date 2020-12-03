@@ -497,7 +497,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			align: 'right',
 		},
 		body: translate(
-			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}{{b}}Watch our tutorial videos to get started{{/b}}{{/a}}.',
+			'Accept credit card payments today for just about anything – physical and digital goods, services, donations and tips, or access to your exclusive content. {{a}}Watch our tutorial videos to get started{{/a}}.',
 			{
 				components: {
 					a: (
@@ -507,7 +507,6 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							rel="noopener noreferrer"
 						/>
 					),
-					b: <strong />,
 				},
 			}
 		),
