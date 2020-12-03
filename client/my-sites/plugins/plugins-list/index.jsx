@@ -33,6 +33,7 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
+import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
@@ -101,7 +102,8 @@ export const PluginsList = createReactClass( {
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
-		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices ) ) {
+
+		if ( ! isEqual( this.props.inProgressStatuses, nextProps.inProgressStatuses ) ) {
 			return true;
 		}
 
@@ -426,7 +428,7 @@ export const PluginsList = createReactClass( {
 	showDisconnectDialog() {
 		const { translate } = this.props;
 
-		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
+		if ( this.state.disconnectJetpackDialog && ! this.props.inProgressStatuses.length ) {
 			this.setState( {
 				disconnectJetpackDialog: false,
 			} );
@@ -541,8 +543,8 @@ export const PluginsList = createReactClass( {
 				key={ plugin.slug }
 				plugin={ plugin }
 				sites={ plugin.sites }
-				progress={ this.state.notices.inProgress.filter(
-					( log ) => log.plugin.slug === plugin.slug
+				progress={ this.props.inProgressStatuses.filter(
+					( status ) => status.pluginId === plugin.id
 				) }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
@@ -565,9 +567,11 @@ export const PluginsList = createReactClass( {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
+
 		return {
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
