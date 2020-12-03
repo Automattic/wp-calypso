@@ -40,6 +40,7 @@ export const getPlanProduct = ( plan: Plans.Plan, flow: string ): PlanProduct =>
 export type DomainProduct = {
 	meta: string;
 	product_id: number;
+	is_domain_registration: true;
 	extra: {
 		privacy_available: boolean;
 		privacy: boolean;
@@ -53,6 +54,7 @@ export const getDomainProduct = (
 ): DomainProduct => ( {
 	meta: domain?.domain_name,
 	product_id: domain?.product_id,
+	is_domain_registration: true,
 	extra: {
 		privacy_available: domain?.supports_privacy,
 		privacy: domain?.supports_privacy,
@@ -62,9 +64,9 @@ export const getDomainProduct = (
 
 export type Product = {
 	product_id: number;
+	is_domain_registration?: boolean;
 };
 
 export const isDomainProduct = ( item: Product ): boolean => {
-	const DOMAIN_PRODUCT_ID = 148;
-	return item.product_id === DOMAIN_PRODUCT_ID;
+	return !! item.is_domain_registration;
 };
