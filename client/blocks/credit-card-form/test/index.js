@@ -74,15 +74,6 @@ describe( 'Credit Card Form', () => {
 		expect( getErrorMessage( 'number' ) ).toEqual( '' );
 	} );
 
-	test( 'has getErrorMessage return the correct errors', () => {
-		const initialValues = { number: '234' };
-		const props = { ...defaultProps, initialValues };
-		const wrapper = shallow( <CreditCardForm { ...props } /> );
-		const child = wrapper.find( CreditCardFormFields );
-		const getErrorMessage = child.prop( 'getErrorMessage' );
-		expect( getErrorMessage( 'number' )[ 0 ] ).toMatch( /invalid/ );
-	} );
-
 	describe( 'getParamsForApi()', () => {
 		test( 'should return expected api params from form credit card values', () => {
 			expect(
