@@ -106,7 +106,7 @@ class CalendarCard extends Component {
 		const formattedTime = this.withTimezone( time ).format( 'LT' );
 
 		if ( [ '12:00 AM', '00:00' ].includes( formattedTime ) ) {
-			return this.props.translate( 'midnight' );
+			return this.props.translate( 'Midnight' );
 		}
 
 		return formattedTime;
