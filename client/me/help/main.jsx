@@ -243,14 +243,14 @@ class Help extends React.PureComponent {
 							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
 							onClick={ this.trackSupportSessionButtonClick() }
 						>
-							Schedule a session
+							{ this.props.translate( 'Schedule a session' ) }
 						</Button>
 						<Button
 							className="help__support-session-action is-link"
 							borderless
 							href={ localizeUrl( 'https://wordpress.com/support/quickstart-support/' ) }
 						>
-							Learn more
+							{ this.props.translate( 'Learn more' ) }
 						</Button>
 					</div>
 				</div>
