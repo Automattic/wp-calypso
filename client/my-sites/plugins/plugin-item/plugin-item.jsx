@@ -4,7 +4,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
-import { flowRight as compose, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -311,4 +311,4 @@ class PluginItem extends Component {
 	}
 }
 
-export default compose( localize, withLocalizedMoment )( PluginItem );
+export default localize( withLocalizedMoment( PluginItem ) );
