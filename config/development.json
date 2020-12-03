@@ -29,7 +29,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm": true,
+		"anchor-fm-dev": true,
 		"async-payments": false,
 		"automated-transfer": true,
 		"blogger-plan": true,

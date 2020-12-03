@@ -26,7 +26,7 @@
 	"livechat_support_locales": [ "en", "es", "pt-br" ],
 	"features": {
 		"ad-tracking": false,
-		"anchor-fm": false,
+		"anchor-fm-dev": false,
 		"async-payments": false,
 		"blogger-plan": false,
 		"calypsoify/plugins": true,
