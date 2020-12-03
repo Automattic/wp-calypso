@@ -114,13 +114,13 @@ export function useAnchorFmPodcastId(): string | null {
 
 	// Use location state if available
 	if ( locationState && locationState.anchorFmPodcastId ) {
-		return sanitizePodcastId(locationState.anchorFmPodcastId);
+		return sanitizePodcastId( locationState.anchorFmPodcastId );
 	}
 
 	// Fall back to looking in query param
 	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
 	if ( queryParam !== null && queryParam !== '' ) {
-		return sanitizePodcastId(queryParam);
+		return sanitizePodcastId( queryParam );
 	}
 	return null;
 }

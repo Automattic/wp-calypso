@@ -41,9 +41,10 @@ export default function useSignup() {
 		// TODO: We can remove this condition when we've converted signup into it's own page
 		// We also open the signup modal when this is an Anchor.fm signup and
 		// we don't have a user yet.
-		if ( new URLSearchParams( search ).has( 'signup' ) || (
-				isAnchorFmSignup && ! newUser && ! currentUser
-		) ) {
+		if (
+			new URLSearchParams( search ).has( 'signup' ) ||
+			( isAnchorFmSignup && ! newUser && ! currentUser )
+		) {
 			setShowSignupDialog( true );
 		} else {
 			// Dialogs usually close naturally when the user clicks the browser's
