@@ -11,7 +11,7 @@ import {
 import { isDomainTransfer } from 'calypso/lib/products-values';
 
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
+	return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
 }
 
 function canEditPaymentDetails( purchase ) {
