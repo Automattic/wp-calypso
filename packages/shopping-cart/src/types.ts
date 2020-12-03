@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import {
+import type {
 	TempResponseCart,
 	ResponseCart,
 	RequestCart,

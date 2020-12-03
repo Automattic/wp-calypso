@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { getEmptyResponseCart } from './empty-carts';
-import { TempResponseCart } from './shopping-cart-endpoint';
+import type { TempResponseCart } from './shopping-cart-endpoint';
 import type {
 	CartLocation,
 	RequestCart,

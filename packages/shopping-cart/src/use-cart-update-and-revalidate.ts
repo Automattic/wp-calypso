@@ -11,7 +11,7 @@ import {
 	convertResponseCartToRequestCart,
 	convertRawResponseCartToResponseCart,
 } from './cart-functions';
-import {
+import type {
 	TempResponseCart,
 	RequestCart,
 	ResponseCart,
