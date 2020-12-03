@@ -37,14 +37,21 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	featureId,
 } );
 
-export function* createSite(
-	username: string,
-	languageSlug: string,
-	bearerToken?: string,
-	visibility: number = isEnabled( 'coming-soon-v2' )
+export interface CreateSiteActionParameters {
+	username: string;
+	languageSlug: string;
+	bearerToken?: string;
+	visibility: number;
+}
+
+export function* createSite( {
+	username,
+	languageSlug,
+	bearerToken = undefined,
+	visibility = isEnabled( 'coming-soon-v2' )
 		? Site.Visibility.PublicNotIndexed
-		: Site.Visibility.Private
-) {
+		: Site.Visibility.Private,
+}: CreateSiteActionParameters ) {
 	const {
 		domain,
 		selectedDesign,

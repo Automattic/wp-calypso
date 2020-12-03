@@ -26,15 +26,20 @@ export default function useOnSignup() {
 	const visibility = useNewSiteVisibility();
 
 	const handleCreateSite = React.useCallback(
-		( username: string, bearerToken?: string, isPublicSite?: number ) => {
-			createSite( username, locale, bearerToken, isPublicSite );
+		( username: string, isPublicSite: number, bearerToken?: string ) => {
+			createSite( {
+				username,
+				languageSlug: locale,
+				bearerToken,
+				visibility: isPublicSite,
+			} );
 		},
 		[ createSite, locale ]
 	);
 
 	React.useEffect( () => {
 		if ( newUser && newUser.bearerToken && newUser.username && ! newSite ) {
-			handleCreateSite( newUser.username, newUser.bearerToken, visibility );
+			handleCreateSite( newUser.username, visibility, newUser.bearerToken );
 		}
 	}, [ newSite, newUser, locale, handleCreateSite, visibility ] );
 }
