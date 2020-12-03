@@ -1,10 +1,13 @@
+name: Editing Toolkit Plugin
+
 on:
   pull_request:
     # only trigger this workflow if Editing Toolkit plugin files have been modified, or if packages have been updated.
     paths:
       - 'apps/editing-toolkit/**'
-
-name: Editing Toolkit Plugin
+  push:
+    tags:
+      - 'editing-toolkit@*'
 
 jobs:
   build:
@@ -212,3 +215,43 @@ jobs:
       # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
       - name: Execute phpcs on newspack-blocks PHP files.
         run: ./vendor/bin/phpcs --standard=apps/editing-toolkit/bin/newspack-block-sync-phpcs.xml
+
+  create-release-and-attach-asset:
+    name: Create release draft and attach asset
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, "editing-toolkit@")
+    steps:
+      - name: Set Release Version
+        id: get_release_version
+        run: echo ::set-output name=version::$(echo $GITHUB_REF | cut -d / -f 3 | sed s/^editing-toolkit@// | sed 's/-rc./ RC/' )
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ steps.get_release_version.outputs.version }}
+          draft: true
+
+      - name: Get build
+        uses: actions/download-artifact@HEAD
+        with:
+          name: editing-toolkit-build-archive
+
+      - name: Build zip archive
+        run: |
+          zip -r editing-toolkit.zip ./*
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./editing-toolkit.zip
+          asset_name: editing-toolkit-${{ steps.get_release_version.outputs.version }}.zip
+          asset_content_type: application/zip
