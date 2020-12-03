@@ -111,7 +111,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 				nextPos = step < 0 ? Math.max( nextPos, to ) : Math.min( nextPos, to );
 				this.scrollWrapperDOM.scrollLeft = nextPos;
 
-				if ( nextPos !== to ) {
+				if ( Math.abs( to - nextPos ) > 50 ) {
 					window.requestAnimationFrame( animate );
 				} else {
 					window.requestAnimationFrame( resolve );
