@@ -41,7 +41,7 @@ export class PurchasePlanDetails extends Component {
 		// Connected props
 		purchase: PropTypes.object,
 		hasLoadedSites: PropTypes.bool,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool,
+		hasLoadedPurchasesFromServer: PropTypes.bool,
 		pluginList: PropTypes.arrayOf(
 			PropTypes.shape( {
 				slug: PropTypes.string.isRequired,
