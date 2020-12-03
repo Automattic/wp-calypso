@@ -10,7 +10,6 @@ import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
-import PluginsActions from 'calypso/lib/plugins/actions';
 import versionCompare from 'calypso/lib/version-compare';
 import { normalizePluginData } from 'calypso/lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
