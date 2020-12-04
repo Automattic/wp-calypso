@@ -24,7 +24,6 @@ import {
 	WEB_PAYMENT_BASIC_CARD_METHOD,
 	WEB_PAYMENT_APPLE_PAY_METHOD,
 } from 'calypso/lib/web-payment';
-import IncompatibleProductNotice from './incompatible-product-notice';
 
 export class PaymentBox extends PureComponent {
 	constructor() {
@@ -185,7 +184,6 @@ export class PaymentBox extends PureComponent {
 					<div className="checkout__box-padding">
 						<div className={ contentClass }>
 							{ infoMessage && this.props.infoMessage }
-							<IncompatibleProductNotice incompatibleProducts={ this.props.incompatibleProducts } />
 							{ this.props.children }
 						</div>
 					</div>
