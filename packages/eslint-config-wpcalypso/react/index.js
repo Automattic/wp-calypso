@@ -10,13 +10,10 @@ module.exports = {
 	plugins: [ 'react', 'react-hooks', 'wpcalypso' ],
 	rules: {
 		'react/jsx-boolean-value': [ 'error', 'never' ],
-		'react/jsx-curly-spacing': [ 'error', 'always' ],
 		'react/jsx-no-duplicate-props': 'error',
 		'react/jsx-no-target-blank': 'error',
 		'react/jsx-no-undef': 'error',
-		'react/jsx-tag-spacing': 'error',
 		'react/jsx-uses-react': 'error',
-		'react/jsx-uses-vars': 'error',
 		'react/no-danger': 'error',
 		'react/no-deprecated': 'error',
 		'react/no-did-mount-set-state': 'error',
