@@ -167,11 +167,9 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	}
 
 	const langFragment = lang ? `/${ lang }` : '';
-	const anchorFmParameter = isAnchorFmSignup ? `&anchor_podcast=${ anchorFmPodcastId }` : '';
-	const loginRedirectUrl = encodeURIComponent(
-		`${ window.location.origin }/new${
-			isAnchorFmSignup ? makePath( Step.IntentGathering ) : makePath( Step.CreateSite )
-		}?new${ anchorFmParameter }`
+	const loginRedirectUrl = encodeURIComponent( isAnchorFmSignup
+			? `${ window.location.origin }/new${ makePath( Step.IntentGathering ) }?new&anchor_podcast=${ anchorFmPodcastId }`
+			: `${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
 	const loginUrl = `/log-in/new${ langFragment }?redirect_to=${ loginRedirectUrl }&signup_url=${ signupUrl }`;
