@@ -23,7 +23,7 @@ import moreOptions from './images/more_options.gif';
 function getTourContent() {
 	return [
 		{
-			heading: __( 'Welcome to Wordpress', 'full-site-editing' ),
+			heading: __( 'Welcome to WordPress!', 'full-site-editing' ),
 			description: __(
 				'Continue on with this short tour to learn the fundamentals of the WordPress editor.',
 				'full-site-editing'

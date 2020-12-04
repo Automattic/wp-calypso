@@ -83,6 +83,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 			<Flex>
 				<Button
 					isPrimary
+					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
 					iconSize={ 24 }
 					onClick={ () => onMinimize( true ) }
