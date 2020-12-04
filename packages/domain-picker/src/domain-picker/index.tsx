@@ -177,7 +177,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			( suggestion ) => suggestion.domain_name === currentDomain?.domain_name
 		);
 
-		if ( ! currentDomainIsInSuggestions ) {
+		if ( domainSuggestionsWithSubdomain?.length && ! currentDomainIsInSuggestions ) {
 			setPersistentSelectedDomain( currentDomain );
 		}
 	}, [ currentDomain, domainSuggestionsWithSubdomain ] );
