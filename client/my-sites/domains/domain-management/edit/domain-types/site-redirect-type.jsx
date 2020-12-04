@@ -37,7 +37,7 @@ class SiteRedirectType extends React.Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( domain.subscriptionId, 10 ) }
@@ -60,7 +60,7 @@ class SiteRedirectType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				withTextStatus={ true }
+				withTextStatus
 				toggleSource="site-redirect-status"
 			/>
 		);
@@ -107,7 +107,7 @@ class SiteRedirectType extends React.Component {
 						domain={ domain }
 					/>
 				</DomainStatus>
-				<Card compact={ true } className="domain-types__expiration-row">
+				<Card compact className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ domain.currentUserCanManage && this.renderAutoRenew() }

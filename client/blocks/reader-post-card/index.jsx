@@ -167,8 +167,8 @@ class ReaderPostCard extends React.Component {
 				post={ discoverPost || post }
 				site={ site }
 				visitUrl={ post.URL }
-				showVisit={ true }
-				showMenu={ true }
+				showVisit
+				showMenu
 				fullPost={ false }
 				showMenuFollow={ ! isDiscover }
 				onCommentClick={ onCommentClick }
@@ -189,9 +189,7 @@ class ReaderPostCard extends React.Component {
 				URL: post.URL,
 				primary_tag: post.primary_tag,
 			} );
-			postByline = (
-				<PostByline post={ postForByline } site={ discoverSite } showSiteName={ true } />
-			);
+			postByline = <PostByline post={ postForByline } site={ discoverSite } showSiteName />;
 		} else {
 			postByline = (
 				<PostByline

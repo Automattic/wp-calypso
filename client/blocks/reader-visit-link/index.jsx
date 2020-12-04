@@ -33,8 +33,8 @@ class ReaderVisitLink extends React.Component {
 				className="reader-visit-link"
 				href={ this.props.href }
 				target="_blank"
-				icon={ true }
-				showIconFirst={ true }
+				icon
+				showIconFirst
 				iconSize={ this.props.iconSize }
 				iconClassName="reader-visit-link__icon"
 				onClick={ this.props.onClick }

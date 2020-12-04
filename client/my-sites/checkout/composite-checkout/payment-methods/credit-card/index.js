@@ -206,7 +206,7 @@ function CreditCardSummary() {
 		<SummaryDetails>
 			<SummaryLine>{ cardholderName?.value }</SummaryLine>
 			<SummaryLine>
-				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary={ true } />
+				{ brand !== 'unknown' && '****' } <PaymentLogo brand={ brand } isSummary />
 			</SummaryLine>
 		</SummaryDetails>
 	);

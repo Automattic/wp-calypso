@@ -112,11 +112,11 @@ const UnverifiedAddress = ( {
 						) }
 					</p>
 					{ uspsUrl && (
-						<ExternalLink icon={ true } href={ uspsUrl } target="_blank">
+						<ExternalLink icon href={ uspsUrl } target="_blank">
 							{ translate( 'Verify with USPS' ) }
 						</ExternalLink>
 					) }
-					<ExternalLink icon={ true } href={ googleMapsUrl } target="_blank">
+					<ExternalLink icon href={ googleMapsUrl } target="_blank">
 						{ translate( 'View on Google Maps' ) }
 					</ExternalLink>
 				</div>

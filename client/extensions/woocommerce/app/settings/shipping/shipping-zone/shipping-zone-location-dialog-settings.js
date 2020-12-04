@@ -64,7 +64,7 @@ const ShippingZoneLocationDialogSettings = ( {
 		if ( ! canFilter ) {
 			return (
 				<div>
-					<FormRadio disabled={ true } checked={ true } readOnly={ true } />
+					<FormRadio disabled checked readOnly />
 					{ translate( 'Include entire countries in the zone' ) }
 				</div>
 			);

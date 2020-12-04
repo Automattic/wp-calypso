@@ -123,7 +123,7 @@ export class PlansAtomicStoreStep extends Component {
 				<PlanFeatures
 					plans={ plans }
 					onUpgradeClick={ this.onSelectPlan }
-					isInSignup={ true }
+					isInSignup
 					siteId={ siteId }
 					domainName={ this.getDomainName() }
 					displayJetpackPlans={ false }
@@ -148,7 +148,7 @@ export class PlansAtomicStoreStep extends Component {
 				positionInFlow={ positionInFlow }
 				headerText={ headerText }
 				fallbackHeaderText={ headerText }
-				isWideLayout={ true }
+				isWideLayout
 				stepContent={ this.plansFeaturesList() }
 			/>
 		);

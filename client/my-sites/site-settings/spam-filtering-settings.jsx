@@ -80,7 +80,7 @@ const SpamFilteringSettings = ( {
 				) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
-				showIcon={ true }
+				showIcon
 				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
 		);

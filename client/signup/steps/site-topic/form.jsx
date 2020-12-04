@@ -94,9 +94,9 @@ class SiteTopicForm extends Component {
 							placeholder={ suggestionSearchInputPlaceholder }
 							labelText={ headerText }
 							onChange={ this.onSiteTopicChange }
-							showPopular={ true }
+							showPopular
 							searchValue={ siteTopic }
-							autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							siteType={ siteType }
 						/>
 						<Button

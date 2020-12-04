@@ -185,7 +185,7 @@ const Miscellaneous = ( {
 										components: {
 											fry: (
 												<ExternalLink
-													icon={ true }
+													icon
 													target="_blank"
 													href="https://twitter.com/#!/HibbsLupusTrust/statuses/136429993059291136"
 												/>

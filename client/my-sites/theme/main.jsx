@@ -556,7 +556,7 @@ class ThemeSheet extends React.Component {
 							) }
 						</div>
 					</div>
-					<Button primary={ true } href={ '/themes/' }>
+					<Button primary href={ '/themes/' }>
 						{ i18n.translate( 'See All Themes' ) }
 					</Button>
 				</Card>
@@ -688,9 +688,9 @@ class ThemeSheet extends React.Component {
 						)
 					) }
 					event="themes_plan_particular_free_with_plan"
-					forceHref={ true }
+					forceHref
 					href={ plansUrl }
-					showIcon={ true }
+					showIcon
 				/>
 			);
 		}

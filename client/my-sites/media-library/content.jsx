@@ -269,7 +269,7 @@ export class MediaLibraryContent extends React.Component {
 		};
 		return (
 			<NoticeAction
-				external={ true }
+				external
 				href={
 					upgradeNudgeFeature
 						? `/plans/compare/${ this.props.siteSlug }?feature=${ upgradeNudgeFeature }`

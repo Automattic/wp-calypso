@@ -196,7 +196,7 @@ export function PurchaseChangePaymentMethod( {
 					siteSlug={ siteSlug }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
+					isFullWidth
 				/>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>

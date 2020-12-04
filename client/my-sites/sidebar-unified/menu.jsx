@@ -88,7 +88,7 @@ export const MySitesSidebarUnifiedMenu = ( {
 							key={ item.slug }
 							{ ...item }
 							selected={ isSelected }
-							isSubItem={ true }
+							isSubItem
 						/>
 					);
 				} ) }

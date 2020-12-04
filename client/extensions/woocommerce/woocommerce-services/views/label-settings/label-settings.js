@@ -73,8 +73,8 @@ class ShippingLabels extends Component {
 						<span />
 					</FormLabel>
 					<p className="label-settings__credit-card-description" />
-					<PaymentMethod selected={ false } isLoading={ true } />
-					<PaymentMethod selected={ false } isLoading={ true } />
+					<PaymentMethod selected={ false } isLoading />
+					<PaymentMethod selected={ false } isLoading />
 					<Button compact />
 				</FormFieldSet>
 			</div>
@@ -280,8 +280,8 @@ class ShippingLabels extends Component {
 				<QueryStoredCards />
 				{ isReloading ? (
 					<div className="label-settings__placeholder">
-						<PaymentMethod selected={ false } isLoading={ true } />
-						<PaymentMethod selected={ false } isLoading={ true } />
+						<PaymentMethod selected={ false } isLoading />
+						<PaymentMethod selected={ false } isLoading />
 					</div>
 				) : (
 					paymentMethods.map( renderPaymentMethod )

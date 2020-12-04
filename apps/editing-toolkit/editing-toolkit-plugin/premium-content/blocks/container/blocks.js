@@ -13,7 +13,7 @@ export default function Blocks() {
 					[ 'premium-content/subscriber-view' ],
 					[ 'premium-content/logged-out-view' ],
 				] }
-				__experimentalCaptureToolbars={ true }
+				__experimentalCaptureToolbars
 				templateInsertUpdatesSelection={ false }
 			/>
 		</div>

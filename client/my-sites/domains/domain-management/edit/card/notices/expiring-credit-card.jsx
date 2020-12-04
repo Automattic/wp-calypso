@@ -78,7 +78,7 @@ function ExpiringCreditCard( props ) {
 	return (
 		<div>
 			<p>{ messageText }</p>
-			<Button primary={ true } href={ changePaymentMethodPath }>
+			<Button primary href={ changePaymentMethodPath }>
 				{ isEnabled( 'purchases/new-payment-methods' )
 					? translate( 'Add a new payment method' )
 					: translate( 'Add a new credit card' ) }

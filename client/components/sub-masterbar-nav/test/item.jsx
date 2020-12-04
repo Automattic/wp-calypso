@@ -27,7 +27,7 @@ describe( 'Item', () => {
 	} );
 
 	test( 'should be selectable', () => {
-		const item = shallow( <Item label={ 'test item' } isSelected={ true } /> );
+		const item = shallow( <Item label={ 'test item' } isSelected /> );
 
 		expect( item.hasClass( 'is-selected' ) ).to.equal( true );
 	} );

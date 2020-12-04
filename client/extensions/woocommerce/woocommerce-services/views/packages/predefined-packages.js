@@ -99,7 +99,7 @@ const PredefinedPackages = ( {
 					header={ renderGroupHeader( group ) }
 					summary={ summary }
 					expandedSummary={ summary }
-					clickableHeader={ true }
+					clickableHeader
 					expanded={ false }
 					screenReaderText={ translate( 'Expand Services' ) }
 					icon="chevron-down"

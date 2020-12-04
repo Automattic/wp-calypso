@@ -90,9 +90,7 @@ class JetpackInstallStep extends Component {
 				title: translate( '2. Activate Jetpack' ),
 				text: translate( 'Next, click the blue “Activate Plugin” button to activate Jetpack.' ),
 				action: null,
-				example: (
-					<JetpackExampleActivate url={ currentUrl } isInstall={ true } onClick={ onClick } />
-				),
+				example: <JetpackExampleActivate url={ currentUrl } isInstall onClick={ onClick } />,
 			},
 			connectJetpackAfterInstall: {
 				title: translate( '3. Connect Jetpack' ),

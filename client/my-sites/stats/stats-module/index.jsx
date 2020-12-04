@@ -78,15 +78,7 @@ class StatsModule extends Component {
 		const { period, startOf } = this.props.period;
 		const { path, query } = this.props;
 
-		return (
-			<DatePicker
-				period={ period }
-				date={ startOf }
-				path={ path }
-				query={ query }
-				summary={ true }
-			/>
-		);
+		return <DatePicker period={ period } date={ startOf } path={ path } query={ query } summary />;
 	}
 
 	getHref() {
@@ -204,7 +196,7 @@ class StatsModule extends Component {
 							plan={ PLAN_PREMIUM }
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
+							showIcon
 						/>
 					) }
 				</Card>

@@ -248,7 +248,7 @@ const couponConditions = {
 				<FormField
 					labelText={ translate( 'Cannot be combined with any other coupon' ) }
 					isEnableable
-					defaultValue={ true }
+					defaultValue
 				/>
 			),
 		},

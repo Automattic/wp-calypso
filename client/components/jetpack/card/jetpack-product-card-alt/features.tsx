@@ -89,7 +89,7 @@ const JetpackProductCardFeatures: FunctionComponent< Props > = ( {
 			</ul>
 			{ more && (
 				<div className="jetpack-product-card-alt__feature-more">
-					<ExternalLink icon={ true } href={ more.url }>
+					<ExternalLink icon href={ more.url }>
 						{ more.label }
 					</ExternalLink>
 				</div>

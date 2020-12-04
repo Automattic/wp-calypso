@@ -53,7 +53,7 @@ const Caching = ( {
 									components: {
 										a: (
 											<ExternalLink
-												icon={ true }
+												icon
 												target="_blank"
 												href="https://codex.wordpress.org/Changing_File_Permissions"
 											/>

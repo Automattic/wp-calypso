@@ -44,14 +44,14 @@ function PlanPriceExample() {
 			<br />
 			<h3>Simple View (isInSignup) - Plan with discounted price and tax </h3>
 			<div style={ { display: 'flex' } }>
-				<PlanPrice rawPrice={ 8.25 } original taxText="10%" isInSignup={ true } />
-				<PlanPrice rawPrice={ 2 } discounted taxText="10%" isInSignup={ true } />
+				<PlanPrice rawPrice={ 8.25 } original taxText="10%" isInSignup />
+				<PlanPrice rawPrice={ 2 } discounted taxText="10%" isInSignup />
 			</div>
 			<br />
 			<h3>Simple View (isInSignup) - Plan with discounted price range and tax </h3>
 			<div style={ { display: 'flex' } }>
-				<PlanPrice rawPrice={ [ 8.25, 20.23 ] } original taxText="10%" isInSignup={ true } />
-				<PlanPrice rawPrice={ [ 2.25, 3 ] } discounted taxText="10%" isInSignup={ true } />
+				<PlanPrice rawPrice={ [ 8.25, 20.23 ] } original taxText="10%" isInSignup />
+				<PlanPrice rawPrice={ [ 2.25, 3 ] } discounted taxText="10%" isInSignup />
 			</div>
 		</div>
 	);

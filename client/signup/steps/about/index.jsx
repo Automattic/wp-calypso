@@ -503,7 +503,7 @@ class AboutStep extends Component {
 							{ this.renderExperienceOptions() }
 
 							<div className="about__submit-wrapper">
-								<Button primary={ true } type="submit">
+								<Button primary type="submit">
 									{ translate( 'Continue' ) }
 								</Button>
 							</div>

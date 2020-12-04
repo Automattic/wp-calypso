@@ -86,7 +86,7 @@ class Hosting extends Component {
 				href={ `/checkout/${ siteId }/business` }
 				plan={ PLAN_BUSINESS }
 				feature={ FEATURE_SFTP }
-				showIcon={ true }
+				showIcon
 			/>
 		);
 

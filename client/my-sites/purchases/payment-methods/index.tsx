@@ -144,7 +144,7 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 								recordFormSubmitEvent={ recordFormSubmitEvent }
 								saveStoredCard={ saveStoredCard }
 								successCallback={ goToBillingHistory }
-								showUsedForExistingPurchasesInfo={ true }
+								showUsedForExistingPurchasesInfo
 							/>
 						</StripeHookProvider>
 					</Column>

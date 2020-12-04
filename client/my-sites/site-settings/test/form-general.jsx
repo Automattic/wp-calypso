@@ -121,7 +121,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 		} );
 
 		test( 'No UpsellNudge for jetpack plans', () => {
-			const comp = shallow( <SiteSettingsFormGeneral { ...props } siteIsJetpack={ true } /> );
+			const comp = shallow( <SiteSettingsFormGeneral { ...props } siteIsJetpack /> );
 			expect( comp.find( 'UpsellNudge' ).length ).toBe( 0 );
 		} );
 	} );

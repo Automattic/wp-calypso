@@ -363,7 +363,7 @@ export class PluginsBrowser extends Component {
 				onSearch={ this.props.doSearch }
 				initialValue={ this.props.search }
 				placeholder={ this.props.translate( 'Search Plugins' ) }
-				delaySearch={ true }
+				delaySearch
 				analyticsGroup="PluginsBrowser"
 			/>
 		);
@@ -521,7 +521,7 @@ export class PluginsBrowser extends Component {
 		return (
 			<UpsellNudge
 				event="calypso_plugins_browser_upgrade_nudge"
-				showIcon={ true }
+				showIcon
 				href={ bannerURL }
 				feature={ FEATURE_UPLOAD_PLUGINS }
 				plan={ plan }

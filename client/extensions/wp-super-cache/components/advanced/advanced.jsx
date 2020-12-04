@@ -58,7 +58,7 @@ const Advanced = ( {
 										components: {
 											faq: (
 												<ExternalLink
-													icon={ true }
+													icon
 													target="_blank"
 													href="http://wordpress.org/plugins/wp-super-cache/faq/"
 												/>
@@ -82,7 +82,7 @@ const Advanced = ( {
 										components: {
 											faq: (
 												<ExternalLink
-													icon={ true }
+													icon
 													target="_blank"
 													href="http://wordpress.org/plugins/wp-super-cache/faq/"
 												/>

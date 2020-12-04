@@ -181,7 +181,7 @@ export class PostTypeFilter extends Component {
 							isOpen={ this.props.getSearchOpen() }
 							onSearch={ this.props.doSearch }
 							placeholder={ `${ searchPagesPlaceholder }…` }
-							delaySearch={ true }
+							delaySearch
 						/>
 					) }
 				</SectionNav>

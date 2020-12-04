@@ -121,7 +121,7 @@ describe( 'CheckoutThankYou', () => {
 			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBeFalsy();
 		} );
 		test( 'Should display a simplified version when isSimplified is set to true', () => {
-			const comp = shallow( <CheckoutThankYou { ...props } isSimplified={ true } /> );
+			const comp = shallow( <CheckoutThankYou { ...props } isSimplified /> );
 			expect( comp.find( '.checkout-thank-you__purchase-details-list' ) ).toHaveLength( 0 );
 			expect( comp.find( 'HappinessSupport' ) ).toHaveLength( 0 );
 			expect( comp.find( 'CheckoutThankYouHeader' ).props().isSimplified ).toBe( true );
@@ -130,8 +130,8 @@ describe( 'CheckoutThankYou', () => {
 			const comp = shallow(
 				<CheckoutThankYou
 					{ ...props }
-					isSimplified={ true }
-					siteUnlaunchedBeforeUpgrade={ true }
+					isSimplified
+					siteUnlaunchedBeforeUpgrade
 					upgradeIntent={ 'plugins' }
 				/>
 			);
@@ -234,7 +234,7 @@ describe( 'CheckoutThankYou', () => {
 		} );
 
 		test( 'Should be there for AT', () => {
-			const comp = shallow( <CheckoutThankYou { ...props } transferComplete={ true } /> );
+			const comp = shallow( <CheckoutThankYou { ...props } transferComplete /> );
 			expect( comp.find( 'component--AtomicStoreThankYouCard' ) ).toHaveLength( 1 );
 		} );
 

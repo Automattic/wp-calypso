@@ -49,7 +49,7 @@ const NotificationsOrigin = ( {
 			/>
 			{ emailValidationError && (
 				<FormTextValidation
-					isError={ true }
+					isError
 					text={ translate( '%(recipient)s is not a valid email address.', {
 						args: { recipient },
 					} ) }

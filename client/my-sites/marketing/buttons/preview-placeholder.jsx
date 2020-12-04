@@ -17,7 +17,7 @@ class SharingButtonsPreviewPlaceholder extends React.Component {
 	render() {
 		return (
 			<div className="sharing-buttons-preview is-placeholder">
-				<ButtonsPreviewAction icon="pencil" position="top-left" disabled={ true }>
+				<ButtonsPreviewAction icon="pencil" position="top-left" disabled>
 					{ this.props.translate( 'Edit label text', {
 						context: 'Sharing: Buttons edit label',
 					} ) }
@@ -46,12 +46,12 @@ class SharingButtonsPreviewPlaceholder extends React.Component {
 				</div>
 
 				<div className="sharing-buttons-preview__button-tray-actions">
-					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled>
 						{ this.props.translate( 'Edit visible buttons', {
 							context: 'Sharing: Buttons edit label',
 						} ) }
 					</ButtonsPreviewAction>
-					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled={ true }>
+					<ButtonsPreviewAction icon="pencil" position="bottom-left" disabled>
 						{ this.props.translate( 'Edit “More” buttons', {
 							context: 'Sharing: Buttons edit label',
 						} ) }

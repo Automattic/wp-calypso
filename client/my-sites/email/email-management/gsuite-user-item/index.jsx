@@ -70,7 +70,7 @@ function GSuiteUserItem( props ) {
 
 		return (
 			<Fragment>
-				<Button compact={ true } onClick={ onFixClickHandler }>
+				<Button compact onClick={ onFixClickHandler }>
 					{ translate( 'Finish Setup' ) }
 				</Button>
 

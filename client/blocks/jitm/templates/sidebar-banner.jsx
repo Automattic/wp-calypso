@@ -35,8 +35,8 @@ export default function SidebarBannerTemplate( {
 			callToAction={ CTA.message }
 			compact
 			event={ displayName }
-			forceHref={ true }
-			forceDisplay={ true }
+			forceHref
+			forceDisplay
 			dismissPreferenceName={ dismissPreferenceName }
 			href={ CTA.link }
 			onDismissClick={ onDismissClick }

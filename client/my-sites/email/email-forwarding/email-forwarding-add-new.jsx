@@ -185,7 +185,7 @@ class EmailForwardingAddNew extends React.Component {
 					{ ! isValidMailbox && (
 						<FormInputValidation
 							text={ translate( 'Invalid mailbox - only characters [a-z0-9._+-] are allowed' ) }
-							isError={ true }
+							isError
 						/>
 					) }
 				</FormFieldset>
@@ -202,10 +202,7 @@ class EmailForwardingAddNew extends React.Component {
 						value={ destination }
 					/>
 					{ ! isValidDestination && (
-						<FormInputValidation
-							text={ translate( 'Invalid destination address' ) }
-							isError={ true }
-						/>
+						<FormInputValidation text={ translate( 'Invalid destination address' ) } isError />
 					) }
 				</FormFieldset>
 			</div>

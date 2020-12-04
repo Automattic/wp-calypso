@@ -63,7 +63,7 @@ const DateRangeTrigger: FunctionComponent< Props > = ( {
 				ref={ buttonRef }
 				onClick={ onTriggerClick }
 				compact={ isCompact }
-				aria-haspopup={ true }
+				aria-haspopup
 			>
 				<Gridicon className="date-range__trigger-btn-icon" icon="calendar" aria-hidden="true" />
 				<span className="date-range__trigger-btn-text">{ dateRangeText }</span>

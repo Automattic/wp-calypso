@@ -156,7 +156,7 @@ class SinglePlugin extends React.Component {
 		const shouldUseHistoryBack = window.history.length > 1 && navigated;
 		return (
 			<HeaderCake
-				isCompact={ true }
+				isCompact
 				backHref={ this.backHref( shouldUseHistoryBack ) }
 				onBackArrowClick={ recordEvent }
 				onClick={ shouldUseHistoryBack ? goBack : undefined }

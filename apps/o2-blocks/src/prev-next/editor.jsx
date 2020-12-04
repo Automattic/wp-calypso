@@ -87,7 +87,7 @@ const edit = ( { attributes, className, isSelected, setAttributes } ) => {
 			<Fragment>
 				<URLInput
 					className="prev-next__link-entry"
-					autoFocus={ true }
+					autoFocus
 					label="Previous link"
 					value={ attributes.prev }
 					onChange={ ( url, post ) =>

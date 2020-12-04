@@ -35,7 +35,7 @@ describe( 'QueryVerticals', () => {
 	test( 'should not call request on mount if a matching fetched result is found in state.', () => {
 		const requestVerticals = jest.fn();
 
-		shallow( <QueryVerticals requestVerticals={ requestVerticals } isFetched={ true } /> );
+		shallow( <QueryVerticals requestVerticals={ requestVerticals } isFetched /> );
 
 		expect( requestVerticals ).not.toHaveBeenCalled();
 	} );

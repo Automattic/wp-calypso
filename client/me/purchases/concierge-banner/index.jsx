@@ -148,7 +148,7 @@ class ConciergeBanner extends Component {
 					mainText={ mainText }
 					buttonText={ buttonText }
 					buttonIcon={ null }
-					buttonPrimary={ true }
+					buttonPrimary
 					buttonHref={ buttonHref }
 					buttonTarget={ null }
 					buttonOnClick={ () => {

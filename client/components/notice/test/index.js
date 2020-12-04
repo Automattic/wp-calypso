@@ -18,7 +18,7 @@ describe( 'Notice', () => {
 	} );
 
 	test( 'should have dismiss button when showDismiss passed as true', () => {
-		const wrapper = shallow( <Notice showDismiss={ true } translate={ identity } /> );
+		const wrapper = shallow( <Notice showDismiss translate={ identity } /> );
 		assert.isOk( wrapper.find( '.is-dismissable' ).length );
 	} );
 
@@ -28,19 +28,17 @@ describe( 'Notice', () => {
 	} );
 
 	test( 'should have compact look when isCompact passed as true', () => {
-		const wrapper = shallow( <Notice isCompact={ true } translate={ identity } /> );
+		const wrapper = shallow( <Notice isCompact translate={ identity } /> );
 		assert.isOk( wrapper.find( '.is-compact' ).length );
 	} );
 
 	test( 'should not have dismiss button by default if isCompact is true', () => {
-		const wrapper = shallow( <Notice isCompact={ true } translate={ identity } /> );
+		const wrapper = shallow( <Notice isCompact translate={ identity } /> );
 		assert.isOk( wrapper.find( '.is-dismissable' ).length === 0 );
 	} );
 
 	test( 'should have dismiss button when showDismiss is true and isCompact is true', () => {
-		const wrapper = shallow(
-			<Notice isCompact={ true } showDismiss={ true } translate={ identity } />
-		);
+		const wrapper = shallow( <Notice isCompact showDismiss translate={ identity } /> );
 		assert.isOk( wrapper.find( '.is-dismissable' ).length );
 	} );
 

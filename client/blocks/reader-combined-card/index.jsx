@@ -110,9 +110,9 @@ class ReaderCombinedCardComponent extends React.Component {
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
 						author={ null }
-						preferGravatar={ true }
+						preferGravatar
 						siteUrl={ streamUrl }
-						isCompact={ true }
+						isCompact
 					/>
 					<div className="reader-combined-card__header-details">
 						<ReaderSiteStreamLink
@@ -151,11 +151,11 @@ class ReaderCombinedCardComponent extends React.Component {
 				<div className="reader-combined-card__footer">
 					<ReaderPostOptionsMenu
 						className="reader-combined-card__options-menu ignore-click"
-						showFollow={ true }
+						showFollow
 						showConversationFollow={ false }
 						showVisitPost={ false }
 						showEditPost={ false }
-						showReportSite={ true }
+						showReportSite
 						showReportPost={ false }
 						post={ posts[ 0 ] }
 						posts={ posts }

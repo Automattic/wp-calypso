@@ -100,9 +100,9 @@ class PostByline extends React.Component {
 						siteIcon={ siteIcon }
 						feedIcon={ feedIcon }
 						author={ post.author }
-						preferGravatar={ true }
+						preferGravatar
 						siteUrl={ streamUrl }
-						isCompact={ true }
+						isCompact
 					/>
 				) }
 				<div className="reader-post-card__byline-details">

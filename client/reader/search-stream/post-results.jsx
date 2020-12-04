@@ -47,9 +47,9 @@ class PostResults extends Component {
 				followSource={ SEARCH_RESULTS }
 				listName={ translate( 'Search' ) }
 				emptyContent={ emptyContent }
-				showFollowInHeader={ true }
+				showFollowInHeader
 				placeholderFactory={ this.placeholderFactory }
-				shouldCombineCards={ true }
+				shouldCombineCards
 				transformStreamItems={ transformStreamItems }
 				isMain={ false }
 			>

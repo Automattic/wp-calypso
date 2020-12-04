@@ -135,7 +135,7 @@ class MediaSettingsPerformance extends Component {
 					) }
 					event={ 'jetpack_video_settings' }
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
-					showIcon={ true }
+					showIcon
 					href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ] }` }
 				/>
 			)

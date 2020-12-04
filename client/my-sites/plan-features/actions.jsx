@@ -157,7 +157,7 @@ const PlanFeaturesActionsButton = ( {
 
 	if ( ! availableForPurchase && forceDisplayButton ) {
 		return (
-			<Button className={ classes } disabled={ true }>
+			<Button className={ classes } disabled>
 				{ props.buttonText }
 			</Button>
 		);

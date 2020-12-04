@@ -82,20 +82,13 @@ describe( 'PlanStorage basic tests', () => {
 
 	test( 'should render for atomic sites', () => {
 		const storage = shallow(
-			<PlanStorage
-				{ ...props }
-				sitePlanSlug={ PLAN_BUSINESS }
-				jetpackSite={ true }
-				atomicSite={ true }
-			/>
+			<PlanStorage { ...props } sitePlanSlug={ PLAN_BUSINESS } jetpackSite atomicSite />
 		);
 		assert.lengthOf( storage.find( '.plan-storage' ), 1 );
 	} );
 
 	test( 'should not render for jetpack sites', () => {
-		const storage = shallow(
-			<PlanStorage { ...props } jetpackSite={ true } atomicSite={ false } />
-		);
+		const storage = shallow( <PlanStorage { ...props } jetpackSite atomicSite={ false } /> );
 		assert.lengthOf( storage.find( '.plan-storage' ), 0 );
 	} );
 

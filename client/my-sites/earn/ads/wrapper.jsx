@@ -106,7 +106,7 @@ class AdsWrapper extends Component {
 					>
 						<NoticeAction
 							href="https://wordads.co/2012/09/06/wordads-is-for-family-safe-sites/"
-							external={ true }
+							external
 						>
 							{ translate( 'Learn more' ) }
 						</NoticeAction>

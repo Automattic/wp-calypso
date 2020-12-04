@@ -248,7 +248,7 @@ class PodcastCoverImageSetting extends PureComponent {
 					labels={ {
 						confirm: translate( 'Continue' ),
 					} }
-					disableLargeImageSources={ true }
+					disableLargeImageSources
 					single
 				/>
 			)

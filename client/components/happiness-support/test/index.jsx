@@ -59,7 +59,7 @@ describe( 'HappinessSupport', () => {
 
 	test( 'should render a support button with link to JETPACK_SUPPORT if it is for JetPack', () => {
 		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack={ true } />
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isJetpack />
 		);
 		expect( wrapper.find( 'Button' ).last().prop( 'href' ) ).to.equal( JETPACK_SUPPORT );
 	} );
@@ -68,18 +68,14 @@ describe( 'HappinessSupport', () => {
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.false;
 
 		wrapper = shallow(
-			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder={ true } />
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } isPlaceholder />
 		);
 		expect( wrapper.find( '.happiness-support' ).hasClass( 'is-placeholder' ) ).to.be.true;
 	} );
 
 	test( 'should render a <HappychatConnection /> when showLiveChat prop is true', () => {
 		wrapper = shallow(
-			<HappinessSupport
-				translate={ translate }
-				recordTracksEvent={ noop }
-				showLiveChatButton={ true }
-			/>
+			<HappinessSupport translate={ translate } recordTracksEvent={ noop } showLiveChatButton />
 		);
 		expect( wrapper.find( HappychatConnection ) ).to.have.length( 1 );
 	} );
@@ -91,9 +87,7 @@ describe( 'HappinessSupport', () => {
 		};
 
 		beforeEach( () => {
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
-			);
+			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
 		} );
 
 		test( 'should be rendered only when showLiveChatButton prop is true and LiveChat is available', () => {
@@ -104,19 +98,19 @@ describe( 'HappinessSupport', () => {
 			wrapper = shallow( <HappinessSupport { ...props } /> );
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
+			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton /> );
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 
 			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } />
 			);
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 
 			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
+				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable />
 			);
 			expect( wrapper.find( HappychatButton ) ).to.have.length( 0 );
 
@@ -139,8 +133,8 @@ describe( 'HappinessSupport', () => {
 				<HappinessSupport
 					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton={ true }
-					liveChatAvailable={ true }
+					showLiveChatButton
+					liveChatAvailable
 					liveChatButtonEventName="test:eventName"
 				/>
 			);
@@ -157,8 +151,8 @@ describe( 'HappinessSupport', () => {
 				<HappinessSupport
 					translate={ translate }
 					recordTracksEvent={ recordTracksEvent }
-					showLiveChatButton={ true }
-					liveChatAvailable={ true }
+					showLiveChatButton
+					liveChatAvailable
 				/>
 			);
 
@@ -177,28 +171,26 @@ describe( 'HappinessSupport', () => {
 
 		test( 'should be rendered unless LiveChat button shows up', () => {
 			// should not be displayed here
-			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ true } />
-			);
+			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton liveChatAvailable /> );
 			expect( wrapper.find( selector ) ).to.have.length( 0 );
 
 			// should be rendered in the following cases
 			wrapper = shallow( <HappinessSupport { ...props } /> );
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 
-			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ true } /> );
+			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton /> );
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 
 			wrapper = shallow( <HappinessSupport { ...props } showLiveChatButton={ false } /> );
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 
 			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ true } liveChatAvailable={ false } />
+				<HappinessSupport { ...props } showLiveChatButton liveChatAvailable={ false } />
 			);
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 
 			wrapper = shallow(
-				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable={ true } />
+				<HappinessSupport { ...props } showLiveChatButton={ false } liveChatAvailable />
 			);
 			expect( wrapper.find( selector ) ).to.have.length( 1 );
 
@@ -214,7 +206,7 @@ describe( 'HappinessSupport', () => {
 		} );
 
 		test( 'should be rendered with link to JETPACK_CONTACT_SUPPORT if it is for JetPack', () => {
-			wrapper = shallow( <HappinessSupport { ...props } isJetpack={ true } /> );
+			wrapper = shallow( <HappinessSupport { ...props } isJetpack /> );
 			expect( wrapper.find( selector ).prop( 'href' ) ).to.equal( JETPACK_CONTACT_SUPPORT );
 		} );
 

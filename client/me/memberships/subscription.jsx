@@ -47,11 +47,7 @@ class Subscription extends React.Component {
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<HeaderCake backHref={ purchasesRoot }>{ translate( 'Subscription Details' ) }</HeaderCake>
 				{ stoppingStatus === 'start' && (
-					<Notice
-						status="is-info"
-						isLoading={ true }
-						text={ translate( 'Stopping this subscription' ) }
-					/>
+					<Notice status="is-info" isLoading text={ translate( 'Stopping this subscription' ) } />
 				) }
 				{ stoppingStatus === 'fail' && (
 					<Notice

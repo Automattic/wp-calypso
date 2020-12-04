@@ -387,7 +387,7 @@ function DefaultCheckoutSteps() {
 					completeStepContent={ orderSummaryStep.completeStepContent }
 					titleContent={ orderSummaryStep.titleContent }
 					isStepActive={ false }
-					isStepComplete={ true }
+					isStepComplete
 					stepNumber={ 1 }
 					stepId={ 'order-summary-step' }
 					className={ orderSummaryStep.className }

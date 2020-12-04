@@ -28,7 +28,7 @@ const UserMentionsSuggestionList = ( {
 	<PopoverMenu
 		className="user-mentions__suggestions"
 		context={ popoverContext }
-		isVisible={ true }
+		isVisible
 		isFocusEnabled={ false }
 		autoPosition={ false }
 		position="bottom right"

@@ -54,7 +54,7 @@ class LikeButtonContainer extends Component {
 					{ ...props }
 					likeCount={ this.props.likeCount }
 					liked={ this.props.iLike }
-					animateLike={ true }
+					animateLike
 					onLikeToggle={ this.handleLikeToggle }
 				/>
 			</Fragment>

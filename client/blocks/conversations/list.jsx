@@ -265,7 +265,7 @@ export class ConversationCommentList extends React.Component {
 								onUpdateCommentText={ this.onUpdateCommentText }
 								onCommentSubmit={ this.resetActiveReplyComment }
 								commentText={ this.state.commentText }
-								showReadMoreInActions={ true }
+								showReadMoreInActions
 								displayType={ POST_COMMENT_DISPLAY_TYPES.excerpt }
 							/>
 						);

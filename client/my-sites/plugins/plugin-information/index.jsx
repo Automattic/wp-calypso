@@ -64,7 +64,7 @@ class PluginInformation extends React.Component {
 		);
 		return (
 			<ExternalLink
-				icon={ true }
+				icon
 				href={ this.props.plugin.plugin_url }
 				onClick={ recordEvent }
 				target="_blank"
@@ -87,7 +87,7 @@ class PluginInformation extends React.Component {
 		);
 		return (
 			<ExternalLink
-				icon={ true }
+				icon
 				href={ 'https://' + this._WPORG_PLUGINS_URL + this.props.plugin.slug + '/' }
 				onClick={ recordEvent }
 				target="_blank"
@@ -240,7 +240,7 @@ class PluginInformation extends React.Component {
 					downloaded={ this.props.plugin.downloaded }
 					numRatings={ this.props.plugin.num_ratings }
 					slug={ this.props.plugin.slug }
-					placeholder={ true }
+					placeholder
 				/>
 			</div>
 		);

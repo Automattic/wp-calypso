@@ -43,7 +43,7 @@ const LaunchSidebar: React.FunctionComponent = () => {
 				<LaunchMenu onMenuItemClick={ handleMenuItemClick } />
 			</div>
 			<div className="nux-launch-sidebar__footer">
-				<ActionButtons sticky={ true }>
+				<ActionButtons sticky>
 					<NextButton onClick={ handleStart }>
 						{ __( 'Get Started', 'full-site-editing' ) }
 					</NextButton>

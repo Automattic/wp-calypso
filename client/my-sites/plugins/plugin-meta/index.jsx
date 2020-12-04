@@ -489,7 +489,7 @@ export class PluginMeta extends Component {
 					feature={ FEATURE_UPLOAD_PLUGINS }
 					plan={ plan }
 					title={ title }
-					showIcon={ true }
+					showIcon
 				/>
 			</div>
 		);

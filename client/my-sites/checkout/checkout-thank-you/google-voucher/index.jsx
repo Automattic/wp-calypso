@@ -137,7 +137,7 @@ class GoogleVoucherDetails extends Component {
 	renderTermsAndConditions() {
 		return (
 			<Dialog
-				isVisible={ true }
+				isVisible
 				onClose={ this.onDialogCancel }
 				additionalClassNames="google-voucher__dialog"
 			>
@@ -166,7 +166,7 @@ class GoogleVoucherDetails extends Component {
 					<Button
 						className="google-voucher__dialog-agree-button"
 						onClick={ this.onAcceptTermsAndConditions }
-						primary={ true }
+						primary
 					>
 						{ this.props.translate( 'Agree' ) }
 					</Button>

@@ -67,7 +67,7 @@ const ShippingServiceGroup = ( props ) => {
 				header={ renderHeader() }
 				summary={ summary }
 				expandedSummary={ summary }
-				clickableHeader={ true }
+				clickableHeader
 				compact
 				screenReaderText={ translate( 'Expand Services' ) }
 			>

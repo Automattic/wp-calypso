@@ -31,7 +31,7 @@ export default class extends React.PureComponent {
 				max="100"
 				value={ this.state.rangeValue }
 				onChange={ this.onChange }
-				showValueLabel={ true }
+				showValueLabel
 			/>
 		);
 	}

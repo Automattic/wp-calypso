@@ -170,7 +170,7 @@ CreditCardExpiryAndCvvFields.propTypes = {
 };
 
 function LoadingField() {
-	return <Input disabled={ true } />;
+	return <Input disabled />;
 }
 
 export class CreditCardFormFields extends React.Component {

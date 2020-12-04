@@ -92,7 +92,7 @@ class ConciergeCancel extends Component {
 						<Button
 							className="cancel__schedule-button"
 							href={ `/me/concierge/${ siteSlug }/book` }
-							primary={ true }
+							primary
 						>
 							{ translate( 'Schedule', {
 								context: 'Concierge session',
@@ -152,8 +152,8 @@ class ConciergeCancel extends Component {
 										className="cancel__confirmation-button"
 										disabled={ disabledCancelling }
 										onClick={ this.cancelAppointment }
-										primary={ true }
-										scary={ true }
+										primary
+										scary
 									>
 										{ translate( 'Cancel session' ) }
 									</Button>

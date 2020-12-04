@@ -21,7 +21,7 @@ const CancelPurchaseLoadingPlaceholder = ( { purchaseId, siteSlug, getManagePurc
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace, jsx-a11y/heading-has-content */
 	return (
-		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path } isFullWidth={ true }>
+		<LoadingPlaceholder title={ titles.cancelPurchase } path={ path } isFullWidth>
 			<Card className="cancel-purchase-loading-placeholder__card">
 				<h2 className="loading-placeholder__content cancel-purchase-loading-placeholder__header" />
 				<div className="loading-placeholder__content cancel-purchase-loading-placeholder__subheader" />

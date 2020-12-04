@@ -46,7 +46,7 @@ function AddCardDialog( {
 					recordFormSubmitEvent={ recordFormSubmitEvent }
 					saveStoredCard={ saveStoredCard }
 					successCallback={ onClose }
-					showUsedForExistingPurchasesInfo={ true }
+					showUsedForExistingPurchasesInfo
 					heading={ translate( 'Add credit card' ) }
 					onCancel={ onClose }
 				/>

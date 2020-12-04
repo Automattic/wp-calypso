@@ -85,7 +85,7 @@ class CalendarStep extends Component {
 					<FormattedHeader
 						headerText={ translate( 'Select a time that works for you' ) }
 						align="left"
-						isSecondary={ true }
+						isSecondary
 					/>
 					<div class="calendar-step__explanation">
 						<div>

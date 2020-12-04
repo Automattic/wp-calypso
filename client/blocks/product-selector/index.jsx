@@ -546,7 +546,7 @@ export class ProductSelector extends Component {
 					<ProductCard
 						key={ product.id }
 						title={ product.title }
-						isPlaceholder={ true }
+						isPlaceholder
 						description={ product.description ? product.description : null }
 					/>
 				);

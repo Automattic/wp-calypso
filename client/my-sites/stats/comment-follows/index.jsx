@@ -51,7 +51,7 @@ class StatsCommentFollows extends Component {
 		const { followList, perPage, translate } = this.props;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<PageViewTracker
 					path="/stats/follows/comment/:site_id"
 					title="Stats > Followers > Comment"

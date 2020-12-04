@@ -61,9 +61,7 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 	} );
 
 	test( 'should show popular topics', () => {
-		const wrapper = shallow(
-			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
-		);
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } showPopular /> );
 		expect( wrapper.find( PopularTopics ) ).toHaveLength( 1 );
 	} );
 
@@ -76,19 +74,13 @@ describe( '<SiteVerticalsSuggestionSearch />', () => {
 
 	test( 'should hide popular topics if user has typed a query', () => {
 		const wrapper = shallow(
-			<SiteVerticalsSuggestionSearch
-				{ ...defaultProps }
-				searchValue={ 'Dogs' }
-				showPopular={ true }
-			/>
+			<SiteVerticalsSuggestionSearch { ...defaultProps } searchValue={ 'Dogs' } showPopular />
 		);
 		expect( wrapper.find( PopularTopics ) ).toHaveLength( 0 );
 	} );
 
 	test( 'should pass default vertical search term to <QueryVerticals />', () => {
-		const wrapper = shallow(
-			<SiteVerticalsSuggestionSearch { ...defaultProps } showPopular={ true } />
-		);
+		const wrapper = shallow( <SiteVerticalsSuggestionSearch { ...defaultProps } showPopular /> );
 		const queryComponent = wrapper.find( 'QueryVerticals' ).at( 1 );
 
 		expect( queryComponent.length ).toBe( 1 );

@@ -333,7 +333,7 @@ export class ThreatAlert extends Component {
 				<FoldableCard
 					className={ className }
 					compact
-					clickableHeader={ true }
+					clickableHeader
 					actionButton={ <span /> }
 					header={
 						<Fragment>

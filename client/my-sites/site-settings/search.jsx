@@ -127,7 +127,7 @@ class Search extends Component {
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
 					feature={ FEATURE_SEARCH }
 					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
-					showIcon={ true }
+					showIcon
 				/>
 			</Fragment>
 		);

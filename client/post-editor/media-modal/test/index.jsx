@@ -86,7 +86,7 @@ describe( 'EditorMediaModal', () => {
 	} );
 
 	test( 'When `single` selection screen chosen should initialise with no items selected', () => {
-		shallow( <EditorMediaModal { ...baseProps } single={ true } view={ null } /> ).instance();
+		shallow( <EditorMediaModal { ...baseProps } single view={ null } /> ).instance();
 		expect( setMediaLibrarySelectedItems ).to.have.been.calledWith( DUMMY_SITE.ID, [] );
 	} );
 

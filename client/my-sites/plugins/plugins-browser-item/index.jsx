@@ -94,7 +94,7 @@ class PluginsBrowserListElement extends Component {
 			<li className="plugins-browser-item is-placeholder">
 				<span className="plugins-browser-item__link">
 					<div className="plugins-browser-item__info">
-						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
+						<PluginIcon size={ this.props.iconSize } isPlaceholder />
 						<div className="plugins-browser-item__title">…</div>
 						<div className="plugins-browser-item__author">…</div>
 					</div>

@@ -29,7 +29,7 @@ class ConfirmationStep extends Component {
 				description={ translate( 'We will send you an email with information on how to prepare.' ) }
 				title={ translate( 'Your session is booked!' ) }
 			>
-				<Button className="book__schedule-button" onClick={ this.handleClick } primary={ true }>
+				<Button className="book__schedule-button" onClick={ this.handleClick } primary>
 					{ translate( 'View your session dashboard' ) }
 				</Button>
 			</Confirmation>

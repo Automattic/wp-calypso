@@ -32,7 +32,7 @@ export default class CardHeadingExample extends PureComponent {
 				<CardHeading tagName="h5" size={ 24 }>
 					This is a CardHeading, H5 at 24px
 				</CardHeading>
-				<CardHeading tagName="h6" isBold={ true } size={ 16 }>
+				<CardHeading tagName="h6" isBold size={ 16 }>
 					This is a CardHeading, H6 at 16px
 				</CardHeading>
 			</Card>

@@ -127,7 +127,7 @@ class RequestLoginEmailForm extends React.Component {
 						duration={ 10000 }
 						text={ errorText }
 						className="magic-login__request-login-email-form-notice"
-						showDismiss={ true }
+						showDismiss
 						onDismissClick={ this.onNoticeDismiss }
 						status="is-error"
 					/>

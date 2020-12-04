@@ -149,7 +149,7 @@ class MappedDomainType extends React.Component {
 			<div>
 				{ ( isLoadingPurchase || purchase ) && (
 					<RenewButton
-						compact={ true }
+						compact
 						purchase={ purchase }
 						selectedSite={ this.props.selectedSite }
 						subscriptionId={ parseInt( subscriptionId, 10 ) }
@@ -173,7 +173,7 @@ class MappedDomainType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				withTextStatus={ true }
+				withTextStatus
 				toggleSource="mapped-domain-status"
 			/>
 		);
@@ -235,7 +235,7 @@ class MappedDomainType extends React.Component {
 						domain={ domain }
 					/>
 				</DomainStatus>
-				<Card compact={ true } className="domain-types__expiration-row">
+				<Card compact className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
 					{ domain.currentUserCanManage && this.renderAutoRenew() }

@@ -19,7 +19,7 @@ const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (
 		<Card className="comment__comment-permalink">
 			<SectionHeader label={ translate( 'Comment Permalink' ) } />
-			<ExternalLink icon={ true } href={ permaLink }>
+			<ExternalLink icon href={ permaLink }>
 				{ permaLink }
 			</ExternalLink>
 		</Card>

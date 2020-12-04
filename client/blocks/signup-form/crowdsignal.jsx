@@ -122,7 +122,7 @@ class CrowdsignalSignupForm extends Component {
 						</h2>
 
 						<div className="signup-form__crowdsignal-card-content">
-							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate={ true }>
+							<LoggedOutForm onSubmit={ this.props.handleSubmit } noValidate>
 								{ this.props.formFields }
 
 								<LoggedOutFormFooter>

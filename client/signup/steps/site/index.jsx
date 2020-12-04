@@ -246,7 +246,7 @@ class Site extends React.Component {
 			<ValidationFieldset errorMessages={ this.getErrorMessagesWithLogin( 'site' ) }>
 				<FormLabel htmlFor="site">{ this.props.translate( 'Choose a site address' ) }</FormLabel>
 				<FormTextInput
-					autoFocus={ true } // eslint-disable-line jsx-a11y/no-autofocus
+					autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }

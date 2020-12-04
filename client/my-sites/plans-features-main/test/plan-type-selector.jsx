@@ -31,7 +31,7 @@ describe( '<PlanTypeSelector />', () => {
 
 	test( 'Should show IntervalTypeToggle when displayJetpackPlans is set to true', () => {
 		const comp = shallow(
-			<PlanTypeSelector { ...myProps } displayJetpackPlans={ true } intervalType="monthly" />
+			<PlanTypeSelector { ...myProps } displayJetpackPlans intervalType="monthly" />
 		);
 
 		expect( comp.find( 'IntervalTypeToggle' ).length ).toBe( 1 );

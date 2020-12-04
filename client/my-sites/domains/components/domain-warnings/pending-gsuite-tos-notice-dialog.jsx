@@ -155,7 +155,7 @@ function PendingGSuiteTosNoticeDialog( props ) {
 							className="domain-warnings__dialog-copy"
 							onCopy={ onCopyAction }
 							text={ password }
-							compact={ true }
+							compact
 						>
 							{ isCopied && <Gridicon icon="checkmark" /> }
 							{ isCopied ? translate( 'Copied!' ) : translate( 'Copy' ) }

@@ -209,7 +209,7 @@ class FormFields extends React.PureComponent {
 					<br />
 					<FormToggle checked={ false } disabled />
 					<br />
-					<FormToggle checked={ true } disabled />
+					<FormToggle checked disabled />
 					<br />
 
 					<FormButtonsBar>
@@ -278,7 +278,7 @@ class FormFields extends React.PureComponent {
 						/>
 						<br />
 						<FormRadiosBarExample
-							isThumbnail={ true }
+							isThumbnail
 							checked={ this.state.checkedRadio }
 							onChange={ this.handleRadioChange }
 						/>

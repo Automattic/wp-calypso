@@ -114,7 +114,7 @@ describe( 'index', () => {
 		test( 'should accept a disabled boolean', () => {
 			act( () => {
 				ReactDOM.render(
-					<MultiCheckbox name="favorite_colors" options={ options } disabled={ true } />,
+					<MultiCheckbox name="favorite_colors" options={ options } disabled />,
 					container
 				);
 			} );

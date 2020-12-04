@@ -54,11 +54,7 @@ class EmailedLoginLinkExpired extends React.Component {
 
 		return (
 			<div>
-				<RedirectWhenLoggedIn
-					delayAtMount={ 3500 }
-					redirectTo="/"
-					replaceCurrentLocation={ true }
-				/>
+				<RedirectWhenLoggedIn delayAtMount={ 3500 } redirectTo="/" replaceCurrentLocation />
 
 				<EmptyContent
 					action={ translate( 'Try again' ) }

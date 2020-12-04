@@ -315,7 +315,7 @@ class LinkDialog extends React.Component {
 						<FormTextInput
 							// eslint-disable-next-line react/no-string-refs
 							ref="url"
-							autoFocus={ true }
+							autoFocus
 							onChange={ this.setUrl }
 							value={ this.state.url }
 							onKeyDown={ this.onInputKeyDown }
@@ -345,7 +345,7 @@ class LinkDialog extends React.Component {
 							<PostSelector
 								siteId={ this.props.site.ID }
 								type="any"
-								excludePrivateTypes={ true }
+								excludePrivateTypes
 								status="publish"
 								orderBy="date"
 								order="DESC"

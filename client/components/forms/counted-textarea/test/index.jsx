@@ -123,7 +123,7 @@ describe( 'index', () => {
 			<CountedTextarea
 				value={ value }
 				acceptableLength={ acceptableLength }
-				showRemainingCharacters={ true }
+				showRemainingCharacters
 			/>
 		);
 		const result = renderer.getRenderOutput();

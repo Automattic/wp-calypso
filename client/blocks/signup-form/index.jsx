@@ -799,7 +799,7 @@ class SignupForm extends Component {
 	emailDisableExplanation() {
 		if ( this.props.disableEmailInput && this.props.disableEmailExplanation ) {
 			return (
-				<FormSettingExplanation noValidate={ true }>
+				<FormSettingExplanation noValidate>
 					{ this.props.disableEmailExplanation }
 				</FormSettingExplanation>
 			);
@@ -943,7 +943,7 @@ class SignupForm extends Component {
 
 			return (
 				<div className={ classNames( 'signup-form__woocommerce', this.props.className ) }>
-					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate={ true }>
+					<LoggedOutForm onSubmit={ this.handleWooCommerceSubmit } noValidate>
 						{ this.props.formHeader && (
 							<header className="signup-form__header">{ this.props.formHeader }</header>
 						) }
@@ -977,7 +977,7 @@ class SignupForm extends Component {
 			>
 				{ this.getNotice() }
 
-				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate={ true }>
+				<LoggedOutForm onSubmit={ this.handleSubmit } noValidate>
 					{ this.props.formHeader && (
 						<header className="signup-form__header">{ this.props.formHeader }</header>
 					) }

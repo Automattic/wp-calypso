@@ -27,7 +27,7 @@ function ListDelete( { list } ) {
 
 			{ showDeleteConfirmation && (
 				<Dialog
-					isVisible={ true }
+					isVisible
 					buttons={ [
 						{ action: 'cancel', label: translate( 'Cancel' ) },
 						{ action: 'delete', label: translate( 'Delete list' ), isPrimary: true },

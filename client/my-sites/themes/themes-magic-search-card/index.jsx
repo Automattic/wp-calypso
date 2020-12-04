@@ -279,7 +279,7 @@ class ThemesMagicSearchCard extends React.Component {
 					"I'm creating a site for a: portfolio, magazine, business, wedding, blog, or…"
 				) }
 				analyticsGroup="Themes"
-				delaySearch={ true }
+				delaySearch
 				onSearchOpen={ this.onSearchOpen }
 				onSearchClose={ this.onSearchClose }
 				onSearchChange={ this.onSearchChange }
@@ -287,7 +287,7 @@ class ThemesMagicSearchCard extends React.Component {
 				onClick={ this.onClick }
 				overlayStyling={ this.searchTokens }
 				fitsContainer={ this.props.isBreakpointActive && this.state.searchIsOpen }
-				hideClose={ true }
+				hideClose
 			/>
 		);
 

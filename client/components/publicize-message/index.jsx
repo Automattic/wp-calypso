@@ -89,10 +89,10 @@ class PublicizeMessage extends Component {
 				<CountedTextarea
 					disabled={ this.props.disabled }
 					placeholder={ placeholder }
-					countPlaceholderLength={ true }
+					countPlaceholderLength
 					value={ this.getMessage() }
 					onChange={ this.onChange }
-					showRemainingCharacters={ true }
+					showRemainingCharacters
 					acceptableLength={ this.props.acceptableLength }
 					className="publicize-message__input"
 				>

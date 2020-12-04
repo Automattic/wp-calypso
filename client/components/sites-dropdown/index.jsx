@@ -101,11 +101,11 @@ export class SitesDropdown extends PureComponent {
 					</div>
 					{ this.props.hasMultipleSites && this.state.open && (
 						<SiteSelector
-							autoFocus={ true }
+							autoFocus
 							onClose={ this.onClose }
 							onSiteSelect={ this.selectSite }
 							selected={ this.state.selectedSiteId }
-							hideSelected={ true }
+							hideSelected
 							filter={ this.props.filter && this.siteFilter }
 						/>
 					) }

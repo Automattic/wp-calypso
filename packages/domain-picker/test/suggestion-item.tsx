@@ -294,7 +294,7 @@ describe( 'check conditional elements render correctly', () => {
 				{ ...testRequiredProps }
 				onSelect={ jest.fn() }
 				onRender={ jest.fn() }
-				hstsRequired={ true }
+				hstsRequired
 			/>
 		);
 
@@ -313,7 +313,7 @@ describe( 'check conditional elements render correctly', () => {
 				{ ...testRequiredProps }
 				onSelect={ jest.fn() }
 				onRender={ jest.fn() }
-				hstsRequired={ true }
+				hstsRequired
 			/>
 		);
 

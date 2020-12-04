@@ -116,7 +116,7 @@ class ThemesSiteSelectorModal extends React.Component {
 				{ selectedOption && (
 					<SiteSelectorModal
 						className="themes__site-selector-modal"
-						isVisible={ true }
+						isVisible
 						filter={ function ( siteId ) {
 							return ! (
 								selectedOption.hideForTheme &&

@@ -268,7 +268,7 @@ class SiteIconSetting extends Component {
 						labels={ {
 							confirm: translate( 'Continue' ),
 						} }
-						disableLargeImageSources={ true }
+						disableLargeImageSources
 						single
 					/>
 				) }

@@ -147,15 +147,13 @@ describe( 'Banner basic tests', () => {
 	} );
 
 	test( 'should render Card with no href if href prop is passed but disableHref is true', () => {
-		const comp = shallow( <Banner { ...props } href={ '/' } disableHref={ true } /> );
+		const comp = shallow( <Banner { ...props } href={ '/' } disableHref /> );
 		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Card' ).props().href ).toBeNull();
 	} );
 
 	test( 'should render Card with href if href prop is passed but disableHref is true and forceHref is true', () => {
-		const comp = shallow(
-			<Banner { ...props } href={ '/' } disableHref={ true } forceHref={ true } />
-		);
+		const comp = shallow( <Banner { ...props } href={ '/' } disableHref forceHref /> );
 		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Card' ).props().href ).toBe( '/' );
 	} );
@@ -174,7 +172,7 @@ describe( 'Banner basic tests', () => {
 
 	test( 'should render Card with href and CTA button with no href if href prop is passed and callToAction is also passed and forceHref is true', () => {
 		const comp = shallow(
-			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref={ true } />
+			<Banner { ...props } href={ '/' } callToAction="Go WordPress!" forceHref />
 		);
 		expect( comp.find( 'Card' ) ).toHaveLength( 1 );
 		expect( comp.find( 'Card' ).props().href ).toBe( '/' );

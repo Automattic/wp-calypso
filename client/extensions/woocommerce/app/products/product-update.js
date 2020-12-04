@@ -207,7 +207,7 @@ class ProductUpdate extends React.Component {
 				<ProductHeader
 					site={ site }
 					product={ product }
-					viewEnabled={ true }
+					viewEnabled
 					onTrash={ this.onTrash }
 					onSave={ saveEnabled ? this.onSave : false }
 					isBusy={ isBusy }

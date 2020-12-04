@@ -103,7 +103,7 @@ const PlansFilterBar = ( { duration, onDurationChange }: Props ) => {
 
 	return (
 		<div ref={ barRef } className={ classNames( 'plans-filter-bar', { sticky: hasCrossed } ) }>
-			<SegmentedControl primary={ true }>
+			<SegmentedControl primary>
 				<SegmentedControl.Item
 					onClick={ () => onDurationChange?.( TERM_MONTHLY ) }
 					selected={ duration === TERM_MONTHLY }

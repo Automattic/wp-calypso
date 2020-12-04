@@ -37,9 +37,9 @@ export default function ItemAdder( props ) {
 			<Card className="list-manage__query-input">
 				<SearchInput
 					additionalClasses="following-manage__search-new"
-					delaySearch={ true }
+					delaySearch
 					delayTimeout={ 500 }
-					disableAutocorrect={ true }
+					disableAutocorrect
 					initialValue={ query }
 					maxLength={ 500 }
 					onSearch={ updateQuery }

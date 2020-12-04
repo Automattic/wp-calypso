@@ -48,25 +48,25 @@ class StatsOverviewPlaceholder extends React.Component {
 
 				<StatsTabs>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="visible"
 						label={ this.props.translate( 'Views', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="user"
 						label={ this.props.translate( 'Visitors', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="star"
 						label={ this.props.translate( 'Likes', { context: 'noun' } ) }
 						value={ null }
 					/>
 					<StatsTab
-						isLoading={ true }
+						isLoading
 						gridicon="comment"
 						label={ this.props.translate( 'Comments', { context: 'noun' } ) }
 						value={ null }

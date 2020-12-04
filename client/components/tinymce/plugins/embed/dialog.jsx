@@ -292,7 +292,7 @@ export class EmbedDialog extends React.Component {
 					<h3 className="embed__title">{ translate( 'Embed URL' ) }</h3>
 
 					<FormTextInput
-						autoFocus={ true }
+						autoFocus
 						className="embed__url"
 						defaultValue={ this.props.embedUrl }
 						onChange={ this.onChangeEmbedUrl }

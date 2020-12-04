@@ -88,7 +88,7 @@ class SetupTasks extends Component {
 			<div className="setup__checklist">
 				<QuerySettingsGeneral siteId={ this.props.site.ID } />
 				<Checklist
-					showChecklistHeader={ true }
+					showChecklistHeader
 					isPlaceholder={ this.props.loading || ! this.props.productsLoaded }
 				>
 					<Task

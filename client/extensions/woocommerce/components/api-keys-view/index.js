@@ -35,7 +35,7 @@ class APIKeysView extends Component {
 
 		return (
 			<FormFieldset className="api-keys-view__key-container" key={ key.id }>
-				<FormLabel required={ true }>{ key.label }</FormLabel>
+				<FormLabel required>{ key.label }</FormLabel>
 				<FormTextInput
 					isError={ isError }
 					name={ key.id }

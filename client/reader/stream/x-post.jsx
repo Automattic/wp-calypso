@@ -191,7 +191,7 @@ class CrossPost extends PureComponent {
 					feedIcon={ feedIcon }
 					author={ post.author }
 					onClick={ this.handleTitleClick }
-					isCompact={ true }
+					isCompact
 				/>
 				<div className="reader__x-post">
 					{ post.title && (

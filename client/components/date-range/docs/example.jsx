@@ -54,7 +54,7 @@ class DateRangeExample extends Component {
 
 				<h3>Compact</h3>
 				<Card>
-					<DateRange isCompact={ true } />
+					<DateRange isCompact />
 				</Card>
 
 				<h3>Select only past dates</h3>

@@ -20,7 +20,7 @@ describe( 'PurchaseDetail', () => {
 		wrapper = shallow( <PurchaseDetail /> );
 		expect( wrapper.hasClass( 'is-placeholder' ) ).to.be.false;
 
-		wrapper = shallow( <PurchaseDetail isPlaceholder={ true } /> );
+		wrapper = shallow( <PurchaseDetail isPlaceholder /> );
 		expect( wrapper.hasClass( 'is-placeholder' ) ).to.be.true;
 	} );
 

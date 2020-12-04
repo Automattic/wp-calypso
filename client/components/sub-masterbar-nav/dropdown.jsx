@@ -44,11 +44,7 @@ export default class Dropdown extends Component {
 		return (
 			<div className={ className }>
 				<div className="sub-masterbar-nav__select" onClick={ this.toggle }>
-					<Item
-						isSelected={ true }
-						label={ this.props.selected.label }
-						icon={ this.props.selected.icon }
-					/>
+					<Item isSelected label={ this.props.selected.label } icon={ this.props.selected.icon } />
 					<Gridicon icon="chevron-down" className="sub-masterbar-nav__select-icon" />
 				</div>
 				<div className="sub-masterbar-nav__wrapper">

@@ -136,7 +136,7 @@ class MembershipsSection extends Component {
 										a: (
 											<ExternalLink
 												href="https://wordpress.com/support/recurring-payments-button/#related-fees"
-												icon={ true }
+												icon
 											/>
 										),
 									},
@@ -602,7 +602,7 @@ class MembershipsSection extends Component {
 					/>
 				) }
 				{ this.renderOnboarding(
-					<Button primary={ true } href={ this.props.connectUrl }>
+					<Button primary href={ this.props.connectUrl }>
 						{ this.props.translate( 'Connect Stripe to Get Started' ) }{ ' ' }
 						<Gridicon size={ 18 } icon={ 'external' } />
 					</Button>
@@ -620,7 +620,7 @@ class MembershipsSection extends Component {
 					feature={ FEATURE_MEMBERSHIPS }
 					title={ this.props.translate( 'Upgrade to the Personal plan' ) }
 					description={ this.props.translate( 'Upgrade to start selling.' ) }
-					showIcon={ true }
+					showIcon
 					event="calypso_memberships_upsell_nudge"
 					tracksImpressionName="calypso_upgrade_nudge_impression"
 					tracksClickName="calypso_upgrade_nudge_cta_click"

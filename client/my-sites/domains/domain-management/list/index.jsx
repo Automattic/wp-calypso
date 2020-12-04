@@ -411,7 +411,7 @@ export class List extends React.Component {
 						href={ selectedSite.URL }
 						title={ translate( 'Launch your site' ) }
 						target="_blank"
-						icon={ true }
+						icon
 					>
 						{ primaryDomain.name }
 					</ExternalLink>

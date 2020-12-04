@@ -72,7 +72,7 @@ export default function DomainContactDetails( {
 					tld={ 'ca' }
 					getDomainNames={ () => domainNames }
 					translate={ translate }
-					isManaged={ true }
+					isManaged
 				/>
 			) }
 			{ tlds.includes( 'uk' ) && (
@@ -86,7 +86,7 @@ export default function DomainContactDetails( {
 					tld={ 'uk' }
 					getDomainNames={ () => domainNames }
 					translate={ translate }
-					isManaged={ true }
+					isManaged
 				/>
 			) }
 			{ tlds.includes( 'fr' ) && (
@@ -100,7 +100,7 @@ export default function DomainContactDetails( {
 					tld={ 'fr' }
 					getDomainNames={ () => domainNames }
 					translate={ translate }
-					isManaged={ true }
+					isManaged
 				/>
 			) }
 		</React.Fragment>

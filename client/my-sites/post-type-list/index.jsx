@@ -292,7 +292,7 @@ class PostTypeList extends Component {
 						event="published_posts_no_ads"
 						tracksImpressionName="calypso_upgrade_nudge_impression"
 						tracksClickName="calypso_upgrade_nudge_cta_click"
-						showIcon={ true }
+						showIcon
 					/>
 				) }
 				{ posts.slice( 10 ).map( this.renderPost ) }

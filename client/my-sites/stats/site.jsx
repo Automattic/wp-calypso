@@ -152,7 +152,7 @@ class StatsSite extends Component {
 					query={ query }
 					statType="statsFileDownloads"
 					showSummaryLink
-					useShortLabel={ true }
+					useShortLabel
 				/>
 			);
 		}
@@ -199,7 +199,7 @@ class StatsSite extends Component {
 							event="stats_earn_nudge"
 							tracksImpressionName="calypso_upgrade_nudge_impression"
 							tracksClickName="calypso_upgrade_nudge_cta_click"
-							showIcon={ true }
+							showIcon
 							jetpack={ false }
 						/>
 					) }
@@ -312,7 +312,7 @@ class StatsSite extends Component {
 		const { period } = this.props.period;
 
 		return (
-			<Main wideLayout={ true }>
+			<Main wideLayout>
 				<QueryKeyringConnections />
 				{ isJetpack && <QueryJetpackModules siteId={ siteId } /> }
 				{ siteId && <QuerySiteKeyrings siteId={ siteId } /> }

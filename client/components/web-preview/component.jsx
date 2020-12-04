@@ -169,7 +169,7 @@ export class WebPreviewModal extends Component {
 						<WebPreviewContent
 							{ ...this.props }
 							onDeviceUpdate={ this.setDeviceViewport }
-							isModalWindow={ true }
+							isModalWindow
 							frontPageMetaDescription={ this.props.frontPageMetaDescription || null }
 						/>
 					</div>

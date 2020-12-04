@@ -43,7 +43,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 
 	return (
 		<Modal
-			open={ true }
+			open
 			className={ classnames(
 				'nux-launch-modal',
 				`step-${ currentStep }`,

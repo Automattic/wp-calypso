@@ -173,9 +173,7 @@ class SharingButtonsTray extends React.Component {
 	getButtonElements = () => {
 		if ( this.state.isReordering ) {
 			const buttons = this.getButtonsOfCurrentVisibility().map( function ( button ) {
-				return (
-					<ButtonsPreviewButton key={ button.ID } button={ button } enabled={ true } style="text" />
-				);
+				return <ButtonsPreviewButton key={ button.ID } button={ button } enabled style="text" />;
 			}, this );
 
 			return <SortableList onChange={ this.onButtonsReordered }>{ buttons }</SortableList>;

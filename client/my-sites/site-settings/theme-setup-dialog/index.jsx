@@ -81,7 +81,7 @@ class ThemeSetupDialog extends React.Component {
 			<div>
 				<h1>{ translate( 'Theme Setup' ) }</h1>
 				<p>{ translate( 'Running Theme Setup. This may take up to a minute.' ) }</p>
-				<PulsingDot active={ true } />
+				<PulsingDot active />
 			</div>
 		);
 		const success = (

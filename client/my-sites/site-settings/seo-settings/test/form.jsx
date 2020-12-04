@@ -76,7 +76,7 @@ describe( 'SeoForm basic tests', () => {
 	} );
 
 	test( 'should not render Jetpack unsupported notice when has any SEO features', () => {
-		const comp = shallow( <SeoForm { ...props } hasSeoPreviewFeature={ true } /> );
+		const comp = shallow( <SeoForm { ...props } hasSeoPreviewFeature /> );
 		expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 0 );
 
 		comp.setProps( {
@@ -107,7 +107,7 @@ describe( 'SeoForm basic tests', () => {
 	} );
 
 	test( 'should render SEO editor when has advanced seo and there is no conflicted SEO plugin', () => {
-		const comp = shallow( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		const comp = shallow( <SeoForm { ...props } showAdvancedSeo /> );
 		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 1 );
 	} );
 
@@ -118,11 +118,7 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 0 );
 
 		comp = shallow(
-			<SeoForm
-				{ ...props }
-				hasAdvancedSEOFeature={ true }
-				conflictedSeoPlugin={ { name: 'test' } }
-			/>
+			<SeoForm { ...props } hasAdvancedSEOFeature conflictedSeoPlugin={ { name: 'test' } } />
 		);
 		expect( comp.find( '.seo-settings__page-title-header' ) ).toHaveLength( 0 );
 	} );
@@ -130,10 +126,10 @@ describe( 'SeoForm basic tests', () => {
 	test( 'should render website meta editor when appropriate', () => {
 		let comp;
 
-		comp = shallow( <SeoForm { ...props } showAdvancedSeo={ true } /> );
+		comp = shallow( <SeoForm { ...props } showAdvancedSeo /> );
 		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 1 );
 
-		comp = shallow( <SeoForm { ...props } showWebsiteMeta={ true } /> );
+		comp = shallow( <SeoForm { ...props } showWebsiteMeta /> );
 		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 1 );
 	} );
 
@@ -144,7 +140,7 @@ describe( 'SeoForm basic tests', () => {
 		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
 
 		comp = shallow(
-			<SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } showAdvancedSeo={ true } />
+			<SeoForm { ...props } conflictedSeoPlugin={ { name: 'test' } } showAdvancedSeo />
 		);
 		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
 
@@ -152,8 +148,8 @@ describe( 'SeoForm basic tests', () => {
 			<SeoForm
 				{ ...props }
 				conflictedSeoPlugin={ { name: 'test' } }
-				siteIsJetpack={ true }
-				showWebsiteMeta={ true }
+				siteIsJetpack
+				showWebsiteMeta
 			/>
 		);
 		expect( comp.find( '[name="advanced_seo_front_page_description"]' ) ).toHaveLength( 0 );
@@ -191,11 +187,7 @@ describe( 'UpsellNudge should get appropriate plan constant', () => {
 		( product_slug ) => {
 			test( `Jetpack Security Daily for (${ product_slug })`, () => {
 				const comp = shallow(
-					<SeoForm
-						{ ...props }
-						siteIsJetpack={ true }
-						selectedSite={ { plan: { product_slug } } }
-					/>
+					<SeoForm { ...props } siteIsJetpack selectedSite={ { plan: { product_slug } } } />
 				);
 				expect( comp.find( 'UpsellNudge' ) ).toHaveLength( 1 );
 				expect( comp.find( 'UpsellNudge' ).props().href ).toContain( OPTIONS_JETPACK_SECURITY );

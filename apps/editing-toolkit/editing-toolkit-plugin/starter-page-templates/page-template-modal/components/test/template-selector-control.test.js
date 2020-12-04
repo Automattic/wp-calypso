@@ -168,7 +168,7 @@ describe( 'TemplateSelectorControl', () => {
 					templates={ templatesFixture }
 					blocksByTemplates={ blocksByTemplatesFixture }
 					siteInformation={ siteInformation }
-					useDynamicPreview={ true }
+					useDynamicPreview
 				/>
 			);
 
@@ -186,7 +186,7 @@ describe( 'TemplateSelectorControl', () => {
 					instanceId={ testUniqueId }
 					templates={ templatesFixture }
 					siteInformation={ siteInformation }
-					useDynamicPreview={ true }
+					useDynamicPreview
 				/>
 			);
 

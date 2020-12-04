@@ -138,7 +138,7 @@ describe( 'CheckoutProvider', () => {
 		} );
 
 		it( 'sets form status to loading when isLoading is true', () => {
-			const { getByText } = render( <MyCheckout isLoading={ true } /> );
+			const { getByText } = render( <MyCheckout isLoading /> );
 			expect( getByText( 'Loading' ) ).toBeInTheDocument();
 		} );
 
@@ -214,7 +214,7 @@ describe( 'CheckoutProvider', () => {
 		} );
 
 		it( 'sets form status to loading when isLoading is true', () => {
-			const { getByText } = render( <MyCheckout isLoading={ true } /> );
+			const { getByText } = render( <MyCheckout isLoading /> );
 			expect( getByText( 'Loading' ) ).toBeInTheDocument();
 		} );
 

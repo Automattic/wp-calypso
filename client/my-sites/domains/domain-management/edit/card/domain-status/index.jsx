@@ -56,7 +56,7 @@ class DomainStatus extends React.Component {
 		);
 
 		return (
-			<Card compact={ true } className={ cardClasses }>
+			<Card compact className={ cardClasses }>
 				<h2 className={ headerClasses }>
 					<a target="_blank" rel="noopener noreferrer" href={ 'http://' + header }>
 						<span>{ header }</span>

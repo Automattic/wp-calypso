@@ -31,7 +31,7 @@ const StartOver = ( { translate, selectedSiteSlug } ) => {
 			</HeaderCake>
 			<ActionPanel>
 				<ActionPanelBody>
-					<ActionPanelFigure inlineBodyText={ true }>
+					<ActionPanelFigure inlineBodyText>
 						<img src="/calypso/images/wordpress/logo-stars.svg" alt="" width="170" height="143" />
 					</ActionPanelFigure>
 					<ActionPanelTitle>{ translate( 'Start Over' ) }</ActionPanelTitle>

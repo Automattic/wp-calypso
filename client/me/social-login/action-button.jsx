@@ -101,7 +101,7 @@ class SocialLoginActionButton extends Component {
 			<FormButton
 				className="social-login__button button"
 				disabled={ disabled }
-				compact={ true }
+				compact
 				isPrimary={ ! isConnected }
 				onClick={ isConnected && this.disconnectFromSocialService }
 			>

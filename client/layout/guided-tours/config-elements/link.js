@@ -22,7 +22,7 @@ class Link extends Component {
 		return (
 			<div className="config-elements__link guided-tours__external-link">
 				{ ! this.props.supportArticleId && (
-					<ExternalLink target="_blank" icon={ true } href={ this.props.href }>
+					<ExternalLink target="_blank" icon href={ this.props.href }>
 						{ this.props.children }
 					</ExternalLink>
 				) }

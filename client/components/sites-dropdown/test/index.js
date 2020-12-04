@@ -28,7 +28,7 @@ describe( 'index', () => {
 
 		test( 'with multiple sites, should toggle the dropdown when it is clicked', () => {
 			const toggleOpenSpy = sinon.spy( SitesDropdown.prototype, 'toggleOpen' );
-			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites={ true } /> );
+			const sitesDropdown = shallow( <SitesDropdown hasMultipleSites /> );
 
 			sitesDropdown.find( '.sites-dropdown__selected' ).simulate( 'click' );
 			sinon.assert.calledOnce( toggleOpenSpy );

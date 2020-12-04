@@ -143,12 +143,7 @@ const GMClosureNotice = ( {
 
 	if ( compact ) {
 		return (
-			<FoldableCard
-				className="gm-closure-notice"
-				clickableHeader={ true }
-				compact={ true }
-				header={ HEADING }
-			>
+			<FoldableCard className="gm-closure-notice" clickableHeader compact header={ HEADING }>
 				{ mainMessage }
 				<br />
 				<br />

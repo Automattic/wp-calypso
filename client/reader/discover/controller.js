@@ -46,9 +46,9 @@ const exported = {
 					mcKey
 				) }
 				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
-				suppressSiteNameLink={ true }
+				suppressSiteNameLink
 				showPrimaryFollowButtonOnCards={ false }
-				isDiscoverStream={ true }
+				isDiscoverStream
 				showBack={ false }
 				className="is-discover-stream is-site-stream"
 			/>

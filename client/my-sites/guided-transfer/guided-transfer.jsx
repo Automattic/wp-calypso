@@ -84,7 +84,7 @@ class GuidedTransfer extends React.Component {
 			<Main className="guided-transfer__main site-settings">
 				<QuerySiteGuidedTransfer siteId={ siteId } />
 				<div className="guided-transfer__header-nav">
-					<HeaderCake onClick={ this.goBack } isCompact={ true }>
+					<HeaderCake onClick={ this.goBack } isCompact>
 						{ this.props.translate( 'Guided Transfer' ) }
 					</HeaderCake>
 				</div>

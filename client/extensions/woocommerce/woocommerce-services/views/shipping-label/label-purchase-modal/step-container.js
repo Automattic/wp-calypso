@@ -66,7 +66,7 @@ const StepContainer = ( {
 			header={ header }
 			summary={ summary }
 			expandedSummary={ summary }
-			clickableHeader={ true }
+			clickableHeader
 			compact
 			screenReaderText={ translate( 'Expand' ) }
 			expanded={ expanded }

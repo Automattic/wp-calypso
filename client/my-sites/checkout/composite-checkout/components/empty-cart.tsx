@@ -10,7 +10,7 @@ export default function EmptyCart(): JSX.Element {
 		<CheckoutStepBody
 			stepId="empty-cart"
 			isStepActive={ false }
-			isStepComplete={ true }
+			isStepComplete
 			titleContent={ <EmptyCartTitle /> }
 		/>
 	);

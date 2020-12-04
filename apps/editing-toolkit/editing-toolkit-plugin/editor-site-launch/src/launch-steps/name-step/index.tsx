@@ -57,7 +57,7 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 				</form>
 			</div>
 			<div className="nux-launch-step__footer">
-				<ActionButtons sticky={ true }>
+				<ActionButtons sticky>
 					<BackButton onClick={ handlePrev } />
 					<NextButton onClick={ handleNext } disabled={ ! title?.trim() } />
 				</ActionButtons>

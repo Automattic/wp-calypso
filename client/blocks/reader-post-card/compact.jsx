@@ -26,7 +26,7 @@ const CompactPost = ( { post, postByline, children, isDiscover, onClick } ) => {
 				{ postByline }
 				<ReaderPostOptionsMenu
 					className="ignore-click"
-					showFollow={ true }
+					showFollow
 					post={ post }
 					position="bottom"
 				/>
