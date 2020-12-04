@@ -21,7 +21,6 @@ import documentHead from './document-head/reducer';
 import happychat from './happychat/reducer';
 import i18n from './i18n/reducer';
 import importerNux from './importer-nux/reducer';
-import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
@@ -44,7 +43,6 @@ const reducers = {
 	httpData,
 	i18n,
 	importerNux,
-	inlineSupportArticle,
 	jitm,
 	mySites,
 	notices,
