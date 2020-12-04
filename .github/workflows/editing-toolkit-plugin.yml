@@ -220,7 +220,7 @@ jobs:
     name: Create release draft and attach asset
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, "editing-toolkit@")
+    if: startsWith(github.ref, 'editing-toolkit@')
     steps:
       - name: Set Release Version
         id: get_release_version
