@@ -7,8 +7,8 @@ import { every, filter, find, get, isArray, some, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isWcsEnabled } from 'woocommerce/state/selectors/plugins';
 import { LOADING } from 'woocommerce/state/constants';
 import {

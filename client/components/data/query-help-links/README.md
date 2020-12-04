@@ -8,7 +8,7 @@ Render the component, passing `query`. It does not accept any children, nor does
 
 ```jsx
 import React from 'react';
-import QueryHelpLinks from 'components/data/query-help-links';
+import QueryHelpLinks from 'calypso/components/data/query-help-links';
 
 export default function MyHelpLinksSection( { links } ) {
 	return (

@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `restoreId`. It does not accept any c
 
 ```jsx
 import React from 'react';
-import QueryRewindRestoreStatus from 'components/data/query-rewind-restore-status';
+import QueryRewindRestoreStatus from 'calypso/components/data/query-rewind-restore-status';
 
 export default function MyComponent( props ) {
 	return (

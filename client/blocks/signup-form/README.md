@@ -11,7 +11,7 @@ disabled={ this.isDisabled() }
 submitting={ this.isSubmitting() }
 
 ```js
-import SignupForm from 'blocks/signup-form';
+import SignupForm from 'calypso/blocks/signup-form';
 
 function render() {
 	return (

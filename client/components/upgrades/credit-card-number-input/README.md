@@ -6,7 +6,7 @@
 
 ```jsx
 import React from 'react';
-import CreditCardNumberInput from 'components/upgrades/credit-card-number-input';
+import CreditCardNumberInput from 'calypso/components/upgrades/credit-card-number-input';
 
 class MyComponent extends React.Component {
 	render() {

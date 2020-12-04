@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPostLikes } from 'state/posts/selectors/get-post-likes';
+import { getPostLikes } from 'calypso/state/posts/selectors/get-post-likes';
 
 describe( 'getPostLikes()', () => {
 	test( 'should return null if the site has never been fetched', () => {

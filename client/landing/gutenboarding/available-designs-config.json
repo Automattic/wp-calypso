@@ -1,41 +1,28 @@
 {
 	"featured": [
 		{
-			"title": "Reynolds (FSE)",
-			"slug": "reynolds-fse",
-			"template": "reynolds-fse",
+			"title": "Seedlet",
+			"slug": "seedlet-blocks",
+			"template": "seedlet-blocks",
 			"theme": "seedlet-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true
 		},
 		{
-			"title": "Vesta (FSE)",
-			"slug": "vesta-fse",
-			"template": "vesta",
-			"theme": "seedlet-blocks",
+			"title": "Twenty Twenty One",
+			"slug": "twentytwentyone-blocks",
+			"template": "twentytwentyone-blocks",
+			"theme": "twentytwentyone-blocks",
 			"fonts": {
-				"headings": "Cabin",
-				"base": "Raleway"
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "portfolio" ],
-			"is_premium": false,
-			"is_fse": true
-		},
-		{
-			"title": "Ibis (FSE)",
-			"slug": "ibis-fse",
-			"template": "ibis",
-			"theme": "ibis",
-			"fonts": {
-				"headings": "Lora",
-				"base": "Lora"
-			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true
 		},

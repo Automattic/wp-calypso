@@ -6,9 +6,8 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import { dispatchFluxUpdateMediaItem } from 'state/media/utils/flux-adapter';
-import { updateMediaItem } from 'state/media/actions';
-import getMediaItem from 'state/selectors/get-media-item';
+import { updateMediaItem } from 'calypso/state/media/actions';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Redux thunk to update a media item data.
@@ -25,7 +24,5 @@ export const updateMedia = ( siteId, item ) => ( dispatch, getState ) => {
 	const originalMediaItem = getMediaItem( getState(), siteId, mediaId );
 	const updatedMediaItem = assign( {}, originalMediaItem, item );
 
-	dispatchFluxUpdateMediaItem( siteId, updatedMediaItem );
-
-	dispatch( updateMediaItem( siteId, updatedMediaItem ) );
+	dispatch( updateMediaItem( siteId, updatedMediaItem, originalMediaItem ) );
 };

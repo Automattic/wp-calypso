@@ -10,12 +10,12 @@ import React from 'react';
  * Internal dependencies
  */
 import AuthorMapping from './author-mapping-item';
-import SiteUsersFetcher from 'components/site-users-fetcher';
-import UsersStore from 'lib/users/store';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
+import UsersStore from 'calypso/lib/users/store';
 
-import ImporterActionButtonContainer from 'my-sites/importer/importer-action-buttons/container';
-import ImporterActionButton from 'my-sites/importer/importer-action-buttons/action-button';
-import ImporterCloseButton from 'my-sites/importer/importer-action-buttons/close-button';
+import ImporterActionButtonContainer from 'calypso/my-sites/importer/importer-action-buttons/container';
+import ImporterActionButton from 'calypso/my-sites/importer/importer-action-buttons/action-button';
+import ImporterCloseButton from 'calypso/my-sites/importer/importer-action-buttons/close-button';
 
 /**
  * Style dependencies
@@ -171,10 +171,10 @@ class AuthorMappingPane extends React.PureComponent {
 					);
 				} ) }
 				<ImporterActionButtonContainer>
-					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 					<ImporterActionButton primary disabled={ ! canStartImport } onClick={ onStartImport }>
 						{ this.props.translate( 'Start import' ) }
 					</ImporterActionButton>
+					<ImporterCloseButton importerStatus={ importerStatus } site={ site } isEnabled />
 				</ImporterActionButtonContainer>
 			</div>
 		);

@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer, { currentClientId } from '../reducer';
-import { ROUTE_SET, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { ROUTE_SET, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

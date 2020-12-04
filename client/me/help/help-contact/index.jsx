@@ -22,7 +22,7 @@ import HelpContactConfirmation from 'calypso/me/help/help-contact-confirmation';
 import HeaderCake from 'calypso/components/header-cake';
 import wpcomLib from 'calypso/lib/wp';
 import notices from 'calypso/notices';
-import ChatCovidLimitedAvailabilityNotice from 'calypso/me/help/contact-form-notice/chat-covid-limited-availability';
+import ChatHolidayClosureNotice from 'calypso/me/help/contact-form-notice/chat-holiday-closure';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import getHappychatUserInfo from 'calypso/state/happychat/selectors/get-happychat-userinfo';
 import isHappychatUserEligible from 'calypso/state/happychat/selectors/is-happychat-user-eligible';
@@ -52,10 +52,7 @@ import {
 } from 'calypso/state/help/directly/actions';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import getLocalizedLanguageNames from 'calypso/state/selectors/get-localized-language-names';
-import getSupportLevel, {
-	SUPPORT_LEVEL_PERSONAL,
-	SUPPORT_LEVEL_PERSONAL_WITH_LEGACY_CHAT,
-} from 'calypso/state/selectors/get-support-level';
+import getSupportLevel from 'calypso/state/selectors/get-support-level';
 import hasUserAskedADirectlyQuestion from 'calypso/state/selectors/has-user-asked-a-directly-question';
 import isDirectlyReady from 'calypso/state/selectors/is-directly-ready';
 import isDirectlyUninitialized from 'calypso/state/selectors/is-directly-uninitialized';
@@ -74,6 +71,7 @@ import getInlineHelpSupportVariation, {
 	SUPPORT_TICKET,
 	SUPPORT_UPWORK_TICKET,
 } from 'calypso/state/selectors/get-inline-help-support-variation';
+import { getPlanTermLabel } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
@@ -192,12 +190,19 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale, supportVariation } = this.props;
-
+		const { currentUserLocale, supportVariation, translate } = this.props;
+		let plan = 'N/A';
+		if ( site ) {
+			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
+				site.plan.product_slug,
+				translate
+			) })`;
+		}
 		const ticketMeta = [
 			'How can you help: ' + howCanWeHelp,
 			'How I feel: ' + howYouFeel,
 			'Site I need help with: ' + ( site ? site.URL : 'N/A' ),
+			'Plan: ' + plan,
 		];
 
 		const kayakoMessage = [ ...ticketMeta, '\n', message ].join( '\n' );
@@ -539,7 +544,7 @@ class HelpContact extends React.Component {
 	 */
 	getView = () => {
 		const { confirmation } = this.state;
-		const { activeSupportTickets, compact, supportLevel, supportVariation, translate } = this.props;
+		const { activeSupportTickets, compact, supportVariation, translate } = this.props;
 
 		debug( { supportVariation } );
 
@@ -601,15 +606,24 @@ class HelpContact extends React.Component {
 					<ActiveTicketsNotice count={ activeTicketCount } compact={ compact } />
 				) }
 
-				{ isUserAffectedByLiveChatClosure &&
-					( supportLevel === SUPPORT_LEVEL_PERSONAL ||
-						supportLevel === SUPPORT_LEVEL_PERSONAL_WITH_LEGACY_CHAT ) && (
-						<ChatCovidLimitedAvailabilityNotice
-							showAt="2020-08-24"
-							hideAt="2020-10-05"
+				{ isUserAffectedByLiveChatClosure && (
+					<>
+						<ChatHolidayClosureNotice
+							holidayName="Christmas"
 							compact={ compact }
+							displayAt="2020-12-17 00:00Z"
+							closesAt="2020-12-24 00:00Z"
+							reopensAt="2020-12-26 07:00Z"
 						/>
-					) }
+						<ChatHolidayClosureNotice
+							holidayName="New Year's Day"
+							compact={ compact }
+							displayAt="2020-12-26 07:00Z"
+							closesAt="2020-12-31 00:00Z"
+							reopensAt="2021-01-02 07:00Z"
+						/>
+					</>
+				) }
 
 				{ this.shouldShowTicketRequestErrorNotice( supportVariation ) && (
 					<Notice

@@ -3,6 +3,7 @@
  */
 import Button from './components/button';
 import CheckoutErrorBoundary from './components/checkout-error-boundary';
+import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
@@ -39,8 +40,6 @@ import {
 	useRegistry,
 	useSelect,
 } from './lib/registry';
-import { createFullCreditsMethod } from './lib/payment-methods/full-credits';
-import { createFreePaymentMethod } from './lib/payment-methods/free-purchase';
 import { createIdealPaymentMethodStore, createIdealMethod } from './lib/payment-methods/ideal';
 import { createSofortPaymentMethodStore, createSofortMethod } from './lib/payment-methods/sofort';
 import { createAlipayPaymentMethodStore, createAlipayMethod } from './lib/payment-methods/alipay';
@@ -77,12 +76,13 @@ import { useTransactionStatus } from './lib/transaction-status';
 import {
 	usePaymentProcessor,
 	usePaymentProcessors,
-	makeNoopResponse,
+	makeManualResponse,
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
+import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
-import { FormStatus, TransactionStatus } from './types';
+export * from './types';
 
 // Re-export the public API
 export {
@@ -103,13 +103,13 @@ export {
 	CheckoutSteps,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
-	FormStatus,
 	MainContentWrapper,
 	OrderReviewLineItems,
 	OrderReviewSection,
 	OrderReviewTotal,
+	PaymentLogo,
+	RadioButton,
 	SubmitButtonWrapper,
-	TransactionStatus,
 	checkoutTheme,
 	createAlipayMethod,
 	createAlipayPaymentMethodStore,
@@ -119,8 +119,6 @@ export {
 	createEpsMethod,
 	createEpsPaymentMethodStore,
 	createExistingCardMethod,
-	createFreePaymentMethod,
-	createFullCreditsMethod,
 	createGiropayMethod,
 	createGiropayPaymentMethodStore,
 	createIdealMethod,
@@ -138,7 +136,7 @@ export {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	makeNoopResponse,
+	makeManualResponse,
 	makeRedirectResponse,
 	makeSuccessResponse,
 	registerStore,

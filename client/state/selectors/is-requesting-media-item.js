@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
 
 /**
  * Returns true if the media is being requested for a specified site ID and media ID.

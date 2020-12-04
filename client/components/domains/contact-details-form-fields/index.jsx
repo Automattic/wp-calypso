@@ -26,7 +26,6 @@ import { localize } from 'i18n-calypso';
 import { getCountryStates } from 'calypso/state/country-states/selectors';
 import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormFooter from 'calypso/my-sites/domains/domain-management/components/form-footer';
 import FormButton from 'calypso/components/forms/form-button';
 import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
 import { countries } from 'calypso/components/phone-input/data';
@@ -537,10 +536,12 @@ export class ContactDetailsFormFields extends Component {
 					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
 
-				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				{ this.props.children && (
+					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				) }
 
 				{ isFooterVisible && (
-					<FormFooter>
+					<div>
 						{ this.props.onSubmit && (
 							<FormButton
 								className="contact-details-form-fields__submit-button"
@@ -560,7 +561,7 @@ export class ContactDetailsFormFields extends Component {
 								{ translate( 'Cancel' ) }
 							</FormButton>
 						) }
-					</FormFooter>
+					</div>
 				) }
 				<QueryDomainCountries />
 			</FormFieldset>

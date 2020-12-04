@@ -7,9 +7,9 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { NOT_SUBMITTED, SUBMITTING, SUBMIT_FAILURE, SUBMITTED } from './constants';
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
-import 'state/nps-survey/init';
+import 'calypso/state/nps-survey/init';
 
 const ALLOWED_SECTION_NAMES = [
 	'discover',

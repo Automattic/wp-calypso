@@ -318,6 +318,12 @@ class CancelPurchaseForm extends React.Component {
 		);
 
 		appendRadioOption(
+			'downgradeToAnotherPlan',
+			translate( "I'd like to downgrade to another plan." ),
+			translate( 'Mind telling us which one?' )
+		);
+
+		appendRadioOption(
 			'onlyNeedFree',
 			translate( 'The plan was too expensive.' ),
 			translate( 'How can we improve our upgrades?' )
@@ -660,50 +666,54 @@ class CancelPurchaseForm extends React.Component {
 		const disabled = disableButtons || this.state.isSubmitting;
 
 		const close = {
-				action: 'close',
-				disabled,
-				label: translate( "I'll Keep It" ),
-			},
-			chat = (
-				<PrecancellationChatButton
-					purchase={ purchase }
-					onClick={ this.closeDialog }
-					surveyStep={ surveyStep }
-				/>
-			),
-			next = {
-				action: 'next',
-				disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
-				label: translate( 'Next Step' ),
-				onClick: this.clickNext,
-			},
-			prev = {
-				action: 'prev',
-				disabled,
-				label: translate( 'Previous Step' ),
-				onClick: this.clickPrevious,
-			},
-			cancel = {
-				action: 'cancel',
-				disabled,
-				label: translate( 'Cancel Now' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
-			},
-			downgrade = {
-				action: 'downgrade',
-				disabled: this.state.isSubmitting,
-				label: translate( 'Switch to Personal' ),
-				onClick: this.downgradeClick,
-				isPrimary: true,
-			},
-			remove = {
-				action: 'remove',
-				disabled,
-				label: translate( 'Remove Now' ),
-				onClick: this.onSubmit,
-				isPrimary: true,
-			};
+			action: 'close',
+			disabled,
+			label: translate( "I'll Keep It" ),
+		};
+		const chat = (
+			<PrecancellationChatButton
+				purchase={ purchase }
+				onClick={ this.closeDialog }
+				surveyStep={ surveyStep }
+			/>
+		);
+		const next = {
+			action: 'next',
+			disabled: disabled || ! isSurveyFilledIn( this.state, isImport ),
+			label: translate( 'Next Step' ),
+			onClick: this.clickNext,
+		};
+		const prev = {
+			action: 'prev',
+			disabled,
+			label: translate( 'Previous Step' ),
+			onClick: this.clickPrevious,
+		};
+		const cancel = {
+			action: 'cancel',
+			disabled,
+			label: translate( 'Cancel Now' ),
+			onClick: this.onSubmit,
+			isPrimary: true,
+		};
+		const downgrade = {
+			action: 'downgrade',
+			disabled: this.state.isSubmitting,
+			label: translate( 'Switch to Personal' ),
+			onClick: this.downgradeClick,
+			isPrimary: true,
+		};
+		const remove = (
+			<Button
+				disabled={ this.props.disableButtons }
+				busy={ this.props.disableButtons }
+				onClick={ this.onSubmit }
+				primary
+				data-e2e-button="remove"
+			>
+				{ this.props.disableButtons ? 'Removing' : 'Remove It' }
+			</Button>
+		);
 
 		const firstButtons =
 			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'

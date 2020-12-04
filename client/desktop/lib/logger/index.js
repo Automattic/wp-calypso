@@ -21,7 +21,7 @@ const { createLogger, format, transports } = require( 'winston' );
 /**
  * Internal dependencies
  */
-const state = require( 'desktop/lib/state' );
+const state = require( 'calypso/desktop/lib/state' );
 const namespaces = require( './namespaces' );
 
 /**

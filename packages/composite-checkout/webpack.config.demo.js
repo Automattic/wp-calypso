@@ -18,7 +18,10 @@ module.exports = {
 			},
 		],
 	},
-	resolve: { extensions: [ '*', '.js', '.jsx' ] },
+	resolve: {
+		extensions: [ '*', '.js', '.jsx' ],
+		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+	},
 	output: {
 		path: path.resolve( __dirname, '/dist/' ),
 		publicPath: '/dist/',

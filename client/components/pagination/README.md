@@ -5,7 +5,7 @@ Use pagination to allow navigation between pages that represent an ordered colle
 ## Usage
 
 ```js
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 
 function render() {
 	return <Pagination />;

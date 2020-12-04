@@ -13,7 +13,7 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 import getHappychatConnectionStatus from '../get-happychat-connection-status';
 
 describe( '#getConnectionStatus', () => {

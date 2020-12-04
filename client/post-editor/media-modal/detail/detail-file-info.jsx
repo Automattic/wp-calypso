@@ -9,8 +9,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { playtime } from 'lib/media/utils';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { playtime } from 'calypso/lib/media/utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class EditorMediaModalDetailFileInfo extends React.Component {
 	static displayName = 'EditorMediaModalDetailFileInfo';

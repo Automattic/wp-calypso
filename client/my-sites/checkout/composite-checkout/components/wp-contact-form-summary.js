@@ -4,13 +4,13 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { useSelect } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { SummaryLine, SummaryDetails } from './summary-details';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import { hasOnlyRenewalItems } from 'lib/cart-values/cart-items';
+import { hasOnlyRenewalItems } from 'calypso/lib/cart-values/cart-items';
 
 export default function WPContactFormSummary( {
 	areThereDomainProductsInCart,
@@ -18,7 +18,7 @@ export default function WPContactFormSummary( {
 	isLoggedOutCart,
 } ) {
 	const contactInfo = useSelect( ( select ) => select( 'wpcom' ).getContactInfo() );
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const isRenewal = cart && hasOnlyRenewalItems( cart );
 
 	// Check if paymentData is empty

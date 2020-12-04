@@ -26,7 +26,7 @@ class BackupDatePicker extends Component {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.object.isRequired,
 		onDateChange: PropTypes.func.isRequired,
-		oldestDateAvailable: PropTypes.object.isRequired,
+		oldestDateAvailable: PropTypes.object,
 	};
 
 	getDisplayDate = ( date, showTodayYesterday = true ) => {

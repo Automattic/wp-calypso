@@ -9,15 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SupportInfo from 'components/support-info';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SupportInfo from 'calypso/components/support-info';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies

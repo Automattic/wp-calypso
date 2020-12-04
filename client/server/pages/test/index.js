@@ -125,7 +125,7 @@ import cloneDeep from 'lodash/cloneDeep';
 /**
  * Internal dependencies
  */
-import sections from 'sections';
+import sections from 'calypso/sections';
 
 /**
  * Builds an app for an specific environment.
@@ -155,7 +155,7 @@ const buildApp = ( environment ) => {
 		// When the app requries these modules, they are loaded from its isolated registry.
 		// Requiring them here will give us the same instance used by the app, this will allow
 		// us to change the mock implementation later or make assertions about it.
-		mocks.config = require( 'config' );
+		mocks.config = require( 'calypso/config' );
 		mocks.matchesUA = require( 'browserslist-useragent' ).matchesUA;
 		const {
 			attachBuildTimestamp,
@@ -163,15 +163,15 @@ const buildApp = ( environment ) => {
 			attachHead,
 			renderJsx,
 			serverRender,
-		} = require( 'server/render' );
+		} = require( 'calypso/server/render' );
 		mocks = { ...mocks, attachBuildTimestamp, attachI18n, attachHead, renderJsx, serverRender };
 		mocks.sanitize = require( 'sanitize' );
-		mocks.createReduxStore = require( 'state' ).createReduxStore;
+		mocks.createReduxStore = require( 'calypso/state' ).createReduxStore;
 		mocks.execSync = require( 'child_process' ).execSync;
-		mocks.login = require( 'lib/paths' ).login;
-		mocks.getBootstrappedUser = require( 'server/user-bootstrap' );
-		mocks.setCurrentUser = require( 'state/current-user/actions' ).setCurrentUser;
-		mocks.analytics = require( 'server/lib/analytics' );
+		mocks.login = require( 'calypso/lib/paths' ).login;
+		mocks.getBootstrappedUser = require( 'calypso/server/user-bootstrap' );
+		mocks.setCurrentUser = require( 'calypso/state/current-user/actions' ).setCurrentUser;
+		mocks.analytics = require( 'calypso/server/lib/analytics' );
 
 		// Set the environment. This has to be done before requiring `../index.js`
 		mocks.config.mockImplementation(
@@ -189,7 +189,7 @@ const buildApp = ( environment ) => {
 				}[ key ] )
 		);
 
-		appFactory = require( '../index' );
+		appFactory = require( '../index' ).default;
 	} );
 	const app = appFactory();
 
@@ -332,6 +332,9 @@ const buildApp = ( environment ) => {
 					method: 'GET',
 					get: jest.fn(),
 					connection: {},
+					logger: {
+						error: jest.fn(),
+					},
 					...request,
 				};
 
@@ -641,7 +644,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		const { request } = await app.run();
 		const staticUrls = request.context.app.staticUrls;
 		expect( staticUrls ).toEqual( {
-			'editor.css': '/calypso/editor.css?v=hash',
 			'tinymce/skins/wordpress/wp-content.css':
 				'/calypso/tinymce/skins/wordpress/wp-content.css?v=hash',
 		} );
@@ -940,7 +942,8 @@ const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
 	} );
 
 	describe( 'for authenticated users', () => {
-		let theStore, theAction;
+		let theStore;
+		let theAction;
 
 		beforeEach( () => {
 			theStore = {
@@ -1699,11 +1702,9 @@ describe( 'main app', () => {
 		} );
 
 		it( 'logs the error in development mode', async () => {
-			app.withMockedVariable( process.env, 'NODE_ENV', 'development' );
+			const { request } = await forceError();
 
-			await forceError();
-
-			expect( console.error ).toHaveBeenCalledWith( { error: 'fake error' } );
+			expect( request.logger.error ).toHaveBeenCalledWith( { error: 'fake error' } );
 		} );
 	} );
 } );

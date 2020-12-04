@@ -9,45 +9,19 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { action as ActionTypes } from 'lib/invites/constants';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { acceptedNotice } from 'my-sites/invites/utils';
-import { requestSites, receiveSites } from 'state/sites/actions';
-import { requestSiteInvites } from 'state/invites/actions';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import { action as ActionTypes } from 'calypso/lib/invites/constants';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { acceptedNotice } from 'calypso/my-sites/invites/utils';
+import { requestSites, receiveSites } from 'calypso/state/sites/actions';
+import { requestSiteInvites } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
  */
 const debug = new Debug( 'calypso:invites-actions' );
-
-export function fetchInvite( siteId, inviteKey ) {
-	debug( 'fetchInvite', siteId, inviteKey );
-
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.FETCH_INVITE,
-		siteId,
-		inviteKey,
-	} );
-
-	wpcom.undocumented().getInvite( siteId, inviteKey, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error ? ActionTypes.RECEIVE_INVITE_ERROR : ActionTypes.RECEIVE_INVITE,
-			siteId,
-			inviteKey,
-			data,
-			error,
-		} );
-
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_validation_failure', {
-				error: error.error,
-			} );
-		}
-	} );
-}
 
 export function createAccount( userData, invite, callback ) {
 	const send_verification_email = userData.email !== invite.sentTo;
@@ -217,30 +191,4 @@ export function sendInvites( siteId, usernamesOrEmails, role, message, formId, i
 				}
 			} );
 	};
-}
-
-export function createInviteValidation( siteId, usernamesOrEmails, role ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.CREATE_INVITE_VALIDATION,
-		siteId,
-		usernamesOrEmails,
-		role,
-	} );
-	wpcom.undocumented().createInviteValidation( siteId, usernamesOrEmails, role, ( error, data ) => {
-		Dispatcher.handleServerAction( {
-			type: error
-				? ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_ERROR
-				: ActionTypes.RECEIVE_CREATE_INVITE_VALIDATION_SUCCESS,
-			error,
-			siteId,
-			usernamesOrEmails,
-			role,
-			data,
-		} );
-		if ( error ) {
-			recordTracksEvent( 'calypso_invite_create_validation_failed' );
-		} else {
-			recordTracksEvent( 'calypso_invite_create_validation_success' );
-		}
-	} );
 }

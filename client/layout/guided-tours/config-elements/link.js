@@ -7,8 +7,8 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import InlineSupportLink from 'components/inline-support-link';
+import ExternalLink from 'calypso/components/external-link';
+import InlineSupportLink from 'calypso/components/inline-support-link';
 
 class Link extends Component {
 	static displayName = 'Link';

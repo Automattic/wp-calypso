@@ -20,12 +20,12 @@ import {
 	loadTrackingTool,
 } from '../actions';
 import { analyticsMiddleware } from '../middleware.js';
-import { spy as mockAdTracking } from 'lib/analytics/ad-tracking';
-import { spy as mockMC } from 'lib/analytics/mc';
-import { spy as mockGA } from 'lib/analytics/ga';
-import { spy as mockPageView } from 'lib/analytics/page-view';
-import { spy as mockTracks } from 'lib/analytics/tracks';
-import { addHotJarScript } from 'lib/analytics/hotjar';
+import { spy as mockAdTracking } from 'calypso/lib/analytics/ad-tracking';
+import { spy as mockMC } from 'calypso/lib/analytics/mc';
+import { spy as mockGA } from 'calypso/lib/analytics/ga';
+import { spy as mockPageView } from 'calypso/lib/analytics/page-view';
+import { spy as mockTracks } from 'calypso/lib/analytics/tracks';
+import { addHotJarScript } from 'calypso/lib/analytics/hotjar';
 
 jest.mock( 'lib/analytics/page-view', () => {
 	const pageViewSpy = require( 'sinon' ).spy();

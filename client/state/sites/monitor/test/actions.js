@@ -16,9 +16,9 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

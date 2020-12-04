@@ -6,13 +6,13 @@ import deepfreeze from 'deep-freeze';
 /**
  * Internal Dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { requestPage, handlePage, INITIAL_FETCH, PER_FETCH, QUERY_META } from '../';
 import {
 	requestPage as requestPageAction,
 	receivePage,
 	receiveUpdates,
-} from 'state/reader/streams/actions';
+} from 'calypso/state/reader/streams/actions';
 
 jest.mock( 'lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -82,6 +82,15 @@ describe( 'streams', () => {
 					expected: {
 						method: 'GET',
 						path: '/read/a8c',
+						apiVersion: '1.2',
+						query,
+					},
+				},
+				{
+					stream: 'p2',
+					expected: {
+						method: 'GET',
+						path: '/read/following/p2',
 						apiVersion: '1.2',
 						query,
 					},

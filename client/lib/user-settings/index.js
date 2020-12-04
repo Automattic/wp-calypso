@@ -4,15 +4,15 @@
 import { assign, isEmpty, keys, merge, has, get, set, unset } from 'lodash';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:user:settings' );
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
-import emitterClass from 'lib/mixins/emitter';
-import user from 'lib/user';
-import userUtils from 'lib/user/utils';
-import wp from 'lib/wp';
+import emitterClass from 'calypso/lib/mixins/emitter';
+import user from 'calypso/lib/user';
+import userUtils from 'calypso/lib/user/utils';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 

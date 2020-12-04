@@ -7,11 +7,11 @@ import moment from 'moment';
 /**
  * Internal Dependencies
  */
-import { recordPageView } from 'lib/analytics/page-view';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat } from 'lib/analytics/mc';
-import { recordTrack } from 'reader/stats';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordTrack } from 'calypso/reader/stats';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
 
 export function trackPageLoad( path, title, readerView ) {
 	recordPageView( path, title );

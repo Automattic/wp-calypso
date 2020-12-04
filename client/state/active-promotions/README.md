@@ -24,7 +24,7 @@ import {
 	activePromotionsRequestSuccessAction,
 	activePromotionsRequestFailureAction,
 	requestActivePromotions,
-} from 'state/activePromotions/actions';
+} from 'calypso/state/activePromotions/actions';
 
 dispatch( requestActivePromotions() );
 

@@ -6,16 +6,16 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import userFactory from 'lib/user';
+import config from 'calypso/config';
+import userFactory from 'calypso/lib/user';
 import * as controller from './controller';
-import { login } from 'lib/paths';
-import { siteSelection } from 'my-sites/controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
-import plansV2 from 'my-sites/plans-v2';
-import { OFFER_RESET_FLOW_TYPES } from 'jetpack-connect/flow-types';
+import { login } from 'calypso/lib/paths';
+import { siteSelection } from 'calypso/my-sites/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
+import { OFFER_RESET_FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 /**
  * Style dependencies
@@ -106,17 +106,7 @@ export default function () {
 		clientRender
 	);
 
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2( `/jetpack/connect/store`, controller.offerResetContext );
-	} else {
-		page(
-			`/jetpack/connect/store/:interval(yearly|monthly)?/${ locale }`,
-			controller.setLoggedOutLocale,
-			controller.plansLanding,
-			makeLayout,
-			clientRender
-		);
-	}
+	jetpackPlans( `/jetpack/connect/store`, controller.offerResetContext );
 
 	page(
 		'/jetpack/connect/:_(akismet|plans|vaultpress)/:interval(yearly|monthly)?',
@@ -126,26 +116,16 @@ export default function () {
 
 	if ( isLoggedOut ) {
 		page( '/jetpack/connect/plans/:interval(yearly|monthly)?/:site', ( { path } ) =>
-			page.redirect( login( { isNative: true, redirectTo: path } ) )
+			page( login( { isNative: true, isJetpack: true, redirectTo: path } ) )
 		);
 	}
 
-	if ( shouldShowOfferResetFlow() ) {
-		plansV2(
-			`/jetpack/connect/plans`,
-			siteSelection,
-			controller.offerResetRedirects,
-			controller.offerResetContext
-		);
-	} else {
-		page(
-			'/jetpack/connect/plans/:interval(yearly|monthly)?/:site',
-			siteSelection,
-			controller.plansSelection,
-			makeLayout,
-			clientRender
-		);
-	}
+	jetpackPlans(
+		`/jetpack/connect/plans`,
+		siteSelection,
+		controller.offerResetRedirects,
+		controller.offerResetContext
+	);
 
 	page(
 		`/jetpack/connect/:type(${ planTypeString })?/${ locale }`,
@@ -159,10 +139,15 @@ export default function () {
 
 	page( '/jetpack/sso/:siteId?/:ssoNonce?', controller.sso, makeLayout, clientRender );
 	page( '/jetpack/sso/*', controller.sso, makeLayout, clientRender );
+
 	// The /jetpack/new route previously allowed to create a .com site and
 	// connect a Jetpack site. The redirect rule will skip this page and take
 	// the user directly to the .com site creation flow.
 	// See https://github.com/Automattic/wp-calypso/issues/45486
-	page( '/jetpack/new', config( 'signup_url' ) );
-	page( '/jetpack/new/*', '/jetpack/connect' );
+
+	// For some reason, the first redirection below redirects `/jetpack/connect` to `/jetpack/new` in Jetpack cloud.
+	if ( ! isJetpackCloud() ) {
+		page( '/jetpack/new', config( 'signup_url' ) );
+		page( '/jetpack/new/*', '/jetpack/connect' );
+	}
 }

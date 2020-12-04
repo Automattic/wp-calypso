@@ -1,16 +1,13 @@
 /**
  * Internal dependencies
  */
-
-import { RECEIPT_FETCH, RECEIPT_FETCH_COMPLETED, RECEIPT_FETCH_FAILED } from 'state/action-types';
-import { combineReducers } from 'state/utils';
-
-export const initialReceiptState = {
-	data: null,
-	error: null,
-	hasLoadedFromServer: false,
-	isRequesting: false,
-};
+import {
+	RECEIPT_FETCH,
+	RECEIPT_FETCH_COMPLETED,
+	RECEIPT_FETCH_FAILED,
+} from 'calypso/state/action-types';
+import { initialReceiptState } from 'calypso/state/receipts/initial';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 
 /**
  * Returns a new state with the given attributes for the given receipt ID.
@@ -49,6 +46,8 @@ export function items( state = {}, action ) {
 	return state;
 }
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	items,
 } );
+
+export default withStorageKey( 'receipts', combinedReducer );

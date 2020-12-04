@@ -3,7 +3,7 @@
 ## Usage
 
 ```js
-import PodcastIndicator from 'components/podcast-indicator';
+import PodcastIndicator from 'calypso/components/podcast-indicator';
 
 <PodcastIndicator size={ 24 } />;
 ```

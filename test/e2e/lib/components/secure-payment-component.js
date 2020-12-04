@@ -1,8 +1,8 @@
 /**
  * External dependencies
  */
-import { By, promise, until } from 'selenium-webdriver';
 import config from 'config';
+import { By, promise, until } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -26,7 +26,8 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		);
 		this.personalPlanSlug = getJetpackHost() === 'WPCOM' ? 'personal-bundle' : 'jetpack_personal';
 		this.premiumPlanSlug = getJetpackHost() === 'WPCOM' ? 'value_bundle' : 'jetpack_premium';
-		this.businessPlanSlug = getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_business';
+		this.businessPlanSlug =
+			getJetpackHost() === 'WPCOM' ? 'business-bundle' : 'jetpack_security_daily';
 		this.dotLiveDomainSlug = 'dotlive_domain';
 	}
 
@@ -75,6 +76,17 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 		// calling this function by using
 		// SecurePaymentComponent.completeTaxDetailsInContactSection.
 		await this.completeTaxDetailsForCreditCard( { cardPostCode, cardCountryCode } );
+
+		const creditCardHandleSelector = By.css( 'label[for="card"]' );
+		await driverHelper.scrollIntoView( this.driver, creditCardHandleSelector );
+
+		// Sometimes the credit card form will be closed and it will require a click to be opened.
+		// This can happen when users have a credit card already associated with their account.
+		await driverHelper.selectElementByText(
+			this.driver,
+			creditCardHandleSelector,
+			'Credit or debit card'
+		);
 
 		await driverHelper.setWhenSettable(
 			this.driver,
@@ -162,6 +174,15 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 	}
 
 	async waitForCreditCardPaymentProcessing() {
+		const isCompositeCheckout = await this.isCompositeCheckout();
+
+		if ( isCompositeCheckout ) {
+			return await driverHelper.waitTillNotPresent(
+				this.driver,
+				By.css( '.checkout-submit-button .checkout-button.is-busy' ),
+				this.explicitWaitMS * 5
+			);
+		}
 		return await driverHelper.waitTillNotPresent(
 			this.driver,
 			By.css( '.credit-card-payment-box__progress-bar' ),
@@ -203,6 +224,10 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 	async containsBusinessPlan() {
 		return await this._cartContainsProduct( this.businessPlanSlug );
+	}
+
+	async containsPlan( planSlug ) {
+		return await this._cartContainsProduct( planSlug );
 	}
 
 	async containsDotLiveDomain() {
@@ -284,7 +309,7 @@ export default class SecurePaymentComponent extends AsyncBaseContainer {
 
 		const cartElement = await this.driver.findElement( this.getCartTotalSelector() );
 
-		const cartText = await cartElement.getText();
+		const cartText = await cartElement.getAttribute( 'innerText' );
 
 		// We need to remove the comma separator first, e.g. 1,024 or 2,048, so `match()` can parse out the whole number properly.
 		const amountMatches = cartText.replace( /,/g, '' ).match( /\d+\.?\d*/g );

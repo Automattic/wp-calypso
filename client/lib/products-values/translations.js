@@ -8,40 +8,35 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { shouldShowOfferResetFlow } from 'calypso/lib/plans/config';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
 export const getJetpackProductsShortNames = () => {
 	return {
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Daily{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Daily Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
-		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: shouldShowOfferResetFlow()
-			? translate( 'Backup {{em}}Real-time{{/em}}', {
-					components: {
-						em: createElement( 'em' ),
-					},
-			  } )
-			: translate( 'Real-Time Backups' ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: translate( 'Backup {{em}}Daily{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME ]: translate( 'Backup {{em}}Real-time{{/em}}', {
+			components: {
+				em: createElement( 'em' ),
+			},
+		} ),
+		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: translate(
+			'Backup {{em}}Real-time{{/em}}',
+			{
+				components: {
+					em: createElement( 'em' ),
+				},
+			}
+		),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ]: translate( 'Search' ),
 		[ CONSTANTS.PRODUCT_WPCOM_SEARCH ]: translate( 'Search' ),
@@ -54,27 +49,49 @@ export const getJetpackProductsShortNames = () => {
 };
 
 export const getJetpackProductsDisplayNames = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
-			{ translate( 'Backup {{em}}Daily{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'v2'
+				? translate( 'Jetpack Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Backup {{em}}Daily{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
 	const backupRealtime = (
 		<>
-			{ translate( 'Backup {{em}}Real-Time{{/em}}', {
-				components: {
-					em: <em />,
-				},
-			} ) }
+			{ currentCROvariant === 'v2'
+				? translate( 'Jetpack Backup {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } )
+				: translate( 'Backup {{em}}Real-Time{{/em}}', {
+						components: {
+							em: <em />,
+						},
+				  } ) }
 		</>
 	);
-	const search = translate( 'Jetpack Search' );
-	const scan = translate( 'Jetpack Scan' );
-	const antiSpam = <>{ translate( 'Jetpack Anti-spam' ) }</>;
+	const search =
+		{
+			v2: translate( 'Jetpack Site Search' ),
+			i5: translate( 'Site Search' ),
+		}[ currentCROvariant ] || translate( 'Jetpack Search' );
+	const scan = currentCROvariant === 'i5' ? translate( 'Scan' ) : translate( 'Jetpack Scan' );
+	const antiSpam =
+		currentCROvariant === 'i5' ? (
+			translate( 'Anti-spam' )
+		) : (
+			<>{ translate( 'Jetpack Anti-spam' ) }</>
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -93,6 +110,7 @@ export const getJetpackProductsDisplayNames = () => {
 };
 
 export const getJetpackProductsCallToAction = () => {
+	const currentCROvariant = getJetpackCROActiveVersion();
 	const backupDaily = (
 		<>
 			{ translate( 'Get Backup {{em}}Daily{{/em}}', {
@@ -111,15 +129,17 @@ export const getJetpackProductsCallToAction = () => {
 			} ) }
 		</>
 	);
-	const search = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Search' )
-		: translate( 'Get Search' );
-	const scan = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Scan' )
-		: translate( 'Get Scan' );
-	const antiSpam = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Get Jetpack Anti-spam' )
-		: translate( 'Get Anti-spam' );
+	const search =
+		{
+			v1: translate( 'Get Jetpack Search' ),
+			i5: translate( 'Get Site Search' ),
+		}[ currentCROvariant ] || translate( 'Get Search' );
+	const scan =
+		currentCROvariant === 'v1' ? translate( 'Get Jetpack Scan' ) : translate( 'Get Scan' );
+	const antiSpam =
+		currentCROvariant === 'v1'
+			? translate( 'Get Jetpack Anti-spam' )
+			: translate( 'Get Anti-spam' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDaily,
@@ -136,18 +156,24 @@ export const getJetpackProductsCallToAction = () => {
 };
 
 export const getJetpackProductsTaglines = () => {
-	const backupDailyTagline = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Automated backups with one-click restores' )
-		: translate( 'Best for sites with occasional updates' );
+	const currentCROvariant = getJetpackCROActiveVersion();
+	const backupDailyTagline =
+		currentCROvariant === 'v1'
+			? translate( 'Automated backups with one-click restores' )
+			: translate( 'Best for sites with occasional updates' );
 	const backupRealtimeTagline = translate( 'Best for sites with frequent updates' );
 	const backupOwnedTagline = translate( 'Your site is actively being backed up' );
-
-	const searchTagline = isEnabled( 'plans/alternate-selector' )
-		? translate( 'Great for sites with a lot of content' )
-		: translate( 'Recommended for sites with lots of products or content' );
+	const searchTagline =
+		{
+			v1: translate( 'Great for sites with a lot of content' ),
+			v2: translate( 'Recommended for sites with lots of content' ),
+		}[ currentCROvariant ] || translate( 'Recommended for sites with lots of products or content' );
 	const scanTagline = translate( 'Protect your site' );
 	const scanOwnedTagline = translate( 'Your site is actively being scanned for malicious threats' );
-	const antiSpamTagline = translate( 'Block spam automatically' );
+	const antiSpamTagline =
+		currentCROvariant === 'v2'
+			? translate( 'Powered By Akismet' )
+			: translate( 'Block spam automatically' );
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: {
@@ -184,21 +210,36 @@ export const getJetpackProductsTaglines = () => {
 };
 
 export const getJetpackProductsDescriptions = () => {
-	const backupDailyDescription = translate(
-		'Never lose a word, image, page, or time worrying about your site.'
-	);
+	const backupDailyDescription =
+		{
+			i5: translate(
+				'Never lose a word, image, page, or time worrying about your site with automated backups & one-click restores.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Never lose a word, image, page, or time worrying about your site.' );
 	const backupRealtimeDescription = translate(
 		'Real-time backups save every change and one-click restores get you back online quickly.'
 	);
-	const searchDescription = translate(
-		'Help your site visitors find answers instantly so they keep reading and buying.'
-	);
+	const searchDescription =
+		{
+			i5: translate(
+				'Help your site visitors find answers instantly so they keep reading and buying. Great for sites with a lot of content.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate( 'Help your site visitors find answers instantly so they keep reading and buying.' );
+
 	const scanDescription = translate(
-		'Automatic scanning and one-click fixes keep your site one step ahead of security threats.'
+		'Automatic scanning and one-click fixes keep your site one step ahead of security threats and malware.'
 	);
-	const antiSpamDescription = translate(
-		'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
-	);
+	const antiSpamDescription =
+		{
+			i5: translate(
+				'Save time, get more responses, and give your visitors a better experience, by automatically blocking spam.'
+			),
+		}[ getJetpackCROActiveVersion() ] ||
+		translate(
+			'Automated spam protection for comments and forms. Save time, get more responses, and give your visitors a better experience.'
+		);
 
 	return {
 		[ CONSTANTS.PRODUCT_JETPACK_BACKUP_DAILY ]: backupDailyDescription,
@@ -296,78 +337,77 @@ export const getJetpackProducts = () => {
 			optionsLabel: translate( 'Select a product option:' ),
 			slugs: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCTS,
 		} );
-	isEnabled( 'jetpack/search-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Search' ),
-			description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: CONSTANTS.PRODUCT_JETPACK_SEARCH,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_search_description',
-					slug: 'learn-more-search',
-				},
-				url: CONSTANTS.JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+
+	output.push( {
+		title: translate( 'Jetpack Search' ),
+		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
+		// There is only one option per billing interval, but this
+		// component still needs the full display with radio buttons.
+		forceRadios: true,
+		hasPromo: false,
+		id: CONSTANTS.PRODUCT_JETPACK_SEARCH,
+		link: {
+			label: translate( 'Learn more' ),
+			props: {
+				location: 'product_jetpack_search_description',
+				slug: 'learn-more-search',
 			},
-			options: {
-				yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
-				monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
-			},
-			optionShortNamesCallback: ( productObject ) => {
-				const numberOfDefinedTiers = 5;
-				switch ( productObject.price_tier_slug ) {
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
-						return translate( 'Pricing Tier 1: Up to 100 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
-						return translate( 'Pricing Tier 2: Up to 1,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
-						return translate( 'Pricing Tier 3: Up to 10,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
-						return translate( 'Pricing Tier 4: Up to 100,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
-						return translate( 'Pricing Tier 5: Up to 1,000,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
-						// This is a catch-all tier with prices increasing
-						// proportionally per million records, so define fake
-						// tiers here to show the user what they will actually
-						// pay and why.
-						const tierNumber =
-							numberOfDefinedTiers +
-							Math.floor( productObject.price_tier_usage_quantity / 1000000 );
-						const tierMaximumRecords =
-							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
-						return translate( 'Pricing Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
-							args: {
-								tierNumber,
-								tierMaximumRecords: numberFormat( tierMaximumRecords ),
-							},
-						} );
-					}
-					default:
-						return null;
-				}
-			},
-			optionActionButtonNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabelCallback: ( productObject ) => {
-				return translate(
-					'Your current site record size: %(numberOfRecords)s record',
-					'Your current site record size: %(numberOfRecords)s records',
-					{
-						count: productObject.price_tier_usage_quantity,
+			url: CONSTANTS.JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+		},
+		options: {
+			yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
+			monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
+		},
+		optionShortNamesCallback: ( productObject ) => {
+			const numberOfDefinedTiers = 5;
+			switch ( productObject.price_tier_slug ) {
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
+					return translate( 'Pricing Tier 1: Up to 100 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
+					return translate( 'Pricing Tier 2: Up to 1,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
+					return translate( 'Pricing Tier 3: Up to 10,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
+					return translate( 'Pricing Tier 4: Up to 100,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
+					return translate( 'Pricing Tier 5: Up to 1,000,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
+					// This is a catch-all tier with prices increasing
+					// proportionally per million records, so define fake
+					// tiers here to show the user what they will actually
+					// pay and why.
+					const tierNumber =
+						numberOfDefinedTiers + Math.floor( productObject.price_tier_usage_quantity / 1000000 );
+					const tierMaximumRecords =
+						1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
+					return translate( 'Pricing Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
 						args: {
-							numberOfRecords: numberFormat( productObject.price_tier_usage_quantity ),
+							tierNumber,
+							tierMaximumRecords: numberFormat( tierMaximumRecords ),
 						},
-					}
-				);
-			},
-			slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
-		} );
+					} );
+				}
+				default:
+					return null;
+			}
+		},
+		optionActionButtonNames: getJetpackProductsShortNames(),
+		optionDisplayNames: getJetpackProductsDisplayNames(),
+		optionDescriptions: getJetpackProductsDescriptions(),
+		optionsLabelCallback: ( productObject ) => {
+			return translate(
+				'Your current site record size: %(numberOfRecords)s record',
+				'Your current site record size: %(numberOfRecords)s records',
+				{
+					count: productObject.price_tier_usage_quantity,
+					args: {
+						numberOfRecords: numberFormat( productObject.price_tier_usage_quantity ),
+					},
+				}
+			);
+		},
+		slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
+	} );
 
 	return output;
 };

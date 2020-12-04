@@ -10,29 +10,27 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { Card } from '@automattic/components';
 import filesize from 'filesize';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import SupportInfo from 'components/support-info';
-import { planHasFeature } from 'lib/plans';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import SupportInfo from 'calypso/components/support-info';
+import { planHasFeature } from 'calypso/lib/plans';
 import {
 	FEATURE_VIDEO_UPLOADS,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PREMIUM,
 	FEATURE_VIDEO_UPLOADS_JETPACK_PRO,
-	TERM_ANNUALLY,
-} from 'lib/plans/constants';
-import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
-import getMediaStorageUsed from 'state/selectors/get-media-storage-used';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSitePlanSlug, getSiteSlug } from 'state/sites/selectors';
-import QueryMediaStorage from 'components/data/query-media-storage';
-import PlanStorageBar from 'blocks/plan-storage/bar';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
-import { getPathToDetails } from 'my-sites/plans-v2/utils';
+} from 'calypso/lib/plans/constants';
+import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
+import getMediaStorageUsed from 'calypso/state/selectors/get-media-storage-used';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSitePlanSlug, getSiteSlug } from 'calypso/state/sites/selectors';
+import QueryMediaStorage from 'calypso/components/data/query-media-storage';
+import PlanStorageBar from 'calypso/blocks/plan-storage/bar';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 class MediaSettingsPerformance extends Component {
 	static propTypes = {
@@ -138,13 +136,7 @@ class MediaSettingsPerformance extends Component {
 					event={ 'jetpack_video_settings' }
 					feature={ FEATURE_VIDEO_UPLOADS_JETPACK_PRO }
 					showIcon={ true }
-					href={ getPathToDetails(
-						'/plans',
-						{},
-						OPTIONS_JETPACK_SECURITY,
-						TERM_ANNUALLY,
-						siteSlug
-					) }
+					href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_VIDEO_UPLOADS_JETPACK_PRO ] }` }
 				/>
 			)
 		);

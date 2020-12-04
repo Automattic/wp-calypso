@@ -6,7 +6,7 @@ This module renders a dataset as an HTML-based chart representing the data.
 
 ```jsx
 // import the component
-import ElementChart from 'my-sites/chart';
+import ElementChart from 'calypso/my-sites/chart';
 
 // And use it inline inside the render method of another component
 function render() {

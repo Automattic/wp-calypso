@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withItemsSchema } from 'lib/query-manager/schema';
+import { withItemsSchema } from 'calypso/lib/query-manager/schema';
 
 const themesSchema = {
 	title: 'Theme',

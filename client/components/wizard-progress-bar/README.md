@@ -8,7 +8,7 @@ A Progress Bar for use with a custom wizard. It has buttons to go backward and f
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import WizardProgressBar from 'components/wizard-progress-bar';
+import WizardProgressBar from 'calypso/components/wizard-progress-bar';
 
 export default class WizardProgressBarExample extends Component {
 	static defaultProps = {

@@ -3,7 +3,9 @@
  */
 import edit from './edit';
 import save from './save';
+import deprecated from './deprecated/v1';
 import { getCategoryWithFallbacks } from '../../../block-helpers';
+import icon from '../icon.js';
 
 /**
  * WordPress dependencies
@@ -28,7 +30,9 @@ const settings = {
 		html: false,
 	},
 	edit,
+	icon,
 	save,
+	deprecated,
 };
 
 export { name, category, settings };

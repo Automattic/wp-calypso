@@ -10,18 +10,18 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import PostTypeFilter from 'my-sites/post-type-filter';
-import PostTypeList from 'my-sites/post-type-list';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import PostTypeList from 'calypso/my-sites/post-type-list';
 import PostTypeUnsupported from './post-type-unsupported';
 import PostTypeForbidden from './post-type-forbidden';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getPostType, isPostTypeSupported } from 'state/post-types/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getPostType, isPostTypeSupported } from 'calypso/state/post-types/selectors';
 
 function Types( {
 	siteId,

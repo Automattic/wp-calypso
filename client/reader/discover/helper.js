@@ -2,16 +2,13 @@
  * External dependencies
  */
 import { find, get } from 'lodash';
-import config from 'config';
-import Debug from 'debug';
+import config from 'calypso/config';
 
-const debug = Debug( 'calypso:reader:discover' ); // eslint-disable-line
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
-import userUtils from 'lib/user/utils';
-import { getSiteUrl as readerRouteGetSiteUrl } from 'reader/route';
-import { getUrlParts } from 'lib/url';
+import { getSiteUrl as readerRouteGetSiteUrl } from 'calypso/reader/route';
+import { getUrlParts } from 'calypso/lib/url';
 
 function hasDiscoverSlug( post, searchSlug ) {
 	const metaData = get( post, 'discover_metadata.discover_fp_post_formats' );
@@ -29,7 +26,7 @@ export function isDiscoverFeed( feedId ) {
 }
 
 export function isDiscoverEnabled() {
-	return userUtils.getLocaleSlug() === 'en';
+	return false;
 }
 
 export function isDiscoverPost( post ) {
@@ -55,6 +52,7 @@ export function getSiteUrl( post ) {
 export function getDiscoverBlogName( post ) {
 	return get( post, 'discover_metadata.attribution.blog_name' );
 }
+
 export function hasSource( post ) {
 	return isDiscoverPost( post ) && ! isDiscoverSitePick( post );
 }

@@ -14,18 +14,26 @@ import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept';
-import { warningNotice } from 'state/notices/actions';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'lib/plugins/actions';
-import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginNotices from 'lib/plugins/notices';
+import acceptDialog from 'calypso/lib/accept';
+import { warningNotice } from 'calypso/state/notices/actions';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import PluginNotices from 'calypso/lib/plugins/notices';
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import {
+	activatePlugin,
+	deactivatePlugin,
+	disableAutoupdatePlugin,
+	enableAutoupdatePlugin,
+	removePlugin,
+	updatePlugin,
+} from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -33,7 +41,8 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
-	let i, prop;
+	let i;
+	let prop;
 
 	for ( i = 0; i < propArr.length; i++ ) {
 		prop = propArr[ i ];
@@ -225,7 +234,7 @@ export const PluginsList = createReactClass( {
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 	},
 
-	doActionOverSelected( actionName, action ) {
+	doActionOverSelected( actionName, action, siteIdOnly = false ) {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
@@ -236,7 +245,11 @@ export const PluginsList = createReactClass( {
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
 			.map( ( p ) => p.sites ) // list of plugins -> list of list of sites
 			.reduce( flattenArrays, [] ) // flatten the list into one big list of sites
-			.forEach( ( site ) => action( site, site.plugin ) );
+			.forEach( ( site ) => {
+				// Our Redux actions only need a site ID instead of an entire site object
+				const siteArg = siteIdOnly ? site.ID : site;
+				return action( siteArg, site.plugin );
+			} );
 	},
 
 	pluginHasUpdate( plugin ) {
@@ -248,23 +261,23 @@ export const PluginsList = createReactClass( {
 	updateAllPlugins() {
 		this.removePluginsNotices();
 		this.props.plugins.forEach( ( plugin ) => {
-			plugin.sites.forEach( ( site ) => PluginsActions.updatePlugin( site, site.plugin ) );
+			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
 	},
 
 	updateSelected() {
-		this.doActionOverSelected( 'updating', PluginsActions.updatePlugin );
+		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
 	},
 
 	activateSelected() {
-		this.doActionOverSelected( 'activating', PluginsActions.activatePlugin );
+		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
 	},
 
 	deactivateSelected() {
-		this.doActionOverSelected( 'deactivating', PluginsActions.deactivatePlugin );
+		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
 	},
 
@@ -273,7 +286,7 @@ export const PluginsList = createReactClass( {
 
 		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
 			waitForDeactivate = true;
-			PluginsActions.deactivatePlugin( site, plugin );
+			this.props.deactivatePlugin( site, plugin, true );
 		} );
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
@@ -284,19 +297,20 @@ export const PluginsList = createReactClass( {
 	},
 
 	setAutoupdateSelected() {
-		this.doActionOverSelected( 'enablingAutoupdates', PluginsActions.enableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
 	},
 
 	unsetAutoupdateSelected() {
-		this.doActionOverSelected( 'disablingAutoupdates', PluginsActions.disableAutoUpdatesPlugin );
+		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
 	},
 
 	getConfirmationText() {
-		const pluginsList = {},
-			sitesList = {};
-		let pluginName, siteName;
+		const pluginsList = {};
+		const sitesList = {};
+		let pluginName;
+		let siteName;
 		const { plugins, translate } = this.props;
 
 		plugins.filter( this.isSelected ).forEach( ( plugin ) => {
@@ -404,7 +418,7 @@ export const PluginsList = createReactClass( {
 
 	removeSelected( accepted ) {
 		if ( accepted ) {
-			this.doActionOverSelected( 'removing', PluginsActions.removePlugin );
+			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
 	},
@@ -530,7 +544,6 @@ export const PluginsList = createReactClass( {
 				progress={ this.state.notices.inProgress.filter(
 					( log ) => log.plugin.slug === plugin.slug
 				) }
-				notices={ this.state.notices }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
 				onClick={ selectThisPlugin }
@@ -559,7 +572,13 @@ export default connect(
 		};
 	},
 	{
+		activatePlugin,
+		deactivatePlugin,
+		disableAutoupdatePlugin,
+		enableAutoupdatePlugin,
 		recordGoogleEvent,
+		removePlugin,
+		updatePlugin,
 		warningNotice,
 	}
 )( localize( PluginsList ) );

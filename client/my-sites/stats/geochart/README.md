@@ -5,7 +5,7 @@ This component creates the geochart used in the Countries module. It utilizes th
 ## How to use
 
 ```js
-import GeoChart from 'my-sites/stats/geochart';
+import GeoChart from 'calypso/my-sites/stats/geochart';
 
 const MyComponent = () => {
 	return <GeoChart query={ query /*object*/ } />;

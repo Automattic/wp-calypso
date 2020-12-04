@@ -18,13 +18,13 @@ import {
 	isPlan,
 	isFreePlan,
 	isDomainRegistration,
-} from 'lib/products-values';
-import PurchaseDetail from 'components/purchase-detail';
-import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'lib/url/support';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/products-values';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { EMAIL_VALIDATION_AND_VERIFICATION, DOMAIN_WAITING } from 'calypso/lib/url/support';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const DomainRegistrationDetails = ( {
 	selectedSite,
@@ -33,16 +33,14 @@ const DomainRegistrationDetails = ( {
 	hasNonPrimaryDomainsFlag,
 	onPickPlanUpsellClick,
 } ) => {
-	const googleAppsWasPurchased = purchases.some( isGoogleApps ),
-		domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified ),
-		hasOtherPrimaryDomain =
-			selectedSite.options &&
-			selectedSite.options.is_mapped_domain &&
-			selectedSite.domain !== domain,
-		showPlanUpsell =
-			hasNonPrimaryDomainsFlag && isFreePlan( selectedSite.plan ) && ! purchases.some( isPlan ),
-		purchasedDomain = purchases.find( isDomainRegistration ).meta,
-		isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
+	const googleAppsWasPurchased = purchases.some( isGoogleApps );
+	const domainContactEmailVerified = purchases.some( ( purchase ) => purchase.isEmailVerified );
+	const hasOtherPrimaryDomain =
+		selectedSite.options && selectedSite.options.is_mapped_domain && selectedSite.domain !== domain;
+	const showPlanUpsell =
+		hasNonPrimaryDomainsFlag && isFreePlan( selectedSite.plan ) && ! purchases.some( isPlan );
+	const purchasedDomain = purchases.find( isDomainRegistration ).meta;
+	const isRestrictedToBlogDomains = purchases.some( isBlogger ) || isBlogger( selectedSite.plan );
 
 	return (
 		<div>

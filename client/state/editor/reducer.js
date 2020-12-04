@@ -16,12 +16,11 @@ import {
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
-import contactForm from './contact-form/reducer';
 import saveBlockers from './save-blockers/reducer';
 import rawContent from './raw-content/reducer';
 
@@ -75,6 +74,17 @@ export function isIframeLoaded( state = false, action ) {
 	return state;
 }
 
+export const iframePort = withoutPersistence( ( state = null, action ) => {
+	switch ( action.type ) {
+		case EDITOR_IFRAME_LOADED: {
+			const loaded = action.isIframeLoaded;
+			return loaded && action.iframePort ? action.iframePort : null;
+		}
+	}
+
+	return state;
+} );
+
 export function isAutosaving( state = false, action ) {
 	switch ( action.type ) {
 		case EDITOR_AUTOSAVE:
@@ -106,12 +116,12 @@ const combinedReducer = combineReducers( {
 	loadingError,
 	isLoading,
 	isIframeLoaded,
+	iframePort,
 	isAutosaving,
 	autosavePreviewUrl,
 	imageEditor,
 	videoEditor,
 	lastDraft,
-	contactForm,
 	saveBlockers,
 	rawContent,
 } );

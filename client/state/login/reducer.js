@@ -6,7 +6,7 @@ import { get, isEmpty, pick, startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import magicLogin from './magic-login/reducer';
 import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST,
@@ -41,9 +41,9 @@ import {
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_UPDATE_NONCE,
 	CURRENT_USER_RECEIVE,
-} from 'state/action-types';
-import { login } from 'lib/paths';
-import { addQueryArgs } from 'lib/route';
+} from 'calypso/state/action-types';
+import { login } from 'calypso/lib/paths';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export const isRequesting = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
@@ -123,7 +123,7 @@ export const redirectTo = combineReducers( {
 	} ),
 } );
 
-export const isFormDisabled = withoutPersistence( ( state = null, action ) => {
+export const isFormDisabled = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {
 		case LOGIN_AUTH_ACCOUNT_TYPE_REQUEST:
 			return true;

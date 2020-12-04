@@ -43,7 +43,7 @@ These are added with the `retryPolicy` override in the HTTP request description.
 import {
 	noRetry,
 	exponentialBackoff,
-} from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+} from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 
 dispatch(
 	http(

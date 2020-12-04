@@ -1,15 +1,20 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation, withStorageKey } from 'state/utils';
+import {
+	combineReducers,
+	keyedReducer,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
 	SITE_CHECKLIST_RECEIVE,
 	SITE_CHECKLIST_TASK_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { items as itemSchemas } from './schema';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
 const setChecklistTaskCompletion = ( state, taskId, completed ) => ( {
 	...state,

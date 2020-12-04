@@ -1,0 +1,7 @@
+.form-textarea {
+	@extend %form-field;
+
+	border-radius: 2px;
+	box-sizing: border-box;
+	min-height: 92px;
+}

@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { flowRight, get, has } from 'lodash';
 
 /**
@@ -12,38 +12,44 @@ import { flowRight, get, has } from 'lodash';
  */
 import wrapSettingsForm from './wrap-settings-form';
 import { Card, CompactCard, Button } from '@automattic/components';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import LanguagePicker from 'components/language-picker';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import config from 'config';
-import { languages } from 'languages';
-import FormInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Timezone from 'components/timezone';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import LanguagePicker from 'calypso/components/language-picker';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import config from 'calypso/config';
+import languages from '@automattic/languages';
+import FormInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Timezone from 'calypso/components/timezone';
 import SiteIconSetting from './site-icon-setting';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { isBusiness } from 'lib/products-values';
-import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'lib/plans/constants';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { isJetpackSite, isCurrentPlanPaid } from 'state/sites/selectors';
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import guessTimezone from 'lib/i18n-utils/guess-timezone';
-import { preventWidows } from 'lib/formatting';
-import scrollTo from 'lib/scroll-to';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import isVipSite from 'state/selectors/is-vip-site';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import { launchSite } from 'state/sites/launch/actions';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { isBusiness } from 'calypso/lib/products-values';
+import { FEATURE_NO_BRANDING, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { isJetpackSite, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import { preventWidows } from 'calypso/lib/formatting';
+import scrollTo from 'calypso/lib/scroll-to';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import { launchSite } from 'calypso/state/sites/launch/actions';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isAtomicAndEditingToolkitPluginDeactivated from 'calypso/state/selectors/is-atomic-and-editing-toolkit-plugin-deactivated';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 
 export class SiteSettingsFormGeneral extends Component {
 	componentDidMount() {
@@ -146,8 +152,8 @@ export class SiteSettingsFormGeneral extends Component {
 
 	blogAddress() {
 		const { site, siteIsJetpack, siteSlug, translate, isWPForTeamsSite } = this.props;
-		let customAddress = '',
-			addressDescription = '';
+		let customAddress = '';
+		let addressDescription = '';
 
 		if ( ! site || siteIsJetpack || isWPForTeamsSite ) {
 			return null;
@@ -323,7 +329,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Coming Soon' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
 							) }
@@ -349,7 +355,7 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormLabel>
 				) }
-				<FormSettingExplanation isIndented>
+				<FormSettingExplanation>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
@@ -368,7 +374,7 @@ export class SiteSettingsFormGeneral extends Component {
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
 					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-					<FormSettingExplanation isIndented>
+					<FormSettingExplanation>
 						{ translate(
 							'This option does not block access to your site — it is up to search engines to honor your request.'
 						) }
@@ -393,7 +399,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Private' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
 							) }
@@ -407,6 +413,7 @@ export class SiteSettingsFormGeneral extends Component {
 	visibilityOptionsComingSoonV2() {
 		const {
 			fields,
+			isAtomicAndEditingToolkitDeactivated,
 			isRequestingSettings,
 			isWPForTeamsSite,
 			eventTracker,
@@ -414,50 +421,62 @@ export class SiteSettingsFormGeneral extends Component {
 			siteIsAtomic,
 			translate,
 		} = this.props;
-		const blogPublic = parseInt( fields.blog_public, 10 );
 
+		const blogPublic = parseInt( fields.blog_public, 10 );
 		const wpcomComingSoon = 1 === parseInt( fields.wpcom_coming_soon, 10 );
 		const wpcomPublicComingSoon = 1 === parseInt( fields.wpcom_public_coming_soon, 10 );
-
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
 		const isNonAtomicJetpackSite = siteIsJetpack && ! siteIsAtomic;
-
+		const isAnyComingSoonEnabled =
+			( 0 === blogPublic && wpcomPublicComingSoon ) || isPrivateAndUnlaunched || wpcomComingSoon;
+		const isComingSoonDisabled = isRequestingSettings || isAtomicAndEditingToolkitDeactivated;
+		const comingSoonFormLabelClasses = classNames(
+			'site-settings__visibility-label is-coming-soon',
+			{
+				'is-coming-soon-disabled': isComingSoonDisabled,
+			}
+		);
 		return (
 			<FormFieldset>
-				{ ! isNonAtomicJetpackSite && ! isWPForTeamsSite && (
-					<>
-						<FormLabel className="site-settings__visibility-label is-coming-soon">
-							<FormRadio
-								name="blog_public"
-								value="0"
-								checked={
-									( 0 === blogPublic && wpcomPublicComingSoon ) ||
-									( -1 === blogPublic && wpcomComingSoon )
-								}
-								onChange={ () =>
-									this.handleVisibilityOptionChange( {
-										blog_public: 0,
-										wpcom_coming_soon: 0,
-										wpcom_public_coming_soon: 1,
-									} )
-								}
-								disabled={ isRequestingSettings }
-								onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
-								label={ translate( 'Coming Soon' ) }
-							/>
-						</FormLabel>
-						<FormSettingExplanation isIndented>
-							{ translate(
-								'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
-							) }
-						</FormSettingExplanation>
-					</>
-				) }
+				{ ! isNonAtomicJetpackSite &&
+					! isWPForTeamsSite &&
+					! isAtomicAndEditingToolkitDeactivated && (
+						<>
+							<FormLabel className={ comingSoonFormLabelClasses }>
+								<FormRadio
+									name="blog_public"
+									value="0"
+									checked={ isAnyComingSoonEnabled }
+									onChange={ () =>
+										this.handleVisibilityOptionChange( {
+											blog_public: 0,
+											wpcom_coming_soon: 0,
+											wpcom_public_coming_soon: 1,
+										} )
+									}
+									disabled={ isComingSoonDisabled }
+									onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
+									label={ translate( 'Coming Soon' ) }
+								/>
+							</FormLabel>
+							<FormSettingExplanation>
+								{ translate(
+									'Your site is hidden from visitors behind a "Coming Soon" notice until it is ready for viewing.'
+								) }
+							</FormSettingExplanation>
+						</>
+					) }
 				{ ! isNonAtomicJetpackSite && (
 					<FormLabel className="site-settings__visibility-label is-public">
 						<FormRadio
 							name="blog_public"
 							value="1"
-							checked={ ( blogPublic === 0 && ! wpcomPublicComingSoon ) || blogPublic === 1 }
+							checked={
+								( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+								( blogPublic === 0 && ! wpcomPublicComingSoon ) ||
+								blogPublic === 1
+							}
 							onChange={ () =>
 								this.handleVisibilityOptionChange( {
 									blog_public: 1,
@@ -471,14 +490,17 @@ export class SiteSettingsFormGeneral extends Component {
 						/>
 					</FormLabel>
 				) }
-				<FormSettingExplanation isIndented>
+				<FormSettingExplanation>
 					{ translate( 'Your site is visible to everyone.' ) }
 				</FormSettingExplanation>
 				<FormLabel className="site-settings__visibility-label is-checkbox is-hidden">
 					<FormInputCheckbox
 						name="blog_public"
 						value="0"
-						checked={ 0 === blogPublic && ! wpcomPublicComingSoon }
+						checked={
+							( wpcomPublicComingSoon && blogPublic === 0 && isComingSoonDisabled ) ||
+							( 0 === blogPublic && ! wpcomPublicComingSoon )
+						}
 						onChange={ () =>
 							this.handleVisibilityOptionChange( {
 								blog_public: wpcomPublicComingSoon || blogPublic === -1 || blogPublic === 1 ? 0 : 1,
@@ -490,7 +512,7 @@ export class SiteSettingsFormGeneral extends Component {
 						onClick={ eventTracker( 'Clicked Site Visibility Radio Button' ) }
 					/>
 					<span>{ translate( 'Discourage search engines from indexing this site' ) }</span>
-					<FormSettingExplanation isIndented>
+					<FormSettingExplanation>
 						{ translate(
 							'This option does not block access to your site — it is up to search engines to honor your request.'
 						) }
@@ -502,7 +524,10 @@ export class SiteSettingsFormGeneral extends Component {
 							<FormRadio
 								name="blog_public"
 								value="-1"
-								checked={ -1 === blogPublic && ! wpcomComingSoon }
+								checked={
+									( -1 === blogPublic && ! wpcomComingSoon && ! isPrivateAndUnlaunched ) ||
+									( wpcomComingSoon && isAtomicAndEditingToolkitDeactivated )
+								}
 								onChange={ () =>
 									this.handleVisibilityOptionChange( {
 										blog_public: -1,
@@ -515,7 +540,7 @@ export class SiteSettingsFormGeneral extends Component {
 								label={ translate( 'Private' ) }
 							/>
 						</FormLabel>
-						<FormSettingExplanation isIndented>
+						<FormSettingExplanation>
 							{ translate(
 								'Your site is only visible to you and logged-in members you approve. Everyone else will see a log in screen.'
 							) }
@@ -582,13 +607,22 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	renderLaunchSite() {
-		const { translate, siteDomains, siteSlug, siteId, isPaidPlan, isComingSoon } = this.props;
+		const {
+			translate,
+			siteDomains,
+			siteSlug,
+			siteId,
+			isPaidPlan,
+			isComingSoon,
+			fields,
+		} = this.props;
 
 		const launchSiteClasses = classNames( 'site-settings__general-settings-launch-site-button', {
 			'site-settings__disable-privacy-settings': ! siteDomains.length,
 		} );
 		const btnText = translate( 'Launch site' );
-		let querySiteDomainsComponent, btnComponent;
+		let querySiteDomainsComponent;
+		let btnComponent;
 
 		if ( 0 === siteDomains.length ) {
 			querySiteDomainsComponent = <QuerySiteDomains siteId={ siteId } />;
@@ -603,13 +637,17 @@ export class SiteSettingsFormGeneral extends Component {
 			querySiteDomainsComponent = '';
 		}
 
+		const blogPublic = parseInt( fields.blog_public, 10 );
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = -1 === blogPublic && this.props.isUnlaunchedSite;
+
 		return (
 			<>
 				<SettingsSectionHeader title={ translate( 'Launch site' ) } />
 				<Card className="site-settings__general-settings-launch-site">
 					<div className="site-settings__general-settings-launch-site-text">
 						<p>
-							{ isComingSoon
+							{ isComingSoon || isPrivateAndUnlaunched
 								? translate(
 										'Your site hasn\'t been launched yet. It is hidden from visitors behind a "Coming Soon" notice until it is launched.'
 								  )
@@ -627,10 +665,17 @@ export class SiteSettingsFormGeneral extends Component {
 	}
 
 	privacySettings() {
-		const { isRequestingSettings, translate, handleSubmitForm, isSavingSettings } = this.props;
+		const {
+			isRequestingSettings,
+			translate,
+			handleSubmitForm,
+			isSavingSettings,
+			siteId,
+		} = this.props;
 
 		return (
 			<>
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<SettingsSectionHeader
 					disabled={ isRequestingSettings || isSavingSettings }
 					id="site-privacy-settings"
@@ -790,6 +835,10 @@ const connectComponent = connect(
 			isPaidPlan: isCurrentPlanPaid( state, siteId ),
 			siteDomains: getDomainsBySiteId( state, siteId ),
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+			isAtomicAndEditingToolkitDeactivated: isAtomicAndEditingToolkitPluginDeactivated(
+				state,
+				siteId
+			),
 		};
 	},
 	mapDispatchToProps,

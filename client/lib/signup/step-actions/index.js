@@ -13,55 +13,63 @@ import {
 	omitBy,
 	pick,
 	startsWith,
+	has,
 } from 'lodash';
+import cookie from 'cookie';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 // Libraries
-import wpcom from 'lib/wp';
-import guessTimezone from 'lib/i18n-utils/guess-timezone';
-import user from 'lib/user';
-import { getSavedVariations } from 'lib/abtest';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { recordRegistration } from 'lib/analytics/signup';
+import wpcom from 'calypso/lib/wp';
+import guessTimezone from 'calypso/lib/i18n-utils/guess-timezone';
+import user from 'calypso/lib/user';
+import { abtest, getSavedVariations } from 'calypso/lib/abtest';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { recordRegistration } from 'calypso/lib/analytics/signup';
 import {
 	updatePrivacyForDomain,
 	supportsPrivacyProtectionPurchase,
 	planItem as getCartItemForPlan,
-} from 'lib/cart-values/cart-items';
-import { getUrlParts } from 'lib/url';
+} from 'calypso/lib/cart-values/cart-items';
+import { getUrlParts } from 'calypso/lib/url';
 
 // State actions and selectors
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { getSurveyVertical, getSurveySiteType } from 'state/signup/steps/survey/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteVerticalId, getSiteVerticalName } from 'state/signup/steps/site-vertical/selectors';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import { getSelectedImportEngine, getNuxUrlInputValue } from 'state/importer-nux/temp-selectors';
-import getSiteId from 'state/selectors/get-site-id';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
+import { getSurveyVertical, getSurveySiteType } from 'calypso/state/signup/steps/survey/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import {
+	getSiteVerticalId,
+	getSiteVerticalName,
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import {
+	getSelectedImportEngine,
+	getNuxUrlInputValue,
+} from 'calypso/state/importer-nux/temp-selectors';
+import getSiteId from 'calypso/state/selectors/get-site-id';
 import { Site } from '@automattic/data-stores';
 const Visibility = Site.Visibility;
 
 // Current directory dependencies
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 
-import SignupCart from 'lib/signup/cart';
+import SignupCart from 'calypso/lib/signup/cart';
 
 // Others
-import flows from 'signup/config/flows';
-import steps, { isDomainStepSkippable } from 'signup/config/steps';
-import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'lib/signup/page-builder';
-
-import { fetchSitesAndUser } from 'lib/signup/step-actions/fetch-sites-and-user';
+import flows from 'calypso/signup/config/flows';
+import steps, { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { isEligibleForPageBuilder, shouldEnterPageBuilder } from 'calypso/lib/signup/page-builder';
+import { isDomainRegistration, isPersonal } from 'calypso/lib/products-values';
+import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 
 /**
  * Constants
@@ -191,10 +199,8 @@ function getNewSiteParams( {
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
 		newSiteParams.options.wpcom_public_coming_soon = 1;
-		newSiteParams.options.wpcom_coming_soon = 0;
 		newSiteParams.public = Visibility.PublicNotIndexed;
 	} else {
-		newSiteParams.options.wpcom_public_coming_soon = 0;
 		newSiteParams.options.wpcom_coming_soon = 1;
 		newSiteParams.public = Visibility.Private;
 	}
@@ -355,9 +361,12 @@ export function addPlanToCart( callback, dependencies, stepProvidedItems, reduxS
 		return;
 	}
 
+	const state = reduxStore.getState();
+	const domainUpsellItems =
+		get( getSignupDependencyStore( state ), 'domainUpsellItems', null ) || [];
 	const providedDependencies = { cartItem };
 
-	const newCartItems = [ cartItem ].filter( ( item ) => item );
+	const newCartItems = [ cartItem ].filter( ( item ) => item ).concat( domainUpsellItems );
 
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, siteSlug, null, null );
 }
@@ -607,16 +616,15 @@ export function createSite( callback, dependencies, stepData, reduxStore ) {
 
 	if ( config.isEnabled( 'coming-soon-v2' ) ) {
 		data.options.wpcom_public_coming_soon = 1;
-		data.options.wpcom_coming_soon = 0;
 		data.public = Visibility.PublicNotIndexed;
 	} else {
-		data.options.wpcom_public_coming_soon = 0;
 		data.options.wpcom_coming_soon = 1;
 		data.public = Visibility.Private;
 	}
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
@@ -653,7 +661,8 @@ export function createWpForTeamsSite( callback, dependencies, stepData, reduxSto
 	};
 
 	wpcom.undocumented().sitesNew( data, function ( errors, response ) {
-		let providedDependencies, siteSlug;
+		let providedDependencies;
+		let siteSlug;
 
 		if ( response && response.blog_details ) {
 			const parsedBlogURL = getUrlParts( response.blog_details.url );
@@ -846,6 +855,35 @@ export function isSiteTopicFulfilled( stepName, defaultDependencies, nextProps )
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isSecureYourBrandFulfilled( stepName, defaultDependencies, nextProps ) {
+	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
+	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
+	const { submitSignupStep } = nextProps;
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+	const skipSecureYourBrand = get( nextProps, 'skipSecureYourBrand', false );
+	const isNotRegistration = ! ( domainItem && isDomainRegistration( domainItem ) );
+	const planDoesNotSupportUpsell = ! cartItem || isPersonal( cartItem );
+	const cookies = cookie.parse( document.cookie );
+	const isUs = cookies?.country_code === 'US';
+
+	if ( ! hasDomain || ! hasPlan ) {
+		return;
+	}
+
+	if (
+		isNotRegistration ||
+		skipSecureYourBrand ||
+		planDoesNotSupportUpsell ||
+		isUs ||
+		'test' !== abtest( 'secureYourBrand' )
+	) {
+		const domainUpsellItems = null;
+		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
 		flows.excludeStep( stepName );
 	}
 }

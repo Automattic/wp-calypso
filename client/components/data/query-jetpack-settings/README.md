@@ -11,8 +11,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { map } from 'lodash';
 
-import getJetpackSettings from 'state/selectors/get-jetpack-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 
 function MyJetpackSettings( { settings, siteId } ) {
 	const query = {

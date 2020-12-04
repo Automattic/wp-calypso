@@ -9,12 +9,25 @@
 }
 
 .earn__placeholder-promo-card {
-    .promo-card:not( .is-primary ) {
-        & > * {
-            @include placeholder( --color-neutral-10 );
-            * {
-                visibility: hidden;
-            }
-        }
-    }
+	.promo-card:not( .is-primary ) {
+		& > * {
+			@include placeholder( --color-neutral-10 );
+			* {
+				visibility: hidden;
+			}
+		}
+	}
+}
+
+.earn .promo-section__promos .gridicon {
+    fill: var( --studio-blue-10 );
+    position: relative;
+    top: -8px;
+}
+
+@include break-wide {
+	.earn .promo-card.is-primary {
+		padding-left: 72px;
+		padding-right: 72px;
+	}
 }

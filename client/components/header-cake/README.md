@@ -5,7 +5,7 @@ The "header cake" component should be used at the top of an item's detail page. 
 ## Usage
 
 ```js
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 
 <HeaderCake onClick={ callback }>Item Details</HeaderCake>;
 ```

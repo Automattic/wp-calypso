@@ -12,17 +12,17 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import SignupForm from 'blocks/signup-form';
-import InviteFormHeader from 'my-sites/invites/invite-form-header';
-import { login } from 'lib/paths';
-import { createAccount, acceptInvite } from 'lib/invites/actions';
-import WpcomLoginForm from 'signup/wpcom-login-form';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { errorNotice } from 'state/notices/actions';
+import SignupForm from 'calypso/blocks/signup-form';
+import InviteFormHeader from 'calypso/my-sites/invites/invite-form-header';
+import { login } from 'calypso/lib/paths';
+import { createAccount, acceptInvite } from 'calypso/lib/invites/actions';
+import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 
 /**
  * Module variables

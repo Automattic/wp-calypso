@@ -7,15 +7,21 @@ import EventEmitter from 'events';
  * Internal dependencies
  */
 import loggerMiddleware from '../logger';
-import config from 'config';
+import config from 'calypso/config';
 
-const mockLogger = {
+const requestLogger = {
 	info: jest.fn(),
 };
+const mockRootLogger = {
+	child: jest.fn( () => requestLogger ),
+};
 jest.mock( 'server/lib/logger', () => ( {
-	getLogger: () => mockLogger,
+	getLogger: () => mockRootLogger,
 } ) );
 jest.mock( 'config', () => jest.fn() );
+jest.mock( 'uuid', () => ( {
+	v4: jest.fn( () => '00000000-0000-0000-0000-000000000000' ),
+} ) );
 
 const fakeRequest = ( { method, url, ip, httpVersion, headers = {} } = {} ) => {
 	const req = new EventEmitter();
@@ -54,10 +60,11 @@ const withEnv = ( env ) => {
 	} );
 };
 
-const simulateRequest = ( { req, res, delay } ) => {
+const simulateRequest = ( { req, res, delay, finished = true } ) => {
 	loggerMiddleware()( req, res, () => {} );
 	jest.advanceTimersByTime( delay );
-	res.emit( 'finish' );
+	res.finished = finished;
+	res.emit( 'close' );
 };
 
 beforeEach( () => {
@@ -66,10 +73,10 @@ beforeEach( () => {
 
 afterEach( () => {
 	jest.useRealTimers();
-	jest.resetAllMocks();
+	jest.clearAllMocks();
 } );
 
-it( 'Adds a `logger` property to the request', () => {
+it( 'Adds a `logger` property to the request with the request id', () => {
 	const req = fakeRequest();
 
 	simulateRequest( {
@@ -77,10 +84,13 @@ it( 'Adds a `logger` property to the request', () => {
 		res: fakeResponse(),
 	} );
 
-	expect( req.logger ).toBe( mockLogger );
+	expect( req.logger ).toBe( requestLogger );
+	expect( mockRootLogger.child ).toHaveBeenCalledWith( {
+		reqId: '00000000-0000-0000-0000-000000000000',
+	} );
 } );
 
-it( 'It logs info about the request', () => {
+it( 'Logs info about the request', () => {
 	withEnv( 'production' );
 
 	simulateRequest( {
@@ -104,20 +114,33 @@ it( 'It logs info about the request', () => {
 		delay: 100,
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith( {
-		length: 123,
-		duration: 100,
-		status: '200',
-		method: 'GET',
-		env: 'production',
-		url: '/example.html',
-		httpVersion: '2.0',
-		userAgent: 'Chrome 85',
-		rawUserAgent:
-			'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
-		remoteAddr: '127.0.0.1',
-		referrer: 'https://wordpress.com',
+	expect( requestLogger.info ).toHaveBeenCalledWith(
+		{
+			length: 123,
+			duration: 100,
+			status: '200',
+			method: 'GET',
+			env: 'production',
+			url: '/example.html',
+			httpVersion: '2.0',
+			userAgent: 'Chrome 85',
+			rawUserAgent:
+				'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36',
+			remoteAddr: '127.0.0.1',
+			referrer: 'https://wordpress.com',
+		},
+		'request finished'
+	);
+} );
+
+it( 'Logs closed requests', () => {
+	simulateRequest( {
+		req: fakeRequest(),
+		res: fakeResponse(),
+		finished: false,
 	} );
+
+	expect( requestLogger.info ).toHaveBeenCalledWith( expect.anything(), 'request closed' );
 } );
 
 it( "Logs raw UserAgent if it can't be parsed", () => {
@@ -130,10 +153,11 @@ it( "Logs raw UserAgent if it can't be parsed", () => {
 		res: fakeResponse(),
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith(
+	expect( requestLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			userAgent: 'A random browser',
-		} )
+		} ),
+		expect.anything()
 	);
 } );
 
@@ -145,9 +169,10 @@ it( 'Adds the COMMIT_SHA as version', () => {
 		res: fakeResponse(),
 	} );
 
-	expect( mockLogger.info ).toHaveBeenCalledWith(
+	expect( requestLogger.info ).toHaveBeenCalledWith(
 		expect.objectContaining( {
 			appVersion: 'abcd1234',
-		} )
+		} ),
+		expect.anything()
 	);
 } );

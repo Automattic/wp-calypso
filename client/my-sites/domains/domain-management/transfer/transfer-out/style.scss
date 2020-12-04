@@ -9,17 +9,17 @@
 }
 
 .transfer-out__action-button {
-	float: right;
 	margin-right: 10px;
-	&:first-of-type {
-		margin-right: 0;
-	}
 }
 
 .transfer-out__card {
 	p {
 		color: var( --color-neutral-50 );
 	}
+}
+
+.transfer-out__content {
+	margin-bottom: 1.5rem;
 }
 
 .dialog.card.transfer-out__select-ips-tag-dialog {

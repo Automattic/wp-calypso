@@ -8,8 +8,6 @@ import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
-	usePaymentProcessor,
-	useTransactionStatus,
 	useLineItems,
 	useEvents,
 	useFormStatus,
@@ -22,16 +20,16 @@ import { camelCase } from 'lodash';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { validatePaymentDetails } from 'lib/checkout/validation';
-import useCountryList from 'my-sites/checkout/composite-checkout/hooks/use-country-list';
-import Field from 'my-sites/checkout/composite-checkout/components/field';
+import notices from 'calypso/notices';
+import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import useCountryList from 'calypso/my-sites/checkout/composite-checkout/hooks/use-country-list';
+import Field from 'calypso/my-sites/checkout/composite-checkout/components/field';
 import {
 	SummaryLine,
 	SummaryDetails,
-} from 'my-sites/checkout/composite-checkout/components/summary-details';
-import { PaymentMethodLogos } from 'my-sites/checkout/composite-checkout/components/payment-method-logos';
-import { maskField } from 'lib/checkout';
+} from 'calypso/my-sites/checkout/composite-checkout/components/summary-details';
+import { PaymentMethodLogos } from 'calypso/my-sites/checkout/composite-checkout/components/payment-method-logos';
+import { maskField } from 'calypso/lib/checkout';
 import CountrySpecificPaymentFields from '../components/country-specific-payment-fields';
 
 const debug = debugFactory( 'composite-checkout:id-wallet-payment-method' );
@@ -212,16 +210,10 @@ const IdWalletField = styled( Field )`
 	}
 `;
 
-function IdWalletPayButton( { disabled, store } ) {
+function IdWalletPayButton( { disabled, onClick, store } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'id_wallet' );
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'id_wallet' ).getCustomerName() );
 	const fields = useSelect( ( select ) => select( 'id_wallet' ).getFields() );
@@ -239,33 +231,17 @@ function IdWalletPayButton( { disabled, store } ) {
 			onClick={ () => {
 				if ( isFormValid( store, contactCountryCode, __ ) ) {
 					debug( 'submitting id wallet payment' );
-					setTransactionPending();
 					onEvent( {
 						type: 'REDIRECT_TRANSACTION_BEGIN',
 						payload: { paymentMethodId: 'id_wallet' },
 					} );
-					submitTransaction( {
+					onClick( 'id_wallet', {
 						...massagedFields,
 						name: customerName?.value,
 						address: massagedFields?.address1,
 						items,
 						total,
-					} )
-						.then( ( transactionResponse ) => {
-							if ( ! transactionResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'id wallet transaction requires redirect', transactionResponse.redirect_url );
-							setTransactionRedirecting( transactionResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"

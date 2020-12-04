@@ -5,7 +5,7 @@ This component is used to display a button that launch a remove action when clic
 ## How to use
 
 ```js
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 
 function render() {
 	return <PluginRemoveButton plugin={ plugin } site={ site } notices={ notices } />;

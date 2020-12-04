@@ -11,10 +11,10 @@ import {
 	isSiteTopicFulfilled,
 	isSiteTypeFulfilled,
 } from '../step-actions';
-import { useNock } from 'test-helpers/use-nock';
-import flows from 'signup/config/flows';
-import { isDomainStepSkippable } from 'signup/config/steps';
-import { getUserStub } from 'lib/user';
+import { useNock } from 'calypso/test-helpers/use-nock';
+import flows from 'calypso/signup/config/flows';
+import { isDomainStepSkippable } from 'calypso/signup/config/steps';
+import { getUserStub } from 'calypso/lib/user';
 
 jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
 

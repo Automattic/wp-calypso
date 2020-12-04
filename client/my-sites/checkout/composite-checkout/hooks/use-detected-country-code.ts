@@ -9,7 +9,7 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
+import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-detected-country-code' );
 const { dispatch } = defaultRegistry;

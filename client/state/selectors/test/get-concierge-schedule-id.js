@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
 
 describe( 'getConciergeScheduleId()', () => {
 	test( 'should default to null', () => {

@@ -11,13 +11,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormInputValidation from 'components/forms/form-input-validation';
-import { getCountryStates } from 'state/country-states/selectors';
-import QueryCountryStates from 'components/data/query-country-states';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import QueryCountryStates from 'calypso/components/data/query-country-states';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import Input from './input';
 
 class StateSelect extends PureComponent {

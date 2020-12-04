@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
+import Spinner from 'calypso/components/spinner';
 
 /**
  * Style dependencies

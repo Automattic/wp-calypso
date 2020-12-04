@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
-import isEligibleForGutenframe from 'state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
-import { getSiteAdminUrl } from 'state/sites/selectors';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
+import isEligibleForGutenframe from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
 	// isEligibleForGutenframe deals with the server side checks for classic editor plugin etc.

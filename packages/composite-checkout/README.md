@@ -29,7 +29,6 @@ Most components of this package require being inside a [CheckoutProvider](#check
 
 - [createApplePayMethod](#createApplePayMethod)
 - [createExistingCardMethod](#createExistingCardMethod)
-- [createFullCreditsMethod](#createFullCreditsMethod)
 - [createPayPalMethod](#createpaypalmethod)
 - [createStripeMethod](#createStripeMethod)
 
@@ -102,9 +101,9 @@ When a payment method is ready to submit its data, it can use an appropriate "pa
 
 Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument. However, for convenience, the `submitButton` will be provided with an `onClick` handler that can do this automatically. The `onClick` function takes two arguments, a string which is the key of the payment processor to be used, and an object that contains the data needed by the payment processor.
 
-If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeNoopResponse](#makeNoopResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
+If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
 
-If not using the `onClick` function, or if the `NOOP` result is returned by the payment processor, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
+If not using the `onClick` function, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
@@ -147,6 +146,12 @@ A generic button component that is used internally for almost all buttons (like 
 The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
+
+### CheckoutCheckIcon
+
+An icon that is displayed for each complete step.
+
+Requires an `id` prop, which is a string that is used to construct the SVG `id`.
 
 ### CheckoutErrorBoundary
 
@@ -298,6 +303,39 @@ Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
 
+### PaymentLogo
+
+Renders a logo for a credit card.
+
+Takes two props:
+
+- `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+- `isSummary: boolean`. If true, will display a more compact version of the logo.
+
+### RadioButton
+
+Renders a radio button wrapper for payment methods or other similar boxes.
+
+Props:
+
+- `name: string`
+- `id: string`
+- `label: React.ReactNode`
+- `disabled?: boolean`
+- `checked?: boolean`
+- `value: string`
+- `onChange?: () => void`
+- `ariaLabel: string`
+- `children?: React.ReactNode`
+
+### PaymentProcessorResponseType
+
+An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).
+
+- `.SUCCESS` (the payload will be an `unknown` object that is the server response).
+- `.REDIRECT` (the payload will be a `string` that is the redirect URL).
+- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
+
 ### SubmitButtonWrapper
 
 A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the submit button that's rendered by each [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
@@ -342,16 +380,6 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
 - `last4: string`. The card's last four digits. Used for display only.
 
-### createFullCreditsMethod
-
-Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
-- `label?: React.ReactNode`. An optional label React element to use in the payment method.
-- `buttonText?: string`. An optional string to display in the payment button.
-
 ### createPayPalMethod
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
@@ -390,25 +418,21 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
 
-### makeNoopResponse
+### makeManualResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a NOOP response; it will do nothing.
+An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
 
 ### makeRedirectResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a REDIRECT response. It takes one string argument and will cause the page to redirect to the URL in that string.
+An action creator function to be used by a [payment processor function](#payment-methods) for a [REDIRECT](#PaymentProcessorResponseType) response. It takes one string argument and will cause the page to redirect to the URL in that string.
 
 ### makeSuccessResponse
 
-An action creator function to be used by a [payment processor function](#payment-methods) for a SUCCESS response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
+An action creator function to be used by a [payment processor function](#payment-methods) for a [SUCCESS](#PaymentProcessorResponseType) response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
 
 ### registerStore
 
 The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
-
-### formatValueForCurrency
-
-Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
 ### useAllPaymentMethods
 

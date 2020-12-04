@@ -9,7 +9,7 @@ import classNames from 'classnames';
 import { flowRight, get, includes, noop } from 'lodash';
 import { localize } from 'i18n-calypso';
 import url from 'url';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -22,14 +22,14 @@ import EditorMediaModalDetailPreviewVideo from './detail-preview-video';
 import EditorMediaModalDetailPreviewAudio from './detail-preview-audio';
 import EditorMediaModalDetailPreviewDocument from './detail-preview-document';
 import { Button, ScreenReaderText } from '@automattic/components';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import versionCompare from 'lib/version-compare';
-import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'lib/media/utils';
-import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPrivateSite from 'state/selectors/is-private-site';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import versionCompare from 'calypso/lib/version-compare';
+import { getMimePrefix, isItemBeingUploaded, isVideoPressItem } from 'calypso/lib/media/utils';
+import config from 'calypso/config';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 export class EditorMediaModalDetailItem extends Component {
 	static propTypes = {

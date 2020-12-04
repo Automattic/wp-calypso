@@ -10,30 +10,30 @@ import { compact, overSome } from 'lodash';
  * Internal dependencies
  */
 
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import { useTranslate } from 'i18n-calypso';
-import { SiteSlug } from 'types';
-import { getSelectedSiteSlug, getSelectedSiteId } from 'state/ui/selectors';
-import getSiteBySlug from 'state/sites/selectors/get-site-by-slug';
-import { hasFeature, getSitePlanSlug } from 'state/sites/plans/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isRequestingWordAdsApprovalForSite } from 'state/wordads/approve/selectors';
-import EmptyContent from 'components/empty-content';
-import PromoSection, { Props as PromoSectionProps } from 'components/promo-section';
-import QueryMembershipsSettings from 'components/data/query-memberships-settings';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
+import { SiteSlug } from 'calypso/types';
+import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSiteBySlug from 'calypso/state/sites/selectors/get-site-by-slug';
+import { hasFeature, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isRequestingWordAdsApprovalForSite } from 'calypso/state/wordads/approve/selectors';
+import EmptyContent from 'calypso/components/empty-content';
+import PromoSection, { Props as PromoSectionProps } from 'calypso/components/promo-section';
+import QueryMembershipsSettings from 'calypso/components/data/query-memberships-settings';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
 import {
 	FEATURE_WORDADS_INSTANT,
 	FEATURE_SIMPLE_PAYMENTS,
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
-} from 'lib/plans/constants';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import { CtaButton } from 'components/promo-section/promo-card/cta';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/lib/plans/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { CtaButton } from 'calypso/components/promo-section/promo-card/cta';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { addQueryArgs } from '@wordpress/url';
 import {
 	isPremiumPlan,
@@ -44,19 +44,12 @@ import {
 	isSecurityDailyPlan,
 	isSecurityRealTimePlan,
 	isCompletePlan,
-} from 'lib/plans';
+} from 'calypso/lib/plans';
 
 /**
  * Image dependencies
  */
-import earnSectionImage from 'assets/images/earn/earn-section.svg';
-import adsImage from 'assets/images/earn/ads.svg';
-import recurringImage from 'assets/images/earn/recurring.svg';
-import donationsImage from 'assets/images/earn/donations.svg';
-import referralImage from 'assets/images/earn/referral.svg';
-import simplePaymentsImage from 'assets/images/earn/simple-payments.svg';
-import premiumContentImage from 'assets/images/earn/premium-content.svg';
-import paidNewsletterImage from 'assets/images/earn/newsletters.svg';
+import earnSectionImage from 'calypso/assets/images/earn/earn-section.svg';
 
 /**
  * Style dependencies
@@ -171,9 +164,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: simplePaymentsImage,
-			},
+			icon: 'credit-card',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -229,9 +220,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: recurringImage,
-			},
+			icon: 'money',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -280,9 +269,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: donationsImage,
-			},
+			icon: 'heart-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -347,9 +334,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: premiumContentImage,
-			},
+			icon: 'bookmark-outline',
 			actions: {
 				cta,
 				learnMoreLink,
@@ -399,9 +384,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 			title,
 			body,
 			badge: translate( 'New' ),
-			image: {
-				path: paidNewsletterImage,
-			},
+			icon: 'mail',
 			actions: {
 				cta,
 			},
@@ -450,9 +433,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 							},
 						}
 				  ),
-			image: {
-				path: referralImage,
-			},
+			icon: 'user-add',
 			actions: {
 				cta,
 			},
@@ -505,9 +486,7 @@ const Home: FunctionComponent< ConnectedProps > = ( {
 		return {
 			title,
 			body,
-			image: {
-				path: adsImage,
-			},
+			icon: 'speaker',
 			actions: {
 				cta,
 				learnMoreLink,

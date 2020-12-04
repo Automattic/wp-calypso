@@ -5,7 +5,7 @@ Component/Block to share posts to social-media accounts
 ## Example
 
 ```jsx
-import PostShare from 'blocks/post-share';
+import PostShare from 'calypso/blocks/post-share';
 
 <PostShare post={ post } siteId={ siteId } />;
 ```

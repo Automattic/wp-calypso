@@ -7,10 +7,10 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import SupportInfo from 'components/support-info';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import SupportInfo from 'calypso/components/support-info';
 
 interface Props {
 	checked: boolean;

@@ -3,7 +3,7 @@
  */
 import moment from 'moment';
 import page from 'page';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 /**
  * Internal dependencies
@@ -19,7 +19,8 @@ import {
 	handleRenewMultiplePurchasesClick,
 } from '../index';
 
-import {
+import data from './data';
+const {
 	DOMAIN_PURCHASE,
 	DOMAIN_PURCHASE_PENDING_TRANSFER,
 	DOMAIN_PURCHASE_EXPIRED,
@@ -31,7 +32,7 @@ import {
 	SITE_REDIRECT_PURCHASE_EXPIRED,
 	PLAN_PURCHASE_WITH_CREDITS,
 	PLAN_PURCHASE_WITH_PAYPAL,
-} from './data';
+} = data;
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
@@ -224,9 +225,16 @@ describe( 'index', () => {
 			);
 		} );
 
+		test( 'should redirect to the checkout page with ?redirect_to', () => {
+			handleRenewNowClick( purchase, siteSlug, { redirectTo: '/me/purchases' } );
+			expect( page ).toHaveBeenCalledWith(
+				'/checkout/personal-bundle/renew/1/my-site.wordpress.com?redirect_to=%2Fme%2Fpurchases'
+			);
+		} );
+
 		test( 'should send the tracks events', () => {
-			const trackProps = { extra: 'extra' };
-			handleRenewNowClick( purchase, siteSlug, trackProps );
+			const tracksProps = { extra: 'extra' };
+			handleRenewNowClick( purchase, siteSlug, { tracksProps } );
 			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_purchases_renew_now_click', {
 				product_slug: 'personal-bundle',
 				extra: 'extra',

@@ -9,7 +9,7 @@ import deepFreeze from 'deep-freeze';
  */
 import { timezonesReceive } from '../actions';
 import timezonesReducer, { byContinents, labels, rawOffsets } from '../reducer';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;

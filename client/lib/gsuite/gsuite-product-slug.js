@@ -5,7 +5,7 @@ import {
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
-} from 'lib/gsuite/constants';
+} from 'calypso/lib/gsuite/constants';
 
 /**
  * Determines whether the specified product slug is for G Suite Basic or Business.

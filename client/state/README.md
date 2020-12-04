@@ -11,7 +11,7 @@ Calypso started off with a monolithic state approach, following the guidelines o
 As such, Calypso now implements a modularized state approach, where reducers can be registered on demand. Each modularized portion of state has an `init` file that takes care of registration through a side effect. For example, for `reader`:
 
 ```js
-import { registerReducer } from 'state/redux-store';
+import { registerReducer } from 'calypso/state/redux-store';
 import reducer from './reducer';
 
 registerReducer( [ 'reader' ], reducer );
@@ -20,7 +20,7 @@ registerReducer( [ 'reader' ], reducer );
 This `init` file is then imported on every selector and action creator module that makes use of `reader` state:
 
 ```js
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 function getStream( state, streamKey ) {
 	return state.reader.streams[ streamKey ] || emptyStream;
@@ -36,7 +36,7 @@ There is currently an ongoing migration effort in modularizing all of Calypso st
 ## Usage
 
 ```js
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 
 const store = createReduxStore();
 ```

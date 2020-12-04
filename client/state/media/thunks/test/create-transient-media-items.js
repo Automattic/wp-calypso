@@ -1,11 +1,10 @@
 /**
  * Internal dependencies
  */
-import { createTransientMediaItems as createTransientMediaItemsThunk } from 'state/media/thunks/create-transient-media-items';
-import { createTransientMedia, validateMediaItem } from 'lib/media/utils';
-import * as dateUtils from 'state/media/utils/transient-date';
-import * as fluxUtils from 'state/media/utils/flux-adapter';
-import * as syncActions from 'state/media/actions';
+import { createTransientMediaItems as createTransientMediaItemsThunk } from 'calypso/state/media/thunks/create-transient-media-items';
+import { createTransientMedia, validateMediaItem } from 'calypso/lib/media/utils';
+import * as dateUtils from 'calypso/state/media/utils/transient-date';
+import * as syncActions from 'calypso/state/media/actions';
 
 jest.mock( 'lib/media/utils', () => ( {
 	createTransientMedia: jest.fn(),
@@ -52,15 +51,6 @@ describe( 'media - thunks - createTransientMediaItems', () => {
 			createTransientMediaItems( [ file ], site );
 
 			expect( createMediaItem ).toHaveBeenCalledTimes( 1 );
-		} );
-	} );
-
-	describe( 'flux adaptation', () => {
-		it( 'should dispatch flux create media item', () => {
-			const dispatchFluxCreateMediaItem = jest.spyOn( fluxUtils, 'dispatchFluxCreateMediaItem' );
-			createTransientMediaItems( [ file ], site );
-
-			expect( dispatchFluxCreateMediaItem ).toHaveBeenCalledTimes( 1 );
 		} );
 	} );
 

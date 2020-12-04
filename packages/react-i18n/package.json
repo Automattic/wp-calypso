@@ -1,12 +1,13 @@
 {
 	"name": "@automattic/react-i18n",
-	"version": "1.0.0-alpha.0",
+	"version": "1.0.0-alpha.1",
 	"description": "React bindings for @wordpress/i18n",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
 	"sideEffects": false,
 	"repository": {
 		"type": "git",
@@ -25,13 +26,14 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@wordpress/compose": "1.x.x - 3.x.x",
+		"@wordpress/hooks": "^2.9.0",
 		"@wordpress/i18n": "^3.14.0",
 		"tslib": "^1.10.0"
 	},

@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_ASSIGN } from 'state/action-types';
+import { EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
 
 export type ExperimentResponse = {
 	variations: object;

@@ -10,8 +10,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
-import { decodeEntities } from 'lib/formatting';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const closeKeyCodes = [
 	13, // Return

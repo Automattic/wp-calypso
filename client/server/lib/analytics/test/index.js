@@ -8,9 +8,9 @@ import superagent from 'superagent';
 /**
  * Internal dependencies
  */
-import { statsdTimingUrl, statsdCountingUrl } from 'lib/analytics/statsd-utils';
+import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
-import config from 'config';
+import config from 'calypso/config';
 jest.mock( 'config', () => require( 'sinon' ).stub() );
 jest.mock( 'lib/analytics/statsd-utils', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),

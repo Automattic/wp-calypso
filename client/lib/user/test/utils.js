@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import UserUtils from '../utils';
-import config from 'config';
-import User from 'lib/user';
+import config from 'calypso/config';
+import User from 'calypso/lib/user';
 
 const user = User();
 

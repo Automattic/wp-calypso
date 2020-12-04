@@ -11,11 +11,11 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent, tracksEvents } from 'lib/analytics/tracks';
-import { identifyUser } from 'lib/analytics/identify-user';
-import { initializeAnalytics } from 'lib/analytics/init';
-import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
-import { recordAliasInFloodlight } from 'lib/analytics/ad-tracking';
+import { recordTracksEvent, tracksEvents } from 'calypso/lib/analytics/tracks';
+import { identifyUser } from 'calypso/lib/analytics/identify-user';
+import { initializeAnalytics } from 'calypso/lib/analytics/init';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
+import { recordAliasInFloodlight } from 'calypso/lib/analytics/ad-tracking';
 
 jest.mock( 'config', () => require( './mocks/config' ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {

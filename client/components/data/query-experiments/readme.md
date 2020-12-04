@@ -5,7 +5,7 @@
 ## Usage
 
 ```jsx
-import QueryExperiments from 'components/data/query-experiments';
+import QueryExperiments from 'calypso/components/data/query-experiments';
 export default function listExperiments() {
 	return (
 		<div>

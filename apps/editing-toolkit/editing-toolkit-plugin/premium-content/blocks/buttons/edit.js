@@ -2,11 +2,7 @@
  * WordPress dependencies
  */
 // eslint-disable-next-line wpcalypso/import-docblock
-import {
-	__experimentalAlignmentHookSettingsProvider as AlignmentHookSettingsProvider,
-	InnerBlocks,
-	__experimentalBlock as Block,
-} from '@wordpress/block-editor';
+import { InnerBlocks, __experimentalBlock as Block } from '@wordpress/block-editor';
 import { compose } from '@wordpress/compose';
 import { withDispatch, withSelect } from '@wordpress/data';
 import { useEffect } from '@wordpress/element';
@@ -19,27 +15,36 @@ const ALLOWED_BLOCKS = [
 	'premium-content/login-button',
 ];
 
-// Inside buttons block alignment options are not supported.
-const alignmentHooksSetting = {
-	isEmbedButton: true,
-};
-
-function ButtonsEdit( {
-	context,
-	jetpackButton,
-	subscribeButton,
-	setSubscribeButtonText,
-	setSubscribeButtonPlan,
-} ) {
+function ButtonsEdit( { context, subscribeButton, setSubscribeButtonPlan } ) {
 	const planId = context ? context[ 'premium-content/planId' ] : null;
+	const isPreview = context ? context[ 'premium-content/isPreview' ] : false;
+
+	const previewTemplate = [
+		[
+			'core/button',
+			{
+				element: 'a',
+				uniqueId: 'recurring-payments-id',
+				text: __( 'Subscribe', 'full-site-editing' ),
+			},
+		],
+		[ 'premium-content/login-button' ],
+	];
 
 	const template = [
 		[
 			'jetpack/recurring-payments',
-			{
-				planId,
-				submitButtonText: __( 'Subscribe', 'full-site-editing' ),
-			},
+			{ planId },
+			[
+				[
+					'jetpack/button',
+					{
+						element: 'a',
+						uniqueId: 'recurring-payments-id',
+						text: __( 'Subscribe', 'full-site-editing' ),
+					},
+				],
+			],
 		],
 		[ 'premium-content/login-button' ],
 	];
@@ -54,7 +59,7 @@ function ButtonsEdit( {
 		if ( subscribeButton.attributes.planId !== planId ) {
 			setSubscribeButtonPlan( planId );
 		}
-	}, [ planId, subscribeButton ] );
+	}, [ planId, subscribeButton, setSubscribeButtonPlan ] );
 
 	// Hides the inspector controls of the Recurring Payments inner block acting as a subscribe button so users can only
 	// switch plans using the plan selector of the Premium Content block.
@@ -74,24 +79,16 @@ function ButtonsEdit( {
 		);
 	}, [ subscribeButton ] );
 
-	// Updates the subscribe button text.
-	useEffect( () => {
-		if ( ! jetpackButton ) {
-			return;
-		}
-		setSubscribeButtonText( __( 'Subscribe', 'full-site-editing' ) );
-	}, [ jetpackButton, setSubscribeButtonText ] );
-
 	return (
 		// eslint-disable-next-line wpcalypso/jsx-classname-namespace
 		<Block.div className="wp-block-buttons">
-			<AlignmentHookSettingsProvider value={ alignmentHooksSetting }>
-				<InnerBlocks
-					allowedBlocks={ ALLOWED_BLOCKS }
-					template={ template }
-					__experimentalMoverDirection="horizontal"
-				/>
-			</AlignmentHookSettingsProvider>
+			<InnerBlocks
+				allowedBlocks={ ALLOWED_BLOCKS }
+				template={ isPreview ? previewTemplate : template }
+				templateInsertUpdatesSelection={ false }
+				__experimentalLayout={ { type: 'default', alignments: [] } }
+				__experimentalMoverDirection="horizontal"
+			/>
 		</Block.div>
 	);
 }
@@ -104,13 +101,7 @@ export default compose( [
 			.getBlock( props.clientId )
 			.innerBlocks.find( ( block ) => block.name === 'jetpack/recurring-payments' );
 
-		const jetpackButton = select( 'core/block-editor' )
-			.getBlock( subscribeButton.clientId )
-			.innerBlocks.find( ( block ) => block.name === 'jetpack/button' );
-		return {
-			subscribeButton,
-			jetpackButton,
-		};
+		return { subscribeButton };
 	} ),
 	withDispatch( ( dispatch, props ) => ( {
 		/**
@@ -121,16 +112,6 @@ export default compose( [
 		setSubscribeButtonPlan( planId ) {
 			dispatch( 'core/block-editor' ).updateBlockAttributes( props.subscribeButton.clientId, {
 				planId,
-			} );
-		},
-		/**
-		 * Updates the button text on the Recurring Payments block acting as a subscribe button.
-		 *
-		 * @param text {string} Button text.
-		 */
-		setSubscribeButtonText( text ) {
-			dispatch( 'core/block-editor' ).updateBlockAttributes( props.jetpackButton.clientId, {
-				text,
 			} );
 		},
 	} ) ),

@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+
+// eslint-disable-next-line
 import config from 'config';
 import assert from 'assert';
 import { By } from 'selenium-webdriver';
@@ -354,7 +356,19 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	// eslint-disable-next-line jest/no-disabled-tests
+	/**
+	 * This test fails due to the step to delete the plan failing which results in a warning message as shown below.
+	 * ~~
+	 * ~~ There was an error in the hooks that clean up the test account (delete plan) but since it is cleaning
+	 * ~~ up we really don't care: 'TimeoutError: Timed out waiting for element with css selector of '.cancel-purchase.main' to be
+	 * ~~ present and displayed Wait timed out after 22157ms'
+	 * ~~
+	 * This error should ideally be raised as a proper test failure. It doesn't because of a try catch preventing errors from bubbling up to the test client;
+	 * check file wp-calypso/test/e2e/lib/flowswp-calypso/test/e2e/lib/flows/delete-plan-flow.js Line 51
+	 * Fixes need to happen to wp-calypso/test/e2e/lib/pages/cancel-purchase-page.js to expect the proper class
+	 * The catch all should be replaced with a check that isolate the exact error we don't want to break the test (There was an error in the hooks that clean up the test account)
+	 * And throw the error on all other instances
+	 */
 	describe.skip( 'Sign up for a site on a premium paid plan through main flow in USD currency and launch @parallel @canary', function () {
 		const blogName = dataHelper.getNewBlogName();
 		const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );

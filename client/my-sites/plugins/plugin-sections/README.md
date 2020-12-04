@@ -5,7 +5,7 @@ This component is used to display the sections for a plugin as returned from the
 ## How to use
 
 ```js
-import PluginSections from 'my-sites/plugins/plugin-sections';
+import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
 
 function render() {
 	return <PluginSections plugin={ plugin } />;

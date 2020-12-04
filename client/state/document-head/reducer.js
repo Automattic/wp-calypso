@@ -6,20 +6,21 @@ import { uniqWith, isEqual, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import config from 'config';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,
 	DOCUMENT_HEAD_META_SET,
 	DOCUMENT_HEAD_TITLE_SET,
 	DOCUMENT_HEAD_UNREAD_COUNT_SET,
 	ROUTE_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { titleSchema, unreadCountSchema, linkSchema, metaSchema } from './schema';
 
 /**
  * Constants
  */
-export const DEFAULT_META_STATE = [ { property: 'og:site_name', content: 'WordPress.com' } ];
+export const DEFAULT_META_STATE = config( 'meta' );
 
 export const title = withSchemaValidation( titleSchema, ( state = '', action ) => {
 	switch ( action.type ) {

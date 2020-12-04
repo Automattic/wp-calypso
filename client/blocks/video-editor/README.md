@@ -57,7 +57,7 @@ It receives one argument:
 ## Example
 
 ```js
-import VideoEditor from 'blocks/video-editor';
+import VideoEditor from 'calypso/blocks/video-editor';
 
 function render() {
 	return <VideoEditor media={ { videopress_guid: 'kUJmAcSf' } } />;

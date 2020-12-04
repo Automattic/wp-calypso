@@ -6,8 +6,8 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSiteSlug, isJetpackSite, isSingleUserSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const getPostTypeTrashUrl = ( state, postType ) => {
 	const siteId = getSelectedSiteId( state );

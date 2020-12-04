@@ -15,14 +15,14 @@ import { Button } from '@automattic/components';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
+import Main from 'calypso/components/main';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
 import ProductCategoriesList from 'woocommerce/app/product-categories/list';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import SectionNav from 'components/section-nav';
-import Search from 'components/search';
-import { withAnalytics } from 'state/analytics/actions';
+import SectionNav from 'calypso/components/section-nav';
+import Search from 'calypso/components/search';
+import { withAnalytics } from 'calypso/state/analytics/actions';
 
 class ProductCategories extends Component {
 	state = {

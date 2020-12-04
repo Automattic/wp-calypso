@@ -7,7 +7,7 @@
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryEmailForwards from 'components/data/query-email-forwards';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
 
 export default function listEmailForwards( { emailForwards } ) {
 	return (

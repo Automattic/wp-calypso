@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import ReaderPopover from 'calypso/reader/components/reader-popover';
 import SegmentedControl from 'calypso/components/segmented-control';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
 import {
 	subscribeToNewPostEmail,
@@ -154,14 +154,13 @@ class ReaderSiteNotificationSettings extends Component {
 					className="reader-site-notification-settings__popout"
 				>
 					<div className="reader-site-notification-settings__popout-toggle">
-						<CompactFormToggle
+						<FormToggle
 							onChange={ this.toggleNewPostNotification }
 							checked={ sendNewPostsByNotification }
-							wrapperClassName="reader-site-notification-settings__popout-form-toggle"
 							id="reader-site-notification-settings__notifications"
 						>
 							{ translate( 'Notify me of new posts' ) }
-						</CompactFormToggle>
+						</FormToggle>
 						<p className="reader-site-notification-settings__popout-hint">
 							{ translate( 'Receive web and mobile notifications for new posts from this site.' ) }
 						</p>
@@ -174,13 +173,13 @@ class ReaderSiteNotificationSettings extends Component {
 						}
 					>
 						{ ! isEmailBlocked && (
-							<CompactFormToggle
+							<FormToggle
 								onChange={ this.toggleNewPostEmail }
 								checked={ sendNewPostsByEmail }
 								id={ 'reader-site-notification-settings__email-posts' }
 							>
 								{ translate( 'Email me new posts' ) }
-							</CompactFormToggle>
+							</FormToggle>
 						) }
 
 						{ isEmailBlocked && (
@@ -224,13 +223,13 @@ class ReaderSiteNotificationSettings extends Component {
 					) }
 					{ ! isEmailBlocked && (
 						<div className="reader-site-notification-settings__popout-toggle">
-							<CompactFormToggle
+							<FormToggle
 								onChange={ this.toggleNewCommentEmail }
 								checked={ sendNewCommentsByEmail }
 								id="reader-site-notification-settings__email-comments"
 							>
 								{ translate( 'Email me new comments' ) }
-							</CompactFormToggle>
+							</FormToggle>
 						</div>
 					) }
 				</ReaderPopover>

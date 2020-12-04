@@ -11,13 +11,13 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { getEditorPath } from 'state/editor/selectors';
-import { getPostPreviewUrl } from 'state/posts/selectors';
-import { isSitePreviewable } from 'state/sites/selectors';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { setPreviewUrl } from 'state/ui/preview/actions';
-import { setUrlScheme } from 'lib/url';
+import SectionHeader from 'calypso/components/section-header';
+import { getEditorPath } from 'calypso/state/editor/selectors';
+import { getPostPreviewUrl } from 'calypso/state/posts/selectors';
+import { isSitePreviewable } from 'calypso/state/sites/selectors';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { setPreviewUrl } from 'calypso/state/ui/preview/actions';
+import { setUrlScheme } from 'calypso/lib/url';
 
 class PostCard extends Component {
 	static propTypes = {

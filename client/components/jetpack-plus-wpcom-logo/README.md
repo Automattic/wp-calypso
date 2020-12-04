@@ -7,7 +7,7 @@ This component is used to display the Jetpack Plus WPCOM logo (a Jetpack logo, a
 ## How to use
 
 ```js
-import JetpackPlusWpComLogo from 'components/jetpack-plus-wpcom-logo';
+import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 
 export default function JetpackPlusWpComLogoExample() {
 	return (

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 const jetpackCloudEnvironments = [
 	'jetpack-cloud-development',
@@ -10,6 +10,6 @@ const jetpackCloudEnvironments = [
 	'jetpack-cloud-production',
 ];
 
-const isJetpackCloud = () => jetpackCloudEnvironments.includes( config( 'env_id' ) );
+const isJetpackCloud = (): boolean => jetpackCloudEnvironments.includes( config( 'env_id' ) );
 
 export default isJetpackCloud;

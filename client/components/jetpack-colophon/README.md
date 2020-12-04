@@ -7,7 +7,7 @@ This component is used to display a "Powered by Jetpack" colophon, usually on th
 ## How to use
 
 ```js
-import JetpackColophon from 'components/jetpack-colophon';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 
 function MyFooter() {
 	return (

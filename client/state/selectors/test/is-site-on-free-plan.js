@@ -8,8 +8,8 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import isSiteOnFreePlan from '../is-site-on-free-plan';
-import { PLAN_BUSINESS, PLAN_FREE, PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import { PLAN_BUSINESS, PLAN_FREE, PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 jest.mock( 'state/sites/plans/selectors', () => ( { getCurrentPlan: require( 'sinon' ).stub() } ) );
 
 describe( 'isSiteOnFreePlan', () => {

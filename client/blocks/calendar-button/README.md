@@ -5,7 +5,7 @@ This component is used to display a calendar button. When it pressed, it shows a
 ## Usage
 
 ```jsx
-import CalendarButton from 'blocks/calendar-button';
+import CalendarButton from 'calypso/blocks/calendar-button';
 
 function render() {
 	return <CalendarButton />;
@@ -78,7 +78,7 @@ This property defines to this component as a `button`. You shouldn't change this
 ### As much simple as possible
 
 ```jsx
-import CalendarButton from 'blocks/calendar-button';
+import CalendarButton from 'calypso/blocks/calendar-button';
 
 function render() {
 	const tomorrow = new Date( new Date().getTime() + 24 * 60 * 60 * 1000 );
@@ -90,7 +90,7 @@ function render() {
 ### Custom calendar icon
 
 ```jsx
-import CalendarButton from 'blocks/calendar-button';
+import CalendarButton from 'calypso/blocks/calendar-button';
 
 function render() {
 	return <CalendarButton icon="thumbs-up" />;
@@ -100,7 +100,7 @@ function render() {
 ### Render using children property
 
 ```jsx
-import CalendarButton from 'blocks/calendar-button';
+import CalendarButton from 'calypso/blocks/calendar-button';
 
 function render() {
 	return (

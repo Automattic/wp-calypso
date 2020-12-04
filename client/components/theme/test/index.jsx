@@ -24,7 +24,8 @@ jest.mock( 'components/popover/menu-item', () => 'components--popover--menu-item
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'Theme', () => {
-	let props, themeNode;
+	let props;
+	let themeNode;
 
 	beforeEach( () => {
 		props = {

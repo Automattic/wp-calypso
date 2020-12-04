@@ -15,8 +15,8 @@ import {
 	SHORTCODE_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -343,60 +343,6 @@ describe( 'reducer', () => {
 				87654321: {
 					test_shortcode: shortcodeData,
 				},
-			} );
-		} );
-
-		test( 'should forget gallery shortcodes when receiving a MEDIA ITEM and the id matches', () => {
-			const state = items(
-				deepFreeze( {
-					12345678: {
-						test_shortcode: shortcodeData,
-					},
-					87654321: {
-						test_shortcode: { ...shortcodeData, result: '<html></html>' },
-					},
-				} ),
-				{
-					type: 'FLUX_RECEIVE_MEDIA_ITEM',
-					siteId: 87654321,
-					data: {
-						ID: 1,
-					},
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					test_shortcode: shortcodeData,
-				},
-				87654321: {},
-			} );
-		} );
-
-		test( 'should forget gallery shortcodes when receiving MEDIA ITEMS the ids match', () => {
-			const state = items(
-				deepFreeze( {
-					12345678: {
-						test_shortcode: shortcodeData,
-					},
-					87654321: {
-						test_shortcode: { ...shortcodeData, result: '<html></html>' },
-					},
-				} ),
-				{
-					type: 'FLUX_RECEIVE_MEDIA_ITEMS',
-					siteId: 87654321,
-					data: {
-						media: [ { ID: 1 }, { ID: 2 } ],
-					},
-				}
-			);
-
-			expect( state ).to.eql( {
-				12345678: {
-					test_shortcode: shortcodeData,
-				},
-				87654321: {},
 			} );
 		} );
 

@@ -10,21 +10,21 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isVipSite from 'state/selectors/is-vip-site';
-import DocumentHead from 'components/data/document-head';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import Main from 'calypso/components/main';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SectionNav from 'calypso/components/section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
 
 /**
  * Style Dependencies

@@ -5,10 +5,10 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getSitePlanSlug } from 'state/sites/selectors';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT } from 'lib/plans/constants';
+import createSelector from 'calypso/lib/create-selector';
+import { getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { planHasFeature } from 'calypso/lib/plans';
+import { FEATURE_EMAIL_FORWARDING_EXTENDED_LIMIT } from 'calypso/lib/plans/constants';
 
 const DEFAULT_EMAIL_FORWARDING_LIMT = 5;
 const EXTENDED_EMAIL_FORWARDING_LIMIT = 100;

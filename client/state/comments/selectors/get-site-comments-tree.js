@@ -6,9 +6,9 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns a tree of loaded comments for a given site, filtered by status

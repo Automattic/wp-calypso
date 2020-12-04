@@ -47,7 +47,7 @@ There are also several optional configuration settings available:
 Next, in your code, import the `abtest` method from the `abtest` module:
 
 ```js
-import { abtest } from 'lib/abtest';
+import { abtest } from 'calypso/lib/abtest';
 ```
 
 The exported `abtest` method takes a test name (and optional country code) and returns one of the variations you defined in the config file.
@@ -93,7 +93,7 @@ if ( abtest( 'freeTrialButtonWordingForIndia', userCountryCode ) === 'startFreeT
 If you want to determine whether the user is a participant in a specific A/B test, you can import the `abtest` module's `getABTestVariation` method:
 
 ```js
-import { getABTestVariation } from 'lib/abtest';
+import { getABTestVariation } from 'calypso/lib/abtest';
 
 // ...
 

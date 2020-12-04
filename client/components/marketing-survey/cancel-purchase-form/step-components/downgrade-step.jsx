@@ -41,7 +41,9 @@ export class DowngradeStep extends Component {
 		const downgradeWarning = translate(
 			'If you choose to downgrade, your plan will be downgraded immediately.'
 		);
-		let refundDetails, refundTitle, refundReason;
+		let refundDetails;
+		let refundTitle;
+		let refundReason;
 		if ( isEnglishLocale ) {
 			refundTitle = translate( 'Would you rather switch to a more affordable plan?' );
 			refundReason = (

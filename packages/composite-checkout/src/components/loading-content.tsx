@@ -10,44 +10,10 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import styled from '../lib/styled';
 
-export default function LoadingContent() {
-	const { __ } = useI18n();
-
-	return (
-		<LoadingContentWrapper>
-			<LoadingContentInnerWrapper>
-				<LoadingCard>
-					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
-					<LoadingCopy />
-					<LoadingCopy />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-					<LoadingCopy />
-					<LoadingCopy />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-				</LoadingCard>
-				<LoadingCard>
-					<LoadingTitle />
-				</LoadingCard>
-				<LoadingFooter />
-			</LoadingContentInnerWrapper>
-
-			<LoadingSidebar>
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-				<SideBarLoadingCopy />
-			</LoadingSidebar>
-		</LoadingContentWrapper>
-	);
-}
-
 const LoadingContentWrapper = styled.div`
 	display: flex;
 
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		align-items: flex-start;
 		flex-direction: row;
 		justify-content: center;
@@ -62,6 +28,11 @@ const LoadingContentInnerWrapper = styled.div`
 	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
 		max-width: 556px;
+		margin: 0 auto;
+	}
+
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
+		margin: 0;
 	}
 `;
 
@@ -69,7 +40,7 @@ const LoadingSidebar = styled.div`
 	display: none;
 	width: 100%;
 
-	@media ( ${ ( props ) => props.theme.breakpoints.tabletUp } ) {
+	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		display: block;
 		padding: 24px;
 		box-sizing: border-box;
@@ -179,3 +150,37 @@ const LoadingFooter = styled.div`
 		height: 40px;
 	}
 `;
+
+export default function LoadingContent() {
+	const { __ } = useI18n();
+
+	return (
+		<LoadingContentWrapper>
+			<LoadingContentInnerWrapper>
+				<LoadingCard>
+					<LoadingTitle>{ __( 'Loading checkout' ) }</LoadingTitle>
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+					<LoadingCopy />
+					<LoadingCopy />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingCard>
+					<LoadingTitle />
+				</LoadingCard>
+				<LoadingFooter />
+			</LoadingContentInnerWrapper>
+
+			<LoadingSidebar>
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+				<SideBarLoadingCopy />
+			</LoadingSidebar>
+		</LoadingContentWrapper>
+	);
+}

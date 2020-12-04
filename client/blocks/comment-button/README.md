@@ -5,7 +5,7 @@ This component is used to display a button with an embedded number indicator.
 ## How to use
 
 ```js
-import CommentButton from 'blocks/comment-button';
+import CommentButton from 'calypso/blocks/comment-button';
 
 function render() {
 	return <CommentButton commentCount={ 123 } />;

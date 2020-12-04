@@ -86,6 +86,7 @@ JetpackLogo.propTypes = {
 	full: PropTypes.bool,
 	monochrome: PropTypes.bool,
 	size: PropTypes.number,
+	className: PropTypes.string,
 };
 
 export default JetpackLogo;

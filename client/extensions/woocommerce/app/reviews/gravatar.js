@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
+import Gravatar from 'calypso/components/gravatar';
 
 // The WP comments endpoint and reviews endpoints return different but similar responses.
 // This helper component displays a gravatar for either a review or admin reply to a review.

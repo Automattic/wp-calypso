@@ -32,7 +32,7 @@ import {
 	domainsRequestAction,
 	domainsRequestSuccessAction,
 	domainsRequestFailureAction,
-} from 'state/sites/domains/actions';
+} from 'calypso/state/sites/domains/actions';
 
 const siteId = 2916284;
 

@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ViewersData from 'components/data/viewers-data';
+import ViewersData from 'calypso/components/data/viewers-data';
 import Viewers from './viewers';
 
 class ViewersList extends React.PureComponent {

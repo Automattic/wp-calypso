@@ -6,8 +6,8 @@ import {
 	SITE_DOMAINS_REQUEST,
 	SITE_DOMAINS_REQUEST_SUCCESS,
 	SITE_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
-import { createSiteDomainObject } from 'state/sites/domains/assembler';
+} from 'calypso/state/action-types';
+import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 
 // first testing-site ID
 export const SITE_ID_FIRST = 2916284;
@@ -38,6 +38,9 @@ export const DOMAIN_PRIMARY = {
 	expirySoon: false,
 	gdprConsentStatus: null,
 	googleAppsSubscription: {
+		status: 'no_subscription',
+	},
+	titanMailSubscription: {
 		status: 'no_subscription',
 	},
 	privacyAvailable: false,
@@ -108,6 +111,9 @@ export const DOMAIN_NOT_PRIMARY = {
 	googleAppsSubscription: {
 		status: 'no_subscription',
 	},
+	titanMailSubscription: {
+		status: 'no_subscription',
+	},
 	privacyAvailable: false,
 	hasRegistration: false,
 	hasWpcomNameservers: true,
@@ -176,6 +182,9 @@ export const REST_API_SITE_DOMAIN_FIRST = {
 	google_apps_subscription: {
 		status: 'no_subscription',
 	},
+	titan_mail_subscription: {
+		status: 'no_subscription',
+	},
 	has_private_registration: false,
 	privacyAvailable: false,
 	has_registration: false,
@@ -233,6 +242,9 @@ export const REST_API_SITE_DOMAIN_SECOND = {
 	expiry_soon: false,
 	gdprConsentStatus: null,
 	google_apps_subscription: {
+		status: 'no_subscription',
+	},
+	titan_mail_subscription: {
 		status: 'no_subscription',
 	},
 	has_private_registration: false,

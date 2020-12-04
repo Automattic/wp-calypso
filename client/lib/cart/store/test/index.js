@@ -6,8 +6,8 @@
  * Internal dependencies
  */
 import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import { recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
-import { setTaxLocation } from 'lib/cart-values';
+import { recordUnrecognizedPaymentMethod } from 'calypso/lib/analytics/cart';
+import { setTaxLocation } from 'calypso/lib/cart-values';
 
 jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
@@ -44,12 +44,13 @@ jest.mock( 'lib/wp', () => ( {
 } ) );
 
 describe( 'Cart Store', () => {
-	let CartStore, Dispatcher;
+	let CartStore;
+	let Dispatcher;
 
 	beforeEach( () => {
 		jest.isolateModules( () => {
-			CartStore = require( 'lib/cart/store' );
-			Dispatcher = require( 'dispatcher' );
+			CartStore = require( 'calypso/lib/cart/store' ).default;
+			Dispatcher = require( 'calypso/dispatcher' ).default;
 		} );
 
 		CartStore.setSelectedSiteId();
@@ -69,7 +70,8 @@ describe( 'Cart Store', () => {
 	} );
 
 	test( 'Store should ignore update actions that arrive after disable', () => {
-		let disableCart, removeCoupon;
+		let disableCart;
+		let removeCoupon;
 		jest.isolateModules( () => {
 			const cartActions = jest.requireActual( 'lib/cart/actions' );
 			disableCart = cartActions.disableCart;

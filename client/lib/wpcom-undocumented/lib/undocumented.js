@@ -459,8 +459,8 @@ Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 };
 
 Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams,
-		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
+	const { apiVersion, method } = originalParams;
+	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -1319,48 +1319,6 @@ Undocumented.prototype.readTagImages = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readLists = function ( fn ) {
-	debug( '/read/lists' );
-	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
-};
-
-Undocumented.prototype.followList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/follow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/follow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.unfollowList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/unfollow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/unfollow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
@@ -1684,31 +1642,6 @@ Undocumented.prototype.uploadTheme = function ( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.nameservers = function ( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.updateNameservers = function ( domain, nameservers, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/nameservers/', {}, nameservers, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
 Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
@@ -1767,50 +1700,6 @@ Undocumented.prototype.getDnsTemplateRecords = function (
 		{ variables },
 		callback
 	);
-};
-
-Undocumented.prototype.fetchWapiDomainInfo = function ( domainName, fn ) {
-	return this.wpcom.req.get( '/domains/' + domainName + '/status', fn );
-};
-
-Undocumented.prototype.requestTransferCode = function ( options, fn ) {
-	const { domainName } = options,
-		data = {
-			domainStatus: JSON.stringify( {
-				command: 'send-code',
-			} ),
-		};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.cancelTransferRequest = function ( { domainName, declineTransfer }, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( {
-			command: 'cancel-transfer-request',
-			payload: {
-				decline_transfer: declineTransfer,
-			},
-		} ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.acceptTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'accept-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
-};
-
-Undocumented.prototype.declineTransfer = function ( domainName, fn ) {
-	const data = {
-		domainStatus: JSON.stringify( { command: 'deny-transfer' } ),
-	};
-
-	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
 
 Undocumented.prototype.transferToUser = function ( siteId, domainName, targetUserId, fn ) {
@@ -2521,17 +2410,17 @@ Undocumented.prototype.updateSiteAddress = function (
 };
 
 Undocumented.prototype.requestGdprConsentManagementLink = function ( domain, callback ) {
-	return this.wpcom.req.get( `/domains/${ domain }/request-gdpr-consent-management-link`, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	return this.wpcom.req.get(
+		`/domains/${ domain }/request-gdpr-consent-management-link`,
+		function ( error, response ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, response );
-	} );
+			callback( null, response );
+		}
+	);
 };
 
 Undocumented.prototype.getDomainConnectSyncUxUrl = function (

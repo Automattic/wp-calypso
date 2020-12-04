@@ -88,7 +88,7 @@ Inside of this model we can build a simple interface for issuing and responding 
 Use the `http` function to create a Redux action describing an HTTP request.
 
 ```js
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 // announce presence - requires no response inside of Calypso
 dispatch(
@@ -145,7 +145,7 @@ We can be as creative or dull as we want to be in the request lifecycle.
 Because the information from the request response extends the action through meta, we can actually re-use the originating action and handle it based on that meta.
 
 ```js
-import { getProgress } from 'state/data-layer/wpcom-http/utils';
+import { getProgress } from 'calypso/state/data-layer/wpcom-http/utils';
 
 const packageMiddleware = ( store, action ) => {
 	if ( CREATE_PACKAGE !== action.type ) {
@@ -197,7 +197,7 @@ If given, the action passed as the second and optional parameter will take the p
 Because we have a very common pattern when issuing requests there is a built-in helper to hand each action off to the right function based on the (possibly) attached metadata.
 
 ```js
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 // create request when no meta present, add on success, alert on failure
 dispatchRequest( { fetch: fetchMenu, onSuccess: addMenuItems, onError: alertFailure } );
@@ -234,9 +234,9 @@ Its inclusion here is meant merely to illustrate how the pieces can fit together
 
 ```js
 // API Middleware, Post Like
-import { LIKE_POST, LIKE_POST_PROGRESS, UNLIKE_POST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { QUEUE_REQUEST } from 'state/data-layer/wpcom-http/constants';
+import { LIKE_POST, LIKE_POST_PROGRESS, UNLIKE_POST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { QUEUE_REQUEST } from 'calypso/state/data-layer/wpcom-http/constants';
 
 /**
  * @see https://developer.wordpress.com/docs/api/1.1/post/sites/%24site/posts/%24post_ID/likes/new/ API description

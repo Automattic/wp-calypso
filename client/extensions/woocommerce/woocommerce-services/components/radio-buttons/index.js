@@ -8,10 +8,10 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormRadio from 'calypso/components/forms/form-radio';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 import FieldDescription from 'woocommerce/woocommerce-services/components/field-description';
 

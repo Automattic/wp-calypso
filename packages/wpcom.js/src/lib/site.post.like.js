@@ -31,7 +31,7 @@ export default function Like( pid, sid, wpcom ) {
  * @param {Function} fn - callback function
  */
 Like.prototype.mine = Like.prototype.state = function ( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
 
@@ -43,7 +43,7 @@ Like.prototype.mine = Like.prototype.state = function ( query, fn ) {
  * @returns {Function} request handler
  */
 Like.prototype.add = function ( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/new';
 	return this.wpcom.req.put( path, query, null, fn );
 };
 
@@ -54,6 +54,6 @@ Like.prototype.add = function ( query, fn ) {
  * @param {Function} fn - callback function
  */
 Like.prototype.del = Like.prototype.delete = function ( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/likes/mine/delete';
 	return this.wpcom.req.del( path, query, fn );
 };

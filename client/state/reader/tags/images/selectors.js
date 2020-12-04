@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Returns the all images available for a given tag.

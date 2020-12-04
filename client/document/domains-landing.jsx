@@ -9,9 +9,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Head from 'components/head';
+import Head from 'calypso/components/head';
 import { chunkCssLinks } from './utils';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 function DomainsLanding( {
 	branchName,

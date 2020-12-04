@@ -21,8 +21,8 @@ import {
 	PUBLICIZE_SHARE_SUCCESS,
 	PUBLICIZE_SHARE_FAILURE,
 	PUBLICIZE_SHARE_DISMISS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { connectionsSchema } from './schema';
 import sharePostActions from './publicize-actions/reducer';
 

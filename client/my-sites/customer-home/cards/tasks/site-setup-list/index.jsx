@@ -12,24 +12,24 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Spinner from 'components/spinner';
-import { getTaskList } from 'lib/checklist';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { requestGuidedTour } from 'state/guided-tours/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
+import CardHeading from 'calypso/components/card-heading';
+import Spinner from 'calypso/components/spinner';
+import { getTaskList } from 'calypso/lib/checklist';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
 import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
 
 /**
@@ -37,7 +37,7 @@ import { getTask } from './get-task';
  */
 import './style.scss';
 
-const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
+const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_start', {
 			checklist_name: 'new_blog',
@@ -45,6 +45,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 			location: 'checklist_show',
 			step_name: task.id,
 			completed: task.isCompleted,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 
@@ -65,7 +66,7 @@ const startTask = ( dispatch, task, siteId, advanceToNextIncompleteTask ) => {
 	}
 };
 
-const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
+const skipTask = ( dispatch, task, tasks, siteId, setIsLoading, isPodcastingSite ) => {
 	const isLastTask = tasks.filter( ( t ) => ! t.isCompleted ).length === 1;
 
 	if ( isLastTask ) {
@@ -82,11 +83,12 @@ const skipTask = ( dispatch, task, tasks, siteId, setIsLoading ) => {
 			checklist_name: 'new_blog',
 			site_id: siteId,
 			step_name: task.id,
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
-const trackTaskDisplay = ( dispatch, task, siteId ) => {
+const trackTaskDisplay = ( dispatch, task, siteId, isPodcastingSite ) => {
 	dispatch(
 		recordTracksEvent( 'calypso_checklist_task_display', {
 			checklist_name: 'new_blog',
@@ -94,20 +96,22 @@ const trackTaskDisplay = ( dispatch, task, siteId ) => {
 			step_name: task.id,
 			completed: task.isCompleted,
 			location: 'home',
+			is_podcasting_site: isPodcastingSite,
 		} )
 	);
 };
 
 const SiteSetupList = ( {
 	emailVerificationStatus,
+	firstIncompleteTask,
 	isEmailUnverified,
+	isPodcastingSite,
 	menusUrl,
 	siteId,
 	siteSlug,
 	tasks,
 	taskUrls,
 	userEmail,
-	firstIncompleteTask,
 } ) => {
 	const [ currentTaskId, setCurrentTaskId ] = useState( null );
 	const [ currentTask, setCurrentTask ] = useState( null );
@@ -171,6 +175,7 @@ const SiteSetupList = ( {
 				emailVerificationStatus,
 				isDomainUnverified,
 				isEmailUnverified,
+				isPodcastingSite,
 				menusUrl,
 				siteId,
 				siteSlug,
@@ -178,7 +183,7 @@ const SiteSetupList = ( {
 				userEmail,
 			} );
 			setCurrentTask( newCurrentTask );
-			trackTaskDisplay( dispatch, newCurrentTask, siteId );
+			trackTaskDisplay( dispatch, newCurrentTask, siteId, isPodcastingSite );
 		}
 	}, [
 		currentTaskId,
@@ -186,6 +191,7 @@ const SiteSetupList = ( {
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
+		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -217,10 +223,16 @@ const SiteSetupList = ( {
 					currentTask={ currentTask }
 					skipTask={ () => {
 						setTaskIsManuallySelected( false );
-						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+						skipTask( dispatch, currentTask, tasks, siteId, setIsLoading, isPodcastingSite );
 					} }
 					startTask={ () =>
-						startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+						startTask(
+							dispatch,
+							currentTask,
+							siteId,
+							advanceToNextIncompleteTask,
+							isPodcastingSite
+						)
 					}
 				/>
 			) }
@@ -260,10 +272,23 @@ const SiteSetupList = ( {
 									currentTask={ currentTask }
 									skipTask={ () => {
 										setTaskIsManuallySelected( false );
-										skipTask( dispatch, currentTask, tasks, siteId, setIsLoading );
+										skipTask(
+											dispatch,
+											currentTask,
+											tasks,
+											siteId,
+											setIsLoading,
+											isPodcastingSite
+										);
 									} }
 									startTask={ () =>
-										startTask( dispatch, currentTask, siteId, advanceToNextIncompleteTask )
+										startTask(
+											dispatch,
+											currentTask,
+											siteId,
+											advanceToNextIncompleteTask,
+											isPodcastingSite
+										)
 									}
 									useAccordionLayout={ useAccordionLayout }
 								/>
@@ -298,13 +323,14 @@ export default connect( ( state ) => {
 
 	return {
 		emailVerificationStatus,
+		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 		isEmailUnverified: ! isCurrentUserEmailVerified( state ),
+		isPodcastingSite: !! getSiteOption( state, siteId, 'anchor_podcast' ),
 		menusUrl: getMenusUrl( state, siteId ),
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
 		tasks: taskList.getAll(),
 		taskUrls: getChecklistTaskUrls( state, siteId ),
 		userEmail: user?.email,
-		firstIncompleteTask: taskList.getFirstIncompleteTask(),
 	};
 } )( SiteSetupList );

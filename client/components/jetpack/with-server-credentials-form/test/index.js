@@ -19,23 +19,18 @@ import withServerCredentialsForm from 'calypso/components/jetpack/with-server-cr
 /**
  * Mocks
  */
-jest.doMock( 'components/data/query-rewind-state', () => {
-	const QueryRewindState = () => <div />;
-	return QueryRewindState;
+jest.mock( 'components/data/query-site-credentials', () => {
+	const QuerySiteCredentials = () => <div />;
+	return QuerySiteCredentials;
 } );
 
-jest.mock( 'state/selectors/get-rewind-state', () => ( {
+jest.mock( 'state/selectors/get-jetpack-credentials', () => ( {
 	__esModule: true,
 	default: () => ( {
-		credentials: [
-			{
-				role: 'main',
-				user: 'rewindUser',
-				host: 'rewindHost',
-				port: 33,
-				path: 'rewindPath',
-			},
-		],
+		user: 'jetpackUser',
+		host: 'jetpackHost',
+		port: 33,
+		abspath: '/jetpack/path',
 	} ),
 } ) );
 
@@ -162,7 +157,7 @@ describe( 'useWithServerCredentials HOC', () => {
 				pass: 'pass',
 				host: 'host',
 				kpri: '',
-				path: 'rewindPath',
+				path: '/jetpack/path',
 				port: 33,
 				protocol: 'ssh',
 			} )
@@ -187,17 +182,17 @@ describe( 'useWithServerCredentials HOC', () => {
 		expect( advancedSection.innerHTML ).toContain( 'Hidden content!' );
 	} );
 
-	it( 'should use rewindState to prefill the form', async () => {
+	it( 'should use state to prefill the form', async () => {
 		const { utils } = setup();
 		const submitButton = utils.getByText( 'Submit' );
 		const errorMessagesContainer = utils.getByTestId( 'error-messages' );
 		const formDataContainer = utils.getByTestId( 'form-content' );
 
-		// Verify the form was pre-filled with the current store rewind state
-		expect( formDataContainer.innerHTML ).toContain( 'rewindUser' );
-		expect( formDataContainer.innerHTML ).toContain( 'rewindHost' );
+		// Verify the form was pre-filled with the current store
+		expect( formDataContainer.innerHTML ).toContain( 'jetpackUser' );
+		expect( formDataContainer.innerHTML ).toContain( 'jetpackHost' );
 		expect( formDataContainer.innerHTML ).toContain( 33 );
-		expect( formDataContainer.innerHTML ).toContain( 'rewindPath' );
+		expect( formDataContainer.innerHTML ).toContain( '/jetpack/path' );
 
 		fireEvent.click( submitButton );
 		expect( errorMessagesContainer.innerHTML ).not.toContain(

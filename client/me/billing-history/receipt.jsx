@@ -29,6 +29,8 @@ import {
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import { getPlanTermLabel } from 'calypso/lib/plans';
 import { PARTNER_PAYPAL_EXPRESS } from 'calypso/lib/checkout/payment-methods';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 class BillingReceipt extends React.Component {
 	componentDidMount() {
@@ -63,12 +65,14 @@ class BillingReceipt extends React.Component {
 		const { transaction, transactionId, translate } = this.props;
 
 		return (
-			<Main>
+			<Main className="receipt is-wide-layout">
 				<DocumentHead title={ translate( 'Billing History' ) } />
 				<PageViewTracker
 					path="/me/purchases/billing/:receipt"
 					title="Me > Billing History > Receipt"
 				/>
+
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<QueryBillingTransaction transactionId={ transactionId } />
 
 				<ReceiptTitle backHref={ billingHistory } />
@@ -132,12 +136,12 @@ export function ReceiptBody( { transaction, handlePrintLinkClick } ) {
 					) }
 				</ul>
 				<ReceiptLineItems transaction={ transaction } />
-			</Card>
 
-			<Card compact className="billing-history__receipt-links">
-				<Button primary onClick={ handlePrintLinkClick }>
-					{ translate( 'Print Receipt' ) }
-				</Button>
+				<div className="billing-history__receipt-links">
+					<Button primary onClick={ handlePrintLinkClick }>
+						{ translate( 'Print Receipt' ) }
+					</Button>
+				</div>
 			</Card>
 		</div>
 	);
@@ -308,7 +312,7 @@ function ReceiptLabels() {
 
 export function ReceiptTitle( { backHref } ) {
 	const translate = useTranslate();
-	return <HeaderCake backHref={ backHref }>{ translate( 'Billing History' ) }</HeaderCake>;
+	return <HeaderCake backHref={ backHref }>{ translate( 'Receipt' ) }</HeaderCake>;
 }
 
 export default connect(

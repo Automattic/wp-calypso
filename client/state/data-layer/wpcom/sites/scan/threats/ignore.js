@@ -1,13 +1,13 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { JETPACK_SCAN_THREAT_IGNORE } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { requestScanStatus } from 'state/jetpack-scan/actions';
-import { requestJetpackScanHistory } from 'state/jetpack-scan/history/actions';
-import { updateThreat, updateThreatCompleted } from 'state/jetpack-scan/threats/actions';
-import * as sitesAlertsIgnoreHandlers from 'state/data-layer/wpcom/sites/alerts/ignore';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { JETPACK_SCAN_THREAT_IGNORE } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { requestScanStatus } from 'calypso/state/jetpack-scan/actions';
+import { requestJetpackScanHistory } from 'calypso/state/jetpack-scan/history/actions';
+import { updateThreat, updateThreatCompleted } from 'calypso/state/jetpack-scan/threats/actions';
+import * as sitesAlertsIgnoreHandlers from 'calypso/state/data-layer/wpcom/sites/alerts/ignore';
 
 export const request = ( action ) => {
 	const defaultActions = sitesAlertsIgnoreHandlers.request( action );

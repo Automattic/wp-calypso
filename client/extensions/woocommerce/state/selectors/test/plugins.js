@@ -9,7 +9,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { areAllRequiredPluginsActive, isWcsEnabled } from '../plugins';
-import config from 'config';
+import config from 'calypso/config';
 import plugins from './fixtures/plugins.js';
 
 const state = deepFreeze( { plugins } );

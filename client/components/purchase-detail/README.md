@@ -7,7 +7,7 @@ This component renders a box with a title, description, button, and icon, based 
 ```js
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import PurchaseDetail from 'components/purchase-detail';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 const MyComponent = ( { translate } ) => (
 	<PurchaseDetail

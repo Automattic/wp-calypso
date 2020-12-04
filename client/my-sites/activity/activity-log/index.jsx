@@ -18,37 +18,37 @@ import ActivityLogItem from '../activity-log-item';
 import ActivityLogAggregatedItem from '../activity-log-item/aggregated';
 import ActivityLogSwitch from '../activity-log-switch';
 import ActivityLogTasklist from '../activity-log-tasklist';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
 import ErrorBanner from '../activity-log-banner/error-banner';
 import Filterbar from '../filterbar';
 import UpgradeBanner from '../activity-log-banner/upgrade-banner';
 import IntroBanner from '../activity-log-banner/intro-banner';
-import { isFreePlan } from 'lib/plans';
-import JetpackColophon from 'components/jetpack-colophon';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Pagination from 'components/pagination';
+import { isFreePlan } from 'calypso/lib/plans';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import Pagination from 'calypso/components/pagination';
 import ProgressBanner from '../activity-log-banner/progress-banner';
 import RewindAlerts from './rewind-alerts';
-import QueryRewindBackups from 'components/data/query-rewind-backups';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import QuerySiteSettings from 'components/data/query-site-settings'; // For site time offset
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings'; // For site time offset
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SuccessBanner from '../activity-log-banner/success-banner';
 import RewindUnavailabilityNotice from './rewind-unavailability-notice';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { siteHasBackupProductPurchase } from 'state/purchases/selectors';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
-import { getSiteSlug, getSiteTitle, isJetpackSite } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { siteHasBackupProductPurchase } from 'calypso/state/purchases/selectors';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
+import { getSiteSlug, getSiteTitle, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
-} from 'state/analytics/actions';
+} from 'calypso/state/analytics/actions';
 import {
 	getRewindRestoreProgress,
 	rewindRequestDismiss,
@@ -56,25 +56,26 @@ import {
 	rewindBackupDismiss,
 	rewindBackup,
 	updateFilter,
-} from 'state/activity-log/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
-import getBackupProgress from 'state/selectors/get-backup-progress';
-import getRequestedBackup from 'state/selectors/get-requested-backup';
-import getRequestedRewind from 'state/selectors/get-requested-rewind';
-import getRestoreProgress from 'state/selectors/get-restore-progress';
-import getRewindBackups from 'state/selectors/get-rewind-backups';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isVipSite from 'state/selectors/is-vip-site';
-import { requestActivityLogs } from 'state/data-getters';
-import { emptyFilter } from 'state/activity-log/reducer';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { applySiteOffset } from 'lib/site/timezone';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPreference } from 'state/preferences/selectors';
+} from 'calypso/state/activity-log/actions';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
+import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
+import getRestoreProgress from 'calypso/state/selectors/get-restore-progress';
+import getRewindBackups from 'calypso/state/selectors/get-rewind-backups';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { requestActivityLogs } from 'calypso/state/data-getters';
+import { emptyFilter } from 'calypso/state/activity-log/reducer';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 /**
  * Style dependencies
@@ -521,22 +522,9 @@ class ActivityLog extends Component {
 	}
 
 	render() {
-		const { canViewActivityLog, siteId, translate } = this.props;
+		const { siteId, translate } = this.props;
 
-		if ( ! canViewActivityLog ) {
-			return (
-				<Main>
-					<QuerySitePurchases siteId={ siteId } />
-					<SidebarNavigation />
-					<EmptyContent
-						title={ translate( 'You are not authorized to view this page' ) }
-						illustration={ '/calypso/images/illustrations/illustration-404.svg' }
-					/>
-				</Main>
-			);
-		}
-
-		const { context, rewindState } = this.props;
+		const { context, rewindState, siteSettingsUrl } = this.props;
 
 		const rewindNoThanks = get( context, 'query.rewind-redirect', '' );
 		const rewindIsNotReady =
@@ -550,6 +538,7 @@ class ActivityLog extends Component {
 				<DocumentHead title={ translate( 'Activity' ) } />
 				{ siteId && <QueryRewindState siteId={ siteId } /> }
 				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
+				{ siteId && <TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } /> }
 				{ '' !== rewindNoThanks && rewindIsNotReady
 					? siteId && <ActivityLogSwitch siteId={ siteId } redirect={ rewindNoThanks } />
 					: this.getActivityLog() }
@@ -580,7 +569,6 @@ export default connect(
 		const isJetpack = isJetpackSite( state, siteId );
 
 		return {
-			canViewActivityLog: canCurrentUser( state, siteId, 'manage_options' ),
 			gmtOffset,
 			enableRewind:
 				'active' === rewindState.state &&
@@ -600,6 +588,7 @@ export default connect(
 			rewindState,
 			siteId,
 			siteTitle: getSiteTitle( state, siteId ),
+			siteSettingsUrl: getSettingsUrl( state, siteId, 'general' ),
 			slug: getSiteSlug( state, siteId ),
 			timezone,
 			siteHasNoLog,

@@ -8,9 +8,9 @@ Those notices will appear when there is a feature overlap between the current pl
 
 ```jsx
 import React from 'react';
-import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices';
-import { JETPACK_PRODUCTS_LIST } from 'lib/products-values/constants';
-import { JETPACK_PLANS } from 'lib/plans/constants';
+import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { JETPACK_PLANS } from 'calypso/lib/plans/constants';
 
 export default class extends React.Component {
 	render() {

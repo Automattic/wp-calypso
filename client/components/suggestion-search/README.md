@@ -5,7 +5,7 @@ SuggestionSearch is a bundled component of FormTextInput and Suggestions which e
 ## Usage
 
 ```jsx
-import SuggestionSearch from 'components/suggestion-search';
+import SuggestionSearch from 'calypso/components/suggestion-search';
 
 function onChange( newValue, isNavigating ) {
 	console.log( 'New value: ', newValue, 'isNavigating:', isNavigating );

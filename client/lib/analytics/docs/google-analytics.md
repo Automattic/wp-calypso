@@ -13,7 +13,7 @@ In most situations, it is best to use the [Analytics Middleware](https://github.
 ### `recordGoogleEvent( category, action [, label, value ] )`
 
 ```js
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 dispatch( recordGoogleEvent( 'Reader', 'Loaded Next Page', 'page', 2 ) );
 ```
@@ -25,7 +25,7 @@ _Note: Unless you have a strong reason to call `analytics.ga` directly, you shou
 Record an event:
 
 ```js
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 gaRecordEvent( 'Reader', 'Clicked Like' );
 gaRecordEvent( 'Reader', 'Loaded Next Page', 'page', 2 );
@@ -40,7 +40,7 @@ _Note: Unless you have a strong reason to directly record a page view to Google 
 Record a virtual page view:
 
 ```js
-import { gaRecordPageView } from 'lib/analytics/ga';
+import { gaRecordPageView } from 'calypso/lib/analytics/ga';
 
 gaRecordPageView( '/posts/draft', 'Posts > Drafts' );
 ```

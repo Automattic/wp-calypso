@@ -6,9 +6,9 @@ import { includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import { PLAN_PREMIUM, PLAN_BUSINESS } from 'lib/plans/constants';
-import { getSitePlan } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { PLAN_PREMIUM, PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import { getSitePlan } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 // NOTE: selector moved here because tour is no longer active and serves as example only
 // to use in a tour, move back to 'state/guided-tours/contexts' (see commented out import above)

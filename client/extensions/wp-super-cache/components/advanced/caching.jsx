@@ -9,14 +9,14 @@ import { includes, pick } from 'lodash';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle/compact';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 const Caching = ( {

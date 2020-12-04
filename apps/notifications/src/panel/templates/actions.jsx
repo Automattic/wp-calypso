@@ -23,7 +23,8 @@ import { getActions, getReferenceId } from '../helpers/notes';
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
 const getInitialReplyValue = ( note, translate ) => {
-	let ranges, username;
+	let ranges;
+	let username;
 
 	if ( 'user' === note.subject[ 0 ].ranges[ 0 ].type ) {
 		// Build the username from the subject line

@@ -23,7 +23,11 @@ import {
 import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
-import { requestPostComments, requestComment, setActiveReply } from 'calypso/state/comments/actions';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
 import { getErrorKey } from 'calypso/state/comments/utils';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 

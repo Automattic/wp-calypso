@@ -6,19 +6,19 @@ import { get, replace } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_FAILURE,
 	TWO_FACTOR_AUTHENTICATION_LOGIN_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'state/login/selectors';
-import { getErrorFromHTTPError, postLoginRequest } from 'state/login/utils';
+} from 'calypso/state/action-types';
+import { getTwoFactorAuthNonce, getTwoFactorUserId } from 'calypso/state/login/selectors';
+import { getErrorFromHTTPError, postLoginRequest } from 'calypso/state/login/utils';
 
-import { remoteLoginUser } from 'state/login/actions/remote-login-user';
-import { updateNonce } from 'state/login/actions/update-nonce';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
+import { updateNonce } from 'calypso/state/login/actions/update-nonce';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Logs a user in with a two factor verification code.

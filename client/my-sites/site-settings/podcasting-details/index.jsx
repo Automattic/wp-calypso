@@ -125,7 +125,7 @@ class PodcastingDetails extends Component {
 		);
 	}
 
-	renderTextField( { FormComponent = FormInput, key, label, explanation } ) {
+	renderTextField( { FormComponent = FormInput, key, label, explanation, isDisabled = false } ) {
 		const { fields, isRequestingSettings, onChangeField, isPodcastingEnabled } = this.props;
 
 		return (
@@ -137,7 +137,7 @@ class PodcastingDetails extends Component {
 					name={ key }
 					value={ decodeEntities( fields[ key ] ) || '' }
 					onChange={ onChangeField( key ) }
-					disabled={ isRequestingSettings || ! isPodcastingEnabled }
+					disabled={ isDisabled || isRequestingSettings || ! isPodcastingEnabled }
 				/>
 			</FormFieldset>
 		);
@@ -378,6 +378,7 @@ class PodcastingDetails extends Component {
 					explanation: translate(
 						'The keywords setting has been deprecated. This field is for reference only.'
 					),
+					isDisabled: true,
 				} ) }
 				{ isPodcastingEnabled && this.renderSaveButton( true ) }
 			</Fragment>

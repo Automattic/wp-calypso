@@ -28,9 +28,9 @@ export interface FormState {
 }
 
 export const INITIAL_FORM_STATE: FormState = {
-	protocol: 'ssh',
+	protocol: 'ftp',
 	host: '',
-	port: 22,
+	port: 21,
 	user: '',
 	pass: '',
 	path: '',

@@ -4,21 +4,21 @@
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { some } from 'lodash';
 import classNames from 'classnames';
+import { isEmpty } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
 import CredentialsConfigured from './credentials-configured';
-import Notice from 'components/notice';
-import QueryRewindState from 'components/data/query-rewind-state';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
-import { getSiteSlug } from 'state/sites/selectors';
-import RewindCredentialsForm from 'components/rewind-credentials-form';
+import Notice from 'calypso/components/notice';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import RewindCredentialsForm from 'calypso/components/rewind-credentials-form';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies
@@ -45,11 +45,11 @@ class JetpackCredentials extends Component {
 			this.isSectionHighlighted() && 'is-highlighted'
 		);
 		const hasAuthorized = rewindState === 'provisioning' || rewindState === 'active';
-		const hasCredentials = some( credentials, { role: 'main' } );
+		const hasCredentials = ! isEmpty( credentials );
 
 		return (
 			<div className={ classes }>
-				<QueryRewindState siteId={ siteId } />
+				<QuerySiteCredentials siteId={ siteId } />
 				<SettingsSectionHeader title={ translate( 'Backups and security scans' ) }>
 					{ hasAuthorized && (
 						<Notice
@@ -85,12 +85,9 @@ class JetpackCredentials extends Component {
 
 export default connect( ( state ) => {
 	const siteId = getSelectedSiteId( state );
-	const { credentials, state: rewindState } = getRewindState( state, siteId );
-
 	return {
-		credentials,
-		rewindState,
 		siteId,
 		siteSlug: getSiteSlug( state, siteId ),
+		credentials: getJetpackCredentials( state, siteId, 'main' ),
 	};
 } )( localize( JetpackCredentials ) );

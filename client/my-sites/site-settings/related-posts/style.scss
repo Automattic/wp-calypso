@@ -19,10 +19,10 @@
 }
 
 .related-posts__preview-headline {
-		margin: 0 0 1em 8px;
-		font-size: $font-body-extra-small;
-		font-weight: 600;
-	}
+	margin: 0 0 1em 8px;
+	font-size: $font-body-extra-small;
+	font-weight: 600;
+}
 
 .related-posts__preview-items {
 	@include breakpoint-deprecated( '>480px' ) {

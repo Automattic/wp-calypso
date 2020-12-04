@@ -11,9 +11,9 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
+} from 'calypso/state/sites/selectors';
 
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 const _filters = {
 	none: function () {
@@ -151,4 +151,37 @@ export function getStatusForSite( state, siteId ) {
 export function isPluginDoingAction( state, siteId, pluginId ) {
 	const status = getStatusForPlugin( state, siteId, pluginId );
 	return !! status && 'inProgress' === status.status;
+}
+
+/**
+ * Whether the plugin's status for one or more recent actions matches a specified status.
+ *
+ * @param  {object}       state    Global state tree
+ * @param  {number}       siteId   ID of the site
+ * @param  {string}       pluginId ID of the plugin
+ * @param  {string|Array} action   Action, or array of actions of interest
+ * @param  {string}       status   Status to check against
+ * @returns {boolean}              True if status is the specified one for one or more actions, false otherwise.
+ */
+export function isPluginActionStatus( state, siteId, pluginId, action, status ) {
+	const pluginStatus = getStatusForPlugin( state, siteId, pluginId );
+	if ( ! pluginStatus ) {
+		return false;
+	}
+
+	const actions = Array.isArray( action ) ? action : [ action ];
+	return actions.includes( pluginStatus.action ) && status === pluginStatus.status;
+}
+
+/**
+ * Whether the plugin's status for one or more recent actions is in progress.
+ *
+ * @param  {object}       state    Global state tree
+ * @param  {number}       siteId   ID of the site
+ * @param  {string}       pluginId ID of the plugin
+ * @param  {string|Array} action   Action, or array of actions of interest
+ * @returns {boolean}              True if one or more specified actions are in progress, false otherwise.
+ */
+export function isPluginActionInProgress( state, siteId, pluginId, action ) {
+	return isPluginActionStatus( state, siteId, pluginId, action, 'inProgress' );
 }

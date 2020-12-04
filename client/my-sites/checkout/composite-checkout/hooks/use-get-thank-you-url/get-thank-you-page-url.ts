@@ -3,6 +3,7 @@
  */
 import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 import debugFactory from 'debug';
+import type { ResponseCart } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:get-thank-you-page-url' );
 
@@ -22,6 +23,7 @@ import {
 	hasPremiumPlan,
 	hasBusinessPlan,
 	hasEcommercePlan,
+	hasMonthlyCartItem,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -29,7 +31,6 @@ import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
 import { JETPACK_RESET_PLANS } from 'calypso/lib/plans/constants';
 import { persistSignupDestination, retrieveSignupDestination } from 'calypso/signup/storageUtils';
 import { abtest } from 'calypso/lib/abtest';
-import type { ResponseCart } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-shopping-cart-manager/types';
 
 type SaveUrlToCookie = ( url: string ) => void;
 type GetUrlFromCookie = () => string | undefined;
@@ -49,8 +50,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 	isInEditor,
 }: {
 	siteSlug: string | undefined;
@@ -67,8 +66,6 @@ export default function getThankYouPageUrl( {
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult: boolean;
 	hideNudge: boolean;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 	isInEditor?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
@@ -171,8 +168,6 @@ export default function getThankYouPageUrl( {
 		cart,
 		siteSlug,
 		hideNudge,
-		didPurchaseFail,
-		isTransactionResultEmpty,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -277,21 +272,18 @@ function maybeShowPlanBumpOffer( {
 	cart,
 	siteSlug,
 	orderId,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 } ): string | undefined {
 	if ( orderId ) {
 		return;
 	}
-	if ( hasPremiumPlan( cart ) && ! isTransactionResultEmpty && ! didPurchaseFail ) {
-		return `/checkout/${ siteSlug }/offer-plan-upgrade/business/${ pendingOrReceiptId }`;
+	if ( hasPremiumPlan( cart ) ) {
+		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
+		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
 	return;
 }
@@ -302,16 +294,12 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
-	didPurchaseFail,
-	isTransactionResultEmpty,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
-	didPurchaseFail: boolean;
-	isTransactionResultEmpty: boolean;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -337,8 +325,6 @@ function getRedirectUrlForConciergeNudge( {
 			cart,
 			orderId,
 			siteSlug,
-			didPurchaseFail,
-			isTransactionResultEmpty,
 		} );
 		if ( upgradePath ) {
 			return upgradePath;

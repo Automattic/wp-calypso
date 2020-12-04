@@ -4,14 +4,15 @@
 import {
 	combineReducers,
 	keyedReducer,
-	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
 	GSUITE_USERS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { usersSchema } from './schema';
 
 export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {
@@ -61,7 +62,7 @@ export const requestingReducer = withoutPersistence( ( state = false, action ) =
 	return state;
 } );
 
-export default keyedReducer(
+const combinedReducer = keyedReducer(
 	'siteId',
 	combineReducers( {
 		users: usersReducer,
@@ -69,3 +70,5 @@ export default keyedReducer(
 		requestError: requestErrorReducer,
 	} )
 );
+
+export default withStorageKey( 'gsuiteUsers', combinedReducer );

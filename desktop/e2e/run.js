@@ -18,6 +18,8 @@ const APP_ARGS = [
 	'--disable-http-cache',
 	'--start-maximized',
 	'--remote-debugging-port=9222',
+	'--disable-setuid-sandbox',
+	'--no-sandbox',
 ];
 
 let BUILT_APP_DIR;
@@ -63,18 +65,21 @@ function initLogs( timestamp ) {
 
 	const appLogPath = path.join( dir, `app-${ timestamp }.log` );
 	const driverLogPath = path.join( dir, `chromedriver-${ timestamp }.log` );
+	const electronLogPath = path.join( dir, `electron-${ timestamp }.log` );
 
 	const appLogFd = openSync( appLogPath, 'a' );
 	const driverLogFd = openSync( driverLogPath, 'a' );
+	const electronLogFd = openSync( electronLogPath, 'a' );
 
-	if ( ! appLogFd || ! driverLogFd ) {
+	if ( ! appLogFd || ! driverLogFd || ! electronLogFd ) {
 		throw 'failed to initialize logs';
 	}
 
 	const appLog = { path: appLogPath, fd: appLogFd };
 	const driverLog = { path: driverLogPath, fd: driverLogFd };
+	const electronLog = { path: electronLogPath, fd: electronLogFd };
 
-	return { appLog, driverLog };
+	return { appLog, driverLog, electronLog };
 }
 
 const delay = promisify( setTimeout );
@@ -111,12 +116,12 @@ async function run() {
 
 		// Replace `:` with `-` to format timestamp as YYYY-MM-DDTHH-MM-SS.mmmZ
 		const timestamp = new Date().toJSON().replace( /:/g, '-' );
-		const { appLog, driverLog } = initLogs( timestamp );
+		const { appLog, driverLog, electronLog } = initLogs( timestamp );
 
 		await videoRecorder.startVideo();
 
 		const parentEnv = process.env;
-		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, null, {
+		app = spawnDetached( CWD, SPAWN_CMD, APP_ARGS, electronLog.fd, {
 			WP_DEBUG_LOG: appLog.path,
 			DEBUG: true,
 			...parentEnv,
@@ -132,9 +137,14 @@ async function run() {
 		);
 
 		const tests = path.join( E2E_DIR, 'tests', 'e2e.js' );
-		execSync( `npx mocha ${ tests } --timeout 20000`, {
-			stdio: 'inherit',
-		} );
+		const reporterOptions = path.join( E2E_DIR, 'mocha-reporter.json' );
+		execSync(
+			`npx mocha ${ tests } --timeout 20000 --exit --reporter mocha-multi-reporters --reporter-options configFile=${ reporterOptions }`,
+			{
+				cwd: PROJECT_DIR,
+				stdio: 'inherit',
+			}
+		);
 	} catch ( err ) {
 		console.error( err ); // eslint-disable-line no-console
 		process.exitCode = 1;

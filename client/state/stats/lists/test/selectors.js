@@ -14,7 +14,7 @@ import {
 	getSiteStatsCSVData,
 	hasSiteStatsQueryFailed,
 } from '../selectors';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	beforeEach( () => {

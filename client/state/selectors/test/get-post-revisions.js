@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getPostRevisions } from 'state/posts/selectors/get-post-revisions';
+import { getPostRevisions } from 'calypso/state/posts/selectors/get-post-revisions';
 
 describe( 'getPostRevisions', () => {
 	const SITE_ID = 12345678;

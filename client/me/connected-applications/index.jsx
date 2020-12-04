@@ -23,6 +23,7 @@ import QueryConnectedApplications from 'calypso/components/data/query-connected-
 import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -109,7 +110,7 @@ class ConnectedApplications extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<Main className="security connected-applications">
+			<Main className="security connected-applications is-wide-layout">
 				<QueryConnectedApplications />
 
 				<PageViewTracker
@@ -118,6 +119,8 @@ class ConnectedApplications extends PureComponent {
 				/>
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				<DocumentHead title={ translate( 'Connected Applications' ) } />
 

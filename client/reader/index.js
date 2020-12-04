@@ -16,11 +16,12 @@ import {
 	legacyRedirects,
 	prettyRedirects,
 	readA8C,
+	readFollowingP2,
 	sidebar,
 	updateLastRoute,
 } from './controller';
-import config from 'config';
-import { makeLayout, render as clientRender } from 'controller';
+import config from 'calypso/config';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 import { addMiddleware } from 'redux-dynamic-middlewares';
 
 /**
@@ -37,7 +38,7 @@ export async function lazyLoadDependencies() {
 	const isBrowser = typeof window === 'object';
 	if ( isBrowser && config.isEnabled( 'lasagna' ) && config.isEnabled( 'reader' ) ) {
 		const lasagnaMiddleware = await import(
-			/* webpackChunkName: "lasagnaMiddleware" */ 'state/lasagna/middleware.js'
+			/* webpackChunkName: "lasagnaMiddleware" */ 'calypso/state/lasagna/middleware.js'
 		);
 		addMiddleware( lasagnaMiddleware.default );
 	}
@@ -95,4 +96,7 @@ export default async function () {
 
 	// Automattic Employee Posts
 	page( '/read/a8c', updateLastRoute, sidebar, forceTeamA8C, readA8C, makeLayout, clientRender );
+
+	// new P2 Posts
+	page( '/read/p2', updateLastRoute, sidebar, readFollowingP2, makeLayout, clientRender );
 }

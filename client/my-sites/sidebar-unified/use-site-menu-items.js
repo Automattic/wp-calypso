@@ -9,9 +9,9 @@ import buildFallbackResponse from './fallback-data.js';
  * Internal dependencies
  */
 import { requestAdminMenu } from '../../state/admin-menu/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getAdminMenu } from 'state/admin-menu/selectors';
-import { getSiteDomain } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
+import { getSiteDomain } from 'calypso/state/sites/selectors';
 
 const useSiteMenuItems = () => {
 	const dispatch = useDispatch();

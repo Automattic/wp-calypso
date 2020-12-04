@@ -7,9 +7,9 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import reducer, { items, itemReducer } from '../reducer';
-import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'state/action-types';
+import { POST_LIKES_RECEIVE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
 import { addLiker, removeLiker, like, unlike } from '../actions';
-import { useFakeTimers, useSandbox } from 'test-helpers/use-sinon';
+import { useFakeTimers, useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {
@@ -426,6 +426,21 @@ describe( 'reducer', () => {
 				} );
 				expect( state.likes ).toBe( initialState.likes );
 			} );
+
+			test( 'should return previous state if liker is already present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 }, liker ],
+					found: 5,
+					iLike: false,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					addLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toBe( initialState );
+			} );
 		} );
 
 		describe( 'a POST_LIKES_REMOVE_LIKER action', () => {
@@ -461,14 +476,14 @@ describe( 'reducer', () => {
 				expect(
 					itemReducer(
 						deepFreeze( {
-							likes: [ liker ],
+							likes: [ { ID: 123 }, liker, { ID: 456 } ],
 							found: 5,
 							iLike: false,
 						} ),
 						removeLiker( 1, 1, 5, liker )
 					)
 				).toEqual( {
-					likes: [],
+					likes: [ { ID: 123 }, { ID: 456 } ],
 					found: 5,
 					iLike: false,
 				} );
@@ -493,6 +508,22 @@ describe( 'reducer', () => {
 					iLike: false,
 				} );
 				expect( state.likes ).toBe( initialState.likes );
+			} );
+
+			test( 'should return previous state if liker is not present and like count is the same', () => {
+				const initialState = deepFreeze( {
+					likes: [ { ID: 2 } ],
+					found: 5,
+					iLike: false,
+					lastUpdated: undefined,
+				} );
+				const state = itemReducer(
+					initialState,
+					// same liker, same count!
+					removeLiker( 1, 1, 5, liker )
+				);
+
+				expect( state ).toBe( initialState );
 			} );
 		} );
 	} );

@@ -1,8 +1,12 @@
 /**
  * Internal dependencies
  */
-import { isJetpackPlan } from 'lib/products-values';
-import { costToUSD, isAdTrackingAllowed, refreshCountryCodeCookieGdpr } from 'lib/analytics/utils';
+import { isJetpackPlan } from 'calypso/lib/products-values';
+import {
+	costToUSD,
+	isAdTrackingAllowed,
+	refreshCountryCodeCookieGdpr,
+} from 'calypso/lib/analytics/utils';
 import {
 	debug,
 	isCriteoEnabled,
@@ -450,7 +454,9 @@ function recordOrderInGAEnhancedEcommerce( cart, orderId, wpcomJetpackCartInfo )
 		return;
 	}
 
-	let products, brand, totalCostUSD;
+	let products;
+	let brand;
+	let totalCostUSD;
 
 	if ( wpcomJetpackCartInfo.containsWpcomProducts ) {
 		products = wpcomJetpackCartInfo.wpcomProducts;

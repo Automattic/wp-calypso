@@ -5,7 +5,7 @@
 ## Usage
 
 ```js
-import QuerySiteCommentsList from 'components/data/query-site-comments-list';
+import QuerySiteCommentsList from 'calypso/components/data/query-site-comments-list';
 
 const CommentList = ( { comments, siteId } ) => (
 	<div>

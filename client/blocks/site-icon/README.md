@@ -5,7 +5,7 @@ This component is used to display the icon for a site. It takes a Site object as
 ## How to use
 
 ```js
-import SiteIcon from 'blocks/site-icon';
+import SiteIcon from 'calypso/blocks/site-icon';
 
 function render() {
 	return <SiteIcon site={ site } />;

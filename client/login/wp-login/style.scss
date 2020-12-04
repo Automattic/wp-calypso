@@ -164,16 +164,6 @@ $image-height: 47px;
 }
 
 .layout.is-jetpack-login {
-	background-color: var( --color-jetpack-onboarding-background );
-
-	.login__form-header,
-	.magic-login__form-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text {
-		fill: var( --color-jetpack-onboarding-text );
-	}
 
 	.login__form input:focus,
 	.logged-out-form input:focus {
@@ -193,21 +183,6 @@ $image-height: 47px;
 		}
 	}
 
-	.wp-login__links a,
-	.wp-login__links button,
-	.logged-out-form__links a,
-	.logged-out-form__link-item,
-	.translator-invite__content a,
-	.magic-login__footer a {
-		color: var( --color-neutral-20 );
-		border-bottom-color: var( --color-neutral-70 );
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-20 );
-		}
-	}
-
 	.translator-invite__content a {
 		border: none;
 	}
@@ -219,8 +194,8 @@ $image-height: 47px;
 	.wp-login__site-return-link::after {
 		background: linear-gradient(
 			to right,
-			rgba( var( --color-jetpack-onboarding-background-rgb ), 0 ),
-			var( --color-jetpack-onboarding-background ) 90%
+			rgba( var( --color-surface-backdrop-rgb ), 0 ),
+			var( --color-surface-backdrop ) 90%
 		);
 	}
 }

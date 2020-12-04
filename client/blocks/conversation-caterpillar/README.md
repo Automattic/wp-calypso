@@ -5,7 +5,7 @@ This component is used to show who's involved in a conversation, and how many co
 ## How to use
 
 ```js
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
 
 function render() {
 	return <ConversationCaterpillar blogId={ blogId } postId={ postId } />;

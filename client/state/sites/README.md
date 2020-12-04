@@ -11,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Adds a site object to the set of known sites.
 
 ```js
-import { receiveSite } from 'state/sites/actions';
+import { receiveSite } from 'calypso/state/sites/actions';
 
 dispatch( receiveSite( { ID: 2916284, name: 'WordPress.com Example Blog' } ) );
 ```

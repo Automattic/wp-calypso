@@ -9,18 +9,18 @@ import { Card } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import FreePhotoLibrary from 'my-sites/customer-home/cards/education/free-photo-library';
+import FreePhotoLibrary from 'calypso/my-sites/customer-home/cards/education/free-photo-library';
 // eslint-disable-next-line inclusive-language/use-inclusive-words
-import MasteringGutenberg from 'my-sites/customer-home/cards/education/mastering-gutenberg';
-import EducationEarn from 'my-sites/customer-home/cards/education/earn';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHomeLayout } from 'state/selectors/get-home-layout';
+import MasteringGutenberg from 'calypso/my-sites/customer-home/cards/education/mastering-gutenberg';
+import EducationEarn from 'calypso/my-sites/customer-home/cards/education/earn';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHomeLayout } from 'calypso/state/selectors/get-home-layout';
 import {
 	EDUCATION_FREE_PHOTO_LIBRARY,
 	EDUCATION_GUTENBERG,
 	EDUCATION_EARN,
-} from 'my-sites/customer-home/cards/constants';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/my-sites/customer-home/cards/constants';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

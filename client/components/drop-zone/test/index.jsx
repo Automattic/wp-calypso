@@ -23,7 +23,8 @@ class Wrapper extends React.Component {
 }
 
 describe( 'index', () => {
-	let container, sandbox;
+	let container;
+	let sandbox;
 	const requiredProps = {
 		hideDropZone: () => {},
 		showDropZone: () => {},
@@ -73,8 +74,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should render default content if none is provided', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-			content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
+		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
 
 		TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-icon' );
 		TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content-text' );
@@ -83,10 +84,10 @@ describe( 'index', () => {
 
 	test( 'should accept children to override the default content', () => {
 		const tree = ReactDom.render(
-				React.createElement( DropZone, requiredProps, 'Hello World' ),
-				container
-			),
-			content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
+			React.createElement( DropZone, requiredProps, 'Hello World' ),
+			container
+		);
+		const content = TestUtils.findRenderedDOMComponentWithClass( tree, 'drop-zone__content' );
 
 		expect( content.textContent ).to.equal( 'Hello World' );
 	} );
@@ -106,8 +107,8 @@ describe( 'index', () => {
 	} );
 
 	test( 'should highlight the drop zone when dragging over the body', () => {
-		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-			dragEnterEvent = new window.MouseEvent( 'dragenter' );
+		const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+		const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 		window.dispatchEvent( dragEnterEvent );
 
@@ -117,8 +118,8 @@ describe( 'index', () => {
 
 	test( 'should start observing the body for mutations when dragging over', () => {
 		return new Promise( ( done ) => {
-			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-				dragEnterEvent = new window.MouseEvent( 'dragenter' );
+			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+			const dragEnterEvent = new window.MouseEvent( 'dragenter' );
 
 			window.dispatchEvent( dragEnterEvent );
 
@@ -131,9 +132,9 @@ describe( 'index', () => {
 
 	test( 'should stop observing the body for mutations upon drag ending', () => {
 		return new Promise( ( done ) => {
-			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container ),
-				dragEnterEvent = new window.MouseEvent( 'dragenter' ),
-				dragLeaveEvent = new window.MouseEvent( 'dragleave' );
+			const tree = ReactDom.render( React.createElement( DropZone, requiredProps ), container );
+			const dragEnterEvent = new window.MouseEvent( 'dragenter' );
+			const dragLeaveEvent = new window.MouseEvent( 'dragleave' );
 
 			window.dispatchEvent( dragEnterEvent );
 			window.dispatchEvent( dragLeaveEvent );

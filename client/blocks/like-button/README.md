@@ -7,7 +7,7 @@ For most usage, the container is the easiest route.
 ## How to use the container
 
 ```js
-import LikeButtonContainer from 'blocks/like-button';
+import LikeButtonContainer from 'calypso/blocks/like-button';
 
 function render() {
 	return (
@@ -26,7 +26,7 @@ function render() {
 ## How to use the button directly
 
 ```js
-import LikeButton from 'blocks/like-button/button';
+import LikeButton from 'calypso/blocks/like-button/button';
 
 function render() {
 	return (

@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/i18n-no-this-translate' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/i18n-no-this-translate' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

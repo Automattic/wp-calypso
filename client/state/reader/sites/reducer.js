@@ -12,12 +12,12 @@ import {
 	READER_SITE_REQUEST_SUCCESS,
 	READER_SITE_REQUEST_FAILURE,
 	READER_SITE_UPDATE,
-} from 'state/reader/action-types';
-import { SERIALIZE } from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { SERIALIZE } from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { readerSitesSchema } from './schema';
-import { withoutHttp } from 'lib/url';
-import { decodeEntities } from 'lib/formatting';
+import { withoutHttp } from 'calypso/lib/url';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 function handleSerialize( state ) {
 	// remove errors from the serialized state

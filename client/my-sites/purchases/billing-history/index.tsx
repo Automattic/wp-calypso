@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 import { CompactCard } from '@automattic/components';
@@ -25,10 +25,38 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import useRedirectToHistoryPageOnInvalidTransaction from './use-redirect-to-history-page-on-invalid-transaction';
 import useRedirectToHistoryPageOnWrongSiteForTransaction from './use-redirect-to-history-page-on-wrong-site-for-transaction';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
+import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import config from 'calypso/config';
+
+function useLogBillingHistoryError( message: string ) {
+	const reduxDispatch = useDispatch();
+
+	return useCallback(
+		( error ) => {
+			reduxDispatch(
+				logToLogstash( {
+					feature: 'calypso_client',
+					message,
+					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+					extra: {
+						env: config( 'env_id' ),
+						type: 'site_level_billing_history',
+						message: String( error ),
+					},
+				} )
+			);
+		},
+		[ reduxDispatch ]
+	);
+}
 
 export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
 	const translate = useTranslate();
+	const logBillingHistoryError = useLogBillingHistoryError(
+		'site level billing history load error'
+	);
 
 	const getReceiptUrlForReceiptId = ( targetReceiptId: string | number ) =>
 		getReceiptUrlFor( siteSlug, targetReceiptId );
@@ -47,10 +75,15 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 			/>
 			<PurchasesNavigation sectionTitle={ 'Billing History' } siteSlug={ siteSlug } />
 
-			<BillingHistoryList
-				siteId={ selectedSiteId }
-				getReceiptUrlFor={ getReceiptUrlForReceiptId }
-			/>
+			<SiteLevelPurchasesErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logBillingHistoryError }
+			>
+				<BillingHistoryList
+					siteId={ selectedSiteId }
+					getReceiptUrlFor={ getReceiptUrlForReceiptId }
+				/>
+			</SiteLevelPurchasesErrorBoundary>
 			<CompactCard href="/me/purchases/billing">
 				{ translate( 'View all billing history and receipts' ) }
 			</CompactCard>
@@ -61,6 +94,7 @@ export function BillingHistory( { siteSlug }: { siteSlug: string } ) {
 export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receiptId: number } ) {
 	const translate = useTranslate();
 	const transaction = useSelector( ( state ) => getPastBillingTransaction( state, receiptId ) );
+	const logBillingHistoryError = useLogBillingHistoryError( 'site level receipt view load error' );
 	const reduxDispatch = useDispatch();
 
 	useRedirectToHistoryPageOnInvalidTransaction( siteSlug, receiptId );
@@ -91,12 +125,17 @@ export function ReceiptView( { siteSlug, receiptId }: { siteSlug: string; receip
 				align="left"
 			/>
 
-			<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
-			{ transaction && isCorrectSite ? (
-				<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
-			) : (
-				<ReceiptPlaceholder />
-			) }
+			<SiteLevelPurchasesErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logBillingHistoryError }
+			>
+				<ReceiptTitle backHref={ getBillingHistoryUrlFor( siteSlug ) } />
+				{ transaction && isCorrectSite ? (
+					<ReceiptBody transaction={ transaction } handlePrintLinkClick={ handlePrintLinkClick } />
+				) : (
+					<ReceiptPlaceholder />
+				) }
+			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
 }

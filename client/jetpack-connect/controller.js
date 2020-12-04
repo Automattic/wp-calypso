@@ -4,14 +4,13 @@
 import React from 'react';
 import Debug from 'debug';
 import page from 'page';
-import { get, some, dropRight } from 'lodash';
+import { get, some } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { recordPageView } from 'lib/analytics/page-view';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import config from 'config';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import config from 'calypso/config';
 import InstallInstructions from './install-instructions';
 import JetpackAuthorize from './authorize';
 import JetpackConnect from './main';
@@ -19,25 +18,20 @@ import JetpackSignup from './signup';
 import JetpackSsoForm from './sso';
 import NoDirectAccessError from './no-direct-access-error';
 import OrgCredentialsForm from './remote-credentials';
-import Plans from './plans';
-import PlansLanding from './plans-landing';
 import SearchPurchase from './search';
 import StoreHeader from './store-header';
 import StoreFooter from './store-footer';
-import { addQueryArgs, sectionify } from 'lib/route';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getLocaleFromPath, removeLocaleFromPath, getPathParts } from 'lib/i18n-utils';
-import switchLocale from 'lib/i18n-utils/switch-locale';
-import { hideMasterbar, showMasterbar } from 'state/ui/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getLocaleFromPath, removeLocaleFromPath } from 'calypso/lib/i18n-utils';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { OFFER_RESET_FLOW_TYPES } from './flow-types';
 import {
 	ALLOWED_MOBILE_APP_REDIRECT_URL_LIST,
 	CALYPSO_PLANS_PAGE,
 	CALYPSO_REDIRECTION_PAGE,
 	JETPACK_ADMIN_PATH,
-	JPC_PATH_PLANS,
 } from './constants';
-import { login } from 'lib/paths';
+import { login } from 'calypso/lib/paths';
 import { parseAuthorizationQuery } from './utils';
 import {
 	isCalypsoStartedConnection,
@@ -45,11 +39,11 @@ import {
 	retrieveMobileRedirect,
 	storePlan,
 } from './persistence-utils';
-import { startAuthorizeStep } from 'state/jetpack-connect/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
+import { startAuthorizeStep } from 'calypso/state/jetpack-connect/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -57,7 +51,7 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 import {
 	JETPACK_SEARCH_PRODUCTS,
@@ -71,10 +65,12 @@ import {
 	PRODUCT_JETPACK_SCAN_MONTHLY,
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
-} from 'lib/products-values/constants';
-import { getProductFromSlug } from 'lib/products-values/get-product-from-slug';
-import { getJetpackProductDisplayName } from 'lib/products-values/get-jetpack-product-display-name';
-import { externalRedirect } from 'lib/route/path';
+} from 'calypso/lib/products-values/constants';
+import { getProductFromSlug } from 'calypso/lib/products-values/get-product-from-slug';
+import { getJetpackProductDisplayName } from 'calypso/lib/products-values/get-jetpack-product-display-name';
+import { externalRedirect } from 'calypso/lib/route/path';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Module variables
@@ -115,7 +111,7 @@ export function offerResetRedirects( context, next ) {
 			'controller: offerResetRedirects -> redirecting to /plans since site has a plan or is not a Jetpack site',
 			context.params
 		);
-		return page.redirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
+		return externalRedirect( CALYPSO_PLANS_PAGE + selectedSite.slug );
 	}
 
 	// If current user is not an admin (can't purchase plans), redirect the user to /posts if
@@ -144,7 +140,11 @@ export function offerResetRedirects( context, next ) {
 export function offerResetContext( context, next ) {
 	debug( 'controller: offerResetContext', context.params );
 	context.header = <StoreHeader />;
-	context.footer = <StoreFooter />;
+
+	if ( getJetpackCROActiveVersion() !== Iterations.I5 ) {
+		context.footer = <StoreFooter />;
+	}
+
 	next();
 }
 
@@ -273,6 +273,7 @@ export function connect( context, next ) {
 				path={ path }
 				type={ type }
 				url={ query.url }
+				queryArgs={ query }
 				forceRemoteInstall={ query.forceInstall }
 			/>
 		);
@@ -351,71 +352,5 @@ export function sso( context, next ) {
 			ssoNonce={ context.params.ssoNonce }
 		/>
 	);
-	next();
-}
-
-export function plansLanding( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
-	recordTracksEvent( 'calypso_plans_view' );
-	recordPageView( analyticsBasePath, analyticsPageTitle );
-
-	context.primary = (
-		<PlansLanding
-			context={ context }
-			interval={ context.params.interval }
-			url={ context.query.site }
-		/>
-	);
-	next();
-}
-
-export function plansSelection( context, next ) {
-	const analyticsPageTitle = 'Plans';
-	const basePath = sectionify( context.path );
-	const analyticsBasePath = basePath + '/:site';
-
-	recordTracksEvent( 'calypso_plans_view' );
-	recordPageView( analyticsBasePath, analyticsPageTitle );
-
-	context.primary = (
-		<Plans
-			basePlansPath={
-				context.query.redirect
-					? addQueryArgs( { redirect: context.query.redirect }, JPC_PATH_PLANS )
-					: JPC_PATH_PLANS
-			}
-			context={ context }
-			interval={ context.params.interval }
-			queryRedirect={ context.query.redirect }
-		/>
-	);
-	next();
-}
-
-/**
- * Checks for a locale fragment at the end of context.path
- * and switches to that locale if the user is logged out.
- * If the user is logged in we remove the fragment and defer to the user's settings.
- *
- * @param {object} context -- Middleware context
- * @param {Function} next -- Call next middleware in chain
- */
-export function setLoggedOutLocale( context, next ) {
-	const isLoggedIn = !! getCurrentUserId( context.store.getState() );
-	const locale = getLocaleFromPath( context.path );
-
-	if ( ! locale ) {
-		return next();
-	}
-
-	if ( isLoggedIn ) {
-		page.redirect( dropRight( getPathParts( context.path ) ).join( '/' ) );
-	} else {
-		switchLocale( locale );
-	}
-
 	next();
 }

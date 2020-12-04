@@ -16,8 +16,8 @@
 
 	.plugin-site__activate-manage {
 		position: absolute;
-			right: 0;
-			top: 0;
+		right: 0;
+		top: 0;
 		margin: 8px;
 		height: 32px;
 		display: flex;
@@ -27,10 +27,6 @@
 			line-height: 32px;
 			margin-top: 0;
 		}
-	}
-
-	.plugin-action {
-		padding: 8px;
 	}
 
 	.all-sites-icon {
@@ -57,12 +53,13 @@
 	}
 }
 
-.plugin-site__secondary-sites {
+.plugin-site__secondary-sites,
+.plugin-site-network__secondary-site-actions {
 	padding-top: 16px;
 }
 
 .plugin-site-network__header_info {
-		display: inline-block;
+	display: inline-block;
 }
 
 .plugin-site-network .all-sites {

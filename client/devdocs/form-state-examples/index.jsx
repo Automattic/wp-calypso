@@ -1,19 +1,17 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
-import { camelCase, kebabCase, upperFirst } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import SyncInitialize from 'lib/form-state/examples/sync-initialize';
-import AsyncInitialize from 'lib/form-state/examples/async-initialize';
+import SyncInitialize from 'calypso/lib/form-state/examples/sync-initialize';
+import AsyncInitialize from 'calypso/lib/form-state/examples/async-initialize';
 
 const COMPONENTS = {
-	SyncInitialize,
-	AsyncInitialize,
+	'sync-initialize': SyncInitialize,
+	'async-initialize': AsyncInitialize,
 };
 
 class FormStateExamples extends React.Component {
@@ -25,7 +23,9 @@ class FormStateExamples extends React.Component {
 		const items = Object.keys( COMPONENTS ).map( ( componentName ) => {
 			return (
 				<li key={ componentName }>
-					<a href={ 'form-state-examples/' + kebabCase( componentName ) }>{ componentName }</a>
+					<a href={ 'form-state-examples/' + componentName }>
+						{ COMPONENTS[ componentName ].name }
+					</a>
 				</li>
 			);
 		} );
@@ -39,12 +39,15 @@ class FormStateExamples extends React.Component {
 	}
 
 	component() {
-		const componentName = upperFirst( camelCase( this.props.component ) ),
-			ComponentClass = COMPONENTS[ componentName ];
+		const ComponentClass = COMPONENTS[ this.props.component ];
+
+		if ( ! ComponentClass ) {
+			return null;
+		}
 
 		return (
 			<div>
-				<h1>{ componentName }</h1>
+				<h1>{ ComponentClass.name }</h1>
 				<ComponentClass />
 			</div>
 		);

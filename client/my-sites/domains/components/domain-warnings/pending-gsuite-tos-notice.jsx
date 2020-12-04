@@ -9,12 +9,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { emailManagement } from 'my-sites/email/paths';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { emailManagement } from 'calypso/my-sites/email/paths';
 import PendingGSuiteTosNoticeAction from './pending-gsuite-tos-notice-action';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -120,9 +124,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 		const button = (
 			<PendingGSuiteTosNoticeAction
 				domainName={ domainName }
-				isMultipleDomains={ false }
 				section={ this.props.section }
-				severity={ null }
 				siteSlug={ this.props.siteSlug }
 				user={ users[ 0 ] }
 				isCompact={ false }
@@ -146,6 +148,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 						}
 					) }
 				</p>
+
 				{ button }
 			</>
 		);
@@ -178,9 +181,7 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 				<NoticeAction>
 					<PendingGSuiteTosNoticeAction
 						domainName={ domainName }
-						isMultipleDomains={ false }
 						section={ this.props.section }
-						severity={ severity }
 						siteSlug={ this.props.siteSlug }
 						user={ users[ 0 ] }
 					/>
@@ -206,17 +207,17 @@ class PendingGSuiteTosNotice extends React.PureComponent {
 						args: { exclamation },
 					}
 				) }
+
 				<ul>
 					{ this.props.domains.map(
 						( { name: domainName, googleAppsSubscription: { pendingUsers: users } } ) => {
 							return (
 								<li key={ `pending-gapps-tos-acceptance-domain-${ domainName }` }>
 									<strong>{ domainName } </strong>
+
 									<PendingGSuiteTosNoticeAction
 										domainName={ domainName }
-										isMultipleDomains={ true }
 										section={ this.props.section }
-										severity={ severity }
 										siteSlug={ this.props.siteSlug }
 										user={ users[ 0 ] }
 									/>

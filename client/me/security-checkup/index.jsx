@@ -42,14 +42,14 @@ class SecurityCheckupComponent extends React.Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main className="security security-checkup">
+			<Main className="security security-checkup is-wide-layout">
 				<PageViewTracker path={ path } title="Me > Security Checkup" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
 				<DocumentHead title={ translate( 'Security' ) } />
 
-				<FormattedHeader headerText={ translate( 'Security' ) } align="left" />
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				<SectionHeader label={ translate( 'Security Checklist' ) } />
 

@@ -30,8 +30,8 @@ Component used to display a clickable tile with an image, call to action, and de
 ### How to use
 
 ```js
-import Tile from 'components/tile-grid/tile';
-import TileGrid from 'components/tile-grid';
+import Tile from 'calypso/components/tile-grid/tile';
+import TileGrid from 'calypso/components/tile-grid';
 
 class MyExampleComponent extends PureComponent {
 	render() {

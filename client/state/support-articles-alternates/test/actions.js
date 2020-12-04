@@ -13,7 +13,7 @@ import {
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_SUCCESS,
 	SUPPORT_ARTICLE_ALTERNATES_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const mockSupportAlternates = jest.fn( () => Promise.resolve() );
 

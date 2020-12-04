@@ -12,21 +12,21 @@ import { flowRight as compose } from 'lodash';
 /**
  * Internal dependencies
  */
-import scrollTo from 'lib/scroll-to';
-import { settingsPath } from 'lib/jetpack/paths';
-import { applySiteOffset } from 'lib/site/timezone';
+import scrollTo from 'calypso/lib/scroll-to';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import ActivityActor from './activity-actor';
 import ActivityDescription from './activity-description';
 import ActivityMedia from './activity-media';
 import ActivityIcon from './activity-icon';
 import ActivityLogConfirmDialog from '../activity-log-confirm-dialog';
-import EllipsisMenu from 'components/ellipsis-menu';
-import Gridicon from 'components/gridicon';
-import HappychatButton from 'components/happychat/button';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import Gridicon from 'calypso/components/gridicon';
+import HappychatButton from 'calypso/components/happychat/button';
 import { Button } from '@automattic/components';
-import FoldableCard from 'components/foldable-card';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import FoldableCard from 'calypso/components/foldable-card';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 import {
 	rewindBackup,
 	rewindBackupDismiss,
@@ -34,15 +34,15 @@ import {
 	rewindRequestDismiss,
 	rewindRequestRestore,
 	rewindRestore,
-} from 'state/activity-log/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import getRequestedBackup from 'state/selectors/get-requested-backup';
-import getRequestedRewind from 'state/selectors/get-requested-rewind';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
-import { getSite } from 'state/sites/selectors';
-import { withLocalizedMoment } from 'components/localized-moment';
+} from 'calypso/state/activity-log/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import getRequestedBackup from 'calypso/state/selectors/get-requested-backup';
+import getRequestedRewind from 'calypso/state/selectors/get-requested-rewind';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import { getSite } from 'calypso/state/sites/selectors';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
@@ -243,6 +243,7 @@ class ActivityLogItem extends Component {
 			createRewind,
 			disableRestore,
 			disableBackup,
+			missingRewindCredentials,
 			siteId,
 			siteSlug,
 			trackAddCreds,
@@ -260,7 +261,7 @@ class ActivityLogItem extends Component {
 						{ translate( 'Restore to this point' ) }
 					</PopoverMenuItem>
 
-					{ disableRestore && (
+					{ disableRestore && missingRewindCredentials && (
 						<PopoverMenuItem
 							icon="plus"
 							href={
@@ -379,7 +380,7 @@ class ActivityLogItem extends Component {
 					<ActivityLogConfirmDialog
 						key="activity-backup-dialog"
 						confirmTitle={ translate( 'Create download' ) }
-						onClose={ this.cancelBackupIntent }
+						onClose={ this.cancelDownloadIntent }
 						onConfirm={ this.confirmBackup }
 						onSettingsChange={ this.downloadSettingsChange }
 						supportLink="https://jetpack.com/support/backup"
@@ -430,6 +431,7 @@ const mapStateToProps = ( state, { activity, siteId } ) => {
 		timezone: getSiteTimezoneValue( state, siteId ),
 		siteSlug: site.slug,
 		rewindIsActive: 'active' === rewindState.state || 'provisioning' === rewindState.state,
+		missingRewindCredentials: rewindState.state === 'awaitingCredentials',
 		canAutoconfigure: rewindState.canAutoconfigure,
 		site,
 	};

@@ -666,14 +666,14 @@ class PushNotificationSettings extends React.Component {
 	};
 
 	render() {
-		let blockedInstruction,
-			buttonClass,
-			buttonDisabled,
-			buttonPrimary,
-			buttonText,
-			deniedText,
-			stateClass,
-			stateText;
+		let blockedInstruction;
+		let buttonClass;
+		let buttonDisabled;
+		let buttonPrimary;
+		let buttonText;
+		let deniedText;
+		let stateClass;
+		let stateText;
 
 		if ( ! this.props.apiReady ) {
 			return null;

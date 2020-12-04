@@ -20,18 +20,18 @@ import {
 	CART_TAX_COUNTRY_CODE_SET,
 	CART_TAX_POSTAL_CODE_SET,
 	CART_RELOAD,
-} from 'lib/cart/action-types';
+} from 'calypso/lib/cart/action-types';
 import {
 	TRANSACTION_NEW_CREDIT_CARD_DETAILS_SET,
 	TRANSACTION_PAYMENT_SET,
-} from 'lib/transaction/action-types';
-import emitter from 'lib/mixins/emitter';
+} from 'calypso/lib/transaction/action-types';
+import emitter from 'calypso/lib/mixins/emitter';
 import cartSynchronizer from './cart-synchronizer';
-import PollerPool from 'lib/data-poller';
-import { recordEvents, recordUnrecognizedPaymentMethod } from 'lib/analytics/cart';
-import productsListFactory from 'lib/products-list';
+import PollerPool from 'calypso/lib/data-poller';
+import { recordEvents, recordUnrecognizedPaymentMethod } from 'calypso/lib/analytics/cart';
+import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import {
 	applyCoupon,
 	removeCoupon,
@@ -39,7 +39,7 @@ import {
 	setTaxCountryCode,
 	setTaxPostalCode,
 	setTaxLocation,
-} from 'lib/cart-values';
+} from 'calypso/lib/cart-values';
 import {
 	addPrivacyToAllDomains,
 	removePrivacyFromAllDomains,
@@ -49,12 +49,12 @@ import {
 	removeItemAndDependencies,
 	clearCart,
 	replaceItem as replaceCartItem,
-} from 'lib/cart-values/cart-items';
-import wp from 'lib/wp';
-import { getReduxStore } from 'lib/redux-bridge';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { extractStoredCardMetaValue } from 'state/payment/util';
+} from 'calypso/lib/cart-values/cart-items';
+import wp from 'calypso/lib/wp';
+import { getReduxStore } from 'calypso/lib/redux-bridge';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { extractStoredCardMetaValue } from 'calypso/state/payment/util';
 
 const wpcom = wp.undocumented();
 
@@ -213,7 +213,8 @@ CartStore.dispatchToken = Dispatcher.register( ( payload ) => {
 
 		case TRANSACTION_PAYMENT_SET:
 			{
-				let postalCode, countryCode;
+				let postalCode;
+				let countryCode;
 
 				const paymentMethod = get( action, [ 'payment', 'paymentMethod' ] );
 				switch ( paymentMethod ) {

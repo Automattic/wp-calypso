@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.7
+Stable tag: 2.8.10
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -40,13 +40,92 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 == Changelog ==
 
+= 2.8.10 =
+* Premium Content: Fix selection of payment plans (https://github.com/Automattic/wp-calypso/pull/47944)
+* Coming soon: Check for coming soon mode on 404 (https://github.com/Automattic/wp-calypso/pull/47945)
+* Onboarding: Add support for RTL site launch stylesheet (https://github.com/Automattic/wp-calypso/pull/47890)
+* Coming soon: Show Coming Soon on blog post pages (https://github.com/Automattic/wp-calypso/pull/47853)
+
+= 2.8.9 =
+* Domain Picker: Persistent Domain (https://github.com/Automattic/wp-calypso/pull/47633)
+* Focused Launch: Add Launch your site button (https://github.com/Automattic/wp-calypso/pull/47601)
+
+= 2.8.8 =
+* Coming soon: Show coming soon page when showing posts on front (https://github.com/Automattic/wp-calypso/pull/47661)
+* Coming soon: Fix login link on coming soon page (https://github.com/Automattic/wp-calypso/pull/47665)
+* Launch: Launch flow can use translations from global translation functions (https://github.com/Automattic/wp-calypso/pull/47352)
+
+= 2.8.7 =
+* Launch: open launch modal in editor only for free sites created in New Onboarding (https://github.com/Automattic/wp-calypso/pull/47514)
+* Focused Launch: add launch success view (https://github.com/Automattic/wp-calypso/pull/47404)
+* Premium Content: Use snackbar for error and success messages (https://github.com/Automattic/wp-calypso/pull/47477)
+* Coming soon: only show the coming soon page for singular, archive and search posts (https://github.com/Automattic/wp-calypso/pull/47563)
+* Patterns: Support skipping registering patterns with a requires-align-wide tag (https://github.com/Automattic/wp-calypso/pull/47571)
+
+= 2.8.6 =
+* Premium Content: Compatibility fix for Gutenberg >= 9.3.0 (https://github.com/Automattic/wp-calypso/pull/47467)
+
+= 2.8.5 =
+* Launch: support i18n in plans grid (https://github.com/Automattic/wp-calypso/pull/47227)
+* Launch: support i18n in domain picker (https://github.com/Automattic/wp-calypso/pull/47178)
+* Premium Content: add block preview for the Premium Content block (https://github.com/Automattic/wp-calypso/pull/47200)
+* Premium Content: allow the payments button to know when it's inside the premium content block (https://github.com/Automattic/wp-calypso/pull/47245)
+* Coming soon: remove cookie banner, open graph, gravatar and other unneeded features from coming soon page (https://github.com/Automattic/wp-calypso/pull/47400)
+* Coming soon: fix the localised login link on the coming soon page (https://github.com/Automattic/wp-calypso/pull/47307)
+* Coming soon: don't cache the coming soon page (https://github.com/Automattic/wp-calypso/pull/47450)
+
+= 2.8.4 =
+* Editor NUX modal: Temporarily make text smaller in editor welcome modal for german language (https://github.com/Automattic/wp-calypso/pull/47193)
+* Editor Toolkit: update slide copy in NUX (https://github.com/Automattic/wp-calypso/pull/46674)
+* Focused Launch: fix domain picker not showing in summary page in Calypso (https://github.com/Automattic/wp-calypso/pull/47141)
+* Premium Content: Make text of Subscribe button editable (https://github.com/Automattic/wp-calypso/pull/46983)
+* Remove premium content block placeholder. (https://github.com/Automattic/wp-calypso/pull/47068)
+* Focused Launch: use site title hook in the name step (https://github.com/Automattic/wp-calypso/pull/46921)
+* Add block pattern dom validation tests (https://github.com/Automattic/wp-calypso/pull/45747)
+* Coming soon fallback page: namespace the class names, add an svg for the wp logo (https://github.com/Automattic/wp-calypso/pull/46994)
+* Update global font pairings (https://github.com/Automattic/wp-calypso/pull/46927)
+* Add recordTracksEvent for Editor NUX modal (https://github.com/Automattic/wp-calypso/pull/46796)
+
+= 2.8.3 =
+* Focused Launch: added WIP Focused Launch modal behind a flag (https://github.com/Automattic/wp-calypso/pull/46686)
+* Editor close button should deal with situation where experimental GB feature is unavailable (https://github.com/Automattic/wp-calypso/pull/46666)
+* Premium Content: Remove double banners (https://github.com/Automattic/wp-calypso/pull/46659)
+* Premium Content: Add missing migrations for margin fix (https://github.com/Automattic/wp-calypso/pull/46924)
+* Editing Toolkit: Add a workaround to prevent slider blocks breaking the editor at full width (https://github.com/Automattic/wp-calypso/pull/46951)
+
+= 2.8.2 =
+* Gutenberg: Support new line height setting (https://github.com/Automattic/wp-calypso/pull/46792)
+* Gutenberg: Make line-height setting more robust. (https://github.com/Automattic/wp-calypso/pull/46873)
+
+= 2.8.1 =
+* Launch: Added persistent launch button. (https://github.com/Automattic/wp-calypso/pull/46558)
+
+= 2.8 =
+* Editing Toolkit: Load patterns from the rest API endpoint v3 (https://github.com/Automattic/wp-calypso/pull/46463)
+* Contextual-tips: remove /block-editor from URL (https://github.com/Automattic/wp-calypso/pull/46592)
+* Premium Content: Fix margins on child blocks in Varia based themes (https://github.com/Automattic/wp-calypso/pull/46579)
+* Premium Content Block: Remove the intermediate block UI. (https://github.com/Automattic/wp-calypso/pull/46619)
+* ET/FSE: Remove the "Showcase New Blocks" module (https://github.com/Automattic/wp-calypso/pull/46663)
+* Add text domain to copy in domain-picker and plans-grid packages (https://github.com/Automattic/wp-calypso/pull/46557)
+* Gutenboarding: stop HotJar capturing input fields in gutenboarding (https://github.com/Automattic/wp-calypso/pull/46620)
+* Launch: Move launch store to package/data-stores. (https://github.com/Automattic/wp-calypso/pull/46570)
+* Launch: Hide inline help button when launch modal opens. (https://github.com/Automattic/wp-calypso/pull/46768)
+* Localise the launch sidebar and final launch step (https://github.com/Automattic/wp-calypso/pull/46555)
+
+= 2.7.2 =
+* Enable Coming Soon v2 for a12s
+
+= 2.7.1 =
+* Coming Soon v2: adding links to default page (https://github.com/Automattic/wp-calypso/pull/46441)
+* Remove "gutenboarding/new-launch" feature flag and checks. (https://github.com/Automattic/wp-calypso/pull/46453)
+* Fixes Global Styles plugin translation (https://github.com/Automattic/wp-calypso/pull/46421)
+
 = 2.7 =
-* Added coming soon page.
-* Added vertical space above the first content block when the page title is hidden
-* Added launch flow mobile layout (hiding behind feature flag).
-* Removed the Premium Content block from the "New" category, and add it to the "Earn" category.
-* Styling fixes to Recurring Payments block.
-* Styling fixes to Premium Content block.
+* Added launch flow mobile layout (https://github.com/Automattic/wp-calypso/pull/45714).
+* Added vertical space above the first content block when the page title is hidden. (https://github.com/Automattic/wp-calypso/pull/46003)
+* Removed the Premium Content block from the "New" category, and add it to the "Earn" category. (https://github.com/Automattic/wp-calypso/pull/45978)
+* Styling fixes to Recurring Payments block. (https://github.com/Automattic/wp-calypso/pull/46125)
+* Styling fixes to Premium Content block. (https://github.com/Automattic/wp-calypso/pull/46125)
 
 = 2.6.1 =
 * Fixed an error in the Premium Content token subscription service that causing some fatal errors if the auth token was missing (https://github.com/Automattic/wp-calypso/pull/45878)

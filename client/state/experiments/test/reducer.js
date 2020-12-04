@@ -6,7 +6,7 @@
  * Internal Dependencies
  */
 import reducer from '../reducer';
-import { EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'state/action-types';
+import { EXPERIMENT_ASSIGN, EXPERIMENT_FETCH } from 'calypso/state/action-types';
 
 describe( 'Experiment Reducer', () => {
 	describe( 'Init Action', () => {

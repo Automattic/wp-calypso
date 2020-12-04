@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SerializationResult } from 'state/serialization-result';
+import { SerializationResult } from 'calypso/state/serialization-result';
 
 describe( 'SerializationResult', () => {
 	test( 'simple root result', () => {

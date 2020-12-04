@@ -1,0 +1,213 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+/* Header */
+
+$cloud-icon-height: 24px;
+
+.backup-card__header {
+	display: flex;
+}
+
+.backup-card__header-text {
+	flex: 1;
+}
+
+.backup-card__date {
+	margin-bottom: 8px;
+
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1;
+
+	.is-featured & {
+		font-size: 2.25rem;
+	}
+}
+
+.backup-card__title {
+	display: flex;
+	align-items: center;
+
+	margin-bottom: 36px;
+
+	color: var( --studio-jetpack-green-50 );
+
+	font-weight: 700;
+	line-height: $cloud-icon-height;
+
+	.is-featured & {
+		margin-bottom: 100px;
+	}
+
+	&.backup-card__title--scheduled {
+		color: var( --studio-gray-40 );
+
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
+	}
+
+	&.backup-card__title--failed {
+		color: var( --p2-color-error );
+
+		img.backup-card__icon {
+			color: var( --p2-color-error );
+		}
+	}
+
+	&.backup-card__title--delayed {
+		color: var( --studio-orange-30 );
+
+		img.backup-card__icon {
+			color: var( --studio-orange-30 );
+		}
+	}
+
+	&.backup-card__title--preparing {
+		color: var( --studio-gray-40 );
+
+		img.backup-card__icon {
+			color: var( --studio-gray-30 );
+		}
+	}
+}
+
+.backup-card__icon {
+	margin-right: 6px;
+	height: $cloud-icon-height;
+}
+
+.backup-card__badge {
+	margin-left: 1rem;
+
+	&.badge {
+		background-color: var( --studio-jetpack-green-5 );
+		color: var( --color-text );
+
+		font-size: 0.75rem;
+	}
+}
+
+/* Actions */
+
+.backup-card__actions {
+	margin: 0 0 32px;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		position: relative;
+
+		margin-bottom: 20px;
+
+		.button {
+			width: 100%;
+		}
+	}
+
+	@include break-mobile {
+		display: flex;
+
+		> li {
+			margin-bottom: 0;
+			margin-right: 24px;
+
+			&:last-child {
+				margin-right: 0;
+			}
+		}
+	}
+}
+
+.backup-card__restore-area {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	width: 100%;
+	height: 100%;
+}
+
+.backup-card__restore-tooltip {
+	max-width: 174px;
+
+	&.tooltip.popover .popover__inner {
+		text-align: center;
+	}
+}
+
+/* About section */
+
+.backup-card__about {
+	// Necessary so that the border takes the full width of the card
+	margin: 0 -16px -16px;
+	padding: 24px;
+
+	border-top: solid 1px var( --color-neutral-5 );
+
+	@include break-mobile {
+		margin: 0 -24px -24px;
+	}
+}
+
+.backup-card__about-heading {
+	margin-bottom: 16px;
+
+	font-weight: 700;
+}
+
+.backup-card__about-content {
+	padding: 20px;
+
+	background-color: var( --color-neutral-0 );
+	color: var( --color-neutral-40 );
+}
+
+.backup-card__about-list {
+	margin: -16px 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		display: flex;
+		align-items: flex-start;
+
+		margin: 16px 0;
+	}
+}
+
+.backup-card__about-media {
+	margin-right: 16px;
+
+	img,
+	svg {
+		// Prevent container from being larger than image
+		// Ref. https://stackoverflow.com/questions/11126685/why-does-container-div-insist-on-being-slightly-larger-than-img-or-svg-content
+		display: block;
+	}
+	svg.backup-card__jetpack-logo-muted path.jetpack-logo__icon-circle {
+		fill: var( --studio-gray-30 );
+	}
+	svg.backup-card__jetpack-logo-warning path.jetpack-logo__icon-circle {
+		fill: var( --studio-orange-30 );
+	}
+	svg.backup-card__jetpack-logo-danger path.jetpack-logo__icon-circle {
+		fill: var( --p2-color-error );
+	}
+	&.backup-card__about-media--notice {
+		align-self: center;
+	}
+}
+
+.backup-card__about-body {
+	flex: 1;
+	align-self: center;
+
+	.activity-card__activity-media {
+		max-width: 250px;
+		margin-bottom: 4px;
+	}
+}

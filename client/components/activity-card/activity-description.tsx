@@ -8,18 +8,10 @@ import React, { FunctionComponent } from 'react';
  */
 import FormattedBlock from 'calypso/components/notes-formatted-block';
 
-// FUTURE WORK: move this to a shared location
-interface Activity {
-	activityDescription: [
-		{
-			intent?: string;
-			section?: string;
-			type?: string;
-			url?: string;
-		}
-	];
-	activityName: string;
-}
+/**
+ * Type dependencies
+ */
+import { Activity } from 'calypso/state/activity-log/types';
 
 interface Props {
 	activity: Activity;

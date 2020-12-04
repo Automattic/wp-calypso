@@ -6,20 +6,20 @@ import { delay } from 'lodash';
 /**
  * Internal dependencies
  */
-import { ATOMIC_TRANSFER_REQUEST } from 'state/action-types';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { requestSite } from 'state/sites/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { ATOMIC_TRANSFER_REQUEST } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { requestSite } from 'calypso/state/sites/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	fetchAtomicTransfer,
 	setAtomicTransfer,
 	atomicTransferFetchingFailure,
 	atomicTransferComplete,
-} from 'state/atomic-transfer/actions';
-import { transferStates } from 'state/atomic-transfer/constants';
+} from 'calypso/state/atomic-transfer/actions';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const requestTransfer = ( action ) =>
 	http(

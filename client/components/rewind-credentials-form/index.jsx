@@ -4,7 +4,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { find, get, isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
 
@@ -21,11 +21,11 @@ import FormInputValidation from 'calypso/components/forms/form-input-validation'
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import Gridicon from 'calypso/components/gridicon';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
 import { deleteCredentials, updateCredentials } from 'calypso/state/jetpack/credentials/actions';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
+import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentials';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Style dependencies
@@ -128,17 +128,17 @@ export class RewindCredentialsForm extends Component {
 		this.setState( { showAdvancedSettings: ! this.state.showAdvancedSettings } );
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
-		const { rewindState, role, siteSlug } = nextProps;
-		const credentials = find( rewindState.credentials, { role: role } );
+		const { credentials, siteSlug } = nextProps;
 
 		const nextForm = Object.assign( {}, this.state.form );
+		const hasCredentials = isEmpty( nextForm.host ) && ! isEmpty( credentials );
 
 		// Populate the fields with data from state if credentials are already saved
-		nextForm.protocol = credentials ? credentials.type : nextForm.protocol;
-		nextForm.host = isEmpty( nextForm.host ) && credentials ? credentials.host : nextForm.host;
-		nextForm.port = isEmpty( nextForm.port ) && credentials ? credentials.port : nextForm.port;
-		nextForm.user = isEmpty( nextForm.user ) && credentials ? credentials.user : nextForm.user;
-		nextForm.path = isEmpty( nextForm.path ) && credentials ? credentials.path : nextForm.path;
+		nextForm.protocol = ! isEmpty( credentials ) ? credentials.protocol : nextForm.protocol;
+		nextForm.host = hasCredentials ? credentials.host : nextForm.host;
+		nextForm.port = hasCredentials ? credentials.port : nextForm.port;
+		nextForm.user = hasCredentials ? credentials.user : nextForm.user;
+		nextForm.path = hasCredentials ? credentials.abspath : nextForm.path;
 
 		// Populate the host field with the site slug if needed
 		nextForm.host =
@@ -161,7 +161,7 @@ export class RewindCredentialsForm extends Component {
 
 		return (
 			<div className="rewind-credentials-form">
-				<QueryRewindState siteId={ siteId } />
+				<QuerySiteCredentials siteId={ siteId } />
 				{ showNotices && (
 					<div className="rewind-credentials-form__instructions">
 						{ translate(
@@ -357,10 +357,10 @@ export class RewindCredentialsForm extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { siteId } ) => ( {
+const mapStateToProps = ( state, { siteId, role } ) => ( {
 	formIsSubmitting: 'pending' === getJetpackCredentialsUpdateStatus( state, siteId ),
 	siteSlug: getSiteSlug( state, siteId ),
-	rewindState: getRewindState( state, siteId ),
+	credentials: getJetpackCredentials( state, siteId, role ),
 } );
 
 export default connect( mapStateToProps, { deleteCredentials, updateCredentials } )(

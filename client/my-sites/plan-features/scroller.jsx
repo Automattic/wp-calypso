@@ -3,8 +3,8 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
-import { clamp, inRange, range, round } from 'lodash';
+import Gridicon from 'calypso/components/gridicon';
+import { inRange, range, round } from 'lodash';
 import classNames from 'classnames';
 
 /**
@@ -111,7 +111,7 @@ export default class PlanFeaturesScroller extends PureComponent {
 				nextPos = step < 0 ? Math.max( nextPos, to ) : Math.min( nextPos, to );
 				this.scrollWrapperDOM.scrollLeft = nextPos;
 
-				if ( nextPos !== to ) {
+				if ( Math.abs( to - nextPos ) > 50 ) {
 					window.requestAnimationFrame( animate );
 				} else {
 					window.requestAnimationFrame( resolve );
@@ -147,7 +147,10 @@ export default class PlanFeaturesScroller extends PureComponent {
 				let index = 0;
 
 				if ( planCount > visibleCount ) {
-					index = clamp( round( initialSelectedIndex - visibleCount / 2 ), minIndex, maxIndex );
+					index = Math.min(
+						Math.max( round( initialSelectedIndex - visibleCount / 2 ), minIndex ),
+						maxIndex
+					);
 				}
 
 				this.scrollBy( index );

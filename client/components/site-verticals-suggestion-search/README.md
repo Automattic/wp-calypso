@@ -5,7 +5,7 @@ As a wrapper for `<SuggestionSearch />`, SiteVerticalsSuggestionSearch fetches s
 ## Usage
 
 ```jsx
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
+import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
 
 function onChange( { vertical_name, vertical_slug, vertical_id } ) {
 	console.log( 'New vertical values: ', vertical_name, vertical_slug, vertical_id );

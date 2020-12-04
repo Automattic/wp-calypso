@@ -1,14 +1,15 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
 	POST_FORMATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/post-formats/init';
 
 /**
  * Returns an action thunk which, when invoked, triggers a network request to

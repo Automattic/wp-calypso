@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getMagicLoginRequestedEmailSuccessfully from 'state/selectors/get-magic-login-requested-email-successfully';
+import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
 
 describe( 'getMagicLoginRequestedEmailSuccessfully()', () => {
 	test( 'should return false if there is no information yet', () => {

@@ -14,7 +14,7 @@ Component used to show an embedded URL in a dialog
 ## How to use
 
 ```js
-import EmbedDialog from 'components/tinymce/plugins/embed';
+import EmbedDialog from 'calypso/components/tinymce/plugins/embed/dialog';
 
 function render() {
 	return (

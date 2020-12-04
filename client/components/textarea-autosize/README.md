@@ -7,7 +7,7 @@
 Since it is a drop-in replacement, use as you would a regular `<textarea />` element.
 
 ```jsx
-import TextareaAutosize from 'components/textarea-autosize';
+import TextareaAutosize from 'calypso/components/textarea-autosize';
 
 export default function MyForm( { onTextareaChange } ) {
 	return <TextareaAutosize onChange={ onTextareaChange } rows="1" />;

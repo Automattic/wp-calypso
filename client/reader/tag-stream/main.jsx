@@ -10,17 +10,17 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import DocumentHead from 'calypso/components/data/document-head';
 import EmptyContent from './empty';
 import TagStreamHeader from './header';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import HeaderBack from 'reader/header-back';
-import { getReaderTags, getReaderFollowedTags } from 'state/reader/tags/selectors';
-import { requestFollowTag, requestUnfollowTag } from 'state/reader/tags/items/actions';
-import QueryReaderFollowedTags from 'components/data/query-reader-followed-tags';
-import QueryReaderTag from 'components/data/query-reader-tag';
-import ReaderMain from 'reader/components/reader-main';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import HeaderBack from 'calypso/reader/header-back';
+import { getReaderTags, getReaderFollowedTags } from 'calypso/state/reader/tags/selectors';
+import { requestFollowTag, requestUnfollowTag } from 'calypso/state/reader/tags/items/actions';
+import QueryReaderFollowedTags from 'calypso/components/data/query-reader-followed-tags';
+import QueryReaderTag from 'calypso/components/data/query-reader-tag';
+import ReaderMain from 'calypso/reader/components/reader-main';
 
 /**
  * Style dependencies

@@ -3,7 +3,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { endsWith, get, map } from 'lodash';
+import { get, map } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -20,10 +20,10 @@ const EditorTemplateClasses = withSelect( ( select ) => {
 			'name',
 			''
 		);
-		if ( endsWith( typeName, '-header' ) ) {
+		if ( typeName.endsWith( '-header' ) ) {
 			return 'fse-header';
 		}
-		if ( endsWith( typeName, '-footer' ) ) {
+		if ( typeName.endsWith( '-footer' ) ) {
 			return 'fse-footer';
 		}
 	} );

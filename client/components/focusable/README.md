@@ -14,7 +14,7 @@ If you want to add an action to a larger element, for example the Language Picke
 ## How to use
 
 ```jsx
-import Focusable from 'components/focusable';
+import Focusable from 'calypso/components/focusable';
 
 export default function InteractiveItem() {
 	return (

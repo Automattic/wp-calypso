@@ -5,6 +5,7 @@ import edit from './edit';
 import save from './save';
 import deprecated from './deprecated';
 import { getCategoryWithFallbacks } from '../../../block-helpers';
+import icon from '../icon.js';
 
 /**
  * WordPress dependencies
@@ -25,7 +26,6 @@ const category = getCategoryWithFallbacks( 'design', 'common' );
 const settings = {
 	name,
 	category,
-	attributes: {},
 	/* translators: block name */
 	title: __( 'Logged Out View', 'full-site-editing' ),
 	/* translators: block description */
@@ -38,6 +38,7 @@ const settings = {
 	},
 	edit,
 	save,
+	icon,
 	deprecated,
 };
 

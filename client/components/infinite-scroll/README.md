@@ -9,7 +9,7 @@ There is an alternative implementation called [InfiniteList](../infinite-list), 
 First, require the component with
 
 ```js
-import InfiniteScroll from 'components/infinite-scroll';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
 ```
 
 and in your component's `render` method, render it, passing a name of method that fetches next page. Be sure to place it at the bottom of your content list, so that it can serve as an anchor point for a new load.

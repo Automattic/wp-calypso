@@ -13,16 +13,16 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import Comment from 'my-sites/comments/comment';
-import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import CommentNavigation from 'my-sites/comments/comment-navigation';
-import EmptyContent from 'components/empty-content';
-import Pagination from 'components/pagination';
-import QuerySiteCommentsTree from 'components/data/query-site-comments-tree';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { getSiteCommentsTree, isCommentsTreeInitialized } from 'state/comments/selectors';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import { isEnabled } from 'calypso/config';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
+import QuerySiteCommentsTree from 'calypso/components/data/query-site-comments-tree';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { getSiteCommentsTree, isCommentsTreeInitialized } from 'calypso/state/comments/selectors';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = ( props ) => (

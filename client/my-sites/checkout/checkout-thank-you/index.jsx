@@ -11,28 +11,28 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { themeActivated } from 'state/themes/actions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import WordPressLogo from 'components/wordpress-logo';
+import { themeActivated } from 'calypso/state/themes/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import { Card } from '@automattic/components';
 import ChargebackDetails from './chargeback-details';
 import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
-import { fetchReceipt } from 'state/receipts/actions';
-import { fetchSitePlans, refreshSitePlans } from 'state/sites/plans/actions';
-import { getPlansBySite, getSitePlanSlug } from 'state/sites/plans/selectors';
-import { getReceiptById } from 'state/receipts/selectors';
+import { fetchReceipt } from 'calypso/state/receipts/actions';
+import { fetchSitePlans, refreshSitePlans } from 'calypso/state/sites/plans/actions';
+import { getPlansBySite, getSitePlanSlug } from 'calypso/state/sites/plans/selectors';
+import { getReceiptById } from 'calypso/state/receipts/selectors';
 import {
 	getCurrentUser,
 	getCurrentUserDate,
 	isCurrentUserEmailVerified,
-} from 'state/current-user/selectors';
+} from 'calypso/state/current-user/selectors';
 import GoogleAppsDetails from './google-apps-details';
 import GuidedTransferDetails from './guided-transfer-details';
-import HappinessSupport from 'components/happiness-support';
-import PlanThankYouCard from 'blocks/plan-thank-you-card';
+import HappinessSupport from 'calypso/components/happiness-support';
+import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card';
 import AtomicStoreThankYouCard from './atomic-store-thank-you-card';
 import {
 	isChargeback,
@@ -53,10 +53,10 @@ import {
 	isBusiness,
 	isSiteRedirect,
 	isTheme,
-} from 'lib/products-values';
-import { isExternal } from 'lib/url';
+} from 'calypso/lib/products-values';
+import { isExternal } from 'calypso/lib/url';
 import JetpackPlanDetails from './jetpack-plan-details';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import BloggerPlanDetails from './blogger-plan-details';
 import PersonalPlanDetails from './personal-plan-details';
 import PremiumPlanDetails from './premium-plan-details';
@@ -64,27 +64,34 @@ import BusinessPlanDetails from './business-plan-details';
 import EcommercePlanDetails from './ecommerce-plan-details';
 import FailedPurchaseDetails from './failed-purchase-details';
 import TransferPending from './transfer-pending';
-import PurchaseDetail from 'components/purchase-detail';
-import { isJetpackBusinessPlan, isWpComBusinessPlan, shouldFetchSitePlans } from 'lib/plans';
-import { getFeatureByKey } from 'lib/plans/features-list';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import {
+	isJetpackBusinessPlan,
+	isWpComBusinessPlan,
+	shouldFetchSitePlans,
+} from 'calypso/lib/plans';
+import { getFeatureByKey } from 'calypso/lib/plans/features-list';
 import RebrandCitiesThankYou from './rebrand-cities-thank-you';
 import SiteRedirectDetails from './site-redirect-details';
-import Notice from 'components/notice';
-import { domainManagementList, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isRebrandCitiesSiteUrl } from 'lib/rebrand-cities';
-import { fetchAtomicTransfer } from 'state/atomic-transfer/actions';
-import { transferStates } from 'state/atomic-transfer/constants';
-import getAtomicTransfer from 'state/selectors/get-atomic-transfer';
-import isFetchingTransfer from 'state/selectors/is-fetching-atomic-transfer';
-import { getSiteHomeUrl, getSiteSlug } from 'state/sites/selectors';
-import { recordStartTransferClickInThankYou } from 'state/domains/actions';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getActiveTheme } from 'state/themes/selectors';
-import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
-import getCheckoutUpgradeIntent from 'state/selectors/get-checkout-upgrade-intent';
-import { isProductsListFetching } from 'state/products-list/selectors';
+import Notice from 'calypso/components/notice';
+import {
+	domainManagementList,
+	domainManagementTransferInPrecheck,
+} from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRebrandCitiesSiteUrl } from 'calypso/lib/rebrand-cities';
+import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
+import { transferStates } from 'calypso/state/atomic-transfer/constants';
+import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
+import isFetchingTransfer from 'calypso/state/selectors/is-fetching-atomic-transfer';
+import { getSiteHomeUrl, getSiteSlug } from 'calypso/state/sites/selectors';
+import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getActiveTheme } from 'calypso/state/themes/selectors';
+import getCustomizeOrEditFrontPageUrl from 'calypso/state/selectors/get-customize-or-edit-front-page-url';
+import getCheckoutUpgradeIntent from 'calypso/state/selectors/get-checkout-upgrade-intent';
+import { isProductsListFetching } from 'calypso/state/products-list/selectors';
 /**
  * Style dependencies
  */
@@ -500,8 +507,8 @@ export class CheckoutThankYou extends React.Component {
 	 */
 	getComponentAndPrimaryPurchaseAndDomain = () => {
 		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
-			const purchases = getPurchases( this.props ),
-				failedPurchases = getFailedPurchases( this.props );
+			const purchases = getPurchases( this.props );
+			const failedPurchases = getFailedPurchases( this.props );
 
 			if ( failedPurchases.length > 0 ) {
 				return [ FailedPurchaseDetails ];

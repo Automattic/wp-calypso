@@ -9,36 +9,36 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Masterbar from './masterbar';
 import Item from './item';
 import Publish from './publish';
 import Notifications from './notifications';
-import Gravatar from 'components/gravatar';
-import config from 'config';
-import { preload } from 'sections-helper';
-import { getCurrentUserSiteCount, getCurrentUser } from 'state/current-user/selectors';
-import { isSupportSession } from 'state/support/selectors';
-import AsyncLoad from 'components/async-load';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
-import isSiteMigrationActiveRoute from 'state/selectors/is-site-migration-active-route';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import canCurrentUserUseCustomerHome from 'state/sites/selectors/can-current-user-use-customer-home';
-import { getStatsPathForTab } from 'lib/route';
-import { domainManagementList } from 'my-sites/domains/paths';
-import getSiteMigrationStatus from 'state/selectors/get-site-migration-status';
-import { updateSiteMigrationMeta } from 'state/sites/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { hasUnseen } from 'state/reader-ui/seen-posts/selectors';
-import getPreviousPath from 'state/selectors/get-previous-path.js';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import Gravatar from 'calypso/components/gravatar';
+import config from 'calypso/config';
+import { preload } from 'calypso/sections-helper';
+import { getCurrentUserSiteCount, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isSupportSession } from 'calypso/state/support/selectors';
+import AsyncLoad from 'calypso/components/async-load';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import isSiteMigrationActiveRoute from 'calypso/state/selectors/is-site-migration-active-route';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUserUseCustomerHome from 'calypso/state/sites/selectors/can-current-user-use-customer-home';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import { domainManagementList } from 'calypso/my-sites/domains/paths';
+import getSiteMigrationStatus from 'calypso/state/selectors/get-site-migration-status';
+import { updateSiteMigrationMeta } from 'calypso/state/sites/actions';
+import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { hasUnseen } from 'calypso/state/reader-ui/seen-posts/selectors';
+import getPreviousPath from 'calypso/state/selectors/get-previous-path.js';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 class MasterbarLoggedIn extends React.Component {
 	static propTypes = {
@@ -151,16 +151,16 @@ class MasterbarLoggedIn extends React.Component {
 
 	renderMySites() {
 		const {
-				domainOnlySite,
-				hasMoreThanOneSite,
-				siteSlug,
-				translate,
-				isCustomerHomeEnabled,
-				section,
-			} = this.props,
-			homeUrl = isCustomerHomeEnabled
-				? `/home/${ siteSlug }`
-				: getStatsPathForTab( 'day', siteSlug );
+			domainOnlySite,
+			hasMoreThanOneSite,
+			siteSlug,
+			translate,
+			isCustomerHomeEnabled,
+			section,
+		} = this.props;
+		const homeUrl = isCustomerHomeEnabled
+			? `/home/${ siteSlug }`
+			: getStatsPathForTab( 'day', siteSlug );
 
 		let mySitesUrl = domainOnlySite ? domainManagementList( siteSlug ) : homeUrl;
 		if ( config.isEnabled( 'nav-unification' ) && 'sites' === section ) {
@@ -198,7 +198,7 @@ class MasterbarLoggedIn extends React.Component {
 		if ( isCheckout ) {
 			return (
 				<AsyncLoad
-					require="layout/masterbar/checkout"
+					require="calypso/layout/masterbar/checkout"
 					placeholder={ null }
 					title={ title }
 					isJetpackNotAtomic={ isJetpackNotAtomic }
@@ -227,7 +227,7 @@ class MasterbarLoggedIn extends React.Component {
 				{ ( this.props.isSupportSession || config.isEnabled( 'quick-language-switcher' ) ) && (
 					<AsyncLoad require="./quick-language-switcher" placeholder={ null } />
 				) }
-				<AsyncLoad require="my-sites/resume-editing" placeholder={ null } />
+				<AsyncLoad require="calypso/my-sites/resume-editing" placeholder={ null } />
 				{ ! domainOnlySite && ! isMigrationInProgress && (
 					<Publish
 						isActive={ this.isActive( 'post' ) }

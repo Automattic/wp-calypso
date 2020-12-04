@@ -15,7 +15,7 @@ import {
 	WORDADS_SETTINGS_SAVE_FAILURE,
 	WORDADS_SETTINGS_SAVE_SUCCESS,
 	WORDADS_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	const originalConsoleWarn = global.console.warn;

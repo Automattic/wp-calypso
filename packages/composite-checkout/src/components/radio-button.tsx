@@ -10,69 +10,6 @@ import PropTypes from 'prop-types';
 import { Theme } from 'src/lib/theme';
 import styled from '../lib/styled';
 
-export default function RadioButton( {
-	checked,
-	name,
-	value,
-	onChange,
-	children,
-	label,
-	disabled,
-	id,
-	ariaLabel,
-}: RadioButtonProps ) {
-	const [ isFocused, changeFocus ] = useState( false );
-
-	return (
-		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
-			<Radio
-				type="radio"
-				name={ name }
-				id={ id }
-				disabled={ disabled }
-				value={ value }
-				checked={ checked }
-				onChange={ onChange }
-				onFocus={ () => {
-					changeFocus( true );
-				} }
-				onBlur={ () => {
-					changeFocus( false );
-				} }
-				readOnly={ ! onChange }
-				aria-label={ ariaLabel }
-			/>
-			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
-				{ label }
-			</Label>
-			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
-		</RadioButtonWrapper>
-	);
-}
-
-interface RadioButtonProps {
-	name: string;
-	id: string;
-	label: React.ReactNode;
-	disabled?: boolean;
-	checked?: boolean;
-	value: string;
-	onChange?: () => void;
-	ariaLabel: string;
-	children?: React.ReactNode;
-}
-
-RadioButton.propTypes = {
-	name: PropTypes.string.isRequired,
-	id: PropTypes.string.isRequired,
-	label: PropTypes.node.isRequired,
-	disabled: PropTypes.bool,
-	checked: PropTypes.bool,
-	value: PropTypes.string.isRequired,
-	onChange: PropTypes.func,
-	ariaLabel: PropTypes.string.isRequired,
-};
-
 const RadioButtonWrapper = styled.div<
 	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
 >`
@@ -139,25 +76,6 @@ interface RadioButtonWrapperProps {
 	disabled?: boolean;
 	isFocused?: boolean;
 	checked?: boolean;
-}
-
-function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
-	if ( ! disabled ) {
-		return null;
-	}
-
-	return `
-		::before,
-		:hover::before {
-			border: 1px solid lightgray;
-		}
-
-		svg,
-		:hover svg {
-			filter: grayscale( 100% );
-			opacity: 50%;
-		}
-	`;
 }
 
 const Radio = styled.input`
@@ -247,6 +165,94 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	${ handleLabelDisabled };
 `;
 
+const RadioButtonChildren = styled.div<
+	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
+>`
+	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
+`;
+
+export default function RadioButton( {
+	checked,
+	name,
+	value,
+	onChange,
+	children,
+	label,
+	disabled,
+	id,
+	ariaLabel,
+}: RadioButtonProps ): JSX.Element {
+	const [ isFocused, changeFocus ] = useState( false );
+
+	return (
+		<RadioButtonWrapper disabled={ disabled } isFocused={ isFocused } checked={ checked }>
+			<Radio
+				type="radio"
+				name={ name }
+				id={ id }
+				disabled={ disabled }
+				value={ value }
+				checked={ checked }
+				onChange={ onChange }
+				onFocus={ () => {
+					changeFocus( true );
+				} }
+				onBlur={ () => {
+					changeFocus( false );
+				} }
+				readOnly={ ! onChange }
+				aria-label={ ariaLabel }
+			/>
+			<Label checked={ checked } htmlFor={ id } disabled={ disabled }>
+				{ label }
+			</Label>
+			{ children && <RadioButtonChildren checked={ checked }>{ children }</RadioButtonChildren> }
+		</RadioButtonWrapper>
+	);
+}
+
+interface RadioButtonProps {
+	name: string;
+	id: string;
+	label: React.ReactNode;
+	disabled?: boolean;
+	checked?: boolean;
+	value: string;
+	onChange?: () => void;
+	ariaLabel: string;
+	children?: React.ReactNode;
+}
+
+RadioButton.propTypes = {
+	name: PropTypes.string.isRequired,
+	id: PropTypes.string.isRequired,
+	label: PropTypes.node.isRequired,
+	disabled: PropTypes.bool,
+	checked: PropTypes.bool,
+	value: PropTypes.string.isRequired,
+	onChange: PropTypes.func,
+	ariaLabel: PropTypes.string.isRequired,
+};
+
+function handleWrapperDisabled( { disabled }: { disabled?: boolean } ) {
+	if ( ! disabled ) {
+		return null;
+	}
+
+	return `
+		::before,
+		:hover::before {
+			border: 1px solid lightgray;
+		}
+
+		svg,
+		:hover svg {
+			filter: grayscale( 100% );
+			opacity: 50%;
+		}
+	`;
+}
+
 function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {
 	if ( ! disabled ) {
 		return null;
@@ -274,12 +280,6 @@ function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {
 		}
 	`;
 }
-
-const RadioButtonChildren = styled.div<
-	RadioButtonWrapperProps & React.HTMLAttributes< HTMLDivElement >
->`
-	display: ${ ( props ) => ( props.checked ? 'block' : 'none' ) };
-`;
 
 function getBorderColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {
 	return checked ? theme.colors.highlight : theme.colors.borderColor;

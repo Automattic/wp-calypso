@@ -6,7 +6,7 @@ import { defaults, filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	EDITOR_AUTOSAVE,
 	EDITOR_AUTOSAVE_RESET,
@@ -22,15 +22,16 @@ import {
 	EDITOR_EDIT_RAW_CONTENT,
 	EDITOR_RESET_RAW_CONTENT,
 	EDITOR_INIT_RAW_CONTENT,
-} from 'state/action-types';
-import { ModalViews } from 'state/ui/media-modal/constants';
-import { setMediaModalView } from 'state/ui/media-modal/actions';
-import { withAnalytics, bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
-import { editPost } from 'state/posts/actions';
+} from 'calypso/state/action-types';
+import { ModalViews } from 'calypso/state/ui/media-modal/constants';
+import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
+import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { editPost } from 'calypso/state/posts/actions';
 
-import 'state/editor/init';
+import 'calypso/state/editor/init';
+import 'calypso/state/ui/init';
 
 /**
  * Constants
@@ -156,9 +157,10 @@ export function saveConfirmationSidebarPreference( siteId, isEnabled = true ) {
 	};
 }
 
-export const setEditorIframeLoaded = ( isIframeLoaded = true ) => ( {
+export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null ) => ( {
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,
+	iframePort,
 } );
 
 export const editorAutosaveReset = () => ( {

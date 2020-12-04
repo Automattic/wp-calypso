@@ -3,7 +3,7 @@
  */
 
 import cache from './cache/reducer';
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import plugins from './plugins/reducer';
 import status from './status/reducer';
 import settings from './settings/reducer';

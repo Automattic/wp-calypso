@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 
 import {
 	AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP,
@@ -12,7 +12,7 @@ import {
 	PLUGIN_UPLOAD_COMPLETE,
 	PLUGIN_UPLOAD_ERROR,
 	PLUGIN_UPLOAD_PROGRESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const uploadedPluginId = keyedReducer(
 	'siteId',

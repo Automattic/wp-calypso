@@ -4,7 +4,7 @@
 
 import { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -12,26 +12,17 @@ import { connect } from 'react-redux';
 import { fetchJITM } from 'calypso/state/jitm/actions';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
-function QueryJITM( { siteId, sectionName, messagePath, doFetchJITM, locale } ) {
+export default function QueryJITM( { siteId, messagePath } ) {
+	const locale = useSelector( getCurrentUserLocale );
+	const dispatch = useDispatch();
 	useEffect( () => {
-		doFetchJITM( siteId, messagePath, locale );
-	}, [ siteId, sectionName, messagePath, locale ] );
+		dispatch( fetchJITM( siteId, messagePath, locale ) );
+	}, [ dispatch, siteId, messagePath, locale ] );
 
 	return null;
 }
 
 QueryJITM.propTypes = {
 	siteId: PropTypes.number.isRequired,
-	sectionName: PropTypes.string,
 	messagePath: PropTypes.string.isRequired,
 };
-
-QueryJITM.defaultProps = {
-	sectionName: '',
-};
-
-const mapStateToProps = ( state ) => ( {
-	locale: getCurrentUserLocale( state ),
-} );
-
-export default connect( mapStateToProps, { doFetchJITM: fetchJITM } )( QueryJITM );

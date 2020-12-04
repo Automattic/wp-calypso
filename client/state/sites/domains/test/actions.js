@@ -23,14 +23,15 @@ import {
 	ACTION_SITE_DOMAIN_REQUEST_FAILURE,
 	ERROR_MESSAGE_RESPONSE as errorResponse,
 } from './fixture';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
 jest.mock( 'lib/user', () => () => {} );
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

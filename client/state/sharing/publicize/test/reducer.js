@@ -21,8 +21,8 @@ import {
 	PUBLICIZE_CONNECTIONS_REQUEST_FAILURE,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	describe( 'fetchConnection()', () => {
@@ -212,17 +212,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_CREATE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_CREATE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -231,16 +231,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_CREATE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_CREATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,
@@ -272,17 +272,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_RECEIVE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_RECEIVE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -291,16 +291,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_RECEIVE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_RECEIVE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,
@@ -310,17 +310,17 @@ describe( 'reducer', () => {
 
 		describe( 'PUBLICIZE_CONNECTION_UPDATE', () => {
 			test( 'should add new connection', () => {
-				const existingConnection = { ID: 1, site_ID: 2916284 },
-					newConnection = { ID: 2, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: existingConnection,
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_UPDATE,
-							connection: newConnection,
-						}
-					);
+				const existingConnection = { ID: 1, site_ID: 2916284 };
+				const newConnection = { ID: 2, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: existingConnection,
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: existingConnection,
@@ -329,16 +329,16 @@ describe( 'reducer', () => {
 			} );
 
 			test( 'should update existing connections', () => {
-				const newConnection = { ID: 1, site_ID: 2916284 },
-					state = connections(
-						deepFreeze( {
-							1: { ID: 1, site_ID: 77203074 },
-						} ),
-						{
-							type: PUBLICIZE_CONNECTION_UPDATE,
-							connection: newConnection,
-						}
-					);
+				const newConnection = { ID: 1, site_ID: 2916284 };
+				const state = connections(
+					deepFreeze( {
+						1: { ID: 1, site_ID: 77203074 },
+					} ),
+					{
+						type: PUBLICIZE_CONNECTION_UPDATE,
+						connection: newConnection,
+					}
+				);
 
 				expect( state ).to.eql( {
 					1: newConnection,

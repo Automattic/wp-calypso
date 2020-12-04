@@ -9,14 +9,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { siteHasScanProductPurchase } from 'state/purchases/selectors';
-import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import isRewindActive from 'state/selectors/is-rewind-active';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import config from 'calypso/config';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import isSiteFailedMigrationSource from 'calypso/state/selectors/is-site-failed-migration-source';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class SiteSettingsNavigation extends Component {
 	static propTypes = {
@@ -117,6 +118,8 @@ export default connect( ( state ) => {
 		shouldShowJetpackSettings:
 			siteId &&
 			isJetpackSectionEnabledForSite( state, siteId ) &&
-			( siteHasScanProductPurchase( state, siteId ) || isRewindActive( state, siteId ) ),
+			( siteHasScanProductPurchase( state, siteId ) ||
+				isRewindActive( state, siteId ) ||
+				isSiteFailedMigrationSource( state, siteId ) ),
 	};
 } )( localize( SiteSettingsNavigation ) );

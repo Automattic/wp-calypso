@@ -7,9 +7,9 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 
@@ -50,6 +50,9 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {
 		return 'following_a8c';
+	}
+	if ( path.indexOf( '/read/p2' ) === 0 ) {
+		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { TimerHandle } from 'types';
+import { TimerHandle } from 'calypso/types';
 
 interface Cancelable {
 	cancel: () => void;

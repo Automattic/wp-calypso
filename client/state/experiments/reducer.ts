@@ -6,9 +6,11 @@ import { Action, Reducer } from 'redux';
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'state/action-types';
-import { ExperimentState, ExperimentAssign } from 'state/experiments/types';
-import { tracksAnonymousUserId } from 'lib/analytics/ad-tracking';
+import { EXPERIMENT_FETCH, EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
+import { ExperimentState, ExperimentAssign } from 'calypso/state/experiments/types';
+import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
+import { withSchemaValidation, withStorageKey } from 'calypso/state/utils';
+import { schema } from 'calypso/state/experiments/schema';
 
 /**
  * Attempt to get the anon id for the user, if set
@@ -64,4 +66,6 @@ const reducer: Reducer< ExperimentState, HandledActions > = (
 	}
 };
 
-export default reducer;
+const validatedReducer = withSchemaValidation( schema, reducer );
+
+export default withStorageKey( 'experiments', validatedReducer );

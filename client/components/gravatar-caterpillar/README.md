@@ -7,7 +7,7 @@ On smaller screens (<660px wide), the component will display half the maximum nu
 ## How to use
 
 ```js
-import GravatarCaterpillar from 'components/gravatar-caterpillar';
+import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
 
 function render() {
 	return <GravatarCaterpillar users={ users } />;

@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `type`. It does not accept any childr
 
 ```jsx
 import React from 'react';
-import QueryPostCounts from 'components/data/query-post-counts';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
 
 export default function PostCount( { count } ) {
 	return (

@@ -2,12 +2,12 @@
  * External dependencies
  */
 import { map, pickBy } from 'lodash';
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Internal dependencies
  */
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Returns a list of site IDs blocked by the user

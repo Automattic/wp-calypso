@@ -11,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Fetches the info of a plugin from .org plugins API.
 
 ```js
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
 
 dispatch( fetchPluginData( 'akismet' ) );
 ```

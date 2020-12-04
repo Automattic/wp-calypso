@@ -10,17 +10,20 @@ import { compact, find, flow, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
-import { getPostTypeLabel } from 'state/post-types/selectors';
-import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
-import urlSearch from 'lib/url-search';
-import QueryPostCounts from 'components/data/query-post-counts';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import {
+	getNormalizedMyPostCounts,
+	getNormalizedPostCounts,
+} from 'calypso/state/posts/counts/selectors';
+import urlSearch from 'calypso/lib/url-search';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
 import AuthorSegmented from './author-segmented';
 
 /**
@@ -48,10 +51,20 @@ export class PostTypeFilter extends Component {
 	getNavItems() {
 		const { query, siteId, siteSlug, statusSlug, jetpack, counts } = this.props;
 
+		const isPostOrPage = query.type === 'post' || query.type === 'page';
+
+		let basePath = '/types/' + query.type;
+		if ( query.type === 'page' ) {
+			basePath = '/pages';
+		} else if ( query.type === 'post' ) {
+			basePath = '/posts';
+		}
+
 		return reduce(
 			counts,
 			( memo, count, status ) => {
-				let label, pathStatus;
+				let label;
+				let pathStatus;
 				switch ( status ) {
 					case 'publish':
 						label = this.props.translate( 'Published', {
@@ -86,8 +99,8 @@ export class PostTypeFilter extends Component {
 					// Hide count in all sites mode; and in Jetpack mode for non-posts
 					count: ! siteId || ( jetpack && query.type !== 'post' ) ? null : count,
 					path: compact( [
-						query.type === 'post' ? '/posts' : '/types/' + query.type,
-						query.type === 'post' && query.author && 'my',
+						basePath,
+						isPostOrPage && query.author && 'my',
 						pathStatus,
 						siteSlug,
 					] ).join( '/' ),
@@ -152,7 +165,12 @@ export class PostTypeFilter extends Component {
 						) ) }
 					</NavTabs>
 					{ ! authorToggleHidden && (
-						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />
+						<AuthorSegmented
+							author={ query.author }
+							siteId={ siteId }
+							statusSlug={ statusSlug }
+							type={ query.type }
+						/>
 					) }
 					{ /* Disable search in all-sites mode because it doesn't work. */ }
 					{ isSingleSite && (
@@ -178,7 +196,7 @@ export default flow(
 	connect( ( state, { query } ) => {
 		const siteId = getSelectedSiteId( state );
 		let authorToggleHidden = false;
-		if ( query && query.type === 'post' ) {
+		if ( query && ( query.type === 'post' || query.type === 'page' ) ) {
 			if ( siteId ) {
 				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
 			} else {

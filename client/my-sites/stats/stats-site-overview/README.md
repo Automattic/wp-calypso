@@ -5,7 +5,7 @@ This component creates Stats Overview which is what renders each site section on
 ## How to use
 
 ```js
-import StatsOverview from 'my-sites/stats/overview';
+import StatsOverview from 'calypso/my-sites/stats/overview';
 
 const MyComponent = () => {
 	return <StatsOverview site={ site /*object*/ } path={ path /*string*/ } />;

@@ -8,10 +8,10 @@ import { uniq, map, find, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import TokenField from 'calypso/components/token-field';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 export default class ShippingClassesField extends React.Component {
 	static propTypes = {

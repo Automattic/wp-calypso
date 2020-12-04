@@ -16,7 +16,7 @@
 
 	@include breakpoint-deprecated( '<480px' ) {
 		// Don't show more than 2 first items
-		.activity-log-item:nth-child( n+3 ) {
+		.activity-log-item:nth-child( n + 3 ) {
 			display: none;
 		}
 	}

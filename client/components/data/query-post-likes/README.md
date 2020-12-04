@@ -8,7 +8,7 @@ Render the component, passing `siteId` and `postId`. It does not accept any chil
 
 ```jsx
 import React from 'react';
-import QueryPostLikes from 'components/data/query-post-likes';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
 import MyPostLikesListItem from './list-item';
 
 export default function Component( { likes } ) {

@@ -7,7 +7,7 @@ import { isFunction, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import mixinEmitter from 'lib/mixins/emitter';
+import mixinEmitter from 'calypso/lib/mixins/emitter';
 import core from './core';
 import syncInitialize from './sync-initialize';
 import asyncInitialize from './async-initialize';

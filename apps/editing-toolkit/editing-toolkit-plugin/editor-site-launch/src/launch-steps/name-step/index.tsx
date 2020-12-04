@@ -10,7 +10,7 @@ import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automat
  * Internal dependencies
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
-import { useTitle } from '../../hooks';
+import { useTitle } from '@automattic/launch';
 import './styles.scss';
 
 const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
@@ -24,8 +24,6 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 	const handlePrev = () => {
 		onPrevStep?.();
 	};
-
-	const handleBlur = () => saveTitle();
 
 	return (
 		<LaunchStepContainer>
@@ -44,13 +42,12 @@ const NameStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onN
 						id="nux-launch-step__input"
 						className="nux-launch-step__input"
 						onChange={ updateTitle }
-						onBlur={ handleBlur }
+						onBlur={ saveTitle }
 						value={ title }
 						spellCheck={ false }
 						autoComplete="off"
 						placeholder={ __( 'Enter site name', 'full-site-editing' ) }
 						autoCorrect="off"
-						data-hj-whitelist
 					/>
 					<div className="nux-launch-step__input-hint">
 						<Tip size={ 18 } />

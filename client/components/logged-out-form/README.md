@@ -5,13 +5,13 @@ This component is meant to be used when creating form for logged out users. You 
 ## Usage
 
 ```js
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form-footer';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import config from 'config';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form-footer';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import config from 'calypso/config';
 import { Button } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class MyLoggedOutForm extends React.Component {
 	handleSubmit = ( event ) => {

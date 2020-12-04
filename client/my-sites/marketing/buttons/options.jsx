@@ -11,20 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import MultiCheckbox from 'components/forms/multi-checkbox';
-import SupportInfo from 'components/support-info';
-import { getPostTypes } from 'state/post-types/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getSharingButtons from 'state/selectors/get-sharing-buttons';
-import { isJetpackSite } from 'state/sites/selectors';
-import QueryPostTypes from 'components/data/query-post-types';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import MultiCheckbox from 'calypso/components/forms/multi-checkbox';
+import SupportInfo from 'calypso/components/support-info';
+import { getPostTypes } from 'calypso/state/post-types/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getSharingButtons from 'calypso/state/selectors/get-sharing-buttons';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 

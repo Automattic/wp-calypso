@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSendingBillingReceiptEmail from 'state/selectors/is-sending-billing-receipt-email';
+import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
 
 describe( 'isSendingBillingReceiptEmail()', () => {
 	test( 'should return true if the receipt email is being sent for that receiptId', () => {

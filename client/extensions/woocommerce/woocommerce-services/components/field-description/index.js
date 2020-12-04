@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import sanitizeHTML from 'woocommerce/woocommerce-services/lib/utils/sanitize-html';
 
 const FieldDescription = ( { text } ) => {

@@ -5,7 +5,7 @@ A utility module to smoothly scroll to a window position.
 ## Usage
 
 ```js
-import scrollTo from 'lib/scroll-to';
+import scrollTo from 'calypso/lib/scroll-to';
 
 scrollTo( {
 	x: 400,

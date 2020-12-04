@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withStorageKey } from 'state/utils';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import approve from './approve/reducer';
 import earnings from './earnings/reducer';
 import settings from './settings/reducer';

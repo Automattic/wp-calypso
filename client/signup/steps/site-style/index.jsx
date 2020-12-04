@@ -13,17 +13,17 @@ import { find } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import StepWrapper from 'signup/step-wrapper';
-import { setSiteStyle } from 'state/signup/steps/site-style/actions';
-import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { getSiteStyleOptions } from 'lib/signup/site-styles';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { setSiteStyle } from 'calypso/state/signup/steps/site-style/actions';
+import { getSiteStyle } from 'calypso/state/signup/steps/site-style/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { getSiteStyleOptions } from 'calypso/lib/signup/site-styles';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies

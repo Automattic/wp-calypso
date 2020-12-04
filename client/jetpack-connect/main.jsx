@@ -11,18 +11,18 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import LocaleSuggestions from 'components/locale-suggestions';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl } from 'state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'jetpack-connect/flow-types';
-import { getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
+import { checkUrl } from 'calypso/state/jetpack-connect/actions';
+import { FLOW_TYPES } from 'calypso/jetpack-connect/flow-types';
+import { getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { persistSession } from './persistence-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import jetpackConnection from './jetpack-connection';
 
 export class JetpackConnectMain extends Component {

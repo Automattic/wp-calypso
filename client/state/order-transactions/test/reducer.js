@@ -5,7 +5,7 @@ import {
 	ORDER_TRANSACTION_FETCH,
 	ORDER_TRANSACTION_FETCH_ERROR,
 	ORDER_TRANSACTION_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 import { items, isFetching, errors } from '../reducer';
 

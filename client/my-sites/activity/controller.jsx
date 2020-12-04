@@ -7,14 +7,16 @@ import { isEqual } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { queryToFilterState } from 'state/activity-log/utils';
-import { recordTrack } from 'reader/stats';
-import { setFilter } from 'state/activity-log/actions';
-import ActivityLog from 'my-sites/activity/activity-log';
-import ActivityLogV2 from 'my-sites/activity/activity-log-v2';
-import config from 'config';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import config from 'calypso/config';
+import { recordTrack } from 'calypso/reader/stats';
+import { queryToFilterState } from 'calypso/state/activity-log/utils';
+import { setFilter } from 'calypso/state/activity-log/actions';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import IsCurrentUserAdminSwitch from 'calypso/components/jetpack/is-current-user-admin-switch';
+import NotAuthorizedPage from 'calypso/components/jetpack/not-authorized-page';
+import ActivityLog from 'calypso/my-sites/activity/activity-log';
+import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
 
 function queryFilterToStats( filter ) {
 	// These values are hardcoded so that the attributes that we collect via stats are not unbound
@@ -72,6 +74,17 @@ export function activity( context, next ) {
 		<ActivityLogV2 />
 	) : (
 		<ActivityLog siteId={ siteId } context={ context } />
+	);
+
+	next();
+}
+
+export function showNotAuthorizedForNonAdmins( context, next ) {
+	context.primary = (
+		<IsCurrentUserAdminSwitch
+			trueComponent={ context.primary }
+			falseComponent={ <NotAuthorizedPage /> }
+		/>
 	);
 
 	next();

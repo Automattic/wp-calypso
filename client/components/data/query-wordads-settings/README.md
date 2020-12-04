@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryWordadsSettings from 'components/data/query-wordads-settings';
+import QueryWordadsSettings from 'calypso/components/data/query-wordads-settings';
 
 export default function MySettings( { settings } ) {
 	return (

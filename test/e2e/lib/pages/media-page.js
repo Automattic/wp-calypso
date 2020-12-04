@@ -82,9 +82,7 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async uploadFile( file ) {
-		const fileNameInputSelector = By.css(
-			'.media-library__upload-button input[type="file"]'
-		);
+		const fileNameInputSelector = By.css( '.media-library__upload-button input[type="file"]' );
 		const driver = this.driver;
 
 		await driverHelper.waitTillPresentAndDisplayed(
@@ -104,14 +102,25 @@ export default class MediaPage extends AsyncBaseContainer {
 	}
 
 	async deleteMedia( file ) {
-		if( await driverHelper.elementIsNotPresent( this.driver, By.css( '.media-library__list-item.is-selected' ) ) ) {
+		if (
+			await driverHelper.elementIsNotPresent(
+				this.driver,
+				By.css( '.media-library__list-item.is-selected' )
+			)
+		) {
 			this.selectFirstImage();
 		}
-		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-media-modal__delete') );
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.dialog__backdrop button[data-e2e-button="accept"]') );
+		await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-media-modal__delete' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.dialog__backdrop button[data-e2e-button="accept"]' )
+		);
 	}
 
 	async clickCancel() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.editor-media-modal button[data-e2e-button="cancel"]'));
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.editor-media-modal button[data-e2e-button="cancel"]' )
+		);
 	}
 }

@@ -29,6 +29,7 @@ import {
 import EmailCategory from './email-category';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -184,13 +185,18 @@ class WPCOMNotifications extends React.Component {
 
 	render() {
 		return (
-			<Main>
+			<Main className="wpcom-settings__main is-wide-layout">
 				<PageViewTracker
 					path="/me/notifications/updates"
 					title="Me > Notifications > Updates from WordPress.com"
 				/>
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader
+					brandFont
+					headerText={ this.props.translate( 'Notification Settings' ) }
+					align="left"
+				/>
 
 				<Navigation path={ this.props.path } />
 

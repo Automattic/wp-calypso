@@ -5,7 +5,7 @@ This component is used to implement a checkbox which you can use to bulk select 
 ## How to use
 
 ```jsx
-import BulkSelect from 'components/bulk-select';
+import BulkSelect from 'calypso/components/bulk-select';
 
 function render() {
 	return <BulkSelect selectedElements={ 3 } totalElements={ 6 } onToggle={ callback } />;

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { isValidCapability } from 'state/current-user/selectors';
+import { isValidCapability } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns true if the current user has the specified capability for the site,

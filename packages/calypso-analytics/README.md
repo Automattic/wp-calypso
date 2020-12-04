@@ -19,7 +19,7 @@ recordTracksEvent( 'calypso_signup_step_start', { step: 'a_nice_step' } );
 _Note: Unless you have a strong reason to call `recordTracksEvent` directly, you should use the Analytics Middleware instead:_
 
 ```js
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 dispatch( recordTracksEvent( 'calypso_checkout_coupon_apply', { coupon_code: 'abc123' } ) );
 ```
@@ -42,7 +42,8 @@ recordTracksEvent( 'calypso_do_thing', { extra: 'info' } );
 `recordTracksEvent( name, properties )` deprecates the following call to the analytics lib method:
 
 ```js
-import { recordTracksEvent } from 'lib/analytics/tracks';
+// eslint-disable-next-line no-restricted-imports
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 recordTracksEvent( name, properties );
 ```

@@ -8,8 +8,8 @@ import React, { FunctionComponent } from 'react';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import JetpackLogo from 'components/jetpack-logo';
-import Main from 'components/main';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import Main from 'calypso/components/main';
 
 /**
  * Style dependencies

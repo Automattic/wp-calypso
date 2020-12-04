@@ -13,47 +13,51 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
+import config from 'calypso/config';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
 import DomainOnly from './domain-only';
 import ListItemPlaceholder from './item-placeholder';
-import Main from 'components/main';
-import { domainManagementRoot, domainManagementList } from 'my-sites/domains/paths';
+import Main from 'calypso/components/main';
+import { domainManagementRoot, domainManagementList } from 'calypso/my-sites/domains/paths';
 import { Button, Card, CompactCard } from '@automattic/components';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import { setPrimaryDomain } from 'state/sites/domains/actions';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import EmptyContent from 'components/empty-content';
-import { hasDomainCredit } from 'state/sites/plans/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
-import { type } from 'lib/domains/constants';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import getSites from 'state/selectors/get-sites';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import { setPrimaryDomain } from 'calypso/state/sites/domains/actions';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import EmptyContent from 'calypso/components/empty-content';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
+import { type } from 'calypso/lib/domains/constants';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import getSites from 'calypso/state/selectors/get-sites';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getDomainManagementPath } from './utils';
 import DomainItem from './domain-item';
 import ListHeader from './list-header';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import HeaderCart from 'my-sites/checkout/cart/header-cart';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import InfoPopover from 'calypso/components/info-popover';
+import ExternalLink from 'calypso/components/external-link';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'my-sites/domains/style.scss';
+import 'calypso/my-sites/domains/style.scss';
 
 export class List extends React.Component {
 	static propTypes = {
@@ -304,8 +308,8 @@ export class List extends React.Component {
 		}
 
 		this.props.changePrimary( domain, mode );
-		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } ),
-			currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
+		const currentPrimaryIndex = findIndex( this.props.domains, { isPrimary: true } );
+		const currentPrimaryName = this.props.domains[ currentPrimaryIndex ].name;
 
 		if ( domain.name === currentPrimaryName ) {
 			// user clicked the current primary domain

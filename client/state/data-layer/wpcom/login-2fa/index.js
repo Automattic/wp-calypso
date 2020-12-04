@@ -6,25 +6,25 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'state/action-types';
+import config from 'calypso/config';
+import { TWO_FACTOR_AUTHENTICATION_PUSH_POLL_START } from 'calypso/state/action-types';
 import {
 	startPollAppPushAuth,
 	stopPollAppPushAuth,
 	receivedTwoFactorPushNotificationApproved,
-} from 'state/login/actions/push/impl'; // Import implementations directly, to avoid cyclical refs.
-import { updateNonce } from 'state/login/actions/update-nonce';
+} from 'calypso/state/login/actions/push/impl'; // Import implementations directly, to avoid cyclical refs.
+import { updateNonce } from 'calypso/state/login/actions/update-nonce';
 import {
 	getTwoFactorAuthNonce,
 	getTwoFactorPushPollInProgress,
 	getTwoFactorPushToken,
 	getTwoFactorUserId,
-} from 'state/login/selectors';
-import { http } from 'state/http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/login/selectors';
+import { http } from 'calypso/state/http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Module constants

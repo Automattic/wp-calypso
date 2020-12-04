@@ -5,14 +5,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { entries } from 'lodash';
 import { CURRENCIES } from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
 import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
@@ -41,8 +39,8 @@ import getCountries from 'calypso/state/selectors/get-countries';
 import PhoneInput from 'calypso/components/phone-input';
 import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
 
-const currencyList = entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
-const visualCurrencyList = entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
+const currencyList = Object.entries( CURRENCIES ).map( ( [ code ] ) => ( { code } ) );
+const visualCurrencyList = Object.entries( CURRENCIES ).map( ( [ code, { symbol } ] ) => ( {
 	code,
 	label: `${ code } ${ symbol }`,
 } ) );
@@ -55,7 +53,6 @@ class FormFields extends React.PureComponent {
 	state = {
 		checkedRadio: 'first',
 		toggled: false,
-		compactToggled: false,
 		phoneInput: { countryCode: 'US', value: '' },
 		currencyInput: { currency: 'USD', value: '' },
 	};
@@ -68,12 +65,8 @@ class FormFields extends React.PureComponent {
 		this.setState( { toggled: ! this.state.toggled } );
 	};
 
-	handleCompactToggle = () => {
-		this.setState( { compactToggled: ! this.state.compactToggled } );
-	};
-
 	handleAction = () => {
-		alert( 'Thank you.' );
+		window.alert( 'Thank you.' );
 	};
 
 	handlePhoneInputChange = ( data ) => {
@@ -218,12 +211,6 @@ class FormFields extends React.PureComponent {
 					<br />
 					<FormToggle checked={ true } disabled />
 					<br />
-					<CompactFormToggle
-						checked={ this.state.compactToggled }
-						onChange={ this.handleCompactToggle }
-					/>
-					<br />
-					<CompactFormToggle checked={ false } disabled />
 
 					<FormButtonsBar>
 						<FormButton>Form Button</FormButton>

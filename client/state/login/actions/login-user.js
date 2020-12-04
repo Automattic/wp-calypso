@@ -6,21 +6,21 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	LOGIN_REQUEST,
 	LOGIN_REQUEST_FAILURE,
 	LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { remoteLoginUser } from 'state/login/actions/remote-login-user';
+} from 'calypso/state/action-types';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
 	postLoginRequest,
-} from 'state/login/utils';
+} from 'calypso/state/login/utils';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Logs a user in.

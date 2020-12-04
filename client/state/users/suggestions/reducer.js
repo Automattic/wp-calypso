@@ -6,8 +6,8 @@ import {
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**

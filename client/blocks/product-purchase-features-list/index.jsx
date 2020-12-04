@@ -24,6 +24,7 @@ import {
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
 	TYPE_ALL,
+	TERM_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { PLANS_LIST } from 'calypso/lib/plans/plans-list';
 import FindNewTheme from './find-new-theme';
@@ -69,6 +70,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	// TODO: Define feature list.
 	getEcommerceFeatures() {
 		const {
+			isMonthlyPlan,
 			isPlaceholder,
 			plan,
 			planHasDomainCredit,
@@ -82,7 +84,9 @@ export class ProductPurchaseFeaturesList extends Component {
 					showLiveChatButton
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_ecommerce' }
 				/>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ ! isMonthlyPlan && (
+					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<GoogleMyBusiness selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
@@ -100,6 +104,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	getBusinessFeatures() {
 		const {
 			isPlaceholder,
+			isMonthlyPlan,
 			plan,
 			currentPlan,
 			planHasDomainCredit,
@@ -133,7 +138,9 @@ export class ProductPurchaseFeaturesList extends Component {
 					showLiveChatButton
 					liveChatButtonEventName={ 'calypso_livechat_my_plan_business' }
 				/>
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ ! isMonthlyPlan && (
+					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				) }
 				{ isBusinessOnboardingAvailable && (
 					<BusinessOnboarding
 						isWpcomPlan
@@ -163,6 +170,7 @@ export class ProductPurchaseFeaturesList extends Component {
 	getPremiumFeatures() {
 		const {
 			isPlaceholder,
+			isMonthlyPlan,
 			plan,
 			planHasDomainCredit,
 			selectedSite,
@@ -172,7 +180,9 @@ export class ProductPurchaseFeaturesList extends Component {
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ ! isMonthlyPlan && (
+					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				) }
 				<GoogleAnalyticsStats selectedSite={ selectedSite } />
 				<AdvertisingRemoved isBusinessPlan={ false } selectedSite={ selectedSite } />
 				{ showCustomizerFeature && <CustomizeTheme selectedSite={ selectedSite } /> }
@@ -189,12 +199,14 @@ export class ProductPurchaseFeaturesList extends Component {
 	}
 
 	getPersonalFeatures() {
-		const { isPlaceholder, selectedSite, planHasDomainCredit } = this.props;
+		const { isPlaceholder, isMonthlyPlan, selectedSite, planHasDomainCredit } = this.props;
 
 		return (
 			<Fragment>
 				<HappinessSupportCard isPlaceholder={ isPlaceholder } />
-				<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				{ ! isMonthlyPlan && (
+					<CustomDomain selectedSite={ selectedSite } hasDomainCredit={ planHasDomainCredit } />
+				) }
 				<AdvertisingRemoved isBusinessPlan selectedSite={ selectedSite } />
 				<SiteActivity />
 				<MobileApps onClick={ this.handleMobileAppsClick } />
@@ -390,9 +402,9 @@ export class ProductPurchaseFeaturesList extends Component {
 }
 
 export default connect(
-	( state ) => {
-		const selectedSite = getSelectedSite( state ),
-			selectedSiteId = getSelectedSiteId( state );
+	( state, ownProps ) => {
+		const selectedSite = getSelectedSite( state );
+		const selectedSiteId = getSelectedSiteId( state );
 		const isAutomatedTransfer = isSiteAutomatedTransfer( state, selectedSiteId );
 
 		return {
@@ -402,6 +414,7 @@ export default connect(
 			showCustomizerFeature: ! isSiteUsingFullSiteEditing( state, selectedSiteId ),
 			currentPlan: getCurrentPlan( state, selectedSiteId ),
 			scheduleId: getConciergeScheduleId( state ),
+			isMonthlyPlan: TERM_MONTHLY === getPlan( ownProps.plan )?.term,
 		};
 	},
 	{

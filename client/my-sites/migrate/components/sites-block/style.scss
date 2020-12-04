@@ -15,7 +15,7 @@
 		width: 1px;
 		border-left: 1px solid var( --color-border-subtle );
 		overflow: visible;
-		flex-grow:0;
+		flex-grow: 0;
 		flex-shrink: 0;
 		position: relative;
 
@@ -50,7 +50,7 @@
 		}
 	}
 
-	@include breakpoint-deprecated('<660px') {
+	@include breakpoint-deprecated( '<660px' ) {
 		&.is-step-source-select {
 			.sites-block__sites-arrow-wrapper,
 			.sites-block__target-site {

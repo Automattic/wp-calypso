@@ -5,7 +5,7 @@ import reducer, { postTypeList } from '../reducer';
 import {
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

@@ -75,22 +75,6 @@
 		}
 	}
 
-	.plan-price {
-		font-size: rem( 21px );
-
-		@include break-medium {
-			font-size: rem( 30px );
-		}
-
-		&.is-original {
-			color: #8c8f94;
-		}
-
-		.plan-price__integer {
-			font-weight: 400;
-		}
-	}
-
 	.jetpack-product-card-alt {
 		background: var( --studio-gray-0 );
 

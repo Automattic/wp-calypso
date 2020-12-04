@@ -24,7 +24,6 @@ import NavBarComponent from '../lib/components/nav-bar-component.js';
 import WPAdminSidebar from '../lib/pages/wp-admin/wp-admin-sidebar';
 
 import WPAdminLogonPage from '../lib/pages/wp-admin/wp-admin-logon-page';
-import JetpackComSearchLandingPage from '../lib/pages/external/jetpackcom-search-landing-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -68,13 +67,9 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 			return await jetpackDashboard.clickUpgradeNudge();
 		} );
 
-		step( 'Can click upgrade on Jetpack landing page', async function () {
-			const searchLandingPage = await JetpackComSearchLandingPage.Expect( driver );
-			return await searchLandingPage.upgrade();
-		} );
-
-		step( 'Can then see secure payment component', async function () {
-			return await SecurePaymentComponent.Expect( driver );
+		step( 'Can then see secure payment component and Search in the cart', async function () {
+			const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+			return await securePaymentComponent.containsPlan( 'jetpack_search' );
 		} );
 
 		// Remove all items from basket for clean up
@@ -85,7 +80,7 @@ describe( `[${ host }] Jetpack Plans: (${ screenSize }) @jetpack`, function () {
 			await navbarComponent.clickMySites();
 
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectPlan();
+			await sidebarComponent.selectPlans();
 
 			await PlansPage.Expect( driver );
 			const shoppingCartWidgetComponent = await ShoppingCartWidgetComponent.Expect( driver );

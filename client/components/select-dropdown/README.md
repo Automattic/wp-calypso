@@ -14,7 +14,7 @@ A good example for this case is navigation. Sometimes the option that is selecte
 
 ```js
 import React from 'react';
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 export default class extends React.Component {
 	// ...
@@ -107,7 +107,7 @@ As a sibling to `SelectDropdown.Item`, an item "separator" or horizontal line ca
 ![separator example screenshot](https://cldup.com/CWEH2K9PUf.png)
 
 ```js
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 export default class extends React.Component {
 	// ...
@@ -142,7 +142,7 @@ A good example for this case is a form element. You don't want to have to write 
 > **NOTE** - there is still more work here in order to be fully functional as a form element, not recommended use case... yet.
 
 ```js
-import SelectDropdown from 'components/select-dropdown';
+import SelectDropdown from 'calypso/components/select-dropdown';
 
 const options = [
 	{ label: 'Post status', isLabel: true },

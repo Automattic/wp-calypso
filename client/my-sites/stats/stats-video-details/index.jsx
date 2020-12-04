@@ -15,12 +15,12 @@ import StatsListLegend from '../stats-list/legend';
 import StatsModulePlaceholder from '../stats-module/placeholder';
 import StatsModuleHeader from '../stats-module/header';
 import { Card } from '@automattic/components';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
+} from 'calypso/state/stats/lists/selectors';
 
 const StatModuleVideoDetails = ( props ) => {
 	const { data, query, requesting, siteId, translate } = props;

@@ -53,7 +53,8 @@ export default class extends React.Component {
 	};
 
 	getValueLabelElement = () => {
-		let left, offset;
+		let left;
+		let offset;
 
 		if ( this.props.showValueLabel ) {
 			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );

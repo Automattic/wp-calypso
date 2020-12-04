@@ -20,7 +20,7 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import { protectForm } from 'calypso/lib/protect-form';
 import formBase from 'calypso/me/form-base';
 import config from 'calypso/config';
-import { languages } from 'calypso/languages';
+import languages from '@automattic/languages';
 import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -58,6 +58,9 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
+import wpcom from 'calypso/lib/wp';
+import user from 'calypso/lib/user';
 
 /**
  * Style dependencies
@@ -71,22 +74,24 @@ const colorSchemeKey = 'calypso_preferences.colorScheme';
  */
 const debug = debugFactory( 'calypso:me:account' );
 
+const ALLOWED_USERNAME_CHARACTERS_REGEX = /^[a-z0-9]+$/;
+const USERNAME_MIN_LENGTH = 4;
+
 /* eslint-disable react/prefer-es6-class */
 const Account = createReactClass( {
 	displayName: 'Account',
 
 	// form-base mixin is needed for getDisabledState() (and possibly other uses?)
-	mixins: [ formBase, observe( 'userSettings', 'username' ) ],
+	mixins: [ formBase, observe( 'userSettings' ) ],
 
 	propTypes: {
 		userSettings: PropTypes.object.isRequired,
-		username: PropTypes.object.isRequired,
 		showNoticeInitially: PropTypes.bool,
 	},
 
 	UNSAFE_componentWillMount() {
 		// Clear any username changes that were previously made
-		this.props.username.clearValidation();
+		this.clearUsernameValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 	},
 
@@ -183,10 +188,49 @@ const Account = createReactClass( {
 		this.setState( { userLoginConfirm: event.target.value } );
 	},
 
-	validateUsername() {
+	async validateUsername() {
+		const { translate } = this.props;
 		const username = this.getUserSetting( 'user_login' );
+
 		debug( 'Validating username ' + username );
-		this.props.username.validate( username );
+
+		if ( username === user().get().username ) {
+			this.setState( { validationResult: false } );
+			return;
+		}
+
+		if ( username.length < USERNAME_MIN_LENGTH ) {
+			this.setState( {
+				validationResult: {
+					error: 'invalid_input',
+					message: translate( 'Usernames must be at least 4 characters.' ),
+				},
+			} );
+			return;
+		}
+
+		if ( ! ALLOWED_USERNAME_CHARACTERS_REGEX.test( username ) ) {
+			this.setState( {
+				validationResult: {
+					error: 'invalid_input',
+					message: translate( 'Usernames can only contain lowercase letters (a-z) and numbers.' ),
+				},
+			} );
+			return;
+		}
+
+		try {
+			const { success, allowed_actions } = await wpcom
+				.undocumented()
+				.me()
+				.validateUsername( username );
+
+			this.setState( {
+				validationResult: { success, allowed_actions, validatedUsername: username },
+			} );
+		} catch ( error ) {
+			this.setState( { validationResult: error } );
+		}
 	},
 
 	hasEmailValidationError() {
@@ -382,7 +426,7 @@ const Account = createReactClass( {
 			usernameAction: null,
 		} );
 
-		this.props.username.clearValidation();
+		this.clearUsernameValidation();
 		this.props.userSettings.removeUnsavedSetting( 'user_login' );
 
 		if ( ! this.props.userSettings.hasUnsavedSettings() ) {
@@ -390,23 +434,45 @@ const Account = createReactClass( {
 		}
 	},
 
-	submitUsernameForm() {
+	async submitUsernameForm() {
 		const username = this.getUserSetting( 'user_login' );
-		const action = null === this.state.usernameAction ? 'none' : this.state.usernameAction;
+		const action = this.state.usernameAction ? this.state.usernameAction : 'none';
 
 		this.setState( { submittingForm: true } );
-		this.props.username.change( username, action, ( error ) => {
-			this.setState( { submittingForm: false } );
-			if ( error ) {
-				this.props.errorNotice( this.props.username.getValidationFailureMessage() );
-			} else {
-				this.props.markSaved();
 
-				// We reload here to refresh cookies, user object, and user settings.
-				// @TODO: Do not require reload here.
-				window.location.reload();
-			}
-		} );
+		try {
+			await wpcom.undocumented().me().changeUsername( username, action );
+			this.setState( { submittingForm: false } );
+
+			this.props.markSaved();
+
+			// We reload here to refresh cookies, user object, and user settings.
+			// @TODO: Do not require reload here.
+			window.location.reload();
+		} catch ( error ) {
+			this.setState( { submittingForm: false, validationResult: error } );
+			this.props.errorNotice( error.message );
+		}
+	},
+
+	isUsernameValid() {
+		return this.state.validationResult?.success === true;
+	},
+
+	getUsernameValidationFailureMessage() {
+		return this.state.validationResult?.message ?? null;
+	},
+
+	getAllowedActions() {
+		return this.state.validationResult?.allowed_actions ?? {};
+	},
+
+	getValidatedUsername() {
+		return this.state.validationResult?.validatedUsername ?? null;
+	},
+
+	clearUsernameValidation() {
+		this.setState( { validationResult: false } );
 	},
 
 	onSiteSelect( siteId ) {
@@ -461,44 +527,44 @@ const Account = createReactClass( {
 	},
 
 	renderUsernameValidation() {
-		const { translate, username, userSettings } = this.props;
+		const { translate, userSettings } = this.props;
 
 		if ( ! userSettings.isSettingUnsaved( 'user_login' ) ) {
 			return null;
 		}
 
-		if ( username.isUsernameValid() ) {
+		if ( this.isUsernameValid() ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-success"
 					text={ translate( '%(username)s is a valid username.', {
 						args: {
-							username: username.getValidatedUsername(),
+							username: this.getValidatedUsername(),
 						},
 					} ) }
 				/>
 			);
-		} else if ( null !== username.getValidationFailureMessage() ) {
+		} else if ( null !== this.getUsernameValidationFailureMessage() ) {
 			return (
 				<Notice
 					showDismiss={ false }
 					status="is-error"
-					text={ username.getValidationFailureMessage() }
+					text={ this.getUsernameValidationFailureMessage() }
 				/>
 			);
 		}
 	},
 
 	renderUsernameConfirmNotice() {
-		const { translate, username } = this.props;
+		const { translate } = this.props;
 		const usernameMatch = this.getUserSetting( 'user_login' ) === this.state.userLoginConfirm;
 		const status = usernameMatch ? 'is-success' : 'is-error';
 		const text = usernameMatch
 			? translate( 'Thanks for confirming your new username!' )
 			: translate( 'Please re-enter your new username to confirm it.' );
 
-		if ( ! username.isUsernameValid() ) {
+		if ( ! this.isUsernameValid() ) {
 			return null;
 		}
 
@@ -660,8 +726,8 @@ const Account = createReactClass( {
 	},
 
 	renderBlogActionFields() {
-		const { translate, username } = this.props;
-		const actions = username.getAllowedActions();
+		const { translate } = this.props;
+		const actions = this.getAllowedActions();
 
 		/*
 		 * If there are no actions or if there is only one action,
@@ -697,11 +763,11 @@ const Account = createReactClass( {
 	 * These form fields are displayed when a username change is in progress.
 	 */
 	renderUsernameFields() {
-		const { currentUserDisplayName, currentUserName, translate, username } = this.props;
+		const { currentUserDisplayName, currentUserName, translate } = this.props;
 
 		const isSaveButtonDisabled =
 			this.getUserSetting( 'user_login' ) !== this.state.userLoginConfirm ||
-			! username.isUsernameValid() ||
+			! this.isUsernameValid() ||
 			this.state.submittingForm;
 
 		return (
@@ -811,10 +877,12 @@ const Account = createReactClass( {
 		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
 
 		return (
-			<Main className="account">
+			<Main className="account is-wide-layout">
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>

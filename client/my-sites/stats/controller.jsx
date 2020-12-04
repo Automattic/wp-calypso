@@ -10,14 +10,14 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getSiteFragment, getStatsDefaultSitePage } from 'lib/route';
-import { bumpStat } from 'lib/analytics/mc';
-import { recordPlaceholdersTiming } from 'lib/perfmon';
-import { getSite, getSiteOption } from 'state/sites/selectors';
-import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FollowList from 'lib/follow-list';
+import { getSiteFragment, getStatsDefaultSitePage } from 'calypso/lib/route';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { recordPlaceholdersTiming } from 'calypso/lib/perfmon';
+import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
+import { getCurrentLayoutFocus } from 'calypso/state/ui/layout-focus/selectors';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FollowList from 'calypso/lib/follow-list';
 import StatsInsights from './stats-insights';
 import StatsOverview from './overview';
 import StatsSite from './site';

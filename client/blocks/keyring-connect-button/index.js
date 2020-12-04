@@ -170,9 +170,9 @@ class KeyringConnectButton extends Component {
 		const { primary, service, translate } = this.props;
 		const { isConnecting, isRefreshing } = this.state;
 		const status = service ? this.getConnectionStatus() : 'unknown';
-		let localPrimary = false,
-			warning = false,
-			label;
+		let localPrimary = false;
+		let warning = false;
+		let label;
 
 		const isPending = 'unknown' === status || isRefreshing || isConnecting;
 

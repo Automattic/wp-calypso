@@ -131,7 +131,8 @@ class SiteSelector extends Component {
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
 		// we need to switch seemlessly between the two
-		let highlightedSiteId, highlightedIndex;
+		let highlightedSiteId;
+		let highlightedIndex;
 		if ( this.state.isKeyboardEngaged ) {
 			debug( 'using highlight from last keyboard interaction' );
 			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];

@@ -12,14 +12,14 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import RegisterDomainStep from 'components/domains/register-domain-step';
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
-import { addItem, removeItem } from 'lib/cart/actions';
-import { canDomainAddGSuite } from 'lib/gsuite';
+import EmptyContent from 'calypso/components/empty-content';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
+import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { addItem, removeItem } from 'calypso/lib/cart/actions';
+import { canDomainAddGSuite } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
 	hasDomainInCart,
@@ -27,25 +27,32 @@ import {
 	domainTransfer,
 	domainRegistration,
 	updatePrivacyForDomain,
-} from 'lib/cart-values/cart-items';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import isSiteUpgradeable from 'state/selectors/is-site-upgradeable';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { getProductsList } from 'state/products-list/selectors';
-import { recordAddDomainButtonClick, recordRemoveDomainButtonClick } from 'state/domains/actions';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSuggestionsVendor } from 'lib/domains/suggestions';
-import NewDomainsRedirectionNoticeUpsell from 'my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
-import HeaderCart from 'my-sites/checkout/cart/header-cart';
+} from 'calypso/lib/cart-values/cart-items';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import isSiteUpgradeable from 'calypso/state/selectors/is-site-upgradeable';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import {
+	recordAddDomainButtonClick,
+	recordRemoveDomainButtonClick,
+} from 'calypso/state/domains/actions';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
+import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'my-sites/domains/style.scss';
+import 'calypso/my-sites/domains/style.scss';
 
 class DomainSearch extends Component {
 	static propTypes = {

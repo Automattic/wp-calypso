@@ -6,7 +6,7 @@ import {
 	IMPORTER_NUX_URL_INPUT_SET,
 	IMPORTER_NUX_FROM_SIGNUP_CLEAR,
 	IMPORTER_NUX_FROM_SIGNUP_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const setNuxUrlInputValue = ( value ) => ( {
 	type: IMPORTER_NUX_URL_INPUT_SET,

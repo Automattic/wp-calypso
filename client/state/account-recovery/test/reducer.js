@@ -11,7 +11,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( '#account-recovery/isFetchingSettings reducer :', () => {
 	test( 'should set isFetchingSettings flag.', () => {

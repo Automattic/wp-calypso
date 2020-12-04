@@ -5,15 +5,14 @@ import React, { useCallback } from 'react';
 import { sprintf } from '@wordpress/i18n';
 import { useTranslate } from 'i18n-calypso';
 import page from 'page';
+import { Button } from '@automattic/components';
+import { CheckoutCheckIcon, PaymentLogo } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
-import { CheckoutCheckIcon } from '@automattic/composite-checkout';
-import PaymentLogo from '@automattic/composite-checkout/src/lib/payment-methods/payment-logo';
-import Gridicon from 'components/gridicon';
-import CheckoutTerms from 'my-sites/checkout/checkout/checkout-terms';
+import Gridicon from 'calypso/components/gridicon';
+import CheckoutTerms from 'calypso/my-sites/checkout/composite-checkout/components/checkout-terms';
 import { formatDate } from './util';
 import { BEFORE_SUBMIT } from './constants';
 

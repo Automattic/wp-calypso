@@ -6,8 +6,8 @@ import { startsWith } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
-import { ROUTE_SET } from 'state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 export const currentClientId = withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

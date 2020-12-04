@@ -10,9 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import Toggle from 'components/forms/form-toggle';
-import { CHANGE_NAME_SERVERS } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import { CHANGE_NAME_SERVERS } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 class NameserversToggle extends React.PureComponent {
 	static propTypes = {
@@ -28,7 +32,7 @@ class NameserversToggle extends React.PureComponent {
 				</span>
 
 				<form className="name-servers__toggle">
-					<Toggle
+					<FormToggle
 						id="wp-nameservers"
 						name="wp-nameservers"
 						onChange={ this.handleToggle }

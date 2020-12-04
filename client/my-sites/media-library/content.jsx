@@ -12,33 +12,33 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import MediaListData from 'components/data/media-list-data';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import MediaListData from 'calypso/components/data/media-list-data';
 import {
 	ValidationErrors as MediaValidationErrors,
 	MEDIA_IMAGE_RESIZER,
 	MEDIA_IMAGE_THUMBNAIL,
-} from 'lib/media/constants';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteSlug } from 'state/sites/selectors';
+} from 'calypso/lib/media/constants';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import MediaLibraryHeader from './header';
 import MediaLibraryExternalHeader from './external-media-header';
 import MediaLibraryList from './list';
-import InlineConnection from 'my-sites/marketing/connections/inline-connection';
+import InlineConnection from 'calypso/my-sites/marketing/connections/inline-connection';
 import {
 	isKeyringConnectionsFetching,
 	getKeyringConnectionsByName,
-} from 'state/sharing/keyring/selectors';
-import { pauseGuidedTour, resumeGuidedTour } from 'state/guided-tours/actions';
-import { deleteKeyringConnection } from 'state/sharing/keyring/actions';
-import { getGuidedTourState } from 'state/guided-tours/selectors';
-import { withoutNotice } from 'state/notices/actions';
-import { clearMediaErrors, changeMediaSource } from 'state/media/actions';
+} from 'calypso/state/sharing/keyring/selectors';
+import { pauseGuidedTour, resumeGuidedTour } from 'calypso/state/guided-tours/actions';
+import { deleteKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { getGuidedTourState } from 'calypso/state/guided-tours/selectors';
+import { withoutNotice } from 'calypso/state/notices/actions';
+import { clearMediaErrors, changeMediaSource } from 'calypso/state/media/actions';
 
 /**
  * Style dependencies
@@ -121,7 +121,8 @@ export class MediaLibraryContent extends React.Component {
 	renderErrors() {
 		const { mediaValidationErrorTypes, site, translate } = this.props;
 		return map( groupBy( mediaValidationErrorTypes ), ( occurrences, errorType ) => {
-			let message, onDismiss;
+			let message;
+			let onDismiss;
 			const i18nOptions = {
 				count: occurrences.length,
 				args: occurrences.length,
@@ -358,6 +359,14 @@ export class MediaLibraryContent extends React.Component {
 			return this.renderConnectExternalMedia();
 		}
 
+		const listKey = [
+			'list',
+			this.props.site.ID,
+			this.props.search,
+			this.props.filter,
+			this.props.source,
+		].join( '-' );
+
 		return (
 			<MediaListData
 				siteId={ this.props.site.ID }
@@ -367,7 +376,7 @@ export class MediaLibraryContent extends React.Component {
 				source={ this.props.source }
 			>
 				<MediaLibraryList
-					key={ 'list-' + [ this.props.site.ID, this.props.search, this.props.filter ].join() }
+					key={ listKey }
 					site={ this.props.site }
 					filter={ this.props.filter }
 					filterRequiresUpgrade={ this.props.filterRequiresUpgrade }

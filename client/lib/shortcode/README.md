@@ -5,7 +5,7 @@ Utility functions for working with WordPress shortcodes. These functions largely
 ## Usage
 
 ```js
-import { parse, stringify } from 'lib/shortcode';
+import { parse, stringify } from 'calypso/lib/shortcode';
 
 const value = stringify( {
 	tag: 'foo',

@@ -8,7 +8,7 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderTagImages from 'components/data/query-reader-tag-images';
+import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
 import MyListItem from './list-item';
 
 export default function MyReaderTagImages( { images } ) {

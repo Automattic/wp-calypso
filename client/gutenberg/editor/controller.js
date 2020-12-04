@@ -22,21 +22,22 @@ import {
 	isJetpackSite,
 	isSSOEnabled,
 } from 'calypso/state/sites/selectors';
-import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { isEnabled } from 'calypso/config';
 import { Placeholder } from './placeholder';
+
 import { makeLayout, render } from 'calypso/controller';
 import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
 import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
 import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
 import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
 import { requestSite } from 'calypso/state/sites/actions';
+import { stopEditingPost } from 'calypso/state/editor/actions';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/block-editor/post/' ) ) {
+	if ( context.path.startsWith( '/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/block-editor/page/' ) ) {
+	if ( context.path.startsWith( '/page/' ) ) {
 		return 'page';
 	}
 
@@ -101,16 +102,18 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
 	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
+		! isJetpack || // If the site is not Jetpack (Atomic or self hosted) then it's a simple site and users are always authenticated.
+		( isJetpack && isSSOEnabled( state, siteId ) ) || // Assume we can authenticate with SSO
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
@@ -248,4 +251,13 @@ export const siteEditor = ( context, next ) => {
 	);
 
 	return next();
+};
+
+export const exitPost = ( context, next ) => {
+	const postId = getPostID( context );
+	const siteId = getSelectedSiteId( context.store.getState() );
+	if ( siteId ) {
+		context.store.dispatch( stopEditingPost( siteId, postId ) );
+	}
+	next();
 };

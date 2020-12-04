@@ -1,7 +1,7 @@
 /**
  * Internal Dependencies
  */
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 export {
 	isFetchingUserPurchases,

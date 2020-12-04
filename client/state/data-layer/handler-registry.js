@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { mergeHandlers } from 'state/action-watchers/utils';
+import { mergeHandlers } from 'calypso/state/action-watchers/utils';
 
 /** Stores lists of handlers by action type */
 let registeredHandlers = {};

@@ -7,7 +7,7 @@
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryDomainsSuggestions from 'components/data/query-domains-suggestions';
+import QueryDomainsSuggestions from 'calypso/components/data/query-domains-suggestions';
 
 export default function defaultSuggestions() {
 	return (

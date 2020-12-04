@@ -11,14 +11,17 @@ import { Dialog } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { getPostRevisionsSelectedRevision } from 'state/posts/selectors/get-post-revisions-selected-revision';
-import { isPostRevisionsDialogVisible } from 'state/posts/selectors/is-post-revisions-dialog-visible';
-import { getEditorPostId } from 'state/editor/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { closePostRevisionsDialog, selectPostRevision } from 'state/posts/revisions/actions';
-import EditorRevisions from 'post-editor/editor-revisions';
-import CloseOnEscape from 'components/close-on-escape';
+import { getPostRevisionsSelectedRevision } from 'calypso/state/posts/selectors/get-post-revisions-selected-revision';
+import { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
+import { getEditorPostId } from 'calypso/state/editor/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import {
+	closePostRevisionsDialog,
+	selectPostRevision,
+} from 'calypso/state/posts/revisions/actions';
+import EditorRevisions from 'calypso/post-editor/editor-revisions';
+import CloseOnEscape from 'calypso/components/close-on-escape';
 
 class PostRevisionsDialog extends PureComponent {
 	static propTypes = {

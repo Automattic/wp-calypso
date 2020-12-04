@@ -7,18 +7,18 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'state/reader/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { READER_SUBSCRIBE_TO_NEW_POST_EMAIL } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	unsubscribeToNewPostEmail,
 	updateNewPostEmailSubscription,
-} from 'state/reader/follows/actions';
-import { errorNotice } from 'state/notices/actions';
+} from 'calypso/state/reader/follows/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { buildBody } from '../utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestPostEmailSubscription( action ) {
 	return http( {

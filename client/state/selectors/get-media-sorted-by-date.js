@@ -7,7 +7,9 @@ import { values } from 'lodash';
  * Internal dependencies
  */
 import getMediaQueryManager from './get-media-query-manager';
-import { sortItemsByDate } from 'lib/media/utils/sort-items-by-date';
+import { sortItemsByDate } from 'calypso/lib/media/utils/sort-items-by-date';
+
+import 'calypso/state/media/init';
 
 /**
  * Returns media for a specified site ID and query.

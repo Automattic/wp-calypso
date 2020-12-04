@@ -11,7 +11,7 @@ Because it's possible to allow `nock` interceptions and modifiers to persist bey
 ## Usage
 
 ```js
-import useNock, { nock } from 'test-helpers/use-nock';
+import useNock, { nock } from 'calypso/test-helpers/use-nock';
 
 /*
 //or

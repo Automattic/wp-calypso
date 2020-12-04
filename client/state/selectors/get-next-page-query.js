@@ -6,8 +6,10 @@ import { isString, isNumber } from 'lodash';
 /**
  * Internal dependencies
  */
-import getNextPageHandle from 'state/selectors/get-next-page-handle';
-import getCurrentMediaQuery from 'state/selectors/get-current-media-query';
+import getNextPageHandle from 'calypso/state/selectors/get-next-page-handle';
+import getCurrentMediaQuery from 'calypso/state/selectors/get-current-media-query';
+
+import 'calypso/state/media/init';
 
 const DEFAULT_QUERY = Object.freeze( { number: 20 } );
 

@@ -6,11 +6,15 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import { recordTrack } from 'reader/stats';
-import { trackPageLoad, trackUpdatesLoaded, trackScrollPage } from 'reader/controller-helper';
-import AsyncLoad from 'components/async-load';
+import config from 'calypso/config';
+import { sectionify } from 'calypso/lib/route';
+import { recordTrack } from 'calypso/reader/stats';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'calypso/reader/controller-helper';
+import AsyncLoad from 'calypso/components/async-load';
 
 const ANALYTICS_PAGE_TITLE = 'Reader';
 
@@ -29,7 +33,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/site-stream"
+				require="calypso/reader/site-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
 				siteId={ +blogId }

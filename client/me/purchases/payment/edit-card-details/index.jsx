@@ -5,12 +5,12 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal Dependencies
  */
 import CreditCardForm from 'calypso/blocks/credit-card-form';
-import CreditCardFormLoadingPlaceholder from 'calypso/blocks/credit-card-form/loading-placeholder';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
@@ -18,12 +18,12 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { createCardToken } from 'calypso/lib/store-transactions';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
 } from 'calypso/state/purchases/selectors';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCardById,
@@ -31,7 +31,10 @@ import {
 } from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { StripeHookProvider } from 'calypso/lib/stripe';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
+import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function EditCardDetails( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -49,10 +52,7 @@ function EditCardDetails( props ) {
 
 				<QueryUserPurchases userId={ props.userId } />
 
-				<CreditCardFormLoadingPlaceholder
-					title={ titles.editCardDetails }
-					isFullWidth={ props.isFullWidth }
-				/>
+				<PaymentMethodLoader title={ titles.editCardDetails } />
 			</Fragment>
 		);
 	}
@@ -80,21 +80,33 @@ function EditCardDetails( props ) {
 				path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
 				title="Purchases > Edit Card Details"
 			/>
+
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
 				{ titles.editCardDetails }
 			</HeaderCake>
 
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
-				<CreditCardForm
-					apiParams={ { purchaseId: props.purchase.id } }
-					createCardToken={ createCardUpdateToken }
-					initialValues={ props.card }
-					purchase={ props.purchase }
-					recordFormSubmitEvent={ recordFormSubmitEvent }
-					siteSlug={ props.siteSlug }
-					successCallback={ successCallback }
-				/>
-			</StripeHookProvider>
+			<Layout>
+				<Column type="main">
+					<StripeHookProvider
+						locale={ props.locale }
+						configurationArgs={ { needs_intent: true } }
+						fetchStripeConfiguration={ getStripeConfiguration }
+					>
+						<CreditCardForm
+							apiParams={ { purchaseId: props.purchase.id } }
+							createCardToken={ createCardUpdateToken }
+							initialValues={ props.card }
+							purchase={ props.purchase }
+							recordFormSubmitEvent={ recordFormSubmitEvent }
+							siteSlug={ props.siteSlug }
+							successCallback={ successCallback }
+						/>
+					</StripeHookProvider>
+				</Column>
+				<Column type="sidebar">
+					<PaymentMethodSidebar purchase={ props.purchase } />
+				</Column>
+			</Layout>
 		</Fragment>
 	);
 }
@@ -110,6 +122,7 @@ EditCardDetails.propTypes = {
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
+	locale: PropTypes.string,
 	purchaseListUrl: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 	isFullWidth: PropTypes.bool.isRequired,
@@ -123,6 +136,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	purchase: getByPurchaseId( state, purchaseId ),
 	selectedSite: getSelectedSite( state ),
 	userId: getCurrentUserId( state ),
+	locale: getCurrentUserLocale( state ),
 } );
 
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( EditCardDetails );

@@ -9,10 +9,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import P2StepWrapper from 'signup/p2-step-wrapper';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
 import { Button } from '@automattic/components';
-import { login } from 'lib/paths';
-import { getStepUrl } from 'signup/utils';
+import { login } from 'calypso/lib/paths';
+import { getStepUrl } from 'calypso/signup/utils';
 
 /**
  * Style dependencies

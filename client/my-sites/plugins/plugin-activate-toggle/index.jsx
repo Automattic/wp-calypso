@@ -6,20 +6,23 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { togglePluginActivation } from 'calypso/state/plugins/installed/actions';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+const activationActions = [ 'ACTIVATE_PLUGIN', 'DEACTIVATE_PLUGIN' ];
 
 export class PluginActivateToggle extends Component {
 	toggleActivation = () => {
@@ -35,7 +38,7 @@ export class PluginActivateToggle extends Component {
 			return;
 		}
 
-		PluginsActions.togglePluginActivation( site, plugin );
+		this.props.togglePluginActivation( site.ID, plugin );
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 		if ( plugin.active ) {
@@ -98,16 +101,11 @@ export class PluginActivateToggle extends Component {
 	}
 
 	render() {
-		const { site, plugin, disabled, translate } = this.props;
+		const { inProgress, site, plugin, disabled, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
 		}
-
-		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-			'ACTIVATE_PLUGIN',
-			'DEACTIVATE_PLUGIN',
-		] );
 
 		if ( plugin && 'jetpack' === plugin.slug ) {
 			return (
@@ -145,7 +143,13 @@ PluginActivateToggle.defaultProps = {
 	disabled: false,
 };
 
-export default connect( null, {
-	recordGoogleEvent,
-	recordTracksEvent,
-} )( localize( PluginActivateToggle ) );
+export default connect(
+	( state, { site, plugin } ) => ( {
+		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, activationActions ),
+	} ),
+	{
+		recordGoogleEvent,
+		recordTracksEvent,
+		togglePluginActivation,
+	}
+)( localize( PluginActivateToggle ) );

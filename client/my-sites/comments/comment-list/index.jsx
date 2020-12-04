@@ -13,17 +13,17 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 /**
  * Internal dependencies
  */
-import Comment from 'my-sites/comments/comment';
-import CommentListHeader from 'my-sites/comments/comment-list/comment-list-header';
-import CommentNavigation from 'my-sites/comments/comment-navigation';
-import EmptyContent from 'components/empty-content';
-import Pagination from 'components/pagination';
-import QuerySiteCommentCounts from 'components/data/query-site-comment-counts';
-import QuerySiteCommentsList from 'components/data/query-site-comments-list';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import getCommentsPage from 'state/selectors/get-comments-page';
-import { getSiteCommentCounts } from 'state/comments/selectors';
-import { bumpStat, composeAnalytics, recordTracksEvent } from 'state/analytics/actions';
+import Comment from 'calypso/my-sites/comments/comment';
+import CommentListHeader from 'calypso/my-sites/comments/comment-list/comment-list-header';
+import CommentNavigation from 'calypso/my-sites/comments/comment-navigation';
+import EmptyContent from 'calypso/components/empty-content';
+import Pagination from 'calypso/components/pagination';
+import QuerySiteCommentCounts from 'calypso/components/data/query-site-comment-counts';
+import QuerySiteCommentsList from 'calypso/components/data/query-site-comments-list';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import getCommentsPage from 'calypso/state/selectors/get-comments-page';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
+import { bumpStat, composeAnalytics, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { COMMENTS_PER_PAGE } from '../constants';
 
 const CommentTransition = ( props ) => (

@@ -8,7 +8,7 @@ Render the component and pass `transactionId` as a prop. It does not accept any 
 
 ```jsx
 import React from 'react';
-import QueryBillingTransaction from 'components/data/query-billing-transaction';
+import QueryBillingTransaction from 'calypso/components/data/query-billing-transaction';
 import Receipt from './receipt';
 
 export default function MyBillingTransaction( { transactionId, transaction } ) {

@@ -30,6 +30,7 @@ import ProductExpiration from 'calypso/components/product-expiration';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { getPlan, planHasFeature } from 'calypso/lib/plans';
+import { TERM_MONTHLY } from 'calypso/lib/plans/constants';
 import {
 	isExpiring,
 	isPartnerPurchase,
@@ -106,7 +107,7 @@ class PurchasesListing extends Component {
 	}
 
 	getTitle( purchase ) {
-		const { currentPlan } = this.props;
+		const { currentPlan, translate } = this.props;
 
 		if ( isJetpackProduct( purchase ) ) {
 			return getJetpackProductDisplayName( purchase );
@@ -114,6 +115,13 @@ class PurchasesListing extends Component {
 
 		if ( currentPlan ) {
 			const planObject = getPlan( currentPlan.productSlug );
+			if ( planObject.term === TERM_MONTHLY ) {
+				return (
+					<>
+						{ planObject.getTitle() } { translate( 'monthly' ) }
+					</>
+				);
+			}
 			return planObject.getTitle();
 		}
 

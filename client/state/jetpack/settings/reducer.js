@@ -6,7 +6,7 @@ import { mapValues, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withSchemaValidation } from 'state/utils';
+import { combineReducers, keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import { jetpackSettingsSchema } from './schema';
 import { normalizeSettings } from './utils';
 import {
@@ -15,7 +15,7 @@ import {
 	JETPACK_MODULES_RECEIVE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const settingsReducer = keyedReducer(
 	'siteId',

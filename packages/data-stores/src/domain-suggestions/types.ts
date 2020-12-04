@@ -120,7 +120,7 @@ export interface DomainSuggestion {
 	/**
 	 * Whether the domain is free
 	 */
-	is_free?: true;
+	is_free?: boolean;
 
 	/**
 	 * Whether the domain requies HSTS

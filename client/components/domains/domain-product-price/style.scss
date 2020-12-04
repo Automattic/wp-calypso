@@ -15,12 +15,12 @@
 			align-items: flex-start;
 		}
 
-		&.domain-product-price__domain-step-copy-updates {
+		&.domain-product-price__domain-step-signup-flow {
 			align-items: flex-start;
 		}
 	}
 
-	.is-section-signup &:not( .domain-product-price__domain-step-copy-updates ) {
+	.is-section-signup &:not( .domain-product-price__domain-step-signup-flow ) {
 		@include breakpoint-deprecated( '>660px' ) {
 			padding-left: 1em;
 			padding-right: 2em;
@@ -96,6 +96,18 @@
 			animation: loading-fade 1.6s ease-in-out infinite;
 			background-color: var( --color-neutral-0 );
 			color: transparent;
+		}
+	}
+}
+
+.featured-domain-suggestions {
+	.domain-product-price {
+		.is-section-domains & {
+			padding-left: 0;
+		}
+
+		&.is-free-domain {
+			padding-left: 0;
 		}
 	}
 }

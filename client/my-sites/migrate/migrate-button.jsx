@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import accept from 'lib/accept';
-import { recordTracksEvent } from 'state/analytics/actions';
+import accept from 'calypso/lib/accept';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class MigrateButton extends Component {
 	state = {

@@ -10,8 +10,8 @@ import { get as getStoreStub, set as setSpy } from 'store';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { getUserStub } from 'lib/user';
+import { abtest } from 'calypso/lib/abtest';
+import { getUserStub } from 'calypso/lib/user';
 
 const NODE_ENV = process.env.NODE_ENV;
 beforeAll( () => {

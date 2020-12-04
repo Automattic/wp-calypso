@@ -20,7 +20,8 @@ const hasTld = function ( hostname ) {
 };
 
 export function validateImportUrl( value ) {
-	let parsedUrl, formattedUrl;
+	let parsedUrl;
+	let formattedUrl;
 	try {
 		parsedUrl = parseUrl( value );
 		formattedUrl = url.format( parsedUrl );

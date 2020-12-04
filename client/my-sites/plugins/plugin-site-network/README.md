@@ -5,7 +5,7 @@ This component is used to display a single instance of a plugin within a multisi
 ## How to use
 
 ```js
-import PluginSiteNetwork from 'my-sites/plugins/plugin-site/plugin-site-network';
+import PluginSiteNetwork from 'calypso/my-sites/plugins/plugin-site/plugin-site-network';
 
 function render() {
 	return (

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 
 describe( 'isNotificationsOpen()', () => {
 	test( 'returns true if notifications are open', () => {

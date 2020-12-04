@@ -13,9 +13,9 @@ import {
 	READER_FEED_REQUEST_SUCCESS,
 	READER_FEED_REQUEST_FAILURE,
 	READER_FEED_UPDATE,
-} from 'state/reader/action-types';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { captureConsole } from 'test-helpers/console';
+} from 'calypso/state/reader/action-types';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { captureConsole } from 'calypso/test-helpers/console';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

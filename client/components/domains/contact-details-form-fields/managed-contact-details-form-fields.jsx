@@ -383,7 +383,9 @@ export class ManagedContactDetailsFormFields extends Component {
 					this.renderContactDetailsFields()
 				) }
 
-				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				{ this.props.children && (
+					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				) }
 
 				<QueryDomainCountries />
 			</FormFieldset>

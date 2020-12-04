@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
 import { userState } from './fixtures/user-state';
 
 describe( 'areAllSitesSingleUser()', () => {

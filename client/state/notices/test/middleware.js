@@ -16,20 +16,21 @@ import noticesMiddleware, {
 	onPostRestoreFailure,
 	onPostSaveSuccess,
 } from '../middleware';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	BILLING_TRANSACTION_REQUEST_FAILURE,
 	NOTICE_CREATE,
 	POST_DELETE_FAILURE,
 	POST_RESTORE_FAILURE,
 	POST_SAVE_SUCCESS,
-} from 'state/action-types';
-import { successNotice, withoutNotice } from 'state/notices/actions';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { successNotice, withoutNotice } from 'calypso/state/notices/actions';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'middleware', () => {
 	describe( 'noticesMiddleware()', () => {
-		let store, dispatchSpy;
+		let store;
+		let dispatchSpy;
 		useSandbox( ( sandbox ) => {
 			const spyMiddleware = () => ( next ) => {
 				dispatchSpy = sandbox.spy( next );

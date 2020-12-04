@@ -30,6 +30,7 @@ import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import { protectForm } from 'calypso/lib/protect-form';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -65,12 +66,45 @@ const Profile = createReactClass( {
 			'https://gravatar.com/' + this.props.userSettings.getSetting( 'user_login' );
 
 		return (
-			<Main className="profile">
+			<Main className="profile is-wide-layout">
 				<PageViewTracker path="/me" title="Me > My Profile" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader
+					brandFont
+					headerText={ this.props.translate( 'My Profile' ) }
+					align="left"
+				/>
+
 				<SectionHeader label={ this.props.translate( 'Profile' ) } />
 				<Card className="profile__settings">
+					<p>
+						{ this.props.translate(
+							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
+								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
+							{
+								components: {
+									profilelink: (
+										<a
+											onClick={ this.getClickHandler( 'My Profile Link' ) }
+											href={ gravatarProfileLink }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+									hovercardslink: (
+										<a
+											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
+											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
+											target="_blank"
+											rel="noopener noreferrer"
+										/>
+									),
+								},
+							}
+						) }
+					</p>
+
 					<EditGravatar />
 
 					<form onSubmit={ this.submitForm } onChange={ this.props.markChanged }>
@@ -124,7 +158,7 @@ const Profile = createReactClass( {
 							/>
 						</FormFieldset>
 
-						<p>
+						<p className="profile__submit-button-wrapper">
 							<FormButton
 								disabled={
 									! this.props.userSettings.hasUnsavedSettings() || this.getDisabledState()
@@ -137,32 +171,6 @@ const Profile = createReactClass( {
 							</FormButton>
 						</p>
 					</form>
-					<p className="profile__info-text">
-						{ this.props.translate(
-							'This information will be displayed publicly on {{profilelink}}your profile{{/profilelink}} and in ' +
-								'{{hovercardslink}}Gravatar Hovercards{{/hovercardslink}}.',
-							{
-								components: {
-									profilelink: (
-										<a
-											onClick={ this.getClickHandler( 'My Profile Link' ) }
-											href={ gravatarProfileLink }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-									hovercardslink: (
-										<a
-											onClick={ this.getClickHandler( 'Gravatar Hovercards Link' ) }
-											href={ localizeUrl( 'https://wordpress.com/support/gravatar-hovercards/' ) }
-											target="_blank"
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
 				</Card>
 
 				<ProfileLinks />

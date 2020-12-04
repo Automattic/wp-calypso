@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { userCan } from 'lib/site/utils';
+import { userCan } from 'calypso/lib/site/utils';
 import {
 	isBusiness,
 	isPremium,
@@ -9,7 +9,7 @@ import {
 	isSecurityDaily,
 	isSecurityRealTime,
 	isComplete,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 
 export function hasWordadsPlan( site ) {
 	return (

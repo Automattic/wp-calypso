@@ -10,22 +10,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
-import PeopleProfile from 'my-sites/people/people-profile';
-import UsersStore from 'lib/users/store';
-import { fetchUser } from 'lib/users/actions';
-import { protectForm } from 'lib/protect-form';
-import DeleteUser from 'my-sites/people/delete-user';
-import PeopleNotices from 'my-sites/people/people-notices';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PeopleLogStore from 'lib/people/log-store';
-import { isJetpackSiteMultiSite, isJetpackSite } from 'state/sites/selectors';
+import PeopleProfile from 'calypso/my-sites/people/people-profile';
+import UsersStore from 'calypso/lib/users/store';
+import { fetchUser } from 'calypso/lib/users/actions';
+import { protectForm } from 'calypso/lib/protect-form';
+import DeleteUser from 'calypso/my-sites/people/delete-user';
+import PeopleNotices from 'calypso/my-sites/people/people-notices';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PeopleLogStore from 'calypso/lib/people/log-store';
+import { isJetpackSiteMultiSite, isJetpackSite } from 'calypso/state/sites/selectors';
 import EditUserForm from './edit-user-form';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import getPreviousRoute from 'state/selectors/get-previous-route';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 /**
  * Style dependencies

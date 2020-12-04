@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { find, includes } from 'lodash';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
@@ -14,12 +14,12 @@ import classnames from 'classnames';
  * Internal dependencies
  */
 import { Button, ScreenReaderText } from '@automattic/components';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 import GooglePhotosIcon from './google-photos-icon';
-import config from 'config';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import config from 'calypso/config';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 export class MediaLibraryDataSource extends Component {
 	static propTypes = {

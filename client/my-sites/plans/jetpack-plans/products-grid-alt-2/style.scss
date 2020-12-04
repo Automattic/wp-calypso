@@ -1,0 +1,45 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.products-grid-alt-2 {
+	.jetpack-free-card-alt {
+		/*
+		 * To match its top and bottom border with the borders
+		 * of the product cards next to it
+		 */
+		margin-block-start: calc( 24px + 32.5px );
+		margin-bottom: 24px;
+	}
+
+	.formatted-header__title {
+		font-size: 1.25rem;
+		color: var( --studio-color-gray-70 );
+	}
+}
+
+/*
+ * We really should be using @include break-small here,
+ * but Calypso's main Layout component doesn't play nicely with it yet.
+ */
+@include breakpoint-deprecated( '>660px' ) {
+	.products-grid-alt-2 {
+		display: grid;
+		grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+		grid-gap: calc( 32.5px /* $jetpack-product-card-alt-2-circle-size/2 */ + 44px ) 16px;
+		align-items: flex-start;
+
+		margin-top: 24px;
+		padding-top: 32.5px; // $jetpack-product-card-alt-2-circle-size/2
+
+		&.has-plans {
+			margin-bottom: 44px;
+			padding-bottom: 44px;
+
+			border-bottom: 1px solid var( --color-border-subtle );
+		}
+
+		.jetpack-free-card-alt {
+			grid-column-end: span 2;
+		}
+	}
+}

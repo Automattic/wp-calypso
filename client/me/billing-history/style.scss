@@ -344,22 +344,14 @@ textarea.billing-history__billing-details-editable {
 }
 
 .billing-history__receipt-links {
-	.button {
-		margin: 16px 0;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			float: right;
-			margin: 0 1%;
-		}
-	}
+	padding: 0 40px 10px;
 }
 
 .billing-history__receipt-card.card.is-compact {
 	padding: 16px 0;
 }
 
-.billing-history__receipts.card,
-.billing-history__upcoming-charges.card {
+.billing-history__receipts.card {
 	padding: 0;
 }
 
@@ -367,8 +359,7 @@ textarea.billing-history__billing-details-editable {
 	min-height: 500px;
 }
 
-.billing-history .search-card.card,
-.billing-history__upcoming-charges .search-card.card {
+.billing-history .search-card.card {
 	margin: 0;
 }
 

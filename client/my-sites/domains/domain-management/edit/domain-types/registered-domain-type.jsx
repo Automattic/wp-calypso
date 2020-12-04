@@ -10,38 +10,38 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import formatCurrency from '@automattic/format-currency';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import DomainWarnings from 'my-sites/domains/components/domain-warnings';
-import IcannVerificationCard from 'my-sites/domains/domain-management/components/icann-verification';
-import { isRecentlyRegistered, isExpiringSoon } from 'lib/domains/utils';
+import DomainWarnings from 'calypso/my-sites/domains/components/domain-warnings';
+import IcannVerificationCard from 'calypso/my-sites/domains/domain-management/components/icann-verification';
+import { isRecentlyRegistered, isExpiringSoon } from 'calypso/lib/domains/utils';
 import {
 	DOMAIN_EXPIRATION,
 	DOMAIN_EXPIRATION_REDEMPTION,
 	DOMAIN_RECENTLY_REGISTERED,
-} from 'lib/url/support';
+} from 'calypso/lib/url/support';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { getProductBySlug } from 'state/products-list/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-} from 'state/purchases/selectors';
+} from 'calypso/state/purchases/selectors';
 import NonPrimaryDomainPlanUpsell from '../../components/domain/non-primary-domain-plan-upsell';
-import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
-import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { shouldRenderExpiringCreditCard } from 'lib/purchases';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { shouldRenderExpiringCreditCard } from 'calypso/lib/purchases';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
 import OutboundTransferConfirmation from '../../components/outbound-transfer-confirmation';
-import { hasPendingGSuiteUsers } from 'lib/gsuite';
-import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
-import { resolveDomainStatus } from 'lib/domains';
-import getSiteIsDomainOnly from 'state/selectors/is-domain-only-site';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import { resolveDomainStatus } from 'calypso/lib/domains';
+import getSiteIsDomainOnly from 'calypso/state/selectors/is-domain-only-site';
 import DomainOnlyNotice from '../domain-only-notice';
 
 class RegisteredDomainType extends React.Component {
@@ -243,13 +243,18 @@ class RegisteredDomainType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				compact={ true }
 				withTextStatus={ true }
 				toggleSource="registered-domain-status"
 			/>
 		);
 
-		return content && <WrapDomainStatusButtons>{ content }</WrapDomainStatusButtons>;
+		return (
+			content && (
+				<WrapDomainStatusButtons className="domain-types__auto-renew-wrapper">
+					{ content }
+				</WrapDomainStatusButtons>
+			)
+		);
 	}
 
 	renderAutoRenew() {

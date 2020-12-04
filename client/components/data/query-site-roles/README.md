@@ -8,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySiteRoles from 'components/data/query-site-roles';
+import QuerySiteRoles from 'calypso/components/data/query-site-roles';
 import MySiteRolesListItem from './list-item';
 
 export default function MySiteRolesList( { siteRoles } ) {

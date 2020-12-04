@@ -1,32 +1,32 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * me.settings.profileLinks
  */
 describe( 'wpcom.me.settings.profileLinks', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
-	var settings = me.settings();
-	var profile = settings.profileLinks();
-	var testing_profile;
-	var added_profile;
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
+	const settings = me.settings();
+	const profile = settings.profileLinks();
+	let testing_profile;
+	let added_profile;
 
 	// profile fixture
-	var fix_profiles = fixture[ 'profile-links' ];
+	const fix_profiles = fixture[ 'profile-links' ];
 
 	// set random name ro first profile link
-	var fix_profile = fix_profiles[ 0 ];
-	var rnd = Math.random().toString().substr( 2 );
+	const fix_profile = fix_profiles[ 0 ];
+	const rnd = Math.random().toString().substr( 2 );
 	fix_profile.title += '-' + rnd;
 	fix_profile.value += '/#' + rnd;
 

@@ -9,7 +9,6 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormButton from 'calypso/components/forms/form-button';
 import Gridicon from 'calypso/components/gridicon';
 
@@ -27,7 +26,7 @@ class SecurityAccountRecoveryManageContactButtons extends React.Component {
 
 	render() {
 		return (
-			<FormButtonsBar>
+			<div>
 				<FormButton disabled={ ! this.props.isSavable } onClick={ this.props.onSave }>
 					{ this.props.saveText ? this.props.saveText : this.props.translate( 'Save' ) }
 				</FormButton>
@@ -37,15 +36,12 @@ class SecurityAccountRecoveryManageContactButtons extends React.Component {
 				</FormButton>
 
 				{ this.props.isDeletable ? (
-					<button
-						className={ 'security-account-recovery-contact__remove' }
-						onClick={ this.props.onDelete }
-					>
+					<button className="security-account-recovery__remove" onClick={ this.props.onDelete }>
 						<Gridicon icon="trash" size={ 24 } />
 						<span>{ this.props.translate( 'Remove' ) }</span>
 					</button>
 				) : null }
-			</FormButtonsBar>
+			</div>
 		);
 	}
 }

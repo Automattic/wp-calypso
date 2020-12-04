@@ -6,22 +6,22 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	SOCIAL_LOGIN_REQUEST,
 	SOCIAL_LOGIN_REQUEST_FAILURE,
 	SOCIAL_LOGIN_REQUEST_SUCCESS,
 	TWO_FACTOR_AUTHENTICATION_SEND_SMS_CODE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	getErrorFromHTTPError,
 	getSMSMessageFromResponse,
 	postLoginRequest,
-} from 'state/login/utils';
+} from 'calypso/state/login/utils';
 
-import { remoteLoginUser } from 'state/login/actions/remote-login-user';
+import { remoteLoginUser } from 'calypso/state/login/actions/remote-login-user';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Logs a user in from a third-party social account (Google ...).

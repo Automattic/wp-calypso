@@ -10,23 +10,23 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarOrganizationsListItem from './list-item';
-import getOrganizationSites from 'state/reader/follows/selectors/get-reader-follows-organization';
-import { toggleReaderSidebarOrganization } from 'state/reader-ui/sidebar/actions';
-import { isOrganizationOpen } from 'state/reader-ui/sidebar/selectors';
-import { AUTOMATTIC_ORG_ID } from 'state/reader/organizations/constants';
-import ReaderSidebarHelper from 'reader/sidebar/helper';
-import SidebarItem from 'layout/sidebar/item';
-import Count from 'components/count';
+import getOrganizationSites from 'calypso/state/reader/follows/selectors/get-reader-follows-organization';
+import { toggleReaderSidebarOrganization } from 'calypso/state/reader-ui/sidebar/actions';
+import { isOrganizationOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { AUTOMATTIC_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import Count from 'calypso/components/count';
 
 /**
  * Styles
  */
 import '../style.scss';
-import SVGIcon from 'components/svg-icon';
-import AutomatticLogo from 'assets/images/icons/a8c-logo.svg';
-import P2Logo from 'assets/images/icons/p2-logo.svg';
+import SVGIcon from 'calypso/components/svg-icon';
+import AutomatticLogo from 'calypso/assets/images/icons/a8c-logo.svg';
+import P2Logo from 'calypso/assets/images/icons/p2-logo.svg';
 
 export class ReaderSidebarOrganizationsList extends Component {
 	static propTypes = {
@@ -50,28 +50,25 @@ export class ReaderSidebarOrganizationsList extends Component {
 
 	renderAll() {
 		const { translate, organization, path, sites } = this.props;
-		if ( organization.id === AUTOMATTIC_ORG_ID ) {
-			// have a selector
-			const sum = sites.reduce( ( acc, item ) => {
-				acc = acc + item.unseen_count;
-				return acc;
-			}, 0 );
-			return (
-				<>
-					<SidebarItem
-						link={ '/read/' + organization.slug }
-						key={ translate( 'All' ) }
-						label={ translate( 'All' ) }
-						className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
-							'sidebar-streams__all': true,
-						} ) }
-					>
-						{ sum > 0 && <Count count={ sum } compact /> }
-					</SidebarItem>
-				</>
-			);
-		}
-		return null;
+		// have a selector
+		const sum = sites.reduce( ( acc, item ) => {
+			acc = acc + item.unseen_count;
+			return acc;
+		}, 0 );
+		return (
+			<>
+				<SidebarItem
+					link={ '/read/' + organization.slug }
+					key={ translate( 'All' ) }
+					label={ translate( 'All' ) }
+					className={ ReaderSidebarHelper.itemLinkClass( '/read/' + organization.slug, path, {
+						'sidebar-streams__all': true,
+					} ) }
+				>
+					{ sum > 0 && <Count count={ sum } compact /> }
+				</SidebarItem>
+			</>
+		);
 	}
 
 	renderSites() {

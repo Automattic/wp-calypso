@@ -7,17 +7,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import FormTextInput from 'components/forms/form-text-input';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { ScreenReaderText } from '@automattic/components';
-import { clearMediaItemErrors } from 'state/media/actions';
-import { addMedia } from 'state/media/thunks';
+import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { addMedia } from 'calypso/state/media/thunks';
 
 /**
  * Style dependencies

@@ -22,7 +22,7 @@ export class FeaturedDomainSuggestions extends Component {
 	static propTypes = {
 		cart: PropTypes.object,
 		fetchAlgo: PropTypes.string,
-		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		primarySuggestion: PropTypes.object,
 		railcarId: PropTypes.string,
 		secondarySuggestion: PropTypes.object,
@@ -36,7 +36,7 @@ export class FeaturedDomainSuggestions extends Component {
 			'cart',
 			'isDomainOnly',
 			'domainsWithPlansOnly',
-			'isSignupStep',
+			'showStrikedOutPrice',
 			'onButtonClick',
 			'query',
 			'selectedSite',
@@ -84,7 +84,7 @@ export class FeaturedDomainSuggestions extends Component {
 
 	getClassNames() {
 		return classNames( 'featured-domain-suggestions', this.getTextSizeClass(), {
-			'featured-domain-suggestions__is-domain-management': ! this.props.isSignupStep,
+			'featured-domain-suggestions__is-domain-management': ! this.props.showStrikedOutPrice,
 			'featured-domain-suggestions--has-match-reasons': this.hasMatchReasons(),
 		} );
 	}
@@ -122,7 +122,6 @@ export class FeaturedDomainSuggestions extends Component {
 						fetchAlgo={ this.getFetchAlgorithm( primarySuggestion ) }
 						buttonStyles={ { primary: true } }
 						{ ...childProps }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 				{ secondarySuggestion && (
@@ -135,7 +134,6 @@ export class FeaturedDomainSuggestions extends Component {
 						premiumDomain={ this.props.premiumDomains[ secondarySuggestion.domain_name ] }
 						fetchAlgo={ this.getFetchAlgorithm( secondarySuggestion ) }
 						{ ...childProps }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				) }
 			</div>

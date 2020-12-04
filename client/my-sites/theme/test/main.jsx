@@ -9,9 +9,9 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import ThemeSheetComponent from '../main';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import { receiveTheme, themeRequestFailure } from 'state/themes/actions';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
+import { receiveTheme, themeRequestFailure } from 'calypso/state/themes/actions';
 
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 jest.mock( 'lib/wp', () => ( {
@@ -19,9 +19,9 @@ jest.mock( 'lib/wp', () => ( {
 		getProducts: () => {},
 	} ),
 } ) );
-jest.mock( 'my-sites/themes/theme-preview', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/themes/theme-preview', () => require( 'calypso/components/empty-component' ) );
 jest.mock( 'my-sites/themes/themes-site-selector-modal', () =>
-	require( 'components/empty-component' )
+	require( 'calypso/components/empty-component' )
 );
 
 describe( 'main', () => {
@@ -39,7 +39,8 @@ describe( 'main', () => {
 			demo_uri: 'https://twentysixteendemo.wordpress.com/',
 		};
 
-		let store, initialState;
+		let store;
+		let initialState;
 
 		beforeAll( () => {
 			store = createReduxStore();

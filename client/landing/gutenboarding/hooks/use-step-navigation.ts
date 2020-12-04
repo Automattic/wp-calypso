@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-import { isEnabled } from 'config';
 import { useHistory } from 'react-router-dom';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { useI18n } from '@automattic/react-i18n';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
  */
-import { Step, usePath, useCurrentStep, StepType } from '../path';
+import { Step, usePath, useCurrentStep } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
-import { useNewSiteVisibility, useHasPaidPlanFromPath } from './use-selected-plan';
+import { useNewSiteVisibility } from './use-selected-plan';
 import useSignup from './use-signup';
+import useSteps from './use-steps';
 
 /**
  * A React hook that returns callback to navigate to previous and next steps in Gutenboarding flow
@@ -25,41 +25,12 @@ import useSignup from './use-signup';
  * @returns { Navigation } An object with callbacks to navigate to previous and next steps
  */
 export default function useStepNavigation(): { goBack: () => void; goNext: () => void } {
-	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
-
 	const makePath = usePath();
 	const history = useHistory();
 	const currentStep = useCurrentStep();
-	const { i18nLocale } = useI18n();
+	const locale = useLocale();
 
-	// If the user enters a site title on Intent Capture step we are showing Domains step next.
-	// Else, we're showing Domains step before Plans step.
-	let steps: StepType[];
-
-	steps = hasSiteTitle()
-		? [ Step.IntentGathering, Step.Domains, Step.DesignSelection, Step.Style, Step.Plans ]
-		: [ Step.IntentGathering, Step.DesignSelection, Step.Style, Step.Domains, Step.Plans ];
-
-	// When feature picker experiment is enabled, if site title is skipped, we're showing Domains step before Features step.
-	if ( isEnabled( 'gutenboarding/feature-picker' ) ) {
-		steps = hasSiteTitle()
-			? [
-					Step.IntentGathering,
-					Step.Domains,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Features,
-					Step.Plans,
-			  ]
-			: [
-					Step.IntentGathering,
-					Step.DesignSelection,
-					Step.Style,
-					Step.Domains,
-					Step.Features,
-					Step.Plans,
-			  ];
-	}
+	const steps = useSteps();
 
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -68,29 +39,8 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	const { onSignupDialogOpen } = useSignup();
 	const handleSiteCreation = () =>
 		currentUser
-			? createSite( currentUser.username, i18nLocale, undefined, newSiteVisibility )
+			? createSite( currentUser.username, locale, undefined, newSiteVisibility )
 			: onSignupDialogOpen();
-
-	// Logic necessary to skip Domains or Plans steps
-	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
-		select( ONBOARD_STORE ).getState()
-	);
-	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
-	const hasPaidPlanFromPath = useHasPaidPlanFromPath();
-
-	if ( domain && ! hasUsedDomainsStep ) {
-		steps = steps.filter( ( step ) => step !== Step.Domains );
-	}
-
-	// Don't show the mandatory Plans step:
-	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step)
-	// - if a plan has been selected using the PlansModal but only if there is no Features step
-	if (
-		hasPaidPlanFromPath ||
-		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
-	) {
-		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );
-	}
 
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );
 	const previousStepPath = currentStepIndex > 0 ? makePath( steps[ currentStepIndex - 1 ] ) : '';

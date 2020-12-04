@@ -1,11 +1,11 @@
 /**
  * Internal Dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { ADMIN_MENU_REQUEST } from 'state/action-types';
-import { receiveAdminMenu } from 'state/admin-menu/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { ADMIN_MENU_REQUEST } from 'calypso/state/action-types';
+import { receiveAdminMenu } from 'calypso/state/admin-menu/actions';
 
 export const requestFetchAdminMenu = ( action ) =>
 	http(

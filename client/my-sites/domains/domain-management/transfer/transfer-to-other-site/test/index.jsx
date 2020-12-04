@@ -43,7 +43,7 @@ import {
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
 	PLAN_JETPACK_BUSINESS_MONTHLY,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies
@@ -69,14 +69,8 @@ const props = {
 };
 
 describe( 'TransferToOtherSite.isSiteEligible()', () => {
-	[ PLAN_FREE ].forEach( ( plan ) => {
-		test( `Should return false for plan ${ plan }`, () => {
-			const instance = new TransferToOtherSite( props );
-			expect( instance.isSiteEligible( { ...site, plan: { product_slug: plan } } ) ).toBe( false );
-		} );
-	} );
-
 	[
+		PLAN_FREE,
 		PLAN_JETPACK_FREE,
 		PLAN_PERSONAL,
 		PLAN_PERSONAL_2_YEARS,

@@ -12,29 +12,29 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import afterLayoutFlush from 'lib/after-layout-flush';
-import QueryPosts from 'components/data/query-posts';
-import QueryRecentPostViews from 'components/data/query-stats-recent-post-views';
-import { DEFAULT_POST_QUERY } from 'lib/query-manager/post/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import afterLayoutFlush from 'calypso/lib/after-layout-flush';
+import QueryPosts from 'calypso/components/data/query-posts';
+import QueryRecentPostViews from 'calypso/components/data/query-stats-recent-post-views';
+import { DEFAULT_POST_QUERY } from 'calypso/lib/query-manager/post/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 import {
 	isRequestingPostsForQueryIgnoringPage,
 	getPostsForQueryIgnoringPage,
 	getPostsFoundForQuery,
 	getPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getPostType, getPostTypeLabel } from 'state/post-types/selectors';
-import { getEditorUrl } from 'state/selectors/get-editor-url';
-import ListEnd from 'components/list-end';
-import PostItem from 'blocks/post-item';
+} from 'calypso/state/posts/selectors';
+import { getPostType, getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { getEditorUrl } from 'calypso/state/selectors/get-editor-url';
+import ListEnd from 'calypso/components/list-end';
+import PostItem from 'calypso/blocks/post-item';
 import PostTypeListEmptyContent from './empty-content';
 import PostTypeListMaxPagesNotice from './max-pages-notice';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_NO_ADS } from 'lib/plans/constants';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_NO_ADS } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies

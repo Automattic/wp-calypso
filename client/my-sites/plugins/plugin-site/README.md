@@ -5,7 +5,7 @@ This component is used to represent the state of a single instance of a plugin i
 ## How to use
 
 ```js
-import PluginSite from 'my-sites/plugins/plugin-site/plugin-site';
+import PluginSite from 'calypso/my-sites/plugins/plugin-site/plugin-site';
 
 function render() {
 	return (

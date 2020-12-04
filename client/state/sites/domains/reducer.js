@@ -24,8 +24,8 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT,
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**

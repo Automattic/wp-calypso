@@ -44,35 +44,23 @@ module.exports = {
 			},
 		},
 		{
-			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
-			// See:
-			// eslint-disable-next-line inclusive-language/use-inclusive-words
-			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
-			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
-			files: [ '*.md.js', '*.md.javascript', '*.md.cjs', '*.md.ejs', '*.md.jsx' ],
-			rules: {
-				// These are ok for examples
-				'import/no-extraneous-dependencies': 'off',
-				'jest/expect-expect': 'off',
-				'jsdoc/require-param-description': 'off',
-				'no-console': 'off',
-				'no-redeclare': 'off',
-				'no-restricted-imports': 'off',
-				'no-undef': 'off',
-				'no-unused-vars': 'off',
-				'react/jsx-no-undef': 'off',
-				'react/react-in-jsx-scope': 'off',
-				'wpcalypso/import-docblock': 'off',
-				'wpcalypso/jsx-classname-namespace': 'off',
-			},
-		},
-		{
-			// Eventually the whole repo should follow this rule. This is the list of the folders we have
-			// already cleaned up. Once we have cleaned all repo, this override should dissapear and the rule
-			// should be enabled as a regular `rule`.
 			files: [ 'packages/**/*' ],
 			rules: {
-				'import/no-extraneous-dependencies': 'error',
+				// These two rules are to ensure packages don't import form calypso by accident to avoid circular deps.
+				'no-restricted-imports': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
+				'no-restricted-modules': [
+					'error',
+					{
+						patterns: [ 'calypso/*' ],
+						message: "Packages shouldn't import from calypso",
+					},
+				],
 			},
 		},
 		{
@@ -89,7 +77,8 @@ module.exports = {
 			rules: {
 				'import/no-nodejs-modules': 'off',
 				'no-console': 'off',
-
+				// test/e2e doesn't support package-relative imports
+				'wpcalypso/no-package-relative-imports': 'off',
 				// Disable all rules from "plugin:jest/recommended", as e2e tests use mocha
 				...Object.keys( require( 'eslint-plugin-jest' ).configs.recommended.rules ).reduce(
 					( disabledRules, key ) => ( { ...disabledRules, [ key ]: 'off' } ),
@@ -167,6 +156,43 @@ module.exports = {
 				},
 			}
 		),
+		{
+			// This lints the codeblocks marked as `javascript`, `js`, `cjs` or `ejs`, all valid aliases
+			// See:
+			// eslint-disable-next-line inclusive-language/use-inclusive-words
+			//  * https://github.com/highlightjs/highlight.js/blob/master/SUPPORTED_LANGUAGES.md)
+			//  * https://www.npmjs.com/package/eslint-plugin-md#modifying-eslint-setup-for-js-code-inside-md-files
+			files: [
+				'*.md.js',
+				'*.md.javascript',
+				'*.md.cjs',
+				'*.md.ejs',
+				'*.md.jsx',
+				'*.md.tsx',
+				'*.md.ts',
+			],
+			rules: {
+				// These are ok for examples
+				'import/no-extraneous-dependencies': 'off',
+				'jest/expect-expect': 'off',
+				'jest/no-focused-tests': 'off',
+				'jest/no-standalone-expect': 'off',
+				'jsdoc/require-param-description': 'off',
+				'no-console': 'off',
+				'no-redeclare': 'off',
+				'no-restricted-imports': 'off',
+				'no-undef': 'off',
+				'no-unused-vars': 'off',
+				'react/jsx-no-undef': 'off',
+				'react/react-in-jsx-scope': 'off',
+				'wpcalypso/import-docblock': 'off',
+				'wpcalypso/jsx-classname-namespace': 'off',
+				'@typescript-eslint/no-unused-vars': 'off',
+				'jsdoc/require-param': 'off',
+				'jsdoc/check-param-names': 'off',
+				'@typescript-eslint/no-empty-function': 'off',
+			},
+		},
 	],
 	env: {
 		jest: true,
@@ -200,6 +226,10 @@ module.exports = {
 	rules: {
 		// REST API objects include underscores
 		camelcase: 'off',
+
+		'no-path-concat': 'error',
+
+		'one-var': [ 'error', 'never' ],
 
 		// TODO: why did we turn this off?
 		'jest/valid-expect': 'off',
@@ -328,14 +358,6 @@ module.exports = {
 					// It's not likely that this will change
 					{ term: 'mastercard', allowPartialMatches: true },
 
-					// The next two are stored in a site's meta so would require a data migration of all sites to fix
-					'comment_whitelist',
-					'blacklist_keys',
-
-					// For HotJar compatibility. HJ will reach out to @saramarcondes once a new
-					// and inclusive attribute name exists to be used: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
-					'data-hj-whitelist',
-
 					// Depends on https://github.com/Automattic/jetpack/blob/3dae8f80e5020338e84bfc20bb41786f056a2eec/json-endpoints/jetpack/class.wpcom-json-api-get-option-endpoint.php#L38
 					'option_name_not_in_whitelist',
 
@@ -349,7 +371,6 @@ module.exports = {
 				],
 			},
 		],
-		// Disabled for now until we finish the migration
 		'wpcalypso/no-package-relative-imports': [
 			'error',
 			{
@@ -366,5 +387,14 @@ module.exports = {
 
 		// Force packages to declare their dependencies
 		'import/no-extraneous-dependencies': 'error',
+
+		'wpcalypso/no-unsafe-wp-apis': [
+			'error',
+			{
+				'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
+				'@wordpress/date': [ '__experimentalGetSettings' ],
+				'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
+			},
+		],
 	},
 };

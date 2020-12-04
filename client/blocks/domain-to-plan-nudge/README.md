@@ -6,7 +6,7 @@ and a paid domain.
 ## How to use
 
 ```js
-import DomainToPlanNudge from 'blocks/domain-to-plan-nudge';
+import DomainToPlanNudge from 'calypso/blocks/domain-to-plan-nudge';
 
 function render() {
 	return (

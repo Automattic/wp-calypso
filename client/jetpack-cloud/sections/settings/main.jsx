@@ -4,30 +4,33 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { localize, useTranslate } from 'i18n-calypso';
+import { isEmpty } from 'lodash';
+import { Card } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import ServerCredentialsForm from 'components/jetpack/server-credentials-form';
-import { Card } from '@automattic/components';
-import FoldableCard from 'components/foldable-card';
-import getRewindState from 'state/selectors/get-rewind-state';
-import getSiteScanState from 'state/selectors/get-site-scan-state';
-import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import QueryRewindState from 'components/data/query-rewind-state';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ExternalLink from 'components/external-link';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import ServerCredentialsForm from 'calypso/components/jetpack/server-credentials-form';
+import FoldableCard from 'calypso/components/foldable-card';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSiteCredentials from 'calypso/state/selectors/get-jetpack-credentials';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySiteCredentials from 'calypso/components/data/query-site-credentials';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import ExternalLink from 'calypso/components/external-link';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import connectedIcon from 'assets/images/jetpack/connected.svg';
-import disconnectedIcon from 'assets/images/jetpack/disconnected.svg';
+import connectedIcon from 'calypso/assets/images/jetpack/connected.svg';
+import disconnectedIcon from 'calypso/assets/images/jetpack/disconnected.svg';
 
 const connectedProps = ( translate, connectedMessage ) => ( {
 	iconPath: connectedIcon,
@@ -117,9 +120,11 @@ const SettingsPage = () => {
 
 	const scanState = useSelector( ( state ) => getSiteScanState( state, siteId ) );
 	const backupState = useSelector( ( state ) => getRewindState( state, siteId ) );
+	const credentials = useSelector( ( state ) => getSiteCredentials( state, siteId, 'main' ) );
 
-	const isInitialized = backupState.state !== 'uninitialized';
-	const isConnected = backupState.state === 'active';
+	const isInitialized =
+		backupState.state !== 'uninitialized' || scanState?.state !== 'provisioning';
+	const isConnected = ! isEmpty( credentials );
 
 	const hasBackup = backupState?.state !== 'unavailable';
 	const hasScan = scanState?.state !== 'unavailable';
@@ -139,6 +144,7 @@ const SettingsPage = () => {
 			<SidebarNavigation />
 			<QueryRewindState siteId={ siteId } />
 			<QueryJetpackScan siteId={ siteId } />
+			<QuerySiteCredentials siteId={ siteId } />
 			<PageViewTracker path="/settings/:site" title="Settings" />
 
 			<div className="settings__title">

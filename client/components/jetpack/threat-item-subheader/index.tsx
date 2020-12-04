@@ -11,7 +11,10 @@ import moment from 'moment';
  */
 import Badge from 'calypso/components/badge';
 import { Threat } from 'calypso/components/jetpack/threat-item/types';
-import { getThreatType, getThreatVulnerability } from 'calypso/components/jetpack/threat-item/utils';
+import {
+	getThreatType,
+	getThreatVulnerability,
+} from 'calypso/components/jetpack/threat-item/utils';
 
 /**
  * Style dependencies
@@ -20,6 +23,7 @@ import './style.scss';
 
 interface Props {
 	threat: Threat;
+	isFixable: bool;
 }
 
 const entryActionClassNames = ( threat: Threat ) => {
@@ -63,11 +67,21 @@ const getThreatStatusMessage = ( translate, threat: Threat ) => {
 	return null;
 };
 
+const getAutoFixBadge = ( translate, threat: Threat, isFixable ) => {
+	if ( isFixable && threat.status !== 'fixed' ) {
+		return (
+			<Badge className={ classnames( 'threat-item-subheader__badge', 'is-auto-fix' ) }>
+				<small>{ translate( 'Auto fix' ) }</small>
+			</Badge>
+		);
+	}
+	return null;
+};
+
 // This renders two different kind of sub-headers. One is for current threats (displayed
 // in the Scanner section), and the other for threats in the History section.
-const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
+const ThreatItemSubheader: React.FC< Props > = ( { threat, isFixable } ) => {
 	const translate = useTranslate();
-
 	if ( threat.status === 'current' ) {
 		switch ( getThreatType( threat ) ) {
 			case 'file':
@@ -82,10 +96,16 @@ const ThreatItemSubheader: React.FC< Props > = ( { threat } ) => {
 								),
 							},
 						} ) }
+						{ getAutoFixBadge( translate, threat, isFixable ) }
 					</>
 				);
 			default:
-				return <> { getThreatVulnerability( threat ) }</>;
+				return (
+					<>
+						{ getThreatVulnerability( threat ) }
+						{ getAutoFixBadge( translate, threat, isFixable ) }
+					</>
+				);
 		}
 	} else {
 		const threatStatusMessage = getThreatStatusMessage( translate, threat );

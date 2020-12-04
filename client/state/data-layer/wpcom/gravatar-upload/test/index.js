@@ -10,8 +10,8 @@ import {
 	GRAVATAR_UPLOAD_RECEIVE,
 	GRAVATAR_UPLOAD_REQUEST_SUCCESS,
 	GRAVATAR_UPLOAD_REQUEST_FAILURE,
-} from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+} from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( '#uploadGravatar()', () => {
 	test( 'dispatches an HTTP request to the gravatar upload endpoint', () => {
@@ -42,7 +42,8 @@ describe( '#uploadGravatar()', () => {
 } );
 
 describe( '#announceSuccess()', () => {
-	let oFormData, oFileReader;
+	let oFormData;
+	let oFileReader;
 	const noop = () => {};
 	const tempImageSrc = 'tempImageSrc';
 

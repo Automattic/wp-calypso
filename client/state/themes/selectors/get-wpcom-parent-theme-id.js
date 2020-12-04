@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { getTheme } from 'state/themes/selectors/get-theme';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns id of the parent theme, if any, for a wpcom theme.

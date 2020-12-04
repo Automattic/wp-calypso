@@ -5,7 +5,7 @@ This component is used to display a button that launch a install action when cli
 ## How to use
 
 ```js
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 
 function render() {
 	return (

@@ -11,7 +11,7 @@ import {
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	MEDIA_DELETE,
@@ -23,7 +23,7 @@ import {
 	SITE_SETTINGS_SAVE_FAILURE,
 	SITE_SETTINGS_SAVE_SUCCESS,
 	SITE_SETTINGS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

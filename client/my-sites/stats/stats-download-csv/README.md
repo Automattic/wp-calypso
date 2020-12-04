@@ -5,7 +5,7 @@ The download csv component creates a download link that allows a stats-list to b
 ## How to use
 
 ```js
-import DownloadCsv from 'my-sites/stats/stats-download-csv';
+import DownloadCsv from 'calypso/my-sites/stats/stats-download-csv';
 
 const MyComponent = () => {
 	return (

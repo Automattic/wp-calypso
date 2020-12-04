@@ -4,9 +4,9 @@
 import {
 	READER_VIEWING_FULL_POST_SET,
 	READER_VIEWING_FULL_POST_UNSET,
-} from 'state/reader/action-types';
-import { SERIALIZE } from 'state/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { SERIALIZE } from 'calypso/state/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks the post key of the currently full viewed post

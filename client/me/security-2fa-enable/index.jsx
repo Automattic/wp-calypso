@@ -15,7 +15,6 @@ const debug = debugFactory( 'calypso:me:security:2fa-enable' );
  */
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import FormButton from 'calypso/components/forms/form-button';
-import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
@@ -176,7 +175,7 @@ class Security2faEnable extends React.Component {
 
 	getToggleLink = () => {
 		return (
-			<a
+			<button
 				className="security-2fa-enable__toggle"
 				onClick={ function ( event ) {
 					this.toggleMethod( event );
@@ -329,7 +328,6 @@ class Security2faEnable extends React.Component {
 				{ this.renderInputHelp() }
 
 				<FormVerificationCodeInput
-					autoFocus
 					disabled={ this.state.submittingForm }
 					name="verificationCode"
 					method={ this.state.method }
@@ -358,7 +356,7 @@ class Security2faEnable extends React.Component {
 
 	renderButtons = () => {
 		return (
-			<FormButtonsBar className="security-2fa-enable__buttons-bar">
+			<div className="security-2fa-enable__buttons-bar">
 				<FormButton
 					className="security-2fa-enable__verify"
 					disabled={ this.getFormDisabled() }
@@ -373,22 +371,6 @@ class Security2faEnable extends React.Component {
 						: this.props.translate( 'Enable', {
 								context: 'A button label used during Two-Step setup.',
 						  } ) }
-				</FormButton>
-
-				<FormButton
-					className="security-2fa-enable__cancel"
-					isPrimary={ false }
-					onClick={ function ( event ) {
-						gaRecordEvent(
-							'Me',
-							'Clicked On Step 2 Cancel 2fa Button',
-							'method',
-							this.state.method
-						);
-						this.props.onCancel( event );
-					}.bind( this ) }
-				>
-					{ this.props.translate( 'Cancel' ) }
 				</FormButton>
 
 				{ 'sms' === this.state.method ? (
@@ -417,7 +399,23 @@ class Security2faEnable extends React.Component {
 						} ) }
 					</FormButton>
 				) }
-			</FormButtonsBar>
+
+				<FormButton
+					className="security-2fa-enable__cancel"
+					isPrimary={ false }
+					onClick={ function ( event ) {
+						gaRecordEvent(
+							'Me',
+							'Clicked On Step 2 Cancel 2fa Button',
+							'method',
+							this.state.method
+						);
+						this.props.onCancel( event );
+					}.bind( this ) }
+				>
+					{ this.props.translate( 'Cancel' ) }
+				</FormButton>
+			</div>
 		);
 	};
 

@@ -4,7 +4,9 @@
 	animation: loading-fade 1.6s ease-in-out infinite;
 }
 
-.migrate__source-site, .migrate__confirmation, .migrate__explain {
+.migrate__source-site,
+.migrate__confirmation,
+.migrate__explain {
 	margin-bottom: 16px;
 }
 
@@ -18,7 +20,8 @@
 }
 
 .migrate__card {
-	.site__content, .site-selector__hidden-sites-message {
+	.site__content,
+	.site-selector__hidden-sites-message {
 		border-bottom: 1px solid var( --color-neutral-10 );
 		padding-left: 0;
 		padding-right: 0;
@@ -73,8 +76,7 @@
 	flex-basis: 25%;
 }
 
-
-@include breakpoint-deprecated('<800px') {
+@include breakpoint-deprecated( '<800px' ) {
 	&.migrate__plan-upsell {
 		flex-wrap: wrap;
 		margin: 16px 0;
@@ -82,7 +84,6 @@
 		justify-content: space-between;
 		border-top: none;
 		border-bottom: none;
-
 	}
 
 	&.migrate__plan-upsell-container,
@@ -117,10 +118,7 @@
 			max-width: none;
 		}
 	}
-
-
 }
-
 
 .migrate__plan-name,
 .migrate__plan-price,
@@ -235,7 +233,7 @@
 .migrate__section-header {
 	.formatted-header__title {
 		font-size: $font-title-medium;
-		@include breakpoint-deprecated('>660px') {
+		@include breakpoint-deprecated( '>660px' ) {
 			font-size: $font-title-large;
 		}
 	}

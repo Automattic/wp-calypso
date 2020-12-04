@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the currently active theme on a given site.

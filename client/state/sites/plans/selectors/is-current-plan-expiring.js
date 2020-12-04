@@ -6,7 +6,7 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 export function isCurrentPlanExpiring( state, siteId ) {
 	const currentPlan = getCurrentPlan( state, siteId );

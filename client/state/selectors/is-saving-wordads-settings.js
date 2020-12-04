@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/wordads/init';
+import 'calypso/state/wordads/init';
 
 /**
  * Returns true if we are saving the Wordads settings for the specified site ID, false otherwise.

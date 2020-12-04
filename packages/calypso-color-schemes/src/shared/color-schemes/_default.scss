@@ -325,4 +325,21 @@
 	/* WP Admin */
 	--color-wp-admin-button-background: #008ec2;
 	--color-wp-admin-button-border: #006799;
+
+	/* WP Admin Default Theme */
+	--theme-text-color: #ffffff; /* Direct from wp-admin */
+	--theme-text-color-rgb: 255, 255, 255;
+	--theme-base-color: #23282d; /* Direct from wp-admin */
+	--theme-base-color-rgb: 35, 40, 45;
+	--theme-submenu-background-color: #131619; /* darken( $base-color, 7% ) */
+	--theme-icon-color: #e1eaf2; /* hsl( hue( $base-color ), 7%, 95% )*/
+	--theme-highlight-color: #0073aa; /* Direct from wp-admin */
+	--theme-highlight-color-rgb: 0, 115, 170;
+	--theme-notification-color: #d54e21; /* Direct from wp-admin */
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: var( --studio-blue-0 );
+	--color-sidebar-submenu-text: var( --studio-blue-70 );
+	--color-sidebar-submenu-hover-text: var( --color-accent );
+	--color-sidebar-submenu-selected-text: var( --color-accent );
 }

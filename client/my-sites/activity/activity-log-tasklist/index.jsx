@@ -15,18 +15,18 @@ import page from 'page';
 import ActivityLogTaskUpdate from './update';
 import WithItemsToUpdate from './to-update';
 import { Card } from '@automattic/components';
-import PopoverMenuItem from 'components/popover/menu-item';
-import SplitButton from 'components/split-button';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getSite } from 'state/sites/selectors';
-import { updatePlugin } from 'state/plugins/installed/actions';
-import { getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { getStatusForPlugin } from 'state/plugins/installed/selectors';
-import { errorNotice, infoNotice, successNotice } from 'state/notices/actions';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { navigate } from 'state/ui/actions';
-import { decodeEntities } from 'lib/formatting';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getSite } from 'calypso/state/sites/selectors';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { getStatusForPlugin } from 'calypso/state/plugins/installed/selectors';
+import { errorNotice, infoNotice, successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { navigate } from 'calypso/state/ui/actions';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies

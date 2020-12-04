@@ -42,7 +42,9 @@ const charCodes = {
 };
 
 describe( 'TokenField', () => {
-	let wrapper, tokenFieldNode, textInputNode;
+	let wrapper;
+	let tokenFieldNode;
+	let textInputNode;
 
 	function setText( text ) {
 		textInputNode.simulate( 'change', { target: { value: text } } );

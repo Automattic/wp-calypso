@@ -41,7 +41,9 @@ export function disableSubmitButton( children ) {
  * }
  */
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode, errorMessage;
+	let explicitPath;
+	let errorCode;
+	let errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message

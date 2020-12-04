@@ -1,44 +1,82 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { translate } from 'i18n-calypso';
+import classNames from 'classnames';
+import { useTranslate } from 'i18n-calypso';
+import React, { useMemo } from 'react';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { preventWidows } from 'calypso/lib/formatting';
 import JetpackComMasterbar from '../jpcom-masterbar';
+import FormattedHeader from 'calypso/components/formatted-header';
+import OlarkChat from 'calypso/components/olark-chat';
+import config from 'calypso/config';
+import { preventWidows } from 'calypso/lib/formatting';
+// Black Friday 2020 promotion; runs Nov 20-30 automatically. Safe to remove after Dec 1
+import BlackFriday2020Banner from './black-friday-2020-banner';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const Header = () => {
-	const isAlternateSelector = isEnabled( 'plans/alternate-selector' );
-	const header = isAlternateSelector
-		? translate( 'Security, performance, and growth tools for WordPress' )
-		: translate( 'Security, performance, and marketing tools for WordPress' );
+type HeaderProps = {
+	urlQueryArgs: { [ key: string ]: string };
+};
+
+const Header: React.FC< HeaderProps > = ( { urlQueryArgs } ) => {
+	const identity = config( 'olark_chat_identity' );
+	const translate = useTranslate();
+	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
+
+	const title =
+		{
+			[ Iterations.V1 ]: translate( 'Security, performance, and growth tools for WordPress' ),
+			[ Iterations.V2 ]: translate( 'Security, performance, and growth tools for WordPress' ),
+			[ Iterations.I5 ]: translate(
+				'Security, performance, and marketing tools made for WordPress'
+			),
+		}[ iteration ] ?? translate( 'Security, performance, and marketing tools for WordPress' );
+	const tagline =
+		{
+			[ Iterations.V1 ]: '',
+			[ Iterations.V2 ]: '',
+			[ Iterations.I5 ]: '',
+		}[ iteration ] ??
+		translate(
+			'Get everything your site needs, in one package — so you can focus on your business.'
+		);
+
+	// Black Friday 2020 promotion; runs Nov 20-30 automatically. Safe to remove after Dec 1
+	// The banner should go live at November 20, 00:00:00 UTC and then go dark on November 30, 23:59:59 UTC
+	const promoStartDateUTC = moment.utc( '2020-11-20', 'YYYY-MM-DD HH:mm:ss' );
+	const promoEndDateUTC = moment.utc( '2020-11-30 23:59:59', 'YYYY-MM-DD HH:mm:ss' );
+	const today = moment();
+	const todayUTC = moment.utc( today );
+
+	// Use query param `?bf=true` to preview the banner outside of Black Friday: https://cloud.jetpack.com/pricing?bf=true
+	const hasPromoQueryParam = urlQueryArgs?.bf === 'true';
+	const isWithinPromoDate =
+		todayUTC.isBetween( promoStartDateUTC, promoEndDateUTC ) || hasPromoQueryParam;
 
 	return (
 		<>
+			{ identity && <OlarkChat { ...{ identity } } /> }
 			<JetpackComMasterbar />
-			<div className="header">
+
+			{ isWithinPromoDate && <BlackFriday2020Banner /> }
+
+			<div className={ classNames( 'header', iteration ) }>
 				<FormattedHeader
 					className="header__main-title"
-					headerText={ preventWidows( header ) }
+					headerText={ preventWidows( title ) }
 					align="center"
 				/>
-				{ ! isAlternateSelector && (
-					<p>
-						{ translate(
-							'Get everything your site needs, in one package — so you can focus on your business.'
-						) }
-					</p>
-				) }
+				{ tagline && <p>{ tagline }</p> }
 			</div>
 		</>
 	);

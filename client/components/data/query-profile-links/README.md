@@ -7,7 +7,7 @@
 Render the component without props. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryProfileLinks from 'components/data/query-profile-links';
+import QueryProfileLinks from 'calypso/components/data/query-profile-links';
 
 export default () => (
 	<div>

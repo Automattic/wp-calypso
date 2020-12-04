@@ -6,7 +6,7 @@ via user preference.
 ## How to use
 
 ```js
-import DismissibleCard from 'blocks/dismissible-card';
+import DismissibleCard from 'calypso/blocks/dismissible-card';
 
 function render() {
 	return (

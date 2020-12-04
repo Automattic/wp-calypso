@@ -3,7 +3,7 @@
  */
 
 import { v4 as uuid } from 'uuid';
-import config from 'config';
+import config from 'calypso/config';
 
 const allHyphens = new RegExp( '-', 'g' );
 

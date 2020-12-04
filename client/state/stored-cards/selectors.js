@@ -6,7 +6,9 @@ import { groupBy } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { isPaymentAgreement, isCreditCard } from 'lib/checkout/payment-methods';
+import { isPaymentAgreement, isCreditCard } from 'calypso/lib/checkout/payment-methods';
+
+import 'calypso/state/stored-cards/init';
 
 /**
  * Return user's stored cards from state object

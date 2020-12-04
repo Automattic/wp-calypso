@@ -5,35 +5,35 @@ import React, { Component, createRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { get, noop, pick } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import CommentHtmlEditor from 'my-sites/comments/comment/comment-html-editor';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import InfoPopover from 'components/info-popover';
-import Popover from 'components/popover';
-import PostSchedule from 'components/post-schedule';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { decodeEntities } from 'lib/formatting';
+import CommentHtmlEditor from 'calypso/my-sites/comments/comment/comment-html-editor';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
+import Popover from 'calypso/components/popover';
+import PostSchedule from 'calypso/components/post-schedule';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { editComment } from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
-import getSiteSetting from 'state/selectors/get-site-setting';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/analytics/actions';
+import { editComment } from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import getSiteSetting from 'calypso/state/selectors/get-site-setting';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export class CommentEdit extends Component {
 	static propTypes = {

@@ -5,12 +5,13 @@
 	"main": "dist/cjs/public-api.js",
 	"module": "dist/esm/public-api.js",
 	"types": "dist/types/public-api.d.ts",
+	"calypso:src": "src/public-api.ts",
 	"sideEffects": false,
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__composite-checkout*\"",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"files": [
 		"dist",
@@ -53,7 +54,7 @@
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
 		"cache-loader": "^4.1.0",
-		"webpack": "^4.44.1"
+		"webpack": "^4.44.2"
 	},
 	"private": true
 }

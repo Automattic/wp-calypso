@@ -6,7 +6,7 @@ that represents a rating in a scale between 0 and 5.
 ## How to use
 
 ```js
-import Rating from 'components/rating';
+import Rating from 'calypso/components/rating';
 
 function render() {
 	return <Rating rating={ 65 } size={ 48 } />;

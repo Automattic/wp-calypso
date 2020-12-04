@@ -13,7 +13,7 @@ the global application state.
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QuerySiteInvites from 'components/data/query-site-invites';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
 
 const SITE_ID = 3584907;
 

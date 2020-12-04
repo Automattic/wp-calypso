@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -31,9 +30,11 @@ import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import CartData from 'calypso/components/data/cart';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import { getPlan, isWpComPlan } from 'calypso/lib/plans';
+import getIntervalTypeForTerm from 'calypso/lib/plans/get-interval-type-for-term';
+import { isMonthly } from 'calypso/lib/plans/constants';
 
 class Plans extends React.Component {
 	static propTypes = {
@@ -65,15 +66,20 @@ class Plans extends React.Component {
 	}
 
 	isInvalidPlanInterval() {
-		const { displayJetpackPlans, intervalType, selectedSite } = this.props;
+		const { displayJetpackPlans, hasWpcomMonthlyPlan, intervalType, selectedSite } = this.props;
 		const isJetpack2Yearly = displayJetpackPlans && intervalType === '2yearly';
 		const isWpcomMonthly = ! displayJetpackPlans && intervalType === 'monthly';
 
-		return selectedSite && ( isJetpack2Yearly || isWpcomMonthly );
+		return selectedSite && ( isJetpack2Yearly || ( isWpcomMonthly && ! hasWpcomMonthlyPlan ) );
 	}
 
 	redirectIfInvalidPlanInterval() {
-		const { selectedSite } = this.props;
+		const { currentPlanIntervalType, hasWpcomMonthlyPlan, selectedSite, intervalType } = this.props;
+
+		if ( hasWpcomMonthlyPlan && currentPlanIntervalType !== intervalType ) {
+			page.redirect( `/plans/${ currentPlanIntervalType }/${ selectedSite.slug }` );
+			return;
+		}
 
 		if ( this.isInvalidPlanInterval() ) {
 			page.redirect( '/plans/yearly/' + selectedSite.slug );
@@ -101,6 +107,7 @@ class Plans extends React.Component {
 			canAccessPlans,
 			customerType,
 			isWPForTeamsSite,
+			hasWpcomMonthlyPlan,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
@@ -126,9 +133,7 @@ class Plans extends React.Component {
 						<>
 							<FormattedHeader brandFont headerText={ translate( 'Plans' ) } align="left" />
 							<div id="plans" className="plans plans__has-sidebar">
-								<CartData>
-									<PlansNavigation path={ this.props.context.path } />
-								</CartData>
+								<PlansNavigation path={ this.props.context.path } />
 								{ isEnabled( 'p2/p2-plus' ) && isWPForTeamsSite ? (
 									<P2PlansMain
 										selectedPlan={ this.props.selectedPlan }
@@ -142,6 +147,7 @@ class Plans extends React.Component {
 										displayJetpackPlans={ displayJetpackPlans }
 										hideFreePlan={ true }
 										customerType={ customerType }
+										isMonthlyPricingTest={ hasWpcomMonthlyPlan }
 										intervalType={ this.props.intervalType }
 										selectedFeature={ this.props.selectedFeature }
 										selectedPlan={ this.props.selectedPlan }
@@ -168,12 +174,20 @@ export default connect( ( state ) => {
 	const jetpackSite = isJetpackSite( state, selectedSiteId );
 	const isSiteAutomatedTransfer = isSiteAutomatedTransferSelector( state, selectedSiteId );
 	const currentPlan = getCurrentPlan( state, selectedSiteId );
+	let currentPlanIntervalType = getIntervalTypeForTerm( getPlan( currentPlan?.productSlug )?.term );
+
+	if ( 'BRL' === currentPlan?.currencyCode ) {
+		currentPlanIntervalType = 'yearly';
+	}
 
 	return {
+		currentPlanIntervalType,
 		purchase: currentPlan ? getByPurchaseId( state, currentPlan.id ) : null,
 		selectedSite: getSelectedSite( state ),
 		displayJetpackPlans: ! isSiteAutomatedTransfer && jetpackSite,
 		canAccessPlans: canCurrentUser( state, getSelectedSiteId( state ), 'manage_options' ),
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
+		hasWpcomMonthlyPlan:
+			isWpComPlan( currentPlan?.productSlug ) && isMonthly( currentPlan?.productSlug ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );

@@ -5,13 +5,13 @@
 
 import React from 'react';
 import classNames from 'classnames';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import Head from 'components/head';
-import EmptyContent from 'components/empty-content';
+import Head from 'calypso/components/head';
+import EmptyContent from 'calypso/components/empty-content';
 import { chunkCssLinks } from './utils';
 
 function NotFound( { entrypoint } ) {

@@ -6,38 +6,43 @@ import { connect } from 'react-redux';
 import { Button, Card, ProgressBar } from '@automattic/components';
 import { translate } from 'i18n-calypso';
 import { flowRight as compose } from 'lodash';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import QueryJetpackScan from 'components/data/query-jetpack-scan';
-import FormattedHeader from 'components/formatted-header';
-import SecurityIcon from 'components/jetpack/security-icon';
-import ScanPlaceholder from 'components/jetpack/scan-placeholder';
-import ScanThreats from 'components/jetpack/scan-threats';
-import { Scan, Site } from 'my-sites/scan/types';
-import EmptyContent from 'components/empty-content';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSiteUrl from 'state/sites/selectors/get-site-url';
-import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
-import getSiteScanIsInitial from 'state/selectors/get-site-scan-is-initial';
-import getSiteScanState from 'state/selectors/get-site-scan-state';
-import isRequestingJetpackScan from 'state/selectors/is-requesting-jetpack-scan';
-import { withLocalizedMoment } from 'components/localized-moment';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/site-offset';
+import DocumentHead from 'calypso/components/data/document-head';
+import QueryJetpackScan from 'calypso/components/data/query-jetpack-scan';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
+import ScanPlaceholder from 'calypso/components/jetpack/scan-placeholder';
+import ScanThreats from 'calypso/components/jetpack/scan-threats';
+import { Scan, Site } from 'calypso/my-sites/scan/types';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getSiteUrl from 'calypso/state/sites/selectors/get-site-url';
+import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanIsInitial from 'calypso/state/selectors/get-site-scan-is-initial';
+import getSiteScanState from 'calypso/state/selectors/get-site-scan-state';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
+import isRequestingJetpackScan from 'calypso/state/selectors/is-requesting-jetpack-scan';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
+import { withApplySiteOffset, applySiteOffsetType } from 'calypso/components/site-offset';
 import ScanNavigation from './navigation';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
+
+/**
+ * Type dependencies
+ */
+import type { utc } from 'moment';
 
 /**
  * Style dependencies
@@ -56,12 +61,13 @@ interface Props {
 	timezone: string | null;
 	gmtOffset: number | null;
 	moment: {
-		utc: Function;
+		utc: typeof utc;
 	};
 	applySiteOffset: applySiteOffsetType;
-	dispatchRecordTracksEvent: Function;
-	dispatchScanRun: Function;
+	dispatchRecordTracksEvent: ( arg0: string, arg1: Record< string, unknown > ) => null;
+	dispatchScanRun: ( arg0: number ) => null;
 	isAdmin: boolean;
+	siteSettingsUrl: string;
 }
 
 class ScanPage extends Component< Props > {
@@ -144,7 +150,11 @@ class ScanPage extends Component< Props > {
 					) }
 				</p>
 				{ isEnabled( 'jetpack/on-demand-scan' ) && (
-					<Button primary className="scan__button" onClick={ () => dispatchScanRun( siteId ) }>
+					<Button
+						primary
+						className="scan__button"
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
+					>
 						{ translate( 'Scan now' ) }
 					</Button>
 				) }
@@ -173,7 +183,7 @@ class ScanPage extends Component< Props > {
 				) }
 				<p>
 					{ translate(
-						'We will send you an email once the scan completes, in the meantime feel ' +
+						'We will send you an email if security threats are found. In the meantime feel ' +
 							'free to continue to use your site as normal, you can check back on ' +
 							'progress at any time.'
 					) }
@@ -199,7 +209,7 @@ class ScanPage extends Component< Props > {
 				{ isEnabled( 'jetpack/on-demand-scan' ) && (
 					<Button
 						className="scan__button scan__retry-bottom"
-						onClick={ () => dispatchScanRun( siteId ) }
+						onClick={ () => siteId && dispatchScanRun( siteId ) }
 					>
 						{ translate( 'Retry scan' ) }
 					</Button>
@@ -259,7 +269,7 @@ class ScanPage extends Component< Props > {
 	}
 
 	render() {
-		const { isAdmin, siteId } = this.props;
+		const { siteId, siteSettingsUrl } = this.props;
 		const isJetpackPlatform = isJetpackCloud();
 
 		if ( ! siteId ) {
@@ -275,24 +285,16 @@ class ScanPage extends Component< Props > {
 				<DocumentHead title="Scan" />
 				<SidebarNavigation />
 				<PageViewTracker path="/scan/:site" title="Scanner" />
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackPlatform && (
 					<FormattedHeader headerText={ 'Jetpack Scan' } align="left" brandFont />
 				) }
-				{ isAdmin && (
-					<>
-						<QueryJetpackScan siteId={ siteId } />
-						<ScanNavigation section={ 'scanner' } />
-						<Card>
-							<div className="scan__content">{ this.renderScanState() }</div>
-						</Card>
-					</>
-				) }
-				{ ! isAdmin && (
-					<EmptyContent
-						illustration="/calypso/images/illustrations/illustration-404.svg"
-						title={ translate( 'You are not authorized to view this page' ) }
-					/>
-				) }
+
+				<QueryJetpackScan siteId={ siteId } />
+				<ScanNavigation section={ 'scanner' } />
+				<Card>
+					<div className="scan__content">{ this.renderScanState() }</div>
+				</Card>
 			</Main>
 		);
 	}
@@ -309,11 +311,11 @@ export default connect(
 			};
 		}
 		const siteUrl = getSiteUrl( state, siteId ) ?? undefined;
+		const siteSettingsUrl = getSettingsUrl( state, siteId, 'general' );
 		const scanState = ( getSiteScanState( state, siteId ) as Scan ) ?? undefined;
 		const scanProgress = getSiteScanProgress( state, siteId ) ?? undefined;
 		const isRequestingScan = isRequestingJetpackScan( state, siteId );
 		const isInitialScan = getSiteScanIsInitial( state, siteId );
-		const isAdmin = canCurrentUser( state, siteId, 'manage_options' );
 
 		return {
 			site,
@@ -322,8 +324,8 @@ export default connect(
 			scanState,
 			scanProgress,
 			isInitialScan,
+			siteSettingsUrl,
 			isRequestingScan,
-			isAdmin,
 		};
 	},
 	{

@@ -6,12 +6,12 @@ import { assign, get, includes, indexOf, reject } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import stepConfig from './steps';
-import user from 'lib/user';
-import { isEcommercePlan } from 'lib/plans';
-import { generateFlows } from 'signup/config/flows-pure';
-import { addQueryArgs } from 'lib/url';
+import user from 'calypso/lib/user';
+import { isEcommercePlan } from 'calypso/lib/plans';
+import { generateFlows } from 'calypso/signup/config/flows-pure';
+import { addQueryArgs } from 'calypso/lib/url';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
@@ -89,7 +89,7 @@ function getChecklistThemeDestination( dependencies ) {
 }
 
 function getEditorDestination( dependencies ) {
-	return `/block-editor/page/${ dependencies.siteSlug }/home`;
+	return `/page/${ dependencies.siteSlug }/home`;
 }
 
 const flows = generateFlows( {

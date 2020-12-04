@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import { MASTERBAR_TOGGLE_VISIBILITY } from 'state/action-types';
+import { MASTERBAR_TOGGLE_VISIBILITY } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 /**
  * Hide the masterbar.

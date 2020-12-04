@@ -8,17 +8,19 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import Upsell from 'components/jetpack/upsell';
-import { UpsellComponentProps } from 'components/jetpack/upsell-switch';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import JetpackDisconnected from 'calypso/components/jetpack/jetpack-disconnected';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import Upsell from 'calypso/components/jetpack/upsell';
+import { UpsellComponentProps } from 'calypso/components/jetpack/upsell-switch';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
  */
+import VaultPressLogo from 'calypso/assets/images/jetpack/vaultpress-logo.svg';
 import './style.scss';
 
 const BackupsUpsellIcon: FunctionComponent = () => (
@@ -27,6 +29,12 @@ const BackupsUpsellIcon: FunctionComponent = () => (
 			src="/calypso/images/illustrations/jetpack-cloud-backup-error.svg"
 			alt="jetpack cloud backup error"
 		/>
+	</div>
+);
+
+const VaultPressIcon = () => (
+	<div className="backup-upsell__icon-header">
+		<img src={ VaultPressLogo } alt="VaultPress logo" />
 	</div>
 );
 
@@ -48,14 +56,12 @@ const BackupsVPActiveBody: FunctionComponent = () => {
 	const dispatch = useDispatch();
 	return (
 		<Upsell
-			headerText={ translate( 'Your site has VaultPress' ) }
-			bodyText={ translate(
-				'Your site is already backed up by VaultPress. You can find a link to your VaultPress dashboard below.'
-			) }
+			headerText={ translate( 'Your backups are powered by VaultPress' ) }
+			bodyText={ translate( 'You can access them on your VaultPress Dashboard.' ) }
 			buttonLink="https://dashboard.vaultpress.com/"
 			buttonText={ translate( 'Visit Dashboard' ) }
 			onClick={ () => dispatch( recordTracksEvent( 'calypso_jetpack_backup_vaultpress_click' ) ) }
-			iconComponent={ <BackupsUpsellIcon /> }
+			iconComponent={ <VaultPressIcon /> }
 		/>
 	);
 };
@@ -85,6 +91,9 @@ const BackupsUpsellPage: FunctionComponent< UpsellComponentProps > = ( { reason 
 			break;
 		case 'multisite_not_supported':
 			body = <BackupsMultisiteBody />;
+			break;
+		case 'no_connected_jetpack':
+			body = <JetpackDisconnected />;
 			break;
 		default:
 			body = <BackupsUpsellBody />;

@@ -8,7 +8,7 @@ When the props `temporarySelection` and `onSelection` are provided, a selection 
 ## Usage
 
 ```jsx
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 
 handleColorSchemeSelection = ( event ) => {
 	console.log( event.currentTarget.value );

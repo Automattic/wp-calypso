@@ -5,7 +5,7 @@ Component used to declare the main area of any given section —- it's the main 
 ## How to use
 
 ```jsx
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 
 function render() {
 	return <Main className="your-component">Your section content...</Main>;

@@ -2,15 +2,16 @@
  * External dependencies
  */
 import debugFactory from 'debug';
+import { ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { getNonProductWPCOMCartItemTypes } from 'my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { WPCOMCartItem } from 'my-sites/checkout/composite-checkout/types/checkout-cart';
-import type { DomainContactDetails } from 'my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
-import type { CartItemExtra } from 'lib/cart-values/types';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { getNonProductWPCOMCartItemTypes } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from './checkout-cart';
+import type { Purchase } from './wpcom-store-state';
+import type { DomainContactDetails } from './backend/domain-contact-details-components';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 
 const debug = debugFactory( 'calypso:composite-checkout:transaction-endpoint' );
 
@@ -76,7 +77,7 @@ type WPCOMTransactionEndpointCartItem = {
 	meta?: string;
 	currency: string;
 	volume: number;
-	extra?: CartItemExtra;
+	extra?: ResponseCartProductExtra;
 };
 
 // Create cart object as required by the WPCOM transactions endpoint
@@ -135,6 +136,7 @@ function createTransactionEndpointCartItemFromLineItem(
 		meta: item.wpcom_meta?.meta,
 		currency: item.amount.currency,
 		volume: item.wpcom_meta?.volume ?? 1,
+		quantity: item.wpcom_meta?.quantity ?? null,
 		extra: item.wpcom_meta?.extra,
 	} as WPCOMTransactionEndpointCartItem;
 }
@@ -262,15 +264,5 @@ export type WPCOMTransactionEndpointResponse = {
 	error_code: string;
 	error_message: string;
 	receipt_id: number;
-	purchases: {
-		product_id: number;
-		product_name: string;
-		product_name_short: string;
-		product_slug: string;
-		free_trial: false;
-		is_domain_registration: boolean;
-		is_email_verified: boolean;
-		registrar_support_url?: string;
-		meta?: string;
-	}[];
+	purchases: Record< number, Purchase >;
 };

@@ -10,12 +10,12 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import PostLikesPopover from 'blocks/post-likes/popover';
-import { getNormalizedPost } from 'state/posts/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'state/sites/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getRecentViewsForPost } from 'state/stats/recent-post-views/selectors';
+import PostLikesPopover from 'calypso/blocks/post-likes/popover';
+import { getNormalizedPost } from 'calypso/state/posts/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSiteSlug, isJetpackModuleActive, isJetpackSite } from 'calypso/state/sites/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getRecentViewsForPost } from 'calypso/state/stats/recent-post-views/selectors';
 import { ScreenReaderText } from '@automattic/components';
 
 /**

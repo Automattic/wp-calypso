@@ -3,13 +3,13 @@
  */
 
 import { find } from 'lodash';
-import { getThemeIdFromStylesheet } from 'state/themes/utils';
+import { getThemeIdFromStylesheet } from 'calypso/state/themes/utils';
 
 /**
  * Module variables
  */
-const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/,
-	REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/;
+const REGEXP_PUBLICIZE_SERVICE_SKIPPED = /^_wpas_skip_(\d+)$/;
+const REGEXP_PUBLICIZE_SERVICE_DONE = /^_wpas_done_(\d+)$/;
 
 function getValueByKey( metadata, key ) {
 	const meta = find( metadata, { key: key } );

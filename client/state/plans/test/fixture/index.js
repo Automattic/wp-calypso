@@ -7,7 +7,7 @@ import {
 	PLANS_REQUEST,
 	PLANS_REQUEST_SUCCESS,
 	PLANS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 // WP REST-API error response
 export const ERROR_MESSAGE_RESPONSE =

@@ -52,7 +52,7 @@ show/hide logic for this popover must be managed externally: if the popover is
 rendered with a valid `context` prop, it will be shown.
 
 ```js
-import PostLikesPopover from 'blocks/post-likes/popover';
+import PostLikesPopover from 'calypso/blocks/post-likes/popover';
 
 export default function SomeComponent() {
 	return (

@@ -8,8 +8,8 @@ import { startsWith } from 'lodash';
  * Internal dependencies
  */
 import { tagListing } from './controller';
-import { initAbTests, sidebar, updateLastRoute } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { initAbTests, sidebar, updateLastRoute } from 'calypso/reader/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 const redirectHashtaggedTags = ( context, next ) => {
 	if ( context.hashstring && startsWith( context.pathname, '/tag/#' ) ) {

@@ -11,7 +11,7 @@ The component already provides a few helpers which are used for Calypso e.g. _Pr
 ## Usage
 
 ```jsx
-import EnvironmentBadge, { PreferencesHelper } from 'components/environment-badge';
+import EnvironmentBadge, { PreferencesHelper } from 'calypso/components/environment-badge';
 
 <EnvironmentBadge badge="development" feedbackURL="http://feedback">
 	<PreferencesHelper />

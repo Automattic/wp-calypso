@@ -6,8 +6,11 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStoredCards, hasLoadedStoredCardsFromServer } from 'state/stored-cards/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import {
+	getStoredCards,
+	hasLoadedStoredCardsFromServer,
+} from 'calypso/state/stored-cards/selectors';
 
 export const getLabelSettingsForm = ( state, siteId = getSelectedSiteId( state ) ) => {
 	return get(

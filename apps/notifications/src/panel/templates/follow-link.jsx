@@ -36,12 +36,12 @@ export const FollowLink = createReactClass( {
 	},
 
 	toggleFollowStatus: function ( event ) {
-		var isFollowing = this.state.isFollowing;
+		const isFollowing = this.state.isFollowing;
 
-		var follower = wpcom().site( this.props.site ).follow();
-		var component = this;
+		const follower = wpcom().site( this.props.site ).follow();
+		const component = this;
 
-		var updateState = function ( error, data ) {
+		const updateState = function ( error, data ) {
 			if ( error ) throw error;
 
 			if ( component.isMounted() ) {
@@ -57,7 +57,7 @@ export const FollowLink = createReactClass( {
 		} else {
 			follower.add( updateState );
 
-			var stats = { 'notes-click-action': 'follow' };
+			const stats = { 'notes-click-action': 'follow' };
 			stats[ 'follow_source' ] = this.followStatTypes[ this.props.noteType ];
 			bumpStat( stats );
 		}
@@ -69,7 +69,8 @@ export const FollowLink = createReactClass( {
 	},
 
 	render: function () {
-		var gridicon_icon, link_text;
+		let gridicon_icon;
+		let link_text;
 
 		if ( this.state.isFollowing ) {
 			gridicon_icon = 'reader-following';

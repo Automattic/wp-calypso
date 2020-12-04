@@ -7,7 +7,7 @@ This component is used to display a Jetpack logo
 ## How to use
 
 ```js
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 export default function JetpackLogoExample() {
 	return (

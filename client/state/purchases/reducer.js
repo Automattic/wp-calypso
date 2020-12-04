@@ -6,7 +6,7 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence, withStorageKey } from 'state/utils';
+import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -17,7 +17,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants
@@ -66,7 +66,8 @@ function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, pre
 }
 
 function updatePurchases( existingPurchases, action ) {
-	let purchases, predicate;
+	let purchases;
+	let predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
 		predicate = { blog_id: String( action.siteId ) };

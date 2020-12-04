@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'lib/url';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 
 export function getPreviewURL( site, post, autosavePreviewUrl ) {
-	let urlParts, previewUrl;
+	let urlParts;
+	let previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
 		return '';

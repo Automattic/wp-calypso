@@ -11,18 +11,22 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import ExternalLink from 'components/external-link';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import getJetpackModule from 'state/selectors/get-jetpack-module';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite } from 'state/sites/selectors';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import ExternalLink from 'calypso/components/external-link';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import getJetpackModule from 'calypso/state/selectors/get-jetpack-module';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 class Sitemaps extends Component {
 	static defaultProps = {

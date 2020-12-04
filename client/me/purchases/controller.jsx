@@ -24,6 +24,7 @@ import { makeLayout, render as clientRender } from 'calypso/controller';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 import { managePurchase as managePurchaseUrl, purchasesRoot } from 'calypso/me/purchases/paths';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 // FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.
 function setTitle( context, ...title ) {
@@ -35,7 +36,7 @@ const userHasNoSites = ( state ) => getCurrentUserSiteCount( state ) <= 0;
 function noSites( context, analyticsPath ) {
 	setTitle( context );
 	context.primary = (
-		<Main>
+		<Main className="purchases__no-site is-wide-layout">
 			<PageViewTracker path={ analyticsPath } title="Purchases > No Sites" />
 			<PurchasesHeader section={ 'purchases' } />
 			<NoSitesMessage />
@@ -55,13 +56,14 @@ export function addCardDetails( context, next ) {
 	setTitle( context, titles.addCardDetails );
 
 	context.primary = (
-		<Main>
+		<Main className="purchases__add-cart-details is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<AddCardDetails
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
 				purchaseListUrl={ purchasesRoot }
-				isFullWidth={ false }
+				isFullWidth={ true }
 			/>
 		</Main>
 	);
@@ -75,10 +77,10 @@ export function addCreditCard( context, next ) {
 
 export function cancelPurchase( context, next ) {
 	setTitle( context, titles.cancelPurchase );
-	const classes = 'cancel-purchase';
 
 	context.primary = (
-		<Main className={ classes }>
+		<Main className="purchases__cancel is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<CancelPurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -90,7 +92,6 @@ export function cancelPurchase( context, next ) {
 
 export function confirmCancelDomain( context, next ) {
 	const state = context.store.getState();
-	const classes = 'confirm-cancel-domain';
 
 	if ( userHasNoSites( state ) ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/confirm-cancel-domain' );
@@ -99,7 +100,8 @@ export function confirmCancelDomain( context, next ) {
 	setTitle( context, titles.confirmCancelDomain );
 
 	context.primary = (
-		<Main className={ classes }>
+		<Main className="purchases__cancel-domain confirm-cancel-domain is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<ConfirmCancelDomain
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
@@ -119,14 +121,17 @@ export function editCardDetails( context, next ) {
 	setTitle( context, titles.editCardDetails );
 
 	context.primary = (
-		<EditCardDetails
-			cardId={ context.params.cardId }
-			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-			siteSlug={ context.params.site }
-			getManagePurchaseUrlFor={ managePurchaseUrl }
-			purchaseListUrl={ purchasesRoot }
-			isFullWidth={ false }
-		/>
+		<Main className="purchases__change is-wide-layout">
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<EditCardDetails
+				cardId={ context.params.cardId }
+				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
+				siteSlug={ context.params.site }
+				getManagePurchaseUrlFor={ managePurchaseUrl }
+				purchaseListUrl={ purchasesRoot }
+				isFullWidth={ true }
+			/>
+		</Main>
 	);
 	next();
 }
@@ -140,10 +145,12 @@ export function list( context, next ) {
 
 export function managePurchase( context, next ) {
 	setTitle( context, titles.managePurchase );
-	const classes = 'manage-purchase';
+	const classes = 'manage-purchase is-wide-layout';
 
 	context.primary = (
 		<Main className={ classes }>
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<PageViewTracker path="/me/purchases/:site/:purchaseId" title="Purchases > Manage Purchase" />
 			<ManagePurchase
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }

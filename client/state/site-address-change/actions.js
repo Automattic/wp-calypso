@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_ADDRESS_AVAILABILITY_REQUEST,
 	SITE_ADDRESS_AVAILABILITY_SUCCESS,
@@ -17,12 +17,14 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST,
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
-} from 'state/action-types';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { requestSite } from 'state/sites/actions';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
+} from 'calypso/state/action-types';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { requestSite } from 'calypso/state/sites/actions';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+
+import 'calypso/state/site-address-change/init';
 
 // @TODO proper redux data layer stuff for the nonce
 function fetchNonce( siteId ) {

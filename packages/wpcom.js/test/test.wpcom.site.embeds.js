@@ -1,18 +1,18 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 describe( 'wpcom.site.embeds', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
 
 	describe( "wpcom.site.renderEmbed('embed' )", function () {
 		it( 'should render embed', () => {

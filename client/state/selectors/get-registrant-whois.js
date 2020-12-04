@@ -6,9 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { findRegistrantWhois } from 'lib/domains/whois/utils';
+import { findRegistrantWhois } from 'calypso/lib/domains/whois/utils';
 
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 /**
  * Returns registrant's domain contact details if we've successfully requested them.

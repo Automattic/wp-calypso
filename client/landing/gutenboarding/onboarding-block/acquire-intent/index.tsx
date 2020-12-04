@@ -6,7 +6,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@automattic/react-i18n';
 import { SkipButton, NextButton } from '@automattic/onboarding';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies

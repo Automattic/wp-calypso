@@ -7,12 +7,18 @@ import { isEmpty, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { errorNotice } from 'state/notices/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { REWIND_BACKUP_PROGRESS_REQUEST, REWIND_BACKUP_DISMISS_PROGRESS } from 'state/action-types';
-import { updateRewindBackupProgress, rewindBackupUpdateError } from 'state/activity-log/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	REWIND_BACKUP_PROGRESS_REQUEST,
+	REWIND_BACKUP_DISMISS_PROGRESS,
+} from 'calypso/state/action-types';
+import {
+	updateRewindBackupProgress,
+	rewindBackupUpdateError,
+} from 'calypso/state/activity-log/actions';
 
 /** @type {number} how many ms between polls for same data */
 const POLL_INTERVAL = 1500;

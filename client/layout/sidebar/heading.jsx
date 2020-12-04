@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
+const SidebarHeading = ( { children, onClick, ...props } ) => {
 	const tabIndex = onClick ? 0 : -1;
 
 	let onKeyDown = null;
@@ -21,15 +21,17 @@ const SidebarHeading = ( { children, onClick, ...extraProps } ) => {
 
 	/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 	return (
-		<h2
-			tabIndex={ tabIndex }
-			className="sidebar__heading"
-			onKeyDown={ onKeyDown }
-			onClick={ onClick }
-			{ ...extraProps }
-		>
-			{ children }
-		</h2>
+		<li>
+			<h2
+				tabIndex={ tabIndex }
+				className="sidebar__heading"
+				onKeyDown={ onKeyDown }
+				onClick={ onClick }
+				{ ...props }
+			>
+				{ children }
+			</h2>
+		</li>
 	);
 };
 

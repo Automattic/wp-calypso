@@ -24,7 +24,7 @@ import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors'
 import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import { hideSitePreview } from 'calypso/state/signup/preview/actions';
 import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
-
+import DomainSkipSuggestion from 'calypso/components/domains/domain-skip-suggestion';
 /**
  * Style dependencies
  */
@@ -54,7 +54,10 @@ class DomainSearchResults extends React.Component {
 		onClickMapping: PropTypes.func,
 		onClickTransfer: PropTypes.func,
 		onClickUseYourDomain: PropTypes.func,
+		showSkipButton: PropTypes.bool,
+		onSkip: PropTypes.func,
 		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		railcarId: PropTypes.string,
 		fetchAlgo: PropTypes.string,
 		pendingCheckSuggestion: PropTypes.object,
@@ -95,7 +98,8 @@ class DomainSearchResults extends React.Component {
 
 		const domain = get( availableDomain, 'domain_name', lastDomainSearched );
 
-		let availabilityElement, offer;
+		let availabilityElement;
+		let offer;
 
 		if (
 			domain &&
@@ -118,7 +122,12 @@ class DomainSearchResults extends React.Component {
 			const components = { a: <a href="#" onClick={ this.handleAddMapping } />, small: <small /> };
 
 			// If the domain is available we shouldn't offer to let people purchase mappings for it.
-			if ( TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE === lastDomainStatus ) {
+			if (
+				includes(
+					[ TLD_NOT_SUPPORTED, TLD_NOT_SUPPORTED_AND_DOMAIN_NOT_AVAILABLE ],
+					lastDomainStatus
+				)
+			) {
 				if ( isDomainMappingFree( selectedSite ) || isNextDomainFree( this.props.cart ) ) {
 					offer = translate(
 						'{{small}}If you purchased %(domain)s elsewhere, you can {{a}}map it{{/a}} for free.{{/small}}',
@@ -143,10 +152,13 @@ class DomainSearchResults extends React.Component {
 			}
 
 			let domainUnavailableMessage = includes( [ TLD_NOT_SUPPORTED, UNKNOWN ], lastDomainStatus )
-				? translate( '{{strong}}.%(tld)s{{/strong}} domains are not offered on WordPress.com.', {
-						args: { tld: getTld( domain ) },
-						components: { strong: <strong /> },
-				  } )
+				? translate(
+						'{{strong}}.%(tld)s{{/strong}} domains are not available for registration on WordPress.com.',
+						{
+							args: { tld: getTld( domain ) },
+							components: { strong: <strong /> },
+						}
+				  )
 				: translate( '{{strong}}%(domain)s{{/strong}} is taken.', {
 						args: { domain },
 						components: { strong: <strong /> },
@@ -225,11 +237,12 @@ class DomainSearchResults extends React.Component {
 	}
 
 	renderDomainSuggestions() {
-		const { isDomainOnly, suggestions } = this.props;
+		const { isDomainOnly, suggestions, showStrikedOutPrice } = this.props;
 		let suggestionCount;
 		let featuredSuggestionElement;
 		let suggestionElements;
 		let unavailableOffer;
+		let domainSkipSuggestion;
 
 		if ( ! this.props.isLoadingSuggestions && this.props.suggestions ) {
 			suggestionCount = (
@@ -254,6 +267,7 @@ class DomainSearchResults extends React.Component {
 					isDomainOnly={ isDomainOnly }
 					fetchAlgo={ this.props.fetchAlgo }
 					isSignupStep={ this.props.isSignupStep }
+					showStrikedOutPrice={ showStrikedOutPrice }
 					key="featured"
 					onButtonClick={ this.props.onClickResult }
 					premiumDomains={ this.props.premiumDomains }
@@ -264,7 +278,6 @@ class DomainSearchResults extends React.Component {
 					selectedSite={ this.props.selectedSite }
 					pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 					unavailableDomains={ this.props.unavailableDomains }
-					isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				/>
 			);
 
@@ -280,6 +293,7 @@ class DomainSearchResults extends React.Component {
 						key={ suggestion.domain_name }
 						cart={ this.props.cart }
 						isSignupStep={ this.props.isSignupStep }
+						showStrikedOutPrice={ this.props.showStrikedOutPrice }
 						selectedSite={ this.props.selectedSite }
 						domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
 						railcarId={ this.props.railcarId + '-' + ( i + 2 ) }
@@ -290,7 +304,6 @@ class DomainSearchResults extends React.Component {
 						premiumDomain={ this.props.premiumDomains[ suggestion.domain_name ] }
 						pendingCheckSuggestion={ this.props.pendingCheckSuggestion }
 						unavailableDomains={ this.props.unavailableDomains }
-						isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 					/>
 				);
 			} );
@@ -303,6 +316,13 @@ class DomainSearchResults extends React.Component {
 					/>
 				);
 			}
+
+			domainSkipSuggestion = (
+				<DomainSkipSuggestion
+					selectedSiteSlug={ this.props.selectedSite?.slug }
+					onButtonClick={ this.props.onSkip }
+				/>
+			);
 		} else {
 			featuredSuggestionElement = <FeaturedDomainSuggestions showPlaceholders />;
 			suggestionElements = this.renderPlaceholders();
@@ -315,6 +335,7 @@ class DomainSearchResults extends React.Component {
 				{ featuredSuggestionElement }
 				{ suggestionElements }
 				{ unavailableOffer }
+				{ this.props.showSkipButton && domainSkipSuggestion }
 			</div>
 		);
 	}

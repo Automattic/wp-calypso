@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 
 describe( 'getPrimarySiteId()', () => {
 	test( 'should return null if there is no current user', () => {

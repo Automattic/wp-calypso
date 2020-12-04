@@ -1,11 +1,14 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getQueryManager } from 'state/posts/selectors/get-query-manager';
-import { getSerializedPostsQueryWithoutPage, normalizePostForDisplay } from 'state/posts/utils';
+import createSelector from 'calypso/lib/create-selector';
+import { getQueryManager } from 'calypso/state/posts/selectors/get-query-manager';
+import {
+	getSerializedPostsQueryWithoutPage,
+	normalizePostForDisplay,
+} from 'calypso/state/posts/utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns an array of normalized posts for the posts query, including all

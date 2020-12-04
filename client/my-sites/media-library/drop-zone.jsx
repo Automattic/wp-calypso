@@ -5,17 +5,17 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'lib/analytics/mc';
-import DropZone from 'components/drop-zone';
-import { userCan } from 'lib/site/utils';
-import { clearMediaItemErrors } from 'state/media/actions';
-import { addMedia } from 'state/media/thunks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import DropZone from 'calypso/components/drop-zone';
+import { userCan } from 'calypso/lib/site/utils';
+import { clearMediaItemErrors } from 'calypso/state/media/actions';
+import { addMedia } from 'calypso/state/media/thunks';
 
 class MediaLibraryDropZone extends React.Component {
 	static displayName = 'MediaLibraryDropZone';

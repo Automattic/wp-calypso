@@ -21,7 +21,7 @@ Brazil requires that users provide additional details when making payments. When
 
 ```jsx
 import React, { Component } from 'react';
-import CreditCardFormFields from 'components/credit-card-form-fields';
+import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
 
 class YourComponent extends Component {
 	render() {

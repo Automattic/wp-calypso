@@ -7,7 +7,7 @@ import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_CONFIRM_JETPACK_STATUS,
 	JETPACK_CONNECT_DISMISS_URL_STATUS,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 
 export default function jetpackConnectSite( state = {}, action ) {
 	switch ( action.type ) {

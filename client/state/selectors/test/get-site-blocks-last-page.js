@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteBlocksLastPage } from 'state/reader/site-blocks/selectors';
+import { getSiteBlocksLastPage } from 'calypso/state/reader/site-blocks/selectors';
 
 describe( 'getSiteBlocksLastPage()', () => {
 	test( 'should return the last page', () => {

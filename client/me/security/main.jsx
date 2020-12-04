@@ -21,6 +21,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import SecuritySectionNav from 'calypso/me/security-section-nav';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
@@ -49,10 +50,12 @@ class Security extends React.Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security">
+			<Main className="security is-wide-layout">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

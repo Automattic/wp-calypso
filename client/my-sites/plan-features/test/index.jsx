@@ -7,19 +7,6 @@ jest.mock( 'lib/analytics/page-view', () => ( {} ) );
 jest.mock( 'lib/analytics/ad-tracking', () => ( {} ) );
 jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Comp ) => ( props ) => (
-		<Comp
-			{ ...props }
-			translate={ function ( x ) {
-				return x;
-			} }
-		/>
-	),
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
-
 jest.mock( 'state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 	getSitePlanRawPrice: jest.fn(),
@@ -47,13 +34,16 @@ import {
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
 	PLAN_JETPACK_BUSINESS,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies
  */
 import { calculatePlanCredits, isPrimaryUpgradeByPlanDelta, PlanFeatures } from '../index';
-import { getPlanDiscountedRawPrice, getSitePlanRawPrice } from 'state/sites/plans/selectors';
+import {
+	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
+} from 'calypso/state/sites/plans/selectors';
 
 const identity = ( x ) => x;
 

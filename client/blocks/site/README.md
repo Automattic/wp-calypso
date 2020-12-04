@@ -5,7 +5,7 @@ This component displays a Site item using site data retrieved from Redux store. 
 ## How to use
 
 ```js
-import Site from 'blocks/site';
+import Site from 'calypso/blocks/site';
 
 function render() {
 	return <Site siteId={ siteId } indicator={ true } />;

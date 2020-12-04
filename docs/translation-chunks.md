@@ -24,11 +24,11 @@ Building translation chunks requires 3 main components - Calypso strings POT, JS
 
 #### JS Chunks Map
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/client/webpack-utils/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.{BROWSERSLIST_ENV}.json` file in the root of the project.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.{BROWSERSLIST_ENV}.json` file in the root of the project.
 
 #### Language Translations
 
-Build script downloads all language translations from https://widgets.wp.com/languages/calypso/ and saves the files in `/public/{BROWSERSLIST_ENV}/languages`.
+Build script downloads all language translations from <https://widgets.wp.com/languages/calypso/> and saves the files in `/public/{BROWSERSLIST_ENV}/languages`.
 
 ### Build Script
 
@@ -38,8 +38,8 @@ To ensure you have the required files, you need to build or run a development en
 
 #### Build Script Steps
 
-1. Downloads language revisions from - https://widgets.wp.com/languages/calypso/lang-revisions.json. It's used later for cache busting purposes.
-2. Download language translations for all supported languages from https://widgets.wp.com/languages/calypso/.
+1. Downloads language revisions from - <https://widgets.wp.com/languages/calypso/lang-revisions.json>. It's used later for cache busting purposes.
+2. Download language translations for all supported languages from <https://widgets.wp.com/languages/calypso/>.
 3. Use source code references from `calypso-strings.pot` together with `chunks-map.{BROWSERSLIST_ENV}.json` to map the original strings that are included in a chunk. Then use original strings map to build translation chunks for each downloaded language.
 4. For each downloaded language, build a language manifest file that includes the locale data and a set of all translated chunks.
 
@@ -69,6 +69,6 @@ Since not all JS chunks may have translation chunks, we use the translated chunk
 
 ### Fetching translations on demand
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/client/webpack-utils/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us to interact with Webpack's dynamic module import API.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us to interact with Webpack's dynamic module import API.
 
 We hook into JS chunks' dynamic import requests and fetch their translation chunks, when needed. When fetched, the content of a translation chunk is then merged to the existing translations with `i18n.addTranslations`.

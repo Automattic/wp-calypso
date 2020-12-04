@@ -1,9 +1,9 @@
 # Library Middleware
 
 With the deprecation of SitesList, our `client/lib` libraries no longer
-have easy access to the current user site. Since libraries are not react
+have easy access to the current user site. Since libraries are not React
 components there isn't an easy way to provide access to our global
-redux store data.
+Redux store data.
 
 When writing a library there are currently three ways around this:
 
@@ -36,7 +36,7 @@ And in this middleware, we can create a handler:
 
 ```jsx
 /* eslint-disable no-case-declarations */
-import library from 'lib/example';
+import library from 'calypso/lib/example';
 
 switch ( action ) {
 	case MY_EXAMPLE_LIBRARY_ACTION:
@@ -63,7 +63,7 @@ Then add a handler in this middleware:
 
 ```jsx
 /* eslint-disable no-case-declarations */
-import library from 'lib/example';
+import library from 'calypso/lib/example';
 
 switch ( action ) {
 	//All relevant site update events

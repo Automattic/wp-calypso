@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/help/init';
+import 'calypso/state/help/init';
 
 export const SUPPORT_LEVEL_FREE = 'free';
 export const SUPPORT_LEVEL_PERSONAL = 'personal';

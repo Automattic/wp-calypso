@@ -6,11 +6,11 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getThemeFilters } from 'state/themes/selectors/get-theme-filters';
-import { getThemeFilterTerm } from 'state/themes/selectors/get-theme-filter-term';
+import createSelector from 'calypso/lib/create-selector';
+import { getThemeFilters } from 'calypso/state/themes/selectors/get-theme-filters';
+import { getThemeFilterTerm } from 'calypso/state/themes/selectors/get-theme-filter-term';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns a theme filter term object that corresponds to a given filter term slug

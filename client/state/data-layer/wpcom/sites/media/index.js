@@ -2,21 +2,22 @@
  * External dependencies
  */
 import { toPairs, isEqual, omit } from 'lodash';
+import { translate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 
 import debug from 'debug';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	MEDIA_REQUEST,
 	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_UPDATE,
 	MEDIA_ITEM_EDIT,
 	MEDIA_ITEM_DELETE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	deleteMedia,
 	failMediaItemRequest,
@@ -25,20 +26,13 @@ import {
 	setNextPageHandle,
 	successMediaItemRequest,
 	successMediaRequest,
-} from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
-import {
-	dispatchFluxUpdateMediaItemSuccess,
-	dispatchFluxUpdateMediaItemError,
-	dispatchFluxRemoveMediaItemSuccess,
-	dispatchFluxRemoveMediaItemError,
-	dispatchFluxRequestMediaItemSuccess,
-	dispatchFluxRequestMediaItemError,
-	dispatchFluxRequestMediaItemsSuccess,
-} from 'state/media/utils/flux-adapter';
+} from 'calypso/state/media/actions';
+import { requestMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { errorNotice, removeNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import getNextPageQuery from 'state/selectors/get-next-page-query';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
+import { gutenframeUpdateImageBlocks } from 'calypso/state/media/thunks';
 
 /**
  * Module variables
@@ -49,6 +43,7 @@ export function updateMedia( action ) {
 	const { siteId, item } = action;
 
 	return [
+		removeNotice( `update-media-notice-${ item.ID }` ),
 		http(
 			{
 				method: 'POST',
@@ -61,20 +56,24 @@ export function updateMedia( action ) {
 	];
 }
 
-export const updateMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
-	dispatch( receiveMedia( siteId, mediaItem ) );
-	dispatchFluxUpdateMediaItemSuccess( siteId, mediaItem );
-};
+export const updateMediaSuccess = ( { siteId }, mediaItem ) => [
+	receiveMedia( siteId, mediaItem ),
+	gutenframeUpdateImageBlocks( mediaItem, 'updated' ),
+];
 
-export const updateMediaError = ( { siteId }, error ) => (/* dispatch, getState */) => {
-	dispatchFluxUpdateMediaItemError( siteId, error );
-};
+export const updateMediaError = ( { siteId, originalMediaItem } ) => [
+	receiveMedia( siteId, originalMediaItem ),
+	errorNotice( translate( 'We were unable to process this media item.' ), {
+		id: `update-media-notice-${ originalMediaItem.ID }`,
+	} ),
+];
 
 export const editMedia = ( action ) => {
 	const { siteId, data } = action;
 	const { ID: mediaId, ...rest } = data;
 
 	return [
+		removeNotice( `update-media-notice-${ mediaId }` ),
 		http(
 			{
 				method: 'POST',
@@ -122,13 +121,9 @@ export const requestMediaSuccess = ( { siteId, query }, data ) => ( dispatch, ge
 	dispatch( receiveMedia( siteId, data.media, data.found, query ) );
 	dispatch( successMediaRequest( siteId, query ) );
 	dispatch( setNextPageHandle( siteId, data.meta ) );
-
-	dispatchFluxRequestMediaItemsSuccess( siteId, data, query );
 };
 
-export const requestMediaError = ( { siteId, query } ) => ( dispatch ) => {
-	dispatch( failMediaRequest( siteId, query ) );
-};
+export const requestMediaError = ( { siteId, query } ) => failMediaRequest( siteId, query );
 
 export function requestMediaItem( action ) {
 	const { mediaId, query, siteId } = action;
@@ -148,41 +143,41 @@ export function requestMediaItem( action ) {
 	];
 }
 
-export const receiveMediaItem = ( { mediaId, siteId }, media ) => ( dispatch ) => {
-	dispatch( receiveMedia( siteId, media ) );
-	dispatch( successMediaItemRequest( siteId, mediaId ) );
+export const receiveMediaItem = ( { mediaId, siteId }, media ) => [
+	receiveMedia( siteId, media ),
+	successMediaItemRequest( siteId, mediaId ),
+];
 
-	dispatchFluxRequestMediaItemSuccess( siteId, media );
-};
-
-export const receiveMediaItemError = ( { mediaId, siteId }, error ) => ( dispatch ) => {
-	dispatch( failMediaItemRequest( siteId, mediaId ) );
-	dispatchFluxRequestMediaItemError( siteId, error );
-};
+export const receiveMediaItemError = ( { mediaId, siteId } ) =>
+	failMediaItemRequest( siteId, mediaId );
 
 export const requestDeleteMedia = ( action ) => {
+	const { siteId, mediaId } = action;
+
 	return [
+		removeNotice( `delete-media-notice-${ mediaId }` ),
 		http(
 			{
 				apiVersion: '1.1',
 				method: 'POST',
-				path: `/sites/${ action.siteId }/media/${ action.mediaId }/delete`,
+				path: `/sites/${ siteId }/media/${ mediaId }/delete`,
 			},
 			action
 		),
 	];
 };
 
-export const deleteMediaSuccess = ( { siteId }, mediaItem ) => ( dispatch ) => {
-	dispatch( deleteMedia( siteId, mediaItem.ID ) );
-	dispatch( requestMediaStorage( siteId ) );
+export const deleteMediaSuccess = ( { siteId }, mediaItem ) => [
+	deleteMedia( siteId, mediaItem.ID ),
+	requestMediaStorage( siteId ),
+	gutenframeUpdateImageBlocks( mediaItem, 'deleted' ),
+];
 
-	dispatchFluxRemoveMediaItemSuccess( siteId, mediaItem );
-};
-
-export const deleteMediaError = ( { siteId }, error ) => () => {
-	dispatchFluxRemoveMediaItemError( siteId, error );
-};
+export const deleteMediaError = ( { mediaId } ) => [
+	errorNotice( translate( 'We were unable to delete this media item.' ), {
+		id: `delete-media-notice-${ mediaId }`,
+	} ),
+];
 
 registerHandlers( 'state/data-layer/wpcom/sites/media/index.js', {
 	[ MEDIA_REQUEST ]: [

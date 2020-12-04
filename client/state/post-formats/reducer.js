@@ -2,13 +2,18 @@
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import {
+	combineReducers,
+	withSchemaValidation,
+	withStorageKey,
+	withoutPersistence,
+} from 'calypso/state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
 	POST_FORMATS_REQUEST_SUCCESS,
 	POST_FORMATS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The
@@ -56,7 +61,10 @@ export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {},
 	return state;
 } );
 
-export default combineReducers( {
-	requesting,
-	items,
-} );
+export default withStorageKey(
+	'postFormats',
+	combineReducers( {
+		requesting,
+		items,
+	} )
+);

@@ -10,16 +10,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import QuerySites from 'components/data/query-sites';
-import QuerySiteRoles from 'components/data/query-site-roles';
-import { getSite } from 'state/sites/selectors';
-import { getSiteRoles, getWpcomFollowerRole } from 'state/site-roles/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import QuerySites from 'calypso/components/data/query-sites';
+import QuerySiteRoles from 'calypso/components/data/query-site-roles';
+import { getSite } from 'calypso/state/sites/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
 import { ROLES_LIST } from './constants';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 import './style.scss';
 
@@ -57,10 +57,6 @@ const RoleSelect = ( props ) => {
 
 	if ( site && siteRoles && includeFollower ) {
 		siteRoles = siteRoles.concat( wpcomFollowerRole );
-	}
-
-	if ( site && siteRoles && isWPForTeamsSite ) {
-		siteRoles = siteRoles.filter( ( role ) => role.name !== 'contributor' );
 	}
 
 	return (

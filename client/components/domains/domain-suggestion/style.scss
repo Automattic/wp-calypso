@@ -66,7 +66,7 @@
 		display: flex;
 		justify-content: space-between;
 
-		&.domain-suggestion__content-domain-copy-test {
+		&.domain-suggestion__content-domain {
 			justify-content: initial;
 		}
 	}
@@ -138,7 +138,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	&.domain-registration-suggestion__title-domain-copy-test {
+	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( '>480px' ) {
 			max-width: 50%;
 			min-width: 50%;
@@ -271,7 +271,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
-
 		.domain-product-price__free-text {
 			color: var( --color-neutral-60 );
 			font-size: $font-body;
@@ -286,7 +285,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		&:not( .featured-domain-suggestion ) {
-
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
 				.domain-registration-suggestion__domain-title-tld {
@@ -326,13 +324,26 @@ body.is-section-signup.is-white-signup {
 			}
 
 			.domain-suggestion__action:not( .is-borderless ) {
-				border-radius: 4px;
+				border-radius: 2px;
 				line-height: 17px;
 				padding-top: 11px;
 				padding-bottom: 10px;
 			}
 
 			&.domain-transfer-suggestion {
+				$cod-grey: #2b2d2f;
+
+				.domain-suggestion__action {
+					color: $cod-grey;
+					text-decoration-line: underline;
+				}
+				.domain-suggestion__chevron {
+					fill: $cod-grey;
+					margin-left: 0;
+				}
+			}
+
+			&.domain-skip-suggestion {
 				$cod-grey: #2b2d2f;
 
 				.domain-suggestion__action {

@@ -2,14 +2,14 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_LOCATIONS_REQUEST,
 	WOOCOMMERCE_LOCATIONS_REQUEST_SUCCESS,
 	WOOCOMMERCE_ERROR_SET,
 } from 'woocommerce/state/action-types';
 import { LOADING, ERROR } from 'woocommerce/state/constants';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 export default withoutPersistence( ( state = null, action ) => {
 	switch ( action.type ) {

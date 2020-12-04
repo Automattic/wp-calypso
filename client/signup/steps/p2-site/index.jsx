@@ -10,18 +10,18 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import formState from 'lib/form-state';
-import { login } from 'lib/paths';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import P2StepWrapper from 'signup/p2-step-wrapper';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { logToLogstash } from 'state/logstash/actions';
+import config from 'calypso/config';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { login } from 'calypso/lib/paths';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import P2StepWrapper from 'calypso/signup/p2-step-wrapper';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { logToLogstash } from 'calypso/state/logstash/actions';
 
 /**
  * Style dependencies
@@ -50,8 +50,8 @@ const WPCOM_SUBDOMAIN_SUFFIX_SUGGESTIONS = [ 'p2', 'team', 'work' ];
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class P2Site extends React.Component {
 	static displayName = 'P2Site';
@@ -319,10 +319,10 @@ class P2Site extends React.Component {
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: window.location.href,
+		} );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;

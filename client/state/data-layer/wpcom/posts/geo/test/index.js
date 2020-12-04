@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { fetchPostGeoImageUrl, receiveSuccess } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receivePostGeoImageUrl, requestPostGeoImageUrl } from 'state/posts/geo/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receivePostGeoImageUrl, requestPostGeoImageUrl } from 'calypso/state/posts/geo/actions';
 
 const successfulPostGeoMapResponse = {
 	map_url: 'https://google',

@@ -11,7 +11,7 @@ If you pass an array of two numbers in the `rawPrice` prop, a range of prices wi
 ## Usage
 
 ```jsx
-import PlanPrice from 'my-sites/plan-price';
+import PlanPrice from 'calypso/my-sites/plan-price';
 
 export default class extends React.Component {
 	static displayName = 'MyPlanPrice';

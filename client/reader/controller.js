@@ -8,8 +8,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { sectionify } from 'lib/route';
+import { abtest } from 'calypso/lib/abtest';
+import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -17,19 +17,19 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
-import FeedError from 'reader/feed-error';
-import StreamComponent from 'reader/following/main';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
-import { recordTrack } from 'reader/stats';
-import { requestFeedDiscovery } from 'state/data-getters';
-import { waitForHttpData } from 'state/data-layer/http-data';
-import AsyncLoad from 'components/async-load';
-import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
-import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
-import { getLastPath } from 'state/reader-ui/selectors';
-import { getSection } from 'state/ui/selectors';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
-import { getReaderTeams } from 'state/reader/teams/selectors';
+import FeedError from 'calypso/reader/feed-error';
+import StreamComponent from 'calypso/reader/following/main';
+import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
+import { recordTrack } from 'calypso/reader/stats';
+import { requestFeedDiscovery } from 'calypso/state/data-getters';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import AsyncLoad from 'calypso/components/async-load';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { getSection } from 'calypso/state/ui/selectors';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -117,7 +117,7 @@ const exported = {
 
 	sidebar( context, next ) {
 		context.secondary = (
-			<AsyncLoad require="reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
 		);
 
 		next();
@@ -206,7 +206,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/feed-stream"
+				require="calypso/reader/feed-stream"
 				key={ 'feed-' + feedId }
 				streamKey={ 'feed:' + feedId }
 				feedId={ +feedId }
@@ -241,7 +241,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/site-stream"
+				require="calypso/reader/site-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
 				siteId={ +blogId }
@@ -276,10 +276,45 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/a8c/main"
+				require="calypso/reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"
+				streamKey={ streamKey }
+				startDate={ startDate }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				showPrimaryFollowButtonOnCards={ false }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
+			/>
+		);
+		/* eslint-enable wpcalypso/jsx-classname-namespace */
+		next();
+	},
+
+	readFollowingP2( context, next ) {
+		const basePath = sectionify( context.path );
+		const fullAnalyticsPageTitle = analyticsPageTitle + ' > P2';
+		const mcKey = 'p2';
+		const streamKey = 'p2';
+		const startDate = getStartDate( context );
+
+		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
+
+		setPageTitle( context, 'P2' );
+
+		/* eslint-disable wpcalypso/jsx-classname-namespace */
+		context.primary = (
+			<AsyncLoad
+				require="calypso/reader/p2/main"
+				key="read-p2"
+				listName="P2"
 				streamKey={ streamKey }
 				startDate={ startDate }
 				trackScrollPage={ trackScrollPage.bind(
@@ -312,4 +347,5 @@ export const {
 	feedListing,
 	blogListing,
 	readA8C,
+	readFollowingP2,
 } = exported;

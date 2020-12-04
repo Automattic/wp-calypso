@@ -8,9 +8,7 @@
  * External dependencies
  */
 const path = require( 'path' );
-const fs = require( 'fs' );
 const webpack = require( 'webpack' );
-const AssetsWriter = require( './server/bundler/assets-writer' );
 const ConfigFlagPlugin = require( '@automattic/webpack-config-flag-plugin' );
 const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
@@ -34,13 +32,14 @@ const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
-const getAliasesForExtensions = require( './webpack-utils/extensions' );
-const RequireChunkCallbackPlugin = require( './webpack-utils/require-chunk-callback-plugin' );
-const GenerateChunksMapPlugin = require( './webpack-utils/generate-chunks-map-plugin' );
-const ExtractManifestPlugin = require( './webpack-utils/extract-manifest-plugin' );
+const getAliasesForExtensions = require( '../build-tools/webpack/extensions' );
+const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
+const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const ExtractManifestPlugin = require( '../build-tools/webpack/extract-manifest-plugin' );
+const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 
 /**
  * Internal variables
@@ -66,9 +65,6 @@ const defaultBrowserslistEnv = 'evergreen';
 const browserslistEnv = process.env.BROWSERSLIST_ENV || defaultBrowserslistEnv;
 const extraPath = browserslistEnv === 'defaults' ? 'fallback' : browserslistEnv;
 const cachePath = path.resolve( '.cache', extraPath );
-const hasLanguagesMeta = fs.existsSync(
-	path.join( __dirname, 'languages', 'languages-meta.json' )
-);
 
 function filterEntrypoints( entrypoints ) {
 	/* eslint-disable no-console */
@@ -234,7 +230,7 @@ const webpackConfig = {
 			} ),
 			{
 				include: path.join( __dirname, 'sections.js' ),
-				loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+				loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 				options: {
 					include: process.env.SECTION_LIMIT ? process.env.SECTION_LIMIT.split( ',' ) : null,
 				},
@@ -256,6 +252,7 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: Object.assign(
 			{
@@ -281,6 +278,7 @@ const webpackConfig = {
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
+			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
 		} ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
@@ -373,22 +371,13 @@ const webpackConfig = {
 			: [] ),
 
 		/*
-		 * When available, replace fallback-languages-meta.json with languages-meta.json
-		 */
-		hasLanguagesMeta &&
-			new webpack.NormalModuleReplacementPlugin(
-				new RegExp( path.join( __dirname, 'languages/fallback-languages-meta.json' ) ),
-				'./languages-meta.json'
-			),
-
-		/*
 		 * Replace `lodash` with `lodash-es`
 		 */
 		new ExtensiveLodashReplacementPlugin(),
 
 		! isDesktop && new ExtractManifestPlugin(),
 	].filter( Boolean ),
-	externals: [ 'electron' ],
+	externals: [ 'keytar' ],
 };
 
 module.exports = webpackConfig;

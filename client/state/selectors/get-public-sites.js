@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import getSitesItems from 'state/selectors/get-sites-items';
-import { getSite } from 'state/sites/selectors';
-import createSelector from 'lib/create-selector';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import { getSite } from 'calypso/state/sites/selectors';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Get all public sites

@@ -16,44 +16,48 @@ import {
 	isWordadsInstantActivationEligibleButNotOwner,
 	canUpgradeToUseWordAds,
 	canAccessAds,
-} from 'lib/ads/utils';
-import { isPremium, isBusiness, isEcommerce, isSecurityDaily } from 'lib/products-values';
-import FeatureExample from 'components/feature-example';
-import FormButton from 'components/forms/form-button';
+} from 'calypso/lib/ads/utils';
+import { isPremium, isBusiness, isEcommerce, isSecurityDaily } from 'calypso/lib/products-values';
+import FeatureExample from 'calypso/components/feature-example';
+import FormButton from 'calypso/components/forms/form-button';
 import { Card } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
-import { requestWordAdsApproval, dismissWordAdsError } from 'state/wordads/approve/actions';
+import EmptyContent from 'calypso/components/empty-content';
+import { requestWordAdsApproval, dismissWordAdsError } from 'calypso/state/wordads/approve/actions';
 import {
 	isRequestingWordAdsApprovalForSite,
 	getWordAdsErrorForSite,
 	getWordAdsSuccessForSite,
-} from 'state/wordads/approve/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import QueryWordadsStatus from 'components/data/query-wordads-status';
-import UpsellNudge from 'blocks/upsell-nudge';
+} from 'calypso/state/wordads/approve/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import QueryWordadsStatus from 'calypso/components/data/query-wordads-status';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import {
 	PLAN_PREMIUM,
 	PLAN_JETPACK_SECURITY_DAILY,
 	FEATURE_WORDADS_INSTANT,
-} from 'lib/plans/constants';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { isSiteWordadsUnsafe } from 'state/wordads/status/selectors';
-import { wordadsUnsafeValues } from 'state/wordads/status/schema';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import ActionCard from 'components/action-card';
+} from 'calypso/lib/plans/constants';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { isSiteWordadsUnsafe } from 'calypso/state/wordads/status/selectors';
+import { wordadsUnsafeValues } from 'calypso/state/wordads/status/schema';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import ActionCard from 'calypso/components/action-card';
 
 /**
  * Image dependencies
  */
-import wordAdsImage from 'assets/images/illustrations/dotcom-wordads.svg';
+import wordAdsImage from 'calypso/assets/images/illustrations/dotcom-wordads.svg';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'my-sites/stats/stats-module/style.scss';
+import 'calypso/my-sites/stats/stats-module/style.scss';
 
 const isEligbleJetpackPlan = overSome( isPremium, isBusiness, isEcommerce, isSecurityDaily );
 

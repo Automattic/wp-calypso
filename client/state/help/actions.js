@@ -8,11 +8,11 @@ import {
 	SUPPORT_HISTORY_REQUEST,
 	SUPPORT_HISTORY_SET,
 	SUPPORT_LEVEL_SET,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/help/search';
-import 'state/data-layer/wpcom/help/support-history';
-import 'state/help/init';
+import 'calypso/state/data-layer/wpcom/help/search';
+import 'calypso/state/data-layer/wpcom/help/support-history';
+import 'calypso/state/help/init';
 
 export const selectSiteId = ( siteId ) => ( {
 	type: HELP_CONTACT_FORM_SITE_SELECT,

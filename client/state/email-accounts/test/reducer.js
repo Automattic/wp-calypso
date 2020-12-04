@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { emailAccountsReducer } from '../reducer';
 
-import { EMAIL_ACCOUNTS_REQUEST_SUCCESS } from 'state/action-types';
+import { EMAIL_ACCOUNTS_REQUEST_SUCCESS } from 'calypso/state/action-types';
 
 describe( "emailAccountsReducer's", () => {
 	const account = {

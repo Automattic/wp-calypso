@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getMediaItem from 'state/selectors/get-media-item';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Returns a media item from the redux store

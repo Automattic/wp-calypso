@@ -1,4 +1,30 @@
 .threat-history-list {
+	&__no-entries {
+		color: var( --color-text-subtle );
+		font-size: $font-body;
+	}
+
+	&__pagination--top {
+		margin-bottom: 16px;
+	}
+
+	&__pagination-bottom {
+		margin-top: 16px;
+	}
+
+	&__pagination--top.is-placeholder,
+	&__pagination--bottom.is-placeholder {
+		@include placeholder( --color-neutral-10 );
+		height: 34px;
+		width: 50%;
+		margin-left: auto;
+		margin-right: auto;
+
+		&.is-compact {
+			height: 28px;
+		}
+	}
+
 	&__filters-wrapper {
 		margin: 8px 0 24px;
 		text-align: center;

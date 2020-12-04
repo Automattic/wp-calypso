@@ -10,37 +10,37 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import QuerySites from 'components/data/query-sites';
-import QueryProductsList from 'components/data/query-products-list';
-import QuerySitePlans from 'components/data/query-site-plans';
+import Main from 'calypso/components/main';
+import QuerySites from 'calypso/components/data/query-sites';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
-import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getCurrentUserCurrencyCode, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	getProductsList,
 	getProductDisplayCost,
 	getProductCost,
 	getProductBySlug,
 	isProductsListFetching,
-} from 'state/products-list/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/products-list/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 import {
 	isRequestingSitePlans,
 	getPlansBySiteId,
 	getSitePlanRawPrice,
 	getPlanDiscountedRawPrice,
-} from 'state/sites/plans/selectors';
+} from 'calypso/state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
 import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
-import getUpgradePlanSlugFromPath from 'state/selectors/get-upgrade-plan-slug-from-path';
+import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { PurchaseModal } from './purchase-modal';
-import { abtest } from 'lib/abtest';
-import { replaceCartWithItems } from 'lib/cart/actions';
-import Gridicon from 'components/gridicon';
+import { replaceCartWithItems } from 'calypso/lib/cart/actions';
+import Gridicon from 'calypso/components/gridicon';
+import { isMonthly } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -130,6 +130,7 @@ export class UpsellNudge extends React.Component {
 			upsellType,
 			translate,
 			siteSlug,
+			hasSevenDayRefundPeriod,
 		} = this.props;
 
 		switch ( upsellType ) {
@@ -173,6 +174,7 @@ export class UpsellNudge extends React.Component {
 						translate={ translate }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
+						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 		}
@@ -192,7 +194,7 @@ export class UpsellNudge extends React.Component {
 			`calypso_${ upsellType.replace( /-/g, '_' ) }_${ buttonAction }_button_click`
 		);
 
-		if ( this.isEligibleForOneClickUpsellABTest( buttonAction ) ) {
+		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
 				showPurchaseModal: true,
 				cartLastServerResponseDate: this.getCartUpdatedTime(),
@@ -206,7 +208,7 @@ export class UpsellNudge extends React.Component {
 			: page( `/checkout/${ upgradeItem }` );
 	};
 
-	isEligibleForOneClickUpsellABTest = ( buttonAction ) => {
+	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { cards, siteSlug, upsellType } = this.props;
 
 		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
@@ -222,7 +224,7 @@ export class UpsellNudge extends React.Component {
 			return false;
 		}
 
-		return 'test' === abtest( 'oneClickUpsell' );
+		return true;
 	};
 
 	handleOneClickUpsellComplete = () => {
@@ -293,6 +295,7 @@ export default connect(
 			isLoggedIn: isUserLoggedIn( state ),
 			siteSlug,
 			selectedSiteId,
+			hasSevenDayRefundPeriod: isMonthly( planSlug ),
 		};
 	},
 	{

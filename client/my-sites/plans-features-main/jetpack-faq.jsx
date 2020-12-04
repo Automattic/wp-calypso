@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -11,24 +11,26 @@ import FAQ from 'calypso/components/faq';
 import FAQItem from 'calypso/components/faq/faq-item';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
-const JetpackFAQ = ( { translate } ) => {
-	// We want to allow Jetpack Free users to contact support, even when it isn't not available
-	// for them, because it could push them into purchasing a product. To make this possible, we
-	// add two query parameters that let's show the support form to Jetpack Free users:
-	// 1. rel=support is what shows the contact form
-	// 2. hpi=1 stands for has purchase intent
-	const getHelpLink = ( context ) => {
-		return (
-			<a
-				href="https://jetpack.com/contact-support/?rel=support&hpi=1"
-				target="_blank"
-				rel="noopener noreferrer"
-				onClick={ () => {
-					recordTracksEvent( 'calypso_jetpack_faq_support_click', { context } );
-				} }
-			/>
-		);
-	};
+// We want to allow Jetpack Free users to contact support, even when it isn't not available
+// for them, because it could push them into purchasing a product. To make this possible, we
+// add two query parameters that let's show the support form to Jetpack Free users:
+// 1. rel=support is what shows the contact form
+// 2. hpi=1 stands for has purchase intent
+export const getHelpLink = ( context ) => {
+	return (
+		<a
+			href="https://jetpack.com/contact-support/?rel=support&hpi=1"
+			target="_blank"
+			rel="noopener noreferrer"
+			onClick={ () => {
+				recordTracksEvent( 'calypso_jetpack_faq_support_click', { context } );
+			} }
+		/>
+	);
+};
+
+const JetpackFAQ = () => {
+	const translate = useTranslate();
 
 	return (
 		<FAQ>
@@ -82,4 +84,4 @@ const JetpackFAQ = ( { translate } ) => {
 	);
 };
 
-export default localize( JetpackFAQ );
+export default JetpackFAQ;

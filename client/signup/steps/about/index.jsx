@@ -9,42 +9,42 @@ import { noop, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
-import formState from 'lib/form-state';
-import { setSiteTitle } from 'state/signup/steps/site-title/actions';
-import { setDesignType } from 'state/signup/steps/design-type/actions';
-import { getSiteTitle } from 'state/signup/steps/site-title/selectors';
-import { setSiteGoals } from 'state/signup/steps/site-goals/actions';
-import { getSiteGoals } from 'state/signup/steps/site-goals/selectors';
-import { setUserExperience } from 'state/signup/steps/user-experience/actions';
-import { getUserExperience } from 'state/signup/steps/user-experience/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'signup/utils';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { getSurveyVertical } from 'state/signup/steps/survey/selectors';
-import { isValidLandingPageVertical } from 'lib/signup/verticals';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSiteTypePropertyValue } from 'lib/signup/site-type';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import formState from 'calypso/lib/form-state';
+import { setSiteTitle } from 'calypso/state/signup/steps/site-title/actions';
+import { setDesignType } from 'calypso/state/signup/steps/design-type/actions';
+import { getSiteTitle } from 'calypso/state/signup/steps/site-title/selectors';
+import { setSiteGoals } from 'calypso/state/signup/steps/site-goals/actions';
+import { getSiteGoals } from 'calypso/state/signup/steps/site-goals/selectors';
+import { setUserExperience } from 'calypso/state/signup/steps/user-experience/actions';
+import { getUserExperience } from 'calypso/state/signup/steps/user-experience/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getThemeForSiteGoals, getDesignTypeForSiteGoals } from 'calypso/signup/utils';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { getSurveyVertical } from 'calypso/state/signup/steps/survey/selectors';
+import { isValidLandingPageVertical } from 'calypso/lib/signup/verticals';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSiteTypePropertyValue } from 'calypso/lib/signup/site-type';
 import {
 	getSiteVerticalId,
 	getSiteVerticalParentId,
-} from 'state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 //Form components
 import { Card, Button, ScreenReaderText } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
-import InfoPopover from 'components/info-popover';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputCheckbox from 'components/forms/form-checkbox';
-import SegmentedControl from 'components/segmented-control';
-import SiteVerticalsSuggestionSearch from 'components/site-verticals-suggestion-search';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import InfoPopover from 'calypso/components/info-popover';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
+import SegmentedControl from 'calypso/components/segmented-control';
+import SiteVerticalsSuggestionSearch from 'calypso/components/site-verticals-suggestion-search';
 
 /**
  * Style dependencies

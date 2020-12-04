@@ -12,8 +12,8 @@ import {
 	saveUserSettings,
 	finishUserSettingsSave,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { updateUserSettings, clearUnsavedUserSettings } from 'state/user-settings/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { updateUserSettings, clearUnsavedUserSettings } from 'calypso/state/user-settings/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'user settings request', () => {

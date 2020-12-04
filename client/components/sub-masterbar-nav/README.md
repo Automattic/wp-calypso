@@ -12,7 +12,7 @@ In case no option is selected, the `fallback` value will be shown in the dropdow
 If no `icon` is provided, `star` will be used by default.
 
 ```js
-import SubMasterbarNav from 'components/sub-masterbar-nav';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
 
 const options = [
 	{

@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import items from '../reducer';
-import { USER_DEVICES_ADD } from 'state/action-types';
+import { USER_DEVICES_ADD } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( 'items', () => {

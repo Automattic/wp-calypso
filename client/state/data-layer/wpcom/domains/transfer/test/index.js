@@ -6,8 +6,8 @@ import {
 	handleIpsTagSaveSuccess,
 	handleIpsTagSaveFailure,
 } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { saveDomainIpsTag, updateDomainTransfer } from 'state/domains/transfer/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { saveDomainIpsTag, updateDomainTransfer } from 'calypso/state/domains/transfer/actions';
 
 const domain = 'domain-transfer-unit-test.uk';
 const selectedRegistrar = {

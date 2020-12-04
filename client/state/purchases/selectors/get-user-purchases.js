@@ -3,7 +3,7 @@
  */
 import { getPurchases } from './get-purchases';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Returns a list of Purchases associated with a User from the state using its userId

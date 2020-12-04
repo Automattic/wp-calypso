@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'calypso/config';
 import jetpackBackup from './images/jetpack-backup.svg';
 import jetpackBackupV2 from './images/jetpack-backup-v2.svg';
 import jetpackBackupV2Darkblue from './images/jetpack-backup-v2-darkblue.svg';
@@ -31,29 +30,26 @@ import wpcomPremium from './images/wpcom-premium.svg';
 
 export const paths = {
 	'jetpack-scan': jetpackScan,
-	'jetpack-scan-v2': isEnabled( 'plans/alternate-selector' )
-		? jetpackScanV2Darkblue
-		: jetpackScanV2,
+	'jetpack-scan-v2': jetpackScanV2,
+	'jetpack-scan-v2-dark': jetpackScanV2Darkblue,
 	'jetpack-backup-daily': jetpackBackup,
 	'jetpack-backup-realtime': jetpackBackup,
-	'jetpack-backup-v2': isEnabled( 'plans/alternate-selector' )
-		? jetpackBackupV2Darkblue
-		: jetpackBackupV2,
+	'jetpack-backup-v2': jetpackBackupV2,
+	'jetpack-backup-v2-dark': jetpackBackupV2Darkblue,
 	'jetpack-free': jetpackFree,
 	'jetpack-personal': jetpackPersonal,
 	'jetpack-premium': jetpackPremium,
 	'jetpack-professional': jetpackProfessional,
 	'jetpack-complete-v2': jetpackCompleteV2,
-	'jetpack-crm-v2': isEnabled( 'plans/alternate-selector' ) ? jetpackCrmV2Darkblue : jetpackCrmV2,
+	'jetpack-crm-v2': jetpackCrmV2,
+	'jetpack-crm-v2-dark': jetpackCrmV2Darkblue,
 	'jetpack-search': jetpackSearch,
-	'jetpack-search-v2': isEnabled( 'plans/alternate-selector' )
-		? jetpackSearchV2Darkblue
-		: jetpackSearchV2,
+	'jetpack-search-v2': jetpackSearchV2,
+	'jetpack-search-v2-dark': jetpackSearchV2Darkblue,
 	'jetpack-security-v2': jetpackSecurityV2,
 	'jetpack-anti-spam': jetpackAntiSpam,
-	'jetpack-anti-spam-v2': isEnabled( 'plans/alternate-selector' )
-		? jetpackAntiSpamV2Darkblue
-		: jetpackAntiSpamV2,
+	'jetpack-anti-spam-v2': jetpackAntiSpamV2,
+	'jetpack-anti-spam-v2-dark': jetpackAntiSpamV2Darkblue,
 	'wpcom-blogger': wpcomBlogger,
 	'wpcom-business': wpcomBusiness,
 	'wpcom-ecommerce': wpcomEcommerce,
@@ -68,7 +64,12 @@ export const iconToProductSlugMap = {
 	'wpcom-free': [ 'free_plan' ],
 	'wpcom-blogger': [ 'blogger-bundle', 'blogger-bundle-2y' ],
 	'wpcom-personal': [ 'personal-bundle', 'personal-bundle-2y', 'personal-bundle-monthly' ],
-	'wpcom-premium': [ 'value_bundle', 'value_bundle-2y', 'value_bundle-monthly' ],
+	'wpcom-premium': [
+		'value_bundle',
+		'value_bundle-2y',
+		'value_bundle-monthly',
+		'value_bundle_monthly',
+	],
 	'wpcom-ecommerce': [ 'ecommerce-bundle', 'ecommerce-bundle-2y', 'ecommerce-bundle-monthly' ],
 	'wpcom-business': [ 'business-bundle', 'business-bundle-2y', 'business-bundle-monthly' ],
 	'jetpack-free': [ 'jetpack_free' ],
@@ -81,7 +82,8 @@ export const iconToProductSlugMap = {
 		'jetpack_complete_v2',
 		'jetpack_complete_monthly_v2',
 	],
-	'jetpack-crm-v2': [ 'jetpack_crm' ],
+	'jetpack-crm-v2': [ 'jetpack_crm', 'jetpack_crm_monthly' ],
+	'jetpack-crm-v2-dark': [ 'jetpack_crm_dark', 'jetpack_crm_monthly_dark' ],
 	'jetpack-backup-daily': [ 'jetpack_backup_daily', 'jetpack_backup_daily_monthly' ],
 	'jetpack-backup-realtime': [ 'jetpack_backup_realtime', 'jetpack_backup_realtime_monthly' ],
 	'jetpack-backup-v2': [
@@ -90,6 +92,13 @@ export const iconToProductSlugMap = {
 		'jetpack_backup_daily_monthly_v2',
 		'jetpack_backup_realtime_v2',
 		'jetpack_backup_realtime_monthly_v2',
+	],
+	'jetpack-backup-v2-dark': [
+		'jetpack_backup_v2_dark',
+		'jetpack_backup_daily_v2_dark',
+		'jetpack_backup_daily_monthly_v2_dark',
+		'jetpack_backup_realtime_v2_dark',
+		'jetpack_backup_realtime_monthly_v2_dark',
 	],
 	'jetpack-scan': [ 'jetpack_scan', 'jetpack_scan_monthly' ],
 	'jetpack-scan-v2': [
@@ -100,6 +109,14 @@ export const iconToProductSlugMap = {
 		'jetpack_scan_realtime_v2',
 		'jetpack_scan_realtime_monthly_v2',
 	],
+	'jetpack-scan-v2-dark': [
+		'jetpack_scan_v2_dark',
+		'jetpack_scan_monthly_v2_dark',
+		'jetpack_scan_daily_v2_dark',
+		'jetpack_scan_daily_monthly_v2_dark',
+		'jetpack_scan_realtime_v2_dark',
+		'jetpack_scan_realtime_monthly_v2_dark',
+	],
 	'jetpack-search': [
 		'jetpack_search',
 		'jetpack_search_monthly',
@@ -107,8 +124,10 @@ export const iconToProductSlugMap = {
 		'wpcom_search_monthly',
 	],
 	'jetpack-search-v2': [ 'jetpack_search_v2', 'jetpack_search_monthly_v2' ],
+	'jetpack-search-v2-dark': [ 'jetpack_search_v2_dark', 'jetpack_search_monthly_v2_dark' ],
 	'jetpack-anti-spam': [ 'jetpack_anti_spam', 'jetpack_anti_spam_monthly' ],
 	'jetpack-anti-spam-v2': [ 'jetpack_anti_spam_v2', 'jetpack_anti_spam_monthly_v2' ],
+	'jetpack-anti-spam-v2-dark': [ 'jetpack_anti_spam_v2_dark', 'jetpack_anti_spam_monthly_v2_dark' ],
 	'jetpack-security-v2': [
 		'jetpack_security_v2',
 		'jetpack_security_monthly_v2',

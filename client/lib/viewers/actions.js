@@ -9,8 +9,8 @@ const debug = debugFactory( 'calypso:viewers:actions' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
 
 const ViewersActions = {
 	fetch: function ( siteId, page = 1 ) {

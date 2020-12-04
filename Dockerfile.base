@@ -1,5 +1,5 @@
 #### builder image
-FROM node:12.18.4 as builder
+FROM node:12.19.1 as builder
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -13,8 +13,8 @@ ENV CHROMEDRIVER_SKIP_DOWNLOAD=true
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 ENV HOME=/calypso
 
-RUN git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
-	&& git -C "$NVM_DIR" checkout v0.35.3
+RUN git clone --branch v0.37.0 --depth 1 https://github.com/nvm-sh/nvm.git "$NVM_DIR" \
+	&& echo ". ${NVM_DIR}/nvm.sh" >> "${HOME}/.bashrc"
 
 COPY . .
 
@@ -24,7 +24,6 @@ RUN cd / \
 	&& . "$NVM_DIR/nvm.sh" \
 	&& cd $HOME \
 	&& nvm install \
-	&& nvm use \
 	# Prime yarn cache
 	&& yarn \
 	# Prime webpack caches
@@ -33,7 +32,7 @@ RUN cd / \
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci image
-FROM node:12.18.4 as ci
+FROM node:12.19.1 as ci
 
 ARG node_memory=8192
 ARG UID=1003
@@ -44,9 +43,69 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
-
 RUN chown $UID /calypso
+
+# Set bash as the default shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
 COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)
 COPY --from=builder --chown=$UID /calypso/.cache /calypso/.cache
+COPY --from=builder --chown=$UID /calypso/.bashrc /calypso/.bashrc
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-desktop image
+FROM ci as ci-desktop
+
+ENV ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+ENV USE_HARD_LINKS=false
+# This chrome image is the latest version supported by wp-desktop's chromedriver, declared in desktop/package.json
+ENV CHROME_VERSION="80.0.3987.163-1"
+ENV DISPLAY=:99
+
+RUN apt update \
+	&& apt-get install -y \
+		fonts-liberation \
+		git-restore-mtime \
+		gtk2-engines-pixbuf \
+		libappindicator3-1 \
+		libasound2 \
+		libatk-bridge2.0-0 \
+		libatspi2.0-0 \
+		libgtk-3-0 \
+		libnspr4 \
+		libnss3 \
+		libnss3 \
+		libsecret-1-dev \
+		libx11-xcb1 \
+		libxss1 \
+		libxss1 \
+		libxtst6 \
+		xdg-utils \
+		xfonts-100dpi \
+		xfonts-75dpi \
+		xfonts-base \
+		xfonts-cyrillic \
+		xfonts-scalable \
+		xvfb
+
+RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+
+ENTRYPOINT [ "/bin/bash" ]
+
+#### ci-e2e image
+FROM ci-desktop as ci-e2e
+
+# This chrome image is the latest version that accepts SameSite=None
+# test/e2e/test/mocha.env.js will install a compatible chromedriver
+ENV CHROME_VERSION="84.0.4147.135-1"
+ENV DETECT_CHROMEDRIVER_VERSION=true
+
+RUN wget --no-verbose https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& apt-get install -y ./google-chrome-stable_${CHROME_VERSION}_amd64.deb \
+	&& rm ./google-chrome-stable_${CHROME_VERSION}_amd64.deb
+
+ENTRYPOINT [ "/bin/bash" ]

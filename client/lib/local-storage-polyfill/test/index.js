@@ -3,12 +3,17 @@
  */
 import { assert } from 'chai';
 
+/**
+ * Internal dependencies
+ */
+import localStoragePolyfill from '..';
+
 describe( 'localStorage', () => {
 	describe( 'when window.localStorage does not exist', () => {
 		const window = {};
 
 		beforeAll( () => {
-			require( '..' )( window );
+			localStoragePolyfill( window );
 		} );
 
 		test( 'should create a window.localStorage instance', () => {
@@ -28,7 +33,7 @@ describe( 'localStorage', () => {
 		};
 
 		beforeAll( () => {
-			require( '..' )( window );
+			localStoragePolyfill( window );
 		} );
 
 		test( 'should overwrite broken or missing methods', () => {

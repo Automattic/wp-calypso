@@ -5,8 +5,8 @@ A search component for searching locations via the [Google Places API](https://c
 ## Usage
 
 ```jsx
-import LocationSearch from 'blocks/location-search';
-import { createNotice } from 'state/notices/actions';
+import LocationSearch from 'calypso/blocks/location-search';
+import { createNotice } from 'calypso/state/notices/actions';
 
 class LocationSearchExample extends Component {
 	static propTypes = {

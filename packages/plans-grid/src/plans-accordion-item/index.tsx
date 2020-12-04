@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
@@ -59,8 +59,6 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	onToggle,
 	disabledLabel,
 } ) => {
-	const { __ } = useI18n();
-
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0\u00A0';
 
@@ -102,10 +100,19 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								} ) }
 							>
 								{ price || nbsp }
-								{ price && <span>{ __( '/mo' ) }</span> }
+								{ price && (
+									<span>
+										{
+											// translators: /mo is short for "per-month"
+											__( '/mo', __i18n_text_domain__ )
+										}
+									</span>
+								) }
 							</div>
 							<div className="plans-accordion-item__price-note">
-								{ isFree ? __( 'free forever' ) : __( 'billed annually' ) }
+								{ isFree
+									? __( 'free forever', __i18n_text_domain__ )
+									: __( 'billed annually', __i18n_text_domain__ ) }
 							</div>
 						</div>
 						<div className="plans-accordion-item__disabled-label">{ disabledLabel }</div>
@@ -119,7 +126,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								onSelect( slug );
 							} }
 						>
-							{ __( 'Select' ) }
+							{ __( 'Select', __i18n_text_domain__ ) }
 						</NextButton>
 					</div>
 					<PlansFeatureList

@@ -26,7 +26,7 @@ import {
 	PLUGIN_AUTOUPDATE_DISABLE_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer:', () => {
 	describe( 'isRequesting', () => {

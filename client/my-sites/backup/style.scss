@@ -73,6 +73,8 @@
 }
 
 .backup__restore-banner {
+	width: 100%;
+
 	&.banner.card {
 		@include banner-color( var( --color-jetpack ) );
 	}
@@ -122,6 +124,10 @@
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-top: 64px;
 		}
+	}
+
+	.action-panel__figure img {
+		height: 120px;
 	}
 
 	.backup__wpcom-ctas {

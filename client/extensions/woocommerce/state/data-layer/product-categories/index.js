@@ -24,7 +24,7 @@ import {
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_SUCCESS,
 	WOOCOMMERCE_PRODUCT_CATEGORIES_REQUEST_FAILURE,
 } from 'woocommerce/state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
 import request from 'woocommerce/state/sites/http-request';
 import { verifyResponseHasValidCategories } from 'woocommerce/state/data-layer/utils';

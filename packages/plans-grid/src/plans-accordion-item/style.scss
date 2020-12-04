@@ -3,7 +3,7 @@
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
 
-$plans-accordion-item-border-radius: 5px;
+$plans-accordion-item-border-radius: 5px; /* stylelint-disable-line scales/radii */
 $plans-accordion-item-border-color: var( --studio-gray-5 );
 
 .plans-accordion-item {
@@ -269,4 +269,18 @@ ul.plans-accordion-item__feature-item-group {
 
 .plans-accordion-item.is-open .plans-accordion-item__dropdown-chevron {
 	display: none;
+}
+
+.plans-accordion-item__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
 }

@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getCustomizerUrl, isJetpackSite } from 'state/sites/selectors';
-import { getTheme } from 'state/themes/selectors/get-theme';
-import { isThemeActive } from 'state/themes/selectors/is-theme-active';
+import { getCustomizerUrl, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getTheme } from 'calypso/state/themes/selectors/get-theme';
+import { isThemeActive } from 'calypso/state/themes/selectors/is-theme-active';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for opening the customizer with the given theme on the given site.

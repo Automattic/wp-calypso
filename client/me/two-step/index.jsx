@@ -25,6 +25,7 @@ import SecuritySectionNav from 'calypso/me/security-section-nav';
 import Security2faKey from 'calypso/me/security-2fa-key';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -167,13 +168,15 @@ class TwoStep extends Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security two-step">
+			<Main className="security two-step is-wide-layout">
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<DocumentHead title={ translate( 'Two-Step Authentication' ) } />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

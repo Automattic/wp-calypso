@@ -102,18 +102,33 @@ export interface PaymentProcessorProp {
 
 export type PaymentProcessorResponseData = unknown;
 
-export type PaymentProcessorSuccess = { type: 'SUCCESS'; payload: PaymentProcessorResponseData };
-export type PaymentProcessorRedirect = { type: 'REDIRECT'; payload: string };
-export type PaymentProcessorNoop = { type: 'NOOP' };
+export type PaymentProcessorSuccess = {
+	type: PaymentProcessorResponseType.SUCCESS;
+	payload: PaymentProcessorResponseData;
+};
+export type PaymentProcessorRedirect = {
+	type: PaymentProcessorResponseType.REDIRECT;
+	payload: string | undefined;
+};
+export type PaymentProcessorManual = {
+	type: PaymentProcessorResponseType.MANUAL;
+	payload: unknown;
+};
 
 export type PaymentProcessorResponse =
 	| PaymentProcessorSuccess
 	| PaymentProcessorRedirect
-	| PaymentProcessorNoop;
+	| PaymentProcessorManual;
 
 export type PaymentProcessorFunction = (
 	submitData: unknown
 ) => Promise< PaymentProcessorResponse >;
+
+export enum PaymentProcessorResponseType {
+	SUCCESS = 'SUCCESS',
+	REDIRECT = 'REDIRECT',
+	MANUAL = 'MANUAL',
+}
 
 export enum TransactionStatus {
 	NOT_STARTED = 'not-started',

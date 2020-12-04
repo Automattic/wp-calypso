@@ -7,10 +7,10 @@ import React from 'react';
  * Internal dependencies
  */
 import DisconnectSurvey from './disconnect-survey';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import NavigationLink from 'components/wizard/navigation-link';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import NavigationLink from 'calypso/components/wizard/navigation-link';
 import Troubleshoot from './troubleshoot';
 import { useTranslate } from 'i18n-calypso';
 

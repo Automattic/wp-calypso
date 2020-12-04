@@ -4,8 +4,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import Gridicon from 'calypso/components/gridicon';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 
 const BulkSelect = ( {
 	className,

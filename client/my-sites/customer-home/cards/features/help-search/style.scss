@@ -6,7 +6,6 @@ $card_padding_large: 24px;
 $min_results_height: 180px;
 
 .customer-home__layout .help-search {
-
 	&.card {
 		padding: 0;
 	}
@@ -51,17 +50,30 @@ $min_results_height: 180px;
 		width: 26px;
 		height: 26px;
 		margin-right: 12px;
+		position: relative;
 
 		background: var( --color-primary );
 		box-shadow: 0 2px 6px rgba( 0, 0, 0, 0.15 );
 		border: 1px solid var( --color-primary );
 		border-radius: 100%;
 
+		&::before {
+			width: 18px;
+			height: 18px;
+			display: block;
+			position: absolute;
+			top: 4px;
+			left: 4px;
+			content: '';
+			background: var( --color-surface );
+			border-radius: 100%;
+		}
+
 		.gridicon {
-			fill: var( --color-text-inverted );
-			height: 24px;
-			width: 24px;
-			transform: translate( 1px, 1px );
+			fill: var( --color-primary );
+			height: 28px;
+			width: 28px;
+			transform: translate( -2px, -2px );
 		}
 	}
 
@@ -95,8 +107,8 @@ $min_results_height: 180px;
 
 			.gridicon {
 				margin: 0 5px -3px 0;
-					position: relative;
-					top: 0;
+				position: relative;
+				top: 0;
 			}
 
 			&:hover,
@@ -112,9 +124,9 @@ $min_results_height: 180px;
 	}
 
 	.inline-help__results {
-		margin: #{$search_results_top_spacing + 1px } #{-$card_padding_small} 0;
+		margin: #{$search_results_top_spacing + 1px} #{-$card_padding_small} 0;
 		min-height: $min_results_height;
-		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
 
 		@include break-mobile {
@@ -165,14 +177,14 @@ $min_results_height: 180px;
 	.inline-help__results-placeholder {
 		min-height: $min_results_height;
 		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
-		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
 	}
 
 	.inline-help__results-placeholder-item {
 		height: 15px;
 		margin: 20px $card_padding_large 0;
-		border-radius: 16px;
+		border-radius: 16px; /* stylelint-disable-line scales/radii */
 		background-color: var( --color-neutral-5 );
 
 		&:first-child {

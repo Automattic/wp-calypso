@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/activity-log/init';
+import 'calypso/state/activity-log/init';
 
 /**
  * Indicates whether the Rewind feature is currently being

@@ -65,12 +65,12 @@ import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
  */
 import './style.scss';
 
-const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000,
-	debug = debugModule( 'calypso:signup-form:form' );
+const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 2000;
+const debug = debugModule( 'calypso:signup-form:form' );
 
-let usernamesSearched = [],
-	timesUsernameValidationFailed = 0,
-	timesPasswordValidationFailed = 0;
+let usernamesSearched = [];
+let timesUsernameValidationFailed = 0;
+let timesPasswordValidationFailed = 0;
 
 const resetAnalyticsData = () => {
 	usernamesSearched = [];
@@ -331,8 +331,8 @@ class SignupForm extends Component {
 	}
 
 	handleChangeEvent = ( event ) => {
-		const name = event.target.name,
-			value = event.target.value;
+		const name = event.target.name;
+		const value = event.target.value;
 
 		this.setState( { notice: null } );
 
@@ -1065,28 +1065,15 @@ function TrackRender( { children, eventName } ) {
 }
 
 export default connect(
-	( state, ownProps ) => {
-		const isDisplayUsernamePropSet = ownProps.hasOwnProperty( 'displayUsernameInput' );
-		const eligibleFlowsForRemoveUsernameTest = [ 'personal', 'premium', 'business', 'ecommerce' ];
-		let displayUsernameInput = true;
-
-		if ( eligibleFlowsForRemoveUsernameTest.includes( ownProps.flowName ) ) {
-			displayUsernameInput = 'control' === abtest( 'removeUsernameInSignup' );
-		} else if ( isDisplayUsernamePropSet ) {
-			displayUsernameInput = ownProps.displayUsernameInput;
-		}
-
-		return {
-			oauth2Client: getCurrentOAuth2Client( state ),
-			sectionName: getSectionName( state ),
-			isJetpackWooCommerceFlow:
-				'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
-			isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
-			from: get( getCurrentQueryArguments( state ), 'from' ),
-			wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
-			displayUsernameInput,
-		};
-	},
+	( state ) => ( {
+		oauth2Client: getCurrentOAuth2Client( state ),
+		sectionName: getSectionName( state ),
+		isJetpackWooCommerceFlow:
+			'woocommerce-onboarding' === get( getCurrentQueryArguments( state ), 'from' ),
+		isJetpackWooDnaFlow: wooDnaConfig( getCurrentQueryArguments( state ) ).isWooDnaFlow(),
+		from: get( getCurrentQueryArguments( state ), 'from' ),
+		wccomFrom: get( getCurrentQueryArguments( state ), 'wccom-from' ),
+	} ),
 	{
 		trackLoginMidFlow: () => recordTracksEventWithClientId( 'calypso_signup_login_midflow' ),
 		createSocialUserFailed,

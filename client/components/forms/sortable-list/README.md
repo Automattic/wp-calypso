@@ -25,7 +25,7 @@ In traditional React fashion, a SortableList does not track its own state, but i
 
 ```jsx
 import React, { Component } from 'react';
-import SortableList from 'components/forms/sortable-list';
+import SortableList from 'calypso/components/forms/sortable-list';
 
 class MyComponent extends Component {
 	state = {

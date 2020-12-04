@@ -20,15 +20,15 @@ import {
 	getProductCategoriesLastPage,
 	getTotalProductCategories,
 } from 'woocommerce/state/sites/product-categories/selectors';
-import Count from 'components/count';
+import Count from 'calypso/components/count';
 import { CompactCard } from '@automattic/components';
 import { DEFAULT_QUERY } from 'woocommerce/state/sites/product-categories/utils';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { fetchProductCategories } from 'woocommerce/state/sites/product-categories/actions';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import VirtualList from 'components/virtual-list';
-import { stripHTML, decodeEntities } from 'lib/formatting';
+import VirtualList from 'calypso/components/virtual-list';
+import { stripHTML, decodeEntities } from 'calypso/lib/formatting';
 import ImageThumb from 'woocommerce/components/image-thumb';
 
 const ITEM_HEIGHT = 70;

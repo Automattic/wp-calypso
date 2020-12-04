@@ -9,13 +9,12 @@ const debug = debugFactory( 'calypso:my-sites:plugins:log-store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
-let _errors = [],
-	_inProgress = [],
-	_completed = [],
-	LogStore;
+let _errors = [];
+let _inProgress = [];
+let _completed = [];
 
 function addLog( status, action, site, plugin, error ) {
 	const log = {
@@ -83,7 +82,7 @@ function removeSingleLog( log ) {
 	}
 }
 
-LogStore = {
+const LogStore = {
 	getErrors: function () {
 		return clone( _errors );
 	},

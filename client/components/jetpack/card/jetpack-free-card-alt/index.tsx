@@ -1,42 +1,27 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Button } from '@automattic/components';
+import React, { FC } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import FeaturesItem from '../jetpack-product-card-alt/features-item';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
-import { addQueryArgs } from 'calypso/lib/route';
-import getJetpackWpAdminUrl from 'calypso/state/selectors/get-jetpack-wp-admin-url';
-import { JPC_PATH_REMOTE_INSTALL } from 'calypso/jetpack-connect/constants';
+import JetpackFreeCardButton from 'calypso/components/jetpack/card/jetpack-free-card-button';
 
 /**
  * Type dependencies
  */
-import type { JetpackFreeProps } from 'calypso/my-sites/plans-v2/types';
+import type { JetpackFreeProps } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const JetpackFreeCardAlt = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
+const JetpackFreeCardAlt: FC< JetpackFreeProps > = ( { siteId, urlQueryArgs } ) => {
 	const translate = useTranslate();
-	const wpAdminUrl = useSelector( getJetpackWpAdminUrl );
-
-	const startHref = isJetpackCloud()
-		? addQueryArgs( urlQueryArgs, `https://wordpress.com${ JPC_PATH_REMOTE_INSTALL }` )
-		: wpAdminUrl || JPC_PATH_REMOTE_INSTALL;
-
-	const onClickTrack = useTrackCallback( undefined, 'calypso_product_jpfree_click', {
-		site_id: siteId || undefined,
-	} );
 
 	const freeFeaturesOne = [
 		{
@@ -63,7 +48,7 @@ const JetpackFreeCardAlt = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
 	];
 
 	return (
-		<div className="jetpack-free-card-alt">
+		<div className="jetpack-free-card-alt" data-e2e-product-slug="free">
 			<div className="jetpack-free-card-alt__main">
 				<header>
 					<h2>{ translate( 'Jetpack Free' ) }</h2>
@@ -71,9 +56,7 @@ const JetpackFreeCardAlt = ( { siteId, urlQueryArgs }: JetpackFreeProps ) => {
 						{ translate( 'Included for free with all products' ) }
 					</div>
 				</header>
-				<Button primary href={ startHref } onClick={ onClickTrack }>
-					{ translate( 'Start for free' ) }
-				</Button>
+				<JetpackFreeCardButton primary siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 			</div>
 			<div className="jetpack-free-card-alt__features">
 				<ul className="jetpack-free-card-alt__features-list">

@@ -22,7 +22,7 @@
 		"node": ">=10"
 	},
 	"peerDependencies": {
-		"eslint": ">=5"
+		"eslint": ">=7.12.0"
 	},
 	"devDependencies": {
 		"babel-eslint": "^10.1.0"

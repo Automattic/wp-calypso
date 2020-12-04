@@ -6,7 +6,7 @@ The output component expects to be handed either a feedId or a siteId. It will o
 ## Example
 
 ```js
-import connectSite from 'lib/reader-connect-site';
+import connectSite from 'calypso/lib/reader-connect-site';
 
 const SiteInfo = () => {
 	if ( ! this.props.site ) {

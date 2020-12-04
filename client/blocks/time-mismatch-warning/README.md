@@ -7,11 +7,11 @@ Nothing will appear if we don't detect a discrepancy.
 ## How to use
 
 ```jsx
-import TimeMismatchWarning from 'blocks/time-mismatch-warning';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning';
 
 const Test = () => (
 	<>
-		<TimeMismatchWarning />
+		<TimeMismatchWarning siteId={ 1234 } />
 		<ListWithTimes />
 	</>
 );
@@ -19,4 +19,8 @@ const Test = () => (
 
 ## Props
 
-There is only one prop: `status`. This is optional, and allows overriding the notice status. See the `Notice` component for allowed values.
+There are two props:
+
+- `siteId`: Site ID to check.
+- `settingsUrl`: Site settings URL. If unset defaults to current page.
+- `status`: This is optional, and allows overriding the notice status. See the `Notice` component for allowed values.

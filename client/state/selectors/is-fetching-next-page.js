@@ -2,7 +2,13 @@
  * External dependencies
  */
 import { get } from 'lodash';
-import createSelector from 'lib/create-selector';
+
+/**
+ * Internal dependencies
+ */
+import createSelector from 'calypso/lib/create-selector';
+
+import 'calypso/state/media/init';
 
 export default createSelector(
 	/**

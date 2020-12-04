@@ -7,7 +7,7 @@ When the `compactOnMobile` flag is set, the header renders in a compact way on s
 ## How to use
 
 ```js
-import FormattedHeader from 'components/formatted-header';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 function render() {
 	return <FormattedHeader headerText="A main title" subHeaderText="A main title" />;

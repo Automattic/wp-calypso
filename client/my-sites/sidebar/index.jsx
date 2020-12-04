@@ -1,10 +1,9 @@
 /**
  * External dependencies
  */
-import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import Gridicon from 'calypso/components/gridicon';
 import { memoize } from 'lodash';
@@ -30,8 +29,6 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
-import { siteHasJetpackProductPurchase } from 'calypso/state/purchases/selectors';
 import { isEcommerce } from 'calypso/lib/products-values';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
@@ -87,12 +84,14 @@ import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { isUnderDomainManagementAll } from 'calypso/my-sites/domains/paths';
 import { isUnderEmailManagementAll } from 'calypso/my-sites/email/paths';
 import JetpackSidebarMenuItems from 'calypso/components/jetpack/sidebar/menu-items/calypso';
+import getSitePlanSlug from 'calypso/state/sites/selectors/get-site-plan-slug';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
+import { isP2PlusPlan } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 
 export class MySitesSidebar extends Component {
 	static propTypes = {
@@ -103,6 +102,7 @@ export class MySitesSidebar extends Component {
 		isDomainOnly: PropTypes.bool,
 		isJetpack: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
+		sitePlanSlug: PropTypes.string,
 	};
 
 	expandPlanSection = () => this.props.expandSection( SIDEBAR_SECTION_PLAN );
@@ -316,8 +316,8 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let activityLink = '/activity-log' + siteSuffix,
-			activityLabel = translate( 'Activity' );
+		let activityLink = '/activity-log' + siteSuffix;
+		let activityLabel = translate( 'Activity' );
 
 		if ( this.props.isJetpack && isEnabled( 'manage/themes-jetpack' ) ) {
 			activityLink += '?group=rewind';
@@ -407,9 +407,13 @@ export class MySitesSidebar extends Component {
 	}
 
 	jetpack() {
-		const { canUserManageOptions, isJetpackSectionOpen, path } = this.props;
+		const { canUserManageOptions, isJetpackSectionOpen, path, sitePlanSlug } = this.props;
 
-		if ( isEnabled( 'signup/wpforteams' ) && this.props.isSiteWPForTeams ) {
+		if (
+			this.props.isSiteWPForTeams &&
+			( ! isEnabled( 'p2/p2-plus' ) ||
+				( isEnabled( 'p2/p2-plus' ) && ! isP2PlusPlan( sitePlanSlug ) ) )
+		) {
 			return null;
 		}
 
@@ -454,14 +458,14 @@ export class MySitesSidebar extends Component {
 
 	design() {
 		const {
-				path,
-				site,
-				translate,
-				canUserEditThemeOptions,
-				showCustomizerLink,
-				showSiteEditor,
-			} = this.props,
-			jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
+			path,
+			site,
+			translate,
+			canUserEditThemeOptions,
+			showCustomizerLink,
+			showSiteEditor,
+		} = this.props;
+		const jetpackEnabled = isEnabled( 'manage/themes-jetpack' );
 		let themesLink;
 
 		if ( site && ! canUserEditThemeOptions ) {
@@ -477,7 +481,7 @@ export class MySitesSidebar extends Component {
 		}
 
 		return (
-			<ul>
+			<Fragment>
 				{ showCustomizerLink && (
 					<SidebarItem
 						label={ translate( 'Customize' ) }
@@ -506,7 +510,7 @@ export class MySitesSidebar extends Component {
 					forceInternalLink
 					expandSection={ this.expandDesignSection }
 				/>
-			</ul>
+			</Fragment>
 		);
 	}
 
@@ -578,50 +582,45 @@ export class MySitesSidebar extends Component {
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<ExpandableSidebarMenu
-				onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
-				expanded={ this.props.isPlanSectionOpen }
-				title={
-					<>
-						<span className="menu-link-text" data-e2e-sidebar="Plan">
-							{ this.props.translate( 'Plan', { context: 'noun' } ) }
-						</span>
-						{ displayPlanName && (
-							<span className="sidebar__menu-link-secondary-text">
-								{ this.props.site?.plan.product_name_short }
+			<li>
+				<ExpandableSidebarMenu
+					onClick={ this.toggleSection( SIDEBAR_SECTION_PLAN ) }
+					expanded={ this.props.isPlanSectionOpen }
+					title={
+						<>
+							<span className="menu-link-text" data-e2e-sidebar="Plan">
+								{ this.props.translate( 'Plan', { context: 'noun' } ) }
 							</span>
-						) }
-					</>
-				}
-				customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
-			>
-				{ this.plans() }
-				<SidebarItem
-					label={ this.props.translate( 'Billing' ) }
-					tipTarget="purchases"
-					selected={ itemLinkMatches( '/purchases', this.props.path ) }
-					link={
-						this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
+							{ displayPlanName && (
+								<span className="sidebar__menu-link-secondary-text">
+									{ this.props.site?.plan.product_name_short }
+								</span>
+							) }
+						</>
 					}
-					onNavigate={ this.trackPurchasesClick }
-					preloadSectionName="site-purchases"
-					forceInternalLink
-					expandSection={ this.expandPlanSection }
-				/>
-			</ExpandableSidebarMenu>
+					customIcon={ <Gridicon icon="star" className="sidebar__menu-icon" size={ 24 } /> }
+				>
+					{ this.plans() }
+					<SidebarItem
+						label={ this.props.translate( 'Billing' ) }
+						tipTarget="purchases"
+						selected={ itemLinkMatches( '/purchases', this.props.path ) }
+						link={
+							this.props.site ? '/purchases/subscriptions/' + this.props.site.slug : '/me/purchases'
+						}
+						onNavigate={ this.trackPurchasesClick }
+						preloadSectionName="site-purchases"
+						forceInternalLink
+						expandSection={ this.expandPlanSection }
+					/>
+				</ExpandableSidebarMenu>
+			</li>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	plans() {
-		const {
-			canUserManageOptions,
-			hasPaidJetpackPlan,
-			hasPurchasedJetpackProduct,
-			path,
-			site,
-			translate,
-		} = this.props;
+		const { canUserManageOptions, path, site, siteSuffix, translate } = this.props;
 
 		if ( ! site ) {
 			return null;
@@ -639,30 +638,18 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let planLink = '/plans' + this.props.siteSuffix;
-
-		// Show plan details for upgraded sites
-		if ( hasPaidJetpackPlan || hasPurchasedJetpackProduct ) {
-			planLink = '/plans/my-plan' + this.props.siteSuffix;
-		}
-
-		const linkClass = classNames( {
-			selected: itemLinkMatches( [ '/plans' ], path ),
-		} );
-
-		const tipTarget = 'plan';
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className={ linkClass } data-tip-target={ tipTarget }>
-				<a className="sidebar__menu-link" onClick={ this.trackPlanClick } href={ planLink }>
-					<span className="menu-link-text" data-e2e-sidebar="Plan">
-						{ translate( 'Plans', { context: 'noun' } ) }
-					</span>
-				</a>
-			</li>
+			<SidebarItem
+				label={ translate( 'Plans', { context: 'noun' } ) }
+				tipTarget="plans"
+				selected={ itemLinkMatches( '/plans', path ) }
+				link={ '/plans' + siteSuffix }
+				onNavigate={ this.trackPlanClick }
+				preloadSectionName="plans"
+				forceInternalLink
+				expandSection={ this.expandPlanSection }
+			/>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 
 	trackStoreClick = () => {
@@ -864,19 +851,17 @@ export class MySitesSidebar extends Component {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
 			<SidebarMenu className="sidebar__wp-admin">
-				<ul>
-					<li data-tip-target="wpadmin">
-						<ExternalLink
-							className="sidebar__menu-link"
-							href={ adminUrl }
-							icon
-							onClick={ this.trackWpadminClick }
-						>
-							<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
-							<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
-						</ExternalLink>
-					</li>
-				</ul>
+				<li data-tip-target="wpadmin">
+					<ExternalLink
+						className="sidebar__menu-link"
+						href={ adminUrl }
+						icon
+						onClick={ this.trackWpadminClick }
+					>
+						<Gridicon className={ 'sidebar__menu-icon' } icon="my-sites" size={ 24 } />
+						<span className="menu-link-text">{ this.props.translate( 'WP Admin' ) }</span>
+					</ExternalLink>
+				</li>
 			</SidebarMenu>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
@@ -925,15 +910,13 @@ export class MySitesSidebar extends Component {
 		if ( this.props.isDomainOnly ) {
 			return (
 				<SidebarMenu>
-					<ul>
-						<SidebarItem
-							selected={ itemLinkMatches( '/domains', this.props.path ) }
-							label={ this.props.translate( 'Settings' ) }
-							link={ '/domains/manage' + this.props.siteSuffix }
-							onNavigate={ this.trackDomainSettingsClick }
-							tipTarget="settings"
-						/>
-					</ul>
+					<SidebarItem
+						selected={ itemLinkMatches( '/domains', this.props.path ) }
+						label={ this.props.translate( 'Settings' ) }
+						link={ '/domains/manage' + this.props.siteSuffix }
+						onNavigate={ this.trackDomainSettingsClick }
+						tipTarget="settings"
+					/>
 				</SidebarMenu>
 			);
 		}
@@ -954,12 +937,10 @@ export class MySitesSidebar extends Component {
 				<QuerySitePurchases siteId={ this.props.siteId } />
 
 				<SidebarMenu>
-					<ul>
-						{ this.customerHome() }
-						{ this.stats() }
-						{ this.planMenu() }
-						{ this.store() }
-					</ul>
+					{ this.customerHome() }
+					{ this.stats() }
+					{ this.planMenu() }
+					{ this.store() }
 				</SidebarMenu>
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
@@ -1012,12 +993,10 @@ export class MySitesSidebar extends Component {
 						title={ this.props.translate( 'Manage' ) }
 						materialIcon="settings"
 					>
-						<ul>
-							{ this.hosting() }
-							{ this.upgrades() }
-							{ this.users() }
-							{ this.siteSettings() }
-						</ul>
+						{ this.hosting() }
+						{ this.upgrades() }
+						{ this.users() }
+						{ this.siteSettings() }
 					</ExpandableSidebarMenu>
 				) }
 
@@ -1080,8 +1059,6 @@ function mapStateToProps( state ) {
 		customizeUrl: getCustomizerUrl( state, selectedSiteId ),
 		forceAllSitesView: isAllDomainsView,
 		hasJetpackSites: hasJetpackSites( state ),
-		hasPaidJetpackPlan: isCurrentPlanPaid( state, siteId ),
-		hasPurchasedJetpackProduct: siteHasJetpackProductPurchase( state, siteId ),
 		isDomainOnly: isDomainOnlySite( state, selectedSiteId ),
 		isJetpack,
 		shouldRenderJetpackSection: isJetpackSectionEnabledForSite( state, selectedSiteId ),
@@ -1117,6 +1094,7 @@ function mapStateToProps( state ) {
 		isCloudEligible: isJetpackCloudEligible( state, siteId ),
 		isAllSitesView: isAllDomainsView || getSelectedSiteId( state ) === null,
 		isWpMobile: isWpMobileApp(), // This doesn't rely on state, but we inject it here for future testability
+		sitePlanSlug: getSitePlanSlug( state, siteId ),
 	};
 }
 

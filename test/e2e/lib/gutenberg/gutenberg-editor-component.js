@@ -1,7 +1,8 @@
 /**
  * External dependencies
  */
-import { By, Key, until } from 'selenium-webdriver';
+
+import webdriver, { By, Key, until } from 'selenium-webdriver';
 import { kebabCase } from 'lodash';
 
 /**
@@ -10,7 +11,7 @@ import { kebabCase } from 'lodash';
 import * as driverHelper from '../driver-helper';
 import * as driverManager from '../driver-manager.js';
 import AsyncBaseContainer from '../async-base-container';
-import { ContactFormBlockComponent, GutenbergBlockComponent } from './blocks';
+import { ContactFormBlockComponent } from './blocks';
 import { ShortcodeBlockComponent } from './blocks/shortcode-block-component';
 import { ImageBlockComponent } from './blocks/image-block-component';
 import { FileBlockComponent } from './blocks/file-block-component';
@@ -169,7 +170,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 
 		await driverHelper.clickWhenClickable(
 			this.driver,
-			By.xpath( "//div[@aria-label='Options']//button[text()='Code editor']" )
+			By.xpath(
+				"//div[@aria-label='Options']//button[text()='Code editor']|//button[./span='Code editor']"
+			)
 		);
 
 		// Wait for the code editor element.
@@ -273,101 +276,128 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		await driverHelper.waitTillNotPresent( this.driver, inserterMenuSelector );
 	}
 
-	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
-	async addBlock( title ) {
-		title = title.charAt( 0 ).toUpperCase() + title.slice( 1 ); // Capitalize block name
-		let blockClass = kebabCase( title.toLowerCase() );
-		let hasChildBlocks = false;
-		let ariaLabel;
-		let prefix = '';
+	/**
+	 * Returns a list of titles for the block items currently shown in the main inserter.
+	 *
+	 * @returns {string[]} Array of block titles (i.e ['Open Table', 'Paypal']);
+	 */
+	async getShownBlockInserterItems() {
+		return this.driver
+			.findElements(
+				By.css(
+					'.edit-post-layout__inserter-panel .block-editor-block-types-list span.block-editor-block-types-list__item-title'
+				)
+			)
+			.then( ( els ) => webdriver.promise.map( els, ( el ) => el.getAttribute( 'innerText' ) ) );
+	}
+
+	/**
+	 * @typedef {Object} BlockSelectorSettings
+	 * @property {string} title The block title as it appears in the inserter
+	 * @property {string} blockClass The suffix that's part of a wrapper CSS class that's used to select the block button in the inserter.
+	 * Calcualted from the title if not present.
+	 * @property {string} prefix Also used to build the CSS class that's used to select the block in the inserter.
+	 * @property {string} ariaLabel The aria label text used to select the block element wrapper in the editor. Calculated from the title if not present.
+	 * @property {boolean} initsWithChildFocus Whether or not the block gives focus to its first child upon being created/rendered in the editor.
+	 */
+
+	/**
+	 * Returns an object with settings to be used to select the block button in
+	 * the inserter or the actual block in the editor. This is used by @see {@link addBlock}
+	 * to translate the title of a block into something it can use to select/find them.
+	 *
+	 * NOTE: In the future it'd be nice to return the actual block class (in `lib/gutenberg/blocks`) and move those attributes
+	 * there instead of creating yet another value object, like it's being done now. We might then rethink or remove
+	 * the @see {@link insertBlock} function, too.
+	 *
+	 * @param {string} title The block title.
+	 * @returns {BlockSelectorSettings} the selector settings for the given block, to be used by {@link addBlock}.
+	 */
+	getBlockSelectorSettings( title ) {
+		const defaultSettings = {
+			title: title.charAt( 0 ).toUpperCase() + title.slice( 1 ), // Capitalize block name
+			blockClass: kebabCase( title.toLowerCase() ),
+			initsWithChildFocus: false,
+			ariaLabel: `Block: ${ title }`,
+			prefix: '',
+		};
+
+		let blockSettings;
+
 		switch ( title ) {
 			case 'Instagram':
 			case 'Twitter':
 			case 'YouTube':
-				ariaLabel = 'Block: Embed';
-				prefix = 'embed-';
+				blockSettings = { ariaLabel: 'Block: Embed', prefix: 'embed-' };
 				break;
 			case 'Form':
-				prefix = 'jetpack-';
-				blockClass = 'contact-form';
+				blockSettings = { prefix: 'jetpack-', blockClass: 'contact-form' };
 				break;
 			case 'Simple Payments':
 			case 'Pay with PayPal':
-				prefix = 'jetpack-';
-				blockClass = 'simple-payments';
+				blockSettings = {
+					ariaLabel: 'Block: Pay with PayPal',
+					prefix: 'jetpack-',
+					blockClass: 'simple-payments',
+				};
 				break;
 			case 'Markdown':
-				prefix = 'jetpack-';
+				blockSettings = { prefix: 'jetpack-' };
 				break;
 			case 'Buttons':
 			case 'Click to Tweet':
 			case 'Hero':
-				prefix = 'coblocks-';
-				break;
 			case 'Pricing Table':
-				prefix = 'coblocks-';
-				hasChildBlocks = true;
-				break;
-			case 'Logos':
-				prefix = 'coblocks-';
-				blockClass = 'logos';
-				break;
-			case 'Dynamic HR':
-				prefix = 'coblocks-';
-				blockClass = 'dynamic-separator';
-				break;
-			case 'Heading':
-				break;
-			case 'Layout Grid':
-				prefix = 'jetpack-';
-				break;
-			case 'Blog Posts':
-				prefix = 'a8c-';
-				break;
-			case 'Subscription Form':
-				prefix = 'jetpack-';
-				blockClass = 'subscriptions';
-				break;
-			case 'Tiled Gallery':
-				prefix = 'jetpack-';
-				break;
-			case 'Contact Info':
-				prefix = 'jetpack-';
-				hasChildBlocks = true;
-				break;
-			case 'Slideshow':
-				prefix = 'jetpack-';
-				break;
-			case 'Star Rating':
-				prefix = 'jetpack-';
-				blockClass = 'rating-star';
+				blockSettings = { prefix: 'coblocks-' };
 				break;
 			case 'Masonry':
-				prefix = 'coblocks-';
-				blockClass = 'gallery-masonry';
+				blockSettings = { prefix: 'coblocks-', blockClass: 'gallery-masonry' };
+				break;
+			case 'Logos':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'logos' };
+				break;
+			case 'Dynamic HR':
+				blockSettings = { prefix: 'coblocks-', blockClass: 'dynamic-separator' };
+				break;
+			case 'Blog Posts':
+				blockSettings = { prefix: 'a8c-' };
+				break;
+			case 'Subscription Form':
+				blockSettings = { prefix: 'jetpack-', blockClass: 'subscriptions' };
+				break;
+			case 'Layout Grid':
+			case 'Tiled Gallery':
+			case 'Contact Info':
+			case 'Slideshow':
+				blockSettings = { prefix: 'jetpack-' };
+				break;
+			case 'Star Rating':
+				blockSettings = { prefix: 'jetpack-', blockClass: 'rating-star' };
+				break;
+			case 'Premium Content':
+				blockSettings = { blockClass: 'premium-content-container' };
 				break;
 		}
 
-		const selectorAriaLabel = ariaLabel || `Block: ${ title }`;
+		return { ...defaultSettings, ...blockSettings };
+	}
+	// return blockID - top level block id which is looks like `block-b91ce479-fb2d-45b7-ad92-22ae7a58cf04`. Should be used for further interaction with added block.
+	async addBlock( title ) {
+		const { ariaLabel, prefix, blockClass, initsWithChildFocus } = this.getBlockSelectorSettings(
+			title
+		);
 
+		// @TODO Remove the `deprecatedInserterBlockItemSelector` definition and usage after we activate GB 9.4.1 on production.
+		const deprecatedInserterBlockItemSelector = `.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`;
 		const inserterBlockItemSelector = By.css(
-			`.edit-post-layout__inserter-panel .block-editor-inserter__block-list button.editor-block-list-item-${ prefix }${ blockClass }`
+			`.edit-post-layout__inserter-panel .block-editor-block-types-list button.editor-block-list-item-${ prefix }${ blockClass }, ${ deprecatedInserterBlockItemSelector }`
 		);
 
-		let insertedBlockSelector = By.css(
+		const insertedBlockSelector = By.css(
 			`.block-editor-block-list__block.${
-				hasChildBlocks ? 'has-child-selected' : 'is-selected'
-			}[aria-label*='${ selectorAriaLabel }']`
+				initsWithChildFocus ? 'has-child-selected' : 'is-selected'
+			}[aria-label*='${ ariaLabel }']`
 		);
-
-		// @TODO: Remove this condition when Gutenberg v9.1 is deployed for all sites.
-		if ( title === 'Heading' ) {
-			const deprecatedSelector = insertedBlockSelector.value.replace(
-				selectorAriaLabel,
-				'Write heading…'
-			);
-			insertedBlockSelector = By.css( `${ insertedBlockSelector.value }, ${ deprecatedSelector }` );
-		}
 
 		await this.openBlockInserterAndSearch( title );
 
@@ -378,9 +408,9 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 		// The normal click is needed to avoid hovering the element, which seems
 		// to cause the element to become stale.
 		await driverHelper.clickWhenClickable( this.driver, inserterBlockItemSelector );
-
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, insertedBlockSelector );
-		return await this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
+
+		return this.driver.findElement( insertedBlockSelector ).getAttribute( 'id' );
 	}
 
 	/**
@@ -651,5 +681,20 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 				);
 			}
 		}
+	}
+
+	async clickUpgradeOnPremiumBlock() {
+		await driverHelper.waitTillPresentAndDisplayed(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css(
+				'.jetpack-upgrade-plan-banner__wrapper .is-primary:not(.jetpack-upgrade-plan__hidden)'
+			)
+		);
 	}
 }

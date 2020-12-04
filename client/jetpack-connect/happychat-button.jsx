@@ -2,7 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import HappychatButton from 'components/happychat/button';
-import HappychatConnection from 'components/happychat/connection-connected';
-import { isEnabled } from 'config';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import hasActiveHappychatSession from 'state/happychat/selectors/has-active-happychat-session';
-import isHappychatAvailable from 'state/happychat/selectors/is-happychat-available';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import HappychatButton from 'calypso/components/happychat/button';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import { isEnabled } from 'calypso/config';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import hasActiveHappychatSession from 'calypso/state/happychat/selectors/has-active-happychat-session';
+import isHappychatAvailable from 'calypso/state/happychat/selectors/is-happychat-available';
 
 const getHappyChatButtonClickHandler = ( eventName = 'calypso_jpc_chat_initiated' ) => () =>
 	recordTracksEvent( eventName );

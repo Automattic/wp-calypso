@@ -12,12 +12,13 @@
 	.threat-item-header__alert-filename {
 		font-size: $font-body;
 		line-height: 24px;
+		word-break: break-all;
 
 		@include breakpoint-deprecated( '>800px' ) {
 			font-size: $font-title-small;
 		}
 	}
-	
+
 	.threat-item-header__alert-filename {
 		word-break: break-all;
 	}
@@ -41,46 +42,19 @@
 
 	&__buttons {
 		display: flex;
-		justify-content: space-evenly;
+		justify-content: flex-end;
 
-		> button {
-			margin-top: 20px;
-		}
-	}
-
-	&__fix-button.is-summary {
-		display: none;
-
-		@include breakpoint-deprecated( '>800px' ) {
-			display: inline-block;
-			margin-left: 20px;
-		}
-	}
-
-	&__fix-button.is-details {
-		display: inline-block;
-		width: 100%;
-		margin-left: 0;
-
-		@include breakpoint-deprecated( '>800px' ) {
-			display: none;
-		}
 	}
 
 	.foldable-card__action.foldable-card__expand {
 		border: none;
 	}
-
-	.foldable-card__header {
-		border-bottom: 1px solid var( --studio-gray-5 );
-	}
 }
 
-.button.is-compact {
+.button {
 	&.threat-item__fix-button,
+	&.threat-item__codeable-button,
 	&.threat-item__ignore-button {
-		width: 170px;
-		padding: 10px 30px;
 		margin-inline-start: 5px;
 		margin-inline-end: 5px;
 		border-width: 1px;

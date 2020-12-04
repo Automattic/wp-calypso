@@ -41,9 +41,11 @@ const cachePath = path.resolve( '.cache' );
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
  * @param  {object}  argv.entry                    Entry point(s)
+ * @param  {string}  argv.'output-chunk-filename'  Output chunk filename
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
+ * @param  {string}  argv.'output-jsonp-function'  Output jsonp function
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
@@ -54,6 +56,7 @@ function getWebpackConfig(
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
+		'output-jsonp-function': outputJsonpFunction = 'webpackJsonp',
 	}
 ) {
 	const workerCount = 1;
@@ -88,6 +91,7 @@ function getWebpackConfig(
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
+			jsonpFunction: outputJsonpFunction,
 		},
 		optimization: {
 			minimize: ! isDevelopment,
@@ -128,6 +132,7 @@ function getWebpackConfig(
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

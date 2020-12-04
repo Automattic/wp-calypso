@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { calculateMonthlyPriceForPlan } from 'lib/plans';
+import { calculateMonthlyPriceForPlan } from 'calypso/lib/plans';
 import { getPlan } from './plan';
 
-import 'state/plans/init';
+import 'calypso/state/plans/init';
 
 /**
  * Returns a plan price

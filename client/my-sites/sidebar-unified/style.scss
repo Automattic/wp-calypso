@@ -4,35 +4,67 @@
 // Override Global Vars
 .is-nav-unification {
 	// client/assets/stylesheets/shared/_variables.scss
-	--sidebar-width-max: 200px;
-	--sidebar-width-min: 200px;
+	--sidebar-width-max: 272px;
+	--sidebar-width-min: 272px;
 
 	--color-sidebar-background: #23282d;
 	--color-sidebar-background-rgb: 35, 40, 45;
-	--color-sidebar-menu-hover-background: #32373c;
-	--color-sidebar-menu-hover-background-rgb: rgb( #32373c );
-	--color-sidebar-menu-hover-heading-background: #1a1e23;
-	--color-sidebar-menu-hover: #00b9eb;
+	--color-sidebar-menu-hover-background: #1a1e23;
+	--color-sidebar-menu-hover-background-rgb: rgb( var( --color-sidebar-menu-hover-background ) );
 	--color-sidebar-menu-hover-text: #00b9eb;
 	--color-sidebar-menu-selected-background: #0073aa;
+	--color-sidebar-menu-selected-text: white;
 	--color-sidebar-border: #333333;
 	--color-sidebar-text: #eee;
 	--color-sidebar-text-alternative: #a2aab2;
 	--color-sidebar-gridicon-fill: #a2aab2;
+	--color-sidebar-notice-background: #3c434a;
+
+	--color-sidebar-submenu-background: #32373c;
+	--color-sidebar-submenu-text: #b4b9be;
+	--color-sidebar-submenu-hover-background: transparent;
+	--color-sidebar-submenu-hover-text: #00b9eb;
+	--color-sidebar-submenu-selected-background: transparent;
+	--color-sidebar-submenu-selected-text: white;
+
+	.is-sidebar-collapsed:not( .is-section-reader ):not( .is-section-me ) & {
+		--sidebar-width-max: 36px;
+		--sidebar-width-min: 36px;
+	}
 }
 
 // Local Vars
 $sidebar-item-padding: 8px 0;
 $font-size: rem( 14px );
 
+.clear-secondary-layout-transitions {
+	// client/layout/style.scss | Workaround to avoid site-selector being transitioning while expanding the sidebar (client/my-sites/sidebar-unified/index.jsx).
+	.layout__secondary .site-selector {
+		transition: none;
+		overflow: hidden;
+	}
+}
+
 .is-nav-unification {
 	// client/layout/sidebar/style.scss
 	.sidebar {
+		position: relative;
 		background-color: var( --color-sidebar-background );
 		padding-bottom: 12px;
+		min-height: calc( 100vh - var( --masterbar-height ) );
+		box-sizing: border-box;
 
 		.sidebar__separator {
 			margin: 0 0 11px;
+		}
+
+		.site__content {
+			padding: 10px 0 10px 8px;
+		}
+
+		.site__home {
+			left: 8px;
+			top: 10px;
 		}
 
 		.sidebar__heading,
@@ -47,14 +79,30 @@ $font-size: rem( 14px );
 
 			&:hover,
 			&:focus {
-				background-color: var( --color-sidebar-menu-hover-heading-background );
-				color: var( --color-sidebar-menu-hover );
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
+			}
+
+			&::after {
+				content: ' ';
+				display: none;
+				position: absolute;
+				top: 50%;
+				right: 0;
+				width: 0;
+				height: 0;
+				margin-top: -8px;
+				border: solid 8px transparent;
+				border-right-color: #f1f1f1;
+				pointer-events: none;
 			}
 		}
 
 		.sidebar__expandable-title,
 		.sidebar__menu-link-text {
 			padding: $sidebar-item-padding;
+			max-height: 34px;
+			box-sizing: border-box;
 		}
 
 		.sidebar__expandable-arrow,
@@ -65,7 +113,7 @@ $font-size: rem( 14px );
 		}
 
 		.sidebar__expandable-content {
-			background: #32373c;
+			background: var( --color-sidebar-submenu-background );
 			padding: 7px 0 8px;
 
 			.sidebar__menu-link {
@@ -74,18 +122,18 @@ $font-size: rem( 14px );
 				font-size: rem( 13px );
 				line-height: 1.4;
 				font-weight: 400;
-				color: #b4b9be;
+				color: var( --color-sidebar-submenu-text );
 
 				&:hover,
 				&:focus {
-					background-color: transparent;
-					color: var( --color-sidebar-menu-hover );
+					background-color: var( --color-sidebar-submenu-hover-background );
+					color: var( --color-sidebar-submenu-hover-text );
 				}
 			}
 
 			.selected .sidebar__menu-link {
-				background-color: transparent;
-				color: white;
+				background-color: var( --color-sidebar-submenu-selected-background );
+				color: var( --color-sidebar-submenu-selected-text );
 				font-weight: 600;
 			}
 
@@ -96,26 +144,43 @@ $font-size: rem( 14px );
 
 		.sidebar__menu-icon {
 			color: var( --color-sidebar-gridicon-fill );
+			margin-right: 8px;
+		}
+
+		img.sidebar__menu-icon {
+			opacity: 0.6;
 		}
 
 		.sidebar__menu-item-parent {
 			&.selected {
 				.sidebar__menu-link {
 					background: var( --color-sidebar-menu-selected-background );
-					color: white;
+					color: var( --color-sidebar-menu-selected-text );
 
 					.sidebar__menu-icon {
-						color: white;
+						color: var( --color-sidebar-menu-selected-text );
+					}
+
+					img.sidebar__menu-icon {
+						opacity: 1;
+					}
+
+					&::after {
+						display: block;
 					}
 				}
 			}
 		}
 
 		.sidebar__menu,
-		.sidebar__menu-item-parent {
+		.sidebar__menu-item-parent,
+		.sidebar__menu-link {
 			&:hover {
 				.sidebar__menu-icon {
-					color: var( --color-sidebar-menu-hover );
+					color: var( --color-sidebar-menu-hover-text );
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
 				}
 			}
 		}
@@ -125,43 +190,212 @@ $font-size: rem( 14px );
 			.sidebar__heading {
 				padding: 0 0 0 8px;
 				font-weight: 400;
+			}
+		}
 
-				&::after {
-					display: none;
-					right: 0;
-					border: solid 8px transparent;
-					content: ' ';
-					height: 0;
-					width: 0;
-					position: absolute;
-					pointer-events: none;
-					border-right-color: #f1f1f1;
-					top: 50%;
-					margin-top: -8px;
-				}
+		// Is togglable but selected
+		.sidebar__menu.sidebar__menu--selected .sidebar__heading {
+			&::after {
+				display: block;
 			}
 		}
 
 		// Is toggled open
 		.sidebar__menu.is-toggle-open {
 			.sidebar__heading {
-				background: var( --color-sidebar-menu-hover-heading-background );
+				background: var( --color-sidebar-menu-hover-background );
 
 				&:hover {
 					.sidebar__menu-icon {
-						color: var( --color-sidebar-menu-hover );
+						color: var( --color-sidebar-menu-hover-text );
 					}
-				}
-
-				&::after {
-					display: block;
+					img.sidebar__menu-icon {
+						opacity: 1;
+					}
 				}
 
 				.sidebar__menu-icon {
 					color: #fff;
 				}
-
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
 			}
+			// Is toggled open and selected
+			&.sidebar__menu--selected .sidebar__heading {
+				background: var( --color-sidebar-menu-selected-background );
+				color: var( --color-sidebar-menu-selected-text );
+
+				.sidebar__menu-icon {
+					color: var( --color-sidebar-menu-selected-text );
+				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+		}
+
+		.notice {
+			/* stylelint-disable-next-line scales/font-weight */
+			font-weight: 300;
+
+			&.is-compact {
+				margin: 0;
+				align-items: center;
+				min-height: 34px;
+			}
+
+			.notice__icon-wrapper {
+				background-color: transparent;
+				width: 35px;
+
+				.notice__icon-wrapper-drop {
+					top: calc( 50% - 9px );
+					left: calc( 50% - 9px );
+					width: 18px;
+					height: 18px;
+					border-radius: 50%;
+				}
+			}
+
+			.notice__content {
+				padding: 10px 10px 10px 4px;
+				overflow-wrap: anywhere;
+			}
+
+			.notice__action {
+				color: #fff;
+				font-weight: 600;
+				padding-right: 12px;
+			}
+		}
+	}
+
+	//client/components/site-selector/style.scss
+	.site-selector .site.is-highlighted {
+		background-color: var ( --color-sidebar-submenu-background );
+	}
+
+	.site-selector .site.is-highlighted .site__domain,
+	.site-selector .site.is-highlighted .site__title {
+		color: var( --color-sidebar-text );
+	}
+
+	// client/blocks/upsell-nudge/style.scss
+	.upsell-nudge.banner.card.is-compact {
+		background-color: #fff;
+		color: #000;
+		padding: 7px 12px 7px 4px;
+		line-height: 26px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__content {
+		padding-left: 3px;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__info .banner__title {
+		color: #000;
+	}
+
+	.upsell-nudge.banner.card.is-compact .banner__action {
+		margin-left: 0;
+	}
+
+	// client/my-sites/current-site/style.scss
+	.current-site__switch-sites:hover .button.is-borderless:hover {
+		background-color: var( --color-sidebar-menu-hover-background );
+	}
+
+	.current-site__switch-sites .button.is-borderless {
+		color: var( --color-sidebar-text-alternative );
+		padding: 6px 8px 6px 36px;
+	}
+
+	.current-site__switch-sites .button.is-borderless .gridicon {
+		height: 20px;
+		width: 20px;
+		top: 9px;
+		left: 8px;
+	}
+
+	// client/blocks/site/style.scss
+	.site__content,
+	.all-sites .all-sites__content {
+		padding: 10px 0 10px 8px;
+	}
+
+	.is-sidebar-collapsed & {
+		.dashicons-admin-collapse::before {
+			transform: rotate( 180deg );
+		}
+
+		// client/my-sites/current-site/style.scss
+		.current-site__switch-sites .button.is-borderless {
+			height: 34px;
+			padding: 0;
+		}
+
+		.site-selector .search .search__open-icon {
+			width: auto;
+		}
+
+		.current-site__switch-sites-label {
+			display: none;
+		}
+
+		.current-site .site .site__info {
+			display: none;
+		}
+
+		.site__content {
+			padding: 10px 2px;
+		}
+
+		.site__home {
+			left: 2px;
+		}
+
+		.site .site-icon {
+			margin-bottom: 4px;
+		}
+
+		// client/blocks/upsell-nudge/style.scss
+		.current-site__notices > a::before {
+			content: '\f534';
+			font-family: 'dashicons';
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: 20px;
+			line-height: 20px;
+			background-color: #a7aaad;
+			color: white;
+			border-radius: 50%;
+			margin: 3px 0 3px 1px;
+		}
+
+		.upsell-nudge.banner.card.is-compact .banner__content {
+			display: none;
+		}
+
+		.sidebar__heading,
+		.sidebar__menu-link,
+		.sidebar__menu.is-togglable .sidebar__heading {
+			overflow: hidden;
+
+			&::after {
+				border-width: 4px;
+				margin-top: -4px;
+			}
+		}
+
+		.sidebar .notice {
+			.notice__content,
+			.notice__action {
+				display: none;
+			}
+		}
+
+		// Is toggled open
+		.sidebar__menu {
 			// Is toggled open and selected
 			&.sidebar__menu--selected .sidebar__heading {
 				background: var( --color-sidebar-menu-selected-background );
@@ -170,29 +404,67 @@ $font-size: rem( 14px );
 				.sidebar__menu-icon {
 					color: #fff;
 				}
+				img.sidebar__menu-icon {
+					opacity: 1;
+				}
+			}
+
+			&.is-togglable:not( .is-toggle-open ):hover .sidebar__heading::after {
+				border-width: 4px;
+				margin-top: -4px;
 			}
 		}
 	}
 
-	//client/components/site-selector/style.scss
-	.site-selector .site.is-highlighted {
-		background-color: var ( --color-sidebar-menu-hover-background );
+	.collapse-sidebar__toggle {
+		.sidebar__menu-link {
+			cursor: pointer;
+			color: var( --color-sidebar-text-alternative );
+			/* stylelint-disable-next-line scales/font-size */
+			font-size: rem( 13px );
+
+			&:hover,
+			&:focus {
+				background-color: transparent;
+			}
+		}
+
+		.sidebar__menu-icon {
+			margin-top: 1px;
+		}
 	}
 
-	.site-selector .site.is-highlighted .site__domain,
-	.site-selector .site.is-highlighted .site__title {
-		color: var( --color-sidebar-text );
+	.sidebar-unified__menu-loading {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
 	}
 
-	.site__badge {
-		background: var( --color-sidebar-text );
+	.sidebar-unified__sparkline {
+		width: 80px;
+		height: 21px;
+		margin-right: 8px;
+	}
+
+	/*
+	 * Because the sparkline is an image, there's an exception here
+	 * where specific color schemes are targeted instead of using
+	 * CSS variables. This ensures that the sparkline can still be
+	 * seen (as white) on some of the darker color schemes.
+	 */
+	.is-classic-blue .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+	.is-powder-snow .sidebar__menu li.stats.selected .sidebar-unified__sparkline,
+	.is-nightfall .sidebar__menu li.stats.selected .sidebar-unified__sparkline {
+		filter: brightness( 100 );
+		-webkit-filter: brightness( 100 );
 	}
 }
 
 // Flyout menu (showing from >782px)
 @media screen and ( min-width: 783px ) {
 	.is-nav-unification {
-
 		// client/layout/style.scss
 		// layout/sidebar/style.scss
 		// TODO: For prototype only, this prevents the sidebar from being scrollable.
@@ -207,25 +479,27 @@ $font-size: rem( 14px );
 			}
 		}
 
-		.sidebar__menu.is-togglable:not( .is-toggle-open ):hover {
+		.sidebar__menu.is-togglable:not( .is-toggle-open ).hovered {
+			// .hovered is handled in client/layout/sidebar/expandable.jsx. Needed for repositioning and hover intent.
 			position: relative;
 
 			.sidebar__heading {
-				background-color: var( --color-sidebar-menu-hover-heading-background );
-				color: var( --color-sidebar-menu-hover );
+				background-color: var( --color-sidebar-menu-hover-background );
+				color: var( --color-sidebar-menu-hover-text );
 			}
 
 			// indicator arrow
 			.sidebar__heading::after {
 				display: block;
-				border-right-color: var( --color-sidebar-menu-hover-background );
+				border-right-color: var( --color-sidebar-submenu-background );
 			}
 
 			// flyout content
 			.sidebar__expandable-content {
 				display: block;
-				position: absolute;
 				top: 0;
+				bottom: auto;
+				position: absolute;
 				left: var( --sidebar-width-max );
 				width: 160px;
 
@@ -242,9 +516,28 @@ $font-size: rem( 14px );
 	.is-nav-unification {
 		&.focus-content .layout__content {
 			padding: 71px 24px 24px;
+			transition: padding 0.15s ease-in-out;
 		}
 
 		.sidebar {
+			// client/my-sites/current-site/style.scss
+			.site__content {
+				padding: 18px 0 18px 12px;
+			}
+
+			.current-site__switch-sites .button.is-borderless {
+				padding: 11px 8px 11px 38px;
+			}
+
+			.site__home {
+				left: 12px;
+				top: 18px;
+			}
+
+			.current-site__switch-sites .button.is-borderless .gridicon {
+				top: 14px;
+			}
+
 			.sidebar__separator {
 				margin: 0 0 11px;
 			}
@@ -269,6 +562,7 @@ $font-size: rem( 14px );
 			.sidebar__expandable-title,
 			.sidebar__menu-link-text {
 				padding: 13px 0;
+				max-height: inherit;
 			}
 
 			.sidebar__expandable-content {
@@ -281,6 +575,19 @@ $font-size: rem( 14px );
 			.sidebar__menu.is-toggle-open .sidebar__heading::after {
 				display: none;
 			}
+
+			.collapse-sidebar__toggle {
+				display: none;
+			}
+		}
+	}
+}
+
+@media screen and ( max-width: 660px ) {
+	// client/layout/sidebar/style.scss
+	.is-nav-unification {
+		.sidebar {
+			position: absolute;
 		}
 	}
 }

@@ -5,7 +5,7 @@ The `TermFormDialog` component renders a dialog that allows to create/edit Terms
 ## Usage
 
 ```jsx
-import TermFormDialog from 'blocks/term-form-dialog';
+import TermFormDialog from 'calypso/blocks/term-form-dialog';
 
 <TermFormDialog showDialog={ true } taxonomy="category" onClose={ callback } postType="post" />;
 ```

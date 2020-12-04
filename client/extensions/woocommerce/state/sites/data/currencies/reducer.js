@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_CURRENCIES_REQUEST,
 	WOOCOMMERCE_CURRENCIES_REQUEST_SUCCESS,

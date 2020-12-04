@@ -19,10 +19,10 @@ import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
 import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
-		cart: PropTypes.object,
 		isJetpack: PropTypes.bool,
 		path: PropTypes.string.isRequired,
 		shouldShowMyPlan: PropTypes.bool,
@@ -52,8 +52,7 @@ class PlansNavigation extends React.Component {
 		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const cartToggleButton = this.cartToggleButton();
-		const hasPinnedItems = isMobile() && cartToggleButton != null;
+		const hasPinnedItems = isMobile() && config.isEnabled( 'upgrades/checkout' ) && site;
 
 		return (
 			site && (
@@ -63,14 +62,6 @@ class PlansNavigation extends React.Component {
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
-							</NavItem>
-						) }
 						<NavItem
 							path={ `/plans/${ site.slug }` }
 							selected={
@@ -79,8 +70,21 @@ class PlansNavigation extends React.Component {
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
+						{ shouldShowMyPlan && (
+							<NavItem
+								path={ `/plans/my-plan/${ site.slug }` }
+								selected={ path === '/plans/my-plan' }
+							>
+								{ translate( 'My Plan' ) }
+							</NavItem>
+						) }
 					</NavTabs>
-					{ cartToggleButton }
+					<CartToggleButton
+						site={ this.props.site }
+						toggleCartVisibility={ this.toggleCartVisibility }
+						cartVisible={ this.state.cartVisible }
+						path={ this.props.path }
+					/>
 				</SectionNav>
 			)
 		);
@@ -93,23 +97,35 @@ class PlansNavigation extends React.Component {
 	onMobileNavPanelOpen = () => {
 		this.setState( { cartVisible: false } );
 	};
+}
 
-	cartToggleButton() {
-		if ( ! config.isEnabled( 'upgrades/checkout' ) || ! this.props.cart || ! this.props.site ) {
-			return null;
-		}
-
-		return (
-			<PopoverCart
-				cart={ this.props.cart }
-				selectedSite={ this.props.site }
-				onToggle={ this.toggleCartVisibility }
-				pinned={ isMobile() }
-				visible={ this.state.cartVisible }
-				path={ this.props.path }
-			/>
-		);
+function CartToggleButton( {
+	site,
+	toggleCartVisibility,
+	cartVisible,
+	path,
+	closeSectionNavMobilePanel,
+} ) {
+	if ( ! config.isEnabled( 'upgrades/checkout' ) || ! site ) {
+		return null;
 	}
+
+	const onToggle = () => {
+		closeSectionNavMobilePanel();
+		toggleCartVisibility();
+	};
+
+	return (
+		<CalypsoShoppingCartProvider>
+			<PopoverCart
+				selectedSite={ site }
+				onToggle={ onToggle }
+				pinned={ isMobile() }
+				visible={ cartVisible }
+				path={ path }
+			/>
+		</CalypsoShoppingCartProvider>
+	);
 }
 
 export default connect( ( state ) => {

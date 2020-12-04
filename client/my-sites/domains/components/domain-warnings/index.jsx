@@ -11,15 +11,19 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import PendingGSuiteTosNotice from './pending-gsuite-tos-notice';
-import { purchasesRoot } from 'me/purchases/paths';
-import { type as domainTypes, transferStatus, gdprConsentStatus } from 'lib/domains/constants';
-import { hasPendingGSuiteUsers } from 'lib/gsuite';
-import { isSubdomain } from 'lib/domains';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import {
+	type as domainTypes,
+	transferStatus,
+	gdprConsentStatus,
+} from 'calypso/lib/domains/constants';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import { isSubdomain } from 'calypso/lib/domains';
 import {
 	CHANGE_NAME_SERVERS,
 	DOMAINS,
@@ -28,15 +32,15 @@ import {
 	MAP_SUBDOMAIN,
 	SETTING_PRIMARY_DOMAIN,
 	MAP_DOMAIN_CHANGE_NAME_SERVERS,
-} from 'lib/url/support';
+} from 'calypso/lib/url/support';
 import {
 	domainManagementEdit,
 	domainManagementList,
 	domainManagementNameServers,
 	domainManagementTransferIn,
 	domainManagementManageConsent,
-} from 'my-sites/domains/paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
+} from 'calypso/my-sites/domains/paths';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
 
 /**
  * Style dependencies
@@ -638,7 +642,8 @@ export class DomainWarnings extends React.PureComponent {
 
 		if ( domains.length === 1 ) {
 			const domain = domains[ 0 ].name;
-			let fullMessage, compactMessage;
+			let fullMessage;
+			let compactMessage;
 			if ( severity === 'is-error' ) {
 				fullMessage = translate(
 					'Your domain {{strong}}%(domain)s{{/strong}} may be suspended because your email address is not verified.',
@@ -681,7 +686,9 @@ export class DomainWarnings extends React.PureComponent {
 			);
 		}
 
-		let fullContent, compactContent, compactNoticeText;
+		let fullContent;
+		let compactContent;
+		let compactNoticeText;
 
 		const editLink = ( name ) => domainManagementEdit( this.props.selectedSite.slug, name );
 		if ( severity === 'is-error' ) {
@@ -758,20 +765,20 @@ export class DomainWarnings extends React.PureComponent {
 
 		if ( domains.length === 1 ) {
 			const fullMessage = translate(
-					'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
-						'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
-					{
-						components: { strong: <strong /> },
-						args: {
-							domain: domains[ 0 ].name,
-							owner: domains[ 0 ].owner,
-						},
-					}
-				),
-				compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
+				'The domain {{strong}}%(domain)s{{/strong}} may be suspended because the owner, ' +
+					'{{strong}}%(owner)s{{/strong}}, has not verified their contact information.',
+				{
 					components: { strong: <strong /> },
-					args: { domain: domains[ 0 ].name },
-				} );
+					args: {
+						domain: domains[ 0 ].name,
+						owner: domains[ 0 ].owner,
+					},
+				}
+			);
+			const compactMessage = translate( 'Issues with {{strong}}%(domain)s{{/strong}}', {
+				components: { strong: <strong /> },
+				args: { domain: domains[ 0 ].name },
+			} );
 			return (
 				<Notice
 					isCompact={ this.props.isCompact }
@@ -786,19 +793,19 @@ export class DomainWarnings extends React.PureComponent {
 		}
 
 		const fullContent = (
-				<span>
-					{ translate(
-						'Some domains on this site are about to be suspended because their owner has not ' +
-							'verified their contact information.'
-					) }
-					<ul>
-						{ domains.map( ( domain ) => {
-							return <li key={ domain.name }>{ domain.name }</li>;
-						} ) }
-					</ul>
-				</span>
-			),
-			compactNoticeText = translate( 'Issues with domains on this site' );
+			<span>
+				{ translate(
+					'Some domains on this site are about to be suspended because their owner has not ' +
+						'verified their contact information.'
+				) }
+				<ul>
+					{ domains.map( ( domain ) => {
+						return <li key={ domain.name }>{ domain.name }</li>;
+					} ) }
+				</ul>
+			</span>
+		);
+		const compactNoticeText = translate( 'Issues with domains on this site' );
 
 		return (
 			<Notice
@@ -836,17 +843,17 @@ export class DomainWarnings extends React.PureComponent {
 
 		const { translate } = this.props;
 		const compactNotice = translate( '{{strong}}%(domain)s{{/strong}} is pending transfer.', {
+			components: { strong: <strong /> },
+			args: { domain: domain.name },
+		} );
+		const fullNotice = translate(
+			'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
+				'You must wait for the transfer to finish, and then update the settings at the new registrar.',
+			{
 				components: { strong: <strong /> },
 				args: { domain: domain.name },
-			} ),
-			fullNotice = translate(
-				'{{strong}}%(domain)s{{/strong}} is pending transfer. ' +
-					'You must wait for the transfer to finish, and then update the settings at the new registrar.',
-				{
-					components: { strong: <strong /> },
-					args: { domain: domain.name },
-				}
-			);
+			}
+		);
 
 		return (
 			<Notice

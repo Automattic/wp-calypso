@@ -2,7 +2,7 @@
 .register-domain-step__search {
 	padding-bottom: 12px;
 
-	&.register-domain-step__search-domain-step-test:not( .is-sticky ) {
+	&.register-domain-step__search-domain-step:not( .is-sticky ) {
 		padding-bottom: 24px;
 
 		@include breakpoint-deprecated( '>660px' ) {
@@ -72,7 +72,8 @@
 	border-radius: 0;
 
 	// from components/card/style.scss
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+		0 1px 2px var( --color-neutral-0 );
 
 	// from components/domains/domain-suggestion/style
 	// NOTE: easeOutExpo easing function from http://easings.net/#easeOutExpo

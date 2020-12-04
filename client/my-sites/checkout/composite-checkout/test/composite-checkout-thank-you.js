@@ -105,6 +105,25 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/offer-quickstart-session/:receiptId/foo.bar' );
 	} );
 
+	// Note: This just verifies the existing behavior; this URL is invalid unless
+	// placed after a `redirectTo` query string; see the redirect payment
+	// processor
+	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
+	} );
+
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
 		const cart = { products: [ { id: 'something' } ] };
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
@@ -562,6 +581,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [
 				{
 					product_slug: 'value_bundle',
+					bill_period: 365,
 				},
 			],
 		};
@@ -572,6 +592,25 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+	} );
+
+	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle_monthly',
+					bill_period: 31,
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
 	} );
 
 	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {

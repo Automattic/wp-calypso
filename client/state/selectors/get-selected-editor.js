@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import isClassicEditorForced from 'state/selectors/is-classic-editor-forced';
+import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
 
 /**
  * Returns the editor of the selected site

@@ -10,7 +10,7 @@ import {
 } from '@automattic/data-stores';
 import { dispatch, select } from '@wordpress/data-controls';
 import guessTimezone from '../../../../lib/i18n-utils/guess-timezone';
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'calypso/lib/i18n-utils';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -22,7 +22,7 @@ import { SITE_STORE } from '../site';
 import { PLANS_STORE } from '../plans';
 import type { State } from '.';
 import type { FontPair } from '../../constants';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 type CreateSiteParams = Site.CreateSiteParams;
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
@@ -71,7 +71,7 @@ export function* createSite(
 			// so we can match directories in
 			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
 			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug || 'football',
+			site_vertical_slug: siteVertical?.slug,
 			site_information: {
 				title: blogTitle,
 			},
@@ -87,9 +87,13 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
+			...( ! isEnabled( 'coming-soon-v2' ) &&
+				visibility === Site.Visibility.Private && {
+					wpcom_coming_soon: 1,
+				} ),
 			...( isEnabled( 'coming-soon-v2' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
-					wpcom_public_coming_soon: true,
+					wpcom_public_coming_soon: 1,
 				} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),

@@ -12,10 +12,10 @@ import thunk from 'redux-thunk';
 /**
  * Internal dependencies
  */
-import { combineReducers } from 'state/utils';
-import signupReducer from 'state/signup/reducer';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { getSignupProgress } from 'state/signup/progress/selectors';
+import { combineReducers } from 'calypso/state/utils';
+import signupReducer from 'calypso/state/signup/reducer';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import SignupFlowController from '../flow-controller';
 
 jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );

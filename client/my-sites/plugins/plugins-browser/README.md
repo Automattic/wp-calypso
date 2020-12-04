@@ -5,7 +5,7 @@ This component renders the main plugins browser page.
 ## How to use
 
 ```js
-import BrowserMainView from 'my-sites/plugins/plugins-browser';
+import BrowserMainView from 'calypso/my-sites/plugins/plugins-browser';
 
 function render() {
 	return (

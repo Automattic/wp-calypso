@@ -12,15 +12,11 @@ import { assert } from 'chai';
  */
 import actions from './fixtures/actions';
 import site from './fixtures/site';
+import Dispatcher from 'calypso/dispatcher';
+import ViewersStore from '../store';
 
 describe( 'Viewers Store', () => {
 	const siteId = site.ID;
-	let Dispatcher, ViewersStore;
-
-	beforeEach( () => {
-		Dispatcher = require( 'dispatcher' );
-		ViewersStore = require( '../store' );
-	} );
 
 	describe( 'Shape of store', () => {
 		test( 'Store should be an object', () => {
@@ -48,10 +44,8 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'Should return an array of objects when there are viewers', () => {
-			let viewers;
-
 			Dispatcher.handleServerAction( actions.fetchedViewers );
-			viewers = ViewersStore.getViewers( siteId );
+			const viewers = ViewersStore.getViewers( siteId );
 
 			assert.isArray( viewers, 'viewers is an array' );
 			assert.isObject( viewers[ 0 ] );
@@ -59,7 +53,8 @@ describe( 'Viewers Store', () => {
 	} );
 
 	describe( 'Fetch Viewers', () => {
-		let viewers, viewersAgain;
+		let viewers;
+		let viewersAgain;
 		beforeEach( () => {
 			Dispatcher.handleServerAction( actions.fetchedViewers );
 			viewers = ViewersStore.getViewers( siteId );
@@ -127,14 +122,12 @@ describe( 'Viewers Store', () => {
 		} );
 
 		test( 'Should restore a single viewer on removal error.', () => {
-			let viewersAfterRemove, viewersAfterError;
-
 			Dispatcher.handleServerAction( actions.removeViewer );
-			viewersAfterRemove = ViewersStore.getViewers( siteId );
+			const viewersAfterRemove = ViewersStore.getViewers( siteId );
 			assert.lengthOf( viewersAfterRemove, 1 );
 
 			Dispatcher.handleServerAction( actions.removeViewerError );
-			viewersAfterError = ViewersStore.getViewers( siteId );
+			const viewersAfterError = ViewersStore.getViewers( siteId );
 			assert.lengthOf( viewersAfterError, 2 );
 		} );
 	} );

@@ -48,7 +48,7 @@ function SiteIcon( { siteId, site, iconUrl, size, imgSize, isTransientIcon } ) {
 			{ iconSrc ? (
 				<MediaImage component={ Image } className="site-icon__img" src={ iconSrc } alt="" />
 			) : (
-				<Gridicon icon="site" size={ Math.round( size / 1.3 ) } />
+				<Gridicon icon="globe" size={ Math.round( size / 1.8 ) } />
 			) }
 			{ isTransientIcon && <Spinner /> }
 		</div>

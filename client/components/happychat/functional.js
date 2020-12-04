@@ -49,7 +49,8 @@ export const when = ( condition, ifTrue, ifFalse = () => null ) => ( ...args ) =
  */
 
 export const first = ( ...fns ) => ( ...args ) => {
-	let i, result;
+	let i;
+	let result;
 	for ( i = 0; i < fns.length; i++ ) {
 		result = fns[ i ]( ...args );
 		if ( result ) {

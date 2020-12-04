@@ -111,7 +111,7 @@ export class PendingPayments extends Component {
 		}
 
 		return (
-			<Main className="pending-payments">
+			<Main className="pending-payments is-wide-layout">
 				<PageViewTracker path="/me/purchases/pending" title="Pending Payments" />
 				<MeSidebarNavigation />
 				<PurchasesHeader section="pending" />

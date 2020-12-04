@@ -8,19 +8,34 @@ import { Provider as ReduxProvider } from 'react-redux';
  * Internal dependencies
  */
 import { makeLayoutMiddleware } from './shared.js';
-import LayoutLoggedOut from 'layout/logged-out';
-import CalypsoI18nProvider from 'components/calypso-i18n-provider';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import { RouteProvider } from 'calypso/components/route';
 
 /**
  * Re-export
  */
 export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
 
-const ProviderWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUri } ) => (
+const ProviderWrappedLoggedOutLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => (
 	<CalypsoI18nProvider>
-		<ReduxProvider store={ store }>
-			<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
-		</ReduxProvider>
+		<RouteProvider
+			currentSection={ currentSection }
+			currentRoute={ currentRoute }
+			currentQuery={ currentQuery }
+		>
+			<ReduxProvider store={ store }>
+				<LayoutLoggedOut primary={ primary } secondary={ secondary } redirectUri={ redirectUri } />
+			</ReduxProvider>
+		</RouteProvider>
 	</CalypsoI18nProvider>
 );
 
@@ -32,13 +47,3 @@ const ProviderWrappedLoggedOutLayout = ( { store, primary, secondary, redirectUr
  * `context.primary` and `context.secondary` to populate it.
  */
 export const makeLayout = makeLayoutMiddleware( ProviderWrappedLoggedOutLayout );
-
-export function redirectLoggedIn( { isLoggedIn, res }, next ) {
-	// TODO: Make it work also for development env
-	if ( isLoggedIn ) {
-		res.redirect( '/' );
-		return;
-	}
-
-	next();
-}

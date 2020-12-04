@@ -5,7 +5,7 @@ Given a WooCommerce product object, this library will generate new WooCommerce v
 ## Example
 
 ```javascript
-import generateVariations from 'lib/generate-variations';
+import generateVariations from 'calypso/lib/generate-variations';
 
 // Provide a WooCommerce Product Object (from state or server)
 const product = {

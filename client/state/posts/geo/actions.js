@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { POST_GEO_IMAGE_RECEIVE, POST_GEO_IMAGE_REQUEST } from 'state/action-types';
+import { POST_GEO_IMAGE_RECEIVE, POST_GEO_IMAGE_REQUEST } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/posts/geo';
+import 'calypso/state/data-layer/wpcom/posts/geo';
 /**
  * Action creator function: POST_GEO_IMAGE_RECEIVE
  *

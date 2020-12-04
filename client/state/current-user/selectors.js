@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getUser } from 'state/users/selectors';
+import { getUser } from 'calypso/state/users/selectors';
 
 /**
  * Returns the current user ID
@@ -199,3 +199,11 @@ export const isCurrentUserEmailVerified = createCurrentUserSelector( 'email_veri
 export function getCurrentUserLasagnaJwt( state ) {
 	return state.currentUser.lasagnaJwt;
 }
+
+/**
+ * Returns true if the user was bootstrapped (i.e. user data was fetched by the server
+ * and hydrated using window.currentUser)
+ *
+ * @returns {boolean} Whether the current user is bootstrapped
+ */
+export const isCurrentUserBootstrapped = createCurrentUserSelector( 'bootstrapped', false );

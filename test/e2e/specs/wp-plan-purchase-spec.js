@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-// eslint-disable-next-line wpcalypso/no-package-relative-imports
 import config from 'config';
 import assert from 'assert';
 
@@ -43,12 +42,11 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
-			return await sideBarComponent.selectPlan();
+			return await sideBarComponent.selectPlans();
 		} );
 
 		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
 			return await plansPage.waitForComparison();
 		} );
 
@@ -78,7 +76,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Viewing a specific plan with coupon: @parallel @jetpack', function () {
-		let originalCartAmount, loginFlow;
+		let originalCartAmount;
+		let loginFlow;
 
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
@@ -91,12 +90,11 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
-			return await sideBarComponent.selectPlan();
+			return await sideBarComponent.selectPlans();
 		} );
 
-		step( 'Can Select Plans tab', async function () {
+		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
 			if ( host === 'WPCOM' ) {
 				await plansPage.openAdvancedPlansSegment();
 			}
@@ -105,7 +103,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Select Business Plan', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			return await plansPage.selectBusinessPlan();
+			return await plansPage.selectPaidPlan();
 		} );
 
 		step( 'Remove any existing coupon', async function () {
@@ -192,10 +190,9 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can navigate to plans page and select business plan', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectPlan();
+			await sidebarComponent.selectPlans();
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
-			return await plansPage.selectBusinessPlan();
+			return await plansPage.selectPaidPlan();
 		} );
 
 		step( 'User is taken to be Payment Details form', async function () {

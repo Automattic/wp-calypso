@@ -125,20 +125,20 @@ describe( 'scroll-helper', () => {
 
 		describe( 'Hiding batch of items', () => {
 			const preparedBounds = {
-					i0: {
-						bottom: -1850,
-					},
-					i1: {
-						bottom: -1500,
-					},
-					// i2: { bottom: -1200 }, Let it use guessedItemHeight for this one
-					i3: {
-						bottom: -900,
-					},
+				i0: {
+					bottom: -1850,
 				},
-				helper = new ScrollHelper( function ( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i1: {
+					bottom: -1500,
+				},
+				// i2: { bottom: -1200 }, Let it use guessedItemHeight for this one
+				i3: {
+					bottom: -900,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 			helper.props = {
 				guessedItemHeight: 300,
 				items: range( 4 ),
@@ -180,16 +180,16 @@ describe( 'scroll-helper', () => {
 
 		describe( 'Completely above context', () => {
 			const preparedBounds = {
-					i0: {
-						bottom: -1850,
-					},
-					i1: {
-						bottom: -1500,
-					},
+				i0: {
+					bottom: -1850,
 				},
-				helper = new ScrollHelper( function ( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i1: {
+					bottom: -1500,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 
 			helper.props = {
 				guessedItemHeight: 300,
@@ -339,23 +339,23 @@ describe( 'scroll-helper', () => {
 
 		describe( 'Hiding batch of items', () => {
 			const preparedBounds = {
-					i5: {
-						top: 1900,
-					},
-					i6: {
-						top: 2200,
-					},
-					i7: {
-						top: 2500,
-					},
-					// i8: { top: 3400 }, Let it use guessedItemHeight for this one
-					i9: {
-						top: 3700,
-					},
+				i5: {
+					top: 1900,
 				},
-				helper = new ScrollHelper( function ( ref ) {
-					return preparedBounds[ ref ];
-				} );
+				i6: {
+					top: 2200,
+				},
+				i7: {
+					top: 2500,
+				},
+				// i8: { top: 3400 }, Let it use guessedItemHeight for this one
+				i9: {
+					top: 3700,
+				},
+			};
+			const helper = new ScrollHelper( function ( ref ) {
+				return preparedBounds[ ref ];
+			} );
 			helper.props = {
 				items: range( 10 ),
 				guessedItemHeight: 300,

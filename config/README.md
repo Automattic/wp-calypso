@@ -7,7 +7,7 @@ If it is necessary to access a `config` value on the client-side, add the proper
 Server-side and client-side code can retrieve a config value by invoking the `config()` exported function with the desired key name:
 
 ```js
-import config from 'config';
+import config from 'calypso/config';
 console.log( config( 'redirect_uri' ) );
 ```
 

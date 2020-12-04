@@ -6,7 +6,7 @@ Clipboard Button is a React component to facilitate creating a "click-to-copy" b
 
 ```jsx
 import React, { Component } from 'react';
-import ClipboardButton from 'components/forms/clipboard-button';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 
 const MyComponent = () => <ClipboardButton text="Text to copy">Button Text</ClipboardButton>;
 ```

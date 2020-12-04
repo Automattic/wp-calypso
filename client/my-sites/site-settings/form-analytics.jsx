@@ -11,32 +11,35 @@ import { find, flowRight, partialRight, pick } from 'lodash';
 import { hasSiteAnalyticsFeature } from './utils';
 import wrapSettingsForm from './wrap-settings-form';
 import { Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import SupportInfo from 'components/support-info';
-import UpsellNudge from 'blocks/upsell-nudge';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import { getPlugins } from 'state/plugins/installed/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
+import ExternalLink from 'calypso/components/external-link';
+import SupportInfo from 'calypso/components/support-info';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import FormAnalyticsStores from './form-analytics-stores';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { isJetpackSite } from 'state/sites/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { localizeUrl } from 'lib/i18n-utils';
-import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
-import { getPathToDetails } from 'my-sites/plans-v2/utils';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FEATURE_GOOGLE_ANALYTICS, TYPE_PREMIUM, TERM_ANNUALLY } from 'calypso/lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import {
+	OPTIONS_JETPACK_SECURITY,
+	PRODUCT_UPSELLS_BY_FEATURE,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 
-const validateGoogleAnalyticsCode = ( code ) => ! code || code.match( /^UA-\d+-\d+$/i );
+const validateGoogleAnalyticsCode = ( code ) =>
+	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
 
 export class GoogleAnalyticsForm extends Component {
 	state = {
@@ -120,7 +123,7 @@ export class GoogleAnalyticsForm extends Component {
 			  } );
 
 		const href = siteIsJetpack
-			? getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, site.slug )
+			? `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`
 			: null;
 
 		const nudge = (
@@ -129,7 +132,7 @@ export class GoogleAnalyticsForm extends Component {
 					siteIsJetpack
 						? translate( "Monitor your site's views, clicks, and other important metrics" )
 						: translate(
-								"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+								"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 						  )
 				}
 				event={ 'google_analytics_settings' }
@@ -180,7 +183,7 @@ export class GoogleAnalyticsForm extends Component {
 
 						<FormFieldset>
 							<FormLabel htmlFor="wgaCode">
-								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Google Analytics Measurement ID', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="wgaCode"
@@ -205,7 +208,7 @@ export class GoogleAnalyticsForm extends Component {
 							{ ! this.state.isCodeValid && (
 								<FormTextValidation
 									isError={ true }
-									text={ translate( 'Invalid Google Analytics Tracking ID.' ) }
+									text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 								/>
 							) }
 							<ExternalLink
@@ -214,18 +217,18 @@ export class GoogleAnalyticsForm extends Component {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ translate( 'Where can I find my Tracking ID?' ) }
+								{ translate( 'Where can I find my Measurement ID?' ) }
 							</ExternalLink>
 						</FormFieldset>
 						{ siteIsJetpack && (
 							<FormFieldset>
-								<CompactFormToggle
+								<FormToggle
 									checked={ fields.wga ? Boolean( fields.wga.anonymize_ip ) : false }
 									disabled={ isRequestingSettings || ! enableForm }
 									onChange={ this.handleAnonymizeChange }
 								>
 									{ translate( 'Anonymize IP addresses' ) }
-								</CompactFormToggle>
+								</FormToggle>
 								<FormSettingExplanation>
 									{ translate(
 										'Enabling this option is mandatory in certain countries due to national ' +

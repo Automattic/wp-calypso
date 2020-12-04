@@ -2,17 +2,17 @@
  * External dependencies
  */
 import { assign, flowRight, flow, get } from 'lodash';
-import Dispatcher from 'dispatcher';
-import { TRANSACTION_STEP_SET } from 'lib/transaction/action-types';
+import Dispatcher from 'calypso/dispatcher';
+import { TRANSACTION_STEP_SET } from 'calypso/lib/transaction/action-types';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
-import { preprocessCartForServer, fillInAllCartItemAttributes } from 'lib/cart-values';
-import { addCartItem } from 'lib/cart-values/cart-items';
-import productsListFactory from 'lib/products-list';
+import Emitter from 'calypso/lib/mixins/emitter';
+import { preprocessCartForServer, fillInAllCartItemAttributes } from 'calypso/lib/cart-values';
+import { addCartItem } from 'calypso/lib/cart-values/cart-items';
+import productsListFactory from 'calypso/lib/products-list';
 const productsList = productsListFactory();
 
 /**
@@ -142,17 +142,18 @@ CartSynchronizer.prototype._processQueuedChanges = function () {
 };
 
 CartSynchronizer.prototype._postToServer = function ( callback ) {
-	this._wpcom.setCart( this._cartKey, preprocessCartForServer( this._latestValue ), function (
-		error,
-		newValue
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
+	this._wpcom.setCart(
+		this._cartKey,
+		preprocessCartForServer( this._latestValue ),
+		function ( error, newValue ) {
+			if ( error ) {
+				callback( error );
+				return;
+			}
 
-		callback( null, preprocessCartFromServer( newValue ) );
-	} );
+			callback( null, preprocessCartFromServer( newValue ) );
+		}
+	);
 };
 
 CartSynchronizer.prototype._poll = function () {

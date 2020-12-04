@@ -5,7 +5,7 @@
 ## Usage
 
 ```javascript
-import { supportsFeatureToDetect } from 'lib/feature-detection';
+import { supportsFeatureToDetect } from 'calypso/lib/feature-detection';
 
 if ( supportsFeatureToDetect() ) {
 	doSomething();

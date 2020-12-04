@@ -152,6 +152,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .purchase-product__site-url-input-container,
 .example-components__site-url-input-container {
 	.jetpack-connect__site-address-container,
+	.jetpack-connect__password-container,
 	.example-components__site-address-container {
 		position: relative;
 
@@ -300,6 +301,7 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .example-components__browser-chrome {
 	padding: 8px;
 	background-color: var( --color-neutral-0 );
+	/* stylelint-disable-next-line scales/radii */
 	border-radius: 8px 8px 0 0;
 }
 
@@ -548,10 +550,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 .jetpack-connect__logged-in-card.card {
 	max-width: 360px;
 	margin: 0 auto 16px;
-	border-radius: 2px;
-	box-shadow: 0 5px 5px -3px rgba( var( --color-neutral-100 ), 0.2 ),
-		0 8px 10px 1px rgba( var( --color-neutral-100 ), 0.14 ),
-		3px 14px 2px rgba( var( --color-neutral-100 ), 0.12 );
 }
 
 .jetpack-connect__sso-terms-dialog {
@@ -631,99 +629,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	&:hover {
 		color: var( --color-primary );
-	}
-}
-
-.jetpack-connect__plans {
-	.plan-features__header-figure {
-		height: 32px;
-		width: 32px;
-	}
-
-	.plan-features__header-timeframe {
-		height: 20px;
-		margin-top: 11px;
-	}
-
-	.plan-features .plan-price.is-original {
-		align-self: center;
-		margin-top: 6px;
-	}
-
-	.plan-features .plan-price.is-original .plan-price__currency-symbol,
-	.plan-features .plan-price.is-original .plan-price__fraction {
-		font-size: 1rem;
-	}
-
-	.plan-features .plan-price.is-discounted {
-		display: block;
-		margin-right: 0;
-		font-size: $font-title-medium;
-	}
-
-	.plan-pill {
-		left: 50%;
-		transform: translateX( -50% );
-	}
-
-	.formatted-header,
-	.formatted-header.is-without-subhead {
-		margin-bottom: 8px;
-	}
-
-	.formatted-header a {
-		color: var( --color-neutral-20 );
-		text-decoration: underline;
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-20 );
-			text-decoration: underline;
-		}
-	}
-
-	.jetpack-connect__happychat-button {
-		text-align: center;
-	}
-
-	.plans-skip-button {
-		margin-bottom: 32px;
-	}
-}
-
-.jetpack-connect__plans.placeholder {
-	.placeholder-text,
-	.jetpack-connect-plans-placeholder__plans-content {
-		@include placeholder();
-	}
-	.jetpack-connect-plans-placeholder__plans-content {
-		min-height: 400px;
-	}
-
-	.plan-features--signup .plan-price.is-original::before {
-		border-top: 0;
-	}
-
-	.plan-features__actions-buttons {
-		margin-top: 16px;
-	}
-
-	.plan-features__item {
-		.placeholder-text {
-			margin: 0 auto;
-		}
-	}
-}
-
-.jetpack-connect__hide-plan-icons {
-	.jetpack-connect__plans {
-		.plans-wrapper {
-			padding-bottom: 0;
-		}
-
-		.plan-features__graphic {
-			display: none;
-		}
 	}
 }
 
@@ -822,27 +727,10 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
  **/
 .layout.is-section-jetpack-connect:not( .is-jetpack-mobile-flow ),
 .layout.is-section-purchase-product {
-	background-color: var( --color-jetpack-onboarding-background );
-
 	&.layout {
 		position: relative;
 		min-height: calc( 100% - #{$colophon-height} );
 		padding-bottom: $colophon-height;
-	}
-
-	.formatted-header {
-		color: var( --color-jetpack-onboarding-text );
-	}
-
-	.jetpack-logo__text,
-	.wpcom-colophon path {
-		fill: var( --color-jetpack-onboarding-text );
-	}
-
-	.formatted-header__subtitle,
-	.payment-methods,
-	.jetpack-connect__help-button {
-		color: var( --color-neutral-10 );
 	}
 
 	.site__title::after,
@@ -864,7 +752,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.logged-out-form {
+		border-radius: 0;
+		box-shadow: 0 0 0 1px var( --color-border-subtle );
+	}
+
 	.jetpack-connect__site-address-container input:focus,
+	.jetpack-connect__password-container input:focus,
 	.logged-out-form input:focus {
 		border-color: var( --color-accent );
 		box-shadow: 0 0 0 2px var( --color-accent-light );
@@ -872,24 +766,13 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__tos-link a,
 	.signup-form__terms-of-service-link a,
-	.form-input-validation a {
+	.form-input-validation a,
+	.faq a {
 		color: var( --color-accent-dark );
 
 		&:hover,
 		&:focus {
 			color: var( --color-accent );
-		}
-	}
-
-	.logged-out-form__links a,
-	.logged-out-form__link-item,
-	.jetpack-connect__back-button {
-		color: var( --color-neutral-20 );
-		border-bottom-color: var( --color-neutral-70 );
-
-		&:hover,
-		&:focus {
-			color: var( --color-primary-20 );
 		}
 	}
 
@@ -911,11 +794,61 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 		}
 	}
 
+	.signup-form__social p {
+		color: var( --color-neutral-60 );
+	}
+
+	.signup-form__social,
+	.login__form-social {
+		padding-bottom: 0;
+		margin-top: 16px;
+		p {
+			font-size: $font-body-extra-small;
+		}
+
+		.signup-form__social-buttons-tos {
+			color: var( --studio-gray-60 );
+			margin-bottom: 16px;
+			a {
+				text-decoration: underline;
+				color: var( --studio-gray-60 );
+			}
+		}
+
+		.social-buttons__button {
+			border: 1px solid var( --color-accent-dark );
+			color: var( --color-accent-dark );
+			box-shadow: none;
+			max-width: 310px;
+			height: 48px;
+			margin-left: auto;
+			margin-right: auto;
+
+			&.disabled {
+				border-color: var( --studio-gray-30 );
+				color: var( --studio-gray-30 );
+			}
+		}
+
+		.card {
+			padding: 0;
+			box-shadow: none;
+		}
+	}
+
+	.logged-out-form__footer,
+	.login__form-footer {
+		.button.is-primary {
+			box-shadow: none;
+		}
+	}
+
 	.payment-logo.is-paypal {
 		width: 64px;
 		background-color: var( --color-surface );
 		background-size: 84%;
 		background-position: 50% 45%;
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 1px;
 	}
 
@@ -928,8 +861,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 	.jetpack-connect__main-error .empty-content {
 		padding-bottom: 24px;
-		background-color: var( --color-surface );
-		border-radius: 2px;
 	}
 
 	.site-topic__content .form-fieldset {
@@ -995,10 +926,6 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 			fill: var( --color-neutral-0 );
 		}
 
-		.signup-form__social p {
-			color: var( --color-neutral-60 );
-		}
-
 		.formatted-header__title {
 			color: var( --color-neutral-80 );
 		}
@@ -1056,34 +983,14 @@ $colophon-height: 50px; // wpcomColophon element at the bottom
 
 		.signup-form__social,
 		.login__form-social {
-			padding-bottom: 0;
-			margin-top: 16px;
-			p {
-				font-size: $font-body-extra-small;
-			}
-
-			.signup-form__social-buttons-tos {
-				color: var( --studio-gray-60 );
-				margin-bottom: 16px;
-				a {
-					text-decoration: underline;
-					color: var( --studio-gray-60 );
-				}
-			}
-
 			.social-buttons__button {
-				border: 1px solid var( --studio-pink-50 );
+				border-color: var( --studio-pink-50 );
 				color: var( --studio-pink-50 );
-				box-shadow: none;
-				max-width: 310px;
-				height: 48px;
-				margin-left: auto;
-				margin-right: auto;
-			}
 
-			.card {
-				padding: 0;
-				box-shadow: none;
+				&.disabled {
+					border-color: var( --studio-gray-30 );
+					color: var( --studio-gray-30 );
+				}
 			}
 		}
 
@@ -1266,7 +1173,6 @@ body.is-section-jetpack-connect .layout {
 }
 
 .is-section-jetpack-connect .plans-filter-bar {
-	background: var( --color-jetpack-onboarding-background );
 	border-width: 0;
 
 	&.sticky {
@@ -1276,21 +1182,11 @@ body.is-section-jetpack-connect .layout {
 		width: 100%;
 		max-width: none;
 
-		border-bottom: solid 1px #333;
+		border-bottom: solid 1px var( --studio-gray-10 );
 	}
 
 	.select-dropdown .select-dropdown__header {
 		border-color: var( --color-primary );
-	}
-}
-
-.is-section-jetpack-connect .faq {
-	.faq__heading {
-		color: var( --color-text-inverted );
-	}
-
-	.faq__question {
-		color: var( --color-neutral-10 );
 	}
 }
 
@@ -1304,8 +1200,6 @@ body.is-section-jetpack-connect .layout {
 	--color-primary: var( --studio-jetpack-green-40 );
 
 	.plans-filter-bar__discount-message {
-		color: var( --color-surface );
-
 		font-weight: 600;
 	}
 }

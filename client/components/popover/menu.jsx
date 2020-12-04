@@ -112,8 +112,8 @@ class PopoverMenu extends Component {
 	_getClosestSibling = ( target, isDownwardMotion = true ) => {
 		const menu = this.menu.current;
 
-		let first = menu.firstChild,
-			last = menu.lastChild;
+		let first = menu.firstChild;
+		let last = menu.lastChild;
 
 		if ( ! isDownwardMotion ) {
 			first = menu.lastChild;

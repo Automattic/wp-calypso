@@ -8,7 +8,11 @@ import { useSelector, useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isRequestingSites, isRequestingSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import {
+	isRequestingSites,
+	isRequestingSite,
+	hasAllSitesList,
+} from 'calypso/state/sites/selectors';
 import { requestSites, requestSite } from 'calypso/state/sites/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';

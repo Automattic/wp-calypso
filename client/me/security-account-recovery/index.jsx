@@ -47,6 +47,7 @@ import {
 } from 'calypso/state/account-recovery/settings/selectors';
 import { getCurrentUserEmail } from 'calypso/state/current-user/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -54,11 +55,13 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import './style.scss';
 
 const SecurityAccountRecovery = ( props ) => (
-	<Main className="security security-account-recovery">
+	<Main className="security security-account-recovery is-wide-layout">
 		<PageViewTracker path="/me/security/account-recovery" title="Me > Account Recovery" />
 		<QueryAccountRecoverySettings />
 
 		<MeSidebarNavigation />
+
+		<FormattedHeader brandFont headerText={ props.translate( 'Security' ) } align="left" />
 
 		{ ! config.isEnabled( 'security/security-checkup' ) && (
 			<SecuritySectionNav path={ props.path } />

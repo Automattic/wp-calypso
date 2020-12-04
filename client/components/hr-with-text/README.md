@@ -7,7 +7,7 @@ An [hr-like](https://developer.mozilla.org/en/docs/Web/HTML/Element/hr) line wit
 ## Usage
 
 ```js
-import HrWithText from 'components/hr-with-text';
+import HrWithText from 'calypso/components/hr-with-text';
 
 <HrWithText>This is some text</HrWithText>;
 ```

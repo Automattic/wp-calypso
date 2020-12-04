@@ -4,7 +4,7 @@
 import * as React from 'react';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import DomainPicker from '@automattic/domain-picker';
+import DomainPicker, { mockDomainSuggestion } from '@automattic/domain-picker';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { Title, SubTitle, ActionButtons, BackButton, NextButton } from '@automattic/onboarding';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
@@ -14,25 +14,20 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE } from '../../stores';
-import { useSite, useDomainSearch } from '../../hooks';
+import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
+
 import { FLOW_ID } from '../../constants';
 import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
-	const { plan, domain } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-	const { currentDomainName } = useSite();
-	const domainSearch = useDomainSearch();
+	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
+	const { currentDomain } = useDomainSelection();
+	const { siteSubdomain } = useSiteDomains();
+	const { domainSearch, setDomainSearch } = useDomainSearch();
 
-	const {
-		setDomain,
-		unsetDomain,
-		setDomainSearch,
-		unsetPlan,
-		confirmDomainSelection,
-	} = useDispatch( LAUNCH_STORE );
+	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 
 	const handleNext = () => {
-		confirmDomainSelection();
 		onNextStep?.();
 	};
 
@@ -79,12 +74,13 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 					initialDomainSearch={ domainSearch }
 					onSetDomainSearch={ setDomainSearch }
 					onDomainSearchBlur={ trackDomainSearchInteraction }
-					currentDomain={ domain?.domain_name || currentDomainName }
-					existingSubdomain={ currentDomainName }
+					currentDomain={ currentDomain }
+					existingSubdomain={ mockDomainSuggestion( siteSubdomain?.domain ) }
 					onDomainSelect={ handleDomainSelect }
 					onExistingSubdomainSelect={ handleExistingSubdomainSelect }
 					analyticsUiAlgo="editor_domain_modal"
 					segregateFreeAndPaid
+					locale={ document.documentElement.lang }
 				/>
 			</div>
 			<div className="nux-launch-step__footer">

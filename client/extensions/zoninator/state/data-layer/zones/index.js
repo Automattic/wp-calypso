@@ -2,17 +2,22 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
-import { initialize, startSubmit, stopSubmit } from 'redux-form';
 
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
-import { navigate } from 'state/ui/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { navigate } from 'calypso/state/ui/actions';
 import { resetLock } from '../../locks/actions';
-import { requestZones, requestError, updateZone, updateZones } from '../../zones/actions';
+import {
+	requestError,
+	requestZones,
+	updateZone,
+	updateZoneError,
+	updateZones,
+} from '../../zones/actions';
 import { zoneFromApi, zonesListFromApi } from './utils';
 import {
 	ZONINATOR_ADD_ZONE,
@@ -20,8 +25,6 @@ import {
 	ZONINATOR_REQUEST_ZONES,
 	ZONINATOR_SAVE_ZONE,
 } from 'zoninator/state/action-types';
-
-import 'state/form/init';
 
 const settingsPath = '/extensions/zoninator';
 
@@ -43,7 +46,6 @@ export const requestZonesError = ( action ) => requestError( action.siteId );
 export const updateZonesList = ( action, zonesList ) => updateZones( action.siteId, zonesList );
 
 export const createZone = ( action ) => [
-	startSubmit( action.form ),
 	removeNotice( saveZoneNotice ),
 	http(
 		{
@@ -60,7 +62,6 @@ export const createZone = ( action ) => [
 ];
 
 export const saveZone = ( action ) => [
-	startSubmit( action.form ),
 	removeNotice( saveZoneNotice ),
 	resetLock( action.siteId, action.zoneId ),
 	http(
@@ -78,7 +79,6 @@ export const saveZone = ( action ) => [
 ];
 
 const announceZoneSaved = ( action, zone ) => [
-	stopSubmit( action.form ),
 	updateZone( action.siteId, zone.id, zone ),
 	successNotice( translate( 'Zone saved!' ), { id: saveZoneNotice } ),
 ];
@@ -89,12 +89,11 @@ export const handleZoneCreated = ( action, zone ) => [
 ];
 
 export const handleZoneSaved = ( action ) => [
-	initialize( action.form, action.data ),
-	...announceZoneSaved( action, action.data ),
+	...announceZoneSaved( action, { id: action.zoneId, ...action.data } ),
 ];
 
 export const announceSaveFailure = ( action ) => [
-	stopSubmit( action.form ),
+	updateZoneError( action.siteId ),
 	errorNotice( translate( 'There was a problem saving the zone. Please try again.' ), {
 		id: saveZoneNotice,
 	} ),

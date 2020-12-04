@@ -6,7 +6,7 @@ optional highlighting or marks to point out specific parts of one or more lines.
 ## Usage
 
 ```jsx
-import MarkedLines from 'components/marked-lines';
+import MarkedLines from 'calypso/components/marked-lines';
 
 return (
 	<MarkedLines

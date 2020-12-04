@@ -4,6 +4,7 @@ module.exports = {
 	rootDir: '../../client',
 	roots: [ '<rootDir>/server' ],
 	testEnvironment: 'node',
+	resolver: '<rootDir>/../test/module-resolver.js',
 	transform: {
 		'\\.[jt]sx?$': 'babel-jest',
 		'\\.(gif|jpg|jpeg|png|svg|scss|sass|css)$': require.resolve(
@@ -11,7 +12,7 @@ module.exports = {
 		),
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!redux-form|draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
+		'node_modules[\\/\\\\](?!draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
 	],
 	moduleNameMapper: {
 		'^calypso/config$': 'calypso/server/config',

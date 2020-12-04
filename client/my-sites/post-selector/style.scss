@@ -31,8 +31,8 @@
 	-webkit-appearance: none;
 }
 
-input[type=radio].post-selector__input,
-input[type=checkbox].post-selector__input {
+input[type='radio'].post-selector__input,
+input[type='checkbox'].post-selector__input {
 	margin-top: 4px;
 
 	& + .form-label {
@@ -47,7 +47,7 @@ input[type=checkbox].post-selector__input {
 	}
 }
 
-input[type=checkbox].post-selector__input {
+input[type='checkbox'].post-selector__input {
 	margin-right: 8px;
 }
 

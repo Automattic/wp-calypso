@@ -11,49 +11,52 @@ import { localize } from 'i18n-calypso';
  */
 import { Card, Button } from '@automattic/components';
 import { hasSiteSeoFeature } from './utils';
-import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
-import { getPathToDetails } from 'my-sites/plans-v2/utils';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import MetaTitleEditor from 'components/seo/meta-title-editor';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
-import { protectForm } from 'lib/protect-form';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import CountedTextarea from 'components/forms/counted-textarea';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { getSeoTitleFormatsForSite, isJetpackSite, isRequestingSite } from 'state/sites/selectors';
+import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import MetaTitleEditor from 'calypso/components/seo/meta-title-editor';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import notices from 'calypso/notices';
+import { protectForm } from 'calypso/lib/protect-form';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import {
+	getSeoTitleFormatsForSite,
+	isJetpackSite,
+	isRequestingSite,
+} from 'calypso/state/sites/selectors';
 import {
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
-} from 'state/site-settings/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import isHiddenSite from 'state/selectors/is-hidden-site';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isPrivateSite from 'state/selectors/is-private-site';
-import isSiteComingSoon from 'state/selectors/is-site-coming-soon';
-import { toApi as seoTitleToApi } from 'components/seo/meta-title-editor/mappings';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSite } from 'state/sites/actions';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { getPlugins } from 'state/plugins/installed/selectors';
+} from 'calypso/state/site-settings/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import { toApi as seoTitleToApi } from 'calypso/components/seo/meta-title-editor/mappings';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getPlugins } from 'calypso/state/plugins/installed/selectors';
 import {
 	FEATURE_ADVANCED_SEO,
 	FEATURE_SEO_PREVIEW_TOOLS,
 	TYPE_BUSINESS,
-	TERM_ANNUALLY,
 	JETPACK_RESET_PLANS,
-} from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import { requestSiteSettings, saveSiteSettings } from 'state/site-settings/actions';
-import WebPreview from 'components/web-preview';
-import { getFirstConflictingPlugin } from 'lib/seo';
+} from 'calypso/lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import { requestSiteSettings, saveSiteSettings } from 'calypso/state/site-settings/actions';
+import WebPreview from 'calypso/components/web-preview';
+import { getFirstConflictingPlugin } from 'calypso/lib/seo';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -63,7 +66,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import pageTitleImage from 'assets/images/illustrations/seo-page-title.svg';
+import pageTitleImage from 'calypso/assets/images/illustrations/seo-page-title.svg';
 
 // Basic matching for HTML tags
 // Not perfect but meets the needs of this component well
@@ -303,7 +306,7 @@ export class SeoForm extends React.Component {
 			? {
 					title: translate( 'Boost your search engine ranking' ),
 					feature: FEATURE_SEO_PREVIEW_TOOLS,
-					href: getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, slug ),
+					href: `/checkout/${ slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ADVANCED_SEO ] }`,
 			  }
 			: {
 					title: translate(
@@ -316,6 +319,8 @@ export class SeoForm extends React.Component {
 							type: TYPE_BUSINESS,
 						} ),
 			  };
+		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
+		const isPublicComingSoon = isEnabled( 'coming-soon-v2' ) && ! isSitePrivate && siteIsComingSoon;
 
 		return (
 			<div>
@@ -336,6 +341,10 @@ export class SeoForm extends React.Component {
 
 								return translate(
 									"SEO settings aren't recognized by search engines while your site is Private."
+								);
+							} else if ( isPublicComingSoon ) {
+								return translate(
+									"SEO settings aren't recognized by search engines while your site is Coming Soon."
 								);
 							}
 							return translate(

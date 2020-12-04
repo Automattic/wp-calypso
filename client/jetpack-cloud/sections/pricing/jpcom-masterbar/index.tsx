@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useRef, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import classNames from 'classnames';
 import { translate } from 'i18n-calypso';
 
@@ -12,7 +12,8 @@ import { Button } from '@automattic/components';
 import ExternalLink from 'calypso/components/external-link';
 import JetpackLogo from 'calypso/components/jetpack-logo';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import useDetectWindowBoundary from 'calypso/my-sites/plans-v2/use-detect-window-boundary';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
+import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Style dependencies
@@ -40,16 +41,16 @@ const MENU_ITEMS = [
 ];
 
 const JetpackComMasterbar = () => {
+	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
+
 	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
-	const barRef = useRef< HTMLDivElement | null >( null );
-	const hasCrossed = useDetectWindowBoundary( barRef );
 
 	const toggleMenu = () => {
 		setIsMenuOpen( ( currentState ) => ! currentState );
 	};
 
 	return (
-		<div ref={ barRef } className={ classNames( 'jpcom-masterbar', { sticky: hasCrossed } ) }>
+		<div className={ `jpcom-masterbar iteration-${ iteration }` }>
 			<div className="jpcom-masterbar__inner">
 				<ExternalLink
 					className="jpcom-masterbar__logo"

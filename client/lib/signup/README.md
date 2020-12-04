@@ -47,8 +47,8 @@ If `errors` has a non-zero length, it will be attached to the step and the step'
 Actions which provide a `providedDependencies` object will have this information added to the dependency store.
 
 ```js
-import SignupDependencyStore from 'lib/signup/dependency-store';
-import SignupActions from 'lib/signup/actions';
+import SignupDependencyStore from 'calypso/lib/signup/dependency-store';
+import SignupActions from 'calypso/lib/signup/actions';
 
 SignupActions.completeSignupStep( { stepName: 'example' }, [], { userId: 1337 } );
 
@@ -64,7 +64,7 @@ SignupDependencyStore.get(); // => { userId: 1337 }
 `SignupFlowController` accepts an object with a `flowName` property and begins the signup flow with the given name.
 
 ```js
-import SignupFlowController from 'lib/signup/flow-controller';
+import SignupFlowController from 'calypso/lib/signup/flow-controller';
 
 // this is the component that renders the signup flow
 class SignupComponent extends React.Component {

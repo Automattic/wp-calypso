@@ -13,7 +13,7 @@ import { Card } from '@automattic/components';
 /**
  * Module variables
  */
-var suggestions = [
+const suggestions = [
 	'the',
 	'of',
 	'and',

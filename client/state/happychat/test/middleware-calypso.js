@@ -11,12 +11,12 @@ import middleware, {
 	sendAnalyticsLogEvent,
 	getEventMessageFromTracksData,
 } from '../middleware-calypso';
-import getSkills from 'state/happychat/selectors/get-skills';
-import { selectSiteId } from 'state/help/actions';
-import { setRoute } from 'state/route/actions';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
-import getGroups from 'state/happychat/selectors/get-groups';
-import { receiveStatus, sendPreferences } from 'state/happychat/connection/actions';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
+import { selectSiteId } from 'calypso/state/help/actions';
+import { setRoute } from 'calypso/state/route/actions';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import { receiveStatus, sendPreferences } from 'calypso/state/happychat/connection/actions';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -25,16 +25,17 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
 	HAPPYCHAT_CONNECTION_STATUS_CONNECTED,
 	HAPPYCHAT_CONNECTION_STATUS_DISCONNECTED,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 import {
 	ANALYTICS_EVENT_RECORD,
 	HAPPYCHAT_IO_SEND_MESSAGE_EVENT,
 	HAPPYCHAT_IO_SEND_MESSAGE_LOG,
 	SITE_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'middleware', () => {
-	let actionMiddleware, store;
+	let actionMiddleware;
+	let store;
 	beforeEach( () => {
 		store = {
 			getState: jest.fn(),

@@ -23,8 +23,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PieChart from 'components/pie-chart';
-import PieChartLegend from 'components/pie-chart/legend';
+import PieChart from 'calypso/components/pie-chart';
+import PieChartLegend from 'calypso/components/pie-chart/legend';
 
 const titleFunc = ( translateFn, dataTotal ) => {
 	return translateFn( '%(dataTotal)d Total Searches', {

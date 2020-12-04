@@ -12,8 +12,8 @@ Get a list of keyring services.
 
 ```js
 import { connect } from 'react-redux';
-import { isKeyringServicesFetching } from 'state/sharing/services/selectors';
-import { requestKeyringServices } from 'state/sharing/services/actions';
+import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
+import { requestKeyringServices } from 'calypso/state/sharing/services/actions';
 
 class QueryKeyringServices extends Component {
 	componentWillMount() {
@@ -60,7 +60,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns an array of keyring services.
 
 ```js
-import { getKeyringServices } from 'state/sharing/services/selectors';
+import { getKeyringServices } from 'calypso/state/sharing/services/selectors';
 
 const services = getKeyringServices( state );
 ```
@@ -70,7 +70,7 @@ const services = getKeyringServices( state );
 Returns an array of keyring services with the specified type.
 
 ```js
-import { getKeyringServicesByType } from 'state/sharing/services/selectors';
+import { getKeyringServicesByType } from 'calypso/state/sharing/services/selectors';
 
 const publiciseServices = getKeyringServicesByType( state, 'publicize' );
 ```
@@ -86,8 +86,8 @@ A service is eligible for a given site if
 3. the current user can publish posts in case of all publicize services.
 
 ```js
-import { getEligibleKeyringServices } from 'state/sharing/services/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getEligibleKeyringServices } from 'calypso/state/sharing/services/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const eligibleServices = getEligibleKeyringServices(
 	state,
@@ -101,7 +101,7 @@ const eligibleServices = getEligibleKeyringServices(
 Returns true if keyring services are currently being requested.
 
 ```js
-import { isKeyringServicesFetching } from 'state/sharing/services/selectors';
+import { isKeyringServicesFetching } from 'calypso/state/sharing/services/selectors';
 
 const isRequesting = isKeyringServicesFetching( state );
 ```

@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { calculateMonthlyPriceForPlan } from 'lib/plans';
+import { calculateMonthlyPriceForPlan } from 'calypso/lib/plans';
 import { getPlan } from './plan';
 
-import 'state/plans/init';
+import 'calypso/state/plans/init';
 
 /**
  * Returns the full plan price if a discount is available and the raw price if a discount is not available

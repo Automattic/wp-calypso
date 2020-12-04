@@ -24,13 +24,13 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
-} from 'state/action-types';
-import { appStates } from 'state/imports/constants';
-import { createReducerStore } from 'lib/store';
+} from 'calypso/state/action-types';
+import { appStates } from 'calypso/state/imports/constants';
+import { createReducerStore } from 'calypso/lib/store';
 
 // This library unfortunately relies on global Redux state directly.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
-import 'state/imports/init';
+import 'calypso/state/imports/init';
 
 /**
  * Module variables

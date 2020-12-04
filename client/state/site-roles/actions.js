@@ -1,14 +1,15 @@
 /**
  * Internal dependencies
  */
-
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	SITE_ROLES_RECEIVE,
 	SITE_ROLES_REQUEST,
 	SITE_ROLES_REQUEST_FAILURE,
 	SITE_ROLES_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/site-roles/init';
 
 export function requestSiteRoles( siteId ) {
 	return ( dispatch ) => {

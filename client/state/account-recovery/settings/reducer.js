@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	ACCOUNT_RECOVERY_SETTINGS_FETCH_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_UPDATE,
@@ -15,7 +15,7 @@ import {
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_SUCCESS,
 	ACCOUNT_RECOVERY_SETTINGS_VALIDATE_PHONE_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const setTargetState = ( value ) => ( state, { target } ) => ( {
 	...state,

@@ -8,8 +8,8 @@
 	&.is-selected::after {
 		content: attr( data-selected-number ) '';
 		position: absolute;
-			right: 8px;
-			bottom: 18px;
+		right: 8px;
+		bottom: 18px;
 		z-index: z-index( '.media-library__list-item', '.media-library__list-item.is-selected::after' );
 		width: 28px;
 		height: 28px;
@@ -23,7 +23,7 @@
 		text-align: center;
 		color: var( --color-text-inverted );
 	}
-	
+
 	.media__main-section .media-library__content.has-no-upload-button & {
 		// In the Media Library, don't allow contributors to click images.
 		pointer-events: none;
@@ -36,8 +36,8 @@
 
 .media-library__list-item-selected-icon .gridicon {
 	position: absolute;
-		bottom: 22px;
-		right: 12px;
+	bottom: 22px;
+	right: 12px;
 	z-index: z-index(
 		'.media-library__list-item',
 		'.media-library__list-item-selected-icon .gridicon'
@@ -79,10 +79,10 @@
 .media-library__list-item.is-transient .media-library__list-item-figure::after {
 	content: '';
 	position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background-color: rgba( var( --color-surface-rgb ), 0.75 );
 	border-radius: 0;
 	z-index: z-index(
@@ -93,8 +93,8 @@
 
 .media-library__list-item-spinner {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 	z-index: z-index( '.media-library__list-item', '.media-library__list-item-spinner' );
 }
@@ -105,8 +105,8 @@
 
 .media-library__list-item-centered {
 	position: absolute;
-		top: 50%;
-		left: 50%;
+	top: 50%;
+	left: 50%;
 	transform: translate( -50%, -50% );
 }
 

@@ -7,24 +7,28 @@ import { localize } from 'i18n-calypso';
 import { get } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { PanelBody } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
 import { Card, Button } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import MaterialIcon from 'components/material-icon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getHttpData, requestHttpData, resetHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import CardHeading from 'calypso/components/card-heading';
+import MaterialIcon from 'calypso/components/material-icon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getHttpData, requestHttpData, resetHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import RestorePasswordDialog from './restore-db-password';
 import {
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
-} from 'state/analytics/actions';
-import ExternalLink from 'components/external-link';
-import { localizeUrl } from 'lib/i18n-utils';
+} from 'calypso/state/analytics/actions';
+import ExternalLink from 'calypso/components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies
@@ -91,7 +95,7 @@ const PhpMyAdminCard = ( {
 				) }
 			</p>
 			<div className="phpmyadmin-card__questions">
-				<Accordion title={ translate( 'What is phpMyAdmin?' ) }>
+				<PanelBody title={ translate( 'What is phpMyAdmin?' ) } initialOpen={ false }>
 					{ translate(
 						"It is a free open source software tool that allows you to administer your site's MySQL database over the Web. For more information see {{a}}phpMyAdmin and MySQL{{/a}}",
 						{
@@ -106,7 +110,7 @@ const PhpMyAdminCard = ( {
 							},
 						}
 					) }
-				</Accordion>
+				</PanelBody>
 			</div>
 			<p className="phpmyadmin-card__db-warning">
 				{ translate(

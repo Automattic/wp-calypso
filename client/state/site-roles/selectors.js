@@ -1,14 +1,15 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
 import { translate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+
+import 'calypso/state/site-roles/init';
 
 /**
  * Returns true if currently requesting roles for the specified site ID, or

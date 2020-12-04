@@ -26,44 +26,48 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import * as oauthToken from 'lib/oauth-token';
-import { isDomainRegistration, isDomainTransfer, isDomainMapping } from 'lib/products-values';
-import SignupFlowController from 'lib/signup/flow-controller';
-import { disableCart } from 'lib/cart/actions';
+import config from 'calypso/config';
+import * as oauthToken from 'calypso/lib/oauth-token';
+import {
+	isDomainRegistration,
+	isDomainTransfer,
+	isDomainMapping,
+} from 'calypso/lib/products-values';
+import SignupFlowController from 'calypso/lib/signup/flow-controller';
+import { disableCart } from 'calypso/lib/cart/actions';
 import {
 	recordSignupStart,
 	recordSignupComplete,
 	recordSignupStep,
 	recordSignupInvalidStep,
-} from 'lib/analytics/signup';
-import DocumentHead from 'components/data/document-head';
-import LocaleSuggestions from 'components/locale-suggestions';
-import SignupProcessingScreen from 'signup/processing-screen';
-import SignupHeader from 'signup/signup-header';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import { loadTrackingTool } from 'state/analytics/actions';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+} from 'calypso/lib/analytics/signup';
+import DocumentHead from 'calypso/components/data/document-head';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import SignupProcessingScreen from 'calypso/signup/processing-screen';
+import SignupHeader from 'calypso/signup/signup-header';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import { loadTrackingTool } from 'calypso/state/analytics/actions';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	isUserLoggedIn,
 	getCurrentUser,
 	currentUserHasFlag,
 	getCurrentUserSiteCount,
-} from 'state/current-user/selectors';
-import isUserRegistrationDaysWithinRange from 'state/selectors/is-user-registration-days-within-range';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { submitSignupStep, removeStep, addStep } from 'state/signup/progress/actions';
-import { setSurvey } from 'state/signup/steps/survey/actions';
-import { submitSiteType } from 'state/signup/steps/site-type/actions';
-import { submitSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import getSiteId from 'state/selectors/get-site-id';
-import { isCurrentPlanPaid, getSitePlanSlug } from 'state/sites/selectors';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import { isSitePreviewVisible } from 'state/signup/preview/selectors';
-import { showSitePreview, hideSitePreview } from 'state/signup/preview/actions';
+} from 'calypso/state/current-user/selectors';
+import isUserRegistrationDaysWithinRange from 'calypso/state/selectors/is-user-registration-days-within-range';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { submitSignupStep, removeStep, addStep } from 'calypso/state/signup/progress/actions';
+import { setSurvey } from 'calypso/state/signup/steps/survey/actions';
+import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { submitSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { isCurrentPlanPaid, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import { isSitePreviewVisible } from 'calypso/state/signup/preview/selectors';
+import { showSitePreview, hideSitePreview } from 'calypso/state/signup/preview/actions';
 import steps from './config/steps';
 import flows from './config/flows';
 import { getStepComponent } from './config/step-components';
@@ -86,11 +90,12 @@ import {
 } from './storageUtils';
 import WpcomLoginForm from './wpcom-login-form';
 import SiteMockups from './site-mockup';
-import P2SignupProcessingScreen from 'signup/p2-processing-screen';
-import ReskinnedProcessingScreen from 'signup/reskinned-processing-screen';
-import user from 'lib/user';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import { abtest } from 'lib/abtest';
+import P2SignupProcessingScreen from 'calypso/signup/p2-processing-screen';
+import ReskinnedProcessingScreen from 'calypso/signup/reskinned-processing-screen';
+import user from 'calypso/lib/user';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import { abtest } from 'calypso/lib/abtest';
+import { hasSecureYourBrandError } from 'calypso/state/secure-your-brand/selectors';
 
 /**
  * Style dependencies
@@ -313,7 +318,12 @@ class Signup extends React.Component {
 		}
 	}
 
-	handleSignupFlowControllerCompletion = ( dependencies, destination ) => {
+	handleSignupFlowControllerCompletion = async ( dependencies, destination ) => {
+		// See comment below for `this.bizxSurveyTimerComplete`
+		if ( this.bizxSurveyTimerComplete && window && window.hj ) {
+			await this.bizxSurveyTimerComplete;
+		}
+
 		const filteredDestination = getDestination(
 			destination,
 			dependencies,
@@ -340,9 +350,9 @@ class Signup extends React.Component {
 	}
 
 	updateShouldShowLoadingScreen = ( progress = this.props.progress ) => {
-		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress ),
-			waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress ),
-			startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
+		const hasInvalidSteps = !! getFirstInvalidStep( this.props.flowName, progress );
+		const waitingForServer = ! hasInvalidSteps && this.isEveryStepSubmitted( progress );
+		const startLoadingScreen = waitingForServer && ! this.state.shouldShowLoadingScreen;
 
 		if ( ! this.isEveryStepSubmitted( progress ) ) {
 			this.goToFirstInvalidStep( progress );
@@ -350,6 +360,12 @@ class Signup extends React.Component {
 
 		if ( startLoadingScreen ) {
 			this.setState( { shouldShowLoadingScreen: true } );
+			/* Temporary change to add a 10 second delay to the processing screen.
+			 * This is done to allow the user 10 seconds to answer the bizx survey
+			 */
+			if ( ! this.bizxSurveyTimerComplete ) {
+				this.bizxSurveyTimerComplete = new Promise( ( resolve ) => setTimeout( resolve, 10000 ) );
+			}
 
 			if ( isWPForTeamsFlow( this.props.flowName ) ) {
 				addLoadingScreenClassNamesToBody();
@@ -598,7 +614,12 @@ class Signup extends React.Component {
 			return <ReskinnedProcessingScreen hasPaidDomain={ hasPaidDomain } />;
 		}
 
-		return <SignupProcessingScreen />;
+		return (
+			<SignupProcessingScreen
+				flowName={ this.props.flowName }
+				localeSlug={ this.props.localeSlug }
+			/>
+		);
 	}
 
 	renderCurrentStep() {
@@ -618,7 +639,8 @@ class Signup extends React.Component {
 			( isDomainRegistration( domainItem ) ||
 				isDomainTransfer( domainItem ) ||
 				isDomainMapping( domainItem ) );
-		// Hide the free option as part of 'domainStepCopyUpdates' a/b test
+
+		// Hide the free option in the signup flow
 		const selectedHideFreePlan = get( this.props, 'signupDependencies.shouldHideFreePlan', false );
 		const hideFreePlan = planWithDomain || this.props.isDomainOnlySite || selectedHideFreePlan;
 		const shouldRenderLocaleSuggestions = 0 === this.getPositionInFlow() && ! this.props.isLoggedIn;
@@ -771,6 +793,7 @@ export default connect(
 			isSitePreviewVisible: shouldStepShowSitePreview && isSitePreviewVisible( state ),
 			localeSlug: getCurrentLocaleSlug( state ),
 			isReskinned,
+			skipSecureYourBrand: hasSecureYourBrandError( state ),
 		};
 	},
 	{

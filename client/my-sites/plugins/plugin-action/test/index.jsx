@@ -14,7 +14,7 @@ import React from 'react';
  */
 import PluginAction from '../plugin-action';
 
-jest.mock( 'components/info-popover', () => require( 'components/empty-component' ) );
+jest.mock( 'components/info-popover', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'PluginAction', () => {
 	describe( 'rendering with form toggle', () => {
@@ -27,7 +27,7 @@ describe( 'PluginAction', () => {
 		test( 'should render compact form toggle when no children passed', () => {
 			const wrapper = mount( <PluginAction /> );
 
-			expect( wrapper.find( 'input.form-toggle' ) ).to.have.lengthOf( 1 );
+			expect( wrapper.find( 'input.components-form-toggle__input' ) ).to.have.lengthOf( 1 );
 		} );
 
 		test( 'should render a plugin action label', () => {
@@ -49,16 +49,16 @@ describe( 'PluginAction', () => {
 				</PluginAction>
 			);
 
-			expect( wrapper.find( '.form-toggle' ) ).to.have.lengthOf( 0 );
+			expect( wrapper.find( '.components-form-toggle__input' ) ).to.have.lengthOf( 0 );
 		} );
 
 		test( 'should render child within plugin-action__children container', () => {
 			const wrapper = mount(
-					<PluginAction>
-						<span />
-					</PluginAction>
-				),
-				children = wrapper.find( '.plugin-action__children' );
+				<PluginAction>
+					<span />
+				</PluginAction>
+			);
+			const children = wrapper.find( '.plugin-action__children' );
 
 			expect( children.length ).to.equal( 1 );
 			expect( children.props().children[ 0 ].type ).to.equal( 'span' );

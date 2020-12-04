@@ -14,8 +14,9 @@ import { Provider as ReduxProvider } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaLibraryDataSource from 'my-sites/media-library/data-source';
-import { createReduxStore } from 'state';
+import MediaLibraryDataSource from 'calypso/my-sites/media-library/data-source';
+import { createReduxStore } from 'calypso/state';
+import { setStore } from 'calypso/state/redux-store';
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
@@ -34,6 +35,7 @@ describe( 'MediaLibraryDataSource', () => {
 	describe( 'render data sources', () => {
 		test( 'does not exclude any data sources by default', () => {
 			const store = createReduxStore();
+			setStore( store );
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource
@@ -49,6 +51,7 @@ describe( 'MediaLibraryDataSource', () => {
 
 		test( 'excludes data sources listed in disabledSources', () => {
 			const store = createReduxStore();
+			setStore( store );
 			const wrapper = mount(
 				<ReduxProvider store={ store }>
 					<MediaLibraryDataSource

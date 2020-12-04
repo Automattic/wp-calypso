@@ -10,11 +10,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
-import { getPlan } from 'lib/plans';
-import { isMonthly as isMonthlyPlan } from 'lib/plans/constants';
+import notices from 'calypso/notices';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { getPlan } from 'calypso/lib/plans';
+import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
 	getProductFromSlug,
 	isDomainMapping,
@@ -25,8 +25,9 @@ import {
 	isPlan,
 	isTheme,
 	isConciergeSession,
-} from 'lib/products-values';
-import { getJetpackProductsDisplayNames } from 'lib/products-values/translations';
+} from 'calypso/lib/products-values';
+import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -69,6 +70,34 @@ function getPurchasesBySite( purchases, sites ) {
 		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
 }
 
+/**
+ * Returns an array of sites objects, each of which contains an array of subscriptions.
+ *
+ * @param {MembershipSubscription[]} subscriptions An array of subscription objects.
+ * @returns {MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
+ */
+function getSubscriptionsBySite( subscriptions ) {
+	return subscriptions
+		.reduce( ( result, currentValue ) => {
+			const site = result.find( ( subscription ) => subscription.id === currentValue.site_id );
+			if ( ! site ) {
+				return [
+					...result,
+					{
+						id: currentValue.site_id,
+						name: currentValue.site_title,
+						domain: currentValue.site_url,
+						subscriptions: [ currentValue ],
+					},
+				];
+			}
+
+			site.subscriptions = [ ...site.subscriptions, currentValue ];
+			return result;
+		}, [] )
+		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );
+}
+
 function getName( purchase ) {
 	if ( isDomainRegistration( purchase ) ) {
 		return purchase.meta;
@@ -103,9 +132,11 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
+function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
@@ -113,7 +144,7 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	// Track the renew now submit.
 	recordTracksEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
-		...tracksProps,
+		...options.tracksProps,
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
@@ -126,9 +157,12 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
-	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
 		siteSlug || renewItem.extra.purchaseDomain || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
@@ -139,14 +173,16 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
  *
  * @param {Array} purchases - the purchases to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
 	purchases.forEach( ( purchase ) => {
 		// Track the renew now submit.
 		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
 			product_slug: purchase.productSlug,
-			...tracksProps,
+			...options.tracksProps,
 		} );
 	} );
 
@@ -162,9 +198,12 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
-	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
 		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
 	page( renewalUrl );
@@ -669,6 +708,7 @@ export {
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
+	getSubscriptionsBySite,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,

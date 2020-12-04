@@ -24,16 +24,16 @@ import {
 import { Button, Dialog } from '@automattic/components';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import FormTextInput from 'components/forms/form-text-input';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 
 const defaultAddress = {
 	street: '',

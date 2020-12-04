@@ -8,7 +8,7 @@ import cssSafeUrl from 'calypso/lib/css-safe-url';
 /**
  * Internal dependencies
  */
-import FormToggle from 'calypso/components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import classNames from 'classnames';
 import SocialLogo from 'calypso/components/social-logo';
 

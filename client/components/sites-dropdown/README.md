@@ -7,7 +7,7 @@ It supports searching if you have many sites, handles sites with empty titles, s
 ## How to use
 
 ```js
-import SitesDropdown from 'components/sites-dropdown';
+import SitesDropdown from 'calypso/components/sites-dropdown';
 
 function render() {
 	return <SitesDropdown />;

@@ -10,7 +10,7 @@ Counted Textarea is a React form component which renders a `<textarea />` accomp
 
 ```jsx
 import React from 'react';
-import CountedTextarea from 'components/forms/counted-textarea';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
 
 class MyComponent extends Component {
 	state = {

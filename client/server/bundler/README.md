@@ -31,7 +31,7 @@ const sections = [
 	{
 		name: 'me',
 		paths: [ '/me' ],
-		module: 'me',
+		module: 'calypso/me',
 	},
 ];
 ```
@@ -51,7 +51,7 @@ page( /^\/me(\/.*)?$/, function ( context, next ) {
 			return;
 		}
 		if ( ! _loadedSections.me ) {
-			require( 'me' )();
+			require( 'calypso/me' )();
 			_loadedSections.me = true;
 		}
 

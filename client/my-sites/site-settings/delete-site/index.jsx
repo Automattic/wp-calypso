@@ -5,31 +5,31 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import Gridicon from 'components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelFooter from 'components/action-panel/footer';
+import HeaderCake from 'calypso/components/header-cake';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelTitle from 'calypso/components/action-panel/title';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button, Dialog } from '@automattic/components';
-import DeleteSiteWarningDialog from 'my-sites/site-settings/delete-site-warning-dialog';
-import { hasLoadedSitePurchasesFromServer } from 'state/purchases/selectors';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSite, getSiteDomain } from 'state/sites/selectors';
-import Notice from 'components/notice';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { deleteSite } from 'state/sites/actions';
-import { setSelectedSiteId } from 'state/ui/actions';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import hasCancelableSitePurchases from 'state/selectors/has-cancelable-site-purchases';
+import Gridicon from 'calypso/components/gridicon';
+import DeleteSiteWarningDialog from 'calypso/my-sites/site-settings/delete-site-warning-dialog';
+import { hasLoadedSitePurchasesFromServer } from 'calypso/state/purchases/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { getSite, getSiteDomain } from 'calypso/state/sites/selectors';
+import Notice from 'calypso/components/notice';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { deleteSite } from 'calypso/state/sites/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 
 /**
  * Style dependencies
@@ -89,7 +89,7 @@ class DeleteSite extends Component {
 	};
 
 	closeConfirmDialog = () => {
-		this.setState( { showConfirmDialog: false } );
+		this.setState( { showConfirmDialog: false, confirmDomain: '' } );
 	};
 
 	closeWarningDialog = () => {

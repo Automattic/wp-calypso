@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import { updateUploadProgress, uploadComplete, uploadPlugin, receiveError } from '../';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import {
 	completePluginUpload,
 	pluginUploadError,
 	updatePluginUploadProgress,
-} from 'state/plugins/upload/actions';
-import { getSite } from 'state/sites/selectors';
+} from 'calypso/state/plugins/upload/actions';
+import { getSite } from 'calypso/state/sites/selectors';
 
 const siteId = 77203074;
 const pluginId = 'hello-dolly';

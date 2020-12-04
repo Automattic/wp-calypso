@@ -4,7 +4,9 @@
 import {
 	POST_TYPE_LIST_SHARE_PANEL_HIDE,
 	POST_TYPE_LIST_SHARE_PANEL_TOGGLE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 export function hideActiveSharePanel() {
 	return {

@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod, usePaymentProcessors, useTransactionStatus } from '../public-api';
-import { PaymentProcessorResponse } from '../types';
+import { PaymentProcessorResponse, PaymentProcessorResponseType } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-submit-button' );
 
@@ -44,19 +44,19 @@ export default function CheckoutSubmitButton( {
 			return paymentProcessors[ paymentProcessorId ]( submitData )
 				.then( ( processorResponse: PaymentProcessorResponse ) => {
 					debug( 'payment processor function response', processorResponse );
-					if ( processorResponse.type === 'REDIRECT' ) {
+					if ( processorResponse.type === PaymentProcessorResponseType.REDIRECT ) {
 						if ( ! processorResponse.payload ) {
 							throw new Error( redirectErrorMessage );
 						}
 						setTransactionRedirecting( processorResponse.payload );
-						return;
+						return processorResponse;
 					}
-					if ( processorResponse.type === 'SUCCESS' ) {
+					if ( processorResponse.type === PaymentProcessorResponseType.SUCCESS ) {
 						setTransactionComplete( processorResponse.payload );
-						return;
+						return processorResponse;
 					}
-					if ( processorResponse.type === 'NOOP' ) {
-						return;
+					if ( processorResponse.type === PaymentProcessorResponseType.MANUAL ) {
+						return processorResponse;
 					}
 					throw new Error(
 						`Unknown payment processor response for processor "${ paymentProcessorId }"`

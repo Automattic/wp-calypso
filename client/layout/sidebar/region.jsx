@@ -11,10 +11,10 @@ import classNames from 'classnames';
 import SkipNavigation from './skip-navigation';
 
 const SidebarRegion = ( { children, className } ) => (
-	<div className={ classNames( 'sidebar__region', className ) }>
+	<li className={ classNames( 'sidebar__region', className ) }>
 		<SkipNavigation skipToElementId="primary" />
 		{ children }
-	</div>
+	</li>
 );
 
 export default SidebarRegion;

@@ -11,8 +11,8 @@ import { omit } from 'lodash';
 /**
  * Globals
  */
-const debug = debugFactory( 'calypso:resizable-iframe' ),
-	noop = () => {};
+const debug = debugFactory( 'calypso:resizable-iframe' );
+const noop = () => {};
 
 export default class extends React.Component {
 	static displayName = 'ResizableIframe';

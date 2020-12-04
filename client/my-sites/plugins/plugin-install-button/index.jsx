@@ -10,22 +10,23 @@ import React, { Component } from 'react';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
+import PluginsActions from 'calypso/lib/plugins/actions';
 import { Button } from '@automattic/components';
-import InfoPopover from 'components/info-popover';
-import ExternalLink from 'components/external-link';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import QuerySiteConnectionStatus from 'components/data/query-site-connection-status';
-import getSiteConnectionStatus from 'state/selectors/get-site-connection-status';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import { localizeUrl } from 'lib/i18n-utils';
+import InfoPopover from 'calypso/components/info-popover';
+import ExternalLink from 'calypso/components/external-link';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import QuerySiteConnectionStatus from 'calypso/components/data/query-site-connection-status';
+import getSiteConnectionStatus from 'calypso/state/selectors/get-site-connection-status';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { isCompatiblePlugin } from '../plugin-compatibility';
+import { installPlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -36,7 +37,6 @@ export class PluginInstallButton extends Component {
 	installAction = () => {
 		const {
 			isEmbed,
-			selectedSite,
 			siteId,
 			isInstalling,
 			plugin,
@@ -49,7 +49,7 @@ export class PluginInstallButton extends Component {
 		}
 
 		PluginsActions.removePluginsNotices( 'completed', 'error' );
-		PluginsActions.installPlugin( selectedSite, plugin );
+		this.props.installPlugin( siteId, plugin );
 
 		if ( isEmbed ) {
 			recordGAEvent( 'Plugins', 'Install with no selected site', 'Plugin Name', plugin.slug );
@@ -345,6 +345,7 @@ export default connect(
 		};
 	},
 	{
+		installPlugin,
 		recordGoogleEvent,
 		recordTracksEvent,
 	}

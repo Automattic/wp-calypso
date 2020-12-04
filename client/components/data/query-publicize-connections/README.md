@@ -8,7 +8,7 @@ Render the component, passing `siteId` or the boolean attribute `selectedSite`. 
 
 ```jsx
 import React from 'react';
-import QueryPublicizeConnections from 'components/data/query-publicize-connetions';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connetions';
 import MyConnectionsListItem from './list-item';
 
 export default function MyConnectionsList( { connections } ) {

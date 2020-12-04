@@ -16,7 +16,6 @@ import {
 	merge,
 	reject,
 	some,
-	toLower,
 	uniq,
 } from 'lodash';
 import emailValidator from 'email-validator';
@@ -24,7 +23,7 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'lib/gsuite/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_EXTRA_LICENSE_SLUG } from 'calypso/lib/gsuite/constants';
 import {
 	formatProduct,
 	getDomain,
@@ -54,10 +53,11 @@ import {
 	isUnlimitedThemes,
 	isVideoPress,
 	isConciergeSession,
-} from 'lib/products-values';
-import sortProducts from 'lib/products-values/sort';
-import { getTld } from 'lib/domains';
-import { domainProductSlugs } from 'lib/domains/constants';
+	isMonthly,
+} from 'calypso/lib/products-values';
+import sortProducts from 'calypso/lib/products-values/sort';
+import { getTld } from 'calypso/lib/domains';
+import { domainProductSlugs } from 'calypso/lib/domains/constants';
 import {
 	getPlan,
 	isBloggerPlan,
@@ -66,12 +66,12 @@ import {
 	isPremiumPlan,
 	isWpComFreePlan,
 	isWpComBloggerPlan,
-} from 'lib/plans';
-import { getTermDuration } from 'lib/plans/constants';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+} from 'calypso/lib/plans';
+import { getTermDuration } from 'calypso/lib/plans/constants';
 
 /**
  * @typedef { import("./types").CartItemValue} CartItemValue
+ * @typedef { import("./types").CartItemExtra} CartItemExtra
  * @typedef { import("./types").CartValue } CartValue
  */
 
@@ -165,11 +165,7 @@ export function cartItemShouldReplaceCart( cartItem, cart ) {
 		// adding a Jetpack product should replace the cart
 
 		// Jetpack Offer Reset allows users to purchase multiple Jetpack products at the same time.
-		if ( shouldShowOfferResetFlow() ) {
-			return false;
-		}
-
-		return true;
+		return false;
 	}
 
 	return false;
@@ -362,6 +358,10 @@ export function hasBusinessPlan( cart ) {
 
 export function hasDomainCredit( cart ) {
 	return cart.has_bundle_credit || hasPlan( cart );
+}
+
+export function hasMonthlyCartItem( cart ) {
+	return some( getAllCartItems( cart ), isMonthly );
 }
 
 /**
@@ -741,8 +741,8 @@ export function getGoogleApps( cart ) {
 }
 
 export function googleApps( properties ) {
-	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG,
-		item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
+	const productSlug = properties.product_slug || GSUITE_BASIC_SLUG;
+	const item = domainItem( productSlug, properties.meta ? properties.meta : properties.domain );
 
 	return assign( item, { extra: { google_apps_users: properties.users } } );
 }
@@ -1126,7 +1126,7 @@ export function isPartialCredits( cartItem ) {
 /**
  * Determines whether a cart item is a renewal
  *
- * @param {CartItemValue} cartItem - `CartItemValue` object
+ * @param {{extra?: CartItemExtra}} cartItem - object with `CartItemExtra` `extra` property
  * @returns {boolean} true if item is a renewal
  */
 export function isRenewal( cartItem ) {
@@ -1177,7 +1177,7 @@ export function isNextDomainFree( cart, domain = '' ) {
 export function isDomainBundledWithPlan( cart, domain ) {
 	const bundledDomain = get( cart, 'bundled_domain', '' );
 
-	return '' !== bundledDomain && toLower( domain ) === toLower( get( cart, 'bundled_domain', '' ) );
+	return '' !== bundledDomain && ( domain ?? '' ).toLowerCase() === bundledDomain.toLowerCase();
 }
 
 /**
@@ -1196,8 +1196,8 @@ export function isDomainBeingUsedForPlan( cart, domain ) {
 		return false;
 	}
 
-	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) ),
-		domainProduct = domainProducts.shift() || {};
+	const domainProducts = getDomainRegistrations( cart ).concat( getDomainMappings( cart ) );
+	const domainProduct = domainProducts.shift() || {};
 	const processedDomainInCart = domain === domainProduct.meta;
 	if ( ! processedDomainInCart ) {
 		return false;

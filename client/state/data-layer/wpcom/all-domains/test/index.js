@@ -11,9 +11,9 @@ import {
 	ALL_DOMAINS_REQUEST,
 	ALL_DOMAINS_REQUEST_SUCCESS,
 	ALL_DOMAINS_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const isErrorNotice = ( action ) => {
 	return action && action.notice && 'is-error' === action.notice.status;

@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import formatCurrency from '@automattic/format-currency';
@@ -13,8 +13,8 @@ import formatCurrency from '@automattic/format-currency';
 import { EVENT_TYPES } from 'woocommerce/state/sites/orders/activity-log/selectors';
 import LabelItem from 'woocommerce/woocommerce-services/views/shipping-label/label-item';
 import LabelItemInProgress from 'woocommerce/woocommerce-services/views/shipping-label/label-item-in-progress';
-import { decodeEntities, stripHTML } from 'lib/formatting';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { decodeEntities, stripHTML } from 'calypso/lib/formatting';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class OrderEvent extends Component {
 	static propTypes = {

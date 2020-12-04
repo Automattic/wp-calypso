@@ -9,7 +9,7 @@ implement this one.
 ## How to use
 
 ```js
-import HeaderButton from 'components/header-button';
+import HeaderButton from 'calypso/components/header-button';
 
 function MyHeader() {
 	return (

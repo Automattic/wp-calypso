@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_CONNECTION_STATUS_CONNECTED } from 'state/happychat/constants';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
+import { HAPPYCHAT_CONNECTION_STATUS_CONNECTED } from 'calypso/state/happychat/constants';
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
 
 /**
  * Returns true if connection status is connected

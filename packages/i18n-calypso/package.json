@@ -4,6 +4,7 @@
 	"description": "i18n JavaScript library on top of Tannin originally used in Calypso",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"types": "types/index.d.ts",
 	"sideEffects": false,
 	"repository": {
@@ -18,7 +19,7 @@
 	},
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/i18n-calypso#readme",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@tannin/sprintf": "^1.1.0",
 		"@wordpress/compose": "^3.19.3",
 		"debug": "^4.0.0",
@@ -39,7 +40,7 @@
 	},
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile"
+		"build": "transpile",
+		"prepack": "yarn run clean && yarn run build"
 	}
 }

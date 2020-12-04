@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
 
 describe( 'getCurrentRouteParameterized()', () => {
 	const route = {

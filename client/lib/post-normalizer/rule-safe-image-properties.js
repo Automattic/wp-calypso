@@ -1,11 +1,10 @@
 /**
  * External dependencies
  */
-
 import { forOwn, startsWith } from 'lodash';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { makeImageURLSafe } from './utils';
 

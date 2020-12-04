@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
-import { closeAccount, closeAccountSuccess } from 'state/account/actions';
+import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { closeAccount, closeAccountSuccess } from 'calypso/state/account/actions';
 
 jest.mock( 'lib/user', () => () => {
 	return { clear: jest.fn() };

@@ -10,17 +10,17 @@ import {
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	READER_SEEN_MARK_AS_SEEN_BLOG_REQUEST,
 	READER_SEEN_MARK_AS_UNSEEN_BLOG_REQUEST,
-} from 'state/reader/action-types';
-import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
+} from 'calypso/state/reader/action-types';
+import { SOURCE_READER_WEB } from 'calypso/state/reader/seen-posts/constants';
 
 /**
  * Load data layer dependencies
  */
-import 'state/data-layer/wpcom/seen-posts/seen/new/index';
-import 'state/data-layer/wpcom/seen-posts/seen/delete/index';
-import 'state/data-layer/wpcom/seen-posts/seen/all/new/index';
-import 'state/data-layer/wpcom/seen-posts/seen/blog/new/index';
-import 'state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/delete/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/all/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
 
 /**
  * Request mark as seen for given seenIds

@@ -14,21 +14,8 @@
 		line-height: 32px;
 	}
 
-	&__layout {
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	&__layout-col {
-		flex-basis: 100%;
-	}
-
 	@include breakpoint-deprecated( '>1280px' ) {
-		&__layout-col:first-child {
-			box-sizing: border-box;
-			flex-basis: 70%;
-			padding-right: 8px;
-
+		&__main-layout-col {
 			.card {
 				padding-left: 72px;
 
@@ -39,16 +26,15 @@
 				}
 			}
 		}
-
-		&__layout-col:last-child {
-			box-sizing: border-box;
-			flex-basis: 30%;
-			padding-left: 8px;
-		}
 	}
 
 	.spinner {
 		width: 100%;
+	}
+
+	.components-panel__body-title .components-button {
+		font-size: 1rem;
+		font-weight: 600;
 	}
 }
 

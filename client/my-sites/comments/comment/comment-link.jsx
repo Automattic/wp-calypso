@@ -9,7 +9,7 @@ import { get, includes, omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import { navigate } from 'state/ui/actions';
+import { navigate } from 'calypso/state/ui/actions';
 
 export class CommentLink extends PureComponent {
 	static propTypes = {

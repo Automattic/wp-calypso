@@ -39,6 +39,12 @@ process.env.CALYPSO_ENV = config.calypso_config;
 // Set app config path
 app.setPath( 'userData', appData );
 
+// Default value of false deprecated in Electron v9
+app.allowRendererProcessReuse = true;
+
+// Force sandbox: true for all BrowserWindow instances
+app.enableSandbox();
+
 if ( Settings.isDebug() ) {
 	process.env.DEBUG = config.debug.namespace;
 }
@@ -47,7 +53,7 @@ if ( Settings.isDebug() ) {
  * These setup things for Calypso. We have to do them inside the app as we can't set any env variables in the packaged release
  * This has to come after the DEBUG_* variables
  */
-const log = require( 'desktop/lib/logger' )( 'desktop:boot' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:boot' );
 log.info( `Booting ${ config.appPathName + ' v' + config.version }` );
 log.info( `App Path: ${ app.getAppPath() }` );
 log.info( `App Data: ${ app.getPath( 'userData' ) }` );
@@ -73,9 +79,3 @@ if ( Settings.getSetting( 'proxy-type' ) === '' ) {
 		app.commandLine.appendSwitch( 'proxy-pac-url', Settings.getSetting( 'proxy-pac' ) );
 	}
 }
-
-// Define a global 'desktop' variable that can be used in browser windows to access config and settings
-global.desktop = {
-	config: config,
-	settings: Settings,
-};

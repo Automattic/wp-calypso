@@ -42,13 +42,6 @@ export default {
 		},
 	},
 
-	fetchedNotAllowed: {
-		type: 'NOT_ALLOWED_TO_RECEIVE_PLUGINS',
-		site: { ID: 123 },
-		data: undefined,
-		error: undefined,
-	},
-
 	// Update
 	updatePlugin: {
 		type: 'UPDATE_PLUGIN',

@@ -36,6 +36,7 @@ const stepNameToModuleName = {
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',
+	'secure-your-brand': 'secure-your-brand',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
 	'site-style': 'site-style',
@@ -67,6 +68,10 @@ const stepNameToModuleName = {
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
 };
+
+export function getStepModuleName( stepName ) {
+	return stepNameToModuleName[ stepName ] || '';
+}
 
 export async function getStepComponent( stepName ) {
 	const moduleName = stepNameToModuleName[ stepName ];

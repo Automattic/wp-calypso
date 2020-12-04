@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 
 /**
  * Style dependencies

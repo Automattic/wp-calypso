@@ -1,9 +1,4 @@
 /** @jest-environment jsdom */
-
-jest.mock( 'lib/plans/config', () => ( {
-	shouldShowOfferResetFlow: () => false,
-} ) );
-
 jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
 jest.mock( 'components/notice', () => 'Notice' );
 jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
@@ -26,8 +21,8 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-} from 'lib/plans/constants';
-import { OPTIONS_JETPACK_SECURITY } from 'my-sites/plans-v2/constants';
+} from 'calypso/lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 /**
  * Internal dependencies

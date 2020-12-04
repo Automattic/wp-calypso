@@ -55,15 +55,6 @@ export default {
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
 	},
-	skippableDomainStep: {
-		datestamp: '20290717',
-		variations: {
-			skippable: 0,
-			notSkippable: 100,
-		},
-		defaultVariation: 'notSkippable',
-		allowExistingUsers: true,
-	},
 	passwordlessSignup: {
 		datestamp: '20291029',
 		variations: {
@@ -71,24 +62,6 @@ export default {
 			default: 100,
 		},
 		defaultVariation: 'default',
-	},
-	domainStepCopyUpdates: {
-		datestamp: '20191121',
-		variations: {
-			variantShowUpdates: 100,
-			control: 0,
-		},
-		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
-	offerResetFlow: {
-		datestamp: '20200916',
-		variations: {
-			showOfferResetFlow: 100,
-			control: 0,
-		},
-		defaultVariation: 'showOfferResetFlow',
-		allowExistingUsers: true,
 	},
 	userlessCheckout: {
 		datestamp: '20210806',
@@ -119,22 +92,13 @@ export default {
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
 	},
-	removeUsernameInSignup: {
-		datestamp: '20201002',
-		variations: {
-			variantRemoveUsername: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
-	oneClickUpsell: {
-		datestamp: '20200922',
+	secureYourBrand: {
+		datestamp: '20201124',
 		variations: {
 			test: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: true,
+		allowExistingUsers: false,
 	},
 };

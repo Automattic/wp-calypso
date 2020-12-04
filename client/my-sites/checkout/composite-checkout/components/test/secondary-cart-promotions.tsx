@@ -17,7 +17,7 @@ import { checkoutTheme } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 

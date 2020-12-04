@@ -8,7 +8,7 @@ Render the component without props. It does not accept any children, nor does it
 
 ```jsx
 import React from 'react';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 
 export default function CountriesList( { countries } ) {
 	return (

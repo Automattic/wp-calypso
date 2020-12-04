@@ -7,17 +7,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { addCreditCard, billingHistoryReceipt } from 'calypso/me/purchases/paths';
+import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import config from 'calypso/config';
-import CreditCards from 'calypso/me/purchases/credit-cards';
 import PurchasesHeader from '../purchases/purchases-list/header';
 import BillingHistoryTable from './billing-history-table';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
+import titles from 'calypso/me/purchases/titles';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -33,16 +33,15 @@ export function BillingHistoryList( { siteId = null, getReceiptUrlFor = billingH
 }
 
 const BillingHistory = ( { translate } ) => (
-	<Main className="billing-history">
+	<Main className="billing-history is-wide-layout">
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
+
+		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
 		<PurchasesHeader section={ 'billing' } />
 		<BillingHistoryList />
-		{ config.isEnabled( 'upgrades/credit-cards' ) && (
-			<CreditCards addPaymentMethodUrl={ addCreditCard } />
-		) }
 	</Main>
 );
 

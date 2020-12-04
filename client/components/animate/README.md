@@ -5,7 +5,7 @@ Simple interface to introduce animations to components on initial render. Used a
 ## How to use
 
 ```jsx
-import Animate from 'components/animate';
+import Animate from 'calypso/components/animate';
 
 function render() {
 	return <Animate type="appear">Will animate</Animate>;

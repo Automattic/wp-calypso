@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
 import { addCardDetails, editCardDetails } from './paths';
 import {
 	isExpired,
@@ -12,13 +11,10 @@ import {
 import { isDomainTransfer } from 'calypso/lib/products-values';
 
 function isDataLoading( props ) {
-	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
+	return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
 }
 
 function canEditPaymentDetails( purchase ) {
-	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
-		return false;
-	}
 	return (
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&

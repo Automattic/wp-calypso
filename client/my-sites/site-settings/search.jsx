@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
@@ -12,21 +11,25 @@ import { overSome } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import UpsellNudge from 'blocks/upsell-nudge';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
-import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
+import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import {
 	isBusiness,
 	isEnterprise,
@@ -34,10 +37,13 @@ import {
 	isJetpackBusiness,
 	isEcommerce,
 	isJetpackSearch,
-} from 'lib/products-values';
-import { planHasJetpackSearch } from 'lib/plans';
-import { FEATURE_SEARCH } from 'lib/plans/constants';
-import { PRODUCT_JETPACK_SEARCH, PRODUCT_WPCOM_SEARCH } from 'lib/products-values/constants';
+} from 'calypso/lib/products-values';
+import { planHasJetpackSearch } from 'calypso/lib/plans';
+import { FEATURE_SEARCH } from 'calypso/lib/plans/constants';
+import {
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
+} from 'calypso/lib/products-values/constants';
 
 class Search extends Component {
 	static defaultProps = {
@@ -107,8 +113,8 @@ class Search extends Component {
 		const { siteIsJetpack, siteSlug, translate } = this.props;
 
 		const href = siteIsJetpack
-			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH }`
-			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH }`;
+			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
+			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH_MONTHLY }`;
 
 		return (
 			<Fragment>
@@ -120,7 +126,7 @@ class Search extends Component {
 					href={ href }
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
 					feature={ FEATURE_SEARCH }
-					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PRODUCT_WPCOM_SEARCH }
+					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
 					showIcon={ true }
 				/>
 			</Fragment>
@@ -149,25 +155,21 @@ class Search extends Component {
 							<JetpackModuleToggle
 								siteId={ siteId }
 								moduleSlug="search"
-								label={ translate(
-									'Improve built-in WordPress search performance.'
-								) }
+								label={ translate( 'Improve built-in WordPress search performance.' ) }
 								disabled={ isRequestingSettings || isSavingSettings }
 							/>
 						) : (
-							<CompactFormToggle
+							<FormToggle
 								checked={ !! fields.jetpack_search_enabled }
 								disabled={ isRequestingSettings || isSavingSettings }
 								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
 							>
-								{ translate(
-									'Improve built-in WordPress search performance.'
-								) }
-							</CompactFormToggle>
+								{ translate( 'Improve built-in WordPress search performance.' ) }
+							</FormToggle>
 						) }
 
 						<div className="site-settings__jetpack-instant-search-toggle">
-							<CompactFormToggle
+							<FormToggle
 								checked={ !! fields.instant_search_enabled }
 								disabled={
 									isRequestingSettings ||
@@ -178,7 +180,7 @@ class Search extends Component {
 								onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
 							>
 								{ translate( 'Enable instant search experience (recommended)' ) }
-							</CompactFormToggle>
+							</FormToggle>
 							{ isLoading || activatingSearchModule || isSavingSettings
 								? this.renderSettingsUpdating()
 								: this.renderInstantSearchExplanation() }

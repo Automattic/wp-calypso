@@ -8,7 +8,7 @@ A React mixin that makes it easy to trigger re-rendering of a component when a `
 
 ```js
 /* eslint-disable react/prefer-es6-class */
-import observe from 'lib/mixins/data-observe';
+import observe from 'calypso/lib/mixins/data-observe';
 import createReactClass from 'create-react-class';
 
 const Component = createReactClass( {

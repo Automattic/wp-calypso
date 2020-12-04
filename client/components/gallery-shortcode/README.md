@@ -8,7 +8,7 @@ Simply pass a site ID and an array of media items.
 
 ```jsx
 import React from 'react';
-import GalleryShortcode from 'components/gallery-shortcode';
+import GalleryShortcode from 'calypso/components/gallery-shortcode';
 
 export default class extends React.Component {
 	static displayName = 'MyComponent';

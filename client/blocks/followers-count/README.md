@@ -5,7 +5,7 @@
 ## Example
 
 ```js
-import FollowersCount from 'blocks/followers-count';
+import FollowersCount from 'calypso/blocks/followers-count';
 
 function render() {
 	return <FollowersCount />;

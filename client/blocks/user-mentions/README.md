@@ -2,14 +2,13 @@
 
 This block provides a higher-order component `withUserMentions()`, which can be used in conjunction with a standard textarea to add user mentions support. Typing '@_something_' in the textarea will produce a popover menu to select a username by clicking or pressing Enter or Tab.
 
-It also provides the components `UserMentionsSuggestionList` and `UserMentionsSuggestion`, which are also used in the
-[Editor Mentions TinyMCE plugin](https://github.com/Automattic/wp-calypso/tree/HEAD/client/components/tinymce/plugins/mentions).
+It also provides the components `UserMentionsSuggestionList` and `UserMentionsSuggestion`.
 
 ## How to use
 
 ```js
-import FormTextarea from 'components/forms/form-textarea';
-import withUserMentions from 'blocks/user-mentions';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import withUserMentions from 'calypso/blocks/user-mentions';
 
 const ExampleInput = React.forwardRef( ( props, ref ) => (
 	<FormTextarea forwardedRef={ ref } onKeyUp={ props.onKeyUp } onKeyDown={ props.onKeyDown } />
@@ -26,4 +25,4 @@ Note: you'll need to wrap the child component with `React.forwardRef`, and pass 
 
 `connectUserMentions` (connect.jsx) provides a list of user suggestions from the API to the wrapped component.
 
-`withUserMentions` (index.jsx) combines the two higher-order components above. This HOC is used by the Reader comments box.
+`withUserMentions` (index.jsx) combines the two higher-order components above. This HOC is used by the comments block.

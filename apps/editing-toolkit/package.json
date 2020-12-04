@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wpcom-editing-toolkit",
-	"version": "2.7.0",
+	"version": "2.8.10",
 	"description": "Plugin for editing-related features.",
 	"sideEffects": true,
 	"repository": {
@@ -59,7 +59,6 @@
 		"dev:premium-content": "yarn run premium-content",
 		"build:premium-content": "NODE_ENV=production yarn run premium-content",
 		"block-inserter-modifications": "npm-run-all --parallel block-inserter-modifications-*",
-		"block-inserter-modifications-new-blocks-showcase": "calypso-build --source='block-inserter-modifications/new-blocks-showcase'",
 		"block-inserter-modifications-contextual-tips": "calypso-build --source='block-inserter-modifications/contextual-tips'",
 		"dev:block-inserter-modifications": "yarn run block-inserter-modifications",
 		"build:block-inserter-modifications": "NODE_ENV=production yarn run block-inserter-modifications",
@@ -90,11 +89,13 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
 		"@automattic/format-currency": "^1.0.0-alpha.0",
+		"@automattic/i18n-utils": "^1.0.0",
+		"@automattic/launch": "^1.0.0",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/plans-grid": "^1.0.0-alpha.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/typography": "^1.0.0",
-		"@babel/core": "^7.11.1",
+		"@babel/core": "^7.12.3",
 		"@testing-library/jest-dom": "^5.9.0",
 		"@testing-library/react": "^10.0.5",
 		"@wordpress/a11y": "^2.11.0",
@@ -102,7 +103,6 @@
 		"@wordpress/base-styles": "2.0.1",
 		"@wordpress/block-editor": "*",
 		"@wordpress/blocks": "*",
-		"@wordpress/core-data": "^2.16.0",
 		"@wordpress/components": "*",
 		"@wordpress/compose": "*",
 		"@wordpress/data": "*",
@@ -114,7 +114,7 @@
 		"@wordpress/edit-post": "*",
 		"@wordpress/editor": "*",
 		"@wordpress/element": "*",
-		"@wordpress/env": "*",
+		"@wordpress/env": "^2.1.0",
 		"@wordpress/escape-html": "^1.9.0",
 		"@wordpress/hooks": "*",
 		"@wordpress/html-entities": "*",
@@ -131,7 +131,7 @@
 		"classnames": "^2.2.6",
 		"emotion-theming": "^10.0.27",
 		"enzyme": "^3.11.0",
-		"eslint": "^6.8.0",
+		"eslint": "^7.12.0",
 		"jest": "^26.4.0",
 		"lodash": "*",
 		"moment": "*",
@@ -144,9 +144,10 @@
 		"utility-types": "^3.10.0"
 	},
 	"devDependencies": {
+		"@babel/preset-typescript": "^7.12.1",
 		"@types/wordpress__plugins": "^2.3.6",
-		"@babel/preset-typescript": "^7.10.4",
 		"@wordpress/eslint-plugin": "^7.1.0",
-		"babel-jest": "^26.3.0"
+		"babel-jest": "^26.3.0",
+		"webpack": "^4.44.2"
 	}
 }

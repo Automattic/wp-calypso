@@ -44,13 +44,18 @@
 		font-weight: 700;
 	}
 
+	.components-toggle-control__label {
+		margin-bottom: 1px;
+	}
+
 	legend + label,
 	label + label,
 	li label,
 	input[type='checkbox'] + label,
 	input[type='radio'] + label,
 	label input[type='checkbox'],
-	label input[type='radio'] {
+	label input[type='radio'],
+	.components-toggle-control__label {
 		font-weight: 400;
 	}
 
@@ -73,10 +78,6 @@
 		}
 	}
 
-	.form-toggle__switch {
-		margin-top: 3px;
-	}
-
 	p.form-setting-explanation {
 		display: block;
 		margin: 5px 0;
@@ -86,14 +87,13 @@
 		color: var( --color-text-subtle );
 
 		&.is-indented {
-			margin-left: 24px;
+			margin-left: 48px;
 		}
 	}
 
-	.form-toggle__wrapper + p.form-setting-explanation.is-indented,
 	.indented-form-field,
 	.indented-form-field + p.form-setting-explanation.is-indented {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	p.settings-alert {
@@ -224,10 +224,6 @@
 		padding: 0;
 	}
 
-	.composing__publish-confirmation .form-toggle__label-content {
-		font-weight: 700;
-	}
-
 	.eligibility-warnings {
 		margin-top: 0;
 		margin-bottom: 16px;
@@ -247,57 +243,27 @@
 .manage-connection,
 .seo-settings__site-verification,
 .seo-settings__help {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
 }
+
+.site-settings__general-settings .is-coming-soon-disabled {
+	opacity: 0.5;
+}
+
 .site-settings__general-settings .site-settings__language-picker-notice {
 	margin-bottom: 10px;
 }
 
 .site-settings__discussion-settings {
-	.form-toggle__label {
-		display: flex;
-		align-items: center;
-	}
-
-	.form-toggle__switch {
-		flex: 1 0 auto;
-	}
-
-	.form-toggle__switch + span {
-		flex: 0 1 100%;
-		margin-left: 12px;
-	}
-
 	hr {
 		margin: 0 -24px 1.5em;
 	}
 
 	.site-settings__other-comment-settings {
-		.form-toggle__label {
-			align-items: flex-start;
-		}
-
-		.form-toggle__switch {
-			margin-top: 5px;
-		}
-
-		.form-toggle__switch + span {
-			line-height: 26px;
-		}
-
 		.form-select {
-			margin-top: 2px;
+			margin: -3px 4px;
 		}
 	}
 
@@ -453,7 +419,7 @@
 }
 
 .site-settings__child-settings {
-	margin: 16px 36px 0;
+	margin: 16px 48px 0;
 }
 
 .form-legend + .support-info {
@@ -521,7 +487,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	margin-bottom: 16px;
 
 	.site-settings__jetpack-instant-search-toggle {
-		margin-left: 36px;
+		margin-left: 48px;
 	}
 
 	.search__module-settings {
@@ -564,7 +530,7 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 		.form-fieldset.minileven {
 			&.inactive {
 				p,
-				.form-toggle__label,
+				.components-toggle-control__label,
 				.support-info {
 					opacity: 0.3;
 					transition: all 0.75s;

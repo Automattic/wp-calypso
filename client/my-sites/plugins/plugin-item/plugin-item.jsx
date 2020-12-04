@@ -3,42 +3,26 @@
  */
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { flowRight as compose, isEqual, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { CompactCard } from '@automattic/components';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import Count from 'components/count';
-import Notice from 'components/notice';
-import { withLocalizedMoment } from 'components/localized-moment';
-import PluginNotices from 'lib/plugins/notices';
-import { errorNotice } from 'state/notices/actions';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import Count from 'calypso/components/count';
+import Notice from 'calypso/components/notice';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function checkPropsChange( nextProps, propArr ) {
-	let i;
-
-	for ( i = 0; i < propArr.length; i++ ) {
-		const prop = propArr[ i ];
-
-		if ( ! isEqual( nextProps[ prop ], this.props[ prop ] ) ) {
-			return true;
-		}
-	}
-	return false;
-}
 
 class PluginItem extends Component {
 	static propTypes = {
@@ -54,11 +38,6 @@ class PluginItem extends Component {
 		} ),
 		isAutoManaged: PropTypes.bool,
 		progress: PropTypes.array,
-		notices: PropTypes.shape( {
-			completed: PropTypes.array,
-			errors: PropTypes.array,
-			inProgress: PropTypes.array,
-		} ),
 		hasUpdate: PropTypes.func,
 	};
 
@@ -71,29 +50,6 @@ class PluginItem extends Component {
 		isAutoManaged: false,
 		hasUpdate: () => false,
 	};
-
-	shouldComponentUpdate( nextProps ) {
-		const propsToCheck = [
-			'plugin',
-			'sites',
-			'selectedSite',
-			'isMock',
-			'isSelectable',
-			'isSelected',
-		];
-		if ( checkPropsChange.call( this, nextProps, propsToCheck ) ) {
-			return true;
-		}
-
-		if (
-			this.props.notices &&
-			PluginNotices.shouldComponentUpdateNotices( this.props.notices, nextProps.notices )
-		) {
-			return true;
-		}
-
-		return false;
-	}
 
 	ago( date ) {
 		return this.props.moment.utc( date, 'YYYY-MM-DD hh:mma' ).fromNow();
@@ -260,7 +216,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 					/>
 				) }
 				{ canToggleAutoupdate && (
@@ -269,7 +224,6 @@ class PluginItem extends Component {
 						plugin={ this.props.plugin }
 						disabled={ this.props.isSelectable }
 						site={ this.props.selectedSite }
-						notices={ this.props.notices }
 						wporg={ !! this.props.plugin.wporg }
 					/>
 				) }
@@ -357,8 +311,4 @@ class PluginItem extends Component {
 	}
 }
 
-export default compose(
-	connect( null, { errorNotice } ),
-	localize,
-	withLocalizedMoment
-)( PluginItem );
+export default localize( withLocalizedMoment( PluginItem ) );

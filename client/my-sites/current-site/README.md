@@ -6,7 +6,7 @@ Redux state and the component receives no props. It's used in the My Sites Sideb
 ## How to use
 
 ```js
-import CurrentSite from 'my-sites/current-site';
+import CurrentSite from 'calypso/my-sites/current-site';
 
 function render() {
 	return <CurrentSite />;

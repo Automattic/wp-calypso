@@ -6,9 +6,13 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getBlockByType } from './blocks';
+import * as Blocks from './blocks';
 
-const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) => {
+export const FormattedBlockRenderer = ( blockTypeMapping ) => ( {
+	content = {},
+	onClick = null,
+	meta = {},
+} ) => {
 	if ( 'string' === typeof content ) {
 		return content;
 	}
@@ -23,12 +27,25 @@ const FormattedBlock = ( { content = {}, onClick = null, meta = {} } ) => {
 		<FormattedBlock key={ key } content={ child } onClick={ onClick } meta={ meta } />
 	) );
 
-	const blockToRender = getBlockByType( type );
+	const blockToRender = blockTypeMapping[ type ];
 	if ( blockToRender ) {
 		return blockToRender( { content, onClick, meta, children } );
 	}
 
 	return <>{ children }</>;
 };
+
+const FormattedBlock = FormattedBlockRenderer( {
+	b: Blocks.Strong,
+	i: Blocks.Emphasis,
+	pre: Blocks.Preformatted,
+	a: Blocks.Link,
+	link: Blocks.Link,
+	filepath: Blocks.FilePath,
+	post: Blocks.Post,
+	person: Blocks.Person,
+	plugin: Blocks.Plugin,
+	theme: Blocks.Theme,
+} );
 
 export default FormattedBlock;

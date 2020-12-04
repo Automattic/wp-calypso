@@ -8,8 +8,8 @@ import { defaultRegistry } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import { initGoogleRecaptcha } from 'lib/analytics/recaptcha';
-import config from 'config';
+import { initGoogleRecaptcha } from 'calypso/lib/analytics/recaptcha';
+import config from 'calypso/config';
 
 /**
  * Style dependencies

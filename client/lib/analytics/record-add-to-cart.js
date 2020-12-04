@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { costToUSD } from 'lib/analytics/utils';
+import { costToUSD } from 'calypso/lib/analytics/utils';
 
-import { recordAddToCart as trackAddToCart } from 'lib/analytics/ad-tracking';
+import { recordAddToCart as trackAddToCart } from 'calypso/lib/analytics/ad-tracking';
 import { gaRecordEvent } from './ga';
 
 export function recordAddToCart( { cartItem } ) {

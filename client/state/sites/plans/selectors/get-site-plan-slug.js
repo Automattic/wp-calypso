@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getCurrentPlan } from 'state/sites/plans/selectors/get-current-plan';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors/get-current-plan';
 
 /**
  * Returns a site's current plan's product slug

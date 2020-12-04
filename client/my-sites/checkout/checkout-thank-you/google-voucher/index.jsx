@@ -12,19 +12,19 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Dialog } from '@automattic/components';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import PurchaseButton from 'components/purchase-detail/purchase-button';
-import TipInfo from 'components/purchase-detail/tip-info';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import PurchaseButton from 'calypso/components/purchase-detail/purchase-button';
+import TipInfo from 'calypso/components/purchase-detail/tip-info';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import TermsAndConditions from './terms-and-conditions';
-import QuerySiteVouchers from 'components/data/query-site-vouchers';
-import { assignSiteVoucher as assignVoucher } from 'state/sites/vouchers/actions';
-import { GOOGLE_CREDITS } from 'state/sites/vouchers/service-types';
-import { getVouchersBySite, getGoogleAdCredits } from 'state/sites/vouchers/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import QuerySiteVouchers from 'calypso/components/data/query-site-vouchers';
+import { assignSiteVoucher as assignVoucher } from 'calypso/state/sites/vouchers/actions';
+import { GOOGLE_CREDITS } from 'calypso/state/sites/vouchers/service-types';
+import { getVouchersBySite, getGoogleAdCredits } from 'calypso/state/sites/vouchers/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

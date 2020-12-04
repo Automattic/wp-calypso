@@ -11,8 +11,8 @@ import {
 	HAPPYCHAT_GROUP_JPOP,
 	HAPPYCHAT_SKILL_PRODUCT,
 	HAPPYCHAT_SKILL_LANGUAGE,
-} from 'state/happychat/constants';
-import getSkills from 'state/happychat/selectors/get-skills';
+} from 'calypso/state/happychat/constants';
+import getSkills from 'calypso/state/happychat/selectors/get-skills';
 
 describe( '#getSkills()', () => {
 	const uiState = {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { AUTHENTICATE_URL } from './constants';
 import { HTTPError, stringifyBody } from '../utils';
 import {
@@ -14,9 +14,9 @@ import {
 	MAGIC_LOGIN_RESET_REQUEST_FORM,
 	MAGIC_LOGIN_SHOW_LINK_EXPIRED,
 	MAGIC_LOGIN_SHOW_CHECK_YOUR_EMAIL_PAGE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 export const showMagicLoginCheckYourEmailPage = () => {
 	return {

@@ -9,7 +9,7 @@ import { find, isObject, isFunction, isEqual, compact } from 'lodash';
  * Internal dependencies
  */
 // TODO: Remove this when product edits have siteIds.
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { editProductRemoveCategory } from 'woocommerce/state/ui/products/actions';
 import { getAllProductEdits } from 'woocommerce/state/ui/products/selectors';
 import { getProduct } from 'woocommerce/state/sites/products/selectors';

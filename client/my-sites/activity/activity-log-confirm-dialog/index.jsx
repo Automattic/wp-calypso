@@ -10,11 +10,11 @@ import { connect } from 'react-redux';
  */
 import ActivityIcon from '../activity-log-item/activity-icon';
 import { Button, Card } from '@automattic/components';
-import FormLabel from 'components/forms/form-label';
-import FormCheckbox from 'components/forms/form-checkbox';
-import Gridicon from 'components/gridicon';
-import HappychatButton from 'components/happychat/button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import Gridicon from 'calypso/components/gridicon';
+import HappychatButton from 'calypso/components/happychat/button';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

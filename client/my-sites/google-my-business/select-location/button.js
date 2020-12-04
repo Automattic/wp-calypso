@@ -6,17 +6,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { connectGoogleMyBusinessLocation } from 'state/google-my-business/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { enhanceWithLocationCounts } from 'my-sites/google-my-business/utils';
-import { withEnhancers } from 'state/utils';
+import { connectGoogleMyBusinessLocation } from 'calypso/state/google-my-business/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { enhanceWithLocationCounts } from 'calypso/my-sites/google-my-business/utils';
+import { withEnhancers } from 'calypso/state/utils';
 
 class GoogleMyBusinessSelectLocationButton extends Component {
 	static propTypes = {

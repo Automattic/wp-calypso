@@ -30,15 +30,15 @@ class ConversationsEmptyContent extends React.Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read/search"
-				>
-					{ this.props.translate( 'Find posts to follow' ) }
-				</a>
-			),
-			secondaryAction = null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find posts to follow' ) }
+			</a>
+		);
+		const secondaryAction = null;
 
 		return (
 			<EmptyContent

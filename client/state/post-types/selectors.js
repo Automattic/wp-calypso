@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/post-types/init';
+import 'calypso/state/post-types/init';
 
 /**
  * Returns the known post types for a site.

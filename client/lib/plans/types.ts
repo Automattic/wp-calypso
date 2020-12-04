@@ -40,6 +40,7 @@ export type Plan = {
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
 	getTagline?: ( features?: string[] ) => TranslateResult;
+	getButtonLabel?: () => TranslateResult;
 	getAnnualSlug?: () => JetpackPlanSlugs | string;
 	getMonthlySlug?: () => JetpackPlanSlugs | string;
 	getAudience?: () => TranslateResult;

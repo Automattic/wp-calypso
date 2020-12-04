@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
+import { isEnabled } from 'calypso/config';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
 
 const FLAG_JETPACK_SITES = 'jetpack/features-section/jetpack';
 const FLAG_ATOMIC_SITES = 'jetpack/features-section/atomic';

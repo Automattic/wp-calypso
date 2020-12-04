@@ -12,6 +12,7 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -19,16 +20,15 @@ import {
 import {
 	LeftColumn,
 	RightColumn,
-} from 'my-sites/checkout/composite-checkout/components/ie-fallback';
-import Spinner from 'my-sites/checkout/composite-checkout/components/spinner';
+} from 'calypso/my-sites/checkout/composite-checkout/components/ie-fallback';
+import Spinner from 'calypso/my-sites/checkout/composite-checkout/components/spinner';
 import ContactFields from './contact-fields';
 import CreditCardNumberField from './credit-card-number-field';
 import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
-import { paymentMethodClassName } from 'lib/cart-values';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
 export default function CreditCardFields() {
 	const { __ } = useI18n();
@@ -48,7 +48,7 @@ export default function CreditCardFields() {
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
@@ -82,7 +82,11 @@ export default function CreditCardFields() {
 	);
 	const shouldShowContactFields =
 		contactCountryCode === 'BR' &&
-		Boolean( cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) ) );
+		Boolean(
+			cart?.allowed_payment_methods?.includes(
+				translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+			)
+		);
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 

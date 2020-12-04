@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -8,8 +12,8 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { MySitesSidebar } from '..';
-import config from 'config';
-import { abtest } from 'lib/abtest';
+import config from 'calypso/config';
+import { abtest } from 'calypso/lib/abtest';
 
 jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
@@ -25,13 +29,12 @@ jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
 jest.mock( 'my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
 } ) );
-jest.mock( 'config', () => ( {
-	isEnabled: jest.fn( () => true ),
-} ) );
 
-jest.mock( 'config/index', () => ( {
-	isEnabled: jest.fn( () => true ),
-} ) );
+jest.mock( 'config', () => {
+	const configMock = () => '';
+	configMock.isEnabled = jest.fn( () => true );
+	return configMock;
+} );
 
 describe( 'MySitesSidebar', () => {
 	describe( 'MySitesSidebar.store()', () => {

@@ -9,13 +9,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PopoverMenuItem from 'components/popover/menu-item';
-import { bumpStat as bumpAnalyticsStat } from 'state/analytics/actions';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { bumpStat as bumpAnalyticsStat } from 'calypso/state/analytics/actions';
 import { bumpStatGenerator } from './utils';
-import { getPost } from 'state/posts/selectors';
-import { canCurrentUserEditPost } from 'state/posts/selectors/can-current-user-edit-post';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import { preloadEditor } from 'sections-preloaders';
+import { getPost } from 'calypso/state/posts/selectors';
+import { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import { preloadEditor } from 'calypso/sections-preloaders';
 
 function PostActionsEllipsisMenuEdit( { translate, canEdit, status, editUrl, bumpStat } ) {
 	if ( 'trash' === status || ! canEdit ) {

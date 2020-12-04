@@ -3,7 +3,7 @@
 // ==========================================================================
 
 .plugin-action {
-	clear:both;
+	clear: both;
 	line-height: 0;
 	margin-top: 16px;
 
@@ -22,22 +22,23 @@
 			color: var( --color-neutral-70 );
 		}
 	}
-}
 
-.plugin-action .form-toggle__label {
-	display: inline-flex;
-	flex-direction: row-reverse;
-	align-items: center;
-}
+	.components-toggle-control {
+		.components-base-control__field {
+			display: inline-block;
+			margin-bottom: 5px;
 
-.plugin-action .form-toggle__switch {
-	flex: none;
-	align-self: center;
-}
+			.components-form-toggle {
+				margin-right: 0;
+			}
+		}
 
-.plugin-action .form-toggle__label-content {
-	flex: none;
-	margin-right: auto;
+		.components-toggle-control__label {
+			float: left;
+			font-size: $font-body-small;
+			margin-right: 8px;
+		}
+	}
 }
 
 .plugin-action__label {
@@ -56,16 +57,13 @@
 
 	.has-disabled-info & {
 		cursor: default;
+		flex-direction: row;
 	}
-}
-
-.plugin-action .form-toggle__label .form-toggle__switch {
-	float: right;
 }
 
 .plugin-action__disabled-info.info-popover {
 	flex: none;
-	margin: -1px 4px;
+	margin: 0 4px -1px;
 
 	.gridicon {
 		display: block;

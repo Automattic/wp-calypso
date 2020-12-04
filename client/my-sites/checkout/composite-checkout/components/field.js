@@ -110,10 +110,11 @@ const Input = styled.input`
 	font-size: 16px;
 	border: 1px solid
 		${ ( props ) => ( props.isError ? props.theme.colors.error : props.theme.colors.borderColor ) };
-	padding: 13px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 12px 10px;
+	padding: 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) } 7px 10px;
+	line-height: 1.5;
 
 	.rtl & {
-		padding: 13px 10px 12px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
+		padding: 7px 10px 7px ${ ( props ) => ( props.icon ? '60px' : '10px' ) };
 	}
 
 	:focus {

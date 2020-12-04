@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/push-notifications/init';
+import 'calypso/state/push-notifications/init';
 
 // `getState().pushNotifications.system`
 export const isApiReady = ( state ) => !! state.pushNotifications.system.apiReady;

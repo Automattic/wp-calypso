@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { isJetpackSite } from 'state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the last queryable page of themes for the given query, or null if the

@@ -14,7 +14,7 @@ A good example for this case is navigation. Sometimes the option that is selecte
 
 ```jsx
 import React from 'react';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 export default class extends React.Component {
 	// ...
@@ -104,7 +104,7 @@ A good example for this case is a form element. You don't want to have to write 
 
 ```jsx
 import React from 'react';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
 const options = [
 	{ value: 'all', label: 'All' },

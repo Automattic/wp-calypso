@@ -9,6 +9,20 @@
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"site_name": "Jetpack.com",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:image",
+			"content": "https://i1.wp.com/s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png?ssl=1"
+		}
+	],
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
@@ -16,32 +30,39 @@
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
 		"jetpack-cloud": true,
+		"jetpack-cloud/connect": true,
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
-		"jetpack/backup-simplified-screens": true,
+		"jetpack/scan-product": true,
+		"jetpack/anti-spam-product": true,
+		"jetpack/search-product": true,
+		"jetpack/connect/remote-install": true,
 		"jetpack/on-demand-scan": true,
 		"jetpack/pricing-page": true,
-		"jetpack/server-credentials-advanced-flow": false,
+		"jetpack/server-credentials-advanced-flow": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
-		"plans/alternate-selector": true,
 		"oauth": false,
 		"site-indicator": false,
-		"support-user": true
+		"support-user": true,
+		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
 	"sections": {
 		"activity": true,
 		"backup": true,
+		"checkout": true,
 		"jetpack-cloud-auth": false,
 		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
-		"scan": true
+		"scan": true,
+		"jetpack-connect": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud"
+	"theme": "jetpack-cloud",
+	"olark_chat_identity": "5581-687-10-4070"
 }

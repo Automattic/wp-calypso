@@ -9,14 +9,14 @@ as middleware to redirect any pathname ending in `/` to the same path minus the 
 For instance, to redirect `/foo/` to `/foo`:
 
 ```js
-import { normalize } from 'lib/route';
+import { normalize } from 'calypso/lib/route';
 page( '/foo/?', normalize, displayFoo );
 ```
 
 Alternatively, to normalize all routes:
 
 ```js
-import { normalize } from 'lib/route';
+import { normalize } from 'calypso/lib/route';
 page( '*', normalize );
 ```
 
@@ -35,7 +35,7 @@ This module is meant to simplify the work of adding query arguments to a URL.
 ### Example
 
 ```js
-import { addQueryArgs } from 'lib/route';
+import { addQueryArgs } from 'calypso/lib/route';
 
 addQueryArgs( { foo: 'bar' }, 'https://wordpress.com' ); // https://wordpress.com?foo=bar
 addQueryArgs( { foo: 'bar' }, 'https://wordpress.com?search=test' ); // https://wordpress.com/?search=test&foo=bar

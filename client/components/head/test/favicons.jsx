@@ -13,14 +13,9 @@ import React from 'react';
  */
 jest.mock( 'lib/jetpack/is-jetpack-cloud' );
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import Favicons from '../favicons';
 
 describe( 'Favicons', () => {
-	let Favicons;
-
-	beforeAll( () => {
-		Favicons = require( '../favicons' );
-	} );
-
 	beforeEach( () => {
 		isJetpackCloud.mockImplementation( () => false );
 	} );

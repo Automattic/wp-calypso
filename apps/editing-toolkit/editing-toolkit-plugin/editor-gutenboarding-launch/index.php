@@ -33,6 +33,8 @@ function enqueue_script_and_style() {
 		true
 	);
 
+	wp_set_script_translations( 'a8c-fse-editor-gutenboarding-launch-script', 'full-site-editing' );
+
 	wp_enqueue_style(
 		'a8c-fse-editor-gutenboarding-launch-style',
 		plugins_url( 'dist/editor-gutenboarding-launch.css', __FILE__ ),

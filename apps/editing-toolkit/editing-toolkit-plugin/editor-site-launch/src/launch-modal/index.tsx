@@ -2,21 +2,20 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { EntityProvider } from '@wordpress/core-data';
 import { __ } from '@wordpress/i18n';
 import { Modal, Button } from '@wordpress/components';
 import { Icon, wordpress, close } from '@wordpress/icons';
-import classnames from 'classnames';
+import { LaunchContext, useOnLaunch } from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE } from '../stores';
 import Launch from '../launch';
 import LaunchSidebar from '../launch-sidebar';
 import LaunchProgress from '../launch-progress';
-import { useSite } from '../hooks';
 
 import './styles.scss';
 
@@ -25,23 +24,22 @@ interface Props {
 }
 
 const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
+	const { siteId } = React.useContext( LaunchContext );
+
 	const { step: currentStep, isSidebarFullscreen } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()
 	);
-	const { launchSite } = useDispatch( LAUNCH_STORE );
-
 	const [ isLaunching, setIsLaunching ] = React.useState( false );
 
-	const { isPaidPlan } = useSite();
+	const { launchSite } = useDispatch( SITE_STORE );
 
 	const handleLaunch = () => {
+		launchSite( siteId );
 		setIsLaunching( true );
-		launchSite();
 	};
 
-	if ( isPaidPlan && ! isLaunching ) {
-		handleLaunch();
-	}
+	// handle redirects to checkout / my home after launch
+	useOnLaunch();
 
 	return (
 		<Modal
@@ -69,9 +67,7 @@ const LaunchModal: React.FunctionComponent< Props > = ( { onClose } ) => {
 							</div>
 							<LaunchProgress />
 						</div>
-						<EntityProvider kind="root" type="site">
-							<Launch onSubmit={ handleLaunch } />
-						</EntityProvider>
+						<Launch onSubmit={ handleLaunch } />
 					</div>
 					<div className="nux-launch-modal-aside">
 						<LaunchSidebar />

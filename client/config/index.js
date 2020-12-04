@@ -7,7 +7,7 @@ import cookie from 'cookie';
  * Internal dependencies
  */
 
-import createConfig from 'lib/create-config';
+import createConfig from 'calypso/lib/create-config';
 
 /**
  * Manages config flags for various deployment builds
@@ -73,3 +73,6 @@ const configApi = createConfig( configData );
 
 export default configApi;
 export const isEnabled = configApi.isEnabled;
+export const enabledFeatures = configApi.enabledFeatures;
+export const enable = configApi.enable;
+export const disable = configApi.disable;

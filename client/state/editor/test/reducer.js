@@ -1,27 +1,22 @@
 /**
- * External dependencies
- */
-import { expect } from 'chai';
-
-/**
  * Internal dependencies
  */
-import reducer, { postId } from '../reducer';
-import { EDITOR_START, POST_SAVE_SUCCESS } from 'state/action-types';
+import reducer, { postId, iframePort } from '../reducer';
+import { EDITOR_START, POST_SAVE_SUCCESS, EDITOR_IFRAME_LOADED } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {
-		expect( reducer( undefined, {} ) ).to.have.keys( [
+		expect( Object.keys( reducer( undefined, {} ) ) ).toEqual( [
 			'postId',
 			'loadingError',
 			'isLoading',
 			'isIframeLoaded',
+			'iframePort',
 			'isAutosaving',
 			'autosavePreviewUrl',
-			'lastDraft',
-			'contactForm',
 			'imageEditor',
 			'videoEditor',
+			'lastDraft',
 			'saveBlockers',
 			'rawContent',
 		] );
@@ -31,7 +26,7 @@ describe( 'reducer', () => {
 		test( 'should default to null', () => {
 			const state = postId( undefined, {} );
 
-			expect( state ).to.be.null;
+			expect( state ).toBeNull();
 		} );
 
 		test( 'should update the tracked id when starting the editor', () => {
@@ -41,7 +36,7 @@ describe( 'reducer', () => {
 				postId: 184,
 			} );
 
-			expect( state ).to.equal( 184 );
+			expect( state ).toEqual( 184 );
 		} );
 
 		test( 'should update the tracked post id if we save a draft post', () => {
@@ -55,7 +50,7 @@ describe( 'reducer', () => {
 				post: {},
 			} );
 
-			expect( state ).to.equal( 184 );
+			expect( state ).toEqual( 184 );
 		} );
 
 		test( 'should not update the tracked post id if we save a draft post but we already switched the tracked post ID', () => {
@@ -69,7 +64,47 @@ describe( 'reducer', () => {
 				post: {},
 			} );
 
-			expect( state ).to.equal( 10 );
+			expect( state ).toEqual( 10 );
+		} );
+	} );
+
+	describe( ' #iframePort', () => {
+		test( 'should default to null', () => {
+			const state = iframePort( undefined, {} );
+
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should return null if the iframe editor is not loaded', () => {
+			const iframePortObject = {};
+			const state = iframePort( undefined, {
+				type: EDITOR_IFRAME_LOADED,
+				isIframeLoaded: false,
+				iframePort: iframePortObject,
+			} );
+
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should return null if no iframePort object was given', () => {
+			const state = iframePort( undefined, {
+				type: EDITOR_IFRAME_LOADED,
+				isIframeLoaded: true,
+				iframePort: undefined,
+			} );
+
+			expect( state ).toBeNull();
+		} );
+
+		test( 'should return the iframePort object if the iframe editor is loaded', () => {
+			const iframePortObject = {};
+			const state = iframePort( undefined, {
+				type: EDITOR_IFRAME_LOADED,
+				isIframeLoaded: true,
+				iframePort: iframePortObject,
+			} );
+
+			expect( state ).toBe( iframePortObject );
 		} );
 	} );
 } );

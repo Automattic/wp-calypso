@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getRemovableConnections from 'state/selectors/get-removable-connections';
+import getRemovableConnections from 'calypso/state/selectors/get-removable-connections';
 
 describe( 'getRemovableConnections()', () => {
 	const state = {

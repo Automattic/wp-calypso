@@ -9,11 +9,11 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import Main from 'components/main';
-import { preventWidows } from 'lib/formatting';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import Main from 'calypso/components/main';
+import { preventWidows } from 'calypso/lib/formatting';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 
 const NoPermissionsError = ( { title, translate } ) => (
 	<Main>

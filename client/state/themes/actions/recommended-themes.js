@@ -1,14 +1,14 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	RECOMMENDED_THEMES_FAIL,
 	RECOMMENDED_THEMES_FETCH,
 	RECOMMENDED_THEMES_SUCCESS,
-} from 'state/themes/action-types';
+} from 'calypso/state/themes/action-types';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Receives themes and dispatches them with recommended themes success signal.

@@ -12,26 +12,29 @@ import classnames from 'classnames';
 /**
  * Internal Dependencies
  */
-import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import SegmentedControl from 'components/segmented-control';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
+import SegmentedControl from 'calypso/components/segmented-control';
 import { CompactCard } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import SearchInput from 'components/search';
-import { recordAction, recordTrack } from 'reader/stats';
+import DocumentHead from 'calypso/components/data/document-head';
+import SearchInput from 'calypso/components/search';
+import { recordAction, recordTrack } from 'calypso/reader/stats';
 import SiteResults from './site-results';
 import PostResults from './post-results';
-import ReaderMain from 'reader/components/reader-main';
-import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'lib/url';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import { addQueryArgs, resemblesUrl, withoutHttp, addSchemeIfMissing } from 'calypso/lib/url';
 import SearchStreamHeader, { SEARCH_TYPES } from './search-stream-header';
-import { SORT_BY_RELEVANCE, SORT_BY_LAST_UPDATED } from 'state/reader/feed-searches/actions';
-import withDimensions from 'lib/with-dimensions';
+import {
+	SORT_BY_RELEVANCE,
+	SORT_BY_LAST_UPDATED,
+} from 'calypso/state/reader/feed-searches/actions';
+import withDimensions from 'calypso/lib/with-dimensions';
 import SuggestionProvider from './suggestion-provider';
 import Suggestion from './suggestion';
-import { getReaderAliasedFollowFeedUrl } from 'state/reader/follows/selectors';
-import { SEARCH_RESULTS_URL_INPUT } from 'reader/follow-sources';
-import FollowButton from 'reader/follow-button';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import { getSearchPlaceholderText } from 'reader/search/utils';
+import { getReaderAliasedFollowFeedUrl } from 'calypso/state/reader/follows/selectors';
+import { SEARCH_RESULTS_URL_INPUT } from 'calypso/reader/follow-sources';
+import FollowButton from 'calypso/reader/follow-button';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
 
 /**
  * Style dependencies

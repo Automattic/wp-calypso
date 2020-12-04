@@ -45,6 +45,8 @@ import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
 import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 import './style.scss';
 
@@ -260,6 +262,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferMappedDomain() {
+		const { selectedSite, translate, domain, currentRoute, isVip } = this.props;
+
+		if ( isVip ) {
+			return null;
+		}
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer mapping' ) }
+			/>
+		);
+	}
+
+	getTransferInMappedDomain() {
 		const { selectedSite, domain, translate } = this.props;
 
 		const { isEligibleForInboundTransfer } = domain;
@@ -599,6 +617,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
 				{ this.getTransferMappedDomain() }
+				{ this.getTransferInMappedDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
@@ -646,9 +665,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 export default connect(
 	( state ) => {
 		const currentRoute = getCurrentRoute( state );
+		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute,
 			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
+			isVip: isVipSite( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, recordGoogleEvent }

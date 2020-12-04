@@ -16,7 +16,6 @@ import { flowRight as compose } from 'lodash';
  * Internal dependencies
  */
 import FormButton from 'calypso/components/forms/form-button';
-import FormButtonBar from 'calypso/components/forms/form-buttons-bar';
 import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormLabel from 'calypso/components/forms/form-label';
 import config from 'calypso/config';
@@ -274,7 +273,7 @@ class Security2faBackupCodesList extends React.Component {
 
 				{ this.possiblyRenderError() }
 
-				<FormButtonBar>
+				<div>
 					<FormLabel className="security-2fa-backup-codes-list__print-agreement">
 						<FormCheckbox
 							defaultChecked={ this.state.userAgrees }
@@ -296,7 +295,7 @@ class Security2faBackupCodesList extends React.Component {
 							context: 'The user presses the All Finished button at the end of Two-Step setup.',
 						} ) }
 					</FormButton>
-					<ButtonGroup className="security-2fa-backup-codes-list__btn-group">
+					<ButtonGroup>
 						<Button
 							className="security-2fa-backup-codes-list__copy"
 							disabled={ ! this.props.backupCodes.length }
@@ -348,7 +347,7 @@ class Security2faBackupCodesList extends React.Component {
 					>
 						{ this.props.translate( 'Download Codes' ) }
 					</Tooltip>
-				</FormButtonBar>
+				</div>
 			</div>
 		);
 	}

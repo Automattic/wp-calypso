@@ -17,7 +17,7 @@ import SectionNav from 'calypso/components/section-nav';
 import SectionHeader from 'calypso/components/section-header';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
-import { paymentMethodName, isPaymentMethodEnabled } from 'calypso/lib/cart-values';
+import { paymentMethodName } from 'calypso/lib/cart-values';
 import {
 	detectWebPaymentMethod,
 	getWebPaymentMethodName,
@@ -60,8 +60,8 @@ export class PaymentBox extends PureComponent {
 			/>
 		);
 
-		let labelAdditionalText = '',
-			webPaymentMethod = '';
+		let labelAdditionalText = '';
+		let webPaymentMethod = '';
 
 		switch ( method ) {
 			case 'credit-card':
@@ -119,10 +119,6 @@ export class PaymentBox extends PureComponent {
 	}
 
 	paymentMethod( method ) {
-		if ( ! isPaymentMethodEnabled( this.props.cart, method ) ) {
-			return null;
-		}
-
 		return (
 			<NavItem
 				key={ method }
@@ -167,8 +163,8 @@ export class PaymentBox extends PureComponent {
 
 	render() {
 		const paymentMethods = this.getPaymentMethods();
-		const cardClass = classNames( 'payment-box', this.props.classSet ),
-			contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
+		const cardClass = classNames( 'payment-box', this.props.classSet );
+		const contentClass = classNames( 'payment-box__content', this.props.contentClassSet );
 
 		const titleText = this.props.currentPaymentMethod
 			? this.props.translate( 'Pay with %(paymentMethod)s', {

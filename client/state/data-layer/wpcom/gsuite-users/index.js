@@ -6,16 +6,16 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { GSUITE_USERS_REQUEST } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { GSUITE_USERS_REQUEST } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import {
 	receiveGetGSuiteUsersSuccess,
 	receiveGetGSuiteUsersFailure,
-} from 'state/gsuite-users/actions';
+} from 'calypso/state/gsuite-users/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const getGSuiteUsers = ( action ) => {
 	return http(

@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: cimg/node:12.18.4
+      - image: cimg/node:12.19.1
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -218,15 +218,15 @@ references:
   desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
     name: Restore Calypso build cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
     name: Save Calypso build cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - .cache
+      - .cache/evergreen/css-loader
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -303,14 +303,15 @@ jobs:
       - prepare
       - run:
           name: Extract strings
-          working_directory: wp-babel-makepot
-          command: npx https://github.com/Automattic/wp-babel-makepot "~/wp-calypso/{client,packages,apps}/**/*.{js,jsx,ts,tsx}" --ignore "**/node_modules/**,**/test/**,**/*.d.ts" --base "$HOME/wp-calypso" --output "$CIRCLE_ARTIFACTS/translate/calypso-strings.pot"
+          command: |
+            yarn run translate
+            mv calypso-strings.pot "$CIRCLE_ARTIFACTS/translate"
       - run:
           name: Build New Strings .pot
           when: always
           command: |
             git clone --single-branch --depth=1 https://github.com/Automattic/gp-localci-client.git
-            bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
+            DEFAULT_BRANCH=trunk bash gp-localci-client/generate-new-strings-pot.sh "$CIRCLE_BRANCH" "$CIRCLE_SHA1" "$CIRCLE_ARTIFACTS/translate"
             rm -rf gp-localci-client
       - store-artifacts-and-test-results
       - run:
@@ -769,7 +770,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.mac.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
@@ -810,7 +811,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:12.18.4-browsers
+      - image: circleci/node:12.19.1-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:
@@ -818,6 +819,11 @@ jobs:
       - attach_workspace:
           at: ~/wp-calypso
       - run: *update-node
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
       - run: *desktop-install-app-deps
       - run:
           name: Build Desktop Linux
@@ -830,7 +836,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            ! git diff --name-only origin/master...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
+            ! git diff --name-only origin/trunk...HEAD | grep -E -q 'desktop/package.json|desktop/yarn.lock' && ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 
             ELECTRON_BUILDER_ARGS=$ELECTRON_BUILDER_ARGS yarn run build-desktop:app
       - run:
@@ -913,7 +919,7 @@ jobs:
 
             # Build all artifacts only when project config changes.
             # Otherwise only build application executable required for end-to-end testing.
-            If ( -Not $(git diff --name-only origin/master...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
+            If ( -Not $(git diff --name-only origin/trunk...HEAD | Select-String -Pattern desktop/package.json,desktop/yarn.lock) ) { $env:ARG2='-c.win.target=dir' }
 
 
             make -f desktop/Makefile package ELECTRON_BUILDER_ARGS=$($env:ARG1,$env:ARG2 -join " ")
@@ -984,7 +990,7 @@ workflows:
       - prime-calypso-live:
           filters:
             branches:
-              ignore: master
+              ignore: trunk
       - build-notifications:
           requires:
             - setup
@@ -1058,8 +1064,8 @@ workflows:
           filters:
             branches:
               ignore:
-                # Do not spin up calypso.live for `master`
-                - master
+                # Do not spin up calypso.live for `trunk`
+                - trunk
                 # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
                 - /pull\/[0-9]+/
       #      - test-e2e-canary:
@@ -1087,10 +1093,21 @@ workflows:
           slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
-      - wp-desktop-source
+      - wp-desktop-source:
+          filters:
+            branches:
+              only:
+                - trunk
+                - release/*
+                - desktop/*
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
+      # Even though a TeamCity Linux job is ran against trunk,
+      # we should continue to periodically validate the Circle
+      # job to ensure CircleCI continues to work on all
+      # platforms since the application is deployed via CircleCI.
+      # This also provides a benchmark and fallback for TeamCity.
       - wp-desktop-linux:
           requires:
             - wp-desktop-source
@@ -1151,7 +1168,7 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - trunk
 
   e2e-full-suite-scheduled:
     jobs:
@@ -1164,7 +1181,7 @@ workflows:
           cron: '0 3,15 * * *'
           filters:
             branches:
-              only: master
+              only: trunk
 
   e2e-canary-scheduled:
     jobs:
@@ -1188,23 +1205,23 @@ workflows:
           cron: '0 12 * * *'
           filters:
             branches:
-              only: master
+              only: trunk
 
   e2e-full-suite-edge-scheduled:
     jobs:
-    - setup
-    - test-e2e-canary:
-        name: test-e2e-full-suite-edge
-        requires:
-        - setup
-        test-flags: '-g'
-        env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+      - setup
+      - test-e2e-canary:
+          name: test-e2e-full-suite-edge
+          requires:
+            - setup
+          test-flags: '-g'
+          env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
     triggers:
-    - schedule:
-        cron: '30 8 * * *'
-        filters:
-          branches:
-            only: master
+      - schedule:
+          cron: '30 8 * * *'
+          filters:
+            branches:
+              only: trunk
 
   e2e-jetpack-be-scheduled:
     jobs:
@@ -1222,7 +1239,7 @@ workflows:
           cron: '0 7 * * *'
           filters:
             branches:
-              only: master
+              only: trunk
 
   # Temporarily disabling these scheduled test runs
   #  e2e-jetpack-scheduled:
@@ -1241,7 +1258,7 @@ workflows:
   #        cron: "0 1,13 * * *"
   #        filters:
   #          branches:
-  #            only: master
+  #            only: trunk
 
   e2e-canary-i18n-monthly:
     jobs:
@@ -1254,13 +1271,13 @@ workflows:
           test-flags: '-i'
           filters:
             branches:
-              only: master
+              only: trunk
     triggers:
       - schedule:
           cron: '40 15 19 * *'
           filters:
             branches:
-              only: master
+              only: trunk
 
   e2e-canary-i18n-nightly:
     jobs:
@@ -1273,11 +1290,11 @@ workflows:
           test-flags: '-I'
           filters:
             branches:
-              only: master
+              only: trunk
     triggers:
       - schedule:
           cron: '46 4 * * *'
           filters:
             branches:
-              only: master
+              only: trunk
 # vi: sts=2 ts=2 sw=2 et

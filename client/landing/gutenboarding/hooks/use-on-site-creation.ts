@@ -128,7 +128,7 @@ export default function useOnSiteCreation() {
 
 			window.location.href = design?.is_fse
 				? `/site-editor/${ newSite.site_slug }/`
-				: `/block-editor/page/${ newSite.site_slug }/home`;
+				: `/page/${ newSite.site_slug }/home`;
 		}
 	}, [
 		domain,

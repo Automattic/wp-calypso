@@ -59,16 +59,16 @@ class ProfileLink extends React.Component {
 
 	render() {
 		const classes = classNames( {
-				'profile-link': true,
-				'is-placeholder': this.props.isPlaceholder,
-			} ),
-			imageSrc =
-				'//s1.wp.com/mshots/v1/' +
-				encodeURIComponent( this.props.url ) +
-				'?w=' +
-				this.props.imageSize +
-				'&h=64',
-			linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
+			'profile-link': true,
+			'is-placeholder': this.props.isPlaceholder,
+		} );
+		const imageSrc =
+			'//s1.wp.com/mshots/v1/' +
+			encodeURIComponent( this.props.url ) +
+			'?w=' +
+			this.props.imageSize +
+			'&h=64';
+		const linkHref = this.props.isPlaceholder ? null : safeProtocolUrl( this.props.url );
 
 		return (
 			<li className={ classes }>

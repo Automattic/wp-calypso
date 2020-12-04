@@ -18,10 +18,10 @@ function getErrorFromApi( errorMessage ) {
 
 		if ( errorArray.length === 4 ) {
 			// This assumes we have only one link
-			const errorText1 = errorArray[ 0 ],
-				errorUrl = errorArray[ 1 ],
-				errorLinkText = errorArray[ 2 ],
-				errorText2 = errorArray[ 3 ];
+			const errorText1 = errorArray[ 0 ];
+			const errorUrl = errorArray[ 1 ];
+			const errorLinkText = errorArray[ 2 ];
+			const errorText2 = errorArray[ 3 ];
 
 			return (
 				<span>

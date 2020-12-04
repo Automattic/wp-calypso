@@ -29,20 +29,28 @@ The `className` lets you specify the style class that the element should have.
 ### `gaEventCategory`
 
 The `gaEventCategory` lets you specify the Google Analyics Category that you want the toggle event to have.
-Also reqires the `popoverName` attribute.
+Also requires the `popoverName` attribute.
 
 ### `popoverName`
 
 The `popoverName` lets you specify the Google Analyics Event name that you want the toggle event to have.
-Also reqires the `gaEventCategory` attribute.
+Also requires the `gaEventCategory` attribute.
 
 Turns into this even when opened:
 
 ```js
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 gaRecordEvent( gaEventCategory, 'InfoPopover: ' + popoverName + 'Opened' );
 ```
+
+### `onOpen`
+
+The `onOpen` lets you specify a method to be called when the popover is opened. Does not interfere with `popoverName`.
+
+### `onClose`
+
+The `onClose` lets you specify a method to be called when the popover is closed.
 
 ### `ignoreContext`
 
@@ -77,6 +85,8 @@ function render() {
 				gaEventCategory="Reader"
 				popoverName="More info in the reader"
 				ignoreContext={ moreInfoLabelRef }
+				onOpen={ () => console.log( 'opened!' ) }
+				onClose={ () => console.log( 'closed!' ) }
 			>
 				This is some informational text
 			</InfoPopover>

@@ -6,17 +6,17 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { debounce, find } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import FoldableCard from 'components/foldable-card';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import TokenField from 'components/token-field';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import TokenField from 'calypso/components/token-field';
 
 class ProductFormAdditionalDetailsCard extends Component {
 	state = {

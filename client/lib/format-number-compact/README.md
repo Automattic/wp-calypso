@@ -5,7 +5,7 @@ Given a language code, this library will take in a number and display it in a co
 ## Usage
 
 ```javascript
-import formatNumberCompact from 'lib/format-number-compact';
+import formatNumberCompact from 'calypso/lib/format-number-compact';
 
 const noChange = formatNumberCompact( 999, 'en' ); // '999'
 const shortEn = formatNumberCompact( 1234, 'en' ); // '1.2K'

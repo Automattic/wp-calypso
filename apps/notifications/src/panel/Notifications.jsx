@@ -15,7 +15,6 @@ import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 
 import RestClient from './rest-client';
-import { setGlobalData } from './flux/app-actions';
 import repliesCache from './comment-replies-cache';
 
 import { init as initAPI } from './rest-client/wpcom';
@@ -31,8 +30,6 @@ let client;
 
 const globalData = {};
 
-setGlobalData( globalData );
-
 repliesCache.cleanup();
 
 /**
@@ -40,17 +37,7 @@ repliesCache.cleanup();
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
 
-/**
- * Force a manual update of a note's read status
- * (used by the Desktop application)
- *
- * @param {number} noteId Unique identifier of the note
- * @param {boolean} isRead Whether to mark the note as read (true) or unread (false)
- * @param {Function} callback Function to be executed after the API call is made
- */
-export const markNoteAsRead = ( noteId, isRead, callback ) => {
-	client && client.markNoteAsRead.call( client, noteId, isRead, callback );
-};
+export const RestClientContext = React.createContext( client );
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -144,15 +131,15 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
-				<Layout
-					{ ...{
-						client,
-						data: globalData,
-						global: globalData,
-						isShowing: this.props.isShowing,
-						locale: this.props.locale,
-					} }
-				/>
+				<RestClientContext.Provider value={ client }>
+					<Layout
+						client={ client }
+						data={ globalData }
+						global={ globalData }
+						isShowing={ this.props.isShowing }
+						locale={ this.props.local }
+					/>
+				</RestClientContext.Provider>
 			</Provider>
 		);
 	}

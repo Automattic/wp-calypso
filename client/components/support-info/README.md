@@ -5,7 +5,7 @@ This component is used to display a support info icon. When clicked, it displays
 ## Example Usage
 
 ```js
-import SupportInfo from 'components/support-info';
+import SupportInfo from 'calypso/components/support-info';
 
 function render() {
 	const support = {

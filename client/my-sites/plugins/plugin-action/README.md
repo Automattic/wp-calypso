@@ -7,7 +7,7 @@ This component is used to display a plugin action in the form of a toggle or a d
 By default, the PluginAction component will attempt to render a FormToggle.
 
 ```js
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 
 function render() {
 	return (
@@ -27,7 +27,7 @@ function render() {
 This behavior can be overridden by passing a child to the PluginAction component.
 
 ```js
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import { Button } from '@automattic/components';
 
 function render() {

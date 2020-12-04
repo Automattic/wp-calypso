@@ -7,8 +7,8 @@ import { localize, LocalizeProps } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { url } from 'lib/media/utils';
-import MediaFile from 'my-sites/media-library/media-file';
+import { url } from 'calypso/lib/media/utils';
+import MediaFile from 'calypso/my-sites/media-library/media-file';
 
 interface Props {
 	className: string;

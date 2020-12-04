@@ -53,6 +53,8 @@ class WPCOM_Block_Editor_Nav_Sidebar {
 			true
 		);
 
+		wp_set_script_translations( 'wpcom-block-editor-nav-sidebar-script', 'full-site-editing' );
+
 		wp_localize_script(
 			'wpcom-block-editor-nav-sidebar-script',
 			'wpcomBlockEditorNavSidebarAssetsUrl',

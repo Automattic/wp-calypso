@@ -9,9 +9,9 @@ Render the component, passing `siteId` and `themeId`. It does not accept any chi
 ```jsx
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Theme from 'components/theme';
-import { getCanonicalTheme } from 'state/themes/selectors';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Theme from 'calypso/components/theme';
+import { getCanonicalTheme } from 'calypso/state/themes/selectors';
 
 function MyTheme( { theme } ) {
 	return (

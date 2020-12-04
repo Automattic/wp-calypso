@@ -15,7 +15,7 @@ Fetches plans for the site with the given site ID.
 Adds the plans fetched from the API to the set of plans for the given site ID.
 
 ```js
-import { fetchSitePlans, fetchSitePlansCompleted } from 'state/sites/plans/actions';
+import { fetchSitePlans, fetchSitePlansCompleted } from 'calypso/state/sites/plans/actions';
 
 dispatch( fetchSitePlans( 555555555 ) );
 dispatch(

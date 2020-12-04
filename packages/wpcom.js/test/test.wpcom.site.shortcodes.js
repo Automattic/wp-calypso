@@ -1,22 +1,22 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * Module dependencies
  */
 describe( 'wpcom.site.shortcodes', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var testing_media;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let testing_media;
 
 	// add media testing
 	before( ( done ) => {
@@ -40,7 +40,7 @@ describe( 'wpcom.site.shortcodes', function () {
 	describe( "wpcom.site.renderShortcode('gallery' )", function () {
 		it( 'should render [gallery] shortcode', () => {
 			return new Promise( ( done ) => {
-				var shortcode = '[gallery ids="' + testing_media.ID + '"]';
+				const shortcode = '[gallery ids="' + testing_media.ID + '"]';
 				site
 					.renderShortcode( shortcode )
 					.then( ( data ) => {

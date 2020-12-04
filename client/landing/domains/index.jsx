@@ -13,13 +13,13 @@ import i18n from 'i18n-calypso';
 import RegistrantVerificationPage from './registrant-verification';
 import TransferAwayConfirmationPage from './transfer-away-confirmation';
 import InvalidActionPage from './invalid-action';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 
 /**
  *
  * Style dependencies
  */
-import 'assets/stylesheets/style.scss';
+import 'calypso/assets/stylesheets/style.scss';
 import './style.scss';
 
 class DomainsLandingPage extends Component {

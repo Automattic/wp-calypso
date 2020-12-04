@@ -1,17 +1,17 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me.connectedApp
  */
 describe( 'wpcom.me.connectedApp', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
-	var appId;
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
+	let appId;
 
 	describe( 'wpcom.me.connectedApps', function () {
 		it( "should get current user' connected applications", () => {

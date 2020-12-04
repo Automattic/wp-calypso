@@ -8,23 +8,22 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { clearSignupDestinationCookie } from 'signup/storageUtils';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-redirect-if-cart-empty' );
 
 export default function useRedirectIfCartEmpty< T >(
+	doNotRedirect: boolean,
 	items: Array< T >,
 	redirectUrl: string,
-	isLoading: boolean,
-	errors: string[],
 	createUserAndSiteBeforeTransaction: boolean
-) {
+): boolean {
 	const didRedirect = useRef< boolean >( false );
 	useEffect( () => {
-		if ( didRedirect.current ) {
+		if ( didRedirect.current || doNotRedirect ) {
 			return;
 		}
-		if ( ! isLoading && items.length === 0 && errors.length === 0 ) {
+		if ( items.length === 0 ) {
 			didRedirect.current = true;
 			debug( 'cart is empty and not still loading; redirecting...' );
 
@@ -46,5 +45,6 @@ export default function useRedirectIfCartEmpty< T >(
 			page.redirect( redirectUrl );
 			return;
 		}
-	}, [ redirectUrl, items, isLoading, errors, createUserAndSiteBeforeTransaction ] );
+	}, [ redirectUrl, items, doNotRedirect, createUserAndSiteBeforeTransaction ] );
+	return didRedirect.current;
 }

@@ -13,25 +13,25 @@ import fs from 'fs';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'lib/i18n-utils';
+import config from 'calypso/config';
+import { isDefaultLocale, isLocaleRtl, isTranslatedIncompletely } from 'calypso/lib/i18n-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
-} from 'lib/i18n-utils/switch-locale';
+} from 'calypso/lib/i18n-utils/switch-locale';
 import {
 	getDocumentHeadFormattedTitle,
 	getDocumentHeadMeta,
 	getDocumentHeadLink,
-} from 'state/document-head/selectors';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-import initialReducer from 'state/reducer';
-import { SERIALIZE } from 'state/action-types';
-import { logToLogstash } from 'state/logstash/actions';
-import stateCache from 'server/state-cache';
-import { getNormalizedPath } from 'server/isomorphic-routing';
+} from 'calypso/state/document-head/selectors';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
+import initialReducer from 'calypso/state/reducer';
+import { SERIALIZE } from 'calypso/state/action-types';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import stateCache from 'calypso/server/state-cache';
+import { getNormalizedPath } from 'calypso/server/isomorphic-routing';
 
 const debug = debugFactory( 'calypso:server-render' );
 const HOUR_IN_MS = 3600000;
@@ -122,24 +122,13 @@ export function render( element, key = JSON.stringify( element ), req ) {
 
 		return renderedLayout;
 	} catch ( ex ) {
-		if ( process.env.NODE_ENV === 'development' ) {
-			throw ex;
-		} else {
-			try {
-				req.context.store.dispatch(
-					logToLogstash( {
-						feature: 'calypso_ssr',
-						message: 'Exception thrown on render',
-						user_id: req.context.user?.ID,
-						extra: {
-							message: ex.message,
-							stack: ex.stack,
-						},
-					} )
-				);
-			} catch {
-				// Failed to log the error, swallow it so it doesn't break anything. This will serve
-				// a blank page and the client will render on top of it.
+		try {
+			req.logger.error( ex );
+		} catch ( err ) {
+			// Failed to log the error, swallow it in prod so it doesn't break anything. This will serve
+			// a blank page and the client will render on top of it.
+			if ( process.env.NODE_ENV === 'development' ) {
+				throw ex;
 			}
 		}
 	}

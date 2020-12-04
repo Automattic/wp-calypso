@@ -8,7 +8,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { fetchPaymentMethods } from '../actions';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST,
 	WOOCOMMERCE_PAYMENT_METHODS_REQUEST_SUCCESS,

@@ -20,17 +20,17 @@ import DatePicker from '../stats-date-picker';
 import DownloadCsv from '../stats-download-csv';
 import { Card } from '@automattic/components';
 import StatsModulePlaceholder from './placeholder';
-import SectionHeader from 'components/section-header';
-import QuerySiteStats from 'components/data/query-site-stats';
-import UpsellNudge from 'blocks/upsell-nudge';
+import SectionHeader from 'calypso/components/section-header';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import AllTimeNav from './all-time-nav';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 import {
 	isRequestingSiteStatsForQuery,
 	getSiteStatsNormalizedData,
-} from 'state/stats/lists/selectors';
-import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'lib/plans/constants';
+} from 'calypso/state/stats/lists/selectors';
+import { FEATURE_GOOGLE_ANALYTICS, PLAN_PREMIUM } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies

@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { getNewMessages } from 'lib/cart-values';
+import notices from 'calypso/notices';
+import { getNewMessages } from 'calypso/lib/cart-values';
 
 class CartMessages extends PureComponent {
 	static propTypes = {

@@ -41,8 +41,6 @@ import {
 	canJetpackSiteUpdateFiles,
 	canJetpackSiteAutoUpdateFiles,
 	canJetpackSiteAutoUpdateCore,
-	hasJetpackSiteJetpackThemes,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
 	isJetpackSiteMultiSite,
 	isJetpackSiteSecondaryNetworkSite,
 	verifyJetpackModulesActive,
@@ -55,8 +53,8 @@ import {
 	hasDefaultSiteTitle,
 	getSiteComputedAttributes,
 } from '../selectors';
-import config from 'config';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import config from 'calypso/config';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 
 describe( 'selectors', () => {
 	const createStateWithItems = ( items ) =>
@@ -2590,95 +2588,6 @@ describe( 'selectors', () => {
 
 			const canAutoUpdateCore = canJetpackSiteAutoUpdateCore( state, siteId );
 			chaiExpect( canAutoUpdateCore ).to.equal( false );
-		} );
-	} );
-
-	describe( '#hasJetpackSiteJetpackThemes()', () => {
-		test( 'it should return `false` if jetpack version is smaller than 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7-alpha',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( false );
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 3.7-beta', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '3.7',
-					},
-				},
-			} );
-
-			const hasThemes = hasJetpackSiteJetpackThemes( state, siteId );
-			chaiExpect( hasThemes ).to.equal( true );
-		} );
-	} );
-
-	describe( '#hasJetpackSiteJetpackThemesExtendedFeatures()', () => {
-		test( 'it should return `null` if the given site is not a Jetpack site', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.null;
-		} );
-
-		test( 'it should return `false` if jetpack version is smaller than 4.7', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '4.4.1',
-					},
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.false;
-		} );
-
-		test( 'it should return `true` if jetpack version is greater or equal to 4.7', () => {
-			const state = createStateWithItems( {
-				[ siteId ]: {
-					ID: siteId,
-					URL: 'https://jetpacksite.me',
-					jetpack: true,
-					options: {
-						jetpack_version: '4.7',
-					},
-				},
-			} );
-
-			const hasThemesExtendedFeatures = hasJetpackSiteJetpackThemesExtendedFeatures(
-				state,
-				siteId
-			);
-			chaiExpect( hasThemesExtendedFeatures ).to.be.true;
 		} );
 	} );
 

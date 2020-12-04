@@ -5,7 +5,7 @@ This component displays the All Sites item. It's used in the Sidebar as the curr
 ## How to use
 
 ```js
-import AllSites from 'blocks/all-sites';
+import AllSites from 'calypso/blocks/all-sites';
 
 function render() {
 	return <AllSites sites={ sitesArray } />;

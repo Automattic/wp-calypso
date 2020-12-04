@@ -90,18 +90,6 @@ describe( 'ActionButtons', () => {
 		expect( restoreButton.prop( 'disabled' ) ).toEqual( true );
 	} );
 
-	test( "shows 'Activate restores' prompt when credentials are needed", () => {
-		getDoesRewindNeedCredentials.mockImplementation( () => true );
-
-		const wrapper = render( <ActionButtons rewindId="test" /> );
-		const activateButton = wrapper
-			.find( '.daily-backup-status__activate-restores-button' )
-			.hostNodes();
-
-		expect( activateButton.prop( 'href' ) ).toBeTruthy();
-		expect( activateButton.prop( 'disabled' ) ).toBeFalsy();
-	} );
-
 	test( 'emits a Tracks event when the download button is enabled and clicked', () => {
 		const rewindId = 'test';
 		const wrapper = render( <ActionButtons rewindId={ rewindId } /> );
@@ -125,17 +113,5 @@ describe( 'ActionButtons', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_restore', {
 			rewind_id: rewindId,
 		} );
-	} );
-
-	test( "emits a Tracks event when the 'Activate restores' button is clicked", () => {
-		getDoesRewindNeedCredentials.mockImplementation( () => true );
-		const wrapper = render( <ActionButtons rewindId="test" /> );
-
-		const activateButton = wrapper
-			.find( '.daily-backup-status__activate-restores-button' )
-			.hostNodes();
-		activateButton.simulate( 'click' );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_jetpack_backup_activate_click' );
 	} );
 } );

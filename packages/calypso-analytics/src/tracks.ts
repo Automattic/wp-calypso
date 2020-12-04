@@ -41,7 +41,7 @@ let _superProps: any; // Added to all Tracks events.
 let _loadTracksResult = Promise.resolve(); // default value for non-BOM environments.
 
 if ( typeof document !== 'undefined' ) {
-	_loadTracksResult = loadScript( '//stats.wp.com/w.js?61' );
+	_loadTracksResult = loadScript( '//stats.wp.com/w2.js?1' );
 }
 
 function createRandomId( randomBytesLength = 9 ): string {
@@ -77,7 +77,8 @@ function checkForBlockedTracks(): Promise< void > {
 	// Calling this function from `initialize` ensures current user is set.
 	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
 	return _loadTracksResult.catch( () => {
-		let _ut, _ui;
+		let _ut;
+		let _ui;
 		const currentUser = getCurrentUser();
 		if ( currentUser && currentUser.ID ) {
 			_ut = 'wpcom:user_id';

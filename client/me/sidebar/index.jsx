@@ -15,10 +15,9 @@ import ProfileGravatar from 'calypso/me/profile-gravatar';
 import {
 	addCreditCard,
 	billingHistory,
-	upcomingCharges,
 	pendingPayments,
-	myMemberships,
 	purchasesRoot,
+	deprecated as deprecatedPaths,
 } from 'calypso/me/purchases/paths';
 import Sidebar from 'calypso/layout/sidebar';
 import SidebarFooter from 'calypso/layout/sidebar/footer';
@@ -90,9 +89,9 @@ class MeSidebar extends React.Component {
 			[ purchasesRoot ]: 'purchases',
 			[ billingHistory ]: 'purchases',
 			[ addCreditCard ]: 'purchases',
-			[ upcomingCharges ]: 'purchases',
+			[ deprecatedPaths.upcomingCharges ]: 'purchases',
 			[ pendingPayments ]: 'purchases',
-			[ myMemberships ]: 'purchases',
+			[ deprecatedPaths.otherPurchases ]: 'purchases',
 			'/me/chat': 'happychat',
 			'/me/site-blocks': 'site-blocks',
 		};
@@ -129,90 +128,88 @@ class MeSidebar extends React.Component {
 
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Profile' ) }</SidebarHeading>
-						<ul>
-							<SidebarItem
-								selected={ selected === 'profile' }
-								link={
-									config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
-								}
-								label={ translate( 'My Profile' ) }
-								materialIcon="person"
-								onNavigate={ this.onNavigate }
-							/>
 
-							<SidebarItem
-								selected={ selected === 'account' }
-								link={
-									config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
-								}
-								label={ translate( 'Account Settings' ) }
-								materialIcon="settings"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="account"
-							/>
+						<SidebarItem
+							selected={ selected === 'profile' }
+							link={
+								config.isEnabled( 'me/my-profile' ) ? '/me' : '//wordpress.com/me/public-profile'
+							}
+							label={ translate( 'My Profile' ) }
+							materialIcon="person"
+							onNavigate={ this.onNavigate }
+						/>
 
-							<SidebarItem
-								selected={ selected === 'purchases' }
-								link={ purchasesRoot }
-								label={ translate( 'Manage Purchases' ) }
-								materialIcon="credit_card"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="purchases"
-							/>
+						<SidebarItem
+							selected={ selected === 'account' }
+							link={
+								config.isEnabled( 'me/account' ) ? '/me/account' : '//wordpress.com/me/account'
+							}
+							label={ translate( 'Account Settings' ) }
+							materialIcon="settings"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="account"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'security' }
-								link={ '/me/security' }
-								label={ translate( 'Security' ) }
-								materialIcon="lock"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="security"
-							/>
+						<SidebarItem
+							selected={ selected === 'purchases' }
+							link={ purchasesRoot }
+							label={ translate( 'Manage Purchases' ) }
+							materialIcon="credit_card"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="purchases"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'privacy' }
-								link={ '/me/privacy' }
-								label={ translate( 'Privacy' ) }
-								materialIcon="visibility"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="privacy"
-							/>
+						<SidebarItem
+							selected={ selected === 'security' }
+							link={ '/me/security' }
+							label={ translate( 'Security' ) }
+							materialIcon="lock"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="security"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'notifications' }
-								link={
-									config.isEnabled( 'me/notifications' )
-										? '/me/notifications'
-										: '//wordpress.com/me/notifications'
-								}
-								label={ translate( 'Notification Settings' ) }
-								materialIcon="notifications"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="notification-settings"
-							/>
+						<SidebarItem
+							selected={ selected === 'privacy' }
+							link={ '/me/privacy' }
+							label={ translate( 'Privacy' ) }
+							materialIcon="visibility"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="privacy"
+						/>
 
-							<SidebarItem
-								selected={ selected === 'site-blocks' }
-								link={ '/me/site-blocks' }
-								label={ translate( 'Blocked Sites' ) }
-								materialIcon="block"
-								onNavigate={ this.onNavigate }
-								preloadSectionName="site-blocks"
-							/>
-						</ul>
+						<SidebarItem
+							selected={ selected === 'notifications' }
+							link={
+								config.isEnabled( 'me/notifications' )
+									? '/me/notifications'
+									: '//wordpress.com/me/notifications'
+							}
+							label={ translate( 'Notification Settings' ) }
+							materialIcon="notifications"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="notification-settings"
+						/>
+
+						<SidebarItem
+							selected={ selected === 'site-blocks' }
+							link={ '/me/site-blocks' }
+							label={ translate( 'Blocked Sites' ) }
+							materialIcon="block"
+							onNavigate={ this.onNavigate }
+							preloadSectionName="site-blocks"
+						/>
 					</SidebarMenu>
 
 					<SidebarMenu>
 						<SidebarHeading>{ translate( 'Special' ) }</SidebarHeading>
-						<ul>
-							<SidebarItem
-								selected={ selected === 'get-apps' }
-								link={ '/me/get-apps' }
-								label={ translate( 'Get Apps' ) }
-								icon="my-sites"
-								onNavigate={ this.onNavigate }
-							/>
-						</ul>
+
+						<SidebarItem
+							selected={ selected === 'get-apps' }
+							link={ '/me/get-apps' }
+							label={ translate( 'Get Apps' ) }
+							icon="my-sites"
+							onNavigate={ this.onNavigate }
+						/>
 					</SidebarMenu>
 				</SidebarRegion>
 				<SidebarFooter />

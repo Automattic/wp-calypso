@@ -9,13 +9,13 @@ import React, { useEffect } from 'react';
 /**
  * Internal dependencies
  */
-import QueryRewindCapabilities from 'components/data/query-rewind-capabilities';
-import getRewindCapabilities from 'state/selectors/get-rewind-capabilities';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
-import isSiteAtomic from 'state/selectors/is-site-wpcom-atomic';
-import isJetpackSiteMultiSite from 'state/sites/selectors/is-jetpack-site-multi-site';
+import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
+import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import isSiteAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
+import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-site-multi-site';
 
 type Props = {
 	siteIsEligible: boolean | null;

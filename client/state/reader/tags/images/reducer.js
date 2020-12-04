@@ -6,8 +6,8 @@ import {
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
 	READER_TAG_IMAGES_REQUEST_FAILURE,
-} from 'state/reader/action-types';
-import { combineReducers } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers } from 'calypso/state/utils';
 
 /**
  * Tracks all known image objects, indexed by tag name.

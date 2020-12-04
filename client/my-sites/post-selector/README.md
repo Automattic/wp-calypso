@@ -7,7 +7,7 @@ Under the hood, it uses [`<QueryPosts />`](../../components/data/query-posts) to
 ## Usage
 
 ```jsx
-import PostSelector from 'my-sites/post-selector';
+import PostSelector from 'calypso/my-sites/post-selector';
 
 <PostSelector siteId={ this.props.siteId } />;
 ```

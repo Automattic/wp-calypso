@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 import {
 	WOOCOMMERCE_COUPON_UPDATED,
 	WOOCOMMERCE_COUPON_DELETED,

@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { combineReducers } from 'state/utils';
+import { combineReducers } from 'calypso/state/utils';
 import {
 	WOOCOMMERCE_ORDER_INVOICE_SEND_FAILURE,
 	WOOCOMMERCE_ORDER_INVOICE_SEND,

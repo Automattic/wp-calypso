@@ -8,15 +8,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import Task from 'my-sites/customer-home/cards/tasks/task';
-import { TASK_FIND_DOMAIN } from 'my-sites/customer-home/cards/constants';
+import { preventWidows } from 'calypso/lib/formatting';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
+import { TASK_FIND_DOMAIN } from 'calypso/my-sites/customer-home/cards/constants';
 
 /**
  * Image dependencies
  */
-import findDomainIllustration from 'assets/images/customer-home/illustration--task-find-domain.svg';
+import findDomainIllustration from 'calypso/assets/images/customer-home/illustration--task-find-domain.svg';
 
 const FindDomain = ( { siteSlug } ) => {
 	const translate = useTranslate();

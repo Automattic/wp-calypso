@@ -5,7 +5,7 @@ This is a component for presenting a question and a list of answers to a user. T
 ## Usage
 
 ```jsx
-import MultipleChoiceQuestion from 'components/multiple-choice-question';
+import MultipleChoiceQuestion from 'calypso/components/multiple-choice-question';
 
 function MultipleChoiceQuestionExamples( { translate } ) {
 	const [ selectedAnswer, setSelectedAnswer ] = useState( null );

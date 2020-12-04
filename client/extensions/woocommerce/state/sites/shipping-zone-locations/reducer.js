@@ -9,7 +9,7 @@ import {
 	WOOCOMMERCE_SHIPPING_ZONE_UPDATED,
 } from 'woocommerce/state/action-types';
 import { LOADING } from 'woocommerce/state/constants';
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 
 function handleLocationsRequest( state, { zoneId } ) {
 	return {

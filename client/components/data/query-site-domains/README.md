@@ -7,7 +7,7 @@
 Render the component, passing `siteId`. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QuerySiteDomains from 'components/data/query-site-domains';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 
 class MyComponent extends React.Component {
 	render() {

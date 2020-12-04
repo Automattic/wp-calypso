@@ -10,7 +10,6 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import MediaActions from 'calypso/lib/media/actions';
 import passToChildren from 'calypso/lib/react-pass-to-children';
 import utils from './utils';
 import { setQuery } from 'calypso/state/media/actions';
@@ -30,7 +29,6 @@ export class MediaListData extends React.Component {
 	};
 
 	UNSAFE_componentWillMount() {
-		MediaActions.setQuery( this.props.siteId, this.getQuery() );
 		this.props.setQuery( this.props.siteId, this.getQuery() );
 	}
 
@@ -38,7 +36,6 @@ export class MediaListData extends React.Component {
 		const nextQuery = this.getQuery( nextProps );
 
 		if ( this.props.siteId !== nextProps.siteId || ! isEqual( nextQuery, this.getQuery() ) ) {
-			MediaActions.setQuery( nextProps.siteId, nextQuery );
 			this.props.setQuery( nextProps.siteId, nextQuery );
 		}
 	}

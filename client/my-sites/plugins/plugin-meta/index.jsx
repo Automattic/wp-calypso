@@ -12,40 +12,41 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { Button, Card, CompactCard } from '@automattic/components';
-import Count from 'components/count';
-import NoticeAction from 'components/notice/notice-action';
-import ExternalLink from 'components/external-link';
-import Notice from 'components/notice';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginsActions from 'lib/plugins/actions';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import safeProtocolUrl from 'lib/safe-protocol-url';
-import config from 'config';
-import { isCompatiblePlugin } from 'my-sites/plugins/plugin-compatibility';
-import PluginInstallButton from 'my-sites/plugins/plugin-install-button';
-import PluginRemoveButton from 'my-sites/plugins/plugin-remove-button';
-import PluginInformation from 'my-sites/plugins/plugin-information';
-import WpcomPluginInstallButton from 'my-sites/plugins/plugin-install-button-wpcom';
-import PluginAutomatedTransfer from 'my-sites/plugins/plugin-automated-transfer';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import { userCan } from 'lib/site/utils';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import { isBusiness, isEcommerce, isEnterprise } from 'lib/products-values';
-import { addSiteFragment } from 'lib/route';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import { isAutomatedTransferActive } from 'state/automated-transfer/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import QueryEligibility from 'components/data/query-atat-eligibility';
-import { isATEnabled } from 'lib/automated-transfer';
+import Count from 'calypso/components/count';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import ExternalLink from 'calypso/components/external-link';
+import Notice from 'calypso/components/notice';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import safeProtocolUrl from 'calypso/lib/safe-protocol-url';
+import config from 'calypso/config';
+import { isCompatiblePlugin } from 'calypso/my-sites/plugins/plugin-compatibility';
+import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
+import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
+import PluginInformation from 'calypso/my-sites/plugins/plugin-information';
+import WpcomPluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button-wpcom';
+import PluginAutomatedTransfer from 'calypso/my-sites/plugins/plugin-automated-transfer';
+import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
+import { userCan } from 'calypso/lib/site/utils';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import { isBusiness, isEcommerce, isEnterprise } from 'calypso/lib/products-values';
+import { addSiteFragment } from 'calypso/lib/route';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { isAutomatedTransferActive } from 'calypso/state/automated-transfer/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
+import { isATEnabled } from 'calypso/lib/automated-transfer';
+import { updatePlugin } from 'calypso/state/plugins/installed/actions';
 
 /**
  * Style dependencies
@@ -422,7 +423,7 @@ export class PluginMeta extends Component {
 
 	handlePluginUpdatesSingleSite = ( event ) => {
 		event.preventDefault();
-		PluginsActions.updatePlugin( this.props.sites[ 0 ], this.props.sites[ 0 ].plugin );
+		this.props.updatePlugin( this.props.sites[ 0 ].ID, this.props.sites[ 0 ].plugin );
 
 		gaRecordEvent(
 			'Plugins',
@@ -447,7 +448,7 @@ export class PluginMeta extends Component {
 				'error' !== plugin.update &&
 				plugin.update.new_version
 			) {
-				PluginsActions.updatePlugin( site, plugin );
+				this.props.updatePlugin( site.ID, plugin );
 				PluginsActions.removePluginsNotices( 'completed', 'error' );
 
 				recordTracksEvent( 'calypso_plugins_actions_update_plugin_all_sites', {
@@ -589,4 +590,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps )( localize( PluginMeta ) );
+export default connect( mapStateToProps, { updatePlugin } )( localize( PluginMeta ) );

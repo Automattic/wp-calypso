@@ -5,7 +5,7 @@ This component is used to display a round badge next to a site with information 
 ## How to use
 
 ```js
-import SiteIndicator from 'my-sites/site-indicator';
+import SiteIndicator from 'calypso/my-sites/site-indicator';
 
 function render() {
 	return <SiteIndicator site={ siteObject } />;

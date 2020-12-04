@@ -16,7 +16,12 @@ import { isEnabled } from 'calypso/config';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import TimeSince from 'calypso/components/time-since';
 import Gravatar from 'calypso/components/gravatar';
-import { recordAction, recordGaEvent, recordTrack, recordPermalinkClick } from 'calypso/reader/stats';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+	recordPermalinkClick,
+} from 'calypso/reader/stats';
 import { getStreamUrl } from 'calypso/reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';

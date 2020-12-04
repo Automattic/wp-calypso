@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import SectionHeader from 'calypso/components/section-header';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 
 function getExplanation( promotionType, translate ) {
 	switch ( promotionType ) {

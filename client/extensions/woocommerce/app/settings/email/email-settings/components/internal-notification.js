@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
  */
 import ListItem from 'woocommerce/components/list/list-item';
 import ListItemField from 'woocommerce/components/list/list-item-field';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormTextInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextValidation from 'components/forms/form-input-validation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
 import { checkEmails } from './helpers';
 
 const InternalNotification = ( { item, recipient, checked, onChange, loaded, translate } ) => {
@@ -64,7 +64,7 @@ const InternalNotification = ( { item, recipient, checked, onChange, loaded, tra
 			</ListItemField>
 			<ListItemField className="components__notification-component-toggle">
 				{ loaded ? (
-					<CompactFormToggle checked={ checked } onChange={ toggle } id={ item.field } />
+					<FormToggle checked={ checked } onChange={ toggle } id={ item.field } />
 				) : (
 					placeholderComponent
 				) }

@@ -11,26 +11,28 @@ import { includes, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
-import FoldableCard from 'components/foldable-card';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gridicon from 'components/gridicon';
-import SupportInfo from 'components/support-info';
-import ExternalLink from 'components/external-link';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { shouldShowOfferResetFlow } from 'lib/plans/config';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gridicon from 'calypso/components/gridicon';
+import SupportInfo from 'calypso/components/support-info';
+import ExternalLink from 'calypso/components/external-link';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_ANTI_SPAM,
 	FEATURE_JETPACK_ANTI_SPAM_MONTHLY,
-	PLAN_JETPACK_PERSONAL,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
+import { isJetpackAntiSpam } from 'calypso/lib/products-values';
+import { PRODUCT_JETPACK_ANTI_SPAM } from 'calypso/lib/products-values/constants';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import { getSiteProducts } from 'calypso/state/sites/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 const SpamFilteringSettings = ( {
 	currentAkismetKey,
@@ -38,46 +40,53 @@ const SpamFilteringSettings = ( {
 	fields,
 	hasAkismetFeature,
 	hasAkismetKeyError,
-	hasAntiSpam,
+	hasAntiSpamFeature,
+	hasJetpackAntiSpamProduct,
 	isRequestingSettings,
+	isRequestingSitePurchases,
 	isSavingSettings,
 	onChangeField,
+	siteSlug,
 	translate,
 } ) => {
 	const { akismet: akismetActive, wordpress_api_key } = fields;
-	const isStoredKey = wordpress_api_key === currentAkismetKey;
+	const isStoredKey = wordpress_api_key === currentAkismetKey && !! wordpress_api_key;
 	const isDirty = includes( dirtyFields, 'wordpress_api_key' );
 	const isCurrentKeyEmpty = isEmpty( currentAkismetKey );
 	const isKeyFieldEmpty = isEmpty( wordpress_api_key );
 	const isEmptyKey = isCurrentKeyEmpty || isKeyFieldEmpty;
-	const inTransition = isRequestingSettings || isSavingSettings;
+	const inTransition = isRequestingSettings || isSavingSettings || isRequestingSitePurchases;
 	const isValidKey =
 		( wordpress_api_key && isStoredKey ) ||
 		( wordpress_api_key && isDirty && isStoredKey && ! hasAkismetKeyError );
 	const isInvalidKey = ( isDirty && hasAkismetKeyError && ! isStoredKey ) || isEmptyKey;
-	let validationText,
-		className,
-		header = null;
+	let validationText;
+	let className;
+	let header = null;
+
+	if ( inTransition ) {
+		return null;
+	}
 
 	if (
-		! shouldShowOfferResetFlow() &&
-		! inTransition &&
-		! ( hasAkismetFeature || hasAntiSpam ) &&
-		! isValidKey
+		! ( hasAkismetFeature || hasAntiSpamFeature || hasJetpackAntiSpamProduct ) &&
+		! akismetActive
 	) {
 		return (
 			<UpsellNudge
-				description={ translate( 'Automatically remove spam from comments and contact forms.' ) }
+				title={ translate( 'Automatically clear spam from comments and forms' ) }
+				description={ translate(
+					'Save time, get more responses, give your visitors a better experience - all without lifting a finger.'
+				) }
 				event={ 'calypso_akismet_settings_upgrade_nudge' }
 				feature={ FEATURE_SPAM_AKISMET_PLUS }
-				plan={ PLAN_JETPACK_PERSONAL }
-				title={ translate( 'Defend your site against spam! Upgrade to Jetpack Personal.' ) }
 				showIcon={ true }
+				href={ `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_ANTI_SPAM }` }
 			/>
 		);
 	}
 
-	if ( ! inTransition && isValidKey ) {
+	if ( isValidKey ) {
 		validationText = translate( 'Your Antispam key is valid.' );
 		className = 'is-valid';
 		header = (
@@ -88,7 +97,7 @@ const SpamFilteringSettings = ( {
 		);
 	}
 
-	if ( ! inTransition && isInvalidKey ) {
+	if ( isInvalidKey ) {
 		validationText = translate( 'Please enter a valid Antispam API key.' );
 		className = 'is-error';
 		header = (
@@ -150,21 +159,28 @@ SpamFilteringSettings.propTypes = {
 	isRequestingSettings: PropTypes.bool,
 	isSavingSettings: PropTypes.bool,
 	settings: PropTypes.object,
+	siteSlug: PropTypes.string,
 };
 
 export default connect( ( state, { dirtyFields, fields } ) => {
 	const selectedSiteId = getSelectedSiteId( state );
+	const selectedSiteSlug = getSelectedSiteSlug( state );
 	const hasAkismetKeyError =
 		isJetpackSettingsSaveFailure( state, selectedSiteId, fields ) &&
 		includes( dirtyFields, 'wordpress_api_key' );
 	const hasAkismetFeature = hasFeature( state, selectedSiteId, FEATURE_SPAM_AKISMET_PLUS );
-	const hasAntiSpam =
+	const hasAntiSpamFeature =
 		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM ) ||
 		hasFeature( state, selectedSiteId, FEATURE_JETPACK_ANTI_SPAM_MONTHLY );
+	const hasJetpackAntiSpamProduct =
+		getSiteProducts( state, selectedSiteId )?.filter( isJetpackAntiSpam ).length > 0;
 
 	return {
 		hasAkismetFeature,
 		hasAkismetKeyError,
-		hasAntiSpam,
+		hasAntiSpamFeature,
+		hasJetpackAntiSpamProduct,
+		siteSlug: selectedSiteSlug,
+		isRequestingSitePurchases: isFetchingSitePurchases( state ),
 	};
 } )( localize( SpamFilteringSettings ) );

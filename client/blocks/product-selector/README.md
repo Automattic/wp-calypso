@@ -8,7 +8,7 @@ It's used on the plans page near the bundle plans grid and is intended to provid
 
 ```jsx
 import React from 'react';
-import ProductSelector from 'blocks/product-selector';
+import ProductSelector from 'calypso/blocks/product-selector';
 
 const products = [
 	{

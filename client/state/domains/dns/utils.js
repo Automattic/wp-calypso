@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, filter, includes, mapValues, trimStart } from 'lodash';
+import { filter, includes, mapValues, trimStart } from 'lodash';
 
 function validateAllFields( fieldValues, domainName ) {
 	return mapValues( fieldValues, ( value, fieldName ) => {
@@ -91,7 +91,7 @@ function getNormalizedData( record, selectedDomainName ) {
 }
 
 function getNormalizedName( name, type, selectedDomainName ) {
-	const endsWithDomain = endsWith( name, '.' + selectedDomainName );
+	const endsWithDomain = name.endsWith( '.' + selectedDomainName );
 
 	if ( isRootDomain( name, selectedDomainName ) && canBeRootDomain( type ) ) {
 		return selectedDomainName + '.';

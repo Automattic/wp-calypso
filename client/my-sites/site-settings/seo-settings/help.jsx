@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SupportInfo from 'components/support-info';
-import { hasFeature } from 'state/sites/plans/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { FEATURE_ADVANCED_SEO } from 'lib/plans/constants';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { FEATURE_ADVANCED_SEO } from 'calypso/lib/plans/constants';
 
 const SeoSettingsHelpCard = ( {
 	disabled,

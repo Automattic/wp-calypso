@@ -19,7 +19,7 @@ import type {
 	ProductCardFeatures,
 	ProductCardFeaturesSection,
 	ProductCardFeaturesItem,
-} from './types';
+} from 'calypso/components/jetpack/card/jetpack-product-card-alt-2/types';
 
 export type Props = {
 	className?: string;

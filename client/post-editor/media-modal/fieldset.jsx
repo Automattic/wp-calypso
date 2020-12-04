@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
 
 /**
  * Style dependencies

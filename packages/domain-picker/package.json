@@ -7,6 +7,7 @@
 	"author": "Automattic Inc.",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.tsx",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -24,16 +25,17 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
-		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"clean": "tsc --build ./tsconfig.json ./tsconfig-cjs.json --clean && npx rimraf dist",
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json && copy-assets",
+		"prepack": "yarn run clean && yarn run build",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/compose": "^3.19.3",

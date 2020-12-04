@@ -9,8 +9,8 @@ const baseUrl = '//widgets.wp.com/sharing-buttons-preview/';
 
 export default {
 	generatePreviewUrlFromButtons: function ( buttons, showMore ) {
-		let numberOfCustomButtons = 0,
-			query = {};
+		let numberOfCustomButtons = 0;
+		const query = {};
 
 		// Build the query parameter array of services names to be rendered
 		// by the official sharing buttons preview widget

@@ -12,8 +12,8 @@ import { localize } from 'i18n-calypso';
  */
 import { getPaperSizes } from 'woocommerce/woocommerce-services/lib/pdf-label-utils';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormLabel from 'components/forms/form-label';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import PriceSummary from './price-summary';
 import {
 	setEmailDetailsOption,

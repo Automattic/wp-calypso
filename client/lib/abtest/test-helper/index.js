@@ -14,7 +14,7 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { getAllTests, saveABTestVariation } from 'lib/abtest';
+import { getAllTests, saveABTestVariation } from 'calypso/lib/abtest';
 import FormRadio from 'calypso/components/forms/form-radio';
 
 /**

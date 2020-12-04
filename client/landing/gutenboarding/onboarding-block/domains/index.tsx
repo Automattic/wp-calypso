@@ -15,6 +15,7 @@ import {
 	NextButton,
 	SkipButton,
 } from '@automattic/onboarding';
+import { useLocale } from '@automattic/i18n-utils';
 
 /**
  * Internal dependencies
@@ -41,6 +42,7 @@ interface Props {
 
 const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 	const { __ } = useI18n();
+	const locale = useLocale();
 	const history = useHistory();
 	const { goBack, goNext } = useStepNavigation();
 
@@ -143,10 +145,11 @@ const DomainsStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				initialDomainSearch={ domainSearch }
 				onSetDomainSearch={ setDomainSearch }
 				onDomainSearchBlur={ trackDomainSearchInteraction }
-				currentDomain={ domain?.domain_name }
+				currentDomain={ domain }
 				isCheckingDomainAvailability={ isCheckingDomainAvailability }
 				onDomainSelect={ onDomainSelect }
 				analyticsUiAlgo={ isModal ? 'domain_modal' : 'domain_page' }
+				locale={ locale }
 			/>
 		</div>
 	);

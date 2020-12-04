@@ -15,9 +15,9 @@ import multiSite from './fixtures/multi-site';
 import plugins from './fixtures/plugins';
 import site from './fixtures/site';
 import updatePluginData from './fixtures/updated-plugin';
-import Dispatcher from 'dispatcher';
-import PluginsStore from 'lib/plugins/store';
-import { useFakeTimers } from 'test-helpers/use-sinon';
+import Dispatcher from 'calypso/dispatcher';
+import PluginsStore from 'calypso/lib/plugins/store';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
 
@@ -79,28 +79,28 @@ describe( 'Plugins Store', () => {
 			} );
 
 			test( 'should return the same object as getPlugin', () => {
-				const Plugins = PluginsStore.getPlugins( site ),
-					Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
+				const Plugins = PluginsStore.getPlugins( site );
+				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
 				assert.deepEqual( Plugins[ 0 ], Plugin );
 			} );
 
 			test( 'should return active Plugins', () => {
-				const Plugins = PluginsStore.getPlugins( site, 'active' ),
-					Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
+				const Plugins = PluginsStore.getPlugins( site, 'active' );
+				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
 				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isTrue( Plugins[ 0 ].active );
 			} );
 
 			test( 'should return inactive Plugins', () => {
-				const Plugins = PluginsStore.getPlugins( site, 'inactive' ),
-					Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
+				const Plugins = PluginsStore.getPlugins( site, 'inactive' );
+				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
 				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isFalse( Plugins[ 0 ].active );
 			} );
 
 			test( 'should return needs update Plugins', () => {
-				const Plugins = PluginsStore.getPlugins( site, 'updates' ),
-					Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
+				const Plugins = PluginsStore.getPlugins( site, 'updates' );
+				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
 				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isObject( Plugins[ 0 ].update );
 			} );
@@ -180,18 +180,6 @@ describe( 'Plugins Store', () => {
 				plan: { product_slug: 'free_plan' },
 			} );
 			assert.lengthOf( UpdatedStore, 0 );
-		} );
-
-		test( 'Should not set value of the site if NOT_ALLOWED_TO_RECEIVE_PLUGINS errors', () => {
-			Dispatcher.handleServerAction( actions.fetchedNotAllowed );
-			const UpdatedStore = PluginsStore.getPlugins( { ID: 123 } );
-			assert.isDefined( UpdatedStore );
-			assert.lengthOf( UpdatedStore, 0 );
-		} );
-
-		test( 'Should not be set as "fetching" after NOT_ALLOWED_TO_RECEIVE_PLUGINS is triggered', () => {
-			Dispatcher.handleServerAction( actions.fetchedNotAllowed );
-			assert.isFalse( PluginsStore.isFetchingSite( { ID: 123 } ) );
 		} );
 	} );
 

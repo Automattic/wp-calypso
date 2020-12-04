@@ -31,7 +31,11 @@ function createComponent( component, props, children ) {
 
 describe( 'section-nav', () => {
 	describe( 'rendering', () => {
-		let headerElem, headerTextElem, panelElem, sectionNav, text;
+		let headerElem;
+		let headerTextElem;
+		let panelElem;
+		let sectionNav;
+		let text;
 
 		beforeAll( function () {
 			const selectedText = 'test';

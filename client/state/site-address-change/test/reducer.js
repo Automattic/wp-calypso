@@ -11,7 +11,7 @@ import {
 	SITE_ADDRESS_CHANGE_REQUEST,
 	SITE_ADDRESS_CHANGE_REQUEST_SUCCESS,
 	SITE_ADDRESS_CHANGE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { status, requesting } from '../reducer';
 
 describe( 'reducer', () => {

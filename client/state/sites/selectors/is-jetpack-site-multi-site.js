@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import isJetpackSite from './is-jetpack-site';
 
 /**

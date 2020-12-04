@@ -9,7 +9,7 @@ This is useful for components such as `<Dialog />` and `<Popover />`, particular
 To use this component, either nest it inside of an existing component or as a sibling, passing it a function as `onEscape` to be called when <kbd>esc</kbd> is pressed.
 
 ```jsx
-import CloseOnEscape from 'components/close-on-escape';
+import CloseOnEscape from 'calypso/components/close-on-escape';
 
 function closeDialog() {
 	// Take care of closing this component

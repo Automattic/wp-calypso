@@ -20,7 +20,7 @@ const CallToAction = styled( 'button' )< CallToActionProps >`
 		! props.buttonType || props.disabled ? '1px solid ' + props.theme.colors.borderColor : '0' };
 	background: ${ getBackgroundColor };
 	color: ${ getTextColor };
-	font-weight: ${ getFontWeight };
+	font-weight: theme.weights.normal;
 	text-decoration: ${ getTextDecoration };
 
 	:hover {
@@ -223,21 +223,6 @@ function getBackgroundAccentColor( {
 		default:
 			return 'none';
 	}
-}
-
-function getFontWeight( {
-	disabled,
-	buttonType,
-	theme,
-}: {
-	disabled?: boolean;
-	buttonType?: ButtonType;
-	theme: Theme;
-} ) {
-	if ( disabled || buttonType === 'text-button' ) {
-		return theme.weights.normal;
-	}
-	return theme.weights.bold;
 }
 
 function getTextDecoration( { buttonType }: { buttonType?: ButtonType } ) {

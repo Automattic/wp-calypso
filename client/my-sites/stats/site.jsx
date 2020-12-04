@@ -11,37 +11,41 @@ import { find } from 'lodash';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import StatsPeriodNavigation from './stats-period-navigation';
-import Main from 'components/main';
-import StatsNavigation from 'blocks/stats-navigation';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import Main from 'calypso/components/main';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import DatePicker from './stats-date-picker';
 import Countries from './stats-countries';
 import ChartTabs from './stats-chart-tabs';
 import StatsModule from './stats-module';
 import statsStrings from './stats-strings';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import StickyPanel from 'components/sticky-panel';
-import JetpackBackupCredsBanner from 'blocks/jetpack-backup-creds-banner';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'state/sites/selectors';
-import { recordGoogleEvent, recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
-import QueryKeyringConnections from 'components/data/query-keyring-connections';
-import memoizeLast from 'lib/memoize-last';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import EmptyContent from 'components/empty-content';
-import { activateModule } from 'state/jetpack/modules/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import Banner from 'components/banner';
-import isVipSite from 'state/selectors/is-vip-site';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import StickyPanel from 'calypso/components/sticky-panel';
+import JetpackBackupCredsBanner from 'calypso/blocks/jetpack-backup-creds-banner';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isJetpackSite, getSitePlanSlug, getSiteOption } from 'calypso/state/sites/selectors';
+import {
+	recordGoogleEvent,
+	recordTracksEvent,
+	withAnalytics,
+} from 'calypso/state/analytics/actions';
+import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
+import QueryKeyringConnections from 'calypso/components/data/query-keyring-connections';
+import memoizeLast from 'calypso/lib/memoize-last';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import EmptyContent from 'calypso/components/empty-content';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import Banner from 'calypso/components/banner';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 function updateQueryString( query = {} ) {
 	return {

@@ -18,6 +18,7 @@ import {
 	PLAN_BUSINESS_MONTHLY,
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
+	PLAN_ECOMMERCE_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
 	PLAN_FREE,
@@ -36,8 +37,10 @@ import {
 	PLAN_JETPACK_COMPLETE_MONTHLY,
 	PLAN_BLOGGER,
 	PLAN_BLOGGER_2_YEARS,
+	PLAN_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
+	PLAN_PREMIUM_MONTHLY,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
 	TERM_ANNUALLY,
@@ -49,6 +52,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_FREE,
 	PLAN_P2_PLUS,
+	PLAN_P2_FREE,
 } from '../constants';
 import { PLANS_LIST } from '../plans-list';
 import {
@@ -678,9 +682,13 @@ describe( 'findPlansKeys', () => {
 			PLAN_JETPACK_SECURITY_DAILY,
 			PLAN_JETPACK_SECURITY_REALTIME,
 			PLAN_JETPACK_COMPLETE,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { term: TERM_MONTHLY } ) ).to.deep.equal( [
+			PLAN_PERSONAL_MONTHLY,
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_BUSINESS_MONTHLY,
+			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_JETPACK_PREMIUM_MONTHLY,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 			PLAN_JETPACK_BUSINESS_MONTHLY,
@@ -695,18 +703,21 @@ describe( 'findPlansKeys', () => {
 		expect( findPlansKeys( { type: TYPE_FREE } ) ).to.deep.equal( [
 			PLAN_FREE,
 			PLAN_JETPACK_FREE,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { type: TYPE_BLOGGER } ) ).to.deep.equal( [
 			PLAN_BLOGGER,
 			PLAN_BLOGGER_2_YEARS,
 		] );
 		expect( findPlansKeys( { type: TYPE_PERSONAL } ) ).to.deep.equal( [
+			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_JETPACK_PERSONAL,
 			PLAN_JETPACK_PERSONAL_MONTHLY,
 		] );
 		expect( findPlansKeys( { type: TYPE_PREMIUM } ) ).to.deep.equal( [
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_JETPACK_PREMIUM,
@@ -726,16 +737,20 @@ describe( 'findPlansKeys', () => {
 			PLAN_FREE,
 			PLAN_BLOGGER,
 			PLAN_BLOGGER_2_YEARS,
+			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
 			PLAN_BUSINESS_MONTHLY,
 			PLAN_BUSINESS,
 			PLAN_BUSINESS_2_YEARS,
+			PLAN_ECOMMERCE_MONTHLY,
 			PLAN_ECOMMERCE,
 			PLAN_ECOMMERCE_2_YEARS,
 			PLAN_P2_PLUS,
+			PLAN_P2_FREE,
 		] );
 		expect( findPlansKeys( { group: GROUP_JETPACK } ) ).to.deep.equal( [
 			PLAN_JETPACK_FREE,
@@ -759,10 +774,12 @@ describe( 'findPlansKeys', () => {
 			PLAN_BLOGGER_2_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PERSONAL } ) ).to.deep.equal( [
+			PLAN_PERSONAL_MONTHLY,
 			PLAN_PERSONAL,
 			PLAN_PERSONAL_2_YEARS,
 		] );
 		expect( findPlansKeys( { group: GROUP_WPCOM, type: TYPE_PREMIUM } ) ).to.deep.equal( [
+			PLAN_PREMIUM_MONTHLY,
 			PLAN_PREMIUM,
 			PLAN_PREMIUM_2_YEARS,
 		] );

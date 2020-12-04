@@ -1,23 +1,23 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * wpcom.site.post
  */
 describe( 'wpcom.site.post', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var site_ID;
-	var testing_post;
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	let site_ID;
+	let testing_post;
 
 	// Create a testing_post before to start the tests
 	before( ( done ) => {
@@ -111,7 +111,7 @@ describe( 'wpcom.site.post', function () {
 	describe( 'wpcom.site.post.update', function () {
 		it( 'should edit the new added post', () => {
 			return new Promise( ( done ) => {
-				var new_title = fixture.post.title + '-updated';
+				const new_title = fixture.post.title + '-updated';
 
 				site
 					.post( testing_post.ID )
@@ -171,7 +171,7 @@ describe( 'wpcom.site.post', function () {
 	describe( 'wpcom.site.post.restore', function () {
 		it( 'should restore a post from trash', () => {
 			return new Promise( ( done ) => {
-				var post = site.post();
+				const post = site.post();
 
 				post
 					.add( fixture.post )

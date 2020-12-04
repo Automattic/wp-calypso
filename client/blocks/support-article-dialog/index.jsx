@@ -12,7 +12,9 @@ import isInlineSupportArticleVisible from 'calypso/state/selectors/is-inline-sup
 
 function SupportArticleDialogLoader( { isVisible } ) {
 	return (
-		isVisible && <AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />
+		isVisible && (
+			<AsyncLoad require="calypso/blocks/support-article-dialog/dialog" placeholder={ null } />
+		)
 	);
 }
 

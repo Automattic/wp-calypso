@@ -8,10 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import { withPerformanceTrackerStop } from 'lib/performance-tracking';
+import EmptyContent from 'calypso/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 class SearchEmptyContent extends React.Component {
 	static propTypes = {

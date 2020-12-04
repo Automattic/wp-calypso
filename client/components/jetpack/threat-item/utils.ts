@@ -78,6 +78,8 @@ export const getThreatFix = ( fixable: ThreatFix ): i18nCalypso.TranslateResult 
 				} );
 			}
 			return translate( 'Jetpack Scan will update to a newer version.' );
+		case 'edit':
+			return translate( 'Jetpack Scan will edit the affected file or directory.' );
 		default:
 			return translate( 'Jetpack Scan will resolve the threat.' );
 	}

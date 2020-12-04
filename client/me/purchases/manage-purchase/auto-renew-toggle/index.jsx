@@ -21,7 +21,6 @@ import { createNotice } from 'calypso/state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
 import FormToggle from 'calypso/components/forms/form-toggle';
-import CompactFormToggle from 'calypso/components/forms/form-toggle/compact';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getEditCardDetailsPath } from '../../utils';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -35,7 +34,6 @@ class AutoRenewToggle extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
-		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
 		siteSlug: PropTypes.string,
@@ -214,24 +212,21 @@ class AutoRenewToggle extends Component {
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
+		const { planName, siteDomain, purchase, withTextStatus } = this.props;
 
 		if ( ! this.shouldRender( purchase ) ) {
 			return null;
 		}
 
-		const ToggleComponent = compact ? CompactFormToggle : FormToggle;
-
 		return (
 			<>
-				<ToggleComponent
+				<FormToggle
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
-					toggling={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
 				>
 					{ withTextStatus && this.renderTextStatus() }
-				</ToggleComponent>
+				</FormToggle>
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }

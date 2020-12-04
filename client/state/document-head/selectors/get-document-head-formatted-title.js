@@ -6,13 +6,18 @@ import { compact } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import createSelector from 'lib/create-selector';
-import { decodeEntities } from 'lib/formatting';
-import { getSelectedSiteId, isSiteSection } from 'state/ui/selectors';
-import getSiteTitle from 'state/sites/selectors/get-site-title';
-import { getDocumentHeadTitle } from 'state/document-head/selectors/get-document-head-title';
-import { getDocumentHeadCappedUnreadCount } from 'state/document-head/selectors/get-document-head-capped-unread-count';
+import config from 'calypso/config';
+import createSelector from 'calypso/lib/create-selector';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getSelectedSiteId, isSiteSection } from 'calypso/state/ui/selectors';
+import getSiteTitle from 'calypso/state/sites/selectors/get-site-title';
+import { getDocumentHeadTitle } from 'calypso/state/document-head/selectors/get-document-head-title';
+import { getDocumentHeadCappedUnreadCount } from 'calypso/state/document-head/selectors/get-document-head-capped-unread-count';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/ui/init';
 
 /**
  * Returns the formatted document title, based on the currently set title,

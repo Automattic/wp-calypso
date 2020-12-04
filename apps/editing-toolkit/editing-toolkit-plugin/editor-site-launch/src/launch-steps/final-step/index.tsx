@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
-import { useEntityProp } from '@wordpress/core-data';
+import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -27,7 +27,6 @@ import {
  */
 import LaunchStepContainer, { Props as LaunchStepProps } from '../../launch-step';
 import { LAUNCH_STORE, PLANS_STORE } from '../../stores';
-import { useSite, useDomainSuggestion, useDomainSearch } from '../../hooks';
 
 import './styles.scss';
 
@@ -36,15 +35,17 @@ const TickIcon = <Icon icon={ check } size={ 17 } />;
 const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, onPrevStep } ) => {
 	const domain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const plan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
-	const planPrices = useSelect( ( select ) => select( PLANS_STORE ).getPrices() );
+	const planPrices = useSelect( ( select ) =>
+		select( PLANS_STORE ).getPrices( window.wpcomEditorSiteLaunch?.locale || 'en' )
+	);
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
 
-	const [ title ] = useEntityProp( 'root', 'site', 'title' );
-	const { currentDomainName } = useSite();
+	const { title } = useTitle();
+	const { siteSubdomain } = useSiteDomains();
 	const domainSuggestion = useDomainSuggestion();
-	const domainSearch = useDomainSearch();
+	const { domainSearch } = useDomainSearch();
 
 	const { setStep } = useDispatch( LAUNCH_STORE );
 
@@ -65,7 +66,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			) : (
 				<>
 					<p>
-						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
+						{ __( 'Free site address', 'full-site-editing' ) }: { siteSubdomain?.domain }
 					</p>
 					<Tip>
 						{ domainSearch

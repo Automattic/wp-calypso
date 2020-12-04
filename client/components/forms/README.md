@@ -65,34 +65,34 @@ The `FormInputValidation` component is used to display a validation notice to th
 
 ```jsx
 const options = [
-		{
-			label: 'Group 1',
-			options: [
-				{
-					label: 'Option 1',
-					value: 1,
-				},
-				{
-					label: 'Option 2',
-					value: 2,
-				},
-			],
-		},
-		{
-			label: 'Group 2',
-			options: [
-				{
-					label: 'Option 3',
-					value: 3,
-				},
-				{
-					label: 'Option 4',
-					value: 4,
-				},
-			],
-		},
-	],
-	initialSelected = 3;
+	{
+		label: 'Group 1',
+		options: [
+			{
+				label: 'Option 1',
+				value: 1,
+			},
+			{
+				label: 'Option 2',
+				value: 2,
+			},
+		],
+	},
+	{
+		label: 'Group 2',
+		options: [
+			{
+				label: 'Option 3',
+				value: 3,
+			},
+			{
+				label: 'Option 4',
+				value: 4,
+			},
+		],
+	},
+];
+const initialSelected = 3;
 
 <SelectOptGroups name="example" value={ initialSelected } options={ options } />;
 ```

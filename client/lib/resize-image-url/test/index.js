@@ -9,7 +9,7 @@ describe( 'resizeImageUrl()', () => {
 
 	let resizeImageUrl;
 	beforeAll( () => {
-		resizeImageUrl = require( '..' );
+		resizeImageUrl = require( '..' ).default;
 	} );
 
 	test( 'should return non-string URLs unmodified', () => {
@@ -170,14 +170,14 @@ describe( 'resizeImageUrl()', () => {
 			global.window = { devicePixelRatio: 2 };
 			// We need to reset module under test to recompute image scale factor
 			jest.resetModules();
-			resizeImageUrl = require( '..' );
+			resizeImageUrl = require( '..' ).default;
 		} );
 
 		afterAll( () => {
 			global.window = undefined;
 			// We need to reset module under test to recompute image scale factor
 			jest.resetModules();
-			resizeImageUrl = require( '..' );
+			resizeImageUrl = require( '..' ).default;
 		} );
 
 		test( 'should append resize argument', () => {

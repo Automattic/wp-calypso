@@ -35,7 +35,8 @@ function remove( poller ) {
 }
 
 function pauseAll() {
-	let poller, id;
+	let poller;
+	let id;
 	debug( 'Pausing active pollers' );
 	for ( id in _pollers ) {
 		poller = _pollers[ id ];
@@ -47,7 +48,8 @@ function pauseAll() {
 }
 
 function resumePaused() {
-	let poller, id;
+	let poller;
+	let id;
 	debug( 'Resuming paused pollers' );
 	for ( id in _pollers ) {
 		poller = _pollers[ id ];

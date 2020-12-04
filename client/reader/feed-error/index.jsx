@@ -8,10 +8,10 @@ import i18n, { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderMain from 'reader/components/reader-main';
-import MobileBackToSidebar from 'components/mobile-back-to-sidebar';
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import MobileBackToSidebar from 'calypso/components/mobile-back-to-sidebar';
+import EmptyContent from 'calypso/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 class FeedError extends React.Component {
 	static defaultProps = {
@@ -33,23 +33,23 @@ class FeedError extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read/search"
-				>
-					{ this.props.translate( 'Find sites to follow' ) }
-				</a>
-			),
-			secondaryAction = (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore' ) }
-				</a>
-			);
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find sites to follow' ) }
+			</a>
+		);
+		const secondaryAction = (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore' ) }
+			</a>
+		);
 
 		return (
 			<ReaderMain>

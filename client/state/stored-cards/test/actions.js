@@ -8,7 +8,7 @@ import sinon from 'sinon';
  * Internal dependencies
  */
 import { addStoredCard, deleteStoredCard, fetchStoredCards } from '../actions';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	STORED_CARDS_ADD_COMPLETED,
 	STORED_CARDS_DELETE,
@@ -17,9 +17,9 @@ import {
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
@@ -35,9 +35,9 @@ describe( 'actions', () => {
 
 	describe( '#addStoredCard', () => {
 		const cardData = {
-				token: 'pg_1234',
-			},
-			item = { stored_details_id: 123 };
+			token: 'pg_1234',
+		};
+		const item = { stored_details_id: 123 };
 		let sandbox;
 
 		useSandbox( ( newSandbox ) => ( sandbox = newSandbox ) );

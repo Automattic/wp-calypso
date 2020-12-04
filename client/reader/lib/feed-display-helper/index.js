@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'reader/route';
+import { getSiteUrl as getSiteUrlFromRoute, getFeedUrl } from 'calypso/reader/route';
 
 const exported = {
 	/**

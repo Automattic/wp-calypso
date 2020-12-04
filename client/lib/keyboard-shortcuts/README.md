@@ -7,7 +7,7 @@ This module emits an event when a keyboard shortcut is used, indicating the keyb
 This module can be used outside of React, but this is a typical use within React:
 
 ```js
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
 
 class MyComponent extends React.Component {
 	componentWillMount() {

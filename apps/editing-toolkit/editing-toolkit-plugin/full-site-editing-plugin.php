@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.7
+ * Version: 2.8.10
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,7 +35,7 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.7' );
+define( 'PLUGIN_VERSION', '2.8.10' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
@@ -260,18 +260,27 @@ function load_wpcom_block_editor_nux() {
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
 /**
- * Load editing toolkit block patterns
+ * Load editing toolkit block patterns from the API
+ *
+ * @param obj $current_screen The current screen object.
  */
-function load_block_patterns() {
+function load_block_patterns_from_api( $current_screen ) {
+	if ( ! apply_filters( 'a8c_enable_block_patterns_api', false ) ) {
+		return;
+	}
+
 	if ( ! function_exists( '\gutenberg_load_block_pattern' ) ) {
 		return;
 	}
 
-	require_once __DIR__ . '/block-patterns/class-block-patterns.php';
+	if ( ! $current_screen->is_block_editor ) {
+		return;
+	}
 
-	Block_Patterns::get_instance();
+	require_once __DIR__ . '/block-patterns/class-block-patterns-from-api.php';
+	Block_Patterns_From_API::get_instance();
 }
-add_action( 'init', __NAMESPACE__ . '\load_block_patterns', 20 );
+add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
 
 /**
  * Load Premium Content Block
@@ -320,7 +329,10 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_sidebar'
  * Coming soon
  */
 function load_coming_soon() {
-	if ( defined( 'WPCOM_PUBLIC_COMING_SOON' ) && WPCOM_PUBLIC_COMING_SOON ) {
+	if (
+		( defined( 'WPCOM_PUBLIC_COMING_SOON' ) && WPCOM_PUBLIC_COMING_SOON ) ||
+		apply_filters( 'a8c_enable_public_coming_soon', false )
+	) {
 		require_once __DIR__ . '/coming-soon/coming-soon.php';
 	}
 }

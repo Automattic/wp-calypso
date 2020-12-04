@@ -15,8 +15,8 @@ import {
 	KEYRING_SERVICES_REQUEST_SUCCESS,
 	DESERIALIZE,
 	SERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 const originalKeyringServices = {
 	facebook: {
@@ -82,15 +82,15 @@ describe( 'reducer', () => {
 
 		describe( 'persistence', () => {
 			test( 'persists state', () => {
-				const original = deepFreeze( originalKeyringServices ),
-					services = items( original, { type: SERIALIZE } );
+				const original = deepFreeze( originalKeyringServices );
+				const services = items( original, { type: SERIALIZE } );
 
 				expect( services ).to.eql( original );
 			} );
 
 			test( 'loads valid persisted state', () => {
-				const original = deepFreeze( originalKeyringServices ),
-					services = items( original, { type: DESERIALIZE } );
+				const original = deepFreeze( originalKeyringServices );
+				const services = items( original, { type: DESERIALIZE } );
 
 				expect( services ).to.eql( original );
 			} );

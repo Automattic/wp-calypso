@@ -20,6 +20,37 @@ export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
 export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
 export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
 
+export const JETPACK_PRODUCTS_BY_TERM = [
+	{
+		yearly: PRODUCT_JETPACK_BACKUP_DAILY,
+		monthly: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_BACKUP_REALTIME,
+		monthly: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SEARCH,
+		monthly: PRODUCT_JETPACK_SEARCH_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_WPCOM_SEARCH,
+		monthly: PRODUCT_WPCOM_SEARCH_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SCAN,
+		monthly: PRODUCT_JETPACK_SCAN_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_ANTI_SPAM,
+		monthly: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_CRM,
+		monthly: PRODUCT_JETPACK_CRM_MONTHLY,
+	},
+];
+
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
 	PRODUCT_JETPACK_BACKUP_DAILY,
 	PRODUCT_JETPACK_BACKUP_REALTIME,
@@ -53,7 +84,7 @@ export const JETPACK_PRODUCTS_LIST = [
 	...JETPACK_BACKUP_PRODUCTS,
 	...( isEnabled( 'jetpack/scan-product' ) ? JETPACK_SCAN_PRODUCTS : [] ),
 	...( isEnabled( 'jetpack/anti-spam-product' ) ? JETPACK_ANTI_SPAM_PRODUCTS : [] ),
-	...( isEnabled( 'jetpack/search-product' ) ? JETPACK_SEARCH_PRODUCTS : [] ),
+	...JETPACK_SEARCH_PRODUCTS,
 ];
 
 // Jetpack Search tiers

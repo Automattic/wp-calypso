@@ -11,10 +11,10 @@ import debugFactory from 'debug';
  * Internal dependencies
  */
 /* eslint-disable no-restricted-imports */
-import observe from 'lib/mixins/data-observe';
+import observe from 'calypso/lib/mixins/data-observe';
 /* eslint-enable no-restricted-imports */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import Gridicon from 'components/gridicon';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
 
 const debug = debugFactory( 'calypso:stats:action-follow' );
 
@@ -24,8 +24,8 @@ const StatsActionFollow = createReactClass( {
 	mixins: [ observe( 'followSite' ) ],
 
 	clickHandler: function ( event ) {
-		let site = this.props.followSite,
-			gaEvent;
+		const site = this.props.followSite;
+		let gaEvent;
 
 		event.stopPropagation();
 		event.preventDefault();
@@ -43,23 +43,21 @@ const StatsActionFollow = createReactClass( {
 	},
 
 	render: function () {
-		let site = this.props.followSite,
-			following = site.is_following,
-			wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
-				follow: ! following,
-				following: following,
-			} ),
-			label = following
-				? this.props.translate( 'Following', {
-						context: 'Stats: Follow action / Following status',
-				  } )
-				: this.props.translate( 'Follow', {
-						context: 'Stats: Follow action / Following status',
-				  } ),
-			gridiconType = following ? 'reader-following' : 'reader-follow',
-			wrapperClassSet;
-
-		wrapperClassSet = classNames( wrapperClass );
+		const site = this.props.followSite;
+		const following = site.is_following;
+		const wrapperClass = classNames( 'module-content-list-item-action-wrapper', {
+			follow: ! following,
+			following: following,
+		} );
+		const label = following
+			? this.props.translate( 'Following', {
+					context: 'Stats: Follow action / Following status',
+			  } )
+			: this.props.translate( 'Follow', {
+					context: 'Stats: Follow action / Following status',
+			  } );
+		const gridiconType = following ? 'reader-following' : 'reader-follow';
+		const wrapperClassSet = classNames( wrapperClass );
 
 		return (
 			<li className="module-content-list-item-action">

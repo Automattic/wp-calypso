@@ -11,17 +11,17 @@ import { noop } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import { defaultRewindConfig, RewindConfig } from './types';
-import { getRewindBackupProgress, rewindBackup } from 'state/activity-log/actions';
+import { getRewindBackupProgress, rewindBackup } from 'calypso/state/activity-log/actions';
 import CheckYourEmail from './rewind-flow-notice/check-your-email';
 import Error from './error';
-import getBackupProgress from 'state/selectors/get-backup-progress';
-import getRequest from 'state/selectors/get-request';
+import getBackupProgress from 'calypso/state/selectors/get-backup-progress';
+import getRequest from 'calypso/state/selectors/get-request';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
-import QueryRewindBackupStatus from 'components/data/query-rewind-backup-status';
+import QueryRewindBackupStatus from 'calypso/components/data/query-rewind-backup-status';
 import RewindConfigEditor from './rewind-config-editor';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 
 interface Props {
 	backupDisplayDate: string;

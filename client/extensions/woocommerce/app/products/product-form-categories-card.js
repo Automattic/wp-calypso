@@ -11,11 +11,11 @@ import { find, pick, compact, escape, unescape } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldSet from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import TokenField from 'components/token-field';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormFieldSet from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import TokenField from 'calypso/components/token-field';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { generateProductCategoryId } from 'woocommerce/state/ui/product-categories/actions';
 
 // TODO Rename this card since it contains other controls, and may contain more in the future (like tax)
@@ -84,9 +84,9 @@ const ProductFormCategoriesCard = ( {
 			<div className="products__product-form-featured">
 				<FormLabel htmlFor="featured">
 					{ translate( 'Featured' ) }
-					<CompactFormToggle onChange={ toggleFeatured } checked={ product.featured }>
+					<FormToggle onChange={ toggleFeatured } checked={ product.featured }>
 						{ translate( 'Promote this product across the store' ) }
-					</CompactFormToggle>
+					</FormToggle>
 				</FormLabel>
 			</div>
 		</Card>

@@ -47,7 +47,7 @@
 	float: left;
 	color: var( --color-neutral-20 );
 
-	@include breakpoint-deprecated( '<480px') {
+	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }

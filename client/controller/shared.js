@@ -7,21 +7,24 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { setSection } from 'state/ui/actions';
-import { setLocale } from 'state/ui/language/actions';
-import { isTranslatedIncompletely } from 'lib/i18n-utils/utils';
+import config from 'calypso/config';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { setSection } from 'calypso/state/ui/actions';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary } = context;
+		const { store, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }
+					currentSection={ section }
+					currentRoute={ pathname }
+					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }

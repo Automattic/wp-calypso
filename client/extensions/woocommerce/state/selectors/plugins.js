@@ -6,17 +6,17 @@ import { every, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	getPlugins,
 	isRequestingForSites,
 	getPluginOnSite,
-} from 'state/plugins/installed/selectors';
+} from 'calypso/state/plugins/installed/selectors';
 import { getRequiredPluginsForCalypso } from 'woocommerce/lib/get-required-plugins';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import createSelector from 'lib/create-selector';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import createSelector from 'calypso/lib/create-selector';
 
-import 'state/plugins/init';
+import 'calypso/state/plugins/init';
 
 const getWcsPluginData = createSelector(
 	( state, siteId ) => {

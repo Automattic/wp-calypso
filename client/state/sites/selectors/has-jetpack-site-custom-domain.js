@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
+import { withoutHttp } from 'calypso/lib/url';
 import getSiteDomain from './get-site-domain';
 import getSiteOption from './get-site-option';
 import isJetpackSite from './is-jetpack-site';
@@ -20,8 +20,8 @@ export default function hasJetpackSiteCustomDomain( state, siteId ) {
 		return null;
 	}
 
-	const domain = getSiteDomain( state, siteId ),
-		unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
+	const domain = getSiteDomain( state, siteId );
+	const unmappedUrl = getSiteOption( state, siteId, 'unmapped_url' );
 
 	if ( ! domain || ! unmappedUrl ) {
 		return null;

@@ -44,13 +44,13 @@ import {
 	PLAN_PREMIUM_2_YEARS,
 	PLAN_PERSONAL,
 	PLAN_PERSONAL_2_YEARS,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies
  */
 import { SiteSettingsFormGeneral } from '../form-general';
-import config from 'config';
+import config from 'calypso/config';
 import moment from 'moment';
 
 const configMock = ( values ) => ( key ) => values[ key ];

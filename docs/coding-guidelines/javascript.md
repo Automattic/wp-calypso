@@ -1,5 +1,4 @@
-JavaScript Coding Guidelines
-===========================
+# JavaScript Coding Guidelines
 
 ## Spacing
 
@@ -31,6 +30,7 @@ We specify an [EditorConfig](http://editorconfig.org/) configuration and encoura
 Object declarations can be made on a single line if they are short (remember the line length guidelines). When an object declaration is too long to fit on one line, there must be one property per line. Property names only need to be quoted if they are reserved words or contain special characters:
 
 ```js
+/* eslint-disable */
 // Bad
 const labels = { facebook: 'Facebook',
 	twitter: 'Twitter', 'google-plus': 'Google Plus' };
@@ -44,7 +44,7 @@ const labels = { 'google-plus': 'Google Plus' };
 const labels = {
 	facebook: 'Facebook',
 	twitter: 'Twitter',
-	'google-plus': 'Google Plus'
+	'google-plus': 'Google Plus',
 };
 ```
 
@@ -67,7 +67,7 @@ foo( node, 'property', 2 );
 // around object literals and callbacks.
 foo( {
 	a: 'alpha',
-	b: 'beta'
+	b: 'beta',
 } );
 
 foo( data, () => {
@@ -83,7 +83,7 @@ if ( condition ) {
 } else if ( otherCondition ) {
 	otherThing( {
 		key: value,
-		otherKey: otherValue
+		otherKey: otherValue,
 	} );
 } else {
 	somethingElse( true );
@@ -121,7 +121,7 @@ Try to return early from a function to avoid functions with deep indentation aki
 function isFreshData( data ) {
 	let isFresh;
 	if ( data ) {
-		if ( data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+		if ( data.timestamp > Date.now() - 20 * 60 * 1000 ) {
 			isFresh = true;
 		} else {
 			isFresh = false;
@@ -136,7 +136,7 @@ function isFreshData( data ) {
 ```js
 // Good
 function isFreshData( data ) {
-	if ( data && data.timestamp > Date.now() - ( 20 * 60 * 1000 ) ) {
+	if ( data && data.timestamp > Date.now() - 20 * 60 * 1000 ) {
 		return true;
 	}
 
@@ -161,6 +161,7 @@ if ( isLarge() ) {
 When all paths of a set of `if` or `else if` statements `return` a value, do not include an `else` block.
 
 ```js
+/* eslint-disable */
 // Bad
 function getStatusLabel() {
 	if ( isValid() ) {
@@ -169,7 +170,8 @@ function getStatusLabel() {
 		return 'Not OK';
 	}
 }
-
+```
+```js
 // Good
 function getStatusLabel() {
 	if ( isValid() ) {
@@ -185,11 +187,13 @@ function getStatusLabel() {
 When a statement is too long to fit on one line, line breaks must occur after an operator.
 
 ```js
+/* eslint-disable */
 // Bad
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c
 	+ ' is ' + ( a + b + c );
 ```
 ```js
+/* eslint-disable */
 // Good
 const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
 	' is ' + ( a + b + c );
@@ -198,19 +202,19 @@ const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
 When a conditional is too long to fit on one line, successive lines should be indented one extra level to distinguish them from the body.
 
 ```js
+/* eslint-disable */
 if ( firstCondition() && secondCondition() &&
 		thirdCondition() ) {
 	doStuff();
 }
 ```
 
-
 ## Assignments and Globals
 
 ### Variable Declarations
 
-When possible, variables should be declared using a `const` declaration. Use 
-`let` only when you anticipate that the variable value will be reassigned 
+When possible, variables should be declared using a `const` declaration. Use
+`let` only when you anticipate that the variable value will be reassigned
 during runtime. `var` should not be used in any new code.
 
 Note that `const` does not protect against mutations to an object, so do not
@@ -256,7 +260,7 @@ Names should be descriptive, but not excessively so. Exceptions are allowed for 
 
 Constructors intended for use with new should have a capital first letter (UpperCamelCase).
 
-Variables intended to be used as a [constant](https://en.wikipedia.org/wiki/Constant_(computer_programming)) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
+Variables intended to be used as a [constant](<https://en.wikipedia.org/wiki/Constant_(computer_programming)>) can be defined with the [SCREAMING_SNAKE_CASE naming convention](https://en.wikipedia.org/wiki/Snake_case). Note that while any variable declared using `const` could be considered a constant, in the context of our application this usage should usually be limited to top-level or exported module values.
 
 ```js
 const DUMMY_VALUE = 10;
@@ -285,14 +289,12 @@ When adding documentation, use the [jsdoc](http://usejsdoc.org/) format.
 ```js
 /**
  * Represents a book.
- * @constructor
+ *
+ * @class
  * @param {string} title - The title of the book.
  * @param {string} author - The author of the book.
  */
-function Book( title, author ) {
-
-}
-
+function Book( title, author ) {}
 ```
 
 Multi-line comments that are not a jsdoc comment should use `//`:
@@ -304,47 +306,47 @@ Multi-line comments that are not a jsdoc comment should use `//`:
 
 ## Equality
 
-Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null, though it is preferable to use Lodash's [`isNil`](https://lodash.com/docs#isNil) for this purpose.
+Strict equality checks (===) must be used in favor of abstract equality checks (==). The only exception is when checking for both undefined and null by way of null, though it is preferable to do this explicitly.
 
 ```js
 // Check that 'someValue' is either undefined or null, for some important reason.
 
 // Good
 if ( someValue == null ) {
-	...
+	///...
 }
 
-// better
-if ( isNil( someValue ) ) {
-	...
+// Better
+if ( someValue === null || someValue === undefined ) {
+	///...
 }
 ```
 
 ## Type Checks
 
-When checking the type of a value, use one of the following utilities from [Lodash](https://lodash.com/):
-These are the preferred ways of checking the type of a value:
+In general, it's best to avoid checking the type of a value, and instead just rely on its existence and shape over its type.
 
-- String: [`isString( value )`](https://lodash.com/docs#isString)
-- Number: [`isNumber( value )`](https://lodash.com/docs#isNumber)
-- Boolean: [`isBoolean( value )`](https://lodash.com/docs#isBoolean)
-- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject)
-- null: [`isNull( value )`](https://lodash.com/docs#isNull)
-- undefined: [`isUndefined( value )`](https://lodash.com/docs#isUndefined)
-- undefined or null (either): [`isNil( value )`](https://lodash.com/docs#isNil)
+If you really must check the type of a value, however, do the following:
+
+- String: `typeof value === 'string'`. This doesn't work for strings created with `new String( ... )`, however, so if you really must check for those for whatever reason, be sure to do `typeof value === 'string' || value instanceof String` instead.
+- Number: [`Number.isFinite( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number/isFinite) for finite numbers only, or [`isNumber( value )`](https://lodash.com/docs#isNumber) if you accept infinite numbers as well.
+- Boolean: `value === true || value === false` (don't use Lodash's `isBoolean`, as it's incredibly wasteful).
+- Object: [`isPlainObject( value )`](https://lodash.com/docs#isPlainObject).
+- Array: [`Array.isArray( value )`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray).
+- null: `value === null`.
+- undefined: `value === undefined`.
+- undefined or null (either): `value == null` or `value === null || value === undefined` (clearer)
 
 As mentioned earlier, you should avoid referencing global values without first validating their presence.
-Calling `isUndefined( someGlobalValue )` would throw a `ReferenceError` if that value doesn't exist.
+Doing `someGlobalValue === undefined` would throw a `ReferenceError` if that value doesn't exist.
 Instead, fall back to checking with `typeof window !== 'undefined'` for global values.
 
 Note that we don't recommend using [`isObject`](https://lodash.com/docs#isObject) to check that a value is an object. This is because non-plain-object types (arrays, regexes and others) test as true for this check.
 
-Though these are the recommended type checks, you generally don't have to know the type of an object. Instead, prefer testing the object's existence and shape over its type.
-
 ## Existence and Shape Checks
 
 Prefer using the [power of "truthy"](http://www.ecma-international.org/ecma-262/6.0/#sec-toboolean)
-in JavaScript boolean expressions to validate the existence and shape of an 
+in JavaScript boolean expressions to validate the existence and shape of an
 object to using `typeof`.
 
 The following are all false in boolean expressions:
@@ -361,38 +363,64 @@ But be careful, because these are all true:
 - `{}` the empty object
 - `-1` the number
 
-
 To test the existence of an object (including arrays):
+
 ```js
-if ( object ) { ... }
+if ( object ) {
+	/*...*/
+}
 ```
 
 To test if a property exists on an object, regardless of value, including `undefined` or other falsey values:
+
 ```js
 // Good:
-if ( 'desired' in object ) { ... }
+if ( 'desired' in object ) {
+	/*...*/
+}
 
-// Better, using Lodash's `has` function:
-if ( has( object, 'desired' ) ) { ... }
+// Better, using `hasOwnProperty`:
+if ( object.hasOwnProperty( 'desired' ) ) {
+	/*...*/
+}
 ```
 
 To test if a property is present and has a truthy value:
+
 ```js
-if ( object.desired ) { ... }
+if ( object.desired ) {
+	/*...*/
+}
 ```
 
 To test if an object exists and has a property:
+
 ```js
 // Good:
-if ( object && 'desired' in object ) { ... }
-if ( object && object.desired ) { ... }
+if ( object && 'desired' in object ) {
+	/*...*/
+}
+if ( object && object.desired ) {
+	/*...*/
+}
 
-// Better, using Lodash's `has` function:
-if ( has( object, 'desired' ) ) { ... }
+// Better, using `hasOwnProperty`:
+if ( object && object.hasOwnProperty( 'desired' ) ) {
+	/*...*/
+}
 
-// Note: 'has' will safely return `false` if a value is missing at any point in the nesting.
-// Even if the chain breaks at 'b' 'has' will return false, rather than throwing an error.
-if ( has( object, 'a.b.c.desired' ) ) { ... }
+// Note: you can use optional chaining if you need to check for the presence of a nested property.
+// Even if the chain breaks at 'b', it will return `undefined`, rather than throwing an error.
+if ( object?.a?.b?.c?.desired !== undefined ) {
+	/*...*/
+}
+
+// When possible, avoid adding `?.` to every step of the chain, however, and only use it after a
+// property that can be `null` or `undefined`. So if `a` always has a value, and `c` always has a
+// value if `b` does, you could write:
+if ( object?.a.b?.c.desired !== undefined ) {
+	/*...*/
+}
 ```
 
 Note that the `in` operator checks all inherited properties of an object prototype, which can lead to some unexpected scenarios, so should be avoided:
@@ -401,24 +429,21 @@ Note that the `in` operator checks all inherited properties of an object prototy
 'valueOf' in {}; // true
 ```
 
-Instead, use [`has`](https://lodash.com/docs#has) or [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
+Instead, use [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty).
 
 ```js
-{}.hasOwnProperty( 'valueOf' ); // false
-has( {}, 'valueOf' ); // false
+( {}.hasOwnProperty( 'valueOf' ) ); // false
 ```
 
-[`has`](https://lodash.com/docs#has) and [`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) are also recommended for testing the presence of an object key using variable input:
-
+[`Object#hasOwnProperty`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwnProperty) is also recommended for testing the presence of an object key using variable input:
 
 ```js
 const key = 'someParam';
 const object = {
-	someParam: 'someValue'
+	someParam: 'someValue',
 };
 
 object.hasOwnProperty( key ); // true
-has( object, key ); // true
 ```
 
 ## Strings
@@ -443,8 +468,7 @@ const component = <div className="post"></div>;
 
 ```js
 // Before
-const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c +
-	' is ' + ( a + b + c );
+const sumLabel = 'The sum of ' + a + ' and ' + b + ' plus ' + c + ' is ' + ( a + b + c );
 ```
 ```js
 // After
@@ -462,7 +486,6 @@ When using switch statements:
 
 ```js
 switch ( event.keyCode ) {
-
 	// ENTER and SPACE both trigger x()
 	case constants.keyCode.ENTER:
 	case constants.keyCode.SPACE:
@@ -555,18 +578,18 @@ Object properties should be accessed via dot notation, unless the key is a varia
 ```js
 prop = object.propertyName;
 prop = object[ variableKey ];
-prop = object[ 'default' ];
+prop = object.default;
 prop = object[ 'key-with-hyphens' ];
 ```
 
-That said, avoid accessing nested properties through a chain of dot notation as this can lead cause access errors.
-Instead, use Lodash's [`get`](https://lodash.com/docs#get) function. It will safely handle cases where a property or object is missing at any point in the nesting chain.
+For nested properties, avoid using Lodash's [`get`](https://lodash.com/docs#get) function.
+Instead, you can use the standard optional chaining syntax (`?.`) after properties that may be missing. That will safely handle cases where a property or object is missing at any point in the nesting chain.
 
 ```js
 const object = {
 	nestedObject: {
-		property: 'value'
-	}
+		property: 'value',
+	},
 };
 
 // Bad
@@ -574,17 +597,25 @@ nestedProp = object.nestedObject.property;
 anotherNestedProp = object.nestedObject.anotherProperty; // This will throw an error
 
 // Good
-nestedProp = get( object, 'nestedObject.property' );
-anotherNestedProp = get( object, 'nestedObject.anotherProperty' ); // safely returns undefined
+nestedProp = object.nestedObject?.property;
+anotherNestedProp = object.nestedObject?.anotherProperty; // safely returns undefined
 ```
 
-## “Yoda” Conditions #
+If you need default values, you can combine optional chaining with nullish coalescing:
+
+```js
+nestedProp = object.nestedObject?.property ?? 'defaultValue'; // use `defaultValue` if missing
+```
+
+Note that the default value will be used if the expression preceding it resolves to `null` or `undefined`, whereas Lodash's `get` only applies the default value for `undefined`. This distinction isn't usually a concern, but if you're rewriting existing code be sure to double-check the logic.
+
+## “Yoda” Conditions
 
 Since we require strict equality checks, we are not going to enforce [Yoda conditions](https://en.wikipedia.org/wiki/Yoda_conditions). You're welcome to use them, but the most important consideration should be readability of the conditional.
 
 ## Iteration
 
-Starting in [ECMAScript 5](https://en.wikipedia.org/wiki/ECMAScript#5th_Edition), JavaScript includes many methods and patterns inspired by functional programming.
+Starting in [ECMAScript 5](https://en.wikipedia.org/wiki/ECMAScript#5th_Edition), JavaScript includes many methods and patterns inspired by functional programming.
 
 We encourage you to make use of these methods in favor of traditional `for` and `while` loops:
 
@@ -594,22 +625,16 @@ We encourage you to make use of these methods in favor of traditional `for` and 
 - [`Array#some`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/some)
 - [`Array#every`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/every)
 
-Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419) for many more Array prototype methods that were added in ES2015 and beyond. You can safely use them without fear of breaking older browsers. If it's more convenient you can also use their [Lodash](https://lodash.com/) equivalents. For example:
-
-- [`_.find`](https://lodash.com/docs/#find) ([`Array#find`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/find))
-- [`_.findIndex`](https://lodash.com/docs/#findIndex) ([`Array#findIndex`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex))
-- [`_.includes`](https://lodash.com/docs/#includes) ([`Array#includes`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes))
+Calypso [includes polyfills](https://github.com/Automattic/wp-calypso/pull/25419) for many more Array prototype methods that were added in ES2015 and beyond. You can safely use them without fear of breaking older browsers, and you should always prefer them over their [Lodash](https://lodash.com/) equivalents, which in most cases offer little more.
 
 Introduced in ES2015, [arrow functions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) provide a shorter syntax for function expressions while preserving the parent scope's `this` context. Arrow functions are especially well-suited for iteration method callbacks.
 
-__Examples__
+### Examples
 
 Creating an array of React elements from an array of post objects:
 
 ```js
-posts.map( ( post ) => (
-	<Post post={ post } key={ post.global_ID } />
-) );
+posts.map( ( post ) => <Post post={ post } key={ post.global_ID } /> );
 ```
 
 Check whether every post in an array of post objects is published:
@@ -627,7 +652,7 @@ posts.reduce( ( memo, post ) => {
 }, {} );
 ```
 
-__Rationale: contracts in code__
+### Rationale: contracts in code
 
 It could be argued that these functional helpers are not so different from `for` and `while`; after all, they are implemented with the same base loops and can't _do_ anything that `for` and `while` can't.
 
@@ -646,15 +671,13 @@ These important statements are part of the abstraction. As for the side effects:
 
 `for` will still have its uses, but for _most_ scenarios we have well-known higher-level terms. With the caveat that there is such a thing as too "sophisticated" and opaque vocabulary, by continuously learning and choosing the right functional programming iterator we collectively develop the fineness of our expression as developers centered around a common project.
 
-[contracts not apis]: https://twitter.com/dan_abramov/status/618757668862357504
-
 ## React components
 
 - Use [stateless function components or the `React.Component` class](https://facebook.github.io/react/docs/components-and-props.html#functional-and-class-components) instead of `React.createClass`
   - Unlike `React.createClass`, methods of components extending `React.Component` are not automatically bound to the instance. Instead, you will need to bind the functions in your component's constructor or use [class instance property initializers](https://github.com/tc39/proposal-class-public-fields)
 - Use [PropTypes](https://facebook.github.io/react/docs/typechecking-with-proptypes.html) to validate prop types and help set usage expectations for other developers
 - Use [JSX](https://facebook.github.io/jsx/) for creating React elements, like those returned from a component's `render` function
-- Methods that are bound to event handlers should have descriptive names. 
+- Methods that are bound to event handlers should have descriptive names.
   - Avoid naming methods after event handlers like `onClick`, `onSubmit`, etc.
   - You can use fat arrow functions if it makes handling the event cleaner.
 - Avoid prefixing method names with `_`.
@@ -668,13 +691,13 @@ export default class Link extends Component {
 	static propTypes = {
 		href: PropTypes.string,
 		onNavigate: PropTypes.func,
-		children: PropTypes.node
+		children: PropTypes.node,
 	};
 
 	navigate = ( event ) => {
 		event.preventDefault();
 		this.props.onNavigate();
-	}
+	};
 
 	render() {
 		const { href, children } = this.props;
@@ -698,7 +721,7 @@ Resources:
 2. [Babel](https://babeljs.io/)
 3. [Overview of ECMAScript 6 features](https://github.com/lukehoban/es6features)
 4. [ECMAScript 6 new features overview & comparison](http://es6-features.org/)
-6. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb
+5. [More Resources](https://github.com/airbnb/javascript#resources) - listed by Airbnb
 
 ## ESLint
 
@@ -712,7 +735,7 @@ In cases where ESLint incorrectly identifies code as not following our standards
 
 If you would like to have your changes automatically run through ESLint - there is a git pre-commit hook in `bin/pre-commit-hook.js` that will perform the task. It will be run everytime you do a `git commit`.
 
-If ESLint encounters any issues inside any .jsx or .js files you have updated, an error will be displayed, and the commit will not proceed.  Here is an example of an attempted commit with the hook installed:
+If ESLint encounters any issues inside any .jsx or .js files you have updated, an error will be displayed, and the commit will not proceed. Here is an example of an attempted commit with the hook installed:
 
 ![pre-commit](https://cldup.com/hec5WcVc_L-3000x3000.png)
 
@@ -723,7 +746,6 @@ To lint the entire project, from the root of your working directory run:
 ```bash
 yarn run lint:js
 ```
-
 
 #### Sublime Text
 
@@ -748,3 +770,5 @@ To make identifying spaces easier, you can install the [Highlight Whitespaces](h
 	"highlight_whitespaces_check_tabs": false
 }
 ```
+
+[contracts not apis]: https://twitter.com/dan_abramov/status/618757668862357504

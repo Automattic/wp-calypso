@@ -18,8 +18,7 @@
 	text-decoration: none;
 	vertical-align: top;
 	box-sizing: border-box;
-	font-size: 14px;
-	font-weight: 600;
+	font-size: $font-body-small;
 	line-height: 22px;
 	border-radius: 2px;
 	padding: 8px 14px;
@@ -85,7 +84,7 @@
 	&.is-compact {
 		padding: 7px;
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 
 		&:disabled {

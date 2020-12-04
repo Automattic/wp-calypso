@@ -6,8 +6,8 @@ import { get, merge } from 'lodash';
 /**
  * Internal dependencies
  */
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Enhances any Redux action that denotes the recording of an analytics event with two additional properties which

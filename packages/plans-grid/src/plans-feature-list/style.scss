@@ -1,3 +1,4 @@
+@import '~@automattic/onboarding/styles/mixins';
 @import '../variables.scss';
 
 .plans-feature-list {
@@ -132,4 +133,10 @@ ul.plans-feature-list__item-group {
 			margin-left: 8px;
 		}
 	}
+}
+
+.plans-feature-list__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 200px;
 }

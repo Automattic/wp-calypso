@@ -6,7 +6,7 @@ import { stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { isNewUser } from 'state/guided-tours/contexts';
+import { isNewUser } from 'calypso/state/guided-tours/contexts';
 
 export const MainTourMeta = {
 	name: 'main',

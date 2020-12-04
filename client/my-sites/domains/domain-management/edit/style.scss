@@ -154,7 +154,6 @@
 			font-size: $font-body-small;
 		}
 
-
 		> div {
 			margin-bottom: 1.5em;
 			border-bottom: 1px solid var( --color-border-subtle );
@@ -205,7 +204,14 @@
 		margin-top: 0;
 	}
 
-	.domain-types__auto-renew-placeholder, .domain-types__expires-placeholder {
+	.domain-types__auto-renew-wrapper {
+		.components-base-control__field {
+			margin-bottom: 0;
+		}
+	}
+
+	.domain-types__auto-renew-placeholder,
+	.domain-types__expires-placeholder {
 		width: 20%;
 		p {
 			@include placeholder( --color-neutral-5 );

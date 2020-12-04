@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import getPodcastingCategoryId from 'state/selectors/get-podcasting-category-id';
+import getPodcastingCategoryId from 'calypso/state/selectors/get-podcasting-category-id';
 
 describe( 'getPodcastingCategoryId', () => {
 	test( 'returns null if settings are missing', () => {

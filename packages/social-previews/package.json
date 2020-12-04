@@ -4,6 +4,7 @@
 	"description": "A suite of components to generate previews for a post for both social and search engines",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -34,11 +35,11 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile && copy-assets"
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
 		"classnames": "^2.2.6",

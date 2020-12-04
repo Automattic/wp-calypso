@@ -19,22 +19,14 @@ jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnecti
 jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
 jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
 jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'blocks/payment-methods', () => 'PaymentMethods' );
 jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
 jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
 jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
-
-jest.mock( 'i18n-calypso', () => ( {
-	localize: ( Component ) => ( props ) => <Component { ...props } translate={ ( x ) => x } />,
-	numberFormat: ( x ) => x,
-	translate: ( x ) => x,
-} ) );
 
 /**
  * External dependencies
  */
 import { shallow } from 'enzyme';
-import React from 'react';
 
 /**
  * Internal dependencies
@@ -65,23 +57,12 @@ import {
 	TYPE_PERSONAL,
 	TERM_ANNUALLY,
 	TYPE_PREMIUM,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const props = {
 	selectedPlan: PLAN_FREE,
 	translate: ( x ) => x,
 };
-
-describe( 'PlansFeaturesMain.renderFreePlanBanner()', () => {
-	test( 'Should return null when called with hideFreePlan props', () => {
-		const instance = new PlansFeaturesMain( {
-			...props,
-			hideFreePlan: true,
-		} );
-		const freePlanBanner = instance.renderFreePlanBanner();
-		expect( freePlanBanner ).toBeNull();
-	} );
-} );
 
 describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 	test( 'Should render <PlanFeatures /> with plans matching given planTypes when called with planTypes props', () => {
@@ -275,21 +256,7 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 	test( 'Should render <PlanFeatures /> with tab picker when requested', () => {
 		const instance = new PlansFeaturesMain( { ...myProps } );
 		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-	} );
-
-	test( "Should select personal tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'personal' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( false );
+		expect( comp.find( 'PlanTypeSelector' ).length ).toBe( 1 );
 	} );
 
 	test( 'Should display proper plans in personal tab', () => {
@@ -312,33 +279,6 @@ describe( 'PlansFeaturesMain.getPlansForPlanFeatures() with tabs', () => {
 			PLAN_PERSONAL_2_YEARS,
 			PLAN_PREMIUM_2_YEARS,
 		] );
-	} );
-
-	test( "Should select business tab when it's requested", () => {
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=business"]' ).props().selected
-		).toBe( true );
-		expect( comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?customerType=personal"]' ).props().selected
-		).toBe( false );
-	} );
-
-	test( 'Should add existing query arguments to personal and business tab links', () => {
-		global.document = { location: { search: '?fake=item' } };
-		const instance = new PlansFeaturesMain( { ...myProps, customerType: 'business' } );
-		const comp = shallow( instance.render() );
-		expect( comp.find( 'SegmentedControl' ).length ).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=personal"]' ).length
-		).toBe( 1 );
-		expect(
-			comp.find( 'SegmentedControlItem[path="?fake=item&customerType=business"]' ).length
-		).toBe( 1 );
 	} );
 
 	test( 'Highlights TYPE_PREMIUM as popular plan for personal customer type', () => {

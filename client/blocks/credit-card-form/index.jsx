@@ -1,13 +1,19 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
 import debugFactory from 'debug';
-import { Card, CompactCard } from '@automattic/components';
+import { Card } from '@automattic/components';
+import {
+	createStripeSetupIntent,
+	StripeSetupIntentError,
+	StripeValidationError,
+	useStripe,
+} from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -22,12 +28,6 @@ import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 import getCountries from 'calypso/state/selectors/get-countries';
 import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import {
-	createStripeSetupIntent,
-	StripeSetupIntentError,
-	StripeValidationError,
-	useStripe,
-} from 'calypso/lib/stripe';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -56,13 +56,18 @@ export function CreditCardForm( {
 	saveStoredCard = null,
 	siteSlug = undefined,
 	successCallback,
-	showUsedForExistingPurchasesInfo = false,
 	autoFocus = true,
 	heading = undefined,
 	onCancel = undefined,
 	translate,
 } ) {
-	const { stripe, stripeConfiguration, setStripeError } = useStripe();
+	const {
+		stripe,
+		stripeConfiguration,
+		setStripeError,
+		isStripeLoading,
+		stripeLoadingError,
+	} = useStripe();
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
@@ -150,6 +155,14 @@ export function CreditCardForm( {
 		}
 	};
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			displayError( { translate, error: stripeLoadingError } );
+		}
+	}, [ stripeLoadingError, translate ] );
+
+	const disabled = isStripeLoading || stripeLoadingError;
+
 	return (
 		<form onSubmit={ onSubmit }>
 			<Card className="credit-card-form__content">
@@ -169,20 +182,19 @@ export function CreditCardForm( {
 						<TosText translate={ translate } />
 					</p>
 				</div>
-				<UsedForExistingPurchasesInfo
+
+				<SaveButton
 					translate={ translate }
-					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
+					disabled={ disabled }
+					formSubmitting={ formSubmitting }
 				/>
-			</Card>
-			<CompactCard className="credit-card-form__footer">
-				<em>{ translate( 'All fields required' ) }</em>
+
 				{ onCancel && (
 					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</FormButton>
 				) }
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
-			</CompactCard>
+			</Card>
 		</form>
 	);
 }
@@ -197,16 +209,15 @@ CreditCardForm.propTypes = {
 	saveStoredCard: PropTypes.func,
 	siteSlug: PropTypes.string,
 	successCallback: PropTypes.func.isRequired,
-	showUsedForExistingPurchasesInfo: PropTypes.bool,
 	autoFocus: PropTypes.bool,
 	heading: PropTypes.string,
 	onCancel: PropTypes.func,
 	translate: PropTypes.func.isRequired,
 };
 
-function SaveButton( { translate, formSubmitting } ) {
+function SaveButton( { translate, disabled, formSubmitting } ) {
 	return (
-		<FormButton disabled={ formSubmitting } type="submit">
+		<FormButton disabled={ disabled || formSubmitting } type="submit">
 			{ formSubmitting
 				? translate( 'Saving card…', {
 						context: 'Button label',
@@ -244,19 +255,6 @@ function TosText( { translate } ) {
 				),
 			},
 		}
-	);
-}
-
-function UsedForExistingPurchasesInfo( { translate, showUsedForExistingPurchasesInfo } ) {
-	if ( ! showUsedForExistingPurchasesInfo ) {
-		return null;
-	}
-
-	return (
-		<div className="credit-card-form__card-terms">
-			<Gridicon icon="info-outline" size={ 18 } />
-			<p>{ translate( 'This card will be used for future renewals of existing purchases.' ) }</p>
-		</div>
 	);
 }
 

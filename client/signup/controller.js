@@ -8,9 +8,9 @@ import { isEmpty } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import { recordPageView } from 'lib/analytics/page-view';
+import config from 'calypso/config';
+import { sectionify } from 'calypso/lib/route';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
 import SignupComponent from './main';
 import { getStepComponent } from './config/step-components';
 import {
@@ -23,26 +23,26 @@ import {
 	getFlowPageTitle,
 	shouldForceLogin,
 } from './utils';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
-import { setCurrentFlowName } from 'state/signup/flow/actions';
-import { setSelectedSiteId } from 'state/ui/actions';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getCurrentFlowName } from 'state/signup/flow/selectors';
+import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
+import { setSelectedSiteId } from 'calypso/state/ui/actions';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
 	getSiteVerticalId,
 	getSiteVerticalIsUserInput,
-} from 'state/signup/steps/site-vertical/selectors';
-import { setSiteVertical } from 'state/signup/steps/site-vertical/actions';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { setSiteType } from 'state/signup/steps/site-type/actions';
-import { login } from 'lib/paths';
-import { waitForHttpData } from 'state/data-layer/http-data';
-import { requestGeoLocation } from 'state/data-getters';
+} from 'calypso/state/signup/steps/site-vertical/selectors';
+import { setSiteVertical } from 'calypso/state/signup/steps/site-vertical/actions';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { setSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { login } from 'calypso/lib/paths';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
-import { abtest } from 'lib/abtest';
-import user from 'lib/user';
+import { abtest } from 'calypso/lib/abtest';
+import user from 'calypso/lib/user';
 
 /**
  * Constants
@@ -98,6 +98,7 @@ export default {
 			context.pathname.indexOf( 'onboarding-registrationless' ) >= 0 ||
 			context.pathname.indexOf( 'wpcc' ) >= 0 ||
 			context.pathname.indexOf( 'launch-site' ) >= 0 ||
+			context.pathname.indexOf( 'launch-only' ) >= 0 ||
 			context.params.flowName === 'user' ||
 			context.params.flowName === 'account' ||
 			context.params.flowName === 'crowdsignal' ||

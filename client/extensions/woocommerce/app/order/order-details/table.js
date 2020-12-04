@@ -4,7 +4,7 @@
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { every, find, findIndex, get, isNaN, noop } from 'lodash';
 import formatCurrency from '@automattic/format-currency';
@@ -13,9 +13,9 @@ import formatCurrency from '@automattic/format-currency';
  * Internal dependencies
  */
 import { Button, ScreenReaderText } from '@automattic/components';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import { getCurrencyFormatDecimal } from 'woocommerce/lib/currency';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {

@@ -9,10 +9,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import { errorNotice } from 'state/notices/actions';
+import wpcom from 'calypso/lib/wp';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { Button, CompactCard } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
+import { getTitanMailOrderId } from 'calypso/lib/titan/get-titan-mail-order-id';
 
 /**
  * Style dependencies
@@ -40,11 +41,10 @@ class TitanControlPanelLoginCard extends React.Component {
 			return;
 		}
 
-		const { translate } = this.props;
+		const { domain, translate } = this.props;
 		this.setState( { isFetchingAutoLoginLink: true } );
 
-		// TODO: use actual orderID
-		this.fetchTitanAutoLoginURL( 12345 ).then( ( { error, loginURL } ) => {
+		this.fetchTitanAutoLoginURL( getTitanMailOrderId( domain ) ).then( ( { error, loginURL } ) => {
 			this.setState( { isFetchingAutoLoginLink: false } );
 			if ( error ) {
 				this.props.errorNotice(

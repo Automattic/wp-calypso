@@ -10,12 +10,12 @@ import { bindActionCreators } from 'redux';
  * Internal dependencies
  */
 import SettingsGroup from './settings-group';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import * as FormValueActions from 'woocommerce/woocommerce-services/state/service-settings/actions';
 import getFormErrors from 'woocommerce/woocommerce-services/state/service-settings/selectors/errors';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getSite } from 'state/sites/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
 import { getShippingClassOptions } from 'woocommerce/state/sites/shipping-classes/selectors';
 
 const SettingsForm = ( props ) => {

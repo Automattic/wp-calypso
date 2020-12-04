@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 import { openThemesShowcase, setThemesBookmark } from '../actions';
-import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'state/themes/action-types';
+import { THEMES_SHOWCASE_OPEN, THEMES_BOOKMARK_SET } from 'calypso/state/themes/action-types';
 
 describe( 'actions', () => {
 	describe( 'openThemesShowcase()', () => {

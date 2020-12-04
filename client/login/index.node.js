@@ -1,10 +1,11 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import webRouter from './index.web';
-import { makeLayout, redirectLoggedIn, setLocaleMiddleware } from 'controller';
-import { getLanguageRouteParam } from 'lib/i18n-utils';
+import { makeLayout, setLocaleMiddleware } from 'calypso/controller';
+import { getLanguageRouteParam } from 'calypso/lib/i18n-utils';
+import redirectLoggedIn from './redirect-logged-in';
 
 /**
  * Re-exports

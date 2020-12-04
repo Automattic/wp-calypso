@@ -10,9 +10,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import MediaImage from 'my-sites/media-library/media-image';
-import { url, isItemBeingUploaded } from 'lib/media/utils';
+import Spinner from 'calypso/components/spinner';
+import MediaImage from 'calypso/my-sites/media-library/media-image';
+import { url, isItemBeingUploaded } from 'calypso/lib/media/utils';
 
 export default class EditorMediaModalDetailPreviewImage extends Component {
 	static propTypes = {

@@ -5,7 +5,7 @@ This is a component that is used for security icons to indicate state in Jetpack
 ## Usage
 
 ```jsx
-import SecurityIcon from 'components/jetpack/security-icon';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
 
 const SecurityIconExample = () => (
 	<div>

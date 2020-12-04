@@ -8,7 +8,7 @@ Render the component as a child in any component. It does not accept any childre
 
 ```jsx
 import React from 'react';
-import QueryBillingTransactions from 'components/data/query-billing-transactions';
+import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import MyBillingTransactionsList from './list';
 
 export default function MyBillingTransactions( { billingTransactions } ) {

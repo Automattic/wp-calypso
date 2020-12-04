@@ -7,7 +7,7 @@
 Render the component without props. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryApplicationPasswords from 'components/data/query-application-passwords';
+import QueryApplicationPasswords from 'calypso/components/data/query-application-passwords';
 
 export default () => (
 	<div>

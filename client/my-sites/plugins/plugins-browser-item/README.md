@@ -5,7 +5,7 @@ This component is used to display small infobox with the data of a plugin.
 ## How to use
 
 ```js
-import PluginListItem from 'my-sites/plugins-browser-item';
+import PluginListItem from 'calypso/my-sites/plugins-browser-item';
 
 function render() {
 	return (

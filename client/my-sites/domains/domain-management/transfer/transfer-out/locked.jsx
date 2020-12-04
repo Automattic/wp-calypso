@@ -2,41 +2,32 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { getSelectedDomain } from 'lib/domains';
-import { fetchWapiDomainInfo, requestTransferCode } from 'lib/domains/wapi-domain-info/actions';
-import { displayRequestTransferCodeResponseNotice } from './shared';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import {
+	fetchWapiDomainInfo,
+	requestDomainTransferCode,
+} from 'calypso/state/domains/transfer/actions';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 class Locked extends React.Component {
-	state = {
-		submitting: false,
-		showDialog: false,
-	};
-
 	unlockAndRequestTransferCode = () => {
 		const { privateDomain } = getSelectedDomain( this.props );
 
 		const options = {
 			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName,
 			unlock: true,
 			disablePrivacy: privateDomain,
 		};
 
-		this.setState( { submitting: true } );
-		requestTransferCode( options, ( error ) => {
-			if ( error ) {
-				this.setState( { submitting: false } );
-			}
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			fetchWapiDomainInfo( this.props.selectedDomainName );
-		} );
+		this.props.requestDomainTransferCode( this.props.selectedDomainName, options );
 	};
 
 	isManualTransferRequired() {
@@ -78,7 +69,7 @@ class Locked extends React.Component {
 						className="transfer-out__action-button"
 						onClick={ this.unlockAndRequestTransferCode }
 						primary
-						disabled={ this.state.submitting }
+						disabled={ this.props.isRequestingTransferCode }
 					>
 						{ translate( 'Update settings and continue' ) }
 					</Button>
@@ -88,4 +79,16 @@ class Locked extends React.Component {
 	}
 }
 
-export default localize( Locked );
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const domainInfo = getDomainWapiInfoByDomainName( state, selectedDomainName );
+
+		return {
+			isRequestingTransferCode: !! domainInfo.isRequestingTransferCode,
+		};
+	},
+	{
+		fetchWapiDomainInfo,
+		requestDomainTransferCode,
+	}
+)( localize( Locked ) );

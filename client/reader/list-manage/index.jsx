@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -14,40 +14,98 @@ import {
 	getListItems,
 	isCreatingList as isCreatingListSelector,
 	isUpdatingList as isUpdatingListSelector,
-} from 'state/reader/lists/selectors';
-import FormattedHeader from 'components/formatted-header';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormButton from 'components/forms/form-button';
-import QueryReaderList from 'components/data/query-reader-list';
-import QueryReaderListItems from 'components/data/query-reader-list-items';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Main from 'components/main';
-import {
-	addReaderListFeedByUrl,
-	createReaderList,
-	updateReaderList,
-} from 'state/reader/lists/actions';
-import ReaderExportButton from 'blocks/reader-export-button';
-import { READER_EXPORT_TYPE_LIST } from 'blocks/reader-export-button/constants';
-import ListItem from './list-item';
+	isMissingByOwnerAndSlug,
+} from 'calypso/state/reader/lists/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import QueryReaderListItems from 'calypso/components/data/query-reader-list-items';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Main from 'calypso/components/main';
+import { createReaderList, updateReaderList } from 'calypso/state/reader/lists/actions';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import { READER_EXPORT_TYPE_LIST } from 'calypso/blocks/reader-export-button/constants';
+import Missing from 'calypso/reader/list-stream/missing';
+import ItemAdder from './item-adder';
+import ListDelete from './list-delete';
 import ListForm from './list-form';
+import ListItem from './list-item';
+import EmptyContent from 'calypso/components/empty-content';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-function ReaderListCreate() {
+function Details( { list } ) {
 	const dispatch = useDispatch();
+	const isUpdatingList = useSelector( isUpdatingListSelector );
+
+	return (
+		<ListForm
+			list={ list }
+			isSubmissionDisabled={ isUpdatingList }
+			onSubmit={ ( newList ) => dispatch( updateReaderList( newList ) ) }
+		/>
+	);
+}
+
+function Items( { list, listItems, owner } ) {
 	const translate = useTranslate();
+	if ( ! listItems ) {
+		return <Card>{ translate( 'Loading…' ) }</Card>;
+	}
+	return (
+		<>
+			{ listItems?.length > 0 && (
+				<>
+					<h1 className="list-manage__subscriptions-header">
+						{ translate( 'Added sites' ) }
+						<Button compact primary href="#reader-list-item-adder">
+							{ translate( 'Add Site' ) }
+						</Button>
+					</h1>
+					{ listItems.map( ( item ) => (
+						<ListItem
+							key={ item.feed_ID || item.site_ID || item.tag_ID }
+							owner={ owner }
+							list={ list }
+							item={ item }
+						/>
+					) ) }
+					<hr className="list-manage__subscriptions-separator" />
+				</>
+			) }
+			<ItemAdder key="item-adder" list={ list } listItems={ listItems } owner={ owner } />
+		</>
+	);
+}
+
+function Export( { list, listItems } ) {
+	const translate = useTranslate();
+	return (
+		<Card>
+			<p>
+				{ translate(
+					'You can export this list to use on other services. The file will be in OPML format.'
+				) }
+			</p>
+			<ReaderExportButton
+				exportType={ READER_EXPORT_TYPE_LIST }
+				listId={ list.ID }
+				disabled={ ! listItems || listItems.length === 0 }
+			/>
+		</Card>
+	);
+}
+
+function ReaderListCreate() {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const isCreatingList = useSelector( isCreatingListSelector );
+
 	return (
 		<Main>
 			<FormattedHeader headerText={ translate( 'Create List' ) } />
@@ -62,14 +120,25 @@ function ReaderListCreate() {
 
 function ReaderListEdit( props ) {
 	const { selectedSection } = props;
-	const dispatch = useDispatch();
 	const translate = useTranslate();
-	const isUpdatingList = useSelector( isUpdatingListSelector );
 	const list = useSelector( ( state ) => getListByOwnerAndSlug( state, props.owner, props.slug ) );
+	const isMissing = useSelector( ( state ) =>
+		isMissingByOwnerAndSlug( state, props.owner, props.slug )
+	);
 	const listItems = useSelector( ( state ) =>
 		list ? getListItems( state, list.ID ) : undefined
 	);
-	const addFeedText = React.useRef( null );
+	const sectionProps = { ...props, list, listItems };
+
+	// Only the list owner can manage the list
+	if ( list && ! list.is_owner ) {
+		return (
+			<EmptyContent
+				title={ preventWidows( translate( "You don't have permission to manage this list." ) ) }
+				illustration="/calypso/images/illustrations/error.svg"
+			/>
+		);
+	}
 
 	return (
 		<>
@@ -78,10 +147,11 @@ function ReaderListEdit( props ) {
 			<Main>
 				<FormattedHeader
 					headerText={ translate( 'Manage %(listName)s', {
-						args: { listName: list?.title || props.slug },
+						args: { listName: list?.title || decodeURIComponent( props.slug ) },
 					} ) }
 				/>
-				{ ! list && <Card>Loading...</Card> }
+				{ ! list && ! isMissing && <Card>{ translate( 'Loading…' ) }</Card> }
+				{ isMissing && <Missing /> }
 				{ list && (
 					<>
 						<SectionNav>
@@ -100,85 +170,24 @@ function ReaderListEdit( props ) {
 									{ translate( 'Sites' ) }
 								</NavItem>
 
-								{ listItems && (
-									<NavItem
-										selected={ selectedSection === 'export' }
-										path={ `/read/list/${ props.owner }/${ props.slug }/export` }
-									>
-										{ translate( 'Export' ) }
-									</NavItem>
-								) }
+								<NavItem
+									selected={ selectedSection === 'export' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/export` }
+								>
+									{ translate( 'Export' ) }
+								</NavItem>
+								<NavItem
+									selected={ selectedSection === 'delete' }
+									path={ `/read/list/${ props.owner }/${ props.slug }/delete` }
+								>
+									{ translate( 'Delete' ) }
+								</NavItem>
 							</NavTabs>
 						</SectionNav>
-						{ selectedSection === 'details' && (
-							<>
-								<ListForm
-									list={ list }
-									isSubmissionDisabled={ isUpdatingList }
-									onSubmit={ ( formList ) => dispatch( updateReaderList( formList ) ) }
-								/>
-
-								<Card>
-									<FormSectionHeading>DANGER!!</FormSectionHeading>
-									<Button scary primary>
-										DELETE LIST FOREVER
-									</Button>
-								</Card>
-							</>
-						) }
-						{ selectedSection === 'items' && (
-							<>
-								<Card>
-									<FormSectionHeading>Add a feed</FormSectionHeading>
-									<FormFieldset>
-										<FormLabel htmlFor="new-feed-url">URL</FormLabel>
-										<FormTextInput id="new-feed-url" name="new-feed-url" inputRef={ addFeedText } />
-										<FormSettingExplanation>
-											The address of a site or RSS feed
-										</FormSettingExplanation>
-									</FormFieldset>
-									<FormButtonsBar>
-										<FormButton
-											primary
-											onClick={ () => {
-												if ( addFeedText.current?.value ) {
-													dispatch(
-														addReaderListFeedByUrl(
-															list.ID,
-															list.owner,
-															list.slug,
-															addFeedText.current.value
-														)
-													);
-												}
-											} }
-										>
-											Add
-										</FormButton>
-									</FormButtonsBar>
-								</Card>
-								{ props.listItems?.map( ( item ) => (
-									<ListItem key={ item.ID } owner={ props.owner } list={ list } item={ item } />
-								) ) }
-							</>
-						) }
-
-						{ selectedSection === 'export' && (
-							<Card>
-								<p>
-									{ translate(
-										'You can export this list to use on other services. The file will be in OPML format.'
-									) }
-								</p>
-								<ReaderExportButton
-									exportType={ READER_EXPORT_TYPE_LIST }
-									listId={ list.ID }
-									filename={ `reader-list-${ props.slug
-										.replace( /[^a-z0-9]/gi, '-' )
-										.toLowerCase() }.opml` }
-								/>
-							</Card>
-						) }
+						{ selectedSection === 'details' && <Details { ...sectionProps } /> }
+						{ selectedSection === 'items' && <Items { ...sectionProps } /> }
+						{ selectedSection === 'export' && <Export { ...sectionProps } /> }
+						{ selectedSection === 'delete' && <ListDelete { ...sectionProps } /> }
 					</>
 				) }
 			</Main>
@@ -186,15 +195,6 @@ function ReaderListEdit( props ) {
 	);
 }
 
-function ReaderListManage( props ) {
+export default function ReaderListManage( props ) {
 	return props.isCreateForm ? ReaderListCreate() : ReaderListEdit( props );
 }
-
-export default connect( ( state, ownProps ) => {
-	const list = getListByOwnerAndSlug( state, ownProps.owner, ownProps.slug );
-	const listItems = list ? getListItems( state, list.ID ) : undefined;
-	return {
-		list,
-		listItems,
-	};
-} )( ReaderListManage );

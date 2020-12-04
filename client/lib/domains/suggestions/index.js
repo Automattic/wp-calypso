@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Get the suggestions vendor

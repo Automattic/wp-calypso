@@ -8,9 +8,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CartItems from 'my-sites/checkout/cart/cart-items';
-import CartCoupon from 'my-sites/checkout/cart/cart-coupon';
-import CartTotal from 'my-sites/checkout/cart/cart-total';
+import CartItems from 'calypso/my-sites/checkout/cart/cart-items';
+import CartCoupon from 'calypso/my-sites/checkout/cart/cart-coupon';
+import CartTotal from 'calypso/my-sites/checkout/cart/cart-total';
 
 const CartBody = React.forwardRef( ( props, ref ) => {
 	const { cart, selectedSite, collapse = false, showCoupon = false } = props;

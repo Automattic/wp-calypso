@@ -8,8 +8,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
  * Style dependencies

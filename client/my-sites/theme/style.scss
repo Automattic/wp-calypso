@@ -111,7 +111,8 @@
 	margin-top: -156px;
 	width: 98%;
 	z-index: 1;
-	box-shadow: 0 0 0 1px rgba( var( --color-neutral-dark-rgb ), 0 ), 0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
+	box-shadow: 0 0 0 1px rgba( var( --color-neutral-dark-rgb ), 0 ),
+		0 2px 8px 0 rgba( var( --color-neutral-dark-rgb ), 0.5 );
 	background-color: transparentize( white, 0.5 );
 	transition: all 200ms ease-in-out;
 

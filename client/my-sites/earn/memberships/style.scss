@@ -312,7 +312,10 @@
 	background-color: var( --color-surface );
 
 	&.is-visible {
-		z-index: z-index( '.dialog__backdrop', '.memberships__dialog-section.is-visible' );  // Visible section is placed above so it hides the ones below.
+		z-index: z-index(
+			'.dialog__backdrop',
+			'.memberships__dialog-section.is-visible'
+		); // Visible section is placed above so it hides the ones below.
 	}
 }
 
@@ -321,7 +324,6 @@
 	font-weight: 600;
 	margin-bottom: 1.5em;
 }
-
 
 /**
  * Delete Site Options

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -10,18 +9,19 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import Label from 'components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import Label from 'calypso/components/forms/form-label';
 import Select from './select';
-import Tooltip from 'components/tooltip';
-import { setPostType } from 'state/exporter/actions';
+import Tooltip from 'calypso/components/tooltip';
+import { setPostType } from 'calypso/state/exporter/actions';
 import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
-} from 'state/exporter/selectors';
+} from 'calypso/state/exporter/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const mapStateToProps = ( state, ownProps ) => {
-	const siteId = state.ui.selectedSiteId;
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		siteId,

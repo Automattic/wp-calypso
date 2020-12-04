@@ -7,7 +7,12 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import menuFixture from './fixture/menu-fixture';
-import { ADMIN_MENU_RECEIVE, ADMIN_MENU_REQUEST, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import {
+	ADMIN_MENU_RECEIVE,
+	ADMIN_MENU_REQUEST,
+	DESERIALIZE,
+	SERIALIZE,
+} from 'calypso/state/action-types';
 import { menus as menusReducer, requesting as requestingReducer } from '../reducer';
 
 describe( 'reducer', () => {

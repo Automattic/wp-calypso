@@ -7,8 +7,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import ThemesSiteSelectorModal from './themes-site-selector-modal';
 import { connectOptions } from './theme-options';
 import ThemeShowcase from './theme-showcase';

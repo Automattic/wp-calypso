@@ -7,6 +7,7 @@ import config from 'config';
 /**
  * Internal dependencies
  */
+
 import LoginFlow from '../lib/flows/login-flow';
 import SignUpFlow from '../lib/flows/sign-up-flow';
 
@@ -32,7 +33,6 @@ import WPHomePage from '../lib/pages/wp-home-page';
 import ThankYouModalComponent from '../lib/components/thank-you-modal-component';
 import MyPlanPage from '../lib/pages/my-plan-page';
 import WPAdminInPlaceApprovePage from '../lib/pages/wp-admin/wp-admin-in-place-approve-page';
-import WPAdminInPlacePlansPage from '../lib/pages/wp-admin/wp-admin-in-place-plans-page';
 
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
@@ -88,8 +88,8 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 		} );
 
 		step( 'Can click the free plan button', async function () {
-			const pickAPlanPage = await WPAdminInPlacePlansPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+			const pickAPlanPage = await PickAPlanPage.Expect( driver );
+			return await pickAPlanPage.selectFreePlanJetpack();
 		} );
 
 		step( 'Can assert we are on Jetpack Dashboard', async function () {
@@ -212,9 +212,9 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			return await jnFlow.createJNSite();
 		} );
 
-		step( 'Can select buy Premium on Pricing Page', async function () {
+		step( 'Can select buy Jetpack Security on Pricing Page', async function () {
 			const jetpackComPricingPage = await JetpackComPricingPage.Visit( driver );
-			return await jetpackComPricingPage.buyPremium();
+			return await jetpackComPricingPage.buyJetpackPlan( 'jetpack_security_daily' );
 		} );
 
 		step( 'Can start connection flow using JN site', async function () {
@@ -237,19 +237,27 @@ describe( `Jetpack Connect: (${ screenSize })`, function () {
 			'Can see the secure payment page and enter/submit test payment details',
 			async function () {
 				const securePaymentComponent = await SecurePaymentComponent.Expect( driver );
+				const securityPlanInCart = await securePaymentComponent.containsPlan(
+					'jetpack_security_daily'
+				);
+				assert.strictEqual(
+					securityPlanInCart,
+					true,
+					"The cart doesn't contain the security plan"
+				);
 				await securePaymentComponent.payWithStoredCardIfPossible( testCreditCardDetails );
 				await securePaymentComponent.waitForCreditCardPaymentProcessing();
 				return await securePaymentComponent.waitForPageToDisappear();
 			}
 		);
 
-		step( 'Can see Premium plan', async function () {
+		step( 'Can see Jetpack Security plan', async function () {
 			const thankYouModal = await ThankYouModalComponent.Expect( driver );
 			await thankYouModal.continue();
 
 			const myPlanPage = await MyPlanPage.Expect( driver );
-			const isPremium = await myPlanPage.isPremium();
-			assert( isPremium, 'Can not verify Premium plan' );
+			const isSecurity = await myPlanPage.isSecurityPlan();
+			assert( isSecurity, 'Can not verify Security plan' );
 		} );
 	} );
 } );

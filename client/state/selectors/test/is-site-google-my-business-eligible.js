@@ -15,8 +15,8 @@ import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-} from 'lib/plans/constants';
-import selectors from 'state/sites/selectors';
+} from 'calypso/lib/plans/constants';
+import selectors from 'calypso/state/sites/selectors';
 
 jest.mock( 'state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn(),

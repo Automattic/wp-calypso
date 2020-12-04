@@ -6,7 +6,7 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { items as itemSchemas } from './schema';
 import {
 	SHARING_BUTTONS_RECEIVE,
@@ -17,7 +17,7 @@ import {
 	SHARING_BUTTONS_SAVE_FAILURE,
 	SHARING_BUTTONS_SAVE_SUCCESS,
 	SHARING_BUTTONS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Returns the updated requests state after an action has been dispatched. The

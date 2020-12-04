@@ -6,12 +6,12 @@ import { filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import createSelector from 'calypso/lib/create-selector';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
-import 'state/sharing/init';
+import 'calypso/state/sharing/init';
 
 /**
  * Returns an array of known connections for the given site ID.

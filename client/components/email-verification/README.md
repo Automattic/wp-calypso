@@ -10,7 +10,7 @@ when it does.
 ### Usage
 
 ```js
-import emailVerification from 'components/email-verification';
+import emailVerification from 'calypso/components/email-verification';
 
 page( '*', emailVerification );
 ```
@@ -24,7 +24,7 @@ to resend the email.
 ### Usage
 
 ```jsx
-import VerifyEmailDialog from 'components/email-verification/email-verification-dialog';
+import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 
 function UI( { showDialog, closeDialog } ) {
 	return (
@@ -44,7 +44,7 @@ The wrapped content will be disabled: grayed out and won't react to input events
 ### Usage
 
 ```jsx
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
 
 function GatedUI() {
 	return (

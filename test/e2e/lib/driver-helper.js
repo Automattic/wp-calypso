@@ -24,8 +24,14 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function clickWhenClickable( driver, selector, waitOverride ) {
+export function clickWhenClickable(
+	driver,
+	selector,
+	waitOverride = null,
+	extraErrorString = null
+) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
 
 	return driver.wait(
 		function () {
@@ -55,7 +61,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
 	);
 }
 
@@ -524,7 +530,7 @@ export async function selectElementByText( driver, selector, text ) {
 		const allElements = await driver.findElements( selector );
 		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
-	return await this.clickWhenClickable( driver, element );
+	return await this.clickWhenClickable( driver, element, null, `while looking for '${ text }'` );
 }
 
 export async function verifyTextPresent( driver, selector, text ) {

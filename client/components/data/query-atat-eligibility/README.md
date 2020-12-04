@@ -10,7 +10,7 @@ You can use it adjacent to other sibling components which make use of the fetche
 ```js
 import React from 'react';
 import { connect } from 'react-redux';
-import QueryEligibility from 'components/data/query-atat-eligibility';
+import QueryEligibility from 'calypso/components/data/query-atat-eligibility';
 
 export function MyTransferView( { eligibility, siteId } ) {
 	return (

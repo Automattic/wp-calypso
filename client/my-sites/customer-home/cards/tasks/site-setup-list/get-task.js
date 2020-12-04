@@ -7,13 +7,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import InlineSupportLink from 'components/inline-support-link';
-import { domainManagementEdit, domainManagementList } from 'my-sites/domains/paths';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { launchSiteOrRedirectToLaunchSignupFlow } from 'state/sites/launch/actions';
-import { localizeUrl } from 'lib/i18n-utils';
-import { verifyEmail } from 'state/current-user/email-verification/actions';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import InlineSupportLink from 'calypso/components/inline-support-link';
+import { domainManagementEdit, domainManagementList } from 'calypso/my-sites/domains/paths';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { launchSiteOrRedirectToLaunchSignupFlow } from 'calypso/state/sites/launch/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { verifyEmail } from 'calypso/state/current-user/email-verification/actions';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 
 const getTaskDescription = ( task, { isDomainUnverified, isEmailUnverified } ) => {
 	switch ( task.id ) {
@@ -64,6 +64,7 @@ export const getTask = (
 		emailVerificationStatus,
 		isDomainUnverified,
 		isEmailUnverified,
+		isPodcastingSite,
 		menusUrl,
 		siteId,
 		siteSlug,
@@ -89,6 +90,12 @@ export const getTask = (
 				actionAdvanceToNext: true,
 				completeOnView: true,
 			};
+
+			// Change the task title for podcasting sites.
+			if ( isPodcastingSite ) {
+				taskData.title = translate( 'Welcome to your podcast site!' );
+				taskData.hideLabel = true;
+			}
 			break;
 		case CHECKLIST_KNOWN_TASKS.DOMAIN_VERIFIED:
 			taskData = {

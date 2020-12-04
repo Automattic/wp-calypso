@@ -70,7 +70,7 @@ export function deleteFile( fileDetails ) {
 }
 
 export const screenshotsDir = path.resolve(
-	process.env.TEMP_ASSET_PATH || __dirname + '/..',
+	process.env.TEMP_ASSET_PATH || path.join( __dirname, '..' ),
 	process.env.SCREENSHOTDIR || 'screenshots'
 );
 

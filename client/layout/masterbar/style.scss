@@ -618,6 +618,14 @@ a.masterbar__quick-language-switcher {
 	.masterbar__secure-checkout-text {
 		color: var( --color-primary-5 );
 		transform: translateY( 1px );
+		line-height: 1.2em;
+		font-size: 0.75rem;
+		margin-left: 5px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			font-size: 100%;
+			margin-left: 0;
+		}
 
 		.is-jetpack-site & {
 			color: var( --color-jetpack-masterbar-text );

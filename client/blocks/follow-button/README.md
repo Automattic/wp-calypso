@@ -7,7 +7,7 @@ For most uses, the container is the easiest route.
 ## How to use the container
 
 ```js
-import FollowButtonContainer from 'blocks/follow-button';
+import FollowButtonContainer from 'calypso/blocks/follow-button';
 
 function render() {
 	return (
@@ -25,7 +25,7 @@ function render() {
 ## How to use the button directly
 
 ```js
-import FollowButton from 'blocks/follow-button/button';
+import FollowButton from 'calypso/blocks/follow-button/button';
 
 function render() {
 	return (

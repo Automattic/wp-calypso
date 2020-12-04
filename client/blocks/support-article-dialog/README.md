@@ -9,7 +9,7 @@ The component is rendered from our main `<Layout />` component and so is availab
 To launch a support article call the corresponding redux action, like so:
 
 ```jsx
-import { openSupportArticleDialog } from 'state/inline-support-article/actions';
+import { openSupportArticleDialog } from 'calypso/state/inline-support-article/actions';
 
 function onSupportLinkClick() {
 	const { postId, postUrl } = this.props;

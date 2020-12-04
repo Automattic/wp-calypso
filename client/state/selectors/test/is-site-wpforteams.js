@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 describe( 'isSiteWPForTeams()', () => {
 	test( 'should return null if the specified site was not found in the state', () => {

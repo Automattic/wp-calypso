@@ -10,12 +10,12 @@ import { noop } from 'lodash';
 import {
 	MEMBERSHIPS_SUBSCRIPTIONS_LIST_REQUEST,
 	MEMBERSHIPS_SUBSCRIPTIONS_RECEIVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const handleSubscribedMembershipsList = dispatchRequest( {
 	fetch: ( action ) =>

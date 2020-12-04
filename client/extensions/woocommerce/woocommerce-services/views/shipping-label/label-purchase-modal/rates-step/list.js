@@ -12,7 +12,7 @@ import formatCurrency from '@automattic/format-currency';
  */
 import FieldError from 'woocommerce/woocommerce-services/components/field-error';
 import Dropdown from 'woocommerce/woocommerce-services/components/dropdown';
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import getPackageDescriptions from '../packages-step/get-package-descriptions';
 
 const renderRateNotice = ( translate ) => {

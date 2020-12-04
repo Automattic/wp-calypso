@@ -61,7 +61,7 @@ First we'll need to create a directory tour, under `tours`. In there, we create 
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
+import { and } from 'calypso/layout/guided-tours/utils';
 
 export default {};
 ```
@@ -85,8 +85,12 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
-import { isNewUser, isEnabled, isSelectedSitePreviewable } from 'state/guided-tours/contexts';
+} from 'calypso/layout/guided-tours/config-elements';
+import {
+	isNewUser,
+	isEnabled,
+	isSelectedSitePreviewable,
+} from 'calypso/state/guided-tours/contexts';
 
 export const TutorialSitePreviewTour = makeTour();
 ```
@@ -225,7 +229,7 @@ A few notes:
 - The first step of a tour needs to have a name of `init` to be recognizable as the first step by the framework.
 - The `target` is the DOM element the step should be "glued" to or will point at. There are two ways to do that: either the element has a `data-tip-target` attribute, and we pass that name, or we pass a CSS selector that selects that element (cf. method `targetForSlug`). In this case, it's a `data-tip-target`.
 - The `scrollContainer` tells the framework which container it should attempt to scroll in case the `target` isn't visible. In this case, the framework will attempt to scroll the sidebar until the site preview button is in view.
-- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `master`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
+- `translate` calls: we'd add those only after multiple iterations over the copy. Once you merge something with a `translate` call into `trunk`, the strings will be translated -- and we don't want to waste anyone's time with translating strings that will still change a few times.
 - The `Continue` steps attributes basically say: when the user `click`s the `target`, proceed to the step called `close-preview` (the next step, below). The `hidden` attribute tells the framework to not add an explanatory text below the step.
 - The `ButtonRow` with the `Quit` button doesn't really look nice, but it's important to provide a way for the user to get out of the tour. The framework will quit a tour if it believes that the user is trying to navigate away from it, but in this case we thought an explicit way to quit would be good to provide.
 

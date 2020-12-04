@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  */
 import ActionHeader from 'woocommerce/components/action-header';
 import { Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
+import ExternalLink from 'calypso/components/external-link';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import SettingsNavigation from '../navigation';
 

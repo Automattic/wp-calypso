@@ -23,6 +23,7 @@ import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
 } from 'calypso/state/notification-settings/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -55,7 +56,7 @@ class NotificationCommentsSettings extends Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main>
+			<Main className="comment-settings__main is-wide-layout">
 				<PageViewTracker
 					path="/me/notifications/comments"
 					title="Me > Notifications > Comments on other sites"
@@ -63,6 +64,12 @@ class NotificationCommentsSettings extends Component {
 				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Notification Settings' ) }
+					align="left"
+				/>
 
 				<Navigation path={ path } />
 

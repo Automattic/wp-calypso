@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getPostRevisionsDiffView } from 'state/posts/selectors/get-post-revisions-diff-view';
+import { getPostRevisionsDiffView } from 'calypso/state/posts/selectors/get-post-revisions-diff-view';
 
 describe( 'getPostRevisionsDiffView', () => {
 	test( 'should return "unified" if the revisions UI diffView state is not set', () => {

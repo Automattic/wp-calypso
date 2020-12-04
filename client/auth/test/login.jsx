@@ -13,13 +13,16 @@ import { identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { login as loginStub } from 'lib/oauth-store/actions';
 import { Auth } from '../login';
-import FormButton from 'components/forms/form-button';
+import { makeAuthRequest } from '../login-request';
+import FormButton from 'calypso/components/forms/form-button';
 
-jest.mock( 'lib/oauth-store/actions', () => ( {
-	login: require( 'sinon' ).stub(),
+jest.mock( '../login-request', () => ( {
+	makeAuthRequest: require( 'sinon' ).stub(),
+	bumpStats: () => {},
+	errorTypes: {},
 } ) );
+
 jest.mock( 'lib/analytics/ga', () => ( {
 	gaRecordEvent: () => {},
 } ) );
@@ -65,8 +68,8 @@ describe( 'LoginTest', () => {
 			page.setState( { login: 'user', password: 'pass', auth_code: 'otp' }, function () {
 				page.find( 'form' ).simulate( 'submit', { preventDefault: noop, stopPropagation: noop } );
 
-				expect( loginStub ).to.have.been.calledOnce;
-				expect( loginStub.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;
+				expect( makeAuthRequest ).to.have.been.calledOnce;
+				expect( makeAuthRequest.calledWith( 'user', 'pass', 'otp' ) ).to.be.true;
 				done();
 			} );
 		} );

@@ -8,7 +8,7 @@ This is desirable since implementations are inconsistent or non-existant.
 
 ```js
 // require the module
-import Emojify from 'components/emojify';
+import Emojify from 'calypso/components/emojify';
 
 const textToEmojify = 'This will be converted 🙈🙉🙊';
 

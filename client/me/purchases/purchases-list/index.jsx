@@ -18,9 +18,12 @@ import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PurchasesHeader from './header';
 import PurchasesSite from '../purchases-site';
+import MembershipSite from '../membership-site';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { getPurchasesBySite } from 'calypso/lib/purchases';
+import { getPurchasesBySite, getSubscriptionsBySite } from 'calypso/lib/purchases';
+import QueryMembershipsSubscriptions from 'calypso/components/data/query-memberships-subscriptions';
+import { getAllSubscriptions } from 'calypso/state/memberships/subscriptions/selectors';
 import getSites from 'calypso/state/selectors/get-sites';
 import {
 	getUserPurchases,
@@ -40,6 +43,8 @@ import {
 	CONCIERGE_WPCOM_SESSION_PRODUCT_ID,
 } from 'calypso/me/concierge/constants';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import FormattedHeader from 'calypso/components/formatted-header';
+import titles from 'calypso/me/purchases/titles';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -47,7 +52,7 @@ class PurchasesList extends Component {
 			return true;
 		}
 
-		return ! this.props.sites.length;
+		return ! this.props.sites.length && ! this.props.subscriptions.length;
 	}
 
 	renderConciergeBanner() {
@@ -88,6 +93,18 @@ class PurchasesList extends Component {
 		);
 	}
 
+	renderMembershipSubscriptions() {
+		const { subscriptions } = this.props;
+
+		if ( ! subscriptions.length ) {
+			return null;
+		}
+
+		return getSubscriptionsBySite( subscriptions ).map( ( site ) => (
+			<MembershipSite site={ site } key={ site.id } />
+		) );
+	}
+
 	render() {
 		let content;
 
@@ -97,7 +114,7 @@ class PurchasesList extends Component {
 
 		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
 			content = (
-				<div>
+				<>
 					{ this.renderConciergeBanner() }
 
 					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
@@ -110,15 +127,20 @@ class PurchasesList extends Component {
 							purchases={ site.purchases }
 						/>
 					) ) }
-				</div>
+				</>
 			);
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && ! this.props.purchases.length ) {
+		if (
+			this.props.hasLoadedUserPurchasesFromServer &&
+			! this.props.purchases.length &&
+			! this.props.subscriptions.length
+		) {
 			if ( ! this.props.sites.length ) {
 				return (
 					<Main>
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
+						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 						<PurchasesHeader section="purchases" />
 						<NoSitesMessage />
 					</Main>
@@ -145,12 +167,16 @@ class PurchasesList extends Component {
 		}
 
 		return (
-			<Main className="purchases-list">
+			<Main className="purchases-list is-wide-layout">
 				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 				<PurchasesHeader section="purchases" />
 				{ content }
+				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />
 			</Main>
 		);
@@ -161,6 +187,7 @@ PurchasesList.propTypes = {
 	isBusinessPlanUser: PropTypes.bool.isRequired,
 	noticeType: PropTypes.string,
 	purchases: PropTypes.oneOfType( [ PropTypes.array, PropTypes.bool ] ),
+	subscriptions: PropTypes.array,
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
 };
@@ -173,6 +200,7 @@ export default connect(
 			isBusinessPlanUser: isBusinessPlanUser( state ),
 			isFetchingUserPurchases: isFetchingUserPurchases( state ),
 			purchases: getUserPurchases( state, userId ),
+			subscriptions: getAllSubscriptions( state ),
 			sites: getSites( state ),
 			nextAppointment: getConciergeNextAppointment( state ),
 			scheduleId: getConciergeScheduleId( state ),

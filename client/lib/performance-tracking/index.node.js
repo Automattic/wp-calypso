@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import EmptyComponent from 'components/empty-component';
+import EmptyComponent from 'calypso/components/empty-component';
 
 export const performanceTrackerStart = () => null;
 export const usePerformanceTrackerStop = () => null;

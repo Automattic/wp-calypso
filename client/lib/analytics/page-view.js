@@ -3,10 +3,10 @@
 /**
  * Internal dependencies
  */
-import { saveCouponQueryArgument } from 'lib/analytics/utils';
+import { saveCouponQueryArgument } from 'calypso/lib/analytics/utils';
 
-import { retarget as retargetAdTrackers } from 'lib/analytics/ad-tracking';
-import { updateQueryParamsTracking } from 'lib/analytics/sem';
+import { retarget as retargetAdTrackers } from 'calypso/lib/analytics/ad-tracking';
+import { updateQueryParamsTracking } from 'calypso/lib/analytics/sem';
 import { gaRecordPageView } from './ga';
 import { processQueue } from './queue';
 import { referRecordPageView } from './refer';

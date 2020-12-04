@@ -5,9 +5,9 @@
 These undocumented endpoints are automatically added to your `wpcom.js` instance when you use the `wp` constructor.
 
 ```javascript
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 
-wpcom.undocumented().readLists( function ( err, data ) {
+wpcom.undocumented().examplePosts( function ( err, data ) {
 	debug( 'Posts:', data );
 } );
 ```

@@ -3,12 +3,15 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import debugFactory from 'debug';
+import type {
+	RequestCartProduct,
+	ApplyCouponToCart,
+	AddProductsToCart,
+} from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import type { RequestCartProduct } from './use-shopping-cart-manager/types';
-
 const debug = debugFactory( 'calypso:composite-checkout:use-add-products-from-url' );
 
 export type isPendingAddingProductsFromUrl = boolean;
@@ -17,22 +20,18 @@ export default function useAddProductsFromUrl( {
 	isLoadingCart,
 	isCartPendingUpdate,
 	productsForCart,
-	renewalsForCart,
 	areCartProductsPreparing,
 	couponCodeFromUrl,
 	applyCoupon,
 	addProductsToCart,
-	replaceProductsInCart,
 }: {
 	isLoadingCart: boolean;
 	isCartPendingUpdate: boolean;
 	productsForCart: RequestCartProduct[];
-	renewalsForCart: RequestCartProduct[];
 	areCartProductsPreparing: boolean;
 	couponCodeFromUrl: string | null | undefined;
-	applyCoupon: ( couponId: string ) => void;
-	addProductsToCart: ( products: RequestCartProduct[] ) => void;
-	replaceProductsInCart: ( products: RequestCartProduct[] ) => void;
+	applyCoupon: ApplyCouponToCart;
+	addProductsToCart: AddProductsToCart;
 } ): isPendingAddingProductsFromUrl {
 	const [ isLoading, setIsLoading ] = useState< boolean >( true );
 	const hasRequestedInitialProducts = useRef< boolean >( false );
@@ -46,7 +45,6 @@ export default function useAddProductsFromUrl( {
 		if (
 			! areCartProductsPreparing &&
 			productsForCart.length === 0 &&
-			renewalsForCart.length === 0 &&
 			! couponCodeFromUrl &&
 			! isLoadingCart &&
 			! isCartPendingUpdate
@@ -61,7 +59,6 @@ export default function useAddProductsFromUrl( {
 		isLoadingCart,
 		areCartProductsPreparing,
 		productsForCart.length,
-		renewalsForCart.length,
 		couponCodeFromUrl,
 	] );
 
@@ -95,16 +92,6 @@ export default function useAddProductsFromUrl( {
 		if ( productsForCart.length > 0 ) {
 			addProductsToCart( productsForCart );
 		}
-		debug( 'adding initial renewal products to cart', renewalsForCart );
-		if ( renewalsForCart.length > 0 ) {
-			if ( productsForCart.length > 0 ) {
-				throw new Error(
-					'Renewals and non-renewals cannot be added to the cart from the URL at the same time'
-				);
-			}
-			// Note that adding renewals replaces any existing products in the cart
-			replaceProductsInCart( renewalsForCart );
-		}
 		debug( 'adding initial coupon to cart', couponCodeFromUrl );
 		if ( couponCodeFromUrl ) {
 			applyCoupon( couponCodeFromUrl );
@@ -117,9 +104,7 @@ export default function useAddProductsFromUrl( {
 		couponCodeFromUrl,
 		applyCoupon,
 		productsForCart,
-		renewalsForCart,
 		addProductsToCart,
-		replaceProductsInCart,
 	] );
 
 	debug( 'useAddProductsFromUrl isLoading', isLoading );

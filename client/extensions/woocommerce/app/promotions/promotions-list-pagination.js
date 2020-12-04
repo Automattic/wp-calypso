@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 
 const PromotionsListPagination = ( {
 	site,

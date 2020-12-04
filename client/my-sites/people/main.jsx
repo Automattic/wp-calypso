@@ -9,21 +9,22 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
-import TeamList from 'my-sites/people/team-list';
-import EmptyContent from 'components/empty-content';
-import PeopleNotices from 'my-sites/people/people-notices';
-import PeopleSectionNav from 'my-sites/people/people-section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPrivateSite from 'state/selectors/is-private-site';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TeamList from 'calypso/my-sites/people/team-list';
+import EmptyContent from 'calypso/components/empty-content';
+import PeopleNotices from 'calypso/my-sites/people/people-notices';
+import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
+import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 
 class People extends React.Component {
 	renderPeopleList() {
@@ -33,9 +34,20 @@ class People extends React.Component {
 			case 'team':
 				return <TeamList site={ site } search={ search } />;
 			case 'followers':
-				return <FollowersList site={ site } />;
+				/* We're using the `key` prop here to make sure a fresh instance
+				   is mounted in case a user changes their site. That way we don't
+				   have to deal with resetting internal state. Same goes for email
+				   followers. */
+				return <FollowersList key={ `people-followers-${ site.ID }` } site={ site } />;
 			case 'email-followers':
-				return <FollowersList site={ site } search={ search } type="email" />;
+				return (
+					<FollowersList
+						key={ `people-email-followers-${ site.ID }` }
+						site={ site }
+						search={ search }
+						type="email"
+					/>
+				);
 			case 'viewers':
 				return <ViewersList site={ site } label={ translate( 'Viewers' ) } />;
 			default:
@@ -45,6 +57,7 @@ class People extends React.Component {
 
 	render() {
 		const {
+			isComingSoon,
 			isJetpack,
 			canViewPeople,
 			siteId,
@@ -88,6 +101,7 @@ class People extends React.Component {
 						<PeopleSectionNav
 							isJetpack={ isJetpack }
 							isPrivate={ isPrivate }
+							isComingSoon={ isComingSoon }
 							canViewPeople={ canViewPeople }
 							search={ search }
 							filter={ filter }
@@ -110,5 +124,6 @@ export default connect( ( state ) => {
 		isJetpack: isJetpackSite( state, siteId ),
 		isPrivate: isPrivateSite( state, siteId ),
 		canViewPeople: canCurrentUser( state, siteId, 'list_users' ),
+		isComingSoon: isSiteComingSoon( state, siteId ),
 	};
 } )( localize( People ) );

@@ -23,9 +23,9 @@ import {
 } from 'calypso/lib/products-values';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
-	let props = {},
-		url,
-		text;
+	let props = {};
+	let url;
+	let text;
 
 	if ( ! selectedSite ) {
 		return <span />;
