@@ -73,6 +73,10 @@ import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedu
 import './style.scss';
 
 class CurrentPlan extends Component {
+	state = {
+		hideThankYouModal: false,
+	};
+
 	static propTypes = {
 		selectedSiteId: PropTypes.number,
 		selectedSite: PropTypes.object,
@@ -104,6 +108,12 @@ class CurrentPlan extends Component {
 
 		return ! selectedSite || isRequestingPlans || null === scheduleId;
 	}
+
+	hideThankYouModalOnClose = () => {
+		this.setState( {
+			hideThankYouModal: true,
+		} );
+	};
 
 	renderThankYou() {
 		const { currentPlan, product, selectedSite } = this.props;
@@ -200,10 +210,11 @@ class CurrentPlan extends Component {
 				<QuerySitePurchases siteId={ selectedSiteId } />
 				{ shouldQuerySiteDomains && <QuerySiteDomains siteId={ selectedSiteId } /> }
 
-				{ showThankYou && (
+				{ showThankYou && ! this.state.hideThankYouModal && (
 					<Dialog
 						baseClassName="current-plan__dialog dialog__content dialog__backdrop"
 						isVisible={ showThankYou }
+						onClose={ this.hideThankYouModalOnClose }
 					>
 						{ this.renderThankYou() }
 					</Dialog>
