@@ -52,7 +52,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 	const {
 		body,
 		formData,
-		expectStreamMode,
+		processResponseInStreamMode,
 		onStreamRecord,
 		method: rawMethod,
 		onProgress,
@@ -66,7 +66,7 @@ export const queueRequest = ( processOutbound, processInbound ) => ( { dispatch 
 
 	const request = fetcherMap( method )(
 		...compact( [
-			{ path, formData, expectStreamMode, onStreamRecord, responseType },
+			{ path, formData, processResponseInStreamMode, onStreamRecord, responseType },
 			{ ...query }, // wpcom mutates the query so hand it a copy
 			method === 'POST' && body,
 			( error, data, headers ) => {

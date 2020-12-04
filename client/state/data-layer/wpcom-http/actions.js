@@ -38,7 +38,7 @@ export const http = (
 		onSuccess,
 		onFailure,
 		onProgress,
-		expectStreamMode,
+		processResponseInStreamMode,
 		onStreamRecord,
 		...options
 	},
@@ -55,9 +55,12 @@ export const http = (
 			);
 		}
 
-		if ( expectStreamMode && ! onStreamRecord ) {
+		if ( processResponseInStreamMode && ! onStreamRecord ) {
 			// eslint-disable-next-line no-console
-			console.warn( 'No onStreamRecord provided, but expectStreamMode on. Path: %s', path );
+			console.warn(
+				'No onStreamRecord provided, but processResponseInStreamMode on. Path: %s',
+				path
+			);
 		}
 	}
 
@@ -71,7 +74,7 @@ export const http = (
 		onSuccess: onSuccess || action,
 		onFailure: onFailure || action,
 		onProgress: onProgress || action,
-		expectStreamMode,
+		processResponseInStreamMode,
 		onStreamRecord,
 		options,
 	};
