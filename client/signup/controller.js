@@ -43,6 +43,7 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Constants
@@ -123,7 +124,18 @@ export default {
 			const locale = getCurrentUserLocale( context.store.getState() );
 			const flowName = getFlowName( context.params );
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if ( userLoggedIn && flowName === 'onboarding' && [ 'en', 'en-gb' ].includes( locale ) ) {
+
+			// Get the variant for "New Onboarding for existing users [non-EN]"" experiment
+			const existingUsersOnboardingVariant = getVariationForUser(
+				context.store.getState(),
+				'new_onboarding_existing_users_non_en'
+			);
+
+			if (
+				userLoggedIn &&
+				flowName === 'onboarding' &&
+				( existingUsersOnboardingVariant === 'treatment' || [ 'en', 'en-gb' ].includes( locale ) )
+			) {
 				gutenbergRedirect( context.params.flowName );
 				return;
 			}
