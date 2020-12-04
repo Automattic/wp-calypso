@@ -10,11 +10,8 @@ import React from 'react';
 import AddNewPaymentMethod from 'calypso/me/purchases/add-new-payment-method';
 import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
-import AddCardDetails from './payment/add-card-details';
-import AddCreditCard from './add-credit-card';
 import CancelPurchase from './cancel-purchase';
 import ConfirmCancelDomain from './confirm-cancel-domain';
-import EditCardDetails from './payment/edit-card-details';
 import Main from 'calypso/components/main';
 import ManagePurchase from './manage-purchase';
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
@@ -61,7 +58,7 @@ export function addCardDetails( context, next ) {
 	context.primary = (
 		<Main className="purchases__add-cart-details is-wide-layout">
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<AddCardDetails
+			<AddPaymentMethod
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
@@ -74,7 +71,7 @@ export function addCardDetails( context, next ) {
 }
 
 export function addCreditCard( context, next ) {
-	context.primary = <AddCreditCard />;
+	context.primary = <AddNewPaymentMethod />;
 	next();
 }
 
@@ -126,7 +123,7 @@ export function editCardDetails( context, next ) {
 	context.primary = (
 		<Main className="purchases__change is-wide-layout">
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<EditCardDetails
+			<ChangePaymentMethod
 				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }

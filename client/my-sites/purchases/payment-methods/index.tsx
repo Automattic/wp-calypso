@@ -20,7 +20,6 @@ import PaymentMethodList from 'calypso/me/payment-methods/payment-method-list';
 import HeaderCake from 'calypso/components/header-cake';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getAddNewPaymentMethod, getPaymentMethodsUrlFor } from '../paths';
-import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import titles from 'calypso/me/purchases/titles';
@@ -141,21 +140,12 @@ export function AddNewPaymentMethod( { siteSlug }: { siteSlug: string } ): JSX.E
 							configurationArgs={ { needs_intent: true } }
 							fetchStripeConfiguration={ getStripeConfiguration }
 						>
-							{ config.isEnabled( 'purchases/new-payment-methods' ) ? (
-								<PaymentMethodForm
-									recordFormSubmitEvent={ recordFormSubmitEvent }
-									saveStoredCard={ saveStoredCard }
-									successCallback={ goToBillingHistory }
-									showUsedForExistingPurchasesInfo={ true }
-								/>
-							) : (
-								<CreditCardForm
-									recordFormSubmitEvent={ recordFormSubmitEvent }
-									saveStoredCard={ saveStoredCard }
-									successCallback={ goToBillingHistory }
-									showUsedForExistingPurchasesInfo={ true }
-								/>
-							) }
+							<PaymentMethodForm
+								recordFormSubmitEvent={ recordFormSubmitEvent }
+								saveStoredCard={ saveStoredCard }
+								successCallback={ goToBillingHistory }
+								showUsedForExistingPurchasesInfo={ true }
+							/>
 						</StripeHookProvider>
 					</Column>
 					<Column type="sidebar">

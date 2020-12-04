@@ -25,8 +25,6 @@ import {
 	getAddPaymentMethodUrlFor,
 } from './paths';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
-import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
 import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
@@ -191,23 +189,13 @@ export function PurchaseAddPaymentMethod( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				{ config.isEnabled( 'purchases/new-payment-methods' ) ? (
-					<AddPaymentMethod
-						purchaseId={ purchaseId }
-						siteSlug={ siteSlug }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-						isFullWidth={ true }
-					/>
-				) : (
-					<AddCardDetails
-						purchaseId={ purchaseId }
-						siteSlug={ siteSlug }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-						isFullWidth={ true }
-					/>
-				) }
+				<AddPaymentMethod
+					purchaseId={ purchaseId }
+					siteSlug={ siteSlug }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+					isFullWidth={ true }
+				/>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);
@@ -241,25 +229,14 @@ export function PurchaseChangePaymentMethod( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				{ config.isEnabled( 'purchases/new-payment-methods' ) ? (
-					<ChangePaymentMethod
-						cardId={ cardId }
-						purchaseId={ purchaseId }
-						siteSlug={ siteSlug }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-						isFullWidth={ true }
-					/>
-				) : (
-					<EditCardDetails
-						cardId={ cardId }
-						purchaseId={ purchaseId }
-						siteSlug={ siteSlug }
-						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-						isFullWidth={ true }
-					/>
-				) }
+				<ChangePaymentMethod
+					cardId={ cardId }
+					purchaseId={ purchaseId }
+					siteSlug={ siteSlug }
+					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
+					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+					isFullWidth={ true }
+				/>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
 	);

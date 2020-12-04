@@ -533,7 +533,7 @@ class ManagePurchase extends Component {
 			siteSlug,
 			hasLoadedPurchasesFromServer,
 			getManagePurchaseUrlFor,
-			getEditCardDetailsPathFor,
+			getChangePaymentMethodUrlFor,
 		} = this.props;
 
 		return (
@@ -555,7 +555,7 @@ class ManagePurchase extends Component {
 						siteSlug={ siteSlug }
 						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
+						getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
