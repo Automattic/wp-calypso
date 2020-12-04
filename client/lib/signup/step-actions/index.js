@@ -403,7 +403,6 @@ export function addDomainUpsellToCart(
 		defer( callback );
 		return;
 	}
-	// @todo try to create the cart insteed of process it like that, something is veery off with SignupCart.addToCart
 	processItemCart(
 		stepProvidedDependencies,
 		domainUpsellItems,
