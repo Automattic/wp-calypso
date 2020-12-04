@@ -19,7 +19,7 @@ import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-bi
 import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
-class TransactionsHeader extends React.Component {
+class BillingHistoryFilters extends React.Component {
 	state = {
 		activePopover: '',
 		searchValue: '',
@@ -212,7 +212,7 @@ class TransactionsHeader extends React.Component {
 	}
 }
 
-TransactionsHeader.propTypes = {
+BillingHistoryFilters.propTypes = {
 	//connected props
 	appFilters: PropTypes.array.isRequired,
 	dateFilters: PropTypes.array.isRequired,
@@ -233,4 +233,4 @@ export default connect(
 		setApp,
 		setDate,
 	}
-)( localize( withLocalizedMoment( TransactionsHeader ) ) );
+)( localize( withLocalizedMoment( BillingHistoryFilters ) ) );
