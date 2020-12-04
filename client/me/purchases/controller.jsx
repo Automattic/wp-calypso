@@ -199,7 +199,7 @@ export function changePaymentMethod( context, next ) {
 		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/change/:cardId' );
 	}
 
-	setTitle( context, titles.editCardDetails );
+	setTitle( context, titles.changePaymentMethod );
 
 	context.primary = (
 		<Main className="purchases__edit-payment-method is-wide-layout">

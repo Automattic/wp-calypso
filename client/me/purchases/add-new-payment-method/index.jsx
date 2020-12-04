@@ -26,21 +26,29 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
+import { isEnabled } from 'calypso/config';
 
 function AddNewPaymentMethod( props ) {
 	const goToPaymentMethods = () => page( paymentMethods );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
+	const addPaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
+		? titles.addPaymentMethod
+		: titles.addCreditCard;
 
 	return (
 		<Main className="add-new-payment-method is-wide-layout">
 			<PageViewTracker
-				path="/me/purchases/add-payment-method"
-				title="Purchases > Add Payment Method"
+				path={
+					isEnabled( 'purchases/new-payment-methods' )
+						? '/me/purchases/add-payment-method'
+						: '/me/purchases/add-credit-card'
+				}
+				title={ concatTitle( titles.purchases, addPaymentMethodTitle ) }
 			/>
-			<DocumentHead title={ concatTitle( titles.purchases, titles.addPaymentMethod ) } />
+			<DocumentHead title={ concatTitle( titles.purchases, addPaymentMethodTitle ) } />
 
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addPaymentMethod }</HeaderCake>
+			<HeaderCake onClick={ goToPaymentMethods }>{ addPaymentMethodTitle }</HeaderCake>
 
 			<Layout>
 				<Column type="main">

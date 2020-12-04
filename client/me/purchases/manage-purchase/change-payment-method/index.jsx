@@ -35,10 +35,15 @@ import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import { isEnabled } from 'calypso/config';
+import { concatTitle } from 'calypso/lib/react-helpers';
 
 function ChangePaymentMethod( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
+	const changePaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
+		? titles.changePaymentMethod
+		: titles.editCardDetails;
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
@@ -71,16 +76,20 @@ function ChangePaymentMethod( props ) {
 	return (
 		<Fragment>
 			<TrackPurchasePageView
-				eventName="calypso_edit_card_details_purchase_view"
+				eventName="calypso_change_payment_method_view"
 				purchaseId={ props.purchaseId }
 			/>
 			<PageViewTracker
-				path="/me/purchases/:site/:purchaseId/payment/edit/:cardId"
-				title="Purchases > Edit Card Details"
+				path={
+					isEnabled( 'purchases/new-payment-methods' )
+						? '/me/purchases/:site/:purchaseId/payment-method/change/:cardId'
+						: '/me/purchases/:site/:purchaseId/payment/change/:cardId'
+				}
+				title={ concatTitle( titles.purchases, changePaymentMethodTitle ) }
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
-				{ titles.changePaymentMethod }
+				{ changePaymentMethodTitle }
 			</HeaderCake>
 
 			<Layout>
