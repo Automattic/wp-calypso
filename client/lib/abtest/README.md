@@ -1,5 +1,4 @@
-
-# This library is deprecated!
+**This library is deprecated!**
 
 *Please consider ExPlat for your next A/B experiment.*
 See client/components/experiment/readme.md for more info!
