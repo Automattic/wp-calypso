@@ -82,16 +82,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	existingUsersGutenbergOnboard: {
-		datestamp: '20201015',
-		variations: {
-			gutenberg: 100,
-			control: 0,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: [ 'en' ],
-	},
 	secureYourBrand: {
 		datestamp: '20201124',
 		variations: {
