@@ -68,7 +68,6 @@ import QueryContactDetailsCache from 'calypso/components/data/query-contact-deta
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QueryPlans from 'calypso/components/data/query-plans';
-import SecurePaymentForm from './secure-payment-form';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import {
@@ -789,16 +788,7 @@ export class Checkout extends React.Component {
 	};
 
 	content() {
-		const {
-			selectedSite,
-			transaction,
-			cart,
-			cards,
-			productsList,
-			setHeaderText,
-			userCountryCode,
-			infoMessage,
-		} = this.props;
+		const { cart, productsList, userCountryCode } = this.props;
 
 		if ( this.isLoading() ) {
 			return <SecurePaymentFormPlaceholder />;
@@ -818,22 +808,8 @@ export class Checkout extends React.Component {
 			);
 		}
 
-		return (
-			<SecurePaymentForm
-				cart={ cart }
-				transaction={ transaction }
-				cards={ cards }
-				products={ productsList }
-				selectedSite={ selectedSite }
-				setHeaderText={ setHeaderText }
-				redirectTo={ this.getCheckoutCompleteRedirectPath }
-				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
-				infoMessage={ infoMessage }
-			>
-				{ this.renderSubscriptionLengthPicker() }
-			</SecurePaymentForm>
-		);
+		// This checkout is deprecated and has been removed
+		return null;
 	}
 
 	renderSubscriptionLengthPicker() {
