@@ -19,10 +19,11 @@ const mochaTimeOut = config.get('mochaTimeoutMS');
 const screenSize = driverManager.currentScreenSize();
 const host = dataHelper.getJetpackHost();
 
-let browser;
+let browser, context;
 
-before( async function () {
-    browser = await playwright.chromium.launch({ headless: false, devtools: true });
+before(async function () {
+    browser = await playwright.chromium.launch({ headless: false, devtools: false });
+    context = await browser.newContext();
 });
 
 describe( `[${ host }] SEO Preview page: (${ screenSize })`, function () {
@@ -30,10 +31,12 @@ describe( `[${ host }] SEO Preview page: (${ screenSize })`, function () {
 
     // Login as Business plan user and open the sidebar
     describe( `SEO Preview page:`, function () {
+        let page;
+
         it( `Can log in`, async function () {
-            this.LoginFlow = new LoginFlow( browser, 'wooCommerceUser' );
-            await this.LoginFlow.loginAndSelectMySites();
-            this.sidebarComponent = new SidebarComponent( this.LoginFlow.page );
+            this.LoginFlow = new LoginFlow( context, 'wooCommerceUser' );
+            page = await this.LoginFlow.loginAndSelectMySites();
+            this.sidebarComponent = new SidebarComponent( page );
             return await this.sidebarComponent._init();
         });
 
@@ -47,7 +50,6 @@ describe( `[${ host }] SEO Preview page: (${ screenSize })`, function () {
             const trafficTabSelector = '.section-nav-tab__link[href*="/marketing/traffic/"]';
             const frontPageMetaDescriptionSelector = '#advanced_seo_front_page_description';
             const frontPageMetaDescriptionPreviewButton = '.seo-settings__preview-button';
-            const page = this.LoginFlow.page;
 
             await page.waitForSelector( trafficTabSelector );
             await page.click( trafficTabSelector );
@@ -58,12 +60,13 @@ describe( `[${ host }] SEO Preview page: (${ screenSize })`, function () {
 
         it( `Ensure site preview stays open for 10 seconds`, async function () {
             const seoPreview = '.web-preview.is-seo';
-            const page = this.LoginFlow.page;
             
             await page.waitForSelector( seoPreview );
             await page.waitForTimeout( 10000 );
 
-            assert( await page.$$( seoPreview ).length > 0, 'The site preview component has been closed.');
+            // To test this, try closing the preview manually. It will fail the assertion.
+            let previewIsOpen = await page.$$( seoPreview );
+            assert( previewIsOpen.length > 0, 'The site preview component has been closed.');
         });
     })
 });
