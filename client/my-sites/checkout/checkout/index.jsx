@@ -64,10 +64,7 @@ import { hasDomainDetails } from 'calypso/lib/transaction/selectors';
 import notices from 'calypso/notices';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryPlans from 'calypso/components/data/query-plans';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
 import {
@@ -96,11 +93,9 @@ import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors'
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
 import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import QueryProducts from 'calypso/components/data/query-products-list';
 import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
 import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { isApplePayAvailable } from 'calypso/lib/web-payment';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import config from 'calypso/config';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
@@ -895,65 +890,22 @@ export class Checkout extends React.Component {
 	}
 
 	render() {
-		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
-
-		let analyticsPath = '';
-		let analyticsProps = {};
-		if ( purchaseId && product ) {
-			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
-			analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
-		} else if ( selectedFeature && plan ) {
-			analyticsPath = '/checkout/features/:feature/:site/:plan';
-			analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };
-		} else if ( selectedFeature && ! plan ) {
-			analyticsPath = '/checkout/features/:feature/:site';
-			analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
-		} else if ( product && ! purchaseId ) {
-			analyticsPath = '/checkout/:site/:product';
-			analyticsProps = { product, site: selectedSiteSlug };
-		} else if ( selectedSiteSlug ) {
-			analyticsPath = '/checkout/:site';
-			analyticsProps = { site: selectedSiteSlug };
-		} else {
-			analyticsPath = '/checkout/no-site';
-		}
-
-		if ( this.props.children ) {
-			this.props.setHeaderText( '' );
-			const children = React.Children.map( this.props.children, ( child ) => {
-				return React.cloneElement( child, {
-					cart: this.props.cart,
-					cards: this.props.cards,
-					isFetchingStoredCards: this.props.isFetchingStoredCards,
-					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
-				} );
+		this.props.setHeaderText( '' );
+		const children = React.Children.map( this.props.children, ( child ) => {
+			return React.cloneElement( child, {
+				cart: this.props.cart,
+				cards: this.props.cards,
+				isFetchingStoredCards: this.props.isFetchingStoredCards,
+				handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 			} );
+		} );
 
-			return (
-				<>
-					<QueryStoredCards />
-					{ children }
-				</>
-			);
-		}
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="main main-column" role="main">
-				<div className="checkout">
-					<QuerySitePlans siteId={ this.props.selectedSiteId } />
-					<QueryPlans />
-					<QueryProducts />
-					<QueryContactDetailsCache />
-					<QueryStoredCards />
-
-					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-
-					{ this.content() }
-				</div>
-			</div>
+			<>
+				<QueryStoredCards />
+				{ children }
+			</>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
