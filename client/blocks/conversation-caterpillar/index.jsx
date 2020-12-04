@@ -10,12 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { getPostCommentsTree, getDateSortedPostComments } from 'calypso/state/comments/selectors';
 import { expandComments } from 'calypso/state/comments/actions';
 import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import { isAncestor } from 'calypso/blocks/comments/utils';
 import GravatarCaterpillar from 'calypso/components/gravatar-caterpillar';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -69,7 +70,7 @@ class ConversationCaterpillarComponent extends React.Component {
 		} );
 		recordAction( 'comment_caterpillar_click' );
 		recordGaEvent( 'Clicked Caterpillar' );
-		recordTrack( 'calypso_reader_comment_caterpillar_click', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_comment_caterpillar_click', {
 			blog_id: blogId,
 			post_id: postId,
 		} );
@@ -152,7 +153,7 @@ const ConnectedConversationCaterpillar = connect(
 			commentsTree: getPostCommentsTree( state, blogId, postId, 'all' ),
 		};
 	},
-	{ expandComments }
+	{ expandComments, recordReaderTracksEvent }
 )( ConversationCaterpillar );
 
 export default ConnectedConversationCaterpillar;

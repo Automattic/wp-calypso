@@ -1,5 +1,5 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { Card } from '@automattic/components';
 import { getStreamUrl } from 'calypso/reader/route';
@@ -18,12 +18,12 @@ import ReaderCombinedCardPost from './post';
 import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
 import QueryReaderSite from 'calypso/components/data/query-reader-site';
 import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
-import { recordTrack } from 'calypso/reader/stats';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import FollowButton from 'calypso/reader/follow-button';
 import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
 import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
 import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 /**
  * Style dependencies
@@ -67,7 +67,7 @@ class ReaderCombinedCardComponent extends React.Component {
 	recordRenderTrack = () => {
 		const { postKey, posts } = this.props;
 
-		recordTrack( 'calypso_reader_combined_card_render', {
+		this.props.recordReaderTracksEvent( 'calypso_reader_combined_card_render', {
 			blog_id: postKey.blogId,
 			feed_id: postKey.feedId,
 			post_count: size( posts ),
@@ -209,4 +209,4 @@ function mapStateToProps( st, ownProps ) {
 	};
 }
 
-export default connect( mapStateToProps )( ReaderCombinedCard );
+export default connect( mapStateToProps, { recordReaderTracksEvent } )( ReaderCombinedCard );
