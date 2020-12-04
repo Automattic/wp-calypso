@@ -245,7 +245,7 @@ class Help extends React.PureComponent {
 							className="help__support-session-action"
 							primary
 							href={ localizeUrl( 'https://wordpress.com/checkout/offer-quickstart-session/' ) }
-							onClick={ this.trackSupportSessionButtonClick() }
+							onClick={ this.trackSupportSessionButtonClick }
 						>
 							{ translate( 'Schedule a session' ) }
 						</Button>
@@ -266,7 +266,7 @@ class Help extends React.PureComponent {
 	};
 
 	trackSupportSessionButtonClick = () => {
-		//@TODO: What information do we want to track?
+		recordTracksEvent( 'calypso_help_support_session_card_click' );
 	};
 
 	trackCoursesButtonClick = () => {
