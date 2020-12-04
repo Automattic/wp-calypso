@@ -123,11 +123,7 @@ export default {
 			const locale = getCurrentUserLocale( context.store.getState() );
 			const flowName = getFlowName( context.params );
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if (
-				userLoggedIn &&
-				flowName === 'onboarding' &&
-				[ 'en', 'en-gb', 'en-us', 'en-au' ].indexOf( locale ) !== -1
-			) {
+			if ( userLoggedIn && flowName === 'onboarding' && [ 'en', 'en-gb' ].includes( locale ) ) {
 				gutenbergRedirect( context.params.flowName );
 				return;
 			}
