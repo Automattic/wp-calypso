@@ -10,40 +10,26 @@ import LoginPage from '../pages/login-page-playwright.js';
 
 import * as dataHelper from '../data-helper';
 
-const host = dataHelper.getJetpackHost();
-
 export default class LoginFlow {
-    constructor( browser, accountOrFeatures ) {
-        // Reference to an instance of the browser is passed in as a parameter.
-        this.browser = browser;
-        // Create a new context, which can be thought of as a new session/window
-        // containing a clean profile.
-        this.context = browser.newContext();
+    constructor( context, accountOrFeatures ) {
+        // This setup runs all tests in different (new) tabs in within the same window.
+        // This can easily be changed to launch a new incognito browser window each time,
+        // further isolating tests.
+        this.context = context;
 
-        // The following if/else is essentially carried over from the
-        // original file.
-        accountOrFeatures = accountOrFeatures || 'defaultUser';
-        if ( typeof accountOrFeatures === 'string' ) {
-            const legacyConfig = dataHelper.getAccountConfig( accountOrFeatures );
-            if ( ! legacyConfig ) {
-				throw new Error( `Account key '${ accountOrFeatures }' not found in the configuration` );
-            }
-            
-			this.account = {
-				email: legacyConfig[ 0 ],
-				username: legacyConfig[ 0 ],
-				password: legacyConfig[ 1 ],
-				loginURL: legacyConfig[ 2 ],
-				legacyAccountName: accountOrFeatures,
-			};
-		} else {
-			this.account = dataHelper.pickRandomAccountWithFeatures( accountOrFeatures );
-			if ( ! this.account ) {
-				throw new Error(
-					`Could not find any account matching features '${ accountOrFeatures.toString() }'`
-				);
-			}
-		}
+        // The following piece is a simplified one from the original LoginFlow file.
+        const legacyConfig = dataHelper.getAccountConfig(accountOrFeatures);
+        if (!legacyConfig) {
+            throw new Error(`Account key '${accountOrFeatures}' not found in the configuration`);
+        }
+
+        this.account = {
+            email: legacyConfig[0],
+            username: legacyConfig[0],
+            password: legacyConfig[1],
+            loginURL: legacyConfig[2],
+            legacyAccountName: accountOrFeatures,
+        };
     }   
 
     async login() {
@@ -54,8 +40,8 @@ export default class LoginFlow {
 
         console.log( 'Logging in as ' + this.account.username );
 
-        // Retrieve the browser context (session).
-        const context = await this.context;
+        // Retrieve the browser context stored in this object.
+        const context = this.context;
         // Launch a new page/tab in the context.
         const page = await context.newPage();
 
@@ -69,39 +55,42 @@ export default class LoginFlow {
         await loginPage.login( this.account.email || this.account.username, this.account.password );
 
         // Upon successful login, assign page as class property.
-        this.page = page;
+        // this.page = page;
+        return await page;
     }
 
     async loginAndStartNewPost() {
         const newPostButton = 'a.masterbar__item-new';
         const iframe = '.main > iframe:nth-child(1)';
 
-        // Call the login() function to perform the login steps,
-        // and to obtain the page object.
-        await this.login();
+        // Call the login() function to perform the login steps and to obtain the page object.
+        let page = await this.login();
         
-        const page = this.page;
-
         console.log( 'Starting new post' );
 
         await page.waitForSelector( newPostButton );
         await page.click( newPostButton );
         // Editor is loaded once the iframe shows.
-        return await page.waitForSelector( iframe );
+        await page.waitForSelector( iframe );
+        // Return the page object to the caller for further operations.
+        return page;
     }
 
     async loginAndSelectMySites() {
         const navBarSelector = '.masterbar';
         const mySitesSelector = 'header.masterbar a.masterbar__item';
-        
-        await this.login();
 
-        const page = this.page;
+        let page = await this.login();
 
         console.log( 'Selecting My Sites' );
 
         await page.waitForSelector( navBarSelector );
         await page.waitForSelector( mySitesSelector );
-        return await page.click( mySitesSelector );
+        
+        page.waitForNavigation();
+        await page.click(mySitesSelector);
+        // Return page once navigation is complete.
+
+        return page;
     }
 }
