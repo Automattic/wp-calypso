@@ -277,7 +277,7 @@ add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
  * are loaded via load_block_patterns_from_api.
  */
 function load_wpcom_block_patterns_modifications() {
-	if ( apply_filters( 'a8c_enable_block_patterns_modifications', true ) ) {
+	if ( apply_filters( 'a8c_enable_block_patterns_modifications', false ) ) {
 		require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
 	}
 }
