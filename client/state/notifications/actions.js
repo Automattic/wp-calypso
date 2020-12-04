@@ -3,8 +3,7 @@
  */
 import { NOTIFICATIONS_UNSEEN_COUNT_SET } from 'calypso/state/action-types';
 
-export const unseenCount = ( state = null, action ) =>
-	NOTIFICATIONS_UNSEEN_COUNT_SET === action.type ? action.unseenCount : state;
+import 'calypso/state/notifications/init';
 
 export const setUnseenCount = ( count ) => ( {
 	type: NOTIFICATIONS_UNSEEN_COUNT_SET,

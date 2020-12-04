@@ -25,7 +25,6 @@ import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
-import { unseenCount as notificationsUnseenCount } from './notifications';
 import selectedEditor from './selected-editor/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
@@ -48,7 +47,6 @@ const reducers = {
 	jitm,
 	mySites,
 	notices,
-	notificationsUnseenCount,
 	selectedEditor,
 	sites,
 	support,
