@@ -27,7 +27,7 @@ import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import store from 'store';
 import { setCurrentFlowName } from 'calypso/state/signup/flow/actions';
 import { setSelectedSiteId } from 'calypso/state/ui/actions';
-import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { isUserLoggedIn, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import { getCurrentFlowName } from 'calypso/state/signup/flow/selectors';
 import {
@@ -120,12 +120,13 @@ export default {
 
 			next();
 		} else {
+			const locale = getCurrentUserLocale( context.store.getState() );
 			const flowName = getFlowName( context.params );
 			const userLoggedIn = isUserLoggedIn( context.store.getState() );
 			if (
 				userLoggedIn &&
 				flowName === 'onboarding' &&
-				'gutenberg' === abtest( 'existingUsersGutenbergOnboard' )
+				[ 'en', 'en-gb', 'en-us', 'en-au' ].indexOf( locale ) !== -1
 			) {
 				gutenbergRedirect( context.params.flowName );
 				return;
