@@ -20,11 +20,15 @@ import { useDomainSuggestionFromCart, usePlanFromCart } from '../hooks';
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { shouldDisplaySuccessView } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
 	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
+
+	const [ hasSelectedDomain, selectedPlan, shouldDisplaySuccessView ] = useSelect( ( select ) => {
+		const { plan, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+
+		return [ select( LAUNCH_STORE ).hasSelectedDomain(), plan, shouldDisplaySuccessView ];
+	} );
 
 	// Force Success view to be the default view when opening Focused Launch modal.
 	// This is used in case the user opens the Focused Launch modal after launching
@@ -35,21 +39,21 @@ const FocusedLaunch: React.FunctionComponent = () => {
 		}
 	}, [ isSiteLaunched, enablePersistentSuccessView ] );
 
+	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
 	// If there is no selected domain, but there is a domain in cart,
 	// set the domain from cart as the selected domain.
 	const domainSuggestionFromCart = useDomainSuggestionFromCart();
-	const selectedDomain = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedDomain() );
 	const { setDomain } = useDispatch( LAUNCH_STORE );
 	React.useEffect( () => {
-		if ( ! selectedDomain && domainSuggestionFromCart ) {
+		if ( ! hasSelectedDomain && domainSuggestionFromCart ) {
 			setDomain( domainSuggestionFromCart );
 		}
-	}, [ selectedDomain, domainSuggestionFromCart, setDomain ] );
+	}, [ hasSelectedDomain, domainSuggestionFromCart, setDomain ] );
 
+	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
 	// If there is no selected plan, but there is a plan in cart,
 	// set the plan from cart as the selected plan.
 	const planFromCart = usePlanFromCart();
-	const selectedPlan = useSelect( ( select ) => select( LAUNCH_STORE ).getSelectedPlan() );
 	const { setPlan } = useDispatch( LAUNCH_STORE );
 	React.useEffect( () => {
 		if ( ! selectedPlan && planFromCart ) {
