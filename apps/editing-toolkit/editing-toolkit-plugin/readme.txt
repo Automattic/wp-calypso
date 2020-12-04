@@ -41,6 +41,9 @@ This plugin is experimental, so we don't provide any support for it outside of w
 == Changelog ==
 
 = 2.8.11 =
+* Focused Launch: Render selected popular plan only once (https://github.com/Automattic/wp-calypso/pull/47913)
+* Patterns: fix PHP notice about undefined offset in can_register_pattern (https://github.com/Automattic/wp-calypso/pull/48025)
+* Focused Launch: Get selected domain and plan from cart if available (https://github.com/Automattic/wp-calypso/pull/47987)
 * Focused Launch: Add persistent success view after launch (https://github.com/Automattic/wp-calypso/pull/47808)
 * Focused Launch: Implement step highlighting logic (https://github.com/Automattic/wp-calypso/pull/#47503)
 
