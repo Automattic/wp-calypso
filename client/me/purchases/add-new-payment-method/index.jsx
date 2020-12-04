@@ -13,7 +13,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { concatTitle } from 'calypso/lib/react-helpers';
-import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
@@ -28,7 +28,6 @@ import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 
 function AddNewPaymentMethod( props ) {
-	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
 	const goToPaymentMethods = () => page( paymentMethods );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 
@@ -51,7 +50,6 @@ function AddNewPaymentMethod( props ) {
 						fetchStripeConfiguration={ getStripeConfiguration }
 					>
 						<PaymentMethodForm
-							createCardToken={ createAddCardToken }
 							recordFormSubmitEvent={ recordFormSubmitEvent }
 							saveStoredCard={ props.addStoredCard }
 							successCallback={ goToPaymentMethods }

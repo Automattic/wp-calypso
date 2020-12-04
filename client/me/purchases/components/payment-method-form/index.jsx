@@ -36,7 +36,6 @@ import {
 	areFormFieldsEmpty,
 	useDebounce,
 	saveOrUpdateCreditCard,
-	makeAsyncCreateCardToken,
 } from './helpers';
 
 /**
@@ -44,11 +43,10 @@ import {
  */
 import './style.scss';
 
-const debug = debugFactory( 'calypso:payment-method-form' );
+const debug = debugFactory( 'calypso:credit-card-form' );
 
 export function PaymentMethodForm( {
 	apiParams = {},
-	createCardToken,
 	countriesList,
 	initialValues = undefined,
 	purchase = undefined,
@@ -73,10 +71,7 @@ export function PaymentMethodForm( {
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
 	const [ formFieldErrors, setFormFieldErrors ] = useState(
 		camelCaseFormFields(
-			validatePaymentDetails(
-				kebabCaseFormFields( formFieldValues ),
-				stripe ? 'stripe' : 'credit-card'
-			).errors
+			validatePaymentDetails( kebabCaseFormFields( formFieldValues ), 'stripe' ).errors
 		)
 	);
 	const [ debouncedFieldErrors, setDebouncedFieldErrors ] = useDebounce( formFieldErrors, 1000 );
@@ -91,10 +86,7 @@ export function PaymentMethodForm( {
 		// Debounce updating validation errors
 		setFormFieldErrors(
 			camelCaseFormFields(
-				validatePaymentDetails(
-					kebabCaseFormFields( newValues ),
-					stripe ? 'stripe' : 'credit-card'
-				).errors
+				validatePaymentDetails( kebabCaseFormFields( newValues ), 'stripe' ).errors
 			)
 		);
 	};
@@ -121,7 +113,6 @@ export function PaymentMethodForm( {
 				throw new Error( translate( 'Your credit card information is not valid' ) );
 			}
 			recordFormSubmitEvent();
-			const createCardTokenAsync = makeAsyncCreateCardToken( createCardToken );
 			const createStripeSetupIntentAsync = async ( paymentDetails ) => {
 				const { name, country, 'postal-code': zip } = paymentDetails;
 				const paymentDetailsForStripe = {
@@ -134,9 +125,8 @@ export function PaymentMethodForm( {
 				return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 			};
 			const parseStripeToken = ( response ) => response.payment_method;
-			const parsePaygateToken = ( response ) => response.token;
 			await saveOrUpdateCreditCard( {
-				createCardToken: stripe ? createStripeSetupIntentAsync : createCardTokenAsync,
+				createCardToken: createStripeSetupIntentAsync,
 				saveStoredCard,
 				translate,
 				apiParams,
@@ -144,7 +134,7 @@ export function PaymentMethodForm( {
 				siteSlug,
 				formFieldValues,
 				stripeConfiguration,
-				parseTokenFromResponse: stripe ? parseStripeToken : parsePaygateToken,
+				parseTokenFromResponse: parseStripeToken,
 			} );
 			successCallback();
 		} catch ( error ) {
@@ -176,7 +166,7 @@ export function PaymentMethodForm( {
 					getErrorMessage={ getErrorMessage }
 					autoFocus={ autoFocus } // eslint-disable-line jsx-a11y/no-autofocus
 				/>
-				<div className="payment-method-form__card-terms">
+				<div className="payment-method-form__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
 						<TosText translate={ translate } />
@@ -201,7 +191,6 @@ export function PaymentMethodForm( {
 
 PaymentMethodForm.propTypes = {
 	apiParams: PropTypes.object,
-	createCardToken: PropTypes.func.isRequired,
 	countriesList: PropTypes.array.isRequired,
 	initialValues: PropTypes.object,
 	purchase: PropTypes.object,
