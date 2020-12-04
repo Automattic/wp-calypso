@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { forIn, keys, mapValues } from 'lodash';
+import { keys, mapValues } from 'lodash';
 
 /**
  * Internal dependencies
@@ -23,7 +23,7 @@ export const getThemeFilterTermsTable = createSelector(
 	( state ) => {
 		const termTable = {};
 		const taxonomies = mapValues( getThemeFilters( state ), keys );
-		forIn( taxonomies, ( terms, taxonomy ) => {
+		Object.entries( taxonomies ).map( ( [ taxonomy, terms ] ) => {
 			terms.forEach( ( term ) => {
 				const key = isAmbiguousThemeFilterTerm( state, term ) ? `${ taxonomy }:${ term }` : term;
 				termTable[ key ] = taxonomy;

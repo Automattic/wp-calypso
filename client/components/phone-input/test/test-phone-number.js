@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { equal, ok, deepStrictEqual } from 'assert';
-import { groupBy, pickBy, forIn } from 'lodash';
+import { groupBy, pickBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -32,7 +32,7 @@ describe( 'metadata:', () => {
 		);
 
 		describe( 'countries sharing dial code should have priority data', () => {
-			forIn( countriesShareDialCode, ( countriesWithDialCode, dialCode ) => {
+			Object.entries( countriesShareDialCode ).map( ( [ dialCode, countriesWithDialCode ] ) => {
 				describe( 'Dialcode: ' + dialCode, () => {
 					countriesWithDialCode.forEach( ( country ) =>
 						test( country.isoCode, () =>
