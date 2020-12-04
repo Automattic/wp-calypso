@@ -23,6 +23,9 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import SectionHeader from 'calypso/components/section-header';
 import { getCurrentUserId, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import QueryConciergeInitial from 'calypso/components/data/query-concierge-initial';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id.js';
+import getConciergeNextAppointment from 'calypso/state/selectors/get-concierge-next-appointment';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { getUserPurchases, isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
 import { planHasFeature } from 'calypso/lib/plans';
@@ -227,7 +230,12 @@ class Help extends React.PureComponent {
 	};
 
 	supportSessionCard = () => {
-		const { translate } = this.props;
+		const { translate, hasAppointment, scheduleId } = this.props;
+
+		//If we already have an appointment or the scheduleId has not been loaded, bail
+		if ( hasAppointment || null === scheduleId ) {
+			return;
+		}
 
 		return (
 			<Card className="help__support-session-card">
@@ -306,6 +314,7 @@ class Help extends React.PureComponent {
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				<HappinessEngineers />
+				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
 			</Main>
 		);
@@ -323,6 +332,8 @@ export const mapStateToProps = ( state, ownProps ) => {
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
 	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
+	const hasAppointment = getConciergeNextAppointment( state );
+	const scheduleId = getConciergeScheduleId( state );
 
 	return {
 		userId,
@@ -330,6 +341,8 @@ export const mapStateToProps = ( state, ownProps ) => {
 		showCoursesTeaser,
 		isLoading,
 		isEmailVerified,
+		hasAppointment,
+		scheduleId,
 	};
 };
 
