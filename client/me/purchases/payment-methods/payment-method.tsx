@@ -12,7 +12,7 @@ import { CompactCard } from '@automattic/components';
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	card: ComponentProps< typeof PaymentMethodDetails >;
