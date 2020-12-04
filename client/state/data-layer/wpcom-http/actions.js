@@ -39,7 +39,7 @@ export const http = (
 		onFailure,
 		onProgress,
 		onStreamRecord,
-		expectStreamMode,
+		processResponseInStreamMode,
 		...options
 	},
 	action = null
@@ -67,7 +67,7 @@ export const http = (
 		onFailure: onFailure || action,
 		onProgress: onProgress || action,
 		onStreamRecord: onStreamRecord || action,
-		expectStreamMode,
+		processResponseInStreamMode,
 		options,
 	};
 };
