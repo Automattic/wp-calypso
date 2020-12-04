@@ -34,7 +34,7 @@
 	}
 
 	&::placeholder {
-		color: $light-gray-700;
+		color: $gray-400;
 		line-height: normal;
 	}
 
@@ -55,10 +55,6 @@
 
 	&.is-empty {
 		max-width: 550px;
-		background: linear-gradient(
-			90deg,
-			$light-gray-700 0%,
-			lighten( $light-gray-700, 10% ) 100%
-		);
+		background: linear-gradient( 90deg, $gray-400 0%, lighten( $gray-400, 10% ) 100% );
 	}
 }

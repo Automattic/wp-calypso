@@ -27,10 +27,10 @@
 	}
 
 	&.is-selected {
-		background: $dark-gray-600;
+		background: $gray-400;
 
 		.wpcom-block-editor-nav-item__label {
-			background: $dark-gray-500;
+			background: $gray-700;
 		}
 	}
 }
@@ -43,7 +43,7 @@
 
 	&.is-untitled {
 		font-style: italic;
-		color: $light-gray-800;
+		color: $gray-600;
 	}
 }
 
@@ -51,7 +51,7 @@
 	display: inline-block;
 	padding: 4px;
 	border-radius: $radius-block-ui;
-	background: $dark-gray-500;
+	background: $gray-700;
 	font-weight: 600;
 	margin-left: 4px;
 }
