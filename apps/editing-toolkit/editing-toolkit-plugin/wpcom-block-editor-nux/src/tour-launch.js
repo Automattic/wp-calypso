@@ -13,14 +13,35 @@ import './style-tour.scss';
  * External dependencies
  */
 import { Button, Flex } from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
+import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
 
 function LaunchWpcomNuxTour() {
+	const isWpcomNuxEnabled = useSelect( ( select ) =>
+		select( 'automattic/nux' ).isWpcomNuxEnabled()
+	);
+	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+
 	// Create parent div for welcome tour portal
 	const portalParent = document.createElement( 'div' );
 	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
+
+	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
+	useEffect( () => {
+		if ( typeof isWpcomNuxEnabled !== 'undefined' ) {
+			return;
+		}
+
+		const fetchWpcomNuxStatus = async () => {
+			const response = await apiFetch( { path: '/wpcom/v2/block-editor/nux' } );
+			setWpcomNuxStatus( { isNuxEnabled: response.is_nux_enabled, bypassApi: true } );
+		};
+		fetchWpcomNuxStatus();
+	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
+
 	useEffect( () => {
 		document.body.appendChild( portalParent );
 		return () => {
@@ -36,14 +57,17 @@ function WelcomeTourFrame() {
 	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCard, setCurrentCard ] = useState( 0 );
-	// TODO: replace isNuxEnabled with wp.data
-	const [ isNuxEnabled, setIsNuxEnabled ] = useState( true );
+	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
+	const isWpcomNuxEnabled = useSelect( ( select ) =>
+		select( 'automattic/nux' ).isWpcomNuxEnabled()
+	);
+
 	const dismissWpcomNuxTour = () => {
 		// TODO recordTracksEvent
-		setIsNuxEnabled( false );
+		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
-	if ( ! isNuxEnabled ) {
+	if ( ! isWpcomNuxEnabled ) {
 		return null;
 	}
 
