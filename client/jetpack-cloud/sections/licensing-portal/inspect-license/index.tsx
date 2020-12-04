@@ -17,7 +17,7 @@ import './style.scss';
 
 const InspectLicense: React.FC = () => {
 	return (
-		<Main className="inspect-licenses">
+		<Main className="inspect-license">
 			<InspectLicenseForm/>
 			<InspectLicenseResult/>
 		</Main>

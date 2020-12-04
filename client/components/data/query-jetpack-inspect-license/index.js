@@ -9,12 +9,12 @@ import { useDispatch } from 'react-redux';
  */
 import { inspectLicense } from 'calypso/state/licensing-portal/actions';
 
-export default function QueryJetpackInspectLicense( { licenseKey, authToken } ) {
+export default function QueryJetpackInspectLicense( { licenseKey } ) {
 	const dispatch = useDispatch();
 
 	React.useEffect( () => {
 		if ( licenseKey ) {
-			dispatch( inspectLicense( licenseKey, authToken ) );
+			dispatch( inspectLicense( licenseKey ) );
 		}
 	}, [ dispatch, licenseKey ] );
 

@@ -2,9 +2,11 @@
  * Internal dependencies
  */
 import { combineReducers, withStorageKey } from 'calypso/state/utils';
-import inspectLicense from './inspect-license';
+import partners from 'calypso/state/licensing-portal/reducer/partners';
+import inspectLicense from 'calypso/state/licensing-portal/reducer/inspect-license';
 
 const combinedReducer = combineReducers( {
+	partners,
 	inspectLicense,
 } );
 

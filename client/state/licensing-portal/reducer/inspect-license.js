@@ -14,8 +14,6 @@ export const initialState = {
 	isInspecting: false,
 	error: '',
 	result: '',
-	// TODO remove this once we have an auth token API for licensing.
-	authToken: '',
 };
 
 export const licenseKey = withoutPersistence( ( state = initialState.licenseKey, action ) => {
@@ -64,20 +62,9 @@ export const error = withoutPersistence( ( state = initialState.error, action ) 
 	return state;
 } );
 
-// TODO remove this once we have an auth token API for licensing.
-export const authToken = withoutPersistence( ( state = initialState.authToken, action ) => {
-	switch ( action.type ) {
-		case JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE:
-			return action.authToken;
-	}
-
-	return state;
-} );
-
 export default combineReducers( {
 	licenseKey,
 	isInspecting,
 	error,
 	result,
-	authToken,
 } );

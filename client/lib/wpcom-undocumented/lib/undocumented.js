@@ -2554,6 +2554,13 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 	return request();
 };
 
+Undocumented.prototype.getJetpackLicensingPartners = function () {
+	return this.wpcom.req.get( {
+		apiNamespace: 'wpcom/v2',
+		path: '/jetpack-licensing/partners',
+	} );
+};
+
 Undocumented.prototype.inspectJetpackLicense = function ( licenseKey ) {
 	return this.wpcom.req.get(
 		{
