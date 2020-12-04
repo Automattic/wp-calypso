@@ -9,6 +9,8 @@ import {
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'calypso/state/action-types';
 
+import 'calypso/state/happychat/init';
+
 const setChatOpen = ( isOpen ) => ( { type: HAPPYCHAT_OPEN, isOpen } );
 const setChatMinimizing = ( isMinimizing ) => ( { type: HAPPYCHAT_MINIMIZING, isMinimizing } );
 
