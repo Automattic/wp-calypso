@@ -13,6 +13,7 @@ import makeBold from './images/make_bold.gif';
 import undo from './images/undo.gif';
 import moveBlock from './images/move_block.gif';
 import finish from './images/finish.png';
+import moreOptions from './images/more_options.gif';
 
 /**
  * This function returns a collection of NUX Tour slide data
@@ -60,9 +61,7 @@ function getTourContent() {
 		{
 			heading: __( 'More Options', 'full-site-editing' ),
 			description: __( 'Click the settings icon to see even more options.', 'full-site-editing' ),
-			// TODO get More Options gif from Jon
-			imgSrc:
-				'https://nuxtourtest.files.wordpress.com/2020/11/mock-slide-3-more_options.gif?resize=400px',
+			imgSrc: moreOptions,
 			animation: null,
 		},
 		{
