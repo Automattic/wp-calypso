@@ -42,7 +42,10 @@ export const handleFetchExperiments = ( action ) =>
 	);
 
 /**
- * Inform the data-layer to request new experiments from the API
+ * Inform the data-layer to request a experiment assignment from the API,
+ * initialising an assignment if necessary.
+ *
+ * Due to a temporary issue on the backend we have to get and assign all experiments at once.
  */
 export const fetchExperiments = () => ( {
 	type: EXPERIMENT_FETCH,
