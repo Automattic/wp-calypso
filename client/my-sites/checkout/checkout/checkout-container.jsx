@@ -13,7 +13,6 @@ import FormattedHeader from 'calypso/components/formatted-header';
 import Checkout from '../checkout';
 import CartData from 'calypso/components/data/cart';
 import CheckoutData from 'calypso/components/data/checkout';
-import SecondaryCart from '../cart/secondary-cart';
 import SignupSiteCreatedNotice from 'calypso/my-sites/checkout/checkout/signup-site-created-notice';
 import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
@@ -77,11 +76,9 @@ class CheckoutContainer extends React.Component {
 			feature,
 			couponCode,
 			plan,
-			selectedSite,
 			reduxStore,
 			redirectTo,
 			upgradeIntent,
-			shouldShowCart = true,
 			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
@@ -129,12 +126,6 @@ class CheckoutContainer extends React.Component {
 							{ this.props.children }
 						</Checkout>
 					</TransactionData>
-
-					{ shouldShowCart && (
-						<CartData>
-							<SecondaryCart selectedSite={ selectedSite } />
-						</CartData>
-					) }
 				</div>
 			</>
 		);

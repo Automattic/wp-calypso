@@ -170,11 +170,7 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CheckoutContainer clearTransaction={ true } purchaseId={ Number( receiptId ) }>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
@@ -206,11 +202,7 @@ export function upsellNudge( context, next ) {
 	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CheckoutContainer clearTransaction={ true } purchaseId={ Number( receiptId ) }>
 			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
