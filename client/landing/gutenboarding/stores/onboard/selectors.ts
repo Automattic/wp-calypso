@@ -2,6 +2,7 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
+import { isGoodDefaultDomainQuery } from '../../lib/is-good-default-domain-query';
 
 export const getIsRedirecting = ( state: State ) => state.isRedirecting;
 export const getPlan = ( state: State ) => state.plan;
@@ -31,4 +32,6 @@ export const wasVerticalSkipped = ( state: State ): boolean => state.wasVertical
 
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
-	state.domainSearch || getSelectedSiteTitle( state ) || getSelectedVertical( state )?.label;
+	state.domainSearch ||
+	( isGoodDefaultDomainQuery( getSelectedSiteTitle( state ) ) && getSelectedSiteTitle( state ) ) ||
+	getSelectedVertical( state )?.label;
