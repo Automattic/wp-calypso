@@ -16,7 +16,7 @@ import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
 import CreditCardForm from 'calypso/blocks/credit-card-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
-import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
@@ -28,7 +28,6 @@ function AddCardDialog( {
 	addStoredCard: saveStoredCard,
 	locale,
 } ) {
-	const createCardAddToken = ( ...args ) => createCardToken( 'card_add', ...args );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 	const onClose = () => closeDialog( siteId );
 
@@ -44,7 +43,6 @@ function AddCardDialog( {
 				fetchStripeConfiguration={ getStripeConfiguration }
 			>
 				<CreditCardForm
-					createCardToken={ createCardAddToken }
 					recordFormSubmitEvent={ recordFormSubmitEvent }
 					saveStoredCard={ saveStoredCard }
 					successCallback={ onClose }

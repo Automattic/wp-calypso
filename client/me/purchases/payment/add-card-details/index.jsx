@@ -17,7 +17,7 @@ import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
@@ -32,7 +32,6 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 
 function AddCardDetails( props ) {
-	const createCardUpdateToken = ( ...args ) => createCardToken( 'card_update', ...args );
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
 
@@ -86,7 +85,6 @@ function AddCardDetails( props ) {
 					>
 						<CreditCardForm
 							apiParams={ { purchaseId: props.purchase.id } }
-							createCardToken={ createCardUpdateToken }
 							purchase={ props.purchase }
 							recordFormSubmitEvent={ recordFormSubmitEvent }
 							siteSlug={ props.siteSlug }

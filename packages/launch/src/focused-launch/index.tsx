@@ -15,15 +15,20 @@ import DomainDetails from './domain-details';
 import PlanDetails from './plan-details';
 import Success from './success';
 import { LAUNCH_STORE } from '../stores';
+import { useDomainSuggestionFromCart, usePlanFromCart } from '../hooks';
 
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { shouldDisplaySuccessView } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
-
 	const { isSiteLaunched, isSiteLaunching } = useSite();
 
 	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
+
+	const [ hasSelectedDomain, selectedPlan, shouldDisplaySuccessView ] = useSelect( ( select ) => {
+		const { plan, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+
+		return [ select( LAUNCH_STORE ).hasSelectedDomain(), plan, shouldDisplaySuccessView ];
+	} );
 
 	// Force Success view to be the default view when opening Focused Launch modal.
 	// This is used in case the user opens the Focused Launch modal after launching
@@ -33,6 +38,28 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			enablePersistentSuccessView();
 		}
 	}, [ isSiteLaunched, enablePersistentSuccessView ] );
+
+	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
+	// If there is no selected domain, but there is a domain in cart,
+	// set the domain from cart as the selected domain.
+	const domainSuggestionFromCart = useDomainSuggestionFromCart();
+	const { setDomain } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( ! hasSelectedDomain && domainSuggestionFromCart ) {
+			setDomain( domainSuggestionFromCart );
+		}
+	}, [ hasSelectedDomain, domainSuggestionFromCart, setDomain ] );
+
+	// @TODO: extract to some hook for reusability (Eg: use-products-from-cart)
+	// If there is no selected plan, but there is a plan in cart,
+	// set the plan from cart as the selected plan.
+	const planFromCart = usePlanFromCart();
+	const { setPlan } = useDispatch( LAUNCH_STORE );
+	React.useEffect( () => {
+		if ( ! selectedPlan && planFromCart ) {
+			setPlan( planFromCart );
+		}
+	}, [ selectedPlan, planFromCart, setPlan ] );
 
 	return (
 		<Router

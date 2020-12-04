@@ -4,20 +4,16 @@
  * paths here (e.g. `import * from '../../lib/`)
  */
 
+/**************************************************************************************************/
+/* This library is deprecated! Please consider ExPlat for your next A/B experiment.               */
+/* See /client/components/experiment/readme.md for more info!
+/**************************************************************************************************/
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
 		variations: {
 			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	springSale30PercentOff: {
-		datestamp: '20180413',
-		variations: {
-			upsell: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
@@ -31,24 +27,6 @@ export default {
 		},
 		defaultVariation: 'hide',
 		allowExistingUsers: true,
-	},
-	skipThemesSelectionModal: {
-		datestamp: '20170904',
-		variations: {
-			skip: 50,
-			show: 50,
-		},
-		defaultVariation: 'show',
-		allowExistingUsers: true,
-		localeTargets: 'any',
-	},
-	builderReferralStatsNudge: {
-		datestamp: '20181218',
-		variations: {
-			builderReferralBanner: 25,
-			googleMyBusinessBanner: 75,
-		},
-		defaultVariation: 'googleMyBusinessBanner',
 	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
@@ -84,75 +62,6 @@ export default {
 			default: 100,
 		},
 		defaultVariation: 'default',
-	},
-	newSiteGutenbergOnboarding: {
-		datestamp: '20200818',
-		variations: {
-			gutenberg: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-		localeTargets: [ 'en' ],
-		countryCodeTargets: [
-			'AE',
-			'AL',
-			'AR',
-			'AU',
-			'BD',
-			'BR',
-			'CN',
-			'CO',
-			'DE',
-			'EG',
-			'ES',
-			'ET',
-			'FI',
-			'FR',
-			'GB',
-			'GE',
-			'GH',
-			'GR',
-			'HK',
-			'HR',
-			'ID',
-			'IE',
-			'IL',
-			'IN',
-			'IT',
-			'JM',
-			'JP',
-			'KE',
-			'KH',
-			'KR',
-			'LK',
-			'MM',
-			'MX',
-			'MV',
-			'MY',
-			'NG',
-			'NL',
-			'NP',
-			'NP',
-			'NZ',
-			'PH',
-			'PK',
-			'PL',
-			'QA',
-			'RO',
-			'RS',
-			'RU',
-			'SA',
-			'SE',
-			'SG',
-			'TH',
-			'TR',
-			'TZ',
-			'UA',
-			'UG',
-			'VN',
-			'ZA',
-		],
 	},
 	userlessCheckout: {
 		datestamp: '20210806',

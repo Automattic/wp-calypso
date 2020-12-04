@@ -1,17 +1,68 @@
 /**
  * External dependencies
  */
+import * as React from 'react';
 import { useDispatch, useSelect } from '@wordpress/data';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import { mockDomainSuggestion } from '@automattic/domain-picker';
+import type { ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from '../stores';
+import { LAUNCH_STORE, SITE_STORE, DOMAIN_SUGGESTIONS_STORE } from '../stores';
+import LaunchContext from '../context';
+import { isDomainProduct } from '../utils';
+import type { DomainProduct } from '../utils';
 import { useSiteDomains } from './use-site-domains';
 
-export function useDomainSelection() {
+export function useDomainProductFromCart(): DomainProduct | undefined {
+	const { siteId } = React.useContext( LaunchContext );
+	const { getCart } = useDispatch( SITE_STORE );
+
+	const [ domainProductFromCart, setDomainProductFromCart ] = React.useState<
+		DomainProduct | undefined
+	>( undefined );
+
+	React.useEffect( () => {
+		( async function () {
+			const cart = await getCart( siteId );
+			const domainProduct = cart.products?.find( ( item: ResponseCartProduct ) =>
+				isDomainProduct( item )
+			);
+			setDomainProductFromCart( domainProduct );
+		} )();
+	}, [ siteId, getCart, setDomainProductFromCart ] );
+
+	return domainProductFromCart;
+}
+
+export function useDomainSuggestionFromCart(): DomainSuggestions.DomainSuggestion | undefined {
+	const domainProductFromCart = useDomainProductFromCart();
+
+	const domainName = domainProductFromCart?.meta;
+
+	const domainSuggestion = useSelect( ( select ) =>
+		domainName
+			? select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestions( domainName, {
+					quantity: 1,
+					include_wordpressdotcom: false,
+					include_dotblogsubdomain: false,
+			  } )?.[ 0 ]
+			: undefined
+	);
+
+	return domainSuggestion;
+}
+
+type DomainSelection = {
+	onDomainSelect: ( suggestion: DomainSuggestions.DomainSuggestion ) => void;
+	onExistingSubdomainSelect: () => void;
+	selectedDomain: DomainSuggestions.DomainSuggestion | undefined;
+	currentDomain: DomainSuggestions.DomainSuggestion | undefined;
+};
+
+export function useDomainSelection(): DomainSelection {
 	const { setDomain, unsetDomain, unsetPlan, confirmDomainSelection } = useDispatch( LAUNCH_STORE );
 	const { domain: selectedDomain, plan, confirmedDomainSelection } = useSelect( ( select ) =>
 		select( LAUNCH_STORE ).getState()

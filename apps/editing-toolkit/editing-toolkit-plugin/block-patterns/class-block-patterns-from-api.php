@@ -173,7 +173,7 @@ class Block_Patterns_From_API {
 			$split_slug = preg_split( '/^requires-/', $tag_slug );
 
 			// If the theme does not support the matched feature, then skip registering the pattern.
-			if ( $split_slug[1] && false === get_theme_support( $split_slug[1] ) ) {
+			if ( isset( $split_slug[1] ) && false === get_theme_support( $split_slug[1] ) ) {
 				return false;
 			}
 		}
