@@ -10,7 +10,6 @@
 	display: inline;
 	left: 40px;
 	position: fixed;
-	min-width: 400px;
 }
 
 .welcome-tour-card__heading {
@@ -52,7 +51,7 @@
 }
 
 .welcome-tour-card {
-	max-width: 400px;
+	width: 400px;
 
 	.components-card__body,
 	.components-card__footer {
