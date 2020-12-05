@@ -13,29 +13,38 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 /**
  * Internal dependencies
  */
-import { createTransactionEndpointRequestPayloadFromLineItems } from '../types/transaction-endpoint';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
 import { getPostalCode, getDomainDetails, wpcomTransaction } from '../payment-method-helpers';
 import saveTransactionResponseToWpcomStore from './save-transaction-response-to-wpcom-store';
+import type { CardProcessorOptions } from '../types/payment-processors';
+import type { TransactionRequestWithLineItems } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
 
+export type ExistingCardProcessorData = Omit<
+	TransactionRequestWithLineItems,
+	'country' | 'postalCode' | 'subdivisionCode' | 'siteId' | 'domainDetails'
+>;
+
 export default async function existingCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-	transactionOptions
+	submitData: ExistingCardProcessorData,
+	dataForProcessor: CardProcessorOptions
 ): Promise< PaymentProcessorResponse > {
+	const { includeDomainDetails, includeGSuiteDetails, recordEvent } = dataForProcessor;
+	const country = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value;
+	const subdivisionCode = select( 'wpcom' )?.getContactInfo?.()?.state?.value;
+	const siteId = select( 'wpcom' )?.getSiteId?.();
 	return submitExistingCardPayment(
 		{
 			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
 			postalCode: getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
+			country,
+			subdivisionCode,
+			siteId,
 		},
-		wpcomTransaction,
-		transactionOptions
+		dataForProcessor
 	)
 		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
@@ -43,7 +52,7 @@ export default async function existingCardProcessor(
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					submitData.stripeConfiguration,
+					dataForProcessor.stripeConfiguration,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}
@@ -57,12 +66,16 @@ export default async function existingCardProcessor(
 		} );
 }
 
-async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
+async function submitExistingCardPayment(
+	transactionData: TransactionRequestWithLineItems,
+	transactionOptions: CardProcessorOptions
+) {
 	debug( 'formatting existing card transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
 		...transactionData,
 		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
 	} );
 	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
+
+	return wpcomTransaction( formattedTransactionData, transactionOptions );
 }
