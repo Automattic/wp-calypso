@@ -56,6 +56,7 @@ import {
 	weChatProcessor,
 } from './payment-method-processors';
 import existingCardProcessor from './lib/existing-card-processor';
+import type { ExistingCardProcessorData } from './lib/existing-card-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { useProductVariants } from './hooks/product-variants';
@@ -473,7 +474,7 @@ export default function CompositeCheckout( {
 				genericRedirectProcessor( 'brazil-tef', transactionData, dataForRedirectProcessor ),
 			'full-credits': ( transactionData: unknown ) =>
 				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
-			'existing-card': ( transactionData: unknown ) =>
+			'existing-card': ( transactionData: ExistingCardProcessorData ) =>
 				existingCardProcessor( transactionData, dataForProcessor ),
 			paypal: ( transactionData: unknown ) =>
 				payPalProcessor(
