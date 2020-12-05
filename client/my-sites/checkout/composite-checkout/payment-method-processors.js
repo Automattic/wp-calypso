@@ -30,8 +30,9 @@ import {
 } from './payment-method-helpers';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
+import saveTransactionResponseToWpcomStore from './lib/save-transaction-response-to-wpcom-store';
 
-const { select, dispatch } = defaultRegistry;
+const { select } = defaultRegistry;
 
 export async function genericRedirectProcessor(
 	paymentMethodId,
@@ -363,10 +364,4 @@ export async function payPalProcessor(
 	)
 		.then( saveTransactionResponseToWpcomStore )
 		.then( makeRedirectResponse );
-}
-
-async function saveTransactionResponseToWpcomStore( result ) {
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	dispatch( 'wpcom' ).setTransactionResponse( result );
-	return result;
 }
