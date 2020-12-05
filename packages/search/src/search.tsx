@@ -4,7 +4,7 @@
  */
 import classNames from 'classnames';
 import React, { ChangeEvent, FocusEvent, FormEvent, KeyboardEvent, MouseEvent } from 'react';
-import { debounce, noop, uniqueId } from 'lodash';
+import { debounce } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -22,6 +22,8 @@ import './style.scss';
  * Internal variables
  */
 const SEARCH_DEBOUNCE_MS = 300;
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = (): void => {};
 
 const keyListener = (
 	methodToCall: (
@@ -112,7 +114,12 @@ class Search extends React.Component< Props, State > {
 		searching: false,
 	};
 
-	instanceId = uniqueId();
+	static currentId = 0;
+	static getUniqueId = (): number => {
+		return Search.currentId++;
+	};
+
+	instanceId = Search.getUniqueId();
 	searchInput = React.createRef< HTMLInputElement >();
 	openIcon = React.createRef< HTMLButtonElement >();
 	overlay = React.createRef< HTMLDivElement >();

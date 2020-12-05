@@ -5,7 +5,6 @@
 import React, { useState } from 'react';
 import type { ReactNode } from 'react';
 import { useI18n } from '@automattic/react-i18n';
-import { intersection } from 'lodash';
 import Search from '@automattic/search';
 
 /**
@@ -59,7 +58,10 @@ const findBestDefaultLanguageGroupId = (
 
 	return (
 		languageGroups.find( ( lg ) => {
-			const sharedTerritories = intersection( lg.subTerritories, selectedLanguage.territories );
+			const sharedTerritories =
+				lg.subTerritories?.filter( ( territory ) =>
+					selectedLanguage.territories.includes( territory )
+				) ?? [];
 
 			if ( sharedTerritories.length > 0 ) {
 				return true;

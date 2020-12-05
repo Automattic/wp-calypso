@@ -35,7 +35,6 @@
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/i18n": "^3.14.0",
-		"lodash": "^4.17.20",
 		"tslib": "^1.10.0"
 	},
 	"peerDependencies": {
