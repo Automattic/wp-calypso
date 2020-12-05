@@ -8,7 +8,7 @@ import {
 	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import { showStripeModalAuth } from '@automattic/calypso-stripe';
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -186,10 +186,10 @@ export async function stripeCardProcessor(
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
 				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return showStripeModalAuth( {
-					stripeConfiguration: submitData.stripeConfiguration,
-					response: stripeResponse,
-				} );
+				return confirmStripePaymentIntent(
+					submitData.stripeConfiguration,
+					stripeResponse?.message?.payment_intent_client_secret
+				);
 			}
 			return stripeResponse;
 		} )
