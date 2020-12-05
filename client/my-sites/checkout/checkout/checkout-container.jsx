@@ -12,7 +12,6 @@ import { localize } from 'i18n-calypso';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Checkout from '../checkout';
 import CartData from 'calypso/components/data/cart';
-import CheckoutData from 'calypso/components/data/checkout';
 import SignupSiteCreatedNotice from 'calypso/my-sites/checkout/checkout/signup-site-created-notice';
 import Gridicon from 'calypso/components/gridicon';
 import { Button } from '@automattic/components';
@@ -79,14 +78,11 @@ class CheckoutContainer extends React.Component {
 			reduxStore,
 			redirectTo,
 			upgradeIntent,
-			clearTransaction,
 			isComingFromGutenboarding,
 			isGutenboardingCreate,
 			isComingFromUpsell,
 			infoMessage,
 		} = this.props;
-
-		const TransactionData = clearTransaction ? CartData : CheckoutData;
 
 		return (
 			<>
@@ -102,12 +98,12 @@ class CheckoutContainer extends React.Component {
 				) }
 				{ this.renderCheckoutHeader() }
 				{ this.shouldDisplaySiteCreatedNotice() && (
-					<TransactionData>
+					<CartData>
 						<SignupSiteCreatedNotice selectedSite={ this.props.selectedSite } />
-					</TransactionData>
+					</CartData>
 				) }
 				<div className="checkout__container">
-					<TransactionData>
+					<CartData>
 						<Checkout
 							product={ product }
 							purchaseId={ purchaseId }
@@ -125,7 +121,7 @@ class CheckoutContainer extends React.Component {
 						>
 							{ this.props.children }
 						</Checkout>
-					</TransactionData>
+					</CartData>
 				</div>
 			</>
 		);
