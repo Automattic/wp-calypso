@@ -83,17 +83,11 @@ export interface StripeData {
 
 export type StripeSetupIntent = { payment_method: string };
 
-export type StripeAuthenticationResponse = { status?: string };
+export type StripeAuthenticationResponse = { status?: string; redirect_url?: string };
 
 const StripeContext = createContext< StripeData | undefined >( undefined );
 
 type StripeError = Error & { code?: string; type?: string };
-
-export interface TransactionResponseWithPaymentIntent {
-	message: { payment_intent_client_secret: string };
-}
-
-type TransactionResponse = unknown;
 
 export interface UseStripeJs {
 	stripeJs: Stripe | null;
@@ -626,22 +620,4 @@ function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 		return 'auto';
 	}
 	return stripeLocale;
-}
-
-export async function showStripeModalAuth( {
-	stripeConfiguration,
-	response,
-}: {
-	stripeConfiguration: StripeConfiguration;
-	response: TransactionResponseWithPaymentIntent;
-} ): Promise< null | TransactionResponse > {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse?.status ) {
-		return authenticationResponse;
-	}
-	return null;
 }
