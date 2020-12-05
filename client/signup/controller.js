@@ -121,23 +121,25 @@ export default {
 
 			next();
 		} else {
-			const locale = getCurrentUserLocale( context.store.getState() );
+			const state = context.store.getState();
+			const locale = getCurrentUserLocale( state );
 			const flowName = getFlowName( context.params );
-			const userLoggedIn = isUserLoggedIn( context.store.getState() );
+			const userLoggedIn = isUserLoggedIn( state );
 
-			// Get the variant for "New Onboarding for existing users [non-EN]"" experiment
-			const existingUsersOnboardingVariant = getVariationForUser(
-				context.store.getState(),
-				'new_onboarding_existing_users_non_en'
-			);
+			if ( userLoggedIn && flowName === 'onboarding' ) {
+				// Assign to the experiment only logged-in users creating a site using 'onboarding' flow.
+				const existingUsersOnboardingVariant = getVariationForUser(
+					state,
+					'new_onboarding_existing_users_non_en'
+				);
 
-			if (
-				userLoggedIn &&
-				flowName === 'onboarding' &&
-				( existingUsersOnboardingVariant === 'treatment' || [ 'en', 'en-gb' ].includes( locale ) )
-			) {
-				gutenbergRedirect( context.params.flowName );
-				return;
+				if (
+					existingUsersOnboardingVariant === 'treatment' ||
+					[ 'en', 'en-gb' ].includes( locale )
+				) {
+					gutenbergRedirect( context.params.flowName );
+					return;
+				}
 			}
 
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )
