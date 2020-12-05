@@ -15,7 +15,6 @@ import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
  */
 import {
 	getPostalCode,
-	getDomainDetails,
 	createStripePaymentMethodToken,
 	wpcomTransaction,
 	wpcomPayPalExpress,
@@ -27,6 +26,7 @@ import {
 	submitCreditsTransaction,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
+import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
 

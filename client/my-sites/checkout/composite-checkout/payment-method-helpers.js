@@ -13,7 +13,6 @@ import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
-import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
@@ -39,12 +38,6 @@ export async function submitPayPalExpressRequest( transactionData, submit, trans
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return submit( formattedTransactionData, transactionOptions );
-}
-
-export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
-	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
-	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
