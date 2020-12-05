@@ -12,6 +12,6 @@ export interface CardProcessorOptions {
 	includeDomainDetails: boolean;
 	includeGSuiteDetails: boolean;
 	createUserAndSiteBeforeTransaction: boolean;
-	stripeConfiguration: StripeConfiguration;
+	stripeConfiguration: StripeConfiguration | null;
 	recordEvent: ( action: ReactStandardAction ) => void;
 }
