@@ -422,17 +422,23 @@ export default function CompositeCheckout( {
 			includeGSuiteDetails,
 			recordEvent,
 			createUserAndSiteBeforeTransaction,
+			stripeConfiguration,
 		} ),
-		[ includeDomainDetails, includeGSuiteDetails, recordEvent, createUserAndSiteBeforeTransaction ]
+		[
+			includeDomainDetails,
+			includeGSuiteDetails,
+			recordEvent,
+			createUserAndSiteBeforeTransaction,
+			stripeConfiguration,
+		]
 	);
 	const dataForRedirectProcessor = useMemo(
 		() => ( {
 			...dataForProcessor,
 			getThankYouUrl,
 			siteSlug,
-			createUserAndSiteBeforeTransaction,
 		} ),
-		[ dataForProcessor, getThankYouUrl, siteSlug, createUserAndSiteBeforeTransaction ]
+		[ dataForProcessor, getThankYouUrl, siteSlug ]
 	);
 
 	const paymentProcessors = useMemo(
