@@ -22,16 +22,6 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
 
-export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
-	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
-	} );
-	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
-}
-
 export async function submitApplePayPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting apple-pay transaction', transactionData );
 	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {

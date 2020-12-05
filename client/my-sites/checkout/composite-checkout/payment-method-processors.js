@@ -25,7 +25,6 @@ import {
 	submitRedirectTransaction,
 	submitFreePurchaseTransaction,
 	submitCreditsTransaction,
-	submitExistingCardPayment,
 	submitPayPalExpressRequest,
 } from './payment-method-helpers';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
@@ -238,42 +237,6 @@ export async function multiPartnerCardProcessor(
 		} );
 	}
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
-}
-
-export async function existingCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-	transactionOptions
-) {
-	return submitExistingCardPayment(
-		{
-			...submitData,
-			country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
-			postalCode: getPostalCode(),
-			subdivisionCode: select( 'wpcom' )?.getContactInfo?.()?.state?.value,
-			siteId: select( 'wpcom' )?.getSiteId?.(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-		},
-		wpcomTransaction,
-		transactionOptions
-	)
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.message?.payment_intent_client_secret ) {
-				// 3DS authentication required
-				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return confirmStripePaymentIntent(
-					submitData.stripeConfiguration,
-					stripeResponse?.message?.payment_intent_client_secret
-				);
-			}
-			return stripeResponse;
-		} )
-		.then( ( stripeResponse ) => {
-			if ( stripeResponse?.redirect_url ) {
-				return makeRedirectResponse( stripeResponse.redirect_url );
-			}
-			return makeSuccessResponse( stripeResponse );
-		} );
 }
 
 export async function freePurchaseProcessor(
