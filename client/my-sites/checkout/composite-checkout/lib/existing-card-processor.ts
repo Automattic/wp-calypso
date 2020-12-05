@@ -31,10 +31,18 @@ export default async function existingCardProcessor(
 	submitData: ExistingCardProcessorData,
 	dataForProcessor: CardProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const { includeDomainDetails, includeGSuiteDetails, recordEvent } = dataForProcessor;
-	const country = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value;
-	const subdivisionCode = select( 'wpcom' )?.getContactInfo?.()?.state?.value;
-	const siteId = select( 'wpcom' )?.getSiteId?.();
+	const {
+		includeDomainDetails,
+		includeGSuiteDetails,
+		stripeConfiguration,
+		recordEvent,
+	} = dataForProcessor;
+	const country: string | undefined = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value;
+	const subdivisionCode: string | undefined = select( 'wpcom' )?.getContactInfo?.()?.state?.value;
+	const siteId: string | undefined = select( 'wpcom' )?.getSiteId?.();
+	if ( ! stripeConfiguration ) {
+		throw new Error( 'Stripe configuration is required' );
+	}
 	return submitExistingCardPayment(
 		{
 			...submitData,
@@ -52,7 +60,7 @@ export default async function existingCardProcessor(
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
-					dataForProcessor.stripeConfiguration,
+					stripeConfiguration,
 					stripeResponse?.message?.payment_intent_client_secret
 				);
 			}
