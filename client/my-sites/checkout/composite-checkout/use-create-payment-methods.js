@@ -290,7 +290,6 @@ function useCreateApplePay( {
 
 export function useCreateExistingCards( {
 	storedCards,
-	stripeConfiguration,
 	activePayButtonText = undefined,
 } ) {
 	const existingCardMethods = useMemo( () => {
@@ -304,11 +303,10 @@ export function useCreateExistingCards( {
 				storedDetailsId: storedDetails.stored_details_id,
 				paymentMethodToken: storedDetails.mp_ref,
 				paymentPartnerProcessorId: storedDetails.payment_partner,
-				stripeConfiguration,
 				activePayButtonText,
 			} )
 		);
-	}, [ stripeConfiguration, storedCards, activePayButtonText ] );
+	}, [ storedCards, activePayButtonText ] );
 	return existingCardMethods;
 }
 
