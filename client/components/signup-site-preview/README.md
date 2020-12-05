@@ -15,7 +15,7 @@ This component displays a WordPress.com site preview, used by the signup journey
 	langSlug="en"
 	isRtl={ false }
 	onPreviewClick={ this.handlePreviewClick }
-	resize={ true }
+	resize
 	scrolling={ false }
 	className="sophisticated"
 />;

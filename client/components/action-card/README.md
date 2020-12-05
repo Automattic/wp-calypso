@@ -15,7 +15,7 @@ function render() {
 			className={ classnames( 'my-classname-1', 'my-classname-2' ) }
 			buttonText={ 'Call to action!' }
 			buttonIcon="external"
-			buttonPrimary={ true }
+			buttonPrimary
 			buttonHref="https://wordpress.com"
 			buttonTarget="_blank"
 			buttonOnClick={ noop }

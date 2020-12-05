@@ -14,7 +14,7 @@ function myUpsell() {
 			callToAction={ translate( 'Upgrade' ) }
 			title={ translate( 'Free domain with a plan!' ) }
 			href={ '/plans' }
-			showIcon={ true }
+			showIcon
 			compact
 		/>
 	);
