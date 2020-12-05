@@ -11,19 +11,19 @@ import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
 export interface TransactionRequestWithLineItems {
-	siteId: string;
+	siteId: string | undefined;
 	couponId?: string;
-	country: string;
+	country: string | undefined;
 	state?: string;
 	postalCode: string;
-	subdivisionCode?: string;
-	city?: string;
+	subdivisionCode?: string | undefined;
+	city?: string | undefined;
 	address?: string;
 	streetNumber?: string;
 	phoneNumber?: string;
 	document?: string;
 	deviceId?: string;
-	domainDetails?: DomainContactDetails;
+	domainDetails?: DomainContactDetails | null;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken?: string;
