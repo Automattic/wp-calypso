@@ -13,7 +13,7 @@ import type { DomainContactDetails } from './backend/domain-contact-details-comp
 export interface TransactionRequestWithLineItems {
 	siteId: string | undefined;
 	couponId?: string;
-	country: string | undefined;
+	country: string;
 	state?: string;
 	postalCode: string;
 	subdivisionCode?: string | undefined;
