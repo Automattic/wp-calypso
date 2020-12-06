@@ -23,7 +23,7 @@ export interface TransactionRequestWithLineItems {
 	phoneNumber?: string;
 	document?: string;
 	deviceId?: string;
-	domainDetails?: DomainContactDetails | null;
+	domainDetails?: DomainContactDetails | undefined;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
 	paymentMethodToken?: string;

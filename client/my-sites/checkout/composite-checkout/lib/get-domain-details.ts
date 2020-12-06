@@ -18,13 +18,13 @@ export default function getDomainDetails( {
 }: {
 	includeDomainDetails: boolean;
 	includeGSuiteDetails: boolean;
-} ): DomainContactDetails | null {
+} ): DomainContactDetails | undefined {
 	const managedContactDetails: ManagedContactDetails | undefined = select(
 		'wpcom'
 	)?.getContactInfo();
 	if ( ! managedContactDetails ) {
-		return null;
+		return undefined;
 	}
 	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
-	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
+	return includeDomainDetails || includeGSuiteDetails ? domainDetails : undefined;
 }
