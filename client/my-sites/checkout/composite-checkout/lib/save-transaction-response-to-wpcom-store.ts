@@ -14,6 +14,6 @@ export default async function saveTransactionResponseToWpcomStore(
 	result: TransactionResponse
 ): Promise< TransactionResponse > {
 	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	dispatch( 'wpcom' ).setTransactionResponse( result );
+	dispatch( 'wpcom' ).setTransactionResponse?.( result );
 	return result;
 }
