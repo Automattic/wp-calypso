@@ -18,13 +18,11 @@ export default class SidebarComponent {
 		// In a production system, itemName should be subjected to sanitization
 		// to prevent case errors from breaking the test.
 
-		// Note this selector is plural - the intention is to select all matching
-		// selectors, then iterate through each item and check its innerText attribute.
-		const sidebarMenuSelectors = 'css=.sidebar >> css=.is-togglable';
+		const sidebarMenuSelector = 'css=.sidebar >> css=.is-togglable';
 		// Once drawer is toggled, this CSS class is added.
-		const drawerOpen = 'is-toggle-open';
+		const drawerOpen = '.is-toggle-open';
 
-		const handles = await this.page.$$( sidebarMenuSelectors );
+		const handles = await this.page.$$( sidebarMenuSelector );
 
 		for ( const h of handles ) {
 			// Yay, there was a match. Let's click on the element to expand it.
@@ -36,15 +34,21 @@ export default class SidebarComponent {
 		}
 	}
 
+	async selectMyHome() {
+		this.page.waitForNavigation();
+
+		return await this.page.click( '.myhome' );
+	}
+
 	async selectMarketing() {
-		this.expandDrawerItem( 'Tools' );
+		await this.expandDrawerItem( 'Tools' );
 		// Promise that will resolve on page navigation event firing.
 		this.page.waitForNavigation();
 		return await this.page.click( '.marketing' );
 	}
 
 	async selectSettings() {
-		this.expandDrawerItem( 'Manage' );
+		await this.expandDrawerItem( 'Manage' );
 		// Promise that will resolve on page navigation event firing.
 		this.page.waitForNavigation();
 		return await this.page.click( '.settings' );
