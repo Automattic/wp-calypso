@@ -13,7 +13,6 @@ import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
@@ -255,10 +254,4 @@ export function createStripePaymentMethodToken( { stripe, name, country, postalC
 			postal_code: postalCode,
 		},
 	} );
-}
-
-export function getPostalCode() {
-	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
-	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
-	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
