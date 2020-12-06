@@ -289,7 +289,7 @@ export function createTransactionEndpointCartFromLineItems( {
 	items,
 	contactDetails,
 }: {
-	siteId: string;
+	siteId: string | undefined;
 	couponId?: string;
 	country: string;
 	postalCode: string;
