@@ -376,21 +376,6 @@ Creates a [Payment Method](#payment-methods) object. Requires passing an object 
 
 Creates a [data store](#data-stores) registry to be passed (optionally) to [CheckoutProvider](#checkoutprovider). See the `@wordpress/data` [docs for this function](https://developer.wordpress.org/block-editor/packages/packages-data/#createRegistry).
 
-### createExistingCardMethod
-
-Creates a [Payment Method](#payment-methods) object for an existing credit card. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `getCountry: () => string`. A function that returns the country to use for the transaction.
-- `getPostalCode: () => string`. A function that returns the postal code for the transaction.
-- `getSubdivisionCode: () => string`. A function that returns the subdivision code for the transaction.
-- `id: string`. A unique id for this payment method (since there are likely to be several existing cards).
-- `cardholderName: string`. The cardholder's name. Used for display only.
-- `cardExpiry: string`. The card's expiry date. Used for display only.
-- `brand: string`. The card's brand (eg: `visa`). Used for display only.
-- `last4: string`. The card's last four digits. Used for display only.
-
 ### createPayPalMethod
 
 Creates a [Payment Method](#payment-methods) object. Requires passing an object with the following properties:
