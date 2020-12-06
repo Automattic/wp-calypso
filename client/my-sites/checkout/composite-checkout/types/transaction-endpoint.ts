@@ -11,7 +11,7 @@ import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
 export interface TransactionRequestWithLineItems {
-	siteId: string | undefined;
+	siteId: string | number | undefined;
 	couponId?: string;
 	country: string | undefined;
 	state?: string;
