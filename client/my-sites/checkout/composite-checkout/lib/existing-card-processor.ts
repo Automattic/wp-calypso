@@ -2,11 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import {
-	defaultRegistry,
-	makeSuccessResponse,
-	makeRedirectResponse,
-} from '@automattic/composite-checkout';
+import { makeSuccessResponse, makeRedirectResponse } from '@automattic/composite-checkout';
 import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 
@@ -14,46 +10,25 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
-import { getPostalCode, getDomainDetails, wpcomTransaction } from '../payment-method-helpers';
+import { wpcomTransaction } from '../payment-method-helpers';
 import saveTransactionResponseToWpcomStore from './save-transaction-response-to-wpcom-store';
 import type { CardProcessorOptions } from '../types/payment-processors';
 import type { TransactionRequestWithLineItems } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
-const { select } = defaultRegistry;
-
-export type ExistingCardProcessorData = Omit<
-	TransactionRequestWithLineItems,
-	'country' | 'postalCode' | 'subdivisionCode' | 'siteId' | 'domainDetails'
->;
 
 export default async function existingCardProcessor(
-	submitData: ExistingCardProcessorData,
+	transactionData: unknown,
 	dataForProcessor: CardProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	const {
-		includeDomainDetails,
-		includeGSuiteDetails,
-		stripeConfiguration,
-		recordEvent,
-	} = dataForProcessor;
-	const country: string | undefined = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value;
-	const subdivisionCode: string | undefined = select( 'wpcom' )?.getContactInfo?.()?.state?.value;
-	const siteId: string | undefined = select( 'wpcom' )?.getSiteId?.();
+	if ( ! isValidTransactionData( transactionData ) ) {
+		throw new Error( 'Missing data for processor' );
+	}
+	const { stripeConfiguration, recordEvent } = dataForProcessor;
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
-	return submitExistingCardPayment(
-		{
-			...submitData,
-			postalCode: getPostalCode(),
-			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
-			country,
-			subdivisionCode,
-			siteId,
-		},
-		dataForProcessor
-	)
+	return submitExistingCardPayment( transactionData, dataForProcessor )
 		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
@@ -86,4 +61,24 @@ async function submitExistingCardPayment(
 	debug( 'submitting existing card transaction', formattedTransactionData );
 
 	return wpcomTransaction( formattedTransactionData, transactionOptions );
+}
+
+function isValidTransactionData(
+	submitData: unknown
+): submitData is TransactionRequestWithLineItems {
+	const data = submitData as TransactionRequestWithLineItems;
+	if ( ! ( data?.items?.length > 0 ) ) {
+		return false;
+	}
+	// Data required for this payment method type
+	if (
+		! data.siteId ||
+		! data.storedDetailsId ||
+		! data.name ||
+		! data.paymentMethodToken ||
+		! data.paymentPartnerProcessorId
+	) {
+		return false;
+	}
+	return true;
 }
