@@ -45,6 +45,10 @@ export const ItemGrouper: FunctionComponent< {
 	return <>{ children }</>;
 };
 
+export const ItemGroupLabel: FunctionComponent = function ItemGroupLabel( { children } ) {
+	return <p className="domain-picker__suggestion-group-label">{ children }</p>;
+};
+
 export interface Props {
 	header?: React.ReactElement;
 
@@ -285,9 +289,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-sections">
 						<>
 							{ segregateFreeAndPaid && (
-								<p className="domain-picker__suggestion-group-label">
-									{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
-								</p>
+								<ItemGroupLabel>{ __( 'Keep sub-domain', __i18n_text_domain__ ) }</ItemGroupLabel>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ existingSubdomain?.domain_name && (
@@ -315,9 +317,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 								) }
 							</ItemGrouper>
 							{ segregateFreeAndPaid && (
-								<p className="domain-picker__suggestion-group-label">
+								<ItemGroupLabel>
 									{ __( 'Professional domains', __i18n_text_domain__ ) }
-								</p>
+								</ItemGroupLabel>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ ( ! areDependenciesLoading &&
