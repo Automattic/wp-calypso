@@ -12,12 +12,14 @@ import * as Launch from './launch';
 import * as WPCOMFeatures from './wpcom-features';
 import * as VerticalsTemplates from './verticals-templates';
 import * as I18n from './i18n';
+import * as Import from './import';
 
 export {
 	Auth,
 	User,
 	DomainSuggestions,
 	I18n,
+	Import,
 	Site,
 	Verticals,
 	VerticalsTemplates,

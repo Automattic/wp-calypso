@@ -17,6 +17,7 @@ import CreateSiteError from './create-site-error';
 import type { Attributes } from './types';
 import { Step, usePath, useNewQueryParam } from '../path';
 import AcquireIntent from './acquire-intent';
+import Import from './import';
 import StylePreview from './style-preview';
 import Features from './features';
 import Plans from './plans';
@@ -27,7 +28,9 @@ import './colors.scss';
 import './style.scss';
 
 const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = () => {
-	const { selectedDesign, siteTitle } = useSelect( ( select ) => select( STORE_KEY ).getState() );
+	const { selectedDesign, siteTitle, isImporting } = useSelect( ( select ) =>
+		select( STORE_KEY ).getState()
+	);
 	const isRedirecting = useSelect( ( select ) => select( STORE_KEY ).getIsRedirecting() );
 	const isCreatingSite = useSelect( ( select ) => select( SITE_STORE ).isFetchingSite() );
 	const newSiteError = useSelect( ( select ) => select( SITE_STORE ).getNewSiteError() );
@@ -85,9 +88,17 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 					to={ makePath( Step.CreateSite ) }
 				/>
 			) }
+			{ isImporting && (
+				<Redirect push={ shouldTriggerCreate ? undefined : true } to={ makePath( Step.Import ) } />
+			) }
 			<Switch>
 				<Route exact path={ makePath( Step.IntentGathering ) }>
 					<AcquireIntent />
+				</Route>
+
+				<Route exact path={ makePath( Step.Import ) }>
+					<AcquireIntent />
+					<Import />
 				</Route>
 
 				<Route path={ makePath( Step.DesignSelection ) }>

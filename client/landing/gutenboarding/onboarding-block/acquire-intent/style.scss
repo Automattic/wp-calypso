@@ -29,6 +29,8 @@
 }
 
 .site-title {
+	margin-top: auto;
+
 	@include break-small {
 		display: flex;
 		flex-wrap: wrap;
@@ -99,6 +101,19 @@
 	@include break-small {
 		margin-top: 40px;
 		justify-content: flex-start;
+	}
+}
+
+.acquire-intent__import {
+	font-size: 14px;
+	font-family: $default-font;
+	color: var( --studio-gray-100 );
+	margin-top: auto;
+	align-self: center;
+
+	button.components-button {
+		color: var( --studio-gray-40 );
+		padding: 3px;
 	}
 }
 

@@ -217,6 +217,14 @@ export const startOnboarding = () => ( {
 	type: 'ONBOARDING_START' as const,
 } );
 
+export const startImportFlow = () => ( {
+	type: 'IMPORTING_START' as const,
+} );
+
+export const cancelImportFlow = () => ( {
+	type: 'IMPORTING_CANCEL' as const,
+} );
+
 export type OnboardAction = ReturnType<
 	| typeof addFeature
 	| typeof removeFeature
@@ -240,4 +248,6 @@ export type OnboardAction = ReturnType<
 	| typeof skipSiteVertical
 	| typeof togglePageLayout
 	| typeof startOnboarding
+	| typeof startImportFlow
+	| typeof cancelImportFlow
 >;

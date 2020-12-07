@@ -1,0 +1,45 @@
+@import '../../variables.scss';
+
+.import {
+	width: 50%;
+	height: 50%;
+
+	&.components-modal__frame {
+		max-height: 430px;
+	}
+}
+
+.import__wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	height: calc( 100% - 60px );
+	text-align: center;
+}
+
+.import__url-label {
+	margin: 10px 0 18px;
+	color: var( --studio-gray-40 );
+	text-decoration: underline;
+}
+
+.import__url-input {
+	align-self: center;
+	width: 376px;
+
+	input {
+		height: 56px;
+		padding: 16px;
+	}
+}
+
+.import__start-import {
+	align-self: center;
+	justify-content: center;
+	width: 172px;
+
+	&.components-button {
+		margin-top: 48px;
+		height: 42px;
+	}
+}

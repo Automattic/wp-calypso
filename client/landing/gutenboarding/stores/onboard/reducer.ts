@@ -240,6 +240,16 @@ const hasOnboardingStarted: Reducer< boolean, OnboardAction > = ( state = false,
 	return state;
 };
 
+const isImporting: Reducer< boolean, OnboardAction > = ( state = false, action ) => {
+	if ( action.type === 'IMPORTING_START' ) {
+		return true;
+	}
+	if ( action.type === 'IMPORTING_CANCEL' || action.type === 'RESET_ONBOARD_STORE' ) {
+		return false;
+	}
+	return state;
+};
+
 const reducer = combineReducers( {
 	domain,
 	domainSearch,
@@ -260,6 +270,7 @@ const reducer = combineReducers( {
 	isExperimental,
 	randomizedDesigns,
 	hasOnboardingStarted,
+	isImporting,
 } );
 
 export type State = ReturnType< typeof reducer >;

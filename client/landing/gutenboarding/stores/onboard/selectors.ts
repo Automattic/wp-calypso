@@ -32,3 +32,6 @@ export const wasVerticalSkipped = ( state: State ): boolean => state.wasVertical
 // Selectors dependent on other selectors (cannot be put in alphabetical order)
 export const getDomainSearch = ( state: State ) =>
 	state.domainSearch || getSelectedSiteTitle( state ) || getSelectedVertical( state )?.label;
+
+export const isImporting = ( state: State ): boolean => state.isImporting;
+export const importUrl = ( state: State ): string => state.importUrl;

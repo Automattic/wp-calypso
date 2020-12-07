@@ -30,6 +30,7 @@ registerStore< State >( STORE_KEY, {
 		'hasUsedDomainsStep',
 		'hasUsedPlansStep',
 		'isExperimental',
+		'isImporting',
 		'pageLayouts',
 		'plan',
 		'randomizedDesigns',
