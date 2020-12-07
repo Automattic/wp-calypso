@@ -25,7 +25,6 @@ import inlineSupportArticle from './inline-support-article/reducer';
 import jitm from './jitm/reducer';
 import mySites from './my-sites/reducer';
 import notices from './notices/reducer';
-import selectedEditor from './selected-editor/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
 import userSettings from './user-settings/reducer';
@@ -47,7 +46,6 @@ const reducers = {
 	jitm,
 	mySites,
 	notices,
-	selectedEditor,
 	sites,
 	support,
 	userSettings,
