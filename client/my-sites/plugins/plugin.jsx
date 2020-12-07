@@ -359,7 +359,7 @@ export default connect(
 		const sites = getSelectedOrAllSitesWithPlugins( state );
 
 		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
-		const siteIds = uniq( sites ).map( ( site ) => site.ID );
+		const siteIds = uniq( sites.map( ( site ) => site.ID ) );
 
 		return {
 			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
