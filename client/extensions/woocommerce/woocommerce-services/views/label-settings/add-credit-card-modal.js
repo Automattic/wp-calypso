@@ -14,7 +14,7 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 import { Dialog } from '@automattic/components';
 import { closeAddCardDialog } from 'woocommerce/woocommerce-services/state/label-settings/actions';
 import { getLabelSettingsForm } from 'woocommerce/woocommerce-services/state/label-settings/selectors';
-import CreditCardForm from 'calypso/blocks/credit-card-form';
+import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import { addStoredCard } from 'calypso/state/stored-cards/actions';
 import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -42,7 +42,7 @@ function AddCardDialog( {
 				configurationArgs={ { needs_intent: true } }
 				fetchStripeConfiguration={ getStripeConfiguration }
 			>
-				<CreditCardForm
+				<PaymentMethodForm
 					recordFormSubmitEvent={ recordFormSubmitEvent }
 					saveStoredCard={ saveStoredCard }
 					successCallback={ onClose }

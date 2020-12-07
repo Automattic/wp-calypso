@@ -56,7 +56,7 @@ export default function PurchaseMeta( {
 	purchaseId = false,
 	hasLoadedPurchasesFromServer = false,
 	siteSlug,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
 } ) {
 	const translate = useTranslate();
@@ -91,13 +91,13 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					translate={ translate }
 					moment={ moment }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 				<PurchaseMetaPaymentDetails
 					purchase={ purchase }
 					translate={ translate }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
 					site={ site }
 					moment={ moment }
@@ -113,7 +113,7 @@ PurchaseMeta.propTypes = {
 	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func,
-	getEditPaymentMethodUrlFor: PropTypes.func,
+	getChangePaymentMethodUrlFor: PropTypes.func,
 };
 
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
@@ -306,7 +306,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 function PurchaseMetaPaymentDetails( {
 	purchase,
 	translate,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	siteSlug,
 	site,
 	moment,
@@ -340,7 +340,7 @@ function PurchaseMetaPaymentDetails( {
 	return (
 		<li>
 			<a
-				href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
+				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
 				onClick={ handleEditPaymentMethodClick }
 			>
 				{ paymentDetails }
@@ -409,7 +409,7 @@ function PurchaseMetaExpiration( {
 	siteSlug,
 	translate,
 	moment,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
@@ -466,7 +466,7 @@ function PurchaseMetaExpiration( {
 							siteSlug={ site.slug }
 							purchase={ purchase }
 							toggleSource="manage-purchase"
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					</span>
 				) }

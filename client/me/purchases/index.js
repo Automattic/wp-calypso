@@ -26,10 +26,25 @@ export default ( router ) => {
 			makeLayout,
 			clientRender
 		);
-		router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
+
+		if ( config.isEnabled( 'purchases/new-payment-methods' ) ) {
+			router(
+				paths.addNewPaymentMethod,
+				sidebar,
+				controller.addNewPaymentMethod,
+				makeLayout,
+				clientRender
+			);
+		} else {
+			router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
+		}
 
 		// redirect legacy urls
-		router( '/payment-methods/add-credit-card', () => page.redirect( paths.addCreditCard ) );
+		router( '/payment-methods/add-credit-card', () => {
+			config.isEnabled( 'purchases/new-payment-methods' )
+				? page.redirect( paths.addCreditCard )
+				: page.redirect( paths.addNewPaymentMethod );
+		} );
 	}
 
 	router(
@@ -115,23 +130,43 @@ export default ( router ) => {
 		clientRender
 	);
 
-	router(
-		paths.addCardDetails( ':site', ':purchaseId' ),
-		sidebar,
-		siteSelection,
-		controller.addCardDetails,
-		makeLayout,
-		clientRender
-	);
+	if ( config.isEnabled( 'purchases/new-payment-methods' ) ) {
+		router(
+			paths.addPaymentMethod( ':site', ':purchaseId' ),
+			sidebar,
+			siteSelection,
+			controller.addPaymentMethod,
+			makeLayout,
+			clientRender
+		);
 
-	router(
-		paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
-		sidebar,
-		siteSelection,
-		controller.editCardDetails,
-		makeLayout,
-		clientRender
-	);
+		router(
+			paths.changePaymentMethod( ':site', ':purchaseId', ':cardId' ),
+			sidebar,
+			siteSelection,
+			controller.changePaymentMethod,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		router(
+			paths.addCardDetails( ':site', ':purchaseId' ),
+			sidebar,
+			siteSelection,
+			controller.addCardDetails,
+			makeLayout,
+			clientRender
+		);
+
+		router(
+			paths.editCardDetails( ':site', ':purchaseId', ':cardId' ),
+			sidebar,
+			siteSelection,
+			controller.editCardDetails,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	// redirect legacy urls
 	router( '/me/billing', () => page.redirect( paths.billingHistory ) );
