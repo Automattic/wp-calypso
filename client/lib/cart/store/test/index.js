@@ -2,13 +2,6 @@
  * @jest-environment jsdom
  */
 
-/**
- * Internal dependencies
- */
-import { transactionPaymentSetActions, paymentActionLocations } from './fixtures/actions';
-import { recordUnrecognizedPaymentMethod } from 'calypso/lib/analytics/cart';
-import { setTaxLocation } from 'calypso/lib/cart-values';
-
 jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
 	recordUnrecognizedPaymentMethod: jest.fn(),
@@ -45,12 +38,10 @@ jest.mock( 'lib/wp', () => ( {
 
 describe( 'Cart Store', () => {
 	let CartStore;
-	let Dispatcher;
 
 	beforeEach( () => {
 		jest.isolateModules( () => {
 			CartStore = require( 'calypso/lib/cart/store' ).default;
-			Dispatcher = require( 'calypso/dispatcher' ).default;
 		} );
 
 		CartStore.setSelectedSiteId();
@@ -80,57 +71,5 @@ describe( 'Cart Store', () => {
 
 		disableCart();
 		expect( () => removeCoupon() ).not.toThrow();
-	} );
-
-	describe( 'Transaction Payment Set', () => {
-		test.each( paymentActionLocations )(
-			'should extract location from payment method for %s',
-			( paymentMethod, location ) => {
-				Dispatcher.handleServerAction( transactionPaymentSetActions[ paymentMethod ] );
-				expect( setTaxLocation ).toHaveBeenCalledWith( location );
-			}
-		);
-
-		test( 'Should report an unknown payment method', () => {
-			Dispatcher.handleServerAction( transactionPaymentSetActions.unrecognized );
-			expect( recordUnrecognizedPaymentMethod ).toHaveBeenCalled();
-		} );
-
-		test( 'Should report an unknown payment method parameters', () => {
-			Dispatcher.handleServerAction( transactionPaymentSetActions.unrecognized );
-			expect( recordUnrecognizedPaymentMethod ).toHaveBeenCalled();
-
-			const args = JSON.stringify( recordUnrecognizedPaymentMethod.mock.calls );
-			expect( args ).toContain( 'postal-code' );
-			expect( args ).toContain( '98765' );
-		} );
-
-		test( 'Should not report a known payment method', () => {
-			Dispatcher.handleServerAction( transactionPaymentSetActions.credits );
-			expect( recordUnrecognizedPaymentMethod ).not.toHaveBeenCalled();
-		} );
-
-		test( 'Should not ignore missing country code values', () => {
-			Dispatcher.handleServerAction( transactionPaymentSetActions.creditCard );
-			expect( setTaxLocation ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					postalCode: '90014',
-				} )
-			);
-
-			Dispatcher.handleServerAction( transactionPaymentSetActions.newCardNoPostalCode );
-			expect( setTaxLocation ).toHaveBeenNthCalledWith(
-				2,
-				expect.objectContaining( {
-					countryCode: 'AI',
-				} )
-			);
-			expect( setTaxLocation ).toHaveBeenNthCalledWith(
-				2,
-				expect.not.objectContaining( {
-					postalCode: expect.anything(),
-				} )
-			);
-		} );
 	} );
 } );
