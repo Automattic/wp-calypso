@@ -41,26 +41,14 @@ describe( 'selectors', () => {
 		const oldUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: {
-						ID: 73705554,
-						login: 'testonesite2016',
-						date: moment().subtract( 8, 'days' ),
-					},
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: moment().subtract( 8, 'days' ) },
 			},
 		};
 
 		const newUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: moment() },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: moment() },
 			},
 		};
 
@@ -79,22 +67,14 @@ describe( 'selectors', () => {
 		const oldUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2014-10-18T17:14:52+00:00' },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: '2014-10-18T17:14:52+00:00' },
 			},
 		};
 
 		const newUser = {
 			currentUser: {
 				id: 73705554,
-			},
-			users: {
-				items: {
-					73705554: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
-				},
+				user: { ID: 73705554, login: 'testonesite2016', date: '2016-10-18T17:14:52+00:00' },
 			},
 		};
 

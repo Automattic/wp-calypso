@@ -4,11 +4,6 @@
 import { get } from 'lodash';
 
 /**
- * Internal dependencies
- */
-import { getUser } from 'calypso/state/users/selectors';
-
-/**
  * Returns the current user ID
  *
  * @param  {object}  state  Global state tree
@@ -35,12 +30,7 @@ export function isUserLoggedIn( state ) {
  * @returns {?object}        Current user
  */
 export function getCurrentUser( state ) {
-	const userId = getCurrentUserId( state );
-	if ( ! userId ) {
-		return null;
-	}
-
-	return getUser( state, userId );
+	return get( state, [ 'currentUser', 'user' ], null );
 }
 
 /**
