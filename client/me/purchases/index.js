@@ -35,9 +35,17 @@ export default ( router ) => {
 				makeLayout,
 				clientRender
 			);
-		} else {
-			router( paths.addCreditCard, sidebar, controller.addCreditCard, makeLayout, clientRender );
 		}
+
+		router(
+			paths.addCreditCard,
+			sidebar,
+			config.isEnabled( 'purchases/new-payment-methods' )
+				? controller.addNewPaymentMethod
+				: controller.addCreditCard,
+			makeLayout,
+			clientRender
+		);
 
 		// redirect legacy urls
 		router( '/payment-methods/add-credit-card', () => {
