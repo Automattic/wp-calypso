@@ -155,8 +155,8 @@ export const receiveError = ( error ) => ( { type: HAPPYCHAT_IO_RECEIVE_ERROR, e
 /**
  * Returns an action object for the transcript reception.
  *
- * @param {object} result An object with {messages, timestamp} props
- * @param {Array} result.messages An array of message objects
+ * @param {object} result           An object with {messages, timestamp} props
+ * @param {Array}  result.messages  An array of message objects
  * @param {number} result.timestamp The transcript reception timestamp
  * @returns {object} Action object
  */
