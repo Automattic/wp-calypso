@@ -1,8 +1,10 @@
-export default function mergeIfObjects( obj1: unknown, obj2: unknown ): MergedObject {
-	if ( typeof obj1 === 'object' && typeof obj2 === 'object' ) {
-		return { ...obj1, ...obj2 };
-	}
-	return {};
+export default function mergeIfObjects( objects: unknown[] ): MergedObject {
+	return objects.reduce( ( merged: MergedObject, obj: unknown ): MergedObject => {
+		if ( typeof obj !== 'object' ) {
+			return merged;
+		}
+		return { ...merged, ...obj };
+	}, {} );
 }
 
 type MergedObject = Record< string, unknown >;
