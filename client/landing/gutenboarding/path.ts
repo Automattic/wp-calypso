@@ -107,7 +107,7 @@ export function useNewQueryParam() {
 
 export function useIsAnchorFm(): boolean {
 	const podcastId = useAnchorFmPodcastId();
-	return Boolean( podcastId && podcastId.match( /^[0-9a-f]{8}$/i ) );
+	return Boolean( podcastId && podcastId.match( /^[0-9a-f]{7,8}$/i ) );
 }
 
 // Returns the anchor podcast id. First looks in "location state",
