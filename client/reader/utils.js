@@ -97,3 +97,5 @@ export function getStreamType( streamKey ) {
 	const streamType = indexOfColon === -1 ? streamKey : streamKey.substring( 0, indexOfColon );
 	return streamType;
 }
+
+export function is() {}
