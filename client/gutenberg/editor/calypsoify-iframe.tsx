@@ -77,7 +77,11 @@ interface Props {
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThis: any;
-	anchorFmData: any;
+	anchorFmData: {
+		anchor_podcast: string | undefined;
+		anchor_episode: string | undefined;
+		spotify_show_url: string | undefined;
+	};
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
