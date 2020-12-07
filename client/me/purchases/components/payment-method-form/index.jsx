@@ -62,7 +62,7 @@ export function PaymentMethodForm( {
 	const {
 		stripe,
 		stripeConfiguration,
-		setStripeError,
+		reloadStripeConfiguration,
 		isStripeLoading,
 		stripeLoadingError,
 	} = useStripe();
@@ -140,7 +140,7 @@ export function PaymentMethodForm( {
 		} catch ( error ) {
 			debug( 'Error while submitting', error );
 			setFormSubmitting( false );
-			error && setStripeError && setStripeError( error );
+			error && reloadStripeConfiguration && reloadStripeConfiguration();
 			error && displayError( { translate, error } );
 		}
 	};
