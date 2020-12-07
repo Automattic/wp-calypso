@@ -18,6 +18,7 @@ import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import { recordVerticalSkip, recordSiteTitleSkip } from '../../lib/analytics';
 import Arrow from './arrow';
+import { isGoodDefaultDomainQuery } from '../../lib/is-good-default-domain-query';
 
 /**
  * Style dependencies
@@ -70,7 +71,7 @@ const AcquireIntent: React.FunctionComponent = () => {
 	};
 
 	const handleSiteTitleSubmit = () => {
-		if ( hasSiteTitle() ) {
+		if ( hasSiteTitle() && isGoodDefaultDomainQuery( getSelectedSiteTitle() ) ) {
 			setDomainSearch( getSelectedSiteTitle() );
 		}
 		goNext();
