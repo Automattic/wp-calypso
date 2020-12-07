@@ -57,7 +57,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 			} );
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
-		if ( newUser && newUser.username !== undefined ) {
+		if ( newUser?.username ) {
 			return createSite( {
 				username: newUser.username,
 				languageSlug: locale,
