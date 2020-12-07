@@ -489,13 +489,16 @@ export default function CompositeCheckout( {
 				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'existing-card': ( transactionData: unknown ) =>
 				existingCardProcessor(
-					mergeIfObjects( transactionData, {
-						country: countryCode,
-						postalCode,
-						subdivisionCode,
-						siteId: siteId ? String( siteId ) : undefined,
-						domainDetails,
-					} ),
+					mergeIfObjects( [
+						transactionData,
+						{
+							country: countryCode,
+							postalCode,
+							subdivisionCode,
+							siteId: siteId ? String( siteId ) : undefined,
+							domainDetails,
+						},
+					] ),
 					dataForProcessor
 				),
 			paypal: ( transactionData: unknown ) =>
