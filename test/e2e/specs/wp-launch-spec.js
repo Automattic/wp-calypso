@@ -42,7 +42,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Launch (${ screenSize }) @parallel`, function () {
+describe.skip( `[${ host }] Launch (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	describe( 'Launch a free site', function () {
