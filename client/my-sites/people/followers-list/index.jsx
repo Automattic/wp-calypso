@@ -34,6 +34,7 @@ const FollowersList = ( { site, search, type = 'wpcom' } ) => {
 				query={ query }
 				site={ site }
 				currentPage={ currentPage }
+				type={ type }
 				incrementPage={ () => setCurrentPage( currentPage + 1 ) }
 			/>
 		</>
