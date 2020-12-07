@@ -160,5 +160,3 @@ The tests make use of the 3rd party [React Testing Library](https://testing-libr
 When writing tests try to approach them **from the perspective of how a user would interact with your component**. Approaching tests in this fashion provides greater confidence that tests will capture true component behaviors and avoids the need for costly refactoring should the component's implementation need to change.
 
 For more on this approach please see the [excellent introduction in the React Testing Library docs](https://testing-library.com/docs/react-testing-library/intro).
-
-trigger plugin build
