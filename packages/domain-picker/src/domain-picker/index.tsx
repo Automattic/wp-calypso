@@ -103,6 +103,9 @@ export interface Props {
 	itemType?: SUGGESTION_ITEM_TYPE;
 
 	locale?: string;
+
+	/** Whether we show the free .wordpress.com sub-domain first or last */
+	positionExistingSubDomainLast?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -125,6 +128,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	itemType = ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
+	positionExistingSubDomainLast = false,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
