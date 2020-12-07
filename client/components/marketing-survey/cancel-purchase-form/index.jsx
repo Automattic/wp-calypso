@@ -33,7 +33,7 @@ import UpgradeATStep from './step-components/upgrade-at-step';
 import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
 import { getName, isRefundable } from 'calypso/lib/purchases';
-import { isGoogleApps } from 'calypso/lib/products-values';
+import { isGoogleApps, isJetpackPlanSlug, isJetpackProductSlug } from 'calypso/lib/products-values';
 import { radioOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
@@ -74,6 +74,29 @@ class CancelPurchaseForm extends React.Component {
 		onInputChange: () => {},
 		showSurvey: true,
 		isVisible: false,
+	};
+
+	shouldShowChatButton = () => {
+		if ( ! config.isEnabled( 'upgrades/precancellation-chat' ) ) {
+			return false;
+		}
+
+		// Don't show a button to start Happychat
+		// if we're already in a chat session
+		const { surveyStep } = this.state;
+		if ( surveyStep === steps.HAPPYCHAT_STEP ) {
+			return false;
+		}
+
+		// Jetpack doesn't do Happychat support
+		const { purchase } = this.props;
+		const isJetpack =
+			isJetpackProductSlug( purchase.productSlug ) || isJetpackPlanSlug( purchase.productSlug );
+
+		// NOTE: The HappychatButton component may still decide not to render,
+		// based on agent availability and connection status.
+
+		return ! isJetpack;
 	};
 
 	getAllSurveySteps = () => {
@@ -715,10 +738,10 @@ class CancelPurchaseForm extends React.Component {
 			</Button>
 		);
 
-		const firstButtons =
-			config.isEnabled( 'upgrades/precancellation-chat' ) && surveyStep !== 'happychat_step'
-				? [ chat, close ]
-				: [ close ];
+		const firstButtons = [ close ];
+		if ( this.shouldShowChatButton() ) {
+			firstButtons.unshift( chat );
+		}
 
 		if ( surveyStep === steps.FINAL_STEP ) {
 			const stepsCount = this.getAllSurveySteps().length;
