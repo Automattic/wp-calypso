@@ -25,37 +25,6 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormLabel from 'calypso/components/forms/form-label';
 
-function handleUpgradeButtonClick( props, selectedDomain, domainUpsellItems ) {
-	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
-	if ( ! domainUpsellItems ) {
-		return;
-	}
-
-	const step = {
-		stepName,
-		stepSectionName,
-		domainUpsellItems,
-		...additionalStepData,
-	};
-
-	submitSignupStep( step, { domainUpsellItems } );
-	goToNextStep();
-}
-
-function handleSkipButtonClick( props ) {
-	const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
-
-	const step = {
-		stepName,
-		stepSectionName,
-		domainUpsellItems: null,
-		...additionalStepData,
-	};
-
-	submitSignupStep( step, { domainUpsellItems: null } );
-	goToNextStep();
-}
-
 export default function FreePlansDomainDiscountLaunchStep( props ) {
 	const translate = useTranslate();
 	const {
@@ -144,6 +113,38 @@ function RecommendedDomains( props ) {
 			setSelectedDomain( productData[ 0 ].domain );
 		}
 	}, [ productData, selectedDomain, setSelectedDomain ] );
+
+	const handleUpgradeButtonClick = () => {
+		const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
+		if ( ! domainUpsellItems ) {
+			return;
+		}
+
+		const step = {
+			stepName,
+			stepSectionName,
+			domainUpsellItems,
+			...additionalStepData,
+		};
+
+		submitSignupStep( step, { domainUpsellItems } );
+		goToNextStep();
+	};
+
+	const handleSkipButtonClick = () => {
+		const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
+
+		const step = {
+			stepName,
+			stepSectionName,
+			domainUpsellItems: null,
+			...additionalStepData,
+		};
+
+		submitSignupStep( step, { domainUpsellItems: null } );
+		goToNextStep();
+	};
+
 	return (
 		<div className="free-plans-domain-discount-launch">
 			{ ! productData && <QuerySecureYourBrand domain={ domain } /> }
@@ -172,22 +173,13 @@ function RecommendedDomains( props ) {
 					</FormFieldset>
 				) }
 				<div className="free-plans-domain-discount-launch__buttons">
-					<Button
-						busy={ isLoading }
-						primary
-						onClick={ handleUpgradeButtonClick.bind(
-							this,
-							props,
-							selectedDomain,
-							domainUpsellItems
-						) }
-					>
+					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
 						{ isLoading ? '' : translate( 'Use %s', { args: [ selectedDomain ] } ) }
 					</Button>
 				</div>
 			</Card>
 			<div className="free-plans-domain-discount-launch__continue-link">
-				<Button compact borderless plain onClick={ handleSkipButtonClick.bind( this, props ) }>
+				<Button compact borderless plain onClick={ handleSkipButtonClick }>
 					{ translate( 'No thanks, continue to %s', {
 						args: [ siteSlug ],
 					} ) }
