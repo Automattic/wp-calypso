@@ -17,7 +17,7 @@ describe( 'isValidDomainQuery', () => {
 	} );
 
 	it( 'accepts a query with only letters that have diacritics that the server will strip', () => {
-		expect( isGoodDefaultDomainQuery( 'Ďîàçŕïţíćś ôñłÿ' ) ).toBe( true );
+		expect( isGoodDefaultDomainQuery( 'Ďîàçŕïţíćś' ) ).toBe( true );
 	} );
 
 	it( 'accepts all "latin" characters with one letter having a diacritic', () => {
