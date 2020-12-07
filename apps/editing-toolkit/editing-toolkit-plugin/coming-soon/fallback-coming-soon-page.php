@@ -61,10 +61,9 @@ function get_wpcom_redirect_to() {
  */
 function get_login_url() {
 	// If we're on WPCOM use a WordPress.com login URL.
-	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( '//wordpress.com/log-in?redirect_to=' . get_wpcom_redirect_to() );
+	if ( has_filter( 'wpcom_public_coming_soon_localize_url' ) ) {
+		return apply_filters( 'wpcom_public_coming_soon_localize_url', '//wordpress.com/log-in?redirect_to=' . get_wpcom_redirect_to() );
 	}
-
 	return site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
 }
 
@@ -74,8 +73,8 @@ function get_login_url() {
  * @return string The URL
  */
 function get_onboarding_url() {
-	if ( function_exists( 'localized_wpcom_url' ) ) {
-		return localized_wpcom_url( 'https://wordpress.com/?ref=coming_soon' );
+	if ( has_filter( 'wpcom_public_coming_soon_localize_url' ) ) {
+		return apply_filters( 'wpcom_public_coming_soon_localize_url', 'https://wordpress.com/?ref=coming_soon' );
 	}
 
 	$locale           = get_current_locale();
