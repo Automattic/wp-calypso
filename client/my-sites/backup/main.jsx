@@ -18,6 +18,7 @@ import { INDEX_FORMAT } from 'calypso/lib/jetpack/backup-utils';
 import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 import getDoesRewindNeedCredentials from 'calypso/state/selectors/get-does-rewind-need-credentials';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
+import getSettingsUrl from 'calypso/state/selectors/get-settings-url';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DocumentHead from 'calypso/components/data/document-head';
 import QueryRewindCapabilities from 'calypso/components/data/query-rewind-capabilities';
@@ -46,6 +47,7 @@ import './style.scss';
 
 const BackupPage = ( { queryDate } ) => {
 	const siteId = useSelector( getSelectedSiteId );
+	const siteSettingsUrl = useSelector( ( state ) => getSettingsUrl( state, siteId, 'general' ) );
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
@@ -63,7 +65,7 @@ const BackupPage = ( { queryDate } ) => {
 				} ) }
 			>
 				<SidebarNavigation />
-				<TimeMismatchWarning siteId={ siteId } />
+				<TimeMismatchWarning siteId={ siteId } settingsUrl={ siteSettingsUrl } />
 				{ ! isJetpackCloud() && (
 					<FormattedHeader headerText="Jetpack Backup" align="left" brandFont />
 				) }

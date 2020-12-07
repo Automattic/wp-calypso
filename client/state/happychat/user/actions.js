@@ -10,6 +10,8 @@ import {
 import { errorNotice } from 'calypso/state/notices/actions';
 import { setSupportLevel } from 'calypso/state/help/actions';
 
+import 'calypso/state/happychat/init';
+
 export const setHappyChatEligibility = ( isEligible ) => ( {
 	type: HAPPYCHAT_ELIGIBILITY_SET,
 	isEligible,

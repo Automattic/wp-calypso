@@ -103,13 +103,12 @@ describe( 'selectors', () => {
 					'guided-tours-history': toursHistory,
 				},
 			},
-			currentUser: { id: 1337 },
-			users: {
-				items: {
-					1337: {
-						date: '2015-11-20T00:00:00+00:00',
-						...userData,
-					},
+			currentUser: {
+				id: 1337,
+				user: {
+					ID: 1337,
+					date: '2015-11-20T00:00:00+00:00',
+					...userData,
 				},
 			},
 		} );

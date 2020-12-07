@@ -10,9 +10,10 @@ import { StripeHookProvider } from '@automattic/calypso-stripe';
 /**
  * Internal Dependencies
  */
-import CreditCardForm from 'calypso/blocks/credit-card-form';
+import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
@@ -24,28 +25,39 @@ import {
 } from 'calypso/state/purchases/selectors';
 import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import {
+	getStoredCardById,
+	hasLoadedStoredCardsFromServer,
+} from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import Layout from 'calypso/components/layout';
 import Column from 'calypso/components/layout/column';
 import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method-sidebar';
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
+import { isEnabled } from 'calypso/config';
+import { concatTitle } from 'calypso/lib/react-helpers';
 
-function AddCardDetails( props ) {
+function ChangePaymentMethod( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
+	const changePaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
+		? titles.changePaymentMethod
+		: titles.editCardDetails;
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( props.purchaseListUrl );
 	}
 
-	if ( isDataLoading ) {
+	if ( isDataLoading || ! props.hasLoadedStoredCardsFromServer ) {
 		return (
 			<Fragment>
+				<QueryStoredCards />
+
 				<QueryUserPurchases userId={ props.userId } />
 
-				<PaymentMethodLoader title={ titles.addCardDetails } />
+				<PaymentMethodLoader title={ titles.changePaymentMethod } />
 			</Fragment>
 		);
 	}
@@ -64,16 +76,20 @@ function AddCardDetails( props ) {
 	return (
 		<Fragment>
 			<TrackPurchasePageView
-				eventName="calypso_add_card_details_purchase_view"
+				eventName="calypso_change_payment_method_view"
 				purchaseId={ props.purchaseId }
 			/>
 			<PageViewTracker
-				path="/me/purchases/:site/:purchaseId/payment/add"
-				title="Purchases > Add Card Details"
+				path={
+					isEnabled( 'purchases/new-payment-methods' )
+						? '/me/purchases/:site/:purchaseId/payment-method/change/:cardId'
+						: '/me/purchases/:site/:purchaseId/payment/change/:cardId'
+				}
+				title={ concatTitle( titles.purchases, changePaymentMethodTitle ) }
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>
-				{ titles.addCardDetails }
+				{ changePaymentMethodTitle }
 			</HeaderCake>
 
 			<Layout>
@@ -83,8 +99,9 @@ function AddCardDetails( props ) {
 						configurationArgs={ { needs_intent: true } }
 						fetchStripeConfiguration={ getStripeConfiguration }
 					>
-						<CreditCardForm
+						<PaymentMethodForm
 							apiParams={ { purchaseId: props.purchase.id } }
+							initialValues={ props.card }
 							purchase={ props.purchase }
 							recordFormSubmitEvent={ recordFormSubmitEvent }
 							siteSlug={ props.siteSlug }
@@ -100,11 +117,11 @@ function AddCardDetails( props ) {
 	);
 }
 
-AddCardDetails.propTypes = {
-	getManagePurchaseUrlFor: PropTypes.func.isRequired,
-	purchaseListUrl: PropTypes.string.isRequired,
+ChangePaymentMethod.propTypes = {
+	card: PropTypes.object,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
+	hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 	purchaseId: PropTypes.number.isRequired,
 	purchase: PropTypes.object,
@@ -112,11 +129,15 @@ AddCardDetails.propTypes = {
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
 	locale: PropTypes.string,
+	purchaseListUrl: PropTypes.string.isRequired,
+	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
-const mapStateToProps = ( state, { purchaseId } ) => ( {
+const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
+	card: getStoredCardById( state, cardId ),
 	hasLoadedSites: ! isRequestingSites( state ),
+	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	purchase: getByPurchaseId( state, purchaseId ),
 	selectedSite: getSelectedSite( state ),
@@ -124,4 +145,6 @@ const mapStateToProps = ( state, { purchaseId } ) => ( {
 	locale: getCurrentUserLocale( state ),
 } );
 
-export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )( AddCardDetails );
+export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )(
+	ChangePaymentMethod
+);

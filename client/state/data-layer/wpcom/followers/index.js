@@ -33,13 +33,15 @@ const receiveFollowers = ( { query }, data ) => [ requestFollowersSuccess( query
 const requestFollowersError = ( { query }, error ) => [ requestFollowersFailure( query, error ) ];
 
 const removeFollower = ( action ) => {
-	const { siteId, follower } = action;
+	const { siteId, follower, followerType } = action;
+
+	const followersEndpoint = followerType === 'email' ? 'email-followers' : 'followers';
 
 	return [
 		http(
 			{
 				method: 'POST',
-				path: `/sites/${ siteId }/followers/${ follower.ID }/delete`,
+				path: `/sites/${ siteId }/${ followersEndpoint }/${ follower.ID }/delete`,
 				apiVersion: '1.1',
 			},
 			action

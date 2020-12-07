@@ -15,9 +15,7 @@ import {
 } from 'calypso/state/data-layer/http-data';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
 import documentHead from 'calypso/state/document-head/reducer';
-import notices from 'calypso/state/notices/reducer';
 import i18n from 'calypso/state/i18n/reducer';
-import users from 'calypso/state/users/reducer';
 import currentUser from 'calypso/state/current-user/reducer';
 
 // Legacy reducers
@@ -25,9 +23,7 @@ import currentUser from 'calypso/state/current-user/reducer';
 const rootReducer = combineReducers( {
 	documentHead,
 	httpData,
-	notices,
 	i18n,
-	users,
 	currentUser,
 } );
 

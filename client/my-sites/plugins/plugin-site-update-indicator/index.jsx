@@ -12,8 +12,8 @@ import React from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import Gridicon from 'calypso/components/gridicon';
-import PluginsActions from 'calypso/lib/plugins/actions';
 import { updatePlugin } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -39,7 +39,7 @@ class PluginSiteUpdateIndicator extends React.Component {
 		ev.stopPropagation();
 
 		this.props.updatePlugin( this.props.site.ID, this.props.plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error' );
 		gaRecordEvent(
 			'Plugins',
 			'Clicked Update Single Site Plugin',
@@ -115,4 +115,6 @@ class PluginSiteUpdateIndicator extends React.Component {
 	}
 }
 
-export default connect( null, { updatePlugin } )( localize( PluginSiteUpdateIndicator ) );
+export default connect( null, { removePluginStatuses, updatePlugin } )(
+	localize( PluginSiteUpdateIndicator )
+);

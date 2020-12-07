@@ -27,6 +27,7 @@ describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {
 		expect( reducer( undefined, {} ) ).to.have.keys( [
 			'id',
+			'user',
 			'currencyCode',
 			'capabilities',
 			'flags',

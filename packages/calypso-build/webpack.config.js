@@ -103,7 +103,7 @@ function getWebpackConfig(
 				terserOptions: {
 					ecma: 5,
 					safari10: true,
-					mangle: true,
+					mangle: { reserved: [ '__', '_n', '_nx', '_x' ] },
 				},
 			} ),
 		},

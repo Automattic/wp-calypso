@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
 import ExternalLink from 'calypso/components/external-link';
 import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { togglePluginAutoUpdate } from 'calypso/state/plugins/installed/actions';
 
 const autoUpdateActions = [ 'ENABLE_AUTOUPDATE_PLUGIN', 'DISABLE_AUTOUPDATE_PLUGIN' ];
@@ -35,7 +35,7 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		this.props.togglePluginAutoUpdate( site.ID, plugin );
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+		this.props.removePluginStatuses( 'completed', 'error' );
 
 		if ( plugin.autoupdate ) {
 			recordGAEvent(
@@ -184,6 +184,7 @@ export default connect(
 	{
 		recordGoogleEvent,
 		recordTracksEvent,
+		removePluginStatuses,
 		togglePluginAutoUpdate,
 	}
 )( localize( PluginAutoUpdateToggle ) );
