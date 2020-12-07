@@ -105,7 +105,7 @@ export interface Props {
 	locale?: string;
 
 	/** Whether we show the free .wordpress.com sub-domain first or last */
-	positionExistingSubDomainLast?: boolean;
+	positionExistingSubdomainLast?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -128,7 +128,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	itemType = ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
-	positionExistingSubDomainLast = false,
+	positionExistingSubdomainLast = false,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -292,34 +292,36 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					) }
 					<div className="domain-picker__suggestion-sections">
 						<>
-							{ segregateFreeAndPaid && (
+							{ ! positionExistingSubdomainLast && segregateFreeAndPaid && (
 								<ItemGroupLabel>{ __( 'Keep sub-domain', __i18n_text_domain__ ) }</ItemGroupLabel>
 							) }
-							<ItemGrouper groupItems={ segregateFreeAndPaid }>
-								{ existingSubdomain?.domain_name && (
-									<SuggestionItem
-										key={ existingSubdomain?.domain_name }
-										domain={ existingSubdomain?.domain_name }
-										cost="Free"
-										isFree
-										isExistingSubdomain
-										railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
-										onRender={ () =>
-											handleItemRender(
-												existingSubdomain?.domain_name,
-												`${ baseRailcarId }${ 0 }`,
-												0,
-												false
-											)
-										}
-										selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
-										onSelect={ () => {
-											onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
-										} }
-										type={ itemType }
-									/>
-								) }
-							</ItemGrouper>
+							{ ! positionExistingSubdomainLast && (
+								<ItemGrouper groupItems={ segregateFreeAndPaid }>
+									{ existingSubdomain?.domain_name && (
+										<SuggestionItem
+											key={ existingSubdomain?.domain_name }
+											domain={ existingSubdomain?.domain_name }
+											cost="Free"
+											isFree
+											isExistingSubdomain
+											railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
+											onRender={ () =>
+												handleItemRender(
+													existingSubdomain?.domain_name,
+													`${ baseRailcarId }${ 0 }`,
+													0,
+													false
+												)
+											}
+											selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
+											onSelect={ () => {
+												onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
+											} }
+											type={ itemType }
+										/>
+									) }
+								</ItemGrouper>
+							) }
 							{ segregateFreeAndPaid && (
 								<ItemGroupLabel>
 									{ __( 'Professional domains', __i18n_text_domain__ ) }
@@ -370,6 +372,36 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										<SuggestionItemPlaceholder type={ itemType } key={ i } />
 									) ) }
 							</ItemGrouper>
+							{ positionExistingSubdomainLast && segregateFreeAndPaid && (
+								<ItemGroupLabel>{ __( 'Keep sub-domain', __i18n_text_domain__ ) }</ItemGroupLabel>
+							) }
+							{ positionExistingSubdomainLast && (
+								<ItemGrouper groupItems={ segregateFreeAndPaid }>
+									{ existingSubdomain?.domain_name && (
+										<SuggestionItem
+											key={ existingSubdomain?.domain_name }
+											domain={ existingSubdomain?.domain_name }
+											cost="Free"
+											isFree
+											isExistingSubdomain
+											railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
+											onRender={ () =>
+												handleItemRender(
+													existingSubdomain?.domain_name,
+													`${ baseRailcarId }${ 0 }`,
+													0,
+													false
+												)
+											}
+											selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
+											onSelect={ () => {
+												onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
+											} }
+											type={ itemType }
+										/>
+									) }
+								</ItemGrouper>
+							) }
 						</>
 
 						{ ! isExpanded &&
