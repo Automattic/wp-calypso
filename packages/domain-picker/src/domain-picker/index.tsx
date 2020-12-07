@@ -4,7 +4,7 @@
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { useSelect } from '@wordpress/data';
 import { noop, times } from 'lodash';
-import { Button, TextControl } from '@wordpress/components';
+import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import type { DomainSuggestions } from '@automattic/data-stores';
@@ -258,13 +258,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 				</div>
 			) }
 			{ showErrorMessage && (
-				<div className="domain-picker__error">
+				<Notice className="domain-picker__error" status="error" isDismissible={ false }>
 					<p className="domain-picker__error-message">
-						{ __(
-							'An error has occurred, please check your connection and retry.',
-							__i18n_text_domain__
-						) }
-						{ domainSuggestionErrorMessage && ` ${ domainSuggestionErrorMessage }` }
+						{ domainSuggestionErrorMessage ||
+							__(
+								'An error has occurred, please check your connection and retry.',
+								__i18n_text_domain__
+							) }
 					</p>
 					<Button
 						isPrimary
@@ -273,7 +273,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					>
 						{ __( 'Retry', __i18n_text_domain__ ) }
 					</Button>
-				</div>
+				</Notice>
 			) }
 			{ ( showDomainSuggestionsResults || areDependenciesLoading ) && (
 				<div className="domain-picker__body">
