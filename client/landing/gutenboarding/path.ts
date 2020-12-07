@@ -128,7 +128,7 @@ export function useAnchorFmPodcastId(): string | null {
 
 	// Fall back to looking in query param
 	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
-	if ( queryParam !== null && queryParam !== '' ) {
+	if ( queryParam ) {
 		return sanitizePodcastId( queryParam );
 	}
 	return null;
