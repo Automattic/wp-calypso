@@ -76,7 +76,7 @@ export default function status( state = {}, action ) {
 				} )
 				.filter( ( siteStatus ) => siteStatus.length );
 
-			return { ...Object.fromEntries( allStatuses ) };
+			return Object.fromEntries( allStatuses );
 		}
 		default:
 			return state;
