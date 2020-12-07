@@ -14,6 +14,7 @@ import {
 	redirectConnections,
 	redirectDefaultConnectionsDomain,
 	redirectMarketingTools,
+	marketingBusinessTools,
 	redirectSharingButtons,
 	sharingButtons,
 	traffic,
@@ -29,6 +30,7 @@ export default function () {
 		'/marketing/traffic',
 		'/sharing',
 		'/sharing/buttons',
+		'/marketing/business-tools',
 	];
 
 	paths.forEach( ( path ) => page( path, ...[ siteSelection, sites, makeLayout, clientRender ] ) );
@@ -77,6 +79,16 @@ export default function () {
 		siteSelection,
 		navigation,
 		marketingTools,
+		layout,
+		makeLayout,
+		clientRender
+	);
+
+	page(
+		'/marketing/business-tools/:domain',
+		siteSelection,
+		navigation,
+		marketingBusinessTools,
 		layout,
 		makeLayout,
 		clientRender

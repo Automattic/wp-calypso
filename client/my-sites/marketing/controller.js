@@ -9,6 +9,7 @@ import { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import MarketingTools from './tools';
+import MarketingBusinessTools from './business-tools';
 import notices from 'calypso/notices';
 import Sharing from './main';
 import SharingButtons from './buttons/buttons';
@@ -60,6 +61,10 @@ export const redirectMarketingTools = ( context ) => {
 	page.redirect( '/marketing/tools/' + context.params.domain );
 };
 
+export const redirectMarketingBusinessTools = ( context ) => {
+	page.redirect( '/marketing/business-tools/' + context.params.domain );
+};
+
 export const redirectSharingButtons = ( context ) => {
 	page.redirect( '/marketing/sharing-buttons/' + context.params.domain );
 };
@@ -93,6 +98,12 @@ export const connections = ( context, next ) => {
 
 export const marketingTools = ( context, next ) => {
 	context.contentComponent = createElement( MarketingTools );
+
+	next();
+};
+
+export const marketingBusinessTools = ( context, next ) => {
+	context.contentComponent = createElement( MarketingBusinessTools );
 
 	next();
 };
