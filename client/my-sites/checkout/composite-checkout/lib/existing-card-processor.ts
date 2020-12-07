@@ -22,7 +22,7 @@ export default async function existingCardProcessor(
 	dataForProcessor: CardProcessorOptions
 ): Promise< PaymentProcessorResponse > {
 	if ( ! isValidTransactionData( transactionData ) ) {
-		throw new Error( 'Missing data for processor' );
+		throw new Error( 'Required purchase data is missing' );
 	}
 	const { stripeConfiguration, recordEvent } = dataForProcessor;
 	if ( ! stripeConfiguration ) {
@@ -70,11 +70,16 @@ function isValidTransactionData(
 	if ( ! ( data?.items?.length > 0 ) ) {
 		return false;
 	}
-	// Data required for this payment method type
+	// Validate data required for this payment method type. Some other data may
+	// be required by the server but not required here since the server will give
+	// a better localized error message than we can provide.
 	if (
 		! data.siteId ||
+		! data.country ||
+		! data.postalCode ||
 		! data.storedDetailsId ||
 		! data.name ||
+		! data.paymentMethodType ||
 		! data.paymentMethodToken ||
 		! data.paymentPartnerProcessorId
 	) {
