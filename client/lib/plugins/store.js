@@ -233,23 +233,6 @@ const PluginsStore = {
 		return _fetching[ site.ID ];
 	},
 
-	// Array of sites without a particular plugin.
-	getNotInstalledSites: function ( sites, pluginSlug ) {
-		const installedOnSites = this.getSites( sites, pluginSlug ) || [];
-		return sites.filter( function ( site ) {
-			if ( ! site.visible ) {
-				return false;
-			}
-			if ( site.jetpack && site.isSecondaryNetworkSite ) {
-				return false;
-			}
-
-			return installedOnSites.every( function ( installedOnSite ) {
-				return installedOnSite.slug !== site.slug;
-			} );
-		} );
-	},
-
 	emitChange: function () {
 		this.emit( 'change' );
 	},
