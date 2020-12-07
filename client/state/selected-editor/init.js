@@ -2,6 +2,6 @@
  * Internal dependencies
  */
 import { registerReducer } from 'calypso/state/redux-store';
-import readerReducer from './reducer';
+import reducer from './reducer';
 
-registerReducer( [ 'selectedEditor' ], readerReducer );
+registerReducer( [ 'selectedEditor' ], reducer );
