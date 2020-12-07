@@ -31,6 +31,8 @@ import {
 } from 'calypso/state/action-types';
 import { HAPPYCHAT_MESSAGE_TYPES } from 'calypso/state/happychat/constants';
 
+import 'calypso/state/happychat/init';
+
 /**
  * Returns an action object indicating that the connection is being stablished.
  *
@@ -153,7 +155,9 @@ export const receiveError = ( error ) => ( { type: HAPPYCHAT_IO_RECEIVE_ERROR, e
 /**
  * Returns an action object for the transcript reception.
  *
- * @param {object} result An object with {messages, timestamp} props
+ * @param {object} result           An object with {messages, timestamp} props
+ * @param {Array}  result.messages  An array of message objects
+ * @param {number} result.timestamp The transcript reception timestamp
  * @returns {object} Action object
  */
 export const receiveTranscript = ( { messages, timestamp } ) => ( {

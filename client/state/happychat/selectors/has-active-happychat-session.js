@@ -14,6 +14,8 @@ import {
 } from 'calypso/state/happychat/constants';
 import createSelector from 'calypso/lib/create-selector';
 
+import 'calypso/state/happychat/init';
+
 /**
  * Returns true if there's an active chat session in-progress. Chat sessions with
  * the status `new`, `default`, or `closed` are considered inactive, as the session
