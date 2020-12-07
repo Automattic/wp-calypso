@@ -284,7 +284,9 @@ class InvitePeople extends React.Component {
 			this.refreshFormState( response.errors, response.sent );
 		} catch ( error ) {
 			this.props.errorNotice(
-				this.props.translate( "We couldn't process your invitations. Please try again." )
+				this.props.translate(
+					"Sorry, we couldn't process your invitations. Please try again later."
+				)
 			);
 			this.props.recordTracksEventAction( 'calypso_invite_send_failed' );
 			this.setState( { sendingInvites: false } );
