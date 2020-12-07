@@ -104,7 +104,7 @@ export function* createSite( {
 				visibility === Site.Visibility.PublicNotIndexed && {
 					wpcom_public_coming_soon: 1,
 				} ),
-			...( anchorFmPodcastId !== null && {
+			...( anchorFmPodcastId && {
 				anchor_fm_podcast_id: anchorFmPodcastId,
 			} ),
 		},
