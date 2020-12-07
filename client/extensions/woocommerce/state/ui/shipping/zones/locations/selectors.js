@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { every, forIn, isEmpty, isObject, orderBy } from 'lodash';
+import { every, isEmpty, isObject, orderBy } from 'lodash';
 
 /**
  * Internal dependencies
@@ -39,14 +39,16 @@ const getContinentsOwnedByOtherZone = createSelector(
 	( state, siteId ) => {
 		const continents = {};
 		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-		forIn( getRawShippingZoneLocations( state, siteId ), ( { continent }, zoneId ) => {
-			if ( currentZone.id === Number( zoneId ) ) {
-				return;
+		Object.entries( getRawShippingZoneLocations( state, siteId ) ).map(
+			( [ zoneId, { continent } ] ) => {
+				if ( currentZone.id === Number( zoneId ) ) {
+					return;
+				}
+				for ( const c of continent ) {
+					continents[ c ] = Number( zoneId );
+				}
 			}
-			for ( const c of continent ) {
-				continents[ c ] = Number( zoneId );
-			}
-		} );
+		);
 		return continents;
 	},
 	( state, siteId ) => {
@@ -71,14 +73,16 @@ const getCountriesOwnedByOtherZone = createSelector(
 		const countries = {};
 		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
 
-		forIn( getRawShippingZoneLocations( state, siteId ), ( { country, postcode }, zoneId ) => {
-			if ( currentZone.id === Number( zoneId ) || ! isEmpty( postcode ) ) {
-				return;
+		Object.entries( getRawShippingZoneLocations( state, siteId ) ).map(
+			( [ zoneId, { country, postcode } ] ) => {
+				if ( currentZone.id === Number( zoneId ) || ! isEmpty( postcode ) ) {
+					return;
+				}
+				for ( const c of country ) {
+					countries[ c ] = Number( zoneId );
+				}
 			}
-			for ( const c of country ) {
-				countries[ c ] = Number( zoneId );
-			}
-		} );
+		);
 		return countries;
 	},
 	( state, siteId ) => {
@@ -103,17 +107,19 @@ const getStatesOwnedByOtherZone = createSelector(
 	( state, siteId, countryCode ) => {
 		const states = {};
 		const currentZone = getCurrentlyEditingShippingZone( state, siteId );
-		forIn( getRawShippingZoneLocations( state, siteId ), ( locations, zoneId ) => {
-			if ( currentZone.id === Number( zoneId ) ) {
-				return;
-			}
-			for ( const s of locations.state ) {
-				const [ stateCountry, stateCode ] = s.split( ':' );
-				if ( stateCountry === countryCode ) {
-					states[ stateCode ] = Number( zoneId );
+		Object.entries( getRawShippingZoneLocations( state, siteId ) ).map(
+			( [ zoneId, locations ] ) => {
+				if ( currentZone.id === Number( zoneId ) ) {
+					return;
+				}
+				for ( const s of locations.state ) {
+					const [ stateCountry, stateCode ] = s.split( ':' );
+					if ( stateCountry === countryCode ) {
+						states[ stateCode ] = Number( zoneId );
+					}
 				}
 			}
-		} );
+		);
 		return states;
 	},
 	( state, siteId ) => {
@@ -256,7 +262,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					// This is a "countries" zone now, remove all the continents
 					continents.clear();
 					break;
-				case JOURNAL_ACTIONS.REMOVE_COUNTRY:
+				case JOURNAL_ACTIONS.REMOVE_COUNTRY: {
 					let insideSelectedContinent = false;
 					for ( const continentCode of continents ) {
 						if ( insideSelectedContinent ) {
@@ -283,6 +289,7 @@ export const getShippingZoneLocationsWithEdits = createSelector(
 					}
 					countries.delete( code );
 					break;
+				}
 			}
 		} );
 
