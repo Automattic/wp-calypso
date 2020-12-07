@@ -3,8 +3,7 @@
  */
 
 import Debug from 'debug';
-import { get, isEmpty } from 'lodash';
-import i18n from 'i18n-calypso';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -121,74 +120,5 @@ export function acceptInvite( invite, callback ) {
 				callback( error, data );
 			}
 		} );
-	};
-}
-
-export function sendInvites( siteId, usernamesOrEmails, role, message, formId, isExternal ) {
-	return ( dispatch ) => {
-		Dispatcher.handleViewAction( {
-			type: ActionTypes.SENDING_INVITES,
-			siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			isExternal,
-		} );
-		wpcom
-			.undocumented()
-			.sendInvites( siteId, usernamesOrEmails, role, message, isExternal, ( error, data ) => {
-				const validationErrors = get( data, 'errors' );
-				const isErrored = !! error || ! isEmpty( validationErrors );
-
-				Dispatcher.handleServerAction( {
-					type: isErrored
-						? ActionTypes.RECEIVE_SENDING_INVITES_ERROR
-						: ActionTypes.RECEIVE_SENDING_INVITES_SUCCESS,
-					error,
-					siteId,
-					usernamesOrEmails,
-					role,
-					message,
-					formId,
-					data,
-					isExternal,
-				} );
-
-				if ( isErrored ) {
-					// If there are no validation errors but the form errored, assume that all errored
-					const countErrors =
-						error || isEmpty( validationErrors ) || 'object' !== typeof validationErrors
-							? usernamesOrEmails.length
-							: Object.keys( data.errors ).length;
-
-					if ( countErrors === usernamesOrEmails.length ) {
-						message = i18n.translate( 'Invitation failed to send', 'Invitations failed to send', {
-							count: countErrors,
-							context: 'Displayed in a notice when all invitations failed to send.',
-						} );
-					} else {
-						message = i18n.translate(
-							'An invitation failed to send',
-							'Some invitations failed to send',
-							{
-								count: countErrors,
-								context: 'Displayed in a notice when some invitations failed to send.',
-							}
-						);
-					}
-
-					dispatch( errorNotice( message ) );
-					recordTracksEvent( 'calypso_invite_send_failed' );
-				} else {
-					dispatch(
-						successNotice(
-							i18n.translate( 'Invitation sent successfully', 'Invitations sent successfully', {
-								count: usernamesOrEmails.length,
-							} )
-						)
-					);
-					recordTracksEvent( 'calypso_invite_send_success', { role } );
-				}
-			} );
 	};
 }

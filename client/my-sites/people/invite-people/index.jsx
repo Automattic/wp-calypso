@@ -4,7 +4,7 @@
 
 import React from 'react';
 import page from 'page';
-import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some, uniqueId } from 'lodash';
+import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -20,12 +20,11 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import { sendInvites, generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
+import { generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import EmptyContent from 'calypso/components/empty-content';
 import { userCan } from 'calypso/lib/site/utils';
@@ -55,6 +54,7 @@ import SectionHeader from 'calypso/components/section-header';
 import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import wpcom from 'calypso/lib/wp';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -68,14 +68,6 @@ const debug = debugModule( 'calypso:my-sites:people:invite' );
 
 class InvitePeople extends React.Component {
 	static displayName = 'InvitePeople';
-
-	componentDidMount() {
-		InvitesSentStore.on( 'change', this.refreshFormState );
-	}
-
-	componentWillUnmount() {
-		InvitesSentStore.off( 'change', this.refreshFormState );
-	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		if (
@@ -110,16 +102,15 @@ class InvitePeople extends React.Component {
 		};
 	};
 
-	refreshFormState = () => {
-		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
-
-		if ( sendInvitesSuccess ) {
+	refreshFormState = ( errors = {}, success = [] ) => {
+		if ( success.length && ! Object.keys( errors ).length ) {
 			this.setState( this.resetState() );
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
-		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
-			const errors = get( sendInvitesErrored, 'errors', {} );
+			return;
+		}
+
+		if ( Object.keys( errors ).length ) {
 			const updatedState = { sendingInvites: false };
 			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
 				const errorKeys = Object.keys( errors );
@@ -134,7 +125,10 @@ class InvitePeople extends React.Component {
 
 			this.setState( updatedState );
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_retry' );
+			return;
 		}
+
+		this.setState( { sendingInvites: false } );
 	};
 
 	onTokensChange = ( tokens ) => {
@@ -245,6 +239,58 @@ class InvitePeople extends React.Component {
 		return tokens;
 	};
 
+	async sendInvites( siteId, usernamesOrEmails, role, message, isExternal ) {
+		try {
+			const response = await wpcom
+				.undocumented()
+				.sendInvites( siteId, usernamesOrEmails, role, message, isExternal );
+
+			const countValidationErrors = Object.keys( response.errors ).length;
+
+			if ( countValidationErrors ) {
+				let errorMessage;
+
+				if ( countValidationErrors === usernamesOrEmails.length ) {
+					errorMessage = this.props.translate(
+						'Invitation failed to send',
+						'Invitations failed to send',
+						{
+							count: countValidationErrors,
+							context: 'Displayed in a notice when all invitations failed to send.',
+						}
+					);
+				} else {
+					errorMessage = this.props.translate(
+						'An invitation failed to send',
+						'Some invitations failed to send',
+						{
+							count: countValidationErrors,
+							context: 'Displayed in a notice when some invitations failed to send.',
+						}
+					);
+				}
+
+				this.props.errorNotice( errorMessage );
+				this.props.recordTracksEventAction( 'calypso_invite_send_failed' );
+			} else {
+				this.props.successNotice(
+					this.props.translate( 'Invitation sent successfully', 'Invitations sent successfully', {
+						count: usernamesOrEmails.length,
+					} )
+				);
+				this.props.recordTracksEventAction( 'calypso_invite_send_success', { role } );
+			}
+
+			this.refreshFormState( response.errors, response.sent );
+		} catch ( error ) {
+			this.props.errorNotice(
+				this.props.translate( "We couldn't process your invitations. Please try again." )
+			);
+			this.props.recordTracksEventAction( 'calypso_invite_send_failed' );
+			this.setState( { sendingInvites: false } );
+		}
+	}
+
 	submitForm = ( event ) => {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
@@ -253,18 +299,10 @@ class InvitePeople extends React.Component {
 			return false;
 		}
 
-		const formId = uniqueId();
 		const { usernamesOrEmails, message, role, isExternal } = this.state;
 
-		this.setState( { sendingInvites: true, formId } );
-		this.props.sendInvites(
-			this.props.siteId,
-			usernamesOrEmails,
-			role,
-			message,
-			formId,
-			isExternal
-		);
+		this.setState( { sendingInvites: true } );
+		this.sendInvites( this.props.siteId, usernamesOrEmails, role, message, isExternal );
 
 		const groupedInvitees = groupBy( usernamesOrEmails, ( invitee ) => {
 			return includes( invitee, '@' ) ? 'email' : 'username';
@@ -728,10 +766,11 @@ const connectComponent = connect(
 	( dispatch ) => ( {
 		...bindActionCreators(
 			{
-				sendInvites,
 				activateModule,
 				generateInviteLinks,
 				disableInviteLinks,
+				errorNotice,
+				successNotice,
 			},
 			dispatch
 		),
