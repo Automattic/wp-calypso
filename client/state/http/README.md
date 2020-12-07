@@ -12,6 +12,7 @@ So, let's say you would like to do a `POST` request to <https://api.example.com>
 import { GET_EXAMPLE_DATA, EXAMPLE_DATA_ADD, NOTICE_CREATE } from 'calypso/state/action-types';
 import { dispatchRequest } from 'calypso/state/wpcom-http/utils';
 import { http } from 'calypso/state/http/actions';
+import { createNotice } from 'calypso/state/notices/actions';
 import { get } from 'lodash';
 
 const requestExampleData = ( action ) =>
@@ -32,12 +33,10 @@ const receivedExampleData = ( action, data ) => ( {
 	data,
 } );
 
-const receivedExampleDataError = ( action, error ) => ( {
-	type: NOTICE_CREATE,
-	notice: {
-		text: get( error, 'response.body.error', null ),
-	},
-} );
+const receivedExampleDataError = ( action, error ) => createNotice(
+	'is-error',
+	get( error, 'response.body.error', null )
+);
 
 export default {
 	[ GET_EXAMPLE_DATA ]: dispatchRequest( {
