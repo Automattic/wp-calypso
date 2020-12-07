@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { assign, flowRight, flow, get } from 'lodash';
-import Dispatcher from 'calypso/dispatcher';
 import debugFactory from 'debug';
 
 /**
@@ -66,8 +65,6 @@ function CartSynchronizer( cartKey, wpcom ) {
 	this._activeRequest = null;
 	this._queuedChanges = null;
 	this._paused = false;
-
-	this.dispatchToken = Dispatcher.register( this.handleDispatch.bind( this ) );
 }
 
 Emitter( CartSynchronizer.prototype );
