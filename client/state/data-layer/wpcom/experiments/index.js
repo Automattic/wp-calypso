@@ -31,9 +31,9 @@ const transformApiRequest = ( data ) => ( {
 export const handleFetchExperiments = ( action ) =>
 	http(
 		{
-			apiNamespace: 'wpcom',
+			apiNamespace: 'wpcom/v2',
 			method: 'GET',
-			path: '/v2/experiments/0.1.0/assignments/calypso',
+			path: '/experiments/0.1.0/assignments/calypso',
 			query: {
 				anon_id: action.anonId,
 			},
