@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import React, { useEffect, useState, useContext, createContext } from 'react';
+import React, { useEffect, useCallback, useState, useContext, createContext } from 'react';
 import { loadScript } from '@automattic/load-script';
 // We are several versions old for react-stripe-elements, and probably should
 // actually upgrade to the new Stripe.js anyway. Trying to use the actual types
@@ -71,14 +71,14 @@ export interface StripeConfiguration {
 	setup_intent_id: null | string;
 }
 
-type SetStripeError = ( error: string ) => void;
+export type ReloadStripeConfiguration = () => void;
 
 export interface StripeData {
 	stripe: null | Stripe;
 	stripeConfiguration: null | StripeConfiguration;
 	isStripeLoading: boolean;
 	stripeLoadingError: undefined | null | Error;
-	setStripeError: SetStripeError;
+	reloadStripeConfiguration: ReloadStripeConfiguration;
 }
 
 export type StripeSetupIntent = { payment_method: string };
@@ -402,7 +402,7 @@ function useStripeJs(
  * This is internal. You probably actually want the useStripe hook.
  *
  * Returns an object with two properties: `stripeConfiguration`, and
- * `setStripeError`.
+ * `reloadStripeConfiguration`.
  *
  * `stripeConfiguration` is an object as returned by the stripe configuration
  * endpoint, possibly including a Setup Intent if one was requested (via
@@ -410,8 +410,7 @@ function useStripeJs(
  *
  * If there is a stripe error, it may be necessary to reload the configuration
  * since (for example) a Setup Intent may need to be recreated. You can force
- * the configuration to reload by setting a value by calling `setStripeError()`
- * with a value for that error.
+ * the configuration to reload by calling `reloadStripeConfiguration()`.
  *
  * @param {Function} fetchStripeConfiguration A function that will fetch the stripe configuration from the HTTP API
  * @param {object} [requestArgs] (optional) Can include `country` or `needs_intent`
@@ -423,13 +422,18 @@ function useStripeConfiguration(
 ): {
 	stripeConfiguration: StripeConfiguration | undefined;
 	stripeConfigurationError: undefined | Error;
-	setStripeError: SetStripeError;
+	reloadStripeConfiguration: ReloadStripeConfiguration;
 } {
-	const [ stripeError, setStripeError ] = useState< undefined | string >();
+	const [ stripeReloadCount, setReloadCount ] = useState< number >( 0 );
 	const [ stripeConfigurationError, setStripeConfigurationError ] = useState< undefined | Error >();
 	const [ stripeConfiguration, setStripeConfiguration ] = useState<
 		undefined | StripeConfiguration
 	>();
+	const reloadStripeConfiguration = useCallback(
+		() => setReloadCount( ( count ) => count + 1 ),
+		[]
+	);
+
 	useEffect( () => {
 		debug( 'loading stripe configuration' );
 		let isSubscribed = true;
@@ -463,8 +467,8 @@ function useStripeConfiguration(
 		return () => {
 			isSubscribed = false;
 		};
-	}, [ requestArgs, stripeError, fetchStripeConfiguration ] );
-	return { stripeConfiguration, stripeConfigurationError, setStripeError };
+	}, [ requestArgs, stripeReloadCount, fetchStripeConfiguration ] );
+	return { stripeConfiguration, stripeConfigurationError, reloadStripeConfiguration };
 }
 
 function StripeHookProviderInnerWrapper( {
@@ -493,10 +497,11 @@ export function StripeHookProvider( {
 	locale?: undefined | string;
 } ): JSX.Element {
 	debug( 'rendering StripeHookProvider' );
-	const { stripeConfiguration, stripeConfigurationError, setStripeError } = useStripeConfiguration(
-		fetchStripeConfiguration,
-		configurationArgs
-	);
+	const {
+		stripeConfiguration,
+		stripeConfigurationError,
+		reloadStripeConfiguration,
+	} = useStripeConfiguration( fetchStripeConfiguration, configurationArgs );
 	const { stripeJs, isStripeLoading, stripeLoadingError } = useStripeJs(
 		stripeConfiguration,
 		stripeConfigurationError,
@@ -508,7 +513,7 @@ export function StripeHookProvider( {
 		stripeConfiguration,
 		isStripeLoading,
 		stripeLoadingError,
-		setStripeError,
+		reloadStripeConfiguration,
 	};
 
 	return (
@@ -533,7 +538,7 @@ export function StripeHookProvider( {
  * - stripeConfiguration: the object containing the data returned by the wpcom stripe configuration endpoint
  * - isStripeLoading: a boolean that is true if stripe is currently being loaded
  * - stripeLoadingError: an optional object that will be set if there is an error loading stripe
- * - setStripeError: a function that can be called with a value to force the stripe configuration to reload
+ * - reloadStripeConfiguration: a function that can be called with a value to force the stripe configuration to reload
  *
  * @returns {StripeData} See above
  */
@@ -545,10 +550,10 @@ export function useStripe(): StripeData {
 			stripeConfiguration: null,
 			isStripeLoading: false,
 			stripeLoadingError: null,
-			setStripeError: ( error: string ) => {
+			reloadStripeConfiguration: () => {
 				// eslint-disable-next-line no-console
 				console.error(
-					`You cannot use setStripeError until stripe has been initialized. Got "${ error }"`
+					`You cannot use reloadStripeConfiguration until stripe has been initialized.`
 				);
 			},
 		}
