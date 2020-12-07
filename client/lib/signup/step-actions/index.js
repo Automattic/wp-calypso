@@ -397,15 +397,15 @@ export function addDomainUpsellToCart(
 	stepProvidedDependencies
 ) {
 	const slug = siteSlug || dependencies.siteSlug;
-	const { domainUpsellItems } = stepProvidedItems;
+	const { selectedDomainUpsellItem } = stepProvidedItems;
 
-	if ( isEmpty( domainUpsellItems ) ) {
+	if ( isEmpty( selectedDomainUpsellItem ) ) {
 		defer( callback );
 		return;
 	}
 	processItemCart(
 		stepProvidedDependencies,
-		domainUpsellItems,
+		[ selectedDomainUpsellItem ],
 		callback,
 		reduxStore,
 		slug,
@@ -816,8 +816,11 @@ export function isFreePlansDomainUpselFulfilled( stepName, defaultDependencies, 
 	}
 
 	if ( isPaidPlan || domainItem || cartItem || 'test' !== abtest( 'freePlansDomainUpsell' ) ) {
-		const domainUpsellItems = null;
-		submitSignupStep( { stepName, domainUpsellItems, wasSkipped: true }, { domainUpsellItems } );
+		const selectedDomainUpsellItem = null;
+		submitSignupStep(
+			{ stepName, selectedDomainUpsellItem, wasSkipped: true },
+			{ selectedDomainUpsellItem }
+		);
 		flows.excludeStep( stepName );
 	}
 }

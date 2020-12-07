@@ -102,11 +102,11 @@ function RecommendedDomains( props ) {
 	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
 	const domain = getDomainName( siteSlug );
 	const productData = secureYourBrand.product_data;
-	const domainUpsellItems = productData
+	const selectedDomainUpsellItem = productData
 		?.filter( ( product ) => product.domain === selectedDomain )
 		?.map( ( product ) =>
 			domainRegistration( { domain: product.domain, productSlug: product.product_slug } )
-		);
+		)[ 0 ];
 
 	useEffect( () => {
 		if ( productData && ! selectedDomain ) {
@@ -116,18 +116,18 @@ function RecommendedDomains( props ) {
 
 	const handleUpgradeButtonClick = () => {
 		const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
-		if ( ! domainUpsellItems ) {
+		if ( ! selectedDomainUpsellItem ) {
 			return;
 		}
 
 		const step = {
 			stepName,
 			stepSectionName,
-			domainUpsellItems,
+			selectedDomainUpsellItem,
 			...additionalStepData,
 		};
 
-		submitSignupStep( step, { domainUpsellItems } );
+		submitSignupStep( step, { selectedDomainUpsellItem } );
 		goToNextStep();
 	};
 
@@ -137,11 +137,11 @@ function RecommendedDomains( props ) {
 		const step = {
 			stepName,
 			stepSectionName,
-			domainUpsellItems: null,
+			selectedDomainUpsellItem: null,
 			...additionalStepData,
 		};
 
-		submitSignupStep( step, { domainUpsellItems: null } );
+		submitSignupStep( step, { selectedDomainUpsellItem: null } );
 		goToNextStep();
 	};
 

@@ -121,7 +121,7 @@ export function generateSteps( {
 			apiRequestFunction: addDomainUpsellToCart,
 			fulfilledStepCallback: isFreePlansDomainUpselFulfilled,
 			dependencies: [ 'domainItem', 'cartItem', 'siteSlug' ],
-			providesDependencies: [ 'domainUpsellItems' ],
+			providesDependencies: [ 'selectedDomainUpsellItem' ],
 		},
 
 		'plans-site-selected': {

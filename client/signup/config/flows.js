@@ -43,7 +43,7 @@ function dependenciesContainCartItem( dependencies ) {
 		dependencies.cartItem ||
 		dependencies.domainItem ||
 		dependencies.themeItem ||
-		dependencies.domainUpsellItems
+		dependencies.selectedDomainUpsellItem
 	);
 }
 
