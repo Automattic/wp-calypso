@@ -24,6 +24,7 @@ describe( 'PluginActivateToggle', () => {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
+		removePluginStatuses: spy(),
 		togglePluginActivation: spy(),
 		translate: spy(),
 	};

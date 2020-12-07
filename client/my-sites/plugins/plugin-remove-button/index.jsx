@@ -17,11 +17,11 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import accept from 'calypso/lib/accept';
 import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
-import PluginsActions from 'calypso/lib/plugins/actions';
 import ExternalLink from 'calypso/components/external-link';
 import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
-import { removePlugin } from 'calypso/state/plugins/installed/actions';
 import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
+import { removePlugin } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -56,7 +56,7 @@ class PluginRemoveButton extends React.Component {
 
 	processRemovalConfirmation = ( accepted ) => {
 		if ( accepted ) {
-			PluginsActions.removePluginsNotices( 'completed', 'error' );
+			this.props.removePluginStatuses( 'completed', 'error' );
 			this.props.removePlugin( this.props.site.ID, this.props.plugin );
 
 			if ( this.props.isEmbed ) {
@@ -215,5 +215,5 @@ export default connect(
 	( state, { site, plugin } ) => ( {
 		inProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'REMOVE_PLUGIN' ),
 	} ),
-	{ removePlugin }
+	{ removePlugin, removePluginStatuses }
 )( localize( PluginRemoveButton ) );

@@ -17,7 +17,6 @@ import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } 
 import acceptDialog from 'calypso/lib/accept';
 import { warningNotice } from 'calypso/state/notices/actions';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
 import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginNotices from 'calypso/lib/plugins/notices';
@@ -34,6 +33,7 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -225,13 +225,13 @@ export const PluginsList = createReactClass( {
 			this.recordEvent( 'Clicked Manage' );
 		} else {
 			this.setState( { bulkManagementActive: false } );
-			this.removePluginsNotices();
+			this.removePluginStatuses();
 			this.recordEvent( 'Clicked Manage Done' );
 		}
 	},
 
-	removePluginsNotices() {
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+	removePluginStatuses() {
+		this.props.removePluginStatuses( 'completed', 'error' );
 	},
 
 	doActionOverSelected( actionName, action, siteIdOnly = false ) {
@@ -239,7 +239,7 @@ export const PluginsList = createReactClass( {
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
-		this.removePluginsNotices();
+		this.removePluginStatuses();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
@@ -259,7 +259,7 @@ export const PluginsList = createReactClass( {
 	},
 
 	updateAllPlugins() {
-		this.removePluginsNotices();
+		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
 			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
@@ -578,6 +578,7 @@ export default connect(
 		enableAutoupdatePlugin,
 		recordGoogleEvent,
 		removePlugin,
+		removePluginStatuses,
 		updatePlugin,
 		warningNotice,
 	}

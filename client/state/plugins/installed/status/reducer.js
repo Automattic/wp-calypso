@@ -21,6 +21,7 @@ import {
 	PLUGIN_INSTALL_REQUEST,
 	PLUGIN_INSTALL_REQUEST_SUCCESS,
 	PLUGIN_INSTALL_REQUEST_FAILURE,
+	PLUGIN_NOTICES_REMOVE,
 	PLUGIN_REMOVE_REQUEST,
 	PLUGIN_REMOVE_REQUEST_SUCCESS,
 	PLUGIN_REMOVE_REQUEST_FAILURE,
@@ -54,6 +55,29 @@ export default function status( state = {}, action ) {
 		case PLUGIN_INSTALL_REQUEST_FAILURE:
 		case PLUGIN_REMOVE_REQUEST_FAILURE:
 			return Object.assign( {}, state, { [ siteId ]: statusForSite( state[ siteId ], action ) } );
+		case PLUGIN_NOTICES_REMOVE: {
+			if ( ! action.statuses || ! action.statuses.length ) {
+				return state;
+			}
+
+			const allStatuses = Object.entries( state )
+				.map( ( [ stateSiteId, siteStatuses ] ) => {
+					const updatedSiteStatuses = Object.entries( siteStatuses ).filter(
+						( [ , pluginStatus ] ) => {
+							return ! action.statuses.includes( pluginStatus.status );
+						}
+					);
+
+					if ( ! updatedSiteStatuses.length ) {
+						return [];
+					}
+
+					return [ stateSiteId, Object.fromEntries( updatedSiteStatuses ) ];
+				} )
+				.filter( ( siteStatus ) => siteStatus.length );
+
+			return Object.fromEntries( allStatuses );
+		}
 		default:
 			return state;
 	}
