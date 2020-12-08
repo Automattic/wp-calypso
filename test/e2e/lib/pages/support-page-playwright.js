@@ -1,39 +1,49 @@
 export default class SupportPage {
 	constructor( page ) {
 		// Selectors
-		this.inlineHelpButton = '.inline-help__button';
-		this.inlineHelpPopover = '.inline-help__popover';
+		this.inlineHelpButtonSelector = '.inline-help__button';
+		this.inlineHelpPopoverSelector = '.inline-help__popover';
 
 		this.page = page;
 	}
 
 	async openInlineHelp() {
-		const inlineHelpOpen = await this.inlineHelpPopoverVisible();
+		let inlineHelpOpen = await this.inlineHelpPopoverVisible();
 		// If the in-line help popover is not visible, let's click it.
-		if ( ! inlineHelpOpen ) {
+		if ( inlineHelpOpen === false ) {
 			await this.inlineHelpButtonVisible();
-			await this.page.click( this.inlineHelpButton );
-			return await this.inlineHelpPopoverVisible();
+			// Found out via debugging that Inline Help popover does not immediately render in a lot of cases
+			// because it is waiting for the following request to complete.
+			// Waiting for this longest-running to complete turns out to be a good way to ensure
+			// the presence of the popover.
+			await Promise.all( [
+				this.page.waitForResponse( 'https://public-api.wordpress.com/wpcom/v2/support-history**' ),
+				this.page.click( this.inlineHelpButtonSelector ),
+			] );
 		}
+		inlineHelpOpen = await this.inlineHelpPopoverVisible();
+		return inlineHelpOpen === true;
 	}
 
 	async closeInlineHelp() {
-		const inlineHelpOpen = await this.inlineHelpPopoverVisible();
+		let inlineHelpOpen = await this.inlineHelpPopoverVisible();
 		if ( inlineHelpOpen ) {
 			await this.inlineHelpButtonVisible();
-			return await this.page.click( this.inlineHelpButton );
+			await this.page.click( this.inlineHelpButtonSelector );
 		}
+		inlineHelpOpen = await this.inlineHelpPopoverVisible();
+		return inlineHelpOpen === false;
 	}
 
 	async inlineHelpButtonVisible() {
 		await this.page.waitForLoadState( 'networkidle' );
-		const visible = await this.page.$( this.inlineHelpButton );
+		const visible = await this.page.$( this.inlineHelpButtonSelector );
 		return visible !== null;
 	}
 
 	async inlineHelpPopoverVisible() {
-		await this.page.waitForLoadState( 'networkidle' );
-		const visible = await this.page.$( this.inlineHelpPopover );
+		const visible = await this.page.$( this.inlineHelpPopoverSelector );
+
 		return visible !== null;
 	}
 
@@ -61,7 +71,7 @@ export default class SupportPage {
 
 		await this.openInlineHelp();
 
-		await page.waitForSelector( this.inlineHelpPopover );
+		await page.waitForSelector( this.inlineHelpPopoverSelector );
 		await page.waitForSelector( inlineHelpSearchInput );
 
 		if ( searchTerm.trim() === '' ) {
@@ -88,10 +98,10 @@ export default class SupportPage {
 
 	async searchReturnedNoResultsMessage() {
 		const noResultsMessageSelector = '.inline-help__empty-results';
-
 		// As per documentation, returns a null if no element with such selector is found.
 		// Therefore if the returned value is not null, the element in question has been found.
 		const noResults = await this.page.$( noResultsMessageSelector );
+
 		return noResults !== null;
 	}
 }
