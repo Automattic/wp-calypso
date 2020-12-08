@@ -35,17 +35,19 @@ interface FilterBarProps {
 	duration?: Duration;
 	onDurationChange?: DurationChangeCallback;
 	onProductTypeChange?: ( arg0: ProductType ) => void;
+	withTreatmentVariant: boolean;
 }
 
 type DiscountMessageProps = {
 	primary?: boolean;
+	withTreatmentVariant: boolean;
 };
 
 const CLOUD_MASTERBAR_STICKY = false;
 const CALYPSO_MASTERBAR_HEIGHT = 47;
 const CLOUD_MASTERBAR_HEIGHT = CLOUD_MASTERBAR_STICKY ? 94 : 0;
 
-const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
+const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary, withTreatmentVariant } ) => {
 	const translate = useTranslate();
 	const isMobile: boolean = useMobileBreakpoint();
 
@@ -63,7 +65,12 @@ const DiscountMessage: React.FC< DiscountMessageProps > = ( { primary } ) => {
 	}
 
 	return (
-		<div className={ classNames( 'plans-filter-bar-i5__discount-message', { primary: primary } ) }>
+		<div
+			className={ classNames( 'plans-filter-bar-i5__discount-message', {
+				primary,
+				treatment: withTreatmentVariant,
+			} ) }
+		>
 			<div>
 				<span className="plans-filter-bar-i5__discount-message-text">
 					{ isMobile
@@ -86,6 +93,7 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 	showDiscountMessage,
 	duration,
 	onDurationChange,
+	withTreatmentVariant,
 } ) => {
 	const translate = useTranslate();
 	const isInConnectStore = useMemo( isConnectStore, [] );
@@ -120,7 +128,12 @@ const PlansFilterBarI5: React.FC< FilterBarProps > = ( {
 				/>
 				<span className="plans-filter-bar-i5__toggle-on-label">{ translate( 'Bill yearly' ) }</span>
 			</div>
-			{ showDiscountMessage && <DiscountMessage primary={ durationChecked } /> }
+			{ showDiscountMessage && (
+				<DiscountMessage
+					primary={ durationChecked }
+					withTreatmentVariant={ withTreatmentVariant }
+				/>
+			) }
 		</div>
 	);
 };

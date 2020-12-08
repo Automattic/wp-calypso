@@ -134,6 +134,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						showDiscountMessage
 						onDurationChange={ onDurationChange }
 						duration={ duration }
+						withTreatmentVariant={ exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT }
 					/>
 				</div>
 				<ul
@@ -151,14 +152,10 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 								currencyCode={ currencyCode }
 								selectedTerm={ duration }
 								isAligned={ ! isPlanRowWrapping }
-								featuredPlans={
-									// Whether a featured plan is set or not will
-									// allow us to test the experiment in staging
-									// more easily
-									exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT
-										? []
-										: [ PLAN_JETPACK_SECURITY_REALTIME, PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]
-								}
+								featuredPlans={ [
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+								] }
 							/>
 						</li>
 					) ) }
