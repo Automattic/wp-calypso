@@ -5,7 +5,6 @@ import React from 'react';
 import { localize } from 'i18n-calypso';
 import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 /**
  * Internal dependencies
@@ -18,7 +17,7 @@ import { isUserNewerThan, WEEK_IN_MILLISECONDS } from 'calypso/state/guided-tour
 import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 /**
- * Image dependencies
+ * Asset dependencies
  */
 import readerImage from 'calypso/assets/images/reader/reader-intro-character.svg';
 import readerBackground from 'calypso/assets/images/reader/reader-intro-background.svg';
@@ -101,18 +100,14 @@ export default connect(
 			isNewUser: isUserNewerThan( WEEK_IN_MILLISECONDS * 2 )( state ),
 		};
 	},
-	( dispatch ) =>
-		bindActionCreators(
-			{
-				dismiss: () => {
-					recordTrack( 'calypso_reader_following_intro_dismiss' );
-					return savePreference( 'is_new_reader', false );
-				},
-				handleManageLinkClick: () => {
-					recordTrack( 'calypso_reader_following_intro_link_clicked' );
-					return savePreference( 'is_new_reader', false );
-				},
-			},
-			dispatch
-		)
+	{
+		dismiss: () => {
+			recordTrack( 'calypso_reader_following_intro_dismiss' );
+			return savePreference( 'is_new_reader', false );
+		},
+		handleManageLinkClick: () => {
+			recordTrack( 'calypso_reader_following_intro_link_clicked' );
+			return savePreference( 'is_new_reader', false );
+		},
+	}
 )( localize( FollowingIntro ) );

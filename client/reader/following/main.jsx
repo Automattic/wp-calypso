@@ -26,7 +26,6 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
 import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
 import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
-import FollowingVoteBanner from './vote-banner';
 
 /**
  * Style dependencies
@@ -55,17 +54,15 @@ const FollowingStream = ( props ) => {
 	const placeholderText = getSearchPlaceholderText();
 	const { translate } = props;
 	const dispatch = useDispatch();
-	const voteBanner = <FollowingVoteBanner />;
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
 		dispatch( recordReaderTracksEvent( 'calypso_reader_mark_all_as_seen_clicked' ) );
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
 	};
-
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ voteBanner ? voteBanner : <FollowingIntro /> }
+			<FollowingIntro />
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
