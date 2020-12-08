@@ -258,15 +258,16 @@ object RunAllUnitTests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Install modules
 				yarn install
@@ -281,15 +282,16 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Prevent uncommited changes
 				DIRTY_FILES=${'$'}(git status --porcelain 2>/dev/null)
@@ -310,15 +312,16 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run type checks
 				yarn run tsc --project client/landing/gutenboarding
@@ -333,18 +336,18 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-
 				unset NODE_ENV
 				unset CALYPSO_ENV
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run client tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/client" yarn test-client --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -359,18 +362,18 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-
 				unset NODE_ENV
 				unset CALYPSO_ENV
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run server tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/server" yarn test-server --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -385,18 +388,18 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-
 				unset NODE_ENV
 				unset CALYPSO_ENV
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run packages tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/packages" yarn test-packages --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -411,18 +414,18 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-
 				unset NODE_ENV
 				unset CALYPSO_ENV
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run build-tools tests
 				JEST_JUNIT_OUTPUT_DIR="./test_results/build-tools" yarn test-build-tools --maxWorkers=${'$'}JEST_MAX_WORKERS --ci --reporters=default --reporters=jest-junit --silent
@@ -437,18 +440,18 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-
 				unset NODE_ENV
 				unset CALYPSO_ENV
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Run Editing Toolkit tests
 				cd apps/editing-toolkit
@@ -464,15 +467,16 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="production"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Build o2-blocks
 				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
@@ -493,15 +497,16 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="production"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				yarn components:storybook:start --ci --smoke-test
 			""".trimIndent()
@@ -515,15 +520,16 @@ object RunAllUnitTests : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="production"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				yarn search:storybook:start --ci --smoke-test
 			""".trimIndent()
@@ -611,15 +617,16 @@ object CheckCodeStyle : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Install modules
 				yarn install
@@ -634,15 +641,16 @@ object CheckCodeStyle : BuildType({
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export NODE_ENV="test"
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Find files to lint
 				if [ "%teamcity.build.branch.is_default%" = "true" ] || [ "%calypso.run_full_eslint%" = "true" ]; then
@@ -753,13 +761,14 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Prepare environment"
 			scriptContent = """
 				#!/bin/bash
-				set -o errexit
-				set -o nounset
-				set -o pipefail
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Restore mtime to maximize cache hits
 				/usr/lib/git-core/git-restore-mtime --force --commit-time --skip-missing
@@ -781,13 +790,14 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Build Calypso source"
 			scriptContent = """
 				#!/bin/bash
-				set -o errexit
-				set -o nounset
-				set -o pipefail
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
 				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Build desktop
 				yarn run build-desktop:source
@@ -802,16 +812,17 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Build app (linux)"
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
 
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Build app
 				yarn run build-desktop:app
@@ -826,6 +837,11 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			name = "Run tests (linux)"
 			scriptContent = """
 				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
 				set -o errexit
 				set -o nounset
 				set -o pipefail
@@ -833,10 +849,6 @@ object WpDesktop_DesktopE2ETests : BuildType({
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
 				export CI=true
-
-				# Update node
-				. "${'$'}NVM_DIR/nvm.sh" --no-use
-				nvm install
 
 				# Start framebuffer
 				Xvfb ${'$'}{DISPLAY} -screen 0 1280x1024x24 &
