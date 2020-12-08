@@ -14,7 +14,6 @@ import { reducer as httpData } from 'calypso/state/data-layer/http-data';
 /**
  * Reducers
  */
-import atomicTransfer from './atomic-transfer/reducer';
 import currentUser from './current-user/reducer';
 import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
@@ -31,7 +30,6 @@ import users from './users/reducer';
 // The reducers in this list are not modularized, and are always loaded on boot.
 // Please do not add to this list. See #39261 and p4TIVU-9lM-p2 for more details.
 const reducers = {
-	atomicTransfer,
 	currentUser,
 	dataRequests,
 	documentHead,
