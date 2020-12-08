@@ -64,6 +64,18 @@ class PluginsBrowserListElement extends Component {
 		return ! this.props.isJetpackSite && includes( PREINSTALLED_PLUGINS, this.props.plugin.name );
 	}
 
+	renderSupportedFlag() {
+		if ( ! this.isWpcomPreinstalled() ) {
+			return;
+		}
+
+		return (
+			<div className="plugins-browser-item__supported">
+				{ this.props.translate( 'Supported by WordPress.com' ) }
+			</div>
+		);
+	}
+
 	renderInstalledIn() {
 		const { sitesWithPlugin } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
@@ -166,18 +178,21 @@ class PluginsBrowserListElement extends Component {
 							<div className="plugins-browser-item__description">
 								{ this.props.plugin.short_description }
 							</div>
-							<div className="plugins-browser-item__author">
-								{ this.props.translate( 'By {{a}}%(authorName)s{{/a}}', {
-									args: { authorName: this.props.plugin.author_name },
-									components: { a: <a href={ this.props.plugin.author_url } /> },
-								} ) }
-							</div>
 						</div>
 						<PluginIcon
 							size={ this.props.iconSize }
 							image={ this.props.plugin.icon }
 							isPlaceholder={ this.props.isPlaceholder }
 						/>
+					</div>
+					<div className="plugins-browser-item__author-wrapper">
+						<div className="plugins-browser-item__author">
+							{ this.props.translate( 'By {{a}}%(authorName)s{{/a}}', {
+								args: { authorName: this.props.plugin.author_name },
+								components: { a: <a href={ this.props.plugin.author_url } /> },
+							} ) }
+						</div>
+						{ this.renderSupportedFlag() }
 					</div>
 					<div className="plugins-browser-item__meta">
 						<div className="plugins-browser-item__ratings">
