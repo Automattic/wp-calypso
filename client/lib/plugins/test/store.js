@@ -39,28 +39,6 @@ describe( 'Plugins Store', () => {
 			assert.isNotNull( PluginsStore.getSitePlugins( site ) );
 		} );
 
-		describe( 'getPlugin method', () => {
-			test( 'Store should have method getPlugin', () => {
-				assert.isFunction( PluginsStore.getPlugin );
-			} );
-
-			test( 'should return an object', () => {
-				assert.isObject( PluginsStore.getPlugin( site, 'akismet' ) );
-			} );
-
-			test( 'should accept sites as an array of objects or object', () => {
-				assert.deepEqual(
-					PluginsStore.getPlugin( site, 'akismet' ),
-					PluginsStore.getPlugin( [ site ], 'akismet' )
-				);
-			} );
-
-			test( 'should return an object with attribute sites array', () => {
-				const Plugin = PluginsStore.getPlugin( site, 'akismet' );
-				assert.isArray( Plugin.sites );
-			} );
-		} );
-
 		describe( 'getPlugins method', () => {
 			test( 'Store should have method getPlugins', () => {
 				assert.isFunction( PluginsStore.getPlugins );
@@ -78,30 +56,18 @@ describe( 'Plugins Store', () => {
 				assert.isObject( Plugins[ 0 ].sites[ 0 ] );
 			} );
 
-			test( 'should return the same object as getPlugin', () => {
-				const Plugins = PluginsStore.getPlugins( site );
-				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
-				assert.deepEqual( Plugins[ 0 ], Plugin );
-			} );
-
 			test( 'should return active Plugins', () => {
 				const Plugins = PluginsStore.getPlugins( site, 'active' );
-				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
-				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isTrue( Plugins[ 0 ].active );
 			} );
 
 			test( 'should return inactive Plugins', () => {
 				const Plugins = PluginsStore.getPlugins( site, 'inactive' );
-				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
-				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isFalse( Plugins[ 0 ].active );
 			} );
 
 			test( 'should return needs update Plugins', () => {
 				const Plugins = PluginsStore.getPlugins( site, 'updates' );
-				const Plugin = PluginsStore.getPlugin( site, Plugins[ 0 ].slug );
-				assert.deepEqual( Plugins[ 0 ], Plugin );
 				assert.isObject( Plugins[ 0 ].update );
 			} );
 
