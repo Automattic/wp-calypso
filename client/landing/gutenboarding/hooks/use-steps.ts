@@ -41,6 +41,7 @@ export default function useSteps(): Array< StepType > {
 	}
 
 	// Logic necessary to skip Domains or Plans steps
+	// General rule: if a step has been used already, don't remove it.
 	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
@@ -51,16 +52,11 @@ export default function useSteps(): Array< StepType > {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 
-	// Don't show the mandatory Plans step:
+	// Don't show the mandatory Plans steps:
 	// - if the user landed from a marketing page after selecting a plan (in this case, hide also the Features step)
-	// - if this is an Anchor.fm signup
 	// - if a plan has been selected using the PlansModal but only if there is no Features step
-	if (
-		hasPlanFromPath ||
-		isAnchorFmSignup ||
-		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
-	) {
-		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );
+	if ( ( hasPlanFromPath || plan ) && ! hasUsedPlansStep ) {
+		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
 	return steps;
