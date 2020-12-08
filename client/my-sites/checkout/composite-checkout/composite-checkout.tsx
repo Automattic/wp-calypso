@@ -85,6 +85,7 @@ import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
+import type { TransactionResponse } from './types/wpcom-store-state';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -513,8 +514,12 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 	} );
 
+	const transactionResult: TransactionResponse | undefined = select(
+		'wpcom'
+	).getTransactionResult?.();
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
 		siteId,
+		transactionResult,
 		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
 	} );
