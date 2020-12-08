@@ -49,7 +49,9 @@ export type StepNameType = keyof typeof Step;
 
 export interface GutenLocationStateType {
 	anchorFmPodcastId?: string;
+	anchorFmEpisodeId?: string;
 }
+export type GutenLocationStateKeyType = keyof GutenLocationStateType;
 
 export function usePath() {
 	const langParam = useLangRouteParam();
@@ -113,8 +115,54 @@ export function useIsAnchorFm(): boolean {
 // Returns the anchor podcast id. First looks in "location state",
 // provided by react-router-dom, if not available there, checks the query string.
 export function useAnchorFmPodcastId(): string | null {
-	const { state: locationState, search } = useLocation< GutenLocationStateType >();
-	const sanitizePodcastId = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	const sanitize = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+	return useAnchorParameter( {
+		queryParamName: 'anchor_podcast',
+		locationStateParamName: 'anchorFmPodcastId',
+		sanitize,
+	} );
+}
+
+// Returns the anchor podcast id. First looks in "location state",
+// provided by react-router-dom, if not available there, checks the query string.
+export function useAnchorFmEpisodeId(): string | null {
+	// Allow all characters allowed in urls
+	// Reserved characters: !*'();:@&=+$,/?#[]
+	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
+	const sanitize = ( id: string ) => id.replace( /[^A-Za-z0-9_.\-~%]/g, '' );
+	return useAnchorParameter( {
+		queryParamName: 'anchor_episode',
+		locationStateParamName: 'anchorFmEpisodeId',
+		sanitize,
+	} );
+}
+
+/*
+ useAnchorParameter is an internal helper for finding a value that comes from either a query string, or location state.
+ Outside callers shouldn't use it, so it's not exported.
+
+ For example, when a user hits http://calypso.localhost:3000/new?anchor_podcast=40a166a8
+ We grab that anchor_podcast value, and store it in location state to keep as we move along the states.
+ It's called "anchor_podcast" in the query string above, but "anchorFmPodcastId" above.
+
+  Calling this function like so:
+  useAnchorParameter({
+    queryParamName: 'anchor_podcast',
+    locationStateParamName: 'anchorFmPodcastId',
+  })
+  Looks for the value first in location state, then if it can't be found, looks in the query parameter.
+*/
+interface UseAnchorParameterType {
+	queryParamName: string;
+	locationStateParamName: GutenLocationStateKeyType;
+	sanitize: ( arg0: string ) => string;
+}
+function useAnchorParameter( {
+	queryParamName,
+	locationStateParamName,
+	sanitize,
+}: UseAnchorParameterType ): string | null {
+	const { state: locationState = {}, search } = useLocation< GutenLocationStateType >();
 
 	// Feature flag 'anchor-fm-dev' is required for anchor podcast id to be read
 	if ( ! config.isEnabled( 'anchor-fm-dev' ) ) {
@@ -122,14 +170,15 @@ export function useAnchorFmPodcastId(): string | null {
 	}
 
 	// Use location state if available
-	if ( locationState && locationState.anchorFmPodcastId ) {
-		return sanitizePodcastId( locationState.anchorFmPodcastId );
+	const locationStateParamValue = locationState[ locationStateParamName ];
+	if ( locationState && locationStateParamValue ) {
+		return sanitize( locationStateParamValue );
 	}
 
 	// Fall back to looking in query param
-	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
-	if ( queryParam ) {
-		return sanitizePodcastId( queryParam );
+	const queryParamValue = new URLSearchParams( search ).get( queryParamName );
+	if ( queryParamValue ) {
+		return sanitize( queryParamValue );
 	}
 	return null;
 }
