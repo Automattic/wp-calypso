@@ -54,7 +54,8 @@
 }
 
 .plugins-browser-item__title,
-.plugins-browser-item__author {
+.plugins-browser-item__author,
+.plugins-browser-item__description {
 	.is-placeholder & {
 		color: transparent;
 		background-color: var( --color-neutral-0 );

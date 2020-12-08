@@ -92,16 +92,23 @@ class PluginsBrowserListElement extends Component {
 	renderPlaceholder() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<li className="plugins-browser-item is-placeholder">
+			<Card className="plugins-browser-item is-placeholder">
 				<span className="plugins-browser-item__link">
 					<div className="plugins-browser-item__info">
+						<div className="plugins-browser-item__title-wrapper">
+							<div className="plugins-browser-item__title">…</div>
+							<div className="plugins-browser-item__description">…</div>
+							<div className="plugins-browser-item__author">…</div>
+						</div>
 						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
-						<div className="plugins-browser-item__title">…</div>
-						<div className="plugins-browser-item__author">…</div>
 					</div>
-					<Rating rating={ 0 } size={ 12 } />
+					<div className="plugins-browser-item__meta is-placeholder">
+						<div className="plugins-browser-item__ratings">
+							<Rating rating="0" size="16" />
+						</div>
+					</div>
 				</span>
-			</li>
+			</Card>
 		);
 		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
