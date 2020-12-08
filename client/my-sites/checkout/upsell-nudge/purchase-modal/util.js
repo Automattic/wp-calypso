@@ -68,7 +68,7 @@ export function useSubmitTransaction( {
 					persistent: true,
 				} );
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
-				onComplete?.();
+				onComplete?.( data?.receipt_id );
 			}
 		} );
 	}, [ cart, storedCard, setStep, onClose, onComplete, successMessage ] );

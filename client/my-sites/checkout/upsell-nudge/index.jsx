@@ -252,8 +252,8 @@ export class UpsellNudge extends React.Component {
 		return true;
 	};
 
-	handleOneClickUpsellComplete = () => {
-		this.props.handleCheckoutCompleteRedirect( true );
+	handleOneClickUpsellComplete = ( currentRecieptId ) => {
+		this.props.handleCheckoutCompleteRedirect( true, currentRecieptId );
 	};
 
 	renderPurchaseModal = () => {
