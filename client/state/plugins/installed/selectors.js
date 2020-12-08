@@ -94,6 +94,10 @@ export function getPluginsWithUpdates( state, siteIds ) {
 	} ) );
 }
 
+export function getPluginOnSites( state, siteIds, pluginSlug ) {
+	return getPlugins( state, siteIds ).find( ( plugin ) => plugin.slug === pluginSlug );
+}
+
 export function getPluginOnSite( state, siteId, pluginSlug ) {
 	const pluginList = getPlugins( state, [ siteId ] );
 	return find( pluginList, { slug: pluginSlug } );
