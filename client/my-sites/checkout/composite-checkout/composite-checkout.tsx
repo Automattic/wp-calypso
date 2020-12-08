@@ -516,9 +516,6 @@ export default function CompositeCheckout( {
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
 		siteId,
 		getThankYouUrl,
-		recordEvent,
-		couponItem,
-		total,
 		createUserAndSiteBeforeTransaction,
 	} );
 
