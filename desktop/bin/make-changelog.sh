@@ -56,3 +56,5 @@ git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag..
 echo "$git_log" | while IFS=$'\r' read change; do
   awk '$0 !~ /([0-9])+\.([0-9])+\.([0-9])+/ {print "* " $0}' <<< $change
 done
+
+printf "\n"
