@@ -15,8 +15,6 @@ export const GSUITE_SLUG_PROP_TYPES = PropTypes.oneOf( [
 	GSUITE_BUSINESS_SLUG,
 ] );
 
-export const GSUITE_LINK_PREFIX = 'https://mail.google.com/a/';
-
 /**
  * We'll use the following constants to do the switchover from
  * G Suite -> Google Workspace.
