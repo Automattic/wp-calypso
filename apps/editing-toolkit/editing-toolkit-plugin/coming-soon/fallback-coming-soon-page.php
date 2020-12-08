@@ -40,7 +40,7 @@ function original_request_url() {
 }
 
 /**
- * Returns a redirect URL for post-login flow in WordPress.com
+ * Returns a redirect URL for post-login flow in WordPress.com.
  *
  * @return string The redirect URL
  */
@@ -51,7 +51,7 @@ function get_wpcom_redirect_to() {
 		return get_onboarding_url();
 	}
 
-	return rawurlencode( 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
+	return 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 }
 
 /**
