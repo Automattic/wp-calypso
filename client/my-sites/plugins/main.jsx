@@ -42,6 +42,7 @@ import {
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
+import { isRequestingForSites } from 'calypso/state/plugins/installed/selectors';
 import { Button } from '@automattic/components';
 import { isEnabled } from 'calypso/config';
 
@@ -166,7 +167,7 @@ export class PluginsMain extends Component {
 	}
 
 	isFetchingPlugins() {
-		return this.props.sites.some( PluginsStore.isFetchingSite );
+		return this.props.requestingPluginsForSites;
 	}
 
 	getSelectedText() {
@@ -484,9 +485,11 @@ export default flow(
 	localize,
 	urlSearch,
 	connect(
-		( state ) => {
+		( state, { sites } ) => {
 			const selectedSite = getSelectedSite( state );
 			const selectedSiteId = getSelectedSiteId( state );
+			/* eslint-disable wpcalypso/redux-no-bound-selectors */
+			const siteIds = sites?.map( ( site ) => site.ID ) ?? [];
 
 			return {
 				hasJetpackSites: hasJetpackSites( state ),
@@ -504,6 +507,7 @@ export default flow(
 				/* eslint-enable wpcalypso/redux-no-bound-selectors */
 				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
+				requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )
 					: canCurrentUserManagePlugins( state ),
