@@ -44,6 +44,7 @@ import { replaceCartWithItems } from 'calypso/lib/cart/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
+import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
 
 /**
  * Style dependencies
@@ -342,13 +343,16 @@ export default connect(
 		const annualPrice = getSitePlanRawPrice( state, selectedSiteId, planSlug, {
 			isMonthly: false,
 		} );
+		const isFetchingCards = isFetchingStoredCards( state );
 
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
 
 		return {
+			isFetchingStoredCards: isFetchingCards,
+			cards: getStoredCards( state ),
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
-				props.isFetchingStoredCards ||
+				isFetchingCards ||
 				isProductsListFetching( state ) ||
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
