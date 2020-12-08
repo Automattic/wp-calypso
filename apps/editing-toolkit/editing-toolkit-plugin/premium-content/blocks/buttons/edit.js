@@ -101,7 +101,7 @@ export default compose( [
 			.getBlock( props.clientId )
 			.innerBlocks.find( ( block ) => block.name === 'jetpack/recurring-payments' );
 
-		return subscribeButton;
+		return { subscribeButton };
 	} ),
 	withDispatch( ( dispatch, props ) => ( {
 		/**

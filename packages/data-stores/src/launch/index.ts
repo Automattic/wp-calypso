@@ -36,6 +36,7 @@ export function register(): typeof STORE_KEY {
 				'confirmedDomainSelection',
 				'isExperimental',
 				'isSiteTitleStepVisible',
+				'shouldDisplaySuccessView',
 			],
 		} );
 	}

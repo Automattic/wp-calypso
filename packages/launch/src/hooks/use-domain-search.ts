@@ -9,6 +9,7 @@ import { useDispatch } from '@wordpress/data';
 import { LAUNCH_STORE } from '../stores';
 import { useSite, useTitle } from './';
 import { isDefaultSiteTitle } from '../utils';
+import { useSiteDomains } from './use-site-domains';
 
 export function useDomainSearch(): {
 	domainSearch: string;
@@ -17,13 +18,15 @@ export function useDomainSearch(): {
 } {
 	const { domainSearch } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );
 	const { title } = useTitle();
-	const { currentDomainName, isLoadingSite } = useSite();
+	const { isLoadingSite } = useSite();
+	const { siteSubdomain } = useSiteDomains();
+
 	const { setDomainSearch } = useDispatch( LAUNCH_STORE );
 
 	let search = domainSearch.trim() || title;
 
-	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search, exact: true } ) ) {
-		search = currentDomainName?.split( '.' )[ 0 ] ?? '';
+	if ( ! search || isDefaultSiteTitle( { currentSiteTitle: search } ) ) {
+		search = siteSubdomain?.domain?.split( '.' )[ 0 ] ?? '';
 	}
 
 	return {

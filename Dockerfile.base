@@ -1,5 +1,5 @@
 #### builder image
-FROM node:12.18.4 as builder
+FROM node:12.19.1 as builder
 
 ARG node_memory=8192
 WORKDIR /calypso
@@ -32,7 +32,7 @@ RUN cd / \
 ENTRYPOINT [ "/bin/bash" ]
 
 #### ci image
-FROM node:12.18.4 as ci
+FROM node:12.19.1 as ci
 
 ARG node_memory=8192
 ARG UID=1003
@@ -43,8 +43,10 @@ ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV NVM_DIR=/calypso/.nvm
 ENV NODE_OPTIONS=--max-old-space-size=$node_memory
 ENV HOME=/calypso
-
 RUN chown $UID /calypso
+
+# Set bash as the default shell
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 # Copy nvm cache so we don't need to download it again
 COPY --from=builder --chown=$UID /calypso/.nvm /calypso/.nvm
 # Copy all other caches (webpack, babel, yarn...)

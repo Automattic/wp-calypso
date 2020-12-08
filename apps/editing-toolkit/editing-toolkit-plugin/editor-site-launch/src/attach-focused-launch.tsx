@@ -3,13 +3,14 @@
  */
 import * as React from 'react';
 import { registerPlugin as originalRegisterPlugin, PluginSettings } from '@wordpress/plugins';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 import FocusedLaunchModal from '@automattic/launch';
 
 /**
  * Internal dependencies
  */
-import { LAUNCH_STORE } from './stores';
+import { LAUNCH_STORE, SITE_STORE } from './stores';
+import { openCheckout, redirectToWpcomPath } from './utils';
 
 const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > ) =>
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,27 +18,34 @@ const registerPlugin = ( name: string, settings: Omit< PluginSettings, 'icon' > 
 
 registerPlugin( 'a8c-editor-editor-focused-launch', {
 	render: function LaunchSidebar() {
-		const isFocusedLaunchOpen = useSelect( ( select ) =>
-			select( LAUNCH_STORE ).isFocusedLaunchOpen()
+		const currentSiteId = window._currentSiteId;
+
+		const [ isFocusedLaunchOpen, shouldDisplaySuccessView, isSiteLaunched ] = useSelect(
+			( select ) => {
+				const { isFocusedLaunchOpen, shouldDisplaySuccessView } = select( LAUNCH_STORE ).getState();
+
+				return [
+					isFocusedLaunchOpen,
+					shouldDisplaySuccessView,
+					select( SITE_STORE ).isSiteLaunched( currentSiteId ),
+				];
+			}
 		);
 
-		const { closeFocusedLaunch } = useDispatch( LAUNCH_STORE );
+		// Add a class to hide the Launch button from editor bar when site is launched
+		React.useEffect( () => {
+			if ( isSiteLaunched ) {
+				document.body.classList.add( 'is-focused-launch-complete' );
+			}
+		}, [ isSiteLaunched ] );
 
-		if ( ! isFocusedLaunchOpen ) {
-			return null;
-		}
-
-		return (
+		return isFocusedLaunchOpen || shouldDisplaySuccessView ? (
 			<FocusedLaunchModal
-				siteId={ window._currentSiteId }
-				onClose={ closeFocusedLaunch }
-				locale={ document.documentElement.lang }
-				redirectTo={ ( url: string ) => {
-					const origin = 'https://wordpress.com';
-					const path = url.startsWith( '/' ) ? url : `/${ url }`;
-					window.top.location.href = `${ origin }${ path }`;
-				} }
+				locale={ window.wpcomEditorSiteLaunch?.locale }
+				openCheckout={ openCheckout }
+				redirectTo={ redirectToWpcomPath }
+				siteId={ currentSiteId }
 			/>
-		);
+		) : null;
 	},
 } );

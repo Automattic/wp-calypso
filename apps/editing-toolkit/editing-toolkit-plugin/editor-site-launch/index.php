@@ -43,9 +43,13 @@ function enqueue_script_and_style() {
 		)
 	);
 
+	$style_file = is_rtl()
+		? 'editor-site-launch.rtl.css'
+		: 'editor-site-launch.css';
+
 	wp_enqueue_style(
 		'a8c-fse-editor-site-launch-style',
-		plugins_url( 'dist/editor-site-launch.css', __FILE__ ),
+		plugins_url( 'dist/' . $style_file, __FILE__ ),
 		array(),
 		$style_version
 	);

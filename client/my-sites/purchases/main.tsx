@@ -24,9 +24,9 @@ import {
 	getManagePurchaseUrlFor,
 	getAddPaymentMethodUrlFor,
 } from './paths';
-import { getEditOrAddPaymentMethodUrlFor } from './utils';
-import AddCardDetails from 'calypso/me/purchases/payment/add-card-details';
-import EditCardDetails from 'calypso/me/purchases/payment/edit-card-details';
+import { getChangeOrAddPaymentMethodUrlFor } from './utils';
+import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
+import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
 import SiteLevelPurchasesErrorBoundary from 'calypso/my-sites/purchases/site-level-purchases-error-boundary';
@@ -116,9 +116,10 @@ export function PurchaseDetails( {
 					siteSlug={ siteSlug }
 					showHeader={ false }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
+					redirectTo={ getManagePurchaseUrlFor( siteSlug, purchaseId ) }
 					getCancelPurchaseUrlFor={ getCancelPurchaseUrlFor }
 					getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
-					getEditPaymentMethodUrlFor={ getEditOrAddPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangeOrAddPaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 			</SiteLevelPurchasesErrorBoundary>
@@ -188,7 +189,7 @@ export function PurchaseAddPaymentMethod( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				<AddCardDetails
+				<AddPaymentMethod
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
@@ -200,7 +201,7 @@ export function PurchaseAddPaymentMethod( {
 	);
 }
 
-export function PurchaseEditPaymentMethod( {
+export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
 	cardId,
@@ -228,7 +229,7 @@ export function PurchaseEditPaymentMethod( {
 				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
 				onError={ logPurchasesError }
 			>
-				<EditCardDetails
+				<ChangePaymentMethod
 					cardId={ cardId }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }

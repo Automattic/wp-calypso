@@ -64,7 +64,8 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		isLoading,
 		lastBackupBeforeDate,
 		lastBackupAttemptOnDate,
-		earlierBackupAttemptsOnDate,
+		lastSuccessfulBackupOnDate,
+		backupAttemptsOnDate,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
 
 	// Eagerly cache requests for the days before and after our selected date, to make navigation smoother
@@ -86,14 +87,14 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 				{ ...{
 					selectedDate,
 					lastBackupDate,
-					backup: lastBackupAttemptOnDate,
+					backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 				} }
 			/>
 
 			{ lastBackupAttemptOnDate && (
 				<BackupDelta
 					{ ...{
-						realtimeBackups: earlierBackupAttemptsOnDate,
+						realtimeBackups: backupAttemptsOnDate,
 						isToday: moment().isSame( selectedDate, 'day' ),
 					} }
 				/>

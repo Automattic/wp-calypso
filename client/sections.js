@@ -270,7 +270,13 @@ const sections = [
 	},
 	{
 		name: 'reader',
-		paths: [ '/read/feeds/[^\\/]+', '/read/blogs/[^\\/]+', '/read/a8c', '/recommendations' ],
+		paths: [
+			'/read/feeds/[^\\/]+',
+			'/read/blogs/[^\\/]+',
+			'/read/a8c',
+			'/read/p2',
+			'/recommendations',
+		],
 		module: 'calypso/reader',
 		group: 'reader',
 		trackLoadPerformance: true,
@@ -449,7 +455,7 @@ const sections = [
 	},
 	{
 		name: 'jetpack-cloud-pricing',
-		paths: [ '/pricing', '/[^\\/]+/pricing' ],
+		paths: [ '/pricing', '/plans', '/[^\\/]+/pricing' ],
 		module: 'calypso/jetpack-cloud/sections/pricing',
 		group: 'jetpack-cloud',
 		enableLoggedOut: true,
@@ -460,6 +466,12 @@ const sections = [
 					'https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap',
 			},
 		],
+	},
+	{
+		name: 'jetpack-search',
+		paths: [ '/jetpack-search' ],
+		module: 'calypso/my-sites/jetpack-search',
+		group: 'sites',
 	},
 ];
 

@@ -16,7 +16,7 @@ import FeaturesItem from './features-item';
  * Type dependencies
  */
 import type { ProductCardFeatures, ProductCardFeaturesItem } from './types';
-import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans-v2/types';
+import type { Duration, PurchaseCallback } from 'calypso/my-sites/plans/jetpack-plans/types';
 
 export type Props = {
 	className?: string;

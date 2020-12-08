@@ -36,7 +36,7 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 'Debug' option is available in the context menu for the task.
 */
 
-version = "2020.1"
+version = "2020.2"
 
 project {
 
@@ -90,36 +90,76 @@ object BuildBaseImages : BuildType({
 	}
 
 	steps {
-		script {
-			name = "Build docker images"
-			scriptContent = """
-				set -e
-				set -x
-
-				VERSION="%build.number%"
-				REGISTRY="registry.a8c.com/calypso"
-
-				function build {
-					imageName="${'$'}1"
-					buildArgs="${'$'}2"
-
-					imageVersioned="${'$'}{REGISTRY}/${'$'}{imageName}:${'$'}{VERSION}"
-					imageLatest="${'$'}{REGISTRY}/${'$'}{imageName}:latest"
-
-					# Using eval because buildArgs is a single word and we need to expand it to multiple args
-					eval docker build -f Dockerfile.base "${'$'}{buildArgs}" -t "${'$'}{imageVersioned}" .
-					docker tag "${'$'}{imageVersioned}" "${'$'}{imageLatest}"
-					docker push "${'$'}{imageVersioned}"
-					docker push "${'$'}{imageLatest}"
+		dockerCommand {
+			name = "Build base image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
 				}
-
-				build "base" "--no-cache --target builder"
-				build "ci" "--target ci"
-				build "ci-desktop" "--target ci-desktop"
-				build "ci-e2e" "--target builder"
-			""".trimIndent()
-			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
-			dockerRunParameters = "-u %env.UID%"
+				namesAndTags = """
+					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%build.number%
+				""".trimIndent()
+				commandArgs = "--no-cache --target builder"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci:latest
+					registry.a8c.com/calypso/ci:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI Desktop image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-desktop"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Build CI e2e image"
+			commandType = build {
+				source = file {
+					path = "Dockerfile.base"
+				}
+				namesAndTags = """
+					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+				""".trimIndent()
+				commandArgs = "--target ci-e2e"
+			}
+			param("dockerImage.platform", "linux")
+		}
+		dockerCommand {
+			name = "Push images"
+			commandType = push {
+				namesAndTags = """
+					registry.a8c.com/calypso/base:latest
+					registry.a8c.com/calypso/base:%build.number%
+					registry.a8c.com/calypso/ci:latest
+					registry.a8c.com/calypso/ci:%build.number%
+					registry.a8c.com/calypso/ci-desktop:latest
+					registry.a8c.com/calypso/ci-desktop:%build.number%
+					registry.a8c.com/calypso/ci-e2e:latest
+					registry.a8c.com/calypso/ci-e2e:%build.number%
+				""".trimIndent()
+			}
 		}
 	}
 
@@ -128,7 +168,10 @@ object BuildBaseImages : BuildType({
 			schedulingPolicy = daily {
 				hour = 0
 			}
-			branchFilter = "+:master"
+			branchFilter = """
+				+:master
+				+:trunk
+			""".trimIndent()
 			triggerBuild = always()
 			withPendingChangesOnly = false
 		}
@@ -214,12 +257,12 @@ object RunAllUnitTests : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -237,9 +280,11 @@ object RunAllUnitTests : BuildType({
 			name = "Prevent uncommited changes"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				set -x
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="test"
 
 				# Update node
@@ -264,8 +309,11 @@ object RunAllUnitTests : BuildType({
 			name = "Run type checks"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="test"
 
 				# Update node
@@ -284,9 +332,12 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for client"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -307,9 +358,12 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for server"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -330,9 +384,12 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for packages"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -353,9 +410,12 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for build tools"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -376,9 +436,12 @@ object RunAllUnitTests : BuildType({
 			name = "Run unit tests for Editing Toolkit"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export JEST_JUNIT_OUTPUT_NAME="results.xml"
-				export HOME="/calypso"
 
 				unset NODE_ENV
 				unset CALYPSO_ENV
@@ -400,8 +463,11 @@ object RunAllUnitTests : BuildType({
 			name = "Build artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="production"
 
 				# Update node
@@ -426,8 +492,11 @@ object RunAllUnitTests : BuildType({
 			name = "Build components storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="production"
 
 				# Update node
@@ -445,8 +514,11 @@ object RunAllUnitTests : BuildType({
 			name = "Build search storybook"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="production"
 
 				# Update node
@@ -538,12 +610,12 @@ object CheckCodeStyle : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="test"
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
-				export npm_config_cache=${'$'}(yarn cache dir)
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -561,8 +633,11 @@ object CheckCodeStyle : BuildType({
 			name = "Run linters"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
 			scriptContent = """
-				set -e
-				export HOME="/calypso"
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
 				export NODE_ENV="test"
 
 				# Update node
@@ -573,7 +648,7 @@ object CheckCodeStyle : BuildType({
 				if [ "%teamcity.build.branch.is_default%" = "true" ] || [ "%calypso.run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
-					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/master...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
+					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
 				fi
 				echo "Files to lint:"
 				echo ${'$'}FILES_TO_LINT
@@ -638,7 +713,7 @@ object WpCalypso : GitVcsRoot({
 	name = "wp-calypso"
 	url = "git@github.com:Automattic/wp-calypso.git"
 	pushUrl = "git@github.com:Automattic/wp-calypso.git"
-	branch = "refs/heads/master"
+	branch = "refs/heads/trunk"
 	branchSpec = "+:refs/heads/*"
 	useTagsAsBranches = true
 	authMethod = uploadedKey {
@@ -677,10 +752,10 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Prepare environment"
 			scriptContent = """
-				set -e
-
-				export CHROMEDRIVER_SKIP_DOWNLOAD=true
-				export PUPPETEER_SKIP_DOWNLOAD=true
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -705,7 +780,10 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Build Calypso source"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Update node
 				. "${'$'}NVM_DIR/nvm.sh" --no-use
@@ -723,7 +801,10 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Build app (linux)"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				export ELECTRON_BUILDER_ARGS='-c.linux.target=dir'
 				export USE_HARD_LINKS=false
@@ -744,11 +825,13 @@ object WpDesktop_DesktopE2ETests : BuildType({
 		script {
 			name = "Run tests (linux)"
 			scriptContent = """
-				set -e
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				export E2EGUTENBERGUSER="%E2EGUTENBERGUSER%"
 				export E2EPASSWORD="%E2EPASSWORD%"
-				export DISPLAY=:99
 				export CI=true
 
 				# Update node
@@ -760,6 +843,24 @@ object WpDesktop_DesktopE2ETests : BuildType({
 
 				# Run tests
 				yarn run test-desktop:e2e
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image_dekstop%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+
+		script {
+			name = "Clean up artifacts"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
+			scriptContent = """
+				set -e
+				set -x
+
+				# Delete artifacts if branch is not trunk
+				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
+					rm -fr desktop/release/*
+				fi
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true

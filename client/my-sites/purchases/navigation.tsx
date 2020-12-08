@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
+import { useDispatch } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -10,6 +11,8 @@ import { useTranslate } from 'i18n-calypso';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
 export default function PurchasesNavigation( {
 	sectionTitle,
@@ -19,6 +22,7 @@ export default function PurchasesNavigation( {
 	siteSlug: string | null;
 } ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 
 	return (
 		<SectionNav selectedText={ sectionTitle }>
@@ -42,6 +46,18 @@ export default function PurchasesNavigation( {
 					{ translate( 'Payment Methods' ) }
 				</NavItem>
 			</NavTabs>
+
+			{ sectionTitle === 'Billing History' && (
+				<Search
+					pinned
+					fitsContainer
+					onSearch={ ( term ) => {
+						dispatch( setQuery( 'past', term ) );
+					} }
+					placeholder={ translate( 'Search all receipts…' ) }
+					analyticsGroup="Billing"
+				/>
+			) }
 		</SectionNav>
 	);
 }

@@ -7,6 +7,8 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import { LaunchSequence, LaunchStep } from './data';
+import { STORE_KEY as LAUNCH_STORE } from './constants';
+
 import type { State } from './reducer';
 import type { LaunchStepType } from './types';
 import type * as DomainSuggestions from '../domain-suggestions';
@@ -33,9 +35,22 @@ export const getSelectedPlan = ( state: State ): Plans.Plan | undefined => state
  *
  * @param state State
  */
-export const getPaidPlan = ( state: State ): Plans.Plan | undefined => state.paidPlan;
+export const getPaidPlan = ( state: State ): Plans.Plan | undefined =>
+	state.plan && ! state.plan?.isFree ? state.plan : undefined;
+
+// Check if a domain has been explicitly selected (including free subdomain)
+
+/**
+ * Check if the user has selected a domain, including explicitly selecting the subdomain
+ * This is useful for step/flow completion in the context of highlighting steps or enabling Launch button
+ *
+ * @param state State
+ */
+export const hasSelectedDomain = ( state: State ): boolean =>
+	!! getSelectedDomain( state ) || state.confirmedDomainSelection;
 
 // Completion status of steps is derived from the state of the launch flow
+// Warning: because it's using getEntityRecord it works only inside the editor
 export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean => {
 	if ( step === LaunchStep.Plan ) {
 		return !! getSelectedPlan( state );
@@ -49,7 +64,7 @@ export const isStepCompleted = ( state: State, step: LaunchStepType ): boolean =
 		return !! site?.title;
 	}
 	if ( step === LaunchStep.Domain ) {
-		return !! getSelectedDomain( state ) || state.confirmedDomainSelection;
+		return select( LAUNCH_STORE ).hasSelectedDomain();
 	}
 	return false;
 };
@@ -67,15 +82,3 @@ export const isFlowStarted = ( state: State ): boolean =>
 // Get first incomplete step
 export const getFirstIncompleteStep = ( state: State ): LaunchStepType | undefined =>
 	LaunchSequence.find( ( step ) => ! isStepCompleted( state, step ) );
-
-// Check if site title step should be displayed
-export const isSiteTitleStepVisible = ( state: State ): boolean => state.isSiteTitleStepVisible;
-
-// Check if launch modal can be dismissed
-export const isModalDismissible = ( state: State ): boolean => state.isModalDismissible;
-
-// Check if launch modal title should be visible
-export const isModalTitleVisible = ( state: State ): boolean => state.isModalTitleVisible;
-
-// Check if launch modal can be dismissed
-export const isFocusedLaunchOpen = ( state: State ): boolean => state.isFocusedLaunchOpen;

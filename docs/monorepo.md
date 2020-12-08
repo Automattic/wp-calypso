@@ -104,7 +104,6 @@ If your package requires compilation, the `package.json` `prepare` script should
 
 Running `yarn run lint:package-json` will lint all `package.json`'s under `./packages|apps/**` based on [`npmpackagejsonlint.config.js`](../npmpackagejsonlint.config.js).
 
-
 ## Running Tests
 
 To run all of the package tests:
@@ -167,16 +166,16 @@ For all packages that you want to publish, make sure that their `package.json` v
 
 Make sure that the `CHANGELOG.md` document contains up-to-date information, with the `next` heading replaced with the version number that you are about to publish.
 
-Create PRs with the necessary changes and merge them to `master` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `master` branch, rather than an ephemeral commit from a local branch.
+Create PRs with the necessary changes and merge them to `trunk` before publishing. Lerna will add a `gitHead` field to each published package's `package.json`. That field contains the hash of the Git commit that the package was published from. It's better if this commit hash is a permanent one from the `trunk` branch, rather than an ephemeral commit from a local branch.
 
-### Checkout the latest master locally and build the packages
+### Checkout the latest trunk locally and build the packages
 
-Always publish from the latest `master` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
+Always publish from the latest `trunk` branch, so that the package contents come from a verified source that everyone has access to. It's too easy to publish a NPM package from a local branch, or even uncommitted local modifications that are invisible to anyone but you.
 
 Build the `dist/` directories (the transpiled package content that will be published) from scratch.
 
 ```
-git checkout master
+git checkout trunk
 git pull
 git status (should be clean!)
 yarn run distclean

@@ -31,6 +31,7 @@ import { getPreference } from 'calypso/state/preferences/selectors';
 import { editPost } from 'calypso/state/posts/actions';
 
 import 'calypso/state/editor/init';
+import 'calypso/state/ui/init';
 
 /**
  * Constants

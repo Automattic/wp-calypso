@@ -2,7 +2,12 @@
  * Internal dependencies
  */
 import { postFormatsItemsSchema } from './schema';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import {
+	combineReducers,
+	withSchemaValidation,
+	withStorageKey,
+	withoutPersistence,
+} from 'calypso/state/utils';
 import {
 	POST_FORMATS_RECEIVE,
 	POST_FORMATS_REQUEST,
@@ -56,7 +61,10 @@ export const items = withSchemaValidation( postFormatsItemsSchema, ( state = {},
 	return state;
 } );
 
-export default combineReducers( {
-	requesting,
-	items,
-} );
+export default withStorageKey(
+	'postFormats',
+	combineReducers( {
+		requesting,
+		items,
+	} )
+);

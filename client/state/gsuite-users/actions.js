@@ -8,6 +8,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/gsuite-users';
+import 'calypso/state/gsuite-users/init';
 
 export const getGSuiteUsers = ( siteId ) => {
 	return {

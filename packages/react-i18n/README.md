@@ -64,5 +64,54 @@ export default withI18n( MyComponent );
 
 ## API
 
-The translation functions `__`, `_n`, `_nx`, and `_x` are exposed from [`@wordpress/i18n`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/i18n). Refer to their documentation there.
-`i18nLocale` is a `string` containing the current locale. This is determined from the provided localeData and will fall back to `en`.
+### Translation Functions
+
+`__`, `_n`, `_nx`, and `_x` are exposed from [`@wordpress/i18n`](https://github.com/WordPress/gutenberg/tree/HEAD/packages/i18n). Refer to their documentation there.
+
+### localeData
+
+Locale data in Jed-formatted JSON object, that is used by the active Tannin instance.
+
+### hasTranslation
+
+A helper function that can be used to determine if translation entry exists in the locale data. It is based on a similar logic as Tannin's translations lookup.
+
+_Parameters_
+
+- _text_ `string`: Text to lookup for.
+- _context_ `[string]`: Context information for the translators.
+
+_Returns_
+
+- `boolean`: Whether translation entry exists in locale data.
+
+```js
+hasTranslation( 'post', 'verb' );
+```
+
+### Filter Functions
+
+`addFilter` and `removeFilter` are based on [`@wordpress/hooks`](https://developer.wordpress.org/block-editor/packages/packages-hooks/). Refer to their documentation there.
+
+#### Available Filters
+
+##### preTranslation
+
+Modify the input arguments before the translation lookup.
+
+_Parameters_
+
+- _args_ `array`: The arguments array passed to the translate function.
+- _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
+- _filters_ `object`: `@automattic/react-i18n` context filters object.
+
+##### postTranslation
+
+Modify the result of the translate function.
+
+_Parameters_
+
+- _translation_ `string`: The retrieved translation string.
+- _args_ `array`: The input arguments array passed to the translate function.
+- _fnName_ `string`: The name of the translation function. Could be `__`, `_n`, `_nx`, or `_x`.
+- _filters_ `object`: `@automattic/react-i18n` context filters object.

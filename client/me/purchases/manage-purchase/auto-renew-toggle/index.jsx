@@ -22,7 +22,7 @@ import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
 import FormToggle from 'calypso/components/forms/form-toggle';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
-import { getEditCardDetailsPath } from '../../utils';
+import { getChangePaymentMethodPath } from '../../utils';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class AutoRenewToggle extends Component {
@@ -37,13 +37,13 @@ class AutoRenewToggle extends Component {
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
 		siteSlug: PropTypes.string,
-		getEditPaymentMethodUrlFor: PropTypes.func,
+		getChangePaymentMethodUrlFor: PropTypes.func,
 		paymentMethodUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
 		fetchingUserPurchases: false,
-		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
+		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 	};
 
 	state = {
@@ -84,7 +84,7 @@ class AutoRenewToggle extends Component {
 			productSlug,
 			isAtomicSite,
 			toggleSource,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 		} = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
@@ -94,7 +94,7 @@ class AutoRenewToggle extends Component {
 			toggle_source: toggleSource,
 		} );
 
-		page( getEditPaymentMethodUrlFor( siteSlug, purchase ) );
+		page( getChangePaymentMethodUrlFor( siteSlug, purchase ) );
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {

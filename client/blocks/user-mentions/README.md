@@ -25,4 +25,4 @@ Note: you'll need to wrap the child component with `React.forwardRef`, and pass 
 
 `connectUserMentions` (connect.jsx) provides a list of user suggestions from the API to the wrapped component.
 
-`withUserMentions` (index.jsx) combines the two higher-order components above. This HOC is used by the Reader comments box.
+`withUserMentions` (index.jsx) combines the two higher-order components above. This HOC is used by the comments block.

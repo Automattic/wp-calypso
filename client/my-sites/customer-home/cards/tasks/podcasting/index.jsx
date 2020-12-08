@@ -20,9 +20,8 @@ const Podcasting = () => {
 			description={ translate(
 				`Easily turn your blog into a podcast with Anchor — the world's biggest podcasting platform.`
 			) }
-			actionText={ translate( 'Get started' ) }
-			// TODO replace with more appropriate URL as discussed in 320-gh-dotcom-manage
-			actionUrl={ `https://anchor.fm` }
+			actionText={ translate( 'Create an Anchor account' ) }
+			actionUrl={ `https://anchor.fm/wordpress` }
 			illustration={ podcastingIllustration }
 			taskId={ TASK_PODCASTING }
 		/>

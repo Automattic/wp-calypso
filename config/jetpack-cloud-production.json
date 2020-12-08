@@ -32,6 +32,7 @@
 		"current-site/stale-cart-notice": false,
 		"i18n/community-translator": false,
 		"jetpack-cloud": true,
+		"jetpack-cloud/connect": false,
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
 		"jetpack/on-demand-scan": true,
@@ -43,9 +44,11 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": true,
+		"purchases/new-payment-methods": false,
 		"realtime-site-count": true,
 		"site-indicator": false,
-		"support-user": true
+		"support-user": true,
+		"upgrades/redirect-payments": false
 	},
 	"enable_all_sections": false,
 	"sections": {

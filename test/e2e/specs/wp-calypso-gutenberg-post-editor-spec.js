@@ -3,6 +3,7 @@
  */
 import assert from 'assert';
 import config from 'config';
+import { By } from 'selenium-webdriver';
 
 /**
  * Internal dependencies
@@ -281,22 +282,53 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 			step( 'Can see the Earn blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'earn' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Earn' ),
-					true,
-					'Earn (Jetpack) blocks are not present'
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
+
+				[
+					'Donations',
+					'OpenTable',
+					'Payments',
+					'Pay with PayPal',
+					'Premium Content',
+					'Pricing Table',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
 			step( 'Can see the Grow blocks', async function () {
 				const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
 				await gEditorComponent.openBlockInserterAndSearch( 'grow' );
-				assert.strictEqual(
-					await gEditorComponent.isBlockCategoryPresent( 'Grow' ),
-					true,
-					'Grow (Jetpack) blocks are not present'
+				const shownItems = await gEditorComponent.getShownBlockInserterItems();
+
+				[
+					'Business Hours',
+					'Calendly',
+					'Form',
+					'Contact Info',
+					'Mailchimp',
+					'Revue',
+					'Subscription Form',
+					'Click to Tweet',
+					'Logos',
+					'Contact Form',
+					'RSVP Form',
+					'Registration Form',
+					'Appointment Form',
+					'Feedback Form',
+					'WhatsApp Button',
+				].forEach( ( block ) =>
+					assert.ok(
+						shownItems.includes( block ),
+						`Block inserter doesn't show the ${ block } block`
+					)
 				);
+
 				await gEditorComponent.closeBlockInserter();
 			} );
 
@@ -921,6 +953,32 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 						originalBlogPostTitle,
 						'The blog post title shown was unexpected'
 					);
+				} );
+
+				step( 'Can see the Line Height setting for the paragraph', async function () {
+					const gSidebarComponent = await GutenbergEditorSidebarComponent.Expect( driver );
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					// Give focus to the first paragraph block found
+					await driverHelper.clickWhenClickable(
+						driver,
+						By.css( 'p.block-editor-rich-text__editable:first-of-type' )
+					);
+
+					await gSidebarComponent.displayComponentIfNecessary();
+					await gSidebarComponent.chooseBlockSettings();
+
+					const lineHeighSettingPresent = await driverHelper.isElementPresent(
+						driver,
+						By.css( '.block-editor-line-height-control' )
+					);
+
+					if ( driverManager.currentScreenSize() === 'mobile' )
+						await gSidebarComponent.hideComponentIfNecessary();
+
+					assert.ok( lineHeighSettingPresent, 'Line height setting not found' );
 				} );
 
 				step(

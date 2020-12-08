@@ -12,7 +12,7 @@ import React from 'react';
 import { bumpStat } from 'calypso/lib/analytics/mc';
 import EmptyContent from 'calypso/components/empty-content';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { SECTION_SET } from 'calypso/state/action-types';
+import { setSection } from 'calypso/state/ui/section/actions';
 
 /**
  * Module variables
@@ -46,10 +46,7 @@ export function retry( chunkName ) {
 export function show( context, chunkName ) {
 	log( 'Chunk %s could not be loaded', chunkName );
 	bumpStat( 'calypso_chunk_error', chunkName );
-	context.store.dispatch( {
-		type: SECTION_SET,
-		section: false,
-	} );
+	context.store.dispatch( setSection( false, { section: false } ) );
 	context.primary = <LoadingErrorMessage />;
 	makeLayout( context, noop );
 	clientRender( context );

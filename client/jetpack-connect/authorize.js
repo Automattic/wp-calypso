@@ -54,6 +54,7 @@ import {
 	XMLRPC_ERROR,
 } from './connection-notice-types';
 import {
+	clearPlan,
 	isCalypsoStartedConnection,
 	isSsoApproved,
 	retrieveMobileRedirect,
@@ -111,6 +112,10 @@ export class JetpackAuthorize extends Component {
 
 	redirecting = false;
 	retryingAuth = false;
+
+	state = {
+		isRedirecting: false,
+	};
 
 	UNSAFE_componentWillMount() {
 		const { recordTracksEvent, isMobileAppFlow } = this.props;
@@ -201,6 +206,11 @@ export class JetpackAuthorize extends Component {
 	redirect() {
 		const { isMobileAppFlow, mobileAppRedirect } = this.props;
 		const { from, redirectAfterAuth, scope } = this.props.authQuery;
+		const { isRedirecting } = this.state;
+
+		if ( isRedirecting ) {
+			return;
+		}
 
 		if ( isMobileAppFlow ) {
 			debug( `Redirecting to mobile app ${ mobileAppRedirect }` );
@@ -227,6 +237,8 @@ export class JetpackAuthorize extends Component {
 		} else {
 			page.redirect( this.getRedirectionTarget() );
 		}
+
+		this.setState( { isRedirecting: true } );
 	}
 
 	redirectToXmlRpcErrorFallbackUrl() {
@@ -607,7 +619,7 @@ export class JetpackAuthorize extends Component {
 
 	getRedirectionTarget() {
 		const { clientId, homeUrl, redirectAfterAuth } = this.props.authQuery;
-		const { partnerSlug } = this.props;
+		const { partnerSlug, selectedPlanSlug } = this.props;
 
 		// Redirect sites hosted on Pressable with a partner plan to some URL.
 		if (
@@ -621,8 +633,11 @@ export class JetpackAuthorize extends Component {
 		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
 			productSlug.includes( 'jetpack' )
 		);
-		if ( jetpackCheckoutSlugs.includes( this.props.selectedPlanSlug ) ) {
-			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
+		if ( jetpackCheckoutSlugs.includes( selectedPlanSlug ) ) {
+			// Once we decide we want to redirect the user to the checkout page and that there is a
+			// valid plan, we can safely remove it from the session storage
+			clearPlan();
+			return `/checkout/${ urlToSlug( homeUrl ) }/${ selectedPlanSlug }`;
 		}
 
 		return addQueryArgs(

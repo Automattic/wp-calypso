@@ -220,7 +220,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 		authorUrl: get( comment, 'author.URL', '' ),
 		isAuthorBlocked: isAuthorsEmailBlocked( state, siteId, authorEmail ),
 		showBlockUser,
-		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'blacklist_keys' ),
+		blockedCommentAuthorKeys: getSiteSetting( state, siteId, 'disallowed_keys' ),
 		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 	};
@@ -240,7 +240,7 @@ const mapDispatchToProps = ( dispatch ) => ( {
 							: 'comment_author_unblocked'
 					)
 				),
-				saveSiteSettings( siteId, { blacklist_keys: blockedCommentAuthorKeys } )
+				saveSiteSettings( siteId, { disallowed_keys: blockedCommentAuthorKeys } )
 			)
 		),
 	trackAnonymousModeration: () =>

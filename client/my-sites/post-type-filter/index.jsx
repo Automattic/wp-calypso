@@ -51,6 +51,15 @@ export class PostTypeFilter extends Component {
 	getNavItems() {
 		const { query, siteId, siteSlug, statusSlug, jetpack, counts } = this.props;
 
+		const isPostOrPage = query.type === 'post' || query.type === 'page';
+
+		let basePath = '/types/' + query.type;
+		if ( query.type === 'page' ) {
+			basePath = '/pages';
+		} else if ( query.type === 'post' ) {
+			basePath = '/posts';
+		}
+
 		return reduce(
 			counts,
 			( memo, count, status ) => {
@@ -90,8 +99,8 @@ export class PostTypeFilter extends Component {
 					// Hide count in all sites mode; and in Jetpack mode for non-posts
 					count: ! siteId || ( jetpack && query.type !== 'post' ) ? null : count,
 					path: compact( [
-						query.type === 'post' ? '/posts' : '/types/' + query.type,
-						query.type === 'post' && query.author && 'my',
+						basePath,
+						isPostOrPage && query.author && 'my',
 						pathStatus,
 						siteSlug,
 					] ).join( '/' ),
@@ -156,7 +165,12 @@ export class PostTypeFilter extends Component {
 						) ) }
 					</NavTabs>
 					{ ! authorToggleHidden && (
-						<AuthorSegmented author={ query.author } siteId={ siteId } statusSlug={ statusSlug } />
+						<AuthorSegmented
+							author={ query.author }
+							siteId={ siteId }
+							statusSlug={ statusSlug }
+							type={ query.type }
+						/>
 					) }
 					{ /* Disable search in all-sites mode because it doesn't work. */ }
 					{ isSingleSite && (
@@ -182,7 +196,7 @@ export default flow(
 	connect( ( state, { query } ) => {
 		const siteId = getSelectedSiteId( state );
 		let authorToggleHidden = false;
-		if ( query && query.type === 'post' ) {
+		if ( query && ( query.type === 'post' || query.type === 'page' ) ) {
 			if ( siteId ) {
 				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
 			} else {

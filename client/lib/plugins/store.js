@@ -10,22 +10,19 @@ import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 import Dispatcher from 'calypso/dispatcher';
 import emitter from 'calypso/lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
-import PluginsActions from 'calypso/lib/plugins/actions';
 import versionCompare from 'calypso/lib/version-compare';
 import { normalizePluginData } from 'calypso/lib/plugins/utils';
 import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
 import getNetworkSites from 'calypso/state/selectors/get-network-sites';
 import { getSite } from 'calypso/state/sites/selectors';
 import { sitePluginUpdated } from 'calypso/state/sites/actions';
+import { fetchSitePlugins } from 'calypso/state/plugins/installed/actions';
 
 const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 
 /*
  * Constants
  */
-// time to wait until a plugin recentlyUpdate flag is cleared once it's updated
-const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
-
 // Stores the plugins of each site.
 const _fetching = {};
 const _pluginsBySite = {};
@@ -59,7 +56,7 @@ const _filters = {
 function refreshNetworkSites( site ) {
 	const networkSites = getNetworkSites( reduxGetState(), site.ID );
 	if ( networkSites ) {
-		networkSites.forEach( PluginsActions.fetchSitePlugins );
+		networkSites.forEach( ( networkSite ) => reduxDispatch( fetchSitePlugins( networkSite.ID ) ) );
 	}
 }
 
@@ -188,7 +185,7 @@ const PluginsStore = {
 			return [];
 		}
 		if ( ! _pluginsBySite[ site.ID ] && ! _fetching[ site.ID ] ) {
-			PluginsActions.fetchSitePlugins( site );
+			reduxDispatch( fetchSitePlugins( site.ID ) );
 			_fetching[ site.ID ] = true;
 		}
 		if ( ! _pluginsBySite[ site.ID ] ) {
@@ -236,23 +233,6 @@ const PluginsStore = {
 		return _fetching[ site.ID ];
 	},
 
-	// Array of sites without a particular plugin.
-	getNotInstalledSites: function ( sites, pluginSlug ) {
-		const installedOnSites = this.getSites( sites, pluginSlug ) || [];
-		return sites.filter( function ( site ) {
-			if ( ! site.visible ) {
-				return false;
-			}
-			if ( site.jetpack && site.isSecondaryNetworkSite ) {
-				return false;
-			}
-
-			return installedOnSites.every( function ( installedOnSite ) {
-				return installedOnSite.slug !== site.slug;
-			} );
-		} );
-	},
-
 	emitChange: function () {
 		this.emit( 'change' );
 	},
@@ -274,13 +254,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'NOT_ALLOWED_TO_RECEIVE_PLUGINS':
-			_fetching[ action.site.ID ] = false;
-			_pluginsBySite[ action.site.ID ] = {};
-			PluginsStore.emitChange();
-			break;
-
-		case 'AUTOUPDATE_PLUGIN':
 		case 'UPDATE_PLUGIN':
 			PluginsStore.emitChange();
 			break;
@@ -290,7 +263,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 			PluginsStore.emitChange();
 			break;
 
-		case 'RECEIVE_AUTOUPDATE_PLUGIN':
 		case 'RECEIVE_UPDATED_PLUGIN':
 			if ( action.error ) {
 				debug( 'plugin updating error', action.error );
@@ -304,10 +276,6 @@ PluginsStore.dispatchToken = Dispatcher.register( function ( { action } ) {
 					Object.assign( { update: { recentlyUpdated: true } }, action.data )
 				);
 				reduxDispatch( sitePluginUpdated( action.site.ID ) );
-				setTimeout(
-					PluginsActions.removePluginUpdateInfo.bind( PluginsActions, action.site, action.plugin ),
-					_UPDATED_PLUGIN_INFO_TIME_TO_LIVE
-				);
 			}
 			PluginsStore.emitChange();
 			break;

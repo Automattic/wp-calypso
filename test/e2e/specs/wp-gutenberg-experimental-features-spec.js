@@ -23,10 +23,9 @@ const gutenbergUser =
 // of the @wordpress/* packages. The purpose of these tests is to give us an early
 // warning if an experimental feature has been removed or renamed.
 const EXPERIMENTAL_FEATURES = {
-	'@wordpress/block-editor': [
-		// Used in the premium content block in the Editing Toolkit plugin
-		'__experimentalBlock',
-	],
+	'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
+	'@wordpress/date': [ '__experimentalGetSettings' ],
+	'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
 };
 
 /**

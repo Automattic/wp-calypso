@@ -11,6 +11,7 @@ import {
 	backupRestore,
 	backups,
 	showJetpackIsDisconnected,
+	showNotAuthorizedForNonAdmins,
 	showUpsellIfNoBackup,
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
@@ -50,6 +51,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -67,6 +69,7 @@ export default function () {
 			showUnavailableForVaultPressSites,
 			showJetpackIsDisconnected,
 			showUnavailableForMultisites,
+			showNotAuthorizedForNonAdmins,
 			notFoundIfNotEnabled,
 			makeLayout,
 			clientRender
@@ -85,6 +88,7 @@ export default function () {
 		showUnavailableForVaultPressSites,
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
+		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

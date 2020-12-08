@@ -14,24 +14,24 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import fixtures from './fixtures';
-import mockedActions from './mocks/actions';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 
 jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )
 );
-jest.mock( 'lib/plugins/actions', () => require( './mocks/actions' ) );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );
 
 describe( 'PluginAutoupdateToggle', () => {
 	const mockedProps = {
 		recordGoogleEvent: spy(),
 		recordTracksEvent: spy(),
+		removePluginStatuses: spy(),
 		translate: spy(),
+		togglePluginAutoUpdate: spy(),
 	};
 
 	afterEach( () => {
-		mockedActions.togglePluginAutoUpdate.resetHistory();
+		mockedProps.togglePluginAutoUpdate.resetHistory();
 		mockedProps.recordGoogleEvent.resetHistory();
 	} );
 
@@ -55,6 +55,6 @@ describe( 'PluginAutoupdateToggle', () => {
 
 		wrapper.simulate( 'click' );
 
-		expect( mockedActions.togglePluginAutoUpdate.called ).to.equal( true );
+		expect( mockedProps.togglePluginAutoUpdate.called ).to.equal( true );
 	} );
 } );

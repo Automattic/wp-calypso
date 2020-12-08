@@ -3,12 +3,12 @@
  */
 import type * as DomainSuggestions from '../domain-suggestions';
 import type * as Plans from '../plans';
-import { dispatch, select } from '@wordpress/data-controls';
+import { select } from '@wordpress/data-controls';
 
 /**
  * Internal dependencies
  */
-import { SITE_ID, SITE_STORE, PLANS_STORE } from './constants';
+import { PLANS_STORE } from './constants';
 import type { LaunchStepType } from './types';
 
 export const setSidebarFullscreen = () =>
@@ -66,16 +66,6 @@ export function* updatePlan( planSlug: Plans.PlanSlug ) {
 	yield setPlan( plan );
 }
 
-/* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types */
-export function* launchSite() {
-	try {
-		const success = yield dispatch( SITE_STORE, 'launchSite', SITE_ID );
-		return success;
-	} catch ( error ) {
-		// console.log( 'launch error', error );
-	}
-}
-
 export const openSidebar = () =>
 	( {
 		type: 'OPEN_SIDEBAR',
@@ -126,6 +116,16 @@ export const hideModalTitle = () =>
 		type: 'HIDE_MODAL_TITLE',
 	} as const );
 
+export const enablePersistentSuccessView = () =>
+	( {
+		type: 'ENABLE_SUCCESS_VIEW',
+	} as const );
+
+export const disablePersistentSuccessView = () =>
+	( {
+		type: 'DISABLE_SUCCESS_VIEW',
+	} as const );
+
 export type LaunchAction = ReturnType<
 	| typeof unsetDomain
 	| typeof setStep
@@ -146,4 +146,6 @@ export type LaunchAction = ReturnType<
 	| typeof unsetModalDismissible
 	| typeof showModalTitle
 	| typeof hideModalTitle
+	| typeof enablePersistentSuccessView
+	| typeof disablePersistentSuccessView
 >;

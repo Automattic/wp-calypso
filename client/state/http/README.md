@@ -9,9 +9,10 @@ It follows the same API as `wpcom-http`, the only difference from the user's per
 So, let's say you would like to do a `POST` request to <https://api.example.com> when the action `GET_EXAMPLE_DATA` is dispatched, later continuing with `EXAMPLE_DATA_ADD` for the data or `NOTICE_CREATE` for the error. You'll be able to do that with the following code (that could be located under `third-party`):
 
 ```js
-import { GET_EXAMPLE_DATA, EXAMPLE_DATA_ADD, NOTICE_CREATE } from 'calypso/state/action-types';
+import { GET_EXAMPLE_DATA, EXAMPLE_DATA_ADD } from 'calypso/state/action-types';
 import { dispatchRequest } from 'calypso/state/wpcom-http/utils';
 import { http } from 'calypso/state/http/actions';
+import { createNotice } from 'calypso/state/notices/actions';
 import { get } from 'lodash';
 
 const requestExampleData = ( action ) =>
@@ -32,12 +33,10 @@ const receivedExampleData = ( action, data ) => ( {
 	data,
 } );
 
-const receivedExampleDataError = ( action, error ) => ( {
-	type: NOTICE_CREATE,
-	notice: {
-		text: get( error, 'response.body.error', null ),
-	},
-} );
+const receivedExampleDataError = ( action, error ) => createNotice(
+	'is-error',
+	get( error, 'response.body.error', null )
+);
 
 export default {
 	[ GET_EXAMPLE_DATA ]: dispatchRequest( {

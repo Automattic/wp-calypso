@@ -80,7 +80,8 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 		mostRecentBackupEver,
 		lastBackupBeforeDate,
 		lastBackupAttemptOnDate,
-		earlierBackupAttemptsOnDate,
+		lastSuccessfulBackupOnDate,
+		backupAttemptsOnDate,
 		rawDeltas,
 	} = useRealtimeBackupStatus( siteId, selectedDate );
 
@@ -117,14 +118,14 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 					{ ...{
 						selectedDate,
 						lastBackupDate,
-						backup: lastBackupAttemptOnDate,
+						backup: lastSuccessfulBackupOnDate || lastBackupAttemptOnDate,
 						isLatestBackup,
 						dailyDeltas,
 					} }
 				/>
 			</li>
 
-			{ earlierBackupAttemptsOnDate.map( ( activity ) => (
+			{ backupAttemptsOnDate.map( ( activity ) => (
 				<li key={ activity.activityId }>
 					<BackupCard activity={ activity } />
 				</li>

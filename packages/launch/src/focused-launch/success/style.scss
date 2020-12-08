@@ -1,16 +1,16 @@
 @import '~@automattic/onboarding/styles/variables';
 @import '~@automattic/onboarding/styles/mixins';
+@import '../../variables';
 
-.focused-launch-success {
-	padding: 0 20px 120px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.focused-launch-success__wrapper {
-	width: 100%;
+// Override some of the .focused-launch-container styles,
+// to make the contents of success view centered in the middle of the page
+.focused-launch-container.focused-launch-success__wrapper {
 	max-width: 420px;
+	padding-bottom: 100px;
+	flex-grow: 0;
+	// Auto in all directions, as a flex child, makes this element centered
+	margin: auto;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -95,17 +95,11 @@
 }
 
 .focused-launch-success__continue-editing-button {
-	// @TODO: refactor to common variable in onboarding
-	// see https://github.com/Automattic/wp-calypso/issues/47181
-	background-color: #117ac9;
+	background-color: $focused-launch-accent-blue;
 	width: 100%;
 	margin-bottom: 20px;
 
 	@include break-small {
 		width: auto;
 	}
-}
-
-.focused-launch-success__go-back-button {
-	color: var( --studio-gray-50 );
 }

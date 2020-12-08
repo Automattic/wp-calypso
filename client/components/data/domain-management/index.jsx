@@ -23,8 +23,7 @@ import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import StoreConnection from 'calypso/components/data/store-connection';
 import UsersStore from 'calypso/lib/users/store';
-import WapiDomainInfoStore from 'calypso/lib/domains/wapi-domain-info/store';
-import { fetchWapiDomainInfo } from 'calypso/lib/domains/wapi-domain-info/actions';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 function getStateFromStores( props ) {
 	return {
@@ -38,7 +37,6 @@ function getStateFromStores( props ) {
 		sitePlans: props.sitePlans,
 		user: props.currentUser,
 		users: UsersStore.getUsers( { siteId: get( props.selectedSite, 'ID' ) } ),
-		wapiDomainInfo: WapiDomainInfoStore.getByDomainName( props.selectedDomainName ),
 	};
 }
 
@@ -53,7 +51,6 @@ class DomainManagementData extends React.Component {
 		needsContactDetails: PropTypes.bool,
 		needsDns: PropTypes.bool,
 		needsDomains: PropTypes.bool,
-		needsDomainInfo: PropTypes.bool,
 		needsPlans: PropTypes.bool,
 		needsProductsList: PropTypes.bool,
 		needsUsers: PropTypes.bool,
@@ -72,11 +69,7 @@ class DomainManagementData extends React.Component {
 	}
 
 	loadData( prevProps ) {
-		const { needsUsers, selectedDomainName, selectedSite } = this.props;
-
-		if ( this.props.needsDomainInfo ) {
-			fetchWapiDomainInfo( selectedDomainName );
-		}
+		const { needsUsers, selectedSite } = this.props;
 
 		if (
 			needsUsers &&
@@ -91,7 +84,6 @@ class DomainManagementData extends React.Component {
 			needsCart,
 			needsContactDetails,
 			needsDomains,
-			needsDomainInfo,
 			needsPlans,
 			needsProductsList,
 			needsUsers,
@@ -101,9 +93,6 @@ class DomainManagementData extends React.Component {
 		const stores = [];
 		if ( needsCart ) {
 			stores.push( CartStore );
-		}
-		if ( needsDomainInfo ) {
-			stores.push( WapiDomainInfoStore );
 		}
 		if ( needsUsers ) {
 			stores.push( UsersStore );
@@ -117,19 +106,21 @@ class DomainManagementData extends React.Component {
 				{ selectedSite && needsPlans && <QuerySitePlans siteId={ selectedSite.ID } /> }
 				{ needsProductsList && <QueryProductsList /> }
 
-				<StoreConnection
-					component={ this.props.component }
-					context={ this.props.context }
-					currentUser={ this.props.currentUser }
-					domains={ this.props.domains }
-					getStateFromStores={ getStateFromStores }
-					isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
-					products={ this.props.productsList }
-					selectedDomainName={ this.props.selectedDomainName }
-					selectedSite={ selectedSite }
-					sitePlans={ this.props.sitePlans }
-					stores={ stores }
-				/>
+				<CalypsoShoppingCartProvider>
+					<StoreConnection
+						component={ this.props.component }
+						context={ this.props.context }
+						currentUser={ this.props.currentUser }
+						domains={ this.props.domains }
+						getStateFromStores={ getStateFromStores }
+						isRequestingSiteDomains={ this.props.isRequestingSiteDomains }
+						products={ this.props.productsList }
+						selectedDomainName={ this.props.selectedDomainName }
+						selectedSite={ selectedSite }
+						sitePlans={ this.props.sitePlans }
+						stores={ stores }
+					/>
+				</CalypsoShoppingCartProvider>
 			</div>
 		);
 	}

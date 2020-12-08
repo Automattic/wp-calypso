@@ -33,8 +33,10 @@ import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
-import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
-import { getPathToDetails } from 'calypso/my-sites/plans-v2/utils';
+import {
+	OPTIONS_JETPACK_SECURITY,
+	PRODUCT_UPSELLS_BY_FEATURE,
+} from 'calypso/my-sites/plans/jetpack-plans/constants';
 
 const validateGoogleAnalyticsCode = ( code ) =>
 	! code || code.match( /^(UA-\d+-\d+)|(G-[A-Z0-9]+)$/i );
@@ -121,7 +123,7 @@ export class GoogleAnalyticsForm extends Component {
 			  } );
 
 		const href = siteIsJetpack
-			? getPathToDetails( '/plans', {}, OPTIONS_JETPACK_SECURITY, TERM_ANNUALLY, site.slug )
+			? `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`
 			: null;
 
 		const nudge = (
@@ -130,7 +132,7 @@ export class GoogleAnalyticsForm extends Component {
 					siteIsJetpack
 						? translate( "Monitor your site's views, clicks, and other important metrics" )
 						: translate(
-								"Add your unique tracking ID to monitor your site's performance in Google Analytics."
+								"Add your unique Measurement ID to monitor your site's performance in Google Analytics."
 						  )
 				}
 				event={ 'google_analytics_settings' }
@@ -181,7 +183,7 @@ export class GoogleAnalyticsForm extends Component {
 
 						<FormFieldset>
 							<FormLabel htmlFor="wgaCode">
-								{ translate( 'Google Analytics Tracking ID', { context: 'site setting' } ) }
+								{ translate( 'Google Analytics Measurement ID', { context: 'site setting' } ) }
 							</FormLabel>
 							<FormTextInput
 								name="wgaCode"
@@ -206,7 +208,7 @@ export class GoogleAnalyticsForm extends Component {
 							{ ! this.state.isCodeValid && (
 								<FormTextValidation
 									isError={ true }
-									text={ translate( 'Invalid Google Analytics Tracking ID.' ) }
+									text={ translate( 'Invalid Google Analytics Measurement ID.' ) }
 								/>
 							) }
 							<ExternalLink
@@ -215,7 +217,7 @@ export class GoogleAnalyticsForm extends Component {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								{ translate( 'Where can I find my Tracking ID?' ) }
+								{ translate( 'Where can I find my Measurement ID?' ) }
 							</ExternalLink>
 						</FormFieldset>
 						{ siteIsJetpack && (

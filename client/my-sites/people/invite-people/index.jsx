@@ -20,17 +20,11 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormLabel from 'calypso/components/forms/form-label';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
-import {
-	sendInvites,
-	createInviteValidation,
-	generateInviteLinks,
-	disableInviteLinks,
-} from 'calypso/lib/invites/actions';
+import { sendInvites, generateInviteLinks, disableInviteLinks } from 'calypso/lib/invites/actions';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 import HeaderCake from 'calypso/components/header-cake';
 import CountedTextarea from 'calypso/components/forms/counted-textarea';
-import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
 import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import EmptyContent from 'calypso/components/empty-content';
@@ -60,6 +54,7 @@ import ClipboardButton from 'calypso/components/forms/clipboard-button';
 import SectionHeader from 'calypso/components/section-header';
 import accept from 'calypso/lib/accept';
 import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies
@@ -75,12 +70,10 @@ class InvitePeople extends React.Component {
 	static displayName = 'InvitePeople';
 
 	componentDidMount() {
-		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
 		InvitesSentStore.on( 'change', this.refreshFormState );
 	}
 
 	componentWillUnmount() {
-		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
 		InvitesSentStore.off( 'change', this.refreshFormState );
 	}
 
@@ -167,7 +160,7 @@ class InvitePeople extends React.Component {
 			success: filteredSuccess,
 			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay,
 		} );
-		createInviteValidation( this.props.siteId, filteredTokens, role );
+		this.validateInvitation( this.props.siteId, filteredTokens, role );
 
 		if ( filteredTokens.length > usernamesOrEmails.length ) {
 			this.props.recordTracksEventAction( 'calypso_invite_people_token_added' );
@@ -181,7 +174,7 @@ class InvitePeople extends React.Component {
 	onRoleChange = ( event ) => {
 		const role = event.target.value;
 		this.setState( { role } );
-		createInviteValidation( this.props.siteId, this.state.usernamesOrEmails, role );
+		this.validateInvitation( this.props.siteId, this.state.usernamesOrEmails, role );
 	};
 
 	onExternalChange = ( event ) => {
@@ -189,11 +182,21 @@ class InvitePeople extends React.Component {
 		this.setState( { isExternal } );
 	};
 
-	refreshValidation = () => {
-		const errors =
-			InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {};
-		const success =
-			InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [];
+	async validateInvitation( siteId, usernamesOrEmails, role ) {
+		try {
+			const { success, errors } = await wpcom
+				.undocumented()
+				.createInviteValidation( siteId, usernamesOrEmails, role );
+
+			this.refreshValidation( success, errors );
+
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_success' );
+		} catch ( error ) {
+			this.props.recordTracksEventAction( 'calypso_invite_create_validation_failed' );
+		}
+	}
+
+	refreshValidation = ( success = [], errors = {} ) => {
 		const errorsKeys = Object.keys( errors );
 		const errorToDisplay =
 			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );

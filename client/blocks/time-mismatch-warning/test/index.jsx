@@ -45,25 +45,36 @@ describe( 'TimeMismatchWarning', () => {
 	} );
 
 	test( 'to render nothing if no site ID is provided', () => {
-		const wrapper = shallow( <TimeMismatchWarning /> );
+		const wrapper = shallow( <TimeMismatchWarning settingsUrl="https://example.com" /> );
+		expect( wrapper.isEmptyRender() ).toBeTruthy();
+	} );
+
+	test( 'to render nothing if no settings URL is provided', () => {
+		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
 		expect( wrapper.isEmptyRender() ).toBeTruthy();
 	} );
 
 	test( 'to render nothing if times match', () => {
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
+		const wrapper = shallow(
+			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
+		);
 		expect( wrapper.isEmptyRender() ).toBeTruthy();
 	} );
 
 	test( 'to render nothing if the user preference is dismissed', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
 		getPreference.mockReturnValueOnce( () => true );
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
+		const wrapper = shallow(
+			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
+		);
 		expect( wrapper.isEmptyRender() ).toBeTruthy();
 	} );
 
 	test( 'to render if GMT offsets do not match', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
+		const wrapper = shallow(
+			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
+		);
 		expect( wrapper ).toMatchSnapshot();
 	} );
 
@@ -77,7 +88,9 @@ describe( 'TimeMismatchWarning', () => {
 
 	test( 'to render the status if set', () => {
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } status="is-error" /> );
+		const wrapper = shallow(
+			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" status="is-error" />
+		);
 		expect( wrapper.dive().prop( 'className' ) ).toEqual( 'is-error' );
 	} );
 
@@ -85,7 +98,9 @@ describe( 'TimeMismatchWarning', () => {
 		const dispatch = jest.fn( () => null );
 		useDispatch.mockReturnValueOnce( dispatch );
 		getSiteGmtOffset.mockReturnValueOnce( 10 );
-		const wrapper = shallow( <TimeMismatchWarning siteId={ 1 } /> );
+		const wrapper = shallow(
+			<TimeMismatchWarning siteId={ 1 } settingsUrl="https://example.com" />
+		);
 		const onDismissClick = wrapper.prop( 'onDismissClick' );
 		onDismissClick();
 		expect( dispatch ).toHaveBeenCalled();

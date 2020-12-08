@@ -35,6 +35,7 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
+		"@automattic/i18n-utils": "^1.0.0",
 		"@wordpress/base-styles": "^2.0.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/compose": "^3.19.3",

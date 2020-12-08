@@ -2,13 +2,16 @@
  * External dependencies
  */
 import impureLodash from 'calypso/lib/impure-lodash';
-const { uniqueId } = impureLodash;
 
 /**
  * Internal dependencies
  */
 import { NOTICE_CREATE, NOTICE_REMOVE } from 'calypso/state/action-types';
 import { extendAction } from 'calypso/state/utils';
+
+import 'calypso/state/notices/init';
+
+const { uniqueId } = impureLodash;
 
 export function removeNotice( noticeId ) {
 	return {

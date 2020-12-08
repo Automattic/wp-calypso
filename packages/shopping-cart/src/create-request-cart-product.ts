@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { RequestCartProduct } from './shopping-cart-endpoint';
+import type { RequestCartProduct } from './shopping-cart-endpoint';
 
 export default function createRequestCartProduct(
 	properties: Partial< RequestCartProduct > &
@@ -13,6 +13,7 @@ export default function createRequestCartProduct(
 	return {
 		meta: '',
 		volume: 1,
+		quantity: null,
 		extra: {},
 		...properties,
 	};

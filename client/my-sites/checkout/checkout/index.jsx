@@ -113,7 +113,6 @@ import {
 import { isExternal, addQueryArgs } from 'calypso/lib/url';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { abtest } from 'calypso/lib/abtest';
-import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
 /**
  * Style dependencies
@@ -298,7 +297,7 @@ export class Checkout extends React.Component {
 	}
 
 	addNewItemToCart() {
-		const { planSlug, product, cart, isJetpackNotAtomic, isPrivate } = this.props;
+		const { planSlug, product, cart, isJetpackNotAtomic } = this.props;
 
 		let cartItem;
 		let cartMeta;
@@ -323,18 +322,11 @@ export class Checkout extends React.Component {
 		// Search product
 		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
 			cartItem = null;
-			// is site JP
 			if ( isJetpackNotAtomic ) {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
-			}
-			// is site WPCOM
-			else if (
-				config.isEnabled( 'jetpack/wpcom-search-product' ) &&
-				! isJetpackNotAtomic &&
-				! isPrivate
-			) {
+			} else {
 				cartItem = product.includes( 'monthly' )
 					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
 					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
@@ -1007,7 +999,6 @@ export default connect(
 			isProductsListFetching: isProductsListFetching( state ),
 			isPlansListFetching: isRequestingPlans( state ),
 			isFetchingStoredCards: isFetchingStoredCards( state ),
-			isPrivate: isPrivateSite( state, selectedSiteId ),
 			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 			isJetpackNotAtomic:
