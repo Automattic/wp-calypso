@@ -37,26 +37,20 @@ export default class SupportPage {
 		return visible !== null;
 	}
 
-	async getDefaultResults() {
-		const defaultResultsSelector = '.inline-help__results-cell';
-
-		return this.page.$$( defaultResultsSelector );
+	async getResults( selector ) {
+		await this.page.waitForLoadState( 'networkidle' );
+		await this.page.waitForSelector( selector );
+		return await this.page.$$( selector );
 	}
 
 	async getDefaultResultCount() {
-		const results = await this.getDefaultResults();
+		const results = await this.getResults( '.inline-help__results-cell' );
 
 		return results.length;
 	}
 
-	async getResults() {
-		const searchResults = '[aria-labelledby="inline-search--api_help"]';
-
-		return await this.page.$$( searchResults );
-	}
-
 	async getResultCount() {
-		const results = await this.getResults();
+		const results = await this.getResults( '[aria-labelledby="inline-search--api_help"]' );
 
 		return results.length;
 	}
