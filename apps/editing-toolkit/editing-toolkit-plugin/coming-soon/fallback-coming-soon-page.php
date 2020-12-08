@@ -27,7 +27,7 @@ function get_current_locale() {
  */
 function original_request_url() {
 	if ( empty( $_SERVER['SERVER_NAME'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
-		return get_marketing_home_url();
+		return get_onboarding_url();
 	}
 
 	$origin = ( is_ssl() ? 'https://' : 'http://' ) . sanitize_text_field( wp_unslash( $_SERVER['SERVER_NAME'] ) );
@@ -48,7 +48,7 @@ function get_wpcom_redirect_to() {
 	// Redirect to the current URL.
 	// If, for any reason, the superglobals aren't available, set a default redirect.
 	if ( empty( $_SERVER['HTTP_HOST'] ) || empty( $_SERVER['REQUEST_URI'] ) ) {
-		return get_marketing_home_url();
+		return get_onboarding_url();
 	}
 
 	return rawurlencode( 'https://' . sanitize_text_field( wp_unslash( $_SERVER['HTTP_HOST'] ) ) . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) );
@@ -60,11 +60,9 @@ function get_wpcom_redirect_to() {
  * @return string The login URL
  */
 function get_login_url() {
-	// If we're on WPCOM use a WordPress.com login URL.
-	if ( has_filter( 'wpcom_public_coming_soon_localize_url' ) ) {
-		return apply_filters( 'wpcom_public_coming_soon_localize_url', '//wordpress.com/log-in?redirect_to=' . get_wpcom_redirect_to() );
-	}
-	return site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
+	$default_url = site_url() . '/wp-login.php?redirect_to=' . set_url_scheme( original_request_url() );
+
+	return apply_filters( 'wpcom_public_coming_soon_login_url', $default_url, get_wpcom_redirect_to() );
 }
 
 /**
@@ -73,14 +71,10 @@ function get_login_url() {
  * @return string The URL
  */
 function get_onboarding_url() {
-	if ( has_filter( 'wpcom_public_coming_soon_localize_url' ) ) {
-		return apply_filters( 'wpcom_public_coming_soon_localize_url', 'https://wordpress.com/?ref=coming_soon' );
-	}
-
 	$locale           = get_current_locale();
 	$locale_subdomain = 'en' === $locale ? '' : $locale . '.';
 
-	return 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon';
+	return apply_filters( 'wpcom_public_coming_soon_onboarding_url', 'https://' . $locale_subdomain . 'wordpress.com/?ref=coming_soon' );
 }
 
 nocache_headers();
