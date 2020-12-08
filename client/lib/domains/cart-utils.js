@@ -13,7 +13,7 @@ import { isDomainRegistration } from 'calypso/lib/products-values/is-domain-regi
  * Depending on the current step in checkout, the user's domain can be found in
  * either the cart or the receipt.
  *
- * @param {?object} receipt - The receipt for the transaction
+ * @param {?object} [receipt] - The receipt for the transaction
  * @param {?object} cart - The cart for the transaction
  *
  * @returns {?string} the name of the first domain for the transaction.
