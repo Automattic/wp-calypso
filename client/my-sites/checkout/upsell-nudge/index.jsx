@@ -5,8 +5,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import page from 'page';
-import { omit } from 'lodash';
-import { withShoppingCart } from '@automattic/shopping-cart';
+import { pick } from 'lodash';
+import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -40,7 +40,6 @@ import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { PurchaseModal } from './purchase-modal';
-import { replaceCartWithItems } from 'calypso/lib/cart/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
@@ -245,9 +244,8 @@ export class UpsellNudge extends React.Component {
 		if ( this.isEligibleForOneClickUpsell( buttonAction ) ) {
 			this.setState( {
 				showPurchaseModal: true,
-				cartLastServerResponseDate: this.getCartUpdatedTime(),
 			} );
-			replaceCartWithItems( [ this.props.product ] );
+			this.props.shoppingCartManager.replaceProductsInCart( [ this.props.product ] );
 			return;
 		}
 
@@ -281,7 +279,7 @@ export class UpsellNudge extends React.Component {
 	};
 
 	renderPurchaseModal = () => {
-		const isCartUpdating = this.state.cartLastServerResponseDate === this.getCartUpdatedTime();
+		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
 
 		return (
 			<PurchaseModal
@@ -301,10 +299,6 @@ export class UpsellNudge extends React.Component {
 				<Gridicon icon="cross-small" />
 			</div>
 		);
-	};
-
-	getCartUpdatedTime = () => {
-		return this.props.cart?.client_metadata?.last_server_response_date;
 	};
 }
 
@@ -353,7 +347,9 @@ export default connect(
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			product: omit( getProductBySlug( state, productSlug ), 'prices' ),
+			product: createRequestCartProduct(
+				pick( getProductBySlug( state, productSlug ), [ 'product_slug', 'product_id' ] )
+			),
 			productCost: getProductCost( state, productSlug ),
 			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
