@@ -19,15 +19,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
