@@ -41,14 +41,17 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
-import { getPluginOnSites, getSitesWithoutPlugin } from 'calypso/state/plugins/installed/selectors';
-
-/* eslint-disable react/prefer-es6-class */
+import {
+	getPluginOnSites,
+	getSitesWithoutPlugin,
+	isRequestingForSites,
+} from 'calypso/state/plugins/installed/selectors';
 
 function goBack() {
 	window.history.back();
 }
 
+/* eslint-disable react/prefer-es6-class */
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
@@ -174,15 +177,13 @@ const SinglePlugin = createReactClass( {
 			return true;
 		}
 
-		const sites = this.props.sites;
-
 		// If the plugin has at least one site then we know it exists
 		const pluginSites = Object.values( plugin.sites );
 		if ( pluginSites && pluginSites[ 0 ] ) {
 			return true;
 		}
 
-		if ( sites.some( PluginsStore.isFetchingSite ) ) {
+		if ( this.props.requestingPluginsForSites ) {
 			return 'unknown';
 		}
 
@@ -195,10 +196,6 @@ const SinglePlugin = createReactClass( {
 
 	isFetched() {
 		return this.props.wporgFetched;
-	},
-
-	isFetchingSites() {
-		return this.props.sites.every( PluginsStore.isFetchingSite );
 	},
 
 	getPlugin() {
@@ -237,7 +234,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	isPluginInstalledOnsite() {
-		if ( this.isFetchingSites() ) {
+		if ( this.props.requestingPluginsForSites ) {
 			return null;
 		}
 
@@ -369,6 +366,7 @@ export default connect(
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
+			requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
