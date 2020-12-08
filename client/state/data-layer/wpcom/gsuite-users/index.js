@@ -31,7 +31,7 @@ export const getGSuiteUsers = ( action ) => {
 export const getGSuiteUsersFailure = ( action, error ) => {
 	return [
 		errorNotice(
-			translate( 'Failed to retrieve %(googleMailService)s Users', {
+			translate( 'Failed to retrieve %(googleMailService)s users', {
 				args: {
 					googleMailService: getGoogleMailServiceName(),
 				},
