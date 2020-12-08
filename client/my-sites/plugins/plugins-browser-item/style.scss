@@ -123,9 +123,9 @@
 .plugins-browser-item__installed {
 	display: flex;
 	align-items: center;
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
+	margin: auto;
+	margin-right: 0;
+	justify-self: flex-end;
 	color: var( --color-success );
 	font-size: $font-body-extra-small;
 	font-weight: 600;
