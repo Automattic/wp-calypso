@@ -54,6 +54,7 @@ git_log=$(git log --oneline --pretty=format:"$git_log_format" $last_stable_tag..
   sort -s -k 1,1)
 
 echo "$git_log" | while IFS=$'\r' read change; do
+  # Don't include application version bump commits
   awk '$0 !~ /([0-9])+\.([0-9])+\.([0-9])+/ {print "* " $0}' <<< $change
 done
 
