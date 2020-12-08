@@ -28,6 +28,10 @@
 	margin: 16px 16px 0 52px;
 	flex: 1 1 200px;
 
+	.subscriptions__list & {
+		margin: 16px 16px 0 0;
+	}
+
 	@include breakpoint-deprecated( '>960px' ) {
 		flex: 0 1 300px;
 		margin: 0 16px 0 0;
