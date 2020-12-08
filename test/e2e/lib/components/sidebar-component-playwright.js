@@ -35,22 +35,18 @@ export default class SidebarComponent {
 	}
 
 	async selectMyHome() {
-		this.page.waitForNavigation();
-
-		return await this.page.click( '.myhome' );
+		return await Promise.all( [ this.page.waitForNavigation(), this.page.click( '.myhome' ) ] );
 	}
 
 	async selectMarketing() {
 		await this.expandDrawerItem( 'Tools' );
-		// Promise that will resolve on page navigation event firing.
-		this.page.waitForNavigation();
-		return await this.page.click( '.marketing' );
+
+		return await Promise.all( [ this.page.waitForNavigation(), this.page.click( '.marketing' ) ] );
 	}
 
 	async selectSettings() {
 		await this.expandDrawerItem( 'Manage' );
-		// Promise that will resolve on page navigation event firing.
-		this.page.waitForNavigation();
-		return await this.page.click( '.settings' );
+
+		return await Promise.all( [ this.page.waitForNavigation(), this.page.click( '.settings' ) ] );
 	}
 }
