@@ -2,12 +2,14 @@
  * Internal dependencies
  */
 import { JITM_SET } from 'calypso/state/action-types';
-import { combineReducers, keyedReducer } from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
 
 export const storeJITM = ( state = {}, { type, jitms } ) => ( type === JITM_SET ? jitms : state );
 
 const sitePathJITM = keyedReducer( 'keyedPath', storeJITM );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	sitePathJITM,
 } );
+
+export default withStorageKey( 'jitm', combinedReducer );

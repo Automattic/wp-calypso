@@ -20,7 +20,6 @@ import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import i18n from './i18n/reducer';
 import importerNux from './importer-nux/reducer';
-import jitm from './jitm/reducer';
 import mySites from './my-sites/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
@@ -38,7 +37,6 @@ const reducers = {
 	httpData,
 	i18n,
 	importerNux,
-	jitm,
 	mySites,
 	sites,
 	support,
