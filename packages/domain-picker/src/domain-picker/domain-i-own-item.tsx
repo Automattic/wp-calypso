@@ -20,7 +20,7 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) =>
 	const localizeUrl = useLocalizeUrl();
 
 	return (
-		<div className="domain-picker__suggestion-item contains-link">
+		<label className="domain-picker__suggestion-item contains-link">
 			<div className="domain-picker__suggestion-item-name">
 				<span className="domain-picker__domain-wrapper with-margin">
 					{ createInterpolateElement(
@@ -57,7 +57,7 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) =>
 				) }
 				<Icon icon={ chevronRight } />
 			</div>
-		</div>
+		</label>
 	);
 };
 
