@@ -14,35 +14,33 @@ import { capitalPDangit } from 'calypso/lib/formatting';
  */
 import { CompactCard } from '@automattic/components';
 import Pagination from 'calypso/components/pagination';
-import TransactionsHeader from './transactions-header';
+import BillingHistoryFilters from 'calypso/me/purchases/billing-history/billing-history-filters';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { setPage } from 'calypso/state/billing-transactions/ui/actions';
 import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
 import { getPlanTermLabel } from 'calypso/lib/plans';
+import isSendingBillingReceiptEmail from 'calypso/state/selectors/is-sending-billing-receipt-email';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { sendBillingReceiptEmail as sendBillingReceiptEmailAction } from 'calypso/state/billing-transactions/actions';
 
-class TransactionsTable extends React.Component {
-	static displayName = 'TransactionsTable';
+class BillingHistoryList extends React.Component {
+	static displayName = 'BillingHistoryList';
 
 	static defaultProps = {
 		header: false,
 	};
 
 	onPageClick = ( page ) => {
-		this.props.setPage( this.props.transactionType, page );
+		this.props.setPage( 'past', page );
 	};
 
 	render() {
 		let header;
 
 		if ( false !== this.props.header ) {
-			header = (
-				<TransactionsHeader
-					transactionType={ this.props.transactionType }
-					siteId={ this.props.siteId }
-				/>
-			);
+			header = <BillingHistoryFilters transactionType="past" siteId={ this.props.siteId } />;
 		}
 
 		return (
@@ -102,6 +100,58 @@ class TransactionsTable extends React.Component {
 		return description;
 	};
 
+	recordClickEvent = ( eventAction ) => {
+		recordGoogleEvent( 'Me', eventAction );
+	};
+
+	handleReceiptLinkClick = () => {
+		return this.recordClickEvent( 'View Receipt in Billing History' );
+	};
+
+	getEmailReceiptLinkClickHandler = ( receiptId ) => {
+		const { sendBillingReceiptEmail } = this.props;
+
+		return ( event ) => {
+			event.preventDefault();
+			this.recordClickEvent( 'Email Receipt in Billing History' );
+			sendBillingReceiptEmail( receiptId );
+		};
+	};
+
+	renderEmailAction = ( receiptId ) => {
+		const { translate, sendingBillingReceiptEmail } = this.props;
+
+		if ( sendingBillingReceiptEmail( receiptId ) ) {
+			return translate( 'Emailing receipt…' );
+		}
+
+		return (
+			<button
+				className="billing-history__email-button"
+				onClick={ this.getEmailReceiptLinkClickHandler( receiptId ) }
+			>
+				{ translate( 'Email receipt' ) }
+			</button>
+		);
+	};
+
+	renderActions = ( transaction ) => {
+		const { translate, getReceiptUrlFor } = this.props;
+
+		return (
+			<div className="billing-history__transaction-links">
+				<a
+					className="billing-history__view-receipt"
+					href={ getReceiptUrlFor( transaction.id ) }
+					onClick={ this.handleReceiptLinkClick }
+				>
+					{ translate( 'View receipt' ) }
+				</a>
+				{ this.renderEmailAction( transaction.id ) }
+			</div>
+		);
+	};
+
 	renderPlaceholder = () => {
 		return (
 			<tr className="billing-history__transaction is-placeholder">
@@ -136,7 +186,7 @@ class TransactionsTable extends React.Component {
 	};
 
 	renderRows = () => {
-		const { transactions, date, app, query, transactionType, translate } = this.props;
+		const { transactions, date, app, query, translate } = this.props;
 		if ( ! transactions ) {
 			return this.renderPlaceholder();
 		}
@@ -144,9 +194,17 @@ class TransactionsTable extends React.Component {
 		if ( isEmpty( transactions ) ) {
 			let noResultsText;
 			if ( ! date.newest || '' !== app || '' !== query ) {
-				noResultsText = this.props.noFilterResultsText;
+				noResultsText = this.props.siteId
+					? translate( 'You have made no purchases for this site.' )
+					: translate( 'No receipts found.' );
 			} else {
-				noResultsText = this.props.emptyTableText;
+				noResultsText = translate(
+					'You do not currently have any upgrades. ' +
+						'To see what upgrades we offer visit our {{link}}Plans page{{/link}}.',
+					{
+						components: { link: <a href="/plans" /> },
+					}
+				);
 			}
 			return (
 				<tr className="billing-history__no-results">
@@ -169,13 +227,13 @@ class TransactionsTable extends React.Component {
 								<div className="billing-history__service-name">
 									{ this.serviceName( transaction ) }
 								</div>
-								{ this.props.transactionRenderer( transaction ) }
+								{ this.renderActions( transaction ) }
 							</div>
 						</div>
 					</td>
 					<td className="billing-history__amount">
 						{ renderTransactionAmount( transaction, {
-							addingTax: transactionType === 'upcoming',
+							addingTax: false,
 							translate,
 						} ) }
 					</td>
@@ -185,7 +243,13 @@ class TransactionsTable extends React.Component {
 	};
 }
 
-TransactionsTable.propTypes = {
+function getIsSendingReceiptEmail( state ) {
+	return function isSendingBillingReceiptEmailForReceiptId( receiptId ) {
+		return isSendingBillingReceiptEmail( state, receiptId );
+	};
+}
+
+BillingHistoryList.propTypes = {
 	//connected props
 	app: PropTypes.string,
 	date: PropTypes.object,
@@ -196,18 +260,13 @@ TransactionsTable.propTypes = {
 	transactions: PropTypes.array,
 	//own props
 	siteId: PropTypes.number,
-	transactionType: PropTypes.string.isRequired,
-	//array allows to accept the output of translate() with components in the string
-	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
-	noFilterResultsText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
-	transactionRenderer: PropTypes.func.isRequired,
 	header: PropTypes.bool,
 };
 
 export default connect(
-	( state, { transactionType, siteId } ) => {
-		const filteredTransactions = getFilteredBillingTransactions( state, transactionType, siteId );
-		const filter = getBillingTransactionFilters( state, transactionType );
+	( state, { siteId } ) => {
+		const filteredTransactions = getFilteredBillingTransactions( state, 'past', siteId );
+		const filter = getBillingTransactionFilters( state, 'past' );
 		return {
 			app: filter.app,
 			date: filter.date,
@@ -216,9 +275,12 @@ export default connect(
 			query: filter.query,
 			total: filteredTransactions.total,
 			transactions: filteredTransactions.transactions,
+			sendingBillingReceiptEmail: getIsSendingReceiptEmail( state ),
 		};
 	},
 	{
 		setPage,
+		recordGoogleEvent,
+		sendBillingReceiptEmail: sendBillingReceiptEmailAction,
 	}
-)( localize( withLocalizedMoment( TransactionsTable ) ) );
+)( localize( withLocalizedMoment( BillingHistoryList ) ) );

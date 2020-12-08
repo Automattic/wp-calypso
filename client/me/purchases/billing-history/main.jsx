@@ -11,23 +11,26 @@ import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import BillingHistoryTable from './billing-history-table';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryBillingTransactions from 'calypso/components/data/query-billing-transactions';
 import titles from 'calypso/me/purchases/titles';
 import FormattedHeader from 'calypso/components/formatted-header';
+import BillingHistoryList from 'calypso/me/purchases/billing-history/billing-history-list';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export function BillingHistoryList( { siteId = null, getReceiptUrlFor = billingHistoryReceipt } ) {
+export function BillingHistoryContent( {
+	siteId = null,
+	getReceiptUrlFor = billingHistoryReceipt,
+} ) {
 	return (
 		<Card className="billing-history__receipts">
-			<BillingHistoryTable siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
+			<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
 		</Card>
 	);
 }
@@ -41,7 +44,7 @@ const BillingHistory = ( { translate } ) => (
 		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
 		<PurchasesNavigation section={ 'billing' } />
-		<BillingHistoryList />
+		<BillingHistoryContent />
 	</Main>
 );
 

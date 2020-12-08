@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import BillingHistoryComponent from './main';
+import BillingHistoryComponent from 'calypso/me/purchases/billing-history/main';
 import Receipt from './receipt';
 
 export function billingHistory( context, next ) {

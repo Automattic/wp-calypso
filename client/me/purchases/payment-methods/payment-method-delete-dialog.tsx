@@ -13,7 +13,7 @@ import CardHeading from 'calypso/components/card-heading';
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	paymentMethodSummary: TranslateResult;

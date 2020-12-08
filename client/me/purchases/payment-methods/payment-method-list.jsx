@@ -13,8 +13,8 @@ import PropTypes from 'prop-types';
  */
 import { Button, CompactCard } from '@automattic/components';
 import config from 'calypso/config';
-import PaymentMethod from './payment-method';
-import PaymentMethodDelete from './payment-method-delete';
+import PaymentMethod from 'calypso/me/purchases/payment-methods/payment-method';
+import PaymentMethodDelete from 'calypso/me/purchases/payment-methods/payment-method-delete';
 import {
 	getStoredCards,
 	getUniquePaymentAgreements,
@@ -28,7 +28,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/payment-methods/style.scss';
 
 class PaymentMethodList extends Component {
 	renderPaymentMethods( cards ) {

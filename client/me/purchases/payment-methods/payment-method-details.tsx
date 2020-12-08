@@ -16,7 +16,7 @@ import {
 /**
  * Style dependencies
  */
-import './style.scss';
+import 'calypso/me/purchases/payment-methods/style.scss';
 
 interface Props {
 	lastDigits?: string;
