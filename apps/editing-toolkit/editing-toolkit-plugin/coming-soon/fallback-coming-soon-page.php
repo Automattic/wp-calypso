@@ -40,7 +40,7 @@ function original_request_url() {
 }
 
 /**
- * Returns a redirect URL for post-login flow in WordPress.com.
+ * Returns an unencoded redirect URL for post-login flow in WordPress.com.
  *
  * @return string The redirect URL
  */
