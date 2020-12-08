@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 
@@ -13,15 +12,12 @@ import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MarketingBusinessToolsFeature from './feature';
 import MarketingBusinessToolsHeader from './header';
-import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 
 /**
  * Images
  */
-import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
-import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
 
 /**
@@ -45,115 +41,82 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const handleBoostMyTrafficClick = () => {
+	const handlePartnerClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
-
-		page( marketingTraffic( selectedSiteSlug ) );
-	};
-
-	const handleEarnClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_earn_button_click' );
-
-		page( `/earn/${ selectedSiteSlug }` );
-	};
-
-	const handleCreateALogoClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
-	};
-
-	const handleFacebookMessengerClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
-	};
-
-	const handleFindYourExpertClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
-	};
-
-	const handleStartSharingClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_start_sharing_button_click' );
-
-		page( marketingConnections( selectedSiteSlug ) );
 	};
 
 	return (
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingBusinessToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingBusinessToolsHeader handleButtonClick={ handlePartnerClick } />
 
 			<div className="business-tools__feature-list">
 				<MarketingBusinessToolsFeature
-					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
+					category={ translate( 'Productivity' ) }
+					title={ translate( 'Partner #1' ) }
 					description={ translate(
-						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
 					) }
-					imagePath={ fiverrLogo }
+					imagePath={ facebookMessenger }
 				>
 					<Button
-						onClick={ handleCreateALogoClick }
-						href="https://wp.me/logo-maker"
+						onClick={ handlePartnerClick }
+						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
 						target="_blank"
 					>
-						{ translate( 'Create a logo' ) }
+						{ translate( 'Call to Action' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
-				{ getLocaleSlug() === 'en' && (
-					<MarketingBusinessToolsFeature
-						title={ translate( 'Want to convert visitors into customers? Add Messenger Chat!' ) }
-						description={ translate(
-							'Customers like to buy from a business they can message. Build trust, help customers, and provide support with the Official Facebook Messenger Chat Plugin. {{em}}Available on Business and eCommerce plans{{/em}}.',
-							{
-								components: {
-									em: <em />,
-								},
-							}
-						) }
-						imagePath={ facebookMessenger }
-					>
-						<Button
-							onClick={ handleFacebookMessengerClick }
-							href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
-							target="_blank"
-						>
-							{ translate( 'Add Messenger Chat' ) }
-						</Button>
-					</MarketingBusinessToolsFeature>
-				) }
-
 				<MarketingBusinessToolsFeature
-					title={ translate( 'Build your community, following, and income with Earn tools' ) }
+					category={ translate( 'Productivity' ) }
+					title={ translate( 'Partner #2' ) }
 					description={ translate(
-						'Increase engagement and income on your site by accepting payments for just about anything – physical and digital goods, services, donations, or access to exclusive content.'
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
 					) }
-					imagePath={ earnIllustration }
-				>
-					<Button onClick={ handleEarnClick }>{ translate( 'Start earning' ) }</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					title={ translate( 'Get social, and share your blog posts where the people are' ) }
-					description={ translate(
-						"Use your site's Publicize tools to connect your site and your social media accounts, and share your new posts automatically. Connect to Twitter, Facebook, LinkedIn, and more."
-					) }
-					imagePath="/calypso/images/marketing/social-media-logos.svg"
-				>
-					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
-					description={ translate(
-						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
-					) }
-					imagePath="/calypso/images/marketing/upwork-logo.png"
+					imagePath={ facebookMessenger }
 				>
 					<Button
-						onClick={ handleFindYourExpertClick }
-						href={ '/experts/upwork?source=marketingtools' }
+						onClick={ handlePartnerClick }
+						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
 						target="_blank"
 					>
-						{ translate( 'Find your expert' ) }
+						{ translate( 'Call to Action' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Productivity' ) }
+					title={ translate( 'Partner #3' ) }
+					description={ translate(
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+					) }
+					imagePath={ facebookMessenger }
+				>
+					<Button
+						onClick={ handlePartnerClick }
+						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						target="_blank"
+					>
+						{ translate( 'Call to Action' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Productivity' ) }
+					title={ translate( 'Partner #4' ) }
+					description={ translate(
+						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+					) }
+					imagePath={ facebookMessenger }
+				>
+					<Button
+						onClick={ handlePartnerClick }
+						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						target="_blank"
+					>
+						{ translate( 'Call to Action' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 			</div>

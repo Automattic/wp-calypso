@@ -16,6 +16,7 @@ interface Props {
 	imageAlt?: string;
 	imagePath?: string;
 	title: ReactNode;
+	category: ReactNode;
 }
 
 const MarketingBusinessToolsFeature: FunctionComponent< Props > = ( {
@@ -25,6 +26,7 @@ const MarketingBusinessToolsFeature: FunctionComponent< Props > = ( {
 	imageAlt,
 	imagePath,
 	title,
+	category,
 } ) => {
 	return (
 		<Card className="business-tools__feature-list-item">
@@ -38,6 +40,7 @@ const MarketingBusinessToolsFeature: FunctionComponent< Props > = ( {
 				) }
 
 				<div className="business-tools__feature-list-item-body-text">
+					<p className="business-tools__feature-category">{ category }</p>
 					<CardHeading>{ title }</CardHeading>
 
 					<p>{ description }</p>
