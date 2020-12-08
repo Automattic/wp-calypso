@@ -35,6 +35,7 @@ import { ITEM_TYPE_RADIO } from './suggestion-item';
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
+type DomainGroups = 'free' | 'premium';
 
 export const ItemGrouper: FunctionComponent< {
 	groupItems: boolean;
@@ -48,6 +49,10 @@ export const ItemGrouper: FunctionComponent< {
 export const ItemGroupLabel: FunctionComponent = function ItemGroupLabel( { children } ) {
 	return <p className="domain-picker__suggestion-group-label">{ children }</p>;
 };
+
+function domainIsFree( suggestion: DomainSuggestion ): boolean {
+	return ! suggestion.cost || suggestion.cost === '';
+}
 
 export interface Props {
 	header?: React.ReactElement;
@@ -105,7 +110,7 @@ export interface Props {
 	locale?: string;
 
 	/** Whether we show the free .wordpress.com sub-domain first or last */
-	positionExistingSubdomainLast?: boolean;
+	orderFreeDomainsLast?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -128,7 +133,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	itemType = ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
-	positionExistingSubdomainLast = false,
+	orderFreeDomainsLast = false,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -157,7 +162,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		isExpanded ? quantityExpanded : quantity
 	);
 
-	// Make a complete list of suggestions with the subdomain, only so we can check if the persistently selected domain is in there
+	// Make a complete list of suggestions with the subdomain
 	const domainSuggestionsWithSubdomain =
 		existingSubdomain && Array.isArray( domainSuggestions )
 			? [ existingSubdomain, ...domainSuggestions ]
@@ -169,7 +174,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	if ( persistentSelectedDomain && ! persistentSelectedDomainIsInSuggestions ) {
 		// Append our currently selected domain to the suggestions so it's persistently visible to the user.
-		domainSuggestions?.push( persistentSelectedDomain );
+		domainSuggestionsWithSubdomain?.push( persistentSelectedDomain );
 	}
 
 	const domainAvailabilities = useDomainAvailabilities();
@@ -246,6 +251,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const neededPlaceholdersCount =
 		( persistentSelectedDomain ? quantity + 1 : quantity ) - ( existingSubdomain ? 1 : 0 );
 
+	// We are specifcying the order of domains by cost. By default free domains (typically .wordpress.com) are first.
+	const groupOrder: DomainGroups[] = [ 'free', 'premium' ];
+
+	if ( orderFreeDomainsLast ) {
+		groupOrder.reverse();
+	}
+
 	return (
 		<div className="domain-picker">
 			{ header && header }
@@ -291,118 +303,103 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</div>
 					) }
 					<div className="domain-picker__suggestion-sections">
-						<>
-							{ ! positionExistingSubdomainLast && segregateFreeAndPaid && (
-								<ItemGroupLabel>{ __( 'Keep sub-domain', __i18n_text_domain__ ) }</ItemGroupLabel>
-							) }
-							{ ! positionExistingSubdomainLast && (
-								<ItemGrouper groupItems={ segregateFreeAndPaid }>
-									{ existingSubdomain?.domain_name && (
-										<SuggestionItem
-											key={ existingSubdomain?.domain_name }
-											domain={ existingSubdomain?.domain_name }
-											cost="Free"
-											isFree
-											isExistingSubdomain
-											railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
-											onRender={ () =>
-												handleItemRender(
-													existingSubdomain?.domain_name,
-													`${ baseRailcarId }${ 0 }`,
-													0,
-													false
-												)
-											}
-											selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
-											onSelect={ () => {
-												onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
-											} }
-											type={ itemType }
-										/>
+						{ groupOrder.map( ( group: DomainGroups ) => {
+							const groupedSuggestions = domainSuggestionsWithSubdomain?.filter( ( suggestion ) =>
+								group === 'free' ? domainIsFree( suggestion ) : ! domainIsFree( suggestion )
+							);
+
+							if ( group === 'free' ) {
+								return (
+									<>
+										{ segregateFreeAndPaid && (
+											<ItemGroupLabel>
+												{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
+											</ItemGroupLabel>
+										) }
+										<ItemGrouper groupItems={ segregateFreeAndPaid }>
+											{ groupedSuggestions?.map( ( suggestion ) => (
+												<SuggestionItem
+													key={ suggestion?.domain_name }
+													domain={ suggestion?.domain_name }
+													cost="Free"
+													isFree
+													isExistingSubdomain
+													railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
+													onRender={ () =>
+														handleItemRender(
+															suggestion?.domain_name,
+															`${ baseRailcarId }${ 0 }`,
+															0,
+															false
+														)
+													}
+													selected={ currentDomain?.domain_name === suggestion?.domain_name }
+													onSelect={ () => {
+														onExistingSubdomainSelect?.( suggestion?.domain_name );
+													} }
+													type={ itemType }
+												/>
+											) ) }
+										</ItemGrouper>
+									</>
+								);
+							}
+
+							return (
+								<>
+									{ segregateFreeAndPaid && (
+										<ItemGroupLabel>
+											{ __( 'Professional domains', __i18n_text_domain__ ) }
+										</ItemGroupLabel>
 									) }
-								</ItemGrouper>
-							) }
-							{ segregateFreeAndPaid && (
-								<ItemGroupLabel>
-									{ __( 'Professional domains', __i18n_text_domain__ ) }
-								</ItemGroupLabel>
-							) }
-							<ItemGrouper groupItems={ segregateFreeAndPaid }>
-								{ ( ! areDependenciesLoading &&
-									domainSuggestions?.map( ( suggestion, i ) => {
-										const index = existingSubdomain?.domain_name ? i + 1 : i;
-										const isRecommended = index === 1;
-										const availabilityStatus =
-											domainAvailabilities[ suggestion?.domain_name ]?.status;
-										// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
-										const isAvailable = availabilityStatus
-											? domainIsAvailableStatus?.indexOf( availabilityStatus ) > -1
-											: true;
-										return (
-											<SuggestionItem
-												key={ suggestion.domain_name }
-												isUnavailable={ ! isAvailable }
-												domain={ suggestion.domain_name }
-												cost={ suggestion.cost }
-												isLoading={
-													currentDomain?.domain_name === suggestion.domain_name &&
-													isCheckingDomainAvailability
-												}
-												hstsRequired={ suggestion.hsts_required }
-												isFree={ suggestion.is_free }
-												isRecommended={ isRecommended }
-												railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
-												onRender={ () =>
-													handleItemRender(
-														suggestion.domain_name,
-														`${ baseRailcarId }${ index }`,
-														index,
-														isRecommended
-													)
-												}
-												onSelect={ () => {
-													onDomainSelect( suggestion );
-												} }
-												selected={ currentDomain?.domain_name === suggestion.domain_name }
-												type={ itemType }
-											/>
-										);
-									} ) ) ||
-									times( neededPlaceholdersCount, ( i ) => (
-										<SuggestionItemPlaceholder type={ itemType } key={ i } />
-									) ) }
-							</ItemGrouper>
-							{ positionExistingSubdomainLast && segregateFreeAndPaid && (
-								<ItemGroupLabel>{ __( 'Keep sub-domain', __i18n_text_domain__ ) }</ItemGroupLabel>
-							) }
-							{ positionExistingSubdomainLast && (
-								<ItemGrouper groupItems={ segregateFreeAndPaid }>
-									{ existingSubdomain?.domain_name && (
-										<SuggestionItem
-											key={ existingSubdomain?.domain_name }
-											domain={ existingSubdomain?.domain_name }
-											cost="Free"
-											isFree
-											isExistingSubdomain
-											railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
-											onRender={ () =>
-												handleItemRender(
-													existingSubdomain?.domain_name,
-													`${ baseRailcarId }${ 0 }`,
-													0,
-													false
-												)
-											}
-											selected={ currentDomain?.domain_name === existingSubdomain?.domain_name }
-											onSelect={ () => {
-												onExistingSubdomainSelect?.( existingSubdomain?.domain_name );
-											} }
-											type={ itemType }
-										/>
-									) }
-								</ItemGrouper>
-							) }
-						</>
+									<ItemGrouper groupItems={ segregateFreeAndPaid }>
+										{ ( ! areDependenciesLoading &&
+											groupedSuggestions?.map( ( suggestion, i ) => {
+												const index = existingSubdomain?.domain_name ? i + 1 : i;
+												const isRecommended = index === 1;
+												const availabilityStatus =
+													domainAvailabilities[ suggestion?.domain_name ]?.status;
+												// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
+												const isAvailable = availabilityStatus
+													? domainIsAvailableStatus?.indexOf( availabilityStatus ) > -1
+													: true;
+												return (
+													<SuggestionItem
+														key={ suggestion.domain_name }
+														isUnavailable={ ! isAvailable }
+														domain={ suggestion.domain_name }
+														cost={ suggestion.cost }
+														isLoading={
+															currentDomain?.domain_name === suggestion.domain_name &&
+															isCheckingDomainAvailability
+														}
+														hstsRequired={ suggestion.hsts_required }
+														isFree={ suggestion.is_free }
+														isRecommended={ isRecommended }
+														railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
+														onRender={ () =>
+															handleItemRender(
+																suggestion.domain_name,
+																`${ baseRailcarId }${ index }`,
+																index,
+																isRecommended
+															)
+														}
+														onSelect={ () => {
+															onDomainSelect( suggestion );
+														} }
+														selected={ currentDomain?.domain_name === suggestion.domain_name }
+														type={ itemType }
+													/>
+												);
+											} ) ) ||
+											times( neededPlaceholdersCount, ( i ) => (
+												<SuggestionItemPlaceholder type={ itemType } key={ i } />
+											) ) }
+									</ItemGrouper>
+								</>
+							);
+						} ) }
 
 						{ ! isExpanded &&
 							quantity < quantityExpanded &&
