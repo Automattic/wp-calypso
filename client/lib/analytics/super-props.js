@@ -8,7 +8,10 @@ import config from '@automattic/calypso-config';
  */
 import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserSiteCount,
+	getCurrentUserLocale,
+} from 'calypso/state/current-user/selectors';
 
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	const state = reduxStore.getState();
@@ -19,6 +22,7 @@ const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 		site_count: getCurrentUserSiteCount( state ) || 0,
 		site_id_label: 'wpcom',
 		client: config( 'client_slug' ),
+		user_lang: getCurrentUserLocale( state ),
 	};
 
 	const omitSelectedSite = shouldReportOmitBlogId( eventProperties.path );
