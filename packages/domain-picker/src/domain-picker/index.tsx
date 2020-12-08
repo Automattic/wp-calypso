@@ -16,6 +16,7 @@ import type { DomainSuggestions } from '@automattic/data-stores';
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
+import UseYourDomainItem from './domain-i-own-item';
 import {
 	useDomainSuggestions,
 	useDomainAvailabilities,
@@ -110,6 +111,9 @@ export interface Props {
 
 	/** Whether we show the free .wordpress.com sub-domain first or last */
 	orderSubDomainsLast?: boolean;
+
+	/** Callback for when a user clicks "Use a domain I own" item */
+	onUseYourDomainClick?: () => void;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -133,6 +137,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	locale,
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,
+	onUseYourDomainClick,
 } ) => {
 	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
@@ -386,6 +391,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											times( placeholdersCount, ( i ) => (
 												<SuggestionItemPlaceholder type={ itemType } key={ i } />
 											) ) }
+											{ ! areDependenciesLoading && existingSubdomain && onUseYourDomainClick && (
+												<UseYourDomainItem onClick={ onUseYourDomainClick } />
+											) }
 									</ItemGrouper>
 								</Fragment>
 							)
