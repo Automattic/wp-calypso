@@ -6,7 +6,6 @@ import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import type { PaymentCompleteCallback } from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -29,8 +28,6 @@ import {
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
 import type { TransactionResponse, Purchase } from '../types/wpcom-store-state';
-import type { WPCOMCartCouponItem, CheckoutCartItem } from '../types/checkout-cart';
-import type { ReactStandardAction } from '../types/analytics';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
@@ -38,14 +35,14 @@ import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
-const { select } = defaultRegistry;
-
 export default function useCreatePaymentCompleteCallback( {
 	siteId,
+	transactionResult,
 	getThankYouUrl,
 	createUserAndSiteBeforeTransaction,
 }: {
 	siteId: undefined | number;
+	transactionResult: TransactionResponse | undefined;
 	getThankYouUrl: () => string;
 	createUserAndSiteBeforeTransaction?: boolean;
 } ): PaymentCompleteCallback {
@@ -63,14 +60,12 @@ export default function useCreatePaymentCompleteCallback( {
 			const url = getThankYouUrl();
 			recordPaymentCompleteAnalytics( {
 				paymentMethodId,
+				transactionResult,
 				redirectUrl: url,
 				responseCart,
 				reduxDispatch,
 			} );
 
-			const transactionResult: TransactionResponse | undefined = select(
-				'wpcom'
-			).getTransactionResult?.();
 			const receiptId = transactionResult?.receipt_id;
 			debug( 'transactionResult was', transactionResult );
 
@@ -139,6 +134,7 @@ export default function useCreatePaymentCompleteCallback( {
 			page.redirect( url );
 		},
 		[
+			transactionResult,
 			reduxStore,
 			isDomainOnly,
 			moment,
@@ -214,11 +210,13 @@ function displayRenewalSuccessNotice(
 
 function recordPaymentCompleteAnalytics( {
 	paymentMethodId,
+	transactionResult,
 	redirectUrl,
 	responseCart,
 	reduxDispatch,
 }: {
 	paymentMethodId: string | null;
+	transactionResult: TransactionResponse | undefined;
 	redirectUrl: string;
 	responseCart: ResponseCart;
 	reduxDispatch: ReturnType< typeof useDispatch >;
@@ -234,9 +232,6 @@ function recordPaymentCompleteAnalytics( {
 			total_cost: responseCart.total_cost,
 		} )
 	);
-	const transactionResult: TransactionResponse | undefined = select(
-		'wpcom'
-	).getTransactionResult?.();
 	recordPurchase( {
 		cart: {
 			total_cost: responseCart.total_cost,
@@ -264,10 +259,8 @@ function recordPaymentCompleteAnalytics( {
 
 export interface WithCreatePaymentCompleteCallbackProps {
 	siteId: undefined | number;
+	transactionResult: TransactionResponse | undefined;
 	getThankYouUrl: () => string;
-	recordEvent: ( action: ReactStandardAction ) => void;
-	couponItem: WPCOMCartCouponItem | null;
-	total: CheckoutCartItem;
 	createUserAndSiteBeforeTransaction?: boolean;
 }
 
@@ -275,9 +268,10 @@ export function withCreatePaymentCompleteCallback< P >( Component: React.Compone
 	return function CreatePaymentCompleteWrapper(
 		props: WithCreatePaymentCompleteCallbackProps & P
 	): JSX.Element {
-		const { siteId, getThankYouUrl, createUserAndSiteBeforeTransaction } = props;
+		const { siteId, transactionResult, getThankYouUrl, createUserAndSiteBeforeTransaction } = props;
 		const onPaymentComplete = useCreatePaymentCompleteCallback( {
 			siteId,
+			transactionResult,
 			getThankYouUrl,
 			createUserAndSiteBeforeTransaction,
 		} );
