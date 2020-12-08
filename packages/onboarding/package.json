@@ -35,11 +35,13 @@
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/icons": "^2.4.0",
-		"classnames": "^2.2.6"
+		"classnames": "^2.2.6",
+		"react-router-dom": "^5.1.2"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
 		"@wordpress/base-styles": "^2.0.1",
+		"@testing-library/react": "^10.0.5",
 		"copyfiles": "^2.3.0"
 	},
 	"peerDependencies": {
