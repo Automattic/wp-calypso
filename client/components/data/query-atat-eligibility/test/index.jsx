@@ -11,7 +11,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { QueryAutomatedTransferEligibility as QueryEligibility, mapDispatchToProps } from '../';
-import { requestEligibility as requestEligibilityAction } from 'state/automated-transfer/actions';
+import { requestEligibility as requestEligibilityAction } from 'calypso/state/automated-transfer/actions';
 
 describe( 'QueryAutomatedTransferEligibility', () => {
 	const siteId = 1337;

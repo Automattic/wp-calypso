@@ -10,15 +10,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import ExpandableSidebarMenu from 'layout/sidebar/expandable';
+import ExpandableSidebarMenu from 'calypso/layout/sidebar/expandable';
 import ReaderSidebarFollowingItem from './item';
-import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
-import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
-import getReaderFollowedSites from 'state/reader/follows/selectors/get-reader-followed-sites';
-import ReaderSidebarHelper from 'reader/sidebar/helper';
-import SidebarItem from 'layout/sidebar/item';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import Count from 'components/count';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import getReaderFollowedSites from 'calypso/state/reader/follows/selectors/get-reader-followed-sites';
+import ReaderSidebarHelper from 'calypso/reader/sidebar/helper';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import Count from 'calypso/components/count';
 
 /**
  * Styles

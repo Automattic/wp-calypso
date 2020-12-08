@@ -8,6 +8,7 @@ import type {
 	SiteDetails,
 	SiteError,
 	Cart,
+	Domain,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
@@ -70,6 +71,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		response,
 	} );
 
+	const receiveSiteTitle = ( siteId: number, title: string ) => ( {
+		type: 'RECEIVE_SITE_TITLE' as const,
+		siteId,
+		title,
+	} );
+
 	const receiveSiteFailed = ( siteId: number, response: SiteError | undefined ) => ( {
 		type: 'RECEIVE_SITE_FAILED' as const,
 		siteId,
@@ -109,6 +116,12 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
+	const receiveSiteDomains = ( siteId: number, domains: Domain[] ) => ( {
+		type: 'RECEIVE_SITE_DOMAINS' as const,
+		siteId,
+		domains,
+	} );
+
 	function* setCart( siteId: number, cartData: Cart ) {
 		const success = yield wpcomRequest( {
 			path: '/me/shopping-cart/' + siteId,
@@ -119,7 +132,23 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		return success;
 	}
 
+	function* saveSiteTitle( siteId: number, title: string ) {
+		try {
+			// extract this into its own function as a generic settings setter
+			yield wpcomRequest( {
+				path: `/sites/${ encodeURIComponent( siteId ) }/settings`,
+				apiVersion: '1.4',
+				body: { blogname: title },
+				method: 'POST',
+			} );
+			yield receiveSiteTitle( siteId, title );
+		} catch ( e ) {}
+	}
+
 	return {
+		receiveSiteDomains,
+		saveSiteTitle,
+		receiveSiteTitle,
 		fetchNewSite,
 		receiveNewSite,
 		receiveNewSiteFailed,
@@ -140,7 +169,9 @@ export type ActionCreators = ReturnType< typeof createActions >;
 export type Action =
 	| ReturnType<
 			| ActionCreators[ 'fetchNewSite' ]
+			| ActionCreators[ 'receiveSiteDomains' ]
 			| ActionCreators[ 'receiveNewSite' ]
+			| ActionCreators[ 'receiveSiteTitle' ]
 			| ActionCreators[ 'receiveNewSiteFailed' ]
 			| ActionCreators[ 'receiveSite' ]
 			| ActionCreators[ 'receiveSiteFailed' ]

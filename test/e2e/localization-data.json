@@ -95,7 +95,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "שלב",
 		"wpcom_landing_page_string": "להתחבר",
-		"wpcom_base_url": "he.wordpress.com",
+		"wpcom_base_url": "wordpress.com/he",
 
 		"google_searches": [
 			{
@@ -163,7 +163,7 @@
 		"currency_symbol": "$",
 		"nux_landing_page_string": "단계",
 		"wpcom_landing_page_string": "로그인",
-		"wpcom_base_url": "ko.wordpress.com",
+		"wpcom_base_url": "wordpress.com/ko",
 
 		"google_searches": [
 			{
@@ -231,7 +231,7 @@
 		"currency_symbol": "€",
 		"nux_landing_page_string": "Steg",
 		"wpcom_landing_page_string": "Logga in",
-		"wpcom_base_url": "sv.wordpress.com",
+		"wpcom_base_url": "wordpress.com/sv",
 
 		"google_searches": [
 			{

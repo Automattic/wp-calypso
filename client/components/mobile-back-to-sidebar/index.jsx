@@ -4,12 +4,13 @@
 
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
+import config from 'calypso/config';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 /**
  * Style dependencies
@@ -17,6 +18,10 @@ import { setLayoutFocus } from 'state/ui/layout-focus/actions';
 import './style.scss';
 
 function MobileBackToSidebar( { children, toggleSidebar } ) {
+	if ( config.isEnabled( 'nav-unification' ) ) {
+		return null;
+	}
+
 	return (
 		<button className="mobile-back-to-sidebar" onClick={ toggleSidebar }>
 			<Gridicon icon="chevron-left" className="mobile-back-to-sidebar__icon" />

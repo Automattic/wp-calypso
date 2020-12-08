@@ -41,7 +41,7 @@ $compact-header-height: 35;
 	}
 
 	.accessible-focus & {
-		border-radius: 4px;
+		border-radius: 2px;
 	}
 
 	.accessible-focus &:focus {
@@ -278,8 +278,11 @@ $compact-header-height: 35;
 	color: var( --color-text-subtle );
 	line-height: 20px;
 
-	label {
+	.form-label {
 		font-size: $font-body-extra-small;
+		font-weight: 400;
 		padding: 0 #{$side-margin}px;
+		margin-bottom: 0;
+		display: inline;
 	}
 }

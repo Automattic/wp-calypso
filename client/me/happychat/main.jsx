@@ -9,24 +9,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { isOutsideCalypso } from 'lib/url';
+import config from 'calypso/config';
+import { isOutsideCalypso } from 'calypso/lib/url';
 // actions
-import { sendMessage, sendNotTyping, sendTyping } from 'state/happychat/connection/actions';
-import { blur, focus, setCurrentMessage } from 'state/happychat/ui/actions';
+import { sendMessage, sendNotTyping, sendTyping } from 'calypso/state/happychat/connection/actions';
+import { blur, focus, setCurrentMessage } from 'calypso/state/happychat/ui/actions';
 // selectors
-import canUserSendMessages from 'state/happychat/selectors/can-user-send-messages';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getCurrentMessage from 'state/happychat/selectors/get-happychat-current-message';
-import getHappychatChatStatus from 'state/happychat/selectors/get-happychat-chat-status';
-import getHappychatConnectionStatus from 'state/happychat/selectors/get-happychat-connection-status';
-import getHappychatTimeline from 'state/happychat/selectors/get-happychat-timeline';
-import isHappychatServerReachable from 'state/happychat/selectors/is-happychat-server-reachable';
+import canUserSendMessages from 'calypso/state/happychat/selectors/can-user-send-messages';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import getCurrentMessage from 'calypso/state/happychat/selectors/get-happychat-current-message';
+import getHappychatChatStatus from 'calypso/state/happychat/selectors/get-happychat-chat-status';
+import getHappychatConnectionStatus from 'calypso/state/happychat/selectors/get-happychat-connection-status';
+import getHappychatTimeline from 'calypso/state/happychat/selectors/get-happychat-timeline';
+import isHappychatServerReachable from 'calypso/state/happychat/selectors/is-happychat-server-reachable';
 // UI components
-import HappychatConnection from 'components/happychat/connection-connected';
-import { Composer } from 'components/happychat/composer';
-import { Notices } from 'components/happychat/notices';
-import { Timeline } from 'components/happychat/timeline';
+import HappychatConnection from 'calypso/components/happychat/connection-connected';
+import { Composer } from 'calypso/components/happychat/composer';
+import { Notices } from 'calypso/components/happychat/notices';
+import { Timeline } from 'calypso/components/happychat/timeline';
 
 /**
  * Style dependencies

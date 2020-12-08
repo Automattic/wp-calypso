@@ -19,9 +19,9 @@ function MyMenu() {
 
 ### `post`
 
-| Type     | Required |
-| -------- | -------- |
-| object   | yes      |
+| Type   | Required |
+| ------ | -------- |
+| object | yes      |
 
 A Reader post object.
 

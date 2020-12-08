@@ -30,7 +30,7 @@
 .step-wrapper__buttons.is-top-buttons .step-wrapper__skip-wrapper {
 	display: inline-block;
 	background: var( --color-surface );
-	border-radius: 3px;
+	border-radius: 2px;
 	padding: 2px 12px;
 	@include elevation ( 2dp );
 }

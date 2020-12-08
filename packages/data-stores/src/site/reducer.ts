@@ -7,7 +7,7 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails } from './types';
+import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails, Domain } from './types';
 import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -68,6 +68,21 @@ export const sites: Reducer< { [ key: number ]: SiteDetails | undefined }, Actio
 		return { ...remainingState };
 	} else if ( action.type === 'RESET_SITE_STORE' ) {
 		return {};
+	} else if ( action.type === 'RECEIVE_SITE_TITLE' ) {
+		return {
+			...state,
+			[ action.siteId ]: { ...( state[ action.siteId ] as SiteDetails ), name: action.title },
+		};
+	}
+	return state;
+};
+
+export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
+	state = {},
+	action
+) => {
+	if ( action.type === 'RECEIVE_SITE_DOMAINS' ) {
+		return { ...state, [ action.siteId ]: action.domains };
 	}
 	return state;
 };
@@ -88,7 +103,7 @@ const newSite = combineReducers( {
 	isFetching: isFetchingSite,
 } );
 
-const reducer = combineReducers( { newSite, sites, launchStatus } );
+const reducer = combineReducers( { newSite, sites, launchStatus, sitesDomains } );
 
 export type State = ReturnType< typeof reducer >;
 

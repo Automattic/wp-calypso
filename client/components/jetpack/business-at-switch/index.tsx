@@ -8,13 +8,13 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
-import WPCOMBusinessAT from 'components/jetpack/wpcom-business-at';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
-import QuerySitePlans from 'components/data/query-site-plans';
-import { getCurrentPlan } from 'state/sites/plans/selectors';
+import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
+import WPCOMBusinessAT from 'calypso/components/jetpack/wpcom-business-at';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
 
 /**
  * Style dependencies

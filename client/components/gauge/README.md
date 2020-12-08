@@ -2,23 +2,21 @@
 
 This component renders a simple gauge to show a percentage visually.
 
-#### How to use:
+## How to use
 
 ```js
-import Gauge from 'components/gauge';
+import Gauge from 'calypso/components/gauge';
 
-render() {
-    return (
-  		<Gauge percentage={ 40 } metric={ 'Visits' } />
-    );
+function render() {
+	return <Gauge percentage={ 40 } metric={ 'Visits' } />;
 }
 ```
 
-#### Required Props
+## Required Props
 
 - `percentage`: a numeric percentage between 0-100.
 
-#### Optional Props
+## Optional Props
 
 The following props may be used to override defaults.
 

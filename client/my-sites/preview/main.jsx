@@ -11,20 +11,20 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteOption, isSitePreviewable } from 'state/sites/selectors';
-import { addQueryArgs } from 'lib/route';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getEditorUrl from 'state/selectors/get-editor-url';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteOption, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { addQueryArgs } from 'calypso/lib/route';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import EmptyContent from 'components/empty-content';
-import Gridicon from 'components/gridicon';
-import Main from 'components/main';
-import { showInlineHelpPopover } from 'state/inline-help/actions';
-import WebPreview from 'components/web-preview';
-import { recordTracksEvent } from 'state/analytics/actions';
+import DocumentHead from 'calypso/components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import Gridicon from 'calypso/components/gridicon';
+import Main from 'calypso/components/main';
+import { showInlineHelpPopover } from 'calypso/state/inline-help/actions';
+import WebPreview from 'calypso/components/web-preview';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Internal dependencies

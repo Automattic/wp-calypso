@@ -11,7 +11,7 @@ import {
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST,
 	WOOCOMMERCE_SHIPPING_CLASSES_REQUEST_SUCCESS,
 } from './../../../action-types';
-import { NOTICE_CREATE } from 'state/action-types';
+import { NOTICE_CREATE } from 'calypso/state/action-types';
 import {
 	fetchShippingClassesSuccess,
 	fetchShippingClassesFailure,

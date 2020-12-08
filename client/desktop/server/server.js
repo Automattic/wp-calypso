@@ -1,16 +1,16 @@
 /**
  * External Dependencies
  */
-import { dialog } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
+import { dialog } from 'electron';
 import http from 'http'; // eslint-disable-line import/no-nodejs-modules
 import portscanner from 'portscanner';
 
 /**
  * Internal dependencies
  */
-import Config from 'desktop/lib/config';
-import logFactory from 'desktop/lib/logger';
-import boot from 'server/boot';
+import Config from 'calypso/desktop/lib/config';
+import logFactory from 'calypso/desktop/lib/logger';
+import boot from 'calypso/server/boot';
 
 const log = logFactory( 'desktop:server' );
 

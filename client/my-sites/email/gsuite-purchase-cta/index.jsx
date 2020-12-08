@@ -11,19 +11,19 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import config from 'config';
-import { emailManagementNewGSuiteAccount } from 'my-sites/email/paths';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductBySlug } from 'state/products-list/selectors';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-import { GSUITE_BASIC_SLUG } from 'lib/gsuite/constants';
-import GSuiteFeatures from 'components/gsuite/gsuite-features';
-import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
-import GSuitePrice from 'components/gsuite/gsuite-price';
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryProductsList from 'components/data/query-products-list';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import config from 'calypso/config';
+import { emailManagementNewGSuiteAccount } from 'calypso/my-sites/email/paths';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
+import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
+import GSuitePrice from 'calypso/components/gsuite/gsuite-price';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies

@@ -11,8 +11,8 @@ import {
 	APPLICATION_PASSWORD_DELETE_SUCCESS,
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation, withStorageKey } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation, withStorageKey } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {

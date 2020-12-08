@@ -6,15 +6,15 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'state/reader/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
+import { READER_SUBSCRIBE_TO_NEW_POST_NOTIFICATIONS } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { translate } from 'i18n-calypso';
-import { bypassDataLayer } from 'state/data-layer/utils';
-import { unsubscribeToNewPostNotifications } from 'state/reader/follows/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
+import { unsubscribeToNewPostNotifications } from 'calypso/state/reader/follows/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function fromApi( response ) {
 	const isSubscribed = !! ( response && response.subscribed );

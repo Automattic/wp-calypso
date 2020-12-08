@@ -10,23 +10,21 @@ import { compact, find, flow, reduce } from 'lodash';
 /**
  * Internal dependencies
  */
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'state/sites/selectors';
-import { getPostTypeLabel } from 'state/post-types/selectors';
-import { getNormalizedMyPostCounts, getNormalizedPostCounts } from 'state/posts/counts/selectors';
-import { isMultiSelectEnabled } from 'state/ui/post-type-list/selectors';
-import { toggleMultiSelect } from 'state/ui/post-type-list/actions';
-import { isEnabled } from 'config';
-import urlSearch from 'lib/url-search';
-import QueryPostCounts from 'components/data/query-post-counts';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite, isSingleUserSite, getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import {
+	getNormalizedMyPostCounts,
+	getNormalizedPostCounts,
+} from 'calypso/state/posts/counts/selectors';
+import urlSearch from 'calypso/lib/url-search';
+import QueryPostCounts from 'calypso/components/data/query-post-counts';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
 import AuthorSegmented from './author-segmented';
-import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
@@ -56,7 +54,8 @@ export class PostTypeFilter extends Component {
 		return reduce(
 			counts,
 			( memo, count, status ) => {
-				let label, pathStatus;
+				let label;
+				let pathStatus;
 				switch ( status ) {
 					case 'publish':
 						label = this.props.translate( 'Published', {
@@ -104,27 +103,6 @@ export class PostTypeFilter extends Component {
 		);
 	}
 
-	renderMultiSelectButton() {
-		if ( ! isEnabled( 'posts/post-type-list/bulk-edit' ) || ! this.props.siteId ) {
-			return null;
-		}
-
-		const { translate, toggleMultiSelect: onMultiSelectClick } = this.props;
-
-		return (
-			<Button
-				className="post-type-filter__multi-select-button"
-				compact
-				onClick={ onMultiSelectClick }
-			>
-				<Gridicon icon="list-checkmark" />
-				<span className="post-type-filter__multi-select-button-text">
-					{ translate( 'Bulk Edit' ) }
-				</span>
-			</Button>
-		);
-	}
-
 	render() {
 		const {
 			authorToggleHidden,
@@ -132,15 +110,10 @@ export class PostTypeFilter extends Component {
 			query,
 			siteId,
 			statusSlug,
-			isMultiSelectEnabled: isMultiSelectButtonEnabled,
 			searchPagesPlaceholder,
 		} = this.props;
 
 		if ( ! query ) {
-			return null;
-		}
-
-		if ( isMultiSelectButtonEnabled ) {
 			return null;
 		}
 
@@ -197,7 +170,6 @@ export class PostTypeFilter extends Component {
 							delaySearch={ true }
 						/>
 					) }
-					{ this.renderMultiSelectButton() }
 				</SectionNav>
 			</div>
 		);
@@ -207,52 +179,46 @@ export class PostTypeFilter extends Component {
 export default flow(
 	localize,
 	urlSearch,
-	connect(
-		( state, { query } ) => {
-			const siteId = getSelectedSiteId( state );
-			let authorToggleHidden = false;
-			if ( query && query.type === 'post' ) {
-				if ( siteId ) {
-					authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
-				} else {
-					authorToggleHidden = areAllSitesSingleUser( state );
-				}
+	connect( ( state, { query } ) => {
+		const siteId = getSelectedSiteId( state );
+		let authorToggleHidden = false;
+		if ( query && query.type === 'post' ) {
+			if ( siteId ) {
+				authorToggleHidden = isSingleUserSite( state, siteId ) || isJetpackSite( state, siteId );
 			} else {
-				// Hide for Custom Post Types
-				authorToggleHidden = true;
+				authorToggleHidden = areAllSitesSingleUser( state );
 			}
-
-			const props = {
-				siteId,
-				authorToggleHidden,
-				jetpack: isJetpackSite( state, siteId ),
-				siteSlug: getSiteSlug( state, siteId ),
-				isMultiSelectEnabled: isMultiSelectEnabled( state ),
-			};
-
-			if ( ! query ) {
-				return props;
-			}
-
-			const localeSlug = getLocaleSlug( state );
-			const searchPagesPlaceholder = getPostTypeLabel(
-				state,
-				siteId,
-				query.type,
-				'search_items',
-				localeSlug
-			);
-
-			return {
-				...props,
-				searchPagesPlaceholder,
-				counts: query.author
-					? getNormalizedMyPostCounts( state, siteId, query.type )
-					: getNormalizedPostCounts( state, siteId, query.type ),
-			};
-		},
-		{
-			toggleMultiSelect,
+		} else {
+			// Hide for Custom Post Types
+			authorToggleHidden = true;
 		}
-	)
+
+		const props = {
+			siteId,
+			authorToggleHidden,
+			jetpack: isJetpackSite( state, siteId ),
+			siteSlug: getSiteSlug( state, siteId ),
+		};
+
+		if ( ! query ) {
+			return props;
+		}
+
+		const localeSlug = getLocaleSlug( state );
+		const searchPagesPlaceholder = getPostTypeLabel(
+			state,
+			siteId,
+			query.type,
+			'search_items',
+			localeSlug
+		);
+
+		return {
+			...props,
+			searchPagesPlaceholder,
+			counts: query.author
+				? getNormalizedMyPostCounts( state, siteId, query.type )
+				: getNormalizedPostCounts( state, siteId, query.type ),
+		};
+	} )
 )( PostTypeFilter );

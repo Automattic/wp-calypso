@@ -6,11 +6,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { fetchPluginsList as fetchWporgPluginsList } from 'lib/wporg';
-import { normalizePluginsList } from 'lib/plugins/utils';
-import impureLodash from 'lib/impure-lodash';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import { fetchPluginsList as fetchWporgPluginsList } from 'calypso/lib/wporg';
+import { normalizePluginsList } from 'calypso/lib/plugins/utils';
+import impureLodash from 'calypso/lib/impure-lodash';
 
 const { debounce } = impureLodash;
 

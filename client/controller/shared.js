@@ -7,21 +7,24 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { setSection as setSectionAction } from 'state/ui/actions';
-import { setLocale } from 'state/ui/language/actions';
-import { isTranslatedIncompletely } from 'lib/i18n-utils/utils';
+import config from 'calypso/config';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { setSection } from 'calypso/state/ui/actions';
+import { setLocale } from 'calypso/state/ui/language/actions';
+import { isTranslatedIncompletely } from 'calypso/lib/i18n-utils/utils';
 
 export function makeLayoutMiddleware( LayoutComponent ) {
 	return ( context, next ) => {
-		const { store, primary, secondary } = context;
+		const { store, section, pathname, query, primary, secondary } = context;
 
 		// On server, only render LoggedOutLayout when logged-out.
 		if ( ! context.isServerSide || ! getCurrentUser( context.store.getState() ) ) {
 			context.layout = (
 				<LayoutComponent
 					store={ store }
+					currentSection={ section }
+					currentRoute={ pathname }
+					currentQuery={ query }
 					primary={ primary }
 					secondary={ secondary }
 					redirectUri={ context.originalUrl }
@@ -32,14 +35,18 @@ export function makeLayoutMiddleware( LayoutComponent ) {
 	};
 }
 
-export function setSection( section ) {
+export function setSectionMiddleware( section ) {
 	return ( context, next = noop ) => {
-		context.store.dispatch( setSectionAction( section ) );
+		// save the section in context
+		context.section = section;
+
+		// save the section to Redux, too (poised to become legacy)
+		context.store.dispatch( setSection( section ) );
 		next();
 	};
 }
 
-export function setUpLocale( context, next ) {
+export function setLocaleMiddleware( context, next ) {
 	const currentUser = getCurrentUser( context.store.getState() );
 
 	if ( context.params.lang ) {

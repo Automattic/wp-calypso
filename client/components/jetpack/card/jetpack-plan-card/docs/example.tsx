@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import JetpackPlanCard from 'components/jetpack/card/jetpack-plan-card';
+import JetpackPlanCard from 'calypso/components/jetpack/card/jetpack-plan-card';
 import { planCardWithBadge, planCardWithDiscount, deprecatedPlanCard } from '../fixture';
 
 export default function JetpackPlanCardExample() {

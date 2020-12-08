@@ -20,18 +20,21 @@ import {
 	isGuidedTransfer,
 	isPlan,
 	isSiteRedirect,
-} from 'lib/products-values';
-import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'lib/gsuite';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/products-values';
+import { isGSuiteExtraLicenseProductSlug, isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { localize } from 'i18n-calypso';
-import { preventWidows } from 'lib/formatting';
-import { domainManagementEdit, domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { getSiteAdminUrl } from 'state/sites/selectors';
-import { recordStartTransferClickInThankYou } from 'state/domains/actions';
-import Gridicon from 'components/gridicon';
+import { preventWidows } from 'calypso/lib/formatting';
+import {
+	domainManagementEdit,
+	domainManagementTransferInPrecheck,
+} from 'calypso/my-sites/domains/paths';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { recordStartTransferClickInThankYou } from 'calypso/state/domains/actions';
+import Gridicon from 'calypso/components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import { Button } from '@automattic/components';
-import isAtomicSite from 'state/selectors/is-site-automated-transfer';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {

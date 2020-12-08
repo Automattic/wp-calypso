@@ -5,12 +5,12 @@
 import React from 'react';
 
 import { localize } from 'i18n-calypso';
-import { isMonthly, isYearly, isBiennially } from 'lib/products-values';
+import { isMonthly, isYearly, isBiennially } from 'calypso/lib/products-values';
 
 /**
  * Internal dependencies
  */
-import { hasRenewalItem } from 'lib/cart-values/cart-items';
+import { hasRenewalItem } from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Style dependencies

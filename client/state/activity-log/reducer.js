@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'state/action-types';
-import { combineReducers, keyedReducer } from 'state/utils';
+import { ACTIVITY_LOG_FILTER_SET, ACTIVITY_LOG_FILTER_UPDATE } from 'calypso/state/action-types';
+import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
 import { activationRequesting } from './activation/reducer';
 import { restoreProgress, restoreRequest } from './restore/reducer';
 import { backupRequest, backupProgress } from './backup/reducer';
@@ -24,7 +24,7 @@ export const filterState = ( state = emptyFilter, { type, filter } ) => {
 	}
 };
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	activationRequesting,
 	filter: keyedReducer( 'siteId', filterState ),
 	restoreProgress,
@@ -32,3 +32,5 @@ export default combineReducers( {
 	backupProgress,
 	backupRequest,
 } );
+
+export default withStorageKey( 'activityLog', combinedReducer );

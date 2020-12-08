@@ -11,7 +11,7 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
 
 /**
  * Style dependencies
@@ -28,6 +28,7 @@ export class PlanPrice extends Component {
 			className,
 			isInSignup,
 			isOnSale,
+			isMonthlyPricingTest,
 			taxText,
 			translate,
 		} = this.props;
@@ -111,6 +112,15 @@ export class PlanPrice extends Component {
 						{ translate( '(+%(taxText)s tax)', { args: { taxText } } ) }
 					</sup>
 				) }
+				{ isMonthlyPricingTest && (
+					<span className="plan-price__term">
+						{ translate( 'per{{newline/}}month', {
+							components: { newline: <br /> },
+							comment:
+								'Displays next to the price. You can remove the "{{newline/}}" if it is not proper for your language.',
+						} ) }
+					</span>
+				) }
 				{ isOnSale && <Badge>{ saleBadgeText }</Badge> }
 			</h4>
 		);
@@ -126,6 +136,7 @@ PlanPrice.propTypes = {
 	currencyCode: PropTypes.string,
 	className: PropTypes.string,
 	isOnSale: PropTypes.bool,
+	isMonthlyPricingTest: PropTypes.bool,
 	taxText: PropTypes.string,
 	translate: PropTypes.func.isRequired,
 };
@@ -136,4 +147,5 @@ PlanPrice.defaultProps = {
 	discounted: false,
 	className: '',
 	isOnSale: false,
+	isMonthlyPricingTest: false,
 };

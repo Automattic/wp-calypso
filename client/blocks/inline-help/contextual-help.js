@@ -8,11 +8,14 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal Dependencies
  */
 import { RESULT_TOUR, RESULT_VIDEO } from './constants';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Module variables
  */
+
+/* eslint-disable inclusive-language/use-inclusive-words */
+// All usage of the word "master" here refers to the verb (ie. "to learn"), not a synonym of "primary".
 const getFallbackLinks = () => [
 	{
 		link: localizeUrl(
@@ -132,6 +135,16 @@ const getContextLinksForSection = () => ( {
 			),
 		},
 	],
+	home: [
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
+	],
 	me: [
 		{
 			link: localizeUrl( 'https://wordpress.com/support/manage-my-profile/' ),
@@ -241,7 +254,7 @@ const getContextLinksForSection = () => ( {
 		{
 			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
 			post_id: 111349,
-			title: translate( 'Manage Purchases' ),
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
 			description: translate(
 				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
@@ -624,6 +637,14 @@ const getContextLinksForSection = () => ( {
 				'Get ready to publish! Our five-step checklist walks you through all the fundamentals.'
 			),
 		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
+		},
 	],
 	themes: [
 		{
@@ -737,6 +758,14 @@ const getContextLinksForSection = () => ( {
 			title: translate( 'Jetpack Plans' ),
 			description: translate(
 				'Learn about the free Jetpack plugin, its benefits, and the useful capabilities and features that a Jetpack plan unlocks.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
 		},
 	],
@@ -867,6 +896,14 @@ const getContextLinksForSection = () => ( {
 			link: localizeUrl( 'https://learn.wordpress.com/' ),
 			title: translate( 'Self-guided Online Tutorial' ),
 			description: translate( 'A step-by-step guide to getting familiar with the platform.' ),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
+			),
 		},
 	],
 	comments: [
@@ -1006,6 +1043,14 @@ const getContextLinksForSection = () => ( {
 			title: translate( 'All about domains' ),
 			description: translate(
 				'A domain name is an address people use to visit your site. It tells the web browser where to look for your site. Just like a street address, a domain is how people visit your website online. And, like having a sign in front of your store, a custom domain name helps give your site a professional look.'
+			),
+		},
+		{
+			link: localizeUrl( 'https://wordpress.com/support/manage-purchases/' ),
+			post_id: 111349,
+			title: translate( 'Managing Purchases, Renewals, and Cancellations' ),
+			description: translate(
+				'Have a question or need to change something about a purchase you have made? Learn how.'
 			),
 		},
 	],
@@ -1445,5 +1490,12 @@ export function getContextResults( section ) {
 	const video = first( get( videosForSection, section ) );
 	const tour = first( get( toursForSection, section ) );
 	const links = get( contextLinksForSection, section, fallbackLinks );
+
+	// If true, still display fallback links in addition (as opposed to instead
+	// of) the other context links.
+	if ( section === 'home' ) {
+		return compact( [ tour, video, ...getFallbackLinks(), ...links ] );
+	}
+
 	return compact( [ tour, video, ...links ] );
 }

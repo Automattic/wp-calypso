@@ -1,11 +1,10 @@
-ViewersData
-===========
+# ViewersData
 
 A component that fetches a private wpcom site's viewers and passes them to its children.
 
 ## Props
 
-`<ViewersData />` should be given a `siteId` which will be used in the path for the API call to /sites/$site/viewers
+`<ViewersData />` should be given a `siteId` which will be used in the path for the API call to /sites/\$site/viewers
 
 ## Usage
 

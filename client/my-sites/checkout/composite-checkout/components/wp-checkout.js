@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import styled from '@emotion/styled';
 import {
@@ -10,7 +10,7 @@ import {
 	CheckoutStepArea,
 	CheckoutSteps,
 	CheckoutStepBody,
-	CheckoutSummaryArea,
+	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
 	useDispatch,
 	useEvents,
@@ -21,22 +21,23 @@ import {
 	usePaymentMethod,
 	useSelect,
 	useTotal,
+	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { areDomainsInLineItems, isLineItemADomain } from '../hooks/has-domains';
 import useCouponFieldState from '../hooks/use-coupon-field-state';
+import useUpdateCartLocationWhenPaymentMethodChanges from '../hooks/use-update-cart-location-when-payment-method-changes';
 import WPCheckoutOrderReview from './wp-checkout-order-review';
 import WPCheckoutOrderSummary from './wp-checkout-order-summary';
 import WPContactForm from './wp-contact-form';
 import WPContactFormSummary from './wp-contact-form-summary';
 import { isCompleteAndValid } from '../types/wpcom-store-state';
-import { WPOrderReviewTotal, WPOrderReviewSection, LineItemUI } from './wp-order-review-line-items';
-import MaterialIcon from 'components/material-icon';
-import Gridicon from 'components/gridicon';
+import MaterialIcon from 'calypso/components/material-icon';
+import Gridicon from 'calypso/components/gridicon';
 import SecondaryCartPromotions from './secondary-cart-promotions';
 import {
 	handleContactValidationResult,
@@ -44,11 +45,17 @@ import {
 	getDomainValidationResult,
 	getSignupEmailValidationResult,
 	getGSuiteValidationResult,
-} from 'my-sites/checkout/composite-checkout/contact-validation';
-import { isGSuiteProductSlug } from 'lib/gsuite';
-import { needsDomainDetails } from 'my-sites/checkout/composite-checkout/payment-method-helpers';
-import { login } from 'lib/paths';
-import config from 'config';
+} from 'calypso/my-sites/checkout/composite-checkout/contact-validation';
+import { login } from 'calypso/lib/paths';
+import config from 'calypso/config';
+import getContactDetailsType from '../lib/get-contact-details-type';
+import {
+	hasGoogleApps,
+	hasDomainRegistration,
+	hasTransferProduct,
+} from 'calypso/lib/cart-values/cart-items';
+import QueryExperiments from 'calypso/components/data/query-experiments';
+import PaymentMethodStep from './payment-method-step';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -56,17 +63,15 @@ const ContactFormTitle = () => {
 	const translate = useTranslate();
 	const isActive = useIsStepActive();
 	const isComplete = useIsStepComplete();
-	const [ items ] = useLineItems();
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
+	const { responseCart } = useShoppingCart();
+	const contactDetailsType = getContactDetailsType( responseCart );
 
-	if ( areDomainsInLineItems( items ) ) {
+	if ( contactDetailsType === 'domain' ) {
 		return ! isActive && isComplete
 			? translate( 'Contact information' )
 			: translate( 'Enter your contact information' );
 	}
-	if ( isGSuiteInCart ) {
+	if ( contactDetailsType === 'gsuite' ) {
 		return ! isActive && isComplete
 			? translate( 'G Suite account information' )
 			: translate( 'Enter your G Suite account information' );
@@ -84,22 +89,21 @@ const OrderReviewTitle = () => {
 const paymentMethodStep = getDefaultPaymentMethodStep();
 
 export default function WPCheckout( {
-	removeItem,
+	removeProductFromCart,
 	updateLocation,
-	submitCoupon,
+	applyCoupon,
 	removeCoupon,
 	couponStatus,
 	changePlanLength,
 	siteId,
 	siteUrl,
-	CheckoutTerms,
 	countriesList,
 	StateSelect,
-	variantSelectOverride,
 	getItemVariants,
 	responseCart,
 	addItemToCart,
 	subtotal,
+	credits,
 	isCartPendingUpdate,
 	showErrorMessageBriefly,
 	isLoggedOutCart,
@@ -107,20 +111,18 @@ export default function WPCheckout( {
 	createUserAndSiteBeforeTransaction,
 } ) {
 	const translate = useTranslate();
-	const couponFieldStateProps = useCouponFieldState( submitCoupon );
+	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();
 
 	const [ items ] = useLineItems();
-	const areThereDomainProductsInCart = items.some( isLineItemADomain );
-	const isGSuiteInCart = items.some( ( item ) =>
-		isGSuiteProductSlug( item.wpcom_meta?.product_slug )
-	);
-	const shouldShowContactStep =
-		areThereDomainProductsInCart || isGSuiteInCart || total.amount.value > 0;
-	const shouldShowDomainContactFields = shouldShowContactStep && needsDomainDetails( responseCart );
-	const areDomainDetailsNeededForTransaction = needsDomainDetails( responseCart ) || isGSuiteInCart;
+	const areThereDomainProductsInCart =
+		hasDomainRegistration( responseCart ) || hasTransferProduct( responseCart );
+	const isGSuiteInCart = hasGoogleApps( responseCart );
+
+	const contactDetailsType = getContactDetailsType( responseCart );
+	const shouldShowContactStep = contactDetailsType !== 'none';
 
 	const contactInfo = useSelect( ( sel ) => sel( 'wpcom' ).getContactInfo() ) || {};
 	const { setSiteId, touchContactFields, applyDomainContactValidationResults } = useDispatch(
@@ -172,9 +174,7 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -185,7 +185,7 @@ export default function WPCheckout( {
 				applyDomainContactValidationResults,
 			} );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
@@ -217,13 +217,11 @@ export default function WPCheckout( {
 			}
 		}
 
-		if ( ! areDomainDetailsNeededForTransaction ) {
-			return isCompleteAndValid( contactInfo );
-		} else if ( areThereDomainProductsInCart ) {
+		if ( contactDetailsType === 'domain' ) {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
-		} else if ( isGSuiteInCart ) {
+		} else if ( contactDetailsType === 'gsuite' ) {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			return isContactValidationResponseValid( validationResult, contactInfo );
@@ -277,24 +275,48 @@ export default function WPCheckout( {
 		[ onEvent ]
 	);
 
+	const onSummaryError = useCallback(
+		( error ) =>
+			onEvent( {
+				type: 'STEP_LOAD_ERROR',
+				payload: {
+					message: error,
+					stepId: 'summary',
+				},
+			} ),
+		[ onEvent ]
+	);
+
 	return (
 		<Checkout>
-			<CheckoutSummaryAreaUI className={ isSummaryVisible ? 'is-visible' : '' }>
-				<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
-					<CheckoutSummaryTitle>
-						<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
-						{ translate( 'Purchase Details' ) }
-						<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
-					</CheckoutSummaryTitle>
-					<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
-						{ total.amount.displayValue }
-					</CheckoutSummaryTitlePrice>
-				</CheckoutSummaryTitleLink>
-				<CheckoutSummaryBody>
-					<WPCheckoutOrderSummary />
-					<SecondaryCartPromotions responseCart={ responseCart } addItemToCart={ addItemToCart } />
-				</CheckoutSummaryBody>
-			</CheckoutSummaryAreaUI>
+			<QueryExperiments />
+			<CheckoutSummaryArea className={ isSummaryVisible ? 'is-visible' : '' }>
+				<CheckoutErrorBoundary
+					errorMessage={ translate( 'Sorry, there was an error loading this information.' ) }
+					onError={ onSummaryError }
+				>
+					<CheckoutSummaryTitleLink onClick={ () => setIsSummaryVisible( ! isSummaryVisible ) }>
+						<CheckoutSummaryTitle>
+							<CheckoutSummaryTitleIcon icon="info-outline" size={ 20 } />
+							{ translate( 'Purchase Details' ) }
+							<CheckoutSummaryTitleToggle icon="keyboard_arrow_down" />
+						</CheckoutSummaryTitle>
+						<CheckoutSummaryTitlePrice className="wp-checkout__total-price">
+							{ total.amount.displayValue }
+						</CheckoutSummaryTitlePrice>
+					</CheckoutSummaryTitleLink>
+					<CheckoutSummaryBody>
+						<WPCheckoutOrderSummary
+							onChangePlanLength={ changePlanLength }
+							nextDomainIsFree={ responseCart?.next_domain_is_free }
+						/>
+						<SecondaryCartPromotions
+							responseCart={ responseCart }
+							addItemToCart={ addItemToCart }
+						/>
+					</CheckoutSummaryBody>
+				</CheckoutErrorBoundary>
+			</CheckoutSummaryArea>
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				disableSubmitButton={ isOrderReviewActive }
@@ -310,14 +332,14 @@ export default function WPCheckout( {
 					goToNextStep={ () => setIsOrderReviewActive( ! isOrderReviewActive ) }
 					activeStepContent={
 						<WPCheckoutOrderReview
-							removeItem={ removeItem }
+							removeProductFromCart={ removeProductFromCart }
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							removeCoupon={ removeCoupon }
 							onChangePlanLength={ changePlanLength }
-							variantSelectOverride={ variantSelectOverride }
 							getItemVariants={ getItemVariants }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
 						/>
 					}
@@ -328,6 +350,7 @@ export default function WPCheckout( {
 							couponStatus={ couponStatus }
 							couponFieldStateProps={ couponFieldStateProps }
 							siteUrl={ siteUrl }
+							siteId={ siteId }
 						/>
 					}
 					editButtonText={ translate( 'Edit' ) }
@@ -362,7 +385,7 @@ export default function WPCheckout( {
 										shouldShowContactDetailsValidationErrors
 									}
 									contactValidationCallback={ validateContactDetails }
-									shouldShowDomainContactFields={ shouldShowDomainContactFields }
+									contactDetailsType={ contactDetailsType }
 									isLoggedOutCart={ isLoggedOutCart }
 								/>
 							}
@@ -390,9 +413,9 @@ export default function WPCheckout( {
 						stepId="payment-method-step"
 						activeStepContent={
 							<PaymentMethodStep
-								CheckoutTerms={ CheckoutTerms }
-								responseCart={ responseCart }
+								activeStepContent={ paymentMethodStep.activeStepContent }
 								subtotal={ subtotal }
+								credits={ credits }
 							/>
 						}
 						completeStepContent={ paymentMethodStep.completeStepContent }
@@ -414,7 +437,7 @@ export default function WPCheckout( {
 	);
 }
 
-const CheckoutSummaryAreaUI = styled( CheckoutSummaryArea )`
+const CheckoutSummaryArea = styled( CheckoutSummaryAreaUnstyled )`
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
 		position: relative;
 	}
@@ -502,96 +525,9 @@ const CheckoutSummaryBody = styled.div`
 		display: block;
 		max-width: 328px;
 		position: fixed;
+		width: 100%;
 	}
 `;
-
-function PaymentMethodStep( { CheckoutTerms, responseCart, subtotal } ) {
-	const [ items, total ] = useLineItems();
-	const taxes = items.filter( ( item ) => item.type === 'tax' );
-	return (
-		<>
-			{ paymentMethodStep.activeStepContent }
-
-			<CheckoutTermsUI>
-				<CheckoutTerms cart={ responseCart } />
-			</CheckoutTermsUI>
-
-			<WPOrderReviewSection>
-				{ subtotal && <LineItemUI subtotal item={ subtotal } /> }
-				{ taxes.map( ( tax ) => (
-					<LineItemUI tax key={ tax.id } item={ tax } />
-				) ) }
-				<WPOrderReviewTotal total={ total } />
-			</WPOrderReviewSection>
-		</>
-	);
-}
-
-const CheckoutTermsUI = styled.div`
-	& > * {
-		margin: 16px 0 16px -24px;
-		padding-left: 24px;
-		position: relative;
-	}
-
-	.rtl & > * {
-		margin: 16px -24px 16px 0;
-		padding-right: 24px;
-		padding-left: 0;
-	}
-
-	& div:first-of-type {
-		padding-right: 0;
-		padding-left: 0;
-		margin-right: 0;
-		margin-left: 0;
-		margin-top: 32px;
-	}
-
-	svg {
-		width: 16px;
-		height: 16px;
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		.rtl & {
-			left: auto;
-			right: 0;
-		}
-	}
-
-	p {
-		font-size: 12px;
-		margin: 0;
-		word-break: break-word;
-	}
-
-	a {
-		text-decoration: underline;
-	}
-
-	a:hover {
-		text-decoration: none;
-	}
-`;
-
-function useUpdateCartLocationWhenPaymentMethodChanges(
-	activePaymentMethod,
-	updateCartContactDetails
-) {
-	const previousPaymentMethodId = useRef();
-	const hasInitialized = useRef( false );
-	useEffect( () => {
-		if ( activePaymentMethod?.id && activePaymentMethod.id !== previousPaymentMethodId.current ) {
-			previousPaymentMethodId.current = activePaymentMethod.id;
-			if ( hasInitialized.current ) {
-				updateCartContactDetails();
-			}
-			hasInitialized.current = true;
-		}
-	}, [ activePaymentMethod, updateCartContactDetails ] );
-}
 
 function SubmitButtonHeader() {
 	const translate = useTranslate();
@@ -599,17 +535,17 @@ function SubmitButtonHeader() {
 	const scrollToTOS = () => document.getElementById( 'checkout-terms' ).scrollIntoView();
 
 	return (
-		<SubmitButtonHeaderUI>
+		<SubmitButtonHeaderWrapper>
 			{ translate( 'By continuing, you agree to our {{button}}Terms of Service{{/button}}.', {
 				components: {
 					button: <button onClick={ scrollToTOS } />,
 				},
 			} ) }
-		</SubmitButtonHeaderUI>
+		</SubmitButtonHeaderWrapper>
 	);
 }
 
-const SubmitButtonHeaderUI = styled.div`
+const SubmitButtonHeaderWrapper = styled.div`
 	display: none;
 	font-size: 13px;
 	margin-top: -5px;

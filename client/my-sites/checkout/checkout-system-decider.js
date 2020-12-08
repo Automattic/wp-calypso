@@ -1,79 +1,68 @@
 /**
  * External dependencies
  */
-import React, { useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import debugFactory from 'debug';
-import wp from 'lib/wp';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
-import cookie from 'cookie';
+import { ShoppingCartProvider } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal Dependencies
  */
-import CheckoutContainer from './checkout/checkout-container';
-import PrePurchaseNotices from './checkout/prepurchase-notices';
+import wp from 'calypso/lib/wp';
+import PrePurchaseNotices from './composite-checkout/components/prepurchase-notices';
 import CompositeCheckout from './composite-checkout/composite-checkout';
 import { fetchStripeConfiguration } from './composite-checkout/payment-method-helpers';
-import { StripeHookProvider } from 'lib/stripe';
-import config from 'config';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import { logToLogstash } from 'state/logstash/actions';
-import Recaptcha from 'signup/recaptcha';
+import config from 'calypso/config';
+import { logToLogstash } from 'calypso/state/logstash/actions';
+import Recaptcha from 'calypso/signup/recaptcha';
+import getCartKey from './get-cart-key';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 const debug = debugFactory( 'calypso:checkout-system-decider' );
+
+// Aliasing wpcom functions explicitly bound to wpcom is required here;
+// otherwise we get `this is not defined` errors.
 const wpcom = wp.undocumented();
+const wpcomGetCart = ( ...args ) => wpcom.getCart( ...args );
+const wpcomSetCart = ( ...args ) => wpcom.setCart( ...args );
 
-function getGeoLocationFromCookie() {
-	const cookies = cookie.parse( document.cookie );
-
-	return cookies.country_code;
-}
-
-// Decide if we should use CompositeCheckout or CheckoutContainer
 export default function CheckoutSystemDecider( {
-	product,
+	productAliasFromUrl,
 	purchaseId,
 	selectedFeature,
 	couponCode,
-	isComingFromSignup,
-	isComingFromGutenboarding,
-	isGutenboardingCreate,
 	isComingFromUpsell,
 	plan,
 	selectedSite,
-	reduxStore,
 	redirectTo,
-	upgradeIntent,
-	clearTransaction,
-	cart,
 	isLoggedOutCart,
 	isNoSiteCart,
+	cart: otherCart,
 } ) {
-	const countryCode =
-		useSelector( ( state ) => getCurrentUserCountryCode( state ) ) || getGeoLocationFromCookie();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
+	const locale = useSelector( getCurrentUserLocale );
 
-	const prepurchaseNotices = <PrePurchaseNotices cart={ cart } />;
-
-	const checkoutVariant = getCheckoutVariant( countryCode );
+	const prepurchaseNotices = <PrePurchaseNotices />;
 
 	useEffect( () => {
-		if ( product ) {
+		if ( productAliasFromUrl ) {
 			reduxDispatch(
 				logToLogstash( {
 					feature: 'calypso_client',
 					message: 'CheckoutSystemDecider saw productSlug to add',
 					severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
 					extra: {
-						productSlug: product,
+						productSlug: productAliasFromUrl,
 					},
 				} )
 			);
 		}
-	}, [ reduxDispatch, product ] );
+	}, [ reduxDispatch, productAliasFromUrl ] );
 
 	const logCheckoutError = useCallback(
 		( error ) => {
@@ -93,95 +82,65 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
-	if ( ! cart || ! cart.currency ) {
-		debug( 'not deciding yet; cart has not loaded' );
-		return null; // TODO: replace with loading page
+	const waitForOtherCartUpdates =
+		otherCart?.hasPendingServerUpdates || ! otherCart?.hasLoadedFromServer;
+	const cartKey = useMemo(
+		() =>
+			getCartKey( {
+				selectedSite,
+				isLoggedOutCart,
+				isNoSiteCart,
+				waitForOtherCartUpdates,
+			} ),
+		[ waitForOtherCartUpdates, selectedSite, isLoggedOutCart, isNoSiteCart ]
+	);
+	debug( 'cartKey is', cartKey );
+
+	let siteSlug = selectedSite?.slug;
+
+	if ( ! siteSlug ) {
+		siteSlug = 'no-site';
+
+		if ( isLoggedOutCart || isNoSiteCart ) {
+			siteSlug = 'no-user';
+		}
 	}
 
-	if ( 'composite-checkout' === checkoutVariant ) {
-		let siteSlug = selectedSite?.slug;
+	const getCart =
+		isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( otherCart ) : wpcomGetCart;
+	debug( 'getCart being controlled by', { isLoggedOutCart, isNoSiteCart, otherCart } );
 
-		if ( ! siteSlug ) {
-			siteSlug = 'no-site';
-
-			if ( isLoggedOutCart || isNoSiteCart ) {
-				siteSlug = 'no-user';
-			}
-		}
-
-		return (
-			<>
-				<CheckoutErrorBoundary
-					errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-					onError={ logCheckoutError }
-				>
-					<StripeHookProvider fetchStripeConfiguration={ fetchStripeConfigurationWpcom }>
+	return (
+		<>
+			<CheckoutErrorBoundary
+				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
+				onError={ logCheckoutError }
+			>
+				<ShoppingCartProvider cartKey={ cartKey } getCart={ getCart } setCart={ wpcomSetCart }>
+					<StripeHookProvider
+						fetchStripeConfiguration={ fetchStripeConfigurationWpcom }
+						locale={ locale }
+					>
 						<CompositeCheckout
 							siteSlug={ siteSlug }
 							siteId={ selectedSite?.ID }
-							product={ product }
+							productAliasFromUrl={ productAliasFromUrl }
 							purchaseId={ purchaseId }
 							couponCode={ couponCode }
 							redirectTo={ redirectTo }
 							feature={ selectedFeature }
 							plan={ plan }
-							cart={ cart }
 							isComingFromUpsell={ isComingFromUpsell }
 							infoMessage={ prepurchaseNotices }
 							isLoggedOutCart={ isLoggedOutCart }
 							isNoSiteCart={ isNoSiteCart }
-							getCart={ isLoggedOutCart || isNoSiteCart ? () => Promise.resolve( cart ) : null }
 						/>
 					</StripeHookProvider>
-				</CheckoutErrorBoundary>
-				{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
-			</>
-		);
-	}
-
-	return (
-		<CheckoutContainer
-			product={ product }
-			purchaseId={ purchaseId }
-			selectedFeature={ selectedFeature }
-			couponCode={ couponCode }
-			isComingFromSignup={ isComingFromSignup }
-			isComingFromGutenboarding={ isComingFromGutenboarding }
-			isGutenboardingCreate={ isGutenboardingCreate }
-			isComingFromUpsell={ isComingFromUpsell }
-			plan={ plan }
-			selectedSite={ selectedSite }
-			reduxStore={ reduxStore }
-			redirectTo={ redirectTo }
-			upgradeIntent={ upgradeIntent }
-			clearTransaction={ clearTransaction }
-			infoMessage={ prepurchaseNotices }
-		/>
+				</ShoppingCartProvider>
+			</CheckoutErrorBoundary>
+			{ isLoggedOutCart && <Recaptcha badgePosition="bottomright" /> }
+		</>
 	);
-}
-
-function getCheckoutVariant( countryCode ) {
-	if ( config.isEnabled( 'old-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout false because old-checkout-force flag is set' );
-		return 'old-checkout';
-	}
-
-	if ( config.isEnabled( 'composite-checkout-force' ) ) {
-		debug( 'shouldShowCompositeCheckout true because force config is enabled' );
-		return 'composite-checkout';
-	}
-
-	// Disable for Brazil and India
-	if ( countryCode?.toLowerCase() === 'br' || countryCode?.toLowerCase() === 'in' ) {
-		debug(
-			'shouldShowCompositeCheckout false because country is not allowed',
-			countryCode?.toLowerCase()
-		);
-		return 'disallowed-geo';
-	}
-
-	debug( 'shouldShowCompositeCheckout true' );
-	return 'composite-checkout';
 }
 
 function fetchStripeConfigurationWpcom( args ) {

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/wordads/init';
+import 'calypso/state/wordads/init';
 
 /**
  * Returns true if we're currently requesting WordAds approval

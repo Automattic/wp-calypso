@@ -8,8 +8,8 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { recordTracksEvent } from 'state/analytics/actions';
+import Gridicon from 'calypso/components/gridicon';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const NavItem = ( { text, taskId, isCompleted, isCurrent, onClick, useAccordionLayout } ) => {
 	const dispatch = useDispatch();

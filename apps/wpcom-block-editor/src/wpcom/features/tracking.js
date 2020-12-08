@@ -1,11 +1,10 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /**
  * External dependencies
  */
 import { use, select } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { applyFilters } from '@wordpress/hooks';
-import { castArray, noop } from 'lodash';
+import { castArray, noop, find } from 'lodash';
 import debugFactory from 'debug';
 
 /**
@@ -13,11 +12,36 @@ import debugFactory from 'debug';
  */
 import tracksRecordEvent from './tracking/track-record-event';
 import delegateEventTracking from './tracking/delegate-event-tracking';
-/* eslint-enable import/no-extraneous-dependencies */
 
 // Debugger.
 const debug = debugFactory( 'wpcom-block-editor:tracking' );
 
+/**
+ * Global handler.
+ * Use this function when you need to inspect the block
+ * to get specific data and populate the record.
+ *
+ * @param {object} block - Block object data.
+ * @param {object} parentBlock - Block object data.
+ * @returns {object} Record properties object.
+ */
+function globalEventPropsHandler( block, parentBlock ) {
+	if ( ! block?.name ) {
+		return {};
+	}
+
+	// Pick up variation slug from `core/embed` block.
+	if ( block.name === 'core/embed' && block?.attributes?.providerNameSlug ) {
+		return { variation_slug: block.attributes.providerNameSlug };
+	}
+
+	// Pick up variation slug from `core/social-link` block.
+	if ( block.name === 'core/social-link' && block?.attributes?.service ) {
+		return { variation_slug: block.attributes.service };
+	}
+
+	return {};
+}
 /**
  * Looks up the block name based on its id.
  *
@@ -73,6 +97,7 @@ function trackBlocksHandler( blocks, eventName, propertiesHandler = noop, parent
 		block = ensureBlockObject( block );
 
 		const eventProperties = {
+			...globalEventPropsHandler( block, parentBlock ),
 			...propertiesHandler( block, parentBlock ),
 			inner_block: !! parentBlock,
 		};
@@ -111,15 +136,41 @@ const getBlocksTracker = ( eventName ) => ( blockIds ) => {
 };
 
 /**
+ * Determines whether a block pattern has been inserted and if so, records
+ * a track event for it. The recorded event will also reflect whether the
+ * inserted pattern replaced blocks.
+ *
+ * @param {Array} actionData Data supplied to block insertion or replacement tracking functions.
+ * @returns {string} Pattern name being inserted if available.
+ */
+const maybeTrackPatternInsertion = ( actionData ) => {
+	const meta = find( actionData, ( item ) => item?.patternName );
+	const patternName = meta?.patternName;
+
+	if ( patternName ) {
+		tracksRecordEvent( 'wpcom_pattern_inserted', {
+			pattern_name: patternName,
+			blocks_replaced: actionData?.blocks_replaced,
+		} );
+	}
+
+	return patternName;
+};
+
+/**
  * Track block insertion.
  *
  * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Array} args additional insertBlocks data e.g. metadata containing pattern name.
  * @returns {void}
  */
-const trackBlockInsertion = ( blocks ) => {
+const trackBlockInsertion = ( blocks, ...args ) => {
+	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: false } );
+
 	trackBlocksHandler( blocks, 'wpcom_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: false,
+		pattern_name: patternName,
 	} ) );
 };
 
@@ -140,12 +191,16 @@ const trackBlockRemoval = ( blocks ) => {
  *
  * @param {Array} originalBlockIds ids or blocks that are being replaced
  * @param {object|Array} blocks block instance object or an array of such objects
+ * @param {Array} args Additional data supplied to replaceBlocks action
  * @returns {void}
  */
-const trackBlockReplacement = ( originalBlockIds, blocks ) => {
+const trackBlockReplacement = ( originalBlockIds, blocks, ...args ) => {
+	const patternName = maybeTrackPatternInsertion( { ...args, blocks_replaced: true } );
+
 	trackBlocksHandler( blocks, 'wpcom_block_picker_block_inserted', ( { name } ) => ( {
 		block_name: name,
 		blocks_replaced: true,
+		pattern_name: patternName,
 	} ) );
 };
 

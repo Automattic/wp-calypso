@@ -28,8 +28,7 @@
 		"noEmitHelpers": true,
 		"importHelpers": true,
 
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__browser-data-collector"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ]

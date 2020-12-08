@@ -7,31 +7,31 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import { compact, pickBy } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
+import { abtest } from 'calypso/lib/abtest';
 import { Button } from '@automattic/components';
 import ThemesSelection from './themes-selection';
-import SubMasterbarNav from 'components/sub-masterbar-nav';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import SubMasterbarNav from 'calypso/components/sub-masterbar-nav';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { addTracking, trackClick } from './helpers';
-import DocumentHead from 'components/data/document-head';
-import { buildRelativeSearchUrl } from 'lib/build-url';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import { buildRelativeSearchUrl } from 'calypso/lib/build-url';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import ThemePreview from './theme-preview';
-import config from 'config';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { openThemesShowcase } from 'state/themes/themes-ui/actions';
+import config from 'calypso/config';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { openThemesShowcase } from 'calypso/state/themes/themes-ui/actions';
 import {
 	getThemesBookmark,
 	hasShowcaseOpened as hasShowcaseOpenedSelector,
-} from 'state/themes/themes-ui/selectors';
+} from 'calypso/state/themes/themes-ui/selectors';
 import ThemesSearchCard from './themes-magic-search-card';
-import QueryThemeFilters from 'components/data/query-theme-filters';
+import QueryThemeFilters from 'calypso/components/data/query-theme-filters';
 import {
 	getActiveTheme,
 	getThemeFilterTerms,
@@ -39,8 +39,8 @@ import {
 	getThemeShowcaseDescription,
 	getThemeShowcaseTitle,
 	prependThemeFilterKeys,
-} from 'state/themes/selectors';
-import UpworkBanner from 'blocks/upwork-banner';
+} from 'calypso/state/themes/selectors';
+import UpworkBanner from 'calypso/blocks/upwork-banner';
 import RecommendedThemes from './recommended-themes';
 
 /**

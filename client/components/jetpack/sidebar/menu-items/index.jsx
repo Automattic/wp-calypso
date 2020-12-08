@@ -7,26 +7,29 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { backupPath, scanPath } from 'lib/jetpack/paths';
-import { itemLinkMatches } from 'my-sites/sidebar/utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setNextLayoutFocus } from 'state/ui/layout-focus/actions';
+import { backupPath, scanPath } from 'calypso/lib/jetpack/paths';
+import { itemLinkMatches } from 'calypso/my-sites/sidebar/utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setNextLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { useTranslate } from 'i18n-calypso';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
-import getSiteScanProgress from 'state/selectors/get-site-scan-progress';
-import getSiteScanThreats from 'state/selectors/get-site-scan-threats';
-import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
-import QueryScanState from 'components/data/query-jetpack-scan';
-import ScanBadge from 'components/jetpack/scan-badge';
-import SidebarItem from 'layout/sidebar/item';
-import { isEnabled } from 'config';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
+import getSiteScanProgress from 'calypso/state/selectors/get-site-scan-progress';
+import getSiteScanThreats from 'calypso/state/selectors/get-site-scan-threats';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import QueryScanState from 'calypso/components/data/query-jetpack-scan';
+import ScanBadge from 'calypso/components/jetpack/scan-badge';
+import SidebarItem from 'calypso/layout/sidebar/item';
+import { isEnabled } from 'calypso/config';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug ) ?? '';
+
+	const isWPForTeamsSite = useSelector( ( state ) => isSiteWPForTeams( state, siteId ) );
 
 	const isWPCOM = useSelector( ( state ) => getIsSiteWPCOM( state, siteId ) );
 	const scanProgress = useSelector( ( state ) => getSiteScanProgress( state, siteId ) );
@@ -59,7 +62,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 			{
 				// Backup does not work in wp-desktop. Disable in the desktop app until
 				// it can be revisited: https://github.com/Automattic/wp-desktop/issues/943
-				! isDesktop && (
+				! isDesktop && ! isWPForTeamsSite && (
 					<SidebarItem
 						materialIcon={ showIcons ? 'backup' : undefined }
 						materialIconStyle="filled"
@@ -71,7 +74,7 @@ export default ( { path, showIcons, tracksEventNames, expandSection } ) => {
 					/>
 				)
 			}
-			{ ! isWPCOM && (
+			{ ! isWPCOM && ! isWPForTeamsSite && (
 				<SidebarItem
 					materialIcon={ showIcons ? 'security' : undefined }
 					materialIconStyle="filled"

@@ -9,26 +9,24 @@ import { filter, some, find, get, includes, keyBy, map, omit, union, reject } fr
  */
 import {
 	READER_LIST_CREATE,
-	READER_LIST_DISMISS_NOTICE,
+	READER_LIST_DELETE,
+	READER_LIST_FOLLOW_RECEIVE,
 	READER_LIST_REQUEST,
 	READER_LIST_REQUEST_SUCCESS,
 	READER_LIST_REQUEST_FAILURE,
+	READER_LIST_UNFOLLOW_RECEIVE,
 	READER_LIST_UPDATE,
 	READER_LIST_UPDATE_SUCCESS,
 	READER_LIST_UPDATE_FAILURE,
 	READER_LISTS_RECEIVE,
 	READER_LISTS_REQUEST,
-	READER_LISTS_REQUEST_SUCCESS,
-	READER_LISTS_REQUEST_FAILURE,
-	READER_LISTS_FOLLOW_SUCCESS,
-	READER_LISTS_UNFOLLOW_SUCCESS,
 	READER_LIST_ITEMS_RECEIVE,
 	READER_LIST_ITEM_DELETE_FEED,
 	READER_LIST_ITEM_DELETE_SITE,
 	READER_LIST_ITEM_DELETE_TAG,
 	READER_LIST_ITEM_ADD_FEED_RECEIVE,
-} from 'state/reader/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema, subscriptionsSchema, updatedListsSchema, errorsSchema } from './schema';
 
 /**
@@ -45,6 +43,11 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 		case READER_LIST_REQUEST_SUCCESS:
 		case READER_LIST_UPDATE_SUCCESS:
 			return Object.assign( {}, state, keyBy( [ action.data.list ], 'ID' ) );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 } );
@@ -85,6 +88,11 @@ export const listItems = ( state = {}, action ) => {
 			return removeItemBy( state, action, ( item ) => item.tag_ID === action.tagId );
 		case READER_LIST_ITEM_DELETE_SITE:
 			return removeItemBy( state, action, ( item ) => item.site_ID === action.siteId );
+		case READER_LIST_DELETE:
+			if ( ! ( action.listId in state ) ) {
+				return state;
+			}
+			return omit( state, action.listId );
 	}
 	return state;
 };
@@ -102,17 +110,30 @@ export const subscribedLists = withSchemaValidation(
 		switch ( action.type ) {
 			case READER_LISTS_RECEIVE:
 				return map( action.lists, 'ID' );
-			case READER_LISTS_FOLLOW_SUCCESS:
-				const newListId = get( action, [ 'data', 'list', 'ID' ] );
-				if ( ! newListId || includes( state, newListId ) ) {
+			case READER_LIST_FOLLOW_RECEIVE:
+				const followedListId = action.list?.ID;
+				if ( ! followedListId || includes( state, followedListId ) ) {
 					return state;
 				}
-				return [ ...state, newListId ];
-			case READER_LISTS_UNFOLLOW_SUCCESS:
+				return [ ...state, followedListId ];
+			case READER_LIST_UNFOLLOW_RECEIVE:
 				// Remove the unfollowed list ID from subscribedLists
+				const unfollowedListId = action.list?.ID;
+				if ( ! unfollowedListId ) {
+					return state;
+				}
 				return filter( state, ( listId ) => {
-					return listId !== action.data.list.ID;
+					return listId !== unfollowedListId;
 				} );
+			case READER_LIST_DELETE:
+				return filter( state, ( listId ) => {
+					return listId !== action.listId;
+				} );
+			case READER_LIST_REQUEST_SUCCESS:
+				if ( ! state.includes( action.data.list.ID ) ) {
+					return [ ...state, action.data.list.ID ];
+				}
+				return state;
 		}
 		return state;
 	}
@@ -133,11 +154,6 @@ export const updatedLists = withSchemaValidation( updatedListsSchema, ( state = 
 				return state;
 			}
 			return union( state, [ newListId ] );
-		case READER_LIST_DISMISS_NOTICE:
-			// Remove the dismissed list ID
-			return filter( state, ( listId ) => {
-				return listId !== action.listId;
-			} );
 	}
 	return state;
 } );
@@ -206,8 +222,7 @@ export function isUpdatingList( state = false, action ) {
 export function isRequestingLists( state = false, action ) {
 	switch ( action.type ) {
 		case READER_LISTS_REQUEST:
-		case READER_LISTS_REQUEST_SUCCESS:
-		case READER_LISTS_REQUEST_FAILURE:
+		case READER_LISTS_RECEIVE:
 			return READER_LISTS_REQUEST === action.type;
 	}
 
@@ -227,10 +242,6 @@ export const errors = withSchemaValidation( errorsSchema, ( state = {}, action )
 			const newError = {};
 			newError[ action.list.ID ] = action.error.statusCode;
 			return Object.assign( {}, state, newError );
-
-		case READER_LIST_DISMISS_NOTICE:
-			// Remove the dismissed list ID
-			return omit( state, action.listId );
 	}
 
 	return state;

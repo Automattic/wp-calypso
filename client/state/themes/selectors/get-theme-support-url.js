@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { getSiteSlug } from 'state/sites/selectors';
-import { isThemePremium } from 'state/themes/selectors/is-theme-premium';
-import { oldShowcaseUrl } from 'state/themes/utils';
+import config from 'calypso/config';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { isThemePremium } from 'calypso/state/themes/selectors/is-theme-premium';
+import { oldShowcaseUrl } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a given theme's setup instructions

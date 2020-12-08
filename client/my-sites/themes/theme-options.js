@@ -10,31 +10,31 @@ import { has, identity, mapValues, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	activate as activateAction,
 	tryAndCustomize as tryAndCustomizeAction,
 	confirmDelete,
 	showThemePreview as themePreview,
 	showAutoLoadingHomepageWarning as showAutoLoadingHomepageWarningAction,
-} from 'state/themes/actions';
+} from 'calypso/state/themes/actions';
 import {
-	getThemeSignupUrl,
-	getThemePurchaseUrl,
-	getThemeDetailsUrl,
-	getThemeSupportUrl,
 	getJetpackUpgradeUrlIfPremiumTheme,
+	getThemeDetailsUrl,
 	getThemeHelpUrl,
-	isThemeActive,
-	isThemePremium,
+	getThemePurchaseUrl,
+	getThemeSignupUrl,
+	getThemeSupportUrl,
 	isPremiumThemeAvailable,
-	isThemeAvailableOnJetpackSite,
+	isThemeActive,
 	isThemeGutenbergFirst,
-} from 'state/themes/selectors';
-import { isJetpackSite, isJetpackSiteMultiSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getCurrentUser } from 'state/current-user/selectors';
-import getCustomizeOrEditFrontPageUrl from 'state/selectors/get-customize-or-edit-front-page-url';
+	isThemePremium,
+} from 'calypso/state/themes/selectors';
+
+import getCustomizeUrl from 'calypso/state/selectors/get-customize-url';
+import { isJetpackSite, isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 function getAllThemeOptions() {
 	const purchase = config.isEnabled( 'upgrades/checkout' )
@@ -91,9 +91,7 @@ function getAllThemeOptions() {
 			! getCurrentUser( state ) ||
 			isJetpackSiteMultiSite( state, siteId ) ||
 			isThemeActive( state, themeId, siteId ) ||
-			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			( isJetpackSite( state, siteId ) &&
-				! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ),
+			( isThemePremium( state, themeId ) && ! isPremiumThemeAvailable( state, themeId, siteId ) ),
 	};
 
 	const deleteTheme = {
@@ -112,7 +110,7 @@ function getAllThemeOptions() {
 			comment: 'label in the dialog for selecting a site for which to customize a theme',
 		} ),
 		icon: 'customize',
-		getUrl: getCustomizeOrEditFrontPageUrl,
+		getUrl: getCustomizeUrl,
 		hideForTheme: ( state, themeId, siteId ) =>
 			! canCurrentUser( state, siteId, 'edit_theme_options' ) ||
 			! isThemeActive( state, themeId, siteId ),
@@ -134,8 +132,6 @@ function getAllThemeOptions() {
 			( isThemePremium( state, themeId ) &&
 				isJetpackSite( state, siteId ) &&
 				! isPremiumThemeAvailable( state, themeId, siteId ) ) ||
-			( isJetpackSite( state, siteId ) &&
-				! isThemeAvailableOnJetpackSite( state, themeId, siteId ) ) ||
 			isThemeGutenbergFirst( state, themeId ),
 	};
 
@@ -203,8 +199,8 @@ function getAllThemeOptions() {
 }
 export const connectOptions = connect(
 	( state, { siteId, origin = siteId } ) => {
-		let mapGetUrl = identity,
-			mapHideForTheme = identity;
+		let mapGetUrl = identity;
+		let mapHideForTheme = identity;
 
 		/* eslint-disable wpcalypso/redux-no-bound-selectors */
 		if ( siteId ) {

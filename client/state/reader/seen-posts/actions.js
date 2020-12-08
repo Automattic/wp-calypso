@@ -8,15 +8,19 @@ import {
 	READER_SEEN_MARK_AS_UNSEEN_RECEIVE,
 	READER_SEEN_MARK_ALL_AS_SEEN_REQUEST,
 	READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
-} from 'state/reader/action-types';
-import { SOURCE_READER_WEB } from 'state/reader/seen-posts/constants';
+	READER_SEEN_MARK_AS_SEEN_BLOG_REQUEST,
+	READER_SEEN_MARK_AS_UNSEEN_BLOG_REQUEST,
+} from 'calypso/state/reader/action-types';
+import { SOURCE_READER_WEB } from 'calypso/state/reader/seen-posts/constants';
 
 /**
  * Load data layer dependencies
  */
-import 'state/data-layer/wpcom/seen-posts/seen/new/index';
-import 'state/data-layer/wpcom/seen-posts/seen/delete/index';
-import 'state/data-layer/wpcom/seen-posts/seen/all/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/delete/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/all/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/new/index';
+import 'calypso/state/data-layer/wpcom/seen-posts/seen/blog/delete/index';
 
 /**
  * Request mark as seen for given seenIds
@@ -123,5 +127,49 @@ export const receiveMarkAllAsSeen = ( { feedIds, feedUrls, globalIds } ) => ( {
 	type: READER_SEEN_MARK_ALL_AS_SEEN_RECEIVE,
 	feedIds,
 	feedUrls,
+	globalIds,
+} );
+
+/**
+ * Request mark as seen for given blog and post id
+ *
+ * @param {object} payload method
+ * @param payload.blogId identifier of the blog
+ * @param payload.postIds list of blog post ids
+ * @param payload.feedId identifier of the feed
+ * @param payload.feedUrl url of the feed
+ * @param payload.globalIds list of Calypso Reader specific global ids
+ *
+ * @returns {{seenIds: *, globalIds: *, source: *, type: string}} redux action
+ */
+export const requestMarkAsSeenBlog = ( { blogId, postIds, feedId, feedUrl, globalIds } ) => ( {
+	type: READER_SEEN_MARK_AS_SEEN_BLOG_REQUEST,
+	blogId,
+	postIds,
+	feedId,
+	feedUrl,
+	source: SOURCE_READER_WEB,
+	globalIds,
+} );
+
+/**
+ * Request mark as unseen for given blog and post ids
+ *
+ * @param {object} payload method
+ * @param payload.blogId identifier of the blog
+ * @param payload.feedId identifier of the feed
+ * @param payload.feedUrl url of the feed
+ * @param payload.postIds list of blog post ids
+ * @param payload.globalIds list of Calypso Reader specific global ids
+ *
+ * @returns {{seenIds: *, globalIds: *, type: string}} redux action
+ */
+export const requestMarkAsUnseenBlog = ( { blogId, postIds, feedId, feedUrl, globalIds } ) => ( {
+	type: READER_SEEN_MARK_AS_UNSEEN_BLOG_REQUEST,
+	blogId,
+	postIds,
+	feedId,
+	feedUrl,
+	source: SOURCE_READER_WEB,
 	globalIds,
 } );

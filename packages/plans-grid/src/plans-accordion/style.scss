@@ -1,0 +1,51 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
+@import '../variables.scss';
+
+.plans-accordion__actions {
+	text-align: center;
+}
+
+.plans-accordion__plan-item-group {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.plans-accordion__toggle-all-button.components-button.is-link {
+	margin: 22px auto;
+	color: $dark-gray-500;
+
+	@include break-medium {
+		margin: 32px auto;
+	}
+}
+
+.plans-accordion__recommend-hint {
+	color: var( --studio-gray-40 );
+	font-size: $font-body-small;
+	text-align: right;
+	margin-bottom: 16px;
+
+	svg {
+		fill: var( --studio-yellow-30 );
+		margin-right: $grid-unit-10;
+		position: relative;
+		top: 2px;
+	}
+}
+
+.plans-accordion__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
+}

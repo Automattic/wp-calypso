@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import { usersReducer } from '../reducer';
 
-import { GSUITE_USERS_REQUEST_SUCCESS } from 'state/action-types';
+import { GSUITE_USERS_REQUEST_SUCCESS } from 'calypso/state/action-types';
 
 describe( "gsuiteUsersReducer's", () => {
 	const account = {

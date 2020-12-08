@@ -6,15 +6,15 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

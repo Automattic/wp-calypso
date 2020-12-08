@@ -9,8 +9,8 @@ import { capitalize, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import { withLocalizedMoment } from 'components/localized-moment';
+import FoldableCard from 'calypso/components/foldable-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DateFormatOption from './date-format-option';
 import StartOfWeekOption from './start-of-week-option';
 import TimeFormatOption from './time-format-option';

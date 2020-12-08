@@ -1,26 +1,22 @@
-CardHeading (JSX)
-=====================
+# CardHeading (JSX)
 
 This component displays a heading for a `<Card>`
 
-#### How to use:
+## How to use
 
 ```js
-import CardHeading from 'components/card-heading';
+import CardHeading from 'calypso/components/card-heading';
 
-render() {
+function render() {
 	return (
-		<CardHeading
-			tagName="h1"
-			size={ 21 }
-		>
+		<CardHeading tagName="h1" size={ 21 }>
 			Put your heading text here
 		</CardHeading>
 	);
 }
 ```
 
-#### Props
+## Props
 
-* `tagName` (`string`) - The element to wrap the text in
-* `size` (`int`) - The font size of the heading
+- `tagName` (`string`) - The element to wrap the text in
+- `size` (`int`) - The font size of the heading

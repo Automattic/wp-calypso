@@ -10,12 +10,12 @@ import React, { useState } from 'react';
  * Internal dependencies
  */
 import { Button, CompactCard } from '@automattic/components';
-import { areAllUsersValid, getItemsForCart, newUsers } from 'lib/gsuite/new-users';
+import { areAllUsersValid, getItemsForCart, newUsers } from 'calypso/lib/gsuite/new-users';
 import GSuiteUpsellProductDetails from './product-details';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import { GSUITE_SLUG_PROP_TYPES } from 'lib/gsuite/constants';
-import QueryProducts from 'components/data/query-products-list';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import { GSUITE_SLUG_PROP_TYPES } from 'calypso/lib/gsuite/constants';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

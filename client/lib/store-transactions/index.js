@@ -3,14 +3,18 @@
  */
 import { isEmpty, omit } from 'lodash';
 import debugFactory from 'debug';
-const debug = debugFactory( 'calypso:store-transactions' );
 import inherits from 'inherits';
+import {
+	createStripePaymentMethod,
+	confirmStripePaymentIntent,
+	StripeValidationError,
+} from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
-import paymentGatewayLoader from 'lib/payment-gateway-loader';
-import { validatePaymentDetails } from 'lib/checkout';
+import paymentGatewayLoader from 'calypso/lib/payment-gateway-loader';
+import { validatePaymentDetails } from 'calypso/lib/checkout';
 import {
 	INPUT_VALIDATION,
 	RECEIVED_PAYMENT_KEY_RESPONSE,
@@ -21,17 +25,13 @@ import {
 	SUBMITTING_PAYMENT_KEY_REQUEST,
 	SUBMITTING_WPCOM_REQUEST,
 } from './step-types';
-import wp from 'lib/wp';
+import wp from 'calypso/lib/wp';
 import {
 	isEbanxCreditCardProcessingEnabledForCountry,
 	translatedEbanxError,
-} from 'lib/checkout/processor-specific';
-import {
-	createStripePaymentMethod,
-	confirmStripePaymentIntent,
-	StripeValidationError,
-} from 'lib/stripe';
+} from 'calypso/lib/checkout/processor-specific';
 
+const debug = debugFactory( 'calypso:store-transactions' );
 const wpcom = wp.undocumented();
 
 /**
@@ -89,11 +89,11 @@ TransactionFlow.prototype._pushStep = function ( options ) {
 TransactionFlow.prototype._paymentHandlers = {
 	WPCOM_Billing_MoneyPress_Stored: async function () {
 		const {
-				mp_ref: payment_key,
-				stored_details_id,
-				payment_partner,
-			} = this._initialData.payment.storedCard,
-			{ successUrl, cancelUrl, stripeConfiguration } = this._initialData;
+			mp_ref: payment_key,
+			stored_details_id,
+			payment_partner,
+		} = this._initialData.payment.storedCard;
+		const { successUrl, cancelUrl, stripeConfiguration } = this._initialData;
 
 		this._pushStep( { name: INPUT_VALIDATION, first: true } );
 		debug( 'submitting transaction with stored card' );
@@ -113,10 +113,10 @@ TransactionFlow.prototype._paymentHandlers = {
 	},
 
 	WPCOM_Billing_MoneyPress_Paygate: function () {
-		const { newCardDetails } = this._initialData.payment,
-			{ successUrl, cancelUrl } = this._initialData,
-			paymentType = newCardDetails.tokenized_payment_data ? 'token' : undefined,
-			validation = validatePaymentDetails( newCardDetails, paymentType );
+		const { newCardDetails } = this._initialData.payment;
+		const { successUrl, cancelUrl } = this._initialData;
+		const paymentType = newCardDetails.tokenized_payment_data ? 'token' : undefined;
+		const validation = validatePaymentDetails( newCardDetails, paymentType );
 
 		if ( ! isEmpty( validation.errors ) ) {
 			this._pushStep( {

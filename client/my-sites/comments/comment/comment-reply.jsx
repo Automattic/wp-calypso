@@ -11,19 +11,20 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
+import AutoDirection from 'calypso/components/auto-direction';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import { Button } from '@automattic/components';
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 import {
 	bumpStat,
 	composeAnalytics,
 	recordTracksEvent,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { changeCommentStatus, replyComment } from 'state/comments/actions';
-import { removeNotice, successNotice } from 'state/notices/actions';
-import { getSiteComment } from 'state/comments/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/analytics/actions';
+import { changeCommentStatus, replyComment } from 'calypso/state/comments/actions';
+import { removeNotice, successNotice } from 'calypso/state/notices/actions';
+import { getSiteComment } from 'calypso/state/comments/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
 const TEXTAREA_HEIGHT_FOCUSED = 68; // 2 lines
@@ -155,14 +156,14 @@ export class CommentReply extends Component {
 		return (
 			<form className="comment__reply">
 				<AutoDirection>
-					<textarea
+					<FormTextarea
 						className={ textareaClasses }
 						onBlur={ this.blurReply }
 						onChange={ this.updateTextarea }
 						onFocus={ this.focusReply }
 						onKeyDown={ this.keyDownHandler }
 						placeholder={ this.getPlaceholder() }
-						ref={ this.storeTextareaRef }
+						forwardedRef={ this.storeTextareaRef }
 						style={ textareaStyle }
 						value={ replyContent }
 					/>

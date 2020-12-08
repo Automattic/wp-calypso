@@ -80,14 +80,15 @@ The type of a handler follows:
 
 ```js
 // middlewareHandler :: ReduxStore -> ReduxAction -> Any
-const myHandler = ( store, action ) => { … }
+const myHandler = ( store, action ) => {
+	/*...*/
+};
 ```
 
 Note that the Redux store incorporates four methods, two of which are likely to be used here.
 When dispatching through the store's `dispatch` function the action will start at the beginning of the entire middleware chain.
 Sometimes we need to bypass the data layer so that we don't create endless loops of action dispatches.
 In these cases we can import the `bypassDataLayer()` function which will cause the action to do just that: bypass the data layer.
-
 
 ```js
 const {
@@ -118,20 +119,24 @@ Let's look at a full example:
 /**
  * Internal dependencies
  */
-import { addSplines } from 'state/splines/actions';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { addSplines } from 'calypso/state/splines/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * Transform the API response into consumble data
+ *
+ * @param data the data
  */
-const apiTransformer = data => data.splines;
+const apiTransformer = ( data ) => data.splines;
 
 /**
  * Issue the HTTP request to fetch the splines
+ *
+ * @param action the action
  */
-const fetchSplines = action =>
+const fetchSplines = ( action ) =>
 	http(
 		{
 			method: 'GET',
@@ -140,23 +145,24 @@ const fetchSplines = action =>
 			query: {
 				site_id: action.siteId,
 			},
-		}, action
+		},
+		action
 	);
-};
 
 /**
  * Take spline data from API request and inject into state
+ *
+ * @param action the action
+ * @param splines the splines
  */
-const handleSuccess = ( action, splines ) =>
-	addSplines( action.siteId, splines );
+const handleSuccess = ( action, splines ) => addSplines( action.siteId, splines );
 
 /**
  * Notify customer that we failed to get splines for site
  *
- * @TODO: Explain why and provide better alternatives
+ * TODO: Explain why and provide better alternatives
  */
-const announceFailure = () =>
-	errorNotice( `Could not retrieve the splines. Please try again.` );
+const announceFailure = () => errorNotice( `Could not retrieve the splines. Please try again.` );
 
 export default {
 	[ SPLINES_REQUEST ]: [
@@ -167,14 +173,10 @@ export default {
 			fromApi: apiTransformer,
 		} ),
 	],
-}
+};
 
 // middlware.js
-const handlers = mergeHandlers(
-	postsEndpoint,
-	sitesEndpoint,
-	splineEndpoint,
-);
+const handlers = mergeHandlers( postsEndpoint, sitesEndpoint, splineEndpoint );
 ```
 
 Note that **these middlewares are not restricted to making HTTP requests**.

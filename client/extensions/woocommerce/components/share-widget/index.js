@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from 'calypso/config';
 import { localize } from 'i18n-calypso';
 import url from 'url';
 
@@ -11,7 +11,7 @@ import url from 'url';
  * Internal dependencies
  */
 import DashboardWidget from 'woocommerce/components/dashboard-widget';
-import SocialLogo from 'components/social-logo';
+import SocialLogo from 'calypso/components/social-logo';
 
 class ShareWidget extends Component {
 	static propTypes = {

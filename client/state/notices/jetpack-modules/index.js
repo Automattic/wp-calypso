@@ -12,9 +12,9 @@ import {
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_DEACTIVATE_FAILURE,
 	JETPACK_MODULE_DEACTIVATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { MODULE_NOTICES } from './constants';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 export const onJetpackModuleActivationActionMessage = ( { type, moduleSlug, silent } ) => {
 	if ( silent ) {

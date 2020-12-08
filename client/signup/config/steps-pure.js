@@ -7,7 +7,7 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import {
 	PLAN_PERSONAL,
 	PLAN_PREMIUM,
@@ -18,7 +18,7 @@ import {
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
 	TYPE_ECOMMERCE,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 export function generateSteps( {
 	addPlanToCart = noop,
@@ -35,7 +35,6 @@ export function generateSteps( {
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
-	addOrRemoveFromProgressStore = noop,
 	maybeRemoveStepForUserlessCheckout = noop,
 } = {} ) {
 	return {
@@ -101,11 +100,11 @@ export function generateSteps( {
 			stepName: 'domains-launch',
 			apiRequestFunction: addDomainToCart,
 			fulfilledStepCallback: isDomainFulfilled,
-			providesDependencies: [ 'domainItem' ],
+			providesDependencies: [ 'domainItem', 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan' ],
 			props: {
 				isDomainOnly: false,
 				showExampleSuggestions: false,
-				shouldShowDomainTestCopy: false,
 				includeWordPressDotCom: false,
 				showSkipButton: true,
 				headerText: i18n.translate( 'Getting ready to launch, pick a domain' ),
@@ -281,30 +280,12 @@ export function generateSteps( {
 			},
 		},
 
-		'upsell-plan': {
-			stepName: 'upsell-plan',
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-		},
-
-		'plans-plan-only': {
-			stepName: 'plans-plan-only',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: addOrRemoveFromProgressStore,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			props: {
-				hideFreePlan: true,
-				planTypes: [ TYPE_PERSONAL, TYPE_PREMIUM ],
-			},
-		},
-
 		'plans-store-nux': {
 			stepName: 'plans-store-nux',
 			apiRequestFunction: addPlanToCart,
 			dependencies: [ 'siteSlug', 'domainItem' ],
 			providesDependencies: [ 'cartItem' ],
 		},
-
 		domains: {
 			stepName: 'domains',
 			apiRequestFunction: createSiteWithCart,
@@ -314,8 +295,9 @@ export function generateSteps( {
 				'domainItem',
 				'themeItem',
 				'shouldHideFreePlan',
+				'isManageSiteFlow',
 			],
-			optionalDependencies: [ 'shouldHideFreePlan' ],
+			optionalDependencies: [ 'shouldHideFreePlan', 'isManageSiteFlow' ],
 			props: {
 				isDomainOnly: false,
 			},
@@ -327,7 +309,7 @@ export function generateSteps( {
 			providesDependencies: [ 'siteId', 'siteSlug', 'domainItem' ],
 			props: {
 				isDomainOnly: true,
-				shouldShowDomainTestCopy: false,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
 		},
 
@@ -337,8 +319,14 @@ export function generateSteps( {
 			props: {
 				isAllDomains: true,
 				isDomainOnly: true,
-				shouldShowDomainTestCopy: false,
+				forceHideFreeDomainExplainerAndStrikeoutUi: true,
 			},
+		},
+
+		'secure-your-brand': {
+			stepName: 'secure-your-brand',
+			dependencies: [ 'domainItem', 'siteSlug' ],
+			providesDependencies: [ 'domainUpsellItems' ],
 		},
 
 		'domains-store': {
@@ -360,8 +348,8 @@ export function generateSteps( {
 				'siteSlug',
 				'domainItem',
 				'themeItem',
-				'shouldHideFreePlan',
 				'useThemeHeadstart',
+				'shouldHideFreePlan',
 			],
 			optionalDependencies: [ 'shouldHideFreePlan', 'useThemeHeadstart' ],
 			props: {
@@ -660,6 +648,10 @@ export function generateSteps( {
 			providesToken: true,
 			providesDependencies: [ 'bearer_token', 'email', 'username' ],
 			unstorableDependencies: [ 'bearer_token' ],
+		},
+
+		'p2-details': {
+			stepName: 'p2-details',
 		},
 
 		'p2-site': {

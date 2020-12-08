@@ -42,21 +42,27 @@ exports.startVideo = function () {
 	const fileName = `e2e-test-run-${ dateTime }.mpg`;
 	file = path.join( E2E_DIR, 'screenshots', 'videos', fileName );
 	this.createDir( path.dirname( file ) );
-	ffVideo = child_process.spawn( ffmpeg.path, [
-		'-f',
-		'avfoundation',
-		'-video_size',
-		'1440x1000',
-		'-r',
-		30,
-		'-i',
-		'0:none',
-		'-pixel_format',
-		'yuv420p',
-		'-loglevel',
-		'error',
-		file,
-	] );
+	ffVideo = child_process.spawn(
+		ffmpeg.path,
+		[
+			'-f',
+			'avfoundation',
+			'-video_size',
+			'1440x1000',
+			'-r',
+			30,
+			'-i',
+			'0:none',
+			'-pix_fmt',
+			'yuv420p',
+			'-loglevel',
+			'error',
+			file,
+		],
+		{
+			stdio: 'inherit',
+		}
+	);
 };
 
 exports.stopVideo = function () {

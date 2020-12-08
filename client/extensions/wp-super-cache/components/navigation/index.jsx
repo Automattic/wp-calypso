@@ -10,14 +10,14 @@ import { get, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import SectionNav from 'components/section-nav';
-import SectionNavTabs from 'components/section-nav/tabs';
-import SectionNavTabItem from 'components/section-nav/item';
-import { addSiteFragment } from 'lib/route';
-import versionCompare from 'lib/version-compare';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getPluginOnSite } from 'state/plugins/installed/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import SectionNav from 'calypso/components/section-nav';
+import SectionNavTabs from 'calypso/components/section-nav/tabs';
+import SectionNavTabItem from 'calypso/components/section-nav/item';
+import { addSiteFragment } from 'calypso/lib/route';
+import versionCompare from 'calypso/lib/version-compare';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getPluginOnSite } from 'calypso/state/plugins/installed/selectors';
 import { Tabs } from '../../app/constants';
 
 const Navigation = ( { activeTab, pluginVersion, siteSlug, translate } ) => (

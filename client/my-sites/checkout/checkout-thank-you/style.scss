@@ -28,7 +28,7 @@
 
 	&:first-child {
 		border-bottom: none;
-		border-radius: 3px 3px 0 0;
+		border-radius: 2px 2px 0 0;
 		margin-top: 16px;
 
 		.purchase-detail__required-notice {
@@ -322,7 +322,8 @@
 			.thank-you-card {
 				color: var( --color-text );
 				background-color: var( --color-surface );
-				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ), 0 1px 2px var( --color-neutral-0 );
+				box-shadow: 0 0 0 1px rgba( var( --color-neutral-10-rgb ), 0.5 ),
+					0 1px 2px var( --color-neutral-0 );
 			}
 		}
 	}

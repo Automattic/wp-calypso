@@ -12,7 +12,7 @@ import {
 	REWIND_ACTIVATE_FAILURE,
 	REWIND_ACTIVATE_REQUEST,
 	REWIND_ACTIVATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants

@@ -214,7 +214,7 @@ describe( 'Checkout', () => {
 		describe( 'when clicking continue from the first step', function () {
 			let container;
 
-			beforeEach( () => {
+			beforeEach( async () => {
 				const mockMethod = createMockMethod();
 				const { items, total } = createMockItems();
 				const MyCheckout = () => (
@@ -234,7 +234,9 @@ describe( 'Checkout', () => {
 				const renderResult = render( <MyCheckout /> );
 				container = renderResult.container;
 				const firstStepContinue = renderResult.getAllByText( 'Continue' )[ 0 ];
-				fireEvent.click( firstStepContinue );
+				await act( async () => {
+					return fireEvent.click( firstStepContinue );
+				} );
 			} );
 
 			it( 'makes the first step invisible', () => {
@@ -376,7 +378,7 @@ describe( 'Checkout', () => {
 			expect( getByTextInNode( step, 'Continue' ) ).not.toBeDisabled();
 		} );
 
-		it( 'does not change steps if the continue button is clicked when the step is active and incomplete', () => {
+		it( 'does not change steps if the continue button is clicked when the step is active and incomplete', async () => {
 			const incompleteStep = {
 				...steps[ 0 ],
 				hasStepNumber: true,
@@ -389,11 +391,13 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.' + steps[ 0 ].className );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
 		} );
 
-		it( 'does change steps if the continue button is clicked when the step is active and complete', () => {
+		it( 'does change steps if the continue button is clicked when the step is active and complete', async () => {
 			const completeStep = { ...steps[ 0 ], hasStepNumber: true, isCompleteCallback: () => true };
 			const { container, getAllByText } = render(
 				<MyCheckout steps={ [ completeStep, steps[ 4 ], steps[ 1 ] ] } />
@@ -402,7 +406,9 @@ describe( 'Checkout', () => {
 			const firstStep = container.querySelector( '.custom-summary-step-class' );
 			const firstStepContent = firstStep.querySelector( '.checkout-steps__step-content' );
 			expect( firstStepContent ).toHaveStyle( 'display: block' );
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( firstStepContent ).toHaveStyle( 'display: none' );
 		} );
 
@@ -486,10 +492,12 @@ describe( 'Checkout', () => {
 			expect( queryByTextInNode( step, 'Edit' ) ).not.toBeInTheDocument();
 		} );
 
-		it( 'renders the edit button for editable steps with a lower index than the active step', () => {
+		it( 'renders the edit button for editable steps with a lower index than the active step', async () => {
 			const { container, getAllByText } = render( <MyCheckout /> );
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			const step = container.querySelector( '.' + steps[ 1 ].className );
 			expect( getByTextInNode( step, 'Edit' ) ).toBeInTheDocument();
 		} );
@@ -499,7 +507,9 @@ describe( 'Checkout', () => {
 				<MyCheckout steps={ [ steps[ 0 ], steps[ 1 ], steps[ 2 ] ] } />
 			);
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			expect( queryByText( 'Edit' ) ).toBeInTheDocument();
 			const submitButton = getAllByText( 'Pay Please' )[ 0 ];
 			await act( async () => {
@@ -543,7 +553,9 @@ describe( 'Checkout', () => {
 			);
 			expect( getByText( 'Possibly Complete isComplete false' ) ).toBeInTheDocument();
 			const firstStepContinue = getAllByText( 'Continue' )[ 0 ];
-			fireEvent.click( firstStepContinue );
+			await act( async () => {
+				return fireEvent.click( firstStepContinue );
+			} );
 			fireEvent.change( getByLabelText( 'User Name' ), { target: { value: 'Lyra' } } );
 			await act( async () => {
 				// isComplete does not update until we press continue

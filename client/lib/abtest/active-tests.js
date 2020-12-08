@@ -4,11 +4,6 @@
  * paths here (e.g. `import * from '../../lib/`)
  */
 
-/**
- * Internal dependencies
- */
-import * as RUM_DATA_COLLECTION from '../../lib/performance-tracking/const';
-
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -74,10 +69,10 @@ export default {
 	},
 	conciergeUpsellDial: {
 		//this test is used to dial down the upsell offer
-		datestamp: '20200421',
+		datestamp: '20200910',
 		variations: {
-			offer: 50,
-			noOffer: 50,
+			offer: 75,
+			noOffer: 25,
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
@@ -99,29 +94,11 @@ export default {
 		},
 		defaultVariation: 'default',
 	},
-	domainStepCopyUpdates: {
-		datestamp: '20191121',
-		variations: {
-			variantShowUpdates: 100,
-			control: 0,
-		},
-		defaultVariation: 'variantShowUpdates',
-		allowExistingUsers: true,
-	},
-	domainStepPlanStepSwap: {
-		datestamp: '20210513',
-		variations: {
-			variantShowSwapped: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	newSiteGutenbergOnboarding: {
 		datestamp: '20200818',
 		variations: {
-			gutenberg: 50,
-			control: 50,
+			gutenberg: 0,
+			control: 100,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
@@ -186,34 +163,6 @@ export default {
 			'ZA',
 		],
 	},
-	[ RUM_DATA_COLLECTION.AB_NAME ]: {
-		datestamp: '20200602',
-		variations: {
-			[ RUM_DATA_COLLECTION.AB_VARIATION_ON ]: 50,
-			[ RUM_DATA_COLLECTION.AB_VARIATION_OFF ]: 50,
-		},
-		defaultVariation: RUM_DATA_COLLECTION.AB_VARIATION_OFF,
-		localeTargets: 'any',
-		allowExistingUsers: true,
-	},
-	showBusinessPlanBump: {
-		datestamp: '20300619',
-		variations: {
-			variantShowPlanBump: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
-	offerResetFlow: {
-		datestamp: '20200804',
-		variations: {
-			showOfferResetFlow: 0,
-			control: 100,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: true,
-	},
 	userlessCheckout: {
 		datestamp: '20210806',
 		variations: {
@@ -225,24 +174,43 @@ export default {
 		countryCodeTargets: [ 'US', 'CA' ],
 	},
 	reskinSignupFlow: {
-		datestamp: '20200812',
+		datestamp: '20300928',
 		variations: {
 			reskinned: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
-		localeTargets: 'any',
-		localeExceptions: [ 'en', 'es' ],
 	},
 	existingUsersGutenbergOnboard: {
-		datestamp: '20200818',
+		datestamp: '20201015',
 		variations: {
-			gutenberg: 50,
-			control: 50,
+			gutenberg: 100,
+			control: 0,
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 		localeTargets: [ 'en' ],
+	},
+	jetpackConversionRateOptimization: {
+		datestamp: '20201115',
+		variations: {
+			'v0 - Offer Reset': 0, // Offer Reset
+			'v1 - 3 cols layout': 0, // first Offer Reset iteration (3 layout columns + simpler cards)
+			'v2 - slide outs': 0, // second Offer Reset iteration (reorder & slide outs)
+			'i5 - Saas table design': 100, // third Offer Reset iteration (Saas table design)
+		},
+		defaultVariation: 'i5 - Saas table design',
+		allowExistingUsers: true,
+	},
+	secureYourBrand: {
+		datestamp: '20201026',
+		variations: {
+			test: 0,
+			control: 100,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: false,
+		countryCodeTargets: [ 'US' ],
 	},
 };

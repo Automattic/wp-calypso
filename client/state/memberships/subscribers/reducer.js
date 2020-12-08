@@ -6,7 +6,7 @@ import { get, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	MEMBERSHIPS_SUBSCRIBERS_RECEIVE,
 	MEMBERSHIPS_SUBSCRIPTION_STOP_SUCCESS,

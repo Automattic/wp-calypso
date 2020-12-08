@@ -9,7 +9,7 @@ const debug = debugFactory( 'calypso:followers-actions' );
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	FOLLOWERS_RECEIVE,
 	FOLLOWERS_REQUEST,
@@ -17,7 +17,7 @@ import {
 	FOLLOWER_REMOVE_ERROR,
 	FOLLOWER_REMOVE_REQUEST,
 	FOLLOWER_REMOVE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export default {
 	fetchFollowers( query, silentUpdate = false ) {

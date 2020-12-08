@@ -9,8 +9,8 @@ import { get } from 'lodash';
 import {
 	READER_ORGANIZATIONS_REQUEST,
 	READER_ORGANIZATIONS_RECEIVE,
-} from 'state/reader/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'state/utils';
+} from 'calypso/state/reader/action-types';
+import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 export const items = withSchemaValidation( itemsSchema, ( state = [], action ) => {

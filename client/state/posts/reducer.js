@@ -19,8 +19,8 @@ import {
 /**
  * Internal dependencies
  */
-import PostQueryManager from 'lib/query-manager/post';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import PostQueryManager from 'calypso/lib/query-manager/post';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	EDITOR_SAVE,
 	EDITOR_START,
@@ -43,7 +43,7 @@ import {
 	POSTS_REQUEST_FAILURE,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import counts from './counts/reducer';
 import likes from './likes/reducer';
 import revisions from './revisions/reducer';
@@ -60,7 +60,7 @@ import {
 	normalizePostForState,
 } from './utils';
 import { itemsSchema, queriesSchema, allSitesQueriesSchema } from './schema';
-import { getFeaturedImageId } from 'state/posts/utils';
+import { getFeaturedImageId } from 'calypso/state/posts/utils';
 
 /**
  * Tracks all known post objects, indexed by post global ID.

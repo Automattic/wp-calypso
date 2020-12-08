@@ -1,3 +1,3 @@
-export { recordEditorEvent } from 'state/posts/stats/record-editor-event';
-export { recordEditorStat } from 'state/posts/stats/record-editor-stat';
-export { recordSaveEvent } from 'state/posts/stats/record-save-event';
+export { recordEditorEvent } from 'calypso/state/posts/stats/record-editor-event';
+export { recordEditorStat } from 'calypso/state/posts/stats/record-editor-stat';
+export { recordSaveEvent } from 'calypso/state/posts/stats/record-save-event';

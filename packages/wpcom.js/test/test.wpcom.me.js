@@ -1,121 +1,138 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * me
  */
 describe( 'wpcom.me', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var me = wpcom.me();
+	const wpcom = util.wpcom();
+	const me = wpcom.me();
 
 	describe( 'wpcom.me.billingHistory', function () {
-		it( 'should require billing history', function ( done ) {
-			me.billingHistory( function ( err, data ) {
-				if ( err ) throw err;
+		it( 'should require billing history', function () {
+			return new Promise( ( done ) => {
+				me.billingHistory( function ( err, data ) {
+					if ( err ) throw err;
 
-				assert.ok( data );
-				assert.equal( 'object', typeof data.billing_history );
-				assert.ok( data.billing_history instanceof Array );
+					assert.ok( data );
+					assert.equal( 'object', typeof data.billing_history );
+					assert.ok( data.billing_history instanceof Array );
 
-				assert.equal( 'object', typeof data.upcoming_charges );
-				assert.ok( data.upcoming_charges instanceof Array );
+					assert.equal( 'object', typeof data.upcoming_charges );
+					assert.ok( data.upcoming_charges instanceof Array );
 
-				done();
+					done();
+				} );
 			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.get', function () {
-		it( 'should require user information object', ( done ) => {
-			me.get()
-				.then( ( data ) => {
-					// testing object
-					assert.ok( data );
-					assert.equal( 'object', typeof data );
+		it( 'should require user information object', () => {
+			return new Promise( ( done ) => {
+				me.get()
+					.then( ( data ) => {
+						// testing object
+						assert.ok( data );
+						assert.equal( 'object', typeof data );
 
-					// testing user data
-					assert.equal( 'number', typeof data.ID );
+						// testing user data
+						assert.equal( 'number', typeof data.ID );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 
-		it( 'should require user passing query parameter', ( done ) => {
-			me.get( { context: 'info' } )
-				.then( ( data ) => {
-					// testing object
-					assert.ok( me );
-					assert.equal( 'object', typeof data );
+		it( 'should require user passing query parameter', () => {
+			return new Promise( ( done ) => {
+				me.get( { context: 'info' } )
+					.then( ( data ) => {
+						// testing object
+						assert.ok( me );
+						assert.equal( 'object', typeof data );
 
-					// testing user data
-					assert.equal( 'number', typeof data.ID );
+						// testing user data
+						assert.equal( 'number', typeof data.ID );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.keyringConnections', function () {
-		it( "should get current user' keyring connections", ( done ) => {
-			me.keyringConnections()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.connections instanceof Array );
-					done();
-				} )
-				.catch( done );
+		it( "should get current user' keyring connections", () => {
+			return new Promise( ( done ) => {
+				me.keyringConnections()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.connections instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.likes', function () {
-		it( 'should require user likes', ( done ) => {
-			me.likes()
-				.then( ( data ) => {
-					assert.equal( 'number', typeof data.found );
-					assert.equal( 'object', typeof data.likes );
-					assert.ok( data.likes instanceof Array );
+		it( 'should require user likes', () => {
+			return new Promise( ( done ) => {
+				me.likes()
+					.then( ( data ) => {
+						assert.equal( 'number', typeof data.found );
+						assert.equal( 'object', typeof data.likes );
+						assert.ok( data.likes instanceof Array );
 
-					done();
-				} )
-				.catch( done );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.postsList', function () {
-		it( 'should get posts list that current user belongs to', function ( done ) {
-			me.postsList()
-				.then( ( data ) => {
-					assert.equal( 'number', typeof data.found );
-					assert.ok( data.posts instanceof Array );
-					done();
-				} )
-				.catch( done );
+		it( 'should get posts list that current user belongs to', function () {
+			return new Promise( ( done ) => {
+				me.postsList()
+					.then( ( data ) => {
+						assert.equal( 'number', typeof data.found );
+						assert.ok( data.posts instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.publicizeConnections', function () {
-		it( "should get current user' publicize connections", ( done ) => {
-			me.publicizeConnections()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.connections instanceof Array );
-					done();
-				} )
-				.catch( done );
+		it( "should get current user' publicize connections", () => {
+			return new Promise( ( done ) => {
+				me.publicizeConnections()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.connections instanceof Array );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.me.sites', function () {
-		it( 'should require user sites object', ( done ) => {
-			me.sites()
-				.then( () => done() )
-				.catch( done );
+		// eslint-disable-next-line jest/expect-expect
+		it( 'should require user sites object', () => {
+			return new Promise( ( done ) => {
+				me.sites()
+					.then( () => done() )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

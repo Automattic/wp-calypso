@@ -1,25 +1,21 @@
-Color Scheme Picker
-================
+# Color Scheme Picker
 
 This component renders a Color Scheme Picker.
 
 When using the component without any props, any selection will immediately be saved to the `colorSchemes` property in the `calypso_settings`.
 When the props `temporarySelection` and `onSelection` are provided, a selection will only be set locally and the provided onSelection handler called (e.g. to save the selection at a later stage via a save button).
 
-
 ## Usage
 
 ```jsx
-import ColorSchemePicker from 'blocks/color-scheme-picker';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 
-handleColorSchemeSelection = event => {
+handleColorSchemeSelection = ( event ) => {
 	console.log( event.currentTarget.value );
 };
 
-render() {
-	return (
-		<ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />
-	);
+function render() {
+	return <ColorSchemePicker temporarySelection onSelection={ this.handleColorSchemeSelection } />;
 }
 ```
 
@@ -40,7 +36,6 @@ The following props can be passed to the ColorSchemePicker component:
 	<tr><td>Type</td><td>Function</td></tr>
 	<tr><td>Required</td><td>No</td></tr>
 </table>
-
 
 #### Connect Props
 

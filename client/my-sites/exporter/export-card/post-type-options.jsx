@@ -10,15 +10,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import FormRadio from 'components/forms/form-radio';
-import Label from 'components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import Label from 'calypso/components/forms/form-label';
 import Select from './select';
-import Tooltip from 'components/tooltip';
-import { setPostType } from 'state/exporter/actions';
+import Tooltip from 'calypso/components/tooltip';
+import { setPostType } from 'calypso/state/exporter/actions';
 import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
-} from 'state/exporter/selectors';
+} from 'calypso/state/exporter/selectors';
 
 const mapStateToProps = ( state, ownProps ) => {
 	const siteId = state.ui.selectedSiteId;
@@ -66,8 +66,7 @@ class PostTypeOptions extends React.PureComponent {
 		return (
 			<div className="export-card__option-fieldset">
 				<Label>
-					<FormRadio checked={ isEnabled } onChange={ onSelect } />
-					<span>{ legend }</span>
+					<FormRadio checked={ isEnabled } onChange={ onSelect } label={ legend } />
 				</Label>
 
 				{ description && (

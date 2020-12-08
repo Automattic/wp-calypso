@@ -6,37 +6,41 @@ import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import PluginSiteList from 'my-sites/plugins/plugin-site-list';
-import HeaderCake from 'components/header-cake';
+import PluginSiteList from 'calypso/my-sites/plugins/plugin-site-list';
+import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
-import PluginMeta from 'my-sites/plugins/plugin-meta';
-import PluginsStore from 'lib/plugins/store';
-import PluginsLog from 'lib/plugins/log-store';
-import { getPlugin, isFetched, isFetching } from 'state/plugins/wporg/selectors';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import PluginNotices from 'lib/plugins/notices';
-import MainComponent from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PluginSections from 'my-sites/plugins/plugin-sections';
-import PluginSectionsCustom from 'my-sites/plugins/plugin-sections/custom';
-import DocumentHead from 'components/data/document-head';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { isJetpackSite, isRequestingSites } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
-import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
+import PluginsStore from 'calypso/lib/plugins/store';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import {
+	isFetching as isWporgPluginFetching,
+	isFetched as isWporgPluginFetched,
+	getPlugin as getWporgPlugin,
+} from 'calypso/state/plugins/wporg/selectors';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import PluginNotices from 'calypso/lib/plugins/notices';
+import MainComponent from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PluginSections from 'calypso/my-sites/plugins/plugin-sections';
+import PluginSectionsCustom from 'calypso/my-sites/plugins/plugin-sections/custom';
+import DocumentHead from 'calypso/components/data/document-head';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import NoPermissionsError from './no-permissions-error';
-import getToursHistory from 'state/guided-tours/selectors/get-tours-history';
-import hasNavigated from 'state/selectors/has-navigated';
+import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
+import hasNavigated from 'calypso/state/selectors/has-navigated';
 
 /* eslint-disable react/prefer-es6-class */
 
@@ -81,16 +85,16 @@ const SinglePlugin = createReactClass( {
 	getSitesPlugin( nextProps ) {
 		const props = nextProps || this.props;
 
-		const sites = uniq( props.sites ),
-			sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug ),
-			plugin = Object.assign(
-				{
-					name: props.pluginSlug,
-					id: props.pluginSlug,
-					slug: props.pluginSlug,
-				},
-				sitePlugin
-			);
+		const sites = uniq( props.sites );
+		const sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
+		const plugin = Object.assign(
+			{
+				name: props.pluginSlug,
+				id: props.pluginSlug,
+				slug: props.pluginSlug,
+			},
+			sitePlugin
+		);
 
 		return {
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
@@ -185,7 +189,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	isFetched() {
-		return isFetched( this.props.wporgPlugins, this.props.pluginSlug );
+		return this.props.wporgFetched;
 	},
 
 	isFetchingSites() {
@@ -193,11 +197,8 @@ const SinglePlugin = createReactClass( {
 	},
 
 	getPlugin() {
-		let plugin = Object.assign( {}, this.state.plugin );
 		// assign it .org details
-		plugin = Object.assign( plugin, getPlugin( this.props.wporgPlugins, this.props.pluginSlug ) );
-
-		return plugin;
+		return { ...this.state.plugin, ...this.props.wporgPlugin };
 	},
 
 	getPluginDoesNotExistView( selectedSite ) {
@@ -352,8 +353,9 @@ export default connect(
 		const selectedSiteId = getSelectedSiteId( state );
 
 		return {
-			wporgPlugins: state.plugins.wporg.items,
-			wporgFetching: isFetching( state.plugins.wporg.fetchingItems, props.pluginSlug ),
+			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
+			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
+			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),

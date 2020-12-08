@@ -1,18 +1,17 @@
-Shortcode
-=========
+# Shortcode
 
 Utility functions for working with WordPress shortcodes. These functions largely mirror those made available in the core WordPress `wp.shortcode` JavaScript class. More information about shortcodes is available [at the WordPress Codex](https://codex.wordpress.org/Shortcode_API).
 
 ## Usage
 
 ```js
-import { parse, stringify } from 'lib/shortcode';
+import { parse, stringify } from 'calypso/lib/shortcode';
 
 const value = stringify( {
 	tag: 'foo',
 	attrs: {
-		bar: 'baz'
-	}
+		bar: 'baz',
+	},
 } );
 
 // -> [foo bar="baz"][/foo]
@@ -29,13 +28,13 @@ A shortcode object is comprised of the following properties:
 
 The name of the shortcode.
 
-See: https://codex.wordpress.org/Shortcode_API#Names
+See: <https://codex.wordpress.org/Shortcode_API#Names>
 
 ### `type`
 
 The type of shortcode, `closed`, `self-closing`, or `single`.
 
-See: https://codex.wordpress.org/Shortcode_API#Enclosing_vs_self-closing_shortcodes
+See: <https://codex.wordpress.org/Shortcode_API#Enclosing_vs_self-closing_shortcodes>
 
 ### `attrs`
 

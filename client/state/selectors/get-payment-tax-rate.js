@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/payment/init';
+import 'calypso/state/payment/init';
 
 /**
  * Returns the current user's tax rate.

@@ -1,16 +1,11 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
-import {
-	getSiteSlug,
-	getSiteOption,
-	isJetpackSite,
-	hasJetpackSiteJetpackThemesExtendedFeatures,
-} from 'state/sites/selectors';
-import { oldShowcaseUrl } from 'state/themes/utils';
+import config from 'calypso/config';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { oldShowcaseUrl } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns the URL for a given theme's details sheet.
@@ -23,16 +18,6 @@ import 'state/themes/init';
 export function getThemeDetailsUrl( state, themeId, siteId ) {
 	if ( ! themeId ) {
 		return null;
-	}
-
-	if (
-		isJetpackSite( state, siteId ) &&
-		! (
-			config.isEnabled( 'manage/themes/details/jetpack' ) &&
-			hasJetpackSiteJetpackThemesExtendedFeatures( state, siteId )
-		)
-	) {
-		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + themeId;
 	}
 
 	let baseUrl = oldShowcaseUrl + themeId;

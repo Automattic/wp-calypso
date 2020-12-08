@@ -1,7 +1,6 @@
 {
 	"mocha_tests": [ "specs" ],
-	"mocha_opts": "test/mocha.opts",
-	"mocha_args": "-R spec-xunit-reporter",
+	"mocha_args": "-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json",
 	"max_test_attempts": 3,
 	"max_workers": 7,
 	"suiteTag": "parallel;signup",

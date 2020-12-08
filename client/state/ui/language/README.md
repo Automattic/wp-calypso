@@ -1,5 +1,4 @@
-Language UI State
-==================
+# Language UI State
 
 ## Actions
 
@@ -17,7 +16,7 @@ The value of the current locale slug ('en', 'fr'...)
 
 ###`localeVariant`
 
-The locale variant refers to a subset of the locale, for example formal German (Sie) ('de_formal'). 
+The locale variant refers to a subset of the locale, for example formal German (Sie) ('de_formal').
 
 ###`isRtl`
 

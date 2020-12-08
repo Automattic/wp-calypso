@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Theme from 'components/theme';
-import EmptyContent from 'components/empty-content';
-import InfiniteScroll from 'components/infinite-scroll';
-import { DEFAULT_THEME_QUERY } from 'state/themes/constants';
-import { getThemesBookmark } from 'state/themes/themes-ui/selectors';
+import Theme from 'calypso/components/theme';
+import EmptyContent from 'calypso/components/empty-content';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import { DEFAULT_THEME_QUERY } from 'calypso/state/themes/constants';
+import { getThemesBookmark } from 'calypso/state/themes/themes-ui/selectors';
 
 /**
  * Style dependencies

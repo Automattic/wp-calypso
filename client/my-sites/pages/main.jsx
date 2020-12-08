@@ -7,25 +7,27 @@ import { localize, getLocaleSlug } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React from 'react';
 import titlecase from 'to-title-case';
+import moment from 'moment';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import DocumentHead from 'components/data/document-head';
-import urlSearch from 'lib/url-search';
-import Main from 'components/main';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import urlSearch from 'calypso/lib/url-search';
+import Main from 'calypso/components/main';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
 import PageList from './page-list';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { mapPostStatus as mapStatus } from 'lib/route';
-import { POST_STATUSES } from 'state/posts/constants';
-import { getPostTypeLabel } from 'state/post-types/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { mapPostStatus as mapStatus } from 'calypso/lib/route';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
+import { getPostTypeLabel } from 'calypso/state/post-types/selectors';
+import { Experiment } from 'calypso/components/experiment';
 
 /**
  * Style dependencies
@@ -97,6 +99,7 @@ class PagesMain extends React.Component {
 		const query = {
 			number: 20, // all-sites mode, i.e the /me/posts endpoint, only supports up to 20 results at a time
 			search,
+			site_visibility: ! siteId ? 'visible' : undefined,
 			// When searching, search across all statuses so the user can
 			// always find what they are looking for, regardless of what tab
 			// the search was initiated from. Use POST_STATUSES rather than
@@ -135,6 +138,23 @@ class PagesMain extends React.Component {
 					) }
 				</SectionNav>
 				<PageList siteId={ siteId } status={ status } search={ search } query={ query } />
+
+				{ /* ExPlat's Evergreen A/A Test Experiment:
+				 *
+				 * This continually starts a new experiment every week that doesn't render anything and
+				 * shouldn't send any extra requests, just to help us ensure our experimentation system is
+				 * working smoothly.
+				 *
+				 * This particular spot isn't special, it just needs somewhere to live.
+				 *
+				 * We use iso-week and iso-week-year in order to consistently change the experiment name every week.
+				 * Assumes users have a somewhat working clock but shouldn't be a problem if they don't.
+				 */ }
+				<Experiment
+					name={ `explat_test_aa_weekly_calypso_${ moment
+						.utc()
+						.format( 'GGGG' ) }_week_${ moment.utc().format( 'WW' ) }` }
+				/>
 			</Main>
 		);
 	}

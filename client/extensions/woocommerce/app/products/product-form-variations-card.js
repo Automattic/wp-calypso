@@ -9,11 +9,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
+import FoldableCard from 'calypso/components/foldable-card';
 import ProductVariationTypesForm from './product-variation-types-form';
 import ProductFormVariationsTable from './product-form-variations-table';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormToggle from 'components/forms/form-toggle';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormToggle from 'calypso/components/forms/form-toggle';
 
 class ProductFormVariationsCard extends Component {
 	state = {

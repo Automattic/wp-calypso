@@ -4,8 +4,8 @@
 import {
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_LIST,
 	MEMBERSHIPS_CONNECTED_ACCOUNTS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 const accounts = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

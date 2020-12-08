@@ -7,14 +7,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { newPost } from 'lib/paths';
-import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'lib/plans';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { newPost } from 'calypso/lib/paths';
+import { isWpComBusinessPlan, isWpComEcommercePlan, isWpComPremiumPlan } from 'calypso/lib/plans';
 
 /**
  * Image dependencies
  */
-import videoImage from 'assets/images/illustrations/video-hosting.svg';
+import videoImage from 'calypso/assets/images/illustrations/video-hosting.svg';
 
 function getDescription( plan, translate ) {
 	if ( isWpComBusinessPlan( plan ) ) {

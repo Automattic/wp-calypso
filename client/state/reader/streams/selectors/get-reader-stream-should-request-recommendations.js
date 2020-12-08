@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { getDistanceBetweenRecs, RECS_PER_BLOCK } from 'reader/stream/utils';
-import { getReaderFollows } from 'state/reader/follows/selectors';
-import getReaderStream from 'state/reader/streams/selectors/get-reader-stream';
+import { getDistanceBetweenRecs, RECS_PER_BLOCK } from 'calypso/reader/stream/utils';
+import { getReaderFollows } from 'calypso/state/reader/follows/selectors';
+import getReaderStream from 'calypso/state/reader/streams/selectors/get-reader-stream';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * shouldRequestRecs is used for calculating whether or not we need more recommendations

@@ -9,20 +9,20 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import FollowersList from './followers-list';
 import ViewersList from './viewers-list';
-import TeamList from 'my-sites/people/team-list';
-import EmptyContent from 'components/empty-content';
-import PeopleNotices from 'my-sites/people/people-notices';
-import PeopleSectionNav from 'my-sites/people/people-section-nav';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSiteId, getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import isPrivateSite from 'state/selectors/is-private-site';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import TeamList from 'calypso/my-sites/people/team-list';
+import EmptyContent from 'calypso/components/empty-content';
+import PeopleNotices from 'calypso/my-sites/people/people-notices';
+import PeopleSectionNav from 'calypso/my-sites/people/people-section-nav';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getSelectedSiteId, getSelectedSite } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
 
 class People extends React.Component {

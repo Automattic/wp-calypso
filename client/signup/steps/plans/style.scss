@@ -34,3 +34,12 @@
 .plans-step__compare {
 	margin-top: 25px;
 }
+
+.signup__step.is-plans .formatted-header__subtitle .button.is-borderless {
+	padding: 0;
+	color: inherit;
+	font-size: inherit;
+	font-weight: inherit;
+	line-height: inherit;
+	text-decoration: underline;
+}

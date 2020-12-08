@@ -8,7 +8,8 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Badge from 'components/badge';
+import Badge from 'calypso/components/badge';
+import FormRadio from 'calypso/components/forms/form-radio';
 
 import './style.scss';
 import PropTypes from 'prop-types';
@@ -77,7 +78,7 @@ export default class ImportTypeChoice extends Component {
 				data-key={ key }
 				key={ key }
 			>
-				<input type="radio" checked={ this.state.activeItem === key } readOnly={ true } />
+				<FormRadio checked={ this.state.activeItem === key } readOnly={ true } />
 				<div className="import-type-choice__option-data">
 					<div className="import-type-choice__option-header">
 						<p className="import-type-choice__option-title">{ item.title }</p>

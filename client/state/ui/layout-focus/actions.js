@@ -6,7 +6,7 @@ import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export function setLayoutFocus( area ) {
 	return {

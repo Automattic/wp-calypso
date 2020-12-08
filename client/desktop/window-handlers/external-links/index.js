@@ -1,16 +1,16 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc } = require( 'electron' );
 const { URL, format } = require( 'url' );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
+const Config = require( 'calypso/desktop/lib/config' );
 const { handleJetpackEnableSSO, handleUndefined } = require( './editor' );
 const openInBrowser = require( './open-in-browser' );
-const log = require( 'desktop/lib/logger' )( 'desktop:external-links' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links' );
 
 /**
  * Module variables

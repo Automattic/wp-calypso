@@ -1,0 +1,43 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.products-grid-alt {
+	& > .jetpack-free-card-alt {
+		/*
+		 * To match its top and bottom border with the borders
+		 * of the product cards next to it
+		 */
+		margin-block-start: calc( 24px + 32.5px );
+		margin-bottom: 24px;
+	}
+
+	& .formatted-header__title {
+		font-size: 1.25rem;
+		color: var( --studio-color-gray-70 );
+	}
+}
+
+/*
+ * We really should be using @include break-small here,
+ * but Calypso's main Layout component doesn't play nicely with it yet.
+ */
+@include breakpoint-deprecated( '>660px' ) {
+	.products-grid-alt {
+		/*
+		 * Once the screen is wide enough to support it,
+		 * create a grid with cells that are evenly sized,
+		 * with a minimum width of 300px each.
+		 * The horizontal/vertical gap between each cell should always be 16px.
+		 */
+		@include breakpoint-deprecated( '>660px' ) {
+			display: grid;
+			grid-template-columns: repeat( auto-fit, minmax( 300px, 1fr ) );
+			grid-gap: 16px;
+			align-items: flex-start;
+		}
+
+		& > .jetpack-free-card-alt {
+			grid-column-end: span 2;
+		}
+	}
+}

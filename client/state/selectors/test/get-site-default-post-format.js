@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSiteDefaultPostFormat from 'state/selectors/get-site-default-post-format';
+import getSiteDefaultPostFormat from 'calypso/state/selectors/get-site-default-post-format';
 
 describe( 'getSiteDefaultPostFormat()', () => {
 	const siteId = 2916284;

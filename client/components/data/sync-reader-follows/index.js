@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import shouldSyncReaderFollows from 'state/selectors/should-sync-reader-follows';
-import { requestFollows } from 'state/reader/follows/actions';
+import shouldSyncReaderFollows from 'calypso/state/selectors/should-sync-reader-follows';
+import { requestFollows } from 'calypso/state/reader/follows/actions';
 
 class SyncReaderFollows extends Component {
 	check() {

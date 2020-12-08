@@ -27,6 +27,7 @@ const { cssNameFromFilename, shouldTranspileDependency } = require( './webpack/u
  * Internal variables
  */
 const isDevelopment = process.env.NODE_ENV !== 'production';
+const cachePath = path.resolve( '.cache' );
 
 /**
  * Return a webpack config object
@@ -40,9 +41,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production';
  * @param  {object}  env                           environment options
  * @param  {object}  argv                          options map
  * @param  {object}  argv.entry                    Entry point(s)
+ * @param  {string}  argv.'output-chunk-filename'  Output chunk filename
  * @param  {string}  argv.'output-path'            Output path
  * @param  {string}  argv.'output-filename'        Output filename pattern
  * @param  {string}  argv.'output-library-target'  Output library target
+ * @param  {string}  argv.'output-jsonp-function'  Output jsonp function
  * @returns {object}                                webpack config
  */
 function getWebpackConfig(
@@ -53,6 +56,7 @@ function getWebpackConfig(
 		'output-path': outputPath = path.join( process.cwd(), 'dist' ),
 		'output-filename': outputFilename = '[name].js',
 		'output-library-target': outputLibraryTarget = 'window',
+		'output-jsonp-function': outputJsonpFunction = 'webpackJsonp',
 	}
 ) {
 	const workerCount = 1;
@@ -87,13 +91,12 @@ function getWebpackConfig(
 			path: outputPath,
 			filename: outputFilename,
 			libraryTarget: outputLibraryTarget,
+			jsonpFunction: outputJsonpFunction,
 		},
 		optimization: {
 			minimize: ! isDevelopment,
 			minimizer: Minify( {
-				cache: process.env.CIRCLECI
-					? `${ process.env.HOME }/terser-cache`
-					: 'docker' !== process.env.CONTAINER,
+				cache: path.resolve( cachePath, 'terser' ),
 				parallel: workerCount,
 				sourceMap: Boolean( process.env.SOURCEMAP ),
 				extractComments: false,
@@ -108,24 +111,28 @@ function getWebpackConfig(
 			strictExportPresence: true,
 			rules: [
 				TranspileConfig.loader( {
-					cacheDirectory: true,
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					configFile: babelConfig,
 					exclude: /node_modules\//,
 					presets,
 					workerCount,
 				} ),
 				TranspileConfig.loader( {
-					cacheDirectory: true,
+					cacheDirectory: path.resolve( cachePath, 'babel' ),
 					include: shouldTranspileDependency,
 					presets: [ path.join( __dirname, 'babel', 'dependencies' ) ],
 					workerCount,
 				} ),
-				SassConfig.loader( { postCssConfig: { path: postCssConfigPath } } ),
+				SassConfig.loader( {
+					postCssConfig: { path: postCssConfigPath },
+					cacheDirectory: path.resolve( cachePath, 'css-loader' ),
+				} ),
 				FileConfig.loader(),
 			],
 		},
 		resolve: {
 			extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+			mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
 			modules: [ 'node_modules' ],
 		},
 		node: false,

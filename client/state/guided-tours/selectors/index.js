@@ -19,18 +19,18 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'state/action-types';
-import { getSectionName, getSectionGroup } from 'state/ui/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { getActionLog } from 'state/ui/action-log/selectors';
-import { preferencesLastFetchedTimestamp } from 'state/preferences/selectors';
-import GuidedToursConfig from 'layout/guided-tours/config';
-import createSelector from 'lib/create-selector';
+import { GUIDED_TOUR_UPDATE, ROUTE_SET } from 'calypso/state/action-types';
+import { getSectionName, getSectionGroup } from 'calypso/state/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import { getActionLog } from 'calypso/state/ui/action-log/selectors';
+import { preferencesLastFetchedTimestamp } from 'calypso/state/preferences/selectors';
+import GuidedToursConfig from 'calypso/layout/guided-tours/config';
+import createSelector from 'calypso/lib/create-selector';
 import findOngoingTour from './find-ongoing-tour';
 import getToursHistory from './get-tours-history';
 
-import 'state/guided-tours/init';
+import 'calypso/state/guided-tours/init';
 
 const SECTIONS_WITHOUT_TOURS = [
 	'signup',

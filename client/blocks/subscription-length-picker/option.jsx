@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
@@ -11,9 +10,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-
-import Badge from 'components/badge';
-import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'lib/plans/constants';
+import Badge from 'calypso/components/badge';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import { TERM_ANNUALLY, TERM_BIENNIALLY, TERM_MONTHLY } from 'calypso/lib/plans/constants';
 
 const TYPE_NEW_SALE = 'new-sale';
 const TYPE_UPGRADE = 'upgrade';
@@ -53,11 +53,10 @@ export class SubscriptionLengthOption extends React.Component {
 			'is-active': checked,
 		} );
 		return (
-			<label className={ className } htmlFor={ this.htmlId }>
+			<FormLabel className={ className } htmlFor={ this.htmlId }>
 				<div className="subscription-length-picker__option-radio-wrapper">
-					<input
+					<FormRadio
 						id={ this.htmlId }
-						type="radio"
 						className="subscription-length-picker__option-radio"
 						checked={ checked }
 						onChange={ this.handleChange }
@@ -67,7 +66,7 @@ export class SubscriptionLengthOption extends React.Component {
 				<div className="subscription-length-picker__option-content">
 					{ type === TYPE_NEW_SALE ? this.renderNewSaleContent() : this.renderUpgradeContent() }
 				</div>
-			</label>
+			</FormLabel>
 		);
 	}
 

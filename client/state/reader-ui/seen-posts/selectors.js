@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/reader-ui/init';
+import 'calypso/state/reader-ui/init';
 
 /**
  * Check if we have Reader unseen content

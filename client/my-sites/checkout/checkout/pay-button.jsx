@@ -7,10 +7,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isPaidForFullyInCredits } from 'lib/cart-values';
-import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'lib/cart-values/cart-items';
+import { isPaidForFullyInCredits } from 'calypso/lib/cart-values';
+import { hasOnlyFreeTrial, hasRenewalItem, hasFreeTrial } from 'calypso/lib/cart-values/cart-items';
 import { Button } from '@automattic/components';
-import SubscriptionText from 'my-sites/checkout/checkout/subscription-text';
+import SubscriptionText from 'calypso/my-sites/checkout/checkout/subscription-text';
 import {
 	BEFORE_SUBMIT,
 	INPUT_VALIDATION,
@@ -21,7 +21,7 @@ import {
 	SUBMITTING_WPCOM_REQUEST,
 	REDIRECTING_FOR_AUTHORIZATION,
 	MODAL_AUTHORIZATION,
-} from 'lib/store-transactions/step-types';
+} from 'calypso/lib/store-transactions/step-types';
 
 export class PayButton extends React.Component {
 	buttonState = () => {

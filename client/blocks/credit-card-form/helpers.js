@@ -7,13 +7,14 @@ import { camelCase, kebabCase, debounce } from 'lodash';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
+import notices from 'calypso/notices';
 import {
 	handleRenewNowClick,
 	isRenewable,
 	shouldAddPaymentSourceInsteadOfRenewingNow,
-} from 'lib/purchases';
-import wpcomFactory from 'lib/wp';
+} from 'calypso/lib/purchases';
+import wpcomFactory from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 const wpcom = wpcomFactory.undocumented();
 
@@ -75,6 +76,7 @@ async function saveCreditCard( { token, translate, saveStoredCard, stripeConfigu
 		? { payment_partner: stripeConfiguration.processor_id }
 		: {};
 	await saveStoredCard( { token, additionalData } );
+	recordTracksEvent( 'calypso_purchases_add_new_payment_method' );
 	notices.success( translate( 'Card added successfully' ), {
 		persistent: true,
 	} );
@@ -101,33 +103,38 @@ async function updateCreditCard( {
 		throw new Error( response );
 	}
 
-	if ( purchase && siteSlug && isRenewable( purchase ) ) {
-		let noticeMessage = '';
-		let noticeOptions = {};
-		if ( shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
-			noticeMessage = translate( 'Your credit card details were successfully updated.' );
-			noticeOptions = {
-				persistent: true,
-			};
-		} else {
-			noticeMessage = translate(
-				'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
-			);
-			noticeOptions = {
-				button: translate( 'Renew Now' ),
-				onClick: function ( event, closeFunction ) {
-					handleRenewNowClick( purchase, siteSlug );
-					closeFunction();
-				},
-				persistent: true,
-			};
-		}
+	const purchaseIsRenewable = purchase && siteSlug && isRenewable( purchase );
+	recordTracksEvent( 'calypso_purchases_save_new_payment_method' );
+
+	let noticeMessage = response.success;
+	let noticeOptions = { persistent: true };
+
+	if ( purchaseIsRenewable && shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
+		noticeMessage = translate( 'Your credit card details were successfully updated.' );
+		noticeOptions = {
+			persistent: true,
+		};
+		notices.success( noticeMessage, noticeOptions );
+		return;
+	}
+
+	if ( purchaseIsRenewable && ! shouldAddPaymentSourceInsteadOfRenewingNow( purchase ) ) {
+		noticeMessage = translate(
+			'Your credit card details were successfully updated, but your subscription has not been renewed yet.'
+		);
+		noticeOptions = {
+			button: translate( 'Renew Now' ),
+			onClick: function ( event, closeFunction ) {
+				handleRenewNowClick( purchase, siteSlug );
+				closeFunction();
+			},
+			persistent: true,
+		};
 		notices.info( noticeMessage, noticeOptions );
 		return;
 	}
-	notices.success( response.success, {
-		persistent: true,
-	} );
+
+	notices.success( noticeMessage, noticeOptions );
 }
 
 export function getParamsForApi( cardDetails, cardToken, stripeConfiguration, extraParams = {} ) {

@@ -9,6 +9,10 @@ export function getDomainTypeText( domain = {} ) {
 			return 'Mapped Domain';
 
 		case domainTypes.REGISTERED:
+			if ( domain?.isPremium ) {
+				return 'Premium Domain';
+			}
+
 			return 'Registered Domain';
 
 		case domainTypes.SITE_REDIRECT:
@@ -18,7 +22,7 @@ export function getDomainTypeText( domain = {} ) {
 			return 'Default Site Domain';
 
 		case domainTypes.TRANSFER:
-			return 'Transfer';
+			return 'Domain Transfer';
 
 		default:
 			return '';

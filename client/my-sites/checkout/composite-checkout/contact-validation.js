@@ -7,17 +7,17 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isLineItemADomain } from 'my-sites/checkout/composite-checkout/hooks/has-domains';
-import { isGSuiteProductSlug } from 'lib/gsuite';
+import { isLineItemADomain } from 'calypso/my-sites/checkout/composite-checkout/hooks/has-domains';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
 import {
 	prepareDomainContactValidationRequest,
 	prepareGSuiteContactValidationRequest,
 	formatDomainContactValidationResponse,
 	getSignupValidationErrorResponse,
 	areRequiredFieldsNotEmpty,
-} from 'my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'my-sites/checkout/composite-checkout/types/backend/payment-method';
-import wp from 'lib/wp';
+} from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
+import wp from 'calypso/lib/wp';
 
 const wpcom = wp.undocumented();
 

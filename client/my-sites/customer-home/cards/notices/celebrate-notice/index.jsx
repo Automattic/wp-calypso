@@ -10,15 +10,15 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Spinner from 'components/spinner';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
-import { savePreference } from 'state/preferences/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import Spinner from 'calypso/components/spinner';
+import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * Image dependencies
  */
-import fireworksIllustration from 'assets/images/customer-home/illustration--fireworks-v2.svg';
+import fireworksIllustration from 'calypso/assets/images/customer-home/illustration--fireworks-v2.svg';
 
 const CelebrateNotice = ( {
 	actionText,

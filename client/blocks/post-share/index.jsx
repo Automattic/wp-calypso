@@ -7,60 +7,60 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { get, includes, map, concat } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { isEnabled } from 'config';
-import Gridicon from 'components/gridicon';
+import { isEnabled } from 'calypso/config';
+import Gridicon from 'calypso/components/gridicon';
 import { current as currentPage } from 'page';
 
 /**
  * Internal dependencies
  */
-import QueryPostTypes from 'components/data/query-post-types';
-import QueryPublicizeConnections from 'components/data/query-publicize-connections';
-import QuerySitePlans from 'components/data/query-site-plans';
+import QueryPostTypes from 'calypso/components/data/query-post-types';
+import QueryPublicizeConnections from 'calypso/components/data/query-publicize-connections';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import NoticeAction from 'components/notice/notice-action';
-import { withLocalizedMoment } from 'components/localized-moment';
-import getPostSharePublishedActions from 'state/selectors/get-post-share-published-actions';
-import getPostShareScheduledActions from 'state/selectors/get-post-share-scheduled-actions';
-import getScheduledPublicizeShareActionTime from 'state/selectors/get-scheduled-publicize-share-action-time';
-import isPublicizeEnabled from 'state/selectors/is-publicize-enabled';
-import isSchedulingPublicizeShareAction from 'state/selectors/is-scheduling-publicize-share-action';
-import isSchedulingPublicizeShareActionError from 'state/selectors/is-scheduling-publicize-share-action-error';
-import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
+import ButtonGroup from 'calypso/components/button-group';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import getPostSharePublishedActions from 'calypso/state/selectors/get-post-share-published-actions';
+import getPostShareScheduledActions from 'calypso/state/selectors/get-post-share-scheduled-actions';
+import getScheduledPublicizeShareActionTime from 'calypso/state/selectors/get-scheduled-publicize-share-action-time';
+import isPublicizeEnabled from 'calypso/state/selectors/is-publicize-enabled';
+import isSchedulingPublicizeShareAction from 'calypso/state/selectors/is-scheduling-publicize-share-action';
+import isSchedulingPublicizeShareActionError from 'calypso/state/selectors/is-scheduling-publicize-share-action-error';
+import { getSiteSlug, getSitePlanSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getCurrentUserId, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 
 import {
 	fetchConnections as requestConnections,
 	sharePost,
 	dismissShareConfirmation,
-} from 'state/sharing/publicize/actions';
-import { schedulePostShareAction } from 'state/sharing/publicize/publicize-actions/actions';
+} from 'calypso/state/sharing/publicize/actions';
+import { schedulePostShareAction } from 'calypso/state/sharing/publicize/publicize-actions/actions';
 import {
 	getSiteUserConnections,
 	hasFetchedConnections as siteHasFetchedConnections,
 	isRequestingSharePost,
 	sharePostFailure,
 	sharePostSuccessMessage,
-} from 'state/sharing/publicize/selectors';
-import PostMetadata from 'lib/post-metadata';
-import PublicizeMessage from 'post-editor/editor-sharing/publicize-message';
-import Notice from 'components/notice';
+} from 'calypso/state/sharing/publicize/selectors';
+import PostMetadata from 'calypso/lib/post-metadata';
+import PublicizeMessage from 'calypso/components/publicize-message';
+import Notice from 'calypso/components/notice';
 import {
 	hasFeature,
 	isRequestingSitePlans as siteIsRequestingPlans,
-} from 'state/sites/plans/selectors';
-import { FEATURE_REPUBLICIZE } from 'lib/plans/constants';
+} from 'calypso/state/sites/plans/selectors';
+import { FEATURE_REPUBLICIZE } from 'calypso/lib/plans/constants';
 import { UpgradeToPremiumNudge } from './nudges';
 import SharingPreviewModal from './sharing-preview-modal';
 import ConnectionsList from './connections-list';
 import NoConnectionsNotice from './no-connections-notice';
 import ActionsList from './publicize-actions-list';
-import CalendarButton from 'blocks/calendar-button';
-import EventsTooltip from 'components/date-picker/events-tooltip';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { sectionify } from 'lib/route';
+import CalendarButton from 'calypso/blocks/calendar-button';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { sectionify } from 'calypso/lib/route';
 
 /**
  * Style dependencies
@@ -228,7 +228,6 @@ class PostShare extends Component {
 				disabled={ this.isDisabled() }
 				message={ this.state.message }
 				requireCount={ requireCount }
-				displayMessageHeading={ false }
 				onChange={ this.setMessage }
 				acceptableLength={ acceptableLength }
 			/>

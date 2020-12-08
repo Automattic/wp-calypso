@@ -1,0 +1,34 @@
+.domains__header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		align-items: center;
+	}
+}
+
+.domains__header-buttons {
+	display: flex;
+
+	> div {
+		margin-top: auto;
+		margin-bottom: auto;
+	}
+
+	.popover-cart {
+		margin-right: 8px;
+	}
+
+	.popover-cart .header-button,
+	.popover-cart .header-button:hover {
+		min-height: initial;
+		background: none;
+		color: var( --color-text );
+	}
+
+	.cart__count-badge .count {
+		top: -7px;
+		right: -3px;
+	}
+}

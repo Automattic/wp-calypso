@@ -7,7 +7,7 @@ import { get, forOwn } from 'lodash';
  * Internal dependencies
  */
 import apiResponseSchema from './schema';
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 
 /**
  * Transforms API response into array of activities

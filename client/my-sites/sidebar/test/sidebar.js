@@ -1,4 +1,8 @@
 /**
+ * @jest-environment jsdom
+ */
+
+/**
  * External dependencies
  */
 import React from 'react';
@@ -8,8 +12,8 @@ import { shallow } from 'enzyme';
  * Internal dependencies
  */
 import { MySitesSidebar } from '..';
-import config from 'config';
-import { abtest } from 'lib/abtest';
+import config from 'calypso/config';
+import { abtest } from 'calypso/lib/abtest';
 
 jest.mock( 'lib/user', () => () => null );
 jest.mock( 'lib/user/index', () => () => {} );
@@ -182,6 +186,123 @@ describe( 'MySitesSidebar', () => {
 			const wrapper = shallow( <Earn /> );
 
 			expect( wrapper.html() ).not.toEqual( null );
+		} );
+	} );
+
+	describe( 'MySitesSidebar.wpAdmin()', () => {
+		test( 'Should return null if no site selected', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: null,
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null if no admin_url is set', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: {
+					options: {
+						admin_url: '',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should not return null for a simple site', () => {
+			const Sidebar = new MySitesSidebar( {
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for an Atomic site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: true,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for a VIP site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isVip: true,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should not return null for a Jetpack site', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: false,
+				site: {
+					options: {
+						admin_url: 'https://example.com/wp-admin/',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).not.toEqual( null );
+		} );
+
+		test( 'Should return null for a Jetpack site with an invalid admin_url', () => {
+			const Sidebar = new MySitesSidebar( {
+				isJetpack: true,
+				isAtomicSite: false,
+				site: {
+					options: {
+						admin_url: 'example\\.com',
+					},
+				},
+				siteSuffix: '',
+				translate: ( x ) => x,
+			} );
+			const Admin = () => Sidebar.wpAdmin();
+			const wrapper = shallow( <Admin /> );
+
+			expect( wrapper.html() ).toEqual( null );
 		} );
 	} );
 } );

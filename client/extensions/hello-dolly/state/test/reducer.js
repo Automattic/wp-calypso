@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'state/action-types';
+import { ROUTE_SET, SECTION_SET, SITE_SETTINGS_SAVE } from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should initialize to the first index', () => {

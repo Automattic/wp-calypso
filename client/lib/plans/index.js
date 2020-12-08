@@ -6,11 +6,16 @@ import { difference, get, has, includes, pick, values, isFunction } from 'lodash
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { isFreeJetpackPlan } from 'lib/products-values/is-free-jetpack-plan';
-import { isJetpackPlan } from 'lib/products-values/is-jetpack-plan';
-import { isMonthly } from 'lib/products-values/is-monthly';
-import { format as formatUrl, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
+import { isEnabled } from 'calypso/config';
+import { isFreeJetpackPlan } from 'calypso/lib/products-values/is-free-jetpack-plan';
+import { isJetpackPlan } from 'calypso/lib/products-values/is-jetpack-plan';
+import { isMonthly } from 'calypso/lib/products-values/is-monthly';
+import {
+	format as formatUrl,
+	getUrlParts,
+	getUrlFromParts,
+	determineUrlType,
+} from 'calypso/lib/url';
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
@@ -23,10 +28,21 @@ import {
 	TYPE_BLOGGER,
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
+	TYPE_SECURITY_DAILY,
+	TYPE_SECURITY_REALTIME,
+	TYPE_ALL,
 	GROUP_WPCOM,
 	GROUP_JETPACK,
+	JETPACK_RESET_PLANS,
+	FEATURE_JETPACK_SEARCH,
+	FEATURE_JETPACK_SEARCH_MONTHLY,
+	TYPE_P2_PLUS,
 } from './constants';
 import { PLANS_LIST } from './plans-list';
+
+/**
+ * @typedef { import('./types').Plan } Plan
+ */
 
 export function getPlans() {
 	return PLANS_LIST;
@@ -49,13 +65,14 @@ export function getPlan( planKey ) {
  * Find a plan by its path slug
  *
  * @param {string} pathSlug Path slug
- * @param {string?} group Group to search in
- * @returns {object} The plan
+ * @param {string} [group] Group to search in
+ * @returns {Plan|undefined} The plan
  */
 export function getPlanByPathSlug( pathSlug, group ) {
-	return Object.values( PLANS_LIST )
-		.filter( ( p ) => ( group ? p.group === group : true ) )
-		.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
+	/** @type {Plan[]} */
+	let plans = Object.values( PLANS_LIST );
+	plans = plans.filter( ( p ) => ( group ? p.group === group : true ) );
+	return plans.find( ( p ) => isFunction( p.getPathSlug ) && p.getPathSlug() === pathSlug );
 }
 
 export function getPlanPath( plan ) {
@@ -87,6 +104,18 @@ export function getPlanClass( planKey ) {
 
 	if ( isEcommercePlan( planKey ) ) {
 		return 'is-ecommerce-plan';
+	}
+
+	if ( isSecurityDailyPlan( planKey ) ) {
+		return 'is-daily-security-plan';
+	}
+
+	if ( isSecurityRealTimePlan( planKey ) ) {
+		return 'is-realtime-security-plan';
+	}
+
+	if ( isCompletePlan( planKey ) ) {
+		return 'is-complete-plan';
 	}
 
 	return '';
@@ -261,6 +290,22 @@ export function isFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE } );
 }
 
+export function isSecurityDailyPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_DAILY } );
+}
+
+export function isSecurityRealTimePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_SECURITY_REALTIME } );
+}
+
+export function isCompletePlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_ALL } );
+}
+
+export function isWpComPlan( planSlug ) {
+	return planMatches( planSlug, { group: GROUP_WPCOM } );
+}
+
 export function isWpComBusinessPlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_BUSINESS, group: GROUP_WPCOM } );
 }
@@ -299,6 +344,14 @@ export function isJetpackPersonalPlan( planSlug ) {
 
 export function isJetpackFreePlan( planSlug ) {
 	return planMatches( planSlug, { type: TYPE_FREE, group: GROUP_JETPACK } );
+}
+
+export function isJetpackOfferResetPlan( planSlug ) {
+	return JETPACK_RESET_PLANS.includes( planSlug );
+}
+
+export function isP2PlusPlan( planSlug ) {
+	return planMatches( planSlug, { type: TYPE_P2_PLUS } );
 }
 
 /**
@@ -534,3 +587,13 @@ export const chooseDefaultCustomerType = ( { currentCustomerType, selectedPlan, 
 
 	return 'personal';
 };
+
+/**
+ * Determines if a plan includes Jetpack Search by looking at the plan's features.
+ *
+ * @param   {string}  planSlug  Slug of the plan.
+ * @returns {boolean}           Whether the specified plan includes Jetpack Search.
+ */
+export const planHasJetpackSearch = ( planSlug ) =>
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH ) ||
+	planHasFeature( planSlug, FEATURE_JETPACK_SEARCH_MONTHLY );

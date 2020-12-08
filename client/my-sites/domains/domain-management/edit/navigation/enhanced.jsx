@@ -4,23 +4,22 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { addQueryArgs } from '@wordpress/url';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getDomainTypeText,
 	isSubdomain,
 	isDomainUpdateable,
 	isDomainInGracePeriod,
-} from 'lib/domains';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
-import MaterialIcon from 'components/material-icon';
+} from 'calypso/lib/domains';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
+import MaterialIcon from 'calypso/components/material-icon';
 import {
 	domainAddNew,
 	domainManagementNameServers,
@@ -33,18 +32,21 @@ import {
 	domainTransferIn,
 	domainManagementSecurity,
 	isUnderDomainManagementAll,
-} from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { type as domainTypes, transferStatus, sslStatuses } from 'lib/domains/constants';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import { isCancelable } from 'lib/purchases';
-import { cancelPurchase } from 'me/purchases/paths';
-import { getUnmappedUrl } from 'lib/site/utils';
-import { withoutHttp } from 'lib/url';
-import RemovePurchase from 'me/purchases/remove-purchase';
-import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'lib/gsuite';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { isRecentlyRegistered } from 'lib/domains/utils';
+} from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { type as domainTypes, transferStatus, sslStatuses } from 'calypso/lib/domains/constants';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isCancelable } from 'calypso/lib/purchases';
+import { cancelPurchase } from 'calypso/me/purchases/paths';
+import { getUnmappedUrl } from 'calypso/lib/site/utils';
+import { withoutHttp } from 'calypso/lib/url';
+import RemovePurchase from 'calypso/me/purchases/remove-purchase';
+import { hasGSuiteWithUs, getGSuiteMailboxCount } from 'calypso/lib/gsuite';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { isRecentlyRegistered } from 'calypso/lib/domains/utils';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 
 import './style.scss';
 
@@ -109,6 +111,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 					comment: 'The number of GSuite mailboxes active for the current domain',
 				}
 			);
+		} else if ( hasTitanMailWithUs( domain ) ) {
+			navigationDescription = translate( 'Titan Mail' );
 		} else if ( emailForwardsCount > 0 ) {
 			navigationDescription = translate(
 				'%(emailForwardsCount)d forward',
@@ -258,6 +262,22 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	}
 
 	getTransferMappedDomain() {
+		const { selectedSite, translate, domain, currentRoute, isVip } = this.props;
+
+		if ( isVip ) {
+			return null;
+		}
+
+		return (
+			<DomainManagementNavigationItem
+				path={ domainManagementTransfer( selectedSite.slug, domain.name, currentRoute ) }
+				materialIcon="sync_alt"
+				text={ translate( 'Transfer mapping' ) }
+			/>
+		);
+	}
+
+	getTransferInMappedDomain() {
 		const { selectedSite, domain, translate } = this.props;
 
 		const { isEligibleForInboundTransfer } = domain;
@@ -301,7 +321,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 	getManageSite() {
 		const { isManagingAllSites, selectedSite, translate } = this.props;
 
-		if ( ! config.isEnabled( 'manage/all-domains' ) || ! isManagingAllSites ) {
+		if ( ! isManagingAllSites ) {
 			return null;
 		}
 
@@ -444,14 +464,6 @@ class DomainManagementNavigationEnhanced extends React.Component {
 
 	getSecurity() {
 		const { selectedSite, domain, currentRoute, translate } = this.props;
-
-		const shouldRenderDomainSecurity = config.isEnabled(
-			'domains/new-status-design/security-option'
-		);
-
-		if ( ! shouldRenderDomainSecurity ) {
-			return null;
-		}
 
 		const { pointsToWpcom, sslStatus } = domain;
 
@@ -605,6 +617,7 @@ class DomainManagementNavigationEnhanced extends React.Component {
 				{ this.getEmail() }
 				{ this.getDomainConnectMapping() }
 				{ this.getTransferMappedDomain() }
+				{ this.getTransferInMappedDomain() }
 				{ this.getSecurity() }
 				{ this.getSimilarDomains() }
 				{ this.getDeleteDomain() }
@@ -616,6 +629,8 @@ class DomainManagementNavigationEnhanced extends React.Component {
 		return (
 			<React.Fragment>
 				{ this.getManageSite() }
+				{ this.getDnsRecords() }
+				{ this.getSecurity() }
 				{ this.getDeleteDomain() }
 			</React.Fragment>
 		);
@@ -650,9 +665,11 @@ class DomainManagementNavigationEnhanced extends React.Component {
 export default connect(
 	( state ) => {
 		const currentRoute = getCurrentRoute( state );
+		const siteId = getSelectedSiteId( state );
 		return {
 			currentRoute,
 			isManagingAllSites: isUnderDomainManagementAll( currentRoute ),
+			isVip: isVipSite( state, siteId ),
 		};
 	},
 	{ recordTracksEvent, recordGoogleEvent }

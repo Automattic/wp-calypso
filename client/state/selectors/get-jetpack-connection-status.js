@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/jetpack/init';
+import 'calypso/state/jetpack/init';
 
 /**
  * Returns the current status of the connection.

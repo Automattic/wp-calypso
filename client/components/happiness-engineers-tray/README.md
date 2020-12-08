@@ -1,16 +1,13 @@
-HappinessEngineersTray
-==================
+# HappinessEngineersTray
 
 Renders a row of Happiness Engineers' Gravatars.
 
-#### How to use:
+## How to use
 
 ```jsx
-import HappinessEngineersTray from 'components/happiness-engineers-tray';
+import HappinessEngineersTray from 'calypso/components/happiness-engineers-tray';
 
-render() {
-    return (
-        <HappinessEngineersTray />
-    );
+function render() {
+	return <HappinessEngineersTray />;
 }
 ```

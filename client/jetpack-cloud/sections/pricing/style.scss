@@ -1,0 +1,127 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+@import '~@automattic/typography/styles/fonts';
+
+.is-group-jetpack-cloud.is-section-jetpack-cloud-pricing {
+	--color-accent: var( --studio-jetpack-green-40 );
+	--color-primary: var( --studio-jetpack-green-40 );
+
+	background-color: var( --color-surface );
+
+	font-family: 'Noto Sans', $sans;
+
+	.plans-filter-bar.sticky {
+		top: 0; // No masterbar here.
+		left: 0;
+
+		width: 100%;
+		max-width: none;
+
+		border-left: none;
+		border-right: none;
+
+		@include break-large {
+			// This is the height of the jpcom masterbar
+			top: 94px;
+		}
+	}
+
+	.header {
+		margin-bottom: 24px;
+		padding: 0 5%;
+
+		color: #4f748e;
+
+		@include break-medium {
+			margin-top: 48px;
+			margin-bottom: 40px;
+			padding: 0;
+		}
+
+		.formatted-header__title {
+			margin: 0 0 36px;
+
+			color: var( --color-text );
+
+			font-size: rem( 21px );
+
+			@include break-medium {
+				margin: 1.5rem 0 40px;
+
+				font-size: rem( 35px );
+			}
+		}
+	}
+
+	.jetpack-product-card {
+		.jetpack-product-card__product-name {
+			font-size: rem( 21px );
+		}
+
+		.jetpack-product-card__from,
+		.jetpack-product-card__billing-time-frame,
+		.jetpack-product-card__subheadline {
+			color: #8c8f94;
+
+			font-size: rem( 11px );
+
+			@include break-medium {
+				font-size: rem( 13px );
+			}
+		}
+
+		.jetpack-product-card__description {
+			font-size: rem( 15px );
+		}
+	}
+
+	.jetpack-product-card-alt {
+		background: var( --studio-gray-0 );
+
+		.foldable-card {
+			font-size: $font-body;
+		}
+	}
+
+	.jetpack-free-card-alt {
+		background: var( --studio-gray-0 );
+	}
+
+	.foldable-card {
+		font-size: rem( 13px );
+	}
+
+	.jetpack-free-card {
+		.jetpack-free-card__header {
+			font-size: rem( 21px );
+		}
+
+		.jetpack-free-card__body {
+			font-size: rem( 15px );
+		}
+	}
+
+	.faq {
+		margin-bottom: 16px;
+
+		@include break-medium {
+			margin-bottom: 48px;
+		}
+
+		.faq__heading {
+			margin: 56px 0 24px;
+
+			color: #2e4453;
+
+			font-size: rem( 26px );
+			font-weight: 400;
+			text-align: center;
+
+			@include break-medium {
+				margin: 64px 0;
+
+				font-size: rem( 35px );
+			}
+		}
+	}
+}

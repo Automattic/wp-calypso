@@ -6,43 +6,47 @@ import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { concat, find, flow, get, flatMap, includes } from 'lodash';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import DocumentHead from 'components/data/document-head';
-import Search from 'components/search';
-import SectionNav from 'components/section-nav';
-import MainComponent from 'components/main';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import InfiniteScroll from 'components/infinite-scroll';
-import NoResults from 'my-sites/no-results';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PluginsBrowserList from 'my-sites/plugins/plugins-browser-list';
-import PluginsListStore from 'lib/plugins/wporg-data/list-store';
-import PluginsActions from 'lib/plugins/wporg-data/actions';
-import urlSearch from 'lib/url-search';
-import { recordTracksEvent, recordGoogleEvent } from 'state/analytics/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getSelectedOrAllSitesJetpackCanManage from 'state/selectors/get-selected-or-all-sites-jetpack-can-manage';
-import getRecommendedPlugins from 'state/selectors/get-recommended-plugins';
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { getSitePlan, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import NoPermissionsError from 'my-sites/plugins/no-permissions-error';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import Search from 'calypso/components/search';
+import SectionNav from 'calypso/components/section-nav';
+import MainComponent from 'calypso/components/main';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import NoResults from 'calypso/my-sites/no-results';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PluginsBrowserList from 'calypso/my-sites/plugins/plugins-browser-list';
+import PluginsListStore from 'calypso/lib/plugins/wporg-data/list-store';
+import PluginsActions from 'calypso/lib/plugins/wporg-data/actions';
+import urlSearch from 'calypso/lib/url-search';
+import { recordTracksEvent, recordGoogleEvent } from 'calypso/state/analytics/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getSelectedOrAllSitesJetpackCanManage from 'calypso/state/selectors/get-selected-or-all-sites-jetpack-can-manage';
+import getRecommendedPlugins from 'calypso/state/selectors/get-recommended-plugins';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { getSitePlan, isJetpackSite, isRequestingSites } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import NoPermissionsError from 'calypso/my-sites/plugins/no-permissions-error';
 import { Button } from '@automattic/components';
-import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'lib/products-values';
-import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'lib/plans/constants';
-import { findFirstSimilarPlanKey } from 'lib/plans';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { isEnabled } from 'config';
+import { isBusiness, isEcommerce, isEnterprise, isPremium } from 'calypso/lib/products-values';
+import { FEATURE_UPLOAD_PLUGINS, TYPE_BUSINESS } from 'calypso/lib/plans/constants';
+import { findFirstSimilarPlanKey } from 'calypso/lib/plans';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { isEnabled } from 'calypso/config';
 import wpcomFeaturesAsPlugins from './wpcom-features-as-plugins';
-import QuerySiteRecommendedPlugins from 'components/data/query-site-recommended-plugins';
+import QuerySiteRecommendedPlugins from 'calypso/components/data/query-site-recommended-plugins';
 
 /**
  * Style dependencies

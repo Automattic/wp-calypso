@@ -8,25 +8,25 @@ import { includes, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { getSiteFragment, sectionify } from 'lib/route';
-import notices from 'notices';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import { getSiteFragment, sectionify } from 'calypso/lib/route';
+import notices from 'calypso/notices';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import PlanSetup from './jetpack-plugins-setup';
 import PluginEligibility from './plugin-eligibility';
 import PluginListComponent from './main';
 import PluginComponent from './plugin';
 import PluginBrowser from './plugins-browser';
 import PluginUpload from './plugin-upload';
-import { hideSidebar } from 'state/ui/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
 
 /**
  * Module variables
  */
 const allowedCategoryNames = [ 'new', 'popular', 'featured' ];
 
-let lastPluginsListVisited, lastPluginsQuerystring;
+let lastPluginsListVisited;
+let lastPluginsQuerystring;
 
 function renderSinglePlugin( context, siteUrl ) {
 	const pluginSlug = decodeURIComponent( context.params.plugin );
@@ -115,8 +115,6 @@ function renderPluginWarnings( context ) {
 }
 
 function renderProvisionPlugins( context ) {
-	context.store.dispatch( hideSidebar() );
-
 	context.primary = React.createElement( PlanSetup, {
 		forSpecificPlugin: context.query.only || false,
 	} );

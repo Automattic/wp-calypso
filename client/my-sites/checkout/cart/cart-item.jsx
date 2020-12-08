@@ -9,11 +9,11 @@ import { getCurrencyObject } from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { canRemoveFromCart } from 'lib/cart-values';
-import { getIncludedDomain } from 'lib/cart-values/cart-items';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { canRemoveFromCart } from 'calypso/lib/cart-values';
+import { getIncludedDomain } from 'calypso/lib/cart-values/cart-items';
 import {
 	isCredits,
 	isGoogleApps,
@@ -24,14 +24,14 @@ import {
 	isPlan,
 	isBundled,
 	isDomainProduct,
-} from 'lib/products-values';
-import { isGSuiteProductSlug } from 'lib/gsuite';
-import { currentUserHasFlag } from 'state/current-user/selectors';
-import { DOMAINS_WITH_PLANS_ONLY } from 'state/current-user/constants';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
-import { removeItem } from 'lib/cart/actions';
+} from 'calypso/lib/products-values';
+import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
+import { currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { DOMAINS_WITH_PLANS_ONLY } from 'calypso/state/current-user/constants';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import { removeItem } from 'calypso/lib/cart/actions';
 import { localize } from 'i18n-calypso';
-import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'lib/plans';
+import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
 
 export class CartItem extends React.Component {
 	removeFromCart = ( event ) => {
@@ -241,6 +241,10 @@ export class CartItem extends React.Component {
 
 		if ( isTheme( cartItem ) ) {
 			name += ' - ' + translate( 'never expires' );
+		}
+
+		if ( isDomainProduct( cartItem ) && cartItem?.extra?.premium ) {
+			name = translate( 'Premium' ) + ' ' + name;
 		}
 
 		/*eslint-disable wpcalypso/jsx-classname-namespace*/

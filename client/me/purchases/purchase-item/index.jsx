@@ -22,7 +22,7 @@ import {
 	purchaseType,
 	showCreditCardExpiringWarning,
 	getPartnerName,
-} from 'lib/purchases';
+} from 'calypso/lib/purchases';
 import {
 	isDomainProduct,
 	isDomainTransfer,
@@ -31,13 +31,12 @@ import {
 	isTheme,
 	isJetpackProduct,
 	isConciergeSession,
-} from 'lib/products-values';
-import Notice from 'components/notice';
-import Gridicon from 'components/gridicon';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { managePurchase } from '../paths';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { getPlanClass, getPlanTermLabel } from 'lib/plans';
+} from 'calypso/lib/products-values';
+import Notice from 'calypso/components/notice';
+import Gridicon from 'calypso/components/gridicon';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { getPlanClass, getPlanTermLabel } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
@@ -70,8 +69,12 @@ class PurchaseItem extends Component {
 
 		if ( isRenewing( purchase ) && purchase.renewDate ) {
 			const renewDate = moment( purchase.renewDate );
-			return translate( 'Renews on %s', {
-				args: renewDate.format( 'LL' ),
+
+			return translate( 'Renews at %(amount)s on %(date)s.', {
+				args: {
+					amount: purchase.priceText,
+					date: renewDate.format( 'LL' ),
+				},
 			} );
 		}
 
@@ -193,7 +196,7 @@ class PurchaseItem extends Component {
 		const { purchase, translate } = this.props;
 
 		if ( purchase && isPartnerPurchase( purchase ) ) {
-			return translate( 'This plan is managed by %(partnerName)s', {
+			return translate( 'This plan is managed by %(partnerName)s.', {
 				args: {
 					partnerName: getPartnerName( purchase ),
 				},
@@ -237,12 +240,12 @@ class PurchaseItem extends Component {
 
 		let onClick;
 		let href;
-		if ( ! isPlaceholder ) {
+		if ( ! isPlaceholder && this.props.getManagePurchaseUrlFor ) {
 			// A "disconnected" Jetpack site's purchases may be managed.
 			// A "disconnected" WordPress.com site may not (the user has been removed).
 			if ( ! isDisconnectedSite || isJetpack ) {
 				onClick = this.scrollToTop;
-				href = managePurchase( this.props.slug, this.props.purchase.id );
+				href = this.props.getManagePurchaseUrlFor( this.props.slug, this.props.purchase.id );
 			}
 		}
 
@@ -265,6 +268,7 @@ PurchaseItem.propTypes = {
 	purchase: PropTypes.object,
 	slug: PropTypes.string,
 	isJetpack: PropTypes.bool,
+	getManagePurchaseUrlFor: PropTypes.func,
 };
 
 export default localize( withLocalizedMoment( PurchaseItem ) );

@@ -1,7 +1,8 @@
 module.exports = {
+	cacheDirectory: '<rootDir>/../.cache/jest',
 	moduleNameMapper: {
 		'^config$': '<rootDir>/server/config/index.js',
-		'^wp-calypso-client/config$': '<rootDir>/server/config/index.js',
+		'^calypso/config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
 		'\\.[jt]sx?$': 'babel-jest',
@@ -11,9 +12,10 @@ module.exports = {
 	},
 	modulePaths: [ '<rootDir>/../test', '<rootDir>', '<rootDir>/extensions' ],
 	rootDir: '../../client',
+	resolver: '<rootDir>../test/module-resolver.js',
 	testEnvironment: 'node',
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js|social-logos|gridicons|wp-calypso-client)',
+		'node_modules[\\/\\\\](?!flag-icon-css|redux-form|simple-html-tokenizer|draft-js|social-logos|gridicons|calypso)',
 	],
 	testMatch: [ '<rootDir>/**/test/*.[jt]s?(x)', '!**/*.skip.[jt]s?(x)', '!**/.eslintrc.*' ],
 	testPathIgnorePatterns: [ '<rootDir>/server/' ],

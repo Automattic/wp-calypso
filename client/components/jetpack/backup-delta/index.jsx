@@ -7,7 +7,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ActivityCard from 'components/activity-card';
+import ActivityCard from 'calypso/components/activity-card';
 
 /**
  * Style dependencies

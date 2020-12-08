@@ -26,38 +26,41 @@ It's also possible to build an entirely custom form using the other components e
 ## How to use this package
 
 Most components of this package require being inside a [CheckoutProvider](#checkoutprovider). That component requires an array of [Payment Method objects](#payment-methods) which define the available payment methods (stripe credit cards, apple pay, paypal, credits, etc.) that will be displayed in the form. While you can create these objects manually, the package provides many pre-defined payment method objects that can be created by using the following functions:
- - [createApplePayMethod](#createApplePayMethod)
- - [createExistingCardMethod](#createExistingCardMethod)
- - [createFullCreditsMethod](#createFullCreditsMethod)
- - [createPayPalMethod](#createpaypalmethod)
- - [createStripeMethod](#createStripeMethod)
+
+- [createApplePayMethod](#createApplePayMethod)
+- [createExistingCardMethod](#createExistingCardMethod)
+- [createPayPalMethod](#createpaypalmethod)
+- [createStripeMethod](#createStripeMethod)
 
 Any component which is a child of `CheckoutProvider` gets access to the following custom hooks:
- - [useAllPaymentMethods](#useAllPaymentMethods)
- - [useEvents](#useEvents)
- - [useFormStatus](#useFormStatus)
- - [useTransactionStatus](#useTransactionStatus)
- - [usePaymentProcessor](#usePaymentProcessor)
- - [useMessages](#useMessages)
- - [useDispatch](#useDispatch)
- - [useLineItems](#useLineItems)
- - [useLineItemsOfType](#useLineItemsOfType)
- - [usePaymentMethod](#usePaymentMethodId)
- - [usePaymentMethodId](#usePaymentMethodId)
- - [useRegisterStore](#useRegisterStore)
- - [useRegistry](#useRegistry)
- - [useSelect](#useSelect)
- - [useTotal](#useTotal)
+
+- [useAllPaymentMethods](#useAllPaymentMethods)
+- [useEvents](#useEvents)
+- [useFormStatus](#useFormStatus)
+- [useTransactionStatus](#useTransactionStatus)
+- [usePaymentProcessor](#usePaymentProcessor)
+- [usePaymentProcessors](#usePaymentProcessors)
+- [useMessages](#useMessages)
+- [useDispatch](#useDispatch)
+- [useLineItems](#useLineItems)
+- [useLineItemsOfType](#useLineItemsOfType)
+- [usePaymentMethod](#usePaymentMethodId)
+- [usePaymentMethodId](#usePaymentMethodId)
+- [useRegisterStore](#useRegisterStore)
+- [useRegistry](#useRegistry)
+- [useSelect](#useSelect)
+- [useTotal](#useTotal)
 
 The [Checkout](#checkout) component creates a wrapper for Checkout. Within the component you can render any children to create the checkout experience, but a few components are provided to make this easier:
- - [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
- - [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
- - [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
- - [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
- - [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
- - [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
- - [Button](#Button) (optional) a generic button component that can be used to match the button styles of those buttons used inside the package (like the continue button on each step).
- - [CheckoutErrorBoundary](#CheckoutErrorBoundary) (optional) a [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like.
+
+- [CheckoutSummaryArea](#CheckoutSummaryArea) (optional) can be used to render an invisible area that, by default, floats beside the checkout steps on larger screens and collapses behind a toggle at the top of smaller screens.
+- [CheckoutSummaryCard](#CheckoutSummaryCard) (optional) can be used inside CheckoutSummaryArea to render a bordered area.
+- [CheckoutStepArea](#CheckoutStepArea) (required) supplies a styled wrapper for the CheckoutStepBody and CheckoutStep components, and creates the Checkout form itself with a submit button.
+- [CheckoutStepBody](#CheckoutStepBody) (optional) can be used to render something that looks like a checkout step. A series of these can be used to create a semantic form.
+- [CheckoutSteps](#CheckoutSteps) (with [CheckoutStep](#CheckoutStep) children) can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+- [CheckoutStep](#CheckoutStep) (optional) children of `CheckoutSteps` can be used to create a series of steps that are joined by "Continue" buttons which are hidden and displayed as needed.
+- [Button](#Button) (optional) a generic button component that can be used to match the button styles of those buttons used inside the package (like the continue button on each step).
+- [CheckoutErrorBoundary](#CheckoutErrorBoundary) (optional) a [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like.
 
 Each `CheckoutStep` has an `isCompleteCallback` prop, which will be called when the "Continue" button is pressed. It can perform validation on that step's contents to determine if the form should continue to the next step. If the function returns true, the form continues to the next step, otherwise it remains on the same step. If the function returns a `Promise`, then the "Continue" button will change to "Please wait…" until the Promise resolves allowing for async operations. The value resolved by the Promise must be a boolean; true to continue, false to stay on the current step.
 
@@ -94,15 +97,19 @@ Each payment method is an object with the following properties:
 
 Within the components, the Hook `usePaymentMethod()` will return an object of the above form with the key of the currently selected payment method or null if none is selected. To retrieve all the payment methods and their properties, the Hook `useAllPaymentMethods()` will return an array that contains them all.
 
-When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key. Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument.
+When a payment method is ready to submit its data, it can use an appropriate "payment processor" function. These are functions passed to [CheckoutProvider](#CheckoutProvider) with the `paymentProcessors` prop and each one has a unique key.
 
-When the `submitButton` component has been clicked, it should do the following:
+Payment method components (probably the `submitButton`) can access these functions using the [usePaymentProcessor](#usePaymentProcessor) hook, passing the key used for that function in `paymentProcessors` as an argument. However, for convenience, the `submitButton` will be provided with an `onClick` handler that can do this automatically. The `onClick` function takes two arguments, a string which is the key of the payment processor to be used, and an object that contains the data needed by the payment processor.
 
-1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to 'submitting' and disable the form.
+If you use the `onClick` function, the payment processor function's response will control what happens next. Each payment processor function must return a Promise that either resolves to one of three results on success (see [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)), or rejects on failure.
+
+If not using the `onClick` function, when the `submitButton` component has been clicked, it should do the following (these are normally handled by `onClick`):
+
+1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
-3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead. If the transaction requires 3DS auth, use `setTransactionAuthorizing(response: object)`.
+3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
 4. If the `Promise` rejects, call `setTransactionError(message: string)`.
-5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is 'complete' (call [onPaymentComplete](#CheckoutProvider)), 'error' (display the error and re-enable the form), or 'redirecting' (redirect to the url). No action will be taken if the status is 'authorizing'; the payment method must handle that status manually and eventually set one of the other statuses. If for some reason the transaction should be cancelled, call `resetTransaction()`.
+5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is [`.COMPLETE`](#TransactionStatus) (call [onPaymentComplete](#CheckoutProvider)), [`.ERROR`](#TransactionStatus) (display the error and re-enable the form), or [`.REDIRECTING`](#TransactionStatus) (redirect to the url). If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
 ## Line Items
 
@@ -124,7 +131,7 @@ The registry used for these stores is created by default but you can use a custo
 
 ## API
 
-While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package.
+While the `Checkout` component takes care of most everything, there are many situations where its appearance and behavior will be customized. In these cases it's appropriate to use the underlying building blocks of this package. The following are in alphabetical order.
 
 ### Button
 
@@ -140,10 +147,15 @@ The main wrapper component for Checkout. It has the following props.
 
 - `className?: string`. The className for the component.
 
+### CheckoutCheckIcon
+
+An icon that is displayed for each complete step.
+
+Requires an `id` prop, which is a string that is used to construct the SVG `id`.
+
 ### CheckoutErrorBoundary
 
 A [React error boundary](https://reactjs.org/docs/error-boundaries.html) that can be used to wrap any components you like. There are several layers of these already built-in to `CheckoutProvider` and its children, but you may use this to manually wrap components. It has the following props.
-
 
 - `errorMessage: React.ReactNode`. The error message to display to the user if there is a problem; typically a string but can also be a component.
 - `onError?: (string) => void`. A function to be called when there is an error. Can be used for logging.
@@ -165,18 +177,19 @@ It has the following props.
 - `paymentMethods: object[]`. An array of [Payment Method objects](#payment-methods).
 - `paymentProcessors: object`. A key-value map of payment processor functions (see [Payment Methods](#payment-methods)).
 - `registry?: object`. An object returned by [createRegistry](#createRegistry). If not provided, the default registry will be used.
-- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to 'loading' (see [useFormStatus](#useFormStatus)).
-- `isValidating?: boolean`. If set and true, the form status will be set to 'validating' (see [useFormStatus](#useFormStatus)).
+- `isLoading?: boolean`. If set and true, the form will be replaced with a loading placeholder and the form status will be set to [`.LOADING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
+- `isValidating?: boolean`. If set and true, the form status will be set to [`.VALIDATING`](#FormStatus) (see [useFormStatus](#useFormStatus)).
+- `redirectToUrl?: (url: string) => void`. Will be used by [useTransactionStatus](#useTransactionStatus) if it needs to redirect. If not set, it will change `window.location.href`.
 
 The line items are for display purposes only. They should also include subtotals, discounts, and taxes. No math will be performed on the line items. Instead, the amount to be charged will be specified by the required prop `total`, which is another line item.
 
 In addition, `CheckoutProvider` monitors the [transaction status](#useTransactionStatus) and will take actions when it changes.
 
-- If the `transactionStatus` changes to 'pending', the [form status](#useFormStatus) will be set to 'submitting'.
-- If the `transactionStatus` changes to 'error', the transaction status will be set to 'not-started', the [form status](#useFormStatus) will be set to 'ready', and the error message will be displayed.
-- If the `transactionStatus` changes to 'complete', the [form status](#useFormStatus) will be set to 'complete' (which will cause the `onPaymentComplete` function to be called).
-- If the `transactionStatus` changes to 'redirecting', the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
-- If the `transactionStatus` changes to 'not-started', the [form status](#useFormStatus) will be set to 'ready'.
+- If the `transactionStatus` changes to [`.PENDING`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.SUBMITTING`](#FormStatus).
+- If the `transactionStatus` changes to [`.ERROR`](#TransactionStatus), the transaction status will be set to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus), and the error message will be displayed.
+- If the `transactionStatus` changes to [`.COMPLETE`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.COMPLETE`](#FormStatus) (which will cause the `onPaymentComplete` function to be called).
+- If the `transactionStatus` changes to [`.REDIRECTING`](#TransactionStatus), the page will be redirected to the `transactionRedirectUrl` (or will display an error as above if there is no url).
+- If the `transactionStatus` changes to [`.NOT_STARTED`](#TransactionStatus), the [form status](#useFormStatus) will be set to [`.READY`](#FormStatus).
 
 ### CheckoutReviewOrder
 
@@ -208,7 +221,11 @@ Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutSte
 This component's props are:
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
-- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is 'ready'.
+- `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
+
+## CheckoutStepAreaWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
 
 ## CheckoutStepBody
 
@@ -246,13 +263,27 @@ A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps 
 
 ### CheckoutSummaryArea
 
-Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CehckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
+Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CheckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.
 
 - `className?: string`. The className for the component.
 
 ### CheckoutSummaryCard
 
 Can be used inside [CheckoutSummaryArea](#CheckoutSummaryArea) to render a bordered area.
+
+### FormStatus
+
+An enum that holds the values of the [form status](#useFormStatus).
+
+- `.LOADING`
+- `.READY`
+- `.SUBMITTING`
+- `.VALIDATING`
+- `.COMPLETE`
+
+## MainContentWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the [Checkout](#Checkout) component. You shouldn't need to use this manually.
 
 ### OrderReviewLineItems
 
@@ -271,6 +302,53 @@ A wrapper for a section of a list of related line items. Renders its `children` 
 Renders the `total` prop like a line item, but with different styling.
 
 An optional boolean prop, `collapsed`, can be used to simplify the output for when the review section is collapsed.
+
+### PaymentLogo
+
+Renders a logo for a credit card.
+
+Takes two props:
+
+- `brand: string`. This is a lower-case card name, like `visa` or `mastercard`.
+- `isSummary: boolean`. If true, will display a more compact version of the logo.
+
+### RadioButton
+
+Renders a radio button wrapper for payment methods or other similar boxes.
+
+Props:
+
+- `name: string`
+- `id: string`
+- `label: React.ReactNode`
+- `disabled?: boolean`
+- `checked?: boolean`
+- `value: string`
+- `onChange?: () => void`
+- `ariaLabel: string`
+- `children?: React.ReactNode`
+
+### PaymentProcessorResponseType
+
+An enum that holds the values of the [payment processor function return value's `type` property](#payment-methods) (each payment processor function returns a Promise that resolves to `{type: PaymentProcessorResponseType, payload: string | unknown }` where the payload varies based on the response type).
+
+- `.SUCCESS` (the payload will be an `unknown` object that is the server response).
+- `.REDIRECT` (the payload will be a `string` that is the redirect URL).
+- `.MANUAL` (the payload will be an `unknown` object that is determined by the payment processor function).
+
+### SubmitButtonWrapper
+
+A styled div, controlled by the [theme](#checkoutTheme), that's used as the inner wrapper for the submit button that's rendered by each [CheckoutStepArea](#CheckoutStepArea) component. You shouldn't need to use this manually.
+
+### TransactionStatus
+
+An enum that holds the values of the [transaction status](#useTransactionStatus).
+
+- `.NOT_STARTED`
+- `.PENDING`
+- `.COMPLETE`
+- `.REDIRECTING`
+- `.ERROR`
 
 ### checkoutTheme
 
@@ -301,16 +379,6 @@ Creates a [Payment Method](#payment-methods) object for an existing credit card.
 - `cardExpiry: string`. The card's expiry date. Used for display only.
 - `brand: string`. The card's brand (eg: `visa`). Used for display only.
 - `last4: string`. The card's last four digits. Used for display only.
-
-### createFullCreditsMethod
-
-Creates a [Payment Method](#payment-methods) object for credits. Requires passing an object with the following properties:
-
-- `registerStore: object => object`. The `registerStore` function from the return value of [createRegistry](#createRegistry).
-- `submitTransaction: async ?object => object`. An async function that sends the request to the endpoint process the payment.
-- `creditsDisplayValue: string`. The amount of credits to display as a readable string.
-- `label?: React.ReactNode`. An optional label React element to use in the payment method.
-- `buttonText?: string`. An optional string to display in the payment button.
 
 ### createPayPalMethod
 
@@ -350,13 +418,21 @@ Returns a step object whose properties can be added to a [CheckoutStep](Checkout
 
 Returns a step object whose properties can be added to a [CheckoutStep](CheckoutStep) (and customized) to display a way to select a payment method. The payment methods displayed are those provided to the [CheckoutProvider](#checkoutprovider).
 
+### makeManualResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a [MANUAL](#PaymentProcessorResponseType) response; it will do nothing but pass along its argument as a `payload` property to the resolved Promise of the `onClick` function.
+
+### makeRedirectResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a [REDIRECT](#PaymentProcessorResponseType) response. It takes one string argument and will cause the page to redirect to the URL in that string.
+
+### makeSuccessResponse
+
+An action creator function to be used by a [payment processor function](#payment-methods) for a [SUCCESS](#PaymentProcessorResponseType) response. It takes one object argument which is the transaction response. It will cause checkout to mark the payment as complete and run the `onPaymentComplete` function on the [CheckoutProvider](#CheckoutProvider).
+
 ### registerStore
 
 The `registerStore` function on the [#defaultRegistry](default registry). Don't use this if you create a custom registry.
-
-### formatValueForCurrency
-
-Takes two arguments, a currency string and an integer string and returns the locale-specific string displayValue. For example, the arguments (`USD`, `6000`) would return the string `$60.00`.
 
 ### useAllPaymentMethods
 
@@ -374,12 +450,12 @@ A React Hook that will return the `onEvent` callback as passed to `CheckoutProvi
 
 A React Hook that will return an object with the following properties. Used to represent and change the current status of the checkout form (eg: causing it to be disabled). This differs from the status of the transaction itself, which is handled by [useTransactionStatus](#useTransactionStatus).
 
-- `formStatus: string`. The current status of the form; one of 'loading', 'ready', 'validating', 'submitting', or 'complete'.
-- `setFormReady: () => void`. Function to change the form status to 'ready'.
-- `setFormLoading: () => void`. Function to change the form status to 'loading'.
-- `setFormValidating: () => void`. Function to change the form status to 'validating'.
-- `setFormSubmitting: () => void`. Function to change the form status to 'submitting'. Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
-- `setFormComplete: () => void`. Function to change the form status to 'complete'. Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
+- `formStatus: `[`FormStatus`](#FormStatus). The current status of the form.
+- `setFormReady: () => void`. Function to change the form status to [`.READY`](#FormStatus).
+- `setFormLoading: () => void`. Function to change the form status to [`.LOADING`](#FormStatus).
+- `setFormValidating: () => void`. Function to change the form status to [`.VALIDATING`](#FormStatus).
+- `setFormSubmitting: () => void`. Function to change the form status to [`.SUBMITTING`](#FormStatus). Usually you can use [setTransactionPending](#useTransactionStatus) instead, which will call this.
+- `setFormComplete: () => void`. Function to change the form status to [`.COMPLETE`](#FormStatus). Note that this will trigger `onPaymentComplete` from [CheckoutProvider](#CheckoutProvider). Usually you can use [setTransactionComplete](#useTransactionStatus) instead, which will call this.
 
 Only works within [CheckoutProvider](#CheckoutProvider) which may sometimes change the status itself based on its props.
 
@@ -415,6 +491,10 @@ A React Hook that will return a two element array. The first element is a string
 
 A React Hook that returns a payment processor function as passed to the `paymentProcessors` prop of [CheckoutProvider](#CheckoutProvider). Takes one argument which is the key of the processor function to return. Throws an Error if the key does not match a processor function. See [Payment Methods](#payment-methods) for an explanation of how this is used. Only works within [CheckoutProvider](#CheckoutProvider).
 
+### usePaymentProcessors
+
+A React Hook that returns all the payment processor functions in a Record.
+
 ### useRegisterStore
 
 A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -439,17 +519,16 @@ A React Hook that returns the `total` property provided to the [CheckoutProvider
 
 A React Hook that returns an object with the following properties to be used by [payment methods](#payment-methods) for storing and communicating the current status of the transaction. This differs from the current status of the _form_, which is handled by [useFormStatus](#useFormStatus). Note, however, that [CheckoutProvider](#CheckoutProvider) will automatically perform certain actions when the transaction status changes. See [CheckoutProvider](#CheckoutProvider) for the details.
 
-- `transactionStatus: string`. The current status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
-- `previousTransactionStatus: string`. The last status of the transaction; one of 'not-started', 'complete', 'error', 'pending', 'redirecting', 'authorizing'.
-- `transactionError: string | null`. The most recent error message encountered by the transaction if its status is 'error'.
-- `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is 'redirecting'.
-- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionAuthorizing` or `setTransactionComplete`.
-- `resetTransaction: () => void`. Function to change the transaction status to 'not-started'.
-- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to 'complete' and save the response object in `transactionLastResponse`.
-- `setTransactionError: ( string ) => void`. Function to change the transaction status to 'error' and save the error in `transactionError`.
-- `setTransactionPending: () => void`. Function to change the transaction status to 'pending'.
-- `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to 'redirecting' and save the redirect URL in `transactionRedirectUrl`.
-- `setTransactionAuthorizing: ( object ) => void`. Function to change the transaction status to 'authorizing' and save the response object in `transactionLastResponse`.
+- `transactionStatus: `[`TransactionStatus`](#TransactionStatus). The current status of the transaction.
+- `previousTransactionStatus: `[`TransactionStatus.`](#TransactionStatus). The last status of the transaction.
+- `transactionError: string | null`. The most recent error message encountered by the transaction if its status is [`.ERROR`](#TransactionStatus).
+- `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is [`.REDIRECTING`](#TransactionStatus).
+- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
+- `resetTransaction: () => void`. Function to change the transaction status to [`.NOT_STARTED`](#TransactionStatus).
+- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
+- `setTransactionError: ( string ) => void`. Function to change the transaction status to [`.ERROR`](#TransactionStatus) and save the error in `transactionError`.
+- `setTransactionPending: () => void`. Function to change the transaction status to [`.PENDING`](#TransactionStatus).
+- `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to [`.REDIRECTING`](#TransactionStatus) and save the redirect URL in `transactionRedirectUrl`.
 
 ## FAQ
 

@@ -6,9 +6,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import i18n, { localize } from 'i18n-calypso';
 import classNames from 'classnames';
-import config from 'config';
+import config from 'calypso/config';
 import titlecase from 'to-title-case';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { head, split } from 'lodash';
 import photon from 'photon';
 import page from 'page';
@@ -16,32 +16,32 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import AsyncLoad from 'components/async-load';
-import QueryCanonicalTheme from 'components/data/query-canonical-theme';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import SectionHeader from 'components/section-header';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import SectionHeader from 'calypso/components/section-header';
 import ThemeDownloadCard from './theme-download-card';
-import ThemePreview from 'my-sites/themes/theme-preview';
-import UpsellNudge from 'blocks/upsell-nudge';
+import ThemePreview from 'calypso/my-sites/themes/theme-preview';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { Button, Card } from '@automattic/components';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import isVipSite from 'state/selectors/is-vip-site';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { isUserPaid } from 'state/purchases/selectors';
-import ThanksModal from 'my-sites/themes/thanks-modal';
-import AutoLoadingHomepageModal from 'my-sites/themes/auto-loading-homepage-modal';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isUserPaid } from 'calypso/state/purchases/selectors';
+import ThanksModal from 'calypso/my-sites/themes/thanks-modal';
+import AutoLoadingHomepageModal from 'calypso/my-sites/themes/auto-loading-homepage-modal';
 
-import QueryActiveTheme from 'components/data/query-active-theme';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import ThemesSiteSelectorModal from 'my-sites/themes/themes-site-selector-modal';
-import { connectOptions } from 'my-sites/themes/theme-options';
+import QueryActiveTheme from 'calypso/components/data/query-active-theme';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import ThemesSiteSelectorModal from 'calypso/my-sites/themes/themes-site-selector-modal';
+import { connectOptions } from 'calypso/my-sites/themes/theme-options';
 import {
 	isThemeActive,
 	isThemePremium,
@@ -52,18 +52,24 @@ import {
 	getThemeDetailsUrl,
 	getThemeRequestErrors,
 	getThemeForumUrl,
-} from 'state/themes/selectors';
-import { getBackPath } from 'state/themes/themes-ui/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { setThemePreviewOptions } from 'state/themes/actions';
+} from 'calypso/state/themes/selectors';
+import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import ThemeNotFoundError from './theme-not-found-error';
 import ThemeFeaturesCard from './theme-features-card';
-import { FEATURE_UNLIMITED_PREMIUM_THEMES, PLAN_PREMIUM } from 'lib/plans/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
-import getPreviousRoute from 'state/selectors/get-previous-route';
+import {
+	FEATURE_UNLIMITED_PREMIUM_THEMES,
+	FEATURE_UPLOAD_THEMES,
+	PLAN_PREMIUM,
+	PLAN_BUSINESS,
+} from 'calypso/lib/plans/constants';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -339,7 +345,11 @@ class ThemeSheet extends React.Component {
 		return (
 			<div className="theme__sheet-content">
 				{ config.isEnabled( 'jitms' ) && this.props.siteSlug && (
-					<AsyncLoad require="blocks/jitm" messagePath={ 'calypso:theme:admin_notices' } />
+					<AsyncLoad
+						require="calypso/blocks/jitm"
+						placeholder={ null }
+						messagePath="calypso:theme:admin_notices"
+					/>
 				) }
 				{ this.renderSectionNav( section ) }
 				{ activeSection }
@@ -611,9 +621,11 @@ class ThemeSheet extends React.Component {
 			retired,
 			isPremium,
 			isJetpack,
+			isWpcomTheme,
 			isVip,
 			translate,
 			hasUnlimitedPremiumThemes,
+			canUserUploadThemes,
 			previousRoute,
 		} = this.props;
 
@@ -656,10 +668,15 @@ class ThemeSheet extends React.Component {
 			} );
 		}
 
-		let pageUpsellBanner, previewUpsellBanner;
-		const hasUpsellBanner =
+		let pageUpsellBanner;
+		let previewUpsellBanner;
+		const hasWpComThemeUpsellBanner =
 			! isJetpack && isPremium && ! hasUnlimitedPremiumThemes && ! isVip && ! retired;
-		if ( hasUpsellBanner ) {
+		const hasWpOrgThemeUpsellBanner =
+			! isWpcomTheme && ( ! siteId || ( ! isJetpack && ! canUserUploadThemes ) );
+		const hasUpsellBanner = hasWpComThemeUpsellBanner || hasWpOrgThemeUpsellBanner;
+
+		if ( hasWpComThemeUpsellBanner ) {
 			pageUpsellBanner = (
 				<UpsellNudge
 					plan={ PLAN_PREMIUM }
@@ -676,10 +693,34 @@ class ThemeSheet extends React.Component {
 					showIcon={ true }
 				/>
 			);
+		}
+
+		if ( hasWpOrgThemeUpsellBanner ) {
+			pageUpsellBanner = (
+				<UpsellNudge
+					plan={ PLAN_BUSINESS }
+					className="theme__page-upsell-banner"
+					title={ translate( 'Access this theme for FREE with a Business plan!' ) }
+					description={ preventWidows(
+						translate(
+							'Instantly unlock thousands of different themes and install your own when you upgrade.'
+						)
+					) }
+					forceHref
+					feature={ FEATURE_UPLOAD_THEMES }
+					forceDisplay
+					href={ ! siteId ? '/plans' : null }
+					showIcon
+				/>
+			);
+		}
+
+		if ( hasUpsellBanner ) {
 			previewUpsellBanner = React.cloneElement( pageUpsellBanner, {
 				className: 'theme__preview-upsell-banner',
 			} );
 		}
+
 		const className = classNames( 'theme__sheet', { 'is-with-upsell-banner': hasUpsellBanner } );
 
 		const links = [ { rel: 'canonical', href: canonicalUrl } ];
@@ -706,7 +747,7 @@ class ThemeSheet extends React.Component {
 					backText={ previousRoute ? i18n.translate( 'Back' ) : i18n.translate( 'All Themes' ) }
 					onClick={ this.goBack }
 				>
-					{ ! retired && this.renderButton() }
+					{ ! retired && ! hasWpOrgThemeUpsellBanner && this.renderButton() }
 				</HeaderCake>
 				<div className="theme__sheet-columns">
 					<div className="theme__sheet-column-left">
@@ -716,6 +757,7 @@ class ThemeSheet extends React.Component {
 					<div className="theme__sheet-column-right">{ this.renderScreenshot() }</div>
 				</div>
 				<ThemePreview belowToolbar={ previewUpsellBanner } />
+				<PerformanceTrackerStop />
 			</Main>
 		);
 	};
@@ -806,6 +848,7 @@ export default connect(
 			isPurchased: isPremiumThemeAvailable( state, id, siteId ),
 			forumUrl: getThemeForumUrl( state, id, siteId ),
 			hasUnlimitedPremiumThemes: hasFeature( state, siteId, FEATURE_UNLIMITED_PREMIUM_THEMES ),
+			canUserUploadThemes: hasFeature( state, siteId, FEATURE_UPLOAD_THEMES ),
 			// No siteId specified since we want the *canonical* URL :-)
 			canonicalUrl: 'https://wordpress.com' + getThemeDetailsUrl( state, id ),
 			previousRoute: getPreviousRoute( state ),

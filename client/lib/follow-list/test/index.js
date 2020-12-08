@@ -2,17 +2,25 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
-
+/**
+ * External dependencies
+ */
 import { assert } from 'chai';
 import sinon from 'sinon';
 
+/**
+ * Internal dependencies
+ */
+import FollowList from 'calypso/lib/follow-list';
+import FollowListSite from 'calypso/lib/follow-list/site';
+
+jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+
 describe( 'index', () => {
-	let FollowList, FollowListSite, followList, site;
+	let followList;
+	let site;
 
 	beforeAll( () => {
-		FollowList = require( 'lib/follow-list' );
-		FollowListSite = require( 'lib/follow-list/site' );
 		followList = new FollowList();
 		site = new FollowListSite( { site_id: 95327318, is_following: false } );
 	} );

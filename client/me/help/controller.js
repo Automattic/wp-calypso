@@ -8,14 +8,14 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { login } from 'lib/paths';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import config from 'config';
+import { login } from 'calypso/lib/paths';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import config from 'calypso/config';
 import HelpComponent from './main';
 import CoursesComponent from './help-courses';
 import ContactComponent from './help-contact';
-import { CONTACT, SUPPORT_ROOT } from 'lib/url/support';
-import userUtils from 'lib/user/utils';
+import { CONTACT, SUPPORT_ROOT } from 'calypso/lib/url/support';
+import userUtils from 'calypso/lib/user/utils';
 
 export function loggedOut( context, next ) {
 	if ( userUtils.isLoggedIn() ) {

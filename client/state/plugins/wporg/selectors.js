@@ -1,25 +1,27 @@
-export const getPlugin = function ( state, pluginSlug ) {
-	if ( ! state || ! state[ pluginSlug ] ) {
-		return null;
-	}
-	return Object.assign( {}, state[ pluginSlug ] );
-};
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/plugins/init';
 
-export const isFetching = function ( state, pluginSlug ) {
+export function getAllPlugins( state ) {
+	return state?.plugins.wporg.items;
+}
+
+export function getPlugin( state, pluginSlug ) {
+	const plugin = state?.plugins.wporg.items[ pluginSlug ] ?? null;
+	return plugin ? { ...plugin } : plugin;
+}
+
+export function isFetching( state, pluginSlug ) {
 	// if the `isFetching` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
-	if ( typeof state[ pluginSlug ] === 'undefined' ) {
-		return true;
-	}
-	return state[ pluginSlug ];
-};
+	const status = state?.plugins.wporg.fetchingItems[ pluginSlug ];
+	return status === undefined ? true : status;
+}
 
-export const isFetched = function ( state, pluginSlug ) {
+export function isFetched( state, pluginSlug ) {
 	const plugin = getPlugin( state, pluginSlug );
 	// if the plugin or the `isFetching` attribute doesn't exist yet,
 	// we assume we are still launching the fetch action, so it's true
-	if ( ! plugin ) {
-		return false;
-	}
-	return !! plugin.fetched;
-};
+	return plugin ? !! plugin.fetched : false;
+}

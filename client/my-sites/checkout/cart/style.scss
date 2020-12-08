@@ -187,7 +187,7 @@
 			margin: 15px -15px 0;
 			padding: 15px 15px 0;
 
-			input[type='text'] {
+			input[type='text'].form-text-input {
 				font-size: $font-body-extra-small;
 				margin: 0 4% 0 0;
 				width: 70%;
@@ -218,7 +218,7 @@
 .cart__cart-ad {
 	background: var( --color-neutral-0 );
 	border: 1px solid var( --color-neutral-0 );
-	border-radius: 4px;
+	border-radius: 2px;
 	color: var( --color-text );
 	font-size: $font-body-extra-small;
 	margin: 15px 15px 0;

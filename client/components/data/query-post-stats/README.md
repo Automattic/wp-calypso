@@ -1,5 +1,4 @@
-Query Post Stats
-================
+# Query Post Stats
 
 `<QueryPostStats />` is a React component used in managing network requests for post stats.
 
@@ -9,10 +8,9 @@ Render the component, passing `siteId`, `postId` and `fields`. It does not accep
 
 ```jsx
 import React from 'react';
-import QueryPostStats from 'components/data/query-post-stats';
-import MyPostStatItem from './stat-item';
+import QueryPostStats from 'calypso/components/data/query-post-stats';
 
-export default function MyPostStatItem( { statValue } ) {
+export default function Component( { statValue } ) {
 	return (
 		<div>
 			<QueryPostStats siteId={ 3584907 } postId={ 4533 } fields={ [ 'views' ] } />

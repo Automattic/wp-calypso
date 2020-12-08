@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSectionName } from 'state/ui/selectors';
+import { getSectionName } from 'calypso/state/ui/selectors';
 
 /**
  * Returns a selector that tests if the current user is in a given section

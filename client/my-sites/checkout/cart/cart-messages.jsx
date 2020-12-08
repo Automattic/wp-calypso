@@ -3,40 +3,34 @@
  */
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { getNewMessages } from 'lib/cart-values';
+import notices from 'calypso/notices';
+import { getNewMessages } from 'calypso/lib/cart-values';
 
 class CartMessages extends PureComponent {
 	static propTypes = {
 		cart: PropTypes.object.isRequired,
-		selectedSite: PropTypes.object,
+		isLoadingCart: PropTypes.bool,
+		selectedSite: PropTypes.shape( {
+			slug: PropTypes.string,
+		} ).isRequired,
 
 		// connected
 		translate: PropTypes.func.isRequired,
 	};
 
-	state = { previousCart: null };
+	previousCart = null;
 
 	componentDidMount() {
-		// Makes sure that we display any messages from the current cart
-		// that might have been delivered when the cart was unmounted
-		this.displayCartMessages( this.props.cart );
+		this.displayCartMessages();
 	}
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! nextProps.cart.hasLoadedFromServer ) {
-			return;
-		}
-
-		if ( this.props.cart.messages !== nextProps.cart.messages ) {
-			this.displayCartMessages( nextProps.cart );
-		}
+	componentDidUpdate() {
+		this.displayCartMessages();
 	}
 
 	getChargebackErrorMessage() {
@@ -91,27 +85,34 @@ class CartMessages extends PureComponent {
 		} );
 	}
 
-	displayCartMessages( newCart ) {
-		const { previousCart } = this.state;
-		const messages = getNewMessages( previousCart, newCart );
+	displayCartMessages() {
+		const newCart = this.props.cart;
+		if ( this.props.isLoadingCart ) {
+			return;
+		}
+		const messages = getNewMessages( this.previousCart, newCart );
 
 		messages.errors = this.getPrettyErrorMessages( messages.errors );
 
-		this.setState( { previousCart: newCart } );
+		this.previousCart = newCart;
 
-		if ( ! isEmpty( messages.errors ) ) {
+		if ( messages.errors?.length > 0 ) {
 			notices.error(
-				messages.errors.map( ( error, index ) => (
-					<p key={ `${ error.code }-${ index }` }>{ error.message }</p>
+				messages.errors.map( ( error ) => (
+					<p key={ `${ error.code }-${ error.message }` }>{ error.message }</p>
 				) ),
 				{ persistent: true }
 			);
-		} else if ( ! isEmpty( messages.success ) ) {
+			return;
+		}
+
+		if ( messages.success?.length > 0 ) {
 			notices.success(
-				messages.success.map( ( success, index ) => (
-					<p key={ `${ success.code }-${ index }` }>{ success.message }</p>
+				messages.success.map( ( success ) => (
+					<p key={ `${ success.code }-${ success.message }` }>{ success.message }</p>
 				) )
 			);
+			return;
 		}
 	}
 

@@ -9,7 +9,7 @@ import { sortBy, sumBy } from 'lodash';
  * Internal dependencies
  */
 import DataType from './data-type';
-import LegendItem from 'components/legend-item';
+import LegendItem from 'calypso/components/legend-item';
 
 const NUM_COLOR_SECTIONS = 3;
 

@@ -1,5 +1,4 @@
-Query Reader Tag Images
-========================
+# Query Reader Tag Images
 
 `<QueryReaderTagImages />` is a React component used in managing network requests for Reader tag images.
 
@@ -9,7 +8,7 @@ Render the component. It does not accept any children, nor does it render any el
 
 ```jsx
 import React from 'react';
-import QueryReaderTagImages from 'components/data/query-reader-tag-images';
+import QueryReaderTagImages from 'calypso/components/data/query-reader-tag-images';
 import MyListItem from './list-item';
 
 export default function MyReaderTagImages( { images } ) {
@@ -17,12 +16,8 @@ export default function MyReaderTagImages( { images } ) {
 		<div>
 			<QueryReaderTagImages tag={ 'bananas' } />
 			{ images.map( ( image ) => {
-				return (
-					<MyListItem
-						key={ image.url }
-						image={ image } />
-				);
-			} }
+				return <MyListItem key={ image.url } image={ image } />;
+			} ) }
 		</div>
 	);
 }

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { THEME_FILTERS_REQUEST } from 'state/themes/action-types';
+import { THEME_FILTERS_REQUEST } from 'calypso/state/themes/action-types';
 
-import 'state/data-layer/wpcom/theme-filters';
-import 'state/themes/init';
+import 'calypso/state/data-layer/wpcom/theme-filters';
+import 'calypso/state/themes/init';
 
 /**
  * Triggers a network request to fetch all available theme filters.

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { isEmpty } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
@@ -23,7 +18,7 @@ import {
 	DomainContactValidationRequestExtraFields,
 	DomainContactValidationResponse,
 } from './backend/domain-contact-validation-endpoint';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { SignupValidationResponse } from './backend/signup-validation-endpoint';
 
 export type ManagedContactDetailsShape< T > = {
@@ -634,9 +629,7 @@ export function prepareGSuiteContactValidationRequest(
 		contact_information: {
 			firstName: details.firstName?.value ?? '',
 			lastName: details.lastName?.value ?? '',
-			...( details.alternateEmail?.value && { alternateEmail: details.alternateEmail?.value } ),
-			...( ! details.alternateEmail?.value &&
-				details.email?.value && { email: details.email?.value } ),
+			alternateEmail: details.alternateEmail?.value ?? '',
 			postalCode: tryToGuessPostalCodeFormat(
 				details.postalCode?.value ?? '',
 				details.countryCode?.value
@@ -651,9 +644,9 @@ export function getSignupValidationErrorResponse(
 	email: string,
 	emailTakenLoginRedirect: ( arg0: string ) => string
 ): ManagedContactDetailsErrors {
-	const emailResponse = response.messages?.email || {};
+	const emailResponse: Record< string, string > = response.messages?.email ?? {};
 
-	if ( isEmpty( emailResponse ) ) {
+	if ( Object.keys( emailResponse ).length === 0 ) {
 		return emailResponse;
 	}
 
@@ -900,9 +893,43 @@ export type WpcomStoreState = {
 	siteId: string;
 	siteSlug: string;
 	recaptchaClientId: number;
-	transactionResult: object;
+	transactionResult: TransactionResponse;
 	contactDetails: ManagedContactDetails;
 };
+
+type PurchaseSiteId = number;
+
+export interface TransactionResponse {
+	failed_purchases?: Record< PurchaseSiteId, Purchase >;
+	purchases?: Record< PurchaseSiteId, Purchase >;
+	receipt_id?: number;
+	order_id?: number;
+}
+
+export interface FailedPurchase {
+	product_meta: string;
+	product_id: string | number;
+	product_slug: string;
+	product_cost: string | number;
+	product_name: string;
+}
+
+export interface Purchase {
+	meta: string;
+	product_id: string | number;
+	product_slug: string;
+	product_cost: string | number;
+	product_name: string;
+	product_name_short: string;
+	delayed_provisioning?: boolean;
+	is_domain_registration?: boolean;
+	registrar_support_url?: string;
+	is_email_verified?: boolean;
+	is_root_domain_with_us?: boolean;
+	will_auto_renew?: boolean;
+	expiry: string;
+	user_email: string;
+}
 
 export const emptyManagedContactDetails: ManagedContactDetails = {
 	firstName: getInitialManagedValue(),

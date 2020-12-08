@@ -12,7 +12,7 @@ import {
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import {
 	EMAIL_FORWARDING_REQUEST,
 	EMAIL_FORWARDING_REQUEST_SUCCESS,
@@ -26,7 +26,7 @@ import {
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_RESEND_VERIFICATION_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { forwardsSchema, mxSchema, typeSchema } from './schema';
 
 export const requestingReducer = withoutPersistence( ( state = false, action ) => {

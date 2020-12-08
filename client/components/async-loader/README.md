@@ -16,22 +16,25 @@ We're going to use the dynamic `import()` syntax to load our components and then
 In the absence of the loading component the async loader will render `null`.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
-export default ( { siteId, currentSearch } ) => React.createElement( asyncLoader( {
-	promises: {
-		AuthorList: import( './author-list' ),
-		Banner: import( './banner' ),
-		PostList: import( './post-list' ),
-	},
-	success: ( { AuthorList, Banner, PostsList } ) => (
-		<>
-			<Banner />
-			<AuthorList siteId={ siteId } />
-			<PostList siteId={ siteId } search={ currentSearch } />
-		</>
-	),
-} ) );
+export default ( { siteId, currentSearch } ) =>
+	React.createElement(
+		asyncLoader( {
+			promises: {
+				AuthorList: import( './author-list' ),
+				Banner: import( './banner' ),
+				PostList: import( './post-list' ),
+			},
+			success: ( { AuthorList, Banner, PostsList } ) => (
+				<>
+					<Banner />
+					<AuthorList siteId={ siteId } />
+					<PostList siteId={ siteId } search={ currentSearch } />
+				</>
+			),
+		} )
+	);
 ```
 
 Note that can use this method for pulling in any module asynchronously.
@@ -46,20 +49,27 @@ Usually it looks like `if ( null == someData ) { return null; }`.
 We can use the `asyncLoader` to separate the concern of waiting for data from the concern of rendering that data.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
-export default props => React.createElement( asyncLoader( {
-	promises: {
-		data: waitForData( {
-			plan: requestPlan( props.userId ),
-			site: requestSiteInfo( props.siteId ),
-			user: requestUserInfo( props.userId ),
-		} ),
-	},
-	loading: () => <div>Loading profile information…</div>,
-	success: ( { data: { plan, site, user } } ) => <UserProfile plan={ plan } site={ site } user={ user } />,
-	failure: () => <div>Could not load necessary information. Please refresh the page to try again.</div>,
-} ) );
+export default ( props ) =>
+	React.createElement(
+		asyncLoader( {
+			promises: {
+				data: waitForHttpData( () => ( {
+					plan: requestPlan( props.userId ),
+					site: requestSiteInfo( props.siteId ),
+					user: requestUserInfo( props.userId ),
+				} ) ),
+			},
+			loading: () => <div>Loading profile information…</div>,
+			success: ( { data: { plan, site, user } } ) => (
+				<UserProfile plan={ plan } site={ site } user={ user } />
+			),
+			failure: () => (
+				<div>Could not load necessary information. Please refresh the page to try again.</div>
+			),
+		} )
+	);
 ```
 
 ### Waiting on tasks
@@ -69,15 +79,16 @@ We don't use the data returned by the promise in this case because the framework
 Thus we're not passing any data to the success component.
 
 ```js
-import { asyncLoader } from 'components/async-loader';
+import { asyncLoader } from 'calypso/components/async-loader';
 
-const getTranslations = slug => waitForData( {
-	translations: requestTranslations( slug ),
-} );
+const getTranslations = ( slug ) =>
+	waitForHttpData( () => ( {
+		translations: requestTranslations( slug ),
+	} ) );
 
 const Panel = asyncLoader( {
 	promises: {
-		translations: getTranslations( currentLocale )
+		translations: getTranslations( currentLocale ),
 	},
 	success: () => <TranslatedThing />,
 	loading: () => 'Loading…',
@@ -86,7 +97,7 @@ const Panel = asyncLoader( {
 			<Notice>Could not load translations, proceeding with English.</Notice>
 			<TranslatedThing />
 		</>
-	)
+	),
 } );
 
 context.primary = <Panel />;

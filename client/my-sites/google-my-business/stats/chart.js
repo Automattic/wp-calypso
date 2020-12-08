@@ -11,23 +11,24 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import getGoogleMyBusinessStats from 'state/selectors/get-google-my-business-stats';
-import getGoogleMyBusinessStatsError from 'state/selectors/get-google-my-business-stats-error';
-import LineChart from 'components/line-chart';
-import LineChartPlaceholder from 'components/line-chart/placeholder';
-import Notice from 'components/notice';
-import PieChart from 'components/pie-chart';
-import PieChartLegend from 'components/pie-chart/legend';
-import PieChartLegendPlaceholder from 'components/pie-chart/legend-placeholder';
-import PieChartPlaceholder from 'components/pie-chart/placeholder';
-import SectionHeader from 'components/section-header';
-import { changeGoogleMyBusinessStatsInterval } from 'state/google-my-business/ui/actions';
-import { enhanceWithSiteType, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getStatsInterval } from 'state/google-my-business/ui/selectors';
-import { requestGoogleMyBusinessStats } from 'state/google-my-business/actions';
-import { withEnhancers } from 'state/utils';
+import CardHeading from 'calypso/components/card-heading';
+import FormSelect from 'calypso/components/forms/form-select';
+import getGoogleMyBusinessStats from 'calypso/state/selectors/get-google-my-business-stats';
+import getGoogleMyBusinessStatsError from 'calypso/state/selectors/get-google-my-business-stats-error';
+import LineChart from 'calypso/components/line-chart';
+import LineChartPlaceholder from 'calypso/components/line-chart/placeholder';
+import Notice from 'calypso/components/notice';
+import PieChart from 'calypso/components/pie-chart';
+import PieChartLegend from 'calypso/components/pie-chart/legend';
+import PieChartLegendPlaceholder from 'calypso/components/pie-chart/legend-placeholder';
+import PieChartPlaceholder from 'calypso/components/pie-chart/placeholder';
+import SectionHeader from 'calypso/components/section-header';
+import { changeGoogleMyBusinessStatsInterval } from 'calypso/state/google-my-business/ui/actions';
+import { enhanceWithSiteType, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getStatsInterval } from 'calypso/state/google-my-business/ui/selectors';
+import { requestGoogleMyBusinessStats } from 'calypso/state/google-my-business/actions';
+import { withEnhancers } from 'calypso/state/utils';
 
 const withToolTip = ( WrappedComponent ) => ( props ) => {
 	// inject interval props to renderTooltipForDatanum
@@ -293,7 +294,7 @@ class GoogleMyBusinessStatsChart extends Component {
 							</CardHeading>
 						</div>
 					) }
-					<select
+					<FormSelect
 						className="gmb-stats__chart-interval"
 						onChange={ this.handleIntervalChange }
 						value={ interval }
@@ -301,7 +302,7 @@ class GoogleMyBusinessStatsChart extends Component {
 						<option value="week">{ translate( 'Week' ) }</option>
 						<option value="month">{ translate( 'Month' ) }</option>
 						<option value="quarter">{ translate( 'Quarter' ) }</option>
-					</select>
+					</FormSelect>
 
 					<div className="gmb-stats__chart">{ this.renderChart() }</div>
 				</Card>

@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting/decode-entities';
-import { getLanguage } from 'lib/i18n-utils/utils';
-import { withoutHttp } from 'lib/url';
+import { decodeEntities } from 'calypso/lib/formatting/decode-entities';
+import { getLanguage } from 'calypso/lib/i18n-utils/utils';
+import { withoutHttp } from 'calypso/lib/url';
 
 function getSiteSlug( url ) {
 	const slug = withoutHttp( url );

@@ -1,5 +1,4 @@
-Notifications
-=========
+# Notifications
 
 Handles the notification badge.
 

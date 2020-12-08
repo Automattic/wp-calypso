@@ -11,13 +11,13 @@ import { flowRight, mapValues, trim } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextarea from 'components/forms/form-textarea';
-import ReduxFormFieldset from 'components/redux-forms/redux-form-fieldset';
-import SectionHeader from 'components/section-header';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import ReduxFormFieldset from 'calypso/components/redux-forms/redux-form-fieldset';
+import SectionHeader from 'calypso/components/section-header';
 
-import 'state/form/init';
+import 'calypso/state/form/init';
 
 const form = 'extensions.zoninator.zoneDetails';
 

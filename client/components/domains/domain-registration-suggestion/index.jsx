@@ -6,32 +6,33 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { get, isNumber, includes } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import page from 'page';
 
 /**
  * Internal dependencies
  */
-import DomainSuggestion from 'components/domains/domain-suggestion';
+import DomainSuggestion from 'calypso/components/domains/domain-suggestion';
 import {
 	shouldBundleDomainWithPlan,
 	getDomainPriceRule,
 	hasDomainInCart,
 	isPaidDomain,
-} from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	parseMatchReasons,
 	VALID_MATCH_REASONS,
-} from 'components/domains/domain-registration-suggestion/utility';
+} from 'calypso/components/domains/domain-registration-suggestion/utility';
 import { ProgressBar } from '@automattic/components';
-import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'lib/domains';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getProductsList } from 'state/products-list/selectors';
-import Badge from 'components/badge';
-import InfoPopover from 'components/info-popover';
-import { HTTPS_SSL } from 'lib/url/support';
+import { getDomainPrice, getDomainSalePrice, getTld, isHstsRequired } from 'calypso/lib/domains';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import Badge from 'calypso/components/badge';
+import PremiumBadge from '../premium-badge';
+import InfoPopover from 'calypso/components/info-popover';
+import { HTTPS_SSL } from 'calypso/lib/url/support';
 
 const NOTICE_GREEN = '#4ab866';
 
@@ -39,6 +40,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	static propTypes = {
 		isDomainOnly: PropTypes.bool,
 		isSignupStep: PropTypes.bool,
+		showStrikedOutPrice: PropTypes.bool,
 		isFeatured: PropTypes.bool,
 		buttonStyles: PropTypes.object,
 		cart: PropTypes.object,
@@ -50,6 +52,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		} ).isRequired,
 		onButtonClick: PropTypes.func.isRequired,
 		domainsWithPlansOnly: PropTypes.bool.isRequired,
+		premiumDomain: PropTypes.object,
 		selectedSite: PropTypes.object,
 		railcarId: PropTypes.string,
 		recordTracksEvent: PropTypes.func,
@@ -91,6 +94,7 @@ class DomainRegistrationSuggestion extends React.Component {
 				fetch_algo: `${ this.props.fetchAlgo }/${ this.props.suggestion.vendor }`,
 				rec_result: `${ this.props.suggestion.domain_name }${ resultSuffix }`,
 				fetch_query: this.props.query,
+				domain_type: this.props.suggestion.is_premium ? 'premium' : 'standard',
 			} );
 		}
 	}
@@ -125,6 +129,7 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion,
 			translate,
 			pendingCheckSuggestion,
+			premiumDomain,
 		} = this.props;
 		const { domain_name: domain } = suggestion;
 		const isAdded = hasDomainInCart( cart, domain );
@@ -149,7 +154,14 @@ class DomainRegistrationSuggestion extends React.Component {
 					: translate( 'Select', { context: 'Domain mapping suggestion button' } );
 		}
 
-		if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
+		if ( premiumDomain?.pending ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+		} else if ( premiumDomain?.is_price_limit_exceeded ) {
+			buttonStyles = { ...buttonStyles, disabled: true };
+			buttonContent = translate( 'Restricted', {
+				context: 'Premium domain is not available for registration',
+			} );
+		} else if ( this.isUnavailableDomain( suggestion.domain_name ) ) {
 			buttonStyles = { ...buttonStyles, disabled: true };
 			buttonContent = translate( 'Unavailable', {
 				context: 'Domain suggestion is not available for registration',
@@ -168,22 +180,8 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	getPriceRule() {
-		const {
-			cart,
-			isDomainOnly,
-			domainsWithPlansOnly,
-			selectedSite,
-			suggestion,
-			selectedFreePlanInSwapFlow,
-		} = this.props;
-		const shouldShowFullDomainPrice = isDomainOnly || selectedFreePlanInSwapFlow;
-		return getDomainPriceRule(
-			domainsWithPlansOnly,
-			selectedSite,
-			cart,
-			suggestion,
-			shouldShowFullDomainPrice
-		);
+		const { cart, isDomainOnly, domainsWithPlansOnly, selectedSite, suggestion } = this.props;
+		return getDomainPriceRule( domainsWithPlansOnly, selectedSite, cart, suggestion, isDomainOnly );
 	}
 
 	/**
@@ -219,7 +217,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			isFeatured,
 			showHstsNotice,
 			productSaleCost,
-			suggestion: { domain_name: domain },
+			premiumDomain,
+			suggestion: { domain_name: domain, is_premium: isPremium },
 			translate,
 			isReskinned,
 		} = this.props;
@@ -241,14 +240,18 @@ class DomainRegistrationSuggestion extends React.Component {
 			comment: 'Shown next to a domain that has a special discounted sale price',
 		} );
 		const infoPopoverSize = isFeatured ? 22 : 18;
+
 		const titleWrapperClassName = classNames( 'domain-registration-suggestion__title-wrapper', {
-			'domain-registration-suggestion__title-domain-copy-test':
-				this.props.isEligibleVariantForDomainTest && ! this.props.isFeatured,
+			'domain-registration-suggestion__title-domain':
+				this.props.showStrikedOutPrice && ! this.props.isFeatured,
 		} );
 
 		return (
 			<div className={ titleWrapperClassName }>
 				<h3 className="domain-registration-suggestion__title">{ title }</h3>
+				{ isPremium && (
+					<PremiumBadge restrictedPremium={ premiumDomain?.is_price_limit_exceeded } />
+				) }
 				{ productSaleCost && paidDomain && <Badge>{ saleBadgeText }</Badge> }
 				{ showHstsNotice && (
 					<InfoPopover
@@ -290,17 +293,17 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { isRecommended, isBestAlternative, relevance: matchScore },
 			translate,
 			isFeatured,
+			showStrikedOutPrice,
 		} = this.props;
 
 		if ( ! isFeatured ) {
 			return null;
 		}
 
-		let title, progressBarProps;
+		let title;
+		let progressBarProps;
 		if ( isRecommended ) {
-			title = this.props.isEligibleVariantForDomainTest
-				? translate( 'Our Recommendation' )
-				: translate( 'Best Match' );
+			title = showStrikedOutPrice ? translate( 'Our Recommendation' ) : translate( 'Best Match' );
 			progressBarProps = {
 				color: NOTICE_GREEN,
 				title,
@@ -317,7 +320,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		}
 
 		if ( title ) {
-			if ( this.props.isEligibleVariantForDomainTest ) {
+			if ( showStrikedOutPrice ) {
 				const badgeClassName = classNames( '', {
 					success: isRecommended,
 					'info-blue': isBestAlternative,
@@ -340,7 +343,7 @@ class DomainRegistrationSuggestion extends React.Component {
 	}
 
 	renderMatchReason() {
-		if ( this.props.isEligibleVariantForDomainTest ) {
+		if ( this.props.showStrikedOutPrice ) {
 			return null;
 		}
 
@@ -374,6 +377,8 @@ class DomainRegistrationSuggestion extends React.Component {
 			suggestion: { domain_name: domain },
 			productCost,
 			productSaleCost,
+			premiumDomain,
+			showStrikedOutPrice,
 		} = this.props;
 
 		const isUnavailableDomain = this.isUnavailableDomain( domain );
@@ -386,6 +391,7 @@ class DomainRegistrationSuggestion extends React.Component {
 		return (
 			<DomainSuggestion
 				extraClasses={ extraClasses }
+				premiumDomain={ premiumDomain }
 				priceRule={ this.getPriceRule() }
 				price={ productCost }
 				salePrice={ productSaleCost }
@@ -393,9 +399,8 @@ class DomainRegistrationSuggestion extends React.Component {
 				domainsWithPlansOnly={ domainsWithPlansOnly }
 				onButtonClick={ this.onButtonClick }
 				{ ...this.getButtonProps() }
-				isEligibleVariantForDomainTest={ this.props.isEligibleVariantForDomainTest }
 				isFeatured={ isFeatured }
-				selectedPaidPlanInSwapFlow={ this.props.selectedPaidPlanInSwapFlow }
+				showStrikedOutPrice={ showStrikedOutPrice }
 			>
 				{ this.renderDomain() }
 				{ this.renderProgressBar() }
@@ -409,17 +414,28 @@ const mapStateToProps = ( state, props ) => {
 	const productSlug = get( props, 'suggestion.product_slug' );
 	const productsList = getProductsList( state );
 	const currentUserCurrencyCode = getCurrentUserCurrencyCode( state );
-	const stripZeros = props.isEligibleVariantForDomainTest ? true : false;
+	const stripZeros = props.showStrikedOutPrice ? true : false;
+	const isPremium = props.premiumDomain?.is_premium || props.suggestion?.is_premium;
 
-	return {
-		showHstsNotice: isHstsRequired( productSlug, productsList ),
-		productCost: getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros ),
-		productSaleCost: getDomainSalePrice(
+	let productCost;
+	let productSaleCost;
+
+	if ( isPremium ) {
+		productCost = props.premiumDomain?.cost;
+	} else {
+		productCost = getDomainPrice( productSlug, productsList, currentUserCurrencyCode, stripZeros );
+		productSaleCost = getDomainSalePrice(
 			productSlug,
 			productsList,
 			currentUserCurrencyCode,
 			stripZeros
-		),
+		);
+	}
+
+	return {
+		showHstsNotice: isHstsRequired( productSlug, productsList ),
+		productCost,
+		productSaleCost,
 	};
 };
 

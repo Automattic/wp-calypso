@@ -9,33 +9,33 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { requestSite } from 'state/sites/actions';
+import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
 	getSiteAdminUrl,
 	getSiteSlug,
 	isJetpackModuleActive,
 	isJetpackSite,
-} from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { setSelectedSiteId, setSection, setAllSitesSelected } from 'state/ui/actions';
-import { savePreference } from 'state/preferences/actions';
-import { hasReceivedRemotePreferences, getPreference } from 'state/preferences/selectors';
-import NavigationComponent from 'my-sites/navigation';
-import { addQueryArgs, getSiteFragment, sectionify } from 'lib/route';
-import notices from 'notices';
-import config from 'config';
-import { recordPageView } from 'lib/analytics/page-view';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import getPrimaryDomainBySiteId from 'state/selectors/get-primary-domain-by-site-id';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import getSiteId from 'state/selectors/get-site-id';
-import { getCurrentUser } from 'state/current-user/selectors';
-import isDomainOnlySite from 'state/selectors/is-domain-only-site';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteMigrationInProgress from 'state/selectors/is-site-migration-in-progress';
-import canCurrentUser from 'state/selectors/can-current-user';
+} from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { setSelectedSiteId, setAllSitesSelected } from 'calypso/state/ui/actions';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import NavigationComponent from 'calypso/my-sites/navigation';
+import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
+import notices from 'calypso/notices';
+import config from 'calypso/config';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import getPrimaryDomainBySiteId from 'calypso/state/selectors/get-primary-domain-by-site-id';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementDns,
@@ -48,19 +48,20 @@ import {
 	domainManagementTransferOut,
 	domainManagementTransferToOtherSite,
 	domainManagementRoot,
-} from 'my-sites/domains/paths';
+} from 'calypso/my-sites/domains/paths';
 import {
 	emailManagement,
 	emailManagementForwarding,
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
-} from 'my-sites/email/paths';
-import SitesComponent from 'my-sites/sites';
-import { warningNotice } from 'state/notices/actions';
-import { makeLayout, render as clientRender } from 'controller';
-import NoSitesMessage from 'components/empty-content/no-sites-message';
-import EmptyContentComponent from 'components/empty-content';
-import DomainOnly from 'my-sites/domains/domain-management/list/domain-only';
+} from 'calypso/my-sites/email/paths';
+import SitesComponent from 'calypso/my-sites/sites';
+import { warningNotice } from 'calypso/state/notices/actions';
+import { makeLayout, render as clientRender, setSectionMiddleware } from 'calypso/controller';
+import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
+import EmptyContentComponent from 'calypso/components/empty-content';
+import DomainOnly from 'calypso/my-sites/domains/domain-management/list/domain-only';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
 
 /*
  * @FIXME Shorthand, but I might get rid of this.
@@ -98,12 +99,8 @@ function createNavigation( context ) {
 	);
 }
 
-function removeSidebar( context ) {
-	context.store.dispatch( setSection( { group: 'sites', secondary: false } ) );
-}
-
 function renderEmptySites( context ) {
-	removeSidebar( context );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( NoSitesMessage );
 
@@ -117,7 +114,7 @@ function renderNoVisibleSites( context ) {
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
 	const signup_url = config( 'signup_url' );
 
-	removeSidebar( context );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( EmptyContentComponent, {
 		title: i18n.translate(
@@ -324,8 +321,9 @@ export function noSite( context, next ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
 	const hasSite = currentUser && currentUser.visible_site_count >= 1;
+	const isDomainOnlyFlow = context.query?.isDomainOnly === '1';
 
-	if ( hasSite ) {
+	if ( ! isDomainOnlyFlow && hasSite ) {
 		siteSelection( context, next );
 	} else {
 		context.store.dispatch( setSelectedSiteId( null ) );
@@ -488,7 +486,7 @@ export function sites( context, next ) {
 	}
 
 	context.store.dispatch( setLayoutFocus( 'content' ) );
-	removeSidebar( context );
+	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = createSitesComponent( context );
 	next();
@@ -504,4 +502,53 @@ export function redirectWithoutSite( redirectPath ) {
 
 		return next();
 	};
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project but only
+ * if the P2+ paid plan is disabled for the specific environment (ie development vs production).
+ *
+ * If you need to prevent navigation to pages for the P2 project in general,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsP2PlusNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if (
+		! config.isEnabled( 'p2/p2-plus' ) &&
+		selectedSite &&
+		isSiteWPForTeams( store.getState(), selectedSite.ID )
+	) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
+}
+
+/**
+ * Use this middleware to prevent navigation to pages which are not supported by the P2 project in general.
+ *
+ * If you need to prevent navigation to pages based on whether the P2+ paid plan is enabled or disabled,
+ * see `wpForTeamsP2PlusNotSupportedRedirect`.
+ *
+ * @param {object} context -- Middleware context
+ * @param {Function} next -- Call next middleware in chain
+ */
+export function wpForTeamsGeneralNotSupportedRedirect( context, next ) {
+	const store = context.store;
+	const selectedSite = getSelectedSite( store.getState() );
+
+	if ( selectedSite && isSiteWPForTeams( store.getState(), selectedSite.ID ) ) {
+		const siteSlug = getSiteSlug( store.getState(), selectedSite.ID );
+
+		return page.redirect( `/home/${ siteSlug }` );
+	}
+
+	next();
 }

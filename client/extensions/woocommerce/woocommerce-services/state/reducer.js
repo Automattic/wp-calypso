@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { combineReducers, keyedReducer } from 'state/utils';
+import { combineReducers, keyedReducer } from 'calypso/state/utils';
 
 /**
  * Internal dependencies

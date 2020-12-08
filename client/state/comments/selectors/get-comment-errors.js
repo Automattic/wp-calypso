@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 export function getCommentErrors( state ) {
 	return state.comments.errors;

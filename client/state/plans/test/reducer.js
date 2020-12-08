@@ -20,7 +20,7 @@ import plansReducer, {
 } from '../reducer';
 
 import { WPCOM_RESPONSE } from './fixture';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	let sandbox;

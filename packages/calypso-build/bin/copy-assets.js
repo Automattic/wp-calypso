@@ -9,8 +9,8 @@ const rcopy = require( 'recursive-copy' );
 const dir = process.cwd();
 
 const inputDir = path.join( dir, 'src' );
-const outputDirEsm = path.join( dir, 'dist', 'esm' );
-const outputDirCommon = path.join( dir, 'dist', 'cjs' );
+const outputDirESM = path.join( dir, 'dist', 'esm' );
+const outputDirCJS = path.join( dir, 'dist', 'cjs' );
 
 const copyOptions = {
 	overwrite: true,
@@ -26,5 +26,26 @@ const copyOptions = {
 	concurrency: 127,
 };
 
-rcopy( inputDir, outputDirEsm, copyOptions );
-rcopy( inputDir, outputDirCommon, copyOptions );
+let copyAll = true;
+let copyESM = false;
+let copyCJS = false;
+
+for ( const arg of process.argv.slice( 2 ) ) {
+	if ( arg === '--esm' ) {
+		copyAll = false;
+		copyESM = true;
+	}
+
+	if ( arg === '--cjs' ) {
+		copyAll = false;
+		copyCJS = true;
+	}
+}
+
+if ( copyAll || copyESM ) {
+	rcopy( inputDir, outputDirESM, copyOptions );
+}
+
+if ( copyAll || copyCJS ) {
+	rcopy( inputDir, outputDirCJS, copyOptions );
+}

@@ -9,10 +9,10 @@ import debugModule from 'debug';
 /**
  * Internal dependencies
  */
-import EmailFollowersStore from 'lib/email-followers/store';
-import EmailFollowersActions from 'lib/email-followers/actions';
-import passToChildren from 'lib/react-pass-to-children';
-import pollers from 'lib/data-poller';
+import EmailFollowersStore from 'calypso/lib/email-followers/store';
+import EmailFollowersActions from 'calypso/lib/email-followers/actions';
+import passToChildren from 'calypso/lib/react-pass-to-children';
+import pollers from 'calypso/lib/data-poller';
 
 /**
  * Module variables

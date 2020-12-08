@@ -11,10 +11,11 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import preloadImage from '../preload-image';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( '#preloadImage()', () => {
-	let sandbox, Image;
+	let sandbox;
+	let Image;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;

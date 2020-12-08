@@ -17,7 +17,7 @@ import {
 	PREFERENCES_SAVE_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	test( 'should export expected reducer keys', () => {

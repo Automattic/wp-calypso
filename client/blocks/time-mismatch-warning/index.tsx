@@ -2,58 +2,68 @@
  * External dependencies
  */
 import React, { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import { withApplySiteOffset, applySiteOffsetType } from 'components/site-offset';
-import { useLocalizedMoment } from 'components/localized-moment';
-
-/**
- * Type dependencies
- */
-import { getSelectedSiteSlug } from 'state/ui/selectors';
-
-interface ConnectedProps {
-	applySiteOffset: applySiteOffsetType;
-}
+import Notice from 'calypso/components/notice';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import { preventWidows } from 'calypso/lib/formatting';
+import { hasReceivedRemotePreferences, getPreference } from 'calypso/state/preferences/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
 
 interface ExternalProps {
 	status?: string;
+	siteId: number | null;
+	settingsUrl?: string;
 }
 
-export const TimeMismatchWarning: FC< ExternalProps & ConnectedProps > = ( {
-	applySiteOffset,
+export const TimeMismatchWarning: FC< ExternalProps > = ( {
 	status = 'is-warning',
-}: ExternalProps & ConnectedProps ) => {
-	const translate = useTranslate();
-	const moment = useLocalizedMoment();
-	const siteSlug = useSelector( getSelectedSiteSlug );
-	const settingsUrl = siteSlug ? `/settings/general/${ siteSlug }` : '#';
-	const now = moment();
-	const siteOffset = applySiteOffset( now );
+	siteId,
+	settingsUrl = '#',
+}: ExternalProps ) => {
+	const dismissPreference = `time-mismatch-warning-${ siteId }`;
 
-	if ( ! siteOffset || now.isSame( siteOffset ) ) {
+	const translate = useTranslate();
+	const dispatch = useDispatch();
+	const userOffset = new Date().getTimezoneOffset() / -60; // Negative as function returns minutes *behind* UTC.
+	const siteOffset = useSelector( ( state ) => siteId && getSiteGmtOffset( state, siteId ) );
+	const hasPreferences = useSelector( hasReceivedRemotePreferences );
+	const isDismissed = useSelector(
+		( state ) => siteId && getPreference( state, dismissPreference )
+	);
+
+	if (
+		! siteId ||
+		! hasPreferences ||
+		isDismissed ||
+		siteOffset === null ||
+		userOffset === siteOffset
+	) {
 		return null;
 	}
 
+	const dismissClick = () => dispatch( savePreference( dismissPreference, 1 ) );
+
 	return (
-		<Notice status={ status }>
-			{ translate(
-				'Looks like your computer time and site time don’t match! ' +
-					'We’re going to show you times based on your site. ' +
-					'If that doesn’t look right, you can {{SiteSettings}}go here to update it{{/SiteSettings}}.',
-				{
-					components: {
-						SiteSettings: <a href={ settingsUrl } />,
-					},
-				}
+		<Notice status={ status } onDismissClick={ dismissClick }>
+			{ preventWidows(
+				translate(
+					'This page reflects the time zone set on your site. ' +
+						'It looks like that does not match your current time zone. ' +
+						'{{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.',
+					{
+						components: {
+							SiteSettings: <a href={ settingsUrl } />,
+						},
+					}
+				)
 			) }
 		</Notice>
 	);
 };
 
-export default withApplySiteOffset( TimeMismatchWarning );
+export default TimeMismatchWarning;

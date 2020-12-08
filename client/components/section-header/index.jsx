@@ -8,8 +8,8 @@ import classNames from 'classnames';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Count from 'components/count';
-import SupportInfo from 'components/support-info';
+import Count from 'calypso/components/count';
+import SupportInfo from 'calypso/components/support-info';
 
 /**
  * Style dependencies

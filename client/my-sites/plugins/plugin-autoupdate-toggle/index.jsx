@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PluginsActions from 'lib/plugins/actions';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginAction from 'my-sites/plugins/plugin-action/plugin-action';
-import ExternalLink from 'components/external-link';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSiteFileModDisableReason, isMainNetworkSite } from 'lib/site/utils';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import PluginAction from 'calypso/my-sites/plugins/plugin-action/plugin-action';
+import ExternalLink from 'calypso/components/external-link';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSiteFileModDisableReason, isMainNetworkSite } from 'calypso/lib/site/utils';
 
 export class PluginAutoUpdateToggle extends Component {
 	toggleAutoUpdates = () => {
@@ -142,14 +142,14 @@ export class PluginAutoUpdateToggle extends Component {
 		}
 
 		const inProgress = PluginsLog.isInProgressAction( site.ID, plugin.slug, [
-				'ENABLE_AUTOUPDATE_PLUGIN',
-				'DISABLE_AUTOUPDATE_PLUGIN',
-			] ),
-			getDisabledInfo = this.getDisabledInfo(),
-			label = translate( 'Autoupdates', {
-				comment:
-					'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
-			} );
+			'ENABLE_AUTOUPDATE_PLUGIN',
+			'DISABLE_AUTOUPDATE_PLUGIN',
+		] );
+		const getDisabledInfo = this.getDisabledInfo();
+		const label = translate( 'Autoupdates', {
+			comment:
+				'this goes next to an icon that displays if the plugin has "autoupdates", both enabled and disabled',
+		} );
 
 		return (
 			<PluginAction

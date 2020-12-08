@@ -7,9 +7,9 @@ import debugFactory from 'debug';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { gaRecordEvent } from 'lib/analytics/ga';
-import { bumpStat, bumpStatWithPageView } from 'lib/analytics/mc';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import { bumpStat, bumpStatWithPageView } from 'calypso/lib/analytics/mc';
 
 const debug = debugFactory( 'calypso:reader:stats' );
 

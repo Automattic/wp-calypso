@@ -7,7 +7,10 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
 import { Card } from '@automattic/components';
 
 const LONGREADS_SITE_ID = 70135762;

@@ -6,27 +6,26 @@ import { localize } from 'i18n-calypso';
 import page from 'page';
 import { initial, flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import BlankSuggestions from 'reader/components/reader-blank-suggestions';
-import Stream from 'reader/stream';
+import BlankSuggestions from 'calypso/reader/components/reader-blank-suggestions';
+import Stream from 'calypso/reader/stream';
 import { CompactCard, Button } from '@automattic/components';
-import SearchInput from 'components/search';
-import { recordTrack } from 'reader/stats';
-import Suggestion from 'reader/search-stream/suggestion';
-import SuggestionProvider from 'reader/search-stream/suggestion-provider';
+import SearchInput from 'calypso/components/search';
+import { recordTrack } from 'calypso/reader/stats';
+import Suggestion from 'calypso/reader/search-stream/suggestion';
+import SuggestionProvider from 'calypso/reader/search-stream/suggestion-provider';
 import FollowingIntro from './intro';
-import { getSearchPlaceholderText } from 'reader/search/utils';
-import Banner from 'components/banner';
-import { getCurrentUserCountryCode } from 'state/current-user/selectors';
-import SectionHeader from 'components/section-header';
-import { requestMarkAllAsSeen } from 'state/reader/seen-posts/actions';
-import { SECTION_FOLLOWING } from 'state/reader/seen-posts/constants';
-import { getReaderOrganizationFeedsInfo } from 'state/reader/organizations/selectors';
-import { NO_ORG_ID } from 'state/reader/organizations/constants';
+import { getSearchPlaceholderText } from 'calypso/reader/search/utils';
+import SectionHeader from 'calypso/components/section-header';
+import { requestMarkAllAsSeen } from 'calypso/state/reader/seen-posts/actions';
+import { SECTION_FOLLOWING } from 'calypso/state/reader/seen-posts/constants';
+import { getReaderOrganizationFeedsInfo } from 'calypso/state/reader/organizations/selectors';
+import { NO_ORG_ID } from 'calypso/state/reader/organizations/constants';
+import FollowingVoteBanner from './vote-banner';
 
 /**
  * Style dependencies
@@ -43,8 +42,6 @@ function handleSearch( query ) {
 	}
 }
 
-const lastDayForVoteBanner = new Date( '2018-11-07T00:00:00' );
-
 const FollowingStream = ( props ) => {
 	const suggestionList =
 		props.suggestions &&
@@ -55,11 +52,9 @@ const FollowingStream = ( props ) => {
 			] )
 		);
 	const placeholderText = getSearchPlaceholderText();
-	const now = new Date();
-	const showRegistrationMsg = props.userInUSA && now < lastDayForVoteBanner;
 	const { translate } = props;
 	const dispatch = useDispatch();
-
+	const voteBanner = <FollowingVoteBanner />;
 	const markAllAsSeen = ( feedsInfo ) => {
 		const { feedIds, feedUrls } = feedsInfo;
 		dispatch( requestMarkAllAsSeen( { identifier: SECTION_FOLLOWING, feedIds, feedUrls } ) );
@@ -68,20 +63,7 @@ const FollowingStream = ( props ) => {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
 		<Stream { ...props }>
-			{ ! showRegistrationMsg && <FollowingIntro /> }
-			{ showRegistrationMsg && (
-				<Banner
-					className="following__reader-vote"
-					title="Election Day: Tuesday November 6th"
-					callToAction="How to vote"
-					description="Remember to vote."
-					dismissPreferenceName="reader-vote-prompt"
-					event="reader-vote-prompt"
-					href="https://www.usa.gov/election-office"
-					icon="star"
-					horizontal
-				/>
-			) }
+			{ voteBanner ? voteBanner : <FollowingIntro /> }
 			<CompactCard className="following__search">
 				<SearchInput
 					onSearch={ handleSearch }
@@ -111,6 +93,5 @@ const FollowingStream = ( props ) => {
 };
 
 export default connect( ( state ) => ( {
-	userInUSA: getCurrentUserCountryCode( state ) === 'US',
 	feedsInfo: getReaderOrganizationFeedsInfo( state, NO_ORG_ID ),
 } ) )( SuggestionProvider( localize( FollowingStream ) ) );

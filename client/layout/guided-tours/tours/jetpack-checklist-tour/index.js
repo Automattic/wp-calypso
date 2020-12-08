@@ -7,7 +7,14 @@ import React from 'react';
  * Internal dependencies
  */
 import meta from './meta';
-import { ButtonRow, makeTour, Next, Quit, Step, Tour } from 'layout/guided-tours/config-elements';
+import {
+	ButtonRow,
+	makeTour,
+	Next,
+	Quit,
+	Step,
+	Tour,
+} from 'calypso/layout/guided-tours/config-elements';
 
 export const JetpackChecklistTour = makeTour(
 	<Tour { ...meta }>

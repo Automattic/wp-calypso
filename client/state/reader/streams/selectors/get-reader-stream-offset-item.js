@@ -6,10 +6,10 @@ import { findIndex } from 'lodash';
 /**
  * Internal dependencies
  */
-import { keysAreEqual } from 'reader/post-key';
-import getCurrentStream from 'state/selectors/get-reader-current-stream';
+import { keysAreEqual } from 'calypso/reader/post-key';
+import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /*
  * Given state, an item, and an offset: return the item that is offset away from the currentItem in the list.

@@ -30,11 +30,17 @@ export type NewSiteResponse =
 	| NewSiteErrorResponse
 	| NewSiteErrorCreateBlog;
 
+export enum Visibility {
+	PublicIndexed = 1,
+	PublicNotIndexed = 0,
+	Private = -1,
+}
+
 export interface CreateSiteParams {
 	blog_name: string;
 	blog_title?: string;
 	authToken?: string;
-	public?: number;
+	public?: Visibility;
 	options?: {
 		site_vertical?: string;
 		site_vertical_name?: string;
@@ -51,7 +57,21 @@ export interface CreateSiteParams {
 		font_headings?: string;
 		font_base?: string;
 		use_patterns?: boolean;
+		selected_features?: string[];
+		wpcom_public_coming_soon?: number;
 	};
+}
+
+export interface SiteDetailsPlan {
+	product_id: number;
+	product_slug: string;
+	product_name: string;
+	product_name_short: string;
+	product_name_short_with_suffix: string;
+	expired: boolean;
+	billing_period: string;
+	user_is_owner: boolean;
+	is_free: boolean;
 }
 
 export interface SiteDetails {
@@ -62,10 +82,9 @@ export interface SiteDetails {
 	launch_status: string;
 	options: {
 		created_at: string;
+		selected_features?: string[];
 	};
-	plan?: {
-		is_free: boolean;
-	};
+	plan?: SiteDetailsPlan;
 }
 
 export interface SiteError {
@@ -104,4 +123,54 @@ export interface Cart {
 	allowed_payment_methods: unknown[];
 	create_new_blog: boolean;
 	messages: Record< 'errors' | 'success', unknown >;
+}
+
+export interface Domain {
+	primary_domain: boolean;
+	blog_id: number;
+	subscription_id?: any;
+	current_user_can_manage: boolean;
+	can_set_as_primary: boolean;
+	domain: string;
+	supports_domain_connect?: any;
+	email_forwards_count: number;
+	expiry: boolean;
+	expiry_soon: boolean;
+	expired: boolean;
+	new_registration: boolean;
+	auto_renewing: boolean;
+	pending_registration: boolean;
+	pending_registration_time: string;
+	has_registration: boolean;
+	points_to_wpcom: boolean;
+	privacy_available: boolean;
+	private_domain: boolean;
+	partner_domain: boolean;
+	wpcom_domain: boolean;
+	has_zone: boolean;
+	is_renewable: boolean;
+	is_redeemable: boolean;
+	is_subdomain: boolean;
+	is_eligible_for_inbound_transfer: boolean;
+	is_locked: boolean;
+	is_wpcom_staging_domain: boolean;
+	transfer_away_eligible_at?: any;
+	type: string;
+	registration_date: string;
+	auto_renewal_date: string;
+	google_apps_subscription?: unknown[];
+	titan_mail_subscription?: unknown[];
+	pending_whois_update: boolean;
+	tld_maintenance_end_time?: any;
+	ssl_status?: any;
+	supports_gdpr_consent_management: boolean;
+	supports_transfer_approval: boolean;
+	domain_registration_agreement_url: string;
+	contact_info_disclosure_available: boolean;
+	contact_info_disclosed: boolean;
+	renewable_until?: any;
+	redeemable_until?: any;
+	bundled_plan_subscription_id?: any;
+	product_slug?: any;
+	owner: string;
 }

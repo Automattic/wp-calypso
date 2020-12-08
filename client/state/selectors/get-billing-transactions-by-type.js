@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
-import getUpcomingBillingTransactions from 'state/selectors/get-upcoming-billing-transactions';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
+import getUpcomingBillingTransactions from 'calypso/state/selectors/get-upcoming-billing-transactions';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 /**
  * Returns billing transactions of the provided type.

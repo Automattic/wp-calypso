@@ -14,7 +14,7 @@ import { mount } from 'enzyme';
  */
 import { PluginsList } from '..';
 import { sites } from './fixtures';
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 
 jest.mock( 'lib/analytics/ga', () => ( {
 	recordEvent: () => {},
@@ -25,13 +25,17 @@ jest.mock( 'lib/wp', () => ( {
 	} ),
 } ) );
 jest.mock( 'my-sites/plugins/plugin-item/plugin-item', () =>
-	require( 'components/empty-component' )
+	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/plugins/plugin-list-header', () => require( 'components/empty-component' ) );
+jest.mock( 'my-sites/plugins/plugin-list-header', () =>
+	require( 'calypso/components/empty-component' )
+);
 
 describe( 'PluginsList', () => {
 	describe( 'rendering bulk actions', () => {
-		let renderedPluginsList, plugins, props;
+		let renderedPluginsList;
+		let plugins;
+		let props;
 
 		beforeAll( () => {
 			plugins = [

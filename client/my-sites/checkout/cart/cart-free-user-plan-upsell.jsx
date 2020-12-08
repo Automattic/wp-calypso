@@ -12,25 +12,25 @@ import { find } from 'lodash';
  */
 import formatCurrency from '@automattic/format-currency';
 import { Button } from '@automattic/components';
-import { getSelectedSite } from 'state/ui/selectors';
-import { siteHasPaidPlan } from 'signup/steps/site-picker/site-picker-submit';
-import { currentUserHasFlag, getCurrentUser } from 'state/current-user/selectors';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { siteHasPaidPlan } from 'calypso/signup/steps/site-picker/site-picker-submit';
+import { currentUserHasFlag, getCurrentUser } from 'calypso/state/current-user/selectors';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 import {
 	hasDomainRegistration,
 	hasTransferProduct,
 	hasPlan,
 	planItem,
-} from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
-import SectionHeader from 'components/section-header';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { isRequestingSitePlans } from 'state/sites/plans/selectors';
-import { isRequestingPlans } from 'state/plans/selectors';
-import { getPlan } from 'lib/plans';
-import { getPlanPrice } from 'state/products-list/selectors';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+} from 'calypso/lib/cart-values/cart-items';
+import { addItem } from 'calypso/lib/cart/actions';
+import SectionHeader from 'calypso/components/section-header';
+import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
+import { isRequestingPlans } from 'calypso/state/plans/selectors';
+import { getPlan } from 'calypso/lib/plans';
+import { getPlanPrice } from 'calypso/state/products-list/selectors';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getAllCartItems } from '../../../lib/cart-values/cart-items';
 import { isDomainRegistration, isDomainTransfer } from '../../../lib/products-values';
 
@@ -130,8 +130,10 @@ class CartFreeUserPlanUpsell extends React.Component {
 
 	addPlanToCart = () => {
 		const planCartItem = planItem( PLAN_PERSONAL, {} );
-		this.props.addItemToCart( planCartItem );
-		this.props.clickUpsellAddToCart();
+		if ( planCartItem ) {
+			this.props.addItemToCart( planCartItem );
+			this.props.clickUpsellAddToCart();
+		}
 	};
 
 	render() {

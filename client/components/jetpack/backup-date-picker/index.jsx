@@ -10,11 +10,11 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { withLocalizedMoment } from 'components/localized-moment';
-import Button from 'components/forms/form-button';
-import DateRangeSelector from 'my-sites/activity/filterbar/date-range-selector';
-import Gridicon from 'components/gridicon';
+import { isEnabled } from 'calypso/config';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Button from 'calypso/components/forms/form-button';
+import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
@@ -26,7 +26,7 @@ class BackupDatePicker extends Component {
 		siteId: PropTypes.number.isRequired,
 		selectedDate: PropTypes.object.isRequired,
 		onDateChange: PropTypes.func.isRequired,
-		oldestDateAvailable: PropTypes.object.isRequired,
+		oldestDateAvailable: PropTypes.object,
 	};
 
 	getDisplayDate = ( date, showTodayYesterday = true ) => {

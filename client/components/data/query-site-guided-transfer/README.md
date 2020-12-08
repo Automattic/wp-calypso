@@ -1,5 +1,4 @@
-Query Site Guided Transfer
-================
+# Query Site Guided Transfer
 
 `<QuerySiteGuidedTransfer />` is a React component used to fetch the status of any guided transfer for a site.
 

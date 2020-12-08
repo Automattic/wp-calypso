@@ -11,32 +11,28 @@ import { flowRight, isEqual, size, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import ListEnd from 'components/list-end';
-import QueryPosts from 'components/data/query-posts';
+import ListEnd from 'calypso/components/list-end';
+import QueryPosts from 'calypso/components/data/query-posts';
 import Page from './page';
-import { preload } from 'sections-helper';
-import InfiniteScroll from 'components/infinite-scroll';
-import EmptyContent from 'components/empty-content';
-import NoResults from 'my-sites/no-results';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import InfiniteScroll from 'calypso/components/infinite-scroll';
+import EmptyContent from 'calypso/components/empty-content';
+import NoResults from 'calypso/my-sites/no-results';
 import Placeholder from './placeholder';
 import { sortPagesHierarchically } from './helpers';
 import BlogPostsPage from './blog-posts-page';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import {
 	getPostsForQueryIgnoringPage,
 	isRequestingPostsForQuery,
 	isPostsLastPageForQuery,
-} from 'state/posts/selectors';
-import { getSite } from 'state/sites/selectors';
-import getEditorUrl from 'state/selectors/get-editor-url';
-import SectionHeader from 'components/section-header';
+} from 'calypso/state/posts/selectors';
+import { getSite } from 'calypso/state/sites/selectors';
+import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import SectionHeader from 'calypso/components/section-header';
 import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
-import config from 'config';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import config from 'calypso/config';
 
 export default class PageList extends Component {
 	static propTypes = {

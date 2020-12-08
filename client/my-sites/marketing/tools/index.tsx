@@ -4,25 +4,30 @@
 import { connect } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
-import { useTranslate } from 'i18n-calypso';
+import { useTranslate, getLocaleSlug } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MarketingToolsFeature from './feature';
-import MarketingToolsGoogleMyBusinessFeature from './google-my-business-feature';
 import MarketingToolsHeader from './header';
-import { marketingConnections, marketingTraffic } from 'my-sites/marketing/paths';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import earnIllustration from 'assets/images/customer-home/illustration--task-earn.svg';
+import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+
+/**
+ * Images
+ */
+import earnIllustration from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
+import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
+import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
 
 /**
  * Types
  */
-import * as T from 'types';
+import * as T from 'calypso/types';
 
 /**
  * Style dependencies
@@ -56,6 +61,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_create_a_logo_button_click' );
 	};
 
+	const handleFacebookMessengerClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_facebook_messenger_button_click' );
+	};
+
 	const handleFindYourExpertClick = () => {
 		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
 	};
@@ -76,9 +85,9 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				<MarketingToolsFeature
 					title={ translate( 'Want to build a great brand? Start with a great logo' ) }
 					description={ translate(
-						"A custom logo helps your brand pop and makes your site memorable. Our partner Looka is standing by if you'd like some professional help."
+						'A custom logo helps your brand pop and makes your site memorable. Make a professional logo in a few clicks with our partner Fiverr.'
 					) }
-					imagePath="/calypso/images/marketing/looka-logo.svg"
+					imagePath={ fiverrLogo }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
@@ -88,6 +97,29 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 						{ translate( 'Create a logo' ) }
 					</Button>
 				</MarketingToolsFeature>
+
+				{ getLocaleSlug() === 'en' && (
+					<MarketingToolsFeature
+						title={ translate( 'Want to convert visitors into customers? Add Messenger Chat!' ) }
+						description={ translate(
+							'Customers like to buy from a business they can message. Build trust, help customers, and provide support with the Official Facebook Messenger Chat Plugin. {{em}}Available on Business and eCommerce plans{{/em}}.',
+							{
+								components: {
+									em: <em />,
+								},
+							}
+						) }
+						imagePath={ facebookMessenger }
+					>
+						<Button
+							onClick={ handleFacebookMessengerClick }
+							href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+							target="_blank"
+						>
+							{ translate( 'Add Messenger Chat' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 
 				<MarketingToolsFeature
 					title={ translate( 'Build your community, following, and income with Earn tools' ) }
@@ -108,8 +140,6 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				>
 					<Button onClick={ handleStartSharingClick }>{ translate( 'Start sharing' ) }</Button>
 				</MarketingToolsFeature>
-
-				<MarketingToolsGoogleMyBusinessFeature />
 
 				<MarketingToolsFeature
 					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	DOMAINS_DNS_ADD,
 	DOMAINS_DNS_ADD_COMPLETED,
@@ -13,10 +13,10 @@ import {
 	DOMAINS_DNS_FETCH,
 	DOMAINS_DNS_FETCH_COMPLETED,
 	DOMAINS_DNS_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { getDomainDns } from './selectors';
 
-import 'state/domains/init';
+import 'calypso/state/domains/init';
 
 export const fetchDns = ( domainName ) => ( dispatch, getState ) => {
 	const dns = getDomainDns( getState(), domainName );
@@ -36,12 +36,10 @@ export const fetchDns = ( domainName ) => ( dispatch, getState ) => {
 		);
 };
 
-export const addDns = ( domainName, record ) => ( dispatch, getState ) => {
+export const addDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_ADD, domainName, record } );
 
-	const dns = getDomainDns( getState(), domainName );
-
-	const addResult = wpcom.undocumented().updateDns( domainName, dns.records );
+	const addResult = wpcom.undocumented().updateDns( domainName, { records_to_add: [ record ] } );
 
 	addResult.then(
 		() => dispatch( { type: DOMAINS_DNS_ADD_COMPLETED, domainName, record } ),
@@ -51,12 +49,12 @@ export const addDns = ( domainName, record ) => ( dispatch, getState ) => {
 	return addResult;
 };
 
-export const deleteDns = ( domainName, record ) => ( dispatch, getState ) => {
+export const deleteDns = ( domainName, record ) => ( dispatch ) => {
 	dispatch( { type: DOMAINS_DNS_DELETE, domainName, record } );
 
-	const dns = getDomainDns( getState(), domainName );
-
-	const updateResult = wpcom.undocumented().updateDns( domainName, dns.records );
+	const updateResult = wpcom
+		.undocumented()
+		.updateDns( domainName, { records_to_remove: [ record ] } );
 
 	updateResult.then(
 		() => dispatch( { type: DOMAINS_DNS_DELETE_COMPLETED, domainName, record } ),

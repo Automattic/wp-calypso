@@ -8,8 +8,8 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { action as ActionTypes } from 'lib/invites/constants';
-import { decodeEntities } from 'lib/formatting';
+import { action as ActionTypes } from 'calypso/lib/invites/constants';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const initialState = fromJS( {
 	list: {},

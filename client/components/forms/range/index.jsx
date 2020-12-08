@@ -10,7 +10,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormRange from 'components/forms/form-range';
+import FormRange from 'calypso/components/forms/form-range';
 
 /**
  * Style dependencies
@@ -53,7 +53,8 @@ export default class extends React.Component {
 	};
 
 	getValueLabelElement = () => {
-		let left, offset;
+		let left;
+		let offset;
 
 		if ( this.props.showValueLabel ) {
 			left = ( 100 * ( this.props.value - this.props.min ) ) / ( this.props.max - this.props.min );

@@ -7,11 +7,11 @@ import { defer } from 'lodash';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
-import Dispatcher from 'dispatcher';
-import { userCan } from 'lib/site/utils';
-import wpcom from 'lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import Dispatcher from 'calypso/dispatcher';
+import { userCan } from 'calypso/lib/site/utils';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Module vars

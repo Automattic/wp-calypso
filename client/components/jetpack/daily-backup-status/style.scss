@@ -1,172 +1,21 @@
 .daily-backup-status {
-	text-align: center;
-	padding-top: 2rem;
-	padding-bottom: 1rem;
-	background: #fff;
-}
-
-.daily-backup-status__status-icon.gridicon {
-	width: 3rem;
-	height: 3rem;
-	fill: var( --color-primary-30 );
-}
-
-.daily-backup-status__gridicon-no-backup {
-	width: 3rem;
-	height: 3rem;
-	color: var( --studio-yellow-20 );
-}
-
-.daily-backup-status__gridicon-backup-scheduled {
-	width: 3rem;
-	height: 3rem;
-	color: var( --studio-gray-40 );
-}
-
-.daily-backup-status__label {
-	margin-top: 24px;
-	color: var( --studio-gray-80 );
-	text-align: left;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		margin-top: 32px;
-	}
-}
-
-.daily-backup-status__date,
-.daily-backup-status__static-title {
-	font-size: $font-title-medium;
-	font-weight: 400;
 	margin-bottom: 1rem;
+	text-align: center;
+	background: #fff;
+	box-shadow: 0 0 0 1px #dcdcde;
 }
 
-.daily-backup-status__failed-message {
-	font-size: $font-title-medium;
-	font-weight: 400;
-	color: var( --color-scary-50 );
-	margin-bottom: 0.5rem;
-	margin-top: -0.5rem;
-}
-
-.daily-backup-status__no-backup-last-backup {
-	margin-bottom: 24px;
-	font-style: italic;
-}
-
-.form-button.daily-backup-status__restore-button,
-.form-button.daily-backup-status__download-button,
-.form-button.daily-backup-status__support-button {
+.daily-backup-status .form-button {
 	float: none;
 	display: block;
 	width: 100%;
 	text-align: center;
 	margin-left: 0;
 }
-.form-button.daily-backup-status__support-button {
-	margin: 32px 0;
-}
-
-.form-button.daily-backup-status__restore-button img {
-	width: 22px;
-	height: 22px;
-	filter: grayscale( 100% ) contrast( 70% );
-}
-
-.daily-backup-status__restore-button-icon {
-	display: flex;
-	justify-content: flex-start;
-	align-items: center;
-}
 
 .daily-backup-status__download-button {
 	margin: 24px 0 1rem;
 	color: var( --studio-jetpack-green-60 );
-}
-
-.daily-backup-status__title {
-	font-size: $font-title-medium;
-	font-weight: 600;
-	margin-bottom: 18px;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		font-size: $font-headline-small;
-		margin: 8px 0 12px;
-	}
-}
-
-.daily-backup-status__hide-mobile {
-	display: none;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		display: block;
-	}
-}
-.daily-backup-status__hide-desktop {
-	display: block;
-
-	@include breakpoint-deprecated( '>660px' ) {
-		display: none;
-	}
-}
-
-.daily-backup-status__success.card,
-.daily-backup-status__failed.card {
-	background: transparent;
-	box-shadow: none;
-}
-
-.daily-backup-status__realtime-details {
-	margin-top: 24px;
-	text-align: left;
-}
-
-.daily-backup-status__realtime-details-title {
-	margin-top: 1rem;
-	margin-bottom: 0.5rem;
-	font-weight: 400;
-}
-
-.daily-backup-status__realtime-details-card .activity-card .card {
-	margin: 0;
-	background: transparent;
-	box-shadow: none;
-}
-
-.daily-backup-status__realtime-details-card
-	.activity-card
-	.card
-	.activity-log-item__actor
-	.activity-log-item__actor-info {
-	display: flex;
-	& > *:not( :last-child ) {
-		margin-right: 8px;
-	}
-}
-
-.daily-backup-status__realtime-details-card
-	.activity-card
-	.card
-	.activity-log-item__actor
-	.activity-log-item__actor-info
-	.activity-log-item__actor-name::after {
-	margin-right: 0.2rem;
-}
-
-.daily-backup-status__realtime-details-card
-	.activity-card
-	.card
-	.activity-log-item__actor
-	.gravatar,
-.daily-backup-status__realtime-details-card .activity-card .card .activity-log-item__actor svg {
-	width: 30px;
-}
-
-.daily-backup-status__meta {
-	margin-bottom: 24px;
-	margin-top: -0.3rem;
-	color: var( --studio-gray-40 );
-	font-weight: 400;
-	font-size: $font-body-small;
 }
 
 .daily-backup-status__credentials-warning {
@@ -204,34 +53,13 @@
 .button.daily-backup-status__activate-restores-button:visited {
 	float: none;
 	width: 100%;
-	margin: 1rem 0;
+	margin: 1rem 0 3rem;
 	text-align: center;
 	color: var( --studio-jetpack-green-60 );
 
 	@include breakpoint-deprecated( '>660px' ) {
 		width: 330px;
 	}
-}
-
-.daily-backup-status__message-head {
-	color: var( --studio-gray-80 );
-
-	img {
-		width: 48px;
-	}
-
-	div {
-		font-size: $font-title-small;
-		font-weight: 600;
-	}
-}
-
-.daily-backup-status__message-error {
-	color: var( --studio-red-50 );
-}
-
-.daily-backup-status__view-all-button {
-	float: none;
 }
 
 .daily-backup-status__changes-header {
@@ -356,46 +184,13 @@
 	text-align: left;
 }
 
-.daily-backup-status__view-all-button {
-	display: block;
-	text-align: center;
-}
-
 .daily-backup-status__metas {
 	margin-top: 0;
 }
 
 @include breakpoint-deprecated( '>660px' ) {
-	.daily-backup-status__meta {
-		display: block;
-	}
-
-	.daily-backup-status__success.card,
-	.daily-backup-status__failed.card {
-		background: #fff;
-		box-shadow: 0 0 0 1px #dcdcde;
-	}
-
 	.daily-backup-status {
 		text-align: left;
-		background: transparent;
-		padding-bottom: 0;
-	}
-
-	.daily-backup-status__icon-section {
-		display: flex;
-		align-items: center;
-	}
-
-	.daily-backup-status__date {
-		margin-bottom: 0.5rem;
-	}
-
-	.daily-backup-status__meta {
-		margin-top: 0;
-		color: var( --studio-gray-40 );
-		font-weight: 400;
-		font-size: $font-body;
 	}
 
 	.form-button.daily-backup-status__download-button,
@@ -408,43 +203,17 @@
 		padding-right: 2rem;
 	}
 
-	.daily-backup-status__failed-message {
-		font-size: $font-headline-small;
-		font-weight: 600;
-		margin-bottom: 2rem;
-	}
-
-	.daily-backup-status__message-head {
-		display: flex;
-		font-weight: 600;
-		align-items: center;
-	}
-
-	.daily-backup-status__message-head img {
-		width: 3rem;
-		height: 3rem;
-	}
-
-	.daily-backup-status__message-head div {
-		margin-left: 12px;
-	}
-
-	.form-button.daily-backup-status__support-button {
-		width: 50%;
-	}
-
-	.form-button.daily-backup-status__restore-button img {
-		margin-right: 1rem;
-	}
-
 	.daily-backup-status__credentials-warning {
 		padding: 0;
 	}
 }
 
-/* WordPress.com-only styles */
-.wordpressdotcom .daily-backup-status {
-	padding-top: initial;
-	margin-bottom: 1rem;
-	box-shadow: 0 0 0 1px #dcdcde;
+/* Jetpack Cloud-specific rules */
+.is_jetpackcom .daily-backup-status {
+	margin-top: 2rem;
+	box-shadow: none;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		box-shadow: 0 0 0 1px #dcdcde;
+	}
 }

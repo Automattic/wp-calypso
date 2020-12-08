@@ -39,7 +39,7 @@
 
 	@include breakpoint-deprecated( '>480px' ) {
 		display: flex;
-    	flex-shrink: 0;
+		flex-shrink: 0;
 		width: 100px;
 		height: 100px;
 		margin: auto 40px auto 20px;

@@ -10,8 +10,8 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { Button } from '@automattic/components';
 import ThankYou, { ThankYouCtaType } from './thank-you';
-import { settingsPath } from 'lib/jetpack/paths';
-import getSelectedSiteSlug from 'state/ui/selectors/get-selected-site-slug';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
+import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 
 const ThankYouCta: ThankYouCtaType = ( {
 	dismissUrl,

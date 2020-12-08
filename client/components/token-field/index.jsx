@@ -334,10 +334,10 @@ class TokenField extends PureComponent {
 	};
 
 	_getMatchingSuggestions = () => {
-		let suggestions = this.props.suggestions,
-			match = this.props.saveTransform( this.state.incompleteTokenValue ),
-			startsWithMatch = [],
-			containsMatch = [];
+		let suggestions = this.props.suggestions;
+		let match = this.props.saveTransform( this.state.incompleteTokenValue );
+		const startsWithMatch = [];
+		const containsMatch = [];
 
 		if ( match.length === 0 ) {
 			suggestions = difference( suggestions, this.props.value );
@@ -371,8 +371,8 @@ class TokenField extends PureComponent {
 	};
 
 	_addCurrentToken = () => {
-		let preventDefault = false,
-			selectedSuggestion = this._getSelectedSuggestion();
+		let preventDefault = false;
+		const selectedSuggestion = this._getSelectedSuggestion();
 
 		if ( selectedSuggestion ) {
 			this._addNewToken( selectedSuggestion );

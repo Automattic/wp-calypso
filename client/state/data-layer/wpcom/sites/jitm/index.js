@@ -6,14 +6,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema.json';
-import { clearJITM, insertJITM } from 'state/jitm/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { JITM_DISMISS, JITM_FETCH } from 'state/action-types';
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { clearJITM, insertJITM } from 'calypso/state/jitm/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { JITM_DISMISS, JITM_FETCH } from 'calypso/state/action-types';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Existing libraries do not escape decimal encoded entities that php encodes, this handles that.

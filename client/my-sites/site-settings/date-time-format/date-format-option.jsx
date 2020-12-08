@@ -8,11 +8,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { defaultDateFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
 
@@ -35,8 +35,8 @@ export const DateFormatOption = ( {
 					name="date_format"
 					onChange={ setDateFormat }
 					value={ format }
+					label={ phpToMomentDatetimeFormat( localizedDate, format ) }
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
 			</FormLabel>
 		) ) }
 		<FormLabel className="date-time-format__custom-field">
@@ -46,25 +46,26 @@ export const DateFormatOption = ( {
 				name="date_format"
 				onChange={ setCustomDateFormat }
 				value={ dateFormat }
+				label={
+					<>
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+						<FormInput
+							disabled={ disabled }
+							name="date_format_custom"
+							onChange={ setCustomDateFormat }
+							value={ dateFormat || '' }
+						/>
+						<FormSettingExplanation>
+							{ isCustom &&
+								dateFormat &&
+								translate( 'Preview: %s', {
+									args: phpToMomentDatetimeFormat( localizedDate, dateFormat ),
+									comment: 'Date/time format preview',
+								} ) }
+						</FormSettingExplanation>
+					</>
+				}
 			/>
-			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
-				<FormInput
-					disabled={ disabled }
-					name="date_format_custom"
-					onChange={ setCustomDateFormat }
-					type="text"
-					value={ dateFormat || '' }
-				/>
-				<FormSettingExplanation>
-					{ isCustom &&
-						dateFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, dateFormat ),
-							comment: 'Date/time format preview',
-						} ) }
-				</FormSettingExplanation>
-			</span>
 		</FormLabel>
 	</FormFieldset>
 );

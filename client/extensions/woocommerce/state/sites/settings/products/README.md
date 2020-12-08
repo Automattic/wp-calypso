@@ -1,5 +1,4 @@
-Products Settings
-================
+# Products Settings
 
 This module is used to manage settings for products for a site.
 
@@ -14,29 +13,36 @@ Pull products settings from the remote site. Does not run if the settings are lo
 This is saved on a per-site basis, either as "LOADING" (when requesting settings), or a list of settings as returned from the site's API.
 
 ```js
-{
-	"settings": {
-		"products": "LOADING",
-	}
-	// or
-	"settings": {
-		"products": [ {
-			"id": "woocommerce_weight_unit",
-			"label": "Weight unit",
-			"description": "This controls what unit you will define weights in.",
-			"type": "select",
-			"default": "kg",
-			"options": {
-				"kg": "kg",
-				"g": "g",
-				"lbs": "lbs",
-				"oz": "oz"
+const object1 = {
+	settings: {
+		products: 'LOADING',
+	},
+};
+// or
+const object2 = {
+	settings: {
+		products: [
+			{
+				id: 'woocommerce_weight_unit',
+				label: 'Weight unit',
+				description: 'This controls what unit you will define weights in.',
+				type: 'select',
+				default: 'kg',
+				options: {
+					kg: 'kg',
+					g: 'g',
+					lbs: 'lbs',
+					oz: 'oz',
+				},
+				tip: 'This controls what unit you will define weights in.',
+				value: 'lbs',
 			},
-			"tip": "This controls what unit you will define weights in.",
-			"value": "lbs",
-		} ]
-	}, { … } ],
-}
+			{
+				/*...*/
+			},
+		],
+	},
+};
 ```
 
 ## Selectors

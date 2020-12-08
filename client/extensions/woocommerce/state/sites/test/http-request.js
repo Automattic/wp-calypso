@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import request from '../http-request';
-import { WPCOM_HTTP_REQUEST } from 'state/action-types';
+import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
 
 const siteId = '123';
 const originalAction = {

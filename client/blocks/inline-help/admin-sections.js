@@ -3,12 +3,13 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getCustomizerUrl } from 'state/sites/selectors';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
-import { getLocaleSlug } from 'lib/i18n-utils';
+import config from 'calypso/config';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
 /**
@@ -337,7 +338,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Manage my blog posts' ),
-		link: '/posts/${ siteSlug }',
+		link: `/posts/${ siteSlug }`,
 		synonyms: [ 'lists', 'posts' ],
 		icon: 'my-sites',
 	},
@@ -367,7 +368,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: '/jetpack/new?ref=calypso-selector',
+		link: `${ config( 'signup_url' ) }?ref=calypso-selector`,
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},

@@ -8,9 +8,9 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormRadioWithThumbnail from 'components/forms/form-radio-with-thumbnail';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormRadioWithThumbnail from 'calypso/components/forms/form-radio-with-thumbnail';
 
 /**
  * Style dependencies
@@ -31,7 +31,6 @@ const FormRadiosBar = ( { isThumbnail, checked, onChange, items } ) => {
 				) : (
 					<FormLabel key={ item.value + i }>
 						<FormRadio checked={ checked === item.value } onChange={ onChange } { ...item } />
-						<span>{ item.label }</span>
 					</FormLabel>
 				)
 			) }

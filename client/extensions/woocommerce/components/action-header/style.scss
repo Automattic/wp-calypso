@@ -13,7 +13,7 @@
 	border-bottom: 1px solid var( --color-neutral-10 );
 	position: fixed;
 	z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );
-	top: 47px;
+	top: var( --masterbar-height );
 	left: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
@@ -57,7 +57,8 @@
 		color: var( --color-neutral-40 );
 		margin: 2px 0 -3px;
 
-		a, a:hover {
+		a,
+		a:hover {
 			color: var( --color-neutral-40 );
 		}
 	}

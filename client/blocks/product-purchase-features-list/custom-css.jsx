@@ -8,25 +8,25 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PurchaseDetail from 'components/purchase-detail';
-import { isEnabled } from 'config';
+import PurchaseDetail from 'calypso/components/purchase-detail';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Image dependencies
  */
-import customizeImage from 'assets/images/illustrations/dashboard.svg';
+import customizeImage from 'calypso/assets/images/illustrations/dashboard.svg';
 
 function isCustomizeEnabled() {
 	return isEnabled( 'manage/customize' );
 }
 
 function getEditCSSLink( selectedSite ) {
-	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizerInAdmin =
-			adminUrl +
-			'customize.php?return=' +
-			encodeURIComponent( window.location.href ) +
-			'&section=jetpack_custom_css';
+	const adminUrl = selectedSite.URL + '/wp-admin/';
+	const customizerInAdmin =
+		adminUrl +
+		'customize.php?return=' +
+		encodeURIComponent( window.location.href ) +
+		'&section=jetpack_custom_css';
 
 	return isCustomizeEnabled() ? '/customize/custom-css/' + selectedSite.slug : customizerInAdmin;
 }

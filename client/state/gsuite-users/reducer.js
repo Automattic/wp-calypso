@@ -6,12 +6,12 @@ import {
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import {
 	GSUITE_USERS_REQUEST,
 	GSUITE_USERS_REQUEST_FAILURE,
 	GSUITE_USERS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { usersSchema } from './schema';
 
 export const usersReducer = withSchemaValidation( usersSchema, ( state = null, action ) => {

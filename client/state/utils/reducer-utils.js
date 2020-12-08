@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import { get, mapValues, pick, reduce, reduceRight } from 'lodash';
+import { get, mapValues, pick, reduce } from 'lodash';
 import { combineReducers as combine } from 'redux'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
-import { SerializationResult } from 'state/serialization-result';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
+import { SerializationResult } from 'calypso/state/serialization-result';
 import { withoutPersistence } from './without-persistence';
 
 /**
@@ -55,8 +55,7 @@ export function addReducer( origReducer, reducers ) {
 			//   })
 			// })
 			// ```
-			newReducer = reduceRight(
-				restKeys,
+			newReducer = restKeys.reduceRight(
 				( subreducer, subkey ) => createCombinedReducer( { [ subkey ]: subreducer } ),
 				setupReducerPersistence( reducer )
 			);

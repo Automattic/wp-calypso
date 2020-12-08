@@ -6,11 +6,11 @@ import { assert } from 'chai';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import { action as ActionTypes } from 'lib/invites/constants';
+import Dispatcher from 'calypso/dispatcher';
+import { action as ActionTypes } from 'calypso/lib/invites/constants';
+import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
 
 describe( 'Invites Create Validation Store', () => {
-	let InvitesCreateValidationStore;
 	const siteId = 123;
 
 	const validationData = {
@@ -32,10 +32,6 @@ describe( 'Invites Create Validation Store', () => {
 			data: validationData,
 		},
 	};
-
-	beforeEach( () => {
-		InvitesCreateValidationStore = require( 'lib/invites/stores/invites-create-validation' );
-	} );
 
 	describe( 'Validating invite creation', () => {
 		beforeEach( () => {

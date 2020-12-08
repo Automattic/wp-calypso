@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestCommentsList } from 'state/comments/actions';
+import { requestCommentsList } from 'calypso/state/comments/actions';
 
 export class QuerySiteCommentsList extends PureComponent {
 	static propTypes = {

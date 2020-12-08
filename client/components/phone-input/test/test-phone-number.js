@@ -24,8 +24,6 @@ import {
 	getUpdatedCursorPosition,
 } from '../phone-number';
 
-/* eslint-disable jest/expect-expect */
-
 describe( 'metadata:', () => {
 	describe( 'data assertions:', () => {
 		const countriesShareDialCode = pickBy(

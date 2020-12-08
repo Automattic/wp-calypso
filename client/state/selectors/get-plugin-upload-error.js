@@ -1,8 +1,12 @@
 /**
  * External dependencies
  */
-
 import { get } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import 'calypso/state/plugins/init';
 
 /**
  * Returns any error from a plugin uploaded to a site, or

@@ -15,8 +15,8 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import { DomainWarnings } from '../';
-import { type as domainTypes } from 'lib/domains/constants';
-import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'lib/url/support';
+import { type as domainTypes } from 'calypso/lib/domains/constants';
+import { MAP_EXISTING_DOMAIN_UPDATE_DNS, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
 
 jest.mock( 'lib/analytics/tracks', () => ( {} ) );
 
@@ -126,9 +126,9 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'contact your domain registrar' );
 			expect(
@@ -163,8 +163,8 @@ describe( 'index', () => {
 
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( links.some( ( link ) => link.href === MAP_EXISTING_DOMAIN_UPDATE_DNS ) ).toBeTruthy();
 		} );
@@ -185,9 +185,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'DNS records need to be configured' );
 			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
@@ -215,9 +215,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( "Some of your domains' DNS records need to be configured" );
 			expect( links.some( ( link ) => link.href === MAP_SUBDOMAIN ) ).toBeTruthy();
@@ -245,9 +245,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain(
 				"Some of your domains' name server records need to be configured"
@@ -283,9 +283,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode ? domNode.textContent : '',
-				links = domNode ? [].slice.call( domNode.querySelectorAll( 'a' ) ) : [];
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode ? domNode.textContent : '';
+			const links = domNode ? [].slice.call( domNode.querySelectorAll( 'a' ) ) : [];
 
 			expect( textContent ).not.toContain( 'Please verify ownership of domains' );
 			expect(
@@ -323,9 +323,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain( 'Please verify ownership of domains' );
 			expect(
@@ -364,9 +364,9 @@ describe( 'index', () => {
 			};
 			const component = TestUtils.renderIntoDocument( <DomainWarnings { ...props } /> );
 
-			const domNode = ReactDom.findDOMNode( component ),
-				textContent = domNode.textContent,
-				links = [].slice.call( domNode.querySelectorAll( 'a' ) );
+			const domNode = ReactDom.findDOMNode( component );
+			const textContent = domNode.textContent;
+			const links = [].slice.call( domNode.querySelectorAll( 'a' ) );
 
 			expect( textContent ).toContain(
 				'Your domains may be suspended because your email address is not verified.'

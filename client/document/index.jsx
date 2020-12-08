@@ -2,25 +2,25 @@
  * External dependencies
  *
  */
-import React, { Fragment } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import path from 'path';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Head from 'components/head';
+import config from 'calypso/config';
+import Head from 'calypso/components/head';
 import EnvironmentBadge, {
 	TestHelper,
 	Branch,
 	DevDocsLink,
 	PreferencesHelper,
-} from 'components/environment-badge';
+} from 'calypso/components/environment-badge';
 import { chunkCssLinks } from './utils';
-import JetpackLogo from 'components/jetpack-logo';
-import WordPressLogo from 'components/wordpress-logo';
-import { jsonStringifyForHtml } from 'server/sanitize';
+import JetpackLogo from 'calypso/components/jetpack-logo';
+import WordPressLogo from 'calypso/components/wordpress-logo';
+import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 
 class Document extends React.Component {
 	render() {
@@ -34,12 +34,11 @@ class Document extends React.Component {
 			initialReduxState,
 			isRTL,
 			entrypoint,
-			manifest,
+			manifests,
 			lang,
 			languageRevisions,
 			renderedLayout,
 			user,
-			hasSecondary,
 			sectionGroup,
 			sectionName,
 			clientData,
@@ -144,20 +143,8 @@ class Document extends React.Component {
 									'is-wccom-oauth-flow': isWCComConnect,
 								} ) }
 							>
-								<div className="masterbar" />
 								<div className="layout__content">
 									<LoadingLogo size={ 72 } className="wpcom-site__logo" />
-									{ hasSecondary && (
-										<Fragment>
-											<div className="layout__secondary" />
-											<ul className="sidebar" />
-										</Fragment>
-									) }
-									{ sectionGroup === 'editor' && (
-										<div className="card editor-ground-control">
-											<div className="editor-ground-control__action-buttons" />
-										</div>
-									) }
 								</div>
 							</div>
 						</div>
@@ -213,15 +200,21 @@ class Document extends React.Component {
 					 * this lets us have the performance benefit in prod, without breaking HMR in dev
 					 * since the manifest needs to be updated on each save
 					 */ }
-					{ env === 'development' && <script src={ `/calypso/${ target }/manifest.js` } /> }
-					{ env !== 'development' && (
-						<script
-							nonce={ inlineScriptNonce }
-							dangerouslySetInnerHTML={ {
-								__html: manifest,
-							} }
-						/>
+					{ env === 'development' && (
+						<>
+							<script src={ `/calypso/${ target }/manifest.js` } />
+							<script src={ `/calypso/${ target }/runtime.js` } />
+						</>
 					) }
+					{ env !== 'development' &&
+						manifests.map( ( manifest ) => (
+							<script
+								nonce={ inlineScriptNonce }
+								dangerouslySetInnerHTML={ {
+									__html: manifest,
+								} }
+							/>
+						) ) }
 
 					{ entrypoint?.language?.manifest && <script src={ entrypoint.language.manifest } /> }
 

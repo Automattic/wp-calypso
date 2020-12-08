@@ -11,10 +11,10 @@ import React from 'react';
  * Internal dependencies
  */
 import PlansGrid from '../plans-grid';
-import QueryPlans from 'components/data/query-plans';
+import QueryPlans from 'calypso/components/data/query-plans';
 import { DEFAULT_PROPS, SELECTED_SITE, SITE_PLAN_PRO } from './lib/plans';
 import { PlansTestComponent as Plans } from '../plans';
-import * as path from 'lib/route/path';
+import * as path from 'calypso/lib/route/path';
 
 jest.mock( 'lib/route/path', () => ( {
 	externalRedirect: jest.fn(),

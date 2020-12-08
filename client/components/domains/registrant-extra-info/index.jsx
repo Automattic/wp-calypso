@@ -9,11 +9,11 @@ import { keys, filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import ca from './ca-form';
 import fr from './fr-form';
 import uk from './uk-form';
-import { getTopLevelOfTld } from 'lib/domains';
+import { getTopLevelOfTld } from 'calypso/lib/domains';
 
 /**
  * Style dependencies

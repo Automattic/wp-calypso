@@ -12,8 +12,8 @@ import { flowRight } from 'lodash';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import DeleteZoneDialog from './delete-zone-dialog';
 import QueryFeed from '../../data/query-feed';
 import ZoneContentForm from '../../forms/zone-content-form';
@@ -27,7 +27,7 @@ import { getFeed, isRequestingFeed } from '../../../state/feeds/selectors';
 import { blocked, expires } from '../../../state/locks/selectors';
 import { getZone, isRequestingZones } from '../../../state/zones/selectors';
 import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class Zone extends Component {
 	static propTypes = {

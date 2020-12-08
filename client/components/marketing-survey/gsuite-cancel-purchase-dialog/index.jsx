@@ -12,17 +12,17 @@ import React, { Component } from 'react';
  */
 import * as steps from './steps';
 import { Dialog } from '@automattic/components';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { getName, purchaseType } from 'lib/purchases';
-import { getPurchasesError } from 'state/purchases/selectors';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getName, purchaseType } from 'calypso/lib/purchases';
+import { getPurchasesError } from 'calypso/state/purchases/selectors';
 import GSuiteCancellationFeatures from './gsuite-cancellation-features';
 import GSuiteCancellationSurvey from './gsuite-cancellation-survey';
-import notices from 'notices';
-import { purchasesRoot } from 'me/purchases/paths';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { removePurchase } from 'state/purchases/actions';
-import wpcom from 'lib/wp';
+import notices from 'calypso/notices';
+import { purchasesRoot } from 'calypso/me/purchases/paths';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { removePurchase } from 'calypso/state/purchases/actions';
+import wpcom from 'calypso/lib/wp';
 
 /**
  * Style dependencies

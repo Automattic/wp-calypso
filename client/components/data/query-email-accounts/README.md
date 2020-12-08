@@ -7,13 +7,13 @@
 Render the component, passing in the properties below. It does not accept any children, nor does it render any elements to the page.
 
 ```jsx
-import QueryEmailAccounts from 'components/data/query-email-accounts';
+import QueryEmailAccounts from 'calypso/components/data/query-email-accounts';
 
 export default function listEmailAccounts( { emailAccounts } ) {
 	return (
 		<div>
 			<QueryEmailAccounts siteId={ siteId } />
-			{ emailAccounts.map( emailAccount => (
+			{ emailAccounts.map( ( emailAccount ) => (
 				<li>{ `${ emailAccount.mailbox }@${ emailAccount.domain }` }</li>
 			) ) }
 		</div>

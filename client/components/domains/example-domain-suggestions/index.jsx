@@ -9,9 +9,9 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getDesignType } from 'state/signup/steps/design-type/selectors';
-import { DESIGN_TYPE_STORE } from 'signup/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getDesignType } from 'calypso/state/signup/steps/design-type/selectors';
+import { DESIGN_TYPE_STORE } from 'calypso/signup/constants';
 import ExampleDomainBrowser from '../example-domain-browser';
 
 /**

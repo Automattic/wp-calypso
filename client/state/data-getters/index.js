@@ -1,27 +1,27 @@
 /**
  * External dependencies
  */
-import { omit, sortBy } from 'lodash';
+import { omit, isArray, isUndefined, sortBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http as rawHttp } from 'state/http/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { requestHttpData } from 'state/data-layer/http-data';
-import { filterStateToApiQuery } from 'state/activity-log/utils';
-import { noRetry } from 'state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
+import { http as rawHttp } from 'calypso/state/http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { requestHttpData } from 'calypso/state/data-layer/http-data';
+import { filterStateToApiQuery } from 'calypso/state/activity-log/utils';
+import { noRetry } from 'calypso/state/data-layer/wpcom-http/pipeline/retry-on-failure/policies';
 import fromActivityLogApi, {
 	fromActivityApi,
-} from 'state/data-layer/wpcom/sites/activity/from-api';
-import fromActivityTypeApi from 'state/data-layer/wpcom/sites/activity-types/from-api';
+} from 'calypso/state/data-layer/wpcom/sites/activity/from-api';
+import fromActivityTypeApi from 'calypso/state/data-layer/wpcom/sites/activity-types/from-api';
 
 /**
  * Fetches content from a URL with a GET request
  *
  * @example
- * waitForData( {
+ * waitForHttpData( () => ( {
  *     planets: requestFromUrl( 'https://swapi.co/api/planets/' ),
- * } ).then( ( { planets } ) => {
+ * } ) ).then( ( { planets } ) => {
  *     console.log( planets.data );
  * } );
  *
@@ -64,14 +64,35 @@ export const requestActivityActionTypeCounts = (
 };
 
 export const getRequestActivityLogsId = ( siteId, filter ) => {
-	const group =
-		filter && filter.group && filter.group.length ? sortBy( filter.group ).join( ',' ) : '';
-	const before = filter && filter.before ? filter.before : '';
-	const after = filter && filter.after ? filter.after : '';
-	const on = filter && filter.on ? filter.on : '';
-	const aggregate = filter && filter.aggregate ? filter.aggregate : '';
+	const knownFilterOptions = [
+		'action',
+		'after',
+		'aggregate',
+		'before',
+		'by',
+		'dateRange',
+		'group',
+		'name',
+		'notGroup',
+		'number',
+		'on',
+		'sortOrder',
+	];
+	const filterCacheKey = knownFilterOptions
+		.map( ( opt ) => {
+			const optionValue = filter[ opt ];
+			if ( isUndefined( optionValue ) ) {
+				return undefined;
+			}
 
-	return `activity-log-${ siteId }-${ group }-${ after }-${ before }-${ on }-${ aggregate }`;
+			const cacheKeyValue = String( isArray( optionValue ) ? sortBy( optionValue ) : optionValue );
+
+			return `${ opt }=${ cacheKeyValue }`;
+		} )
+		.filter( ( pair ) => pair )
+		.join( '-' );
+
+	return `activity-log-${ siteId }-${ filterCacheKey }`;
 };
 
 export const requestActivityLogs = ( siteId, filter, { freshness = 5 * 60 * 1000 } = {} ) => {
@@ -196,7 +217,7 @@ export const requestFeedDiscovery = ( feedId ) => {
 			{}
 		),
 		{
-			fromApi: () => ( { feeds } ) => [ [ requestId, feeds ] ],
+			fromApi: () => ( response ) => [ [ requestId, response.feeds[ 0 ].feed_ID ] ],
 		}
 	);
 };

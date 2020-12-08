@@ -11,16 +11,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import { submitSurvey } from 'lib/purchases/actions';
-import { isDomainRegistration, isPlan } from 'lib/products-values';
-import enrichedSurveyData from 'components/marketing-survey/cancel-purchase-form/enriched-survey-data';
-import PrecancellationChatButton from 'components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import { submitSurvey } from 'calypso/lib/purchases/actions';
+import { isDomainRegistration, isPlan } from 'calypso/lib/products-values';
+import enrichedSurveyData from 'calypso/components/marketing-survey/cancel-purchase-form/enriched-survey-data';
+import PrecancellationChatButton from 'calypso/components/marketing-survey/cancel-purchase-form/precancellation-chat-button';
 
 /**
  * Style dependencies
@@ -114,29 +112,53 @@ class CancelAutoRenewalForm extends Component {
 					value={ value }
 					onChange={ this.onRadioChange }
 					checked={ this.state.response === value }
+					label={ text }
 				/>
-				<span>{ text }</span>
 			</FormLabel>
 		);
 	};
 
-	render() {
-		const { translate, isVisible, purchase, onClose } = this.props;
+	renderButtons = () => {
+		const { translate, purchase, onClose } = this.props;
 		const { response } = this.state;
-
 		const disableSubmit = ! response;
+
+		const skip = {
+			action: 'skip',
+			disabled: false,
+			label: translate( 'Skip' ),
+			onClick: onClose,
+		};
+
+		const submit = {
+			action: 'submit',
+			isPrimary: true,
+			disabled: disableSubmit,
+			label: translate( 'Submit' ),
+			onClick: this.onSubmit,
+		};
+
+		const chat = <PrecancellationChatButton purchase={ purchase } onClick={ onClose } />;
+
+		return [ skip, submit, chat ];
+	};
+
+	render() {
+		const { translate, isVisible, onClose } = this.props;
+
 		const productType = this.getProductTypeString();
 
 		return (
 			<Dialog
 				className="cancel-auto-renewal-form__dialog"
 				isVisible={ isVisible }
+				buttons={ this.renderButtons() }
 				onClose={ onClose }
 			>
 				<FormSectionHeading className="cancel-auto-renewal-form__header">
 					{ translate( 'Your thoughts are needed.' ) }
 				</FormSectionHeading>
-				<FormFieldset>
+				<FormFieldset className="cancel-auto-renewal-form__form-fieldset">
 					<p>
 						{ translate(
 							"Auto-renewal is now off. Before you go, we'd love to know: " +
@@ -151,16 +173,6 @@ class CancelAutoRenewalForm extends Component {
 						this.createRadioButton( radioButton[ 0 ], radioButton[ 1 ] )
 					) }
 				</FormFieldset>
-
-				<FormButtonsBar>
-					<FormButton onClick={ this.onSubmit } disabled={ disableSubmit }>
-						{ translate( 'Submit' ) }
-					</FormButton>
-					<FormButton isPrimary={ false } onClick={ onClose }>
-						{ translate( 'Skip' ) }
-					</FormButton>
-					<PrecancellationChatButton purchase={ purchase } onClick={ onClose } />
-				</FormButtonsBar>
 			</Dialog>
 		);
 	}

@@ -2,7 +2,7 @@
  * Internal dependencies
  */
 
-import { CURRENT_USER_RECEIVE } from 'state/action-types';
+import { CURRENT_USER_RECEIVE } from 'calypso/state/action-types';
 
 /**
  * Returns an action object that sets the current user object on the store

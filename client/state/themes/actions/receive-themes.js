@@ -6,12 +6,12 @@ import { filter } from 'lodash';
 /**
  * Internal dependencies
  */
-import { THEMES_REQUEST_SUCCESS } from 'state/themes/action-types';
-import { isJetpackSite } from 'state/sites/selectors';
-import { shouldFilterWpcomThemes } from 'state/themes/selectors';
-import { isThemeFromWpcom, isThemeMatchingQuery } from 'state/themes/utils';
+import { THEMES_REQUEST_SUCCESS } from 'calypso/state/themes/action-types';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { shouldFilterWpcomThemes } from 'calypso/state/themes/selectors';
+import { isThemeFromWpcom, isThemeMatchingQuery } from 'calypso/state/themes/utils';
 
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns an action object to be used in signalling that theme objects from

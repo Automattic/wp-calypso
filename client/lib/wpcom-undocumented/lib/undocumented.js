@@ -2,7 +2,7 @@
  * External dependencies
  */
 import debugFactory from 'debug';
-import { camelCase, isPlainObject, omit, pick, reject, snakeCase, set } from 'lodash';
+import { camelCase, isPlainObject, omit, pick, snakeCase, set } from 'lodash';
 import { stringify } from 'qs';
 
 /**
@@ -11,9 +11,9 @@ import { stringify } from 'qs';
 import Site from './site';
 import Me from './me';
 import MailingList from './mailing-list';
-import config from 'config';
-import { getLanguage, getLocaleSlug } from 'lib/i18n-utils';
-import readerContentWidth from 'reader/lib/content-width';
+import config from 'calypso/config';
+import { getLanguage, getLocaleSlug } from 'calypso/lib/i18n-utils';
+import readerContentWidth from 'calypso/reader/lib/content-width';
 
 const debug = debugFactory( 'calypso:wpcom-undocumented:undocumented' );
 const { Blob } = globalThis; // The linter complains if I don't do this...?
@@ -459,8 +459,8 @@ Undocumented.prototype.deleteSiteKeyring = function deleteSiteKeyring(
 };
 
 Undocumented.prototype._sendRequest = function ( originalParams, fn ) {
-	const { apiVersion, method } = originalParams,
-		updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
+	const { apiVersion, method } = originalParams;
+	const updatedParams = omit( originalParams, [ 'apiVersion', 'method' ] );
 
 	if ( apiVersion ) {
 		// TODO: temporary solution for apiVersion until https://github.com/Automattic/wpcom.js/issues/152 is resolved
@@ -546,22 +546,6 @@ Undocumented.prototype.startInboundTransfer = function ( siteId, domain, authCod
 };
 
 /**
- * Initiates a resend of the inbound transfer verification email.
- *
- * @param {string} domain - The domain name to check.
- * @param {Function} fn The callback function
- * @returns {Promise} A promise that resolves when the request completes
- */
-Undocumented.prototype.resendInboundTransferEmail = function ( domain, fn ) {
-	return this.wpcom.req.get(
-		{
-			path: `/domains/${ encodeURIComponent( domain ) }/resend-inbound-transfer-email`,
-		},
-		fn
-	);
-};
-
-/**
  * Fetches a list of available top-level domain names ordered by popularity.
  *
  * @param {object} query Optional query parameters
@@ -638,6 +622,20 @@ Undocumented.prototype.getDomainContactInformation = function ( fn ) {
 
 			fn( null, newData );
 		}
+	);
+};
+/**
+ *
+ * @param domain {string}
+ * @param fn {function}
+ */
+Undocumented.prototype.getDomainPrice = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		`/domains/${ encodeURIComponent( domain ) }/price`,
+		{
+			apiVersion: '1.1',
+		},
+		fn
 	);
 };
 
@@ -759,6 +757,38 @@ Undocumented.prototype.validateGoogleAppsContactInformation = function (
 	);
 
 	return result.then?.( camelCaseKeys );
+};
+
+/**
+ * Retrieves the Titan order provisioning URL for a domain.
+ *
+ * @param domain the domain name
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanOrderProvisioningURL = function ( domain, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( domain ) }/order-provisioning-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
+};
+
+/**
+ * Retrieves the auto login link to Titan's control panel.
+ *
+ * @param orderId the Titan order ID
+ * @param fn The callback function
+ */
+Undocumented.prototype.getTitanControlPanelAutoLoginURL = function ( orderId, fn ) {
+	return this.wpcom.req.get(
+		{
+			path: `/emails/titan/${ encodeURIComponent( orderId ) }/control-panel-auto-login-url`,
+			apiNamespace: 'wpcom/v2',
+		},
+		fn
+	);
 };
 
 /**
@@ -885,23 +915,6 @@ Undocumented.prototype.getStoredCards = function ( fn ) {
 Undocumented.prototype.getPaymentMethods = function ( query, fn ) {
 	debug( '/me/payment-methods query', { query } );
 	return this.wpcom.req.get( '/me/payment-methods', query, fn );
-};
-
-/**
- * Return a list of third-party services that WordPress.com can integrate with
- *
- * @param {Function} fn The callback function
- * @returns {Promise} A Promise to resolve when complete
- */
-Undocumented.prototype.metaKeyring = function ( fn ) {
-	debug( '/meta/external-services query' );
-	return this.wpcom.req.get(
-		{
-			path: '/meta/external-services/',
-			apiVersion: '1.1',
-		},
-		fn
-	);
 };
 
 /**
@@ -1306,48 +1319,6 @@ Undocumented.prototype.readTagImages = function ( query, fn ) {
 	);
 };
 
-Undocumented.prototype.readList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/list' );
-	params.apiVersion = '1.2';
-	return this.wpcom.req.get( '/read/lists/' + query.owner + '/' + query.slug, params, fn );
-};
-
-Undocumented.prototype.readLists = function ( fn ) {
-	debug( '/read/lists' );
-	return this.wpcom.req.get( '/read/lists', { apiVersion: '1.2' }, fn );
-};
-
-Undocumented.prototype.followList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/follow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/follow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
-Undocumented.prototype.unfollowList = function ( query, fn ) {
-	const params = omit( query, [ 'owner', 'slug' ] );
-	debug( '/read/lists/:owner/:slug/unfollow' );
-	return this.wpcom.req.post(
-		'/read/lists/' +
-			encodeURIComponent( query.owner ) +
-			'/' +
-			encodeURIComponent( query.slug ) +
-			'/unfollow',
-		{ apiVersion: '1.2' },
-		params,
-		fn
-	);
-};
-
 Undocumented.prototype.readSitePost = function ( query, fn ) {
 	const params = omit( query, [ 'site', 'postId' ] );
 	debug( '/read/sites/:site/post/:post' );
@@ -1362,6 +1333,17 @@ Undocumented.prototype.readSitePostRelated = function ( query, fn ) {
 	addReaderContentWidth( params );
 	return this.wpcom.req.get(
 		'/read/site/' + query.site_id + '/post/' + query.post_id + '/related',
+		params,
+		fn
+	);
+};
+
+Undocumented.prototype.supportAlternates = function ( query, fn ) {
+	const params = omit( query, [ 'site', 'postId' ] );
+	debug( '/support/alternates/:site/posts/:post' );
+	addReaderContentWidth( params );
+	return this.wpcom.req.get(
+		'/support/alternates/' + query.site + '/posts/' + query.postId,
 		params,
 		fn
 	);
@@ -1627,12 +1609,15 @@ Undocumented.prototype.activeTheme = function ( siteId, fn ) {
 	return this.wpcom.req.get( { path: '/sites/' + siteId + '/themes/mine' }, fn );
 };
 
-Undocumented.prototype.activateTheme = function ( themeId, siteId, fn ) {
+Undocumented.prototype.activateTheme = function ( themeId, siteId, dontChangeHomepage, fn ) {
 	debug( '/sites/:site_id/themes/mine' );
 	return this.wpcom.req.post(
 		{
 			path: '/sites/' + siteId + '/themes/mine',
-			body: { theme: themeId },
+			body: {
+				theme: themeId,
+				...( dontChangeHomepage && { dont_change_homepage: true } ),
+			},
 		},
 		fn
 	);
@@ -1657,31 +1642,6 @@ Undocumented.prototype.uploadTheme = function ( siteId, file, onProgress ) {
 	} );
 };
 
-Undocumented.prototype.nameservers = function ( domain, callback ) {
-	return this.wpcom.req.get( '/domains/' + domain + '/nameservers', function ( error, response ) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
-Undocumented.prototype.updateNameservers = function ( domain, nameservers, callback ) {
-	return this.wpcom.req.post( '/domains/' + domain + '/nameservers/', {}, nameservers, function (
-		error,
-		response
-	) {
-		if ( error ) {
-			callback( error );
-			return;
-		}
-
-		callback( null, response );
-	} );
-};
-
 Undocumented.prototype.resendIcannVerification = function ( domain, callback ) {
 	return this.wpcom.req.post( '/domains/' + domain + '/resend-icann/', callback );
 };
@@ -1691,8 +1651,7 @@ Undocumented.prototype.fetchDns = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.updateDns = function ( domain, records, fn ) {
-	const filtered = reject( records, 'isBeingDeleted' ),
-		body = { dns: JSON.stringify( filtered ) };
+	const body = { dns: JSON.stringify( records ) };
 
 	return this.wpcom.req.post( '/domains/' + domain + '/dns', body, fn );
 };
@@ -1748,12 +1707,12 @@ Undocumented.prototype.fetchWapiDomainInfo = function ( domainName, fn ) {
 };
 
 Undocumented.prototype.requestTransferCode = function ( options, fn ) {
-	const { domainName } = options,
-		data = {
-			domainStatus: JSON.stringify( {
-				command: 'send-code',
-			} ),
-		};
+	const { domainName } = options;
+	const data = {
+		domainStatus: JSON.stringify( {
+			command: 'send-code',
+		} ),
+	};
 
 	return this.wpcom.req.post( '/domains/' + domainName + '/transfer', data, fn );
 };
@@ -2520,10 +2479,6 @@ Undocumented.prototype.getDomainConnectSyncUxUrl = function (
 		{ redirect_uri: redirectUri },
 		callback
 	);
-};
-
-Undocumented.prototype.applePayMerchantValidation = function ( validationURL ) {
-	return this.wpcom.req.get( '/apple-pay/merchant-validation/', { validation_url: validationURL } );
 };
 
 Undocumented.prototype.domainsVerifyRegistrantEmail = function ( domain, email, token ) {

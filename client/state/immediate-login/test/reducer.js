@@ -6,7 +6,7 @@
  * Internal dependencies
  */
 import reducer from '../reducer';
-import { IMMEDIATE_LOGIN_SAVE_INFO } from 'state/action-types';
+import { IMMEDIATE_LOGIN_SAVE_INFO } from 'calypso/state/action-types';
 
 describe( 'immediate-login/reducer', () => {
 	describe( 'reducer', () => {

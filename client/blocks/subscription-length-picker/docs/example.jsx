@@ -7,9 +7,9 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getPlan } from 'lib/plans';
-import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
-import { SubscriptionLengthPicker } from 'blocks/subscription-length-picker';
+import { getPlan } from 'calypso/lib/plans';
+import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'calypso/lib/plans/constants';
+import { SubscriptionLengthPicker } from 'calypso/blocks/subscription-length-picker';
 import PropTypes from 'prop-types';
 
 const productsWithPrices1 = [

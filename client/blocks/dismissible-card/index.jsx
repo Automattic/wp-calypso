@@ -7,15 +7,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { noop, flow } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import QueryPreferences from 'components/data/query-preferences';
-import { savePreference, setPreference } from 'state/preferences/actions';
-import { getPreference, hasReceivedRemotePreferences } from 'state/preferences/selectors';
+import QueryPreferences from 'calypso/components/data/query-preferences';
+import { savePreference, setPreference } from 'calypso/state/preferences/actions';
+import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 
 /**
  * Style dependencies

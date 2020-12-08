@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["testOnBlur", "expect.*"] }] */
+
 /**
  * External dependencies
  */
@@ -18,7 +20,7 @@ import TokenFieldWrapper from './lib/token-field-wrapper';
 /**
  * Module constants
  */
-jest.mock( 'components/tooltip', () => require( 'components/empty-component' ) );
+jest.mock( 'components/tooltip', () => require( 'calypso/components/empty-component' ) );
 
 /**
  * Module variables
@@ -40,7 +42,9 @@ const charCodes = {
 };
 
 describe( 'TokenField', () => {
-	let wrapper, tokenFieldNode, textInputNode;
+	let wrapper;
+	let tokenFieldNode;
+	let textInputNode;
 
 	function setText( text ) {
 		textInputNode.simulate( 'change', { target: { value: text } } );
@@ -106,7 +110,7 @@ describe( 'TokenField', () => {
 	beforeEach( () => {
 		wrapper = mount( <TokenFieldWrapper /> );
 		tokenFieldNode = wrapper.find( '.token-field' );
-		textInputNode = wrapper.find( '.token-field__input' );
+		textInputNode = wrapper.find( 'input.token-field__input' );
 		textInputNode.simulate( 'focus' );
 	} );
 

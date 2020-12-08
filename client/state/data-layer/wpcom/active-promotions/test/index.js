@@ -2,13 +2,13 @@
  * Internal dependencies
  */
 import { receiveActivePromotions, receiveError, requestActivePromotions } from '../';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import {
 	activePromotionsReceiveAction,
 	activePromotionsRequestFailureAction,
 	activePromotionsRequestSuccessAction,
-} from 'state/active-promotions/actions';
-import { WPCOM_RESPONSE } from 'state/active-promotions/test/fixture';
+} from 'calypso/state/active-promotions/actions';
+import { WPCOM_RESPONSE } from 'calypso/state/active-promotions/test/fixture';
 
 describe( 'wpcom-api', () => {
 	describe( 'active promotions request', () => {

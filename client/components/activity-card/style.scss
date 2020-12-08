@@ -1,7 +1,7 @@
 .activity-card {
 	.card {
-		border-radius: 3px;
 		padding: 16px;
+		border-radius: var( --jetpack-corners-sharp );
 	}
 
 	.activity-card__actor {
@@ -14,14 +14,13 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			margin-left: 8px;
+
+			&:first-child {
+				margin-left: 0;
+			}
 			> *:not( :last-child ) {
 				margin-right: 8px;
 			}
-		}
-		> img.gravatar,
-		> svg {
-			max-height: 24px;
-			max-width: 24px;
 		}
 	}
 

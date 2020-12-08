@@ -12,10 +12,15 @@
 	.threat-item-header__alert-filename {
 		font-size: $font-body;
 		line-height: 24px;
+		word-break: break-all;
 
 		@include breakpoint-deprecated( '>800px' ) {
 			font-size: $font-title-small;
 		}
+	}
+	
+	.threat-item-header__alert-filename {
+		word-break: break-all;
 	}
 
 	.log-item__subheader {
@@ -81,6 +86,6 @@
 		margin-inline-end: 5px;
 		border-width: 1px;
 		border-style: solid;
-		border-radius: 3px;
+		border-radius: var( --jetpack-corners-soft );
 	}
 }

@@ -22,6 +22,7 @@ jest.mock( 'lib/user', () => () => {
 } );
 
 describe( 'index', () => {
+	// eslint-disable-next-line jest/expect-expect
 	test( 'should not have overlapping step/flow names', () => {
 		const overlappingNames = intersection( keys( steps ), keys( flows.getFlows() ) );
 

@@ -1,0 +1,37 @@
+.form-checkbox {
+	@extend %form-field;
+
+	clear: none;
+	cursor: pointer;
+	display: inline-block;
+	line-height: 0;
+	height: 16px;
+	margin: 2px 0 0;
+	float: left;
+	outline: 0;
+	padding: 0;
+	text-align: center;
+	vertical-align: middle;
+	width: 16px;
+	min-width: 16px;
+	appearance: none;
+	border-radius: 2px;
+
+	&:checked::before {
+		content: url( '/calypso/images/checkbox-icons/checkmark-primary.svg' );
+		width: 12px;
+		height: 12px;
+		margin: 1px auto;
+		display: inline-block;
+		speak: none;
+	}
+
+	&:disabled:checked::before {
+		color: var( --color-neutral-20 );
+	}
+
+	& + span {
+		display: block;
+		margin-left: 24px;
+	}
+}

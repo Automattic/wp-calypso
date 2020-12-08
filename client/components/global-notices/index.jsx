@@ -8,11 +8,11 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import notices from 'notices';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { getNotices } from 'state/notices/selectors';
-import { removeNotice } from 'state/notices/actions';
+import notices from 'calypso/notices';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { getNotices } from 'calypso/state/notices/selectors';
+import { removeNotice } from 'calypso/state/notices/actions';
 import GlobalNoticesContainer from './container';
 
 export class GlobalNotices extends Component {

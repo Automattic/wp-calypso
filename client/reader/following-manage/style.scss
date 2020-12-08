@@ -150,9 +150,21 @@
 }
 
 .following-manage__subscriptions-import-export-menu-item {
+	.reader-import-button,
+	.reader-export-button {
+		padding: 0;
+		font-weight: 400;
+	}
+
 	.reader-import-button__icon,
 	.reader-export-button__icon {
+		fill: var( --color-neutral-light );
 		vertical-align: middle;
+	}
+
+	.reader-import-button__label,
+	.reader-export-button__label {
+		color: var( --color-text-subtle );
 	}
 
 	&:hover,

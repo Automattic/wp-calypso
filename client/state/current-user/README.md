@@ -1,5 +1,4 @@
-User State
-==========
+# User State
 
 A module for managing user state.
 
@@ -12,7 +11,7 @@ Used in combination with the Redux store instance `dispatch` function, actions c
 Sets the current user by user ID.
 
 ```js
-import { setCurrentUser } from 'state/current-user/actions';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
 
 dispatch( setCurrentUser( { ID: 73705554 } ) );
 ```
@@ -34,7 +33,7 @@ Selectors are intended to assist in extracting data from the global state tree f
 Returns the current user object.
 
 ```js
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const selectedSite = getCurrentUser( store.getState() );
 ```

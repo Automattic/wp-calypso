@@ -1,7 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import debugFactory from 'debug';
+
+/**
+ * Internal dependencies
+ */
 import { createReadStream } from './util/fs';
 
 const debug = debugFactory( 'wpcom:media' );
@@ -17,7 +21,10 @@ function buildFormData( files ) {
 	const isArray = Array.isArray( files );
 	files = isArray ? files : [ files ];
 
-	let i, f, k, param;
+	let i;
+	let f;
+	let k;
+	let param;
 	for ( i = 0; i < files.length; i++ ) {
 		f = files[ i ];
 
@@ -110,7 +117,7 @@ Media.prototype.update = function ( query, body, fn ) {
  * @returns {Function} request handler
  */
 Media.prototype.edit = function ( query, body, fn ) {
-	if ( typeof body == 'function' || ! body ) {
+	if ( typeof body === 'function' || ! body ) {
 		fn = body;
 		body = query;
 		query = {};
@@ -184,7 +191,10 @@ Media.prototype.addUrls = function ( query, media, fn ) {
 	const body = { media_urls: [] };
 
 	// process formData
-	let i, m, url, k;
+	let i;
+	let m;
+	let url;
+	let k;
 
 	media = Array.isArray( media ) ? media : [ media ];
 	for ( i = 0; i < media.length; i++ ) {

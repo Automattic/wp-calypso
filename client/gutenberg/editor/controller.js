@@ -2,42 +2,42 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { get, has, isInteger, noop } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { shouldRedirectGutenberg } from 'state/selectors/should-redirect-gutenberg';
-import { EDITOR_START, POST_EDIT } from 'state/action-types';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { addQueryArgs } from 'lib/route';
-import { getSelectedEditor } from 'state/selectors/get-selected-editor';
-import { requestSelectedEditor } from 'state/selected-editor/actions';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import { addQueryArgs } from 'calypso/lib/route';
+import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
+import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
 import {
 	getSiteUrl,
 	getSiteOption,
 	getSite,
 	isJetpackSite,
 	isSSOEnabled,
-} from 'state/sites/selectors';
-import isSiteWpcomAtomic from 'state/selectors/is-site-wpcom-atomic';
-import { isEnabled } from 'config';
+} from 'calypso/state/sites/selectors';
+import { isEnabled } from 'calypso/config';
 import { Placeholder } from './placeholder';
-import { makeLayout, render } from 'controller';
-import isSiteUsingCoreSiteEditor from 'state/selectors/is-site-using-core-site-editor';
-import getSiteEditorUrl from 'state/selectors/get-site-editor-url';
-import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'state/desktop/window-events';
-import { notifyDesktopCannotOpenEditor } from 'state/desktop/actions';
+
+import { makeLayout, render } from 'calypso/controller';
+import isSiteUsingCoreSiteEditor from 'calypso/state/selectors/is-site-using-core-site-editor';
+import getSiteEditorUrl from 'calypso/state/selectors/get-site-editor-url';
+import { REASON_BLOCK_EDITOR_JETPACK_REQUIRES_SSO } from 'calypso/state/desktop/window-events';
+import { notifyDesktopCannotOpenEditor } from 'calypso/state/desktop/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { stopEditingPost } from 'calypso/state/editor/actions';
 
 function determinePostType( context ) {
-	if ( context.path.startsWith( '/block-editor/post/' ) ) {
+	if ( context.path.startsWith( '/post/' ) ) {
 		return 'post';
 	}
-	if ( context.path.startsWith( '/block-editor/page/' ) ) {
+	if ( context.path.startsWith( '/page/' ) ) {
 		return 'page';
 	}
 
@@ -102,20 +102,31 @@ export const authenticate = ( context, next ) => {
 	const state = context.store.getState();
 
 	const siteId = getSelectedSiteId( state );
+	const isJetpack = isJetpackSite( state, siteId );
 	const isDesktop = isEnabled( 'desktop' );
 	const storageKey = `gutenframe_${ siteId }_is_authenticated`;
 
 	let isAuthenticated =
 		globalThis.sessionStorage.getItem( storageKey ) || // Previously authenticated.
-		! isSiteWpcomAtomic( state, siteId ) || // Simple sites users are always authenticated.
+		! isJetpack || // If the site is not Jetpack (Atomic or self hosted) then it's a simple site and users are always authenticated.
+		( isJetpack && isSSOEnabled( state, siteId ) ) || // Assume we can authenticate with SSO
 		isDesktop || // The desktop app can store third-party cookies.
 		context.query.authWpAdmin; // Redirect back from the WP Admin login page to Calypso.
 
-	if ( isDesktop && isJetpackSite( state, siteId ) && ! isSSOEnabled( state, siteId ) ) {
+	if ( isDesktop && isJetpack && ! isSSOEnabled( state, siteId ) ) {
 		isAuthenticated = false;
 	}
 
 	if ( isAuthenticated ) {
+		/*
+		 * Make sure we have an up-to-date frame nonce.
+		 *
+		 * By requesting the site here instead of using <QuerySites /> we avoid a race condition, where
+		 * if a render occurs before the site is requested, the first request for retrieving the iframe
+		 * will get aborted.
+		 */
+		context.store.dispatch( requestSite( siteId ) );
+
 		globalThis.sessionStorage.setItem( storageKey, 'true' );
 		return next();
 	}
@@ -167,7 +178,7 @@ export const redirect = async ( context, next ) => {
 	const state = getState();
 	const siteId = getSelectedSiteId( state );
 
-	if ( shouldRedirectGutenberg( state, siteId ) ) {
+	if ( ! isEligibleForGutenframe( state, siteId ) ) {
 		const postType = determinePostType( context );
 		const postId = getPostID( context );
 
@@ -179,11 +190,7 @@ export const redirect = async ( context, next ) => {
 		return window.location.replace( addQueryArgs( context.query, url ) );
 	}
 
-	if ( shouldLoadGutenberg( state, siteId ) ) {
-		return next();
-	}
-
-	return page.redirect( `/post/${ getSelectedSiteSlug( state ) }` );
+	return next();
 };
 
 function getPressThisData( query ) {
@@ -223,6 +230,7 @@ export const post = ( context, next ) => {
 			fseParentPageId={ fseParentPageId }
 			parentPostId={ parentPostId }
 			creatingNewHomepage={ postType === 'page' && has( context, 'query.new-homepage' ) }
+			stripeConnectSuccess={ context.query.stripe_connect_success ?? null }
 		/>
 	);
 
@@ -243,4 +251,13 @@ export const siteEditor = ( context, next ) => {
 	);
 
 	return next();
+};
+
+export const exitPost = ( context, next ) => {
+	const postId = getPostID( context );
+	const siteId = getSelectedSiteId( context.store.getState() );
+	if ( siteId ) {
+		context.store.dispatch( stopEditingPost( siteId, postId ) );
+	}
+	next();
 };

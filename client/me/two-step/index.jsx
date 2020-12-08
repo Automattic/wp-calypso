@@ -10,21 +10,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AppPasswords from 'me/application-passwords';
+import AppPasswords from 'calypso/me/application-passwords';
 import { Card } from '@automattic/components';
-import config from 'config';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import Security2faBackupCodes from 'me/security-2fa-backup-codes';
-import Security2faDisable from 'me/security-2fa-disable';
-import Security2faSetup from 'me/security-2fa-setup';
-import SecuritySectionNav from 'me/security-section-nav';
-import Security2faKey from 'me/security-2fa-key';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import config from 'calypso/config';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import ReauthRequired from 'calypso/me/reauth-required';
+import Security2faBackupCodes from 'calypso/me/security-2fa-backup-codes';
+import Security2faDisable from 'calypso/me/security-2fa-disable';
+import Security2faSetup from 'calypso/me/security-2fa-setup';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import Security2faKey from 'calypso/me/security-2fa-key';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -167,13 +168,15 @@ class TwoStep extends Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security two-step">
+			<Main className="security two-step is-wide-layout">
 				<PageViewTracker path="/me/security/two-step" title="Me > Two-Step Authentication" />
 				<MeSidebarNavigation />
 
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 
 				<DocumentHead title={ translate( 'Two-Step Authentication' ) } />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

@@ -15,7 +15,7 @@ import reducer, {
 	transientItems,
 	fetching,
 } from '../reducer';
-import MediaQueryManager from 'lib/query-manager/media';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
 import {
 	DESERIALIZE,
 	MEDIA_DELETE,
@@ -27,7 +27,7 @@ import {
 	MEDIA_REQUEST_FAILURE,
 	MEDIA_REQUEST_SUCCESS,
 	SERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	changeMediaSource,
 	clearMediaErrors,
@@ -42,7 +42,7 @@ import {
 	setMediaLibrarySelectedItems,
 	successMediaItemRequest,
 } from '../actions';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
 
 describe( 'reducer', () => {
 	test( 'should include expected keys in return value', () => {

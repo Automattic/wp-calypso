@@ -12,7 +12,7 @@ import {
 	HAPPYCHAT_CONNECTION_ERROR_PING_TIMEOUT,
 	HAPPYCHAT_CONNECTION_ERROR_TRANSPORT_CLOSE,
 	HAPPYCHAT_CONNECTION_ERROR_TRANSPORT_ERROR,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 import isHappychatServerReachable from '../is-happychat-server-reachable';
 
 describe( '#isHappychatServerReachable', () => {

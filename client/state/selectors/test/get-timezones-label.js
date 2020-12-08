@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getTimezonesLabel from 'state/selectors/get-timezones-label';
+import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
 describe( 'getTimezonesLabel()', () => {
 	test( "should return null if `timezones` aren't synced", () => {

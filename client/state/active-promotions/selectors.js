@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/active-promotions/init';
+import 'calypso/state/active-promotions/init';
 
 /**
  * Return WordPress activePromotions getting from state object

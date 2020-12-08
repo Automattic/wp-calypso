@@ -55,7 +55,8 @@ describe( 'BusinessATStep', () => {
 			}
 			return null;
 		};
-		let recordTracksEvent, wrapper;
+		let recordTracksEvent;
+		let wrapper;
 
 		beforeEach( () => {
 			recordTracksEvent = stub();

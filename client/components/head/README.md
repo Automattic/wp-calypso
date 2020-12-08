@@ -1,17 +1,16 @@
-Head
-====
+# Head
 
 Provides an HTML `<head>` prefilled with boilerplate (such as `meta`s and `links` for stylesheets, favicons, etc.) that is common for all of Calypso. Accepts children which will be rendered as children of `head`.
 
 ## Usage
 
 ```jsx
-import Head from 'components/head';
+import Head from 'calypso/components/head';
 
 <Head title="Calypso">
-  <meta property="myCustomMeta" content="foobar" />
-  <link rel="stylesheet" href="/dev/null" />
-</Head>
+	<meta property="myCustomMeta" content="foobar" />
+	<link rel="stylesheet" href="/dev/null" />
+</Head>;
 ```
 
 ## Props

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns the poster URL of the video.

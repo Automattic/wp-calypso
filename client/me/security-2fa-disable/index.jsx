@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormButton from 'components/forms/form-button';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import Security2faStatus from 'me/security-2fa-status';
-import Security2faCodePrompt from 'me/security-2fa-code-prompt';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { successNotice } from 'state/notices/actions';
-import { localizeUrl } from 'lib/i18n-utils';
+import FormButton from 'calypso/components/forms/form-button';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import Security2faStatus from 'calypso/me/security-2fa-status';
+import Security2faCodePrompt from 'calypso/me/security-2fa-code-prompt';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 /**
  * Style dependencies

@@ -10,21 +10,20 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { isExpiring } from 'lib/purchases';
-import { disableAutoRenew, enableAutoRenew } from 'lib/purchases/actions';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { isFetchingUserPurchases } from 'state/purchases/selectors';
-import { fetchUserPurchases } from 'state/purchases/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import isSiteAtomic from 'state/selectors/is-site-automated-transfer';
-import { createNotice } from 'state/notices/actions';
+import { isExpiring } from 'calypso/lib/purchases';
+import { disableAutoRenew, enableAutoRenew } from 'calypso/lib/purchases/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { isFetchingUserPurchases } from 'calypso/state/purchases/selectors';
+import { fetchUserPurchases } from 'calypso/state/purchases/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
+import { createNotice } from 'calypso/state/notices/actions';
 import AutoRenewDisablingDialog from './auto-renew-disabling-dialog';
 import AutoRenewPaymentMethodDialog from './auto-renew-payment-method-dialog';
-import FormToggle from 'components/forms/form-toggle';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
+import FormToggle from 'calypso/components/forms/form-toggle';
 import { isExpired, isOneTimePurchase, isRechargeable } from '../../../../lib/purchases';
 import { getEditCardDetailsPath } from '../../utils';
-import { getSelectedSiteSlug } from 'state/ui/selectors';
+import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class AutoRenewToggle extends Component {
 	static propTypes = {
@@ -35,14 +34,16 @@ class AutoRenewToggle extends Component {
 		isAtomicSite: PropTypes.bool.isRequired,
 		fetchingUserPurchases: PropTypes.bool,
 		recordTracksEvent: PropTypes.func.isRequired,
-		compact: PropTypes.bool,
 		withTextStatus: PropTypes.bool,
 		toggleSource: PropTypes.string,
 		siteSlug: PropTypes.string,
+		getEditPaymentMethodUrlFor: PropTypes.func,
+		paymentMethodUrl: PropTypes.string,
 	};
 
 	static defaultProps = {
 		fetchingUserPurchases: false,
+		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
 	};
 
 	state = {
@@ -77,7 +78,14 @@ class AutoRenewToggle extends Component {
 	}
 
 	goToUpdatePaymentMethod = () => {
-		const { purchase, siteSlug, productSlug, isAtomicSite, toggleSource } = this.props;
+		const {
+			purchase,
+			siteSlug,
+			productSlug,
+			isAtomicSite,
+			toggleSource,
+			getEditPaymentMethodUrlFor,
+		} = this.props;
 		this.closeAutoRenewPaymentMethodDialog();
 
 		this.props.recordTracksEvent( 'calypso_auto_renew_no_payment_method_dialog_add_click', {
@@ -86,7 +94,7 @@ class AutoRenewToggle extends Component {
 			toggle_source: toggleSource,
 		} );
 
-		page( getEditCardDetailsPath( siteSlug, purchase ) );
+		page( getEditPaymentMethodUrlFor( siteSlug, purchase ) );
 	};
 
 	onCloseAutoRenewPaymentMethodDialog = () => {
@@ -204,24 +212,21 @@ class AutoRenewToggle extends Component {
 	}
 
 	render() {
-		const { planName, siteDomain, purchase, compact, withTextStatus } = this.props;
+		const { planName, siteDomain, purchase, withTextStatus } = this.props;
 
 		if ( ! this.shouldRender( purchase ) ) {
 			return null;
 		}
 
-		const ToggleComponent = compact ? CompactFormToggle : FormToggle;
-
 		return (
 			<>
-				<ToggleComponent
+				<FormToggle
 					checked={ this.getToggleUiStatus() }
 					disabled={ this.isUpdatingAutoRenew() }
-					toggling={ this.isUpdatingAutoRenew() }
 					onChange={ this.onToggleAutoRenew }
 				>
 					{ withTextStatus && this.renderTextStatus() }
-				</ToggleComponent>
+				</FormToggle>
 				<AutoRenewDisablingDialog
 					isVisible={ this.state.showAutoRenewDisablingDialog }
 					planName={ planName }

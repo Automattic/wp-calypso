@@ -7,8 +7,8 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import getRawSite from 'state/selectors/get-raw-site';
-import { getDomainsBySiteId } from 'state/sites/domains/selectors';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 
 /**
  * Returns true if site is a mapped domain site, false if the site is not,

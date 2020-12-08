@@ -1,0 +1,53 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
+.host-selection__notice {
+	padding: 21px 24px 24px 27px;
+	margin: 24px 0;
+	background: var( --studio-yellow-0 );
+}
+
+.host-selection__list {
+	margin-left: calc( -16px - 1px );
+	margin-right: calc( -16px - 1px );
+	//bring the final space in the card to the same height as the vertical nav items
+	margin-bottom: 32px;
+
+	@include break-mobile {
+		margin-left: calc( -24px - 1px );
+		margin-right: calc( -24px - 1px );
+	}
+
+	> :not( :last-child ) {
+		margin-bottom: -1px;
+	}
+}
+
+.host-selection__list-item,
+.host-selection__list-item-placeholder,
+.host-selection__list-item:hover,
+.host-selection__list-item-placeholder:hover {
+	border: 1px solid var( --color-border-subtle );
+	padding: 16px 24px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	.badge {
+		background: var( --studio-yellow-0 );
+	}
+}
+
+.host-selection__list-item-badge-and-icon {
+	display: flex;
+	align-items: center;
+}
+
+.host-selection__list-item-placeholder {
+	span {
+		@include placeholder();
+	}
+}
+
+.host-selection__header {
+	margin-bottom: 32px;
+}

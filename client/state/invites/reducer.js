@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { includes, map, pick, zipObject } from 'lodash';
+import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -11,7 +12,7 @@ import {
 	withSchemaValidation,
 	withoutPersistence,
 	withStorageKey,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import {
 	INVITES_DELETE_REQUEST,
 	INVITES_DELETE_REQUEST_FAILURE,
@@ -22,7 +23,7 @@ import {
 	INVITE_RESEND_REQUEST,
 	INVITE_RESEND_REQUEST_FAILURE,
 	INVITE_RESEND_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import { inviteItemsSchema, inviteLinksSchema } from './schema';
 
 /**
@@ -106,7 +107,12 @@ export const links = withSchemaValidation( inviteLinksSchema, ( state = {}, acti
 	switch ( action.type ) {
 		case INVITES_REQUEST_SUCCESS: {
 			let inviteLinks = {};
+			const currentDate = moment();
 			action.links.forEach( ( link ) => {
+				// Do not process expired links
+				if ( link.expiry && currentDate.isAfter( link.expiry * 1000 ) ) {
+					return;
+				}
 				const linkForState = {
 					key: link.invite_key,
 					link: link.link,

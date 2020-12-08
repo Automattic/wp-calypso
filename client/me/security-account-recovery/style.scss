@@ -15,7 +15,6 @@
 	padding-right: 0;
 
 	@include breakpoint-deprecated( '>480px' ) {
-		flex: 1;
 		padding-right: 20px;
 		margin-bottom: 0;
 	}
@@ -64,18 +63,16 @@
 	flex-direction: row;
 }
 
+.security-account-recovery-contact__header-action .form-button {
+	margin: 0;
+}
+
 .security-account-recovery-contact__header-info {
 	flex: 2;
 }
 
-.security-account-recovery-contact__header-title {
-	font-size: 1em;
-	line-height: 1em;
-}
-
 .security-account-recovery-contact__header-subtitle {
 	display: block;
-	font-size: 1em;
 	font-style: italic;
 	color: var( --color-text-subtle );
 }
@@ -84,9 +81,9 @@
 	margin-top: 8px;
 }
 
-.security-account-recovery-contact__remove {
+.security-account-recovery__remove {
 	color: var( --color-text-subtle );
-	float: left;
+	float: right;
 	cursor: pointer;
 	padding: 9px 0;
 
@@ -97,19 +94,8 @@
 	.gridicon {
 		vertical-align: bottom;
 		margin-right: 2px;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			width: 16px;
-			height: 16px;
-		}
-	}
-
-	span {
-		display: none;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			display: inline;
-		}
+		width: 16px;
+		height: 16px;
 	}
 }
 

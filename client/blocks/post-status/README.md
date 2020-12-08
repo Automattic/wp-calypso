@@ -1,5 +1,4 @@
-Post Status
-===========
+# Post Status
 
 `<PostStatus />` is a React component for rendering relevant status details about a post (sticky, scheduled, pending review, trashed). Renders nothing if there is no relevant status for the post.
 
@@ -9,7 +8,7 @@ Render the component, passing the global ID of a post:
 
 ```js
 function MyPost() {
-	return <PostStatus globalId="e532356fdb689509a1a5149072e8aafc" />
+	return <PostStatus globalId="e532356fdb689509a1a5149072e8aafc" />;
 }
 ```
 

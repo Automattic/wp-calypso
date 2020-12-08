@@ -3,6 +3,9 @@
 @import '~@automattic/typography/styles/variables';
 @import '../variables.scss';
 
+/* stylelint-disable scales/font-size */
+// @TODO: re-enable lint rule in https://github.com/Automattic/wp-calypso/issues/44933
+
 .plans-table {
 	width: 100%;
 	display: flex;
@@ -73,14 +76,6 @@
 	@media ( max-width: $break-mobile ) {
 		font-weight: normal;
 	}
-}
-
-.plan-item__domain-name {
-	font-size: $font-body-small;
-}
-
-ul.plan-item__feature-item-group {
-	margin: 0;
 }
 
 .plan-item__mobile-expand-all-plans {
@@ -180,81 +175,9 @@ ul.plan-item__feature-item-group {
 	display: none;
 }
 
-.plan-item__domain-summary {
-	font-size: $font-body-small;
-	line-height: 22px;
-	margin-top: 10px;
-
-	// overwrite button styles
-	&.components-button.is-link {
-		text-decoration: none;
-		font-size: 14px;
-		color: var( --studio-blue-40 );
-		display: flex;
-		align-items: flex-start;
-		padding: 0;
-	}
-
-	// the tick
-	svg:first-child {
-		// we use a margin because there is a space,
-		// the strike-through will look dirty over it
-		margin-right: 5px;
-		vertical-align: middle;
-		margin-top: 4px;
-		flex: none;
-	}
-
-	svg:first-child path {
-		fill: var( --studio-green-40 );
-
-		// to make the tick thicker
-		stroke: var( --studio-green-40 );
-	}
-}
-
 .plan-item.is-popular {
 	@media ( max-width: $break-mobile ) {
 		order: -3;
-	}
-}
-
-.plan-item__domain-summary.is-picked {
-	font-weight: bold;
-}
-
-.plan-item__domain-summary.is-cta {
-	font-weight: bold;
-	padding: 0;
-
-	// overwrite button styles
-	&.components-button.is-link {
-		color: var( --studio-blue-40 );
-	}
-
-	// the tick
-	svg:first-child path {
-		fill: var( --studio-green-40 );
-		stroke: var( --studio-green-40 );
-		margin-top: 5px;
-	}
-
-	// the chevron
-	svg:last-child {
-		fill: var( --studio-blue-40 );
-		stroke: var( --studio-blue-40 );
-		margin-left: 8px;
-		margin-top: 8px;
-	}
-}
-
-.plan-item__domain-summary.components-button.is-link.is-free {
-	font-weight: bold;
-	color: var( --studio-orange-40 );
-	text-decoration: line-through; // the tick
-	svg path {
-		fill: var( --studio-orange-40 );
-		stroke: var( --studio-orange-40 );
 	}
 }
 
@@ -269,65 +192,5 @@ ul.plan-item__feature-item-group {
 	svg {
 		margin-left: -8px;
 		margin-right: 10px;
-	}
-}
-
-.plan-item__domain-picker-button.components-button {
-	font-size: $font-body-small;
-	line-height: 19px;
-	letter-spacing: 0.2px;
-	word-break: break-word;
-
-	&.has-domain {
-		color: var( --studio-gray-50 );
-		text-decoration: none;
-	}
-
-	svg {
-		margin-left: 2px;
-	}
-}
-
-.plan-item__feature-item {
-	font-size: $font-body-small;
-	line-height: 20px;
-	letter-spacing: 0.2px;
-	margin: 4px 0;
-	vertical-align: middle;
-	color: $dark-gray-500;
-	display: flex;
-	align-items: flex-start;
-
-	svg {
-		display: block;
-		margin-right: 6px;
-		margin-top: 2px;
-	}
-
-	// the tick
-	svg path {
-		fill: var( --studio-green-40 );
-		stroke: var( --studio-green-40 );
-	}
-
-	.plan-item__disabled-message {
-		svg {
-			align-self: flex-start;
-			width: 18px;
-			height: 18px;
-
-			path {
-				fill: var( --studio-orange-40 );
-				stroke: var( --studio-orange-40 );
-			}
-		}
-
-		p {
-			font-size: $font-body-small;
-			line-height: 20px;
-			letter-spacing: 0.2px;
-			font-weight: bold;
-			color: var( --studio-orange-40 );
-		}
 	}
 }

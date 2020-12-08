@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { ROUTE_SET } from 'state/action-types';
+import { ROUTE_SET } from 'calypso/state/action-types';
 
 const initialState = {
 	initial: '',

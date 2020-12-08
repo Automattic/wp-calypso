@@ -10,7 +10,7 @@ import { trim } from 'lodash';
 /**
  * Internal dependencies
  */
-import SiteUsersFetcher from 'components/site-users-fetcher';
+import SiteUsersFetcher from 'calypso/components/site-users-fetcher';
 import SwitcherShell from './switcher-shell';
 
 /**

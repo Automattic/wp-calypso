@@ -4,16 +4,16 @@
 
 import page from 'page';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import notices from 'notices';
+import notices from 'calypso/notices';
 import utils from './utils';
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Constants
@@ -232,11 +232,11 @@ class MainComponent extends React.Component {
 	render() {
 		const translate = this.props.translate;
 		const headingLabel = this.state.isSubscribed
-				? translate( "You're subscribed" )
-				: translate( "We've unsubscribed your email." ),
-			messageLabel = this.state.isSubscribed
-				? translate( "We'll send you updates for this mailing list." )
-				: translate( 'You will no longer receive updates for this mailing list.' );
+			? translate( "You're subscribed" )
+			: translate( "We've unsubscribed your email." );
+		const messageLabel = this.state.isSubscribed
+			? translate( "We'll send you updates for this mailing list." )
+			: translate( 'You will no longer receive updates for this mailing list.' );
 
 		return (
 			<div className="mailing-lists">

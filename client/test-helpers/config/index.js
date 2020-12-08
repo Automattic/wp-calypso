@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 export const setFeatureFlag = ( feature, val ) => {
 	const c = config;

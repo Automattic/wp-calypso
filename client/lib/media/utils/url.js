@@ -6,7 +6,7 @@ import photon from 'photon';
 /**
  * Internal dependencies
  */
-import resize from 'lib/resize-image-url';
+import resize from 'calypso/lib/resize-image-url';
 
 /**
  * Given a media object, returns a URL string to that media. Accepts

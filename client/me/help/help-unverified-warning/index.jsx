@@ -3,24 +3,24 @@
  */
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
-import user from 'lib/user';
+import user from 'calypso/lib/user';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import notices from 'notices';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import notices from 'calypso/notices';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-const RESEND_IDLE = 0,
-	RESEND_IN_PROGRESS = 1,
-	RESEND_SUCCESS = 2,
-	RESEND_ERROR = 3;
+const RESEND_IDLE = 0;
+const RESEND_IN_PROGRESS = 1;
+const RESEND_SUCCESS = 2;
+const RESEND_ERROR = 3;
 
 class HelpUnverifiedWarning extends Component {
 	constructor( props ) {

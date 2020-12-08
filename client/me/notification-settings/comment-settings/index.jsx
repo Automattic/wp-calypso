@@ -8,21 +8,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import MeSidebarNavigation from 'me/sidebar-navigation';
+import Main from 'calypso/components/main';
+import ReauthRequired from 'calypso/me/reauth-required';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import Navigation from '../navigation';
 import { Card } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import SettingsForm from 'me/notification-settings/settings-form';
-import QueryUserDevices from 'components/data/query-user-devices';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { fetchSettings, toggle, saveSettings } from 'state/notification-settings/actions';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import SettingsForm from 'calypso/me/notification-settings/settings-form';
+import QueryUserDevices from 'calypso/components/data/query-user-devices';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { fetchSettings, toggle, saveSettings } from 'calypso/state/notification-settings/actions';
 import {
 	getNotificationSettings,
 	hasUnsavedNotificationSettingsChanges,
-} from 'state/notification-settings/selectors';
+} from 'calypso/state/notification-settings/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -55,7 +56,7 @@ class NotificationCommentsSettings extends Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main>
+			<Main className="comment-settings__main is-wide-layout">
 				<PageViewTracker
 					path="/me/notifications/comments"
 					title="Me > Notifications > Comments on other sites"
@@ -63,6 +64,12 @@ class NotificationCommentsSettings extends Component {
 				<QueryUserDevices />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+
+				<FormattedHeader
+					brandFont
+					headerText={ translate( 'Notification Settings' ) }
+					align="left"
+				/>
 
 				<Navigation path={ path } />
 

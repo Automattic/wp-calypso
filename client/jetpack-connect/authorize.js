@@ -14,33 +14,34 @@ import { localize } from 'i18n-calypso';
  */
 import AuthFormHeader from './auth-form-header';
 import { Button, Card } from '@automattic/components';
-import canCurrentUser from 'state/selectors/can-current-user';
-import config from 'config';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import config from 'calypso/config';
 import Disclaimer from './disclaimer';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Gravatar from 'components/gravatar';
-import Gridicon from 'components/gridicon';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Gravatar from 'calypso/components/gravatar';
+import Gridicon from 'calypso/components/gridicon';
 import HelpButton from './help-button';
-import isVipSite from 'state/selectors/is-vip-site';
+import isVipSite from 'calypso/state/selectors/is-vip-site';
 import JetpackConnectHappychatButton from './happychat-button';
 import JetpackConnectNotices from './jetpack-connect-notices';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainWrapper from './main-wrapper';
-import QueryUserConnection from 'components/data/query-user-connection';
-import Spinner from 'components/spinner';
-import userUtilities from 'lib/user/utils';
-import { addQueryArgs, externalRedirect } from 'lib/route';
+import QueryUserConnection from 'calypso/components/data/query-user-connection';
+import Spinner from 'calypso/components/spinner';
+import userUtilities from 'calypso/lib/user/utils';
+import { addQueryArgs, externalRedirect } from 'calypso/lib/route';
 import { authQueryPropTypes, getRoleFromScope } from './utils';
-import { decodeEntities } from 'lib/formatting';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { isRequestingSite, isRequestingSites } from 'state/sites/selectors';
+import { decodeEntities } from 'calypso/lib/formatting';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { isRequestingSite, isRequestingSites } from 'calypso/state/sites/selectors';
 import { JPC_PATH_PLANS, REMOTE_PATH_AUTH } from './constants';
-import { login } from 'lib/paths';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import { urlToSlug } from 'lib/url';
+import { OFFER_RESET_FLOW_TYPES } from './flow-types';
+import { login } from 'calypso/lib/paths';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import { urlToSlug } from 'calypso/lib/url';
 import {
 	ALREADY_CONNECTED,
 	ALREADY_CONNECTED_BY_OTHER_USER,
@@ -61,7 +62,7 @@ import {
 import {
 	authorize as authorizeAction,
 	retryAuth as retryAuthAction,
-} from 'state/jetpack-connect/actions';
+} from 'calypso/state/jetpack-connect/actions';
 import {
 	getAuthAttempts,
 	getAuthorizationData,
@@ -70,9 +71,9 @@ import {
 	hasXmlrpcError as hasXmlrpcErrorSelector,
 	isRemoteSiteOnSitesList,
 	isSiteBlockedError as isSiteBlockedSelector,
-} from 'state/jetpack-connect/selectors';
-import getPartnerIdFromQuery from 'state/selectors/get-partner-id-from-query';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
+} from 'calypso/state/jetpack-connect/selectors';
+import getPartnerIdFromQuery from 'calypso/state/selectors/get-partner-id-from-query';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
 import wooDnaConfig from './woo-dna-config';
 
 /**
@@ -616,10 +617,11 @@ export class JetpackAuthorize extends Component {
 			return `/start/pressable-nux?blogid=${ clientId }`;
 		}
 
-		// If the redirect is part of the Jetpack Search purchase flow
-		const isSearch = this.props.selectedPlanSlug === 'jetpack_search';
-
-		if ( isSearch ) {
+		// If the redirect is part of a Jetpack plan or product go to the checkout page
+		const jetpackCheckoutSlugs = OFFER_RESET_FLOW_TYPES.filter( ( productSlug ) =>
+			productSlug.includes( 'jetpack' )
+		);
+		if ( jetpackCheckoutSlugs.includes( this.props.selectedPlanSlug ) ) {
 			return '/checkout/' + urlToSlug( homeUrl ) + '/' + this.props.selectedPlanSlug;
 		}
 

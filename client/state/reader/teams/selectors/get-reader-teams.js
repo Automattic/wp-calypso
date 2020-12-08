@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Returns all of the reader teams for a user

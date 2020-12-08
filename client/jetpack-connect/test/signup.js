@@ -13,7 +13,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import LocaleSuggestions from 'components/locale-suggestions';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import { JetpackSignup } from '../signup.js';
 
 const CLIENT_ID = 98765;

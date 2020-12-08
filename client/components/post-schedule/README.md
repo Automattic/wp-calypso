@@ -1,5 +1,4 @@
-PostSchedule
-============
+# PostSchedule
 
 This React component implements a small calendar (shown by month) which allows us to select a date through its interface. PostSchedule can be localized to display days/events in a given timezone by passing in a `timezone` or `gmtOffset` properties.
 
@@ -8,28 +7,28 @@ This React component implements a small calendar (shown by month) which allows u
 ## Example Usage
 
 ```js
-import PostSchedule from 'components/post-schedule';
+import PostSchedule from 'calypso/components/post-schedule';
 
 export default class extends React.Component {
 	// ...
 
-	onDateChange: function( date ) {
+	onDateChange( date ) {
 		console.log( 'current date: ', date );
-	},
+	}
 
 	render() {
-		var events = [
+		const events = [
 			{
 				id: 1,
 				title: 'My daily post',
 				date: new Date( '2015-10-15 10:30' ),
-				type: 'personal'
+				type: 'personal',
 			},
 			{
 				id: 2,
 				title: 'Happy Birthday!',
-				date: new Date( '2015-07-18 15:00' )
-			}
+				date: new Date( '2015-07-18 15:00' ),
+			},
 		];
 
 		return (
@@ -40,9 +39,8 @@ export default class extends React.Component {
 			/>
 		);
 	}
-	
-	// ...
 
+	// ...
 }
 ```
 
@@ -50,7 +48,7 @@ export default class extends React.Component {
 
 ## PostSchedule
 
-#### Props
+### Props
 
 `events` - **optional** Array - Events array to print into the calendar.
 

@@ -87,7 +87,10 @@ function generateDefaultSku( productName, attributes ) {
 
 // http://stackoverflow.com/a/29585704
 function cartesian( ...arrays ) {
-	let i, j, l, m;
+	let i;
+	let j;
+	let l;
+	let m;
 	const o = [];
 
 	if ( ! arrays || arrays.length === 0 ) {

@@ -2,29 +2,49 @@
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { planDetails, PLANS_LIST } from './plans-data';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE } from './constants';
-import type { PlanSlug } from './types';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
+import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
+import { select } from '@wordpress/data';
 
-function getPlan( slug: PlanSlug ) {
-	return PLANS_LIST[ slug ];
-}
+export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
 
-export const getPlanBySlug = ( _: State, slug: PlanSlug ) => getPlan( slug );
+export const getFeaturesByType = ( state: State ): Array< PlanFeatureType > => state.featuresByType;
 
-export const getDefaultPaidPlan = () => getPlan( DEFAULT_PAID_PLAN );
+export const getPlanBySlug = ( state: State, slug: PlanSlug ): Plan => {
+	return state.plans[ slug ] ?? undefined;
+};
 
-export const getSupportedPlans = ( state: State ) => state.supportedPlanSlugs.map( getPlan );
+export const getDefaultPaidPlan = (): Plan => {
+	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ DEFAULT_PAID_PLAN ];
+};
 
-export const getPlanByPath = ( state: State, path?: string ) =>
-	path && getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path );
+export const getDefaultFreePlan = (): Plan => {
+	return select( STORE_KEY ).getPlansDetails( '' )?.plans[ PLAN_FREE ];
+};
 
-export const getPlansDetails = () => planDetails;
+export const getSupportedPlans = ( state: State ): Plan[] => {
+	const supportedPlans: Plan[] = [];
 
-export const getPlansPaths = ( state: State ) =>
-	getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+	state.supportedPlanSlugs.forEach( ( slug ) => {
+		if ( slug in state.plans ) {
+			supportedPlans.push( state.plans[ slug ] );
+		}
+	} );
 
-export const getPrices = ( state: State ) => state.prices;
+	return supportedPlans;
+};
+
+export const getPlanByPath = ( state: State, path?: string ): Plan | undefined => {
+	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
+};
+
+export const getPlansDetails = ( state: State, _: string ): State => state; // eslint-disable-line @typescript-eslint/no-unused-vars
+
+export const getPlansPaths = ( state: State ) => {
+	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
+};
+
+export const getPrices = ( state: State, _: string ) => state.prices; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
 	return planSlug === PLAN_ECOMMERCE;

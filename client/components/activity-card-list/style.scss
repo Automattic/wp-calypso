@@ -2,30 +2,6 @@
 	.filterbar {
 		margin-bottom: 2rem;
 	}
-
-	.pagination__list-item {
-		.pagination__list-item:last-child .pagination__list-button.button.is-borderless,
-		.button.pagination__list-button.is-borderless,
-		&.pagination__ellipsis > span {
-			color: var( --color-text );
-			border: none;
-			border-radius: 8px;
-
-			&:disabled {
-				color: var( --studio-gray-10 );
-			}
-		}
-
-		&:not( .is-selected ) .button.pagination__list-button.is-borderless,
-		&.pagination__ellipsis > span {
-			background-color: var( --color-surface-backdrop );
-		}
-
-		&.is-selected .button.pagination__list-button.is-borderless {
-			background-color: var( --color-primary );
-			color: var( --color-text-inverted );
-		}
-	}
 }
 
 .activity-card-list__pagination-bottom {

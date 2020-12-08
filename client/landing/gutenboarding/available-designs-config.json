@@ -1,28 +1,15 @@
 {
 	"featured": [
 		{
-			"title": "Reynolds (FSE)",
-			"slug": "reynolds-fse",
-			"template": "reynolds",
+			"title": "Seedlet",
+			"slug": "seedlet-blocks",
+			"template": "seedlet-blocks",
 			"theme": "seedlet-blocks",
 			"fonts": {
 				"headings": "Playfair Display",
 				"base": "Fira Sans"
 			},
-			"categories": [ "featured", "portfolio" ],
-			"is_premium": false,
-			"is_fse": true
-		},
-		{
-			"title": "Vesta (FSE)",
-			"slug": "vesta-fse",
-			"template": "vesta",
-			"theme": "seedlet-blocks",
-			"fonts": {
-				"headings": "Cabin",
-				"base": "Raleway"
-			},
-			"categories": [ "featured", "portfolio" ],
+			"categories": [ "featured" ],
 			"is_premium": false,
 			"is_fse": true
 		},

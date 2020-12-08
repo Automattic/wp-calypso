@@ -12,7 +12,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 import { CartItem } from '../cart-item';
 import {
 	isPlan,
@@ -21,16 +21,16 @@ import {
 	isBiennially,
 	isBundled,
 	isDomainProduct,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 import {
 	PLAN_BUSINESS_2_YEARS,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_PERSONAL,
 	PLAN_BLOGGER,
 	PLAN_PREMIUM,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
-const plansModule = require( 'lib/plans' );
+const plansModule = require( 'calypso/lib/plans' );
 const originalPlansModuleFunctions = pick( plansModule, [
 	'calculateMonthlyPriceForPlan',
 	'getBillingMonthsForPlan',
@@ -82,7 +82,8 @@ describe( 'cart-item', () => {
 	} );
 
 	describe( 'monthlyPrice', () => {
-		let myTranslate, instance;
+		let myTranslate;
+		let instance;
 		beforeEach( () => {
 			myTranslate = jest.fn( identity );
 			instance = new CartItem( {

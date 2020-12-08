@@ -1,11 +1,11 @@
-const { BrowserWindow } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { BrowserWindow } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
+const Config = require( 'calypso/desktop/lib/config' );
 const debugMenu = require( './debug-menu' );
-const platform = require( 'desktop/lib/platform' );
+const platform = require( 'calypso/desktop/lib/platform' );
 
 /**
  * Module variables

@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
 
 export function getEarningsForSiteId( state, siteId ) {
 	return get( state, [ 'memberships', 'earnings', 'summary', siteId ] );
@@ -20,6 +20,6 @@ export function getEarningsWithDefaultsForSiteId( state, siteId ) {
 		last_month: earnings.last_month ?? 0,
 		forecast: earnings.forecast ?? 0,
 		currency: earnings.currency ?? 'USD',
-		commission: earnings.commission ?? '0.1',
+		commission: earnings.commission ?? null,
 	};
 }

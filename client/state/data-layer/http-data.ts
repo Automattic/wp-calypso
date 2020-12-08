@@ -6,13 +6,13 @@ import { Reducer, AnyAction, Dispatch, Action, StoreEnhancerStoreCreator } from 
 /**
  * Internal dependencies
  */
-import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { HTTP_DATA_REQUEST, HTTP_DATA_TICK } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
 /**
  * Types
  */
-import { Lazy, TimestampMS, TimerHandle } from 'types';
+import { Lazy, TimestampMS, TimerHandle } from 'calypso/types';
 
 export enum DataState {
 	Failure = 'failure',
@@ -61,7 +61,7 @@ export const subscribe = ( f: () => void ): ( () => void ) => {
 	return () => void listeners.delete( f );
 };
 
-export const updateData = ( id: DataId, state: DataState, data: unknown ): typeof httpData => {
+export const updateData = ( id: DataId, state: DataState, data?: unknown ): typeof httpData => {
 	const lastUpdated: TimestampMS = Date.now();
 	const item = httpData.get( id ) || empty;
 
@@ -105,16 +105,14 @@ export const updateData = ( id: DataId, state: DataState, data: unknown ): typeo
 
 export const resetHttpData = ( id: DataId ) => httpData.set( id, empty );
 
-export const update = ( id: DataId, state: DataState, data?: unknown ) => {
-	const updated = updateData( id, state, data );
-
+function fireChangeEvents() {
 	listeners.forEach( ( f ) => f() );
-
-	return updated;
-};
+	return { type: HTTP_DATA_TICK };
+}
 
 const fetch = ( action: HttpDataAction ) => {
-	update( action.id, DataState.Pending );
+	updateData( action.id, DataState.Pending );
+	const tickAction = fireChangeEvents();
 
 	return [
 		{
@@ -123,60 +121,25 @@ const fetch = ( action: HttpDataAction ) => {
 			onFailure: action,
 			onProgress: action,
 		},
-		{ type: HTTP_DATA_TICK },
+		tickAction,
 	];
 };
 
 const onError = ( action: HttpDataAction, error: unknown ) => {
-	update( action.id, DataState.Failure, error );
-
-	return { type: HTTP_DATA_TICK };
-};
-
-type SuccessfulParse = [ undefined, ReturnType< ResponseParser > ];
-type FailedParse = [ unknown, undefined ];
-type ParseResult = SuccessfulParse | FailedParse;
-
-/**
- * Transforms API response data into storable data
- * Returns pairs of data ids and data plus an error indicator
- *
- * [ error?, [ [ id, data ], [ id, data ], … ] ]
- *
- * @example
- *   --input--
- *   { data: { sites: {
- *     14: { is_active: true, name: 'foo' },
- *     19: { is_active: false, name: 'bar' }
- *   } } }
- *
- *   --output--
- *   [ [ 'site-names-14', 'foo' ] ]
- *
- * @param data - input data from API response
- * @param fromApi - transforms API response data
- * @returns output data to store
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const parseResponse = ( data: any, fromApi: ResponseParser ): ParseResult => {
-	try {
-		return [ undefined, fromApi( data ) ];
-	} catch ( error ) {
-		return [ error, undefined ];
-	}
+	updateData( action.id, DataState.Failure, error );
+	return fireChangeEvents();
 };
 
 const onSuccess = ( action: HttpDataAction, apiData: unknown ) => {
-	const [ error, data ] = parseResponse( apiData, action.fromApi() );
-
-	if ( undefined === data ) {
+	try {
+		const data = action.fromApi()( apiData );
+		for ( const [ id, resource ] of data ) {
+			updateData( id, DataState.Success, resource );
+		}
+		return fireChangeEvents();
+	} catch ( error ) {
 		return onError( action, error );
 	}
-
-	update( action.id, DataState.Success, apiData );
-	data.forEach( ( [ id, resource ] ) => update( id, DataState.Success, resource ) );
-
-	return { type: HTTP_DATA_TICK };
 };
 
 export default {
@@ -230,21 +193,26 @@ interface RequestHttpDataOptions {
 	freshness?: number;
 }
 
+function defaultFromApi( requestId: DataId ): Lazy< ResponseParser > {
+	return () => ( data: any ) => [ [ requestId, data ] ];
+}
+
 /**
  * Fetches data from a fetchable action
  *
  * @param requestId - uniquely identifies the request or request type
  * @param fetchAction - action that when dispatched will request the data (may be wrapped in a lazy thunk)
- * @param options - object with options for the http request. Following options are allowed:
- *     - fromAPI: when called produces a function that validates and transforms API data into Calypso data
- *     - freshness - indicates how many ms stale data is allowed to be before refetching
+ * @param options - options object
+ * @param options.fromApi - when called produces a function that validates and transforms API data into Calypso data
+ * @param options.freshness - indicates how many ms stale data is allowed to be before refetching
  * @returns stored data container for request
  */
 export const requestHttpData = (
 	requestId: DataId,
 	fetchAction: Lazy< AnyAction > | AnyAction,
-	{ fromApi, freshness = Infinity }: RequestHttpDataOptions
+	options: RequestHttpDataOptions = {}
 ): Resource => {
+	const { fromApi = defaultFromApi( requestId ), freshness = Infinity } = options;
 	const data = getHttpData( requestId );
 	const { state, lastUpdated } = data;
 
@@ -260,8 +228,7 @@ export const requestHttpData = (
 			type: HTTP_DATA_REQUEST,
 			id: requestId,
 			fetch: 'function' === typeof fetchAction ? fetchAction() : fetchAction,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			fromApi: 'function' === typeof fromApi ? fromApi : () => ( a: any ) => a,
+			fromApi,
 		};
 
 		dispatch ? dispatch( action ) : dispatchQueue.push( action );
@@ -270,11 +237,13 @@ export const requestHttpData = (
 	return data;
 };
 
-interface Query {
-	[ key: string ]: Lazy< Resource >;
+interface WaitForHttpDataOptions {
+	timeout?: number;
 }
 
-type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
+interface QueryResults {
+	[ key: string ]: Resource;
+}
 
 /**
  * Blocks execution until requested data has been fulfilled
@@ -287,60 +256,56 @@ type Results< T extends Query > = { [ P in keyof T ]: ReturnType< T[ P ] > };
  *    as is the case in 99.999% of React component contexts
  *
  * @example
- * waitForData( {
- *     geo: () => requestGeoLocation(),
- *     splines: () => requestSplines( siteId ),
- * } ).then( ( { geo, splines } ) => {
+ * waitForHttpData( () => ( {
+ *     geo: requestGeoLocation(),
+ *     splines: requestSplines( siteId ),
+ * } ) ).then( ( { geo, splines } ) => {
  *     return ( geo.state === 'success' || splines.state === 'success' )
  *         ? res.send( renderToStaticMarkup( <LocalSplines geo={ geo.data } splines={ splines.data } /> ) )
  *         : res.send( renderToStaticMarkup( <UnvailableData /> ) );
  * }
  *
- * @param query - key/value pairs of data name and request
- * @param timeout - how many ms to wait until giving up on requests
+ * @param query - function that returns key/value pairs of data name and request state
+ * @param options - options object
+ * @param options.timeout - how many ms to wait until giving up on requests
  * @returns fulfilled data of request (or partial if could not fulfill)
  */
-export const waitForData = < T extends Query >(
-	query: T,
-	{ timeout }: { timeout?: number } = {}
-): Promise< Results< T > > =>
+export const waitForHttpData = (
+	query: Lazy< QueryResults >,
+	options: WaitForHttpDataOptions = {}
+): Promise< QueryResults > =>
 	new Promise( ( resolve, reject ) => {
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		let unsubscribe = () => {};
 		let timer: TimerHandle;
-		const names = Object.keys( query );
 
-		const getValues = () =>
-			names.reduce(
-				( [ values, allBad, allDone ], name ) => {
-					const value = query[ name ]();
-
-					return [
-						{ ...values, [ name ]: value },
-						allBad && value.state === DataState.Failure,
-						allDone && ( value.state === DataState.Success || value.state === DataState.Failure ),
-					];
-				},
-				[ {}, true, true ] as [ Results< T >, boolean, boolean ]
+		const getResults = () => {
+			const results = query();
+			const values = Object.values( results );
+			const allBad = values.every( ( value ) => value.state === DataState.Failure );
+			const allDone = values.every( ( value ) =>
+				[ DataState.Success, DataState.Failure ].includes( value.state )
 			);
+			return { results, allBad, allDone };
+		};
 
 		const listener = () => {
-			const [ values, allBad, allDone ] = getValues();
+			const { results, allBad, allDone } = getResults();
 
 			if ( allDone ) {
 				clearTimeout( timer );
 				unsubscribe();
-				allBad ? reject( values ) : resolve( values );
+				allBad ? reject( results ) : resolve( results );
 			}
 		};
 
-		if ( timeout ) {
+		if ( options.timeout ) {
 			timer = setTimeout( () => {
-				const [ values ] = getValues();
+				const { results } = getResults();
 
 				unsubscribe();
-				reject( values );
-			}, timeout );
+				reject( results );
+			}, options.timeout );
 		}
 
 		unsubscribe = subscribe( listener );
@@ -351,5 +316,5 @@ if ( 'object' === typeof window && window.app && window.app.isDebug ) {
 	window.getHttpData = getHttpData;
 	window.httpData = httpData;
 	window.requestHttpData = requestHttpData;
-	window.waitForData = waitForData;
+	window.waitForHttpData = waitForHttpData;
 }

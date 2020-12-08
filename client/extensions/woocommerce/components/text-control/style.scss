@@ -12,7 +12,7 @@
 	border: 1px solid var( --color-primary-20 );
 	box-shadow: none;
 	box-sizing: border-box;
-	border-radius: 3px;
+	border-radius: 2px;
 	background: var( --color-surface );
 
 	.text-control__input {
@@ -54,9 +54,14 @@
 		line-height: 24px;
 	}
 
+	input[type='password'] {
+		appearance: none;
+	}
+
 	input[type='text']:focus, input[type='email']:focus, input[type='password']:focus {
 		box-shadow: none;
 		border: 0;
+		outline: 0;
 	}
 
 	&.active {

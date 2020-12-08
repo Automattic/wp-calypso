@@ -8,9 +8,9 @@ import { Field } from 'redux-form';
 /**
  * Internal dependencies
  */
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
-import 'state/form/init';
+import 'calypso/state/form/init';
 
 const TextInputRenderer = ( { input, meta, ...props } ) => (
 	<FormTextInput { ...input } { ...props } />

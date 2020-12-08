@@ -16,14 +16,14 @@ import { localize, translate } from 'i18n-calypso';
 import CartBody from './cart-body';
 import CartBodyLoadingPlaceholder from './cart-body/loading-placeholder';
 import CartMessages from './cart-messages';
-import HeaderButton from 'components/header-button';
+import HeaderButton from 'calypso/components/header-button';
 import CartButtons from './cart-buttons';
-import Count from 'components/count';
-import Popover from 'components/popover';
+import Count from 'calypso/components/count';
+import Popover from 'calypso/components/popover';
 import CartEmpty from './cart-empty';
-import { isCredits } from 'lib/products-values';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { reloadCart } from 'lib/cart/actions';
+import { isCredits } from 'calypso/lib/products-values';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { reloadCart } from 'calypso/lib/cart/actions';
 
 /**
  * Style dependencies
@@ -102,7 +102,11 @@ class PopoverCart extends React.Component {
 
 		return (
 			<div>
-				<CartMessages cart={ cart } selectedSite={ selectedSite } />
+				<CartMessages
+					cart={ cart }
+					selectedSite={ selectedSite }
+					isLoadingCart={ ! cart.hasLoadedFromServer }
+				/>
 				<div className={ classes }>
 					<HeaderButton
 						icon="cart"

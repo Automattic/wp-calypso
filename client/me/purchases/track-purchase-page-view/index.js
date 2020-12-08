@@ -8,8 +8,8 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import { getByPurchaseId } from 'state/purchases/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { getByPurchaseId } from 'calypso/state/purchases/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 export class TrackPurchasePageView extends Component {
 	static propTypes = {

@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, dialog } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const settings = require( 'desktop/lib/settings' );
-const assets = require( 'desktop/lib/assets' );
-const log = require( 'desktop/lib/logger' )( 'desktop:failed-to-load' );
+const settings = require( 'calypso/desktop/lib/settings' );
+const assets = require( 'calypso/desktop/lib/assets' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:failed-to-load' );
 
 /**
  * Module variables

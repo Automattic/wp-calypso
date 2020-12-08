@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { CompactCard, Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -76,7 +76,10 @@ export class ConciergeSupportSession extends PureComponent {
 						<p>
 							<b>
 								{ translate(
-									'Reserve a 45-minute one-on-one call with a website expert to help you get started on the right foot.'
+									'Reserve a %(durationInMinutes)d-minute one-on-one call with a website expert to help you get started on the right foot.',
+									{
+										args: { durationInMinutes: 30 },
+									}
 								) }
 							</b>
 						</p>
@@ -157,10 +160,11 @@ export class ConciergeSupportSession extends PureComponent {
 
 						<h4 className="concierge-support-session__sub-header">
 							{ translate(
-								'Reserve a 45-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
+								'Reserve a %(durationInMinutes)d-minute "Quick Start" appointment, and save %(saveAmount)s if you sign up today.',
 								{
 									args: {
 										saveAmount: formatCurrency( savings, currencyCode, { stripZeros: true } ),
+										durationInMinutes: 30,
 									},
 								}
 							) }

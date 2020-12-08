@@ -12,7 +12,7 @@ import {
 	READER_TAG_IMAGES_RECEIVE,
 	READER_TAG_IMAGES_REQUEST,
 	READER_TAG_IMAGES_REQUEST_SUCCESS,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

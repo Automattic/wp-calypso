@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<ruleset name="full-site-editing">
-	<description>Full Site Editing</description>
+<ruleset name="editing-toolkit">
+	<description>Editing Toolkit Plugin Rules</description>
 
 	<rule ref="WordPress"/>
 	<rule ref="WordPress-Core"/>

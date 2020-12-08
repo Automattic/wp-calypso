@@ -11,8 +11,8 @@ import createReactClass from 'create-react-class';
  * Internal dependencies
  */
 import { ProgressBar } from '@automattic/components';
-import Rating from 'components/rating';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Rating from 'calypso/components/rating';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies

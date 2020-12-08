@@ -9,8 +9,8 @@ It will handle the data itself thus helping us to decouple concerns: i.e. fetchi
 
 ```js
 import React from 'react';
-import DomainManagementData from 'components/data/domain-management';
-import MyChildComponent from 'components/my-child-component';
+import DomainManagementData from 'calypso/components/data/domain-management';
+import MyChildComponent from 'calypso/components/my-child-component';
 
 // initialize rest of the variables
 
@@ -37,7 +37,6 @@ Currently we have both Flux and Redux mixed. Props for loading data:
 - `needsContactDetails` - Loads Contact Details for current user (Redux)
 - `needsDomains` - Loads domain for currently selected site (Redux)
 - `needsDomainInfo` - Loads `WapiDomainInfoStore` (Flux)
-- `needsNameservers` - Loads `NameserversStore` (Flux)
 - `needsPlans` - Loads plans for given site (Redux)
 - `needsProductsList` - Loads products list (Redux)
 - `needsUsers` - Loads `UsersStore` (Flux)

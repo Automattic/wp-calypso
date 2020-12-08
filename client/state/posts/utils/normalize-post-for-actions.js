@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { decodeEntities } from 'lib/formatting';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 function getParentId( post ) {
 	if ( ! post || ! post.parent ) {

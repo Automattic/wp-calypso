@@ -1,5 +1,4 @@
-Installed Plugins
-=================
+# Installed Plugins
 
 A module for managing installed plugins on connected sites.
 
@@ -50,44 +49,52 @@ Data from the aforementioned actions is added to the global state tree, under `p
 ```js
 state.plugins.installed = {
 	isRequesting: {
-		'exampleSiteId': false,
+		exampleSiteId: false,
 	},
 	plugins: {
-		'exampleSiteId': [ {
-			id: 'akismet/akismet',
-			slug: 'akismet',
-			active: true,
-			name: 'Akismet',
-			plugin_url: 'https://akismet.com/',
-			version: '3.1.11',
-			description: 'Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from spam</strong>. It keeps your site protected even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) <a href="https://akismet.com/get/">Sign up for an Akismet plan</a> to get an API key, and 3) Go to your Akismet configuration page, and save your API key.',
-			author: 'Automattic',
-			author_url: 'https://automattic.com/wordpress-plugins/',
-			network: false,
-			autoupdate: true
-		}, {
-			id: 'hello-dolly/hello',
-			slug: 'hello-dolly',
-			active: false,
-			name: 'Hello Dolly',
-			plugin_url: 'https://wordpress.org/plugins/hello-dolly/',
-			version: '1.6',
-			description: 'This is not just a plugin, it symbolizes the hope and enthusiasm of an entire generation summed up in two words sung most famously by Louis Armstrong: Hello, Dolly. When activated you will randomly see a lyric from <cite>Hello, Dolly</cite> in the upper right of your admin screen on every page',
-			author: 'Matt Mullenweg',
-			author_url: 'http://ma.tt/',
-			network: false,
-			autoupdate: true
-		} ],
-		'exampleSiteIdTwo': [ … ],
-		…
+		exampleSiteId: [
+			{
+				id: 'akismet/akismet',
+				slug: 'akismet',
+				active: true,
+				name: 'Akismet',
+				plugin_url: 'https://akismet.com/',
+				version: '3.1.11',
+				description:
+					'Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from spam</strong>. It keeps your site protected even while you sleep. To get started: 1) Click the "Activate" link to the left of this description, 2) <a href="https://akismet.com/get/">Sign up for an Akismet plan</a> to get an API key, and 3) Go to your Akismet configuration page, and save your API key.',
+				author: 'Automattic',
+				author_url: 'https://automattic.com/wordpress-plugins/',
+				network: false,
+				autoupdate: true,
+			},
+			{
+				id: 'hello-dolly/hello',
+				slug: 'hello-dolly',
+				active: false,
+				name: 'Hello Dolly',
+				plugin_url: 'https://wordpress.org/plugins/hello-dolly/',
+				version: '1.6',
+				description:
+					'This is not just a plugin, it symbolizes the hope and enthusiasm of an entire generation summed up in two words sung most famously by Louis Armstrong: Hello, Dolly. When activated you will randomly see a lyric from <cite>Hello, Dolly</cite> in the upper right of your admin screen on every page',
+				author: 'Matt Mullenweg',
+				author_url: 'http://ma.tt/',
+				network: false,
+				autoupdate: true,
+			},
+		],
+		exampleSiteIdTwo: [
+			/*...*/
+		],
+		/*...*/
 	},
 	status: {
-		'exampleSiteIdTwo': {
+		exampleSiteIdTwo: {
 			'akismet/akismet': {
 				status: 'error',
 				action: INSTALL_PLUGIN,
 				error: createError( 'no_package', 'Download failed.' ),
-			}
-		}
-	}
+			},
+		},
+	},
+};
 ```

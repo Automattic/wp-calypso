@@ -8,34 +8,31 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { Card } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import { isExpiringSoon } from 'lib/domains/utils';
-import SubscriptionSettings from '../card/subscription-settings';
+import { isExpiringSoon } from 'calypso/lib/domains/utils';
 import { recordPaymentSettingsClick } from '../payment-settings-analytics';
-import { WPCOM_DEFAULTS } from 'lib/domains/nameservers';
-import AutoRenewToggle from 'me/purchases/manage-purchase/auto-renew-toggle';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import { isSubdomain, resolveDomainStatus } from 'lib/domains';
-import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'lib/url/support';
-import RenewButton from 'my-sites/domains/domain-management/edit/card/renew-button';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import { WPCOM_DEFAULT_NAMESERVERS } from 'calypso/state/domains/nameservers/constants';
+import AutoRenewToggle from 'calypso/me/purchases/manage-purchase/auto-renew-toggle';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import { isSubdomain, resolveDomainStatus } from 'calypso/lib/domains';
+import { MAP_EXISTING_DOMAIN, MAP_SUBDOMAIN } from 'calypso/lib/url/support';
+import RenewButton from 'calypso/my-sites/domains/domain-management/edit/card/renew-button';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-} from 'state/purchases/selectors';
+} from 'calypso/state/purchases/selectors';
 import ExpiringCreditCard from '../card/notices/expiring-credit-card';
 import ExpiringSoon from '../card/notices/expiring-soon';
-import DomainManagementNavigation from '../navigation';
 import DomainManagementNavigationEnhanced from '../navigation/enhanced';
 import { DomainExpiryOrRenewal, WrapDomainStatusButtons } from './helpers';
-import { hasPendingGSuiteUsers } from 'lib/gsuite';
-import PendingGSuiteTosNotice from 'my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
+import { hasPendingGSuiteUsers } from 'calypso/lib/gsuite';
+import PendingGSuiteTosNotice from 'calypso/my-sites/domains/components/domain-warnings/pending-gsuite-tos-notice';
 
 class MappedDomainType extends React.Component {
 	renderSettingUpNameservers() {
@@ -94,7 +91,7 @@ class MappedDomainType extends React.Component {
 					<p>{ primaryMessage }</p>
 					{ ! isSubdomain( domain.name ) && (
 						<ul className="mapped-domain-type__name-server-list">
-							{ WPCOM_DEFAULTS.map( ( nameServer ) => {
+							{ WPCOM_DEFAULT_NAMESERVERS.map( ( nameServer ) => {
 								return <li key={ nameServer }>{ nameServer }</li>;
 							} ) }
 						</ul>
@@ -176,7 +173,6 @@ class MappedDomainType extends React.Component {
 				planName={ selectedSite.plan.product_name_short }
 				siteDomain={ selectedSite.domain }
 				purchase={ purchase }
-				compact={ true }
 				withTextStatus={ true }
 				toggleSource="mapped-domain-status"
 			/>
@@ -216,11 +212,6 @@ class MappedDomainType extends React.Component {
 			isSiteAutomatedTransfer: this.props.isSiteAutomatedTransfer,
 		} );
 
-		const newStatusDesignAutoRenew = config.isEnabled( 'domains/new-status-design/auto-renew' );
-		const newDomainManagementNavigation = config.isEnabled(
-			'domains/new-status-design/new-options'
-		);
-
 		return (
 			<div className="domain-types__container">
 				{ selectedSite.ID && ! purchase && <QuerySitePurchases siteId={ selectedSite.ID } /> }
@@ -247,34 +238,14 @@ class MappedDomainType extends React.Component {
 				<Card compact={ true } className="domain-types__expiration-row">
 					<DomainExpiryOrRenewal { ...this.props } />
 					{ this.renderDefaultRenewButton() }
-					{ ! newStatusDesignAutoRenew && domain.subscriptionId && (
-						<WrapDomainStatusButtons>
-							<SubscriptionSettings
-								type={ domain.type }
-								compact={ true }
-								subscriptionId={ domain.subscriptionId }
-								siteSlug={ this.props.selectedSite.slug }
-								onClick={ this.handlePaymentSettingsClick }
-							/>
-						</WrapDomainStatusButtons>
-					) }
-					{ newStatusDesignAutoRenew && domain.currentUserCanManage && this.renderAutoRenew() }
+					{ domain.currentUserCanManage && this.renderAutoRenew() }
 				</Card>
-				{ newDomainManagementNavigation ? (
-					<DomainManagementNavigationEnhanced
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) : (
-					<DomainManagementNavigation
-						domain={ domain }
-						selectedSite={ this.props.selectedSite }
-						purchase={ mappingPurchase }
-						isLoadingPurchase={ isLoadingPurchase }
-					/>
-				) }
+				<DomainManagementNavigationEnhanced
+					domain={ domain }
+					selectedSite={ this.props.selectedSite }
+					purchase={ mappingPurchase }
+					isLoadingPurchase={ isLoadingPurchase }
+				/>
 			</div>
 		);
 	}

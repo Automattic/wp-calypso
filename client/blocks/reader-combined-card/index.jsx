@@ -11,19 +11,19 @@ import { connect } from 'react-redux';
  * Internal Dependencies
  */
 import { Card } from '@automattic/components';
-import { getStreamUrl } from 'reader/route';
-import ReaderAvatar from 'blocks/reader-avatar';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link';
+import { getStreamUrl } from 'calypso/reader/route';
+import ReaderAvatar from 'calypso/blocks/reader-avatar';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link';
 import ReaderCombinedCardPost from './post';
-import { keysAreEqual, keyForPost } from 'reader/post-key';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import { recordTrack } from 'reader/stats';
-import { getSiteName } from 'reader/get-helpers';
-import FollowButton from 'reader/follow-button';
-import { getPostsByKeys } from 'state/reader/posts/selectors';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu';
-import PostBlocked from 'blocks/reader-post-card/blocked';
+import { keysAreEqual, keyForPost } from 'calypso/reader/post-key';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import { recordTrack } from 'calypso/reader/stats';
+import { getSiteName } from 'calypso/reader/get-helpers';
+import FollowButton from 'calypso/reader/follow-button';
+import { getPostsByKeys } from 'calypso/state/reader/posts/selectors';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu';
+import PostBlocked from 'calypso/blocks/reader-post-card/blocked';
 
 /**
  * Style dependencies

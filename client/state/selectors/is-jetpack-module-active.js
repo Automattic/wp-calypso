@@ -6,10 +6,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 
-import 'state/jetpack/init';
+import 'calypso/state/jetpack/init';
 
 /**
  * Returns true if the module is currently active. False otherwise.

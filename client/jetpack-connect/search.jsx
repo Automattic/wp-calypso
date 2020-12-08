@@ -3,7 +3,7 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from 'calypso/config';
 import { connect } from 'react-redux';
 import { concat, flowRight } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -13,27 +13,27 @@ import { localize } from 'i18n-calypso';
  */
 import { Card } from '@automattic/components';
 import HelpButton from './help-button';
-import LocaleSuggestions from 'components/locale-suggestions';
-import LoggedOutFormLinkItem from 'components/logged-out-form/link-item';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import LoggedOutFormLinkItem from 'calypso/components/logged-out-form/link-item';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import MainHeader from './main-header';
 import MainWrapper from './main-wrapper';
 import page from 'page';
 import SiteUrlInput from './site-url-input';
 import { cleanUrl } from './utils';
-import { checkUrl, dismissUrl } from 'state/jetpack-connect/actions';
-import { FLOW_TYPES } from 'state/jetpack-connect/constants';
-import { getConnectingSite, getJetpackSiteByUrl } from 'state/jetpack-connect/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import getSites from 'state/selectors/get-sites';
-import { isRequestingSites } from 'state/sites/selectors';
+import { checkUrl, dismissUrl } from 'calypso/state/jetpack-connect/actions';
+import { getConnectingSite, getJetpackSiteByUrl } from 'calypso/state/jetpack-connect/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import getSites from 'calypso/state/selectors/get-sites';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
 import { persistSession, retrieveMobileRedirect } from './persistence-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { urlToSlug } from 'lib/url';
-import searchSites from 'components/search-sites';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { urlToSlug } from 'calypso/lib/url';
+import searchSites from 'calypso/components/search-sites';
 import jetpackConnection from './jetpack-connection';
 
 import { IS_DOT_COM_GET_SEARCH, JPC_PATH_REMOTE_INSTALL } from './constants';
+import { FLOW_TYPES } from './flow-types';
 import { ALREADY_CONNECTED } from './connection-notice-types';
 
 export class SearchPurchase extends Component {

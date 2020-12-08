@@ -2,13 +2,16 @@
  * Internal dependencies
  */
 import { fetchSitePlansCompleted, transferPlanOwnership } from '../actions';
-import { SITE_PLANS_FETCH_COMPLETED, SITE_PLAN_OWNERSHIP_TRANSFER } from 'state/action-types';
+import {
+	SITE_PLANS_FETCH_COMPLETED,
+	SITE_PLAN_OWNERSHIP_TRANSFER,
+} from 'calypso/state/action-types';
 
 describe( 'actions', () => {
 	describe( '#fetchSitePlansCompleted()', () => {
 		test( 'should return an action object with an array of plans', () => {
-			const siteId = 2916284,
-				action = fetchSitePlansCompleted( siteId, {} );
+			const siteId = 2916284;
+			const action = fetchSitePlansCompleted( siteId, {} );
 
 			expect( action ).toEqual( {
 				type: SITE_PLANS_FETCH_COMPLETED,

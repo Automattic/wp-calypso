@@ -12,29 +12,25 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import ExternalLink from 'components/external-link';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormToggle from 'components/forms/form-toggle';
-import Main from 'components/main';
-import observe from 'lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
-import { protectForm } from 'lib/protect-form';
-import { localizeUrl } from 'lib/i18n-utils';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import ReauthRequired from 'me/reauth-required';
-import SectionHeader from 'components/section-header';
-import formBase from 'me/form-base';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { requestHttpData, getHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { successNotice, errorNotice } from 'state/notices/actions';
-
-/**
- * Style dependencies
- */
-import './style.scss';
+import DocumentHead from 'calypso/components/data/document-head';
+import ExternalLink from 'calypso/components/external-link';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import Main from 'calypso/components/main';
+import observe from 'calypso/lib/mixins/data-observe'; //eslint-disable-line no-restricted-imports
+import { protectForm } from 'calypso/lib/protect-form';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SectionHeader from 'calypso/components/section-header';
+import formBase from 'calypso/me/form-base';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { requestHttpData, getHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 const TRACKS_OPT_OUT_USER_SETTINGS_KEY = 'tracks_opt_out';
 
@@ -97,11 +93,13 @@ const Privacy = createReactClass( {
 		);
 
 		return (
-			<Main className="privacy">
+			<Main className="privacy is-wide-layout">
 				<PageViewTracker path="/me/privacy" title="Me > Privacy" />
 				<DocumentHead title={ translate( 'Privacy Settings' ) } />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader brandFont headerText={ translate( 'Privacy' ) } align="left" />
+
 				<SectionHeader label={ translate( 'Usage information' ) } />
 				<Card className="privacy__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
@@ -132,24 +130,22 @@ const Privacy = createReactClass( {
 								) }
 							</p>
 							<hr />
-							<p>
-								<FormToggle
-									id="tracks_opt_out"
-									checked={ isSendingTracksEvent }
-									onChange={ this.updateTracksOptOut }
-								>
-									{ translate(
-										'Share information with our analytics tool about your use of services while ' +
-											'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
-											'{{/cookiePolicyLink}}.',
-										{
-											components: {
-												cookiePolicyLink,
-											},
-										}
-									) }
-								</FormToggle>
-							</p>
+							<FormToggle
+								id="tracks_opt_out"
+								checked={ isSendingTracksEvent }
+								onChange={ this.updateTracksOptOut }
+							>
+								{ translate(
+									'Share information with our analytics tool about your use of services while ' +
+										'logged in to your WordPress.com account. {{cookiePolicyLink}}Learn more' +
+										'{{/cookiePolicyLink}}.',
+									{
+										components: {
+											cookiePolicyLink,
+										},
+									}
+								) }
+							</FormToggle>
 						</FormFieldset>
 
 						<FormButton
@@ -195,7 +191,7 @@ const Privacy = createReactClass( {
 							) }
 						</strong>
 					</p>
-					<Button primary className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
+					<Button className="privacy__dpa-request-button" onClick={ this.props.requestDpa }>
 						{ translate( 'Request a DPA', {
 							comment:
 								'A Data Processing Addendum (DPA) is a document to assure customers, vendors, and partners that their data handling complies with the law.',

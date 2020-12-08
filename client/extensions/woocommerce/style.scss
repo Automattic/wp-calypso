@@ -155,7 +155,7 @@
 			padding-left: 7px;
 			position: fixed;
 			width: 100%;
-			top: 47px;
+			top: var( --masterbar-height );
 			left: 0;
 			min-height: 46px;
 			z-index: z-index( 'root', '.sticky-panel.is-sticky .sticky-panel__content' );

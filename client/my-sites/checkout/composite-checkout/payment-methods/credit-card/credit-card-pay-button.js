@@ -1,48 +1,43 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@automattic/react-i18n';
 import {
 	Button,
-	usePaymentProcessor,
-	useTransactionStatus,
+	FormStatus,
 	useLineItems,
 	useEvents,
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { showStripeModalAuth } from 'lib/stripe';
-import { validatePaymentDetails } from 'lib/checkout/validation';
-import { useCart } from 'my-sites/checkout/composite-checkout/cart-provider';
-import { paymentMethodClassName } from 'lib/cart-values';
+import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
-export default function CreditCardPayButton( { disabled, store, stripe, stripeConfiguration } ) {
+export default function CreditCardPayButton( {
+	disabled,
+	onClick,
+	store,
+	stripe,
+	stripeConfiguration,
+} ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
 	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
-	const {
-		transactionStatus,
-		setTransactionComplete,
-		setTransactionAuthorizing,
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'card' );
 	const onEvent = useEvents();
 
-	const cart = useCart();
+	const { responseCart: cart } = useShoppingCart();
 	const contactCountryCode = useSelect(
 		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
 	);
@@ -51,8 +46,6 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 		contactCountryCode,
 	} );
 
-	useShowStripeModalAuth( transactionStatus === 'authorizing', stripeConfiguration );
-
 	return (
 		<Button
 			disabled={ disabled }
@@ -60,40 +53,21 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 				if ( isCreditCardFormValid( store, paymentPartner, __ ) ) {
 					if ( paymentPartner === 'stripe' ) {
 						debug( 'submitting stripe payment' );
-						setTransactionPending();
 						onEvent( { type: 'STRIPE_TRANSACTION_BEGIN' } );
-						submitTransaction( {
+						onClick( 'card', {
 							stripe,
 							name: cardholderName?.value,
 							items,
 							total,
 							stripeConfiguration,
 							paymentPartner,
-						} )
-							.then( ( stripeResponse ) => {
-								if ( stripeResponse?.message?.payment_intent_client_secret ) {
-									debug( 'stripe transaction requires auth' );
-									setTransactionAuthorizing( stripeResponse );
-									return;
-								}
-								if ( stripeResponse?.redirect_url ) {
-									debug( 'stripe transaction requires redirect' );
-									setTransactionRedirecting( stripeResponse.redirect_url );
-									return;
-								}
-								debug( 'stripe transaction is successful' );
-								setTransactionComplete();
-							} )
-							.catch( ( error ) => {
-								setTransactionError( error.message );
-							} );
+						} );
 						return;
 					}
 					if ( paymentPartner === 'ebanx' ) {
 						debug( 'submitting ebanx payment' );
-						setTransactionPending();
 						onEvent( { type: 'EBANX_TRANSACTION_BEGIN' } );
-						submitTransaction( {
+						onClick( 'card', {
 							name: cardholderName?.value || '',
 							countryCode: fields?.countryCode?.value || '',
 							number: fields?.number?.value?.replace( /\s+/g, '' ) || '',
@@ -109,17 +83,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 							items,
 							total,
 							paymentPartner,
-						} )
-							.then( ( ebanxResponse ) => {
-								// TODO
-								debug( 'ebanx transaction is successful', ebanxResponse );
-								setTransactionComplete();
-							} )
-							.catch( ( error ) => {
-								// TODO
-								debug( 'ebanx transaction error', error );
-								setTransactionError( error );
-							} );
+						} );
 						return;
 					}
 					throw new Error(
@@ -128,7 +92,7 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -138,58 +102,20 @@ export default function CreditCardPayButton( { disabled, store, stripe, stripeCo
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }
 
-function useShowStripeModalAuth( shouldShowModal, stripeConfiguration ) {
-	const onEvent = useEvents();
-	const {
-		transactionLastResponse,
-		resetTransaction,
-		setTransactionComplete,
-		setTransactionError,
-	} = useTransactionStatus();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( shouldShowModal ) {
-			debug( 'showing stripe authentication modal' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'stripe auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		shouldShowModal,
-		onEvent,
-		setTransactionComplete,
-		resetTransaction,
-		transactionLastResponse,
-		setTransactionError,
-		stripeConfiguration,
-	] );
-}
-
 function getPaymentPartner( { cart, contactCountryCode } ) {
 	const isEbanxAvailable = Boolean(
-		cart?.allowed_payment_methods?.includes( paymentMethodClassName( 'ebanx' ) )
+		cart?.allowed_payment_methods?.includes(
+			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+		)
 	);
 
 	let paymentPartner = 'stripe';

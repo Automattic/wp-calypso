@@ -1,5 +1,4 @@
-Sending Order Invoices
-======================
+# Sending Order Invoices
 
 This module is used to track the request of sending a customer an order invoice.
 
@@ -14,14 +13,14 @@ Send the customer an email invoice for the given order. `onSuccess` & `onFailure
 This is saved inside the orders state tree, which is keyed by site ID. It only tracks whether an order invoice is currently being sent. `isSending` maps order ID to a boolean representing whether the request is in-flight or completed.
 
 ```js
-{
-	"invoice": {
+const object = {
+	invoice: {
 		// Keyed by order ID
-		"isSending": {
+		isSending: {
 			10: true,
 		},
-	}
-}
+	},
+};
 ```
 
 ## Selectors

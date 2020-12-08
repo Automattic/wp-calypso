@@ -1,5 +1,4 @@
-Login Status
-=========
+# Login Status
 
 Toggles menu items that require the user to be logged in.
 

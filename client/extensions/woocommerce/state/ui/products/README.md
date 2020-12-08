@@ -1,5 +1,4 @@
-Products
-========
+# Products
 
 This module is used to manage UI state related to products on a site.
 
@@ -8,19 +7,21 @@ This module is used to manage UI state related to products on a site.
 The state holds both product edits (see [edits-reducer.js](./edits-reducer.js)), and information related to the product list display - current and request query parameters. Both of these are keyed by siteId. For example:
 
 ```js
-{
-	"products": {
+const object = {
+	products: {
 		[ siteId ]: {
-			edits: {…}
+			edits: {
+				/*...*/
+			},
 			list: {
 				currentPage: 1,
 				currentSearch: 'example',
 				requestedPage: null,
 				requestedSearch: null,
-			}
-		}
-	}
-}
+			},
+		},
+	},
+};
 ```
 
 ## Selectors

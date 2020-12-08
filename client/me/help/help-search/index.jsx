@@ -10,13 +10,13 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import getHelpLinks from 'state/selectors/get-help-links';
-import HelpResults from 'me/help/help-results';
-import NoResults from 'my-sites/no-results';
-import QueryHelpLinks from 'components/data/query-help-links';
-import SearchCard from 'components/search-card';
-import { localizeUrl } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
+import getHelpLinks from 'calypso/state/selectors/get-help-links';
+import HelpResults from 'calypso/me/help/help-results';
+import NoResults from 'calypso/my-sites/no-results';
+import QueryHelpLinks from 'calypso/components/data/query-help-links';
+import SearchCard from 'calypso/components/search-card';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

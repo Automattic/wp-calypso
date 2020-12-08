@@ -8,6 +8,10 @@
 	.name-servers__toggle {
 		display: inline-block;
 		float: right;
+
+		.components-toggle-control .components-base-control__field .components-form-toggle {
+			margin-right: 0;
+		}
 	}
 
 	.name-servers__explanation {
@@ -41,7 +45,7 @@
 		}
 	}
 
-  .vertical-nav-item {
+	.vertical-nav-item {
 		span:nth-of-type( 1 ) {
 			@include placeholder();
 		}
@@ -58,7 +62,7 @@
 
 .name-servers__custom-nameservers-form-explanation {
 	display: block;
-	margin-top: 5px;
+	margin: 5px 0 1.5rem;
 	font-size: $font-body-small;
 	font-style: italic;
 	color: var( --color-text-subtle );
@@ -68,7 +72,11 @@
 	margin-top: 10px;
 	position: relative;
 
-	input[type='text'] {
+	.form-fieldset {
+		margin-bottom: 0;
+	}
+
+	.form-text-input {
 		padding-right: 38px;
 
 		@include breakpoint-deprecated( '<480px' ) {

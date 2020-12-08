@@ -1,0 +1,34 @@
+.email-providers-comparison__providers {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.promo-card {
+		width: calc( 33% - 0.5em );
+		margin: 8px 0;
+
+		&.no-gsuite {
+			width: calc( 50% - 0.5em );
+		}
+
+		@include breakpoint-deprecated( '<1040px' ) {
+			&,
+			&.no-gsuite {
+				width: 100%;
+			}
+		}
+	}
+}
+
+.email-providers-comparison__action-panel {
+	@include breakpoint-deprecated( '>1040px' ) {
+		&.is-primary {
+			padding-left: 73px;
+		}
+	}
+
+	&.is-primary .action-panel__figure {
+		max-width: 170px;
+	}
+}

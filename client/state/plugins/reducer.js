@@ -1,18 +1,19 @@
 /**
  * Internal dependencies
  */
-
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
 import wporg from './wporg/reducer';
-import { combineReducers } from 'state/utils';
 import premium from './premium/reducer';
 import installed from './installed/reducer';
 import upload from './upload/reducer';
 import recommended from './recommended/reducer';
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	wporg,
 	premium,
 	installed,
 	upload,
 	recommended,
 } );
+
+export default withStorageKey( 'plugins', combinedReducer );

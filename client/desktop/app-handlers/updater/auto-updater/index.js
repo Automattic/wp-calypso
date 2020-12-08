@@ -1,18 +1,22 @@
 /**
  * External Dependencies
  */
-const { app } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app } = require( 'electron' );
 const { autoUpdater } = require( 'electron-updater' );
 
 /**
  * Internal dependencies
  */
-const AppQuit = require( 'desktop/lib/app-quit' );
-const Config = require( 'desktop/lib/config' );
-const debugTools = require( 'desktop/lib/debug-tools' );
-const { bumpStat, sanitizeVersion, getPlatform } = require( 'desktop/lib/desktop-analytics' );
-const Updater = require( 'desktop/lib/updater' );
-const log = require( 'desktop/lib/logger' )( 'desktop:updater:auto' );
+const AppQuit = require( 'calypso/desktop/lib/app-quit' );
+const Config = require( 'calypso/desktop/lib/config' );
+const debugTools = require( 'calypso/desktop/lib/debug-tools' );
+const {
+	bumpStat,
+	sanitizeVersion,
+	getPlatform,
+} = require( 'calypso/desktop/lib/desktop-analytics' );
+const Updater = require( 'calypso/desktop/lib/updater' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:updater:auto' );
 
 const statsPlatform = getPlatform( process.platform );
 const sanitizedVersion = sanitizeVersion( app.getVersion() );
@@ -47,17 +51,23 @@ class AutoUpdater extends Updater {
 			autoUpdater.allowPrerelease = true;
 			autoUpdater.allowDowngrade = false;
 		}
+
+		// Tracks whether an auto-update check was initiated via menu selection.
+		this.isUserRequested = false;
 	}
 
-	ping() {
+	ping( isUserRequested ) {
 		if ( process.env.DEBUG ) {
 			dialogDebug( 'DEBUG is set: skipping auto-update check' );
 			return;
 		}
 		dialogDebug( 'Checking for update' );
 		autoUpdater.checkForUpdates();
+		this.isUserRequested = isUserRequested;
 	}
 
+	// ignore (available), confirm (available), cancel (available)
+	// not available ( do nothing ) - user initiated
 	onAvailable( info ) {
 		log.info( 'New update is available: ', info.version );
 		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-needs-update` );
@@ -66,6 +76,10 @@ class AutoUpdater extends Updater {
 	onNotAvailable() {
 		log.info( 'No update is available' );
 		bumpStat( 'wpcom-desktop-update-check', `${ getStatsString( this.beta ) }-no-update` );
+		if ( this.isUserRequested ) {
+			this.notifyNotAvailable();
+		}
+		this.isUserRequested = false;
 	}
 
 	onDownloaded( info ) {
@@ -93,6 +107,7 @@ class AutoUpdater extends Updater {
 	}
 
 	onCancel() {
+		this.isUserRequested = false;
 		bumpStat( 'wpcom-desktop-update', `${ getStatsString( this.beta ) }-update-cancel` );
 	}
 

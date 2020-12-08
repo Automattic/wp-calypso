@@ -2,6 +2,8 @@
 @import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/fonts';
 
+$accent-blue: #117ac9;
+
 .domain-picker__empty-state {
 	display: flex;
 	justify-content: center;
@@ -9,7 +11,7 @@
 
 	&--text {
 		max-width: 320px;
-		font-size: 0.9em;
+		font-size: $font-body-small;
 		margin: 10px 0;
 		color: $dark-gray-500;
 	}
@@ -19,13 +21,13 @@
 		align-items: center;
 
 		&--text {
-			margin: 15px 0;
+			margin: 15px 10px;
 		}
 	}
 }
 
 .domain-picker__show-more {
-	padding: 10px;
+	margin-top: 20px;
 	text-align: center;
 }
 
@@ -70,7 +72,7 @@
 	margin-bottom: 0.5em;
 	text-transform: uppercase;
 	color: var( --studio-gray-40 );
-	font-size: 12px;
+	font-size: $font-body-extra-small;
 	letter-spacing: 1px;
 	font-weight: bold;
 }
@@ -85,28 +87,48 @@
 	background: var( --studio-white );
 	border: 1px solid var( --studio-gray-5 );
 	padding: 10px 14px;
-	margin: 0;
 	position: relative;
-	z-index: 1;
 	text-align: left;
 	cursor: pointer;
+
+	&.type-individual-item {
+		min-height: 64px;
+		border-width: 2px;
+		&.is-selected {
+			border-color: $accent-blue;
+		}
+
+		&:hover {
+			border-color: $accent-blue;
+		}
+	}
 
 	&.placeholder {
 		cursor: default;
 	}
 
+	&.type-individual-item,
 	&:first-of-type {
-		border-top-left-radius: 5px;
-		border-top-right-radius: 5px;
+		border-top-left-radius: 5px; /* stylelint-disable-line scales/radii */
+		border-top-right-radius: 5px; /* stylelint-disable-line scales/radii */
 	}
 
+	&.type-individual-item,
 	&:last-of-type {
-		border-bottom-left-radius: 5px;
-		border-bottom-right-radius: 5px;
+		border-bottom-left-radius: 5px; /* stylelint-disable-line scales/radii */
+		border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
 	}
 
 	+ .domain-picker__suggestion-item {
 		margin-top: -1px;
+	}
+
+	+ .domain-picker__suggestion-item.type-individual-item {
+		margin: 12px 0;
+	}
+
+	&.is-unavailable {
+		color: var( --studio-gray-40 );
 	}
 
 	// animate the added domains after you click expand
@@ -170,19 +192,38 @@
 			border-color: var( --studio-blue-30 );
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
+
+		&:disabled {
+			border-color: var( --studio-gray-40 );
+		}
+	}
+
+	// hide the radio button in individual mode
+	&.type-individual-item input[type='radio'].domain-picker__suggestion-radio-button {
+		display: none;
+	}
+
+	.components-spinner {
+		margin: 1px 10px 0 0;
 	}
 }
 
 .domain-picker__suggestion-item-name {
-	flex-grow: 1;
+	flex-grow: 2;
+	flex-basis: 2px;
 	letter-spacing: 0.4px;
+	// smaller gap between domain name and price on mobile
+	margin-right: 10px;
 
-	.domain-picker__suggestion-item:not( .is-free ) & {
-		margin-right: 0;
+	@include break-medium {
+		margin-right: 24px;
+	}
 
-		@include break-mobile {
-			margin-right: 24px;
-		}
+	.domain-picker__suggestion-item-name-inner {
+		// vertically align elements within, needed for items showing information icon.
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
 	}
 
 	.domain-picker__domain-name {
@@ -196,12 +237,41 @@
 	}
 }
 
+.domain-picker__suggestion-item.type-individual-item.is-selected {
+	.domain-picker__suggestion-item-name {
+		color: $accent-blue;
+	}
+}
+
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
-	// margin for recommended badge. this margin shouldn't
-	// be placed on the badge because if the badge falls
-	// on a newline, it will have whitespace on the left.
+
+	&.with-margin {
+		// margin for recommended badge. this margin shouldn't
+		// be placed on the badge because if the badge falls
+		// on a newline, it will have whitespace on the left.
+		// margin isnt applied if hstsRequired is truthy as InfoTooltip component
+		// provides equal spacing between this and the recommended badge.
+		margin-right: 10px;
+	}
+
+	.domain-picker__suggestion-item.is-unavailable & {
+		color: var( --studio-gray-40 );
+	}
+}
+
+.domain-picker__suggestion-item.type-individual-item {
+	.domain-picker__domain-tld {
+		// stylelint-disable-next-line scales/font-weight
+		font-weight: 500;
+		color: unset;
+	}
+}
+
+.domain-picker__info-tooltip {
 	margin-right: 10px;
+	cursor: pointer;
+	z-index: 1;
 }
 
 .domain-picker__badge {
@@ -211,25 +281,51 @@
 	line-height: 20px;
 	height: 20px;
 	align-items: center;
-	font-size: 10px;
+	// stylelint-disable-next-line scales/font-size
+	font-size: 10px; // typography-exception smaller size needed
 	text-transform: uppercase;
 	vertical-align: middle;
 	background-color: var( --studio-blue-50 );
 	color: var( --color-text-inverted );
+	margin: 2px 0; // harmless in desktop, useful in mobile (when the badge is below the text)
+}
+
+.domain-picker__suggestion-item.type-individual-item {
+	.domain-picker__badge {
+		color: var( --studio-green-80 );
+		background-color: var( --studio-green-5 );
+		// stylelint-disable-next-line scales/radii
+		border-radius: 4px;
+		text-transform: unset;
+		font-size: $font-body-extra-small;
+	}
+
+	&.is-selected {
+		.domain-picker__badge {
+			color: #0f6cb3;
+			background-color: #ddebf8;
+		}
+	}
 }
 
 .domain-picker__price {
 	color: var( --studio-gray-40 );
 	text-align: right;
 	flex-basis: 0;
+	flex-grow: 1;
 	transition: opacity 200ms ease-in-out;
 	// Don't show free text on mobile view
 	&:not( .is-paid ) {
 		display: none;
 	}
 
+	// When select button is visible
+	&:not( :last-child ) {
+		text-align: left;
+	}
+
 	@include break-small {
-		flex-basis: auto;
+		flex-basis: 1px;
 
 		&:not( .is-paid ) {
 			display: inline;
@@ -242,6 +338,23 @@
 	}
 }
 
+.domain-picker__suggestion-item.type-individual-item {
+	.domain-picker__price {
+		display: flex;
+		flex-direction: column-reverse;
+
+		// show the "Default" label for free domains on mobile
+		// applies only when domain-item is in individual-item mode
+		&:not( .is-paid ) {
+			display: block;
+		}
+
+		@include break-medium {
+			display: block;
+		}
+	}
+}
+
 .domain-picker__price-inclusive {
 	color: var( --studio-green-40 );
 	display: none;
@@ -251,8 +364,32 @@
 	}
 }
 
+.domain-picker__suggestion-item.type-individual-item {
+	.domain-picker__price-inclusive {
+		display: block;
+		line-height: 20px;
+
+		strong {
+			// stylelint-disable-next-line scales/font-weight
+			font-weight: 500;
+		}
+	}
+	&.is-selected {
+		.domain-picker__price-inclusive {
+			color: $accent-blue;
+		}
+	}
+}
+
 .domain-picker__price-cost {
 	text-decoration: line-through;
+}
+
+.domain-picker__suggestion-item.type-individual-item.is-selected {
+	.domain-picker__price-cost {
+		color: $accent-blue;
+		opacity: 0.68;
+	}
 }
 
 .domain-picker__body {
@@ -278,4 +415,31 @@
 .domain-picker__change-subdomain-tip {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
+}
+
+.domain-picker__error {
+	margin-top: 24px;
+
+	#{&}-message {
+		@include onboarding-medium-text;
+	}
+
+	#{&}-retry-btn {
+		margin-top: 16px;
+	}
+}
+
+.domain-picker__suggestion-select-button.components-button.is-secondary {
+	min-width: 140px;
+	justify-content: center;
+
+	&:not( :hover ):not( .is-selected ) {
+		box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+		color: var( --mainColor );
+	}
+
+	&.is-selected {
+		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-10 );
+		color: var( --wp-admin-theme-color-darker-10 );
+	}
 }

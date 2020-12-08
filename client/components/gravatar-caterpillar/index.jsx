@@ -8,7 +8,7 @@ import { noop, map, size, takeRight, filter, uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
+import Gravatar from 'calypso/components/gravatar';
 
 /**
  * Style dependencies

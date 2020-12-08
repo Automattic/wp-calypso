@@ -6,29 +6,30 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { defer, get } from 'lodash';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import { hideMagicLoginRequestNotice } from 'state/login/magic-login/actions';
-import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestedEmailSuccessfully from 'state/selectors/get-magic-login-requested-email-successfully';
-import getMagicLoginRequestEmailError from 'state/selectors/get-magic-login-request-email-error';
-import isFetchingMagicLoginEmail from 'state/selectors/is-fetching-magic-login-email';
-import { getRedirectToOriginal } from 'state/login/selectors';
-import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
 import EmailedLoginLinkSuccessfully from './emailed-login-link-successfully';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormTextInput from 'components/forms/form-text-input';
-import LoggedOutForm from 'components/logged-out-form';
-import Notice from 'components/notice';
-import { localize } from 'i18n-calypso';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { sendEmailLogin } from 'state/auth/actions';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestedEmailSuccessfully from 'calypso/state/selectors/get-magic-login-requested-email-successfully';
+import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-login-request-email-error';
+import isFetchingMagicLoginEmail from 'calypso/state/selectors/is-fetching-magic-login-email';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import Notice from 'calypso/components/notice';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { hideMagicLoginRequestNotice } from 'calypso/state/login/magic-login/actions';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { sendEmailLogin } from 'calypso/state/auth/actions';
 
 class RequestLoginEmailForm extends React.Component {
 	static propTypes = {
@@ -147,17 +148,16 @@ class RequestLoginEmailForm extends React.Component {
 								'with your account to log in instantly without your password.'
 						) }
 					</p>
-					<label htmlFor="usernameOrEmail" className="magic-login__form-label">
+					<FormLabel htmlFor="usernameOrEmail">
 						{ this.props.translate( 'Email Address' ) }
-					</label>
+					</FormLabel>
 					<FormFieldset className="magic-login__email-fields">
 						<FormTextInput
 							autoCapitalize="off"
-							autoFocus="true"
+							autoFocus // eslint-disable-line jsx-a11y/no-autofocus
 							disabled={ isFetching || emailRequested }
 							value={ usernameOrEmail }
 							name="usernameOrEmail"
-							type="text"
 							ref={ this.saveUsernameOrEmailRef }
 							onChange={ this.onUsernameOrEmailFieldChange }
 						/>

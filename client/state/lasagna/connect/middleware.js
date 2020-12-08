@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SECTION_SET } from 'state/action-types';
+import { SECTION_SET } from 'calypso/state/action-types';
 import { socketConnect, socketDisconnect } from '../socket';
 import { lasagna } from '../middleware';
 
@@ -10,6 +10,8 @@ let socketConnected = false;
 let socketConnecting = false;
 
 export default ( store ) => ( next ) => async ( action ) => {
+	const mwResult = next( action );
+
 	switch ( action.type ) {
 		case SECTION_SET: {
 			const { section } = action;
@@ -31,5 +33,5 @@ export default ( store ) => ( next ) => async ( action ) => {
 		}
 	}
 
-	return next( action );
+	return mwResult;
 };

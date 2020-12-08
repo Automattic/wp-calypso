@@ -10,17 +10,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import AccountPassword from 'me/account-password';
+import AccountPassword from 'calypso/me/account-password';
 import { Card } from '@automattic/components';
-import config from 'config';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import ReauthRequired from 'me/reauth-required';
-import SecuritySectionNav from 'me/security-section-nav';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import config from 'calypso/config';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SecuritySectionNav from 'calypso/me/security-section-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 const debug = debugFactory( 'calypso:me:security:password' );
 
@@ -49,10 +50,12 @@ class Security extends React.Component {
 		const useCheckupMenu = config.isEnabled( 'security/security-checkup' );
 
 		return (
-			<Main className="security">
+			<Main className="security is-wide-layout">
 				<PageViewTracker path={ path } title="Me > Password" />
 				<DocumentHead title={ translate( 'Password' ) } />
 				<MeSidebarNavigation />
+
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				{ ! useCheckupMenu && <SecuritySectionNav path={ path } /> }
 				{ useCheckupMenu && (

@@ -8,18 +8,18 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isAtomicSite from 'state/selectors/is-site-wpcom-atomic';
-import { getSiteProducts, getSitePlan } from 'state/sites/selectors';
-import { getPlan } from 'lib/plans';
+import Main from 'calypso/components/main';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-wpcom-atomic';
+import { getSiteProducts, getSitePlan } from 'calypso/state/sites/selectors';
+import { getPlan } from 'calypso/lib/plans';
 
 /**
  * Type dependencies
  */
-import type { SiteProduct } from 'state/sites/selectors/get-site-products';
-import type { SitePlan } from 'state/sites/selectors/get-site-plan';
+import type { SiteProduct } from 'calypso/state/sites/selectors/get-site-products';
+import type { SitePlan } from 'calypso/state/sites/selectors/get-site-plan';
 
 type QueryComponentProps = {
 	siteId: number | null;
@@ -121,15 +121,26 @@ function UpsellSwitch( props: Props ): React.ReactElement {
 	}, [ uiState, isRequesting, state ] );
 
 	useEffect( () => {
-		// Show the expected content only if the state is distinct to unavailable
-		// (active, inactive, provisioning) or if the site is Atomic
-		if (
-			UI_STATE_LOADED === uiState &&
-			! atomicSite &&
-			( ! state || state === 'unavailable' || ! hasProduct )
-		) {
-			setUpsell( true );
+		// Don't show an upsell until the page is loaded
+		if ( UI_STATE_LOADED !== uiState ) {
+			setUpsell( false );
+			return;
 		}
+
+		// Don't show an upsell if this site already has the product in question
+		if ( hasProduct ) {
+			setUpsell( false );
+			return;
+		}
+
+		// Don't show an upsell if this is an Atomic site
+		if ( atomicSite ) {
+			setUpsell( false );
+			return;
+		}
+
+		// Only show an upsell if the state is 'unavailable'
+		setUpsell( state === 'unavailable' );
 	}, [ uiState, atomicSite, hasProduct, state ] );
 
 	if ( UI_STATE_LOADED !== uiState ) {

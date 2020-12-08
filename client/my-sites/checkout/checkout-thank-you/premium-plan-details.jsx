@@ -11,19 +11,18 @@ import { useTranslate } from 'i18n-calypso';
  */
 import CustomDomainPurchaseDetail from './custom-domain-purchase-detail';
 import GoogleAppsDetails from './google-apps-details';
-import { isWordadsInstantActivationEligible } from 'lib/ads/utils';
-import { isPremium, isGoogleApps } from 'lib/products-values';
-import { newPost } from 'lib/paths';
-import PurchaseDetail from 'components/purchase-detail';
+import { isPremium, isGoogleApps } from 'calypso/lib/products-values';
+import { newPost } from 'calypso/lib/paths';
+import PurchaseDetail from 'calypso/components/purchase-detail';
 
 /**
  * Image dependencies
  */
-import analyticsImage from 'assets/images/illustrations/google-analytics.svg';
-import advertisingRemovedImage from 'assets/images/upgrades/removed-advertising.svg';
-import customizeThemeImage from 'assets/images/upgrades/customize-theme.svg';
-import mediaPostImage from 'assets/images/upgrades/media-post.svg';
-import wordAdsImage from 'assets/images/upgrades/word-ads.svg';
+import analyticsImage from 'calypso/assets/images/illustrations/google-analytics.svg';
+import advertisingRemovedImage from 'calypso/assets/images/upgrades/removed-advertising.svg';
+import customizeThemeImage from 'calypso/assets/images/upgrades/customize-theme.svg';
+import mediaPostImage from 'calypso/assets/images/upgrades/media-post.svg';
+import earnImage from 'calypso/assets/images/customer-home/illustration--task-earn.svg';
 
 const PremiumPlanDetails = ( {
 	selectedSite,
@@ -33,8 +32,8 @@ const PremiumPlanDetails = ( {
 	customizeUrl,
 } ) => {
 	const translate = useTranslate();
-	const plan = find( sitePlans.data, isPremium ),
-		isPremiumPlan = isPremium( selectedSite.plan );
+	const plan = find( sitePlans.data, isPremium );
+	const isPremiumPlan = isPremium( selectedSite.plan );
 	const googleAppsWasPurchased = purchases.some( isGoogleApps );
 
 	return (
@@ -44,6 +43,17 @@ const PremiumPlanDetails = ( {
 			<CustomDomainPurchaseDetail
 				selectedSite={ selectedSite }
 				hasDomainCredit={ plan && plan.hasDomainCredit }
+			/>
+
+			<PurchaseDetail
+				icon={ <img alt={ translate( 'Earn Illustration' ) } src={ earnImage } /> }
+				title={ translate( 'Make money with your website' ) }
+				description={ translate(
+					'Accept credit card payments today for just about anything – physical and digital goods, services, ' +
+						'donations and tips, or access to your exclusive content.'
+				) }
+				buttonText={ translate( 'Start Earning' ) }
+				href={ '/earn/' + selectedSite.slug }
 			/>
 
 			<PurchaseDetail
@@ -103,18 +113,6 @@ const PremiumPlanDetails = ( {
 				buttonText={ translate( 'Start a new post' ) }
 				href={ newPost( selectedSite ) }
 			/>
-			{ isWordadsInstantActivationEligible( selectedSite ) && (
-				<PurchaseDetail
-					icon={ <img alt={ translate( 'WordAds Illustration' ) } src={ wordAdsImage } /> }
-					title={ translate( 'Easily monetize your site' ) }
-					description={ translate(
-						'Take advantage of WordAds instant activation on your upgraded site. ' +
-							'WordAds lets you earn money by displaying promotional content.'
-					) }
-					buttonText={ translate( 'Start Earning' ) }
-					href={ '/ads/settings/' + selectedSite.slug }
-				/>
-			) }
 		</div>
 	);
 };

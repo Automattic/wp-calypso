@@ -10,22 +10,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import ContactsPrivacyCard from './card';
-import DomainMainPlaceholder from 'my-sites/domains/domain-management/components/domain/main-placeholder';
-import Header from 'my-sites/domains/domain-management/components/header';
-import Main from 'components/main';
-import VerticalNav from 'components/vertical-nav';
-import VerticalNavItem from 'components/vertical-nav/item';
+import DomainMainPlaceholder from 'calypso/my-sites/domains/domain-management/components/domain/main-placeholder';
+import Header from 'calypso/my-sites/domains/domain-management/components/header';
+import Main from 'calypso/components/main';
+import VerticalNav from 'calypso/components/vertical-nav';
+import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import {
 	domainManagementEdit,
 	domainManagementEditContactInfo,
 	domainManagementManageConsent,
-} from 'my-sites/domains/paths';
-import { getSelectedDomain } from 'lib/domains';
-import isRequestingWhois from 'state/selectors/is-requesting-whois';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import NonOwnerCard from 'my-sites/domains/domain-management/components/domain/non-owner-card';
+} from 'calypso/my-sites/domains/paths';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import isRequestingWhois from 'calypso/state/selectors/is-requesting-whois';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import NonOwnerCard from 'calypso/my-sites/domains/domain-management/components/domain/non-owner-card';
 
 /**
  * Style dependencies

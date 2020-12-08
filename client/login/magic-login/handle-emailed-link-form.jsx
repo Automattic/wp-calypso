@@ -12,35 +12,35 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import EmailedLoginLinkExpired from './emailed-login-link-expired';
-import config from 'config';
-import { login } from 'lib/paths';
+import config from 'calypso/config';
+import { login } from 'calypso/lib/paths';
 import { localize } from 'i18n-calypso';
-import { LINK_EXPIRED_PAGE } from 'state/login/magic-login/constants';
+import { LINK_EXPIRED_PAGE } from 'calypso/state/login/magic-login/constants';
 import {
 	fetchMagicLoginAuthenticate,
 	showMagicLoginLinkExpiredPage,
-} from 'state/login/magic-login/actions';
-import { rebootAfterLogin } from 'state/login/actions';
-import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
-import getMagicLoginRequestAuthError from 'state/selectors/get-magic-login-request-auth-error';
-import getMagicLoginRequestedAuthSuccessfully from 'state/selectors/get-magic-login-requested-auth-successfully';
-import isFetchingMagicLoginAuth from 'state/selectors/is-fetching-magic-login-auth';
+} from 'calypso/state/login/magic-login/actions';
+import { rebootAfterLogin } from 'calypso/state/login/actions';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import getMagicLoginRequestAuthError from 'calypso/state/selectors/get-magic-login-request-auth-error';
+import getMagicLoginRequestedAuthSuccessfully from 'calypso/state/selectors/get-magic-login-requested-auth-successfully';
+import isFetchingMagicLoginAuth from 'calypso/state/selectors/is-fetching-magic-login-auth';
 import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
 	isTwoFactorEnabled,
-} from 'state/login/selectors';
+} from 'calypso/state/login/selectors';
 import {
 	wasImmediateLoginAttempted,
 	wasManualRenewalImmediateLoginAttempted,
-} from 'state/immediate-login/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import getInitialQueryArguments from 'state/selectors/get-initial-query-arguments';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+} from 'calypso/state/immediate-login/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import getInitialQueryArguments from 'calypso/state/selectors/get-initial-query-arguments';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
 class HandleEmailedLinkForm extends React.Component {
 	static propTypes = {

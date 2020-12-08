@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 // Jetpack products constants
 export const PRODUCT_JETPACK_BACKUP = 'jetpack_backup';
@@ -17,6 +17,39 @@ export const PRODUCT_JETPACK_SCAN = 'jetpack_scan';
 export const PRODUCT_JETPACK_SCAN_MONTHLY = 'jetpack_scan_monthly';
 export const PRODUCT_JETPACK_ANTI_SPAM = 'jetpack_anti_spam';
 export const PRODUCT_JETPACK_ANTI_SPAM_MONTHLY = 'jetpack_anti_spam_monthly';
+export const PRODUCT_JETPACK_CRM = 'jetpack_crm';
+export const PRODUCT_JETPACK_CRM_MONTHLY = 'jetpack_crm_monthly';
+
+export const JETPACK_PRODUCTS_BY_TERM = [
+	{
+		yearly: PRODUCT_JETPACK_BACKUP_DAILY,
+		monthly: PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_BACKUP_REALTIME,
+		monthly: PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SEARCH,
+		monthly: PRODUCT_JETPACK_SEARCH_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_WPCOM_SEARCH,
+		monthly: PRODUCT_WPCOM_SEARCH_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_SCAN,
+		monthly: PRODUCT_JETPACK_SCAN_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_ANTI_SPAM,
+		monthly: PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
+	},
+	{
+		yearly: PRODUCT_JETPACK_CRM,
+		monthly: PRODUCT_JETPACK_CRM_MONTHLY,
+	},
+];
 
 export const JETPACK_BACKUP_PRODUCTS_YEARLY = [
 	PRODUCT_JETPACK_BACKUP_DAILY,
@@ -37,9 +70,10 @@ export const JETPACK_SEARCH_PRODUCTS = [
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
 ];
-export const isJetpackSearch = ( slug ) => JETPACK_SEARCH_PRODUCTS.includes( slug );
 
 export const JETPACK_SCAN_PRODUCTS = [ PRODUCT_JETPACK_SCAN, PRODUCT_JETPACK_SCAN_MONTHLY ];
+
+export const JETPACK_CRM_PRODUCTS = [ PRODUCT_JETPACK_CRM, PRODUCT_JETPACK_CRM_MONTHLY ];
 
 export const JETPACK_ANTI_SPAM_PRODUCTS = [
 	PRODUCT_JETPACK_ANTI_SPAM,

@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { isFetchingAutomatedTransferStatus } from 'state/automated-transfer/selectors';
+import { isFetchingAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 
 describe( 'isFetchingAutomatedTransferStatus()', () => {
 	test(

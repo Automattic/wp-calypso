@@ -1,13 +1,5 @@
 // SASS placeholder selectors for form styles
 
-%form {
-	ul {
-		margin: 0;
-		padding: 0;
-		list-style: none;
-	}
-}
-
 %form-field {
 	margin: 0;
 	padding: 7px 14px;
@@ -16,6 +8,7 @@
 	font-size: $font-body;
 	line-height: 1.5;
 	border: 1px solid var( --color-neutral-10 );
+	border-radius: 2px;
 	background-color: var( --color-surface );
 	transition: all 0.15s ease-in-out;
 	box-sizing: border-box;
@@ -91,8 +84,4 @@
 			box-shadow: 0 0 0 2px var( --color-error-20 );
 		}
 	}
-}
-
-%textarea {
-	min-height: 92px;
 }

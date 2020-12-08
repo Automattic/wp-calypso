@@ -1,5 +1,4 @@
-Sharing Connections
-===================
+# Sharing Connections
 
 The Connections components allow a user to add, edit, and remove third-party service providers to their account and/or sites. Historically, this has been primarily focused on the publicize action. Moving forward, we have plans to enable other actions and integrations. For example, we could potentially support integration with Dropbox and allow a user to insert images from their Dropbox directory.
 
@@ -54,6 +53,7 @@ When a user authorizes WordPress.com to use their account on a third-party servi
 While Publicize connections have historically been the primary consumer of Keyring tokens, separating the two allows us to create other types of integrations. For example, in the future we may allow a user to integrate with Dropbox or Instagram so that these can be used as sources of media for their posts.
 
 More information:
+
 - [WordPress.org Keyring plugin](https://wordpress.org/plugins/keyring/)
 
 ### Publicize Connection
@@ -61,6 +61,7 @@ More information:
 A Publicize connection is created when a user chooses an account to connect from the options available using the Keyring token associated with a third-party service, so long as the Keyring service supports Publicize. In the context of the connections page, this almost always occurs immediately following the Keyring authorization step, though a user can choose to grant us authorization to their account and never create a connection. By creating a Publicize connection, a user opts in to automatic sharing of new posts to their connected account. For example, if a user creates a Publicize connection for Twitter, each new blog post will be shared automatically to their Twitter feed by default, unless the user chooses not to publicize that particular post.
 
 More information
+
 - [Publicize - WordPress.com Support](https://wordpress.com/support/publicize/)
 
 ### Account

@@ -2,35 +2,7 @@
  * External dependencies
  */
 import { parse, stringify } from 'qs';
-
-/**
- * Internal dependencies
- */
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentLocaleVariant from 'state/selectors/get-current-locale-variant';
-
-/**
- * Module variables
- */
-let locale;
-
-/**
- * Setter function for internal locale value
- *
- * @param {string} localeToSet Locale to set
- */
-export function setLocale( localeToSet ) {
-	locale = localeToSet;
-}
-
-/**
- * Getter function for internal locale value
- *
- * @returns {string} Locale
- */
-export function getLocale() {
-	return locale;
-}
+import i18n from 'i18n-calypso';
 
 /**
  * Given a WPCOM parameter set, modifies the query such that a non-default
@@ -40,6 +12,8 @@ export function getLocale() {
  * @returns {object}        Revised parameters, if non-default locale
  */
 export function addLocaleQueryParam( params ) {
+	const locale = i18n.getLocaleVariant() || i18n.getLocaleSlug();
+
 	if ( ! locale || 'en' === locale ) {
 		return params;
 	}
@@ -76,22 +50,4 @@ export function injectLocalization( wpcom ) {
 			return originalRequest( addLocaleQueryParam( params ), callback );
 		},
 	} );
-}
-
-/**
- * Subscribes to the provided Redux store instance, updating the known locale
- * value to the latest value when state changes.
- *
- * @param {object} store Redux store instance
- */
-export function bindState( store ) {
-	function setLocaleFromState() {
-		const state = store.getState();
-		const localeVariant = getCurrentLocaleVariant( state );
-		const localeSlug = getCurrentLocaleSlug( state );
-		setLocale( localeVariant || localeSlug );
-	}
-
-	store.subscribe( setLocaleFromState );
-	setLocaleFromState();
 }

@@ -1,0 +1,135 @@
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/z-index';
+@import '~@automattic/typography/styles/variables';
+@import '~@automattic/onboarding/styles/variables';
+@import '~@automattic/onboarding/styles/mixins';
+
+body.has-focused-launch-modal {
+	overflow: hidden;
+}
+
+.launch__focused-modal {
+	&.components-modal__frame {
+		transform: none;
+	}
+
+	.components-modal__header {
+		margin: 0 0 20px;
+
+		.components-modal__icon-container {
+			margin-right: 12px;
+		}
+
+		@include break-medium {
+			border-bottom: none;
+
+			// Make sure that the modal title can still be read by screen readers
+			.components-modal__header-heading {
+				@include onboarding-screen-reader-text();
+			}
+		}
+	}
+
+	.components-modal__content {
+		position: fixed;
+		top: 0;
+		left: 0;
+		background: var( --studio-white );
+		width: 100%;
+		height: 100%;
+		padding: 0;
+		// Using overflow-y: scroll for consistent viewport width has an unintended
+		// consequence where if the content height is shorter than the viewport height
+		// the modal header overlaps the scrollbar on Chrome.
+		overflow: auto;
+	}
+
+	&.launch__focused-modal--hide-title {
+		.components-modal__header {
+			border-bottom: none;
+		}
+
+		.components-modal__header-heading {
+			@include onboarding-screen-reader-text();
+		}
+	}
+}
+
+.launch__focused-modal-wrapper {
+	position: relative;
+	flex-grow: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+
+	// 60px is the height of the header, 20px is the margin bottom
+	min-height: calc( 100% - 60px - 20px );
+}
+
+.launch__focused-modal-header {
+	justify-content: space-between;
+	display: flex;
+}
+
+.launch__focused-modal-header-wp-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 60px;
+	height: 60px;
+}
+
+.launch__focused-modal-body {
+	width: 100%;
+	max-width: 1440px;
+	margin: 10px auto;
+	flex: 1;
+
+	display: flex;
+	flex-direction: column;
+
+	// Direct children of this element are the different modal views
+	& > * {
+		flex: 1;
+	}
+}
+
+.launch__focused-modal-close-button.components-button.is-link {
+	// This keeps the button on the top right corner even when scrolled down
+	position: sticky;
+	top: 0;
+	z-index: z-index( '.components-modal__header' ) + 3;
+
+	// Give it no dimension so it doesn't take any flex space
+	// but overflow it so the close button is visible
+	width: 0;
+	height: 0;
+	overflow: visible;
+
+	// Anchor the inline content to the top right (instead of middle).
+	display: flex;
+	align-items: flex-start;
+
+	// Close button icon color
+	color: var( --studio-gray-50 );
+	&:hover {
+		color: var( --studio-gray-40 );
+	}
+
+	> span {
+		// Push the icon back out from the right side
+		position: relative;
+		right: $onboarding-header-height;
+
+		// Use padding to create width
+		// (18px left padding + 24px icon width + 18px right padding = 60px width)
+		padding: 0 #{( $onboarding-header-height - 24px ) / 2};
+		height: $onboarding-header-height;
+
+		// Vertically align icon
+		display: flex;
+		align-items: center;
+	}
+}

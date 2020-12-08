@@ -1,10 +1,11 @@
 /**
- * External dependencies
+ * Internal dependencies
  */
-import url from 'url';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url';
 
 export function getPreviewURL( site, post, autosavePreviewUrl ) {
-	let parsed, previewUrl;
+	let urlParts;
+	let previewUrl;
 
 	if ( ! post || ! post.URL || post.status === 'trash' ) {
 		return '';
@@ -15,10 +16,10 @@ export function getPreviewURL( site, post, autosavePreviewUrl ) {
 	} else if ( post.status === 'publish' ) {
 		previewUrl = post.URL;
 	} else {
-		parsed = url.parse( post.URL, true );
-		parsed.query.preview = 'true';
-		delete parsed.search;
-		previewUrl = url.format( parsed );
+		urlParts = getUrlParts( post.URL );
+		urlParts.searchParams.set( 'preview', 'true' );
+		delete urlParts.search;
+		previewUrl = getUrlFromParts( urlParts ).href;
 	}
 
 	if ( post.site_ID ) {
@@ -30,10 +31,10 @@ export function getPreviewURL( site, post, autosavePreviewUrl ) {
 			previewUrl = previewUrl.replace( site.URL, site.options.unmapped_url );
 		}
 		if ( site.options.frame_nonce ) {
-			parsed = url.parse( previewUrl, true );
-			parsed.query[ 'frame-nonce' ] = site.options.frame_nonce;
-			delete parsed.search;
-			previewUrl = url.format( parsed );
+			urlParts = getUrlParts( previewUrl );
+			urlParts.searchParams.set( 'frame-nonce', site.options.frame_nonce );
+			delete urlParts.search;
+			previewUrl = getUrlFromParts( urlParts ).href;
 		}
 	}
 

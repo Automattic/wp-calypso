@@ -9,16 +9,16 @@ import { Button } from '@automattic/components';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import FixAllThreatsDialog from 'components/jetpack/fix-all-threats-dialog';
-import SecurityIcon from 'components/jetpack/security-icon';
-import ThreatDialog from 'components/jetpack/threat-dialog';
-import ThreatItem from 'components/jetpack/threat-item';
-import { FixableThreat, Threat, ThreatAction } from 'components/jetpack/threat-item/types';
-import { recordTracksEvent } from 'state/analytics/actions';
-import contactSupportUrl from 'lib/jetpack/contact-support-url';
-import { useThreats } from 'lib/jetpack/use-threats';
-import { triggerScanRun } from 'lib/jetpack/trigger-scan-run';
+import { isEnabled } from 'calypso/config';
+import FixAllThreatsDialog from 'calypso/components/jetpack/fix-all-threats-dialog';
+import SecurityIcon from 'calypso/components/jetpack/security-icon';
+import ThreatDialog from 'calypso/components/jetpack/threat-dialog';
+import ThreatItem from 'calypso/components/jetpack/threat-item';
+import { FixableThreat, Threat, ThreatAction } from 'calypso/components/jetpack/threat-item/types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
+import { useThreats } from 'calypso/lib/jetpack/use-threats';
+import { triggerScanRun } from 'calypso/lib/jetpack/trigger-scan-run';
 
 /**
  * Style dependencies
@@ -176,7 +176,7 @@ const ScanThreats = ( { error, site, threats }: Props ) => {
 				) }
 				<br />
 				{ translate(
-					'Please review them below and take action. We are {{a}}here to help{{/a}} if you need us.',
+					'Please review them below and take action. If you have any questions, we are {{a}}here to help{{/a}}.',
 					{
 						components: {
 							a: (

@@ -11,7 +11,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { getImageEditorFileInfo, imageEditorHasChanges } from 'state/editor/image-editor/selectors';
+import {
+	getImageEditorFileInfo,
+	imageEditorHasChanges,
+} from 'calypso/state/editor/image-editor/selectors';
 
 class ImageEditorButtons extends Component {
 	static propTypes = {
@@ -72,8 +75,8 @@ class ImageEditorButtons extends Component {
 }
 
 export default connect( ( state ) => {
-	const { src } = getImageEditorFileInfo( state ),
-		hasChanges = imageEditorHasChanges( state );
+	const { src } = getImageEditorFileInfo( state );
+	const hasChanges = imageEditorHasChanges( state );
 
 	return {
 		src,

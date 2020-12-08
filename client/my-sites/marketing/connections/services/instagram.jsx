@@ -8,9 +8,9 @@ import { isEqual, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
-import SocialLogo from 'components/social-logo';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import SocialLogo from 'calypso/components/social-logo';
 
 export class Instagram extends SharingService {
 	static propTypes = {

@@ -4,7 +4,7 @@
 import creditcards from 'creditcards';
 import { capitalize, compact, isArray, isEmpty, mergeWith, union, isString } from 'lodash';
 import i18n from 'i18n-calypso';
-import { isValidPostalCode } from 'lib/postal-code';
+import { isValidPostalCode } from 'calypso/lib/postal-code';
 
 /**
  * Internal dependencies
@@ -14,7 +14,7 @@ import {
 	isValidCPF,
 	isValidCNPJ,
 	countrySpecificFieldRules,
-} from 'lib/checkout/processor-specific';
+} from 'calypso/lib/checkout/processor-specific';
 
 /**
  * Returns the credit card validation rule set

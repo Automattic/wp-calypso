@@ -3,7 +3,7 @@
  */
 
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -17,8 +17,8 @@ import {
 	Next,
 	Quit,
 	Link,
-} from 'layout/guided-tours/config-elements';
-import { PublishButton } from 'layout/guided-tours/button-labels';
+} from 'calypso/layout/guided-tours/config-elements';
+import { PublishButton } from 'calypso/layout/guided-tours/button-labels';
 
 export const EditorBasicsTour = makeTour(
 	<Tour { ...meta }>

@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { PLAN_BUSINESS, PLAN_ECOMMERCE } from 'lib/plans/constants';
-import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'state/happychat/constants';
-import { userState } from 'state/selectors/test/fixtures/user-state';
+import { isEnabled } from 'calypso/config';
+import { PLAN_BUSINESS, PLAN_ECOMMERCE } from 'calypso/lib/plans/constants';
+import { HAPPYCHAT_GROUP_WPCOM, HAPPYCHAT_GROUP_JPOP } from 'calypso/state/happychat/constants';
+import { userState } from 'calypso/state/selectors/test/fixtures/user-state';
 import getGroups from '../get-groups';
 
 describe( 'selectors', () => {
@@ -132,8 +132,6 @@ describe( 'selectors', () => {
 
 				expect( getGroups( state ) ).toMatchObject( [ HAPPYCHAT_GROUP_JPOP ] );
 			} );
-		} else {
-			test.skip( 'should not return JPOP group if within the jetpack-connect section' );
 		}
 	} );
 } );

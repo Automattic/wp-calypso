@@ -14,10 +14,11 @@ import React from 'react';
  * Internal dependencies
  */
 import { ImageEditorToolbar } from '../image-editor-toolbar';
-import { useSandbox } from 'test-helpers/use-sinon';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'ImageEditorToolbar', () => {
-	let defaultProps, wrapper;
+	let defaultProps;
+	let wrapper;
 
 	useSandbox( ( sandbox ) => {
 		defaultProps = {

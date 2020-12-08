@@ -7,67 +7,78 @@ import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
 import classNames from 'classnames';
 import { get, startsWith, pickBy } from 'lodash';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import AutoDirection from 'components/auto-direction';
-import ReaderMain from 'reader/components/reader-main';
-import EmbedContainer from 'components/embed-container';
-import PostExcerpt from 'components/post-excerpt';
-import { markPostSeen } from 'state/reader/posts/actions';
+import AutoDirection from 'calypso/components/auto-direction';
+import ReaderMain from 'calypso/reader/components/reader-main';
+import EmbedContainer from 'calypso/components/embed-container';
+import PostExcerpt from 'calypso/components/post-excerpt';
+import { markPostSeen } from 'calypso/state/reader/posts/actions';
 import ReaderFullPostHeader from './header';
-import AuthorCompactProfile from 'blocks/author-compact-profile';
-import LikeButton from 'reader/like-button';
-import { isDiscoverPost, isDiscoverSitePick } from 'reader/discover/helper';
-import DiscoverSiteAttribution from 'reader/discover/site-attribution';
-import DailyPostButton from 'blocks/daily-post-button';
-import { isDailyPostChallengeOrPrompt } from 'blocks/daily-post-button/helper';
-import { shouldShowLikes } from 'reader/like-helper';
-import { shouldShowComments } from 'blocks/comments/helper';
-import CommentButton from 'blocks/comment-button';
+import AuthorCompactProfile from 'calypso/blocks/author-compact-profile';
+import LikeButton from 'calypso/reader/like-button';
+import { isDiscoverPost, isDiscoverSitePick } from 'calypso/reader/discover/helper';
+import DiscoverSiteAttribution from 'calypso/reader/discover/site-attribution';
+import DailyPostButton from 'calypso/blocks/daily-post-button';
+import { isDailyPostChallengeOrPrompt } from 'calypso/blocks/daily-post-button/helper';
+import { shouldShowLikes } from 'calypso/reader/like-helper';
+import { shouldShowComments } from 'calypso/blocks/comments/helper';
+import CommentButton from 'calypso/blocks/comment-button';
 import {
 	recordAction,
 	recordGaEvent,
 	recordTrackForPost,
 	recordPermalinkClick,
-} from 'reader/stats';
-import Comments from 'blocks/comments';
-import scrollTo from 'lib/scroll-to';
-import PostExcerptLink from 'reader/post-excerpt-link';
-import { getSiteName } from 'reader/get-helpers';
-import KeyboardShortcuts from 'lib/keyboard-shortcuts';
-import ReaderPostActions from 'blocks/reader-post-actions';
-import { RelatedPostsFromSameSite, RelatedPostsFromOtherSites } from 'components/related-posts';
-import { getStreamUrlFromPost } from 'reader/route';
-import { like as likePost, unlike as unlikePost } from 'state/posts/likes/actions';
-import FeaturedImage from 'blocks/reader-full-post/featured-image';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { getSite } from 'state/reader/sites/selectors';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
-import QueryReaderPost from 'components/data/query-reader-post';
-import ExternalLink from 'components/external-link';
-import DocumentHead from 'components/data/document-head';
+} from 'calypso/reader/stats';
+import Comments from 'calypso/blocks/comments';
+import scrollTo from 'calypso/lib/scroll-to';
+import PostExcerptLink from 'calypso/reader/post-excerpt-link';
+import { getSiteName } from 'calypso/reader/get-helpers';
+import KeyboardShortcuts from 'calypso/lib/keyboard-shortcuts';
+import ReaderPostActions from 'calypso/blocks/reader-post-actions';
+import {
+	RelatedPostsFromSameSite,
+	RelatedPostsFromOtherSites,
+} from 'calypso/components/related-posts';
+import { getStreamUrlFromPost } from 'calypso/reader/route';
+import { like as likePost, unlike as unlikePost } from 'calypso/state/posts/likes/actions';
+import FeaturedImage from 'calypso/blocks/reader-full-post/featured-image';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
+import QueryReaderPost from 'calypso/components/data/query-reader-post';
+import ExternalLink from 'calypso/components/external-link';
+import DocumentHead from 'calypso/components/data/document-head';
 import ReaderFullPostUnavailable from './unavailable';
-import BackButton from 'components/back-button';
-import { isFeaturedImageInContent } from 'lib/post-normalizer/utils';
+import BackButton from 'calypso/components/back-button';
+import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
 import ReaderFullPostContentPlaceholder from './placeholders/content';
-import { keyForPost } from 'reader/post-key';
-import { showSelectedPost } from 'reader/utils';
-import Emojify from 'components/emojify';
-import { COMMENTS_FILTER_ALL } from 'blocks/comments/comments-filters';
-import { READER_FULL_POST } from 'reader/follow-sources';
-import { getPostByKey } from 'state/reader/posts/selectors';
-import { isLikedPost } from 'state/posts/selectors/is-liked-post';
-import QueryPostLikes from 'components/data/query-post-likes';
-import getCurrentStream from 'state/selectors/get-reader-current-stream';
-import { setViewingFullPostKey, unsetViewingFullPostKey } from 'state/reader/viewing/actions';
-import { getNextItem, getPreviousItem } from 'state/reader/streams/selectors';
-import { requestMarkAsSeen, requestMarkAsUnseen } from 'state/reader/seen-posts/actions';
-import Gridicon from 'components/gridicon';
-import { PerformanceTrackerStop } from 'lib/performance-tracking';
+import { keyForPost } from 'calypso/reader/post-key';
+import { showSelectedPost } from 'calypso/reader/utils';
+import Emojify from 'calypso/components/emojify';
+import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import { READER_FULL_POST } from 'calypso/reader/follow-sources';
+import { getPostByKey } from 'calypso/state/reader/posts/selectors';
+import { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
+import QueryPostLikes from 'calypso/components/data/query-post-likes';
+import getCurrentStream from 'calypso/state/selectors/get-reader-current-stream';
+import {
+	setViewingFullPostKey,
+	unsetViewingFullPostKey,
+} from 'calypso/state/reader/viewing/actions';
+import { getNextItem, getPreviousItem } from 'calypso/state/reader/streams/selectors';
+import {
+	requestMarkAsSeen,
+	requestMarkAsUnseen,
+	requestMarkAsSeenBlog,
+	requestMarkAsUnseenBlog,
+} from 'calypso/state/reader/seen-posts/actions';
+import Gridicon from 'calypso/components/gridicon';
+import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Style dependencies
@@ -290,22 +301,47 @@ export class FullPostView extends React.Component {
 
 	markAsSeen = () => {
 		const { post } = this.props;
-		this.props.requestMarkAsSeen( {
-			feedId: post.feed_ID,
-			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_ID ],
-			globalIds: [ post.global_ID ],
-		} );
+
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsSeen( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				feedItemIds: [ post.feed_item_ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsSeenBlog( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds: [ post.ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		}
 	};
 
 	markAsUnseen = () => {
 		const { post } = this.props;
-		this.props.requestMarkAsUnseen( {
-			feedId: post.feed_ID,
-			feedUrl: post.feed_URL,
-			feedItemIds: [ post.feed_item_ID ],
-			globalIds: [ post.global_ID ],
-		} );
+		if ( post.feed_item_ID ) {
+			// is feed
+			this.props.requestMarkAsUnseen( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				feedItemIds: [ post.feed_item_ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		} else {
+			// is blog
+			this.props.requestMarkAsUnseenBlog( {
+				feedId: post.feed_ID,
+				feedUrl: post.feed_URL,
+				blogId: post.site_ID,
+				postIds: [ post.ID ],
+				globalIds: [ post.global_ID ],
+			} );
+		}
 	};
 
 	renderMarkAsSenButton = () => {
@@ -505,6 +541,7 @@ export class FullPostView extends React.Component {
 										showConversationFollowButton={ true }
 										followSource={ READER_FULL_POST }
 										shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+										shouldHighlightNew={ true }
 									/>
 								) }
 							</div>
@@ -568,5 +605,7 @@ export default connect(
 		unlikePost,
 		requestMarkAsSeen,
 		requestMarkAsUnseen,
+		requestMarkAsSeenBlog,
+		requestMarkAsUnseenBlog,
 	}
 )( FullPostView );

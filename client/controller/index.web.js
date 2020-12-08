@@ -8,27 +8,39 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { translate } from 'i18n-calypso';
-import Layout from 'layout';
-import LayoutLoggedOut from 'layout/logged-out';
-import EmptyContent from 'components/empty-content';
-import CalypsoI18nProvider from 'components/calypso-i18n-provider';
-import { MomentProvider } from 'components/localized-moment/context';
-import { login } from 'lib/paths';
+import Layout from 'calypso/layout';
+import LayoutLoggedOut from 'calypso/layout/logged-out';
+import EmptyContent from 'calypso/components/empty-content';
+import CalypsoI18nProvider from 'calypso/components/calypso-i18n-provider';
+import MomentProvider from 'calypso/components/localized-moment/provider';
+import { RouteProvider } from 'calypso/components/route';
+import { login } from 'calypso/lib/paths';
 import { makeLayoutMiddleware } from './shared.js';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { getImmediateLoginEmail, getImmediateLoginLocale } from 'state/immediate-login/selectors';
-import { getSiteFragment } from 'lib/route';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import {
+	getImmediateLoginEmail,
+	getImmediateLoginLocale,
+} from 'calypso/state/immediate-login/selectors';
+import { getSiteFragment } from 'calypso/lib/route';
 import { hydrate } from './web-util.js';
 
 /**
  * Re-export
  */
-export { setSection, setUpLocale } from './shared.js';
-export { render, hydrate, redirectLoggedIn } from './web-util.js';
+export { setSectionMiddleware, setLocaleMiddleware } from './shared.js';
+export { render, hydrate } from './web-util.js';
 
-export const ProviderWrappedLayout = ( { store, primary, secondary, redirectUri } ) => {
+export const ProviderWrappedLayout = ( {
+	store,
+	currentSection,
+	currentRoute,
+	currentQuery,
+	primary,
+	secondary,
+	redirectUri,
+} ) => {
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -40,9 +52,15 @@ export const ProviderWrappedLayout = ( { store, primary, secondary, redirectUri 
 
 	return (
 		<CalypsoI18nProvider>
-			<ReduxProvider store={ store }>
-				<MomentProvider>{ layout }</MomentProvider>
-			</ReduxProvider>
+			<RouteProvider
+				currentSection={ currentSection }
+				currentRoute={ currentRoute }
+				currentQuery={ currentQuery }
+			>
+				<ReduxProvider store={ store }>
+					<MomentProvider>{ layout }</MomentProvider>
+				</ReduxProvider>
+			</RouteProvider>
 		</CalypsoI18nProvider>
 	);
 };

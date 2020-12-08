@@ -9,9 +9,9 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import Popover from 'components/popover';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import Gridicon from 'calypso/components/gridicon';
+import Popover from 'calypso/components/popover';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies
@@ -29,6 +29,8 @@ export default class InfoPopover extends Component {
 		ignoreContext: PropTypes.shape( {
 			getDOMNode: PropTypes.func,
 		} ),
+		onOpen: PropTypes.func,
+		onClose: PropTypes.func,
 		popoverName: PropTypes.string,
 		position: PropTypes.oneOf( [
 			'top',
@@ -56,10 +58,21 @@ export default class InfoPopover extends Component {
 	handleClick = ( e ) => {
 		e.preventDefault();
 		e.stopPropagation();
+
+		// There's no "handleOpen" method for us to hook into,
+		// so we check here to see if the intent is to open the popover
+		// and fire onOpen accordingly
+		if ( ! this.state.showPopover ) {
+			this.props.onOpen?.();
+		}
+
 		this.setState( { showPopover: ! this.state.showPopover }, this.recordStats );
 	};
 
-	handleClose = () => this.setState( { showPopover: false }, this.recordStats );
+	handleClose = () => {
+		this.props.onClose?.();
+		this.setState( { showPopover: false }, this.recordStats );
+	};
 
 	recordStats = () => {
 		const { gaEventCategory, popoverName } = this.props;

@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import user from 'lib/user';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Spinner from 'calypso/components/spinner';
+import user from 'calypso/lib/user';
 
 class EmailUnverifiedNotice extends React.Component {
 	state = {

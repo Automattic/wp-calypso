@@ -13,6 +13,7 @@ describe( 'useNock', () => {
 	useNock();
 
 	describe( 'Messy without useNock', () => {
+		// eslint-disable-next-line jest/expect-expect
 		test( 'sets up a persistent interceptor', () => {
 			nock( 'wordpress.com' ).persist().get( '/me' ).reply( 200, { id: 42 } );
 		} );

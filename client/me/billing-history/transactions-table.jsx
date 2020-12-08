@@ -7,21 +7,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import titleCase from 'to-title-case';
-import { capitalPDangit } from 'lib/formatting';
+import { capitalPDangit } from 'calypso/lib/formatting';
 
 /**
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Pagination from 'components/pagination';
+import Pagination from 'calypso/components/pagination';
 import TransactionsHeader from './transactions-header';
 import { groupDomainProducts, renderTransactionAmount } from './utils';
-import SearchCard from 'components/search-card';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { setPage, setQuery } from 'state/billing-transactions/ui/actions';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getFilteredBillingTransactions from 'state/selectors/get-filtered-billing-transactions';
-import { getPlanTermLabel } from 'lib/plans';
+import SearchCard from 'calypso/components/search-card';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { setPage, setQuery } from 'calypso/state/billing-transactions/ui/actions';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getFilteredBillingTransactions from 'calypso/state/selectors/get-filtered-billing-transactions';
+import { getPlanTermLabel } from 'calypso/lib/plans';
 
 class TransactionsTable extends React.Component {
 	static displayName = 'TransactionsTable';
@@ -42,7 +42,12 @@ class TransactionsTable extends React.Component {
 		let header;
 
 		if ( false !== this.props.header ) {
-			header = <TransactionsHeader transactionType={ this.props.transactionType } />;
+			header = (
+				<TransactionsHeader
+					transactionType={ this.props.transactionType }
+					siteId={ this.props.siteId }
+				/>
+			);
 		}
 
 		return (
@@ -199,6 +204,7 @@ TransactionsTable.propTypes = {
 	total: PropTypes.number.isRequired,
 	transactions: PropTypes.array,
 	//own props
+	siteId: PropTypes.number,
 	transactionType: PropTypes.string.isRequired,
 	//array allows to accept the output of translate() with components in the string
 	emptyTableText: PropTypes.oneOfType( [ PropTypes.string, PropTypes.array ] ).isRequired,
@@ -208,8 +214,8 @@ TransactionsTable.propTypes = {
 };
 
 export default connect(
-	( state, { transactionType } ) => {
-		const filteredTransactions = getFilteredBillingTransactions( state, transactionType );
+	( state, { transactionType, siteId } ) => {
+		const filteredTransactions = getFilteredBillingTransactions( state, transactionType, siteId );
 		const filter = getBillingTransactionFilters( state, transactionType );
 		return {
 			app: filter.app,

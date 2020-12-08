@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import queryKey from 'state/reader/feed-searches/query-key';
+import queryKey from 'calypso/state/reader/feed-searches/query-key';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 /**
  * Returns the feeds result for a given query.

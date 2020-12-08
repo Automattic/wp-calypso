@@ -4,7 +4,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { defer } from 'lodash';
-import config from 'config';
+import config from 'calypso/config';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import page from 'page';
@@ -13,24 +13,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ReaderPopoverMenu from 'reader/components/reader-popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import Gridicon from 'components/gridicon';
-import SocialLogo from 'components/social-logo';
-import * as stats from 'reader/stats';
-import { preload } from 'sections-helper';
-import SiteSelector from 'components/site-selector';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
+import ReaderPopoverMenu from 'calypso/reader/components/reader-popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import Gridicon from 'calypso/components/gridicon';
+import SocialLogo from 'calypso/components/social-logo';
+import * as stats from 'calypso/reader/stats';
+import { preloadEditor } from 'calypso/sections-preloaders';
+import SiteSelector from 'calypso/components/site-selector';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-
-function preloadEditor() {
-	preload( 'post-editor' );
-}
 
 /**
  * Local variables

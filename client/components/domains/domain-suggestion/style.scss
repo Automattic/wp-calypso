@@ -66,7 +66,7 @@
 		display: flex;
 		justify-content: space-between;
 
-		&.domain-suggestion__content-domain-copy-test {
+		&.domain-suggestion__content-domain {
 			justify-content: initial;
 		}
 	}
@@ -138,7 +138,7 @@
 	flex-direction: row;
 	flex-wrap: wrap;
 
-	&.domain-registration-suggestion__title-domain-copy-test {
+	&.domain-registration-suggestion__title-domain {
 		@include breakpoint-deprecated( '>480px' ) {
 			max-width: 50%;
 			min-width: 50%;
@@ -259,7 +259,7 @@
 body.is-section-signup.is-white-signup {
 	.featured-domain-suggestions {
 		.domain-registration-suggestion__title {
-			font-size: 1.625rem;
+			font-size: $font-title-medium;
 		}
 	}
 
@@ -271,7 +271,6 @@ body.is-section-signup.is-white-signup {
 	}
 
 	.domain-suggestion {
-
 		.domain-product-price__free-text {
 			color: var( --color-neutral-60 );
 			font-size: $font-body;
@@ -286,15 +285,6 @@ body.is-section-signup.is-white-signup {
 		}
 
 		&:not( .featured-domain-suggestion ) {
-
-			.domain-suggestion__content {
-				@include breakpoint-deprecated( '>660px' ) {
-					&.domain-suggestion__content-domain-copy-test {
-						justify-content: space-between;
-					}
-				}
-			}
-
 			.domain-registration-suggestion__domain-title {
 				line-height: 3rem;
 				.domain-registration-suggestion__domain-title-tld {
@@ -304,7 +294,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__free-price {
 				font-size: $font-body;
-				
+
 				@include break-mobile {
 					font-size: $font-body-small;
 				}
@@ -312,7 +302,7 @@ body.is-section-signup.is-white-signup {
 
 			.domain-product-price__free-text {
 				font-size: $font-body;
-				
+
 				@include break-mobile {
 					font-size: $font-body-small;
 				}
@@ -330,28 +320,16 @@ body.is-section-signup.is-white-signup {
 				@include break-mobile {
 					background: var( --color-primary-0 );
 					box-shadow: 0 0 0 1px var( --color-primary-40 );
-
-					.domain-suggestion__action:not( .is-borderless ) {
-						border-radius: 4px;
-						display: block;
-						line-height: 17px;
-						padding: 11px 24px 10px;
-					}
-
-					.domain-product-price {
-						display: none;
-					}
 				}
 			}
 
-			&:not( .domain-transfer-suggestion ) {
-				.domain-suggestion__action {
-					@include break-mobile {
-						display: none;
-					}
-				}
+			.domain-suggestion__action:not( .is-borderless ) {
+				border-radius: 2px;
+				line-height: 17px;
+				padding-top: 11px;
+				padding-bottom: 10px;
 			}
-	
+
 			&.domain-transfer-suggestion {
 				$cod-grey: #2b2d2f;
 
@@ -366,4 +344,13 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 	}
+}
+
+.domain-suggestion__price-placeholder {
+	animation: loading-fade 1.6s ease-in-out infinite;
+	background-color: var( --color-neutral-0 );
+	color: transparent;
+	height: 16px;
+	margin: auto 0;
+	width: 20%;
 }

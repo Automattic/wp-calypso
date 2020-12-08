@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import CartStore from 'lib/cart/store';
-import { hasStaleItem } from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { infoNotice, removeNotice } from 'state/notices/actions';
-import { getNoticeLastTimeShown } from 'state/notices/selectors';
-import { getSectionName, getSelectedSiteSlug } from 'state/ui/selectors';
-import { reloadCart } from 'lib/cart/actions';
+import CartStore from 'calypso/lib/cart/store';
+import { hasStaleItem } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { infoNotice, removeNotice } from 'calypso/state/notices/actions';
+import { getNoticeLastTimeShown } from 'calypso/state/notices/selectors';
+import { getSectionName, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { reloadCart } from 'calypso/lib/cart/actions';
 
 const staleCartItemNoticeId = 'stale-cart-item-notice';
 

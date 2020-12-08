@@ -10,24 +10,24 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { Card, CompactCard } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { hasFeature } from 'state/sites/plans/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_PREMIUM } from 'lib/plans/constants';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { getCustomizerUrl } from 'state/sites/selectors';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { FEATURE_WORDADS_INSTANT, PLAN_JETPACK_SECURITY_DAILY } from 'calypso/lib/plans/constants';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 
 class JetpackAds extends Component {
 	static defaultProps = {
@@ -59,8 +59,8 @@ class JetpackAds extends Component {
 				) }
 				event={ 'calypso_wordads_settings_upgrade_nudge' }
 				feature={ FEATURE_WORDADS_INSTANT }
-				plan={ PLAN_JETPACK_PREMIUM }
-				title={ translate( 'Enable WordAds by upgrading to Jetpack Premium' ) }
+				plan={ PLAN_JETPACK_SECURITY_DAILY }
+				title={ translate( 'Enable WordAds by upgrading to a Jetpack Security or Complete plan' ) }
 				showIcon={ true }
 			/>
 		);
@@ -69,13 +69,13 @@ class JetpackAds extends Component {
 	renderToggle( name, isDisabled, label ) {
 		const { fields, handleAutosavingToggle } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				checked={ !! fields[ name ] }
 				disabled={ this.isFormPending() || isDisabled }
 				onChange={ handleAutosavingToggle( name ) }
 			>
 				{ label }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 

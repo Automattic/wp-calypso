@@ -1,11 +1,10 @@
-Post Item
-=========
+# Post Item
 
 `<PostItem />` is a connected React component for rendering a post card, including its title, metadata, thumbnail, and actions for managing that post.
 
 ## Usage
 
-Render the component, passing a global ID of the post to be rendered. 
+Render the component, passing a global ID of the post to be rendered.
 
 ```jsx
 function MyPostList() {

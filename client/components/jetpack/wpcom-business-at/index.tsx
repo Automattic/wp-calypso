@@ -11,50 +11,50 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import FormattedHeader from 'components/formatted-header';
-import SpinnerButton from 'components/spinner-button';
-import PromoCard from 'components/promo-section/promo-card';
-import WhatIsJetpack from 'components/jetpack/what-is-jetpack';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import useTrackCallback from 'lib/jetpack/use-track-callback';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SpinnerButton from 'calypso/components/spinner-button';
+import PromoCard from 'calypso/components/promo-section/promo-card';
+import WhatIsJetpack from 'calypso/components/jetpack/what-is-jetpack';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import useTrackCallback from 'calypso/lib/jetpack/use-track-callback';
 import {
 	getAutomatedTransferStatus,
 	isEligibleForAutomatedTransfer,
 	getEligibility,
 	EligibilityData,
-} from 'state/automated-transfer/selectors';
-import { initiateThemeTransfer } from 'state/themes/actions';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
-import QueryAutomatedTransferEligibility from 'components/data/query-atat-eligibility';
+} from 'calypso/state/automated-transfer/selectors';
+import { initiateThemeTransfer } from 'calypso/state/themes/actions';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import QueryAutomatedTransferEligibility from 'calypso/components/data/query-atat-eligibility';
 import {
 	hasBlockingHold as hasBlockingHoldFunc,
 	getBlockingMessages,
 	HardBlockingNotice,
 	default as HoldList,
-} from 'blocks/eligibility-warnings/hold-list';
-import WarningList from 'blocks/eligibility-warnings/warning-list';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { localizeUrl } from 'lib/i18n-utils';
-import { successNotice } from 'state/notices/actions';
-import { requestSite } from 'state/sites/actions';
-import isJetpackSite from 'state/sites/selectors/is-jetpack-site';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+} from 'calypso/blocks/eligibility-warnings/hold-list';
+import WarningList from 'calypso/blocks/eligibility-warnings/warning-list';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { successNotice } from 'calypso/state/notices/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import isJetpackSite from 'calypso/state/sites/selectors/is-jetpack-site';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'blocks/eligibility-warnings/style.scss';
+import 'calypso/blocks/eligibility-warnings/style.scss';
 
 /**
  * Asset dependencies
  */
-import JetpackBackupSVG from 'assets/images/illustrations/jetpack-backup.svg';
+import JetpackBackupSVG from 'calypso/assets/images/illustrations/jetpack-backup.svg';
 
 interface BlockingHoldNoticeProps {
 	siteId: number;

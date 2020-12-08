@@ -1,15 +1,20 @@
+/**
+ * External dependencies
+ */
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
 import { Provider } from 'react-redux';
 import { noop } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { init as initStore, store } from './state';
 import { mergeHandlers } from './state/action-middleware/utils';
 import { SET_IS_SHOWING } from './state/action-types';
 import actions from './state/actions';
 
 import RestClient from './rest-client';
-import { setGlobalData } from './flux/app-actions';
 import repliesCache from './comment-replies-cache';
 
 import { init as initAPI } from './rest-client/wpcom';
@@ -25,14 +30,14 @@ let client;
 
 const globalData = {};
 
-setGlobalData( globalData );
-
 repliesCache.cleanup();
 
 /**
  * Force a manual refresh of the notes data
  */
 export const refreshNotes = () => client && client.refreshNotes.call( client );
+
+export const RestClientContext = React.createContext( client );
 
 export class Notifications extends PureComponent {
 	static propTypes = {
@@ -126,15 +131,15 @@ export class Notifications extends PureComponent {
 	render() {
 		return (
 			<Provider store={ store }>
-				<Layout
-					{ ...{
-						client,
-						data: globalData,
-						global: globalData,
-						isShowing: this.props.isShowing,
-						locale: this.props.locale,
-					} }
-				/>
+				<RestClientContext.Provider value={ client }>
+					<Layout
+						client={ client }
+						data={ globalData }
+						global={ globalData }
+						isShowing={ this.props.isShowing }
+						locale={ this.props.local }
+					/>
+				</RestClientContext.Provider>
 			</Provider>
 		);
 	}

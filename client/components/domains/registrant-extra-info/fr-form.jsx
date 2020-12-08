@@ -7,19 +7,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
-import { defaults, get, identity, isEmpty, isString, map, noop, set, toUpper, uniq } from 'lodash';
+import { defaults, get, identity, isEmpty, isString, map, noop, set, uniq } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormRadio from 'components/forms/form-radio';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 import validateContactDetails from './fr-validate-contact-details';
 import { disableSubmitButton } from './with-contact-details-validation';
 
@@ -38,7 +38,7 @@ function onlyNumericCharacters( string ) {
  * letters, plus or star symbols.
  */
 export function sanitizeVat( string ) {
-	return isString( string ) ? toUpper( string ).replace( /[^0-9A-Z+*]/g, '' ) : '';
+	return isString( string ) ? string.toUpperCase().replace( /[^0-9A-Z+*]/g, '' ) : '';
 }
 
 // If we set a field to null, react decides it's uncontrolled and complains
@@ -141,8 +141,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'individual' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'An individual' ) }
 						/>
-						<span>{ translate( 'An individual' ) }</span>
 					</FormLabel>
 
 					<FormLabel>
@@ -151,8 +151,8 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 							id="registrantType"
 							checked={ 'organization' === registrantType }
 							onChange={ this.handleChangeContactExtraEvent }
+							label={ translate( 'A company or organization' ) }
 						/>
-						<span>{ translate( 'A company or organization' ) }</span>
 					</FormLabel>
 				</FormFieldset>
 
@@ -377,7 +377,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="sirenSiret"
 						value={ sirenSiret }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						placeholder={ translate( 'ex. 123 456 789 or 123 456 789 01234', {
@@ -399,7 +398,6 @@ class RegistrantExtraInfoFrForm extends React.PureComponent {
 					<FormTextInput
 						id="trademarkNumber"
 						value={ trademarkNumber }
-						type="text"
 						inputMode="numeric"
 						pattern="[0-9]*"
 						autoCapitalize="off"

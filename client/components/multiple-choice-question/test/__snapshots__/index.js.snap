@@ -20,7 +20,9 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
       type="radio"
       value="test-answer-1"
     />
-    <span>
+    <span
+      className="form-radio__label"
+    >
       Test Answer One
     </span>
   </label>
@@ -35,7 +37,9 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
       type="radio"
       value="test-answer-2"
     />
-    <span>
+    <span
+      className="form-radio__label"
+    >
       Test Answer Two
     </span>
   </label>
@@ -50,7 +54,9 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
       type="radio"
       value="test-answer-3"
     />
-    <span>
+    <span
+      className="form-radio__label"
+    >
       Test Answer Three
     </span>
   </label>
@@ -65,7 +71,9 @@ exports[`MultipleChoiceQuestion should render with the minimum required properti
       type="radio"
       value="test-answer-4"
     />
-    <span>
+    <span
+      className="form-radio__label"
+    >
       Test Answer Four
     </span>
   </label>

@@ -50,7 +50,7 @@ import {
 	PLAN_JETPACK_BUSINESS_MONTHLY,
 	PLAN_ECOMMERCE,
 	PLAN_ECOMMERCE_2_YEARS,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const props = {
 	translate: ( x ) => x,

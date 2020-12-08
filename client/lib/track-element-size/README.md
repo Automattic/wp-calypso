@@ -1,5 +1,4 @@
-Track Element Size
-==================
+# Track Element Size
 
 This module is designed to provide utilities for tracking an element's size in the DOM.
 
@@ -31,13 +30,13 @@ function SampleComponent() {
 
 **Note**: The list of properties in the returned rect may vary between browsers. The safe ones to
 use across all of Calypso's supported browsers are:
+
 - `width`
 - `height`
 - `top`
 - `right`
 - `bottom`
 - `left`
-
 
 ### `useWindowResizeCallback`
 
@@ -82,6 +81,7 @@ function SampleComponent() {
 
 **Note**: The list of properties in the returned rect may vary between browsers. The safe ones to
 use across all of Calypso's supported browsers are:
+
 - `width`
 - `height`
 - `top`

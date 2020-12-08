@@ -6,7 +6,7 @@ import { includes, without } from 'lodash';
 /**
  * Internal dependencies
  */
-import { EDITOR_RESET, EDITOR_SAVE_BLOCK, EDITOR_SAVE_UNBLOCK } from 'state/action-types';
+import { EDITOR_RESET, EDITOR_SAVE_BLOCK, EDITOR_SAVE_UNBLOCK } from 'calypso/state/action-types';
 
 export default ( state = [], action ) => {
 	switch ( action.type ) {

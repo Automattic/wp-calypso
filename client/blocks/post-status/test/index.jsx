@@ -3,7 +3,7 @@
  */
 import { expect } from 'chai';
 import { shallow } from 'enzyme';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { identity } from 'lodash';
 import React from 'react';
 

@@ -9,15 +9,15 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getTopJITM } from 'state/jitm/selectors';
-import { dismissJITM, setupDevTool } from 'state/jitm/actions';
-import AsyncLoad from 'components/async-load';
-import QueryJITM from 'components/data/query-jitm';
-import 'state/data-layer/wpcom/marketing';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getTopJITM } from 'calypso/state/jitm/selectors';
+import { dismissJITM, setupDevTool } from 'calypso/state/jitm/actions';
+import AsyncLoad from 'calypso/components/async-load';
+import QueryJITM from 'calypso/components/data/query-jitm';
+import 'calypso/state/data-layer/wpcom/marketing';
 
 /**
  * Style dependencies
@@ -27,15 +27,32 @@ import './style.scss';
 const debug = debugFactory( 'calypso:jitm' );
 
 function renderTemplate( template, props ) {
-	if ( template === 'notice' ) {
-		return <AsyncLoad { ...props } require="blocks/jitm/templates/notice" />;
+	switch ( template ) {
+		case 'notice':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/notice"
+					placeholder={ null }
+				/>
+			);
+		case 'sidebar-banner':
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/sidebar-banner"
+					placeholder={ null }
+				/>
+			);
+		default:
+			return (
+				<AsyncLoad
+					{ ...props }
+					require="calypso/blocks/jitm/templates/default"
+					placeholder={ null }
+				/>
+			);
 	}
-
-	if ( template === 'sidebar-banner' ) {
-		return <AsyncLoad { ...props } require="blocks/jitm/templates/sidebar-banner" />;
-	}
-
-	return <AsyncLoad { ...props } require="blocks/jitm/templates/default" />;
 }
 
 function getEventHandlers( props, dispatch ) {
@@ -119,12 +136,11 @@ JITM.defaultProps = {
 	template: 'default',
 };
 
-const mapStateToProps = ( state, ownProps ) => {
+const mapStateToProps = ( state, { messagePath } ) => {
 	const currentSite = getSelectedSite( state );
-
 	return {
 		currentSite,
-		jitm: getTopJITM( state, ownProps.messagePath ),
+		jitm: getTopJITM( state, messagePath ),
 		isJetpack: currentSite && isJetpackSite( state, currentSite.ID ),
 	};
 };

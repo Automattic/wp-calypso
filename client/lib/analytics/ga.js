@@ -13,7 +13,7 @@ import {
 	fireGoogleAnalyticsPageView,
 	fireGoogleAnalyticsEvent,
 	fireGoogleAnalyticsTiming,
-} from 'lib/analytics/ad-tracking';
+} from 'calypso/lib/analytics/ad-tracking';
 
 const gaDebug = debug( 'calypso:analytics:ga' );
 

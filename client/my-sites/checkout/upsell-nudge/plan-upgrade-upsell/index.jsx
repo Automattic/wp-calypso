@@ -2,15 +2,15 @@
  * External dependencies
  */
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import formatCurrency from '@automattic/format-currency';
 
 /**
  * Internal dependencies
  */
 import { CompactCard, Button } from '@automattic/components';
-import DocumentHead from 'components/data/document-head';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 /**
  * Style dependencies
@@ -20,7 +20,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import premiumThemesImage from 'assets/images/illustrations/themes.svg';
+import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
 
 export class PlanUpgradeUpsell extends PureComponent {
 	render() {
@@ -61,7 +61,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 	}
 
 	body() {
-		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
+		const {
+			translate,
+			planRawPrice,
+			planDiscountedRawPrice,
+			currencyCode,
+			hasSevenDayRefundPeriod,
+		} = this.props;
 		return (
 			<>
 				<h2 className="plan-upgrade-upsell__header">
@@ -184,29 +190,56 @@ export class PlanUpgradeUpsell extends PureComponent {
 							) }
 						</p>
 						<p>
-							{ translate(
-								'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}30-day money-back guarantee{{/b}}.',
-								{
-									components: { b: <b /> },
-								}
-							) }
+							{ hasSevenDayRefundPeriod && // @todo - Remove the duplicate translations once the new string is translated
+								translate(
+									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}%(days)d-day money-back guarantee{{/b}}.',
+									{
+										args: { days: 7 },
+										components: { b: <b /> },
+									}
+								) }
+							{ ! hasSevenDayRefundPeriod &&
+								translate(
+									'The good news is that you can upgrade your plan today and try the Business plan risk-free thanks to our {{b}}30-day money-back guarantee{{/b}}.',
+									{
+										components: { b: <b /> },
+									}
+								) }
 						</p>
 						<p>
-							{ translate(
-								'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
-								{
-									components: {
-										del: <del />,
-										b: <b />,
-									},
-									args: {
-										fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-										discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-											stripZeros: true,
-										} ),
-									},
-								}
-							) }
+							{ hasSevenDayRefundPeriod &&
+								translate(
+									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
+									{
+										components: {
+											del: <del />,
+											b: <b />,
+										},
+										args: {
+											days: 7,
+											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+												stripZeros: true,
+											} ),
+										},
+									}
+								) }
+							{ ! hasSevenDayRefundPeriod &&
+								translate(
+									'Simply click the link below and select the Business plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
+									{
+										components: {
+											del: <del />,
+											b: <b />,
+										},
+										args: {
+											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+												stripZeros: true,
+											} ),
+										},
+									}
+								) }
 						</p>
 						<p>{ translate( 'So are you ready to explore our most powerful plan ever?' ) }</p>
 					</div>

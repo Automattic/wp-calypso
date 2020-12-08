@@ -9,7 +9,7 @@ import { spy } from 'sinon';
  */
 import { deleteProduct } from '../actions';
 import product from './fixtures/product';
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 import {
 	WOOCOMMERCE_ERROR_SET,
 	WOOCOMMERCE_PRODUCT_DELETE,

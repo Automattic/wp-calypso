@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getNextPageQuery from 'state/selectors/get-next-page-query';
+import getNextPageQuery from 'calypso/state/selectors/get-next-page-query';
 
 describe( 'getNextPageQuery', () => {
 	const siteId = 23465832;

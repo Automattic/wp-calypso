@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { partial } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
@@ -13,14 +13,14 @@ import { connect } from 'react-redux';
  */
 import { localize } from 'i18n-calypso';
 import { Button } from '@automattic/components';
-import SelectDropdown from 'components/select-dropdown';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import getPrimarySiteId from 'state/selectors/get-primary-site-id';
-import { getCustomizerUrl } from 'state/sites/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const possibleDevices = [ 'computer', 'tablet', 'phone' ];
 

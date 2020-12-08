@@ -12,11 +12,12 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import GoogleIcon from 'components/social-icons/google';
-import Popover from 'components/popover';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { isFormDisabled } from 'state/login/selectors';
+import GoogleIcon from 'calypso/components/social-icons/google';
+import Popover from 'calypso/components/popover';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { isFormDisabled } from 'calypso/state/login/selectors';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 let auth2InitDone = false;
 
@@ -124,7 +125,18 @@ class GoogleLoginButton extends Component {
 					// This error is caused by 3rd party cookies being blocked.
 					this.setState( {
 						error: translate(
-							'Please enable "third-party cookies" to connect your Google account.'
+							'Please enable "third-party cookies" to connect your Google account. To learn how to do this, {{learnMoreLink}}click here{{/learnMoreLink}}.',
+							{
+								components: {
+									learnMoreLink: (
+										<a
+											target="_blank"
+											rel="noreferrer"
+											href={ localizeUrl( 'https://wordpress.com/support/third-party-cookies/' ) }
+										/>
+									),
+								},
+							}
 						),
 					} );
 				}
@@ -213,7 +225,6 @@ class GoogleLoginButton extends Component {
 						className={ classNames( 'social-buttons__button button', { disabled: isDisabled } ) }
 						onMouseOver={ this.showError }
 						onFocus={ this.showError }
-						onMouseOut={ this.hideError }
 						onBlur={ this.hideError }
 						onClick={ this.handleClick }
 					>

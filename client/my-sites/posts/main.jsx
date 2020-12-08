@@ -9,18 +9,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PostTypeFilter from 'my-sites/post-type-filter';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import PostTypeList from 'my-sites/post-type-list';
-import PostTypeBulkEditBar from 'my-sites/post-type-list/bulk-edit-bar';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PostTypeFilter from 'calypso/my-sites/post-type-filter';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PostTypeList from 'calypso/my-sites/post-type-list';
 import titlecase from 'to-title-case';
-import Main from 'components/main';
-import { POST_STATUSES } from 'state/posts/constants';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { mapPostStatus } from 'lib/route';
+import Main from 'calypso/components/main';
+import { POST_STATUSES } from 'calypso/state/posts/constants';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { mapPostStatus } from 'calypso/lib/route';
 
 /**
  * Style dependencies
@@ -91,7 +90,6 @@ class PostsMain extends React.Component {
 					align="left"
 				/>
 				<PostTypeFilter query={ query } siteId={ siteId } statusSlug={ statusSlug } />
-				{ siteId && <PostTypeBulkEditBar /> }
 				<PostTypeList
 					query={ query }
 					showPublishedStatus={ showPublishedStatus }

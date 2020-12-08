@@ -50,25 +50,25 @@ We only want our tour to show for users who have registered in the past 7 days. 
 
 Now we're ready to actually start writing our tour.
 
+<!--eslint ignore no-heading-punctuation-->
+
 ### Scaffolding, etc.
 
 First we'll need to create a directory tour, under `tours`. In there, we create two files: `meta.js` and `index.js`.
 `meta.js` contains the metadata for a tour. Here's an empty boilerplate:
 
-```JavaScript
+```javascript
 /**
  * Internal dependencies
  */
-import { and } from 'layout/guided-tours/utils';
+import { and } from 'calypso/layout/guided-tours/utils';
 
-export default {
-};
+export default {};
 ```
 
 For `index.js`, this is the essential boilerplate, which comprises the imports and the `makeTour` wrapping:
 
-
-```JavaScript
+```javascript
 /**
  * External dependencies
  */
@@ -85,15 +85,14 @@ import {
 	ButtonRow,
 	Quit,
 	Continue,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import {
 	isNewUser,
 	isEnabled,
 	isSelectedSitePreviewable,
-} from 'state/guided-tours/contexts';
+} from 'calypso/state/guided-tours/contexts';
 
-export const TutorialSitePreviewTour = makeTour(
-);
+export const TutorialSitePreviewTour = makeTour();
 ```
 
 Now add that tour to the [config list](../config.js):
@@ -130,16 +129,12 @@ And add a [feature flag](https://github.com/Automattic/wp-calypso/blob/HEAD/conf
 
 Now we need to configure the metadata for the tour. In `meta.js`:
 
-```JavaScript
+```javascript
 export default {
 	name: 'sitePreview',
 	version: '20170104',
 	path: '/stats',
-	when: and(
-		isEnabled( 'guided-tours/main' ),
-		isSelectedSitePreviewable,
-		isNewUser,
-	)
+	when: and( isEnabled( 'guided-tours/main' ), isSelectedSitePreviewable, isNewUser ),
 };
 ```
 
@@ -165,7 +160,8 @@ To assess the impact of a tour, it can be helpful to run it as an A/B test. If t
 
 Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
 
-```JavaScript
+```javascript
+export default {
 	designShowcaseWelcomeTour: {
 		datestamp: '20170101',
 		variations: {
@@ -175,6 +171,7 @@ Open up `client/lib/abtest/active-tests.js` and add a new test such as this one:
 		defaultVariation: 'disabled',
 		allowExistingUsers: true,
 	},
+};
 ```
 
 Note that we've set the `enabled` variation to 0% so we don't show the tour to any user until we've tested it thoroughly.
@@ -185,12 +182,14 @@ First, add an import for `isAbTestInVariant` to the list of things we import fro
 
 Now, use the import in the `when` property like so:
 
-```JavaScript
-when: and(
-	isNewUser,
-	isEnabled( 'guided-tours/main' ),
-	isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' ),
-)
+```javascript
+export default {
+	when: and(
+		isNewUser,
+		isEnabled( 'guided-tours/main' ),
+		isAbTestInVariant( 'tutorialSitePreviewTour', 'enabled' )
+	),
+};
 ```
 
 **Important:** note that we want to put the call to `isAbTestInVariant` last — it puts users into an A/B test variant, and having later parts of the function return false would taint our results. We want to assign the user to an A/B test variant if and only if the tour would have triggered based on all the other conditions.

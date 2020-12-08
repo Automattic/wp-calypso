@@ -1,5 +1,4 @@
-UI Orders
-=========
+# UI Orders
 
 This module is used to manage state for the UI of the orders sections. This includes which filters are in effect for the list view, and tracking any edits or new orders. Newly created orders get placeholder IDs in the format `{ placeholder: 'order_1' }`. The current structure only tracks editing one order per site.
 
@@ -19,25 +18,25 @@ Clear the current order edit-tracking.
 
 ## Reducer
 
-This is saved on a per-site basis. 
+This is saved on a per-site basis.
 
 ```js
-{
-	"orders": {
-		[ siteId ] : {
+const object = {
+	orders: {
+		[ siteId ]: {
 			edits: {
 				currentlyEditingId: {},
 				changes: {
-					... order data ...
+					/*... order data ...*/
 				},
 			},
 			list: {
 				currentPage: 1,
-				currentSearch: "Smith",
+				currentSearch: 'Smith',
 			},
-		}
-	}
-}
+		},
+	},
+};
 ```
 
 ## Selectors

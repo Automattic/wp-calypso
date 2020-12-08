@@ -15,7 +15,7 @@ import reducer, {
 	siteRequests,
 	edits,
 } from '../reducer';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	EDITOR_START,
 	EDITOR_STOP,
@@ -37,8 +37,8 @@ import {
 	POSTS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'reducer', () => {
 	useSandbox( ( sandbox ) => {

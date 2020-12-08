@@ -7,10 +7,16 @@
 // Shared
 @import 'shared/reset'; // css reset before the rest of the styles are defined
 @import 'shared/animation'; // all UI animation
-@import 'shared/forms'; // form styling
 
 // WordPress.com main styles for global layout and responsive styles
 @import './shared/loading';
 @import 'main';
 
 @import './_p2-vars.scss';
+
+// Styles for the nav unification prototype (see pbAPfg-O2)
+// TODO: depending on project outcome move or delete styles
+@import './_nav-unification';
+
+// @wordpress/components stylesheet
+@import '~@wordpress/components/build-style/style.css';

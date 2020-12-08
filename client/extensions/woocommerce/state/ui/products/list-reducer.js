@@ -2,7 +2,7 @@
  * External dependencies
  */
 
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { get } from 'lodash';
 
 /**

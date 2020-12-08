@@ -6,7 +6,7 @@ import { find, matches } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { withoutPersistence, withStorageKey } from 'state/utils';
+import { withoutPersistence, withStorageKey } from 'calypso/state/utils';
 import {
 	PURCHASES_REMOVE,
 	PURCHASES_SITE_FETCH,
@@ -17,7 +17,7 @@ import {
 	PURCHASE_REMOVE_FAILED,
 	PURCHASES_SITE_FETCH_FAILED,
 	PURCHASES_USER_FETCH_FAILED,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 /**
  * Constants
@@ -66,7 +66,8 @@ function removeMissingPurchasesByPredicate( existingPurchases, newPurchases, pre
 }
 
 function updatePurchases( existingPurchases, action ) {
-	let purchases, predicate;
+	let purchases;
+	let predicate;
 
 	if ( PURCHASES_SITE_FETCH_COMPLETED === action.type ) {
 		predicate = { blog_id: String( action.siteId ) };
@@ -84,8 +85,6 @@ function updatePurchases( existingPurchases, action ) {
 
 	return purchases;
 }
-
-const assignError = ( state, action ) => ( { ...state, error: action.error } );
 
 const reducer = withoutPersistence( ( state = initialState, action ) => {
 	switch ( action.type ) {
@@ -127,11 +126,26 @@ const reducer = withoutPersistence( ( state = initialState, action ) => {
 				hasLoadedUserPurchasesFromServer: true,
 			};
 		case PURCHASE_REMOVE_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				hasLoadedUserPurchasesFromServer: true,
+			};
 		case PURCHASES_SITE_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedSitePurchasesFromServer: true,
+				isFetchingSitePurchases: false,
+			};
 		case PURCHASES_USER_FETCH_FAILED:
-			return assignError( state, action );
+			return {
+				...state,
+				error: action.error,
+				hasLoadedUserPurchasesFromServer: true,
+				isFetchingUserPurchases: false,
+			};
 	}
 
 	return state;

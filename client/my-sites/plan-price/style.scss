@@ -75,3 +75,11 @@
 .plan-price__fraction {
 	font-weight: 600;
 }
+
+.plan-price__term {
+	display: inline-block;
+	font-size: 0.875rem;
+	text-align: left;
+	line-height: 1rem;
+	margin-left: 5px;
+}

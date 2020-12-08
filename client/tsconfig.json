@@ -8,20 +8,22 @@
 
 		"baseUrl": ".",
 		"rootDir": ".",
-		"tsBuildInfoFile": "../.tsc-cache/client",
 		"noEmit": false,
 		"emitDeclarationOnly": true,
 		"composite": true,
-		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ]
+		"typeRoots": [ "../packages/calypso-build/typings", "../node_modules/@types" ],
+		"paths": {
+			"calypso/*": [ "./*" ]
+		}
 	},
 	"references": [
 		{ "path": "../packages/calypso-analytics" },
 		{ "path": "../packages/components" },
 		{ "path": "../packages/data-stores" },
-		{ "path": "../packages/media-library" },
+		{ "path": "../packages/language-picker" },
 		{ "path": "../packages/react-i18n" }
 	],
-	"include": [ "**/*" ],
+	"include": [ "**/*", "../build-tools/**" ],
 	"exclude": [
 		"../**/node_modules/**/*",
 		"**/test/**/*",

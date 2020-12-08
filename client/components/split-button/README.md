@@ -1,5 +1,4 @@
-Split Button
-=============
+# Split Button
 
 A React component for displaying a button with a labeled main action plus a secondary, identified by a chevron, that toggles the menu's visibility.
 
@@ -8,17 +7,13 @@ A React component for displaying a button with a labeled main action plus a seco
 Render `<SplitButton />` in a similar fashion as you would [the `<PopoverMenu />` component](../popover-menu), as it is effectively a convenience wrapper for this component with a few additional options. Specifically, you'll still need to render `<PopoverMenuItem />` as children of the `<SplitButton />`.
 
 ```jsx
-import SplitButton from 'components/split-button';
-import PopoverMenuItem from 'components/popover/menu-item';
+import SplitButton from 'calypso/components/split-button';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 
 export default function MyComponent( { onMenuItemClick } ) {
 	return (
-		<SplitButton
-			mainFace="Split Button"
-		>
-			<PopoverMenuItem onClick={ onMenuItemClick }>
-				Click Me!
-			</PopoverMenuItem>
+		<SplitButton mainFace="Split Button">
+			<PopoverMenuItem onClick={ onMenuItemClick }>Click Me!</PopoverMenuItem>
 		</SplitButton>
 	);
 }

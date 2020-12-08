@@ -1,6 +1,12 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import classNames from 'classnames';
 
+/**
+ * Internal dependencies
+ */
 import { html } from '../indices-to-html';
 import { p } from './functions';
 

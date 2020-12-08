@@ -6,10 +6,9 @@ import { assign } from 'lodash';
 /**
  * Internal dependencies
  */
-import { createTransientMedia } from 'lib/media/utils';
-import { dispatchFluxUpdateMediaItem } from 'state/media/utils/flux-adapter';
-import { editMediaItem } from 'state/media/actions';
-import getMediaItem from 'state/selectors/get-media-item';
+import { createTransientMedia } from 'calypso/lib/media/utils';
+import { editMediaItem } from 'calypso/state/media/actions';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
 
 /**
  * Redux thunk to edit a media item.
@@ -34,7 +33,5 @@ export const editMedia = ( siteId, item ) => ( dispatch, getState ) => {
 		isDirty: true,
 	} );
 
-	dispatchFluxUpdateMediaItem( siteId, editedMediaItem );
-
-	dispatch( editMediaItem( siteId, editedMediaItem, item ) );
+	dispatch( editMediaItem( siteId, editedMediaItem, item, originalMediaItem ) );
 };

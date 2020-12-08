@@ -12,13 +12,13 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 
-import { appStates } from 'state/imports/constants';
+import { appStates } from 'calypso/state/imports/constants';
 import { Card } from '@automattic/components';
 import ImporterHeader from '../importer-header';
 import ImportingPane from '../importing-pane';
 import SiteImporterInputPane from './site-importer-input-pane';
-import { startImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { startImport } from 'calypso/lib/importer/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

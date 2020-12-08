@@ -1,5 +1,4 @@
-App Handlers
-=====================
+# App Handlers
 
 App handlers are bits of code that run before the app is started and the main window has opened. Code here cannot use window or dialog functions.
 

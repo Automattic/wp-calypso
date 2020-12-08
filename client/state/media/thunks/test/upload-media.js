@@ -1,14 +1,9 @@
 /**
  * Internal dependencies
  */
-import { uploadMedia as uploadMediaThunk } from 'state/media/thunks/upload-media';
-import {
-	dispatchFluxReceiveMediaItemError,
-	dispatchFluxReceiveMediaItemSuccess,
-} from 'state/media/utils/flux-adapter';
-import * as syncActions from 'state/media/actions';
-import { requestMediaStorage } from 'state/sites/media-storage/actions';
-import { createTransientMediaItems } from 'state/media/thunks/create-transient-media-items';
+import { uploadMedia as uploadMediaThunk } from 'calypso/state/media/thunks/upload-media';
+import * as syncActions from 'calypso/state/media/actions';
+import { createTransientMediaItems } from 'calypso/state/media/thunks/create-transient-media-items';
 
 jest.mock( 'state/media/utils/is-file-list', () => ( {
 	isFileList: jest.fn(),
@@ -18,17 +13,13 @@ jest.mock( 'state/media/thunks/create-transient-media-items', () => ( {
 	createTransientMediaItems: jest.fn(),
 } ) );
 
-jest.mock( 'state/media/utils/flux-adapter', () => ( {
-	dispatchFluxReceiveMediaItemError: jest.fn(),
-	dispatchFluxReceiveMediaItemSuccess: jest.fn(),
-} ) );
-
 jest.mock( 'state/sites/media-storage/actions', () => ( {
 	requestMediaStorage: jest.fn(),
 } ) );
 
 describe( 'media - thunks - uploadMedia', () => {
-	let dispatch, fileUploader;
+	let dispatch;
+	let fileUploader;
 
 	const siteId = 1343323;
 	const site = { ID: siteId };
@@ -101,24 +92,6 @@ describe( 'media - thunks - uploadMedia', () => {
 				file
 			);
 		} );
-
-		describe( 'flux adaptation', () => {
-			it( 'should dispatch flux receive and media limits actions', async () => {
-				await expect( uploadMedia( file, site, fileUploader ) ).resolves.toEqual( [
-					{ ...file, ID: savedId, transientId: 'generated-id-0' },
-				] );
-
-				expect( dispatchFluxReceiveMediaItemSuccess ).toHaveBeenCalledWith(
-					'generated-id-0',
-					siteId,
-					{
-						...file,
-						ID: savedId,
-					}
-				);
-				expect( requestMediaStorage ).toHaveBeenCalledWith( siteId );
-			} );
-		} );
 	} );
 
 	describe( 'when upload fails', () => {
@@ -145,18 +118,6 @@ describe( 'media - thunks - uploadMedia', () => {
 			await uploadMedia( file, site, fileUploader, jest.fn(), onItemFailure );
 
 			expect( onItemFailure ).toHaveBeenCalledWith( { ...file } );
-		} );
-
-		describe( 'flux adaptation', () => {
-			it( 'should dispatch flux error action', async () => {
-				await expect( uploadMedia( file, site, fileUploader ) ).resolves.toEqual( [] );
-
-				expect( dispatchFluxReceiveMediaItemError ).toHaveBeenCalledWith(
-					'generated-id-0',
-					siteId,
-					error
-				);
-			} );
 		} );
 	} );
 } );

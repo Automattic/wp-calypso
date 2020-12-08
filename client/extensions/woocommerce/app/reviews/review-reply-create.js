@@ -13,10 +13,11 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import Gravatar from 'calypso/components/gravatar';
 import { createReviewReply } from 'woocommerce/state/sites/review-replies/actions';
-import { getCurrentUser } from 'state/current-user/selectors';
-import Gravatar from 'components/gravatar';
-import { successNotice } from 'state/notices/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { successNotice } from 'calypso/state/notices/actions';
 
 // Matches comments reply box heights
 const TEXTAREA_HEIGHT_COLLAPSED = 47; // 1 line
@@ -130,13 +131,13 @@ class ReviewReplyCreate extends Component {
 
 		return (
 			<form className="reviews__reply-textarea">
-				<textarea
+				<FormTextarea
 					className={ textareaClasses }
 					onBlur={ this.unsetFocus }
 					onChange={ this.onTextChange }
 					onFocus={ this.setFocus }
 					placeholder={ this.getTextareaPlaceholder() }
-					ref={ this.bindTextareaRef }
+					forwardedRef={ this.bindTextareaRef }
 					style={ textareaStyle }
 					value={ commentText }
 				/>

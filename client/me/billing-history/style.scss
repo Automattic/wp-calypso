@@ -40,7 +40,7 @@
 	width: 100px;
 	padding: 3px 9px;
 	background-color: var( --color-surface );
-	border-radius: 15px;
+	border-radius: 2px;
 	border: 1px solid var( --color-neutral-0 );
 	transition: width 0.25s ease-out;
 	outline: 0;
@@ -146,6 +146,16 @@
 	}
 }
 
+.billing-history__email-button {
+	color: var( --color-link );
+	cursor: pointer;
+	font-size: inherit;
+
+	&:focus {
+		outline: thin dotted;
+	}
+}
+
 // View Receipt
 .billing-history__app-overview {
 	min-height: 65px;
@@ -234,7 +244,8 @@ textarea.billing-history__billing-details-editable {
 			margin: 0;
 		}
 
-		strong {
+		strong,
+		.form-label {
 			color: var( --color-neutral-50 );
 			display: block;
 			font-size: $font-body-extra-small;
@@ -333,27 +344,22 @@ textarea.billing-history__billing-details-editable {
 }
 
 .billing-history__receipt-links {
-	.button {
-		margin: 16px 0;
-
-		@include breakpoint-deprecated( '>480px' ) {
-			float: right;
-			margin: 0 1%;
-		}
-	}
+	padding: 0 40px 10px;
 }
 
 .billing-history__receipt-card.card.is-compact {
 	padding: 16px 0;
 }
 
-.billing-history__receipts.card,
-.billing-history__upcoming-charges.card {
+.billing-history__receipts.card {
 	padding: 0;
 }
 
-.billing-history .search-card.card,
-.billing-history__upcoming-charges .search-card.card {
+.billing-history {
+	min-height: 500px;
+}
+
+.billing-history .search-card.card {
 	margin: 0;
 }
 

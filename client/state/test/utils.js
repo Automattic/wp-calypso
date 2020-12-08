@@ -6,7 +6,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'state/action-types';
+import { APPLY_STORED_STATE, DESERIALIZE, SERIALIZE } from 'calypso/state/action-types';
 import {
 	extendAction,
 	keyedReducer,
@@ -16,8 +16,8 @@ import {
 	withoutPersistence,
 	withEnhancers,
 	withStorageKey,
-} from 'state/utils';
-import warn from 'lib/warn';
+} from 'calypso/state/utils';
+import warn from 'calypso/lib/warn';
 
 jest.mock( 'lib/warn', () => jest.fn() );
 
@@ -296,9 +296,9 @@ describe( 'utils', () => {
 			const keyed = keyedReducer( 'id', age );
 
 			// state with non-initial value
-			const state = { '1': 1 };
+			const state = { 1: 1 };
 			const serialized = keyed( state, { type: 'SERIALIZE' } );
-			expect( serialized.root() ).toEqual( { '1': 1 } );
+			expect( serialized.root() ).toEqual( { 1: 1 } );
 		} );
 
 		test( 'should not serialize nested empty state', () => {
@@ -315,9 +315,9 @@ describe( 'utils', () => {
 			// right thing.
 			// Another reason why empty state might not be persisted is that the tested reducer didn't
 			// opt in into persistence in the first place -- and we DON'T want to test that!
-			const stateWithData = { a: { '1': 1 } };
+			const stateWithData = { a: { 1: 1 } };
 			const serializedWithData = nestedReducer( stateWithData, { type: 'SERIALIZE' } );
-			expect( serializedWithData.root() ).toEqual( { a: { '1': 1 } } );
+			expect( serializedWithData.root() ).toEqual( { a: { 1: 1 } } );
 
 			// initial state should not serialize
 			const state = nestedReducer( undefined, { type: 'INIT' } );

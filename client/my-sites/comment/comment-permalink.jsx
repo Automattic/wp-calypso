@@ -11,9 +11,9 @@ import { get, isUndefined } from 'lodash';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import ExternalLink from 'components/external-link';
-import { getSiteComment } from 'state/comments/selectors';
+import SectionHeader from 'calypso/components/section-header';
+import ExternalLink from 'calypso/components/external-link';
+import { getSiteComment } from 'calypso/state/comments/selectors';
 
 const CommentPermalink = ( { isLoading, permaLink, translate } ) =>
 	! isLoading && (

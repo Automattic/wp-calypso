@@ -28,14 +28,13 @@
 
 		"importsNotUsedAsValues": "error",
 		"importHelpers": true,
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__domain-picker"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
 	"references": [
-		{
-			"path": "../data-stores"
-		}
+		{ "path": "../data-stores" },
+		{ "path": "../calypso-analytics" },
+		{ "path": "../react-i18n" }
 	]
 }

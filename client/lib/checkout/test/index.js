@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getValidDeepRedirectTo, parseRedirectToChain } from 'lib/checkout';
+import { getValidDeepRedirectTo, parseRedirectToChain } from 'calypso/lib/checkout';
 
 describe( 'parseRedirectToChain', () => {
 	test( 'should return undefined if given empty string', () => {

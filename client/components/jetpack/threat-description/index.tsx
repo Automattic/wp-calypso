@@ -7,9 +7,9 @@ import { translate, TranslateResult } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { ThreatStatus } from 'components/jetpack/threat-item/types';
-import MarkedLines from 'components/marked-lines';
-import DiffViewer from 'components/diff-viewer';
+import { ThreatStatus } from 'calypso/components/jetpack/threat-item/types';
+import MarkedLines from 'calypso/components/marked-lines';
+import DiffViewer from 'calypso/components/diff-viewer';
 
 /**
  * Style dependencies

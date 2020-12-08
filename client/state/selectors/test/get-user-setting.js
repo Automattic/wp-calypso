@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getUserSetting from 'state/selectors/get-user-setting';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
 
 describe( 'getUserSetting()', () => {
 	test( 'should return null if neither server nor local unsaved settings contain the key', () => {

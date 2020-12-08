@@ -6,7 +6,7 @@ import { forEach } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { preventWidows as preventWidowFormatting } from 'lib/formatting';
+import { preventWidows as preventWidowFormatting } from 'calypso/lib/formatting';
 
 export default function preventWidows( post ) {
 	forEach( [ 'excerpt' ], function ( prop ) {

@@ -9,10 +9,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import Spinner from 'components/spinner';
-import getPreviousRoute from 'state/selectors/get-previous-route';
-import isAccountClosed from 'state/selectors/is-account-closed';
+import EmptyContent from 'calypso/components/empty-content';
+import Spinner from 'calypso/components/spinner';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
 
 /**
  * Style dependencies

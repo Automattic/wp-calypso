@@ -15,8 +15,8 @@ import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import { useTrackStep } from '../../hooks/use-track-step';
 import useStepNavigation from '../../hooks/use-step-navigation';
 import Badge from '../../components/badge';
-import designs, { getDesignImageUrl } from '../../available-designs';
-import JetpackLogo from 'components/jetpack-logo'; // @TODO: extract to @automattic package
+import { getDesignImageUrl } from '../../available-designs';
+import JetpackLogo from 'calypso/components/jetpack-logo'; // @TODO: extract to @automattic package
 import type { Design } from '../../stores/onboard/types';
 
 /**
@@ -31,7 +31,9 @@ const DesignSelector: React.FunctionComponent = () => {
 	const { goBack, goNext } = useStepNavigation();
 
 	const { setSelectedDesign, setFonts } = useDispatch( ONBOARD_STORE );
-	const { getSelectedDesign, hasPaidDesign } = useSelect( ( select ) => select( ONBOARD_STORE ) );
+	const { getSelectedDesign, hasPaidDesign, getRandomizedDesigns } = useSelect( ( select ) =>
+		select( ONBOARD_STORE )
+	);
 
 	useTrackStep( 'DesignSelection', () => ( {
 		selected_design: getSelectedDesign()?.slug,
@@ -53,7 +55,7 @@ const DesignSelector: React.FunctionComponent = () => {
 			</div>
 			<div className="design-selector__design-grid">
 				<div className="design-selector__grid">
-					{ designs.featured.map( ( design ) => (
+					{ getRandomizedDesigns().featured.map( ( design ) => (
 						<button
 							key={ design.slug }
 							className="design-selector__design-option"
@@ -88,7 +90,9 @@ const DesignSelector: React.FunctionComponent = () => {
 														className="design-selector__premium-badge-logo"
 														size={ 20 }
 													/>
-													<span>{ __( 'Premium' ) }</span>
+													<span className="design-selector__premium-badge-text">
+														{ __( 'Premium' ) }
+													</span>
 												</Badge>
 											</div>
 										</Tooltip>

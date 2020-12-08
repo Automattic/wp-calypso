@@ -1,8 +1,8 @@
 /**
  * Internal Dependencies
  */
-import { EXPERIMENT_ASSIGN } from 'state/action-types';
-import { ExperimentResponse } from 'state/experiments/types';
+import { EXPERIMENT_ASSIGN } from 'calypso/state/action-types';
+import { ExperimentResponse } from 'calypso/state/experiments/types';
 
 /**
  * Assign the user to the specified experiments

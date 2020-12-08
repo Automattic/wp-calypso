@@ -8,8 +8,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import EmptyContent from 'components/empty-content';
+import config from 'calypso/config';
+import EmptyContent from 'calypso/components/empty-content';
 
 const NoSitesMessage = ( { translate } ) => {
 	return (

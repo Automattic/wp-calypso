@@ -9,7 +9,7 @@ import { get, identity, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import TitleFormatEditor from 'components/title-format-editor';
+import TitleFormatEditor from 'calypso/components/title-format-editor';
 import { localize } from 'i18n-calypso';
 
 /**

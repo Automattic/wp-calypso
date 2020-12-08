@@ -11,15 +11,15 @@ import {
 	EDITOR_TYPE_SET,
 	EDITOR_TYPE_UPDATE,
 	GUTENBERG_OPT_IN_OUT_SET,
-	EDITOR_DEPRECATION_GROUP_SET,
-} from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { replaceHistory } from 'state/ui/actions';
+	GUTENBERG_IFRAME_ELIGIBLE_SET,
+} from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { replaceHistory } from 'calypso/state/ui/actions';
 
-import 'state/editor-deprecation-group/init';
-import 'state/gutenberg-opt-in-out/init';
+import 'calypso/state/gutenberg-opt-in-out/init';
+import 'calypso/state/gutenberg-iframe-eligible/init';
 
 const fetchGutenbergOptInData = ( action ) =>
 	http(
@@ -37,12 +37,12 @@ const setGutenbergOptInData = (
 		editor_web: editor,
 		opt_in: optIn,
 		opt_out: optOut,
-		in_editor_deprecation_group: inEditorDeprecationGroup,
+		eligible_gutenframe: isEligibleForGutenframe,
 	}
 ) => ( dispatch ) => {
 	dispatch( { type: EDITOR_TYPE_SET, siteId, editor } );
 	dispatch( { type: GUTENBERG_OPT_IN_OUT_SET, siteId, optIn, optOut } );
-	dispatch( { type: EDITOR_DEPRECATION_GROUP_SET, inEditorDeprecationGroup } );
+	dispatch( { type: GUTENBERG_IFRAME_ELIGIBLE_SET, siteId, isEligibleForGutenframe } );
 };
 
 const dispatchFetchGutenbergOptInData = dispatchRequest( {

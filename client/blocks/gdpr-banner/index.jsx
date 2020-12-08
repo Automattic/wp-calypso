@@ -13,11 +13,11 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import { localizeUrl } from 'lib/i18n-utils';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import { isCurrentUserMaybeInGdprZone } from 'lib/analytics/utils';
-import { isWpMobileApp } from 'lib/mobile-app';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import { isCurrentUserMaybeInGdprZone } from 'calypso/lib/analytics/utils';
+import { isWpMobileApp } from 'calypso/lib/mobile-app';
 
 /**
  * Internal dependencies

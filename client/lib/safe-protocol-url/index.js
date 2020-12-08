@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getUrlParts, getUrlFromParts } from 'lib/url/url-parts';
+import { getUrlParts, getUrlFromParts } from 'calypso/lib/url/url-parts';
 
 export default function safeProtocolUrl( url ) {
 	// If it's empty, return null

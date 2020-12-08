@@ -3,8 +3,8 @@
  */
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import QueryUsersSuggestions from 'components/data/query-users-suggestions';
-import { getUserSuggestions } from 'state/users/suggestions/selectors';
+import QueryUsersSuggestions from 'calypso/components/data/query-users-suggestions';
+import { getUserSuggestions } from 'calypso/state/users/suggestions/selectors';
 import PropTypes from 'prop-types';
 
 /**

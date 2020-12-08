@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { planHasFeature, planHasSuperiorFeature } from 'lib/plans';
+import createSelector from 'calypso/lib/create-selector';
+import { planHasFeature, planHasSuperiorFeature } from 'calypso/lib/plans';
 import {
 	FEATURE_SPAM_AKISMET_PLUS,
 	FEATURE_JETPACK_BACKUP_REALTIME,
@@ -15,8 +15,14 @@ import {
 	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_JETPACK_PREMIUM,
 	PLAN_JETPACK_PREMIUM_MONTHLY,
-} from 'lib/plans/constants';
-import { isJetpackBackup, isJetpackScan } from 'lib/products-values';
+	PLAN_JETPACK_SECURITY_DAILY,
+	PLAN_JETPACK_SECURITY_DAILY_MONTHLY,
+	PLAN_JETPACK_SECURITY_REALTIME,
+	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+	PLAN_JETPACK_COMPLETE,
+	PLAN_JETPACK_COMPLETE_MONTHLY,
+} from 'calypso/lib/plans/constants';
+import { isJetpackBackup, isJetpackScan } from 'calypso/lib/products-values';
 import {
 	PRODUCT_JETPACK_ANTI_SPAM,
 	PRODUCT_JETPACK_ANTI_SPAM_MONTHLY,
@@ -25,19 +31,23 @@ import {
 	PRODUCT_JETPACK_BACKUP_REALTIME,
 	PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY,
 	PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY,
-} from 'lib/products-values/constants';
-import { hasFeature } from 'state/sites/plans/selectors';
-import isSiteWPCOM from 'state/selectors/is-site-wpcom';
-import { isJetpackSiteMultiSite, hasSiteProduct, getSitePlanSlug } from 'state/sites/selectors';
+} from 'calypso/lib/products-values/constants';
+import { hasFeature } from 'calypso/state/sites/plans/selectors';
+import isSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
+import {
+	isJetpackSiteMultiSite,
+	hasSiteProduct,
+	getSitePlanSlug,
+} from 'calypso/state/sites/selectors';
 
 /**
  * Type dependencies
  */
-import type { AppState } from 'types';
-import type { CartItemValue } from 'lib/cart-values/types';
+import type { AppState } from 'calypso/types';
+import type { CartItemValue } from 'calypso/lib/cart-values/types';
 
 /**
- * Checks if Jetpack Anti-Spam is conflicting with a site's current products.
+ * Checks if Jetpack Anti-spam is conflicting with a site's current products.
  *
  * @param {AppState} state The redux state.
  * @param {number} siteId The site ID.
@@ -118,12 +128,18 @@ export const isPlanIncludingSiteBackup = createSelector(
 			case PLAN_JETPACK_PERSONAL_MONTHLY:
 			case PLAN_JETPACK_PREMIUM:
 			case PLAN_JETPACK_PREMIUM_MONTHLY:
+			case PLAN_JETPACK_SECURITY_DAILY:
+			case PLAN_JETPACK_SECURITY_DAILY_MONTHLY:
 				if ( hasRealTimeBackup ) {
 					return false;
 				}
 				return true;
 			case PLAN_JETPACK_BUSINESS:
 			case PLAN_JETPACK_BUSINESS_MONTHLY:
+			case PLAN_JETPACK_SECURITY_REALTIME:
+			case PLAN_JETPACK_SECURITY_REALTIME_MONTHLY:
+			case PLAN_JETPACK_COMPLETE:
+			case PLAN_JETPACK_COMPLETE_MONTHLY:
 				return true;
 		}
 

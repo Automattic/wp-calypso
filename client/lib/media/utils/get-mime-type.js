@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { MimeTypes } from 'lib/media/constants';
-import { getFileExtension } from 'lib/media/utils/get-file-extension';
+import { MimeTypes } from 'calypso/lib/media/constants';
+import { getFileExtension } from 'calypso/lib/media/utils/get-file-extension';
 
 /**
  * Given a media string, File, or object, returns the MIME type if one can

@@ -13,8 +13,8 @@ import {
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
 	READER_RELATED_POSTS_RECEIVE,
-} from 'state/reader/action-types';
-import useNock from 'test-helpers/use-nock';
+} from 'calypso/state/reader/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 jest.mock( 'state/reader/posts/actions', () => ( {
 	receivePosts( posts ) {
 		return Promise.resolve( posts );

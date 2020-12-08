@@ -6,7 +6,7 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import { STORE_KEY } from './constants';
+import { STORE_KEY, DataStatus } from './constants';
 import type { DomainSuggestionQuery } from './types';
 import type { State } from './reducer';
 import { stringifyDomainQueryObject } from './utils';
@@ -41,6 +41,16 @@ const createSelectors = ( vendor: string ) => {
 		return select( STORE_KEY ).__internalGetDomainSuggestions( normalizedQuery );
 	}
 
+	function getDomainState( state: State ): DataStatus {
+		return state.domainSuggestions.state;
+	}
+
+	function getDomainErrorMessage( state: State ): string | null {
+		return state.domainSuggestions.errorMessage;
+	}
+
+	// TODO: reconcile this function with "Pending" status?
+	// It doesn't seem to be used
 	function isLoadingDomainSuggestions(
 		_state: State,
 		search: string,
@@ -94,15 +104,27 @@ const createSelectors = ( vendor: string ) => {
 	 * @returns suggestions
 	 */
 	function __internalGetDomainSuggestions( state: State, queryObject: DomainSuggestionQuery ) {
-		return state.domainSuggestions[ stringifyDomainQueryObject( queryObject ) ];
+		return state.domainSuggestions.data[ stringifyDomainQueryObject( queryObject ) ];
+	}
+
+	function isAvailable( state: State, domainName: string ) {
+		return state.availability[ domainName ];
+	}
+
+	function getDomainAvailabilities( state: State ) {
+		return state.availability;
 	}
 
 	return {
 		getCategories,
 		getDomainSuggestions,
+		getDomainState,
+		getDomainErrorMessage,
 		getDomainSuggestionVendor,
 		isLoadingDomainSuggestions,
 		__internalGetDomainSuggestions,
+		isAvailable,
+		getDomainAvailabilities,
 	};
 };
 

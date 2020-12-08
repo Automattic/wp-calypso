@@ -1,9 +1,12 @@
 /**
  * Internal dependencies
  */
-import { HAPPYCHAT_SKILL_PRODUCT, HAPPYCHAT_SKILL_LANGUAGE } from 'state/happychat/constants';
-import getGroups from 'state/happychat/selectors/get-groups';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import {
+	HAPPYCHAT_SKILL_PRODUCT,
+	HAPPYCHAT_SKILL_LANGUAGE,
+} from 'calypso/state/happychat/constants';
+import getGroups from 'calypso/state/happychat/selectors/get-groups';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 /**
  * Returns an object of happychat skills array ( product - before known as groups and language )

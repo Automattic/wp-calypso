@@ -1,8 +1,11 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import { difference, get, pick, property, range } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import { store } from '../state';
 import actions from '../state/actions';
 
@@ -313,14 +316,15 @@ function getNotesList() {
 function ready() {
 	const notes = getAllNotes( store.getState() );
 
-	const timestamps = notes
-		.map( property( 'timestamp' ) )
-		.map( ( timestamp ) => Date.parse( timestamp ) / 1000 );
+	let newNotes = notes.filter(
+		( note ) => Date.parse( note.timestamp ) / 1000 > this.lastSeenTime
+	);
 
-	let newNoteCount = timestamps.filter( ( time ) => time > this.lastSeenTime ).length;
+	let newNoteCount = newNotes.length;
 
 	if ( ! this.firstRender && this.lastSeenTime === 0 ) {
 		newNoteCount = 0;
+		newNotes = [];
 	}
 
 	const latestType = get( notes.slice( -1 )[ 0 ], 'type', null );
@@ -440,6 +444,7 @@ function refreshNotes() {
 	if ( this.subscribed ) {
 		return;
 	}
+	debug( 'Refreshing notes...' );
 
 	getNotesList.call( this );
 }
@@ -498,6 +503,24 @@ function setVisibility( { isShowing, isVisible } ) {
 		this.updateLastSeenTime( 0 );
 		this.main();
 	}
+}
+
+// Persists the latest note timestamp sent to the Desktop app.
+function setlatestTimestampSeen( timestamp ) {
+	const parsedTimestamp = Date.parse( timestamp );
+	const latestTimestamp = localStorage.getItem( 'desktop_latest_timestamp_seen' ) || 0;
+
+	if ( parsedTimestamp > latestTimestamp ) {
+		debug( 'Update desktop_latest_timestamp_seen: ', parsedTimestamp );
+
+		try {
+			localStorage.setItem( 'desktop_latest_timestamp_seen', parsedTimestamp );
+			return true;
+		} catch ( e ) {
+			debug( 'Failed to set desktop_latest_timestamp_seen: ', e.message );
+		}
+	}
+	return false;
 }
 
 Client.prototype.main = main;

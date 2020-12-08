@@ -8,7 +8,7 @@ Wrap a child component with `<CartData />`. [As a controller-view](https://faceb
 
 ```jsx
 import React from 'react';
-import CartData from 'components/data/cart-data';
+import CartData from 'calypso/components/data/cart-data';
 import MyChildComponent from './my-child-component';
 
 export default class extends React.Component {

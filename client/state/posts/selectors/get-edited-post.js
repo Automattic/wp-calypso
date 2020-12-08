@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { getPostEdits } from 'state/posts/selectors/get-post-edits';
-import { getSitePost } from 'state/posts/selectors/get-site-post';
-import { applyPostEdits } from 'state/posts/utils';
+import createSelector from 'calypso/lib/create-selector';
+import { getPostEdits } from 'calypso/state/posts/selectors/get-post-edits';
+import { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
+import { applyPostEdits } from 'calypso/state/posts/utils';
 
-import 'state/posts/init';
+import 'calypso/state/posts/init';
 
 /**
  * Returns a post object by site ID post ID pairing, with editor revisions.

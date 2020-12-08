@@ -9,23 +9,40 @@
 
 @mixin onboarding-heading-text {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 42px;
 	line-height: 57px;
 }
 
 @mixin onboarding-heading-text-tablet {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 36px;
 	line-height: 40px;
 }
 
 @mixin onboarding-heading-text-mobile {
 	@include onboarding-font-recoleta;
+	/* stylelint-disable-line */
 	font-size: 32px;
 	line-height: 40px;
 }
 
+@mixin onboarding-heading-title {
+	@include onboarding-heading-text-mobile;
+	color: var( --mainColor );
+
+	@include break-mobile {
+		@include onboarding-heading-text-tablet;
+	}
+
+	@include break-xlarge {
+		@include onboarding-heading-text;
+	}
+}
+
 @mixin onboarding-large-text {
+	/* stylelint-disable-line */
 	font-size: 16px;
 	line-height: 24px;
 }
@@ -46,22 +63,41 @@
 }
 
 @mixin onboarding-block-margin {
-	margin: 0 $onboarding-block-margin-mobile;
+	margin-left: $onboarding-block-margin-mobile;
+	margin-right: $onboarding-block-margin-mobile;
 
 	@include break-small {
-		margin: 0 $onboarding-block-margin-small;
+		margin-left: $onboarding-block-margin-small;
+		margin-right: $onboarding-block-margin-small;
 	}
 
 	@include break-medium {
-		margin: 0 $onboarding-block-margin-medium;
+		margin-left: $onboarding-block-margin-medium;
+		margin-right: $onboarding-block-margin-medium;
 	}
 }
 
 @mixin onboarding-heading-padding {
-	margin: $onboarding-heading-padding-mobile;
+	margin: $onboarding-heading-margin-mobile;
 
-	@include break-mobile {
-		margin: $onboarding-heading-padding-desktop;
+	@include break-small {
+		margin: $onboarding-heading-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-heading-margin-medium;
+	}
+}
+
+@mixin onboarding-body-margin {
+	margin: $onboarding-body-margin-mobile;
+
+	@include break-small {
+		margin: $onboarding-body-margin-small;
+	}
+
+	@include break-medium {
+		margin: $onboarding-body-margin-medium;
 	}
 }
 
@@ -103,21 +139,32 @@
 	background: var( --studio-white );
 }
 
-@mixin onboarding-block-edge2edge-container {
-	width: calc( 100% + #{$onboarding-block-margin-mobile * 2} );
+@mixin onboarding-block-edge2edge {
 	margin-left: #{$onboarding-block-margin-mobile * -1};
 	margin-right: #{$onboarding-block-margin-mobile * -1};
 
 	@include break-small {
-		width: calc( 100% + #{$onboarding-block-margin-small * 2} );
 		margin-left: #{$onboarding-block-margin-small * -1};
 		margin-right: #{$onboarding-block-margin-small * -1};
 	}
 
 	@include break-medium {
-		width: calc( 100% + #{$onboarding-block-margin-medium * 2} );
 		margin-left: #{$onboarding-block-margin-medium * -1};
 		margin-right: #{$onboarding-block-margin-medium * -1};
+	}
+}
+
+@mixin onboarding-block-edge2edge-container {
+	@include onboarding-block-edge2edge;
+
+	width: calc( 100% + #{$onboarding-block-margin-mobile * 2} );
+
+	@include break-small {
+		width: calc( 100% + #{$onboarding-block-margin-small * 2} );
+	}
+
+	@include break-medium {
+		width: calc( 100% + #{$onboarding-block-margin-medium * 2} );
 	}
 }
 
@@ -186,4 +233,17 @@
 	100% {
 		opacity: 0.5;
 	}
+}
+
+// Hide visually without allowing screen reader access.
+@mixin onboarding-screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect( 0, 0, 0, 0 );
+	white-space: nowrap;
+	border-width: 0;
 }

@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import MainWrapper from './main-wrapper';
-import FormattedHeader from 'components/formatted-header';
-import PlansFeaturesMain from 'my-sites/plans-features-main';
-import PlansSkipButton from 'components/plans/plans-skip-button';
-import { recordTracksEvent } from 'state/analytics/actions';
+import FormattedHeader from 'calypso/components/formatted-header';
+import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
+import PlansSkipButton from 'calypso/components/plans/plans-skip-button';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Constants

@@ -1,29 +1,54 @@
 // Introduction banner
 .activity-log-banner__intro {
 	display: flex;
-	align-items: flex-start;
+	align-items: center;
 	margin-bottom: 44px;
 }
 
 .activity-log-banner__intro-image {
 	max-width: 220px;
-	margin: 8px 16px 0 -8px;
+	margin: 8px 0 0 16px;
 
 	@include breakpoint-deprecated( '<960px' ) {
 		max-width: 100px;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {
-		max-width: 64px;
-	}
-
-	@include breakpoint-deprecated( '<480px' ) {
 		display: none;
 	}
 }
 
 .activity-log-banner__intro-description {
+	h1 {
+		@extend .wp-brand-font;
+	}
 	p {
+		font-size: $font-body-small;
+	}
+}
+
+.activity-log-banner__intro-list {
+	margin-top: -12px;
+	margin-left: 0;
+	list-style: none;
+	font-size: $font-body-small;
+
+	li {
+		display: flex;
+		align-items: center;
+	}
+
+	svg {
+		margin-right: 6px;
+	}
+}
+
+.activity-log-banner__intro-actions {
+	display: flex;
+	align-items: center;
+
+	.external-link {
+		margin-left: 24px;
 		font-size: $font-body-small;
 	}
 }

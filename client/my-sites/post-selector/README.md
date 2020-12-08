@@ -1,5 +1,4 @@
-PostSelector
-============
+# PostSelector
 
 The `PostSelector` component renders a list of Posts with corresponding form actions (radio or checkboxes) and a search box for filtering.
 
@@ -8,9 +7,9 @@ Under the hood, it uses [`<QueryPosts />`](../../components/data/query-posts) to
 ## Usage
 
 ```jsx
-import PostSelector from 'my-sites/post-selector';
+import PostSelector from 'calypso/my-sites/post-selector';
 
-<PostSelector siteId={ this.props.siteId } />
+<PostSelector siteId={ this.props.siteId } />;
 ```
 
 ## Props

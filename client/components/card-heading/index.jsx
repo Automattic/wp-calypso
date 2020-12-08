@@ -10,7 +10,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { preventWidows } from 'lib/formatting';
+import { preventWidows } from 'calypso/lib/formatting';
 
 /**
  * Style dependencies

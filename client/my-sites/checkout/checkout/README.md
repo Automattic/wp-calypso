@@ -1,11 +1,11 @@
-checkout
-========
+# checkout
 
 This module contains all the non-shared components for the checkout page (`/checkout`).
 
 Checkout is in a transitional state right now with the underlying core generally Flux-based and new additions grafted in using Redux.
 
 Domain contact details data flow (2017-06-07):
+
 1. If it exists, previous purchase contact data is loaded from the API into a `_contactDetailsCache` property in Redux state.
 2. That data is loaded into the domain details `formStateController`.
 3. `formStateController`'s state is authoritative _while on the main domain details form_ and we watch it for changes which we immediately propagate uni-directionally into Redux. Extra domain detail forms (like ccTLD forms for example) interact directly with Redux and the Redux state is authoritative on those forms at all times.

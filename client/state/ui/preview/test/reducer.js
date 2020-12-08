@@ -7,7 +7,7 @@ import { expect } from 'chai';
  * Internal dependencies
  */
 import { currentPreviewSiteId } from '../reducer';
-import { PREVIEW_SITE_SET } from 'state/action-types';
+import { PREVIEW_SITE_SET } from 'calypso/state/action-types';
 
 describe( '#currentPreviewSiteId()', () => {
 	test( 'should update currentPreviewSiteId', () => {

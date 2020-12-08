@@ -10,26 +10,26 @@ import page from 'page';
 import classNames from 'classnames';
 import { filter, find, flow, get, includes, isEmpty, noop } from 'lodash';
 import debugFactory from 'debug';
-import { format as formatUrl, parse as parseUrl } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
  */
-import { getPreference } from 'state/preferences/selectors';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getSite, hasAllSitesList } from 'state/sites/selectors';
-import areAllSitesSingleUser from 'state/selectors/are-all-sites-single-user';
-import getSites from 'state/selectors/get-sites';
-import getVisibleSites from 'state/selectors/get-visible-sites';
-import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import AllSites from 'blocks/all-sites';
-import Site from 'blocks/site';
-import SitePlaceholder from 'blocks/site/placeholder';
-import Search from 'components/search';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSite, hasAllSitesList } from 'calypso/state/sites/selectors';
+import areAllSitesSingleUser from 'calypso/state/selectors/are-all-sites-single-user';
+import getSites from 'calypso/state/selectors/get-sites';
+import getVisibleSites from 'calypso/state/selectors/get-visible-sites';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import AllSites from 'calypso/blocks/all-sites';
+import Site from 'calypso/blocks/site';
+import SitePlaceholder from 'calypso/blocks/site/placeholder';
+import Search from 'calypso/components/search';
 import SiteSelectorAddSite from './add-site';
-import searchSites from 'components/search-sites';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import searchSites from 'calypso/components/search-sites';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
+import { getUrlParts, getUrlFromParts, determineUrlType, format } from 'calypso/lib/url';
 
 /**
  * Style dependencies
@@ -131,7 +131,8 @@ class SiteSelector extends Component {
 	computeHighlightedSite() {
 		// site can be highlighted by either keyboard or by mouse and
 		// we need to switch seemlessly between the two
-		let highlightedSiteId, highlightedIndex;
+		let highlightedSiteId;
+		let highlightedIndex;
 		if ( this.state.isKeyboardEngaged ) {
 			debug( 'using highlight from last keyboard interaction' );
 			highlightedSiteId = this.visibleSites[ this.state.highlightedIndex ];
@@ -481,19 +482,31 @@ const navigateToSite = ( siteId, { allSitesPath, allSitesSingleUser, siteBasePat
 			// There is currently no "all sites" version of the insights page
 			return path.replace( /^\/stats\/insights\/?$/, '/stats/day' );
 		} else if ( siteBasePath ) {
-			const { protocol, hostname, port, pathname: urlPathname, query } = parseUrl(
-				getSiteBasePath( site ),
-				true
-			);
+			const base = getSiteBasePath( site );
+
+			// Record original URL type. The original URL should be a path-absolute URL, e.g. `/posts`.
+			const urlType = determineUrlType( base );
+
+			// Get URL parts and modify the path.
+			const { protocol, hostname, port, pathname: urlPathname, search } = getUrlParts( base );
 			const newPathname = `${ urlPathname }/${ site.slug }`;
 
-			return formatUrl( {
-				protocol,
-				hostname,
-				port,
-				pathname: newPathname,
-				query,
-			} );
+			try {
+				// Get an absolute URL from the original URL, the modified path, and some defaults.
+				const absoluteUrl = getUrlFromParts( {
+					protocol: protocol || window.location.protocol,
+					hostname: hostname || window.location.hostname,
+					port: port || window.location.port,
+					pathname: newPathname,
+					search,
+				} );
+
+				// Format the absolute URL down to the original URL type.
+				return format( absoluteUrl, urlType );
+			} catch {
+				// Invalid URLs will cause `getUrlFromParts` to throw. Return `null` in that case.
+				return null;
+			}
 		}
 	}
 

@@ -1,14 +1,13 @@
-Happychat State
-===============
+# Happychat State
 
 Happychat state shape:
 
 - connection
-  - error: one of the HAPPYCHAT_CONNECTION_ERROR_* [constants](./constants.js)
+  - error: one of the HAPPYCHAT*CONNECTION_ERROR*\* [constants](./constants.js)
   - isAvailable: whether the Happychat service is accepting new chats.
-  - status: one of the HAPPYCHAT_CONNECTION_STATUS_* [constants](./constants.js)
+  - status: one of the HAPPYCHAT*CONNECTION_STATUS*\* [constants](./constants.js)
 - chat
-  - status: one of the HAPPYCHAT_CHAT_STATUS_* [constants](./constants.js)
+  - status: one of the HAPPYCHAT*CHAT_STATUS*\* [constants](./constants.js)
   - timeline: array of timeline messages, as received from the Happychat service.
   - lastActivityTimestamp: milliseconds since the ongoing chat received or set a message.
 - ui
@@ -27,7 +26,7 @@ Happychat state shape:
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
-  ### `initConnection()`
+### `initConnection()`
 
 Opens Happychat Socket.IO client connection. _Note: Most use cases should use the Query Component
 [`<HappychatConnection />`](../../components/happychat/connection.jsx) instead of dispatching

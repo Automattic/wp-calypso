@@ -1,5 +1,4 @@
-Shipping Zones
-==============
+# Shipping Zones
 
 This module is used to manage the shipping zones for a site.
 
@@ -14,15 +13,24 @@ Pull shipping zones from the remote site. Does not run if the shipping zones are
 This is saved on a per-site basis, either as "LOADING" (when requesting zones), or a list of zones as returned from the site's API.
 
 ```js
-{
-	"shippingZones": "LOADING",
-	// or
-	"shippingZones": [ {
-		"id": 0,
-		"name": "Locations not covered by your other zones",
-		"order": 0,
-	}, { … } ],
-}
+const object = {
+	shippingZones: 'LOADING',
+};
+```
+
+```js
+const object = {
+	shippingZones: [
+		{
+			id: 0,
+			name: 'Locations not covered by your other zones',
+			order: 0,
+		},
+		{
+			/*...*/
+		},
+	],
+};
 ```
 
 ## Selectors

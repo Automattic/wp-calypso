@@ -10,10 +10,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
+import config from 'calypso/config';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SectionNav from 'calypso/components/section-nav';
 
 export default class extends React.Component {
 	static displayName = 'SecuritySectionNav';
@@ -61,8 +61,8 @@ export default class extends React.Component {
 
 	getSelectedText = () => {
 		let text = '';
-		const filteredPath = this.getFilteredPath(),
-			found = find( this.getNavtabs(), { path: filteredPath } );
+		const filteredPath = this.getFilteredPath();
+		const found = find( this.getNavtabs(), { path: filteredPath } );
 
 		if ( 'undefined' !== typeof found ) {
 			text = String( found.title );

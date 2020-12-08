@@ -6,11 +6,11 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { makeLayout, render as clientRender, notFound } from 'controller';
-import { navigation, siteSelection } from 'my-sites/controller';
-import { setScroll, siteSettings } from 'my-sites/site-settings/settings-controller';
-import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { makeLayout, render as clientRender, notFound } from 'calypso/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
+import { setScroll, siteSettings } from 'calypso/my-sites/site-settings/settings-controller';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { jetpack } from './controller';
 
 const notFoundIfNotEnabled = ( context, next ) => {

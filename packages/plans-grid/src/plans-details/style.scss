@@ -1,5 +1,6 @@
 @import '~@wordpress/base-styles/breakpoints';
 @import '~@wordpress/base-styles/mixins';
+@import '~@automattic/onboarding/styles/mixins';
 @import '~@automattic/typography/styles/variables';
 
 .plans-grid__details-heading {
@@ -71,5 +72,29 @@
 
 	td {
 		text-align: center;
+	}
+}
+
+.plans-details__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
+}
+
+.plans-details__select-button.components-button {
+	height: 36px;
+	padding: 0 18px;
+
+	@include break-small {
+		height: 40px;
+		padding: 0 24px;
 	}
 }

@@ -13,12 +13,12 @@
 	margin: 0;
 	outline: 0;
 	overflow: hidden;
+	text-align: center;
 	text-overflow: ellipsis;
 	text-decoration: none;
 	vertical-align: top;
 	box-sizing: border-box;
-	font-size: 14px;
-	font-weight: 600;
+	font-size: $font-body-small;
 	line-height: 22px;
 	border-radius: 2px;
 	padding: 8px 14px;
@@ -84,7 +84,7 @@
 	&.is-compact {
 		padding: 7px;
 		color: var( --color-text-subtle );
-		font-size: 12px;
+		font-size: $font-body-extra-small;
 		line-height: 1;
 
 		&:disabled {
@@ -290,6 +290,18 @@
 			margin-left: 4px;
 		}
 	}
+}
+
+.button-plain {
+	appearance: none;
+	background: transparent;
+	color: inherit;
+	border: none;
+	font-size: inherit;
+	font-weight: inherit;
+	outline: 0;
+	padding: 0;
+	vertical-align: baseline;
 }
 
 // ==========================================================================

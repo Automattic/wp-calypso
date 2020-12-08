@@ -22,7 +22,6 @@
 /client/components/marketing-survey/gsuite-cancel-purchase-dialog @Automattic/cobalt
 /client/components/upgrades/gsuite @Automattic/cobalt
 /client/lib/domains/email-forwarding @Automattic/cobalt
-/client/lib/domains/google-apps-users @Automattic/cobalt
 /client/lib/gsuite @Automattic/cobalt
 /client/me/purchases/remove-purchase/index.jsx @Automattic/cobalt
 /client/my-sites/checkout/checkout-thank-you/google-apps-details.jsx @Automattic/cobalt
@@ -38,34 +37,36 @@
 /client/state/gsuite-users @Automattic/cobalt
 
 # Payments
-/client/blocks/credit-card-form/ @Automattic/payments
-/client/blocks/payment-methods/ @Automattic/payments
-/client/blocks/subscription-length-picker/ @Automattic/payments
-/client/components/credit-card/ @Automattic/payments
-/client/components/credit-card-form-fields/ @Automattic/payments
-/client/components/payment-country-select/ @Automattic/payments
-/client/components/payment-logo/ @Automattic/payments
-/client/lib/cart/ @Automattic/payments
-/client/lib/cart-values/ @Automattic/payments
-/client/lib/checkout/ @Automattic/payments
+/client/blocks/credit-card-form/ @Automattic/shilling
+/client/blocks/payment-methods/ @Automattic/shilling
+/client/blocks/subscription-length-picker/ @Automattic/shilling
+/client/components/credit-card/ @Automattic/shilling
+/client/components/credit-card-form-fields/ @Automattic/shilling
+/client/components/payment-country-select/ @Automattic/shilling
+/client/components/payment-logo/ @Automattic/shilling
+/client/lib/cart/ @Automattic/shilling
+/client/lib/cart-values/ @Automattic/shilling
+/client/lib/checkout/ @Automattic/shilling
 /client/lib/siftscience/ @Automattic/payments
-/client/lib/simple-payments/ @Automattic/payments
 /client/lib/store-transactions/ @Automattic/payments
 /client/lib/stripe/ @Automattic/payments
 /client/lib/transaction/ @Automattic/payments
-/client/me/billing-history/ @Automattic/payments
+/client/me/billing-history/ @Automattic/shilling
 /client/me/memberships/ @Automattic/payments
 /client/me/pending-payments/ @Automattic/payments
-/client/me/purchases/ @Automattic/payments
-/client/my-sites/checkout/ @Automattic/payments
+/client/me/purchases/ @Automattic/shilling
+/client/my-sites/checkout/ @Automattic/shilling
+/client/my-sites/purchases/ @Automattic/shilling
 /client/state/billing-transactions/ @Automattic/payments
 /client/state/memberships/ @Automattic/payments
 /client/state/order-transactions/ @Automattic/payments
 /client/state/plans/ @Automattic/payments
 /client/state/receipts/ @Automattic/payments
-/client/state/simple-payments/ @Automattic/payments
 /client/state/stored-cards/ @Automattic/payments
 /client/state/sites/plans/ @Automattic/payments
+/packages/composite-checkout/ @Automattic/shilling
+/packages/calypso-stripe/ @Automattic/shilling
+/packages/shopping-cart/ @Automattic/shilling
 
 # Reader
 /client/reader @Automattic/reader
@@ -77,11 +78,18 @@
 /docs/coding-guidelines/typescript* @Automattic/type-review
 
 # FSE (Full Site Editing)
-/apps/full-site-editing/full-site-editing-plugin/site-editor @Automattic/cylon
-/apps/full-site-editing/full-site-editing-plugin/dotcom-fse @Automattic/cylon
-/apps/full-site-editing/full-site-editing-plugin/posts-list-block @Automattic/ajax
-/apps/full-site-editing/full-site-editing-plugin/global-styles @Automattic/cylon @nosolosw
+/apps/editing-toolkit/editing-toolkit-plugin/site-editor @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/dotcom-fse @Automattic/cylon
+/apps/editing-toolkit/editing-toolkit-plugin/posts-list-block @Automattic/ajax
+/apps/editing-toolkit/editing-toolkit-plugin/global-styles @Automattic/cylon @nosolosw
 
 # FSE Workflow Files
-/.github/workflows/full-site-editing-plugin.yml @Automattic/cylon
+/.github/workflows/editing-toolkit-plugin.yml @Automattic/cylon
 /.github/workflows/send-calypso-app-build-trigger.sh @Automattic/cylon
+
+# Experimentation platform legacy library and new client
+/client/lib/abtest @Automattic/experimentation-platform
+/client/components/data/query-experiments @Automattic/experimentation-platform
+/client/components/experiment @Automattic/experimentation-platform
+/client/state/data-layer/wpcom/experiments @Automattic/experimentation-platform
+/client/state/experiments @Automattic/experimentation-platform

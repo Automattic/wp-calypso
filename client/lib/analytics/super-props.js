@@ -1,14 +1,14 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import { shouldReportOmitBlogId } from 'lib/analytics/utils';
-import { getSelectedSite } from 'state/ui/selectors';
-import { getCurrentUserSiteCount } from 'state/current-user/selectors';
+import { shouldReportOmitBlogId } from 'calypso/lib/analytics/utils';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
 
 const getSuperProps = ( reduxStore ) => ( eventProperties ) => {
 	const state = reduxStore.getState();

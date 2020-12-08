@@ -8,11 +8,12 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { slugToSelectorProduct } from '../utils';
-import { PRODUCTS_TYPES, SELECTOR_PRODUCTS } from '../constants';
+import { getJetpackDescriptionWithOptions } from '../utils';
+import { PRODUCTS_TYPES } from '../constants';
 import ProductCard from '../product-card';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import FormattedHeader from 'components/formatted-header';
+import useGetPlansGridProducts from '../use-get-plans-grid-products';
+import FormattedHeader from 'calypso/components/formatted-header';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
 
 /**
  * Type dependencies
@@ -34,35 +35,43 @@ const ProductsColumn = ( {
 }: ProductsColumnType ) => {
 	const currencyCode = useSelector( ( state ) => getCurrentUserCurrencyCode( state ) );
 
-	// Gets all products in an array to be parsed.
-	const productObjects: SelectorProduct[] = useMemo(
-		() =>
-			// Convert product slugs to ProductSelector types.
-			SELECTOR_PRODUCTS.map( slugToSelectorProduct )
-				// Remove products that don't fit the filters or have invalid data.
-				.filter(
-					( product: SelectorProduct | null ): product is SelectorProduct =>
-						!! product &&
-						duration === product.term &&
-						PRODUCTS_TYPES[ productType ].includes( product.productSlug )
-				),
-		[ duration, productType ]
+	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
+		siteId
 	);
 
-	if ( ! currencyCode ) {
-		return null; // TODO: Loading component!
-	}
+	const productObjects: SelectorProduct[] = useMemo( () => {
+		// Products that have not been directly purchased must honor the current filter
+		// selection since they exist in both monthly and yearly version.
+		const filteredProducts = [ ...includedInPlanProducts, ...availableProducts ]
+			// Remove products that don't fit the filters or have invalid data.
+			.filter( ( product ): product is SelectorProduct => !! product && duration === product.term );
+		return (
+			[ ...purchasedProducts, ...filteredProducts ]
+				// Only show cards that correspond to the selected productType filter.
+				.filter(
+					( product ): product is SelectorProduct =>
+						!! product && PRODUCTS_TYPES[ productType ].includes( product.productSlug )
+				)
+				.map( ( product ) => ( {
+					...product,
+					description: getJetpackDescriptionWithOptions( product as SelectorProduct ),
+				} ) )
+		);
+	}, [ duration, availableProducts, includedInPlanProducts, purchasedProducts, productType ] );
 
 	return (
 		<div className="plans-column products-column">
-			<FormattedHeader headerText={ translate( 'Individual Products' ) } brandFont />
+			<FormattedHeader headerText={ translate( 'Individual Products' ) } isSecondary brandFont />
 			{ productObjects.map( ( product ) => (
 				<ProductCard
-					key={ product.productSlug }
+					// iconSlug has the same value for all durations. Using this value as a key
+					// prevents unnecessary DOM updates.
+					key={ product.iconSlug }
 					item={ product }
 					onClick={ onProductClick }
 					siteId={ siteId }
 					currencyCode={ currencyCode }
+					highlight
 				/>
 			) ) }
 		</div>

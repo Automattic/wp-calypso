@@ -12,12 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -84,7 +79,7 @@ function BancontactFields() {
 	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
 	const { changeCustomerName } = useDispatch( 'bancontact' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<BancontactFormWrapper>
@@ -132,16 +127,9 @@ const BancontactField = styled( Field )`
 	}
 `;
 
-function BancontactPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function BancontactPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'bancontact' );
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'bancontact' ).getCustomerName() );
 
@@ -151,37 +139,21 @@ function BancontactPayButton( { disabled, store, stripe, stripeConfiguration } )
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting bancontact payment' );
-					setTransactionPending();
 					onEvent( {
 						type: 'REDIRECT_TRANSACTION_BEGIN',
 						payload: { paymentMethodId: 'bancontact' },
 					} );
-					submitTransaction( {
+					onClick( 'bancontact', {
 						stripe,
 						name: customerName?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'bancontact transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -191,10 +163,10 @@ function BancontactPayButton( { disabled, store, stripe, stripeConfiguration } )
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

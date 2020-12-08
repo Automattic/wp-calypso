@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { JETPACK_CONNECT_DISMISS_URL_STATUS } from 'state/jetpack-connect/action-types';
+import { JETPACK_CONNECT_DISMISS_URL_STATUS } from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 export function dismissUrl( url ) {
 	return {

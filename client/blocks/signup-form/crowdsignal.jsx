@@ -3,20 +3,20 @@
  */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import AutomatticLogo from 'components/automattic-logo';
+import AutomatticLogo from 'calypso/components/automattic-logo';
 import { Button } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import WordPressLogo from 'components/wordpress-logo';
+import FormButton from 'calypso/components/forms/form-button';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import WordPressLogo from 'calypso/components/wordpress-logo';
 import SocialSignupForm from './social';
 
 /**

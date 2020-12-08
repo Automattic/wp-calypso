@@ -1,5 +1,4 @@
-Domain Search
-==============
+# Domain Search
 
 This folder contains components specific to the `/domains/add` routes.
 

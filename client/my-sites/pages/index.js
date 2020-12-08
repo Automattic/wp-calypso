@@ -6,10 +6,10 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection } from 'my-sites/controller';
+import { navigation, siteSelection } from 'calypso/my-sites/controller';
 import { pages } from './controller';
-import { makeLayout, render as clientRender } from 'controller';
-import { getSiteFragment } from 'lib/route';
+import { makeLayout, render as clientRender } from 'calypso/controller';
+import { getSiteFragment } from 'calypso/lib/route';
 
 export default function () {
 	page(

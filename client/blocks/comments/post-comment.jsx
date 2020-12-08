@@ -6,30 +6,35 @@ import PropTypes from 'prop-types';
 import { get, noop, some, flatMap } from 'lodash';
 import { connect } from 'react-redux';
 import { translate } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { getCurrentUser } from 'state/current-user/selectors';
-import TimeSince from 'components/time-since';
-import Gravatar from 'components/gravatar';
-import { recordAction, recordGaEvent, recordTrack, recordPermalinkClick } from 'reader/stats';
-import { getStreamUrl } from 'reader/route';
+import { isEnabled } from 'calypso/config';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import TimeSince from 'calypso/components/time-since';
+import Gravatar from 'calypso/components/gravatar';
+import {
+	recordAction,
+	recordGaEvent,
+	recordTrack,
+	recordPermalinkClick,
+} from 'calypso/reader/stats';
+import { getStreamUrl } from 'calypso/reader/route';
 import PostCommentContent from './post-comment-content';
 import PostCommentForm from './form';
 import CommentEditForm from './comment-edit-form';
-import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
-import { decodeEntities } from 'lib/formatting';
+import { PLACEHOLDER_STATE, POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
+import { decodeEntities } from 'calypso/lib/formatting';
 import PostCommentWithError from './post-comment-with-error';
 import PostTrackback from './post-trackback';
 import CommentActions from './comment-actions';
-import Emojify from 'components/emojify';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import withDimensions from 'lib/with-dimensions';
-import { expandComments } from 'state/comments/actions';
+import Emojify from 'calypso/components/emojify';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import withDimensions from 'calypso/lib/with-dimensions';
+import { expandComments } from 'calypso/state/comments/actions';
 
 /**
  * Style dependencies
@@ -86,6 +91,7 @@ class PostComment extends React.PureComponent {
 
 		// connect()ed props:
 		currentUser: PropTypes.object.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -98,6 +104,7 @@ class PostComment extends React.PureComponent {
 		showNestingReplyArrow: false,
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
+		shouldHighlightNew: false,
 	};
 
 	state = {
@@ -245,6 +252,7 @@ class PostComment extends React.PureComponent {
 								activeEditCommentId={ this.props.activeEditCommentId }
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
+								shouldHighlightNew={ this.props.shouldHighlightNew }
 							/>
 						) ) }
 					</ol>
@@ -336,6 +344,7 @@ class PostComment extends React.PureComponent {
 			overflowY,
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
+			shouldHighlightNew,
 		} = this.props;
 
 		const comment = get( commentsTree, [ commentId, 'data' ] );
@@ -386,8 +395,13 @@ class PostComment extends React.PureComponent {
 			commentAuthorName: parentAuthorName,
 		} = this.getAuthorDetails( parentCommentId );
 
+		// highlight comments not older than 10s
+		const isHighlighted =
+			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
+
 		const postCommentClassnames = classnames( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
+			'is-highlighted': isHighlighted,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */

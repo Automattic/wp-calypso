@@ -6,14 +6,14 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'state/reader/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { unsubscribeToNewCommentEmail } from 'state/reader/follows/actions';
-import { errorNotice } from 'state/notices/actions';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import { READER_SUBSCRIBE_TO_NEW_COMMENT_EMAIL } from 'calypso/state/reader/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { unsubscribeToNewCommentEmail } from 'calypso/state/reader/follows/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestCommentEmailSubscription( action ) {
 	return http(

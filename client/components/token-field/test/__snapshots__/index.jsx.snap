@@ -52,7 +52,7 @@ exports[`TokenField render should render tokens 1`] = `
       </svg>
     </span>
     <input
-      class="token-field__input"
+      class="form-text-input token-field__input"
       placeholder=""
       size="1"
       type="text"

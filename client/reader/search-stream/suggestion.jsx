@@ -8,8 +8,8 @@ import { stringify } from 'qs';
 /**
  * Internal Dependencies
  */
-import { recordTrack, recordTracksRailcarInteract } from 'reader/stats';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import { recordTrack, recordTracksRailcarInteract } from 'calypso/reader/stats';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export class Suggestion extends Component {
 	static propTypes = {

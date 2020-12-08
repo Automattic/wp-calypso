@@ -46,7 +46,7 @@
 	line-height: 1.4em;
 
 	@include break-small {
-		// stylelint-disable-next-line unit-whitelist
+		// stylelint-disable-next-line unit-allowed-list
 		margin-right: 0.4ch;
 	}
 }

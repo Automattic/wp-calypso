@@ -10,11 +10,11 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import coerceFormValues from 'woocommerce/woocommerce-services/lib/utils/coerce-values';
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 import { getShippingMethodSchema } from 'woocommerce/woocommerce-services/state/shipping-method-schemas/selectors';
 import { getCurrentlyEditingShippingZone } from 'woocommerce/state/ui/shipping/zones/selectors';
 import { getCurrentlyOpenShippingZoneMethod } from 'woocommerce/state/ui/shipping/zones/methods/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 export const EMPTY_ERROR = {
 	level: 'error',

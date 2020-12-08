@@ -10,8 +10,8 @@ import { connect } from 'react-redux';
  */
 import { Button, ProgressBar } from '@automattic/components';
 import ThankYou, { ThankYouCtaType } from './thank-you';
-import getJetpackProductInstallProgress from 'state/selectors/get-jetpack-product-install-progress';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import getJetpackProductInstallProgress from 'calypso/state/selectors/get-jetpack-product-install-progress';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const ThankYouCta: ThankYouCtaType = ( { siteAdminUrl, recordThankYouClick } ) => {
 	const translate = useTranslate();
@@ -36,7 +36,7 @@ const AntiSpamProductThankYou = ( { installProgress } ): ReactElement => {
 			ThankYouCtaComponent={ isInstalled && ThankYouCta }
 		>
 			<>
-				<p>{ translate( "We're setting up Jetpack Anti-Spam for you right now." ) }</p>
+				<p>{ translate( "We're setting up Jetpack Anti-spam for you right now." ) }</p>
 				<p>
 					{ translate(
 						"In no time you'll be able to enjoy more peace of mind and provide a better experience to your visitors."

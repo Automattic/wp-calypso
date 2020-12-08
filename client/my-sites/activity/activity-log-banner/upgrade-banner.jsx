@@ -8,14 +8,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import UpsellNudge from 'blocks/upsell-nudge';
-import { isJetpackSite } from 'state/sites/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	FEATURE_JETPACK_ESSENTIAL,
 	FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY,
-	PLAN_JETPACK_PERSONAL_MONTHLY,
 	PLAN_PERSONAL,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
+import { OPTIONS_JETPACK_SECURITY } from 'calypso/my-sites/plans-v2/constants';
 
 /**
  * Style dependencies
@@ -24,7 +24,7 @@ import './upgrade-banner.scss';
 
 class UpgradeBanner extends Component {
 	render() {
-		const { translate, isJetpack } = this.props;
+		const { translate, isJetpack, siteSlug } = this.props;
 		return (
 			<div className="activity-log-banner__upgrade">
 				{ isJetpack ? (
@@ -32,7 +32,7 @@ class UpgradeBanner extends Component {
 						callToAction={ translate( 'Learn more' ) }
 						event="activity_log_upgrade_click_jetpack"
 						feature={ FEATURE_OFFSITE_BACKUP_VAULTPRESS_DAILY }
-						plan={ PLAN_JETPACK_PERSONAL_MONTHLY }
+						href={ `/plans/${ OPTIONS_JETPACK_SECURITY }/annual/details/${ siteSlug }` }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ translate(
 							'With your free plan, you can monitor the 20 most ' +
@@ -41,8 +41,8 @@ class UpgradeBanner extends Component {
 						) }
 						showIcon={ true }
 						list={ [
-							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and date range' ),
+							translate( 'Access full activity for the past 30 days.' ),
+							translate( 'Filter events by type and date.' ),
 						] }
 					/>
 				) : (
@@ -60,8 +60,8 @@ class UpgradeBanner extends Component {
 						) }
 						showIcon={ true }
 						list={ [
-							translate( 'Access full activity for the past 30 days' ),
-							translate( 'Filter events by type and date range' ),
+							translate( 'Access full activity for the past 30 days.' ),
+							translate( 'Filter events by type and date.' ),
 						] }
 					/>
 				) }
@@ -73,4 +73,5 @@ class UpgradeBanner extends Component {
 export default connect( ( state, { siteId } ) => ( {
 	isJetpack: isJetpackSite( state, siteId ),
 	siteId: siteId,
+	siteSlug: getSiteSlug( state, siteId ),
 } ) )( localize( UpgradeBanner ) );

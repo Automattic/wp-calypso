@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CalendarButton from 'blocks/calendar-button';
+import CalendarButton from 'calypso/blocks/calendar-button';
 
 const CalendarButtonExample = () => {
 	const tomorrow = new Date( new Date().getTime() + 24 * 60 * 60 * 1000 );

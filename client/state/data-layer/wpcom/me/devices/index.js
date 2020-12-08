@@ -8,13 +8,13 @@ import { keyBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { USER_DEVICES_REQUEST } from 'state/action-types';
-import { userDevicesAdd } from 'state/user-devices/actions';
-import { errorNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { USER_DEVICES_REQUEST } from 'calypso/state/action-types';
+import { userDevicesAdd } from 'calypso/state/user-devices/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 const devicesFromApi = ( devices ) =>
 	keyBy(

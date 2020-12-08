@@ -85,26 +85,28 @@ describe( 'index', () => {
 			expect( labels[ 1 ].querySelector( 'input' ).checked ).toBe( false );
 		} );
 
-		test( 'should accept an onChange event handler', ( done ) => {
-			const finishTest = ( event ) => {
-				expect( event.value ).toEqual( [ options[ 0 ].value ] );
-				done();
-			};
+		test( 'should accept an onChange event handler', () => {
+			return new Promise( ( done ) => {
+				const finishTest = ( event ) => {
+					expect( event.value ).toEqual( [ options[ 0 ].value ] );
+					done();
+				};
 
-			act( () => {
-				ReactDOM.render(
-					<MultiCheckbox name="favorite_colors" options={ options } onChange={ finishTest } />,
-					container
-				);
-			} );
-			const labels = container.querySelectorAll( 'label' );
+				act( () => {
+					ReactDOM.render(
+						<MultiCheckbox name="favorite_colors" options={ options } onChange={ finishTest } />,
+						container
+					);
+				} );
+				const labels = container.querySelectorAll( 'label' );
 
-			act( () => {
-				Simulate.change( labels[ 0 ].querySelector( 'input' ), {
-					target: {
-						value: options[ 0 ].value,
-						checked: true,
-					},
+				act( () => {
+					Simulate.change( labels[ 0 ].querySelector( 'input' ), {
+						target: {
+							value: options[ 0 ].value,
+							checked: true,
+						},
+					} );
 				} );
 			} );
 		} );

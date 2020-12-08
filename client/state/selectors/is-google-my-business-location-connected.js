@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getKeyringConnectionsByName } from 'state/sharing/keyring/selectors';
+import { getKeyringConnectionsByName } from 'calypso/state/sharing/keyring/selectors';
 
 export default function isGoogleMyBusinessLocationConnected( state, siteId ) {
 	const siteKeyrings = state.siteKeyrings.items[ siteId ] ?? [];

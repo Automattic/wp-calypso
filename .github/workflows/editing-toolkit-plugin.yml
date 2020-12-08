@@ -2,7 +2,7 @@ on:
   pull_request:
     # only trigger this workflow if Editing Toolkit plugin files have been modified, or if packages have been updated.
     paths:
-    - 'apps/full-site-editing/**'
+    - 'apps/editing-toolkit/**'
 
 name: Editing Toolkit Plugin
 
@@ -11,6 +11,10 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     steps:
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '^12.18.4'
     - name: Checkout code
       uses: actions/checkout@HEAD
 
@@ -39,13 +43,13 @@ jobs:
 
     - name: Build JavaScript
       run: yarn build
-      working-directory: apps/full-site-editing
+      working-directory: apps/editing-toolkit
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v1
       with:
         name: editing-toolkit-build-archive
-        path: apps/full-site-editing/full-site-editing-plugin
+        path: apps/editing-toolkit/editing-toolkit-plugin
 
   jest:
     name: Run JS tests
@@ -74,11 +78,11 @@ jobs:
       uses: actions/download-artifact@HEAD
       with:
         name: editing-toolkit-build-archive
-        path: apps/full-site-editing/full-site-editing-plugin
+        path: apps/editing-toolkit/editing-toolkit-plugin
 
     - name: Test JavaScript
       run: yarn run test:js
-      working-directory: apps/full-site-editing
+      working-directory: apps/editing-toolkit
 
   mc_upload:
     name: Create wpcom sync diff
@@ -96,7 +100,7 @@ jobs:
       uses: actions/download-artifact@HEAD
       with:
         name: editing-toolkit-build-archive
-        path: apps/full-site-editing/full-site-editing-plugin
+        path: apps/editing-toolkit/editing-toolkit-plugin
 
     - name: Send hook to Mission Control
       run: .github/workflows/send-calypso-app-build-trigger.sh
@@ -106,6 +110,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+    # Pin to Node v12 to work around issue: https://github.com/Automattic/wp-calypso/issues/47255
+    # We should be able to remove this once a wp-env update is released that includes an updated nodegit
+    # More info at: https://github.com/WordPress/gutenberg/pull/26712
+    - name: Set up Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.18.4'
+
     - name: Checkout code
       uses: actions/checkout@HEAD
 
@@ -114,7 +126,7 @@ jobs:
       uses: actions/download-artifact@HEAD
       with:
         name: editing-toolkit-build-archive
-        path: apps/full-site-editing/full-site-editing-plugin
+        path: apps/editing-toolkit/editing-toolkit-plugin
 
     - name: Composer install
       uses: nick-zh/composer-php@HEAD
@@ -137,16 +149,16 @@ jobs:
 
     - name: Setup wp-env dependencies
       run: |
-        echo '{ "plugins": [ "./dev-plugin", "./full-site-editing-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
-      working-directory: apps/full-site-editing
+        echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+      working-directory: apps/editing-toolkit
 
     - name: Start wp-env
       run: npx wp-env start || npx wp-env start # Retry if failed.
-      working-directory: apps/full-site-editing
+      working-directory: apps/editing-toolkit
 
     - name: Run phpunit command
       run: yarn test:php
-      working-directory: apps/full-site-editing
+      working-directory: apps/editing-toolkit
 
   phpcs:
     name: Run phpcs
@@ -169,7 +181,7 @@ jobs:
     - name: Execute phpcs on changed files
       run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
       if: ${{ steps.changes.outputs.all != '' }}
-    
+
     - name: No changes found
       run: echo "No changes found to check!"
       if: ${{ steps.changes.outputs.all == '' }}
@@ -187,10 +199,10 @@ jobs:
       uses: actions/download-artifact@HEAD
       with:
         name: editing-toolkit-build-archive
-        path: apps/full-site-editing/full-site-editing-plugin
+        path: apps/editing-toolkit/editing-toolkit-plugin
 
     - name: Check if newspack-blocks exists
-      run: test -f ./apps/full-site-editing/full-site-editing-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
+      run: test -f ./apps/editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
 
     - name: Composer install
       uses: nick-zh/composer-php@HEAD
@@ -199,4 +211,4 @@ jobs:
 
     # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
     - name: Execute phpcs on newspack-blocks PHP files.
-      run: ./vendor/bin/phpcs --standard=apps/full-site-editing/bin/newspack-block-sync-phpcs.xml
+      run: ./vendor/bin/phpcs --standard=apps/editing-toolkit/bin/newspack-block-sync-phpcs.xml

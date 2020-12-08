@@ -1,5 +1,4 @@
-Query Just In Time Message
-================
+# Query Just In Time Message
 
 `<QueryJITM />` is a React component used in fetching JITMs for the selected site.
 

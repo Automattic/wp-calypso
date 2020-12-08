@@ -4,7 +4,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import page from 'page';
 import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
@@ -12,17 +12,17 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import Emojify from 'components/emojify';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import Emojify from 'calypso/components/emojify';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import Follow from './action-follow';
 import Page from './action-page';
 import Spam from './action-spam';
 import OpenLink from './action-link';
 import titlecase from 'to-title-case';
-import { flagUrl } from 'lib/flags';
-import { recordTrack } from 'reader/stats';
-import { decodeEntities } from 'lib/formatting';
+import { flagUrl } from 'calypso/lib/flags';
+import { recordTrack } from 'calypso/reader/stats';
+import { decodeEntities } from 'calypso/lib/formatting';
 
 const debug = debugFactory( 'calypso:stats:list-item' );
 
@@ -133,12 +133,12 @@ class StatsListItem extends React.Component {
 
 	buildActions = () => {
 		let actionList;
-		const data = this.props.data,
-			moduleName = titlecase( this.props.moduleName ),
-			actionMenu = data.actionMenu,
-			actionClassSet = classNames( 'module-content-list-item-actions', {
-				collapsed: actionMenu && ! this.state.disabled,
-			} );
+		const data = this.props.data;
+		const moduleName = titlecase( this.props.moduleName );
+		const actionMenu = data.actionMenu;
+		const actionClassSet = classNames( 'module-content-list-item-actions', {
+			collapsed: actionMenu && ! this.state.disabled,
+		} );
 
 		// If we have more than a default action build out actions ul
 		if ( data.actions ) {
@@ -205,7 +205,9 @@ class StatsListItem extends React.Component {
 
 		const label = labelData.map( function ( labelItem, i ) {
 			const iconClassSetOptions = { avatar: true };
-			let icon, gridiconSpan, itemLabel;
+			let icon;
+			let gridiconSpan;
+			let itemLabel;
 
 			if ( labelItem.labelIcon ) {
 				gridiconSpan = <Gridicon icon={ labelItem.labelIcon } />;
@@ -286,8 +288,8 @@ class StatsListItem extends React.Component {
 
 	buildValue = () => {
 		const data = this.props.data;
-		let valueData = data.value,
-			value;
+		let valueData = data.value;
+		let value;
 
 		if ( 'object' !== typeof valueData || ! valueData.type ) {
 			valueData = {
@@ -310,17 +312,17 @@ class StatsListItem extends React.Component {
 	};
 
 	render() {
-		const data = this.props.data,
-			rightClassOptions = {
-				'module-content-list-item-right': true,
-			},
-			toggleOptions = {
-				'module-content-list-item-actions-toggle': true,
-				show: data.actionMenu && ! this.state.disabled,
-			},
-			actions = this.buildActions(),
-			toggleGridicon = <Gridicon icon="chevron-down" />,
-			toggleIcon = this.props.children ? toggleGridicon : null;
+		const data = this.props.data;
+		const rightClassOptions = {
+			'module-content-list-item-right': true,
+		};
+		const toggleOptions = {
+			'module-content-list-item-actions-toggle': true,
+			show: data.actionMenu && ! this.state.disabled,
+		};
+		const actions = this.buildActions();
+		const toggleGridicon = <Gridicon icon="chevron-down" />;
+		const toggleIcon = this.props.children ? toggleGridicon : null;
 		let mobileActionToggle;
 
 		const groupClassOptions = {

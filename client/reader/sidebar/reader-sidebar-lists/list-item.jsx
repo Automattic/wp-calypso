@@ -12,7 +12,7 @@ import ReactDom from 'react-dom';
  * Internal dependencies
  */
 import ReaderSidebarHelper from '../helper';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 export class ReaderSidebarListsListItem extends Component {
 	static propTypes = {
@@ -60,7 +60,7 @@ export class ReaderSidebarListsListItem extends Component {
 			this.props.path
 		);
 
-		const classes = classNames( {
+		const classes = classNames( 'sidebar__menu-item--reader-list', {
 			selected: isCurrentList || isActionButtonSelected,
 		} );
 
@@ -77,7 +77,7 @@ export class ReaderSidebarListsListItem extends Component {
 						},
 					} ) }
 				>
-					<div className="sidebar__menu-item-listname">{ list.title }</div>
+					<div className="sidebar__menu-item-title">{ list.title }</div>
 				</a>
 			</li>
 		);

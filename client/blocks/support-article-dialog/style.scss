@@ -50,7 +50,7 @@
 	}
 
 	color: var( --color-neutral-70 );
-	font-size: 17px;
+	font-size: $font-title-small;
 	line-height: 28px;
 }
 
@@ -66,11 +66,10 @@
 	text-decoration: none;
 	clear: none;
 	color: var( --color-neutral-70 );
-	font-family: $serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	font-size: $font-title-medium;
-	font-weight: 700;
+	font-weight: 600;
 	line-height: 34px;
 	margin: 56px 0 0;
 	max-width: 750px;

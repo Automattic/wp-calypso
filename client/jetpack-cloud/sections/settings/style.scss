@@ -1,0 +1,77 @@
+.external-link .gridicon.gridicons-external {
+	fill: currentColor;
+	width: 18px;
+	height: 18px;
+}
+
+.card.is-compact.settings__connected,
+.card.is-compact.settings__disconnected {
+	display: flex;
+	align-items: center;
+	margin-bottom: 32px;
+}
+
+.settings__connected .gridicon {
+	display: inline-block;
+	fill: var( --studio-jetpack-green-40 );
+	width: 4rem;
+	height: 4rem;
+}
+
+.settings__status-uninitialized {
+	height: 90px;
+	margin-bottom: 8px;
+	@include placeholder( --color-neutral-10 );
+}
+
+.settings__form-card {
+	margin-top: 8px;
+	background: none;
+	box-shadow: none;
+}
+
+.settings__form-uninitialized {
+	height: 64px;
+	@include placeholder( --color-neutral-10 );
+}
+
+.settings__link-external {
+	display: block;
+	margin-top: 16px;
+	font-style: italic;
+}
+
+.settings__disconnected .gridicon {
+	display: inline-block;
+	fill: red;
+	width: 4rem;
+	height: 4rem;
+}
+
+.settings__title {
+	font-size: $font-title-small;
+	font-weight: 600;
+	margin: 16px 0 24px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		font-size: $font-headline-small;
+		margin: 32px 0;
+	}
+}
+
+.settings__details {
+	display: inline-block;
+	vertical-align: top;
+	margin-left: 1rem;
+	margin-top: 0.5rem;
+}
+
+.settings__icon {
+	max-width: 50px;
+	max-height: 50px;
+}
+
+.settings__details-head {
+	font-weight: 600;
+	margin-bottom: 0.3rem;
+}

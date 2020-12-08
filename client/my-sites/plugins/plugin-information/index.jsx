@@ -10,15 +10,15 @@ import { get, isEmpty } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { Button, Card } from '@automattic/components';
-import ExternalLink from 'components/external-link';
-import { withLocalizedMoment } from 'components/localized-moment';
-import Version from 'components/version';
-import PluginRatings from 'my-sites/plugins/plugin-ratings/';
-import { getExtensionSettingsPath } from 'my-sites/plugins/utils';
-import versionCompare from 'lib/version-compare';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import ExternalLink from 'calypso/components/external-link';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import Version from 'calypso/components/version';
+import PluginRatings from 'calypso/my-sites/plugins/plugin-ratings/';
+import { getExtensionSettingsPath } from 'calypso/my-sites/plugins/utils';
+import versionCompare from 'calypso/lib/version-compare';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies

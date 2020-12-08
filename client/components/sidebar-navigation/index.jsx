@@ -5,13 +5,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal Dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import TranslatableString from 'components/translatable/proptype';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
+import config from 'calypso/config';
 
 /**
  * Style dependencies
@@ -19,6 +20,10 @@ import TranslatableString from 'components/translatable/proptype';
 import './style.scss';
 
 function SidebarNavigation( { sectionTitle, children, toggleSidebar } ) {
+	if ( config.isEnabled( 'nav-unification' ) ) {
+		return null;
+	}
+
 	return (
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		<header className="current-section">

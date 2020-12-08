@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { resemblesUrl } from 'lib/url';
+import { resemblesUrl } from 'calypso/lib/url';
 
 /**
  * Paste-to-link adds special paste behaviour to the wrapped component.

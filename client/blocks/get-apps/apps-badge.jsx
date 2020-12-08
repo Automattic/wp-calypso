@@ -12,9 +12,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { getLocaleSlug } from 'lib/i18n-utils';
-import { recordTracksEvent } from 'state/analytics/actions';
-import TranslatableString from 'components/translatable/proptype';
+import { getLocaleSlug } from 'calypso/lib/i18n-utils';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies

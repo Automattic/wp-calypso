@@ -24,10 +24,10 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist ../../.tsc-cache/packages__domain-picker*",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json && copy-assets",
 		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
@@ -35,7 +35,8 @@
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/base-styles": "^2.0.1",
-		"@wordpress/components": "^10.0.3",
+		"@wordpress/components": "^10.0.5",
+		"@wordpress/compose": "^3.19.3",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
@@ -43,11 +44,16 @@
 		"use-debounce": "^3.1.0",
 		"uuid": "^7.0.2"
 	},
+	"devDependencies": {
+		"@testing-library/react": "^10.0.5",
+		"react": "^16.12.0",
+		"react-dom": "^16.12.0"
+	},
 	"peerDependencies": {
 		"@wordpress/data": "^4.22.3",
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/i18n": "^3.14.0",
-		"react": "^16.8"
+		"react": "^16.12.0"
 	},
 	"private": true
 }

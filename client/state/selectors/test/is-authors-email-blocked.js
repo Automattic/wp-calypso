@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isAuthorsEmailBlocked from 'state/selectors/is-authors-email-blocked';
+import isAuthorsEmailBlocked from 'calypso/state/selectors/is-authors-email-blocked';
 
 const email = 'foo@bar.baz';
 

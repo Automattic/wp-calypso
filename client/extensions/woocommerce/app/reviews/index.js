@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import ActionHeader from 'woocommerce/components/action-header';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import ReviewsList from './reviews-list';
 
 class Reviews extends Component {

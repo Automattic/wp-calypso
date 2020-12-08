@@ -11,15 +11,16 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 import { CompactCard } from '@automattic/components';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import PluginActivateToggle from 'my-sites/plugins/plugin-activate-toggle';
-import PluginAutoupdateToggle from 'my-sites/plugins/plugin-autoupdate-toggle';
-import Count from 'components/count';
-import Notice from 'components/notice';
-import { withLocalizedMoment } from 'components/localized-moment';
-import PluginNotices from 'lib/plugins/notices';
-import { errorNotice } from 'state/notices/actions';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
+import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
+import Count from 'calypso/components/count';
+import Notice from 'calypso/components/notice';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import PluginNotices from 'calypso/lib/plugins/notices';
+import { errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -331,10 +332,9 @@ class PluginItem extends Component {
 		return (
 			<CompactCard className={ pluginItemClasses }>
 				{ ! this.props.isSelectable ? null : (
-					<input
+					<FormInputCheckbox
 						className="plugin-item__checkbox"
 						id={ plugin.slug }
-						type="checkbox"
 						onClick={ this.props.onClick }
 						checked={ this.props.isSelected }
 						readOnly={ true }

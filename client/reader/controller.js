@@ -8,8 +8,8 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { abtest } from 'lib/abtest';
-import { sectionify } from 'lib/route';
+import { abtest } from 'calypso/lib/abtest';
+import { sectionify } from 'calypso/lib/route';
 import {
 	trackPageLoad,
 	trackUpdatesLoaded,
@@ -17,20 +17,19 @@ import {
 	setPageTitle,
 	getStartDate,
 } from './controller-helper';
-import FeedError from 'reader/feed-error';
-import StreamComponent from 'reader/following/main';
-import { getPrettyFeedUrl, getPrettySiteUrl } from 'reader/route';
-import { recordTrack } from 'reader/stats';
-import { preload } from 'sections-helper';
-import { requestFeedDiscovery } from 'state/data-getters';
-import { waitForData } from 'state/data-layer/http-data';
-import AsyncLoad from 'components/async-load';
-import { isFollowingOpen } from 'state/reader-ui/sidebar/selectors';
-import { toggleReaderSidebarFollowing } from 'state/reader-ui/sidebar/actions';
-import { getLastPath } from 'state/reader-ui/selectors';
-import { getSection } from 'state/ui/selectors';
-import { isAutomatticTeamMember } from 'reader/lib/teams';
-import { getReaderTeams } from 'state/reader/teams/selectors';
+import FeedError from 'calypso/reader/feed-error';
+import StreamComponent from 'calypso/reader/following/main';
+import { getPrettyFeedUrl, getPrettySiteUrl } from 'calypso/reader/route';
+import { recordTrack } from 'calypso/reader/stats';
+import { requestFeedDiscovery } from 'calypso/state/data-getters';
+import { waitForHttpData } from 'calypso/state/data-layer/http-data';
+import AsyncLoad from 'calypso/components/async-load';
+import { isFollowingOpen } from 'calypso/state/reader-ui/sidebar/selectors';
+import { toggleReaderSidebarFollowing } from 'calypso/state/reader-ui/sidebar/actions';
+import { getLastPath } from 'calypso/state/reader-ui/selectors';
+import { getSection } from 'calypso/state/ui/selectors';
+import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
+import { getReaderTeams } from 'calypso/state/reader/teams/selectors';
 
 const analyticsPageTitle = 'Reader';
 
@@ -116,14 +115,9 @@ const exported = {
 		next();
 	},
 
-	preloadReaderBundle( context, next ) {
-		preload( 'reader' );
-		next();
-	},
-
 	sidebar( context, next ) {
 		context.secondary = (
-			<AsyncLoad require="reader/sidebar" path={ context.path } placeholder={ null } />
+			<AsyncLoad require="calypso/reader/sidebar" path={ context.path } placeholder={ null } />
 		);
 
 		next();
@@ -184,16 +178,11 @@ const exported = {
 
 	feedDiscovery( context, next ) {
 		if ( ! context.params.feed_id.match( /^\d+$/ ) ) {
-			waitForData( {
-				feeds: () => requestFeedDiscovery( context.params.feed_id ),
-			} )
-				.then( ( { feeds } ) => {
-					const feed = feeds?.data?.feeds?.[ 0 ];
-					if ( feed && feed.feed_ID ) {
-						return page.redirect( `/read/feeds/${ feed.feed_ID }` );
-					}
+			waitForHttpData( () => ( { feedId: requestFeedDiscovery( context.params.feed_id ) } ) )
+				.then( ( { feedId } ) => {
+					page.redirect( `/read/feeds/${ feedId.data }` );
 				} )
-				.catch( function () {
+				.catch( () => {
 					renderFeedError( context, next );
 				} );
 		} else {
@@ -217,7 +206,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/feed-stream"
+				require="calypso/reader/feed-stream"
 				key={ 'feed-' + feedId }
 				streamKey={ 'feed:' + feedId }
 				feedId={ +feedId }
@@ -252,7 +241,7 @@ const exported = {
 
 		context.primary = (
 			<AsyncLoad
-				require="reader/site-stream"
+				require="calypso/reader/site-stream"
 				key={ 'site-' + blogId }
 				streamKey={ streamKey }
 				siteId={ +blogId }
@@ -287,7 +276,7 @@ const exported = {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		context.primary = (
 			<AsyncLoad
-				require="reader/a8c/main"
+				require="calypso/reader/a8c/main"
 				key="read-a8c"
 				className="is-a8c"
 				listName="Automattic"
@@ -316,7 +305,6 @@ export const {
 	legacyRedirects,
 	updateLastRoute,
 	incompleteUrlRedirects,
-	preloadReaderBundle,
 	sidebar,
 	unmountSidebar,
 	following,

@@ -20,8 +20,8 @@ import {
 	JETPACK_MODULES_REQUEST_SUCCESS,
 	JETPACK_SETTINGS_UPDATE,
 	JETPACK_SETTINGS_SAVE_SUCCESS,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 
 const createItemsReducer = ( active ) => {
 	return ( state, { siteId, moduleSlug } ) => {

@@ -8,18 +8,18 @@ import { isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deleteStoredKeyringConnection } from 'state/sharing/keyring/actions';
-import GoogleMyBusinessLogo from 'my-sites/google-my-business/logo';
-import { SharingService, connectFor } from 'my-sites/marketing/connections/service';
-import { requestSiteKeyrings } from 'state/site-keyrings/actions';
-import { isRequestingSiteKeyrings } from 'state/site-keyrings/selectors';
-import getGoogleMyBusinessLocations from 'state/selectors/get-google-my-business-locations';
-import getSiteUserConnectionsForGoogleMyBusiness from 'state/selectors/get-site-user-connections-for-google-my-business';
+import { deleteStoredKeyringConnection } from 'calypso/state/sharing/keyring/actions';
+import GoogleMyBusinessLogo from 'calypso/my-sites/google-my-business/logo';
+import { SharingService, connectFor } from 'calypso/my-sites/marketing/connections/service';
+import { requestSiteKeyrings } from 'calypso/state/site-keyrings/actions';
+import { isRequestingSiteKeyrings } from 'calypso/state/site-keyrings/selectors';
+import getGoogleMyBusinessLocations from 'calypso/state/selectors/get-google-my-business-locations';
+import getSiteUserConnectionsForGoogleMyBusiness from 'calypso/state/selectors/get-site-user-connections-for-google-my-business';
 import {
 	connectGoogleMyBusinessAccount,
 	connectGoogleMyBusinessLocation,
 	disconnectAllGoogleMyBusinessAccounts,
-} from 'state/google-my-business/actions';
+} from 'calypso/state/google-my-business/actions';
 
 export class GoogleMyBusiness extends SharingService {
 	static propTypes = {

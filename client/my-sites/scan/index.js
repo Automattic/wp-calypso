@@ -6,21 +6,24 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { navigation, siteSelection, sites } from 'my-sites/controller';
-import { notFound, makeLayout, render as clientRender } from 'controller';
-import isJetpackCloud from 'lib/jetpack/is-jetpack-cloud';
-import wrapInSiteOffsetProvider from 'lib/wrap-in-site-offset';
-import wpcomUpsellController from 'lib/jetpack/wpcom-upsell-controller';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import isJetpackSectionEnabledForSite from 'state/selectors/is-jetpack-section-enabled-for-site';
+import { navigation, siteSelection, sites } from 'calypso/my-sites/controller';
+import { notFound, makeLayout, render as clientRender } from 'calypso/controller';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
+import wrapInSiteOffsetProvider from 'calypso/lib/wrap-in-site-offset';
+import wpcomUpsellController from 'calypso/lib/jetpack/wpcom-upsell-controller';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import {
+	showJetpackIsDisconnected,
 	showUpsellIfNoScan,
 	showUpsellIfNoScanHistory,
+	showUnavailableForVaultPressSites,
+	showUnavailableForMultisites,
 	scan,
 	scanHistory,
-} from 'my-sites/scan/controller';
-import WPCOMScanUpsellPage from 'my-sites/scan/wpcom-upsell';
-import getIsSiteWPCOM from 'state/selectors/is-site-wpcom';
+} from 'calypso/my-sites/scan/controller';
+import WPCOMScanUpsellPage from 'calypso/my-sites/scan/wpcom-upsell';
+import getIsSiteWPCOM from 'calypso/state/selectors/is-site-wpcom';
 
 const notFoundIfNotEnabled = ( context, next ) => {
 	const state = context.store.getState();
@@ -45,6 +48,9 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -58,6 +64,9 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScanHistory,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender
@@ -71,6 +80,9 @@ export default function () {
 		wrapInSiteOffsetProvider,
 		showUpsellIfNoScan,
 		wpcomUpsellController( WPCOMScanUpsellPage ),
+		showUnavailableForVaultPressSites,
+		showJetpackIsDisconnected,
+		showUnavailableForMultisites,
 		notFoundIfNotEnabled,
 		makeLayout,
 		clientRender

@@ -9,21 +9,21 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import { CompactCard } from '@automattic/components';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import getConciergeScheduleId from 'state/selectors/get-concierge-schedule-id';
-import getConciergeAppointmentTimespan from 'state/selectors/get-concierge-appointment-timespan';
-import { getCurrentUserId, getCurrentUserLocale } from 'state/current-user/selectors';
-import { bookConciergeAppointment, requestConciergeInitial } from 'state/concierge/actions';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import getConciergeScheduleId from 'calypso/state/selectors/get-concierge-schedule-id';
+import getConciergeAppointmentTimespan from 'calypso/state/selectors/get-concierge-appointment-timespan';
+import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-user/selectors';
+import { bookConciergeAppointment, requestConciergeInitial } from 'calypso/state/concierge/actions';
 import AvailableTimePicker from '../shared/available-time-picker';
 import {
 	CONCIERGE_STATUS_BOOKED,
 	CONCIERGE_STATUS_BOOKING,
 	CONCIERGE_STATUS_BOOKING_ERROR,
 } from '../constants';
-import { recordTracksEvent } from 'state/analytics/actions';
-import ExternalLinkWithTracking from 'components/external-link/with-tracking';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import ExternalLinkWithTracking from 'calypso/components/external-link/with-tracking';
 
 class CalendarStep extends Component {
 	static propTypes = {

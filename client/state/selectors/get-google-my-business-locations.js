@@ -6,8 +6,8 @@ import { filter, last } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSiteKeyringsForService } from 'state/site-keyrings/selectors';
-import { getAvailableExternalAccounts } from 'state/sharing/selectors';
+import { getSiteKeyringsForService } from 'calypso/state/site-keyrings/selectors';
+import { getAvailableExternalAccounts } from 'calypso/state/sharing/selectors';
 
 export default function getGoogleMyBusinessLocations( state, siteId ) {
 	const googleMyBusinessSiteKeyring = last(

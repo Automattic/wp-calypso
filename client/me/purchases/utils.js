@@ -1,24 +1,20 @@
 /**
  * Internal dependencies
  */
-import config from 'config';
 import { addCardDetails, editCardDetails } from './paths';
 import {
 	isExpired,
 	isIncludedWithPlan,
 	isOneTimePurchase,
 	isPaidWithCreditCard,
-} from 'lib/purchases';
-import { isDomainTransfer } from 'lib/products-values';
+} from 'calypso/lib/purchases';
+import { isDomainTransfer } from 'calypso/lib/products-values';
 
 function isDataLoading( props ) {
 	return ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
 }
 
 function canEditPaymentDetails( purchase ) {
-	if ( ! config.isEnabled( 'upgrades/credit-cards' ) ) {
-		return false;
-	}
 	return (
 		! isExpired( purchase ) &&
 		! isOneTimePurchase( purchase ) &&

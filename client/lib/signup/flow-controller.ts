@@ -22,17 +22,21 @@ import { Store, Unsubscribe as ReduxUnsubscribe } from 'redux';
 /**
  * Internal dependencies
  */
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import flows from 'signup/config/flows';
-import untypedSteps from 'signup/config/steps';
-import wpcom from 'lib/wp';
-import { getStepUrl } from 'signup/utils';
-import { isUserLoggedIn } from 'state/current-user/selectors';
-import { ProgressState } from 'state/signup/progress/schema';
-import { getSignupProgress } from 'state/signup/progress/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { resetSignup, updateDependencies } from 'state/signup/actions';
-import { completeSignupStep, invalidateStep, processStep } from 'state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import flows from 'calypso/signup/config/flows';
+import untypedSteps from 'calypso/signup/config/steps';
+import wpcom from 'calypso/lib/wp';
+import { getStepUrl } from 'calypso/signup/utils';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { ProgressState } from 'calypso/state/signup/progress/schema';
+import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { resetSignup, updateDependencies } from 'calypso/state/signup/actions';
+import {
+	completeSignupStep,
+	invalidateStep,
+	processStep,
+} from 'calypso/state/signup/progress/actions';
 
 interface Dependencies {
 	[ other: string ]: string[];
@@ -120,7 +124,7 @@ export default class SignupFlowController {
 		this._resetStoresIfProcessing(); // reset the stores if the cached progress contained a processing step
 		this._resetStoresIfUserHasLoggedIn(); // reset the stores if user has newly authenticated
 
-		if ( this._flow.providesDependenciesInQuery ) {
+		if ( this._flow.providesDependenciesInQuery || options.providedDependencies ) {
 			this._assertFlowProvidedDependenciesFromConfig( options.providedDependencies );
 			this._reduxStore.dispatch( updateDependencies( options.providedDependencies ) );
 		} else {

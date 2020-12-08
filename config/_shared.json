@@ -27,6 +27,7 @@
 	"logout_url": false,
 	"mc_analytics_enabled": false,
 	"oauth_client_id": false,
+	"olark_chat_identity": false,
 	"protocol": "http",
 	"port": 3000,
 	"happychat_url": "https://happychat.io/customer",
@@ -134,11 +135,18 @@
 	"sections": {
 		"jetpack-cloud": false,
 		"jetpack-cloud-settings": false,
-		"jetpack-cloud-auth": false
+		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": false
 	},
 	"site_filter": [],
 	"theme": "default",
 	"site_name": "WordPress.com",
+	"meta": [
+		{
+			"property": "og:site_name",
+			"content": "WordPress.com"
+		}
+	],
 	"restricted_me_access": true,
 	"theme_color": "#135e96"
 }

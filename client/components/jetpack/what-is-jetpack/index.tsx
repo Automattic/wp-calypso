@@ -8,7 +8,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import JetpackLogo from 'components/jetpack-logo';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 /**
  * Style dependencies

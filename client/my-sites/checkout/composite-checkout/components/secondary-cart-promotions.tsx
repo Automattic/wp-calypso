@@ -4,15 +4,15 @@
 import React, { FunctionComponent, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import styled from '@emotion/styled';
+import { ResponseCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import CartFreeUserPlanUpsell from 'my-sites/checkout/cart/cart-free-user-plan-upsell';
-import UpcomingRenewalsReminder from 'my-sites/checkout/cart/upcoming-renewals-reminder';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { ResponseCart } from '../types/backend/shopping-cart-endpoint';
+import config from 'calypso/config';
+import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
+import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 type PartialCart = Pick< ResponseCart, 'products' >;
 interface Props {
@@ -24,44 +24,10 @@ export interface MockResponseCart extends PartialCart {
 	hasLoadedFromServer: boolean;
 }
 
-const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
-	const isPurchaseRenewal = useMemo(
-		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
-		[ responseCart ]
-	);
-
-	// By this point we have definitely loaded the cart using useShoppingCart
-	// so we mock the loaded property the CartStore would inject.
-	const mockCart = useMemo( () => ( { ...responseCart, hasLoadedFromServer: true } ), [
-		responseCart,
-	] );
-
-	if (
-		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
-		isPurchaseRenewal &&
-		selectedSiteId
-	) {
-		return (
-			<UpsellWrapperUI>
-				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
-			</UpsellWrapperUI>
-		);
-	}
-
-	return (
-		<UpsellWrapperUI>
-			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
-		</UpsellWrapperUI>
-	);
-};
-
-export default SecondaryCartPromotions;
-
 type DivProps = {
 	theme?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
-const UpsellWrapperUI = styled.div< DivProps >`
+const UpsellWrapper = styled.div< DivProps >`
 	background: ${ ( props ) => props.theme.colors.surface };
 
 	@media ( ${ ( props ) => props.theme.breakpoints.desktopUp } ) {
@@ -114,3 +80,37 @@ const UpsellWrapperUI = styled.div< DivProps >`
 		}
 	}
 `;
+
+const SecondaryCartPromotions: FunctionComponent< Props > = ( { responseCart, addItemToCart } ) => {
+	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) as number );
+	const isPurchaseRenewal = useMemo(
+		() => responseCart?.products?.some?.( ( product ) => product.is_renewal ),
+		[ responseCart ]
+	);
+
+	// By this point we have definitely loaded the cart using useShoppingCart
+	// so we mock the loaded property the CartStore would inject.
+	const mockCart = useMemo( () => ( { ...responseCart, hasLoadedFromServer: true } ), [
+		responseCart,
+	] );
+
+	if (
+		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
+		isPurchaseRenewal &&
+		selectedSiteId
+	) {
+		return (
+			<UpsellWrapper>
+				<UpcomingRenewalsReminder cart={ mockCart } addItemToCart={ addItemToCart } />
+			</UpsellWrapper>
+		);
+	}
+
+	return (
+		<UpsellWrapper>
+			<CartFreeUserPlanUpsell cart={ mockCart } addItemToCart={ addItemToCart } />
+		</UpsellWrapper>
+	);
+};
+
+export default SecondaryCartPromotions;

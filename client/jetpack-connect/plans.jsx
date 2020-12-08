@@ -11,39 +11,40 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
 import Placeholder from './plans-placeholder';
 import PlansGrid from './plans-grid';
-import QueryPlans from 'components/data/query-plans';
-import QuerySitePlans from 'components/data/query-site-plans';
-import QueryProductsList from 'components/data/query-products-list';
-import { addItem } from 'lib/cart/actions';
-import { addQueryArgs } from 'lib/route';
+import QueryPlans from 'calypso/components/data/query-plans';
+import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import QueryProductsList from 'calypso/components/data/query-products-list';
+import { addItem } from 'calypso/lib/cart/actions';
+import { addQueryArgs } from 'calypso/lib/route';
 import { clearPlan, isCalypsoStartedConnection, retrievePlan } from './persistence-utils';
-import { completeFlow } from 'state/jetpack-connect/actions';
-import { externalRedirect } from 'lib/route/path';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { getPlanBySlug } from 'state/plans/selectors';
-import { getProductBySlug } from 'state/products-list/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { isCurrentPlanPaid, isJetpackSite } from 'state/sites/selectors';
-import { JPC_PATH_PLANS } from './constants';
-import { bumpStat } from 'lib/analytics/mc';
-import { PLAN_JETPACK_FREE } from 'lib/plans/constants';
-import { recordTracksEvent } from 'state/analytics/actions';
-import canCurrentUser from 'state/selectors/can-current-user';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { persistSignupDestination } from 'signup/utils';
-import { isJetpackProductSlug as getJetpackProductSlug } from 'lib/products-values';
-
-const CALYPSO_PLANS_PAGE = '/plans/';
-const CALYPSO_MY_PLAN_PAGE = '/plans/my-plan/';
-const CALYPSO_REDIRECTION_PAGE = '/posts/';
-const JETPACK_ADMIN_PATH = '/wp-admin/admin.php?page=jetpack';
+import { completeFlow } from 'calypso/state/jetpack-connect/actions';
+import { externalRedirect } from 'calypso/lib/route/path';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getPlanBySlug } from 'calypso/state/plans/selectors';
+import { getProductBySlug } from 'calypso/state/products-list/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isCurrentPlanPaid, isJetpackSite } from 'calypso/state/sites/selectors';
+import {
+	CALYPSO_MY_PLAN_PAGE,
+	CALYPSO_PLANS_PAGE,
+	CALYPSO_REDIRECTION_PAGE,
+	JETPACK_ADMIN_PATH,
+	JPC_PATH_PLANS,
+} from './constants';
+import { bumpStat } from 'calypso/lib/analytics/mc';
+import { PLAN_JETPACK_FREE } from 'calypso/lib/plans/constants';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { persistSignupDestination } from 'calypso/signup/storageUtils';
+import { isJetpackProductSlug as getJetpackProductSlug } from 'calypso/lib/products-values';
 
 class Plans extends Component {
 	static propTypes = {

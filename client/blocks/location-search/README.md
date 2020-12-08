@@ -1,20 +1,19 @@
-LocationSearch
-===
+# LocationSearch
 
 A search component for searching locations via the [Google Places API](https://cloud.google.com/maps-platform/places/).
 
 ## Usage
 
 ```jsx
-import LocationSearch from 'blocks/location-search';
-import { createNotice } from 'state/notices/actions';
+import LocationSearch from 'calypso/blocks/location-search';
+import { createNotice } from 'calypso/state/notices/actions';
 
 class LocationSearchExample extends Component {
 	static propTypes = {
 		createNotice: PropTypes.func.isRequired,
 	};
 
-	handlePredictionClick = prediction => {
+	handlePredictionClick = ( prediction ) => {
 		this.props.createNotice(
 			'is-info',
 			`You clicked the '${ prediction.structured_formatting.main_text }' location`
@@ -51,11 +50,11 @@ class LocationSearchExample extends Component {
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`onPredictionClick` | `func` | `undefined` | Click handler for a search suggestion
-`predictionsTransformation` | `func` | `predictions => predictions` | A transformation function that takes `predictions` and `query` and returns predictions, for example if you'd like to add additional virtual predictions. ( see example code )
+| Name                        | Type   | Default                      | Description                                                                                                                                                                   |
+| --------------------------- | ------ | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `onPredictionClick`         | `func` | `undefined`                  | Click handler for a search suggestion                                                                                                                                         |
+| `predictionsTransformation` | `func` | `predictions => predictions` | A transformation function that takes `predictions` and `query` and returns predictions, for example if you'd like to add additional virtual predictions. ( see example code ) |
 
 ## Related components
 
-* This component is based on SearchCard that is based on [Search](../design/search) component.
+- This component is based on SearchCard that is based on [Search](../design/search) component.

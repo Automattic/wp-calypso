@@ -11,24 +11,24 @@ import { includes, noop, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getDomainPriceRule } from 'lib/cart-values/cart-items';
-import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'lib/domains';
-import { domainAvailability } from 'lib/domains/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import DomainProductPrice from 'components/domains/domain-product-price';
-import { getCurrentUser, currentUserHasFlag } from 'state/current-user/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
-import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import FormTextInput from 'components/forms/form-text-input';
+import { getDomainPriceRule } from 'calypso/lib/cart-values/cart-items';
+import { getFixedDomainSearch, getTld, checkDomainAvailability } from 'calypso/lib/domains';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import DomainProductPrice from 'calypso/components/domains/domain-product-price';
+import { getCurrentUser, currentUserHasFlag } from 'calypso/state/current-user/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { MAP_EXISTING_DOMAIN, INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import {
 	recordAddDomainButtonClickInMapDomain,
 	recordFormSubmitInMapDomain,
 	recordInputFocusInMapDomain,
 	recordGoButtonClickInMapDomain,
-} from 'state/domains/actions';
-import Notice from 'components/notice';
-import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'state/current-user/constants';
+} from 'calypso/state/domains/actions';
+import Notice from 'calypso/components/notice';
+import { NON_PRIMARY_DOMAINS_TO_FREE_USERS } from 'calypso/state/current-user/constants';
 
 /**
  * Style dependencies
@@ -111,7 +111,6 @@ class MapDomainStep extends React.Component {
 					<div className="map-domain-step__add-domain" role="group">
 						<FormTextInput
 							className="map-domain-step__external-domain"
-							type="text"
 							value={ this.state.searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }

@@ -254,6 +254,13 @@ $y-axis-padding: 0 20px 0 10px;
 	display: inline-block;
 	padding: 12px 19px 10px 20px; // 1
 
+	&.form-label {
+		display: inline-block;
+		margin-bottom: 0;
+		font-weight: 400;
+		font-size: $font-body-extra-small;
+	}
+
 	&.is-selectable {
 		cursor: pointer;
 

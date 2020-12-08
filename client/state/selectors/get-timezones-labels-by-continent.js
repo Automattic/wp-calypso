@@ -6,10 +6,10 @@ import { fromPairs, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import getTimezonesByContinent from 'state/selectors/get-timezones-by-continent';
-import getTimezonesLabel from 'state/selectors/get-timezones-label';
+import getTimezonesByContinent from 'calypso/state/selectors/get-timezones-by-continent';
+import getTimezonesLabel from 'calypso/state/selectors/get-timezones-label';
 
-import 'state/timezones/init';
+import 'calypso/state/timezones/init';
 
 /**
  * Return the timezones by continent data

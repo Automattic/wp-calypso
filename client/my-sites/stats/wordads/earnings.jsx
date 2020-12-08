@@ -3,7 +3,7 @@
  */
 
 import React, { Component } from 'react';
-import notices from 'notices';
+import notices from 'calypso/notices';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
@@ -13,10 +13,10 @@ import { localize } from 'i18n-calypso';
  */
 import PropTypes from 'prop-types';
 import { Card } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getWordAdsEarnings } from 'state/wordads/earnings/selectors';
-import QueryWordadsEarnings from 'components/data/query-wordads-earnings';
+import Gridicon from 'calypso/components/gridicon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getWordAdsEarnings } from 'calypso/state/wordads/earnings/selectors';
+import QueryWordadsEarnings from 'calypso/components/data/query-wordads-earnings';
 
 class WordAdsEarnings extends Component {
 	static propTypes = {
@@ -131,24 +131,24 @@ class WordAdsEarnings extends Component {
 	payoutNotice() {
 		const { earnings, numberFormat, translate } = this.props;
 		const owed =
-				earnings && earnings.total_amount_owed
-					? numberFormat( earnings.total_amount_owed, 2 )
-					: '0.00',
-			notice = translate(
-				'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
-					'Payment will be made as soon as the total outstanding amount has reached $100.',
-				{
-					comment: 'Insufficient balance for payout.',
-					args: { amountOwed: owed },
-				}
-			),
-			payout = translate(
-				'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
-				{
-					comment: 'Payout will proceed.',
-					args: { amountOwed: owed },
-				}
-			);
+			earnings && earnings.total_amount_owed
+				? numberFormat( earnings.total_amount_owed, 2 )
+				: '0.00';
+		const notice = translate(
+			'Outstanding amount of $%(amountOwed)s does not exceed the minimum $100 needed to make the payment. ' +
+				'Payment will be made as soon as the total outstanding amount has reached $100.',
+			{
+				comment: 'Insufficient balance for payout.',
+				args: { amountOwed: owed },
+			}
+		);
+		const payout = translate(
+			'Outstanding amount of $%(amountOwed)s will be paid approximately 45 days following the end of the month in which it was earned.',
+			{
+				comment: 'Payout will proceed.',
+				args: { amountOwed: owed },
+			}
+		);
 
 		return (
 			<div className="ads__module-content-text module-content-text module-content-text-info">
@@ -205,9 +205,9 @@ class WordAdsEarnings extends Component {
 
 	earningsBreakdown() {
 		const { earnings, numberFormat, translate } = this.props;
-		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0,
-			owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0,
-			paid = total - owed;
+		const total = earnings && earnings.total_earnings ? Number( earnings.total_earnings ) : 0;
+		const owed = earnings && earnings.total_amount_owed ? Number( earnings.total_amount_owed ) : 0;
+		const paid = total - owed;
 
 		return (
 			<ul className="ads__earnings-breakdown-list">
@@ -235,11 +235,11 @@ class WordAdsEarnings extends Component {
 
 	earningsTable( earnings, header_text, type ) {
 		const { numberFormat, translate } = this.props;
-		const rows = [],
-			infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline',
-			classes = classNames( 'earnings_history', {
-				'is-showing-info': this.getInfoToggle( type ),
-			} );
+		const rows = [];
+		const infoIcon = this.getInfoToggle( type ) ? 'info' : 'info-outline';
+		const classes = classNames( 'earnings_history', {
+			'is-showing-info': this.getInfoToggle( type ),
+		} );
 
 		for ( const period in earnings ) {
 			if ( earnings.hasOwnProperty( period ) ) {
@@ -299,10 +299,10 @@ class WordAdsEarnings extends Component {
 
 	render() {
 		const { siteId, earnings, translate } = this.props;
-		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline',
-			classes = classNames( 'earnings_breakdown', {
-				'is-showing-info': this.state.showEarningsNotice,
-			} );
+		const infoIcon = this.state.showEarningsNotice ? 'info' : 'info-outline';
+		const classes = classNames( 'earnings_breakdown', {
+			'is-showing-info': this.state.showEarningsNotice,
+		} );
 
 		return (
 			<div>

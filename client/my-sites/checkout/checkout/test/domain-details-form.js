@@ -14,7 +14,7 @@ import React from 'react';
  * Internal dependencies
  */
 import { DomainDetailsForm, DomainDetailsFormContainer } from '../domain-details-form';
-import { domainRegistration } from 'lib/cart-values/cart-items';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
 
 jest.mock( 'lib/analytics/page-view', () => ( {
 	recordPageView: () => {},

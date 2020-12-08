@@ -9,7 +9,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestThemeFilters } from 'state/themes/actions';
+import { requestThemeFilters } from 'calypso/state/themes/actions';
 
 export class QueryThemeFilters extends Component {
 	static propTypes = {

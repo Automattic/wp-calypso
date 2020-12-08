@@ -1,3 +1,10 @@
+
+
+// Import styles for Jetpack Story block.
+// This is a copy of Jetpack's extensions/blocks/story/player/style.scss, with
+// some unnecessary styles removed.
+@import 'story.scss';
+
 .reader-full-post__story-content {
 	@extend %content-font;
 	margin: 0;

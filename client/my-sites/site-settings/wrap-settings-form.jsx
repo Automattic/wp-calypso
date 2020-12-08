@@ -11,29 +11,29 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { protectForm } from 'lib/protect-form';
-import trackForm from 'lib/track-form';
+import { protectForm } from 'calypso/lib/protect-form';
+import trackForm from 'calypso/lib/track-form';
 import {
 	isRequestingSiteSettings,
 	isSavingSiteSettings,
 	isSiteSettingsSaveSuccessful,
 	getSiteSettingsSaveError,
 	getSiteSettings,
-} from 'state/site-settings/selectors';
-import getCurrentRouteParameterized from 'state/selectors/get-current-route-parameterized';
-import getJetpackSettings from 'state/selectors/get-jetpack-settings';
-import isJetpackSettingsSaveFailure from 'state/selectors/is-jetpack-settings-save-failure';
-import isRequestingJetpackSettings from 'state/selectors/is-requesting-jetpack-settings';
-import isUpdatingJetpackSettings from 'state/selectors/is-updating-jetpack-settings';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { saveSiteSettings } from 'state/site-settings/actions';
-import { saveJetpackSettings } from 'state/jetpack/settings/actions';
-import { removeNotice, successNotice, errorNotice } from 'state/notices/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import QueryJetpackSettings from 'components/data/query-jetpack-settings';
+} from 'calypso/state/site-settings/selectors';
+import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-route-parameterized';
+import getJetpackSettings from 'calypso/state/selectors/get-jetpack-settings';
+import isJetpackSettingsSaveFailure from 'calypso/state/selectors/is-jetpack-settings-save-failure';
+import isRequestingJetpackSettings from 'calypso/state/selectors/is-requesting-jetpack-settings';
+import isUpdatingJetpackSettings from 'calypso/state/selectors/is-updating-jetpack-settings';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSiteSettings } from 'calypso/state/site-settings/actions';
+import { saveJetpackSettings } from 'calypso/state/jetpack/settings/actions';
+import { removeNotice, successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import QueryJetpackSettings from 'calypso/components/data/query-jetpack-settings';
 
 const debug = debugFactory( 'calypso:site-settings' );
 
@@ -164,8 +164,8 @@ const wrapSettingsForm = ( getFormSettings ) => ( SettingsForm ) => {
 		};
 
 		handleRadio = ( event ) => {
-			const currentTargetName = event.currentTarget.name,
-				currentTargetValue = event.currentTarget.value;
+			const currentTargetName = event.currentTarget.name;
+			const currentTargetValue = event.currentTarget.value;
 
 			this.props.trackEvent( `Set ${ currentTargetName } to ${ currentTargetValue }` );
 			this.props.updateFields( { [ currentTargetName ]: currentTargetValue } );

@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React, { Fragment, PureComponent } from 'react';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { localize } from 'i18n-calypso';
 import { find, isString, noop } from 'lodash';
@@ -12,9 +11,8 @@ import { find, isString, noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import LanguagePickerModal from './modal';
-import { requestGeoLocation } from 'state/data-getters';
 import { getLanguageCodeLabels } from './utils';
 
 /**
@@ -29,7 +27,6 @@ export class LanguagePicker extends PureComponent {
 		value: PropTypes.any,
 		onChange: PropTypes.func,
 		onClick: PropTypes.func,
-		countryCode: PropTypes.string,
 		showEmpathyModeControl: PropTypes.bool,
 		empathyMode: PropTypes.bool,
 		getIncompleteLocaleNoticeMessage: PropTypes.func,
@@ -40,7 +37,6 @@ export class LanguagePicker extends PureComponent {
 		valueKey: 'value',
 		onChange: noop,
 		onClick: noop,
-		countryCode: '',
 		showEmpathyModeControl: config.isEnabled( 'i18n/empathy-mode' ),
 		empathyMode: false,
 		useFallbackForIncompleteLanguages: false,
@@ -147,12 +143,7 @@ export class LanguagePicker extends PureComponent {
 			return null;
 		}
 
-		const {
-			countryCode,
-			languages,
-			showEmpathyModeControl,
-			getIncompleteLocaleNoticeMessage,
-		} = this.props;
+		const { languages, showEmpathyModeControl, getIncompleteLocaleNoticeMessage } = this.props;
 
 		return (
 			<LanguagePickerModal
@@ -161,7 +152,6 @@ export class LanguagePicker extends PureComponent {
 				onClose={ this.handleClose }
 				onSelected={ this.selectLanguage }
 				selected={ selectedLanguageSlug }
-				countryCode={ countryCode }
 				showEmpathyModeControl={ showEmpathyModeControl }
 				empathyMode={ this.state.empathyMode }
 				useFallbackForIncompleteLanguages={ this.state.useFallbackForIncompleteLanguages }
@@ -205,6 +195,4 @@ export class LanguagePicker extends PureComponent {
 	}
 }
 
-export default connect( () => ( { countryCode: requestGeoLocation().data } ) )(
-	localize( LanguagePicker )
-);
+export default localize( LanguagePicker );

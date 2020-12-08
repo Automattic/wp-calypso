@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import type { URL as URLString } from 'types';
+import type { URL as URLString } from 'calypso/types';
 
 // For complete definitions of these classifications, see:
 // https://url.spec.whatwg.org/#urls

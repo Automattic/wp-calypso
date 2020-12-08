@@ -11,8 +11,8 @@ import { Button } from '@automattic/components';
 import Table from 'woocommerce/components/table';
 import TableRow from 'woocommerce/components/table/table-row';
 import TableItem from 'woocommerce/components/table/table-item';
-import Gridicon from 'components/gridicon';
-import FormInputCheckbox from 'components/forms/form-checkbox';
+import Gridicon from 'calypso/components/gridicon';
+import FormInputCheckbox from 'calypso/components/forms/form-checkbox';
 
 class Example extends Component {
 	state = {

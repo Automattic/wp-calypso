@@ -4,19 +4,24 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classnames from 'classnames';
 import { noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { Button } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import { changeCommentStatus } from 'state/comments/actions';
+import { changeCommentStatus } from 'calypso/state/comments/actions';
 import CommentLikeButtonContainer from './comment-likes';
 import CommentApproveAction from './comment-approve-action';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import PopoverMenuSeparator from 'components/popover/menu-separator';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import PopoverMenuSeparator from 'calypso/components/popover/menu-separator';
 
 /**
  * Style dependencies
@@ -55,34 +60,34 @@ const CommentActions = ( {
 	return (
 		<div className="comments__comment-actions">
 			{ showReadMore && (
-				<button className="comments__comment-actions-read-more" onClick={ onReadMore }>
+				<Button className="comments__comment-actions-read-more" onClick={ onReadMore }>
 					<Gridicon
 						icon="chevron-down"
 						size={ 18 }
 						className="comments__comment-actions-read-more-icon"
 					/>
 					{ translate( 'Read More' ) }
-				</button>
+				</Button>
 			) }
 			{ showReplyButton && (
-				<button className="comments__comment-actions-reply" onClick={ handleReply }>
+				<Button className="comments__comment-actions-reply" onClick={ handleReply }>
 					<Gridicon icon="reply" size={ 18 } />
 					<span className="comments__comment-actions-reply-label">{ translate( 'Reply' ) }</span>
-				</button>
+				</Button>
 			) }
 			{ showCancelReplyButton && (
-				<button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
+				<Button className="comments__comment-actions-cancel-reply" onClick={ onReplyCancel }>
 					{ translate( 'Cancel reply' ) }
-				</button>
+				</Button>
 			) }
 			{ showCancelEditButton && (
-				<button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
+				<Button className="comments__comment-actions-cancel-reply" onClick={ editCommentCancel }>
 					{ translate( 'Cancel' ) }
-				</button>
+				</Button>
 			) }
 			<CommentLikeButtonContainer
 				className="comments__comment-actions-like"
-				tagName="button"
+				tagName={ Button }
 				siteId={ post.site_ID }
 				postId={ post.ID }
 				commentId={ commentId }
@@ -90,18 +95,18 @@ const CommentActions = ( {
 			{ showModerationTools && (
 				<div className="comments__comment-actions-moderation-tools">
 					<CommentApproveAction { ...{ status, approveComment, unapproveComment } } />
-					<button className="comments__comment-actions-trash" onClick={ trashComment }>
+					<Button className="comments__comment-actions-trash" onClick={ trashComment }>
 						<Gridicon icon="trash" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Trash' ) }</span>
-					</button>
-					<button className="comments__comment-actions-spam" onClick={ spamComment }>
+					</Button>
+					<Button className="comments__comment-actions-spam" onClick={ spamComment }>
 						<Gridicon icon="spam" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Spam' ) }</span>
-					</button>
-					<button className="comments__comment-actions-edit" onClick={ editComment }>
+					</Button>
+					<Button className="comments__comment-actions-edit" onClick={ editComment }>
 						<Gridicon icon="pencil" size={ 18 } />
 						<span className="comments__comment-actions-like-label">{ translate( 'Edit' ) }</span>
-					</button>
+					</Button>
 					<EllipsisMenu toggleTitle={ translate( 'More' ) }>
 						<PopoverMenuItem
 							className={ classnames( 'comments__comment-actions-approve', {

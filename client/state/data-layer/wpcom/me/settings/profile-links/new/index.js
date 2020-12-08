@@ -1,18 +1,18 @@
 /**
  * Internal dependencies
  */
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { USER_PROFILE_LINKS_ADD } from 'state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { USER_PROFILE_LINKS_ADD } from 'calypso/state/action-types';
 import {
 	addUserProfileLinksDuplicate,
 	addUserProfileLinksError,
 	addUserProfileLinksMalformed,
 	addUserProfileLinksSuccess,
 	receiveUserProfileLinks,
-} from 'state/profile-links/actions';
+} from 'calypso/state/profile-links/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /**
  * Dispatches a request to add profile links for the current user

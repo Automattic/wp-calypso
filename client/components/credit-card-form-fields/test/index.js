@@ -13,8 +13,8 @@ import { identity, noop } from 'lodash';
  * Internal dependencies
  */
 import { CreditCardFormFields } from '../';
-import { shouldRenderAdditionalCountryFields } from 'lib/checkout/processor-specific';
-import CountrySpecificPaymentFields from 'my-sites/checkout/checkout/country-specific-payment-fields';
+import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
+import CountrySpecificPaymentFields from 'calypso/my-sites/checkout/checkout/country-specific-payment-fields';
 
 jest.mock( 'lib/checkout/processor-specific', () => ( {
 	shouldRenderAdditionalCountryFields: jest.fn( false ),

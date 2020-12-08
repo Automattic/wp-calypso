@@ -1,3 +1,6 @@
+/**
+ * Internal dependencies
+ */
 import getSuggestions from './get-suggestions';
 
 export const getSiteSuggestions = ( suggestionsState, siteId ) =>

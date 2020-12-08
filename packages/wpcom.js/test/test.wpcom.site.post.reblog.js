@@ -1,25 +1,25 @@
 /**
  * Module dependencies
  */
-var util = require( './util' );
-var assert = require( 'assert' );
+const util = require( './util' );
+const assert = require( 'assert' );
 
 /**
  * Testing data
  */
-var fixture = require( './fixture' );
+const fixture = require( './fixture' );
 
 /**
  * site.post.reblog
  */
 describe( 'wpcom.site.post.reblog', function () {
 	// Global instances
-	var wpcom = util.wpcom();
-	var site = wpcom.site( util.site() );
-	var testing_reblog_post = wpcom
+	const wpcom = util.wpcom();
+	const site = wpcom.site( util.site() );
+	const testing_reblog_post = wpcom
 		.site( fixture.reblog.original_blog )
 		.post( fixture.reblog.original_post );
-	var testing_post;
+	let testing_post;
 
 	// Create a testing_post before to start tests
 	before( ( done ) => {
@@ -41,47 +41,53 @@ describe( 'wpcom.site.post.reblog', function () {
 	} );
 
 	describe( 'wpcom.site.post.reblog.add', function () {
-		it( 'should reblog the added post', ( done ) => {
-			testing_reblog_post
-				.reblog()
-				.add( {
-					note: fixture.reblog.note,
-					destination_site_id: site._id,
-				} )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should reblog the added post', () => {
+			return new Promise( ( done ) => {
+				testing_reblog_post
+					.reblog()
+					.add( {
+						note: fixture.reblog.note,
+						destination_site_id: site._id,
+					} )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.post.reblog.to', function () {
-		it( 'should get reblog the added post', ( done ) => {
-			testing_reblog_post
-				.reblog()
-				.to( site._id, fixture.reblog.note + '-to' )
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should get reblog the added post', () => {
+			return new Promise( ( done ) => {
+				testing_reblog_post
+					.reblog()
+					.to( site._id, fixture.reblog.note + '-to' )
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 
 	describe( 'wpcom.site.post.reblog.mine', function () {
-		it( 'should get the post reblog status of mine', ( done ) => {
-			testing_post
-				.reblog()
-				.mine()
-				.then( ( data ) => {
-					assert.ok( data );
-					assert.ok( data.can_reblog );
-					done();
-				} )
-				.catch( done );
+		it( 'should get the post reblog status of mine', () => {
+			return new Promise( ( done ) => {
+				testing_post
+					.reblog()
+					.mine()
+					.then( ( data ) => {
+						assert.ok( data );
+						assert.ok( data.can_reblog );
+						done();
+					} )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

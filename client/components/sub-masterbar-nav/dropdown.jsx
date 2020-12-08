@@ -9,7 +9,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import Item from './item';
 
 const OptionShape = PropTypes.shape( {

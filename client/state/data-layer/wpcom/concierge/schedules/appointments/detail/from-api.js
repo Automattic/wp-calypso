@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import responseSchema from './schema';
 
 export const transform = ( { begin_timestamp, end_timestamp, schedule_id, ...rest } ) => ( {

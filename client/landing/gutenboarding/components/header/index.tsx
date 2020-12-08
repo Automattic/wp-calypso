@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useI18n } from '@automattic/react-i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useSelect } from '@wordpress/data';
+import { Button } from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -36,11 +37,13 @@ const Header: React.FunctionComponent = () => {
 		'PlansModal',
 	].includes( currentStep );
 
-	// steps (including modals) where we hide Plans button
+	// steps (including modals) where we show Plans button
 	const showPlansButton = [ 'DesignSelection', 'Style', 'Features' ].includes( currentStep );
 
 	// CreateSite step clears state before redirecting, don't show the default text in this case
 	const siteTitleDefault = 'CreateSite' === currentStep ? '' : __( 'Start your website' );
+
+	const homeLink = '/';
 
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 
@@ -66,10 +69,12 @@ const Header: React.FunctionComponent = () => {
 			tabIndex={ -1 }
 		>
 			<section className="gutenboarding__header-section">
-				<div className="gutenboarding__header-section-item">
-					<div className="gutenboarding__header-wp-logo">
-						<Icon icon={ wordpress } size={ 28 } />
-					</div>
+				<div className="gutenboarding__header-section-item gutenboarding__header-section-item--wp-logo">
+					<Button href={ homeLink }>
+						<div className="gutenboarding__header-wp-logo">
+							<Icon icon={ wordpress } size={ 28 } />
+						</div>
+					</Button>
 				</div>
 				<div className="gutenboarding__header-section-item gutenboarding__header-site-title-section">
 					<div className="gutenboarding__header-site-title">

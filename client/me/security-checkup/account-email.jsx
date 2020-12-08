@@ -9,7 +9,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCurrentUserEmail, isCurrentUserEmailVerified } from 'state/current-user/selectors';
+import {
+	getCurrentUserEmail,
+	isCurrentUserEmailVerified,
+} from 'calypso/state/current-user/selectors';
 import { getOKIcon, getWarningIcon } from './icons.js';
 import SecurityCheckupNavigationItem from './navigation-item';
 
@@ -23,7 +26,8 @@ class SecurityCheckupAccountEmail extends React.Component {
 	render() {
 		const { primaryEmail, primaryEmailVerified, translate } = this.props;
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! primaryEmailVerified ) {
 			icon = getWarningIcon();

@@ -17,7 +17,7 @@ import {
 	EMAIL_FORWARDING_REMOVE_REQUEST,
 	EMAIL_FORWARDING_REMOVE_REQUEST_SUCCESS,
 	EMAIL_FORWARDING_REMOVE_REQUEST_FAILURE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const TEST_MAILBOX_EXAMPLE_DOT_COM = {
 	email: 'test@example.com',

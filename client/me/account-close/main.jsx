@@ -3,7 +3,7 @@
  */
 import React, { Component, Fragment } from 'react';
 import page from 'page';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -12,28 +12,28 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import ActionPanel from 'components/action-panel';
-import ActionPanelTitle from 'components/action-panel/title';
-import ActionPanelBody from 'components/action-panel/body';
-import ActionPanelFigure from 'components/action-panel/figure';
-import ActionPanelFigureHeader from 'components/action-panel/figure-header';
-import ActionPanelFigureList from 'components/action-panel/figure-list';
-import ActionPanelFigureListItem from 'components/action-panel/figure-list-item';
-import ActionPanelLink from 'components/action-panel/link';
-import ActionPanelFooter from 'components/action-panel/footer';
+import HeaderCake from 'calypso/components/header-cake';
+import ActionPanel from 'calypso/components/action-panel';
+import ActionPanelBody from 'calypso/components/action-panel/body';
+import ActionPanelFigure from 'calypso/components/action-panel/figure';
+import ActionPanelFigureHeader from 'calypso/components/action-panel/figure-header';
+import ActionPanelFigureList from 'calypso/components/action-panel/figure-list';
+import ActionPanelFigureListItem from 'calypso/components/action-panel/figure-list-item';
+import ActionPanelLink from 'calypso/components/action-panel/link';
+import ActionPanelFooter from 'calypso/components/action-panel/footer';
 import { Button } from '@automattic/components';
 import AccountCloseConfirmDialog from './confirm-dialog';
-import QueryUserPurchases from 'components/data/query-user-purchases';
-import { getCurrentUser } from 'state/current-user/selectors';
-import hasLoadedSites from 'state/selectors/has-loaded-sites';
-import getAccountClosureSites from 'state/selectors/get-account-closure-sites';
-import userHasAnyAtomicSites from 'state/selectors/user-has-any-atomic-sites';
-import isAccountClosed from 'state/selectors/is-account-closed';
-import { hasLoadedUserPurchasesFromServer } from 'state/purchases/selectors';
-import hasCancelableUserPurchases from 'state/selectors/has-cancelable-user-purchases';
-import getUserPurchasedPremiumThemes from 'state/selectors/get-user-purchased-premium-themes';
-import userUtils from 'lib/user/utils';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import hasLoadedSites from 'calypso/state/selectors/has-loaded-sites';
+import getAccountClosureSites from 'calypso/state/selectors/get-account-closure-sites';
+import userHasAnyAtomicSites from 'calypso/state/selectors/user-has-any-atomic-sites';
+import isAccountClosed from 'calypso/state/selectors/is-account-closed';
+import { hasLoadedUserPurchasesFromServer } from 'calypso/state/purchases/selectors';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import getUserPurchasedPremiumThemes from 'calypso/state/selectors/get-user-purchased-premium-themes';
+import userUtils from 'calypso/lib/user/utils';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -88,7 +88,7 @@ class AccountSettingsClose extends Component {
 			purchasedPremiumThemes,
 		} = this.props;
 		const isDeletePossible = ! isLoading && ! hasAtomicSites && ! hasCancelablePurchases;
-		const containerClasses = classnames( 'account-close', 'main', {
+		const containerClasses = classnames( 'account-close', 'main', 'is-wide-layout', {
 			'is-loading': isLoading,
 			'is-hiding-other-sites': this.state.showSiteDropdown,
 		} );
@@ -96,13 +96,12 @@ class AccountSettingsClose extends Component {
 		return (
 			<div className={ containerClasses } role="main">
 				{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
+				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+
 				<HeaderCake onClick={ this.goBack }>
 					<h1>{ translate( 'Close account' ) }</h1>
 				</HeaderCake>
 				<ActionPanel>
-					<ActionPanelTitle className="account-close__heading">
-						{ translate( 'Close account' ) }
-					</ActionPanelTitle>
 					<ActionPanelBody>
 						{ isDeletePossible && (
 							<ActionPanelFigure>

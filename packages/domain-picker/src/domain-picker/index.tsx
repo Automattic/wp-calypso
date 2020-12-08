@@ -3,25 +3,31 @@
  */
 import React, { FunctionComponent, useState, useEffect } from 'react';
 import { useSelect } from '@wordpress/data';
-import { times } from 'lodash';
+import { noop, times } from 'lodash';
 import { Button, TextControl } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
-import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
+import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
+import { __ } from '@wordpress/i18n';
+
 /**
  * Internal dependencies
  */
 import SuggestionItem from './suggestion-item';
 import SuggestionItemPlaceholder from './suggestion-item-placeholder';
 import { useDomainSuggestions } from '../hooks/use-domain-suggestions';
+import { useDomainAvailabilities } from '../hooks/use-domain-availabilities';
 import DomainCategories from '../domain-categories';
 import {
 	PAID_DOMAINS_TO_SHOW,
 	PAID_DOMAINS_TO_SHOW_EXPANDED,
 	DOMAIN_SUGGESTIONS_STORE,
+	domainIsAvailableStatus,
 } from '../constants';
 import { DomainNameExplanationImage } from '../domain-name-explanation/';
+import type { SUGGESTION_ITEM_TYPE } from './suggestion-item';
+import { ITEM_TYPE_RADIO } from './suggestion-item';
 
 /**
  * Style dependencies
@@ -60,9 +66,11 @@ export interface Props {
 	quantityExpanded?: number;
 
 	/** Called when the user leaves the search box */
-	onDomainSearchBlur: ( value: string ) => void;
+	onDomainSearchBlur?: ( value: string ) => void;
 
 	currentDomain?: string;
+
+	isCheckingDomainAvailability?: boolean;
 
 	existingSubdomain?: string;
 
@@ -76,10 +84,18 @@ export interface Props {
 	initialDomainSearch?: string;
 
 	/** Called when the domain search query is changed */
-	onSetDomainSearch: ( value: string ) => void;
+	onSetDomainSearch?: ( value: string ) => void;
 
-	/** Weather to segregate free and paid domains from each other */
+	/** Whether to segregate free and paid domains from each other */
 	segregateFreeAndPaid?: boolean;
+
+	/** Whether to show search field or not. Defaults to true */
+	showSearchField?: boolean;
+
+	/** Whether to show radio button or select button. Defaults to radio button */
+	itemType?: SUGGESTION_ITEM_TYPE;
+
+	locale?: string;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -89,17 +105,20 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	onExistingSubdomainSelect,
 	quantity = PAID_DOMAINS_TO_SHOW,
 	quantityExpanded = PAID_DOMAINS_TO_SHOW_EXPANDED,
-	onDomainSearchBlur,
+	onDomainSearchBlur = noop,
 	analyticsFlowId,
 	analyticsUiAlgo,
 	initialDomainSearch = '',
-	onSetDomainSearch,
+	onSetDomainSearch = noop,
 	currentDomain,
+	isCheckingDomainAvailability,
 	existingSubdomain,
 	segregateFreeAndPaid = false,
+	showSearchField = true,
+	itemType = ITEM_TYPE_RADIO,
+	locale,
 } ) => {
-	const { __ } = useI18n();
-	const label = __( 'Search for a domain' );
+	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
 
@@ -111,17 +130,19 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		select( DOMAIN_SUGGESTIONS_STORE ).getDomainSuggestionVendor()
 	);
 
-	const allDomainSuggestions = useDomainSuggestions(
-		domainSearch.trim(),
-		quantityExpanded,
-		domainCategory,
-		useI18n().i18nLocale
-	) as DomainSuggestion[] | undefined;
+	const {
+		allDomainSuggestions,
+		errorMessage: domainSuggestionErrorMessage,
+		state: domainSuggestionState,
+		retryRequest: retryDomainSuggestionRequest,
+	} = useDomainSuggestions( domainSearch.trim(), quantityExpanded, domainCategory, locale ) || {};
 
 	const domainSuggestions = allDomainSuggestions?.slice(
 		existingSubdomain ? 1 : 0,
 		isExpanded ? quantityExpanded : quantity
 	);
+
+	const domainAvailabilities = useDomainAvailabilities();
 
 	const onDomainSearchBlurValue = ( event: React.FormEvent< HTMLInputElement > ) => {
 		if ( onDomainSearchBlur ) {
@@ -143,6 +164,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 			setBaseRailcarId( getNewRailcarId( 'suggestion' ) );
 		}
 	}, [ allDomainSuggestions, setBaseRailcarId ] );
+
+	// Update domain search query using initialDomainSearch prop if there is no search field
+	useEffect( () => {
+		if ( ! showSearchField ) {
+			setDomainSearch( initialDomainSearch );
+		}
+	}, [ initialDomainSearch, showSearchField ] );
 
 	const handleItemRender = (
 		domain: string,
@@ -169,25 +197,48 @@ const DomainPicker: FunctionComponent< Props > = ( {
 		onSetDomainSearch( searchQuery );
 	};
 
+	const showErrorMessage = domainSuggestionState === DataStatus.Failure;
+	const isDomainSearchEmpty = domainSearch.trim?.().length <= 1;
+	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
+	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
+
 	return (
 		<div className="domain-picker">
 			{ header && header }
-			<div className="domain-picker__search">
-				<div className="domain-picker__search-icon">
-					<Icon icon={ search } />
+			{ showSearchField && (
+				<div className="domain-picker__search">
+					<div className="domain-picker__search-icon">
+						<Icon icon={ search } />
+					</div>
+					<TextControl
+						hideLabelFromVision
+						label={ label }
+						placeholder={ label }
+						onChange={ handleInputChange }
+						onBlur={ onDomainSearchBlurValue }
+						value={ domainSearch }
+					/>
 				</div>
-				<TextControl
-					// Unable to remove this instance due to it being a HotJar term: https://github.com/Automattic/wp-calypso/pull/43348#discussion_r442015229
-					data-hj-whitelist
-					hideLabelFromVision
-					label={ label }
-					placeholder={ label }
-					onChange={ handleInputChange }
-					onBlur={ onDomainSearchBlurValue }
-					value={ domainSearch }
-				/>
-			</div>
-			{ domainSearch.trim()?.length > 1 ? (
+			) }
+			{ showErrorMessage && (
+				<div className="domain-picker__error">
+					<p className="domain-picker__error-message">
+						{ __(
+							'An error has occurred, please check your connection and retry.',
+							__i18n_text_domain__
+						) }
+						{ domainSuggestionErrorMessage && ` ${ domainSuggestionErrorMessage }` }
+					</p>
+					<Button
+						isPrimary
+						className="domain-picker__error-retry-btn"
+						onClick={ retryDomainSuggestionRequest }
+					>
+						Retry
+					</Button>
+				</div>
+			) }
+			{ showDomainSuggestionsResults && (
 				<div className="domain-picker__body">
 					{ showDomainCategories && (
 						<div className="domain-picker__aside">
@@ -197,7 +248,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-sections">
 						<>
 							{ segregateFreeAndPaid && (
-								<p className="domain-picker__suggestion-group-label">{ __( 'Keep sub-domain' ) }</p>
+								<p className="domain-picker__suggestion-group-label">
+									{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
+								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ existingSubdomain && (
@@ -215,23 +268,35 @@ const DomainPicker: FunctionComponent< Props > = ( {
 										onSelect={ () => {
 											onExistingSubdomainSelect?.( existingSubdomain );
 										} }
+										type={ itemType }
 									/>
 								) }
 							</ItemGrouper>
 							{ segregateFreeAndPaid && (
 								<p className="domain-picker__suggestion-group-label">
-									{ __( 'Professional domains' ) }
+									{ __( 'Professional domains', __i18n_text_domain__ ) }
 								</p>
 							) }
 							<ItemGrouper groupItems={ segregateFreeAndPaid }>
 								{ domainSuggestions?.map( ( suggestion, i ) => {
 									const index = existingSubdomain ? i + 1 : i;
 									const isRecommended = index === 1;
+									const availabilityStatus =
+										domainAvailabilities[ suggestion?.domain_name ]?.status;
+									// should availabilityStatus be falsy then we assume it is available as we have not checked yet.
+									const isAvailable = availabilityStatus
+										? domainIsAvailableStatus?.includes( availabilityStatus )
+										: true;
 									return (
 										<SuggestionItem
 											key={ suggestion.domain_name }
+											isUnavailable={ ! isAvailable }
 											domain={ suggestion.domain_name }
 											cost={ suggestion.cost }
+											isLoading={
+												currentDomain === suggestion.domain_name && isCheckingDomainAvailability
+											}
+											hstsRequired={ suggestion.hsts_required }
 											isFree={ suggestion.is_free }
 											isRecommended={ isRecommended }
 											railcarId={ baseRailcarId ? `${ baseRailcarId }${ index }` : undefined }
@@ -247,6 +312,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												onDomainSelect( suggestion );
 											} }
 											selected={ currentDomain === suggestion.domain_name }
+											type={ itemType }
 										/>
 									);
 								} ) ?? times( quantity, ( i ) => <SuggestionItemPlaceholder key={ i } /> ) }
@@ -254,21 +320,24 @@ const DomainPicker: FunctionComponent< Props > = ( {
 						</>
 
 						{ ! isExpanded &&
+							quantity < quantityExpanded &&
 							allDomainSuggestions?.length &&
 							allDomainSuggestions?.length > quantity && (
 								<div className="domain-picker__show-more">
-									<Button onClick={ () => setIsExpanded( true ) }>
-										{ __( 'View more results' ) }
+									<Button onClick={ () => setIsExpanded( true ) } isLink>
+										{ __( 'View more results', __i18n_text_domain__ ) }
 									</Button>
 								</div>
 							) }
 					</div>
 				</div>
-			) : (
+			) }
+			{ showDomainSuggestionsEmpty && (
 				<div className="domain-picker__empty-state">
 					<p className="domain-picker__empty-state--text">
 						{ __(
-							'A domain name is the site address people type in their browser to visit your site.'
+							'A domain name is the site address people type in their browser to visit your site.',
+							__i18n_text_domain__
 						) }
 					</p>
 					<div>

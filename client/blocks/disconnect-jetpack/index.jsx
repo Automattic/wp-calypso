@@ -4,7 +4,7 @@
 
 import PropTypes from 'prop-types';
 import React, { PureComponent } from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
@@ -13,19 +13,24 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import HappychatButton from 'components/happychat/button';
-import QueryRewindState from 'components/data/query-rewind-state';
+import HappychatButton from 'calypso/components/happychat/button';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import {
 	recordGoogleEvent as recordGoogleEventAction,
 	recordTracksEvent as recordTracksEventAction,
 	withAnalytics,
-} from 'state/analytics/actions';
-import { disconnect } from 'state/jetpack/connection/actions';
-import { setAllSitesSelected, navigate } from 'state/ui/actions';
-import { successNotice, errorNotice, infoNotice, removeNotice } from 'state/notices/actions';
-import { getPlanClass } from 'lib/plans';
-import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'state/sites/selectors';
-import getRewindState from 'state/selectors/get-rewind-state';
+} from 'calypso/state/analytics/actions';
+import { disconnect } from 'calypso/state/jetpack/connection/actions';
+import { setAllSitesSelected, navigate } from 'calypso/state/ui/actions';
+import {
+	successNotice,
+	errorNotice,
+	infoNotice,
+	removeNotice,
+} from 'calypso/state/notices/actions';
+import { getPlanClass } from 'calypso/lib/plans';
+import { getSiteSlug, getSiteTitle, getSitePlanSlug } from 'calypso/state/sites/selectors';
+import getRewindState from 'calypso/state/selectors/get-rewind-state';
 
 /**
  * Style dependencies

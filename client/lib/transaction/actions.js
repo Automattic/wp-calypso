@@ -9,7 +9,7 @@ import {
 	TRANSACTION_STEP_SET,
 	TRANSACTION_STRIPE_SET,
 } from './action-types';
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 
 export function setDomainDetails( domainDetails ) {
 	Dispatcher.handleViewAction( {

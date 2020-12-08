@@ -36,7 +36,14 @@ const addSectionClass = addBodyClass( ( s ) => `is-section-${ s }` );
 export default function BodySectionCssClass( { group, section, bodyClass } ) {
 	React.useEffect( addGroupClass( group ), [ group ] );
 	React.useEffect( addSectionClass( section ), [ section ] );
-	React.useEffect( () => bodyClass && document.body.classList.add( bodyClass ) );
+	React.useEffect( () => {
+		if ( ! bodyClass ) {
+			return;
+		}
+
+		document.body.classList.add( bodyClass );
+		return () => document.body.classList.remove( bodyClass );
+	}, [ bodyClass ] );
 
 	return null;
 }

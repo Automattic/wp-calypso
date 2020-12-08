@@ -34,7 +34,7 @@
 }
 
 // Token input
-input[type='text'].token-field__input {
+input[type='text'].form-text-input.token-field__input {
 	display: inline-block;
 	flex-grow: 1;
 	width: auto;
@@ -49,7 +49,8 @@ input[type='text'].token-field__input {
 	font-size: $font-body-small;
 	color: var( --color-neutral-70 );
 
-	&:focus {
+	&:focus,
+	&:focus:hover {
 		box-shadow: none;
 	}
 }
@@ -109,7 +110,7 @@ input[type='text'].token-field__input {
 		&.is-error {
 			.token-field__token-text {
 				color: var( --color-error );
-				border-radius: 4px 0 0 4px;
+				border-radius: 2px 0 0 2px;
 				padding: 0 4px 0 6px;
 			}
 		}
@@ -137,7 +138,7 @@ input[type='text'].token-field__input {
 }
 
 .token-field__token-text {
-	border-radius: 4px 0 0 4px;
+	border-radius: 2px 0 0 2px;
 	padding: 0 4px 0 6px;
 	white-space: nowrap;
 	overflow: hidden;
@@ -146,7 +147,7 @@ input[type='text'].token-field__input {
 
 .token-field__remove-token {
 	cursor: pointer;
-	border-radius: 0 4px 4px 0;
+	border-radius: 0 2px 2px 0;
 	color: var( --color-neutral-10 );
 
 	&:hover {

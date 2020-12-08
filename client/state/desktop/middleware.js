@@ -13,6 +13,7 @@ import {
 	SITE_REQUEST_FAILURE,
 	JETPACK_MODULE_ACTIVATE_SUCCESS,
 	JETPACK_MODULE_ACTIVATE_FAILURE,
+	NOTIFICATIONS_UNSEEN_COUNT_SET,
 	SEND_TO_PRINTER,
 } from '../../state/action-types';
 
@@ -20,6 +21,7 @@ import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
+	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
 } from '../../state/desktop/window-events';
@@ -91,6 +93,19 @@ export const desktopMiddleware = () => {
 					} )
 				);
 				return next( action );
+
+			case NOTIFICATIONS_UNSEEN_COUNT_SET: {
+				debug( 'Dispatching window event for action type: ', action.type );
+				const { unseenCount } = action;
+				window.dispatchEvent(
+					new window.CustomEvent( NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET, {
+						detail: {
+							unseenCount,
+						},
+					} )
+				);
+				return next( action );
+			}
 
 			case SEND_TO_PRINTER: {
 				debug( 'Dispatching window event for action type: ', action.type );

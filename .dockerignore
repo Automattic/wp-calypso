@@ -1,4 +1,6 @@
 Dockerfile
+Dockerfile.base
+bin/build-docker.sh
 /.tsc-cache
 /.cache
 .dockerignore

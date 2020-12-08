@@ -6,8 +6,8 @@ import { uniqBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_RECOMMENDED_SITES_RECEIVE } from 'state/reader/action-types';
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { READER_RECOMMENDED_SITES_RECEIVE } from 'calypso/state/reader/action-types';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 
 /**
  * Tracks mappings between randomization seeds and site recs.

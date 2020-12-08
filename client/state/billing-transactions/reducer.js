@@ -9,13 +9,13 @@ import {
 	BILLING_TRANSACTIONS_REQUEST,
 	BILLING_TRANSACTIONS_REQUEST_FAILURE,
 	BILLING_TRANSACTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 import {
 	combineReducers,
 	withoutPersistence,
 	withSchemaValidation,
 	withStorageKey,
-} from 'state/utils';
+} from 'calypso/state/utils';
 import { billingTransactionsSchema } from './schema';
 import individualTransactions from './individual-transactions/reducer';
 import ui from './ui/reducer';

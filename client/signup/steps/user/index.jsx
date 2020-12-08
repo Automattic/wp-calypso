@@ -4,10 +4,9 @@
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { localize } from 'i18n-calypso';
+import i18n, { localize } from 'i18n-calypso';
 import { identity, includes, isEmpty, omit, get } from 'lodash';
 import classNames from 'classnames';
-import cookie from 'cookie';
 
 /**
  * Internal dependencies
@@ -16,25 +15,30 @@ import {
 	isCrowdsignalOAuth2Client,
 	isWooOAuth2Client,
 	isJetpackCloudOAuth2Client,
-} from 'lib/oauth2-clients';
-import StepWrapper from 'signup/step-wrapper';
-import flows from 'signup/config/flows';
-import SignupForm from 'blocks/signup-form';
-import { getFlowSteps, getNextStepName, getPreviousStepName, getStepUrl } from 'signup/utils';
-import { fetchOAuth2ClientData } from 'state/oauth2-clients/actions';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import { getSuggestedUsername } from 'state/signup/optional-dependencies/selectors';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
-import { WPCC } from 'lib/url/support';
-import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'lib/analytics/recaptcha';
-import config from 'config';
-import AsyncLoad from 'components/async-load';
-import WooCommerceConnectCartHeader from 'extensions/woocommerce/components/woocommerce-connect-cart-header';
-import { getSocialServiceFromClientId } from 'lib/login';
-import { abtest, getABTestVariation } from 'lib/abtest';
-import JetpackLogo from 'components/jetpack-logo';
+} from 'calypso/lib/oauth2-clients';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import flows from 'calypso/signup/config/flows';
+import SignupForm from 'calypso/blocks/signup-form';
+import {
+	getFlowSteps,
+	getNextStepName,
+	getPreviousStepName,
+	getStepUrl,
+} from 'calypso/signup/utils';
+import { fetchOAuth2ClientData } from 'calypso/state/oauth2-clients/actions';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import { getSuggestedUsername } from 'calypso/state/signup/optional-dependencies/selectors';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
+import { WPCC } from 'calypso/lib/url/support';
+import { initGoogleRecaptcha, recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import config from 'calypso/config';
+import AsyncLoad from 'calypso/components/async-load';
+import WooCommerceConnectCartHeader from 'calypso/extensions/woocommerce/components/woocommerce-connect-cart-header';
+import { getSocialServiceFromClientId } from 'calypso/lib/login';
+import { getABTestVariation } from 'calypso/lib/abtest';
+import JetpackLogo from 'calypso/components/jetpack-logo';
 
 /**
  * Style dependencies
@@ -94,7 +98,17 @@ export class UserStep extends Component {
 		}
 
 		this.props.saveSignupStep( { stepName: this.props.stepName } );
+
+		i18n.on( 'change', this.handleI18nChange );
 	}
+
+	componentWillUnmount() {
+		i18n.off( 'change', this.handleI18nChange );
+	}
+
+	handleI18nChange = () => {
+		this.setSubHeaderText( this.props );
+	};
 
 	setSubHeaderText( props ) {
 		const { flowName, oauth2Client, positionInFlow, translate, wccomFrom } = props;
@@ -182,18 +196,6 @@ export class UserStep extends Component {
 		} );
 	}
 
-	isEligibleForSwapStepsTest() {
-		const cookies = cookie.parse( document.cookie );
-		const countryCodeFromCookie = cookies.country_code;
-		const isUserFromUS = 'US' === countryCodeFromCookie;
-
-		if ( isUserFromUS && 'onboarding' === this.props.flowName ) {
-			return true;
-		}
-
-		return false;
-	}
-
 	save = ( form ) => {
 		this.props.saveSignupStep( {
 			stepName: this.props.stepName,
@@ -218,14 +220,6 @@ export class UserStep extends Component {
 			},
 			dependencies
 		);
-
-		if (
-			this.isEligibleForSwapStepsTest() &&
-			'variantShowSwapped' === abtest( 'domainStepPlanStepSwap' )
-		) {
-			const switchFlowName = 'onboarding-plan-first';
-			this.props.goToNextStep( switchFlowName );
-		}
 
 		this.props.goToNextStep();
 	};
@@ -320,7 +314,7 @@ export class UserStep extends Component {
 							<div className={ classNames( 'signup-form__woocommerce-logo' ) }>
 								<svg width={ 200 } viewBox={ '0 0 1270 170' }>
 									<AsyncLoad
-										require="components/jetpack-header/woocommerce"
+										require="calypso/components/jetpack-header/woocommerce"
 										darkColorScheme={ false }
 										placeholder={ null }
 									/>
@@ -395,7 +389,8 @@ export class UserStep extends Component {
 
 	renderSignupForm() {
 		const { oauth2Client, wccomFrom, flowName } = this.props;
-		let socialService, socialServiceResponse;
+		let socialService;
+		let socialServiceResponse;
 		let isSocialSignupEnabled = this.props.isSocialSignupEnabled;
 		const hashObject = this.props.initialContext && this.props.initialContext.hash;
 		if ( this.props.isSocialSignupEnabled && ! isEmpty( hashObject ) ) {

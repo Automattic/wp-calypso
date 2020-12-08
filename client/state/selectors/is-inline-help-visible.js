@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/inline-help/init';
+import 'calypso/state/inline-help/init';
 
 /**
  * Returns a bool indicating if the inline help ui should be visibile

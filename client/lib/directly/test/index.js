@@ -11,7 +11,7 @@ import sinon from 'sinon';
 /**
  * Internal dependencies
  */
-import useNock from 'test-helpers/use-nock';
+import useNock from 'calypso/test-helpers/use-nock';
 
 let directly;
 let loadScript;
@@ -64,31 +64,38 @@ describe( 'index', () => {
 					.then( () => expect( loadScript.loadScript ).to.have.been.calledOnce );
 			} );
 
-			test( 'does nothing after the first call', ( done ) => {
-				Promise.all( [ directly.initialize(), directly.initialize(), directly.initialize() ] )
-					.then( () => {
-						expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
-						expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
-						expect( loadScript.loadScript ).to.have.been.calledOnce;
-					} )
-					.then( () => done() );
+			test( 'does nothing after the first call', () => {
+				return new Promise( ( done ) => {
+					Promise.all( [ directly.initialize(), directly.initialize(), directly.initialize() ] )
+						.then( () => {
+							expect( window.DirectlyRTM.cq ).to.have.lengthOf( 1 );
+							expect( window.DirectlyRTM.cq[ 0 ][ 0 ] ).to.equal( 'config' );
+							expect( loadScript.loadScript ).to.have.been.calledOnce;
+						} )
+						.then( () => done() );
+				} );
 			} );
 
-			test( 'resolves the returned promise if the library load succeeds', ( done ) => {
-				directly.initialize().then( () => done() );
+			// eslint-disable-next-line jest/expect-expect
+			test( 'resolves the returned promise if the library load succeeds', () => {
+				return new Promise( ( done ) => {
+					directly.initialize().then( () => done() );
+				} );
 			} );
 
-			test( 'rejects the returned promise if the library load fails', ( done ) => {
-				const error = { src: 'http://url.to/directly/embed.js' };
-				simulateFailedScriptLoad( error );
+			test( 'rejects the returned promise if the library load fails', () => {
+				return new Promise( ( done ) => {
+					const error = { src: 'http://url.to/directly/embed.js' };
+					simulateFailedScriptLoad( error );
 
-				directly
-					.initialize()
-					.catch( ( e ) => {
-						expect( e ).to.be.an.instanceof( Error );
-						expect( e.message ).to.contain( error.src );
-					} )
-					.then( () => done() );
+					directly
+						.initialize()
+						.catch( ( e ) => {
+							expect( e ).to.be.an.instanceof( Error );
+							expect( e.message ).to.contain( error.src );
+						} )
+						.then( () => done() );
+				} );
 			} );
 		} );
 
@@ -97,28 +104,32 @@ describe( 'index', () => {
 			const name = 'Richie Rich';
 			const email = 'richie@richenterprises.biz';
 
-			test( "initializes Directly if it hasn't already been initialized", ( done ) => {
-				directly
-					.askQuestion( questionText, name, email )
-					.then( () => {
-						expect( typeof window.DirectlyRTM ).to.equal( 'function' );
-						expect( loadScript.loadScript ).to.have.been.calledOnce;
-					} )
-					.then( () => done() );
+			test( "initializes Directly if it hasn't already been initialized", () => {
+				return new Promise( ( done ) => {
+					directly
+						.askQuestion( questionText, name, email )
+						.then( () => {
+							expect( typeof window.DirectlyRTM ).to.equal( 'function' );
+							expect( loadScript.loadScript ).to.have.been.calledOnce;
+						} )
+						.then( () => done() );
+				} );
 			} );
 
-			test( 'invokes the Directly API with the given paramaters', ( done ) => {
-				window.DirectlyRTM = sinon.spy();
-				directly
-					.askQuestion( questionText, name, email )
-					.then( () =>
-						expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', {
-							questionText,
-							name,
-							email,
-						} )
-					)
-					.then( () => done() );
+			test( 'invokes the Directly API with the given paramaters', () => {
+				return new Promise( ( done ) => {
+					window.DirectlyRTM = sinon.spy();
+					directly
+						.askQuestion( questionText, name, email )
+						.then( () =>
+							expect( window.DirectlyRTM ).to.have.been.calledWith( 'askQuestion', {
+								questionText,
+								name,
+								email,
+							} )
+						)
+						.then( () => done() );
+				} );
 			} );
 		} );
 	} );
@@ -134,25 +145,29 @@ describe( 'index', () => {
 		} );
 
 		describe( '#initialize()', () => {
-			test( 'rejects intialization with an error', ( done ) => {
-				directly
-					.initialize()
-					.catch( ( e ) => {
-						expect( e ).to.be.an.instanceof( Error );
-						expect( e.message ).to.equal(
-							'Directly Real-Time Messaging is not available at this time.'
-						);
-					} )
-					.then( () => done() );
+			test( 'rejects intialization with an error', () => {
+				return new Promise( ( done ) => {
+					directly
+						.initialize()
+						.catch( ( e ) => {
+							expect( e ).to.be.an.instanceof( Error );
+							expect( e.message ).to.equal(
+								'Directly Real-Time Messaging is not available at this time.'
+							);
+						} )
+						.then( () => done() );
+				} );
 			} );
 
-			test( 'does not attempt to load the remote script', ( done ) => {
-				directly
-					.initialize()
-					.catch( () => {
-						expect( loadScript.loadScript ).not.to.have.been.called;
-					} )
-					.then( () => done() );
+			test( 'does not attempt to load the remote script', () => {
+				return new Promise( ( done ) => {
+					directly
+						.initialize()
+						.catch( () => {
+							expect( loadScript.loadScript ).not.to.have.been.called;
+						} )
+						.then( () => done() );
+				} );
 			} );
 		} );
 	} );

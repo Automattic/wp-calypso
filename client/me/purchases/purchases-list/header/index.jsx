@@ -10,30 +10,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import NavItem from 'components/section-nav/item';
-import NavTabs from 'components/section-nav/tabs';
-import {
-	billingHistory,
-	upcomingCharges,
-	pendingPayments,
-	myMemberships,
-	purchasesRoot,
-} from '../../paths.js';
-import SectionNav from 'components/section-nav';
-import config from 'config';
-import getPastBillingTransactions from 'state/selectors/get-past-billing-transactions';
+import NavItem from 'calypso/components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import { billingHistory, paymentMethods, pendingPayments, purchasesRoot } from '../../paths.js';
+import SectionNav from 'calypso/components/section-nav';
+import config from 'calypso/config';
+import getPastBillingTransactions from 'calypso/state/selectors/get-past-billing-transactions';
 
 const PurchasesHeader = ( { section, translate } ) => {
 	let text = translate( 'Billing History' );
 
 	if ( section === 'purchases' ) {
 		text = translate( 'Purchases' );
-	} else if ( section === 'upcoming' ) {
-		text = translate( 'Upcoming Charges' );
 	} else if ( section === 'pending' ) {
 		text = translate( 'Pending Payments' );
-	} else if ( section === 'memberships' ) {
-		text = translate( 'Other Sites' );
+	} else if ( section === 'payment-methods' ) {
+		text = translate( 'Payment Methods' );
 	}
 
 	return (
@@ -47,8 +39,8 @@ const PurchasesHeader = ( { section, translate } ) => {
 					{ translate( 'Billing History' ) }
 				</NavItem>
 
-				<NavItem path={ upcomingCharges } selected={ section === 'upcoming' }>
-					{ translate( 'Upcoming Charges' ) }
+				<NavItem path={ paymentMethods } selected={ section === 'payment-methods' }>
+					{ translate( 'Payment Methods' ) }
 				</NavItem>
 
 				{ config.isEnabled( 'async-payments' ) && (
@@ -56,10 +48,6 @@ const PurchasesHeader = ( { section, translate } ) => {
 						{ translate( 'Pending Payments' ) }
 					</NavItem>
 				) }
-
-				<NavItem path={ myMemberships } selected={ section === 'memberships' }>
-					{ translate( 'Other Sites' ) }
-				</NavItem>
 			</NavTabs>
 		</SectionNav>
 	);

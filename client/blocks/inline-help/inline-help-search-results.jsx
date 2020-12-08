@@ -13,18 +13,22 @@ import { speak } from '@wordpress/a11y';
 /**
  * Internal Dependencies
  */
-import { recordTracksEvent } from 'state/analytics/actions';
-import QueryInlineHelpSearch from 'components/data/query-inline-help-search';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import QueryInlineHelpSearch from 'calypso/components/data/query-inline-help-search';
 import PlaceholderLines from './placeholder-lines';
-import { decodeEntities, preventWidows } from 'lib/formatting';
-import getSearchResultsByQuery from 'state/inline-help/selectors/get-inline-help-search-results-for-query';
-import getSelectedResultIndex from 'state/inline-help/selectors/get-selected-result-index';
-import getInlineHelpCurrentlySelectedResult from 'state/inline-help/selectors/get-inline-help-currently-selected-result';
-import isRequestingInlineHelpSearchResultsForQuery from 'state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
-import hasInlineHelpAPIResults from 'state/selectors/has-inline-help-api-results';
-import { selectResult } from 'state/inline-help/actions';
-import { localizeUrl } from 'lib/i18n-utils';
-import Gridicon from 'components/gridicon';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
+import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { getSectionName } from 'calypso/state/ui/selectors';
+import getSearchResultsByQuery from 'calypso/state/inline-help/selectors/get-inline-help-search-results-for-query';
+import getSelectedResultIndex from 'calypso/state/inline-help/selectors/get-selected-result-index';
+import getInlineHelpCurrentlySelectedResult from 'calypso/state/inline-help/selectors/get-inline-help-currently-selected-result';
+import isRequestingInlineHelpSearchResultsForQuery from 'calypso/state/inline-help/selectors/is-requesting-inline-help-search-results-for-query';
+import hasInlineHelpAPIResults from 'calypso/state/selectors/has-inline-help-api-results';
+import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { selectResult } from 'calypso/state/inline-help/actions';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import Gridicon from 'calypso/components/gridicon';
 import {
 	SUPPORT_TYPE_ADMIN_SECTION,
 	SUPPORT_TYPE_API_HELP,
@@ -44,12 +48,15 @@ const resultsSpeak = debounceSpeak( { message: 'Search results loaded.' } );
 const errorSpeak = debounceSpeak( { message: 'No search results found.' } );
 
 function HelpSearchResults( {
+	currentUserId,
 	hasAPIResults = false,
+	hasPurchases,
 	isSearching = false,
 	onSelect,
 	onAdminSectionSelect = noop,
 	searchQuery = '',
 	searchResults = [],
+	sectionName,
 	selectedResultIndex = -1,
 	selectSearchResult,
 	translate = identity,
@@ -74,7 +81,7 @@ function HelpSearchResults( {
 		} else if ( hasAPIResults ) {
 			resultsSpeak();
 		}
-	}, [ isSearching ] );
+	}, [ isSearching, hasAPIResults, searchQuery ] );
 
 	function getTitleBySectionType( type, query = '' ) {
 		let title = '';
@@ -123,12 +130,31 @@ function HelpSearchResults( {
 	};
 
 	const renderHelpLink = ( result ) => {
-		const { link, key, title, support_type = SUPPORT_TYPE_API_HELP, icon = 'domains' } = result;
+		const {
+			link,
+			key,
+			title,
+			support_type = SUPPORT_TYPE_API_HELP,
+			icon = 'domains',
+			post_id,
+		} = result;
 		const resultIndex = searchResults.findIndex( ( r ) => r.link === link );
 
 		const classes = classNames( 'inline-help__results-item', {
 			'is-selected': selectedResultIndex === resultIndex,
 		} );
+
+		// Unless searching with Inline Help or on the Purchases section, hide the
+		// "Managing Purchases" documentation link for users who have not made a purchase.
+		if (
+			post_id === 111349 &&
+			! isSearching &&
+			! hasAPIResults &&
+			! hasPurchases &&
+			sectionName !== 'purchases'
+		) {
+			return null;
+		}
 
 		return (
 			<Fragment key={ link ?? key }>
@@ -186,6 +212,10 @@ function HelpSearchResults( {
 		} );
 	};
 
+	const resultsLabel = hasAPIResults
+		? translate( 'Search Results' )
+		: translate( 'Helpful resources for this section' );
+
 	const renderSearchResults = () => {
 		if ( isSearching && ! searchResults.length ) {
 			// search, but no results so far
@@ -202,7 +232,7 @@ function HelpSearchResults( {
 					</p>
 				) }
 
-				<div className="inline-help__results" aria-label={ translate( 'Search Results' ) }>
+				<div className="inline-help__results" aria-label={ resultsLabel }>
 					{ renderSearchSections( searchResults, searchQuery ) }
 				</div>
 			</>
@@ -212,6 +242,7 @@ function HelpSearchResults( {
 	return (
 		<>
 			<QueryInlineHelpSearch query={ searchQuery } />
+			{ currentUserId && <QueryUserPurchases userId={ currentUserId } /> }
 			{ renderSearchResults() }
 		</>
 	);
@@ -232,11 +263,14 @@ HelpSearchResults.propTypes = {
 
 export default connect(
 	( state, ownProps ) => ( {
+		currentUserId: getCurrentUserId( state ),
 		searchResults: getSearchResultsByQuery( state ),
 		isSearching: isRequestingInlineHelpSearchResultsForQuery( state, ownProps.searchQuery ),
 		selectedResultIndex: getSelectedResultIndex( state ),
 		hasAPIResults: hasInlineHelpAPIResults( state ),
 		selectedResult: getInlineHelpCurrentlySelectedResult( state ),
+		hasPurchases: hasCancelableUserPurchases( state, getCurrentUserId( state ) ),
+		sectionName: getSectionName( state ),
 	} ),
 	{
 		track: recordTracksEvent,

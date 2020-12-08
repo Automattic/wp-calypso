@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import { sortBy, values } from 'lodash';
 
+/**
+ * Internal dependencies
+ */
 import getNotes from './get-notes';
 
 let prevAllNotes;

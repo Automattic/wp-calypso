@@ -5,7 +5,7 @@
 /**
  * Internal dependencies
  */
-import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 describe( 'isFetchingNextPage()', () => {
 	const state = {

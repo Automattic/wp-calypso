@@ -17,7 +17,7 @@ import PackageDialog from './package-dialog';
 import PackagesListItem from './packages-list-item';
 import QueryPackages from 'woocommerce/woocommerce-services/components/query-packages';
 import * as PackagesActions from '../../state/packages/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	getPackagesForm,
 	getAllSelectedPackages,

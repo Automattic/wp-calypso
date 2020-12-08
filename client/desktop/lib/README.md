@@ -1,5 +1,4 @@
-Desktop App Libraries
-=====================
+# Desktop App Libraries
 
 The following libraries are available:
 

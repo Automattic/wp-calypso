@@ -9,8 +9,8 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const rule = require( '../../../lib/rules/import-docblock' ),
-	RuleTester = require( 'eslint' ).RuleTester;
+const rule = require( '../../../lib/rules/import-docblock' );
+const RuleTester = require( 'eslint' ).RuleTester;
 
 //------------------------------------------------------------------------------
 // Tests

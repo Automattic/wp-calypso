@@ -11,12 +11,12 @@ import { flowRight } from 'lodash';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import HeaderCake from 'calypso/components/header-cake';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ZoneDetailsForm from '../../forms/zone-details-form';
 import { addZone } from '../../../state/zones/actions';
 import { settingsPath } from '../../../app/util';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 
 class ZoneCreator extends PureComponent {
 	static propTypes = {

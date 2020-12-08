@@ -6,7 +6,7 @@ import { get, some } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 /**
  * Returns true if we have any pending comment actions that we are tracking.

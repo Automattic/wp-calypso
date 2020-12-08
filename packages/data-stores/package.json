@@ -26,10 +26,10 @@
 	],
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__data-stores*\"",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
 		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^3.18.0",
@@ -44,6 +44,12 @@
 		"wpcom-proxy-request": "^6.0.0"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^4"
+		"@wordpress/data": "^4",
+		"react": "^16.8"
+	},
+	"devDependencies": {
+		"jest-fetch-mock": "^2.1.2",
+		"nock": "^12.0.3",
+		"wait-for-expect": "^3.0.2"
 	}
 }

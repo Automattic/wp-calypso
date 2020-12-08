@@ -9,7 +9,7 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
+import Popover from 'calypso/components/popover';
 
 /**
  * Style dependencies

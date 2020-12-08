@@ -1,13 +1,10 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
+
+const EMPTY_LIST = [];
 
 export function getProductsForSiteId( state, siteId ) {
-	return get( state, [ 'memberships', 'productList', 'items', siteId ] );
+	return state.memberships?.productList.items[ siteId ] ?? EMPTY_LIST;
 }

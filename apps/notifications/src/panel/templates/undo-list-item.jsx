@@ -1,17 +1,23 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
+/**
+ * Internal dependencies
+ */
 import { wpcom } from '../rest-client/wpcom';
-
 import actions from '../state/actions';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
-
 import { bumpStat } from '../rest-client/bump-stat';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 import Gridicon from './gridicons';
 
-var { recordTracksEvent } = require( '../helpers/stats' );
+const { recordTracksEvent } = require( '../helpers/stats' );
 
 const KEY_U = 85;
 
@@ -39,11 +45,11 @@ export class UndoListItem extends React.Component {
 	}
 
 	handleKeyDown = ( event ) => {
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -66,13 +72,13 @@ export class UndoListItem extends React.Component {
 	}
 
 	startUndoSequence = () => {
-		var timerHandle = setTimeout( this.executor, this.state.undoTimeout );
+		const timerHandle = setTimeout( this.executor, this.state.undoTimeout );
 
 		this.instance && this.setState( { undoTimer: timerHandle } );
 	};
 
 	executor = () => {
-		var actionHandlers = {
+		const actionHandlers = {
 			spam: this.spamComment,
 			trash: this.deleteComment,
 		};
@@ -86,12 +92,12 @@ export class UndoListItem extends React.Component {
 	};
 
 	spamComment = () => {
-		var comment = wpcom()
+		const comment = wpcom()
 			.site( this.props.note.meta.ids.site )
 			.comment( this.props.note.meta.ids.comment );
-		var component = this;
+		const component = this;
 
-		var updateSpamStatus = function ( error, data ) {
+		const updateSpamStatus = function ( error, data ) {
 			if ( error ) throw error;
 
 			if ( 'spam' != data.status ) {
@@ -170,14 +176,14 @@ export class UndoListItem extends React.Component {
 	};
 
 	render() {
-		var actionMessages = {
+		const actionMessages = {
 			spam: this.props.translate( 'Comment marked as spam' ),
 			trash: this.props.translate( 'Comment trashed' ),
 		};
-		var undo_text = this.props.translate( 'Undo', { context: 'verb: imperative' } );
+		const undo_text = this.props.translate( 'Undo', { context: 'verb: imperative' } );
 
-		var message = actionMessages[ this.props.action ];
-		var isVisible = this.state.isVisible ? { display: 'block' } : { display: 'none' };
+		const message = actionMessages[ this.props.action ];
+		const isVisible = this.state.isVisible ? { display: 'block' } : { display: 'none' };
 
 		return (
 			<div ref={ this.storeInstance } className="wpnc__summary wpnc__undo-item" style={ isVisible }>
@@ -197,6 +203,7 @@ export class UndoListItem extends React.Component {
 
 const mapStateToProps = ( state ) => ( {
 	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {

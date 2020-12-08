@@ -20,6 +20,41 @@ import QueryKey from './key';
  */
 export const DELETE_PATCH_KEY = '__DELETE';
 
+/*
+ * Construct an array of items from an array of keys and a map of key/item pairs.
+ * There is a two-level memoization cache for the `items` and `itemKeys` params.
+ * `itemKeys` can also be `null`, which means a request to return an array of all items.
+ */
+const itemsCache = new WeakMap();
+const ALL_ITEMS_KEY = [];
+
+function getItemsForKeys( items, itemKeys ) {
+	// Get the cache record for the `items` instance, construct a new one if doesn't exist yet.
+	let cacheForItems = itemsCache.get( items );
+	if ( ! cacheForItems ) {
+		cacheForItems = new WeakMap();
+		itemsCache.set( items, cacheForItems );
+	}
+
+	// `itemKeys == null` means a request for array of all items. Cache them with a special key.
+	if ( itemKeys == null ) {
+		let resultForAllKeys = cacheForItems.get( ALL_ITEMS_KEY );
+		if ( ! resultForAllKeys ) {
+			resultForAllKeys = values( items );
+			cacheForItems.set( ALL_ITEMS_KEY, resultForAllKeys );
+		}
+		return resultForAllKeys;
+	}
+
+	// compute result from `items` and `itemKeys`, cached for unique `itemKeys` instances
+	let resultForItemKeys = cacheForItems.get( itemKeys );
+	if ( ! resultForItemKeys ) {
+		resultForItemKeys = itemKeys.map( ( itemKey ) => items[ itemKey ] );
+		cacheForItems.set( itemKeys, resultForItemKeys );
+	}
+	return resultForItemKeys;
+}
+
 /**
  * QueryManager manages items which can be queried and change over time. It is
  * intended to be extended by a more specific implementation which is
@@ -147,17 +182,16 @@ export default class QueryManager {
 	 * @returns {object[]|null}       Items tracked, if known
 	 */
 	getItems( query ) {
-		if ( ! query ) {
-			return values( this.data.items );
+		let itemKeys = null;
+		if ( query ) {
+			const queryKey = this.constructor.QueryKey.stringify( query );
+			itemKeys = this.data.queries[ queryKey ]?.itemKeys;
+			if ( ! itemKeys ) {
+				return null;
+			}
 		}
 
-		const queryKey = this.constructor.QueryKey.stringify( query );
-		const itemKeys = get( this.data.queries, [ queryKey, 'itemKeys' ] );
-		if ( ! itemKeys ) {
-			return null;
-		}
-
-		return itemKeys.map( ( itemKey ) => this.getItem( itemKey ) );
+		return getItemsForKeys( this.data.items, itemKeys );
 	}
 
 	/**
@@ -262,10 +296,10 @@ export default class QueryManager {
 			this.data.items
 		);
 
-		let isModified = nextItems !== this.data.items,
-			nextQueries = this.data.queries,
-			isNewlyReceivedQueryKey = false,
-			receivedQueryKey;
+		let isModified = nextItems !== this.data.items;
+		let nextQueries = this.data.queries;
+		let isNewlyReceivedQueryKey = false;
+		let receivedQueryKey;
 
 		// Skip if no items have been updated, added, or removed. If query
 		// specified with received items, we may need to update queries

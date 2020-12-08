@@ -8,7 +8,7 @@ The following patterns are considered warnings:
 
 ```js
 translate( '%s %s', {
-	args: [ 'Hello', 'World' ]
+	args: [ 'Hello', 'World' ],
 } );
 ```
 
@@ -18,7 +18,7 @@ The following patterns are not warnings:
 translate( '%(greeting)s %(toWhom)s', {
 	args: {
 		greeting: 'Hello',
-		toWhom: 'World'
-	}
+		toWhom: 'World',
+	},
 } );
 ```

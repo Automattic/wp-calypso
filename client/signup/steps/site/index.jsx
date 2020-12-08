@@ -10,19 +10,19 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import wpcom from 'lib/wp';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import formState from 'lib/form-state';
-import { login } from 'lib/paths';
-import ValidationFieldset from 'signup/validation-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormButton from 'components/forms/form-button';
-import FormTextInput from 'components/forms/form-text-input';
-import StepWrapper from 'signup/step-wrapper';
-import LoggedOutForm from 'components/logged-out-form';
-import LoggedOutFormFooter from 'components/logged-out-form/footer';
-import { saveSignupStep, submitSignupStep } from 'state/signup/progress/actions';
+import config from 'calypso/config';
+import wpcom from 'calypso/lib/wp';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import formState from 'calypso/lib/form-state';
+import { login } from 'calypso/lib/paths';
+import ValidationFieldset from 'calypso/signup/validation-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormButton from 'calypso/components/forms/form-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import LoggedOutForm from 'calypso/components/logged-out-form';
+import LoggedOutFormFooter from 'calypso/components/logged-out-form/footer';
+import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies
@@ -39,8 +39,8 @@ const VALIDATION_DELAY_AFTER_FIELD_CHANGES = 1500;
 /**
  * Module variables
  */
-let siteUrlsSearched = [],
-	timesValidationFailed = 0;
+let siteUrlsSearched = [];
+let timesValidationFailed = 0;
 
 class Site extends React.Component {
 	static displayName = 'Site';
@@ -204,10 +204,10 @@ class Site extends React.Component {
 
 	getErrorMessagesWithLogin = ( fieldName ) => {
 		const link = login( {
-				isNative: config.isEnabled( 'login/native-login-links' ),
-				redirectTo: window.location.href,
-			} ),
-			messages = formState.getFieldErrorMessages( this.state.form, fieldName );
+			isNative: config.isEnabled( 'login/native-login-links' ),
+			redirectTo: window.location.href,
+		} );
+		const messages = formState.getFieldErrorMessages( this.state.form, fieldName );
 
 		if ( ! messages ) {
 			return;
@@ -250,7 +250,6 @@ class Site extends React.Component {
 					autoCapitalize={ 'off' }
 					className="site__site-url"
 					disabled={ fieldDisabled }
-					type="text"
 					name="site"
 					value={ formState.getFieldValue( this.state.form, 'site' ) }
 					isError={ formState.isFieldInvalid( this.state.form, 'site' ) }

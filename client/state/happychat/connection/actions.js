@@ -28,8 +28,8 @@ import {
 	HAPPYCHAT_IO_SEND_MESSAGE_USERINFO,
 	HAPPYCHAT_IO_SEND_PREFERENCES,
 	HAPPYCHAT_IO_SEND_TYPING,
-} from 'state/action-types';
-import { HAPPYCHAT_MESSAGE_TYPES } from 'state/happychat/constants';
+} from 'calypso/state/action-types';
+import { HAPPYCHAT_MESSAGE_TYPES } from 'calypso/state/happychat/constants';
 
 /**
  * Returns an action object indicating that the connection is being stablished.

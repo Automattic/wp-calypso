@@ -8,7 +8,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Image dependencies
  */
-import getAppsImage from 'assets/images/illustrations/get-apps-banner.svg';
+import getAppsImage from 'calypso/assets/images/illustrations/get-apps-banner.svg';
 
 const GetAppsIllustration = ( { translate } ) => (
 	<div className="get-apps__illustration">

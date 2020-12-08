@@ -7,16 +7,16 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { READER_FOLLOW } from 'state/reader/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice } from 'state/notices/actions';
-import { follow, unfollow, recordFollowError } from 'state/reader/follows/actions';
-import { subscriptionFromApi } from 'state/data-layer/wpcom/read/following/mine/utils';
-import { bypassDataLayer } from 'state/data-layer/utils';
+import config from 'calypso/config';
+import { READER_FOLLOW } from 'calypso/state/reader/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { follow, unfollow, recordFollowError } from 'calypso/state/reader/follows/actions';
+import { subscriptionFromApi } from 'calypso/state/data-layer/wpcom/read/following/mine/utils';
+import { bypassDataLayer } from 'calypso/state/data-layer/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export function requestFollow( action ) {
 	const feedUrl = get( action, 'payload.feedUrl' );

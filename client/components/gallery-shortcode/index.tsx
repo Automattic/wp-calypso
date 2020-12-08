@@ -9,11 +9,11 @@ import { assign, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Shortcode from 'blocks/shortcode';
-import { parse as parseShortcode } from 'lib/shortcode';
-import { generateGalleryShortcode } from 'lib/media/utils';
-import { GalleryDefaultAttrs } from 'lib/media/constants';
-import { SiteId } from 'wp-calypso-client/types';
+import Shortcode from 'calypso/blocks/shortcode';
+import { parse as parseShortcode } from 'calypso/lib/shortcode';
+import { generateGalleryShortcode } from 'calypso/lib/media/utils';
+import { GalleryDefaultAttrs } from 'calypso/lib/media/constants';
+import { SiteId } from 'calypso/types';
 
 /**
  * Module variables

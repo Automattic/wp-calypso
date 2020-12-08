@@ -9,9 +9,9 @@ import { noop, values } from 'lodash';
 /**
  * Internal Dependencies
  */
-import NavTabs from 'components/section-nav/tabs';
-import SectionNav from 'components/section-nav';
-import NavItem from 'components/section-nav/item';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import SectionNav from 'calypso/components/section-nav';
+import NavItem from 'calypso/components/section-nav/item';
 
 export const SEARCH_TYPES = { POSTS: 'posts', SITES: 'sites' };
 

@@ -13,7 +13,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import { fetchPromotions } from 'woocommerce/state/sites/promotions/actions';
 import { getPromotions } from 'woocommerce/state/selectors/promotions';
 import ActionHeader from 'woocommerce/components/action-header';
@@ -21,9 +21,9 @@ import { Button } from '@automattic/components';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import { setPromotionSearch } from 'woocommerce/state/ui/promotions/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import PromotionsList from './promotions-list';
-import SearchCard from 'components/search-card';
+import SearchCard from 'calypso/components/search-card';
 
 class Promotions extends Component {
 	static propTypes = {

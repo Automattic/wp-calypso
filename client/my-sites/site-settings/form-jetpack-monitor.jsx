@@ -10,24 +10,24 @@ import { isEmpty, partial } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { Card } from '@automattic/components';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import SupportInfo from 'components/support-info';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
-import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { updateSiteMonitorSettings } from 'state/sites/monitor/actions';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
-import isFetchingJetpackModules from 'state/selectors/is-fetching-jetpack-modules';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
-import isUpdatingSiteMonitorSettings from 'state/selectors/is-updating-site-monitor-settings';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
+import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { updateSiteMonitorSettings } from 'calypso/state/sites/monitor/actions';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
+import isUpdatingSiteMonitorSettings from 'calypso/state/selectors/is-updating-site-monitor-settings';
 
 class SiteSettingsFormJetpackMonitor extends Component {
 	state = {};
@@ -65,7 +65,7 @@ class SiteSettingsFormJetpackMonitor extends Component {
 		const { monitorActive, translate } = this.props;
 
 		return (
-			<CompactFormToggle
+			<FormToggle
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'email_notifications' ) }
 				checked={ !! this.state.email_notifications }
@@ -82,20 +82,20 @@ class SiteSettingsFormJetpackMonitor extends Component {
 						),
 					},
 				} ) }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 
 	settingsMonitorWpNoteCheckbox() {
 		const { monitorActive, translate } = this.props;
 		return (
-			<CompactFormToggle
+			<FormToggle
 				disabled={ this.disableForm() || ! monitorActive }
 				onChange={ this.handleToggle( 'wp_note_notifications' ) }
 				checked={ !! this.state.wp_note_notifications }
 			>
 				{ translate( 'Send notifications via WordPress.com notification' ) }
-			</CompactFormToggle>
+			</FormToggle>
 		);
 	}
 

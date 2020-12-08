@@ -17,8 +17,8 @@ import {
 	WP_SUPER_CACHE_TOGGLE_PLUGIN_SUCCESS,
 } from '../../action-types';
 import { receivePlugins, requestPlugins, togglePlugin } from '../actions';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
 	let spy;

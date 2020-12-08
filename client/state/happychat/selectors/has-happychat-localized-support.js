@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import isHappychatClientConnected from 'state/happychat/selectors/is-happychat-client-connected';
+import isHappychatClientConnected from 'calypso/state/happychat/selectors/is-happychat-client-connected';
 
 /**
  * Returns true if Happychat client is connected and server is available to take new localized chats

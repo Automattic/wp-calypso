@@ -10,11 +10,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import StepWrapper from 'signup/step-wrapper';
+import StepWrapper from 'calypso/signup/step-wrapper';
 import { Card, Button } from '@automattic/components';
-import { recordTracksEvent, withAnalytics } from 'state/analytics/actions';
-import { rewindClone } from 'state/activity-log/actions';
-import { submitSignupStep } from 'state/signup/progress/actions';
+import { recordTracksEvent, withAnalytics } from 'calypso/state/analytics/actions';
+import { rewindClone } from 'calypso/state/activity-log/actions';
+import { submitSignupStep } from 'calypso/state/signup/progress/actions';
 
 /**
  * Style dependencies

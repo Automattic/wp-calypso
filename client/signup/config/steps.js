@@ -21,10 +21,9 @@ import {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	addOrRemoveFromProgressStore,
 	maybeRemoveStepForUserlessCheckout,
-} from 'lib/signup/step-actions';
-import { abtest } from 'lib/abtest';
+} from 'calypso/lib/signup/step-actions';
+import { abtest } from 'calypso/lib/abtest';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
@@ -42,7 +41,6 @@ export default generateSteps( {
 	isDomainFulfilled,
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
-	addOrRemoveFromProgressStore,
 	maybeRemoveStepForUserlessCheckout,
 } );
 

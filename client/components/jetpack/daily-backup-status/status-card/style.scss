@@ -1,0 +1,165 @@
+.status-card__message-head {
+	color: var( --studio-gray-80 );
+
+	img {
+		width: 48px;
+	}
+
+	div {
+		font-size: $font-title-small;
+		font-weight: 600;
+	}
+
+	@include breakpoint-deprecated( '>660px' ) {
+		display: flex;
+		font-weight: 600;
+		align-items: center;
+
+		img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		div {
+			margin-left: 12px;
+		}
+	}
+}
+
+.status-card__message-error {
+	color: var( --studio-red-50 );
+}
+
+.status-card__title {
+	font-size: $font-title-medium;
+	font-weight: 600;
+	margin-bottom: 18px;
+}
+
+.status-card__label {
+	max-width: 500px;
+	margin-top: 24px;
+
+	color: var( --studio-gray-80 );
+	text-align: left;
+}
+
+.status-card__meta {
+	margin-bottom: 24px;
+	margin-top: -0.3rem;
+	color: var( --studio-gray-40 );
+	font-weight: 400;
+	font-size: $font-body-small;
+}
+
+.status-card__link-list {
+	margin: 40px 0 0;
+	padding: 0;
+
+	list-style-type: none;
+
+	> li {
+		margin: 12px 0;
+	}
+}
+
+/* Buttons */
+.daily-backup-status .form-button.status-card__support-button {
+	margin: 32px 0;
+}
+
+/* Status-specific rules */
+.status-card__no-backup-last-backup {
+	margin-bottom: 24px;
+	font-style: italic;
+}
+
+/* Details for real-time backups */
+.status-card__realtime-details {
+	margin-top: 48px;
+	text-align: left;
+}
+
+.status-card__realtime-details-card .activity-card .card {
+	margin: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.status-card__realtime-details-card
+	.activity-card
+	.card
+	.activity-log-item__actor
+	.activity-log-item__actor-info {
+	display: flex;
+	& > *:not( :last-child ) {
+		margin-right: 8px;
+	}
+}
+
+.status-card__realtime-details-card
+	.activity-card
+	.card
+	.activity-log-item__actor
+	.activity-log-item__actor-info
+	.activity-log-item__actor-name::after {
+	margin-right: 0.2rem;
+}
+
+.status-card__realtime-details-card .activity-card .card .activity-log-item__actor .gravatar,
+.status-card__realtime-details-card .activity-card .card .activity-log-item__actor svg {
+	width: 30px;
+}
+
+/* Screen size-specific rules */
+.status-card__hide-mobile {
+	display: none;
+}
+
+.status-card__hide-desktop {
+	display: block;
+}
+
+@include breakpoint-deprecated( '>660px' ) {
+	.status-card__hide-mobile {
+		display: block;
+	}
+
+	.status-card__hide-desktop {
+		display: none;
+	}
+
+	.status-card__message-head {
+		display: flex;
+		font-weight: 600;
+		align-items: center;
+
+		img {
+			width: 3rem;
+			height: 3rem;
+		}
+
+		div {
+			margin-left: 12px;
+		}
+	}
+
+	.status-card__title {
+		font-size: $font-headline-small;
+		margin: 8px 0 12px;
+	}
+
+	.status-card__label {
+		margin-top: 32px;
+	}
+
+	.daily-backup-status .form-button.status-card__support-button {
+		width: 50%;
+	}
+
+	.status-card__meta {
+		display: block;
+		margin-top: 0;
+		font-size: $font-body;
+	}
+}

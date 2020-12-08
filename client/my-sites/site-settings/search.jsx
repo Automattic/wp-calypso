@@ -12,30 +12,39 @@ import { overSome } from 'lodash';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import UpsellNudge from 'blocks/upsell-nudge';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import SettingsSectionHeader from 'my-sites/site-settings/settings-section-header';
-import JetpackModuleToggle from 'my-sites/site-settings/jetpack-module-toggle';
-import CompactFormToggle from 'components/forms/form-toggle/compact';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import SupportInfo from 'components/support-info';
-import QueryJetpackConnection from 'components/data/query-jetpack-connection';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isDeactivatingJetpackModule from 'state/selectors/is-deactivating-jetpack-module';
-import { getSitePurchases, isFetchingSitePurchases } from 'state/purchases/selectors';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import { isJetpackSite, getCustomizerUrl } from 'state/sites/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
+import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import SupportInfo from 'calypso/components/support-info';
+import QueryJetpackConnection from 'calypso/components/data/query-jetpack-connection';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isDeactivatingJetpackModule from 'calypso/state/selectors/is-deactivating-jetpack-module';
+import { getSitePurchases, isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import { isJetpackSite, getCustomizerUrl } from 'calypso/state/sites/selectors';
 import {
 	isBusiness,
 	isEnterprise,
 	isVipPlan,
 	isJetpackBusiness,
 	isEcommerce,
-} from 'lib/products-values';
-import { FEATURE_SEARCH, PLAN_BUSINESS } from 'lib/plans/constants';
-import { PRODUCT_JETPACK_SEARCH, isJetpackSearch } from 'lib/products-values/constants';
+	isJetpackSearch,
+} from 'calypso/lib/products-values';
+import { planHasJetpackSearch } from 'calypso/lib/plans';
+import { FEATURE_SEARCH } from 'calypso/lib/plans/constants';
+import {
+	PRODUCT_JETPACK_SEARCH,
+	PRODUCT_WPCOM_SEARCH,
+} from 'calypso/lib/products-values/constants';
 
 class Search extends Component {
 	static defaultProps = {
@@ -54,9 +63,7 @@ class Search extends Component {
 	renderInfoLink( link ) {
 		return (
 			<SupportInfo
-				text={ this.props.translate(
-					'Replaces the default WordPress search with a faster, filterable search experience.'
-				) }
+				text={ this.props.translate( 'Highly relevant, fast, and customizable search results.' ) }
 				link={ link }
 				privacyLink={ false }
 			/>
@@ -84,7 +91,7 @@ class Search extends Component {
 						? this.props.translate(
 								'If deactivated, Jetpack Search will still optimize your search results but visitors will have to submit a search query before seeing any results.'
 						  )
-						: // The following notice is only shown for Professional plan holders.
+						: // The following notice is only shown for Business/Pro plan holders.
 						  this.props.translate(
 								'Instant search is only available with a Jetpack Search subscription.'
 						  ) }
@@ -93,63 +100,46 @@ class Search extends Component {
 		);
 	}
 
-	renderSettingsContent( isUpdating, isEnabled ) {
+	renderSettingsUpdating() {
 		return (
 			<div className="search__module-settings site-settings__child-settings">
-				{ isUpdating && (
-					<FormSettingExplanation>
-						{ this.props.translate( 'Updating settings…' ) }
-					</FormSettingExplanation>
-				) }
-				{ isEnabled && ! isUpdating ? <div>{ this.renderSearchExplanation() }</div> : null }
+				<FormSettingExplanation>
+					{ this.props.translate( 'Updating settings…' ) }
+				</FormSettingExplanation>
 			</div>
 		);
 	}
 
-	renderWPComSettings() {
-		const {
-			isRequestingSettings,
-			isSavingSettings,
-			fields,
-			handleAutosavingToggle,
-			translate,
-		} = this.props;
+	renderUpgradeNotice() {
+		const { siteIsJetpack, siteSlug, translate } = this.props;
+
+		const href = siteIsJetpack
+			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH }`
+			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH }`;
 
 		return (
-			<FormFieldset>
-				{ this.renderInfoLink( 'https://wordpress.com/support/jetpack-search/' ) }
-
-				<CompactFormToggle
-					checked={ !! fields.jetpack_search_enabled }
-					disabled={ isRequestingSettings || isSavingSettings }
-					onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
-				>
-					{ translate( 'Replace WordPress built-in search with an improved search experience' ) }
-				</CompactFormToggle>
-				{ this.renderSettingsContent( isSavingSettings, fields.jetpack_search_enabled ) }
-
-				<div className="site-settings__jetpack-instant-search-toggle">
-					<CompactFormToggle
-						checked={ !! fields.instant_search_enabled }
-						disabled={
-							isRequestingSettings ||
-							isSavingSettings ||
-							! fields.jetpack_search_enabled ||
-							! this.props.hasSearchProduct
-						}
-						onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
-					>
-						{ translate( 'Enable instant search experience (recommended)' ) }
-					</CompactFormToggle>
-					{ this.renderInstantSearchExplanation() }
-				</div>
-			</FormFieldset>
+			<Fragment>
+				<UpsellNudge
+					title={ translate( 'Keep people reading and buying' ) }
+					description={ translate(
+						'Incredibly powerful and customizable, Jetpack Search helps your visitors instantly find the right content – right when they need it.'
+					) }
+					href={ href }
+					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
+					feature={ FEATURE_SEARCH }
+					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PRODUCT_WPCOM_SEARCH }
+					showIcon={ true }
+				/>
+			</Fragment>
 		);
 	}
 
-	renderJetpackSettings() {
+	renderSettingsCard() {
 		const {
 			activatingSearchModule,
+			fields,
+			handleAutosavingToggle,
+			isLoading,
 			isRequestingSettings,
 			isSavingSettings,
 			isSearchModuleActive,
@@ -158,82 +148,52 @@ class Search extends Component {
 		} = this.props;
 
 		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<FormFieldset className="jetpack-search-settings">
-				{ this.renderInfoLink( 'https://jetpack.com/support/search/' ) }
-
-				<JetpackModuleToggle
-					siteId={ siteId }
-					moduleSlug="search"
-					label={ translate(
-						'Replace WordPress built-in search with an improved search experience'
-					) }
-					disabled={ isRequestingSettings || isSavingSettings }
-				/>
-				{ this.renderSettingsContent( activatingSearchModule, isSearchModuleActive ) }
-
-				<div className="site-settings__jetpack-instant-search-toggle">
-					<CompactFormToggle
-						checked={ !! this.props.fields.instant_search_enabled }
-						disabled={
-							isRequestingSettings ||
-							isSavingSettings ||
-							! isSearchModuleActive ||
-							! this.props.hasSearchProduct
-						}
-						onChange={ this.props.handleAutosavingToggle( 'instant_search_enabled' ) }
-					>
-						{ translate( 'Enable instant search experience (recommended)' ) }
-					</CompactFormToggle>
-					{ this.renderInstantSearchExplanation() }
-				</div>
-			</FormFieldset>
-		);
-	}
-
-	renderUpgradeNotice() {
-		return (
-			<Fragment>
-				<UpsellNudge
-					description={
-						this.props.siteIsJetpack
-							? this.props.translate(
-									'Jetpack Search replaces the built-in search with a fast, scalable, and customizable search powered by WordPress.com. The result: Your users find the content they want, faster.'
-							  )
-							: this.props.translate(
-									'The built-in WordPress search is great for sites without much content. But as your site grows, searches slow down and return less relevant results.'
-							  )
-					}
-					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
-					feature={ FEATURE_SEARCH }
-					plan={ this.props.siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PLAN_BUSINESS }
-					showIcon={ true }
-					title={
-						this.props.siteIsJetpack
-							? this.props.translate(
-									'Add faster, more advanced searching to your site with Jetpack Search'
-							  )
-							: this.props.translate(
-									'Add faster, more advanced searching to your site with WordPress.com Business'
-							  )
-					}
-				/>
-			</Fragment>
-		);
-	}
-
-	renderSettingsCard() {
-		return (
 			<Fragment>
 				<CompactCard className="search__card site-settings__traffic-settings">
-					{ this.props.siteIsJetpack ? this.renderJetpackSettings() : this.renderWPComSettings() }
+					{ /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ }
+					<FormFieldset className="jetpack-search-settings">
+						{ this.props.siteIsJetpack ? (
+							<JetpackModuleToggle
+								siteId={ siteId }
+								moduleSlug="search"
+								label={ translate( 'Improve built-in WordPress search performance.' ) }
+								disabled={ isRequestingSettings || isSavingSettings }
+							/>
+						) : (
+							<FormToggle
+								checked={ !! fields.jetpack_search_enabled }
+								disabled={ isRequestingSettings || isSavingSettings }
+								onChange={ handleAutosavingToggle( 'jetpack_search_enabled' ) }
+							>
+								{ translate( 'Improve built-in WordPress search performance.' ) }
+							</FormToggle>
+						) }
+
+						<div className="site-settings__jetpack-instant-search-toggle">
+							<FormToggle
+								checked={ !! fields.instant_search_enabled }
+								disabled={
+									isRequestingSettings ||
+									isSavingSettings ||
+									! ( isSearchModuleActive || fields.jetpack_search_enabled ) ||
+									! this.props.hasSearchProduct
+								}
+								onChange={ handleAutosavingToggle( 'instant_search_enabled' ) }
+							>
+								{ translate( 'Enable instant search experience (recommended)' ) }
+							</FormToggle>
+							{ isLoading || activatingSearchModule || isSavingSettings
+								? this.renderSettingsUpdating()
+								: this.renderInstantSearchExplanation() }
+						</div>
+					</FormFieldset>
 				</CompactCard>
-				{ ( this.props.isSearchModuleActive || this.props.fields.jetpack_search_enabled ) && (
+				{ fields.instant_search_enabled && (
 					<CompactCard
 						href={ this.props.customizerUrl }
 						target={ this.props.siteIsJetpack ? 'external' : null }
 					>
-						{ this.props.translate( 'Add Search Widget' ) }
+						{ translate( 'Customize Search' ) }
 					</CompactCard>
 				) }
 			</Fragment>
@@ -245,44 +205,49 @@ class Search extends Component {
 			<div className="site-settings__search-block">
 				{ this.props.siteId && <QueryJetpackConnection siteId={ this.props.siteId } /> }
 				{ this.props.siteId && <QuerySitePurchases siteId={ this.props.siteId } /> }
-				<SettingsSectionHeader title={ this.props.translate( 'Jetpack Search' ) } />
-				{ this.props.isLoading ? (
-					<UpsellNudge title="Loading..." plan={ PRODUCT_JETPACK_SEARCH } />
-				) : (
-					<Fragment>
-						{ ! this.props.fields.jetpack_search_supported && ! this.props.isSearchEligible
-							? this.renderUpgradeNotice()
-							: this.renderSettingsCard() }
-					</Fragment>
-				) }
+				<SettingsSectionHeader title={ this.props.translate( 'Jetpack Search' ) }>
+					{ this.renderInfoLink(
+						this.props.hasSearchProduct
+							? 'https://jetpack.com/support/search/'
+							: this.props.upgradeLink
+					) }
+				</SettingsSectionHeader>
+				{ ( this.props.hasSearchProduct || this.props.isSearchEligible ) &&
+					this.renderSettingsCard() }
+				{ ! this.props.hasSearchProduct && this.renderUpgradeNotice() }
 			</div>
 		);
 	}
 }
 
 const hasBusinessPlan = overSome( isJetpackBusiness, isBusiness, isEnterprise, isEcommerce );
-const checkForSearchProduct = ( purchase ) =>
-	purchase.active && isJetpackSearch( purchase.productSlug );
+const checkForSearchProduct = ( purchase ) => purchase.active && isJetpackSearch( purchase );
 export default connect( ( state, { isRequestingSettings } ) => {
 	const site = getSelectedSite( state );
 	const siteId = getSelectedSiteId( state );
-	const hasSearchProduct = getSitePurchases( state, siteId ).find( checkForSearchProduct );
+	const hasSearchProduct =
+		getSitePurchases( state, siteId ).find( checkForSearchProduct ) ||
+		planHasJetpackSearch( site.plan?.product_slug );
 	const isSearchEligible =
 		( site && site.plan && ( hasBusinessPlan( site.plan ) || isVipPlan( site.plan ) ) ) ||
 		!! hasSearchProduct;
+	const upgradeLink =
+		'https://jetpack.com/upgrade/search/?utm_campaign=site-settings&utm_source=calypso&site=' +
+		getSelectedSiteSlug( state );
 
 	return {
-		siteId,
 		activatingSearchModule:
 			!! isActivatingJetpackModule( state, siteId, 'search' ) ||
 			!! isDeactivatingJetpackModule( state, siteId, 'search' ),
+		customizerUrl: getCustomizerUrl( state, siteId, 'jetpack_search' ),
 		hasSearchProduct,
 		isSearchEligible,
 		isSearchModuleActive: !! isJetpackModuleActive( state, siteId, 'search' ),
 		isLoading: isRequestingSettings || isFetchingSitePurchases( state ),
 		site: getSelectedSite( state ),
+		siteId,
 		siteSlug: getSelectedSiteSlug( state ),
 		siteIsJetpack: isJetpackSite( state, siteId ),
-		customizerUrl: getCustomizerUrl( state, siteId ),
+		upgradeLink,
 	};
 } )( localize( Search ) );

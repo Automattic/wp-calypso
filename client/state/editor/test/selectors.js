@@ -2,7 +2,6 @@
  * External dependencies
  */
 import { expect } from 'chai';
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -12,9 +11,8 @@ import {
 	isEditorNewPost,
 	getEditorNewPostPath,
 	getEditorPath,
-	getEditorPublishButtonStatus,
 } from '../selectors';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 
 describe( 'selectors', () => {
 	describe( '#getEditorPostId()', () => {
@@ -315,115 +313,6 @@ describe( 'selectors', () => {
 			);
 
 			expect( path ).to.equal( '/edit/jetpack-portfolio/example.wordpress.com' );
-		} );
-	} );
-
-	describe( '#getEditorPublishButtonStatus()', () => {
-		const siteId = 123;
-		const postId = 456;
-
-		const editorState = ( post, edits = null, canUserPublishPosts = true ) => ( {
-			posts: {
-				queries: {
-					[ siteId ]: new PostQueryManager( {
-						items: {
-							[ postId ]: post,
-						},
-					} ),
-				},
-				edits: {
-					[ siteId ]: {
-						[ postId ]: edits,
-					},
-				},
-			},
-			ui: {
-				selectedSiteId: siteId,
-			},
-			editor: { postId },
-			currentUser: {
-				capabilities: {
-					[ siteId ]: {
-						publish_posts: canUserPublishPosts,
-					},
-				},
-			},
-		} );
-
-		test( 'should return "update" if the post was originally published and is still slated to be published', () => {
-			const state = editorState( { status: 'publish' }, null );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
-		} );
-
-		test( 'should return "update" if the post was originally published and is currently reverted to non-published status', () => {
-			const state = editorState( { status: 'publish' }, [ { status: 'draft' } ] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
-		} );
-
-		test( 'should return "schedule" if the post is dated in the future and not scheduled', () => {
-			const date = moment().add( 1, 'month' ).format();
-			const state = editorState( { status: 'draft' }, [ { date } ] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
-		} );
-
-		test( 'should return "schedule" if the post is dated in the future and published', () => {
-			const date = moment().add( 1, 'month' ).format();
-			const state = editorState( { status: 'publish' }, [ { date } ] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'schedule' );
-		} );
-
-		test( 'should return "update" if the post is scheduled and dated in the future', () => {
-			const date = moment().add( 1, 'month' ).format();
-			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
-		} );
-
-		test( 'should return "update" if the post is scheduled, dated in the future, and next status is draft', () => {
-			const date = moment().add( 1, 'month' ).format();
-			const state = editorState( { status: 'future', date }, [
-				{ title: 'change', status: 'draft' },
-			] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'update' );
-		} );
-
-		test( 'should return "publish" if the post is scheduled and dated in the past', () => {
-			const date = moment().subtract( 1, 'month' ).format();
-			const state = editorState( { status: 'future', date }, [ { title: 'change' } ] );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'publish' );
-		} );
-
-		test( 'should return "publish" if the post is a draft', () => {
-			const state = editorState( { status: 'draft' } );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'publish' );
-		} );
-
-		test( 'should return "requestReview" if the post is a draft and user can\'t publish', () => {
-			const state = editorState( { status: 'draft' }, null, false );
-			expect( getEditorPublishButtonStatus( state ) ).to.equal( 'requestReview' );
-		} );
-
-		test( 'should return null if no site is selected', () => {
-			const state = {
-				posts: { queries: {}, edits: {} },
-				ui: {
-					selectedSiteId: null,
-				},
-				editor: { postId: null },
-				currentUser: { capabilities: {} },
-			};
-			expect( getEditorPublishButtonStatus( state ) ).to.be.null;
-		} );
-
-		test( 'should return null if site and post selected, but post not yet loaded', () => {
-			const state = {
-				posts: { queries: {}, edits: {} },
-				ui: {
-					selectedSiteId: siteId,
-				},
-				editor: { postId },
-				currentUser: { capabilities: {} },
-			};
-			expect( getEditorPublishButtonStatus( state ) ).to.be.null;
 		} );
 	} );
 } );

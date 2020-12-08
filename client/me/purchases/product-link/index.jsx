@@ -10,22 +10,22 @@ import i18n from 'i18n-calypso';
 /**
  * Internal Dependencies
  */
-import config from 'config';
-import { domainManagementEdit } from 'my-sites/domains/paths';
-import { emailManagement } from 'my-sites/email/paths';
-import { getThemeDetailsUrl } from 'state/themes/selectors';
+import config from 'calypso/config';
+import { domainManagementEdit } from 'calypso/my-sites/domains/paths';
+import { emailManagement } from 'calypso/my-sites/email/paths';
+import { getThemeDetailsUrl } from 'calypso/state/themes/selectors';
 import {
 	isDomainProduct,
 	isGoogleApps,
 	isPlan,
 	isSiteRedirect,
 	isTheme,
-} from 'lib/products-values';
+} from 'calypso/lib/products-values';
 
 const ProductLink = ( { productUrl, purchase, selectedSite } ) => {
-	let props = {},
-		url,
-		text;
+	let props = {};
+	let url;
+	let text;
 
 	if ( ! selectedSite ) {
 		return <span />;

@@ -7,14 +7,14 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { withPerformanceTrackerStop } from 'lib/performance-tracking';
+import EmptyContent from 'calypso/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 /**
  * Image dependencies
  */
-import charactersImage from 'assets/images/reader/reader-conversations-characters.svg';
+import charactersImage from 'calypso/assets/images/reader/reader-conversations-characters.svg';
 
 class ConversationsEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -30,15 +30,15 @@ class ConversationsEmptyContent extends React.Component {
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	render() {
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read/search"
-				>
-					{ this.props.translate( 'Find posts to follow' ) }
-				</a>
-			),
-			secondaryAction = null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read/search"
+			>
+				{ this.props.translate( 'Find posts to follow' ) }
+			</a>
+		);
+		const secondaryAction = null;
 
 		return (
 			<EmptyContent

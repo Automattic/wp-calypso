@@ -6,8 +6,8 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { ReaderCombinedCard, combinedCardPostKeyToKeys } from 'blocks/reader-combined-card';
-import { posts, feed, site } from 'blocks/reader-post-card/docs/fixtures';
+import { ReaderCombinedCard, combinedCardPostKeyToKeys } from 'calypso/blocks/reader-combined-card';
+import { posts, feed, site } from 'calypso/blocks/reader-post-card/docs/fixtures';
 
 const postKey = {
 	blogId: site.ID,

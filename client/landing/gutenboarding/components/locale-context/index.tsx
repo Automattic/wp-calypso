@@ -19,6 +19,7 @@ import type { User } from '@automattic/data-stores';
  * Internal dependencies
  */
 import { USER_STORE } from '../../stores/user';
+import { recordOnboardingError } from '../../lib/analytics';
 
 const DEFAULT_LOCALE_SLUG: string = config( 'i18n_default_locale_slug' );
 const USE_TRANSLATION_CHUNKS: boolean =
@@ -31,7 +32,7 @@ interface AppWindow extends Window {
 	installedChunks?: string[];
 	i18nLocaleStrings?: string;
 	__requireChunkCallback__?: {
-		add( callback: Function ): void;
+		add( callback: Function ): void; // eslint-disable-line @typescript-eslint/ban-types
 		getInstalledChunks(): string[];
 	};
 	updateLocale: ( newLocale: string ) => Promise< void >; // fixme: this is just for demonstration purposes
@@ -48,12 +49,14 @@ export const ChangeLocaleContextConsumer = ChangeLocaleContext.Consumer;
 
 export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 	const [ contextLocaleData, setContextLocaleData ] = React.useState< LocaleData | undefined >();
+	const [ localeDataLoaded, setLocaleDataLoaded ] = React.useState( false );
 
 	const setLocale = ( newLocaleData: LocaleData | undefined ) => {
 		// Translations done within react are made using the localData passed to the <I18nProvider/>.
 		// We must also set the locale for translations done outside of a react rendering cycle using setLocaleData.
 		setLocaleData( newLocaleData );
 		setContextLocaleData( newLocaleData );
+		setLocaleDataLoaded( true );
 	};
 
 	const changeLocale = async ( newLocale: string ) => {
@@ -70,7 +73,8 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 				setLocale( localeData );
 			}
 		} catch ( error ) {
-			console.error( error ); // eslint-disable-line no-console
+			recordOnboardingError( error );
+			setLocale( undefined );
 		}
 	};
 
@@ -86,7 +90,9 @@ export const LocaleContext: React.FunctionComponent = ( { children } ) => {
 
 	return (
 		<ChangeLocaleContext.Provider value={ changeLocale }>
-			<I18nProvider localeData={ contextLocaleData }>{ children }</I18nProvider>
+			<I18nProvider localeData={ contextLocaleData }>
+				{ localeDataLoaded ? children : null }
+			</I18nProvider>
 		</ChangeLocaleContext.Provider>
 	);
 };

@@ -19,7 +19,7 @@ import {
 import UsAddressFieldset from './us-address-fieldset';
 import EuAddressFieldset from './eu-address-fieldset';
 import UkAddressFieldset from './uk-address-fieldset';
-import { Input, HiddenInput } from 'my-sites/domains/components/form';
+import { Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
 
 export class RegionAddressFieldsets extends Component {
 	static propTypes = {

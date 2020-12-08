@@ -1,26 +1,19 @@
-Plugin Site Jetpack
-===================
+# Plugin Site Jetpack
 
 This component is used to display a single instance of a plugin within a jetpack single site, including all the options & possible actions the user can do with it
 
-#### How to use:
+## How to use
 
 ```js
-import PluginSiteJetpack from 'my-sites/plugins/plugin-site/plugin-site-jetpack';
+import PluginSiteJetpack from 'calypso/my-sites/plugins/plugin-site/plugin-site-jetpack';
 
-render() {
-    return (
-        <PluginSiteJetpack
-            site={ site }
-            plugin={ plugin }
-            notices={ notices }
-            />
-    );
+function render() {
+	return <PluginSiteJetpack site={ site } plugin={ plugin } notices={ notices } />;
 }
 ```
 
-#### Props
+## Props
 
-* `site`: a site object with the site which would be associated to the component.
-* `plugin`: a plugin object.
-* `notices`: a notices object.
+- `site`: a site object with the site which would be associated to the component.
+- `plugin`: a plugin object.
+- `notices`: a notices object.

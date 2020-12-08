@@ -1,5 +1,4 @@
-Query Shortcode
-================
+# Query Shortcode
 
 `<QueryShortcode />` is a React component used in managing network requests for a specific shortcode in a given site.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId` and `shortcode`. It does not accept any c
 
 ```jsx
 import React from 'react';
-import QueryShortcode from 'components/data/query-shortcode';
+import QueryShortcode from 'calypso/components/data/query-shortcode';
 import MySiteShortcodeItemDetail from './item-detail';
 
 export default function MySiteShortcodeItem( { shortcode } ) {

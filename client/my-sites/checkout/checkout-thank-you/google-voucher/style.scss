@@ -50,12 +50,11 @@
 	padding: 20px 24px 24px;
 	background-color: #fbfcfd;
 	height: 116px;
-	box-shadow: 0 1px 0 0 var( --color-neutral-10 ),
-		0 1px 0 var( --color-neutral-0 );
+	box-shadow: 0 1px 0 0 var( --color-neutral-10 ), 0 1px 0 var( --color-neutral-0 );
 }
 
 .google-voucher__dialog-header-image {
-	width: (149 / 482) * 100%;
+	width: ( 149 / 482 ) * 100%;
 	margin-right: 20px;
 }
 

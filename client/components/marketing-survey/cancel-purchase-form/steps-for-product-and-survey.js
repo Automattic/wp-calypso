@@ -8,10 +8,10 @@ import {
 	TYPE_PERSONAL,
 	TYPE_PREMIUM,
 	TYPE_BUSINESS,
-} from 'lib/plans/constants';
-import { findPlansKeys } from 'lib/plans';
-import { isPlan, includesProduct } from 'lib/products-values';
-import { abtest } from 'lib/abtest';
+} from 'calypso/lib/plans/constants';
+import { findPlansKeys } from 'calypso/lib/plans';
+import { isPlan, includesProduct } from 'calypso/lib/products-values';
+import { abtest } from 'calypso/lib/abtest';
 import * as steps from './steps';
 
 const BUSINESS_PLANS = findPlansKeys( { group: GROUP_WPCOM, type: TYPE_BUSINESS } );

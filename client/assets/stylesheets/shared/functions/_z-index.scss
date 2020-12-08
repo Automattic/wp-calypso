@@ -51,6 +51,7 @@ $z-layers: (
 		'.reader-full-post__sidebar-comment-like': 1,
 		'.list-stream__header-follow': 0,
 		'.following__intro-close-icon-bg' : 0,
+		'.form-text-input-with-affixes .form-text-input': 1,
 		'.is-section-signup': 1,
 		'.media-library .search.is-expanded-to-container': 1,
 		'.ribbon': 1,
@@ -84,8 +85,6 @@ $z-layers: (
 		'.comment-detail.card.is-collapsed:hover': 1,
 		'.comment-detail.card.accessible-focus:focus': 1,
 		'.web-preview__inner .spinner-line': 1,
-		'.google-my-business__close-icon': 1,
-		'.google-my-business__stats-nudge.dismissible-card__close-icon': 1,
 		'.is-section-purchases .search': 1,
 		'.checklist__task': 1,
 		'.editor-sidebar': 2,
@@ -115,7 +114,6 @@ $z-layers: (
 		'.sticky-panel.is-sticky .sticky-panel__content': 20,
 		'.editor-featured-image .editor-drawer-well__remove': 20,
 		'.main': 20, //TODO: this doesn't always have a stacking context
-		//'tinymce-toolbar': 20, client/components/tinymce/index.jsx
 		'.main.calypsoify.is-iframe': 20,
 		'.search': 22,
 		'.reader-update-notice': 22,
@@ -171,6 +169,7 @@ $z-layers: (
 		'.dialog__backdrop': 100200,
 		'.wplink__dialog.dialog.card': 100200,
 		'.web-preview': 100200,
+		'.plan-storage__tooltip': 100300,
 		'.popover.gallery__order-popover': 100300,
 		'popover.is-dialog-visible': 100300,
 		'.popover.info-tooltip__container': 100300,
@@ -184,9 +183,7 @@ $z-layers: (
 		'.webpack-build-monitor': 99999999,
 		'.image-selector__item.is-transient::after': 1,
 		'.image-selector__item .spinner': 2,
-		'.upwork-stats-nudge__close-icon': 1,
 		'.people-list-item.card.is-compact:focus': 1,
-		'.themes-banner__close': 1,
 	),
 	'.is-section-signup': (
 		'.is-section-signup::before': -1,

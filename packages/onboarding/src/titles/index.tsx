@@ -2,15 +2,19 @@
  * External dependencies
  */
 import * as React from 'react';
+import classnames from 'classnames';
 
 import './styles.scss';
 
-/* eslint-disable wpcalypso/jsx-classname-namespace */
+interface TitlesProps {
+	className?: string;
+}
 
-export const Title: React.FunctionComponent = ( { children } ) => (
-	<h1 className="onboarding-title">{ children }</h1>
+/* eslint-disable wpcalypso/jsx-classname-namespace */
+export const Title: React.FunctionComponent< TitlesProps > = ( { className, children } ) => (
+	<h1 className={ classnames( 'onboarding-title', className ) }>{ children }</h1>
 );
 
-export const SubTitle: React.FunctionComponent = ( { children } ) => (
-	<h2 className="onboarding-subtitle">{ children }</h2>
+export const SubTitle: React.FunctionComponent< TitlesProps > = ( { className, children } ) => (
+	<h2 className={ classnames( 'onboarding-subtitle', className ) }>{ children }</h2>
 );

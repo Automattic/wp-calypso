@@ -10,13 +10,13 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { isRequestingLists } from 'woocommerce/state/sites/settings/mailchimp/selectors';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import Notice from 'components/notice';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import Notice from 'calypso/components/notice';
 import QueryMailChimpLists from 'woocommerce/state/sites/settings/mailchimp/queryLists';
 
 const NewsletterSettings = ( { storeData = {}, onChange, siteId, isRequesting, translate } ) => {

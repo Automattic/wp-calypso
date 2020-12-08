@@ -6,18 +6,19 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { noop } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Internal dependencies
  */
-import SiteIcon from 'blocks/site-icon';
-import SiteIndicator from 'my-sites/site-indicator';
-import { getSite, getSiteSlug, isSitePreviewable } from 'state/sites/selectors';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import SiteIcon from 'calypso/blocks/site-icon';
+import SiteIndicator from 'calypso/my-sites/site-indicator';
+import { getSite, getSiteSlug, isSitePreviewable } from 'calypso/state/sites/selectors';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
 
 /**
  * Style dependencies
@@ -97,7 +98,7 @@ class Site extends React.Component {
 	};
 
 	render() {
-		const { site, translate } = this.props;
+		const { isSiteUnlaunched, site, translate } = this.props;
 
 		if ( ! site ) {
 			// we could move the placeholder state here
@@ -115,6 +116,12 @@ class Site extends React.Component {
 			'is-highlighted': this.props.isHighlighted,
 			'is-compact': this.props.compact,
 		} );
+
+		// To ensure two Coming Soon badges don't appear while we introduce public coming soon
+		const isPublicComingSoon =
+			isEnabled( 'coming-soon-v2' ) && ! site.is_private && this.props.site.is_coming_soon;
+		// isPrivateAndUnlaunched means it is an unlaunched coming soon v1 site
+		const isPrivateAndUnlaunched = site.is_private && isSiteUnlaunched;
 
 		return (
 			<div className={ siteClass }>
@@ -145,18 +152,26 @@ class Site extends React.Component {
 					<div className="site__info">
 						<div className="site__title">{ site.title }</div>
 						<div className="site__domain">
-							{ this.props.homeLink
+							{ /* eslint-disable-next-line no-nested-ternary */ }
+							{ isEnabled( 'nav-unification' )
+								? site.domain
+								: this.props.homeLink
 								? translate( 'View %(domain)s', {
 										args: { domain: site.domain },
 								  } )
 								: site.domain }
 						</div>
 						{ /* eslint-disable wpcalypso/jsx-gridicon-size */ }
-						{ this.props.site.is_private && (
+						{ this.props.site.is_private && ( // Coming Soon v1
 							<span className="site__badge site__badge-private">
-								{ this.props.site.is_coming_soon
+								{ this.props.site.is_coming_soon || isPrivateAndUnlaunched
 									? translate( 'Coming Soon' )
 									: translate( 'Private' ) }
+							</span>
+						) }
+						{ isPublicComingSoon && ( // Coming Soon v2
+							<span className="site__badge site__badge-coming-soon">
+								{ translate( 'Coming Soon' ) }
 							</span>
 						) }
 						{ site.options && site.options.is_redirect && (
@@ -190,6 +205,7 @@ function mapStateToProps( state, ownProps ) {
 		site,
 		isPreviewable: isSitePreviewable( state, siteId ),
 		siteSlug: getSiteSlug( state, siteId ),
+		isSiteUnlaunched: isUnlaunchedSite( state, siteId ),
 	};
 }
 

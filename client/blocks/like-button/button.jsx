@@ -24,7 +24,7 @@ class LikeButton extends PureComponent {
 		showZeroCount: PropTypes.bool,
 		likeCount: PropTypes.number,
 		showLabel: PropTypes.bool,
-		tagName: PropTypes.string,
+		tagName: PropTypes.oneOfType( [ PropTypes.string, PropTypes.object ] ),
 		onLikeToggle: PropTypes.func,
 		likedLabel: PropTypes.string,
 		iconSize: PropTypes.number,

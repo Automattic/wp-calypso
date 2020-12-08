@@ -18,12 +18,13 @@ import {
 	PREFERENCES_SAVE,
 	PREFERENCES_SAVE_FAILURE,
 	PREFERENCES_SAVE_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
-import { useSandbox } from 'test-helpers/use-sinon';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
+import { useSandbox } from 'calypso/test-helpers/use-sinon';
 
 describe( 'actions', () => {
-	let sandbox, spy;
+	let sandbox;
+	let spy;
 
 	useSandbox( ( newSandbox ) => {
 		sandbox = newSandbox;
@@ -71,7 +72,7 @@ describe( 'actions', () => {
 		} );
 	} );
 
-	describe( 'fetchPreferences()', () => {
+	describe( 'fetchPreferences() with error', () => {
 		useNock( ( nock ) => {
 			nock( 'https://public-api.wordpress.com:443' )
 				.persist()

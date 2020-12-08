@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isFetchingJetpackModules from 'state/selectors/is-fetching-jetpack-modules';
-import { fetchModuleList } from 'state/jetpack/modules/actions';
+import isFetchingJetpackModules from 'calypso/state/selectors/is-fetching-jetpack-modules';
+import { fetchModuleList } from 'calypso/state/jetpack/modules/actions';
 
 class QueryJetpackModules extends Component {
 	static propTypes = {

@@ -11,24 +11,24 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config, { isEnabled } from 'config';
-import ExternalLink from 'components/external-link';
-import Gridicon from 'components/gridicon';
-import LoggedOutFormBackLink from 'components/logged-out-form/back-link';
+import config, { isEnabled } from 'calypso/config';
+import ExternalLink from 'calypso/components/external-link';
+import Gridicon from 'calypso/components/gridicon';
+import LoggedOutFormBackLink from 'calypso/components/logged-out-form/back-link';
 import {
 	isCrowdsignalOAuth2Client,
 	isJetpackCloudOAuth2Client,
 	isWooOAuth2Client,
-} from 'lib/oauth2-clients';
-import { addQueryArgs, getUrlParts } from 'lib/url';
-import { getCurrentOAuth2Client } from 'state/oauth2-clients/ui/selectors';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getCurrentRoute from 'state/selectors/get-current-route';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { login } from 'lib/paths';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import { resetMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import { isDomainConnectAuthorizePath } from 'lib/domains/utils';
+} from 'calypso/lib/oauth2-clients';
+import { addQueryArgs, getUrlParts } from 'calypso/lib/url';
+import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { login } from 'calypso/lib/paths';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import { isDomainConnectAuthorizePath } from 'calypso/lib/domains/utils';
 
 export class LoginLinks extends React.Component {
 	static propTypes = {
@@ -308,10 +308,10 @@ export class LoginLinks extends React.Component {
 				 */
 				signupUrl = currentQuery.redirect_to;
 			} else {
-				signupUrl = '/jetpack/new';
+				signupUrl = '/jetpack/connect';
 			}
 		} else if ( '/jetpack-connect' === pathname ) {
-			signupUrl = '/jetpack/new';
+			signupUrl = '/jetpack/connect';
 		} else if ( signupFlow ) {
 			signupUrl += '/' + signupFlow;
 		}

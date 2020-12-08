@@ -7,13 +7,13 @@ import { localize } from 'i18n-calypso';
 import { assign, findIndex, fromPairs, noop } from 'lodash';
 import classNames from 'classnames';
 import debugFactory from 'debug';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import { ScreenReaderText } from '@automattic/components';
-import { hasTouch } from 'lib/touch-detect';
+import { hasTouch } from 'calypso/lib/touch-detect';
 
 const debug = debugFactory( 'calypso:forms:sortable-list' );
 
@@ -125,7 +125,8 @@ class SortableList extends React.Component {
 			.current.getBoundingClientRect();
 
 		const index = findIndex( this.props.children, ( child, i ) => {
-			let isBeyond, permittedVertical;
+			let isBeyond;
+			let permittedVertical;
 
 			// Avoid self-comparisons for the active item
 			if ( i === this.state.activeIndex ) {
@@ -184,8 +185,8 @@ class SortableList extends React.Component {
 	};
 
 	moveItem = ( direction ) => {
-		const increment = 'previous' === direction ? -1 : 1,
-			activeOrder = Object.keys( this.props.children ).map( Number );
+		const increment = 'previous' === direction ? -1 : 1;
+		const activeOrder = Object.keys( this.props.children ).map( Number );
 
 		activeOrder[ this.state.activeIndex + increment ] = this.state.activeIndex;
 		activeOrder[ this.state.activeIndex ] = this.state.activeIndex + increment;

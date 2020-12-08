@@ -1,5 +1,4 @@
-Image
-===============
+# Image
 
 Image is a React component that wraps a normal `img` element and adds a class
 to the image element if the image fails to load.
@@ -8,7 +7,7 @@ to the image element if the image fails to load.
 
 ```jsx
 import React from 'react';
-import Image from 'components/image';
+import Image from 'calypso/components/image';
 
 const MyComponent = () => <Image src="http://example.com/fails" className="my-image" />;
 ```

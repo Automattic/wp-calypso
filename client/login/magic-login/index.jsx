@@ -13,26 +13,26 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { login } from 'lib/paths';
-import { CHECK_YOUR_EMAIL_PAGE } from 'state/login/magic-login/constants';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
-import getCurrentQueryArguments from 'state/selectors/get-current-query-arguments';
-import getMagicLoginCurrentView from 'state/selectors/get-magic-login-current-view';
-import { getCurrentRoute } from 'state/selectors/get-current-route';
-import { hideMagicLoginRequestForm } from 'state/login/magic-login/actions';
-import LocaleSuggestions from 'components/locale-suggestions';
+import notices from 'calypso/notices';
+import { login } from 'calypso/lib/paths';
+import { CHECK_YOUR_EMAIL_PAGE } from 'calypso/state/login/magic-login/constants';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
+import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
+import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
+import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
+import { hideMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import {
 	recordTracksEventWithClientId as recordTracksEvent,
 	recordPageViewWithClientId as recordPageView,
 	enhanceWithSiteType,
-} from 'state/analytics/actions';
-import { withEnhancers } from 'state/utils';
-import Main from 'components/main';
-import JetpackHeader from 'components/jetpack-header';
+} from 'calypso/state/analytics/actions';
+import { withEnhancers } from 'calypso/state/utils';
+import Main from 'calypso/components/main';
+import JetpackHeader from 'calypso/components/jetpack-header';
 import RequestLoginEmailForm from './request-login-email-form';
-import GlobalNotices from 'components/global-notices';
-import Gridicon from 'components/gridicon';
+import GlobalNotices from 'calypso/components/global-notices';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies

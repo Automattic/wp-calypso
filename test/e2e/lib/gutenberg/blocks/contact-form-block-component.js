@@ -9,13 +9,16 @@ import { By } from 'selenium-webdriver';
 import * as driverHelper from '../../driver-helper';
 import GutenbergBlockComponent from './gutenberg-block-component';
 
-export class ContactFormBlockComponent extends GutenbergBlockComponent {
-	constructor( driver, blockID ) {
-		super( driver, blockID );
-	}
+class ContactFormBlockComponent extends GutenbergBlockComponent {
+	static blockTitle = 'Form';
+	static blockName = 'jetpack/contact-form';
+	static blockFrontendSelector = By.css( '.entry-content .wp-block-jetpack-contact-form' );
 
 	async _postInit() {
-		return await driverHelper.clickWhenClickable( this.driver, By.css( '.components-button.block-editor-block-variation-picker__variation' ) );
+		return await driverHelper.clickWhenClickable(
+			this.driver,
+			By.css( '.components-button.block-editor-block-variation-picker__variation' )
+		);
 	}
 
 	async openEditSettings() {
@@ -50,3 +53,5 @@ export class ContactFormBlockComponent extends GutenbergBlockComponent {
 		);
 	}
 }
+
+export { ContactFormBlockComponent };

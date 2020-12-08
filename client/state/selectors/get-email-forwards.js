@@ -6,7 +6,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import 'state/email-forwarding/init';
+import 'calypso/state/email-forwarding/init';
 
 /**
  * Retrieve a list of email forwards for a particular domain

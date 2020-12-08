@@ -12,8 +12,9 @@ import { forEach } from 'lodash';
  * Internal dependencies
  */
 import BulkSelect from 'woocommerce/components/bulk-select';
-import FoldableCard from 'components/foldable-card';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FoldableCard from 'calypso/components/foldable-card';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
 import PackagesListItem from './packages-list-item';
 import { getCurrentlyEditingPredefinedPackages } from '../../state/packages/selectors';
 
@@ -40,7 +41,7 @@ const PredefinedPackages = ( {
 		/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 		return (
 			<div className="packages__group-header">
-				<label htmlFor={ inputId } onClick={ ( event ) => event.stopPropagation() }>
+				<FormLabel htmlFor={ inputId } onClick={ ( event ) => event.stopPropagation() }>
 					<BulkSelect
 						id={ inputId }
 						totalElements={ group.total }
@@ -49,7 +50,7 @@ const PredefinedPackages = ( {
 						className="packages__group-header-checkbox"
 					/>
 					{ group.title }
-				</label>
+				</FormLabel>
 			</div>
 		);
 		/* eslint-enable jsx-a11y/click-events-have-key-events */

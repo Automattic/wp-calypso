@@ -9,9 +9,9 @@ import { identity } from 'lodash';
  * Internal Dependencies
  */
 import { Button } from '@automattic/components';
-import { preventWidows } from 'lib/formatting';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { localizeUrl } from 'lib/i18n-utils';
+import { preventWidows } from 'calypso/lib/formatting';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 const trackForumOpen = () =>
 	recordTracksEvent( 'calypso_inlinehelp_forums_open', {

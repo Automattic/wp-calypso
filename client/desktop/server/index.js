@@ -1,22 +1,22 @@
 /**
  * External Dependencies
  */
-const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, BrowserWindow, ipcMain: ipc } = require( 'electron' );
 const url = require( 'url' );
 const path = require( 'path' );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
+const Config = require( 'calypso/desktop/lib/config' );
 const { start } = require( './server' );
-const Settings = require( 'desktop/lib/settings' );
-const settingConstants = require( 'desktop/lib/settings/constants' );
-const cookieAuth = require( 'desktop/lib/cookie-auth' );
-const appInstance = require( 'desktop/lib/app-instance' );
-const platform = require( 'desktop/lib/platform' );
-const System = require( 'desktop/lib/system' );
-const log = require( 'desktop/lib/logger' )( 'desktop:runapp' );
+const Settings = require( 'calypso/desktop/lib/settings' );
+const settingConstants = require( 'calypso/desktop/lib/settings/constants' );
+const cookieAuth = require( 'calypso/desktop/lib/cookie-auth' );
+const appInstance = require( 'calypso/desktop/lib/app-instance' );
+const platform = require( 'calypso/desktop/lib/platform' );
+const System = require( 'calypso/desktop/lib/system' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:runapp' );
 
 /**
  * Module variables

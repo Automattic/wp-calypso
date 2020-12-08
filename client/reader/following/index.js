@@ -7,8 +7,8 @@ import page from 'page';
  * Internal dependencies
  */
 import { followingManage } from './controller';
-import { initAbTests, updateLastRoute, sidebar } from 'reader/controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { initAbTests, updateLastRoute, sidebar } from 'calypso/reader/controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	page( '/following/*', initAbTests );

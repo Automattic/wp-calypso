@@ -10,19 +10,19 @@ import page from 'page';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import DomainStatus from '../card/domain-status';
-import QuerySitePurchases from 'components/data/query-site-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import {
 	getByPurchaseId,
 	isFetchingSitePurchases,
 	hasLoadedSitePurchasesFromServer,
-} from 'state/purchases/selectors';
-import { transferStatus } from 'lib/domains/constants';
-import { domainManagementTransferInPrecheck } from 'my-sites/domains/paths';
-import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'lib/url/support';
-import DomainManagementNavigation from '../navigation';
-import { resolveDomainStatus } from 'lib/domains';
+} from 'calypso/state/purchases/selectors';
+import { transferStatus } from 'calypso/lib/domains/constants';
+import { domainManagementTransferInPrecheck } from 'calypso/my-sites/domains/paths';
+import { INCOMING_DOMAIN_TRANSFER_STATUSES } from 'calypso/lib/url/support';
+import DomainManagementNavigationEnhanced from '../navigation/enhanced';
+import { resolveDomainStatus } from 'calypso/lib/domains';
 
 class TransferInDomainType extends React.Component {
 	startTransfer = () => {
@@ -129,7 +129,7 @@ class TransferInDomainType extends React.Component {
 				>
 					{ this.renderStatusBody( domain.transferStatus ) }
 				</DomainStatus>
-				<DomainManagementNavigation
+				<DomainManagementNavigationEnhanced
 					domain={ domain }
 					selectedSite={ selectedSite }
 					purchase={ purchase }

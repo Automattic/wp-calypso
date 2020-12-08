@@ -1,19 +1,19 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
+import ButtonGroup from 'calypso/components/button-group';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormLabel from 'calypso/components/forms/form-label';
+import notices from 'calypso/notices';
 import { Button } from '@automattic/components';
-import ButtonGroup from 'components/button-group';
-import FormCheckbox from 'components/forms/form-checkbox';
-import notices from 'notices';
-import { createNotice } from 'state/notices/actions';
+import { createNotice } from 'calypso/state/notices/actions';
 
 class GlobalNotices extends Component {
 	constructor() {
@@ -45,10 +45,10 @@ class GlobalNotices extends Component {
 	render() {
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					<FormCheckbox onChange={ this.toggleUseState } checked={ this.state.useState } />
 					<span>Use global application state</span>
-				</label>
+				</FormLabel>
 				<ButtonGroup>
 					<Button onClick={ this.showSuccessNotice }>Show success notice</Button>
 					<Button onClick={ this.showErrorNotice }>Show error notice</Button>

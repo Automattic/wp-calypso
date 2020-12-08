@@ -1,0 +1,166 @@
+/* stylelint-disable selector-max-id */
+
+/**
+ * Notifications
+ */
+
+#wpnc-panel {
+	position: fixed;
+	top: var( --masterbar-height );
+	right: 0;
+	bottom: 0;
+	min-width: 400px;
+
+	@include breakpoint-deprecated( '<660px' ) {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.has-text-align-center {
+		text-align: center;
+	}
+
+	.has-text-align-right {
+		text-align: right;
+	}
+
+	.has-text-align-left {
+		text-align: left;
+	}
+
+	.has-text-align-justify {
+		text-align: justify;
+	}
+
+	.wpnc__h1 {
+		font-size: $font-headline-small;
+	}
+
+	.wpnc__h2 {
+		font-size: $font-title-large;
+	}
+
+	.wpnc__h3 {
+		font-size: $font-title-medium;
+	}
+
+	.uppercase {
+		text-transform: uppercase;
+	}
+
+	.has-drop-cap:not( :focus )::first-letter {
+		font-weight: bold;
+		line-height: 0.66;
+		text-transform: uppercase;
+		font-style: normal;
+		float: left;
+		font-size: calc( 2 * 2.25rem );
+		margin: 0.05em 0.1em 0 0;
+	}
+
+	.has-drop-cap:not( :focus )::after {
+		content: '';
+		display: table;
+		clear: both;
+		padding-top: 14px;
+	}
+
+	.wpnc__sub {
+		font-size: smaller;
+		vertical-align: sub;
+	}
+
+	.wpnc__sup {
+		font-size: smaller;
+		vertical-align: super;
+	}
+
+	.wpnc__em {
+		font-style: italic;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		font-weight: bold;
+	}
+
+	&.wpnt-open {
+		right: 0;
+		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+		opacity: 1;
+		pointer-events: auto;
+		visibility: visible;
+	}
+
+	&.wpnt-closed {
+		visibility: hidden;
+		right: -400px;
+		opacity: 0;
+		pointer-events: none;
+		transition: all 0.15s cubic-bezier( 0.075, 0.82, 0.165, 1 );
+	}
+
+	&.wpnc__main .wpnc__time-group-title.fixed {
+		top: 85px;
+	}
+
+	&.wpnc__main .wpnc__single-view {
+		left: inherit;
+		width: 400px;
+
+		@include breakpoint-deprecated( '<800px' ) {
+			left: 0;
+			width: auto;
+		}
+	}
+
+	@include breakpoint-deprecated( '<800px' ) {
+		&.wpnc__main header {
+			top: 47px;
+		}
+	}
+
+	&.wpnc__main .wpnc__note {
+		blockquote {
+			padding: 0 24px 0 32px;
+			margin: 16px 0 32px;
+			border-left: 3px solid var( --color-neutral-0 );
+			color: var( --color-neutral-50 );
+			font-weight: 400;
+			background: transparent;
+		}
+		ul,
+		ol {
+			margin-left: 1.5em;
+			list-style-position: inside;
+		}
+		ul {
+			list-style-type: disc;
+			ul {
+				list-style-type: circle;
+				ul {
+					list-style-type: square;
+				}
+			}
+		}
+		ol {
+			list-style-type: decimal;
+		}
+		li {
+			margin: auto;
+		}
+	}
+}
+
+#wpnc-panel.wide {
+	border-left: 0;
+	box-shadow: none;
+}
+
+html.touch #wpnc-panel {
+	-webkit-overflow-scrolling: touch;
+}

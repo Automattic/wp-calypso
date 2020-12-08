@@ -2,7 +2,6 @@
  * **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 
-/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
 /* eslint-disable import/no-nodejs-modules */
 
 /**
@@ -14,19 +13,27 @@ const webpack = require( 'webpack' );
 /**
  * Internal dependencies
  */
-const cacheIdentifier = require( './server/bundler/babel/babel-loader-cache-identifier' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const config = require( './server/config' );
 const bundleEnv = config( 'env' );
 const { workerCount } = require( './webpack.common' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
-const nodeExternals = require( 'webpack-node-externals' );
 const FileConfig = require( '@automattic/calypso-build/webpack/file-loader' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const nodeExternals = require( 'webpack-node-externals' );
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
+const ExternalModulesWriter = require( './server/bundler/external-modules' );
+const { packagesInMonorepo } = require( '../build-tools/lib/monorepo' );
 
 /**
  * Internal variables
  */
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
+const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
+const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
+const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
+const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
 	publicPath: isDevelopment ? `/calypso/${ devTarget }/images/` : '/calypso/images/',
@@ -41,39 +48,39 @@ const commitSha = process.env.hasOwnProperty( 'COMMIT_SHA' ) ? process.env.COMMI
  *
  * @returns {Array} list of externals
  */
+
 function getExternals() {
 	return [
 		// Don't bundle any node_modules, both to avoid a massive bundle, and problems
 		// with modules that are incompatible with webpack bundling.
 		nodeExternals( {
 			allowlist: [
-				// `@automattic/components` is forced to be webpack-ed because it has SCSS and other
-				// non-JS asset imports that couldn't be processed by Node.js at runtime.
-				'@automattic/components',
+				// Force all monorepo packages to be bundled. We can guarantee that they are safe
+				// to bundle, and can avoid shipping the entire contents of the `packages/` folder
+				// (there are symlinks into `packages/` from the `node_modules` folder)
+				...packagesInMonorepo().map( ( pkg ) => new RegExp( `^${ pkg.name }(/|$)` ) ),
+
+				// bundle the core-js polyfills. We pick only a very small subset of the library
+				// to polyfill a few things that are not supported by the latest LTS Node.js,
+				// and this avoids shipping the entire library which is fairly big.
+				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
 				fileLoader.test,
 
-				/[^/]?wp-calypso-client\//,
+				/^calypso\//,
 			],
 		} ),
 		// Some imports should be resolved to runtime `require()` calls, with paths relative
-		// to the path of the `build/bundle.js` bundle.
+		// to the path of the `build/server.js` bundle.
 		{
 			// Don't bundle webpack.config, as it depends on absolute paths (__dirname)
 			'webpack.config': {
 				commonjs: '../client/webpack.config.js',
 			},
-			'wp-calypso-client/webpack.config': {
+			'calypso/webpack.config': {
 				commonjs: '../client/webpack.config.js',
-			},
-			// Exclude the devdocs search-index, as it's huge.
-			'server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
-			},
-			'wp-calypso-client/server/devdocs/search-index': {
-				commonjs: '../client/server/devdocs/search-index.js',
 			},
 		},
 	];
@@ -87,25 +94,36 @@ const webpackConfig = {
 	target: 'node',
 	output: {
 		path: buildDir,
-		filename: 'bundle.js',
+		filename: 'server.js',
+		chunkFilename: 'server.[name].js',
 	},
 	mode: isDevelopment ? 'development' : 'production',
-	optimization: { minimize: false },
+	optimization: {
+		concatenateModules: shouldConcatenateModules,
+		minimize: false,
+	},
 	module: {
 		rules: [
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
 			TranspileConfig.loader( {
 				workerCount,
 				configFile: path.resolve( 'babel.config.js' ),
-				cacheDirectory: path.join( buildDir, '.babel-server-cache' ),
+				cacheDirectory,
 				cacheIdentifier,
 				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				cacheDirectory,
+				cacheIdentifier,
+				include: shouldTranspileDependency,
 			} ),
 			fileLoader,
 			{
@@ -116,9 +134,10 @@ const webpackConfig = {
 	},
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, path.join( __dirname, 'extensions' ), 'node_modules' ],
 		alias: {
-			'wp-calypso-client/config': 'server/config',
+			'calypso/config': 'server/config',
 			config: 'server/config',
 		},
 	},
@@ -129,12 +148,19 @@ const webpackConfig = {
 		__dirname: true,
 	},
 	plugins: [
-		// Require source-map-support at the top, so we get source maps for the bundle
-		new webpack.BannerPlugin( {
-			banner: 'require( "source-map-support" ).install();',
-			raw: true,
-			entryOnly: false,
-		} ),
+		shouldEmitStats &&
+			new BundleAnalyzerPlugin( {
+				analyzerMode: 'disabled', // just write the stats.json file
+				generateStatsFile: true,
+				statsFilename: path.join( __dirname, 'stats-server.json' ),
+				statsOptions: {
+					source: false,
+					reasons: shouldEmitStatsWithReasons,
+					optimizationBailout: false,
+					chunkOrigins: false,
+					chunkGroups: true,
+				},
+			} ),
 		new webpack.ExternalsPlugin( 'commonjs', getExternals() ),
 		new webpack.DefinePlugin( {
 			BUILD_TIMESTAMP: JSON.stringify( new Date().toISOString() ),
@@ -146,19 +172,18 @@ const webpackConfig = {
 			'components/empty-component'
 		), // Depends on BOM
 		new webpack.NormalModuleReplacementPlugin(
-			/^wp-calypso-client[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
+			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
+		! isDevelopment && new ExternalModulesWriter(),
 	].filter( Boolean ),
 };
 
 if ( ! config.isEnabled( 'desktop' ) ) {
 	webpackConfig.plugins.push(
 		new webpack.NormalModuleReplacementPlugin( /^lib[/\\]desktop$/, 'lodash/noop' ),
-		new webpack.NormalModuleReplacementPlugin(
-			/^wp-calypso-client[/\\]lib[/\\]desktop$/,
-			'lodash/noop'
-		)
+		new webpack.NormalModuleReplacementPlugin( /^calypso[/\\]lib[/\\]desktop$/, 'lodash/noop' )
 	);
 }
 

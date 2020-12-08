@@ -28,10 +28,9 @@
 
 		"importsNotUsedAsValues": "error",
 		"importHelpers": true,
-		"composite": true,
-		"tsBuildInfoFile": "../../.tsc-cache/packages__onboarding"
+		"composite": true
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/test/*" ],
-	"references": [ {} ]
+	"references": [ { "path": "../data-stores" }, { "path": "../react-i18n" } ]
 }

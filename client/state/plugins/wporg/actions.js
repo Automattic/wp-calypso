@@ -8,9 +8,11 @@ const debug = debugFactory( 'calypso:wporg-data:actions' );
 /**
  * Internal dependencies
  */
-import { fetchPluginInformation } from 'lib/wporg';
-import { normalizePluginData } from 'lib/plugins/utils';
-import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
+import { fetchPluginInformation } from 'calypso/lib/wporg';
+import { normalizePluginData } from 'calypso/lib/plugins/utils';
+import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
+
+import 'calypso/state/plugins/init';
 
 // TODO: fix the selector in `selectors.js` to not return `true` by default
 function isFetching( state, pluginSlug ) {

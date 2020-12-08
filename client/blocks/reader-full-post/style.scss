@@ -1,5 +1,3 @@
-
-
 // Styles targeted at story content
 @import './_content.scss';
 
@@ -63,7 +61,7 @@
 	@include breakpoint-deprecated( '>660px' ) {
 		border: 0;
 		position: absolute;
-		top: 47px;
+		top: var( --masterbar-height );
 		z-index: 0;
 	}
 

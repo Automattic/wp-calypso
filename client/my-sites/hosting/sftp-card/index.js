@@ -7,35 +7,39 @@ import { localize } from 'i18n-calypso';
 import { noop } from 'lodash';
 
 /**
+ * WordPress dependencies
+ */
+import { PanelBody } from '@wordpress/components';
+
+/**
  * Internal dependencies
  */
-import Accordion from 'components/accordion';
 import { Card, Button } from '@automattic/components';
-import CardHeading from 'components/card-heading';
-import MaterialIcon from 'components/material-icon';
-import ClipboardButton from 'components/forms/clipboard-button';
-import Spinner from 'components/spinner';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getCurrentUserId } from 'state/current-user/selectors';
+import CardHeading from 'calypso/components/card-heading';
+import MaterialIcon from 'calypso/components/material-icon';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import Spinner from 'calypso/components/spinner';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import {
 	requestAtomicSftpUsers,
 	createAtomicSftpUser,
 	resetAtomicSftpPassword,
 	updateAtomicSftpUser,
-} from 'state/hosting/actions';
+} from 'calypso/state/hosting/actions';
 import {
 	withAnalytics,
 	composeAnalytics,
 	recordTracksEvent,
 	recordGoogleEvent,
 	bumpStat,
-} from 'state/analytics/actions';
-import { getAtomicHostingSftpUsers } from 'state/selectors/get-atomic-hosting-sftp-users';
-import ExternalLink from 'components/external-link';
-import { localizeUrl } from 'lib/i18n-utils';
-import FormTextInput from 'components/forms/form-text-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
+} from 'calypso/state/analytics/actions';
+import { getAtomicHostingSftpUsers } from 'calypso/state/selectors/get-atomic-hosting-sftp-users';
+import ExternalLink from 'calypso/components/external-link';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
 
 /**
  * Style dependencies
@@ -163,7 +167,7 @@ export const SftpCard = ( {
 			</div>
 			{ displayQuestionsAndButton && (
 				<div className="sftp-card__questions">
-					<Accordion title={ translate( 'What is SFTP?' ) }>
+					<PanelBody title={ translate( 'What is SFTP?' ) } initialOpen={ false }>
 						{ translate(
 							'SFTP stands for Secure File Transfer Protocol (or SSH File Transfer Protocol). It’s a secure way for you to access your website files on your local computer via a client program such as {{a}}Filezilla{{/a}}. ' +
 								'For more information see {{supportLink}}SFTP on WordPress.com{{/supportLink}}.',
@@ -180,7 +184,7 @@ export const SftpCard = ( {
 								},
 							}
 						) }
-					</Accordion>
+					</PanelBody>
 				</div>
 			) }
 			{ displayQuestionsAndButton && (

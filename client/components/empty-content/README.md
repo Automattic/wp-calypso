@@ -1,33 +1,30 @@
-Empty Content
-===
+# Empty Content
 
 EmptyContent is used when a customer has no data to show. This is an opportunity to provide explanation or guidance to help customer progress. The EmptyContent is intended for use when a full view is empty, and not for individual elements or areas in the interface.
 
 ## Usage
 
-#### As a full view component
+### As a full view component
 
 ```jsx
 // import the component
-import EmptyContentComponent from 'components/empty-content';
+import EmptyContentComponent from 'calypso/components/empty-content';
 
 // Render the component
 function show( context, next ) {
-	context.primary = (
-		<EmptyContentComponent title="Your title" line="Some text" />
-	);
+	context.primary = <EmptyContentComponent title="Your title" line="Some text" />;
 	next();
 }
 ```
 
-#### As an inline component
+### As an inline component
 
 ```jsx
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 
 // Use it inline inside the render method of another component
-render() {
-	return(
+function render() {
+	return (
 		<div>
 			<EmptyContent title="Your title" line="Some text" />
 		</div>
@@ -35,30 +32,31 @@ render() {
 }
 ```
 
-### Props
+## Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`title`* | `string` | `'You haven't created any content yet.'` | The title to be displayed.
-`line` | `string` | `null` | A secondary line, usually leads to the call to action.
-`illustration` | `url` |  | The url string of an image path. Displays the [empty results](/calypso/images/illustrations/illustration-empty-results.svg) image by default.
-`illustrationWidth` | `number` | `null` | Will display the image at native width unless a specific width is provided.
-`action` | `string/object` | `null` | Label or React element used for the primary action button.
-`actionURL` | `string` | `null` | `href` value for the primary action button.
-`actionCallback` | `function` | `null` | `onClick` value for the primary action button.
-`actionTarget` | `string` | `null` | If omitted, no target attribute is specified.
-`actionHoverCallback`* | `bool` | `0` | Indicates activity while a background action is being performed.
-`isCompact` | `bool` | `false` | Shows a smaller version of the component.
+| Name                    | Type            | Default                                  | Description                                                                                                                                   |
+| ----------------------- | --------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `title`\*               | `string`        | `'You haven't created any content yet.'` | The title to be displayed.                                                                                                                    |
+| `line`                  | `string`        | `null`                                   | A secondary line, usually leads to the call to action.                                                                                        |
+| `illustration`          | `url`           |                                          | The url string of an image path. Displays the [empty results](/calypso/images/illustrations/illustration-empty-results.svg) image by default. |
+| `illustrationWidth`     | `number`        | `null`                                   | Will display the image at native width unless a specific width is provided.                                                                   |
+| `action`                | `string/object` | `null`                                   | Label or React element used for the primary action button.                                                                                    |
+| `actionURL`             | `string`        | `null`                                   | `href` value for the primary action button.                                                                                                   |
+| `actionCallback`        | `function`      | `null`                                   | `onClick` value for the primary action button.                                                                                                |
+| `actionTarget`          | `string`        | `null`                                   | If omitted, no target attribute is specified.                                                                                                 |
+| `actionHoverCallback`\* | `bool`          | `0`                                      | Indicates activity while a background action is being performed.                                                                              |
+| `isCompact`             | `bool`          | `false`                                  | Shows a smaller version of the component.                                                                                                     |
 
 ### Additional props
+
 The component also supports a secondary action. This should be used sparingly.
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`secondaryAction` | `string/object` | `null` | Label or React element used for the secondary action button.
-`secondaryActionURL` | `string` | `null` | `href` value for the secondary action button.
-`secondaryActionCallback` | `function` | `null` | `onClick` value for the secondary action button.
-`secondaryActionTarget` | `string` | `null` | If omitted, no target attribute is specified.
+| Name                      | Type            | Default | Description                                                  |
+| ------------------------- | --------------- | ------- | ------------------------------------------------------------ |
+| `secondaryAction`         | `string/object` | `null`  | Label or React element used for the secondary action button. |
+| `secondaryActionURL`      | `string`        | `null`  | `href` value for the secondary action button.                |
+| `secondaryActionCallback` | `function`      | `null`  | `onClick` value for the secondary action button.             |
+| `secondaryActionTarget`   | `string`        | `null`  | If omitted, no target attribute is specified.                |
 
 ### Example: Sites
 

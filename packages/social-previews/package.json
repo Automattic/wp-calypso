@@ -1,9 +1,10 @@
 {
 	"name": "@automattic/social-previews",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"description": "A suite of components to generate previews for a post for both social and search engines",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"sideEffects": [
 		"*.css",
 		"*.scss"
@@ -34,13 +35,17 @@
 	],
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "transpile && copy-assets"
+		"build": "transpile && copy-assets",
+		"prepack": "yarn run clean && yarn run build"
 	},
 	"dependencies": {
+		"@babel/runtime": "^7.11.1",
+		"@wordpress/components": "^10.0.5",
+		"@wordpress/i18n": "^3.14.0",
+		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
-		"prop-types": "^15.7.2",
-		"@babel/runtime": "^7.11.1"
+		"moment": "^2.26.0",
+		"prop-types": "^15.7.2"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "^6.1.0",

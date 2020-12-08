@@ -26,6 +26,9 @@ export type JetpackPlanSlugs =
 	| JetpackResetPlanSlugs
 	| JetpackLegacyPlanSlugs;
 
+export type JetpackPlanCardFeature = symbol | [ symbol, symbol[] ];
+export type JetpackPlanCardFeatureSection = Record< symbol, JetpackPlanCardFeature[] >;
+
 export type Plan = {
 	group: typeof constants.GROUP_WPCOM | typeof constants.GROUP_JETPACK;
 	type: string;
@@ -36,7 +39,8 @@ export type Plan = {
 	getBillingTimeFrame: () => TranslateResult;
 	getTitle: () => TranslateResult;
 	getDescription: () => TranslateResult;
-	getTagline?: () => TranslateResult;
+	getTagline?: ( features?: string[] ) => TranslateResult;
+	getButtonLabel?: () => TranslateResult;
 	getAnnualSlug?: () => JetpackPlanSlugs | string;
 	getMonthlySlug?: () => JetpackPlanSlugs | string;
 	getAudience?: () => TranslateResult;
@@ -47,6 +51,7 @@ export type Plan = {
 	getStoreSlug: () => JetpackPlanSlugs | string;
 	getPathSlug?: () => string;
 	getPlanCompareFeatures?: () => string[];
+	getPlanCardFeatures?: () => JetpackPlanCardFeature[] | JetpackPlanCardFeatureSection;
 	getSignupFeatures?: () => string[];
 	getBlogSignupFeatures?: () => string[];
 	getPortfolioSignupFeatures?: () => string[];

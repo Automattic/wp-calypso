@@ -9,7 +9,7 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Tooltip from 'components/tooltip';
+import Tooltip from 'calypso/components/tooltip';
 import { CalendarEvent } from './event';
 
 class EventsTooltip extends Component {

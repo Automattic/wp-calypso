@@ -16,9 +16,15 @@ exports.highlightElement = async function ( driver, element, color = 'gold' ) {
 	}
 };
 
-exports.clickWhenClickable = async function ( driver, selector, waitOverride ) {
+exports.clickWhenClickable = async function (
+	driver,
+	selector,
+	waitOverride = null,
+	extraErrorString = null
+) {
 	const self = this;
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
 
 	return driver.wait(
 		function () {
@@ -36,7 +42,7 @@ exports.clickWhenClickable = async function ( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
 	);
 };
 
@@ -291,7 +297,7 @@ exports.selectElementByText = async function ( driver, selector, text ) {
 			async ( e ) => ( await e.getText() ) === text
 		);
 	};
-	return await this.clickWhenClickable( driver, element );
+	return await this.clickWhenClickable( driver, element, `while looking for '${ text }'` );
 };
 
 exports.clearTextArea = async function ( driver, selector ) {

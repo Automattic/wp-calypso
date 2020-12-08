@@ -3,26 +3,25 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
-import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import Stream from 'reader/stream';
+import config from 'calypso/config';
+import Stream from 'calypso/reader/stream';
 import EmptyContent from './empty';
-import DocumentHead from 'components/data/document-head';
+import DocumentHead from 'calypso/components/data/document-head';
 import ListMissing from './missing';
 import ListStreamHeader from './header';
-import { followList, unfollowList } from 'state/reader/lists/actions';
+import { followList, unfollowList } from 'calypso/state/reader/lists/actions';
 import {
 	getListByOwnerAndSlug,
 	isSubscribedByOwnerAndSlug,
 	isMissingByOwnerAndSlug,
-} from 'state/reader/lists/selectors';
-import QueryReaderList from 'components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+} from 'calypso/state/reader/lists/selectors';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 /**
  * Style dependencies
@@ -60,10 +59,10 @@ class ListStream extends React.Component {
 	};
 
 	render() {
-		const list = this.props.list,
-			shouldShowFollow = list && ! list.is_owner,
-			emptyContent = <EmptyContent />,
-			listStreamIconClasses = 'gridicon gridicon__list';
+		const list = this.props.list;
+		const shouldShowFollow = list && ! list.is_owner;
+		const emptyContent = <EmptyContent />;
+		const listStreamIconClasses = 'gridicon gridicon__list';
 
 		if ( list ) {
 			this.title = list.title;
@@ -89,6 +88,7 @@ class ListStream extends React.Component {
 				<QueryReaderList owner={ this.props.owner } slug={ this.props.slug } />
 				<ListStreamHeader
 					isPlaceholder={ ! list }
+					isPublic={ list?.is_public }
 					icon={
 						<svg
 							className={ listStreamIconClasses }
@@ -109,7 +109,7 @@ class ListStream extends React.Component {
 						</svg>
 					}
 					title={ this.title }
-					description={ list && list.description }
+					description={ list?.description }
 					showFollow={ shouldShowFollow }
 					following={ this.props.isSubscribed }
 					onFollowToggle={ this.toggleFollowing }
@@ -129,13 +129,5 @@ export default connect(
 			isMissing: isMissingByOwnerAndSlug( state, ownProps.owner, ownProps.slug ),
 		};
 	},
-	( dispatch ) => {
-		return bindActionCreators(
-			{
-				followList,
-				unfollowList,
-			},
-			dispatch
-		);
-	}
+	{ followList, unfollowList }
 )( localize( ListStream ) );

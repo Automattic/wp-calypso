@@ -2,15 +2,11 @@
  * External dependencies
  */
 import { translate } from 'i18n-calypso';
+import { ResponseCart, ResponseCartProduct } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import {
-	ResponseCart,
-	ResponseCartProduct,
-	TempResponseCartProduct,
-} from '../types/backend/shopping-cart-endpoint';
 import {
 	WPCOMCart,
 	WPCOMCartItem,
@@ -21,9 +17,11 @@ import {
 import {
 	readWPCOMPaymentMethodClass,
 	translateWpcomPaymentMethodToCheckoutPaymentMethod,
-	WPCOMPaymentMethodClass,
-} from '../types/backend/payment-method';
-import { isPlan, isDomainTransferProduct, isDomainProduct } from 'lib/products-values';
+} from './translate-payment-method-names';
+import { isPlan, isDomainTransferProduct, isDomainProduct } from 'calypso/lib/products-values';
+import { isRenewal } from 'calypso/lib/cart-values/cart-items';
+import doesValueExist from './does-value-exist';
+import doesPurchaseHaveFullCredits from './does-purchase-have-full-credits';
 
 /**
  * Translate a cart object as returned by the WPCOM cart endpoint to
@@ -52,6 +50,8 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		coupon,
 		tax,
 	} = serverCart;
+
+	const isFullCredits = doesPurchaseHaveFullCredits( serverCart );
 
 	const taxLineItem: CheckoutCartItem = {
 		id: 'tax-line-item',
@@ -132,25 +132,27 @@ export function translateResponseCartToWPCOMCart( serverCart: ResponseCart ): WP
 		},
 	};
 
+	const alwaysEnabledPaymentMethods = [ 'full-credits', 'free-purchase' ];
+
+	const allowedPaymentMethods = [ ...allowed_payment_methods, ...alwaysEnabledPaymentMethods ]
+		.map( readWPCOMPaymentMethodClass )
+		.filter( doesValueExist )
+		.map( translateWpcomPaymentMethodToCheckoutPaymentMethod );
+
 	return {
 		items: products.filter( isRealProduct ).map( translateReponseCartProductToWPCOMCartItem ),
 		tax: tax.display_taxes ? taxLineItem : null,
 		coupon: coupon && coupon_savings_total_integer ? couponLineItem : null,
-		total: totalItem,
+		total: isFullCredits ? subtotalItem : totalItem,
 		savings: savings_total_integer > 0 ? savingsLineItem : null,
 		subtotal: subtotalItem,
 		credits: credits_integer > 0 ? creditsLineItem : null,
-		allowedPaymentMethods: allowed_payment_methods
-			.map( readWPCOMPaymentMethodClass )
-			.filter( ( Boolean as WPCOMPaymentMethodClass ) as ExcludesNull )
-			.map( translateWpcomPaymentMethodToCheckoutPaymentMethod ),
+		allowedPaymentMethods,
 		couponCode: coupon,
 	};
 }
 
-type ExcludesNull = < T >( x: T | null ) => x is T;
-
-function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartProduct ): boolean {
+function isRealProduct( serverCartItem: ResponseCartProduct ): boolean {
 	// Credits are displayed separately, so we do not need to include the pseudo-product in the line items.
 	if ( serverCartItem.product_slug === 'wordpress-com-credits' ) {
 		return false;
@@ -160,7 +162,7 @@ function isRealProduct( serverCartItem: ResponseCartProduct | TempResponseCartPr
 
 // Convert a backend cart item to a checkout cart item
 function translateReponseCartProductToWPCOMCartItem(
-	serverCartItem: ResponseCartProduct | TempResponseCartProduct
+	serverCartItem: ResponseCartProduct
 ): WPCOMCartItem {
 	const {
 		product_id,
@@ -173,6 +175,8 @@ function translateReponseCartProductToWPCOMCartItem(
 		item_subtotal_monthly_cost_integer,
 		item_original_subtotal_display,
 		item_original_subtotal_integer,
+		related_monthly_plan_cost_display,
+		related_monthly_plan_cost_integer,
 		is_sale_coupon_applied,
 		months_per_bill_period,
 		item_subtotal_display,
@@ -190,7 +194,11 @@ function translateReponseCartProductToWPCOMCartItem(
 	let label = product_name || '';
 	let sublabel;
 	if ( isPlan( serverCartItem ) ) {
-		sublabel = String( translate( 'Plan Subscription' ) );
+		if ( isRenewal( serverCartItem ) ) {
+			sublabel = String( translate( 'Plan Renewal' ) );
+		} else {
+			sublabel = String( translate( 'Plan Subscription' ) );
+		}
 	} else if ( 'premium_theme' === product_slug || 'concierge-session' === product_slug ) {
 		sublabel = '';
 	} else if (
@@ -198,7 +206,19 @@ function translateReponseCartProductToWPCOMCartItem(
 		( isDomainProduct( serverCartItem ) || isDomainTransferProduct( serverCartItem ) )
 	) {
 		label = meta;
-		sublabel = product_name || '';
+		if ( isRenewal( serverCartItem ) && product_name ) {
+			sublabel = String(
+				translate( '%(productName)s Renewal', { args: { productName: product_name } } )
+			);
+		}
+		if ( isRenewal( serverCartItem ) && ! product_name ) {
+			sublabel = String( translate( 'Renewal' ) );
+		}
+		if ( ! isRenewal( serverCartItem ) ) {
+			sublabel = product_name || '';
+		}
+	} else if ( isRenewal( serverCartItem ) ) {
+		sublabel = String( translate( 'Renewal' ) );
 	}
 
 	const type = isPlan( serverCartItem ) ? 'plan' : product_slug;
@@ -237,6 +257,8 @@ function translateReponseCartProductToWPCOMCartItem(
 			months_per_bill_period,
 			product_cost_integer: product_cost_integer || 0,
 			product_cost_display: product_cost_display || '',
+			related_monthly_plan_cost_integer: related_monthly_plan_cost_integer || 0,
+			related_monthly_plan_cost_display: related_monthly_plan_cost_display || '',
 		},
 	};
 }

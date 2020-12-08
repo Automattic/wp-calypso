@@ -16,7 +16,7 @@
 	align-items: center;
 	z-index: onboarding-z-index( '.onboarding__footer' );
 
-	@include break-small {
+	@mixin unstick {
 		padding: 0;
 		margin-left: 20px;
 		position: static;
@@ -29,6 +29,16 @@
 				margin-left: 0;
 			}
 		}
+	}
+
+	&:not( .is-sticky ) {
+		@include break-small {
+			@include unstick;
+		}
+	}
+
+	&.no-sticky {
+		@include unstick;
 	}
 }
 

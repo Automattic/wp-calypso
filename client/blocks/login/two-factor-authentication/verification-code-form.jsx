@@ -11,19 +11,19 @@ import React, { Component } from 'react';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
-import FormVerificationCodeInput from 'components/forms/form-verification-code-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
 import { localize } from 'i18n-calypso';
-import { getTwoFactorAuthRequestError } from 'state/login/selectors';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
+import { getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
-} from 'state/login/actions';
+} from 'calypso/state/login/actions';
 import TwoFactorActions from './two-factor-actions';
 
 /**

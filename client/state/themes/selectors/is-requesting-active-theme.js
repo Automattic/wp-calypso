@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import 'state/themes/init';
+import 'calypso/state/themes/init';
 
 /**
  * Returns true if a request is in progress for the site active theme, or

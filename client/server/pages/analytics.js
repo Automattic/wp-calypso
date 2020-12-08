@@ -6,7 +6,7 @@ import { throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import analytics from '../lib/analytics';
 
 // Compute the number of milliseconds between each call to recordTiming

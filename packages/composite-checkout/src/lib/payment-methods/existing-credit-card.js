@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useEffect } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import debugFactory from 'debug';
 import { sprintf } from '@wordpress/i18n';
@@ -11,17 +11,10 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import {
-	useMessages,
-	useLineItems,
-	useEvents,
-	useTransactionStatus,
-	usePaymentProcessor,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
-import { showStripeModalAuth } from '../stripe';
 
 const debug = debugFactory( 'composite-checkout:existing-card-payment-method' );
 
@@ -97,7 +90,7 @@ export function ExistingCardLabel( { last4, cardExpiry, cardholderName, brand } 
 				<CardDetails>{ maskedCardDetails }</CardDetails>
 				<span>{ `${ __( 'Expiry:' ) } ${ formatDate( cardExpiry ) }` }</span>
 			</div>
-			<div>
+			<div className="existing-credit-card__logo payment-logos">
 				<PaymentLogo brand={ brand } isSummary={ true } />
 			</div>
 		</React.Fragment>
@@ -110,6 +103,7 @@ const CardHolderName = styled.span`
 
 function ExistingCardPayButton( {
 	disabled,
+	onClick,
 	stripeConfiguration,
 	cardholderName,
 	storedDetailsId,
@@ -117,52 +111,8 @@ function ExistingCardPayButton( {
 	paymentPartnerProcessorId,
 } ) {
 	const [ items, total ] = useLineItems();
-	const { showErrorMessage, showInfoMessage } = useMessages();
-	const {
-		transactionStatus,
-		transactionLastResponse,
-		setTransactionComplete,
-		resetTransaction,
-		setTransactionRedirecting,
-		setTransactionPending,
-		setTransactionAuthorizing,
-		setTransactionError,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'existing-card' );
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-
-	useEffect( () => {
-		let isSubscribed = true;
-
-		if ( transactionStatus === 'authorizing' ) {
-			debug( 'showing auth' );
-			onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-			showStripeModalAuth( {
-				stripeConfiguration,
-				response: transactionLastResponse,
-			} )
-				.then( ( authenticationResponse ) => {
-					debug( 'auth is complete', authenticationResponse );
-					isSubscribed && setTransactionComplete( authenticationResponse );
-				} )
-				.catch( ( error ) => {
-					isSubscribed && setTransactionError( error.message );
-				} );
-		}
-
-		return () => ( isSubscribed = false );
-	}, [
-		onEvent,
-		resetTransaction,
-		setTransactionComplete,
-		setTransactionError,
-		showInfoMessage,
-		showErrorMessage,
-		transactionStatus,
-		stripeConfiguration,
-		transactionLastResponse,
-	] );
 
 	return (
 		<Button
@@ -170,35 +120,18 @@ function ExistingCardPayButton( {
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
-				setTransactionPending();
-				submitTransaction( {
+				onClick( 'existing-card', {
 					items,
 					total,
 					name: cardholderName,
 					storedDetailsId,
 					paymentMethodToken,
 					paymentPartnerProcessorId,
-				} )
-					.then( ( stripeResponse ) => {
-						if ( stripeResponse?.message?.payment_intent_client_secret ) {
-							debug( 'stripe transaction requires auth' );
-							setTransactionAuthorizing( stripeResponse );
-							return;
-						}
-						if ( stripeResponse?.redirect_url ) {
-							debug( 'stripe transaction requires redirect' );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-							return;
-						}
-						debug( 'stripe transaction is successful' );
-						setTransactionComplete();
-					} )
-					.catch( ( error ) => {
-						setTransactionError( error.message );
-					} );
+					stripeConfiguration,
+				} );
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -208,10 +141,10 @@ function ExistingCardPayButton( {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );

@@ -8,15 +8,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
+import { isEnabled } from 'calypso/config';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { Button } from '@automattic/components';
 import SiteTypeForm from './form';
-import StepWrapper from 'signup/step-wrapper';
-import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import { submitSiteType } from 'state/signup/steps/site-type/actions';
-import { saveSignupStep } from 'state/signup/progress/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import StepWrapper from 'calypso/signup/step-wrapper';
+import { getSiteType } from 'calypso/state/signup/steps/site-type/selectors';
+import { submitSiteType } from 'calypso/state/signup/steps/site-type/actions';
+import { saveSignupStep } from 'calypso/state/signup/progress/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const siteTypeToFlowname = {
 	import: 'import-onboarding',

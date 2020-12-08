@@ -14,18 +14,18 @@ import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } 
 /**
  * Internal dependencies
  */
-import acceptDialog from 'lib/accept';
-import { warningNotice } from 'state/notices/actions';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'lib/plugins/actions';
-import PluginsListHeader from 'my-sites/plugins/plugin-list-header';
-import PluginsLog from 'lib/plugins/log-store';
-import PluginNotices from 'lib/plugins/notices';
+import acceptDialog from 'calypso/lib/accept';
+import { warningNotice } from 'calypso/state/notices/actions';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
+import PluginsLog from 'calypso/lib/plugins/log-store';
+import PluginNotices from 'calypso/lib/plugins/notices';
 import { Card } from '@automattic/components';
-import SectionHeader from 'components/section-header';
-import { getSelectedSite, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import SectionHeader from 'calypso/components/section-header';
+import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -33,7 +33,8 @@ import { recordGoogleEvent } from 'state/analytics/actions';
 import './style.scss';
 
 function checkPropsChange( nextProps, propArr ) {
-	let i, prop;
+	let i;
+	let prop;
 
 	for ( i = 0; i < propArr.length; i++ ) {
 		prop = propArr[ i ];
@@ -294,9 +295,10 @@ export const PluginsList = createReactClass( {
 	},
 
 	getConfirmationText() {
-		const pluginsList = {},
-			sitesList = {};
-		let pluginName, siteName;
+		const pluginsList = {};
+		const sitesList = {};
+		let pluginName;
+		let siteName;
 		const { plugins, translate } = this.props;
 
 		plugins.filter( this.isSelected ).forEach( ( plugin ) => {

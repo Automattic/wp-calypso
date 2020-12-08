@@ -10,11 +10,11 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import JetpackHeader from 'components/jetpack-header';
-import Main from 'components/main';
-import DocumentHead from 'components/data/document-head';
+import config from 'calypso/config';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import JetpackHeader from 'calypso/components/jetpack-header';
+import Main from 'calypso/components/main';
+import DocumentHead from 'calypso/components/data/document-head';
 import { retrieveMobileRedirect } from './persistence-utils';
 
 export class JetpackConnectMainWrapper extends PureComponent {

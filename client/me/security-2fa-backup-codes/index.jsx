@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import Notice from 'components/notice';
-import SectionHeader from 'components/section-header';
-import Security2faBackupCodesList from 'me/security-2fa-backup-codes-list';
-import Security2faBackupCodesPrompt from 'me/security-2fa-backup-codes-prompt';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import Notice from 'calypso/components/notice';
+import SectionHeader from 'calypso/components/section-header';
+import Security2faBackupCodesList from 'calypso/me/security-2fa-backup-codes-list';
+import Security2faBackupCodesPrompt from 'calypso/me/security-2fa-backup-codes-prompt';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

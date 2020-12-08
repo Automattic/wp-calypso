@@ -11,12 +11,19 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { activatePlugin, installPlugin, fetchPlugins } from 'state/plugins/installed/actions';
+import {
+	activatePlugin,
+	installPlugin,
+	fetchPlugins,
+} from 'calypso/state/plugins/installed/actions';
 import { Button, ProgressBar } from '@automattic/components';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { getPlugins, getStatusForSite } from 'state/plugins/installed/selectors';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import {
+	getPlugins as getInstalledPlugins,
+	getStatusForSite,
+} from 'calypso/state/plugins/installed/selectors';
 import {
 	getRequiredPluginsForCalypso,
 	getPluginsForStoreSetup,
@@ -25,9 +32,9 @@ import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import SetupHeader from './setup/header';
 import SetupNotices from './setup/notices';
 import { setFinishedInstallOfRequiredPlugins } from 'woocommerce/state/sites/setup-choices/actions';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import { getAutomatedTransferStatus } from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
 import { recordTrack } from 'woocommerce/lib/analytics';
 
 // Time in seconds to complete various steps.
@@ -133,7 +140,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInitialization = () => {
-		const { fixMode, site, sitePlugins, wporg } = this.props;
+		const { fixMode, site, sitePlugins, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
 
 		if ( ! site ) {
@@ -165,7 +172,7 @@ class RequiredPluginsInstallView extends Component {
 		const requiredPlugins = fixMode ? getRequiredPluginsForCalypso() : getPluginsForStoreSetup();
 		let pluginDataLoaded = true;
 		for ( const requiredPluginSlug of requiredPlugins ) {
-			const pluginData = getPlugin( wporg, requiredPluginSlug );
+			const pluginData = wporgPlugins?.[ requiredPluginSlug ] ?? {};
 			// pluginData will be null until the action has had
 			// a chance to try and fetch data for the plugin slug
 			// given. Note that non-wp-org plugins
@@ -230,7 +237,7 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	doInstallation = () => {
-		const { pluginsStatus, site, sitePlugins, wporg } = this.props;
+		const { pluginsStatus, site, sitePlugins } = this.props;
 
 		// If we are working on nothing presently, get the next thing to install and install it
 		if ( 0 === this.state.workingOn.length ) {
@@ -245,10 +252,13 @@ class RequiredPluginsInstallView extends Component {
 			}
 
 			const workingOn = toInstall.shift();
-			const thisPlugin = getPlugin( wporg, workingOn );
-			// Set a default ID if needed.
-			thisPlugin.id = thisPlugin.id || thisPlugin.slug;
-			this.props.installPlugin( site.ID, thisPlugin );
+			// In lieu of waiting on details of plugins from wporg, let's assemble the object ourselves.
+			const plugin = {
+				id: workingOn,
+				slug: workingOn,
+			};
+
+			this.props.installPlugin( site.ID, plugin );
 
 			this.setState( {
 				toInstall,
@@ -410,9 +420,9 @@ class RequiredPluginsInstallView extends Component {
 	};
 
 	renderContactSupport() {
-		const { translate, wporg } = this.props;
+		const { translate, wporgPlugins } = this.props;
 		const { workingOn } = this.state;
-		const plugin = getPlugin( wporg, workingOn );
+		const plugin = wporgPlugins?.[ workingOn ] ?? {};
 
 		const subtitle = [
 			<p key="line-1">
@@ -484,7 +494,7 @@ function mapStateToProps( state ) {
 	const site = getSelectedSiteWithFallback( state );
 	const siteId = site.ID;
 
-	const sitePlugins = site ? getPlugins( state, [ siteId ] ) : [];
+	const sitePlugins = site ? getInstalledPlugins( state, [ siteId ] ) : [];
 	const pluginsStatus = getStatusForSite( state, siteId );
 
 	return {
@@ -492,7 +502,7 @@ function mapStateToProps( state ) {
 		siteId,
 		sitePlugins,
 		pluginsStatus,
-		wporg: state.plugins.wporg.items,
+		wporgPlugins: getAllWporgPlugins( state ),
 		automatedTransferStatus: getAutomatedTransferStatus( state, siteId ),
 		hasPendingAT: hasSitePendingAutomatedTransfer( state, siteId ),
 	};

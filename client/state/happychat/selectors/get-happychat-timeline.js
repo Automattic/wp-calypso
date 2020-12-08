@@ -6,7 +6,7 @@ import { map } from 'lodash';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
+import createSelector from 'calypso/lib/create-selector';
 
 /**
  * Gets timeline chat events from the happychat state

@@ -1,10 +1,9 @@
 /**
- * This script is adapted from ../../full-site-editing/bin/npm-run-build.js
+ * This script is adapted from ../../editing-toolkit/bin/npm-run-build.js
  *
  **** WARNING: No ES6 modules here. Not transpiled! ****
  */
 /* eslint-disable import/no-nodejs-modules */
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-console */
 
 const runAll = require( 'npm-run-all' );

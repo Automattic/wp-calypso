@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { parse } from 'url';
+import { parse } from 'url'; // eslint-disable-line no-restricted-imports
 
 /**
  * Internal dependencies
@@ -12,15 +12,15 @@ import {
 	hasDomainRegistration,
 	hasDomainMapping,
 	hasProduct,
-} from 'lib/cart-values/cart-items';
-import { managePurchase } from 'me/purchases/paths';
+} from 'calypso/lib/cart-values/cart-items';
+import { managePurchase } from 'calypso/me/purchases/paths';
 import {
 	UPGRADE_INTENT_PLUGINS,
 	UPGRADE_INTENT_INSTALL_PLUGIN,
 	UPGRADE_INTENT_THEMES,
 	UPGRADE_INTENT_INSTALL_THEME,
-} from 'lib/checkout/constants';
-import { decodeURIComponentIfValid, isExternal } from 'lib/url';
+} from 'calypso/lib/checkout/constants';
+import { decodeURIComponentIfValid, isExternal } from 'calypso/lib/url';
 import { domainManagementEdit } from '../../my-sites/domains/paths';
 import { isDomainRegistration } from '../products-values';
 
@@ -82,7 +82,7 @@ export function getExitCheckoutUrl(
 	let url = '/plans/';
 
 	if ( returnToBlockEditor ) {
-		return `/block-editor/page/${ siteSlug }/home`;
+		return `/page/${ siteSlug }/home`;
 	}
 
 	if ( returnToHome ) {
@@ -91,8 +91,8 @@ export function getExitCheckoutUrl(
 
 	if ( hasRenewalItem( cart ) ) {
 		const firstRenewalItem = getRenewalItems( cart )[ 0 ];
-		const { purchaseId, purchaseDomain } = firstRenewalItem.extra,
-			siteName = siteSlug || purchaseDomain;
+		const { purchaseId, purchaseDomain } = firstRenewalItem.extra;
+		const siteName = siteSlug || purchaseDomain;
 
 		if ( isDomainRegistration( firstRenewalItem ) ) {
 			const domainManagementPage = domainManagementEdit( siteName, firstRenewalItem.meta );

@@ -9,12 +9,12 @@ import {
 	APPLICATION_PASSWORD_NEW_CLEAR,
 	APPLICATION_PASSWORDS_RECEIVE,
 	APPLICATION_PASSWORDS_REQUEST,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/me/two-step/application-passwords';
-import 'state/data-layer/wpcom/me/two-step/application-passwords/delete';
-import 'state/data-layer/wpcom/me/two-step/application-passwords/new';
-import 'state/application-passwords/init';
+import 'calypso/state/data-layer/wpcom/me/two-step/application-passwords';
+import 'calypso/state/data-layer/wpcom/me/two-step/application-passwords/delete';
+import 'calypso/state/data-layer/wpcom/me/two-step/application-passwords/new';
+import 'calypso/state/application-passwords/init';
 
 /**
  * Returns an action object to signal the request of the user's application passwords.

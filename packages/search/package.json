@@ -1,0 +1,55 @@
+{
+	"name": "@automattic/search",
+	"version": "1.0.0",
+	"description": "Automattic Search",
+	"homepage": "https://github.com/Automattic/wp-calypso",
+	"license": "GPL-2.0-or-later",
+	"author": "Automattic Inc.",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"sideEffects": [
+		"*.css",
+		"*.scss"
+	],
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/search"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"types": "dist/types",
+	"dependencies": {
+		"@babel/runtime": "^7.11.1",
+		"@wordpress/components": "^10.0.5",
+		"@wordpress/i18n": "^3.14.0",
+		"@wordpress/icons": "^2.4.0",
+		"classnames": "^2.2.6",
+		"lodash": "^4.17.15",
+		"tslib": "^1.10.0"
+	},
+	"peerDependencies": {
+		"react": "^16.8",
+		"react-dom": "^16.8"
+	},
+	"devDependencies": {
+		"@storybook/addon-actions": "^6.0.28",
+		"react-docgen-typescript-loader": "^3.7.2",
+		"ts-loader": "^8.0.8"
+	},
+	"scripts": {
+		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"build:esm": "tsc --build ./tsconfig.json && copy-assets --esm",
+		"build:cjs": "tsc --build ./tsconfig-cjs.json && copy-assets --cjs",
+		"prepare": "yarn run build:esm",
+		"prepack": "yarn run clean && yarn run build:esm && yarn run build:cjs"
+	}
+}

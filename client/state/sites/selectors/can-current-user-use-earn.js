@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import getSite from './get-site';
 
 /**
@@ -17,5 +17,5 @@ export default function canCurrentUserUseEarn( state, siteId = null ) {
 		siteId = getSelectedSiteId( state );
 	}
 	const site = getSite( state, siteId );
-	return site && !! canCurrentUser( state, siteId, 'manage_options' );
+	return site && canCurrentUser( state, siteId, 'manage_options' );
 }

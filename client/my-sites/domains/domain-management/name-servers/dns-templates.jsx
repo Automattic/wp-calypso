@@ -10,7 +10,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { dnsTemplates } from 'lib/domains/constants';
+import { dnsTemplates } from 'calypso/lib/domains/constants';
 import DnsTemplateSelector from './dns-template-selector';
 import EmailProvider from '../dns/email-provider';
 

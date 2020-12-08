@@ -1,12 +1,17 @@
 /**
  * Internal dependencies
  */
-import { format, getUrlParts, getUrlFromParts, determineUrlType } from 'lib/url';
+import { format, getUrlParts, getUrlFromParts, determineUrlType } from 'calypso/lib/url';
 
 const IMAGE_SCALE_FACTOR =
 	typeof window !== 'undefined' && window.devicePixelRatio && window.devicePixelRatio > 1 ? 2 : 1;
 
 const DEFAULT_PHOTON_QUALITY = 80; // 80 was chosen after some heuristic testing as the best blend of size and quality
+
+const SERVICE_HOSTNAME_PATTERNS = {
+	photon: /(^[is]\d\.wp\.com|(^|\.)wordpress\.com)$/,
+	gravatar: /(^|\.)gravatar\.com$/,
+};
 
 export function maxWidthPhotonishURL( imageURL, width ) {
 	if ( ! imageURL ) {
@@ -21,20 +26,21 @@ export function maxWidthPhotonishURL( imageURL, width ) {
 		return imageURL;
 	}
 
+	const service = Object.keys( SERVICE_HOSTNAME_PATTERNS ).find( ( key ) =>
+		urlParts.hostname.match( SERVICE_HOSTNAME_PATTERNS[ key ] )
+	);
+
 	// From this point on, we should only have absolute and scheme-relative URLs.
-
-	const isGravatar = urlParts.host.indexOf( 'gravatar.com' ) !== -1;
-
 	delete urlParts.search;
 	// strip other sizing params
 	for ( const param of [ 'h', 'crop', 'resize', 'fit' ] ) {
 		urlParts.searchParams.delete( param );
 	}
 
-	const sizeParam = isGravatar ? 's' : 'w';
+	const sizeParam = 'gravatar' === service ? 's' : 'w';
 	urlParts.searchParams.set( sizeParam, width * IMAGE_SCALE_FACTOR );
 
-	if ( ! isGravatar ) {
+	if ( 'gravatar' !== service ) {
 		// gravatar doesn't support these, only photon / files.wordpress
 		urlParts.searchParams.set( 'quality', DEFAULT_PHOTON_QUALITY );
 		urlParts.searchParams.set( 'strip', 'info' ); // strip all exif data, leave ICC intact

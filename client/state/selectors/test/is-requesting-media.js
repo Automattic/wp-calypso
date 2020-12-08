@@ -6,8 +6,8 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isRequestingMedia from 'state/selectors/is-requesting-media';
-import MediaQueryManager from 'lib/query-manager/media';
+import isRequestingMedia from 'calypso/state/selectors/is-requesting-media';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
 
 describe( 'isRequestingMedia()', () => {
 	const query = {

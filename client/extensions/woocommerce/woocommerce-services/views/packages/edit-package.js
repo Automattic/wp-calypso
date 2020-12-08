@@ -12,11 +12,11 @@ import { omit, trim } from 'lodash';
  */
 import { Button } from '@automattic/components';
 import FormDimensionsInput from 'woocommerce/components/form-dimensions-input';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import FieldError from '../../components/field-error';
 import inputFilters from './input-filters';
 

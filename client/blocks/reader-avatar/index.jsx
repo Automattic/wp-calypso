@@ -3,16 +3,16 @@
  */
 import PropTypes from 'prop-types';
 import React from 'react';
-import { startsWith, endsWith, noop, get } from 'lodash';
+import { startsWith, noop, get } from 'lodash';
+import { localize } from 'i18n-calypso';
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import Gravatar from 'components/gravatar';
-import SiteIcon from 'blocks/site-icon';
-import { localize } from 'i18n-calypso';
-import classnames from 'classnames';
-import safeImageUrl from 'lib/safe-image-url';
+import Gravatar from 'calypso/components/gravatar';
+import SiteIcon from 'calypso/blocks/site-icon';
+import safeImageUrl from 'calypso/lib/safe-image-url';
 
 /**
  * Style dependencies
@@ -33,7 +33,7 @@ const ReaderAvatar = ( {
 	let fakeSite;
 
 	// don't show the default favicon for some sites
-	if ( endsWith( feedIcon, 'wp.com/i/buttonw-com.png' ) ) {
+	if ( feedIcon?.endsWith( 'wp.com/i/buttonw-com.png' ) ) {
 		feedIcon = null;
 	}
 
@@ -75,7 +75,8 @@ const ReaderAvatar = ( {
 
 	const hasBothIcons = hasSiteIcon && hasAvatar;
 
-	let siteIconSize, gravatarSize;
+	let siteIconSize;
+	let gravatarSize;
 	if ( isCompact ) {
 		siteIconSize = 32;
 		gravatarSize = hasBothIcons ? 24 : 32;

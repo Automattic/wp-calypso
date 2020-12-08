@@ -7,10 +7,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import { withPerformanceTrackerStop } from 'lib/performance-tracking';
+import EmptyContent from 'calypso/components/empty-content';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
 
 class TagEmptyContent extends React.Component {
 	shouldComponentUpdate() {
@@ -32,23 +32,23 @@ class TagEmptyContent extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read"
-				>
-					{ this.props.translate( 'Back to Following' ) }
-				</a>
-			),
-			secondaryAction = isDiscoverEnabled() ? (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore' ) }
-				</a>
-			) : null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read"
+			>
+				{ this.props.translate( 'Back to Following' ) }
+			</a>
+		);
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore' ) }
+			</a>
+		) : null;
 
 		return (
 			<EmptyContent

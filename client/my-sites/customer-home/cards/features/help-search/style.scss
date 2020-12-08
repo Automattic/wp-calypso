@@ -6,7 +6,6 @@ $card_padding_large: 24px;
 $min_results_height: 180px;
 
 .customer-home__layout .help-search {
-
 	&.card {
 		padding: 0;
 	}
@@ -95,8 +94,8 @@ $min_results_height: 180px;
 
 			.gridicon {
 				margin: 0 5px -3px 0;
-					position: relative;
-					top: 0;
+				position: relative;
+				top: 0;
 			}
 
 			&:hover,
@@ -112,9 +111,9 @@ $min_results_height: 180px;
 	}
 
 	.inline-help__results {
-		margin: #{$search_results_top_spacing + 1px } #{-$card_padding_small} 0;
+		margin: #{$search_results_top_spacing + 1px} #{-$card_padding_small} 0;
 		min-height: $min_results_height;
-		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
 
 		@include break-mobile {
@@ -125,12 +124,12 @@ $min_results_height: 180px;
 
 	.search-card {
 		margin: 0;
-		border-radius: 3px;
+		border-radius: 2px;
 		border-color: var( --color-border );
 
 		.search {
 			height: auto;
-			border-radius: 3px;
+			border-radius: 2px;
 
 			.search__input {
 				padding: 11px 0;
@@ -165,7 +164,7 @@ $min_results_height: 180px;
 	.inline-help__results-placeholder {
 		min-height: $min_results_height;
 		margin: #{$search_results_top_spacing + 1} 0 0 #{-$search_results_top_spacing};
-		padding: #{$search_results_top_spacing / 2 - 1px } 0 0 0;
+		padding: #{$search_results_top_spacing / 2 - 1px} 0 0 0;
 		border-top: 1px solid var( --color-border-subtle );
 	}
 

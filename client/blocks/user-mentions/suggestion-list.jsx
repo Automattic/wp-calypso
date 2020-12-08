@@ -4,14 +4,13 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import { bind } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import UserMentionsSuggestion from 'blocks/user-mentions/suggestion';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import UserMentionsSuggestion from 'calypso/blocks/user-mentions/suggestion';
 
 /**
  * Style dependencies
@@ -31,6 +30,7 @@ const UserMentionsSuggestionList = ( {
 		className="user-mentions__suggestions"
 		context={ popoverContext }
 		isVisible={ true }
+		isFocusEnabled={ false }
 		autoPosition={ false }
 		position="bottom right"
 		onClose={ onClose }
@@ -41,7 +41,7 @@ const UserMentionsSuggestionList = ( {
 				className="user-mentions__suggestion"
 				key={ suggestion.ID }
 				isSelected={ suggestion.ID === selectedSuggestionId }
-				onClick={ bind( onClick, null, suggestion ) }
+				onClick={ () => onClick( suggestion ) }
 			>
 				<UserMentionsSuggestion
 					avatarUrl={ suggestion.image_URL }

@@ -7,6 +7,7 @@ import '@automattic/calypso-polyfills';
 import React, { useState, useEffect, useMemo } from 'react';
 import styled from '@emotion/styled';
 import ReactDOM from 'react-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
 	Checkout,
 	CheckoutStepArea,
@@ -20,6 +21,7 @@ import {
 	createStripeMethod,
 	createStripePaymentMethodStore,
 	defaultRegistry,
+	FormStatus,
 	getDefaultOrderSummary,
 	getDefaultOrderReviewStep,
 	getDefaultOrderSummaryStep,
@@ -29,8 +31,9 @@ import {
 	useDispatch,
 	useMessages,
 	useFormStatus,
-} from '../src/public-api';
-import { StripeHookProvider, useStripe } from '../src/lib/stripe';
+	makeSuccessResponse,
+} from '@automattic/composite-checkout';
+import { StripeHookProvider, useStripe } from '../src/lib/stripe-demo';
 
 const stripeKey = 'pk_test_zIh4nRbVgmaetTZqoG4XKxWT';
 
@@ -81,9 +84,7 @@ async function stripeCardProcessor( data ) {
 	window.console.log( 'Processing stripe transaction with data', data );
 	// This simulates the transaction and provisioning time
 	await asyncTimeout( 2000 );
-	return {
-		success: true,
-	};
+	return makeSuccessResponse( { success: true } );
 }
 
 async function applePayProcessor( data ) {
@@ -264,7 +265,7 @@ function ContactForm( { summary } ) {
 				type="text"
 				value={ country }
 				onChange={ onChangeCountry }
-				disabled={ formStatus !== 'ready' }
+				disabled={ formStatus !== FormStatus.READY }
 			/>
 		</Form>
 	);

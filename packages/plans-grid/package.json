@@ -24,23 +24,24 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist ../../.tsc-cache/packages__plans-grid*",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json && copy-assets",
 		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/onboarding": "^1.0.0",
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@wordpress/components": "^10.0.3",
+		"@wordpress/components": "^10.0.5",
 		"@wordpress/compose": "^3.19.3",
 		"@wordpress/icons": "^2.4.0",
 		"@wordpress/primitives": "^1.7.0",
 		"classnames": "^2.2.6",
 		"lodash": "^4.17.15",
 		"tslib": "^1.10.0",
-		"uuid": "^7.0.2"
+		"uuid": "^7.0.2",
+		"debug": "^4.1.1"
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",

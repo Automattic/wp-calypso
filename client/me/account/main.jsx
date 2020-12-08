@@ -15,49 +15,50 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import LanguagePicker from 'components/language-picker';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import { protectForm } from 'lib/protect-form';
-import formBase from 'me/form-base';
-import config from 'config';
-import { languages } from 'languages';
-import { supportsCssCustomProperties } from 'lib/feature-detection';
+import LanguagePicker from 'calypso/components/language-picker';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import { protectForm } from 'calypso/lib/protect-form';
+import formBase from 'calypso/me/form-base';
+import config from 'calypso/config';
+import languages from '@automattic/languages';
+import { supportsCssCustomProperties } from 'calypso/lib/feature-detection';
 import { Card, Button } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
-import FormTextValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormLegend from 'components/forms/form-legend';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormRadio from 'components/forms/form-radio';
-import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'state/analytics/actions';
-import ReauthRequired from 'me/reauth-required';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import observe from 'lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
-import Main from 'components/main';
-import SitesDropdown from 'components/sites-dropdown';
-import ColorSchemePicker from 'blocks/color-scheme-picker';
-import { successNotice, errorNotice } from 'state/notices/actions';
-import { getLanguage, isLocaleVariant, canBeTranslated } from 'lib/i18n-utils';
-import isRequestingMissingSites from 'state/selectors/is-requesting-missing-sites';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { canDisplayCommunityTranslator } from 'components/community-translator/utils';
-import { ENABLE_TRANSLATOR_KEY } from 'lib/i18n-utils/constants';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormTextValidation from 'calypso/components/forms/form-input-validation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormLegend from 'calypso/components/forms/form-legend';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormRadio from 'calypso/components/forms/form-radio';
+import { recordGoogleEvent, recordTracksEvent, bumpStat } from 'calypso/state/analytics/actions';
+import ReauthRequired from 'calypso/me/reauth-required';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import observe from 'calypso/lib/mixins/data-observe'; // eslint-disable-line no-restricted-imports
+import Main from 'calypso/components/main';
+import SitesDropdown from 'calypso/components/sites-dropdown';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
+import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { canDisplayCommunityTranslator } from 'calypso/components/community-translator/utils';
+import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
 import AccountSettingsCloseLink from './close-link';
-import { requestGeoLocation } from 'state/data-getters';
-import { withLocalizedMoment } from 'components/localized-moment';
+import { requestGeoLocation } from 'calypso/state/data-getters';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getCurrentUserDate,
 	getCurrentUserDisplayName,
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
-} from 'state/current-user/selectors';
+} from 'calypso/state/current-user/selectors';
+import FormattedHeader from 'calypso/components/formatted-header';
 
 /**
  * Style dependencies
@@ -684,8 +685,8 @@ const Account = createReactClass( {
 								onClick={ this.handleUsernameChangeBlogRadio }
 								value={ key }
 								checked={ key === this.state.usernameAction }
+								label={ message }
 							/>
-							<span>{ message }</span>
 						</FormLabel>
 					) )
 				}
@@ -811,10 +812,12 @@ const Account = createReactClass( {
 		const renderUsernameForm = userSettings.isSettingUnsaved( 'user_login' );
 
 		return (
-			<Main className="account">
+			<Main className="account is-wide-layout">
 				<PageViewTracker path="/me/account" title="Me > Account Settings" />
 				<MeSidebarNavigation />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
+				<FormattedHeader brandFont headerText={ translate( 'Account Settings' ) } align="left" />
+
 				<Card className="account__settings">
 					<form onChange={ markChanged } onSubmit={ this.submitForm }>
 						<FormFieldset>

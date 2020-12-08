@@ -13,53 +13,53 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ContractorSelect from 'my-sites/people/contractor-select';
-import RoleSelect from 'my-sites/people/role-select';
-import TokenField from 'components/token-field';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ContractorSelect from 'calypso/my-sites/people/contractor-select';
+import RoleSelect from 'calypso/my-sites/people/role-select';
+import TokenField from 'calypso/components/token-field';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import {
 	sendInvites,
 	createInviteValidation,
 	generateInviteLinks,
 	disableInviteLinks,
-} from 'lib/invites/actions';
+} from 'calypso/lib/invites/actions';
 import { Card, Button } from '@automattic/components';
-import Main from 'components/main';
-import HeaderCake from 'components/header-cake';
-import CountedTextarea from 'components/forms/counted-textarea';
-import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
-import InvitesSentStore from 'lib/invites/stores/invites-sent';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import EmptyContent from 'components/empty-content';
-import { userCan } from 'lib/site/utils';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import FeatureExample from 'components/feature-example';
-import versionCompare from 'lib/version-compare';
-import { isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import { isJetpackSite } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import isActivatingJetpackModule from 'state/selectors/is-activating-jetpack-module';
-import isJetpackModuleActive from 'state/selectors/is-jetpack-module-active';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import withTrackingTool from 'lib/analytics/with-tracking-tool';
-import isSiteWPForTeams from 'state/selectors/is-site-wpforteams';
-import QuerySiteInvites from 'components/data/query-site-invites';
-import { getInviteLinksForSite } from 'state/invites/selectors';
-import { getSiteRoles } from 'state/site-roles/selectors';
-import FormSelect from 'components/forms/form-select';
-import FormTextInput from 'components/forms/form-text-input';
-import ClipboardButton from 'components/forms/clipboard-button';
-import SectionHeader from 'components/section-header';
-import accept from 'lib/accept';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import Main from 'calypso/components/main';
+import HeaderCake from 'calypso/components/header-cake';
+import CountedTextarea from 'calypso/components/forms/counted-textarea';
+import InvitesCreateValidationStore from 'calypso/lib/invites/stores/invites-create-validation';
+import InvitesSentStore from 'calypso/lib/invites/stores/invites-sent';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import EmptyContent from 'calypso/components/empty-content';
+import { userCan } from 'calypso/lib/site/utils';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import FeatureExample from 'calypso/components/feature-example';
+import versionCompare from 'calypso/lib/version-compare';
+import { isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import isActivatingJetpackModule from 'calypso/state/selectors/is-activating-jetpack-module';
+import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import withTrackingTool from 'calypso/lib/analytics/with-tracking-tool';
+import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import QuerySiteInvites from 'calypso/components/data/query-site-invites';
+import { getInviteLinksForSite } from 'calypso/state/invites/selectors';
+import { getSiteRoles, getWpcomFollowerRole } from 'calypso/state/site-roles/selectors';
+import FormSelect from 'calypso/components/forms/form-select';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import SectionHeader from 'calypso/components/section-header';
+import accept from 'calypso/lib/accept';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 
 /**
  * Style dependencies
@@ -125,9 +125,9 @@ class InvitePeople extends React.Component {
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 		} else {
-			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId ),
-				errors = get( sendInvitesErrored, 'errors', {} ),
-				updatedState = { sendingInvites: false };
+			const sendInvitesErrored = InvitesSentStore.getErrors( this.state.formId );
+			const errors = get( sendInvitesErrored, 'errors', {} );
+			const updatedState = { sendingInvites: false };
 			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
 				const errorKeys = Object.keys( errors );
 				Object.assign( updatedState, {
@@ -191,10 +191,12 @@ class InvitePeople extends React.Component {
 
 	refreshValidation = () => {
 		const errors =
-				InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {},
-			success = InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [],
-			errorsKeys = Object.keys( errors ),
-			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
+			InvitesCreateValidationStore.getErrors( this.props.siteId, this.state.role ) || {};
+		const success =
+			InvitesCreateValidationStore.getSuccess( this.props.siteId, this.state.role ) || [];
+		const errorsKeys = Object.keys( errors );
+		const errorToDisplay =
+			this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[ 0 ] );
 
 		this.setState( {
 			errorToDisplay,
@@ -466,10 +468,26 @@ class InvitePeople extends React.Component {
 		return inviteForm;
 	};
 
+	getInviteLinkRoles = () => {
+		const { siteRoles, wpcomFollowerRole } = this.props;
+
+		if ( ! siteRoles || ! wpcomFollowerRole ) {
+			return [];
+		}
+
+		return siteRoles.concat( wpcomFollowerRole );
+	};
+
+	isValidInviteLinkRole = ( inviteLinkRole ) => {
+		const roles = this.getInviteLinkRoles();
+		return roles.some( ( role ) => role === inviteLinkRole );
+	};
+
 	generateInviteLinks = () => {
 		this.setState( {
 			isGeneratingInviteLinks: true,
 		} );
+
 		return this.props.generateInviteLinks( this.props.siteId );
 	};
 
@@ -485,6 +503,7 @@ class InvitePeople extends React.Component {
 			( accepted ) => {
 				if ( accepted ) {
 					this.props.disableInviteLinks( this.props.siteId );
+					this.setState( this.resetState() );
 				}
 			},
 			this.props.translate( 'Disable' )
@@ -546,15 +565,21 @@ class InvitePeople extends React.Component {
 	};
 
 	renderInviteLinkRoleSelector = ( activeInviteLink ) => {
-		const { siteRoles, translate } = this.props;
+		const { translate, inviteLinks } = this.props;
+		const allRoles = this.getInviteLinkRoles();
 
 		const roleOptions =
-			siteRoles &&
-			siteRoles.map( ( role ) => (
-				<option value={ role.name } key={ role.name }>
-					{ role.display_name }
-				</option>
-			) );
+			allRoles &&
+			allRoles.map( ( role ) => {
+				if ( inviteLinks[ role.name ] ) {
+					return (
+						<option value={ role.name } key={ role.name }>
+							{ role.display_name }
+						</option>
+					);
+				}
+			} );
+
 		const inviteUrlRef = React.createRef();
 
 		return (
@@ -621,15 +646,12 @@ class InvitePeople extends React.Component {
 				<EmailVerificationGate>
 					<div className="invite-people__link-instructions">
 						{ translate(
-							'Use this link to onboard your team members without having to invite them one by one. '
-						) }
-						<strong>
-							{ translate(
-								'Anybody visiting this URL will be able to sign up to your organization, '
-							) }
-						</strong>
-						{ translate(
-							'even if they received the link from somebody else, so make sure that you share it with trusted people.'
+							'Use this link to onboard your team members without having to invite them one by one. {{strong}}Anybody visiting this URL will be able to sign up to your organization,{{/strong}} even if they received the link from somebody else, so make sure that you share it with trusted people.',
+							{
+								components: {
+									strong: <strong />,
+								},
+							}
 						) }
 					</div>
 
@@ -697,6 +719,7 @@ const connectComponent = connect(
 			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
 			inviteLinks: getInviteLinksForSite( state, siteId ),
 			siteRoles: getSiteRoles( state, siteId ),
+			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
 		};
 	},
 	( dispatch ) => ( {

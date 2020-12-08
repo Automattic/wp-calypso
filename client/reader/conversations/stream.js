@@ -7,10 +7,10 @@ import { get } from 'lodash';
 /**
  * Internal Dependencies
  */
-import Stream from 'reader/stream';
-import DocumentHead from 'components/data/document-head';
+import Stream from 'calypso/reader/stream';
+import DocumentHead from 'calypso/components/data/document-head';
 import ConversationsIntro from './intro';
-import ConversationsEmptyContent from 'blocks/conversations/empty';
+import ConversationsEmptyContent from 'calypso/blocks/conversations/empty';
 
 /**
  * Style dependencies

@@ -10,7 +10,7 @@ import { localizedSupport } from '../reducer';
 import {
 	HAPPYCHAT_IO_RECEIVE_INIT,
 	HAPPYCHAT_IO_RECEIVE_LOCALIZED_SUPPORT,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducers', () => {
 	describe( '#localizedSupport', () => {

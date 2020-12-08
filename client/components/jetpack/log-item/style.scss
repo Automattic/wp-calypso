@@ -1,5 +1,5 @@
 .log-item {
-	border-radius: 3px;
+	border-radius: var( --jetpack-corners-sharp );
 	--color-log-item: var( --color-text );
 
 	$highlights: ( 'info': 'primary-20', 'success': 'success-20', 'error': 'error-50', 'warning': 'warning-20' );
@@ -19,7 +19,7 @@
 		display: block;
 		margin-right: 10px;
 		padding: 2px 6px;
-		border-radius: 3px;
+		border-radius: 2px;
 		background-color: var( --color-log-item );
 		font-size: $font-body-extra-small;
 		color: var( --color-text-inverted );

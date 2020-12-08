@@ -7,8 +7,8 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import DocsExample from 'devdocs/docs-example';
-import Focusable from 'components/focusable';
+import DocsExample from 'calypso/devdocs/docs-example';
+import Focusable from 'calypso/components/focusable';
 
 export default class FocusableExample extends React.PureComponent {
 	static displayName = 'Focusable';

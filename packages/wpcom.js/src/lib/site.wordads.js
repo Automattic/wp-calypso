@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * Internal dependencies
  */
 import SiteWordAdsSettings from './site.wordads.settings';
 import SiteWordAdsEarnings from './site.wordads.earnings';

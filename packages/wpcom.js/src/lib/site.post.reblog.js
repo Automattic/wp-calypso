@@ -32,7 +32,7 @@ export default function Reblog( pid, sid, wpcom ) {
  * @returns {Function} request handler
  */
 Reblog.prototype.mine = Reblog.prototype.state = function ( query, fn ) {
-	var path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/mine';
 	return this.wpcom.req.get( path, query, fn );
 };
 
@@ -55,7 +55,7 @@ Reblog.prototype.add = function ( query, body, fn ) {
 		return fn( new Error( 'destination_site_id is not defined' ) );
 	}
 
-	let path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
+	const path = '/sites/' + this._sid + '/posts/' + this._pid + '/reblogs/new';
 	return this.wpcom.req.put( path, query, body, fn );
 };
 

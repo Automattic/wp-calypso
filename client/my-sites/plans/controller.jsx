@@ -9,18 +9,17 @@ import { get } from 'lodash';
  * Internal Dependencies
  */
 import Plans from './plans';
-import { isValidFeatureKey } from 'lib/plans/features-list';
-import { shouldShowOfferResetFlow } from 'lib/abtest/getters';
-import isSiteWpcom from 'state/selectors/is-site-wpcom';
-import getSelectedSiteId from 'state/ui/selectors/get-selected-site-id';
-import { productSelect } from 'my-sites/plans-v2/controller';
-import setJetpackPlansHeader from 'my-sites/plans-v2/plans-header';
+import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { productSelect } from 'calypso/my-sites/plans-v2/controller';
+import setJetpackPlansHeader from 'calypso/my-sites/plans-v2/plans-header';
 
 function showJetpackPlans( context ) {
 	const getState = context.store.getState();
 	const siteId = getSelectedSiteId( getState );
 	const isWpcom = isSiteWpcom( getState, siteId );
-	return shouldShowOfferResetFlow() && ! isWpcom;
+	return ! isWpcom;
 }
 
 export function plans( context, next ) {
@@ -29,7 +28,7 @@ export function plans( context, next ) {
 			return page.redirect( `/plans/${ context.params.site }` );
 		}
 		setJetpackPlansHeader( context );
-		return productSelect( '/plans/:site' )( context, next );
+		return productSelect( '/plans' )( context, next );
 	}
 
 	context.primary = (

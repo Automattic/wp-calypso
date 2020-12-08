@@ -7,12 +7,12 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import type { IncompatibleProducts } from 'state/sites/products/conflicts';
+import type { IncompatibleProducts } from 'calypso/state/sites/products/conflicts';
 
 interface Props {
 	incompatibleProducts: IncompatibleProducts | null;

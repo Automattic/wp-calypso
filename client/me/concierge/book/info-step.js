@@ -4,35 +4,35 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import config from 'config';
+import config from 'calypso/config';
 import { includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import Notice from 'components/notice';
+import Notice from 'calypso/components/notice';
 import { CompactCard } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
-import FormPhoneInput from 'components/forms/form-phone-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import IsRebrandCitiesSite from './is-rebrand-cities-site';
-import Timezone from 'components/timezone';
-import Site from 'blocks/site';
+import Timezone from 'calypso/components/timezone';
+import Site from 'calypso/blocks/site';
 import { localize } from 'i18n-calypso';
-import { updateConciergeSignupForm } from 'state/concierge/actions';
-import getConciergeSignupForm from 'state/selectors/get-concierge-signup-form';
-import getUserSettings from 'state/selectors/get-user-settings';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import { updateConciergeSignupForm } from 'calypso/state/concierge/actions';
+import getConciergeSignupForm from 'calypso/state/selectors/get-concierge-signup-form';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import PrimaryHeader from '../shared/primary-header';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { getLanguage } from 'lib/i18n-utils';
-import getCountries from 'state/selectors/get-countries';
-import QuerySmsCountries from 'components/data/query-countries/sms';
-import FormInputValidation from 'components/forms/form-input-validation';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { getLanguage } from 'calypso/lib/i18n-utils';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QuerySmsCountries from 'calypso/components/data/query-countries/sms';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
 
 class InfoStep extends Component {
 	static propTypes = {

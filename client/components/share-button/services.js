@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 const wordpress = {
 	url: 'https://wordpress.com/post/<SITE_SLUG>?url=<URL>&title=<TITLE>&text=&v=5',

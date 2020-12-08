@@ -1,5 +1,4 @@
-CheckoutData
-============
+# CheckoutData
 
 `CheckoutData` is a React component intended to be used as a controller-view to simplify binding and interacting with the Flux modules required for the [checkout components](../../../my-sites/upgrades/checkout/).
 
@@ -9,7 +8,7 @@ Wrap a child component with `<CheckoutData />`. [As a controller-view](https://f
 
 ```jsx
 import React from 'react';
-import CheckoutData from 'components/data/checkout';
+import CheckoutData from 'calypso/components/data/checkout';
 import MyChildComponent from './my-child-component';
 
 export default class extends React.component {

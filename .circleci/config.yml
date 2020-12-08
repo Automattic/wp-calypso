@@ -8,7 +8,7 @@ references:
   defaults: &defaults
     working_directory: ~/wp-calypso
     docker:
-      - image: circleci/node:12.18.0-browsers
+      - image: cimg/node:12.18.4
     environment:
       CIRCLE_ARTIFACTS: /tmp/artifacts
       CIRCLE_TEST_REPORTS: /tmp/test_results
@@ -18,6 +18,7 @@ references:
       NODE_OPTIONS: --max-old-space-size=3072
       npm_config_cache: /home/circleci/.cache/yarn
       YARN_CACHE_FOLDER: /home/circleci/.cache/yarn
+      CHROME_VERSION: 84.0.4147.135-1
   desktop_defaults: &desktop_defaults
     working_directory: ~/wp-calypso
 
@@ -35,8 +36,7 @@ references:
         "$CIRCLE_TEST_REPORTS/packages"         \
         "$CIRCLE_TEST_REPORTS/server"           \
         "$CIRCLE_TEST_REPORTS/e2ereports"       \
-        "$HOME/jest-cache"                      \
-        "$HOME/terser-cache"
+        "$HOME/jest-cache"
 
   # Jest cache caching
   #
@@ -68,20 +68,21 @@ references:
       - ~/jest-cache
 
   #
-  # Terser cache caching
+  # Build cache
   #
-  restore-terser-cache: &restore-terser-cache
-    name: Restore Terser cache
+  # This contains caches used by the build process (mainly webpack loaders and plugins)
+  restore-build-cache: &restore-build-cache
+    name: Restore build cache
     keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser
-  save-terser-cache: &save-terser-cache
-    name: Save Terser cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-terser-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build
+  save-build-cache: &save-build-cache
+    name: Save build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-build-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/terser-cache
+      - .cache
 
   # Git cache
   #
@@ -160,21 +161,6 @@ references:
     paths:
       - ~/.cache/yarn
 
-  # Babel cache
-  # More about the CircleCI cache: https://circleci.com/docs/2.0/caching
-  restore-babel-client-cache: &restore-babel-client-cache
-    name: Restore Babel Client Cache
-    keys:
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-trunk
-      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client
-  save-babel-client-cache: &save-babel-client-cache
-    name: Save Babel Client Cache
-    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-babel-client-{{ .Branch }}-{{ .Revision }}
-    paths:
-      - 'build/.babel-client-cache'
-
   set-e2e-variables: &set-e2e-variables
     name: Set e2e environment variables
     command: |
@@ -212,32 +198,35 @@ references:
   desktop-restore-yarn-cache: &desktop-restore-yarn-cache
     name: Restore yarn cache
     keys:
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
-      - v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
   desktop-save-yarn-cache: &desktop-save-yarn-cache
     name: Save yarn cache
-    key: v6-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-yarn-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum ".nvmrc" }}
     paths:
       - ~/.cache/yarn
   desktop-restore-packages-cache: &desktop-restore-packages-cache
     name: Restore packages cache
     keys:
-      - v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
   desktop-save-packages-cache: &desktop-save-packages-cache
     name: Save packages cache
-    key: v6-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v0-desktop-packages-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "packages-hash" }}
     paths:
       - packages
       - packages-cache-restored
-  desktop-restore-webpack-css-loader-cache: &desktop-restore-webpack-css-loader-cache
-    name: Restore webpack cache-loader cache
+  desktop-restore-calypso-build-cache: &desktop-restore-calypso-build-cache
+    name: Restore Calypso build cache
     keys:
-      - v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
-  desktop-save-webpack-css-loader-cache: &desktop-save-webpack-css-loader-cache
-    name: Save webpack cache-loader cache
-    key: v6-desktop-webpack-css-loader-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ checksum "webpack-css-loader-hash" }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-trunk
+      - v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}
+  desktop-save-calypso-build-cache: &desktop-save-calypso-build-cache
+    name: Save Calypso build cache
+    key: v{{ .Environment.GLOBAL_CACHE_PREFIX }}-v1-desktop-calypso-build-{{ .Environment.CIRCLE_JOB }}-{{ arch }}-{{ .Branch }}-{{ .Revision }}
     paths:
-      - ~/.cache/webpack/css
+      - .cache/evergreen/css-loader
   desktop-notify-github-success: &desktop-notify-github-success
     name: Notify Github Success
     when: on_success
@@ -251,6 +240,23 @@ references:
     fail_only: true
     mentions: '$CIRCLE_USERNAME'
     failure_message: ':red_circle: wp-desktop tests for $CIRCLE_BRANCH have failed.\n\nCalypso PR: $CIRCLE_PULL_REQUEST'
+  install-specific-chrome-browser: &install-specific-chrome-browser
+    name: Install Chrome
+    command: |
+      sudo apt-get update
+      cd /tmp
+      wget --no-check-certificate https://dl.google.com/linux/chrome/deb/pool/main/g/google-chrome-stable/google-chrome-stable_${CHROME_VERSION}_amd64.deb
+      sudo dpkg -i google-chrome-stable_${CHROME_VERSION}_amd64.deb || sudo apt-get -y -f install
+      rm google-chrome-stable_${CHROME_VERSION}_amd64.deb;
+      sudo sed -i 's|HERE/chrome"|HERE/chrome" --disable-setuid-sandbox --no-sandbox|g' "/opt/google/chrome/google-chrome"
+      CHROME_VERSION="$(google-chrome --version)"
+      CHROMEDRIVER_RELEASE="$(echo $CHROME_VERSION | sed 's/^Google Chrome //')"
+      CHROMEDRIVER_RELEASE=${CHROMEDRIVER_RELEASE%%.*}
+      CHROMEDRIVER_VERSION=$(curl --silent --show-error --location --fail --retry 4 --retry-delay 5 http://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROMEDRIVER_RELEASE})
+      curl --silent --show-error --location --fail --retry 4 --retry-delay 5 --output /tmp/chromedriver_linux64.zip "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+      cd /tmp && unzip chromedriver_linux64.zip && rm -rf chromedriver_linux64.zip && sudo mv chromedriver /usr/local/bin/chromedriver && sudo chmod +x /usr/local/bin/chromedriver
+      google-chrome --version
+      chromedriver --version
 
 commands:
   prepare:
@@ -281,6 +287,7 @@ jobs:
       - run: *update-git
       - save_cache: *save-git-cache
       - run: *update-node
+      - run: *install-specific-chrome-browser
       # npm dependencies
       - restore_cache: *restore-yarn-cache
       - run: *yarn-install
@@ -568,7 +575,9 @@ jobs:
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *install-specific-chrome-browser
       - run: *save-chrome-version
+      - run: sudo apt-get install -y xvfb
       - run: yarn run decryptconfig
       - run: ./scripts/randomize.sh specs
       - run: ./scripts/run-wrapper.sh
@@ -593,11 +602,15 @@ jobs:
       slack-webhook:
         type: string
         default: $SLACK_E2E
+      env-vars:
+        type: string
+        default: ''
     steps:
       - prepare
       - run: *set-e2e-variables
+      - run: *install-specific-chrome-browser
       - run: *save-chrome-version
-      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei
+      - run: sudo apt-get install -y fonts-ipafont-gothic xfonts-100dpi xfonts-75dpi xfonts-scalable xfonts-cyrillic fonts-wqy-zenhei xvfb
       - run:
           name: Skip Jetpack Tests if needed
           command: |
@@ -638,7 +651,7 @@ jobs:
       - run:
           name: Run Canary Tests
           command: |
-            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> ./run.sh -R << parameters.test-flags >>
+            env TARGET=<< parameters.test-target >> JETPACKHOST=<< parameters.jetpack-host >> << parameters.env-vars >> ./run.sh -R << parameters.test-flags >>
       - run: *move-e2e-artifacts
       - store-artifacts-and-test-results
       - slack/status:
@@ -658,6 +671,7 @@ jobs:
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       NODE_OPTIONS: --max-old-space-size=6144
       YARN_CACHE_FOLDER: ~/.cache/yarn
+      CONFIG_ENV: release
     steps:
       - checkout
       - when:
@@ -672,12 +686,9 @@ jobs:
           command: |
             # Get latest commit that modified packages directory
             echo "$(git log -n 1 --format='%h' -- packages .nvmrc yarn.lock)" > packages-hash
-
-            # Get latest commit that modified .css and related files
-            echo "$(git log -n 1 --format='%h' -- '*.css' '*.scss' '*.sass')" > webpack-css-loader-hash
       - restore_cache: *desktop-restore-yarn-cache
       - restore_cache: *desktop-restore-packages-cache
-      - restore_cache: *desktop-restore-webpack-css-loader-cache
+      - restore_cache: *desktop-restore-calypso-build-cache
       - run:
           name: Install Linux deps
           command: |
@@ -727,7 +738,7 @@ jobs:
 
             yarn run build-desktop:source
       - save_cache: *desktop-save-packages-cache
-      - save_cache: *desktop-save-webpack-css-loader-cache
+      - save_cache: *desktop-save-calypso-build-cache
       - persist_to_workspace:
           root: /home/circleci/wp-calypso
           paths: *desktop-cache-paths
@@ -770,6 +781,7 @@ jobs:
 
             yarn run test-desktop:e2e
       - run:
+          when: always
           name: Persist Mac Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
@@ -798,7 +810,7 @@ jobs:
 
   wp-desktop-linux:
     docker:
-      - image: circleci/node:12.18.0-browsers
+      - image: circleci/node:12.18.4-browsers
     <<: *desktop_defaults
     shell: /bin/bash --login
     steps:
@@ -806,6 +818,11 @@ jobs:
       - attach_workspace:
           at: ~/wp-calypso
       - run: *update-node
+      - run:
+          name: Install Linux deps
+          command: |
+            sudo apt update
+            sudo apt-get install -y libsecret-1-dev
       - run: *desktop-install-app-deps
       - run:
           name: Build Desktop Linux
@@ -830,6 +847,7 @@ jobs:
 
             yarn run test-desktop:e2e
       - run:
+          when: always
           name: Persist Linux Executable
           command: |
             # If this isn't a full artifact build, ensure to persist the built application for inspection
@@ -848,9 +866,6 @@ jobs:
       - store_artifacts:
           when: always
           path: desktop/e2e/logs
-      - store_artifacts:
-          when: always
-          path: desktop/e2e/screenshots
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
@@ -912,9 +927,9 @@ jobs:
           command: |
             tar -zcf desktop/release/win-unpacked-x64.tar.gz desktop/release/win-unpacked
 
-            # Check if win-ia32 build is present before archiving: if this isn't a full
-            # artifact build, the win-ia32-unpacked executable will not be generated.
-            If ( $(Test-Path -Path release\win-ia32-unpacked) ) {
+            # Check if win-ia32 build is present before archiving. If this is a full
+            # artifact build, the win-ia32-unpacked executable will be generated and we can archive it.
+            If ( $(Test-Path -Path desktop\release\win-ia32-unpacked) ) {
               tar -zcf desktop/release/win-unpacked-ia32.tar.gz desktop/release/win-ia32-unpacked
             } else {
               echo "Skipping tar archive for 'desktop\release\win-ia32-unpacked' (not built)"
@@ -978,34 +993,73 @@ workflows:
       - build-notifications:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - build-o2-blocks:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - build-wpcom-block-editor:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - translate:
           requires:
             - setup
       - lint:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-client:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-packages:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - test-server:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - typecheck-strict:
           requires:
             - setup
+          filters:
+            branches:
+              only:
+                # Only run for fork pull requets.
+                - /pull\/[0-9]+/
       - wait-calypso-live:
           requires:
-            - test-client
-            - test-server
+            - setup
           filters:
             branches:
               ignore:
@@ -1140,6 +1194,22 @@ workflows:
           filters:
             branches:
               only: master
+
+  e2e-full-suite-edge-scheduled:
+    jobs:
+    - setup
+    - test-e2e-canary:
+        name: test-e2e-full-suite-edge
+        requires:
+        - setup
+        test-flags: '-g'
+        env-vars: 'SKIP_DOMAIN_TESTS=true GUTENBERG_EDGE=true'
+    triggers:
+    - schedule:
+        cron: '30 8 * * *'
+        filters:
+          branches:
+            only: master
 
   e2e-jetpack-be-scheduled:
     jobs:

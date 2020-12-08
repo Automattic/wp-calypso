@@ -4,59 +4,71 @@
 	font-size: $font-body-small;
 	list-style: none;
 	margin-top: -6px;
-
-	button {
+	
+	.components-button {
 		display: inline-block;
-	color: var( --color-text-subtle );
+		color: var( --color-text-subtle );
 		padding: 4px;
+		height: auto;
 		margin-right: 8px;
-		margin-top: 0;
 		cursor: pointer;
 		font-size: $font-body-small;
-
+		font-weight: 400;
+		
+		.is-compact.gridicon,
 		.gridicon {
 			position: relative;
 			top: 4px;
 			margin-right: 4px;
 		}
-
+		
 		.gridicons-star,
 		.gridicons-star-outline {
 			top: 3px;
 		}
-
+		
 		.like-button__like-icons {
 			margin-right: 18px;
 		}
-
+		
 		&.comments__comment-actions-reply {
 			margin-left: -7px;
 		}
-
+		
 		&.like-button {
 			.gridicon {
 				position: absolute;
 			}
 		}
-
+		
 		&:hover {
 			color: var( --color-primary );
 		}
-
+		
 		&.comments__comment-actions-cancel-reply {
 			float: right;
 			margin-top: 4px;
 			margin-right: 0;
 			padding-right: 0;
 		}
-	}
 
+		&.comments__comment-actions-read-more {
+			color: var( --color-primary );
+			margin: 0 10px 0 -3px;
+			padding-left: 0;
+			
+			.comments__comment-actions-read-more-icon {
+				fill: var( --color-primary );
+			}
+		}
+	}
+	
 	// Aligns Like icon to comment text when it's by itself
 	> :only-child {
 		left: -3px;
 		top: 3px;
 	}
-
+	
 	.comments__comment-actions-approve,
 	.comments__comment-actions-trash,
 	.comments__comment-actions-spam,
@@ -82,16 +94,6 @@
 			display: inline;
 		}
 	}
-}
-
-.comments__comment-actions .comments__comment-actions-read-more {
-	color: var( --color-primary );
-	margin: 0 10px 0 -3px;
-	padding-left: 0;
-}
-
-.comments__comment-actions-read-more-icon {
-	fill: var( --color-primary );
 }
 
 .comments__comment-actions-moderation-tools {

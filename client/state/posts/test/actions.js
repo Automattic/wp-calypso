@@ -23,7 +23,7 @@ import {
 	updatePostMetadata,
 	deletePostMetadata,
 } from '../actions';
-import PostQueryManager from 'lib/query-manager/post';
+import PostQueryManager from 'calypso/lib/query-manager/post';
 import {
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
@@ -42,8 +42,8 @@ import {
 	POSTS_REQUEST,
 	POSTS_REQUEST_SUCCESS,
 	POSTS_REQUEST_FAILURE,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();

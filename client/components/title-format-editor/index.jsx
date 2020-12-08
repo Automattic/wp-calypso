@@ -14,8 +14,8 @@ import moment from 'moment';
 import { CompositeDecorator, Editor, EditorState, Modifier, SelectionState } from 'draft-js';
 import { fromEditor, mapTokenTitleForEditor, toEditor } from './parser';
 import Token from './token';
-import { buildSeoTitle } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { buildSeoTitle } from 'calypso/state/sites/selectors';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 import { localize } from 'i18n-calypso';
 
 /**

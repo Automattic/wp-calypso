@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { requestList } from 'state/mailchimp/lists/actions';
+import { requestList } from 'calypso/state/mailchimp/lists/actions';
 
 class QueryMailchimpLists extends Component {
 	componentDidMount() {

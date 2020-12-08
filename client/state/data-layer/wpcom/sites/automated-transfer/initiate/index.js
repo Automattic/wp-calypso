@@ -7,15 +7,18 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'state/action-types';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { errorNotice } from 'state/notices/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { updatePluginUploadProgress, pluginUploadError } from 'state/plugins/upload/actions';
-import { fetchAutomatedTransferStatus } from 'state/automated-transfer/actions';
+import { AUTOMATED_TRANSFER_INITIATE_WITH_PLUGIN_ZIP } from 'calypso/state/action-types';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { errorNotice } from 'calypso/state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import {
+	updatePluginUploadProgress,
+	pluginUploadError,
+} from 'calypso/state/plugins/upload/actions';
+import { fetchAutomatedTransferStatus } from 'calypso/state/automated-transfer/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 /*
  * Currently this module is only used for initiating transfers

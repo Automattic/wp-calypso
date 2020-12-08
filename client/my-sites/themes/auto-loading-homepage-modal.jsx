@@ -10,6 +10,8 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
 import {
 	getCanonicalTheme,
 	hasActivatedTheme,
@@ -18,13 +20,13 @@ import {
 	isThemeActive,
 	shouldShowHomepageWarning,
 	getPreActivateThemeId,
-} from 'state/themes/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+} from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import {
 	acceptAutoLoadingHomepageWarning,
 	hideAutoLoadingHomepageWarning,
 	activate as activateTheme,
-} from 'state/themes/actions';
+} from 'calypso/state/themes/actions';
 
 /**
  * Style dependencies
@@ -46,14 +48,47 @@ class AutoLoadingHomepageModal extends Component {
 		siteId: PropTypes.number,
 		isVisible: PropTypes.bool,
 		onClose: PropTypes.func,
-		installingThemeId: PropTypes.string.isRequired,
+		installingThemeId: PropTypes.string,
+	};
+
+	constructor( props ) {
+		super( props );
+		this.state = {
+			homepageAction: 'keep_current_homepage',
+
+			// Used to reset state when dialog re-opens, see `getDerivedStateFromProps`
+			wasVisible: props.isVisible,
+		};
+	}
+
+	static getDerivedStateFromProps( nextProps, prevState ) {
+		// This component doesn't unmount when the dialog closes, so the state
+		// needs to be reset back to defaults each time it opens.
+		// Reseting `homepageAction` ensures the default option will be selected.
+		if ( nextProps.isVisible && ! prevState.wasVisible ) {
+			return { homepageAction: 'keep_current_homepage', wasVisible: true };
+		} else if ( ! nextProps.isVisible && prevState.wasVisible ) {
+			return { wasVisible: false };
+		}
+		return null;
+	}
+
+	handleHomepageAction = ( event ) => {
+		this.setState( { homepageAction: event.currentTarget.value } );
 	};
 
 	closeModalHandler = ( activate = false ) => () => {
 		if ( activate ) {
 			const { installingThemeId, siteId, source } = this.props;
 			this.props.acceptAutoLoadingHomepageWarning( installingThemeId );
-			return this.props.activateTheme( installingThemeId, siteId, source );
+			const keepCurrentHomepage = this.state.homepageAction === 'keep_current_homepage';
+			return this.props.activateTheme(
+				installingThemeId,
+				siteId,
+				source,
+				false,
+				keepCurrentHomepage
+			);
 		}
 		this.props.hideAutoLoadingHomepageWarning();
 	};
@@ -96,15 +131,13 @@ class AutoLoadingHomepageModal extends Component {
 				buttons={ [
 					{
 						action: 'keepCurrentTheme',
-						label: translate( 'No, keep my current theme' ),
+						label: translate( 'Keep my current theme' ),
 						isPrimary: false,
 						onClick: this.closeModalHandler( false ),
 					},
 					{
 						action: 'activeTheme',
-						label: translate( 'Yes, activate %(themeName)s', {
-							args: { themeName },
-						} ),
+						label: translate( 'Activate %(themeName)s', { args: { themeName } } ),
 						isPrimary: true,
 						onClick: this.closeModalHandler( true ),
 					},
@@ -112,16 +145,34 @@ class AutoLoadingHomepageModal extends Component {
 				onClose={ this.closeModalHandler( false ) }
 			>
 				<div>
-					<h1 className="themes__auto-loading-homepage-modal-title">
-						{ translate(
-							'{{strong}}%(themeName)s{{/strong}} will automatically change your homepage layout. ' +
-								'Your current homepage will become a draft. Would you like to continue?',
-							{
-								args: { themeName },
-								components: { strong: <strong /> },
-							}
-						) }
+					<h1>
+						{ translate( 'How would you like to use %(themeName)s on your site?', {
+							args: { themeName },
+						} ) }
 					</h1>
+					<FormLabel>
+						<FormRadio
+							value="keep_current_homepage"
+							checked={ 'keep_current_homepage' === this.state.homepageAction }
+							onChange={ this.handleHomepageAction }
+							label={ translate( 'Use %(themeName)s without changing my homepage content.', {
+								args: { themeName },
+							} ) }
+						/>
+					</FormLabel>
+					<FormLabel>
+						<FormRadio
+							value="use_new_homepage"
+							checked={ 'use_new_homepage' === this.state.homepageAction }
+							onChange={ this.handleHomepageAction }
+							label={ translate(
+								"Use %(themeName)s's homepage content and make my existing homepage a draft.",
+								{
+									args: { themeName },
+								}
+							) }
+						/>
+					</FormLabel>
 				</div>
 			</Dialog>
 		);

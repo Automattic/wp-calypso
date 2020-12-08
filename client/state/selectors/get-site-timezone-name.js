@@ -2,9 +2,9 @@
  * Internal dependencies
  */
 
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
-import getSiteTimezoneValue from 'state/selectors/get-site-timezone-value';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 
 /**
  * Returns either the site's timezone name (eg 'America/Araguaina').

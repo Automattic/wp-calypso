@@ -10,8 +10,8 @@ jest.mock( '../option', () => 'SubscriptionLengthOption' );
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { getPlan } from 'lib/plans';
-import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'lib/plans/constants';
+import { getPlan } from 'calypso/lib/plans';
+import { PLAN_BUSINESS, PLAN_BUSINESS_2_YEARS } from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies

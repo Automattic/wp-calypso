@@ -13,9 +13,9 @@ import {
 	getAccountRecoveryPhone,
 	isAccountRecoveryPhoneActionInProgress,
 	isAccountRecoveryPhoneValidated,
-} from 'state/account-recovery/settings/selectors';
+} from 'calypso/state/account-recovery/settings/selectors';
 import { getOKIcon, getWarningIcon } from './icons.js';
-import QueryAccountRecoverySettings from 'components/data/query-account-recovery-settings';
+import QueryAccountRecoverySettings from 'calypso/components/data/query-account-recovery-settings';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupAccountRecoveryPhone extends React.Component {
@@ -43,7 +43,8 @@ class SecurityCheckupAccountRecoveryPhone extends React.Component {
 			);
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( ! accountRecoveryPhone ) {
 			icon = getWarningIcon();

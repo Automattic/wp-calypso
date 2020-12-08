@@ -9,7 +9,7 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import getSites from 'state/selectors/get-sites';
+import getSites from 'calypso/state/selectors/get-sites';
 
 const matches = ( item, term, keys ) =>
 	keys.some( ( key ) => get( item, key, '' ).toLowerCase().indexOf( term ) > -1 );

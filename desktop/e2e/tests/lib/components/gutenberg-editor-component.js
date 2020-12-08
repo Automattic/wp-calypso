@@ -74,20 +74,26 @@ class GutenbergEditorComponent extends AsyncBaseContainer {
 		return await driverHelper.isElementPresent( this.driver, By.css( '.editor-error-boundary' ) );
 	}
 
-
 	async dismissPageTemplateSelector() {
 		if ( await driverHelper.isElementPresent( this.driver, By.css( '.page-template-modal' ) ) ) {
 			const useBlankButton = await this.driver.findElement(
-				By.css('.page-template-modal__buttons .components-button.is-primary')
+				By.css( '.page-template-modal__buttons .components-button.is-primary' )
 			);
-			await this.driver.executeScript('arguments[0].click()', useBlankButton);
+			await this.driver.executeScript( 'arguments[0].click()', useBlankButton );
 		}
 	}
 
 	async dismissEditorWelcomeModal() {
 		const welcomeModal = By.css( '.components-guide__container' );
-		if ( await driverHelper.isEventuallyPresentAndDisplayed( this.driver, welcomeModal, this.explicitWaitMS / 5 ) ) {
-				await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
+		if (
+			await driverHelper.isEventuallyPresentAndDisplayed(
+				this.driver,
+				welcomeModal,
+				this.explicitWaitMS / 5
+			)
+		) {
+			// eslint-disable-next-line no-undef
+			await this.driver.findElement( By.css( '.components-guide' ) ).sendKeys( Key.ESCAPE );
 		}
 	}
 

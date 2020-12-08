@@ -8,10 +8,10 @@ import { get, some } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { recordPageView } from 'lib/analytics/page-view';
-import config from 'config';
+import { recordPageView } from 'calypso/lib/analytics/page-view';
+import config from 'calypso/config';
 import SearchPurchase from './search';
-import { hideMasterbar, showMasterbar, hideSidebar } from 'state/ui/actions';
+import { hideMasterbar, showMasterbar } from 'calypso/state/ui/actions';
 import { ALLOWED_MOBILE_APP_REDIRECT_URL_LIST } from '../../jetpack-connect/constants';
 import {
 	persistMobileRedirect,
@@ -24,7 +24,7 @@ import {
 	PRODUCT_JETPACK_SEARCH_MONTHLY,
 	PRODUCT_WPCOM_SEARCH,
 	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'lib/products-values/constants';
+} from 'calypso/lib/products-values/constants';
 
 /**
  * Module variables
@@ -33,8 +33,6 @@ const debug = new Debug( 'calypso:purchase-product:controller' );
 const analyticsPageTitleByType = {
 	jetpack_search: 'Jetpack Search',
 };
-
-const removeSidebar = ( context ) => context.store.dispatch( hideSidebar() );
 
 const getPlanSlugFromFlowType = ( type, interval = 'yearly' ) => {
 	const planSlugs = {
@@ -85,8 +83,6 @@ export function purchase( context, next ) {
 
 	planSlug && storePlan( planSlug );
 	recordPageView( pathname, analyticsPageTitle );
-
-	removeSidebar( context );
 
 	context.primary = (
 		<SearchPurchase

@@ -1,14 +1,13 @@
-Library Middleware
-==================
+# Library Middleware
 
-With the deprecation of SitesList, our `client/lib` libraries no longer 
-have easy access to the current user site. Since libraries are not react 
-components there isn't an easy way to provide access to our global 
+With the deprecation of SitesList, our `client/lib` libraries no longer
+have easy access to the current user site. Since libraries are not react
+components there isn't an easy way to provide access to our global
 redux store data.
 
 When writing a library there are currently three ways around this:
 
-### Update the library interface to pass through data needs
+## Update the library interface to pass through data needs
 
 If we create a new library, or have a library with few usages, we can
 update the function interface to pass through this data. Calling components
@@ -20,10 +19,11 @@ For example a call like:
 Would turn into:
 `library.doSomething( currentSite )`
 
-### Use Redux Middleware to perform the library side-effect
+## Use Redux Middleware to perform the library side-effect
+
 Similarly for a library with few usages, if we don't expect a return value from
 calling a library function this can be abstracted into a dispatched redux action,
-where the side effect is then called. The middleware handler has access to the 
+where the side effect is then called. The middleware handler has access to the
 global store, so it would look something like:
 
 The component dispatches a new action
@@ -33,20 +33,23 @@ dispatch( { type: 'MY_EXAMPLE_LIBRARY_ACTION' } );
 ```
 
 And in this middleware, we can create a handler:
-```jsx
-import library from 'lib/example'
-//... 
 
-case MY_EXAMPLE_LIBRARY_ACTION:
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	library.doSomething( selectedSite );
+```jsx
+/* eslint-disable no-case-declarations */
+import library from 'calypso/lib/example';
+
+switch ( action ) {
+	case MY_EXAMPLE_LIBRARY_ACTION:
+		const state = getState();
+		const selectedSite = getSelectedSite( state );
+		library.doSomething( selectedSite );
+		break;
+}
 ```
 
+## Use Redux Middleware to setSelectedSite
 
-### Use Redux Middleware to setSelectedSite
-
-For libraries that are too large to port, or have too many usages, 
+For libraries that are too large to port, or have too many usages,
 we can try working around this by setting the selectedSite when
 sites change (eg fetches complete or user sets another site).
 
@@ -57,15 +60,19 @@ library.setSelectedSite( selectedSite );
 ```
 
 Then add a handler in this middleware:
-```jsx
-import library from 'lib/example'
-//... 
 
-//All relevant site update events
-case SELECTED_SITE_SET:
-case SITE_RECEIVE:
-case SITES_RECEIVE:
-	const state = getState();
-	const selectedSite = getSelectedSite( state );
-	library.setSelectedSite( selectedSite );
+```jsx
+/* eslint-disable no-case-declarations */
+import library from 'calypso/lib/example';
+
+switch ( action ) {
+	//All relevant site update events
+	case SELECTED_SITE_SET:
+	case SITE_RECEIVE:
+	case SITES_RECEIVE:
+		const state = getState();
+		const selectedSite = getSelectedSite( state );
+		library.setSelectedSite( selectedSite );
+		break;
+}
 ```

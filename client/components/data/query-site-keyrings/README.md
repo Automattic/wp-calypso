@@ -1,5 +1,4 @@
-Query Site Keyrings
-===
+# Query Site Keyrings
 
 `<QuerySiteKeyrings />` is a React component used in managing network requests for site keyrings.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySiteKeyrings from 'components/data/query-site-keyrings';
+import QuerySiteKeyrings from 'calypso/components/data/query-site-keyrings';
 
 export default function MyKeyringsPage( { keyrings } ) {
 	return (
@@ -25,11 +24,10 @@ export default function MyKeyringsPage( { keyrings } ) {
 
 Props are displayed as a table with Name, Type, Default, and Description as headings. Required props are marked with `*`.
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`siteId` | `number` | `null` | The site ID for which the keyrings should be requested.
-
+| Name     | Type     | Default | Description                                             |
+| -------- | -------- | ------- | ------------------------------------------------------- |
+| `siteId` | `number` | `null`  | The site ID for which the keyrings should be requested. |
 
 ### General guidelines
 
-Add this component to the `render()` method wherever you need to have `state.siteKeyrings` populated for your site. 
+Add this component to the `render()` method wherever you need to have `state.siteKeyrings` populated for your site.

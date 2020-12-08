@@ -1,11 +1,15 @@
 /**
  * Internal dependencies
  */
-import { GUIDED_TOUR_UPDATE, GUIDED_TOUR_PAUSE, GUIDED_TOUR_RESUME } from 'state/action-types';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import {
+	GUIDED_TOUR_UPDATE,
+	GUIDED_TOUR_PAUSE,
+	GUIDED_TOUR_RESUME,
+} from 'calypso/state/action-types';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 
-import 'state/guided-tours/init';
+import 'calypso/state/guided-tours/init';
 
 export function quitGuidedTour( { tour, stepName, finished } ) {
 	const quitAction = {

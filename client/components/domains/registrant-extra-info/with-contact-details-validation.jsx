@@ -14,9 +14,9 @@ const debug = debugFactory( 'calypso:domains:with-contact-details-validation' );
 /**
  * Internal dependencies
  */
-import getValidationSchemas from 'state/selectors/get-validation-schemas';
-import { bumpStat, recordTracksEvent } from 'state/analytics/actions';
-import warn from 'lib/warn';
+import getValidationSchemas from 'calypso/state/selectors/get-validation-schemas';
+import { bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
+import warn from 'calypso/lib/warn';
 
 export function disableSubmitButton( children ) {
 	if ( isEmpty( children ) ) {
@@ -41,7 +41,9 @@ export function disableSubmitButton( children ) {
  * }
  */
 export function interpretIMJVError( error, schema ) {
-	let explicitPath, errorCode, errorMessage;
+	let explicitPath;
+	let errorCode;
+	let errorMessage;
 
 	if ( schema ) {
 		// Search up the schema for an explicit errorField & message

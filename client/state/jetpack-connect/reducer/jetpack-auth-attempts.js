@@ -6,9 +6,9 @@ import { isStale } from '../utils';
 import {
 	JETPACK_CONNECT_COMPLETE_FLOW,
 	JETPACK_CONNECT_RETRY_AUTH,
-} from 'state/jetpack-connect/action-types';
+} from 'calypso/state/jetpack-connect/action-types';
 import { jetpackAuthAttemptsSchema } from './schema';
-import { keyedReducer, withSchemaValidation } from 'state/utils';
+import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 
 export function authAttempts( state = undefined, { type, attemptNumber } ) {
 	switch ( type ) {

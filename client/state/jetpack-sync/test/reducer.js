@@ -16,7 +16,7 @@ import {
 	JETPACK_SYNC_START_REQUEST,
 	JETPACK_SYNC_START_SUCCESS,
 	JETPACK_SYNC_START_ERROR,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const successfulSyncStatusRequest = {
 	type: JETPACK_SYNC_STATUS_SUCCESS,

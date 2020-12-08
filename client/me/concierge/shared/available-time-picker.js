@@ -9,7 +9,7 @@ import moment from 'moment-timezone';
  * Internal dependencies
  */
 import AvailableTimeCard from './available-time-card';
-import { isDefaultLocale } from 'lib/i18n-utils';
+import { isDefaultLocale } from 'calypso/lib/i18n-utils';
 
 const groupAvailableTimesByDate = ( availableTimes, timezone ) => {
 	const dates = {};

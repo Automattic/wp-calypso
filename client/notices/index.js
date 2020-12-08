@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
+import React from 'react';
 import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import Emitter from 'lib/mixins/emitter';
+import Emitter from 'calypso/lib/mixins/emitter';
 
 const debug = debugFactory( 'calypso:notices' );
 
@@ -22,7 +23,7 @@ const notices = {
 	 *
 	 * @private
 	 *
-	 * @param {string} text The text of the notices
+	 * @param {string|React.Element} text The text of the notices
 	 * @param {object} options Options for the notice
 	 * @param {string} status The status
 	 *
@@ -76,8 +77,8 @@ const notices = {
 	 *
 	 * @public
 	 *
-	 * @param {string} text The text of the notices
-	 * @param {object} options Options for the notice
+	 * @param {string|React.Element} text The text of the notices
+	 * @param {object} [options] Options for the notice
 	 *
 	 * @returns {object} notice
 	 */
@@ -91,8 +92,8 @@ const notices = {
 	 *
 	 * @public
 	 *
-	 * @param {string} text The text of the notices
-	 * @param {object} options Options for the notice
+	 * @param {string|React.Element} text The text of the notices
+	 * @param {object} [options] Options for the notice
 	 *
 	 * @returns {object} notice
 	 */
@@ -106,8 +107,8 @@ const notices = {
 	 *
 	 * @public
 	 *
-	 * @param {string} text The text of the notices
-	 * @param {object} options Options for the notice
+	 * @param {string|React.Element} text The text of the notices
+	 * @param {object} [options] Options for the notice
 	 *
 	 * @returns {object} notice
 	 */
@@ -121,8 +122,8 @@ const notices = {
 	 *
 	 * @public
 	 *
-	 * @param {string} text The text of the notices
-	 * @param {object} options Options for the notice
+	 * @param {string|React.Element} text The text of the notices
+	 * @param {object} [options] Options for the notice
 	 *
 	 * @returns {object} notice
 	 */
@@ -145,8 +146,8 @@ const notices = {
 		if ( ! notice.container ) {
 			return;
 		}
-		const containerList = list[ notice.container ],
-			index = containerList.indexOf( notice );
+		const containerList = list[ notice.container ];
+		const index = containerList.indexOf( notice );
 
 		if ( -1 === index ) {
 			return;

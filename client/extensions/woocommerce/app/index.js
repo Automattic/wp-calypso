@@ -10,21 +10,21 @@ import PropTypes from 'prop-types';
  * Internal dependencies
  */
 import { areAllRequiredPluginsActive } from 'woocommerce/state/selectors/plugins';
-import canCurrentUser from 'state/selectors/can-current-user';
-import hasSitePendingAutomatedTransfer from 'state/selectors/has-site-pending-automated-transfer';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import hasSitePendingAutomatedTransfer from 'calypso/state/selectors/has-site-pending-automated-transfer';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { Card } from '@automattic/components';
-import config from 'config';
-import DocumentHead from 'components/data/document-head';
+import config from 'calypso/config';
+import DocumentHead from 'calypso/components/data/document-head';
 import { fetchSetupChoices } from 'woocommerce/state/sites/setup-choices/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteHomeUrl } from 'state/sites/selectors';
-import { isLoaded as arePluginsLoaded } from 'state/plugins/installed/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteHomeUrl } from 'calypso/state/sites/selectors';
+import { isLoaded as arePluginsLoaded } from 'calypso/state/plugins/installed/selectors';
 import { isStoreSetupComplete } from 'woocommerce/state/sites/setup-choices/selectors';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import Placeholder from './dashboard/placeholder';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QueryJetpackPlugins from 'components/data/query-jetpack-plugins';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import RequiredPluginsInstallView from 'woocommerce/app/dashboard/required-plugins-install-view';
 import WooCommerceColophon from 'woocommerce/components/woocommerce-colophon';
 

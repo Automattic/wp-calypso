@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { endsWith, get, isEmpty, noop } from 'lodash';
+import { get, isEmpty, noop } from 'lodash';
 import page from 'page';
 import { stringify } from 'qs';
 import classnames from 'classnames';
@@ -23,34 +23,38 @@ import {
 	getFixedDomainSearch,
 	getTld,
 	startInboundTransfer,
-} from 'lib/domains';
-import { getProductsList } from 'state/products-list/selectors';
-import { domainAvailability } from 'lib/domains/constants';
-import { PLAN_PERSONAL } from 'lib/plans/constants';
-import { getAvailabilityNotice } from 'lib/domains/registration/availability-messages';
-import DomainRegistrationSuggestion from 'components/domains/domain-registration-suggestion';
-import { getCurrentUser, getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import UpsellNudge from 'blocks/upsell-nudge';
-import Notice from 'components/notice';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
-import { getSelectedSite } from 'state/ui/selectors';
-import FormTextInput from 'components/forms/form-text-input';
+} from 'calypso/lib/domains';
+import { getProductsList } from 'calypso/state/products-list/selectors';
+import { domainAvailability } from 'calypso/lib/domains/constants';
+import { PLAN_PERSONAL } from 'calypso/lib/plans/constants';
+import { getAvailabilityNotice } from 'calypso/lib/domains/registration/availability-messages';
+import DomainRegistrationSuggestion from 'calypso/components/domains/domain-registration-suggestion';
+import { getCurrentUser, getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import Notice from 'calypso/components/notice';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 import TransferDomainPrecheck from './transfer-domain-precheck';
-import { INCOMING_DOMAIN_TRANSFER } from 'lib/url/support';
-import HeaderCake from 'components/header-cake';
+import { INCOMING_DOMAIN_TRANSFER } from 'calypso/lib/url/support';
+import HeaderCake from 'calypso/components/header-cake';
 import { Button } from '@automattic/components';
-import TransferRestrictionMessage from 'components/domains/transfer-domain-step/transfer-restriction-message';
-import { fetchSiteDomains } from 'state/sites/domains/actions';
-import { domainManagementTransferIn } from 'my-sites/domains/paths';
-import { errorNotice } from 'state/notices/actions';
-import QueryProducts from 'components/data/query-products-list';
-import QueryPlans from 'components/data/query-plans';
-import { isPlan } from 'lib/products-values';
+import TransferRestrictionMessage from 'calypso/components/domains/transfer-domain-step/transfer-restriction-message';
+import { fetchSiteDomains } from 'calypso/state/sites/domains/actions';
+import { domainManagementTransferIn } from 'calypso/my-sites/domains/paths';
+import { errorNotice } from 'calypso/state/notices/actions';
+import QueryProducts from 'calypso/components/data/query-products-list';
+import QueryPlans from 'calypso/components/data/query-plans';
+import { isPlan } from 'calypso/lib/products-values';
 import {
 	isDomainBundledWithPlan,
 	isNextDomainFree,
 	hasToUpgradeToPayForADomain,
-} from 'lib/cart-values/cart-items';
+} from 'calypso/lib/cart-values/cart-items';
 
 /**
  * Style dependencies
@@ -139,7 +143,7 @@ class TransferDomainStep extends React.Component {
 		}
 
 		let buildMapDomainUrl;
-		const basePathForMapping = endsWith( basePath, '/transfer' )
+		const basePathForMapping = basePath?.endsWith( '/transfer' )
 			? basePath.substring( 0, basePath.length - 9 )
 			: basePath;
 
@@ -255,7 +259,6 @@ class TransferDomainStep extends React.Component {
 						<FormTextInput
 							// eslint-disable-next-line jsx-a11y/no-autofocus
 							autoFocus={ true }
-							type="text"
 							value={ searchQuery }
 							placeholder={ translate( 'example.com' ) }
 							onBlur={ this.save }

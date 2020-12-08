@@ -28,9 +28,8 @@
 }
 
 .list__item-primary-domain {
-
 	.list__header-primary-domain-url {
-		color:inherit;
+		color: inherit;
 		text-decoration: none;
 	}
 }
@@ -64,6 +63,7 @@
 		margin-left: 8px;
 		background-color: var( --color-sidebar-menu-hover-background );
 		color: var( --color-sidebar-menu-hover-text );
+		// stylelint-disable-next-line scales/radii
 		border-radius: 12px;
 		display: inline-block;
 		padding: 2px 10px;
@@ -76,7 +76,6 @@
 	font-size: $font-body-small;
 	font-weight: 600;
 	white-space: pre;
-	font-family: $serif;
 	text-align: inherit;
 	line-height: normal;
 
@@ -122,7 +121,8 @@
 	}
 }
 
-.domain-management-list-item__upsell, .domain-item__upsell {
+.domain-management-list-item__upsell,
+.domain-item__upsell {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -180,9 +180,14 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.domain-item, .list-header {
+.domain-item,
+.list-header {
 	display: flex;
 	align-items: center;
+}
+
+.domain-item:hover {
+	background: var( --color-neutral-0 );
 }
 
 .list-header {
@@ -194,9 +199,12 @@ input[type='radio'].domain-management-list-item__radio {
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
 	}
+
+	div {
+		display: flex;
+		justify-content: center;
+	}
 }
-
-
 
 .domain-item .domain-item__checkbox {
 	margin-right: 12px;
@@ -226,7 +234,6 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-
 .domain-item__status-info {
 	border-left: 3px solid var( --color-success-50 );
 }
@@ -237,6 +244,10 @@ input[type='radio'].domain-management-list-item__radio {
 
 .domain-item__status-alert {
 	border-left: 3px solid var( --color-error );
+}
+
+.domain-item__status-premium {
+	border-left: 3px solid var( --color-premium-domain );
 }
 
 .domain-item__status {
@@ -264,7 +275,10 @@ input[type='radio'].domain-management-list-item__radio {
 	}
 }
 
-.list__domain-transfer-lock, .list__domain-auto-renew, .list__domain-privacy, .list__domain-email {
+.list__domain-transfer-lock,
+.list__domain-auto-renew,
+.list__domain-privacy,
+.list__domain-email {
 	flex-shrink: 0;
 	text-align: center;
 	font-size: $font-body-small;
@@ -272,6 +286,12 @@ input[type='radio'].domain-management-list-item__radio {
 
 	@include breakpoint-deprecated( '<960px' ) {
 		display: none;
+	}
+
+	span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 }
 
@@ -308,45 +328,20 @@ input[type='radio'].domain-management-list-item__radio {
 	font-weight: 600;
 }
 
-.list__no-chevron .gridicon {
-	display: none;
+.list__view-all {
+	margin-top: 24px;
 }
 
 .list__action_item_placeholder {
 	@include placeholder( --color-neutral-5 );
 }
 
-.list__domains-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-
-	@include breakpoint-deprecated( '<660px' ) {
-		align-items: center;
-	}
-}
-
-.list__domains-header-buttons {
-	display: flex;
-
-	.popover-cart {
-		margin-right: 4px;
-	}
-
-	.popover-cart .header-button, .popover-cart .header-button:hover {
-		min-height: initial;
-		background: none;
-		color: var( --color-text );
-	}
-
-	.cart__count-badge .count {
-		top: -7px;
-		right: -3px;
-	}
-}
-
 .domain-item__enable-selection {
-	> .list__domain-transfer-lock, > .list__domain-privacy, > .list__domain-auto-renew, > .list__domain-email, > .list__domain-options {
+	> .list__domain-transfer-lock,
+	> .list__domain-privacy,
+	> .list__domain-auto-renew,
+	> .list__domain-email,
+	> .list__domain-options {
 		visibility: hidden;
 	}
 }
@@ -373,4 +368,3 @@ input[type='radio'].domain-management-list-item__radio {
 		margin-left: auto;
 	}
 }
-

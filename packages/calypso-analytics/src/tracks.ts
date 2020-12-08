@@ -77,7 +77,8 @@ function checkForBlockedTracks(): Promise< void > {
 	// Calling this function from `initialize` ensures current user is set.
 	// This detects stats blocking, and identifies by `getCurrentUser()`, URL, or cookie.
 	return _loadTracksResult.catch( () => {
-		let _ut, _ui;
+		let _ut;
+		let _ui;
 		const currentUser = getCurrentUser();
 		if ( currentUser && currentUser.ID ) {
 			_ut = 'wpcom:user_id';

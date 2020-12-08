@@ -12,12 +12,14 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
+import FormButton from 'calypso/components/forms/form-button';
 import CustomNameserversRow from './custom-nameservers-row';
-import { change, remove } from 'lib/domains/nameservers';
-import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'lib/url/support';
-import { composeAnalytics, recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { CHANGE_NAME_SERVERS_FINDING_OUT_NEW_NS } from 'calypso/lib/url/support';
+import {
+	composeAnalytics,
+	recordGoogleEvent,
+	recordTracksEvent,
+} from 'calypso/state/analytics/actions';
 
 const MIN_NAMESERVER_LENGTH = 2;
 const MAX_NAMESERVER_LENGTH = 4;
@@ -92,11 +94,13 @@ class CustomNameserversForm extends React.PureComponent {
 	}
 
 	handleRemove = ( index ) => {
-		this.props.onChange( remove( this.props.nameservers, index ) );
+		this.props.onChange( this.props.nameservers.filter( ( ns, idx ) => idx !== index ) );
 	};
 
 	handleChange = ( nameserver, index ) => {
-		this.props.onChange( change( this.props.nameservers, index, nameserver ) );
+		const nameservers = [ ...this.props.nameservers ];
+		nameservers[ index ] = nameserver;
+		this.props.onChange( nameservers );
 	};
 
 	render() {
@@ -114,7 +118,7 @@ class CustomNameserversForm extends React.PureComponent {
 					{ this.rows() }
 					{ this.popularHostsMessage() }
 
-					<FormFooter>
+					<div>
 						<FormButton
 							isPrimary
 							onClick={ this.handleSubmit }
@@ -126,7 +130,7 @@ class CustomNameserversForm extends React.PureComponent {
 						<FormButton type="button" isPrimary={ false } onClick={ this.handleReset }>
 							{ translate( 'Reset to defaults' ) }
 						</FormButton>
-					</FormFooter>
+					</div>
 				</form>
 			</Card>
 		);

@@ -12,8 +12,8 @@ import {
 	SITE_MEDIA_STORAGE_REQUEST,
 	SITE_MEDIA_STORAGE_REQUEST_SUCCESS,
 	SITE_MEDIA_STORAGE_REQUEST_FAILURE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**

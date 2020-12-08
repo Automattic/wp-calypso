@@ -42,12 +42,11 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
-			return await sideBarComponent.selectPlan();
+			return await sideBarComponent.selectPlans();
 		} );
 
 		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
 			return await plansPage.waitForComparison();
 		} );
 
@@ -77,7 +76,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 	} );
 
 	describe( 'Viewing a specific plan with coupon: @parallel @jetpack', function () {
-		let originalCartAmount, loginFlow;
+		let originalCartAmount;
+		let loginFlow;
 
 		before( async function () {
 			return await driverManager.ensureNotLoggedIn( driver );
@@ -90,12 +90,11 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can Select Plans', async function () {
 			const sideBarComponent = await SidebarComponent.Expect( driver );
-			return await sideBarComponent.selectPlan();
+			return await sideBarComponent.selectPlans();
 		} );
 
-		step( 'Can Select Plans tab', async function () {
+		step( 'Can Compare Plans', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
 			if ( host === 'WPCOM' ) {
 				await plansPage.openAdvancedPlansSegment();
 			}
@@ -104,7 +103,7 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Select Business Plan', async function () {
 			const plansPage = await PlansPage.Expect( driver );
-			return await plansPage.selectBusinessPlan();
+			return await plansPage.selectPaidPlan();
 		} );
 
 		step( 'Remove any existing coupon', async function () {
@@ -124,7 +123,8 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 			await securePaymentComponent.enterCouponCode( dataHelper.getTestCouponCode() );
 
 			const newCartAmount = await securePaymentComponent.cartTotalAmount();
-			const expectedCartAmount = parseFloat( ( originalCartAmount * 0.99 ).toFixed( 2 ) );
+			const expectedCartAmount =
+				Math.round( ( originalCartAmount * 0.99 + Number.EPSILON ) * 100 ) / 100;
 
 			assert.strictEqual( newCartAmount, expectedCartAmount, 'Coupon not applied properly' );
 		} );
@@ -190,10 +190,9 @@ describe( `[${ host }] Plans: (${ screenSize })`, function () {
 
 		step( 'Can navigate to plans page and select business plan', async function () {
 			const sidebarComponent = await SidebarComponent.Expect( driver );
-			await sidebarComponent.selectPlan();
+			await sidebarComponent.selectPlans();
 			const plansPage = await PlansPage.Expect( driver );
-			await plansPage.openPlansTab();
-			return await plansPage.selectBusinessPlan();
+			return await plansPage.selectPaidPlan();
 		} );
 
 		step( 'User is taken to be Payment Details form', async function () {

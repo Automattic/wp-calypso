@@ -2,9 +2,8 @@
  * Internal dependencies
  */
 
-import getRawSite from 'state/selectors/get-raw-site';
-import { getSiteSettings } from 'state/site-settings/selectors';
-import isPrivateSite from 'state/selectors/is-private-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import { getSiteSettings } from 'calypso/state/site-settings/selectors';
 
 /**
  * Returns true if the site is coming_soon
@@ -14,10 +13,6 @@ import isPrivateSite from 'state/selectors/is-private-site';
  * @returns {boolean} True if site is coming_soon
  */
 export default function isSiteComingSoon( state, siteId ) {
-	if ( ! isPrivateSite( state, siteId ) ) {
-		return false;
-	}
-
 	const site = getRawSite( state, siteId );
 
 	if ( site ) {

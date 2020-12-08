@@ -9,21 +9,21 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import FormattedHeader from 'components/formatted-header';
-import JetpackHeader from 'components/jetpack-header';
-import DocumentHead from 'components/data/document-head';
-import getPartnerSlugFromQuery from 'state/selectors/get-partner-slug-from-query';
-import getCurrentRoute from 'state/selectors/get-current-route';
+import FormattedHeader from 'calypso/components/formatted-header';
+import JetpackHeader from 'calypso/components/jetpack-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import getPartnerSlugFromQuery from 'calypso/state/selectors/get-partner-slug-from-query';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 import './style.scss';
 
-function StoreHeader() {
+export default function StoreHeader() {
 	const translate = useTranslate();
 	const partnerSlug = useSelector( ( state ) => getPartnerSlugFromQuery( state ) );
 	const currentRoute = useSelector( ( state ) => getCurrentRoute( state ) );
 	const isStoreLanding =
 		currentRoute === '/jetpack/connect/store' ||
-		currentRoute.startsWith( '/jetpack/connect/plans/' );
+		currentRoute.match( new RegExp( '^/jetpack/connect/plans/[^/]+/?(monthly|annual)?$' ) );
 
 	const headerClass = classNames( 'jetpack-connect__main-logo', {
 		'add-bottom-margin': ! isStoreLanding,
@@ -49,5 +49,3 @@ function StoreHeader() {
 		</>
 	);
 }
-
-export default StoreHeader;

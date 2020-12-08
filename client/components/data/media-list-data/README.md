@@ -1,5 +1,4 @@
-MediaListData
-=============
+# MediaListData
 
 MediaListData is a React component intended to be used as a controller-view to simplify binding and interacting with the [media stores and actions](../../../lib/media/).
 
@@ -9,7 +8,7 @@ Wrap a child component with `<MediaListData />`, passing a `siteId` and optional
 
 ```jsx
 import React from 'react';
-import MediaListData from 'components/data/media-list-data';
+import MediaListData from 'calypso/components/data/media-list-data';
 import MyChildComponent from './my-child-component';
 
 export default class extends React.Component {

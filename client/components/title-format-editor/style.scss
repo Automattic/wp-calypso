@@ -35,7 +35,7 @@
 }
 
 .title-format-editor__button {
-	border-radius: 3px;
+	border-radius: 2px;
 	background-color: var( --color-surface );
 	color: var( --color-neutral-60 );
 	border: 1px solid var( --color-neutral-10 );
@@ -67,7 +67,7 @@
 	display: inline-block;
 	background-color: var( --color-neutral-50 );
 	color: var( --color-text-inverted );
-	border-radius: 4px;
+	border-radius: 2px;
 	cursor: pointer;
 	transition: all 0.3s ease;
 

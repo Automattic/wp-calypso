@@ -14,7 +14,7 @@ A good example for this case is navigation. Sometimes the option that is selecte
 
 ```jsx
 import React from 'react';
-import SegmentedControl from 'components/segmented-control';
+import SegmentedControl from 'calypso/components/segmented-control';
 
 export default class extends React.Component {
 	// ...
@@ -58,15 +58,14 @@ export default class extends React.Component {
 				</SegmentedControl.Item>
 			</SegmentedControl>
 		);
-	},
+	}
 
-	handleFilterClick: function( value ) {
-		return function() {
-
+	handleFilterClick( value ) {
+		return function () {
 			// ... (track analytics, add to state, etc.)
 
 			this.setState( {
-				selected: value
+				selected: value,
 				// ...
 			} );
 		}.bind( this );
@@ -105,14 +104,14 @@ A good example for this case is a form element. You don't want to have to write 
 
 ```jsx
 import React from 'react';
-import SimplifiedSegmentedControl from 'components/segmented-control/simplified';
+import SimplifiedSegmentedControl from 'calypso/components/segmented-control/simplified';
 
-var options = [
+const options = [
 	{ value: 'all', label: 'All' },
 	{ value: 'unread', label: 'Unread' },
 	{ value: 'comments', label: 'Comments' },
 	{ value: 'follows', label: 'Follows' },
-	{ value: 'likes', label: 'Likes' }
+	{ value: 'likes', label: 'Likes' },
 ];
 
 export default class extends React.Component {
@@ -120,13 +119,11 @@ export default class extends React.Component {
 
 	handleOnSelect = ( option ) => {
 		console.log( 'selected option:', option ); // full object of selected option
-	}
+	};
 
 	render() {
-		return (
-			<SimplifiedSegmentedControl options={ options } onSelect={ this.handleOnSelect } />
-		);
-	},
+		return <SimplifiedSegmentedControl options={ options } onSelect={ this.handleOnSelect } />;
+	}
 }
 ```
 
@@ -143,11 +140,11 @@ Note that all the "selection" logic will be applied in `SimplifiedSegmentedContr
 ##### `options` prop example
 
 ```js
-var options = [
+const options = [
 	{
-		value: // *required* - (string) tracked by component
-		label: // *required* - (string) displayed to user
-		path: // optional - (string) URL to navigate when clicked
+		value: 'the value', // *required* - (string) tracked by component
+		label: 'the label', // *required* - (string) displayed to user
+		path: 'a path', // optional - (string) URL to navigate when clicked
 	},
 	// ...
 ];

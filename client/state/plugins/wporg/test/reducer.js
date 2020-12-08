@@ -8,7 +8,7 @@ import deepFreeze from 'deep-freeze';
  * Internal dependencies
  */
 import { items, fetchingItems } from '../reducer';
-import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'state/action-types';
+import { WPORG_PLUGIN_DATA_RECEIVE, FETCH_WPORG_PLUGIN_DATA } from 'calypso/state/action-types';
 
 describe( 'wporg reducer', () => {
 	describe( 'items', () => {

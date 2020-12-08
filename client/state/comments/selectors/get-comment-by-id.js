@@ -6,9 +6,9 @@ import { filter, find, flatMap } from 'lodash';
 /**
  * Internal dependencies
  */
-import { deconstructStateKey, getErrorKey } from 'state/comments/utils';
+import { deconstructStateKey, getErrorKey } from 'calypso/state/comments/utils';
 
-import 'state/comments/init';
+import 'calypso/state/comments/init';
 
 export function getCommentById( { state, commentId, siteId } ) {
 	const errorKey = getErrorKey( siteId, commentId );

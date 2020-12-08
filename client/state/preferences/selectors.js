@@ -8,7 +8,7 @@ import { get, find, has } from 'lodash';
  */
 import { DEFAULT_PREFERENCE_VALUES } from './constants';
 
-import 'state/preferences/init';
+import 'calypso/state/preferences/init';
 
 export const isFetchingPreferences = ( state ) => !! state.preferences.fetching;
 

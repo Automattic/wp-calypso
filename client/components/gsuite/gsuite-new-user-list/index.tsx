@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import React, { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useTranslate } from 'i18n-calypso';
 
@@ -15,7 +15,7 @@ import {
 	GSuiteNewUser as NewUser,
 	sanitizeEmail,
 	validateUsers,
-} from 'lib/gsuite/new-users';
+} from 'calypso/lib/gsuite/new-users';
 
 /**
  * Style dependencies

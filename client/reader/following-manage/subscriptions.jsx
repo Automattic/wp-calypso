@@ -5,29 +5,29 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { escapeRegExp, reverse, sortBy, trimStart, isEmpty } from 'lodash';
+import { sortBy, trimStart, isEmpty } from 'lodash';
 import page from 'page';
 import classnames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import ReaderImportButton from 'blocks/reader-import-button';
-import ReaderExportButton from 'blocks/reader-export-button';
-import InfiniteStream from 'reader/components/reader-infinite-stream';
-import { siteRowRenderer } from 'reader/components/reader-infinite-stream/row-renderers';
-import SyncReaderFollows from 'components/data/sync-reader-follows';
+import ReaderImportButton from 'calypso/blocks/reader-import-button';
+import ReaderExportButton from 'calypso/blocks/reader-export-button';
+import InfiniteStream from 'calypso/reader/components/reader-infinite-stream';
+import { siteRowRenderer } from 'calypso/reader/components/reader-infinite-stream/row-renderers';
+import SyncReaderFollows from 'calypso/components/data/sync-reader-follows';
 import FollowingManageSearchFollowed from './search-followed';
 import FollowingManageSortControls from './sort-controls';
-import { getReaderFollows, getReaderFollowsCount } from 'state/reader/follows/selectors';
-import UrlSearch from 'lib/url-search';
-import { getSiteName, getSiteUrl, getSiteDescription, getSiteAuthorName } from 'reader/get-helpers';
-import EllipsisMenu from 'components/ellipsis-menu';
-import PopoverMenuItem from 'components/popover/menu-item';
-import { formatUrlForDisplay, getFeedTitle } from 'reader/lib/feed-display-helper';
-import { addQueryArgs } from 'lib/url';
-import { READER_SUBSCRIPTIONS } from 'reader/follow-sources';
-import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'blocks/reader-export-button/constants';
+import { getReaderFollows, getReaderFollowsCount } from 'calypso/state/reader/follows/selectors';
+import UrlSearch from 'calypso/lib/url-search';
+import { filterFollowsByQuery } from 'calypso/reader/follow-helpers';
+import EllipsisMenu from 'calypso/components/ellipsis-menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
+import { formatUrlForDisplay, getFeedTitle } from 'calypso/reader/lib/feed-display-helper';
+import { addQueryArgs } from 'calypso/lib/url';
+import { READER_SUBSCRIPTIONS } from 'calypso/reader/follow-sources';
+import { READER_EXPORT_TYPE_SUBSCRIPTIONS } from 'calypso/blocks/reader-export-button/constants';
 
 class FollowingManageSubscriptions extends Component {
 	static propTypes = {
@@ -37,31 +37,6 @@ class FollowingManageSubscriptions extends Component {
 		sortOrder: PropTypes.oneOf( [ 'date-followed', 'alpha' ] ),
 		windowScrollerRef: PropTypes.func,
 	};
-
-	filterFollowsByQuery( query ) {
-		const { follows } = this.props;
-
-		if ( ! query ) {
-			return follows;
-		}
-
-		const phraseRe = new RegExp( escapeRegExp( query ), 'i' );
-
-		return follows.filter( ( follow ) => {
-			const feed = follow.feed;
-			const site = follow.site;
-			const siteName = getSiteName( { feed, site } );
-			const siteUrl = getSiteUrl( { feed, site } );
-			const siteDescription = getSiteDescription( { feed, site } );
-			const siteAuthor = getSiteAuthorName( site );
-
-			return (
-				`${ follow.URL }${ siteName }${ siteUrl }${ siteDescription }${ siteAuthor }`.search(
-					phraseRe
-				) !== -1
-			);
-		} );
-	}
 
 	sortFollows( follows, sortOrder ) {
 		if ( sortOrder === 'alpha' ) {
@@ -73,7 +48,7 @@ class FollowingManageSubscriptions extends Component {
 			} );
 		}
 
-		return reverse( sortBy( follows, [ 'date_subscribed' ] ) );
+		return sortBy( follows, [ 'date_subscribed' ] ).reverse();
 	}
 
 	handleSortChange = ( sort ) => {
@@ -82,7 +57,7 @@ class FollowingManageSubscriptions extends Component {
 
 	render() {
 		const { width, translate, query, followsCount, sortOrder } = this.props;
-		const filteredFollows = this.filterFollowsByQuery( query );
+		const filteredFollows = filterFollowsByQuery( query, this.props.follows );
 		const sortedFollows = this.sortFollows( filteredFollows, sortOrder );
 		const noSitesMatchQuery = isEmpty( sortedFollows );
 		const subsListClassNames = classnames( 'following-manage__subscriptions-list', {
@@ -122,7 +97,7 @@ class FollowingManageSubscriptions extends Component {
 								className="following-manage__subscriptions-import-export-menu-item"
 								itemComponent="div"
 							>
-								<ReaderExportButton exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS } />
+								<ReaderExportButton borderless exportType={ READER_EXPORT_TYPE_SUBSCRIPTIONS } />
 							</PopoverMenuItem>
 						</EllipsisMenu>
 					</div>

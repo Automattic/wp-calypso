@@ -1,5 +1,5 @@
 /**
- * Module dependencies
+ * Internal dependencies
  */
 import DomainEmail from './domain.email';
 import DomainDns from './domain.dns';
@@ -65,7 +65,7 @@ class Domain {
 	 * @returns {Function} request handler
 	 */
 	canRedirect( siteId, query, fn ) {
-		var path = root + siteId + '/' + this._id + '/can-redirect';
+		const path = root + siteId + '/' + this._id + '/can-redirect';
 		return this.wpcom.req.get( path, query, fn );
 	}
 
@@ -100,7 +100,7 @@ class Domain {
 	 * @returns {Function} request handler
 	 */
 	updateNameservers( nameservers, query, fn ) {
-		let body = { nameservers: nameservers };
+		const body = { nameservers: nameservers };
 		return this.wpcom.req.post( root + this._id + '/nameservers', query, body, fn );
 	}
 

@@ -11,15 +11,18 @@ import sinon from 'sinon';
  */
 import analytics from '../../lib/analytics';
 import { logSectionResponse } from 'pages/analytics';
-import { useFakeTimers } from 'test-helpers/use-sinon';
+import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
 const TWO_SECONDS = 2000;
 
 describe( 'index', () => {
 	describe( 'logSectionResponse middleware', () => {
 		// Stub request, response, and next
-		let request, response, next;
-		let request2, response2;
+		let request;
+		let response;
+		let next;
+		let request2;
+		let response2;
 		beforeEach( () => {
 			request = { context: {} };
 			request2 = { context: {} };

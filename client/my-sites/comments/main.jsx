@@ -9,18 +9,18 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import getSiteId from 'state/selectors/get-site-id';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
+import EmptyContent from 'calypso/components/empty-content';
+import getSiteId from 'calypso/state/selectors/get-site-id';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
 import CommentList from './comment-list';
 import CommentTree from './comment-tree';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { preventWidows } from 'lib/formatting';
-import { isEnabled } from 'config';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { preventWidows } from 'calypso/lib/formatting';
+import { isEnabled } from 'calypso/config';
 import { NEWEST_FIRST } from './constants';
 
 /**
@@ -125,7 +125,7 @@ const mapStateToProps = ( state, { postId, siteFragment } ) => {
 	const siteId = getSiteId( state, siteFragment );
 	const isPostView = !! postId;
 	const canModerateComments = canCurrentUser( state, siteId, 'edit_posts' );
-	const showPermissionError = false === canModerateComments;
+	const showPermissionError = ! canModerateComments;
 
 	const showCommentTree =
 		! showPermissionError && isPostView && isEnabled( 'comments/management/threaded-view' );

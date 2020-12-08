@@ -12,22 +12,22 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { CompactCard } from '@automattic/components';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import Spinner from 'components/spinner';
-import QueryPluginKeys from 'components/data/query-plugin-keys';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import PluginIcon from 'my-sites/plugins/plugin-icon/plugin-icon';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import PluginItem from 'my-sites/plugins/plugin-item/plugin-item';
-import { recordTracksEvent } from 'lib/analytics/tracks';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import Spinner from 'calypso/components/spinner';
+import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	JETPACK_CONTACT_SUPPORT,
 	JETPACK_SERVICE_AKISMET,
 	JETPACK_SERVICE_VAULTPRESS,
 	JETPACK_SUPPORT,
-} from 'lib/url/support';
-import { getSiteFileModDisableReason } from 'lib/site/utils';
+} from 'calypso/lib/url/support';
+import { getSiteFileModDisableReason } from 'calypso/lib/site/utils';
 
 /**
  * Style dependencies
@@ -35,13 +35,13 @@ import { getSiteFileModDisableReason } from 'lib/site/utils';
 import './style.scss';
 
 // Redux actions & selectors
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
-import { isRequestingSites } from 'state/sites/selectors';
-import hasInitializedSites from 'state/selectors/has-initialized-sites';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import { fetchPluginData } from 'state/plugins/wporg/actions';
-import { requestSites } from 'state/sites/actions';
-import { installPlugin } from 'state/plugins/premium/actions';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isRequestingSites } from 'calypso/state/sites/selectors';
+import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import { fetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { requestSites } from 'calypso/state/sites/actions';
+import { installPlugin } from 'calypso/state/plugins/premium/actions';
 import {
 	getPluginsForSite,
 	getActivePlugin,
@@ -50,9 +50,9 @@ import {
 	isInstalling,
 	isRequesting,
 	hasRequested,
-} from 'state/plugins/premium/selectors';
+} from 'calypso/state/plugins/premium/selectors';
 // Store for existing plugins
-import PluginsStore from 'lib/plugins/store';
+import PluginsStore from 'calypso/lib/plugins/store';
 
 const helpLinks = {
 	vaultpress: JETPACK_SERVICE_VAULTPRESS,
@@ -88,11 +88,11 @@ class PlansSetup extends React.Component {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins = ( plugins ) => {
 		return plugins.map( ( plugin ) => {
-			const pluginData = getPlugin( this.props.wporg, plugin.slug );
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
 				this.props.fetchPluginData( plugin.slug );
 			}
-			return Object.assign( {}, plugin, pluginData );
+			return { ...plugin, ...pluginData };
 		} );
 	};
 
@@ -161,7 +161,7 @@ class PlansSetup extends React.Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = Object.assign( {}, plugin, getPlugin( this.props.wporg, plugin.slug ) );
+		plugin = { ...plugin, ...this.props.wporgPlugins?.[ plugin.slug ] };
 
 		const getPluginFromStore = function () {
 			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
@@ -253,7 +253,7 @@ class PlansSetup extends React.Component {
 		const plugins = this.addWporgDataToPlugins( this.props.plugins );
 
 		return plugins.map( ( item, i ) => {
-			const plugin = Object.assign( {}, item, getPlugin( this.props.wporg, item.slug ) );
+			const plugin = { ...item, ...this.props.wporgPlugins?.[ item.slug ] };
 
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			return (
@@ -561,7 +561,7 @@ export default connect(
 		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
-			wporg: state.plugins.wporg.items,
+			wporgPlugins: getAllWporgPlugins( state ),
 			isRequesting: isRequesting( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),

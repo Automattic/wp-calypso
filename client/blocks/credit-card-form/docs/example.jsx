@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import CreditCardForm from 'blocks/credit-card-form';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
 
 const createCardToken = ( cardDetails, callback ) => callback( null, 'token' );
 const saveStoredCard = () => Promise.reject( { message: 'This is an example error.' } );

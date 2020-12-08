@@ -10,7 +10,7 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import { NOTIFICATIONS_EXCEPTIONS } from './constants';
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 
 export default class extends React.PureComponent {
 	static displayName = 'NotificationSettingsFormStreamOptions';

@@ -1,5 +1,4 @@
-Payment State
-=============
+# Payment State
 
 A module for managing state associated with payment information.
 

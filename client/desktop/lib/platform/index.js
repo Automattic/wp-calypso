@@ -29,6 +29,10 @@ Platform.prototype.setMainWindow = function ( mainWindow ) {
 		}
 
 		this.platform = new PlatformHandler( mainWindow );
+
+		mainWindow.on( 'blur', () => {
+			mainWindow.webContents.send( 'notifications-panel-show', false );
+		} );
 	}
 };
 

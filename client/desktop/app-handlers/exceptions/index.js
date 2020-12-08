@@ -1,14 +1,16 @@
 /**
  * External Dependencies
  */
-const { app, dialog } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, dialog } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const crashTracker = require( 'desktop/lib/crash-tracker' );
-const system = require( 'desktop/lib/system' );
-const log = require( 'desktop/lib/logger' )( 'desktop:exceptions', { handleExceptions: true } );
+const crashTracker = require( 'calypso/desktop/lib/crash-tracker' );
+const system = require( 'calypso/desktop/lib/system' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:exceptions', {
+	handleExceptions: true,
+} );
 
 /**
  * Module variables

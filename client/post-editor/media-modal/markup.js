@@ -9,9 +9,9 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import { parse, stringify } from 'lib/shortcode';
-import * as MediaUtils from 'lib/media/utils';
-import { deserialize } from 'lib/media-serialization';
+import { parse, stringify } from 'calypso/lib/shortcode';
+import * as MediaUtils from 'calypso/lib/media/utils';
+import { deserialize } from 'calypso/lib/media-serialization';
 
 /**
  * Module variables
@@ -77,7 +77,9 @@ const Markup = {
 	 *                                 a captioned item.
 	 */
 	caption: function ( site, media ) {
-		let img, caption, width;
+		let img;
+		let caption;
+		let width;
 
 		if ( 'string' !== typeof media ) {
 			media = Markup.get( site, media );
@@ -136,7 +138,8 @@ const Markup = {
 				options
 			);
 
-			let width, height;
+			let width;
+			let height;
 			if ( 'full' === options.size ) {
 				width = media.width;
 				height = media.height;

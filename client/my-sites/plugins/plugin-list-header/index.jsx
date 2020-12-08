@@ -8,17 +8,17 @@ import { localize } from 'i18n-calypso';
 import { debounce } from 'lodash';
 import { findDOMNode } from 'react-dom';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import SectionHeader from 'components/section-header';
-import ButtonGroup from 'components/button-group';
+import SectionHeader from 'calypso/components/section-header';
+import ButtonGroup from 'calypso/components/button-group';
 import { Button } from '@automattic/components';
-import SelectDropdown from 'components/select-dropdown';
-import BulkSelect from 'components/bulk-select';
-import { gaRecordEvent } from 'lib/analytics/ga';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import BulkSelect from 'calypso/components/bulk-select';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 
 /**
  * Style dependencies

@@ -10,7 +10,7 @@ import React from 'react';
  * Internal dependencies
  */
 import FileImporter from './file-importer';
-import importerConfig from 'lib/importer/importer-config';
+import importerConfig from 'calypso/lib/importer/importer-config';
 
 class ImporterWordPress extends React.PureComponent {
 	static displayName = 'ImporterWordPress';

@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { requestMediaStorage, requestMediaStorageSuccess, requestMediaStorageError } from '../';
-import { receiveMediaStorage } from 'state/sites/media-storage/actions';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { receiveMediaStorage } from 'calypso/state/sites/media-storage/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 const ARBITRARY_SITE_ID = 12378129379;
 

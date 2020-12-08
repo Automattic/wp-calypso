@@ -22,40 +22,39 @@ A suite of pure analytics action creators are also exposed which can be used in 
 
 ```js
 import {
-    withAnalytics,
-    bumpStat,
-    recordGoogleEvent,
-    recordTracksEvent,
-    recordPageView
-} from 'state/analytics/actions';
+	withAnalytics,
+	bumpStat,
+	recordGoogleEvent,
+	recordTracksEvent,
+	recordPageView,
+} from 'calypso/state/analytics/actions';
 
 // track a page-view
-dispatch( recordPageView( '/path/to/page', 'Page Title' ) )
+dispatch( recordPageView( '/path/to/page', 'Page Title' ) );
 
 // add event-tracking to an action
-dispatch( withAnalytics(
-    recordGoogleEvent( 'selected_thing', 'my_thing' ),
-    selectThing( myThing )
-) );
+dispatch(
+	withAnalytics( recordGoogleEvent( 'selected_thing', 'my_thing' ), selectThing( myThing ) )
+);
 
 // withAnalytics() is auto-curried for convenience
 const statBumper = withAnalytics( bumpStat( 'api_calls', 'success' ) );
 dispatch( statBumper( apiSuccessAction() ) );
 
-
 // works with pure actions and thunks
-dispatch( withAnalytics(
-    recordPageView( '/api/users', 'Fetch Users' ),
-    fetchUsers( siteId ) // returns a thunk which makes an API call
-) );
+dispatch(
+	withAnalytics(
+		recordPageView( '/api/users', 'Fetch Users' ),
+		fetchUsers( siteId ) // returns a thunk which makes an API call
+	)
+);
 
 // passed as a component prop
-const trackSelection =
-    withAnalytics( recordTracksEvent( 'selected_page', { page: 'somePage' } ) );
+const trackSelection = withAnalytics( recordTracksEvent( 'selected_page', { page: 'somePage' } ) );
 
 const mapDispatchToProps = {
-    selectPage: trackSelection( selectPage ),
-    recordPageLoad: bumpStat( 'page_loaded', 'page_selected_page' )
+	selectPage: trackSelection( selectPage ),
+	recordPageLoad: bumpStat( 'page_loaded', 'page_selected_page' ),
 };
 ```
 

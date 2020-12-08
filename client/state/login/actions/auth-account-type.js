@@ -12,11 +12,11 @@ import {
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUESTING,
 	LOGIN_AUTH_ACCOUNT_TYPE_REQUEST_FAILURE,
 	LOGIN_AUTH_ACCOUNT_TYPE_RESET,
-} from 'state/action-types';
-import { recordTracksEventWithClientId as recordTracksEvent } from 'state/analytics/actions';
-import 'state/data-layer/wpcom/users/auth-options';
+} from 'calypso/state/action-types';
+import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
+import 'calypso/state/data-layer/wpcom/users/auth-options';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 /**
  * Retrieves the type of authentication of the account (regular, passwordless ...) of the specified user.

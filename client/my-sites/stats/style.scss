@@ -1,4 +1,3 @@
-
 // Module container
 @include breakpoint-deprecated( '>960px' ) {
 	.stats__module-column {
@@ -48,8 +47,7 @@
 
 .stats__sticky-navigation.is-sticky .sticky-panel__content {
 	background: white;
-	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ),
-		0 0 56px rgba( 0, 0, 0, 0.075 );
+	box-shadow: 0 2px 5px rgba( 0, 0, 0, 0.1 ), 0 0 56px rgba( 0, 0, 0, 0.075 );
 
 	.stats-period-navigation {
 		margin: 9px 0;

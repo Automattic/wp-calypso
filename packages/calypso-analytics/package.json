@@ -25,10 +25,10 @@
 		"url": "https://github.com/Automattic/wp-calypso/issues"
 	},
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__calypso-analytics*\"",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
 		"prepublish": "yarn run clean",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/load-script": "^1.0.0",

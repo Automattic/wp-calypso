@@ -9,20 +9,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import JetpackCredentials from 'my-sites/site-settings/jetpack-credentials';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackManageErrorPage from 'my-sites/jetpack-manage-error-page';
-import Main from 'components/main';
-import QueryRewindState from 'components/data/query-rewind-state';
-import QuerySitePurchases from 'components/data/query-site-purchases';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
-import SiteSettingsNavigation from 'my-sites/site-settings/navigation';
-import { siteHasScanProductPurchase } from 'state/purchases/selectors';
-import isRewindActive from 'state/selectors/is-rewind-active';
-import { isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId } from 'state/ui/selectors';
+import DocumentHead from 'calypso/components/data/document-head';
+import JetpackCredentials from 'calypso/my-sites/site-settings/jetpack-credentials';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
+import Main from 'calypso/components/main';
+import QueryRewindState from 'calypso/components/data/query-rewind-state';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
+import SiteSettingsNavigation from 'calypso/my-sites/site-settings/navigation';
+import { siteHasScanProductPurchase } from 'calypso/state/purchases/selectors';
+import isRewindActive from 'calypso/state/selectors/is-rewind-active';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 const SiteSettingsJetpack = ( { site, siteId, siteIsJetpack, showCredentials, translate } ) => {
 	//todo: this check makes sense in Jetpack section?

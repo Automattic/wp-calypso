@@ -23,23 +23,22 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getCountryStates } from 'state/country-states/selectors';
-import { CountrySelect, Input, HiddenInput } from 'my-sites/domains/components/form';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormFooter from 'my-sites/domains/domain-management/components/form-footer';
-import FormButton from 'components/forms/form-button';
-import FormPhoneMediaInput from 'components/forms/form-phone-media-input';
-import { countries } from 'components/phone-input/data';
-import formState from 'lib/form-state';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { tryToGuessPostalCodeFormat } from 'lib/postal-code';
-import { toIcannFormat } from 'components/phone-input/phone-number';
-import NoticeErrorMessage from 'my-sites/checkout/checkout/notice-error-message';
+import { getCountryStates } from 'calypso/state/country-states/selectors';
+import { CountrySelect, Input, HiddenInput } from 'calypso/my-sites/domains/components/form';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormButton from 'calypso/components/forms/form-button';
+import FormPhoneMediaInput from 'calypso/components/forms/form-phone-media-input';
+import { countries } from 'calypso/components/phone-input/data';
+import formState from 'calypso/lib/form-state';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
+import { toIcannFormat } from 'calypso/components/phone-input/phone-number';
+import NoticeErrorMessage from 'calypso/my-sites/checkout/checkout/notice-error-message';
 import RegionAddressFieldsets from './custom-form-fieldsets/region-address-fieldsets';
-import notices from 'notices';
-import { CALYPSO_CONTACT } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryDomainCountries from 'components/data/query-countries/domains';
+import notices from 'calypso/notices';
+import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryDomainCountries from 'calypso/components/data/query-countries/domains';
 import {
 	CONTACT_DETAILS_FORM_FIELDS,
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -537,10 +536,12 @@ export class ContactDetailsFormFields extends Component {
 					? this.renderGAppsFieldset()
 					: this.renderContactDetailsFields() }
 
-				<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				{ this.props.children && (
+					<div className="contact-details-form-fields__extra-fields">{ this.props.children }</div>
+				) }
 
 				{ isFooterVisible && (
-					<FormFooter>
+					<div>
 						{ this.props.onSubmit && (
 							<FormButton
 								className="contact-details-form-fields__submit-button"
@@ -560,7 +561,7 @@ export class ContactDetailsFormFields extends Component {
 								{ translate( 'Cancel' ) }
 							</FormButton>
 						) }
-					</FormFooter>
+					</div>
 				) }
 				<QueryDomainCountries />
 			</FormFieldset>

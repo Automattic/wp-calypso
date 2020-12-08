@@ -9,15 +9,18 @@ import { noop } from 'lodash';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { getSelectedDomain } from 'lib/domains';
+import { getSelectedDomain } from 'calypso/lib/domains';
 import {
 	cancelTransferRequest,
 	fetchWapiDomainInfo,
 	requestTransferCode,
-} from 'lib/domains/wapi-domain-info/actions';
-import notices from 'notices';
+} from 'calypso/lib/domains/wapi-domain-info/actions';
+import notices from 'calypso/notices';
 import { displayRequestTransferCodeResponseNotice } from './shared';
-import { CALYPSO_CONTACT, TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'lib/url/support';
+import {
+	CALYPSO_CONTACT,
+	TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR,
+} from 'calypso/lib/url/support';
 
 class Unlocked extends React.Component {
 	state = {
@@ -279,7 +282,7 @@ class Unlocked extends React.Component {
 		return (
 			<div>
 				<Card className="transfer-out__card">
-					<div>
+					<div className="transfer-out__content">
 						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }

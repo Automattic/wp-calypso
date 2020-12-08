@@ -55,8 +55,8 @@ PopupMonitor.prototype.open = function ( url, name, specs ) {
  * @public
  */
 PopupMonitor.prototype.getScreenCenterSpecs = function ( width, height ) {
-	const screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY,
-		screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
+	const screenTop = typeof window.screenTop !== 'undefined' ? window.screenTop : window.screenY;
+	const screenLeft = typeof window.screenLeft !== 'undefined' ? window.screenLeft : window.screenX;
 
 	return [
 		'width=' + width,

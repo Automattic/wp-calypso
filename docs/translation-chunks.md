@@ -24,7 +24,7 @@ Building translation chunks requires 3 main components - Calypso strings POT, JS
 
 #### JS Chunks Map
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/client/webpack-utils/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.{BROWSERSLIST_ENV}.json` file in the root of the project.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/generate-chunks-map-plugin.js) to generate basic chunks map as a JSON tree that contains all JS modules that every entry point or chunk includes. Generated chunks map is saved as `chunks-map.{BROWSERSLIST_ENV}.json` file in the root of the project.
 
 #### Language Translations
 
@@ -69,6 +69,6 @@ Since not all JS chunks may have translation chunks, we use the translated chunk
 
 ### Fetching translations on demand
 
-We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/client/webpack-utils/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us to interact with Webpack's dynamic module import API.
+We use [Webpack plugin](https://github.com/Automattic/wp-calypso/blob/HEAD/build-tools/webpack/require-chunk-callback-plugin.js) that provides an API to `window.__requireChunkCallback__` and allows us to interact with Webpack's dynamic module import API.
 
 We hook into JS chunks' dynamic import requests and fetch their translation chunks, when needed. When fetched, the content of a translation chunk is then merged to the existing translations with `i18n.addTranslations`.

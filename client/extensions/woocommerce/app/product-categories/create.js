@@ -13,8 +13,8 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import { ProtectFormGuard } from 'lib/protect-form';
+import Main from 'calypso/components/main';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import {
 	clearProductCategoryEdits,
@@ -30,9 +30,9 @@ import { getLink } from 'woocommerce/lib/nav-utils';
 import ProductCategoryForm from './form';
 import ProductCategoryHeader from './header';
 import { recordTrack } from 'woocommerce/lib/analytics';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getSaveErrorMessage } from './utils';
-import { withAnalytics } from 'state/analytics/actions';
+import { withAnalytics } from 'calypso/state/analytics/actions';
 
 class ProductCategoryCreate extends React.Component {
 	static propTypes = {

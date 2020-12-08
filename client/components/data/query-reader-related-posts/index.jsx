@@ -10,9 +10,9 @@ import { bindActionCreators } from 'redux';
 /**
  * Internal dependencies
  */
-import { shouldFetchRelated } from 'state/reader/related-posts/selectors';
-import { requestRelatedPosts } from 'state/reader/related-posts/actions';
-import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'state/reader/related-posts/utils';
+import { shouldFetchRelated } from 'calypso/state/reader/related-posts/selectors';
+import { requestRelatedPosts } from 'calypso/state/reader/related-posts/actions';
+import { SCOPE_ALL, SCOPE_SAME, SCOPE_OTHER } from 'calypso/state/reader/related-posts/utils';
 
 class QueryReaderRelatedPosts extends Component {
 	UNSAFE_componentWillMount() {

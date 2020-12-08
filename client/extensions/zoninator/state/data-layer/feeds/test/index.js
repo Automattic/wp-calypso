@@ -17,12 +17,12 @@ import {
 	updateZoneFeed,
 } from '../';
 import { fromApi, toApi } from '../util';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { errorNotice, removeNotice, successNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import { updateFeed } from 'zoninator/state/feeds/actions';
 import { resetLock } from 'zoninator/state/locks/actions';
 
-import 'state/form/init';
+import 'calypso/state/form/init';
 
 const dummyAction = {
 	type: 'DUMMY_ACTION',

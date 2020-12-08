@@ -14,47 +14,56 @@ import formatCurrency from '@automattic/format-currency';
 /**
  * Internal dependencies
  */
-import FoldableCard from 'components/foldable-card';
-import Notice from 'components/notice';
+import FoldableCard from 'calypso/components/foldable-card';
+import Notice from 'calypso/components/notice';
 import PlanFeaturesActions from './actions';
 import PlanFeaturesHeader from './header';
 import PlanFeaturesItem from './item';
-import SpinnerLine from 'components/spinner-line';
-import QueryActivePromotions from 'components/data/query-active-promotions';
-import { abtest } from 'lib/abtest';
-import { getCurrentUserCurrencyCode } from 'state/current-user/selectors';
-import { getPlan, getPlanBySlug, getPlanRawPrice, getPlanSlug } from 'state/plans/selectors';
-import { getSignupDependencyStore } from 'state/signup/dependency-store/selectors';
-import { planItem as getCartItemForPlan } from 'lib/cart-values/cart-items';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { retargetViewPlans } from 'lib/analytics/ad-tracking';
-import canUpgradeToPlan from 'state/selectors/can-upgrade-to-plan';
-import { getDiscountByName } from 'lib/discounts';
-import { addQueryArgs } from 'lib/url';
+import SpinnerLine from 'calypso/components/spinner-line';
+import QueryActivePromotions from 'calypso/components/data/query-active-promotions';
+import { abtest } from 'calypso/lib/abtest';
+import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
+import {
+	getPlan,
+	getPlanBySlug,
+	getPlanRawPrice,
+	getPlanSlug,
+	getDiscountedRawPrice,
+} from 'calypso/state/plans/selectors';
+import { getSignupDependencyStore } from 'calypso/state/signup/dependency-store/selectors';
+import { planItem as getCartItemForPlan } from 'calypso/lib/cart-values/cart-items';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { retargetViewPlans } from 'calypso/lib/analytics/ad-tracking';
+import canUpgradeToPlan from 'calypso/state/selectors/can-upgrade-to-plan';
+import getCurrentPlanPurchaseId from 'calypso/state/selectors/get-current-plan-purchase-id';
+import { getDiscountByName } from 'calypso/lib/discounts';
+import { addQueryArgs } from 'calypso/lib/url';
 import {
 	planMatches,
 	applyTestFiltersToPlansList,
 	getMonthlyPlanByYearly,
+	getYearlyPlanByMonthly,
 	getPlanPath,
 	isFreePlan,
 	isWpComEcommercePlan,
 	isWpComBusinessPlan,
 	getPlanClass,
-} from 'lib/plans';
+} from 'calypso/lib/plans';
 import {
 	getPlanDiscountedRawPrice,
+	getSitePlanRawPrice,
 	getPlansBySiteId,
 	isCurrentUserCurrentPlanOwner,
-} from 'state/sites/plans/selectors';
+} from 'calypso/state/sites/plans/selectors';
 import {
 	getSitePlan,
 	getSiteSlug,
 	isCurrentPlanPaid,
 	isCurrentSitePlan,
 	isJetpackSite,
-} from 'state/sites/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isPrivateSite from 'state/selectors/is-private-site';
+} from 'calypso/state/sites/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import {
 	isBestValue,
 	isMonthly,
@@ -66,9 +75,10 @@ import {
 	TYPE_BUSINESS,
 	GROUP_WPCOM,
 	FEATURE_BUSINESS_ONBOARDING,
-} from 'lib/plans/constants';
-import { getPlanFeaturesObject } from 'lib/plans/features-list';
+} from 'calypso/lib/plans/constants';
+import { getPlanFeaturesObject } from 'calypso/lib/plans/features-list';
 import PlanFeaturesScroller from './scroller';
+import { getManagePurchaseUrlFor } from 'calypso/my-sites/purchases/paths';
 
 /**
  * Style dependencies
@@ -77,7 +87,15 @@ import './style.scss';
 
 export class PlanFeatures extends Component {
 	render() {
-		const { isInSignup, planProperties, plans, selectedPlan, withScroll, translate } = this.props;
+		const {
+			isInSignup,
+			isMonthlyPricingTest,
+			planProperties,
+			plans,
+			selectedPlan,
+			withScroll,
+			translate,
+		} = this.props;
 		const tableClasses = classNames(
 			'plan-features__table',
 			`has-${ planProperties.length }-cols`
@@ -85,7 +103,10 @@ export class PlanFeatures extends Component {
 		const planClasses = classNames( 'plan-features', {
 			'plan-features--signup': isInSignup,
 		} );
-		const planWrapperClasses = classNames( { 'plans-wrapper': isInSignup } );
+		const planWrapperClasses = classNames( {
+			'plans-wrapper': isInSignup,
+			'is-monthly-pricing': isMonthlyPricingTest,
+		} );
 		const mobileView = ! withScroll && (
 			<div className="plan-features__mobile">{ this.renderMobileView() }</div>
 		);
@@ -306,6 +327,7 @@ export class PlanFeatures extends Component {
 				hideMonthly,
 			} = properties;
 			const { rawPrice, discountPrice } = properties;
+			const { annualPricePerMonth, isMonthlyPlan } = properties;
 			return (
 				<div className="plan-features__mobile-plan" key={ planName }>
 					<PlanFeaturesHeader
@@ -328,6 +350,8 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						selectedPlan={ selectedPlan }
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
+						annualPricePerMonth={ annualPricePerMonth }
+						isMonthlyPlan={ isMonthlyPlan }
 					/>
 					<p className="plan-features__description">{ planConstantObj.getDescription( abtest ) }</p>
 					<PlanFeaturesActions
@@ -368,6 +392,7 @@ export class PlanFeatures extends Component {
 			displayJetpackPlans,
 			isInSignup,
 			isJetpack,
+			isMonthlyPricingTest,
 			planProperties,
 			selectedPlan,
 			siteType,
@@ -421,6 +446,8 @@ export class PlanFeatures extends Component {
 				billingTimeFrame = planConstantObj.getSignupBillingTimeFrame();
 			}
 
+			const { annualPricePerMonth, isMonthlyPlan } = properties;
+
 			return (
 				<th scope="col" key={ planName } className={ classes }>
 					<PlanFeaturesHeader
@@ -435,6 +462,7 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isJetpack={ isJetpack }
 						isPlaceholder={ isPlaceholder }
+						isMonthlyPricingTest={ isMonthlyPricingTest }
 						newPlan={ newPlan }
 						bestValue={ bestValue }
 						planType={ planName }
@@ -445,6 +473,8 @@ export class PlanFeatures extends Component {
 						showPlanCreditsApplied={ true === showPlanCreditsApplied && ! this.hasDiscountNotice() }
 						title={ planConstantObj.getTitle() }
 						plansWithScroll={ withScroll }
+						annualPricePerMonth={ annualPricePerMonth }
+						isMonthlyPlan={ isMonthlyPlan }
 					/>
 				</th>
 			);
@@ -522,6 +552,7 @@ export class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			purchaseId,
 			translate,
 		} = this.props;
 
@@ -542,8 +573,8 @@ export class PlanFeatures extends Component {
 				'is-top-buttons'
 			);
 
-			let forceDisplayButton = false,
-				buttonText = null;
+			let forceDisplayButton = false;
+			let buttonText = null;
 
 			if ( disableBloggerPlanWithNonBlogDomain || this.props.nonDotBlogDomains.length > 0 ) {
 				if ( planMatches( planName, { type: TYPE_BLOGGER } ) ) {
@@ -568,7 +599,11 @@ export class PlanFeatures extends Component {
 						isInSignup={ isInSignup }
 						isLandingPage={ isLandingPage }
 						isLaunchPage={ isLaunchPage }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
 						onUpgradeClick={ () => this.handleUpgradeClick( properties ) }
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
@@ -604,10 +639,29 @@ export class PlanFeatures extends Component {
 		} );
 	}
 
+	renderAnnualPlansFeatureNotice( feature ) {
+		const { translate, isMonthlyPricingTest } = this.props;
+
+		if ( ! feature.availableOnlyForAnnualPlans || ! isMonthlyPricingTest ) {
+			return null;
+		}
+
+		return (
+			<span className="plan-features__item-annual-plan">
+				{ translate( 'Included with annual plans' ) }
+			</span>
+		);
+	}
+
 	renderFeatureItem( feature, index ) {
 		const description = feature.getDescription
 			? feature.getDescription( abtest, this.props.domainName )
 			: null;
+		const classes = classNames( 'plan-features__item-info', {
+			'is-annual-plan-feature': feature.availableOnlyForAnnualPlans,
+			'is-available': feature.availableForCurrentPlan,
+		} );
+
 		return (
 			<PlanFeaturesItem
 				key={ index }
@@ -615,7 +669,8 @@ export class PlanFeatures extends Component {
 				hideInfoPopover={ feature.hideInfoPopover }
 				hideGridicon={ this.props.isReskinned ? false : this.props.withScroll }
 			>
-				<span className="plan-features__item-info">
+				<span className={ classes }>
+					{ this.renderAnnualPlansFeatureNotice( feature ) }
 					<span className="plan-features__item-title">{ feature.getTitle() }</span>
 				</span>
 			</PlanFeaturesItem>
@@ -628,9 +683,9 @@ export class PlanFeatures extends Component {
 		return map( planProperties, ( properties ) => {
 			const { features, planName } = properties;
 
-			const featureKeys = Object.keys( features ),
-				key = featureKeys[ rowIndex ],
-				currentFeature = features[ key ];
+			const featureKeys = Object.keys( features );
+			const key = featureKeys[ rowIndex ];
+			const currentFeature = features[ key ];
 
 			const classes = classNames( 'plan-features__table-item', getPlanClass( planName ), {
 				'has-partial-border': ! withScroll && rowIndex + 1 < featureKeys.length,
@@ -659,6 +714,7 @@ export class PlanFeatures extends Component {
 			planProperties,
 			selectedPlan,
 			selectedSiteSlug,
+			purchaseId,
 		} = this.props;
 
 		return map( planProperties, ( properties ) => {
@@ -696,7 +752,11 @@ export class PlanFeatures extends Component {
 						isLaunchPage={ isLaunchPage }
 						isPlaceholder={ isPlaceholder }
 						isPopular={ popular }
-						manageHref={ `/plans/my-plan/${ selectedSiteSlug }` }
+						manageHref={
+							purchaseId
+								? getManagePurchaseUrlFor( selectedSiteSlug, purchaseId )
+								: `/plans/my-plan/${ selectedSiteSlug }`
+						}
 						planName={ planConstantObj.getTitle() }
 						planType={ planName }
 						primaryUpgrade={ primaryUpgrade }
@@ -730,6 +790,7 @@ PlanFeatures.propTypes = {
 	selectedFeature: PropTypes.string,
 	selectedPlan: PropTypes.string,
 	selectedSiteSlug: PropTypes.string,
+	purchaseId: PropTypes.number,
 	siteId: PropTypes.number,
 	sitePlan: PropTypes.object,
 };
@@ -754,17 +815,13 @@ export const isPrimaryUpgradeByPlanDelta = ( currentPlan, plan ) =>
 
 export const calculatePlanCredits = ( state, siteId, planProperties ) =>
 	planProperties
-		.map( ( { planName, planConstantObj, availableForPurchase } ) => {
+		.map( ( { planName, availableForPurchase } ) => {
 			if ( ! availableForPurchase ) {
 				return 0;
 			}
-			const planProductId = planConstantObj.getProductId();
-			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName, {
-				isMonthly: false,
-			} );
-			const annualRawPrice = getPlanRawPrice( state, planProductId, false );
-
-			if ( typeof annualDiscountPrice !== 'number' || typeof annualDiscountPrice !== 'number' ) {
+			const annualDiscountPrice = getPlanDiscountedRawPrice( state, siteId, planName );
+			const annualRawPrice = getSitePlanRawPrice( state, siteId, planName );
+			if ( typeof annualDiscountPrice !== 'number' || typeof annualRawPrice !== 'number' ) {
 				return 0;
 			}
 
@@ -788,6 +845,7 @@ export default connect(
 			visiblePlans,
 			popularPlanSpec,
 			withDiscount,
+			isMonthlyPricingTest,
 		} = ownProps;
 		const selectedSiteId = siteId;
 		const selectedSiteSlug = getSiteSlug( state, selectedSiteId );
@@ -867,7 +925,7 @@ export default connect(
 						default:
 							if ( planConstantObj.getSignupFeatures ) {
 								planFeatures = getPlanFeaturesObject(
-									planConstantObj.getSignupFeatures( currentPlan )
+									planConstantObj.getSignupFeatures( currentPlan, { isMonthlyPricingTest } )
 								);
 							}
 					}
@@ -877,6 +935,47 @@ export default connect(
 					planFeatures = getPlanFeaturesObject( planConstantObj.getSignupFeatures( currentPlan ) );
 				}
 				const siteIsPrivateAndGoingAtomic = siteIsPrivate && isWpComEcommercePlan( plan );
+				const isMonthlyObj = { isMonthly: showMonthlyPrice };
+				const rawPrice = siteId
+					? getSitePlanRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getPlanRawPrice( state, planProductId, showMonthlyPrice );
+				const discountPrice = siteId
+					? getPlanDiscountedRawPrice( state, selectedSiteId, plan, isMonthlyObj )
+					: getDiscountedRawPrice( state, planProductId, showMonthlyPrice );
+
+				let annualPricePerMonth = rawPrice;
+				const isMonthlyPlan = isMonthly( plan );
+				if ( isMonthlyPricingTest && isMonthlyPlan ) {
+					// Get annual price per month for comparison
+					const yearlyPlan = getPlanBySlug( state, getYearlyPlanByMonthly( plan ) );
+					if ( yearlyPlan ) {
+						annualPricePerMonth = siteId
+							? getSitePlanRawPrice( state, selectedSiteId, plan, { isMonthly: true } )
+							: getPlanRawPrice( state, yearlyPlan.product_id, true );
+					}
+				}
+
+				const annualPlansOnlyFeatures = planConstantObj.getAnnualPlansOnlyFeatures?.() || [];
+				if ( annualPlansOnlyFeatures.length > 0 ) {
+					planFeatures = planFeatures.map( ( feature ) => {
+						const availableOnlyForAnnualPlans = annualPlansOnlyFeatures.includes(
+							feature.getSlug()
+						);
+
+						return {
+							...feature,
+							availableOnlyForAnnualPlans,
+							availableForCurrentPlan: ! isMonthlyPlan || ! availableOnlyForAnnualPlans,
+						};
+					} );
+				}
+
+				// Strip annual-only features out for the site's /plans page
+				if ( ! isInSignup || isPlaceholder ) {
+					planFeatures = planFeatures.filter(
+						( { availableForCurrentPlan = true } ) => availableForCurrentPlan
+					);
+				}
 
 				return {
 					availableForPurchase,
@@ -884,9 +983,7 @@ export default connect(
 					checkoutUrl,
 					currencyCode: getCurrentUserCurrencyCode( state ),
 					current: isCurrentSitePlan( state, selectedSiteId, planProductId ),
-					discountPrice: getPlanDiscountedRawPrice( state, selectedSiteId, plan, {
-						isMonthly: showMonthlyPrice,
-					} ),
+					discountPrice,
 					features: planFeatures,
 					isLandingPage,
 					isPlaceholder,
@@ -904,9 +1001,11 @@ export default connect(
 						newPlan ||
 						bestValue ||
 						plans.length === 1,
-					rawPrice: getPlanRawPrice( state, planProductId, showMonthlyPrice ),
+					rawPrice,
 					relatedMonthlyPlan,
 					siteIsPrivateAndGoingAtomic,
+					annualPricePerMonth,
+					isMonthlyPlan,
 				};
 			} )
 		);
@@ -919,11 +1018,14 @@ export default connect(
 
 		const isJetpackNotAtomic = isJetpack && ! isSiteAT;
 
+		const purchaseId = getCurrentPlanPurchaseId( state, siteId );
+
 		return {
 			canPurchase,
 			isJetpack,
 			planProperties,
 			selectedSiteSlug,
+			purchaseId,
 			siteIsPrivate,
 			sitePlan,
 			siteType,

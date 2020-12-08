@@ -3,13 +3,13 @@
  */
 
 import page from 'page';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
  */
 import controller from './controller';
-import { makeLayout, render as clientRender } from 'controller';
+import { makeLayout, render as clientRender } from 'calypso/controller';
 
 export default function () {
 	if ( config.isEnabled( 'devdocs' ) ) {
@@ -54,6 +54,13 @@ export default function () {
 			clientRender
 		);
 		page(
+			'/devdocs/wordpress-components-gallery',
+			controller.sidebar,
+			controller.wpComponentsGallery,
+			makeLayout,
+			clientRender
+		);
+		page(
 			'/devdocs/selectors/:selector?',
 			controller.sidebar,
 			controller.selectors,
@@ -64,6 +71,13 @@ export default function () {
 			'/devdocs/typography',
 			controller.sidebar,
 			controller.typography,
+			makeLayout,
+			clientRender
+		);
+		page(
+			'/devdocs/illustrations',
+			controller.sidebar,
+			controller.illustrations,
 			makeLayout,
 			clientRender
 		);

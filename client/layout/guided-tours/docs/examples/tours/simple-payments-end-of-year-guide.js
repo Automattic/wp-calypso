@@ -5,7 +5,7 @@
 import { isDesktop } from '@automattic/viewport';
 import React, { Fragment } from 'react';
 import { overEvery as and } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -19,9 +19,9 @@ import {
 	Next,
 	Quit,
 	Link,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 import { hasSelectedSitePremiumOrBusinessPlan } from '../selectors/has-selected-site-premium-or-business-plan';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export const SimplePaymentsEndOfYearGuide = makeTour(
 	<Tour

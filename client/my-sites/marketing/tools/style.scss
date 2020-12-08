@@ -50,7 +50,7 @@
 
 	.tools__header-image {
 		position: relative;
-			left: -20px;
+		left: -20px;
 	}
 }
 
@@ -112,7 +112,7 @@
 .tools__feature-list-item-body-image {
 	margin: 10px 20px 0 0;
 	max-width: 150px;
-	width: 15%;
+	width: 16%;
 
 	@include breakpoint-deprecated( '>1040px' ) {
 		display: flex;

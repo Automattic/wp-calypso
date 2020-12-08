@@ -17,19 +17,21 @@ describe( 'User Settings', () => {
 		userSettings.fetchSettings();
 	} );
 
-	test( 'should consider overridden settings as saved', ( done ) => {
-		expect( userSettings.updateSetting( 'test', true ) ).toBe( true );
-		expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
-		expect( userSettings.unsavedSettings.test ).toBe( true );
-		expect( userSettings.unsavedSettings.lang_id ).toBe( true );
-
-		userSettings.saveSettings( assertCorrectSettingIsRemoved, { test: true } );
-
-		function assertCorrectSettingIsRemoved() {
-			expect( userSettings.unsavedSettings.test ).toBeUndefined();
+	test( 'should consider overridden settings as saved', () => {
+		return new Promise( ( done ) => {
+			expect( userSettings.updateSetting( 'test', true ) ).toBe( true );
+			expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
+			expect( userSettings.unsavedSettings.test ).toBe( true );
 			expect( userSettings.unsavedSettings.lang_id ).toBe( true );
-			done();
-		}
+
+			userSettings.saveSettings( assertCorrectSettingIsRemoved, { test: true } );
+
+			function assertCorrectSettingIsRemoved() {
+				expect( userSettings.unsavedSettings.test ).toBeUndefined();
+				expect( userSettings.unsavedSettings.lang_id ).toBe( true );
+				done();
+			}
+		} );
 	} );
 
 	describe( '#updateSetting', () => {
@@ -93,25 +95,27 @@ describe( 'User Settings', () => {
 		} );
 	} );
 
-	test( 'should support flat and deep settings', ( done ) => {
-		expect( userSettings.settings.lang_id ).toBe( false );
-		expect( userSettings.settings.testParent.testChild ).toBe( false );
+	test( 'should support flat and deep settings', () => {
+		return new Promise( ( done ) => {
+			expect( userSettings.settings.lang_id ).toBe( false );
+			expect( userSettings.settings.testParent.testChild ).toBe( false );
 
-		expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
-		expect( userSettings.updateSetting( 'testParent.testChild', true ) ).toBe( true );
+			expect( userSettings.updateSetting( 'lang_id', true ) ).toBe( true );
+			expect( userSettings.updateSetting( 'testParent.testChild', true ) ).toBe( true );
 
-		expect( userSettings.unsavedSettings.lang_id ).toBe( true );
-		expect( userSettings.unsavedSettings.testParent.testChild ).toBe( true );
+			expect( userSettings.unsavedSettings.lang_id ).toBe( true );
+			expect( userSettings.unsavedSettings.testParent.testChild ).toBe( true );
 
-		userSettings.saveSettings( assertCorrectSettingIsSaved );
+			userSettings.saveSettings( assertCorrectSettingIsSaved );
 
-		function assertCorrectSettingIsSaved() {
-			expect( userSettings.unsavedSettings.lang_id ).toBeUndefined();
-			expect( userSettings.unsavedSettings.testParent ).toBeUndefined();
-			expect( userSettings.settings.lang_id ).toBe( true );
-			expect( userSettings.settings.testParent.testChild ).toBe( true );
-			done();
-		}
+			function assertCorrectSettingIsSaved() {
+				expect( userSettings.unsavedSettings.lang_id ).toBeUndefined();
+				expect( userSettings.unsavedSettings.testParent ).toBeUndefined();
+				expect( userSettings.settings.lang_id ).toBe( true );
+				expect( userSettings.settings.testParent.testChild ).toBe( true );
+				done();
+			}
+		} );
 	} );
 
 	test( 'should clean unsaved settings if swaping back to the original value', () => {

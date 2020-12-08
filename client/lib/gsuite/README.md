@@ -9,7 +9,7 @@ G Suite is a helper library to help interact with G Suite components and APIs
 The `GSuiteNewUserList` depends on its parent managing the state of the new users. For this purpose `lib/gsuite/new-users` provides a collection of helper functions
 
 ```jsx
-import { newUsers } from 'lib/gsuite/new-users';
+import { newUsers } from 'calypso/lib/gsuite/new-users';
 
 const GSuiteExample = () => {
 	const [ users, setUsers ] = useState( newUsers( 'test.com' ) );
@@ -18,9 +18,9 @@ const GSuiteExample = () => {
 		<Card>
 			<GSuiteNewUserList
 				domains={ domains }
-				extraValidation={ user => user }
+				extraValidation={ ( user ) => user }
 				selectedDomainName={ 'test.com' }
-				onUsersChange={ changedUsers => setUsers( changedUsers ) }
+				onUsersChange={ ( changedUsers ) => setUsers( changedUsers ) }
 				users={ users }
 			>
 				<span>

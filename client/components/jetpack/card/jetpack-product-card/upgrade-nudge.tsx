@@ -4,36 +4,36 @@
 import classNames from 'classnames';
 import { useTranslate, TranslateResult } from 'i18n-calypso';
 import { isFinite } from 'lodash';
-import React, { useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import { preventWidows } from 'lib/formatting';
-import PlanPrice from 'my-sites/plan-price';
-import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'my-sites/plans-v2/constants';
-import { savePreference } from 'state/preferences/actions';
-import { getPreference } from 'state/preferences/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import { preventWidows } from 'calypso/lib/formatting';
+import PlanPrice from 'calypso/my-sites/plan-price';
+import { JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS } from 'calypso/my-sites/plans-v2/constants';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { DEFAULT_UPGRADE_NUDGE_FEATURES } from './fixtures';
+import useFlexboxWrapDetection from './lib/use-flexbox-wrap-detection';
 
 /**
  * Type dependencies
  */
-import type { SelectorProduct } from 'my-sites/plans-v2/types';
-import type { FeaturesItem } from './types';
+import type { SelectorProduct } from 'calypso/my-sites/plans-v2/types';
+import type { ProductCardFeaturesItem } from './types';
 
 type OwnProps = {
 	billingTimeFrame: TranslateResult;
 	className?: string;
-	currencyCode: string;
+	currencyCode: string | null;
 	discountedPrice?: number;
-	features?: FeaturesItem[];
+	features?: ProductCardFeaturesItem[];
 	onUpgradeClick: () => void;
 	originalPrice: number;
-	productType?: TranslateResult;
 	selectorProduct: SelectorProduct;
 };
 
@@ -46,16 +46,17 @@ const UpgradeNudge = ( {
 	onUpgradeClick,
 	originalPrice,
 	selectorProduct,
-	productType = 'Real-time',
 }: OwnProps ) => {
 	const translate = useTranslate();
+	const priceEl = useRef( null );
+	const isHeaderWrapped = useFlexboxWrapDetection( priceEl );
 	const isDiscounted = isFinite( discountedPrice );
 
 	const storedPreference = useSelector( ( state ) =>
 		getPreference( state, JETPACK_OFFER_RESET_UPGRADE_NUDGE_DISMISS )
 	);
 
-	const { description, productSlug } = selectorProduct;
+	const { description, productSlug, displayName } = selectorProduct;
 
 	// Save dismiss to never show up the nudge again for this specific plan/product.
 	const dispatch = useDispatch();
@@ -82,10 +83,15 @@ const UpgradeNudge = ( {
 							comment: 'to be accompanied with a product subtype such as "Real-time"',
 						} ) }
 						<br />
-						<span className="jetpack-product-card__nudge-product-type">{ productType }</span>
+						<span className="jetpack-product-card__nudge-product-type">{ displayName }</span>
 					</h3>
 				</div>
-				<div className="jetpack-product-card__price">
+				<div
+					className={ classNames( 'jetpack-product-card__price', {
+						'is-left-aligned': isHeaderWrapped,
+					} ) }
+					ref={ priceEl }
+				>
 					<span className="jetpack-product-card__raw-price">
 						<PlanPrice
 							rawPrice={ originalPrice }
@@ -109,11 +115,7 @@ const UpgradeNudge = ( {
 				{ features.map( ( feature, index ) => (
 					<li className="jetpack-product-card__nudge-feature" key={ index }>
 						<Gridicon icon="checkmark" />
-						<div className="jetpack-product-card__nudge-feature-desc">
-							<strong>{ feature.text }</strong>
-							<br />
-							{ feature.description }
-						</div>
+						<div className="jetpack-product-card__nudge-feature-desc">{ feature.text }</div>
 					</li>
 				) ) }
 			</ul>

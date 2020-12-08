@@ -7,9 +7,11 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import Popover from 'components/popover';
-import PopoverMenu from 'components/popover/menu';
-import PopoverMenuItem from 'components/popover/menu-item';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
+import Popover from 'calypso/components/popover';
+import PopoverMenu from 'calypso/components/popover/menu';
+import PopoverMenuItem from 'calypso/components/popover/menu-item';
 
 const customPosition = { top: 300, left: 500 };
 
@@ -102,9 +104,9 @@ class PopoverExample extends PureComponent {
 	render() {
 		return (
 			<div>
-				<label>
+				<FormLabel>
 					Position
-					<select value={ this.state.popoverPosition } onChange={ this.changePopoverPosition }>
+					<FormSelect value={ this.state.popoverPosition } onChange={ this.changePopoverPosition }>
 						<option value="top">top</option>
 						<option value="top left">top left</option>
 						<option value="top right">top right</option>
@@ -114,8 +116,8 @@ class PopoverExample extends PureComponent {
 						<option value="bottom left">bottom left</option>
 						<option value="bottom right">bottom right</option>
 						<option value="custom">custom</option>
-					</select>
-				</label>
+					</FormSelect>
+				</FormLabel>
 
 				<hr />
 

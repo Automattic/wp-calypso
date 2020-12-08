@@ -4,19 +4,23 @@
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextInput from 'components/forms/form-text-input';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormCheckbox from 'components/forms/form-checkbox';
-import { MOVE_DOMAIN } from 'lib/url/support';
-import { getName } from 'lib/purchases';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
+import { MOVE_DOMAIN } from 'calypso/lib/url/support';
+import { getName } from 'calypso/lib/purchases';
+import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
+import { getSelectedDomain } from 'calypso/lib/domains';
+import { hasTitanMailWithUs } from 'calypso/lib/titan/has-titan-mail-with-us';
 
 class RemoveDomainDialog extends Component {
 	static propTypes = {
@@ -35,7 +39,7 @@ class RemoveDomainDialog extends Component {
 	};
 
 	renderDomainDeletionWarning( productName ) {
-		const { translate } = this.props;
+		const { translate, hasTitanWithUs } = this.props;
 
 		return (
 			<p>
@@ -48,6 +52,12 @@ class RemoveDomainDialog extends Component {
 						components: { strong: <strong /> },
 					}
 				) }
+				{ hasTitanWithUs &&
+					' ' +
+						translate(
+							'You also have an active Titan Mail subscription for this domain, and your emails will stop ' +
+								'working if you delete your domain.'
+						) }
 			</p>
 		);
 	}
@@ -67,7 +77,7 @@ class RemoveDomainDialog extends Component {
 				{ this.renderDomainDeletionWarning( productName ) }
 
 				<p>
-					{ translate( 'If you want to use this domain with another service, DO NOT delete it.' ) }{ ' ' }
+					{ translate( 'If you want to use this domain with another service, do not delete it.' ) }{ ' ' }
 					{ translate(
 						'Instead, keep the domain. You can then {{a}}move or point your domain to a different service.{{/a}}',
 						{
@@ -208,4 +218,11 @@ class RemoveDomainDialog extends Component {
 	}
 }
 
-export default localize( RemoveDomainDialog );
+export default connect( ( state, ownProps ) => {
+	const domains = getDomainsBySiteId( state, ownProps.purchase.siteId );
+	const selectedDomainName = getName( ownProps.purchase );
+	const selectedDomain = getSelectedDomain( { domains, selectedDomainName } );
+	return {
+		hasTitanWithUs: hasTitanMailWithUs( selectedDomain ),
+	};
+} )( localize( RemoveDomainDialog ) );

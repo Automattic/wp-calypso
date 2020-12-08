@@ -6,7 +6,7 @@ import {
 	getDomainType,
 	getGdprConsentStatus,
 	getTransferStatus,
-} from 'lib/domains/utils';
+} from 'calypso/lib/domains/utils';
 import { camelCase, mapKeys } from 'lodash';
 
 function assembleGoogleAppsSubscription( googleAppsSubscription ) {
@@ -22,7 +22,7 @@ export const createSiteDomainObject = ( domain ) => {
 	if ( domain.transfer_start_date ) {
 		transferEndDate = new Date( domain.transfer_start_date );
 		transferEndDate.setDate( transferEndDate.getDate() + 7 ); // Add 7 days.
-		transferEndDate = transferEndDate.toIsoString();
+		transferEndDate = transferEndDate.toISOString();
 	}
 
 	return {
@@ -44,6 +44,7 @@ export const createSiteDomainObject = ( domain ) => {
 		expirySoon: Boolean( domain.expiry_soon ),
 		gdprConsentStatus: getGdprConsentStatus( domain ),
 		googleAppsSubscription: assembleGoogleAppsSubscription( domain.google_apps_subscription ),
+		titanMailSubscription: assembleGoogleAppsSubscription( domain.titan_mail_subscription ),
 		hasRegistration: Boolean( domain.has_registration ),
 		hasWpcomNameservers: domain.has_wpcom_nameservers,
 		hasZone: Boolean( domain.has_zone ),
@@ -53,6 +54,7 @@ export const createSiteDomainObject = ( domain ) => {
 		isEligibleForInboundTransfer: Boolean( domain.is_eligible_for_inbound_transfer ),
 		isAutoRenewing: Boolean( domain.auto_renewing ),
 		isPendingIcannVerification: Boolean( domain.is_pending_icann_verification ),
+		isPremium: Boolean( domain.is_premium ),
 		isPrimary: Boolean( domain.primary_domain ),
 		isPendingWhoisUpdate: Boolean( domain.pending_whois_update ),
 		isSubdomain: Boolean( domain.is_subdomain ),

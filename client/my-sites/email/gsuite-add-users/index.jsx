@@ -11,38 +11,38 @@ import React, { Fragment } from 'react';
 /**
  * Internal dependencies
  */
-import { addItems } from 'lib/cart/actions';
+import { addItems } from 'calypso/lib/cart/actions';
 import AddEmailAddressesCardPlaceholder from './add-users-placeholder';
 import { Button, Card } from '@automattic/components';
-import DomainManagementHeader from 'my-sites/domains/domain-management/components/header';
+import DomainManagementHeader from 'calypso/my-sites/domains/domain-management/components/header';
 import {
 	emailManagementAddGSuiteUsers,
 	emailManagementNewGSuiteAccount,
 	emailManagement,
-} from 'my-sites/email/paths';
-import EmailVerificationGate from 'components/email-verification/email-verification-gate';
-import { getDomainsBySiteId, isRequestingSiteDomains } from 'state/sites/domains/selectors';
-import { getDomainsWithForwards } from 'state/selectors/get-email-forwards';
-import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'lib/gsuite';
+} from 'calypso/my-sites/email/paths';
+import EmailVerificationGate from 'calypso/components/email-verification/email-verification-gate';
+import { getDomainsBySiteId, isRequestingSiteDomains } from 'calypso/state/sites/domains/selectors';
+import { getDomainsWithForwards } from 'calypso/state/selectors/get-email-forwards';
+import { getEligibleGSuiteDomain, getGSuiteSupportedDomains } from 'calypso/lib/gsuite';
 import {
 	areAllUsersValid,
 	getItemsForCart,
 	newUsers,
 	validateAgainstExistingUsers,
-} from 'lib/gsuite/new-users';
-import { getSelectedSite } from 'state/ui/selectors';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'lib/gsuite/constants';
-import GSuiteNewUserList from 'components/gsuite/gsuite-new-user-list';
-import Main from 'components/main';
-import Notice from 'components/notice';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import QuerySiteDomains from 'components/data/query-site-domains';
-import SectionHeader from 'components/section-header';
-import QueryEmailForwards from 'components/data/query-email-forwards';
-import QueryGSuiteUsers from 'components/data/query-gsuite-users';
-import getGSuiteUsers from 'state/selectors/get-gsuite-users';
-import { recordTracksEvent as recordTracksEventAction } from 'state/analytics/actions';
-import getCurrentRoute from 'state/selectors/get-current-route';
+} from 'calypso/lib/gsuite/new-users';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
+import Main from 'calypso/components/main';
+import Notice from 'calypso/components/notice';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import QuerySiteDomains from 'calypso/components/data/query-site-domains';
+import SectionHeader from 'calypso/components/section-header';
+import QueryEmailForwards from 'calypso/components/data/query-email-forwards';
+import QueryGSuiteUsers from 'calypso/components/data/query-gsuite-users';
+import getGSuiteUsers from 'calypso/state/selectors/get-gsuite-users';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
+import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
 /**
  * Style dependencies
@@ -200,7 +200,7 @@ class GSuiteAddUsers extends React.Component {
 					return <QueryEmailForwards key={ domain.domain } domainName={ domain.domain } />;
 				} ) }
 
-				<SectionHeader label={ translate( 'Add G Suite' ) } />
+				<SectionHeader label={ translate( 'Add New Users' ) } />
 
 				{ gsuiteUsers && selectedDomainInfo && ! isRequestingDomains ? (
 					<Card>
@@ -246,7 +246,7 @@ class GSuiteAddUsers extends React.Component {
 						onClick={ this.goToEmail }
 						selectedDomainName={ selectedDomainName }
 					>
-						{ translate( 'Add G Suite' ) }
+						{ translate( 'G Suite' ) }
 					</DomainManagementHeader>
 
 					<EmailVerificationGate

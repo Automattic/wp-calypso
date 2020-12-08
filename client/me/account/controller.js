@@ -9,10 +9,10 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import AccountComponent from 'me/account/main';
-import username from 'lib/username';
+import userSettings from 'calypso/lib/user-settings';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import AccountComponent from 'calypso/me/account/main';
+import username from 'calypso/lib/username';
 
 export function account( context, next ) {
 	let showNoticeInitially = false;

@@ -38,8 +38,12 @@
 	width: 100%;
 	cursor: pointer;
 
+	font-size: $font-body;
+	font-weight: 400;
+
 	padding: $padding-size;
-	border-radius: 5px;
+	margin-bottom: 0;
+	border-radius: 2px;
 
 	background: var( --color-surface );
 

@@ -7,8 +7,9 @@
 /**
  * Internal dependencies
  */
-import { getThankYouPageUrl } from '../use-get-thank-you-url';
-import { isEnabled } from 'config';
+import getThankYouPageUrl from '../hooks/use-get-thank-you-url/get-thank-you-page-url';
+import { isEnabled } from 'calypso/config';
+import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
 jest.mock( 'lib/user', () =>
@@ -28,8 +29,6 @@ jest.mock( 'lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';
-		} else if ( 'showBusinessPlanBump' === name ) {
-			return 'variantShowPlanBump';
 		}
 	} ),
 } ) );
@@ -106,6 +105,25 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( '/checkout/offer-quickstart-session/:receiptId/foo.bar' );
 	} );
 
+	// Note: This just verifies the existing behavior; this URL is invalid unless
+	// placed after a `redirectTo` query string; see the redirect payment
+	// processor
+	it( 'redirects to the business plan bump offer page with a placeholder receipt id when a site but no orderId is set and the cart contains the premium plan', () => {
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/:receiptId' );
+	} );
+
 	it( 'redirects to the thank-you page with a placeholder receiptId with a site when the cart is not empty but there is no receipt id', () => {
 		const cart = { products: [ { id: 'something' } ] };
 		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', cart } );
@@ -169,9 +187,74 @@ describe( 'getThankYouPageUrl', () => {
 			siteSlug: 'foo.bar',
 			purchaseId: '1234abcd',
 			isJetpackNotAtomic: true,
-			product: 'jetpack_backup_daily',
+			productAliasFromUrl: 'jetpack_backup_daily',
 		} );
 		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_daily' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if there is a non-atomic jetpack product in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_backup_realtime' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_backup_realtime' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if there is the non-atomic Jetpack Security plan', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			productAliasFromUrl: 'jetpack_security_daily_monthly',
+		} );
+		expect( url ).toBe(
+			'/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily_monthly'
+		);
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if non-atomic Jetpack Security plan is in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_security_daily' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_security_daily' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string if non-atomic Jetpack Complete plan is in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_complete' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&product=jetpack_complete' );
+	} );
+
+	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic legacy jetpack plan in the cart', () => {
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			purchaseId: '1234abcd',
+			isJetpackNotAtomic: true,
+			cart: {
+				products: [ { product_slug: 'jetpack_premium' } ],
+			},
+		} );
+		expect( url ).toBe( '/plans/my-plan/foo.bar?thank-you=true&install=all' );
 	} );
 
 	it( 'redirects to the plans page with thank-you query string and jetpack onboarding if there is a non-atomic jetpack plan', () => {
@@ -271,6 +354,47 @@ describe( 'getThankYouPageUrl', () => {
 			isEligibleForSignupDestination: true,
 		} );
 		expect( url ).toBe( '/cookie' );
+	} );
+
+	it( 'Should store the current URL in the redirect cookie when called from the editor', () => {
+		const saveUrlToCookie = jest.fn();
+		const cart = {
+			products: [],
+		};
+		const url = 'http://localhost/editor';
+		Object.defineProperty( window, 'location', {
+			value: {
+				href: url,
+			},
+		} );
+		getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isInEditor: true,
+			saveUrlToCookie,
+		} );
+		expect( saveUrlToCookie ).toBeCalledWith( url );
+	} );
+
+	it( 'Should store the thank you URL in the redirect cookie when called from the editor with an e-commerce plan', () => {
+		const saveUrlToCookie = jest.fn();
+		const cart = {
+			products: [
+				{
+					product_slug: PLAN_ECOMMERCE,
+				},
+			],
+		};
+		window.one = 1;
+		getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			isInEditor: true,
+			saveUrlToCookie,
+		} );
+		expect( saveUrlToCookie ).toBeCalledWith( '/checkout/thank-you/foo.bar/:receiptId' );
 	} );
 
 	it( 'redirects to url from cookie followed by purchase id if create_new_blog is set', () => {
@@ -457,6 +581,7 @@ describe( 'getThankYouPageUrl', () => {
 			products: [
 				{
 					product_slug: 'value_bundle',
+					bill_period: 365,
 				},
 			],
 		};
@@ -467,6 +592,43 @@ describe( 'getThankYouPageUrl', () => {
 			receiptId: '1234abcd',
 		} );
 		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business/1234abcd' );
+	} );
+
+	it( 'redirects to business monthly upgrade nudge if concierge and jetpack are not in the cart, and premium monthly is in the cart', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle_monthly',
+					bill_period: 31,
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			cart,
+			receiptId: '1234abcd',
+		} );
+		expect( url ).toBe( '/checkout/foo.bar/offer-plan-upgrade/business-monthly/1234abcd' );
+	} );
+
+	it( 'redirects to the thank-you pending page with an order id when the business upgrade nudge would normally be included', () => {
+		isEnabled.mockImplementation( ( flag ) => flag === 'upsell/concierge-session' );
+		const cart = {
+			products: [
+				{
+					product_slug: 'value_bundle',
+				},
+			],
+		};
+		const url = getThankYouPageUrl( {
+			...defaultArgs,
+			siteSlug: 'foo.bar',
+			orderId: '1234abcd',
+			cart,
+		} );
+		expect( url ).toBe( '/checkout/thank-you/foo.bar/pending/1234abcd' );
 	} );
 
 	it( 'redirects to concierge nudge if concierge and jetpack are not in the cart, blogger is in the cart, and the previous route is not the nudge', () => {

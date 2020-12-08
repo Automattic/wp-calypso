@@ -56,12 +56,12 @@ const list = function ( resourceOptions ) {
 
 // Walk for each resource and create related method
 resources.forEach( function ( resource ) {
-	const name = resource[ 0 ],
-		resourceOptions = {
-			subpath: resource[ 1 ],
-			apiVersion: resource[ 2 ] || '1',
-			method: resource[ 3 ] || 'get',
-		};
+	const name = resource[ 0 ];
+	const resourceOptions = {
+		subpath: resource[ 1 ],
+		apiVersion: resource[ 2 ] || '1',
+		method: resource[ 3 ] || 'get',
+	};
 
 	UndocumentedSite.prototype[ name ] = list.call( this, resourceOptions );
 } );

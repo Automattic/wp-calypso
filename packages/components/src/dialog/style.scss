@@ -11,12 +11,12 @@
 	justify-content: center;
 	position: fixed;
 	right: 0;
-	top: 46px;
+	top: var( --masterbar-height );
 	transition: background-color 0.2s ease-in;
 	z-index: z-index(
-        'root',
-        '.dialog__backdrop'
-    ); // try to ensure that dialogs are on top of everything else
+		'root',
+		'.dialog__backdrop'
+	); // try to ensure that dialogs are on top of everything else
 
 	// covers the masterbar as well
 	&.is-full-screen {
@@ -54,6 +54,7 @@
 
 	h1 {
 		color: var( --color-neutral-70 );
+		/* stylelint-disable-next-line scales/font-size */
 		font-size: 1.375em;
 		font-weight: 600;
 		margin-bottom: 0.5em;

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import {
 	KEYRING_CONNECTION_DELETE,
 	KEYRING_CONNECTION_DELETE_FAILURE,
@@ -9,9 +9,9 @@ import {
 	KEYRING_CONNECTIONS_REQUEST,
 	KEYRING_CONNECTIONS_REQUEST_FAILURE,
 	KEYRING_CONNECTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/sharing/init';
+import 'calypso/state/sharing/init';
 
 /**
  * Triggers a network request for a user's connected services.

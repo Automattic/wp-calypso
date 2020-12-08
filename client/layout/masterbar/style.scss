@@ -1,4 +1,3 @@
-$masterbar-height: 46px;
 $autobar-height: 20px;
 
 // The WordPress.com Masterbar
@@ -8,7 +7,7 @@ $autobar-height: 20px;
 	color: var( --color-masterbar-text );
 	font-size: $font-body;
 	display: flex;
-	height: $masterbar-height;
+	height: var( --masterbar-height );
 	margin: 0;
 	position: fixed;
 	left: 0;
@@ -17,6 +16,7 @@ $autobar-height: 20px;
 	z-index: z-index( 'root', '.masterbar' );
 	-webkit-font-smoothing: subpixel-antialiased;
 	transition: transform 0.2s ease-out;
+	box-sizing: border-box;
 
 	.is-support-session & {
 		// Use generic colors so that they override whatever theme colors the user has picked.
@@ -73,6 +73,7 @@ $autobar-height: 20px;
 	border: solid 2px var( --color-masterbar-background );
 	border-radius: 50%;
 	display: none;
+	// stylelint-disable-next-line scales/font-size
 	font-size: 8px;
 	height: 8px;
 	letter-spacing: 0;
@@ -88,6 +89,12 @@ $autobar-height: 20px;
 	// Animation
 	animation: bubble-unread-indication 0.5s linear both;
 	transition: all 150ms ease-in;
+
+	@include breakpoint-deprecated( '<480px' ) {
+		top: calc( 50% - 14px );
+		left: calc( 50% - 14px );
+		margin: 0;
+	}
 }
 
 .masterbar__item {
@@ -97,8 +104,8 @@ $autobar-height: 20px;
 	position: relative;
 	color: var( --color-masterbar-text );
 	font-size: $font-body-small;
-	height: $masterbar-height;
-	line-height: $masterbar-height;
+	height: var( --masterbar-height );
+	line-height: var( --masterbar-height );
 	padding: 0 15px;
 	text-decoration: none;
 	cursor: default;
@@ -344,8 +351,9 @@ $autobar-height: 20px;
 .masterbar__item-me {
 	.gravatar {
 		position: absolute;
-		left: 16px;
-		top: 12px;
+		top: 50%;
+		left: 50%;
+		transform: translate( -50%, -50% );
 		width: 18px;
 		height: 18px;
 
@@ -353,6 +361,7 @@ $autobar-height: 20px;
 	}
 
 	.gridicon + .masterbar__item-content {
+		display: block;
 		padding: 0;
 	}
 
@@ -388,6 +397,7 @@ $autobar-height: 20px;
 		border: solid 2px var( --color-masterbar-background );
 		border-radius: 50%;
 		display: none;
+		// stylelint-disable-next-line scales/font-size
 		font-size: 8px;
 		height: 8px;
 		letter-spacing: 0;
@@ -468,7 +478,7 @@ $autobar-height: 20px;
 	height: 36px;
 	margin: 5px 8px 5px -10px;
 	padding: 0 8px;
-	border-radius: 3px;
+	border-radius: 2px;
 	position: relative;
 	transition: all 0.2s ease-out;
 
@@ -533,6 +543,7 @@ $autobar-height: 20px;
 	right: 0;
 	bottom: 0;
 	left: 0;
+	// stylelint-disable-next-line scales/radii
 	border-radius: 0 0 3px 3px;
 
 	.count {
@@ -607,6 +618,14 @@ a.masterbar__quick-language-switcher {
 	.masterbar__secure-checkout-text {
 		color: var( --color-primary-5 );
 		transform: translateY( 1px );
+		line-height: 1.2em;
+		font-size: 0.75rem;
+		margin-left: 5px;
+
+		@include breakpoint-deprecated( '>480px' ) {
+			font-size: 100%;
+			margin-left: 0;
+		}
 
 		.is-jetpack-site & {
 			color: var( --color-jetpack-masterbar-text );

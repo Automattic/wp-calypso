@@ -12,8 +12,8 @@ export function removep( html ) {
 	const blocklist1 = blocklist + '|div|p';
 	const blocklist2 = blocklist + '|pre';
 
-	let preserve_linebreaks = false,
-		preserve_br = false;
+	let preserve_linebreaks = false;
+	let preserve_br = false;
 
 	if ( ! html ) {
 		return '';

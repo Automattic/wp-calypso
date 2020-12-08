@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { withoutPersistence } from 'state/utils';
+import { withoutPersistence } from 'calypso/state/utils';
 import { LOADING } from 'woocommerce/state/constants';
 import {
 	WOOCOMMERCE_SHIPPING_ZONE_DELETED,

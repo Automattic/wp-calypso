@@ -27,19 +27,20 @@ interface Props {
 }
 
 const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
-	const { __ } = useI18n();
+	const { __, i18nLocale: locale } = useI18n();
 	const history = useHistory();
 	const makePath = usePath();
 	const { goBack, goNext } = useStepNavigation();
 
 	const plan = useSelectedPlan();
 	const domain = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDomain() );
+	const selectedFeatures = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedFeatures() );
 	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
 
 	const { setDomain, updatePlan, setHasUsedPlansStep } = useDispatch( ONBOARD_STORE );
 	React.useEffect( () => {
 		! isModal && setHasUsedPlansStep( true );
-	}, [] );
+	}, [] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	// Keep a copy of the selected plan locally so it's available when the component is unmounting
 	const selectedPlanRef = React.useRef< string | undefined >();
@@ -53,30 +54,42 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 
 	const freeDomainSuggestion = useFreeDomainSuggestion();
 
+	const [ planUpdated, setPlanUpdated ] = React.useState( false );
+
 	const handleBack = () => ( isModal ? history.goBack() : goBack() );
-	const handlePlanSelect = ( planSlug: PlanSlug ) => {
+	const handlePlanSelect = async ( planSlug: PlanSlug ) => {
 		// When picking a free plan, if there is a paid domain selected, it's changed automatically to a free domain
 		if ( isPlanFree( planSlug ) && ! domain?.is_free ) {
 			setDomain( freeDomainSuggestion );
 		}
 
-		updatePlan( planSlug );
+		await updatePlan( planSlug );
 
-		if ( isModal ) {
-			history.goBack();
-		} else {
-			goNext();
-		}
+		// We need all hooks to have updated before calling the `goNext()` function,
+		// so we defer by setting a flag and waiting for it to update.
+		setPlanUpdated( true );
 	};
 	const handlePickDomain = () => history.push( makePath( Step.DomainsModal ) );
+
+	React.useEffect( () => {
+		if ( planUpdated ) {
+			if ( isModal ) {
+				history.goBack();
+			} else {
+				goNext();
+			}
+
+			setPlanUpdated( false );
+		}
+	}, [ goNext, history, isModal, planUpdated ] );
 
 	const header = (
 		<>
 			<div>
-				<Title>{ __( 'Choose a plan' ) }</Title>
+				<Title>{ __( 'Select a plan' ) }</Title>
 				<SubTitle>
 					{ __(
-						'Pick a plan that’s right for you. Switch plans as your needs change. There’s no risk, you can cancel for a full refund within 30 days.'
+						'Pick a plan that’s right for you. There’s no risk, you can cancel for a full refund within 30 days.'
 					) }
 				</SubTitle>
 			</div>
@@ -93,6 +106,9 @@ const PlansStep: React.FunctionComponent< Props > = ( { isModal } ) => {
 				currentDomain={ domain }
 				onPlanSelect={ handlePlanSelect }
 				onPickDomainClick={ handlePickDomain }
+				isAccordion
+				selectedFeatures={ selectedFeatures }
+				locale={ locale }
 			/>
 		</div>
 	);

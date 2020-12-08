@@ -13,7 +13,7 @@ import {
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 	SERIALIZE,
 	DESERIALIZE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#items()', () => {

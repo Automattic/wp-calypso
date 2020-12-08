@@ -5,22 +5,20 @@ import { isMobile } from '@automattic/viewport';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
-import { get } from 'lodash';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
-import { sectionify } from 'lib/route';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import PopoverCart from 'my-sites/checkout/cart/popover-cart';
-import { isATEnabled } from 'lib/automated-transfer';
-import isSiteOnFreePlan from 'state/selectors/is-site-on-free-plan';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSite, isJetpackSite } from 'state/sites/selectors';
+import config from 'calypso/config';
+import { sectionify } from 'calypso/lib/route';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import PopoverCart from 'calypso/my-sites/checkout/cart/popover-cart';
+import isSiteOnFreePlan from 'calypso/state/selectors/is-site-on-free-plan';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSite, isJetpackSite } from 'calypso/state/sites/selectors';
 
 class PlansNavigation extends React.Component {
 	static propTypes = {
@@ -45,24 +43,15 @@ class PlansNavigation extends React.Component {
 			case '/plans/yearly':
 				return 'Plans';
 
-			case '/domains/manage':
-			case '/domains/add':
-				return 'Domains';
-
-			case '/email':
-				return 'Email';
-
 			default:
 				return path.split( '?' )[ 0 ].replace( /\//g, ' ' );
 		}
 	}
 
 	render() {
-		const { isJetpack, site, shouldShowMyPlan, translate } = this.props;
+		const { site, shouldShowMyPlan, translate } = this.props;
 		const path = sectionify( this.props.path );
 		const sectionTitle = this.getSectionTitle( path );
-		const userCanManageOptions = get( site, 'capabilities.manage_options', false );
-		const canManageDomain = userCanManageOptions && ( isATEnabled( site ) || ! isJetpack );
 		const cartToggleButton = this.cartToggleButton();
 		const hasPinnedItems = isMobile() && cartToggleButton != null;
 
@@ -74,14 +63,6 @@ class PlansNavigation extends React.Component {
 					onMobileNavPanelOpen={ this.onMobileNavPanelOpen }
 				>
 					<NavTabs label="Section" selectedText={ sectionTitle }>
-						{ shouldShowMyPlan && (
-							<NavItem
-								path={ `/plans/my-plan/${ site.slug }` }
-								selected={ path === '/plans/my-plan' }
-							>
-								{ translate( 'My Plan' ) }
-							</NavItem>
-						) }
 						<NavItem
 							path={ `/plans/${ site.slug }` }
 							selected={
@@ -90,17 +71,12 @@ class PlansNavigation extends React.Component {
 						>
 							{ translate( 'Plans' ) }
 						</NavItem>
-						{ canManageDomain && (
+						{ shouldShowMyPlan && (
 							<NavItem
-								path={ `/domains/manage/${ site.slug }` }
-								selected={ path === '/domains/manage' || path === '/domains/add' }
+								path={ `/plans/my-plan/${ site.slug }` }
+								selected={ path === '/plans/my-plan' }
 							>
-								{ translate( 'Domains' ) }
-							</NavItem>
-						) }
-						{ canManageDomain && (
-							<NavItem path={ `/email/${ site.slug }` } selected={ path === '/email' }>
-								{ translate( 'Email' ) }
+								{ translate( 'My Plan' ) }
 							</NavItem>
 						) }
 					</NavTabs>

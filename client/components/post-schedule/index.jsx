@@ -10,11 +10,11 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import InputChrono from 'components/input-chrono';
-import DatePicker from 'components/date-picker';
-import QuerySiteSettings from 'components/data/query-site-settings';
-import EventsTooltip from 'components/date-picker/events-tooltip';
-import { getCurrentUserLocale } from 'state/current-user/selectors';
+import InputChrono from 'calypso/components/input-chrono';
+import DatePicker from 'calypso/components/date-picker';
+import QuerySiteSettings from 'calypso/components/data/query-site-settings';
+import EventsTooltip from 'calypso/components/date-picker/events-tooltip';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 /**
  * Local dependencies

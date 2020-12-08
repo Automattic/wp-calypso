@@ -13,31 +13,35 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import StatsNavigation from 'blocks/stats-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import Main from 'calypso/components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import StatsNavigation from 'calypso/blocks/stats-navigation';
 import StatsPeriodNavigation from '../stats-period-navigation';
 import DatePicker from '../stats-date-picker';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import FormattedHeader from 'components/formatted-header';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import FormattedHeader from 'calypso/components/formatted-header';
 import WordAdsChartTabs from '../wordads-chart-tabs';
 import titlecase from 'to-title-case';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import JetpackColophon from 'components/jetpack-colophon';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
 import WordAdsEarnings from './earnings';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import { canCurrentUserUseAds } from 'state/sites/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import PrivacyPolicyBanner from 'blocks/privacy-policy-banner';
-import StickyPanel from 'components/sticky-panel';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
+import { canCurrentUserUseAds } from 'calypso/state/sites/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import PrivacyPolicyBanner from 'calypso/blocks/privacy-policy-banner';
+import StickyPanel from 'calypso/components/sticky-panel';
 
 /**
  * Style dependencies
  */
 import './style.scss';
-import 'my-sites/earn/ads/style.scss';
+import 'calypso/my-sites/earn/ads/style.scss';
 
 function updateQueryString( query = {} ) {
 	return {

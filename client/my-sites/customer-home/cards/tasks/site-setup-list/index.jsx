@@ -4,7 +4,7 @@
 import { Card } from '@automattic/components';
 import { isDesktop, isWithinBreakpoint, subscribeIsWithinBreakpoint } from '@automattic/viewport';
 import { translate } from 'i18n-calypso';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Fragment } from 'react';
 import { connect, useDispatch } from 'react-redux';
 import page from 'page';
 import classnames from 'classnames';
@@ -12,24 +12,24 @@ import classnames from 'classnames';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import Spinner from 'components/spinner';
-import { getTaskList } from 'lib/checklist';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { requestSiteChecklistTaskUpdate } from 'state/checklist/actions';
-import { resetVerifyEmailState } from 'state/current-user/email-verification/actions';
-import { getCurrentUser, isCurrentUserEmailVerified } from 'state/current-user/selectors';
-import getChecklistTaskUrls from 'state/selectors/get-checklist-task-urls';
-import getSiteChecklist from 'state/selectors/get-site-checklist';
-import isUnlaunchedSite from 'state/selectors/is-unlaunched-site';
-import getMenusUrl from 'state/selectors/get-menus-url';
-import { getSiteOption, getSiteSlug } from 'state/sites/selectors';
-import { requestGuidedTour } from 'state/guided-tours/actions';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { skipCurrentViewHomeLayout } from 'state/home/actions';
+import CardHeading from 'calypso/components/card-heading';
+import Spinner from 'calypso/components/spinner';
+import { getTaskList } from 'calypso/lib/checklist';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { requestSiteChecklistTaskUpdate } from 'calypso/state/checklist/actions';
+import { resetVerifyEmailState } from 'calypso/state/current-user/email-verification/actions';
+import { getCurrentUser, isCurrentUserEmailVerified } from 'calypso/state/current-user/selectors';
+import getChecklistTaskUrls from 'calypso/state/selectors/get-checklist-task-urls';
+import getSiteChecklist from 'calypso/state/selectors/get-site-checklist';
+import isUnlaunchedSite from 'calypso/state/selectors/is-unlaunched-site';
+import getMenusUrl from 'calypso/state/selectors/get-menus-url';
+import { getSiteOption, getSiteSlug } from 'calypso/state/sites/selectors';
+import { requestGuidedTour } from 'calypso/state/guided-tours/actions';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { skipCurrentViewHomeLayout } from 'calypso/state/home/actions';
 import NavItem from './nav-item';
 import CurrentTaskItem from './current-task-item';
-import { CHECKLIST_KNOWN_TASKS } from 'state/data-layer/wpcom/checklist/index.js';
+import { CHECKLIST_KNOWN_TASKS } from 'calypso/state/data-layer/wpcom/checklist/index.js';
 import { getTask } from './get-task';
 
 /**
@@ -233,7 +233,7 @@ const SiteSetupList = ( {
 					const isCompleted = task.isCompleted;
 
 					return (
-						<>
+						<Fragment key={ task.id }>
 							<NavItem
 								key={ task.id }
 								taskId={ task.id }
@@ -268,7 +268,7 @@ const SiteSetupList = ( {
 									useAccordionLayout={ useAccordionLayout }
 								/>
 							) : null }
-						</>
+						</Fragment>
 					);
 				} ) }
 			</div>

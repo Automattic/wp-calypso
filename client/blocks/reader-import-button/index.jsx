@@ -5,15 +5,15 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { noop } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
-import FilePicker from 'components/file-picker';
-import { successNotice, errorNotice } from 'state/notices/actions';
+import wpcom from 'calypso/lib/wp';
+import FilePicker from 'calypso/components/file-picker';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 
 /**
  * Style dependencies
@@ -22,10 +22,12 @@ import './style.scss';
 
 class ReaderImportButton extends React.Component {
 	static propTypes = {
+		borderless: PropTypes.bool,
 		onProgress: PropTypes.func,
 	};
 
 	static defaultProps = {
+		borderless: true,
 		onProgress: noop,
 	};
 
@@ -99,7 +101,12 @@ class ReaderImportButton extends React.Component {
 
 	render() {
 		return (
-			<div className="reader-import-button">
+			// .button.is-borderless is from Button in '@automattic/components';
+			<div
+				className={ `reader-import-button button ${
+					this.props.borderless ? 'is-borderless' : ''
+				}` }
+			>
 				<FilePicker accept=".xml,.opml" onClick={ this.onClick } onPick={ this.onPick }>
 					<Gridicon icon="cloud-upload" className="reader-import-button__icon" />
 					<span className="reader-import-button__label">{ this.props.translate( 'Import' ) }</span>

@@ -5,7 +5,12 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
+
+/**
+ * Internal dependencies
+ */
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class PostSelectorSearch extends React.Component {
 	static displayName = 'PostSelectorSearch';
@@ -19,7 +24,7 @@ class PostSelectorSearch extends React.Component {
 		return (
 			<div className="post-selector__search">
 				<Gridicon icon="search" size={ 18 } />
-				<input
+				<FormTextInput
 					type="search"
 					placeholder={ this.props.translate( 'Search…', { textOnly: true } ) }
 					value={ this.props.searchTerm }

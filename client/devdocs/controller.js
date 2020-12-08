@@ -1,31 +1,29 @@
 /**
  * External dependencies
  */
-
 import React from 'react';
 import { stringify } from 'qs';
 import { debounce } from 'lodash';
 import page from 'page';
-import url from 'url';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 // This is a custom AsyncLoad component for devdocs that includes a
 // `props.component`-aware placeholder. It still needs to be imported as
 // `AsyncLoad` though–see https://github.com/Automattic/babel-plugin-transform-wpcalypso-async/blob/HEAD/index.js#L12
 import AsyncLoad from './devdocs-async-load';
 import DocsComponent from './main';
-import { login } from 'lib/paths';
+import { login } from 'calypso/lib/paths';
 import SingleDocComponent from './doc';
 import DevWelcome from './welcome';
 import Sidebar from './sidebar';
 import FormStateExamplesComponent from './form-state-examples';
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import WizardComponent from './wizard-component';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import { navigate } from 'state/ui/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { navigate } from 'calypso/state/ui/actions';
 
 const devdocs = {
 	/*
@@ -111,6 +109,11 @@ const devdocs = {
 		next();
 	},
 
+	wpComponentsGallery( context, next ) {
+		context.primary = <AsyncLoad require="./design/wordpress-components-gallery" />;
+		next();
+	},
+
 	selectors: function ( context, next ) {
 		context.primary = (
 			<AsyncLoad
@@ -129,6 +132,13 @@ const devdocs = {
 		next();
 	},
 
+	illustrations: function ( context, next ) {
+		context.primary = (
+			<AsyncLoad component={ context.params.component } require="./design/illustrations" />
+		);
+		next();
+	},
+
 	formStateExamples: function ( context, next ) {
 		context.primary = React.createElement( FormStateExamplesComponent, {
 			component: context.params.component,
@@ -137,7 +147,7 @@ const devdocs = {
 	},
 
 	pleaseLogIn: function ( context, next ) {
-		const currentUrl = url.parse( window.location.href );
+		const currentUrl = new URL( window.location.href );
 		const redirectTo = currentUrl.protocol + '//' + currentUrl.host + '/devdocs/welcome';
 		if ( ! getCurrentUserId( context.store.getState() ) ) {
 			context.primary = React.createElement( EmptyContent, {

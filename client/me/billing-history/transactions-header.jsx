@@ -11,13 +11,13 @@ import { find, isEqual } from 'lodash';
 /**
  * Internal dependencies
  */
-import SelectDropdown from 'components/select-dropdown';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import { setApp, setDate } from 'state/billing-transactions/ui/actions';
-import getBillingTransactionAppFilterValues from 'state/selectors/get-billing-transaction-app-filter-values';
-import getBillingTransactionDateFilterValues from 'state/selectors/get-billing-transaction-date-filter-values';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
+import SelectDropdown from 'calypso/components/select-dropdown';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { setApp, setDate } from 'calypso/state/billing-transactions/ui/actions';
+import getBillingTransactionAppFilterValues from 'calypso/state/selectors/get-billing-transaction-app-filter-values';
+import getBillingTransactionDateFilterValues from 'calypso/state/selectors/get-billing-transaction-date-filter-values';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
 
 class TransactionsHeader extends React.Component {
 	state = {
@@ -219,12 +219,13 @@ TransactionsHeader.propTypes = {
 	filter: PropTypes.object.isRequired,
 	//own props
 	transactionType: PropTypes.string.isRequired,
+	siteId: PropTypes.number,
 };
 
 export default connect(
-	( state, { transactionType } ) => ( {
-		appFilters: getBillingTransactionAppFilterValues( state, transactionType ),
-		dateFilters: getBillingTransactionDateFilterValues( state, transactionType ),
+	( state, { transactionType, siteId } ) => ( {
+		appFilters: getBillingTransactionAppFilterValues( state, transactionType, siteId ),
+		dateFilters: getBillingTransactionDateFilterValues( state, transactionType, siteId ),
 		filter: getBillingTransactionFilters( state, transactionType ),
 	} ),
 	{

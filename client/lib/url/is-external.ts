@@ -1,13 +1,13 @@
 /**
  * External dependencies
  */
-import config from 'config';
-import { URL as URLString } from 'types';
+import config from 'calypso/config';
+import { URL as URLString } from 'calypso/types';
 
 /**
  * Internal dependencies
  */
-import { isLegacyRoute } from 'lib/route/legacy-routes';
+import { isLegacyRoute } from 'calypso/lib/route/legacy-routes';
 
 // Base URL used for URL parsing. The WHATWG URL API doesn't support relative
 // URLs, so we always need to provide a base of some sort.

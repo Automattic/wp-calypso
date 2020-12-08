@@ -24,14 +24,16 @@
 	},
 	"types": "dist/types",
 	"scripts": {
-		"clean": "npx rimraf dist ../../.tsc-cache/packages__onboarding*",
-		"prepare": "tsc --project ./tsconfig.json && tsc --project ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
+		"clean": "tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json && copy-assets && npx copyfiles ./styles/** dist",
 		"prepublish": "yarn run clean",
-		"watch": "tsc --project ./tsconfig.json --watch"
+		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
 		"@automattic/react-i18n": "^1.0.0-alpha.0",
-		"@wordpress/components": "^10.0.3",
+		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@wordpress/components": "^10.0.5",
+		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6"
 	},
 	"devDependencies": {

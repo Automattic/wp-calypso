@@ -1,10 +1,10 @@
 /**
  * Internal Dependencies
  */
-import createSelector from 'lib/create-selector';
-import { createPurchasesArray } from 'lib/purchases/assembler';
+import createSelector from 'calypso/lib/create-selector';
+import { createPurchasesArray } from 'calypso/lib/purchases/assembler';
 
-import 'state/purchases/init';
+import 'calypso/state/purchases/init';
 
 /**
  * Return the list of purchases from state object

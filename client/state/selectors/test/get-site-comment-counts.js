@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { getSiteCommentCounts } from 'state/comments/selectors';
+import { getSiteCommentCounts } from 'calypso/state/comments/selectors';
 
 describe( 'getSiteCommentCounts()', () => {
 	const siteId = 2916284;

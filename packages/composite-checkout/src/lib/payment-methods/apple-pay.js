@@ -8,12 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import {
-	useTransactionStatus,
-	usePaymentProcessor,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { useLineItems, useEvents } from '../../public-api';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -44,48 +39,25 @@ export function ApplePayLabel() {
 	);
 }
 
-export function ApplePaySubmitButton( { disabled, stripe, stripeConfiguration } ) {
+export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfiguration } ) {
 	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const {
-		setTransactionError,
-		setTransactionComplete,
-		setTransactionPending,
-	} = useTransactionStatus();
 	const onEvent = useEvents();
-	const submitTransaction = usePaymentProcessor( 'apple-pay' );
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
-			setTransactionPending();
 			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
-			submitTransaction( {
+			onClick( 'apple-pay', {
 				stripe,
 				paymentMethodToken,
 				name,
 				items,
 				total,
 				stripeConfiguration,
-			} )
-				.then( () => {
-					setTransactionComplete();
-				} )
-				.catch( ( error ) => {
-					setTransactionError( error.message );
-				} );
+			} );
 		},
-		[
-			submitTransaction,
-			setTransactionComplete,
-			setTransactionError,
-			setTransactionPending,
-			onEvent,
-			items,
-			total,
-			stripe,
-			stripeConfiguration,
-		]
+		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
@@ -164,21 +136,23 @@ const PAYMENT_REQUEST_OPTIONS = {
 
 function usePaymentRequestOptions( stripeConfiguration ) {
 	const [ items, total ] = useLineItems();
-	const countryCode = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
+	const country = getProcessorCountryFromStripeConfiguration( stripeConfiguration );
 	const currency = items.reduce(
 		( firstCurrency, item ) => firstCurrency || item.amount.currency,
 		null
 	);
-	const paymentRequestOptions = useMemo(
-		() => ( {
-			country: countryCode,
-			currency: currency && currency.toLowerCase(),
-			displayItems: getDisplayItemsForLineItems( items ),
+	const paymentRequestOptions = useMemo( () => {
+		if ( ! currency || ! total.amount.value ) {
+			return null;
+		}
+		return {
+			country,
+			currency: currency?.toLowerCase(),
 			total: getPaymentRequestTotalFromTotal( total ),
+			displayItems: getDisplayItemsForLineItems( items ),
 			...PAYMENT_REQUEST_OPTIONS,
-		} ),
-		[ countryCode, currency, items, total ]
-	);
+		};
+	}, [ country, currency, items, total ] );
 	return paymentRequestOptions;
 }
 
@@ -199,7 +173,7 @@ function useStripePaymentRequest( { paymentRequestOptions, onSubmit, stripe } ) 
 
 	useEffect( () => {
 		let isSubscribed = true;
-		if ( ! stripe ) {
+		if ( ! stripe || ! paymentRequestOptions ) {
 			return;
 		}
 		const request = stripe.paymentRequest( paymentRequestOptions );

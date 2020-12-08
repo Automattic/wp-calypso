@@ -5,40 +5,47 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
-import { addStoredCard } from 'state/stored-cards/actions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { concatTitle } from 'lib/react-helpers';
-import { createCardToken } from 'lib/store-transactions';
-import CreditCardForm from 'blocks/credit-card-form';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import titles from 'me/purchases/titles';
-import { billingHistory } from 'me/purchases/paths';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import { StripeHookProvider } from 'lib/stripe';
+import { addStoredCard } from 'calypso/state/stored-cards/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { concatTitle } from 'calypso/lib/react-helpers';
+import { createCardToken, getStripeConfiguration } from 'calypso/lib/store-transactions';
+import CreditCardForm from 'calypso/blocks/credit-card-form';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import titles from 'calypso/me/purchases/titles';
+import { paymentMethods } from 'calypso/me/purchases/paths';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 
 function AddCreditCard( props ) {
 	const createAddCardToken = ( ...args ) => createCardToken( 'card_add', ...args );
-	const goToBillingHistory = () => page( billingHistory );
+	const goToPaymentMethods = () => page( paymentMethods );
 	const recordFormSubmitEvent = () => recordTracksEvent( 'calypso_add_credit_card_form_submit' );
 
 	return (
-		<Main>
+		<Main className="add-credit-card is-wide-layout">
 			<PageViewTracker path="/me/purchases/add-credit-card" title="Purchases > Add Credit Card" />
 			<DocumentHead title={ concatTitle( titles.purchases, titles.addCreditCard ) } />
 
-			<HeaderCake onClick={ goToBillingHistory }>{ titles.addCreditCard }</HeaderCake>
-			<StripeHookProvider configurationArgs={ { needs_intent: true } }>
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<HeaderCake onClick={ goToPaymentMethods }>{ titles.addCreditCard }</HeaderCake>
+			<StripeHookProvider
+				configurationArgs={ { needs_intent: true } }
+				locale={ props.locale }
+				fetchStripeConfiguration={ getStripeConfiguration }
+			>
 				<CreditCardForm
 					createCardToken={ createAddCardToken }
 					recordFormSubmitEvent={ recordFormSubmitEvent }
 					saveStoredCard={ props.addStoredCard }
-					successCallback={ goToBillingHistory }
+					successCallback={ goToPaymentMethods }
 					showUsedForExistingPurchasesInfo={ true }
 				/>
 			</StripeHookProvider>
@@ -48,10 +55,16 @@ function AddCreditCard( props ) {
 
 AddCreditCard.propTypes = {
 	addStoredCard: PropTypes.func.isRequired,
+	locale: PropTypes.string,
 };
 
 const mapDispatchToProps = {
 	addStoredCard,
 };
 
-export default connect( null, mapDispatchToProps )( AddCreditCard );
+export default connect(
+	( state ) => ( {
+		locale: getCurrentUserLocale( state ),
+	} ),
+	mapDispatchToProps
+)( AddCreditCard );

@@ -1,13 +1,13 @@
 /**
  * External Dependencies
  */
-const { app, crashReporter } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, crashReporter } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
-const log = require( 'desktop/lib/logger' )( 'desktop:crash-reporting' );
+const Config = require( 'calypso/desktop/lib/config' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:crash-reporting' );
 
 module.exports = function () {
 	if ( Config.crash_reporter.electron ) {

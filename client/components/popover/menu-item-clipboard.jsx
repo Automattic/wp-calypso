@@ -6,12 +6,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import ClipboardButton from 'components/forms/clipboard-button';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
 
 function PopoverMenuItemClipboard( {
 	children,

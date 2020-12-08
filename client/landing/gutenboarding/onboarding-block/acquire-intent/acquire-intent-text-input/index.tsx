@@ -80,7 +80,6 @@ const AcquireIntentTextInput: React.FunctionComponent< Props > = ( {
 				autoComplete="off"
 				autoCorrect="off"
 				onChange={ handleChange }
-				data-hj-whitelist
 				spellCheck={ false }
 				value={ value }
 				onFocus={ onFocus }

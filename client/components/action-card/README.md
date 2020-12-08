@@ -4,15 +4,15 @@ This is a [`Card` component](../../components/card) that has a call-to-action bu
 
 ## Usage
 
-```es6
-import ActionCard from 'components/action-card';
+```jsx
+import ActionCard from 'calypso/components/action-card';
 
-render() {
+function render() {
 	return (
 		<ActionCard
 			headerText={ 'Header' }
 			mainText={ 'Some text' }
-			classNames={ 'my-classname-1', 'my-classname-2' }
+			className={ classnames( 'my-classname-1', 'my-classname-2' ) }
 			buttonText={ 'Call to action!' }
 			buttonIcon="external"
 			buttonPrimary={ true }
@@ -20,7 +20,7 @@ render() {
 			buttonTarget="_blank"
 			buttonOnClick={ noop }
 			buttonDisabled={ false }
-		/>;
+		/>
 	);
 }
 ```
@@ -97,9 +97,10 @@ Button target, to use in conjunction with `buttonHref`
 Button onClick handler
 
 ### `buttonDisabled`
-  - **Type:** `Boolean`
-  - **Required:** `no`
-  - **Default:** `false`
+
+- **Type:** `Boolean`
+- **Required:** `no`
+- **Default:** `false`
 
 Make the button disabled.
 

@@ -2,8 +2,8 @@
  * Internal dependencies
  */
 import { requestUserDevices, handleSuccess, handleError } from '../';
-import { NOTICE_CREATE, USER_DEVICES_ADD } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { NOTICE_CREATE, USER_DEVICES_ADD } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'requestUserDevices()', () => {
 	test( 'should return an action for an HTTP request to the users devices endpoint', () => {

@@ -9,8 +9,8 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import isRequestingSharingButtons from 'state/selectors/is-requesting-sharing-buttons';
-import { requestSharingButtons } from 'state/sites/sharing-buttons/actions';
+import isRequestingSharingButtons from 'calypso/state/selectors/is-requesting-sharing-buttons';
+import { requestSharingButtons } from 'calypso/state/sites/sharing-buttons/actions';
 
 class QuerySharingButtons extends Component {
 	UNSAFE_componentWillMount() {

@@ -4,13 +4,12 @@
 import * as React from 'react';
 import { addQueryArgs } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../../stores/onboard';
-import { useLangRouteParam } from '../../path';
-import { isEnabled } from 'config';
 import { fontPairings } from '../../constants';
 import type { Viewport } from './types';
 
@@ -56,13 +55,13 @@ interface Props {
 	viewport: Viewport;
 }
 const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
+	const { i18nLocale } = useI18n();
 	const [ previewHtml, setPreviewHtml ] = React.useState< string >();
-	const { selectedDesign, selectedFonts, siteVertical, siteTitle } = useSelect( ( select ) =>
+	const { selectedDesign, selectedFonts, siteTitle } = useSelect( ( select ) =>
 		select( STORE_KEY ).getState()
 	);
 
 	const iframe = React.useRef< HTMLIFrameElement >( null );
-	const language = useLangRouteParam();
 
 	React.useEffect(
 		() => {
@@ -73,20 +72,14 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 				const templateUrl = `https://public-api.wordpress.com/rest/v1/template/demo/${ encodeURIComponent(
 					selectedDesign.theme
 				) }/${ encodeURIComponent( selectedDesign.template ) }/`;
-				let url = addQueryArgs( templateUrl, {
-					language: language,
+				const url = addQueryArgs( templateUrl, {
+					language: i18nLocale,
 					site_title: siteTitle,
 					...( selectedFonts && {
 						font_headings: selectedFonts.headings,
 						font_base: selectedFonts.base,
 					} ),
-					use_patterns: isEnabled( 'gutenboarding/use-patterns' ),
 				} );
-				if ( isEnabled( 'gutenboarding/style-preview-verticals' ) ) {
-					url = addQueryArgs( url, {
-						vertical: siteVertical?.label,
-					} );
-				}
 
 				let resp;
 
@@ -112,7 +105,7 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			eff();
 		},
 		// Disable reason: We'll handle font change elsewhere.
-		[ language, selectedDesign, siteVertical ] // eslint-disable-line react-hooks/exhaustive-deps
+		[ i18nLocale, selectedDesign ] // eslint-disable-line react-hooks/exhaustive-deps
 	);
 
 	React.useEffect( () => {
@@ -132,11 +125,11 @@ const Preview: React.FunctionComponent< Props > = ( { viewport } ) => {
 			const iframeDocument = iframeWindow.document;
 			if ( selectedFonts ) {
 				const { headings, base } = selectedFonts;
-				iframeDocument.body.style.setProperty( '--font-headings', headings );
-				iframeDocument.body.style.setProperty( '--font-base', base );
+				iframeDocument.documentElement.style.setProperty( '--font-headings', headings );
+				iframeDocument.documentElement.style.setProperty( '--font-base', base );
 			} else {
-				iframeDocument.body.style.removeProperty( '--font-headings' );
-				iframeDocument.body.style.removeProperty( '--font-base' );
+				iframeDocument.documentElement.style.removeProperty( '--font-headings' );
+				iframeDocument.documentElement.style.removeProperty( '--font-base' );
 			}
 		}
 	}, [ previewHtml, selectedFonts ] );

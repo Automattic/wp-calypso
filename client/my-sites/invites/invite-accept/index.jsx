@@ -12,20 +12,20 @@ import { connect } from 'react-redux';
 /**
  * Internal Dependencies
  */
-import LoggedIn from 'my-sites/invites/invite-accept-logged-in';
-import LoggedOut from 'my-sites/invites/invite-accept-logged-out';
-import { login } from 'lib/paths';
-import { fetchInvite } from 'lib/invites/actions';
-import InvitesStore from 'lib/invites/stores/invites-accept-validation';
-import EmptyContent from 'components/empty-content';
-import { successNotice, infoNotice } from 'state/notices/actions';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getRedirectAfterAccept } from 'my-sites/invites/utils';
-import Notice from 'components/notice';
-import NoticeAction from 'components/notice/notice-action';
-import userUtils from 'lib/user/utils';
-import LocaleSuggestions from 'components/locale-suggestions';
-import { getCurrentUser } from 'state/current-user/selectors';
+import LoggedIn from 'calypso/my-sites/invites/invite-accept-logged-in';
+import LoggedOut from 'calypso/my-sites/invites/invite-accept-logged-out';
+import { login } from 'calypso/lib/paths';
+import { fetchInvite } from 'calypso/lib/invites/actions';
+import InvitesStore from 'calypso/lib/invites/stores/invites-accept-validation';
+import EmptyContent from 'calypso/components/empty-content';
+import { successNotice, infoNotice } from 'calypso/state/notices/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getRedirectAfterAccept } from 'calypso/my-sites/invites/utils';
+import Notice from 'calypso/components/notice';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import userUtils from 'calypso/lib/user/utils';
+import LocaleSuggestions from 'calypso/components/locale-suggestions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies
@@ -35,7 +35,7 @@ import './style.scss';
 /**
  * Image dependencies
  */
-import whoopsImage from 'assets/images/illustrations/whoops.svg';
+import whoopsImage from 'calypso/assets/images/illustrations/whoops.svg';
 
 /**
  * Module variables
@@ -197,8 +197,8 @@ class InviteAccept extends React.Component {
 			return;
 		}
 
-		let props,
-			actionText = this.props.translate( 'Switch Accounts' );
+		let props;
+		let actionText = this.props.translate( 'Switch Accounts' );
 
 		if ( ! user ) {
 			actionText = this.props.translate( 'Sign In' );

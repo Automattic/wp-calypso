@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import SectionHeader from 'components/section-header';
+import SectionHeader from 'calypso/components/section-header';
 
 const SettingsSectionHeader = ( {
 	children,

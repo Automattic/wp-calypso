@@ -4,12 +4,13 @@
 	"version": "6.0.0",
 	"main": "dist/cjs/index.js",
 	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.js",
 	"author": "Automattic, Inc.",
 	"private": true,
 	"scripts": {
 		"clean": "npx rimraf dist",
-		"prepublish": "yarn run clean",
-		"prepare": "run-s build:modules build:bundle",
+		"build": "run-s build:modules build:bundle",
+		"prepack": "yarn run clean && yarn run build",
 		"build:modules": "transpile",
 		"build:bundle": "webpack --display errors-only"
 	},
@@ -34,11 +35,15 @@
 	],
 	"browser": {
 		"./dist/cjs/lib/util/fs.js": "./dist/cjs/lib/util/fs-browser.js",
-		"./dist/esm/lib/util/fs.js": "./dist/esm/lib/util/fs-browser.js"
+		"./dist/esm/lib/util/fs.js": "./dist/esm/lib/util/fs-browser.js",
+		"./src/lib/util/fs.js": "./src/lib/util/fs-browser.js"
 	},
 	"dependencies": {
 		"@babel/runtime": "^7.11.1",
 		"debug": "^4.1.1",
 		"qs": "^6.5.2"
+	},
+	"devDependencies": {
+		"wpcom-proxy-request": "^6.0.0"
 	}
 }

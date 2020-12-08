@@ -1,5 +1,4 @@
-Payments
-================
+# Payments
 
 This folder contains sub-trees for all payments related UI. See the individual
 READMEs for more details.
@@ -7,9 +6,9 @@ READMEs for more details.
 ## Reducer
 
 ```js
-{
-	"currency": "three letter key"
-}
+const object = {
+	currency: 'three letter key',
+};
 ```
 
 - [methods](methods/README.md)

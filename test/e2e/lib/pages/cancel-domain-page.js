@@ -20,7 +20,10 @@ export default class CancelDomainPage extends AsyncBaseContainer {
 
 	async completeSurveyAndConfirm() {
 		await this.driver.sleep( 2000 ); // since this is in after block, wait before open survey
-		await driverHelper.clickWhenClickable( this.driver, by.css( '.confirm-cancel-domain__reasons-dropdown' ) );
+		await driverHelper.clickWhenClickable(
+			this.driver,
+			by.css( '.confirm-cancel-domain__reasons-dropdown' )
+		);
 		await driverHelper.clickWhenClickable( this.driver, by.css( 'option[value="other"]' ) );
 		await driverHelper.setWhenSettable(
 			this.driver,

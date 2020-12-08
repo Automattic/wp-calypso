@@ -1,5 +1,4 @@
-Query Jetpack Modules
-================
+# Query Jetpack Modules
 
 `<QueryJetpackModules />` is a React component used in managing network requests for Jetpack site modules.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QueryJetpackModules from 'components/data/query-jetpack-modules';
+import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import MyJetpackModulesListItem from './list-item';
 
 export default function MyJetpackModulesList( { jetpackModules } ) {
@@ -17,10 +16,8 @@ export default function MyJetpackModulesList( { jetpackModules } ) {
 		<div>
 			<QueryJetpackModules siteId={ 12345678 } />
 			{ jetpackModules.map( ( module ) => {
-				return (
-					<MyJetpackModulesListItem module={ module } />
-				);
-			} }
+				return <MyJetpackModulesListItem module={ module } />;
+			} ) }
 		</div>
 	);
 }

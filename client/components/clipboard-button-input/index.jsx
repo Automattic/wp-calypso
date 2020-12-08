@@ -11,10 +11,10 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { withoutHttp } from 'lib/url';
-import ClipboardButton from 'components/forms/clipboard-button';
-import FormTextInput from 'components/forms/form-text-input';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { withoutHttp } from 'calypso/lib/url';
+import ClipboardButton from 'calypso/components/forms/clipboard-button';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -45,7 +45,6 @@ function ClipboardButtonInput( { value = '', className, disabled, hideHttp, disp
 				{ ...rest }
 				disabled={ disabled }
 				value={ hideHttp ? withoutHttp( value ) : value }
-				type="text"
 				selectOnFocus
 				readOnly
 			/>

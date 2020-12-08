@@ -7,7 +7,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import FollowButton from 'blocks/follow-button/button';
+import FollowButton from 'calypso/blocks/follow-button/button';
 import { CompactCard as Card } from '@automattic/components';
 
 export default class FollowButtonExample extends React.PureComponent {

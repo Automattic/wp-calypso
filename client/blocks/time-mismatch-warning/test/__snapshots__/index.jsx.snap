@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TimeMismatchWarning to render if GMT offsets do not match 1`] = `
+<Component
+  onDismissClick={[Function]}
+  status="is-warning"
+>
+  This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.
+</Component>
+`;
+
+exports[`TimeMismatchWarning to render the passed site settings URL 1`] = `
+[MockFunction] {
+  "calls": Array [
+    Array [
+      "This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.",
+      Object {
+        "components": Object {
+          "SiteSettings": <a
+            href="https://example.com"
+          />,
+        },
+      },
+    ],
+  ],
+  "results": Array [
+    Object {
+      "type": "return",
+      "value": "This page reflects the time zone set on your site. It looks like that does not match your current time zone. {{SiteSettings}}You can update your site time zone here{{/SiteSettings}}.",
+    },
+  ],
+}
+`;

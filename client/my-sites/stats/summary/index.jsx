@@ -11,20 +11,20 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import HeaderCake from 'components/header-cake';
+import HeaderCake from 'calypso/components/header-cake';
 import StatsModule from '../stats-module';
 import statsStringsFactory from '../stats-strings';
 import Countries from '../stats-countries';
 import StatsVideoSummary from '../stats-video-summary';
 import VideoPlayDetails from '../stats-video-details';
-import Main from 'components/main';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Main from 'calypso/components/main';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import titlecase from 'to-title-case';
-import QueryMedia from 'components/data/query-media';
-import JetpackColophon from 'components/jetpack-colophon';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import getMediaItem from 'state/selectors/get-media-item';
-import AnnualSiteStats from 'my-sites/stats/annual-site-stats';
+import QueryMedia from 'calypso/components/data/query-media';
+import JetpackColophon from 'calypso/components/jetpack-colophon';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getMediaItem from 'calypso/state/selectors/get-media-item';
+import AnnualSiteStats from 'calypso/my-sites/stats/annual-site-stats';
 
 const StatsStrings = statsStringsFactory();
 

@@ -6,7 +6,7 @@ import debug from 'debug';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 
 const mcDebug = debug( 'calypso:analytics:mc' );
 

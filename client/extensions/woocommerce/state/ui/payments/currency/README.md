@@ -1,5 +1,4 @@
-Currency
-================
+# Currency
 
 This module is used to manage currency setting related UI.
 
@@ -12,9 +11,9 @@ Adds currency edit to ui state
 ## Reducer
 
 ```js
-{
-	"currency": 'three letter currency key',
-}
+const object = {
+	currency: 'three letter currency key',
+};
 ```
 
 ## Selectors

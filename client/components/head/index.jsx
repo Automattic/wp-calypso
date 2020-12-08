@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import Favicons from './favicons';
 
 const Head = ( { title = 'WordPress.com', children, branchName, inlineScriptNonce } ) => {

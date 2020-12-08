@@ -7,16 +7,16 @@ import { assign, clone, isArray, sortBy, values, find } from 'lodash';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 /* eslint-enable no-restricted-imports */
-import PluginsActions from 'lib/plugins/actions';
-import versionCompare from 'lib/version-compare';
-import { normalizePluginData } from 'lib/plugins/utils';
-import { reduxDispatch, reduxGetState } from 'lib/redux-bridge';
-import getNetworkSites from 'state/selectors/get-network-sites';
-import { getSite } from 'state/sites/selectors';
-import { sitePluginUpdated } from 'state/sites/actions';
+import PluginsActions from 'calypso/lib/plugins/actions';
+import versionCompare from 'calypso/lib/version-compare';
+import { normalizePluginData } from 'calypso/lib/plugins/utils';
+import { reduxDispatch, reduxGetState } from 'calypso/lib/redux-bridge';
+import getNetworkSites from 'calypso/state/selectors/get-network-sites';
+import { getSite } from 'calypso/state/sites/selectors';
+import { sitePluginUpdated } from 'calypso/state/sites/actions';
 
 const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 
@@ -27,34 +27,34 @@ const debug = debugFactory( 'calypso:sites-plugins:sites-plugins-store' );
 const _UPDATED_PLUGIN_INFO_TIME_TO_LIVE = 10 * 1000;
 
 // Stores the plugins of each site.
-let _fetching = {},
-	_pluginsBySite = {},
-	_filters = {
-		none: function () {
-			return false;
-		},
-		all: function () {
-			return true;
-		},
-		active: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && site.plugin.active;
-			} );
-		},
-		inactive: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && ! site.plugin.active;
-			} );
-		},
-		updates: function ( plugin ) {
-			return plugin.sites.some( function ( site ) {
-				return site.plugin && site.plugin.update && site.canUpdateFiles;
-			} );
-		},
-		isEqual: function ( pluginSlug, plugin ) {
-			return plugin.slug === pluginSlug;
-		},
-	};
+const _fetching = {};
+const _pluginsBySite = {};
+const _filters = {
+	none: function () {
+		return false;
+	},
+	all: function () {
+		return true;
+	},
+	active: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && site.plugin.active;
+		} );
+	},
+	inactive: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && ! site.plugin.active;
+		} );
+	},
+	updates: function ( plugin ) {
+		return plugin.sites.some( function ( site ) {
+			return site.plugin && site.plugin.update && site.canUpdateFiles;
+		} );
+	},
+	isEqual: function ( pluginSlug, plugin ) {
+		return plugin.slug === pluginSlug;
+	},
+};
 
 function refreshNetworkSites( site ) {
 	const networkSites = getNetworkSites( reduxGetState(), site.ID );
@@ -114,8 +114,8 @@ function updatePlugins( site, plugins ) {
 
 const PluginsStore = {
 	getPlugin: function ( sites, pluginSlug ) {
-		let pluginData = {},
-			fetched = false;
+		let pluginData = {};
+		let fetched = false;
 		pluginData.sites = [];
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
@@ -143,8 +143,8 @@ const PluginsStore = {
 	},
 
 	getPlugins: function ( sites, pluginFilter ) {
-		let fetched = false,
-			plugins = {};
+		let fetched = false;
+		let plugins = {};
 
 		sites = ! isArray( sites ) ? [ sites ] : sites;
 
@@ -208,19 +208,17 @@ const PluginsStore = {
 
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
-		let plugin,
-			plugins = this.getPlugins( sites ),
-			pluginSites;
+		const plugins = this.getPlugins( sites );
 		if ( ! plugins ) {
 			return;
 		}
 
-		plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
+		const plugin = find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
 		if ( ! plugin ) {
 			return null;
 		}
 
-		pluginSites = plugin.sites
+		const pluginSites = plugin.sites
 			.filter( ( site ) => site.visible )
 			.map( ( site ) => {
 				// clone the site object before adding a new property. Don't modify the return value of getSite

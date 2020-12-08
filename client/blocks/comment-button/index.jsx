@@ -11,8 +11,8 @@ import { isNull, noop, omitBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import Gridicon from 'components/gridicon';
-import { getPostTotalCommentsCount } from 'state/comments/selectors';
+import Gridicon from 'calypso/components/gridicon';
+import { getPostTotalCommentsCount } from 'calypso/state/comments/selectors';
 
 /**
  * Style dependencies

@@ -10,8 +10,9 @@ import { get, isEmpty, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { Button } from '@automattic/components';
+import FormTextarea from 'calypso/components/forms/form-textarea';
 import scrollbleed from './scrollbleed';
+import { Button } from '@automattic/components';
 
 /**
  * Style dependencies
@@ -81,11 +82,10 @@ export const Composer = createReactClass( {
 				onMouseLeave={ this.scrollbleedUnlock }
 			>
 				<div className="happychat__message">
-					<textarea
+					<FormTextarea
 						aria-label="Enter your support request"
-						ref={ this.setScrollbleedTarget }
+						forwardedRef={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
-						type="text"
 						placeholder={ translate( 'Type a message…' ) }
 						onChange={ this.onChange }
 						onKeyDown={ this.onKeyDown }

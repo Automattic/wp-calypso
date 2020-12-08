@@ -2,11 +2,11 @@
  * External dependencies
  */
 import React, { Fragment } from 'react';
-import Gridicon from 'components/gridicon';
 
 /**
  * Internal dependencies
  */
+import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
 import {
 	ButtonRow,
@@ -16,14 +16,14 @@ import {
 	SiteLink,
 	Step,
 	Tour,
-} from 'layout/guided-tours/config-elements';
+} from 'calypso/layout/guided-tours/config-elements';
 
 /* eslint-disable wpcalypso/jsx-classname-namespace */
 export const JetpackSignInTour = makeTour(
 	<Tour { ...meta }>
 		<Step
 			name="init"
-			target=".sso__card .form-toggle__switch"
+			target=".sso__card .components-form-toggle"
 			arrow="top-left"
 			placement="below"
 			style={ {
@@ -41,7 +41,7 @@ export const JetpackSignInTour = makeTour(
 						) }
 					</p>
 					<ButtonRow>
-						<Continue target=".sso__card .form-toggle__switch" step="finish" click hidden />
+						<Continue target=".sso__card .components-form-toggle" step="finish" click hidden />
 						<SiteLink href="/plans/my-plan/:site">
 							{ translate( 'Return to the checklist' ) }
 						</SiteLink>

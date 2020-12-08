@@ -9,8 +9,8 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { PendingListItem } from '../pending-list-item';
-import { PLAN_BUSINESS } from 'lib/plans/constants';
-import * as localizedMoment from 'components/localized-moment';
+import { PLAN_BUSINESS } from 'calypso/lib/plans/constants';
+import * as localizedMoment from 'calypso/components/localized-moment';
 
 jest.mock( 'components/localized-moment' );
 localizedMoment.useLocalizedMoment.mockReturnValue( moment );

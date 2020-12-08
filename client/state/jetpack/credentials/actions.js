@@ -2,15 +2,22 @@
  * Internal dependencies
  */
 import {
+	JETPACK_CREDENTIALS_GET,
 	JETPACK_CREDENTIALS_AUTOCONFIGURE,
 	JETPACK_CREDENTIALS_DELETE,
 	JETPACK_CREDENTIALS_UPDATE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/activity-log/delete-credentials';
-import 'state/data-layer/wpcom/activity-log/rewind/activate';
-import 'state/data-layer/wpcom/activity-log/update-credentials';
-import 'state/jetpack/init';
+import 'calypso/state/data-layer/wpcom/activity-log/get-credentials';
+import 'calypso/state/data-layer/wpcom/activity-log/delete-credentials';
+import 'calypso/state/data-layer/wpcom/activity-log/update-credentials';
+import 'calypso/state/data-layer/wpcom/activity-log/rewind/activate';
+import 'calypso/state/jetpack/init';
+
+export const getCredentials = ( siteId ) => ( {
+	type: JETPACK_CREDENTIALS_GET,
+	siteId,
+} );
 
 export const updateCredentials = ( siteId, credentials ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,

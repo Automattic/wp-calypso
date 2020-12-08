@@ -12,12 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import {
-	usePaymentProcessor,
-	useTransactionStatus,
-	useLineItems,
-	useEvents,
-} from '../../public-api';
+import { FormStatus, useLineItems, useEvents } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -92,7 +87,7 @@ function IdealFields() {
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
 	const { changeCustomerName, changeCustomerBank } = useDispatch( 'ideal' );
 	const { formStatus } = useFormStatus();
-	const isDisabled = formStatus !== 'ready';
+	const isDisabled = formStatus !== FormStatus.READY;
 
 	return (
 		<IdealFormWrapper>
@@ -201,16 +196,9 @@ const SelectWrapper = styled.div`
 	}
 `;
 
-function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
+function IdealPayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const {
-		setTransactionRedirecting,
-		setTransactionError,
-		setTransactionPending,
-	} = useTransactionStatus();
-	const submitTransaction = usePaymentProcessor( 'ideal' );
 	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'ideal' ).getCustomerName() );
 	const customerBank = useSelect( ( select ) => select( 'ideal' ).getCustomerBank() );
@@ -221,35 +209,19 @@ function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting ideal payment' );
-					setTransactionPending();
 					onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'ideal' } } );
-					submitTransaction( {
+					onClick( 'ideal', {
 						stripe,
 						name: customerName?.value,
 						idealBank: customerBank?.value,
 						items,
 						total,
 						stripeConfiguration,
-					} )
-						.then( ( stripeResponse ) => {
-							if ( ! stripeResponse?.redirect_url ) {
-								setTransactionError(
-									__(
-										'There was an error processing your payment. Please try again or contact support.'
-									)
-								);
-								return;
-							}
-							debug( 'ideal transaction requires redirect', stripeResponse.redirect_url );
-							setTransactionRedirecting( stripeResponse.redirect_url );
-						} )
-						.catch( ( error ) => {
-							setTransactionError( error.message );
-						} );
+					} );
 				}
 			} }
 			buttonType="primary"
-			isBusy={ 'submitting' === formStatus }
+			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
 			<ButtonContents formStatus={ formStatus } total={ total } />
@@ -259,10 +231,10 @@ function IdealPayButton( { disabled, store, stripe, stripeConfiguration } ) {
 
 function ButtonContents( { formStatus, total } ) {
 	const { __ } = useI18n();
-	if ( formStatus === 'submitting' ) {
+	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
-	if ( formStatus === 'ready' ) {
+	if ( formStatus === FormStatus.READY ) {
 		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
@@ -304,17 +276,17 @@ function IdealLabel() {
 		<React.Fragment>
 			<span>{ __( 'iDEAL' ) }</span>
 			<PaymentMethodLogos className="ideal__logo payment-logos">
-				<IdealLogoUI />
+				<IdealLogo />
 			</PaymentMethodLogos>
 		</React.Fragment>
 	);
 }
 
-const IdealLogoUI = styled( IdealLogo )`
+const IdealLogo = styled( IdealLogoSvg )`
 	width: 28px;
 `;
 
-function IdealLogo( { className } ) {
+function IdealLogoSvg( { className } ) {
 	return (
 		<svg
 			className={ className }

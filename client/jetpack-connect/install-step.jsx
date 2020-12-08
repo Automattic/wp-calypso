@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import { preventWidows } from 'lib/formatting';
-import versionCompare from 'lib/version-compare';
+import { preventWidows } from 'calypso/lib/formatting';
+import versionCompare from 'calypso/lib/version-compare';
 import JetpackExampleInstall from './example-components/jetpack-install';
 import JetpackExampleActivate from './example-components/jetpack-activate';
 import JetpackExampleConnect from './example-components/jetpack-connect';

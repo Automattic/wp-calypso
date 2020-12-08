@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 /* global calypsoifyGutenberg, Image, MessageChannel, MessagePort, requestAnimationFrame */
 
 /**
@@ -17,7 +16,7 @@ import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
 import debugFactory from 'debug';
-import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../full-site-editing/full-site-editing-plugin/wpcom-block-editor-nav-sidebar/src/constants';
+import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/editing-toolkit-plugin/wpcom-block-editor-nav-sidebar/src/constants';
 
 /**
  * Internal dependencies
@@ -550,6 +549,10 @@ function handleCloseEditor( calypsoPort ) {
 
 	handleCloseInLegacyEditors( dispatchAction );
 
+	if ( typeof MainDashboardButton !== 'undefined' ) {
+		return;
+	}
+
 	if ( isNavSidebarPresent() ) {
 		return;
 	}
@@ -755,10 +758,22 @@ function getGutenboardingStatus( calypsoPort ) {
 		[ port2 ]
 	);
 	port1.onmessage = ( { data } ) => {
-		const { isGutenboarding, frankenflowUrl, isNewLaunch } = data;
+		const {
+			isGutenboarding,
+			isSiteUnlaunched,
+			launchUrl,
+			isNewLaunchMobile,
+			isExperimental,
+			isPersistentLaunchButton,
+			isFocusedLaunchFlow,
+		} = data;
 		calypsoifyGutenberg.isGutenboarding = isGutenboarding;
-		calypsoifyGutenberg.frankenflowUrl = frankenflowUrl;
-		calypsoifyGutenberg.isNewLaunch = isNewLaunch;
+		calypsoifyGutenberg.isSiteUnlaunched = isSiteUnlaunched;
+		calypsoifyGutenberg.launchUrl = launchUrl;
+		calypsoifyGutenberg.isNewLaunchMobile = isNewLaunchMobile;
+		calypsoifyGutenberg.isExperimental = isExperimental;
+		calypsoifyGutenberg.isPersistentLaunchButton = isPersistentLaunchButton;
+		calypsoifyGutenberg.isFocusedLaunchFlow = isFocusedLaunchFlow;
 		// Hook necessary if message recieved after editor has loaded.
 		window.wp.hooks.doAction( 'setGutenboardingStatus', isGutenboarding );
 	};
@@ -912,6 +927,48 @@ async function preselectParentPage() {
 	}
 }
 
+function handleCheckoutModal( calypsoPort ) {
+	const { port1, port2 } = new MessageChannel();
+	calypsoPort.postMessage(
+		{
+			action: 'getCheckoutModalStatus',
+			payload: {},
+		},
+		[ port2 ]
+	);
+	port1.onmessage = ( message ) => {
+		const { isCheckoutOverlayEnabled } = message.data;
+
+		// Conditionally add the hook if the feature flag is enabled.
+		if ( isCheckoutOverlayEnabled ) {
+			addAction(
+				'a8c.wpcom-block-editor.openCheckoutModal',
+				'a8c/wpcom-block-editor/openCheckoutModal',
+				( data ) => {
+					calypsoPort.postMessage( {
+						action: 'openCheckoutModal',
+						payload: data,
+					} );
+				}
+			);
+		}
+	};
+}
+
+function handleInlineHelpButton( calypsoPort ) {
+	addAction(
+		'a8c.wpcom-block-editor.toggleInlineHelpButton',
+		'a8c/wpcom-block-editor/toggleInlineHelpButton',
+		/** @type {({ hidden: boolean }) => void} */
+		( data ) => {
+			calypsoPort.postMessage( {
+				action: 'toggleInlineHelpButton',
+				payload: data,
+			} );
+		}
+	);
+}
+
 function initPort( message ) {
 	if ( 'initPort' !== message.data.action ) {
 		return;
@@ -933,6 +990,7 @@ function initPort( message ) {
 						multiple: this.props.multiple,
 						value: this.props.value,
 					},
+					ports: [ mediaSelectChannel.port2, mediaCancelChannel.port2 ],
 				},
 				[ mediaSelectChannel.port2, mediaCancelChannel.port2 ]
 			);
@@ -1013,6 +1071,10 @@ function initPort( message ) {
 		handleUncaughtErrors( calypsoPort );
 
 		handleEditorLoaded( calypsoPort );
+
+		handleCheckoutModal( calypsoPort );
+
+		handleInlineHelpButton( calypsoPort );
 	}
 
 	window.removeEventListener( 'message', initPort, false );

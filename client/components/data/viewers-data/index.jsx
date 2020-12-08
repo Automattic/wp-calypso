@@ -7,9 +7,9 @@ import PropTypes from 'prop-types';
 /**
  * Internal dependencies
  */
-import ViewersStore from 'lib/viewers/store';
-import ViewersActions from 'lib/viewers/actions';
-import passToChildren from 'lib/react-pass-to-children';
+import ViewersStore from 'calypso/lib/viewers/store';
+import ViewersActions from 'calypso/lib/viewers/actions';
+import passToChildren from 'calypso/lib/react-pass-to-children';
 
 export default class ViewersData extends Component {
 	static propTypes = {

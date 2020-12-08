@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const electron = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const electron = require( 'electron' );
 const BrowserWindow = electron.BrowserWindow;
 const app = electron.app;
 const path = require( 'path' );
@@ -15,13 +15,17 @@ const path = require( 'path' );
 // electron.
 let screen;
 app.on( 'ready', () => {
+	if ( process.platform === 'win32' ) {
+		// required to display application notification settings in Windows
+		app.setAppUserModelId( 'com.automattic.wordpress' );
+	}
 	screen = electron.screen;
 } );
 
 /**
  * Internal dependencies
  */
-const Config = require( 'desktop/lib/config' );
+const Config = require( 'calypso/desktop/lib/config' );
 
 /**
  * Module variables

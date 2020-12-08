@@ -38,7 +38,6 @@
 			justify-content: flex-start;
 			border-bottom: 1px solid #c8d7e1;
 
-
 			.vertical-menu__social-item {
 				border-top: 1px solid #c8d7e1;
 				padding: 0;
@@ -86,6 +85,7 @@
 
 .seo-preview-pane__preview-area {
 	margin: 10px auto;
+	max-width: 100%;
 }
 
 .seo-preview-pane__preview {
@@ -112,7 +112,10 @@
 		.reader-post-actions__item {
 			white-space: nowrap;
 
-			span, .comment-button, .like-button, .ellipsis-menu .button {
+			span,
+			.comment-button,
+			.like-button,
+			.ellipsis-menu .button {
 				cursor: default;
 				pointer-events: none;
 

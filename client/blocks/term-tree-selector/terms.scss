@@ -46,6 +46,10 @@ input[type='checkbox'].term-tree-selector__input {
 	padding: 4px 8px;
 	font-size: $font-body-small;
 
+	.form-label {
+		margin-bottom: 0;
+	}
+
 	.term-tree-selector.is-compact.is-small & {
 		padding-left: 0;
 	}

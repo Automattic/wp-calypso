@@ -106,27 +106,54 @@ export const getMetaDiffForDailyBackup = ( logs, date ) => {
 	];
 };
 
-export const getDailyBackupDeltas = ( logs, date ) => {
-	const changes = getEventsInDailyBackup( logs, date );
+export const DELTA_ACTIVITIES = [
+	'attachment__uploaded',
+	// 'attachment__updated',
+	'attachment__deleted',
+	'post__published',
+	'post__trashed',
+	// 'post__updated',
+	'plugin__installed',
+	'plugin__deleted',
+	'theme__installed',
+	'theme__deleted',
+	'user__invite_accepted',
+];
 
+export const getDeltaActivities = ( logs ) => {
+	return logs.filter( ( { activityName } ) => DELTA_ACTIVITIES.includes( activityName ) );
+};
+
+export const getDeltaActivitiesByType = ( logs ) => {
 	return {
-		mediaCreated: changes.filter( ( event ) => 'attachment__uploaded' === event.activityName ),
-		mediaDeleted: changes.filter( ( event ) => 'attachment__deleted' === event.activityName ),
-		posts: changes.filter(
+		mediaCreated: logs.filter( ( event ) => 'attachment__uploaded' === event.activityName ),
+		mediaDeleted: logs.filter( ( event ) => 'attachment__deleted' === event.activityName ),
+		posts: logs.filter(
 			( event ) =>
 				'post__published' === event.activityName || 'post__trashed' === event.activityName
 		),
-		postsCreated: changes.filter( ( event ) => 'post__published' === event.activityName ),
-		postsDeleted: changes.filter( ( event ) => 'post__trashed' === event.activityName ),
-		plugins: changes.filter(
+		postsCreated: logs.filter( ( event ) => 'post__published' === event.activityName ),
+		postsDeleted: logs.filter( ( event ) => 'post__trashed' === event.activityName ),
+		plugins: logs.filter(
 			( event ) =>
 				'plugin__installed' === event.activityName || 'plugin__deleted' === event.activityName
 		),
-		themes: changes.filter(
+		themes: logs.filter(
 			( event ) =>
 				'theme__installed' === event.activityName || 'theme__deleted' === event.activityName
 		),
+		users: logs.filter( ( event ) => 'user__invite_accepted' === event.activityName ),
 	};
+};
+
+export const getDailyBackupDeltas = ( logs, date ) => {
+	const changes = getEventsInDailyBackup( logs, date );
+	return getDeltaActivitiesByType( changes );
+};
+
+export const getRawDailyBackupDeltas = ( logs, date ) => {
+	const events = getEventsInDailyBackup( logs, date );
+	return getDeltaActivities( events );
 };
 
 /**

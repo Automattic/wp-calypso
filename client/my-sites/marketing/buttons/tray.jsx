@@ -11,7 +11,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import SortableList from 'components/forms/sortable-list';
+import SortableList from 'calypso/components/forms/sortable-list';
 import ButtonsPreviewButtons from './preview-buttons';
 import ButtonsPreviewButton from './preview-button';
 
@@ -125,9 +125,9 @@ class SharingButtonsTray extends React.Component {
 	};
 
 	onButtonClick = ( button ) => {
-		let buttons = this.props.buttons.slice( 0 ),
-			currentButton = find( buttons, { ID: button.ID } ),
-			isEnabled;
+		const buttons = this.props.buttons.slice( 0 );
+		const currentButton = find( buttons, { ID: button.ID } );
+		let isEnabled;
 
 		if ( button.visibility === this.props.visibility ) {
 			// Assuming visibility hasn't changed, we can simply toggle the

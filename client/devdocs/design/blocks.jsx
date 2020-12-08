@@ -5,86 +5,84 @@ import React from 'react';
 import page from 'page';
 import classnames from 'classnames';
 import { trim } from 'lodash';
-import { slugToCamelCase } from 'devdocs/docs-example/util';
+import { slugToCamelCase } from 'calypso/devdocs/docs-example/util';
 
 /**
  * Internal dependencies
  */
-import Collection from 'devdocs/design/search-collection';
-import DocumentHead from 'components/data/document-head';
-import HeaderCake from 'components/header-cake';
-import Main from 'components/main';
-import ReadmeViewer from 'components/readme-viewer';
-import SearchCard from 'components/search-card';
-import { isEnabled } from 'config';
+import Collection from 'calypso/devdocs/design/search-collection';
+import DocumentHead from 'calypso/components/data/document-head';
+import HeaderCake from 'calypso/components/header-cake';
+import Main from 'calypso/components/main';
+import ReadmeViewer from 'calypso/components/readme-viewer';
+import SearchCard from 'calypso/components/search-card';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Docs examples
  */
-import AllSites from 'blocks/all-sites/docs/example';
-import CreditCardForm from 'blocks/credit-card-form/docs/example';
-import CalendarButton from 'blocks/calendar-button/docs/example';
-import CalendarPopover from 'blocks/calendar-popover/docs/example';
-import AuthorSelector from 'blocks/author-selector/docs/example';
-import CommentButtons from 'blocks/comment-button/docs/example';
-import DisconnectJetpackDialog from 'blocks/disconnect-jetpack/docs/example';
-import FollowButton from 'blocks/follow-button/docs/example';
-import LikeButtons from 'blocks/like-button/docs/example';
-import PostSchedule from 'components/post-schedule/docs/example';
-import PostSelector from 'my-sites/post-selector/docs/example';
-import ProductPlanOverlapNotices from 'blocks/product-plan-overlap-notices/docs/example';
-import ProductSelector from 'blocks/product-selector/docs/example';
-import Site from 'blocks/site/docs/example';
-import SitePlaceholder from 'blocks/site/docs/placeholder-example';
-import SitesDropdown from 'components/sites-dropdown/docs/example';
-import SiteIcon from 'blocks/site-icon/docs/example';
-import Theme from 'components/theme/docs/example';
-import HappinessSupport from 'components/happiness-support/docs/example';
-import ThemesListExample from 'components/themes-list/docs/example';
-import PlanStorage from 'blocks/plan-storage/docs/example';
-import PlanCompareCard from 'my-sites/plan-compare-card/docs/example';
-import DomainTip from 'blocks/domain-tip/docs/example';
-import PostItem from 'blocks/post-item/docs/example';
-import PostStatus from 'blocks/post-status/docs/example';
-import ReaderAuthorLink from 'blocks/reader-author-link/docs/example';
-import ReaderSiteStreamLink from 'blocks/reader-site-stream-link/docs/example';
-import AuthorCompactProfile from 'blocks/author-compact-profile/docs/example';
-import RelatedPostCard from 'blocks/reader-related-card/docs/example';
-import PlanPrice from 'my-sites/plan-price/docs/example';
-import PostShare from 'blocks/post-share/docs/example';
-import PlanThankYouCard from 'blocks/plan-thank-you-card/docs/example';
-import DismissibleCard from 'blocks/dismissible-card/docs/example';
-import PostEditButton from 'blocks/post-edit-button/docs/example';
-import PostComment from 'blocks/comments/docs/post-comment-example';
-import ReaderAvatar from 'blocks/reader-avatar/docs/example';
-import SubscriptionLengthPicker from 'blocks/subscription-length-picker/docs/example';
-import ImageEditor from 'blocks/image-editor/docs/example';
-import ImageSelector from 'blocks/image-selector/docs/example';
-import VideoEditor from 'blocks/video-editor/docs/example';
-import ReaderPostCard from 'blocks/reader-post-card/docs/example';
-import ReaderCombinedCard from 'blocks/reader-combined-card/docs/example';
-import ReaderRecommendedSites from 'blocks/reader-recommended-sites/docs/example';
-import ReaderPostOptionsMenu from 'blocks/reader-post-options-menu/docs/example';
-import DailyPostButton from 'blocks/daily-post-button/docs/example';
-import ReaderSubscriptionListItem from 'blocks/reader-subscription-list-item/docs/example';
-import PostLikes from 'blocks/post-likes/docs/example';
-import ReaderFeaturedVideo from 'blocks/reader-featured-video/docs/example';
-import NpsSurvey from 'blocks/nps-survey/docs/example';
-import ReaderExportButton from 'blocks/reader-export-button/docs/example';
-import ReaderImportButton from 'blocks/reader-import-button/docs/example';
-import SharingPreviewPane from 'blocks/sharing-preview-pane/docs/example';
-import ReaderShare from 'blocks/reader-share/docs/example';
-import Login from 'blocks/login/docs/example';
-import LocationSearch from 'blocks/location-search/docs/example';
-import ConversationCommentList from 'blocks/conversations/docs/example';
-import SimplePaymentsDialog from 'components/tinymce/plugins/simple-payments/dialog/docs/example';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar/docs/example';
-import ConversationFollowButton from 'blocks/conversation-follow-button/docs/example';
-import ColorSchemePicker from 'blocks/color-scheme-picker/docs/example';
-import UserMentions from 'blocks/user-mentions/docs/example';
-import SupportArticleDialog from 'blocks/support-article-dialog/docs/example';
-import TimeMismatchWarning from 'blocks/time-mismatch-warning/docs/example';
-import UpsellNudge from 'blocks/upsell-nudge/docs/example';
+import AllSites from 'calypso/blocks/all-sites/docs/example';
+import CreditCardForm from 'calypso/blocks/credit-card-form/docs/example';
+import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
+import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
+import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
+import CommentButtons from 'calypso/blocks/comment-button/docs/example';
+import FollowButton from 'calypso/blocks/follow-button/docs/example';
+import LikeButtons from 'calypso/blocks/like-button/docs/example';
+import PostSchedule from 'calypso/components/post-schedule/docs/example';
+import PostSelector from 'calypso/my-sites/post-selector/docs/example';
+import ProductPlanOverlapNotices from 'calypso/blocks/product-plan-overlap-notices/docs/example';
+import ProductSelector from 'calypso/blocks/product-selector/docs/example';
+import Site from 'calypso/blocks/site/docs/example';
+import SitePlaceholder from 'calypso/blocks/site/docs/placeholder-example';
+import SitesDropdown from 'calypso/components/sites-dropdown/docs/example';
+import SiteIcon from 'calypso/blocks/site-icon/docs/example';
+import Theme from 'calypso/components/theme/docs/example';
+import HappinessSupport from 'calypso/components/happiness-support/docs/example';
+import ThemesListExample from 'calypso/components/themes-list/docs/example';
+import PlanStorage from 'calypso/blocks/plan-storage/docs/example';
+import PlanCompareCard from 'calypso/my-sites/plan-compare-card/docs/example';
+import DomainTip from 'calypso/blocks/domain-tip/docs/example';
+import PostItem from 'calypso/blocks/post-item/docs/example';
+import PostStatus from 'calypso/blocks/post-status/docs/example';
+import ReaderAuthorLink from 'calypso/blocks/reader-author-link/docs/example';
+import ReaderSiteStreamLink from 'calypso/blocks/reader-site-stream-link/docs/example';
+import AuthorCompactProfile from 'calypso/blocks/author-compact-profile/docs/example';
+import RelatedPostCard from 'calypso/blocks/reader-related-card/docs/example';
+import PlanPrice from 'calypso/my-sites/plan-price/docs/example';
+import PostShare from 'calypso/blocks/post-share/docs/example';
+import PlanThankYouCard from 'calypso/blocks/plan-thank-you-card/docs/example';
+import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
+import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
+import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
+import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
+import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker/docs/example';
+import ImageEditor from 'calypso/blocks/image-editor/docs/example';
+import ImageSelector from 'calypso/blocks/image-selector/docs/example';
+import VideoEditor from 'calypso/blocks/video-editor/docs/example';
+import ReaderPostCard from 'calypso/blocks/reader-post-card/docs/example';
+import ReaderCombinedCard from 'calypso/blocks/reader-combined-card/docs/example';
+import ReaderRecommendedSites from 'calypso/blocks/reader-recommended-sites/docs/example';
+import ReaderPostOptionsMenu from 'calypso/blocks/reader-post-options-menu/docs/example';
+import DailyPostButton from 'calypso/blocks/daily-post-button/docs/example';
+import ReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/docs/example';
+import PostLikes from 'calypso/blocks/post-likes/docs/example';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video/docs/example';
+import NpsSurvey from 'calypso/blocks/nps-survey/docs/example';
+import ReaderExportButton from 'calypso/blocks/reader-export-button/docs/example';
+import ReaderImportButton from 'calypso/blocks/reader-import-button/docs/example';
+import SharingPreviewPane from 'calypso/blocks/sharing-preview-pane/docs/example';
+import ReaderShare from 'calypso/blocks/reader-share/docs/example';
+import Login from 'calypso/blocks/login/docs/example';
+import LocationSearch from 'calypso/blocks/location-search/docs/example';
+import ConversationCommentList from 'calypso/blocks/conversations/docs/example';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar/docs/example';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button/docs/example';
+import ColorSchemePicker from 'calypso/blocks/color-scheme-picker/docs/example';
+import UserMentions from 'calypso/blocks/user-mentions/docs/example';
+import SupportArticleDialog from 'calypso/blocks/support-article-dialog/docs/example';
+import TimeMismatchWarning from 'calypso/blocks/time-mismatch-warning/docs/example';
+import UpsellNudge from 'calypso/blocks/upsell-nudge/docs/example';
 
 export default class AppComponents extends React.Component {
 	static displayName = 'AppComponents';
@@ -141,7 +139,6 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
-					<DisconnectJetpackDialog />
 					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
@@ -187,7 +184,6 @@ export default class AppComponents extends React.Component {
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
-					<SimplePaymentsDialog />
 					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />

@@ -9,6 +9,20 @@
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"site_name": "Jetpack.com",
+	"meta": [
+		{
+			"name": "description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:description",
+			"content": "Pricing page for Jetpack security, performance, and marketing plans"
+		},
+		{
+			"property": "og:image",
+			"content": "https://i1.wp.com/s0.wp.com/wp-content/themes/a8c/jetpackme-new/images-2019/jetpack-logo.png?ssl=1"
+		}
+	],
 	"features": {
 		"activity-log/v2": true,
 		"always_use_logout_url": false,
@@ -19,6 +33,8 @@
 		"jetpack/backups-date-picker": true,
 		"jetpack/backups-restore": true,
 		"jetpack/on-demand-scan": true,
+		"jetpack/pricing-page": true,
+		"jetpack/server-credentials-advanced-flow": true,
 		"layout/app-banner": false,
 		"layout/guided-tours": false,
 		"layout/nps-survey-notice": false,
@@ -33,10 +49,12 @@
 		"activity": true,
 		"backup": true,
 		"jetpack-cloud-auth": false,
+		"jetpack-cloud-pricing": true,
 		"jetpack-cloud-settings": true,
 		"jetpack-cloud": true,
 		"scan": true
 	},
 	"site_filter": [ "jetpack" ],
-	"theme": "jetpack-cloud"
+	"theme": "jetpack-cloud",
+	"olark_chat_identity": "5581-687-10-4070"
 }

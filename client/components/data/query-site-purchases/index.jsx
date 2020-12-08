@@ -1,52 +1,42 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
-import { Component } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useRef } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
  */
-import { isFetchingSitePurchases } from 'state/purchases/selectors';
-import { fetchSitePurchases } from 'state/purchases/actions';
+import { isFetchingSitePurchases } from 'calypso/state/purchases/selectors';
+import { fetchSitePurchases } from 'calypso/state/purchases/actions';
 
-class QuerySitePurchases extends Component {
-	requestSitePurchases( props = this.props ) {
-		if ( props.siteId && ! props.requesting ) {
-			this.props.fetchSitePurchases( props.siteId );
-		}
-	}
+const debug = debugFactory( 'calypso:query-site-purchases' );
 
-	UNSAFE_componentWillMount() {
-		this.requestSitePurchases();
-	}
+export default function QuerySitePurchases( { siteId } ) {
+	const isRequesting = useSelector( ( state ) => isFetchingSitePurchases( state ) );
+	const reduxDispatch = useDispatch();
+	const previousSiteId = useRef();
 
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( this.props.siteId === nextProps.siteId ) {
+	useEffect( () => {
+		if ( ! siteId || isRequesting ) {
 			return;
 		}
+		if ( siteId === previousSiteId.current ) {
+			return;
+		}
+		debug(
+			`siteId "${ siteId }" has changed from previous "${ previousSiteId.current }"; fetching site purchases`
+		);
+		previousSiteId.current = siteId;
 
-		this.requestSitePurchases( nextProps );
-	}
+		reduxDispatch( fetchSitePurchases( siteId ) );
+	}, [ siteId, reduxDispatch, isRequesting ] );
 
-	render() {
-		return null;
-	}
+	return null;
 }
 
 QuerySitePurchases.propTypes = {
 	siteId: PropTypes.number,
-	requesting: PropTypes.bool,
-	fetchSitePurchases: PropTypes.func.isRequired,
 };
-
-export default connect(
-	( state ) => {
-		return {
-			requesting: isFetchingSitePurchases( state ),
-		};
-	},
-	{ fetchSitePurchases }
-)( QuerySitePurchases );

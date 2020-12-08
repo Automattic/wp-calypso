@@ -9,7 +9,7 @@ const translate = ( x ) => x;
  */
 import { shallow } from 'enzyme';
 import React from 'react';
-import { TERM_1_YEAR } from 'lib/plans/constants';
+import { TERM_1_YEAR } from 'calypso/lib/plans/constants';
 
 /**
  * Internal dependencies

@@ -1,33 +1,33 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { camelCase, values } from 'lodash';
 import { connect } from 'react-redux';
-import Gridicon from 'components/gridicon';
 import debugFactory from 'debug';
-
-/**
- * Internal dependencies
- */
-import { Card, CompactCard } from '@automattic/components';
-import CreditCardFormFields from 'components/credit-card-form-fields';
-import FormButton from 'components/forms/form-button';
-import notices from 'notices';
-import { validatePaymentDetails } from 'lib/checkout';
-import ValidationErrorList from 'notices/validation-error-list';
-import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'lib/url/support';
-import getCountries from 'state/selectors/get-countries';
-import QueryPaymentCountries from 'components/data/query-countries/payments';
-import { localizeUrl } from 'lib/i18n-utils';
+import { Card } from '@automattic/components';
 import {
 	createStripeSetupIntent,
 	StripeSetupIntentError,
 	StripeValidationError,
 	useStripe,
-} from 'lib/stripe';
+} from '@automattic/calypso-stripe';
+
+/**
+ * Internal dependencies
+ */
+import Gridicon from 'calypso/components/gridicon';
+import CreditCardFormFields from 'calypso/components/credit-card-form-fields';
+import FormButton from 'calypso/components/forms/form-button';
+import notices from 'calypso/notices';
+import { validatePaymentDetails } from 'calypso/lib/checkout';
+import ValidationErrorList from 'calypso/notices/validation-error-list';
+import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
+import getCountries from 'calypso/state/selectors/get-countries';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 import {
 	getInitializedFields,
 	camelCaseFormFields,
@@ -50,19 +50,25 @@ export function CreditCardForm( {
 	apiParams = {},
 	createCardToken,
 	countriesList,
-	initialValues,
-	purchase,
+	initialValues = undefined,
+	purchase = undefined,
 	recordFormSubmitEvent,
 	saveStoredCard = null,
-	siteSlug,
+	siteSlug = undefined,
 	successCallback,
 	showUsedForExistingPurchasesInfo = false,
 	autoFocus = true,
-	heading,
-	onCancel,
+	heading = undefined,
+	onCancel = undefined,
 	translate,
 } ) {
-	const { stripe, stripeConfiguration, setStripeError } = useStripe();
+	const {
+		stripe,
+		stripeConfiguration,
+		setStripeError,
+		isStripeLoading,
+		stripeLoadingError,
+	} = useStripe();
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const [ formFieldValues, setFormFieldValues ] = useState( getInitializedFields( initialValues ) );
 	const [ touchedFormFields, setTouchedFormFields ] = useState( {} );
@@ -150,6 +156,14 @@ export function CreditCardForm( {
 		}
 	};
 
+	useEffect( () => {
+		if ( stripeLoadingError ) {
+			displayError( { translate, error: stripeLoadingError } );
+		}
+	}, [ stripeLoadingError, translate ] );
+
+	const disabled = isStripeLoading || stripeLoadingError;
+
 	return (
 		<form onSubmit={ onSubmit }>
 			<Card className="credit-card-form__content">
@@ -173,16 +187,19 @@ export function CreditCardForm( {
 					translate={ translate }
 					showUsedForExistingPurchasesInfo={ showUsedForExistingPurchasesInfo }
 				/>
-			</Card>
-			<CompactCard className="credit-card-form__footer">
-				<em>{ translate( 'All fields required' ) }</em>
+
+				<SaveButton
+					translate={ translate }
+					disabled={ disabled }
+					formSubmitting={ formSubmitting }
+				/>
+
 				{ onCancel && (
 					<FormButton type="button" isPrimary={ false } onClick={ onCancel }>
 						{ translate( 'Cancel' ) }
 					</FormButton>
 				) }
-				<SaveButton translate={ translate } formSubmitting={ formSubmitting } />
-			</CompactCard>
+			</Card>
 		</form>
 	);
 }
@@ -204,9 +221,9 @@ CreditCardForm.propTypes = {
 	translate: PropTypes.func.isRequired,
 };
 
-function SaveButton( { translate, formSubmitting } ) {
+function SaveButton( { translate, disabled, formSubmitting } ) {
 	return (
-		<FormButton disabled={ formSubmitting } type="submit">
+		<FormButton disabled={ disabled || formSubmitting } type="submit">
 			{ formSubmitting
 				? translate( 'Saving card…', {
 						context: 'Button label',

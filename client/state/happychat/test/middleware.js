@@ -12,8 +12,8 @@ import {
 	sendPreferences,
 	sendTyping,
 	sendNotTyping,
-} from 'state/happychat/connection/actions';
-import { blur, focus } from 'state/happychat/ui/actions';
+} from 'calypso/state/happychat/connection/actions';
+import { blur, focus } from 'calypso/state/happychat/ui/actions';
 import {
 	HAPPYCHAT_CHAT_STATUS_ABANDONED,
 	HAPPYCHAT_CHAT_STATUS_ASSIGNED,
@@ -30,10 +30,12 @@ import {
 	HAPPYCHAT_CONNECTION_STATUS_RECONNECTING,
 	HAPPYCHAT_CONNECTION_STATUS_UNAUTHORIZED,
 	HAPPYCHAT_CONNECTION_STATUS_UNINITIALIZED,
-} from 'state/happychat/constants';
+} from 'calypso/state/happychat/constants';
 
 describe( 'middleware', () => {
-	let actionMiddleware, connection, store;
+	let actionMiddleware;
+	let connection;
+	let store;
 	beforeEach( () => {
 		connection = {
 			init: jest.fn(),

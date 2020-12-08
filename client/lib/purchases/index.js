@@ -10,11 +10,11 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import notices from 'notices';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { getRenewalItemFromProduct } from 'lib/cart-values/cart-items';
-import { getPlan } from 'lib/plans';
-import { isMonthly as isMonthlyPlan } from 'lib/plans/constants';
+import notices from 'calypso/notices';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
+import { getPlan } from 'calypso/lib/plans';
+import { isMonthly as isMonthlyPlan } from 'calypso/lib/plans/constants';
 import {
 	getProductFromSlug,
 	isDomainMapping,
@@ -25,8 +25,9 @@ import {
 	isPlan,
 	isTheme,
 	isConciergeSession,
-} from 'lib/products-values';
-import { getJetpackProductsDisplayNames } from 'lib/products-values/translations';
+} from 'calypso/lib/products-values';
+import { getJetpackProductsDisplayNames } from 'calypso/lib/products-values/translations';
+import { MembershipSubscription, MembershipSubscriptionsSite } from 'calypso/lib/purchases/types';
 
 const debug = debugFactory( 'calypso:purchases' );
 
@@ -67,6 +68,34 @@ function getPurchasesBySite( purchases, sites ) {
 			return result;
 		}, [] )
 		.sort( ( a, b ) => ( a.title.toLowerCase() > b.title.toLowerCase() ? 1 : -1 ) );
+}
+
+/**
+ * Returns an array of sites objects, each of which contains an array of subscriptions.
+ *
+ * @param {MembershipSubscription[]} subscriptions An array of subscription objects.
+ * @returns {MembershipSubscriptionsSite[]} An array of sites with subscriptions attached.
+ */
+function getSubscriptionsBySite( subscriptions ) {
+	return subscriptions
+		.reduce( ( result, currentValue ) => {
+			const site = result.find( ( subscription ) => subscription.id === currentValue.site_id );
+			if ( ! site ) {
+				return [
+					...result,
+					{
+						id: currentValue.site_id,
+						name: currentValue.site_title,
+						domain: currentValue.site_url,
+						subscriptions: [ currentValue ],
+					},
+				];
+			}
+
+			site.subscriptions = [ ...site.subscriptions, currentValue ];
+			return result;
+		}, [] )
+		.sort( ( a, b ) => ( a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1 ) );
 }
 
 function getName( purchase ) {
@@ -669,6 +698,7 @@ export {
 	getPurchasesBySite,
 	getRenewalPrice,
 	getSubscriptionEndDate,
+	getSubscriptionsBySite,
 	handleRenewMultiplePurchasesClick,
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,

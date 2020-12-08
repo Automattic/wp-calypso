@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import { withoutHttp, urlToSlug } from 'lib/url';
-import getSitesItems from 'state/selectors/get-sites-items';
-import getRawSite from 'state/selectors/get-raw-site';
+import createSelector from 'calypso/lib/create-selector';
+import { withoutHttp, urlToSlug } from 'calypso/lib/url';
+import getSitesItems from 'calypso/state/selectors/get-sites-items';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
 import getSiteOption from './get-site-option';
 import isSiteConflicting from './is-site-conflicting';
 

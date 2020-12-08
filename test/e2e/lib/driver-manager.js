@@ -83,7 +83,7 @@ export async function startBrowser( { useCustomUA = true, resizeBrowserWindow = 
 	const chromeVersion = await readFileSync( './.chromedriver_version', 'utf8' ).trim();
 	const userAgent = `user-agent=Mozilla/5.0 (wp-e2e-tests) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${ chromeVersion } Safari/537.36`;
 	const pref = new webdriver.logging.Preferences();
-	pref.setLevel( 'browser', webdriver.logging.Level.SEVERE );
+	pref.setLevel( 'browser', webdriver.logging.Level.ALL );
 	pref.setLevel( 'performance', webdriver.logging.Level.ALL );
 	if ( config.has( 'sauce' ) && config.get( 'sauce' ) ) {
 		const sauceURL = 'http://ondemand.saucelabs.com:80/wd/hub';
@@ -250,8 +250,12 @@ export async function clearCookiesAndDeleteLocalStorage( driver, siteURL = null 
 	const url = await driver.getCurrentUrl();
 	await driver.manage().deleteAllCookies();
 	if ( url.startsWith( 'data:' ) === false && url !== 'about:blank' ) {
-		return await driver.executeScript( 'window.localStorage.clear();' );
+		return deleteLocalStorage( driver );
 	}
+}
+
+export function deleteLocalStorage( driver ) {
+	return driver.executeScript( 'window.localStorage.clear();' );
 }
 
 export async function ensureNotLoggedIn( driver ) {
@@ -308,4 +312,8 @@ export async function acceptAllAlerts( driver ) {
 export function quitBrowser( driver ) {
 	global.__BROWSER__ = null;
 	return driver.quit();
+}
+
+export function enableDebugMode( driver ) {
+	driver.executeScript( 'window.localStorage.debug="*";' );
 }

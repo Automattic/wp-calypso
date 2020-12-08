@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import isRequestingSiteMonitorSettings from 'state/selectors/is-requesting-site-monitor-settings';
+import isRequestingSiteMonitorSettings from 'calypso/state/selectors/is-requesting-site-monitor-settings';
 
 describe( 'isRequestingSiteMonitorSettings()', () => {
 	const siteId = 2916284;

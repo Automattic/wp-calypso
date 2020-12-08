@@ -12,26 +12,26 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import { Card, Button, CompactCard } from '@automattic/components';
-import Gridicon from 'components/gridicon';
-import FormSectionHeading from 'components/forms/form-section-heading';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import User from 'components/user';
-import AuthorSelector from 'blocks/author-selector';
-import { deleteUser } from 'lib/users/actions';
-import accept from 'lib/accept';
-import Gravatar from 'components/gravatar';
+import Gridicon from 'calypso/components/gridicon';
+import FormSectionHeading from 'calypso/components/forms/form-section-heading';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import User from 'calypso/components/user';
+import AuthorSelector from 'calypso/blocks/author-selector';
+import { deleteUser } from 'calypso/lib/users/actions';
+import accept from 'calypso/lib/accept';
+import Gravatar from 'calypso/components/gravatar';
 import { localize } from 'i18n-calypso';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import {
 	requestExternalContributors,
 	requestExternalContributorsRemoval,
-} from 'state/data-getters';
-import { httpData } from 'state/data-layer/http-data';
+} from 'calypso/state/data-getters';
+import { httpData } from 'calypso/state/data-layer/http-data';
 
 /**
  * Style dependencies
@@ -83,9 +83,9 @@ class DeleteUser extends React.Component {
 	};
 
 	handleRadioChange = ( event ) => {
-		const name = event.currentTarget.name,
-			value = event.currentTarget.value,
-			updateObj = {};
+		const name = event.currentTarget.name;
+		const value = event.currentTarget.value;
+		const updateObj = {};
 
 		updateObj[ name ] = value;
 
@@ -258,9 +258,8 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="reassign"
 								checked={ 'reassign' === this.state.radioOption }
+								label={ this.getTranslatedAssignLabel() }
 							/>
-
-							<span>{ this.getTranslatedAssignLabel() }</span>
 						</FormLabel>
 
 						{ this.state.authorSelectorToggled ? (
@@ -273,17 +272,16 @@ class DeleteUser extends React.Component {
 								onChange={ this.handleRadioChange }
 								value="delete"
 								checked={ 'delete' === this.state.radioOption }
+								label={
+									this.props.user.name
+										? translate( 'Delete all content created by %(username)s', {
+												args: {
+													username: this.props.user.name ? this.props.user.name : '',
+												},
+										  } )
+										: translate( 'Delete all content created by this user' )
+								}
 							/>
-
-							<span>
-								{ this.props.user.name
-									? translate( 'Delete all content created by %(username)s', {
-											args: {
-												username: this.props.user.name ? this.props.user.name : '',
-											},
-									  } )
-									: translate( 'Delete all content created by this user' ) }
-							</span>
 						</FormLabel>
 					</FormFieldset>
 

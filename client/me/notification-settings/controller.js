@@ -7,12 +7,12 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import userSettings from 'lib/user-settings';
-import { setDocumentHeadTitle as setTitle } from 'state/document-head/actions';
-import NotificationsComponent from 'me/notification-settings/main';
-import CommentSettingsComponent from 'me/notification-settings/comment-settings';
-import WPcomSettingsComponent from 'me/notification-settings/wpcom-settings';
-import NotificationSubscriptions from 'me/notification-settings/reader-subscriptions';
+import userSettings from 'calypso/lib/user-settings';
+import { setDocumentHeadTitle as setTitle } from 'calypso/state/document-head/actions';
+import NotificationsComponent from 'calypso/me/notification-settings/main';
+import CommentSettingsComponent from 'calypso/me/notification-settings/comment-settings';
+import WPcomSettingsComponent from 'calypso/me/notification-settings/wpcom-settings';
+import NotificationSubscriptions from 'calypso/me/notification-settings/reader-subscriptions';
 
 export function notifications( context, next ) {
 	// FIXME: Auto-converted from the Flux setTitle action. Please use <DocumentHead> instead.

@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { every, filter, find, get, pick, reduce, some, sortBy, values } from 'lodash';
 
 /**
@@ -12,7 +11,9 @@ import {
 	getSiteTitle,
 	isJetpackSite,
 	isJetpackSiteSecondaryNetworkSite,
-} from 'state/sites/selectors';
+} from 'calypso/state/sites/selectors';
+
+import 'calypso/state/plugins/init';
 
 const _filters = {
 	none: function () {

@@ -1,11 +1,18 @@
 /**
  * Module dependencies
  */
-import wpcomFactory from '../index';
+/**
+ * External dependencies
+ */
 import qs from 'qs';
 import oauthCors from 'wpcom-oauth-cors';
+
+/**
+ * Internal dependencies
+ */
+import wpcomFactory from '../index';
 import fixture from './fixture';
-var configFactory;
+let configFactory;
 
 try {
 	configFactory = require( './config' );
@@ -40,7 +47,7 @@ if ( isClientSide ) {
 	console.log( `reqHandler: %o`, reqHandler );
 
 	if ( 'wpcom-xhr-request' === reqHandler || /access_token/.test( document.location.hash ) ) {
-		let wpoauth = oauthCors( clientId, config.oauth.options );
+		const wpoauth = oauthCors( clientId, config.oauth.options );
 
 		wpoauth.get( function ( auth ) {
 			console.log( 'auth: ', auth );
@@ -55,7 +62,7 @@ module.exports = {
 	},
 	site: function () {
 		// check for existence of config in this env, and site if available
-		var site = config && config.site ? config.site : null;
+		const site = config && config.site ? config.site : null;
 
 		return site || fixture.site || process.env.SITE;
 	},
@@ -71,7 +78,7 @@ function wpcom() {
 
 		if ( 'wpcom-proxy-request' === reqHandler ) {
 			console.log( 'PROXY request handler' );
-			let proxy = require( 'wpcom-proxy-request' );
+			const proxy = require( 'wpcom-proxy-request' );
 			_wpcom = wpcomFactory( proxy );
 			_wpcom.request(
 				{
@@ -84,7 +91,7 @@ function wpcom() {
 			);
 		} else {
 			console.log( 'XHR request handler' );
-			let oauthToken = JSON.parse( localStorage.wp_oauth ).access_token;
+			const oauthToken = JSON.parse( localStorage.wp_oauth ).access_token;
 			_wpcom = wpcomFactory( oauthToken );
 		}
 		// expose wpcom just for testing

@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { bumpStat } from 'state/analytics/actions';
+import { bumpStat } from 'calypso/state/analytics/actions';
 import { WOOCOMMERCE_STAT_DISCARDED } from 'woocommerce/state/action-types';
 
 /**

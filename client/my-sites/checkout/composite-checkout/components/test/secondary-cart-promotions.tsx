@@ -2,8 +2,6 @@
  * @jest-environment jsdom
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
-
 /**
  * External dependencies
  */
@@ -14,13 +12,13 @@ import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { ThemeProvider } from 'emotion-theming';
 import '@testing-library/jest-dom/extend-expect';
+import { checkoutTheme } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { responseCartWithRenewal, storeData } from './lib/fixtures';
-import defaultTheme from '@automattic/composite-checkout/src/theme';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 
 const mockConfig = ( config as unknown ) as { isEnabled: jest.Mock };
@@ -47,7 +45,7 @@ describe( 'SecondaryCartPromotions', () => {
 			test( 'displays the upcoming renewals reminder', () => {
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
@@ -62,7 +60,7 @@ describe( 'SecondaryCartPromotions', () => {
 			test( 'does not crash when there is missing data', () => {
 				const { container } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions responseCart={ null } addItemToCart={ jest.fn() } />
 						</ThemeProvider>
 					</ReduxProvider>
@@ -74,7 +72,7 @@ describe( 'SecondaryCartPromotions', () => {
 				const mockAddItemToCart = jest.fn();
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ mockAddItemToCart }
@@ -103,7 +101,7 @@ describe( 'SecondaryCartPromotions', () => {
 			test( 'does not display the upcoming renewals reminder', () => {
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
@@ -121,7 +119,7 @@ describe( 'SecondaryCartPromotions', () => {
 			test( 'displays the free user plan upsell component', () => {
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ jest.fn() }
@@ -137,7 +135,7 @@ describe( 'SecondaryCartPromotions', () => {
 				const mockAddItemToCart = jest.fn();
 				const { queryByText } = render(
 					<ReduxProvider store={ store }>
-						<ThemeProvider theme={ defaultTheme }>
+						<ThemeProvider theme={ checkoutTheme }>
 							<SecondaryCartPromotions
 								responseCart={ responseCartWithRenewal }
 								addItemToCart={ mockAddItemToCart }

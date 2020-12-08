@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'state/action-types';
+import { STATS_CHART_COUNTS_REQUEST, STATS_CHART_COUNTS_RECEIVE } from 'calypso/state/action-types';
 import { counts, isLoading } from '../reducer';
 
 describe( 'reducer', () => {
@@ -106,12 +106,6 @@ describe( 'reducer', () => {
 			expect( state ).toEqual( {
 				[ siteId ]: {
 					[ period ]: [
-						{
-							period: '2018-09-20',
-							views: 247,
-							labelDay: 'Sep 20',
-							classNames: [],
-						},
 						{
 							period: '2018-09-30',
 							views: 487,

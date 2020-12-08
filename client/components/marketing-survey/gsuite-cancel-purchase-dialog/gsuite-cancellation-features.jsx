@@ -9,11 +9,11 @@ import React, { Component } from 'react';
 /**
  * Internal dependencies
  */
-import CardHeading from 'components/card-heading';
-import GSuiteFeatures from 'components/gsuite/gsuite-features';
-import GSuiteLearnMore from 'components/gsuite/gsuite-learn-more';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { purchaseType } from 'lib/purchases';
+import CardHeading from 'calypso/components/card-heading';
+import GSuiteFeatures from 'calypso/components/gsuite/gsuite-features';
+import GSuiteLearnMore from 'calypso/components/gsuite/gsuite-learn-more';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { purchaseType } from 'calypso/lib/purchases';
 
 class GSuiteCancellationFeatures extends Component {
 	componentDidMount() {

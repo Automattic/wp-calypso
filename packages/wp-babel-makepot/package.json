@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/wp-babel-makepot",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "A utility for extracting translatable strings from JavaScript source.",
 	"main": "index.js",
 	"author": "Automattic Inc.",
@@ -38,6 +38,7 @@
 		"lodash.mergewith": "^4.6.2"
 	},
 	"devDependencies": {
-		"jest": "^26.4.0"
+		"jest": "^26.4.0",
+		"rimraf": "^3.0.0"
 	}
 }

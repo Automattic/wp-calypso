@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import { html } from '../indices-to-html';
 import { linkProps } from './functions';
 
@@ -11,12 +17,12 @@ const Snippet = ( { note, snippet, url } ) => (
 
 class UserHeader extends React.Component {
 	render() {
-		var grav = this.props.user.media[ 0 ];
-		var grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
-		var home_url = this.props.user.ranges[ 0 ].url;
+		const grav = this.props.user.media[ 0 ];
+		const grav_tag = <img src={ grav.url } height={ grav.height } width={ grav.width } />;
+		const home_url = this.props.user.ranges[ 0 ].url;
 		const note = this.props.note;
 
-		var get_home_link = function ( classNames, children ) {
+		const get_home_link = function ( classNames, children ) {
 			if ( home_url ) {
 				return (
 					<a className={ classNames } href={ home_url } target="_blank" rel="noopener noreferrer">
@@ -33,7 +39,7 @@ class UserHeader extends React.Component {
 		};
 
 		if ( this.props.user.ranges.length > 1 ) {
-			var usercopy = {};
+			const usercopy = {};
 			usercopy.ranges = this.props.user.ranges;
 			usercopy.text = this.props.user.text;
 			return (
@@ -64,10 +70,10 @@ class UserHeader extends React.Component {
 	}
 }
 
-var Header = React.createFactory(
+const Header = React.createFactory(
 	class extends React.Component {
 		render() {
-			var subject = (
+			const subject = (
 				<div
 					className="wpnc__subject"
 					dangerouslySetInnerHTML={ {
@@ -88,7 +94,8 @@ var Header = React.createFactory(
 
 class SummaryInSingle extends React.Component {
 	render() {
-		var header_url, parser;
+		let header_url;
+		let parser;
 		if ( ! this.props.note.header || 0 === this.props.note.header.length ) {
 			return <span />;
 		}

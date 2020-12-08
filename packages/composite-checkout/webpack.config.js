@@ -1,4 +1,5 @@
 const path = require( 'path' );
+const cachePath = path.resolve( '.cache', 'composite-checkout' );
 
 module.exports = {
 	entry: './src/public-api.js',
@@ -17,7 +18,7 @@ module.exports = {
 					{
 						loader: 'cache-loader',
 						options: {
-							cacheDirectory: path.resolve( process.env.HOME, '.cache', 'webpack', 'css' ),
+							cacheDirectory: path.resolve( cachePath, 'css' ),
 						},
 					},
 					'style-loader',
@@ -26,7 +27,10 @@ module.exports = {
 			},
 		],
 	},
-	resolve: { extensions: [ '*', '.js', '.jsx' ] },
+	resolve: {
+		extensions: [ '*', '.js', '.jsx' ],
+		mainFields: [ 'browser', 'calypso:src', 'module', 'main' ],
+	},
 	output: {
 		path: path.resolve( __dirname, 'dist/' ),
 		publicPath: '/dist/',

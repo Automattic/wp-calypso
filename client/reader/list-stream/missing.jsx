@@ -8,10 +8,10 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
-import { isDiscoverEnabled } from 'reader/discover/helper';
-import QueryReaderList from 'components/data/query-reader-list';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+import EmptyContent from 'calypso/components/empty-content';
+import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
+import QueryReaderList from 'calypso/components/data/query-reader-list';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 
 class ListMissing extends React.Component {
 	static propTypes = {
@@ -34,23 +34,23 @@ class ListMissing extends React.Component {
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
-				<a
-					className="empty-content__action button is-primary"
-					onClick={ this.recordAction }
-					href="/read"
-				>
-					{ this.props.translate( 'Back to Followed Sites' ) }
-				</a>
-			),
-			secondaryAction = isDiscoverEnabled() ? (
-				<a
-					className="empty-content__action button"
-					onClick={ this.recordSecondaryAction }
-					href="/discover"
-				>
-					{ this.props.translate( 'Explore' ) }
-				</a>
-			) : null;
+			<a
+				className="empty-content__action button is-primary"
+				onClick={ this.recordAction }
+				href="/read"
+			>
+				{ this.props.translate( 'Back to Followed Sites' ) }
+			</a>
+		);
+		const secondaryAction = isDiscoverEnabled() ? (
+			<a
+				className="empty-content__action button"
+				onClick={ this.recordSecondaryAction }
+				href="/discover"
+			>
+				{ this.props.translate( 'Explore' ) }
+			</a>
+		) : null;
 
 		return (
 			<div>

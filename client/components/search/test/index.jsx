@@ -16,11 +16,12 @@ import sinon from 'sinon';
 import searchClass from '../';
 
 jest.mock( 'lib/analytics/ga', () => ( {} ) );
-jest.mock( 'gridicons', () => require( 'components/empty-component' ) );
+jest.mock( 'gridicons', () => require( 'calypso/components/empty-component' ) );
 
 describe( 'Search', () => {
 	describe( 'initialValue', () => {
-		let onSearch, rendered;
+		let onSearch;
+		let rendered;
 
 		beforeEach( () => {
 			onSearch = sinon.stub();

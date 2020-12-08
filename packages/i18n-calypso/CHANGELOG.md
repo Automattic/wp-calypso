@@ -1,122 +1,121 @@
-5.0.0
------
+## 5.1.0 (next)
 
-* Dependencies: Move `react` to `peerDependencies`. `i18n-calypso` no longer depends on `react` directly and consumers should install the dependency.
-* Breaking change: drop support for moment both in `i18n.moment` and `i18n.localize`. It's no longer desirable for moment to be a mandatory dependency of i18n-calypso.
-* Update debug to v4
-* Switch from Jed to Tannin, for smaller size as well as runtime speedups
+- Add `i18n.getLocaleVariant()` method to get a nonstandard locale variant slug
 
-4.1.0
------
+## 5.0.0
 
-* Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
+- Dependencies: Move `react` to `peerDependencies`. `i18n-calypso` no longer depends on `react` directly and consumers should install the dependency.
+- Breaking change: drop support for moment both in `i18n.moment` and `i18n.localize`. It's no longer desirable for moment to be a mandatory dependency of i18n-calypso.
+- Update debug to v4
+- Switch from Jed to Tannin, for smaller size as well as runtime speedups
 
-4.0.0
------
+## 4.1.0
 
-* Move i18n-calypso into Calypso repository.
-* Refactor i18n-calypso to Calypso standards.
-* Add TypeScript type definitions to package.
-* Add support for extracting strings from TypeScript.
-* Update dependency `lodash` to `^4.17.11`
-* Update `xgettext-js` to `^3.0.0`
-* Moved the CLI tool to separate package `i18n-calypso-cli`
+- Add `i18n.isRtl()` method to determine current locale's text direction and the `useRtl` and `withRtl` React wrappers
 
-3.0.0
-------
+## 4.0.0
 
-* Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to https://github.com/messageformat/Jed/pull/33 for details.
+- Move i18n-calypso into Calypso repository.
+- Refactor i18n-calypso to Calypso standards.
+- Add TypeScript type definitions to package.
+- Add support for extracting strings from TypeScript.
+- Update dependency `lodash` to `^4.17.11`
+- Update `xgettext-js` to `^3.0.0`
+- Moved the CLI tool to separate package `i18n-calypso-cli`
 
-2.0.2
-------
+## 3.0.0
 
-* The localize HoC will now pass down the current locale slug as a `locale` prop to the wrapped component [#77](https://github.com/Automattic/i18n-calypso/pull/77).
-* Open up the range on the moment-timezone dependency to allow clients to use any moment-timezone from the 0.5 range. [#78](https://github.com/Automattic/i18n-calypso/pull/78)
+- Update Jed dependency to v1.1.1. This is a breaking change, since as of Jed v1.1, the format of Jed translation files has changed. Refer to <https://github.com/messageformat/Jed/pull/33> for details.
 
-2.0.1
-------
+## 2.0.2
 
-* Update parseOptions passed to xgettext to include more modern features https://github.com/Automattic/i18n-calypso/pull/68
-* Switch to hash.js from sha1 for hashing to cut size https://github.com/Automattic/i18n-calypso/pull/67
-* Remove async dependency, as it was unused https://github.com/Automattic/i18n-calypso/pull/66
+- The localize HoC will now pass down the current locale slug as a `locale` prop to the wrapped component [#77](https://github.com/Automattic/i18n-calypso/pull/77).
+- Open up the range on the moment-timezone dependency to allow clients to use any moment-timezone from the 0.5 range. [#78](https://github.com/Automattic/i18n-calypso/pull/78)
 
-2.0.0
-------
+## 2.0.1
 
-* Update xgettext-js [#55](https://github.com/Automattic/i18n-calypso/pull/55).
-* Update to circlci v2 configuration [#57](https://github.com/Automattic/i18n-calypso/pull/57).
-* Update npm audit vulnerabilities [#56](https://github.com/Automattic/i18n-calypso/pull/56).
-* Drop obsolete react-test-env dependency [#58](https://github.com/Automattic/i18n-calypso/pull/58).
-* Remove the `this.translate()` mixin, see [#59](https://github.com/Automattic/i18n-calypso/pull/59).
-* Fix circular reference when calling JSON.stringify with the Community Translator enabled in Calypso  [#54](https://github.com/Automattic/i18n-calypso/pull/54).
-* Update CI image to node:10 and use `npm cit`, see [#63](https://github.com/Automattic/i18n-calypso/pull/63).
+- Update parseOptions passed to xgettext to include more modern features <https://github.com/Automattic/i18n-calypso/pull/68>
+- Switch to hash.js from sha1 for hashing to cut size <https://github.com/Automattic/i18n-calypso/pull/67>
+- Remove async dependency, as it was unused <https://github.com/Automattic/i18n-calypso/pull/66>
 
-1.9.1
-------
+  2.0.0
+
+---
+
+- Update xgettext-js [#55](https://github.com/Automattic/i18n-calypso/pull/55).
+- Update to circlci v2 configuration [#57](https://github.com/Automattic/i18n-calypso/pull/57).
+- Update npm audit vulnerabilities [#56](https://github.com/Automattic/i18n-calypso/pull/56).
+- Drop obsolete react-test-env dependency [#58](https://github.com/Automattic/i18n-calypso/pull/58).
+- Remove the `this.translate()` mixin, see [#59](https://github.com/Automattic/i18n-calypso/pull/59).
+- Fix circular reference when calling JSON.stringify with the Community Translator enabled in Calypso [#54](https://github.com/Automattic/i18n-calypso/pull/54).
+- Update CI image to node:10 and use `npm cit`, see [#63](https://github.com/Automattic/i18n-calypso/pull/63).
+
+## 1.9.1
+
 Fix a reference to an undefined value.
 
-1.9.0
-------
+## 1.9.0
+
 Add support for [key hashing](https://github.com/Automattic/i18n-calypso/#key-hashing) and add a method [`hasTranslation()`](https://github.com/Automattic/i18n-calypso/#hastranslation-method).
 
-1.8.5
-------
+## 1.8.5
+
 Allow newer versions of xgettext-js [#46](https://github.com/Automattic/i18n-calypso/pull/46).
 
-1.8.4
-------
+## 1.8.4
+
 Bump `interpolate-components` to 1.1.1 (for React 16 compat).
 
-1.8.3
-------
+## 1.8.3
+
 Change localize hoc's es6 class --> [create-react-class](https://www.npmjs.com/package/create-react-class) so that the code is still technically es5 and will not need a build step.
 
-1.8.2
-------
+## 1.8.2
+
 Change localize hoc's React.createClass --> es6 classes for React 16 compat.
 
-1.8.1
------
+## 1.8.1
+
 Fix a control sequence escaping error in POT files, see [#41](https://github.com/Automattic/i18n-calypso/pull/41).
 
-1.8.0
------
+## 1.8.0
+
 Merge locale data with existing one when we're not switching locale, see [#40](https://github.com/Automattic/i18n-calypso/pull/40).
 
-1.7.4
------
+## 1.7.4
+
 Handle options with new plural syntax, see [#37](https://github.com/Automattic/i18n-calypso/pull/37).
 
-1.7.3
------
+## 1.7.3
+
 Improve input file pattern support, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
 
-1.7.2
------
+## 1.7.2
+
 Update `moment-timezone` to version `0.5.11`.
 
-1.7.1
------
+## 1.7.1
+
 - Allow exposed composed component, see [#25](https://github.com/Automattic/i18n-calypso/pull/25).
 - Change Localize HOC display name to be consistent with react-redux, see [#29](https://github.com/Automattic/i18n-calypso/pull/29).
 
-1.7.0
------
+## 1.7.0
+
 Replace LRU cache implementation, see [#18](https://github.com/Automattic/i18n-calypso/pull/18).
 
-1.6.3
------
+## 1.6.3
+
 Add support for glob in inputFiles, see [#16](https://github.com/Automattic/i18n-calypso/pull/16).
 
-1.6.1 + 1.6.2
--------------
+## 1.6.1 + 1.6.2
+
 Fix invalid POT output when strings contained a line break, see [#14](https://github.com/Automattic/i18n-calypso/pull/14).
 
-1.6.0
------
+## 1.6.0
+
 - Add method to add/overwrite translations, see [#10](https://github.com/Automattic/i18n-calypso/pull/10).
 - Add ability to parse Calypso source by switching to xgettext-js 1.0.0 and enabling the necessary plugins, see [#13](https://github.com/Automattic/i18n-calypso/pull/13).
 
-1.5.0
------
+## 1.5.0
+
 - POT: enable output of string locations, see [#12](https://github.com/Automattic/i18n-calypso/pull/12).

@@ -10,23 +10,23 @@ import { flowRight, partialRight, pick } from 'lodash';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import EmptyContent from 'components/empty-content';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import SeoSettingsMain from 'my-sites/site-settings/seo-settings/main';
-import SeoSettingsHelpCard from 'my-sites/site-settings/seo-settings/help';
-import SiteVerification from 'my-sites/site-settings/seo-settings/site-verification';
-import AnalyticsSettings from 'my-sites/site-settings/form-analytics';
-import JetpackDevModeNotice from 'my-sites/site-settings/jetpack-dev-mode-notice';
-import JetpackSiteStats from 'my-sites/site-settings/jetpack-site-stats';
-import JetpackAds from 'my-sites/site-settings/jetpack-ads';
-import RelatedPosts from 'my-sites/site-settings/related-posts';
-import Sitemaps from 'my-sites/site-settings/sitemaps';
-import Shortlinks from 'my-sites/site-settings/shortlinks';
-import wrapSettingsForm from 'my-sites/site-settings/wrap-settings-form';
-import canCurrentUser from 'state/selectors/can-current-user';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { isJetpackSite } from 'state/sites/selectors';
+import Main from 'calypso/components/main';
+import EmptyContent from 'calypso/components/empty-content';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import SeoSettingsMain from 'calypso/my-sites/site-settings/seo-settings/main';
+import SeoSettingsHelpCard from 'calypso/my-sites/site-settings/seo-settings/help';
+import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-verification';
+import AnalyticsSettings from 'calypso/my-sites/site-settings/form-analytics';
+import JetpackDevModeNotice from 'calypso/my-sites/site-settings/jetpack-dev-mode-notice';
+import JetpackSiteStats from 'calypso/my-sites/site-settings/jetpack-site-stats';
+import JetpackAds from 'calypso/my-sites/site-settings/jetpack-ads';
+import RelatedPosts from 'calypso/my-sites/site-settings/related-posts';
+import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
+import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
+import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 
 /**
  * Style dependencies

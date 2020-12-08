@@ -15,13 +15,13 @@ import { connect } from 'react-redux';
  */
 import { Card } from '@automattic/components';
 import classNames from 'classnames';
-import PeopleListItem from 'my-sites/people/people-list-item';
-import { fetchUsers } from 'lib/users/actions';
-import InfiniteList from 'components/infinite-list';
-import NoResults from 'my-sites/no-results';
-import PeopleListSectionHeader from 'my-sites/people/people-list-section-header';
-import ListEnd from 'components/list-end';
-import { recordGoogleEvent } from 'state/analytics/actions';
+import PeopleListItem from 'calypso/my-sites/people/people-list-item';
+import { fetchUsers } from 'calypso/lib/users/actions';
+import InfiniteList from 'calypso/components/infinite-list';
+import NoResults from 'calypso/my-sites/no-results';
+import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
+import ListEnd from 'calypso/components/list-end';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 const debug = debugFactory( 'calypso:my-sites:people:team-list' );
 
@@ -42,11 +42,11 @@ class Team extends React.Component {
 		this.props.totalUsers <= this.props.users.length + this.props.excludedUsers.length;
 
 	render() {
-		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) ),
-			listClass = classNames( {
-				'bulk-editing': this.state.bulkEditing,
-				'people-invites__invites-list': true,
-			} );
+		const key = deterministicStringify( omit( this.props.fetchOptions, [ 'number', 'offset' ] ) );
+		const listClass = classNames( {
+			'bulk-editing': this.state.bulkEditing,
+			'people-invites__invites-list': true,
+		} );
 		let people;
 		let headerText;
 		if ( this.props.totalUsers ) {

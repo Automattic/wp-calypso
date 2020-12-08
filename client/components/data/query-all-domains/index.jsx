@@ -7,8 +7,8 @@ import { useDispatch } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { getAllDomainsRequest } from 'state/all-domains/actions';
-import isRequestingAllDomains from 'state/selectors/is-requesting-all-domains';
+import { getAllDomainsRequest } from 'calypso/state/all-domains/actions';
+import isRequestingAllDomains from 'calypso/state/selectors/is-requesting-all-domains';
 
 const request = () => ( dispatch, getState ) => {
 	if ( ! isRequestingAllDomains( getState() ) ) {

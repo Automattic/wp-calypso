@@ -9,9 +9,9 @@ import { get, partial } from 'lodash';
  */
 import { fetchState } from '../actions';
 import store from '../store';
-import Dispatcher from 'dispatcher';
-import { IMPORTS_STORE_RESET } from 'state/action-types';
-import { nock, useNock } from 'test-helpers/use-nock';
+import Dispatcher from 'calypso/dispatcher';
+import { IMPORTS_STORE_RESET } from 'calypso/state/action-types';
+import { nock, useNock } from 'calypso/test-helpers/use-nock';
 
 const testSiteId = 'en.blog.wordpress.com';
 const fetchTestState = partial( fetchState, testSiteId );
@@ -29,28 +29,32 @@ describe( 'Importer store', () => {
 	beforeEach( resetStore );
 
 	describe( 'API integration', () => {
-		test( 'should hydrate if the API returns a blank body', ( done ) => {
-			expect( hydratedState(), 'before fetch' ).to.be.false;
+		test( 'should hydrate if the API returns a blank body', () => {
+			return new Promise( ( done ) => {
+				expect( hydratedState(), 'before fetch' ).to.be.false;
 
-			queuePayload( 'no-imports' );
-			fetchTestState()
-				.then( () => {
-					expect( hydratedState(), 'after fetch' ).to.be.true;
-				} )
-				.then( done )
-				.catch( done );
+				queuePayload( 'no-imports' );
+				fetchTestState()
+					.then( () => {
+						expect( hydratedState(), 'after fetch' ).to.be.true;
+					} )
+					.then( done )
+					.catch( done );
+			} );
 		} );
 
-		test( 'should hydrate if the API returns a defunct importer', ( done ) => {
-			expect( hydratedState(), 'before fetch' ).to.be.false;
+		test( 'should hydrate if the API returns a defunct importer', () => {
+			return new Promise( ( done ) => {
+				expect( hydratedState(), 'before fetch' ).to.be.false;
 
-			queuePayload( 'defunct-importer' );
-			fetchTestState()
-				.then( () => {
-					expect( hydratedState(), 'after fetch' ).to.be.true;
-				} )
-				.then( done )
-				.catch( done );
+				queuePayload( 'defunct-importer' );
+				fetchTestState()
+					.then( () => {
+						expect( hydratedState(), 'after fetch' ).to.be.true;
+					} )
+					.then( done )
+					.catch( done );
+			} );
 		} );
 	} );
 } );

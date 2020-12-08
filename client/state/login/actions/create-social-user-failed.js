@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE } from 'state/action-types';
-import { getErrorFromWPCOMError } from 'state/login/utils';
+import { SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE } from 'calypso/state/action-types';
+import { getErrorFromWPCOMError } from 'calypso/state/login/utils';
 
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 export const createSocialUserFailed = ( socialInfo, error ) => ( {
 	type: SOCIAL_CREATE_ACCOUNT_REQUEST_FAILURE,

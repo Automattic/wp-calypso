@@ -1,5 +1,4 @@
-Marked Lines viewer
-===
+# Marked Lines viewer
 
 This component is designed to show contextualized lines from a file with
 optional highlighting or marks to point out specific parts of one or more lines.
@@ -7,33 +6,38 @@ optional highlighting or marks to point out specific parts of one or more lines.
 ## Usage
 
 ```jsx
-import MarkedLines from 'components/marked-lines';
+import MarkedLines from 'calypso/components/marked-lines';
 
-return <MarkedLines
-	context={ {
-		10: 'add :: Num a => a -> a -> a',
-		11: 'add = (+)',
-		15: 'solve a b = solution',
-		16: '	where',
-		17: '		solution = sum parts',
-		18: '		{- 💩 indices are in UCS-2 code units -}',
-		19: '		sum = foldl add 0',
-		20: '		parts = foo a b',
-		58: '{- lines need not be contiguous -}',
-		marks: {
-			11: [ [ 6, 9 ] ],
-			18: [ [ 23, 28 ] ],
-			19: [ [ 2, 5 ], [ 14, 17 ] ],
-		},
-	} }
-/>
+return (
+	<MarkedLines
+		context={ {
+			10: 'add :: Num a => a -> a -> a',
+			11: 'add = (+)',
+			15: 'solve a b = solution',
+			16: '	where',
+			17: '		solution = sum parts',
+			18: '		{- 💩 indices are in UCS-2 code units -}',
+			19: '		sum = foldl add 0',
+			20: '		parts = foo a b',
+			58: '{- lines need not be contiguous -}',
+			marks: {
+				11: [ [ 6, 9 ] ],
+				18: [ [ 23, 28 ] ],
+				19: [
+					[ 2, 5 ],
+					[ 14, 17 ],
+				],
+			},
+		} }
+	/>
+);
 ```
 
 ### Props
 
-Name | Type | Default | Description
---- | --- | --- | ---
-`context`* | `object` | | Provides the line content and mark ranges
+| Name        | Type     | Default | Description                               |
+| ----------- | -------- | ------- | ----------------------------------------- |
+| `context`\* | `object` |         | Provides the line content and mark ranges |
 
 ### Additional usage information
 

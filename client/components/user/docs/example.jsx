@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
  * Internal dependencies
  */
 import UserItem from '../index';
-import { getCurrentUser } from 'state/current-user/selectors';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 const UserItemExample = ( { currentUser } ) => {
 	return <UserItem user={ currentUser } />;

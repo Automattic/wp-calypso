@@ -1,26 +1,26 @@
 /**
  * Internal dependencies
  */
-import getGutenbergEditorUrl from 'state/selectors/get-gutenberg-editor-url';
-import { shouldLoadGutenberg } from 'state/selectors/should-load-gutenberg';
-import { getSiteSlug } from 'state/sites/selectors';
-import { getEditorPath } from 'state/editor/selectors';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
+import isClassicEditorForced from 'calypso/state/selectors/is-classic-editor-forced';
+import isEligibleForGutenframe from 'calypso/state/gutenberg-iframe-eligible/is-eligible-for-gutenframe';
+import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 
 export const getEditorUrl = ( state, siteId, postId = null, postType = 'post' ) => {
-	if ( shouldLoadGutenberg( state, siteId ) ) {
-		return getGutenbergEditorUrl( state, siteId, postId, postType );
+	// isEligibleForGutenframe deals with the server side checks for classic editor plugin etc.
+	// isClassicEditerForced has the client side checks. We should combine these!
+	if ( ! isEligibleForGutenframe( state, siteId ) || isClassicEditorForced( state, siteId ) ) {
+		const siteAdminUrl = getSiteAdminUrl( state, siteId );
+		let url = `${ siteAdminUrl }post-new.php?post_type=${ postType }`;
+
+		if ( postId ) {
+			url = `${ siteAdminUrl }post.php?post=${ postId }&action=edit`;
+		}
+
+		return url;
 	}
 
-	if ( postId ) {
-		return getEditorPath( state, siteId, postId, postType );
-	}
-
-	const siteSlug = getSiteSlug( state, siteId );
-
-	if ( 'post' === postType || 'page' === postType ) {
-		return `/${ postType }/${ siteSlug }`;
-	}
-	return `/edit/${ postType }/${ siteSlug }`;
+	return getGutenbergEditorUrl( state, siteId, postId, postType );
 };
 
 export default getEditorUrl;

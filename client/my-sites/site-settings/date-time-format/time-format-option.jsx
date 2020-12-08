@@ -8,15 +8,15 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import ExternalLink from 'components/external-link';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormInput from 'components/forms/form-text-input';
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
+import ExternalLink from 'calypso/components/external-link';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInput from 'calypso/components/forms/form-text-input';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import { defaultTimeFormats } from './default-formats';
 import { phpToMomentDatetimeFormat } from './utils';
-import { localizeUrl } from 'lib/i18n-utils';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
 
 export const TimeFormatOption = ( {
 	disabled,
@@ -37,8 +37,8 @@ export const TimeFormatOption = ( {
 					name="time_format"
 					onChange={ setTimeFormat }
 					value={ format }
+					label={ phpToMomentDatetimeFormat( localizedDate, format ) }
 				/>
-				<span>{ phpToMomentDatetimeFormat( localizedDate, format ) }</span>
 			</FormLabel>
 		) ) }
 		<FormLabel className="date-time-format__custom-field">
@@ -48,25 +48,26 @@ export const TimeFormatOption = ( {
 				name="time_format"
 				onChange={ setCustomTimeFormat }
 				value={ timeFormat }
+				label={
+					<>
+						{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
+						<FormInput
+							disabled={ disabled }
+							name="time_format_custom"
+							onChange={ setCustomTimeFormat }
+							value={ timeFormat || '' }
+						/>
+						<FormSettingExplanation>
+							{ isCustom &&
+								timeFormat &&
+								translate( 'Preview: %s', {
+									args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
+									comment: 'Date/time format preview',
+								} ) }
+						</FormSettingExplanation>
+					</>
+				}
 			/>
-			<span>
-				{ translate( 'Custom', { comment: 'Custom date/time format field' } ) }
-				<FormInput
-					disabled={ disabled }
-					name="time_format_custom"
-					onChange={ setCustomTimeFormat }
-					type="text"
-					value={ timeFormat || '' }
-				/>
-				<FormSettingExplanation>
-					{ isCustom &&
-						timeFormat &&
-						translate( 'Preview: %s', {
-							args: phpToMomentDatetimeFormat( localizedDate, timeFormat ),
-							comment: 'Date/time format preview',
-						} ) }
-				</FormSettingExplanation>
-			</span>
 			<FormSettingExplanation>
 				<ExternalLink
 					href={ localizeUrl( 'https://wordpress.com/support/settings/time-settings/' ) }

@@ -20,7 +20,7 @@ import {
 import { clearOrderEdits, editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchSettingsGeneral } from 'woocommerce/state/sites/settings/general/actions';
 import { saveOrder } from 'woocommerce/state/sites/orders/actions';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getSelectedSiteWithFallback } from 'woocommerce/state/sites/selectors';
 import { getLink } from 'woocommerce/lib/nav-utils';
 import {
@@ -30,10 +30,10 @@ import {
 } from 'woocommerce/state/ui/orders/selectors';
 import { isOrderUpdating } from 'woocommerce/state/sites/orders/selectors';
 import { isOrderWaitingPayment } from 'woocommerce/lib/order-status';
-import Main from 'components/main';
+import Main from 'calypso/components/main';
 import OrderCustomerCreate from './order-customer/create';
 import OrderDetails from './order-details';
-import { ProtectFormGuard } from 'lib/protect-form';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { recordTrack } from 'woocommerce/lib/analytics';
 import { sendOrderInvoice } from 'woocommerce/state/sites/orders/send-invoice/actions';
 

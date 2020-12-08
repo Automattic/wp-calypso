@@ -2,10 +2,11 @@
  * External dependencies
  */
 import express from 'express';
+import fs from 'fs';
 import fspath from 'path';
 import marked from 'marked';
 import lunr from 'lunr';
-import { escapeRegExp, find, escape as escapeHTML } from 'lodash';
+import { escapeRegExp, find, escape as escapeHTML, once } from 'lodash';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-json';
@@ -14,11 +15,18 @@ import 'prismjs/components/prism-scss';
 /**
  * Internal dependencies
  */
-import config from 'config';
-import searchIndex from 'server/devdocs/search-index';
-import { primeSelectorsCache, selectorsRouter } from './selectors';
+import config from 'calypso/config';
+import searchSelectors from './selectors';
 
-const docsIndex = lunr.Index.load( searchIndex.index );
+const loadSearchIndex = once( async () => {
+	const searchIndexPath = fspath.resolve( __dirname, '../../../build/devdocs-search-index.json' );
+	const searchIndex = await fs.promises.readFile( searchIndexPath, 'utf-8' );
+	const { index, documents } = JSON.parse( searchIndex );
+	return {
+		documents,
+		index: lunr.Index.load( index ),
+	};
+} );
 
 /**
  * Constants
@@ -45,15 +53,16 @@ marked.setOptions( {
  * @param {object} query The search query for lunr
  * @returns {Array} The results from the query
  */
-function queryDocs( query ) {
-	return docsIndex.search( query ).map( ( result ) => {
-		const doc = searchIndex.documents[ result.ref ];
-		const snippet = makeSnippet( doc, query );
+async function queryDocs( query ) {
+	const { index, documents } = await loadSearchIndex();
+	const results = index.search( query );
+	return results.map( ( result ) => {
+		const doc = documents[ result.ref ];
 
 		return {
 			path: doc.path,
 			title: doc.title,
-			snippet,
+			snippet: makeSnippet( doc, query ),
 		};
 	} );
 }
@@ -64,9 +73,10 @@ function queryDocs( query ) {
  * @param {Array} filePaths An array of file paths
  * @returns {Array} The results from the docs
  */
-function listDocs( filePaths ) {
+async function listDocs( filePaths ) {
+	const { documents } = await loadSearchIndex();
 	return filePaths.map( ( path ) => {
-		const doc = find( searchIndex.documents, { path } );
+		const doc = find( documents, { path } );
 
 		if ( doc ) {
 			return {
@@ -106,13 +116,13 @@ function makeSnippet( doc, query ) {
 	// find up to 4 matches in the document and extract snippets to be joined together
 	// TODO: detect when snippets overlap and merge them.
 	while ( ( match = termRegex.exec( doc.body ) ) !== null && snippets.length < 4 ) {
-		const matchStr = match[ 1 ],
-			index = match.index + 1,
-			before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index ),
-			after = doc.body.substring(
-				index + matchStr.length,
-				index + matchStr.length + SNIPPET_PAD_LENGTH
-			);
+		const matchStr = match[ 1 ];
+		const index = match.index + 1;
+		const before = doc.body.substring( index - SNIPPET_PAD_LENGTH, index );
+		const after = doc.body.substring(
+			index + matchStr.length,
+			index + matchStr.length + SNIPPET_PAD_LENGTH
+		);
 
 		snippets.push( before + '<mark>' + matchStr + '</mark>' + after );
 	}
@@ -135,6 +145,19 @@ function defaultSnippet( doc ) {
 	return escapeHTML( content ) + '…';
 }
 
+function normalizeDocPath( path ) {
+	// if the path is a directory, default to README.md in that dir
+	if ( ! path.endsWith( '.md' ) ) {
+		path = fspath.join( path, 'README.md' );
+	}
+
+	// Remove the optional leading `/` to make the path relative, i.e., convert `/client/README.md`
+	// to `client/README.md`. The `path` query arg can use both forms.
+	path = path.replace( /^\//, '' );
+
+	return path;
+}
+
 export default function devdocs() {
 	const app = express();
 
@@ -149,38 +172,45 @@ export default function devdocs() {
 	} );
 
 	// search the documents using a search phrase "q"
-	app.get( '/devdocs/service/search', ( request, response ) => {
-		const query = request.query.q;
+	app.get( '/devdocs/service/search', async ( request, response ) => {
+		const { q: query } = request.query;
 
 		if ( ! query ) {
-			response.status( 400 ).json( {
-				message: 'Missing required "q" parameter',
-			} );
+			response.status( 400 ).json( { message: 'Missing required "q" parameter' } );
 			return;
 		}
 
-		response.json( queryDocs( query ) );
+		try {
+			const result = await queryDocs( query );
+			response.json( result );
+		} catch ( error ) {
+			console.error( error );
+			response.status( 400 ).json( { message: 'Internal server error: no document index' } );
+		}
 	} );
 
 	// return a listing of documents from filenames supplied in the "files" parameter
-	app.get( '/devdocs/service/list', ( request, response ) => {
-		const files = request.query.files;
+	app.get( '/devdocs/service/list', async ( request, response ) => {
+		const { files } = request.query;
 
 		if ( ! files ) {
-			response.status( 400 ).json( {
-				message: 'Missing required "files" parameter',
-			} );
+			response.status( 400 ).json( { message: 'Missing required "files" parameter' } );
 			return;
 		}
 
-		response.json( listDocs( files.split( ',' ) ) );
+		try {
+			const result = await listDocs( files.split( ',' ) );
+			response.json( result );
+		} catch ( error ) {
+			console.error( error );
+			response.status( 400 ).json( { message: 'Internal server error: no document index' } );
+		}
 	} );
 
 	// return the content of a document in the given format (assumes that the document is in
 	// markdown format)
-	app.get( '/devdocs/service/content', ( request, response ) => {
-		let { path } = request.query;
-		const { format = 'html' } = request.query;
+	app.get( '/devdocs/service/content', async ( request, response ) => {
+		const { path, format = 'html' } = request.query;
 
 		if ( ! path ) {
 			response
@@ -189,32 +219,23 @@ export default function devdocs() {
 			return;
 		}
 
-		if ( ! path.endsWith( '.md' ) ) {
-			path = fspath.join( path, 'README.md' );
+		try {
+			const { documents } = await loadSearchIndex();
+			const doc = find( documents, { path: normalizeDocPath( path ) } );
+
+			if ( ! doc ) {
+				response.status( 404 ).send( 'File does not exist' );
+				return;
+			}
+
+			response.send( 'html' === format ? marked( doc.content ) : doc.content );
+		} catch ( error ) {
+			console.error( error );
+			response.status( 400 ).json( { message: 'Internal server error: no document index' } );
 		}
-
-		// Remove the optional leading `/` to make the path relative, i.e., convert `/client/README.md`
-		// to `client/README.md`. The `path` query arg can use both forms.
-		path = path.replace( /^\//, '' );
-
-		const doc = find( searchIndex.documents, { path } );
-
-		if ( ! doc ) {
-			response.status( 404 ).send( 'File does not exist' );
-			return;
-		}
-
-		response.send( 'html' === format ? marked( doc.content ) : doc.content );
 	} );
 
-	// In environments where enabled, prime the selectors search cache whenever
-	// a request is made for DevDocs
-	app.use( '/devdocs', function ( request, response, next ) {
-		primeSelectorsCache();
-		next();
-	} );
-
-	app.use( '/devdocs/service/selectors', selectorsRouter );
+	app.get( '/devdocs/service/selectors', searchSelectors );
 
 	return app;
 }

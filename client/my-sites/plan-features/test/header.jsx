@@ -33,9 +33,9 @@ import { identity } from 'lodash';
 /**
  * Internal dependencies
  */
-import PlanIntervalDiscount from 'my-sites/plan-interval-discount';
+import PlanIntervalDiscount from 'calypso/my-sites/plan-interval-discount';
 import { PlanFeaturesHeader } from '../header';
-import PlanPill from 'components/plans/plan-pill';
+import PlanPill from 'calypso/components/plans/plan-pill';
 import {
 	PLAN_BUSINESS,
 	PLAN_BUSINESS_2_YEARS,
@@ -53,8 +53,8 @@ import {
 	PLAN_PERSONAL_2_YEARS,
 	PLAN_PREMIUM,
 	PLAN_PREMIUM_2_YEARS,
-} from 'lib/plans/constants';
-import PlanPrice from 'my-sites/plan-price/';
+} from 'calypso/lib/plans/constants';
+import PlanPrice from 'calypso/my-sites/plan-price/';
 
 const props = {
 	translate: ( x ) => x,
@@ -75,6 +75,19 @@ describe( 'PlanFeaturesHeader.getDiscountTooltipMessage()', () => {
 		test( `Should return a particular message for free plans (${ productSlug })`, () => {
 			const comp = new PlanFeaturesHeader( { ...props, currentSitePlan: { productSlug } } );
 			expect( comp.getDiscountTooltipMessage() ).toBe( 'Price for the next 12 months' );
+		} );
+	} );
+
+	[ PLAN_FREE, PLAN_JETPACK_FREE ].forEach( ( productSlug ) => {
+		test( `Should return a particular message for free plans with discount (${ productSlug })`, () => {
+			const comp = new PlanFeaturesHeader( {
+				...props,
+				currentSitePlan: { productSlug },
+				discountPrice: 3,
+			} );
+			expect( comp.getDiscountTooltipMessage() ).toBe(
+				"You'll receive a discount for the first year. The plan will renew at %(price)s."
+			);
 		} );
 	} );
 

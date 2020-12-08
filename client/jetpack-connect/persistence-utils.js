@@ -6,8 +6,8 @@ import cookie from 'cookie';
 /**
  * Internal dependencies
  */
-import { JETPACK_CONNECT_TTL_SECONDS } from 'state/jetpack-connect/constants';
-import { urlToSlug } from 'lib/url';
+import { JETPACK_CONNECT_TTL_SECONDS } from 'calypso/state/jetpack-connect/constants';
+import { urlToSlug } from 'calypso/lib/url';
 
 /**
  * Utilities for storing jetpack connect state that needs to persist across

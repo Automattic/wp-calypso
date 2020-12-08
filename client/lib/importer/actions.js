@@ -1,9 +1,9 @@
 /**
  * External dependencies
  */
-import Dispatcher from 'dispatcher';
+import Dispatcher from 'calypso/dispatcher';
 import { includes, partial } from 'lodash';
-import wpLib from 'lib/wp';
+import wpLib from 'calypso/lib/wp';
 const wpcom = wpLib.undocumented();
 
 /**
@@ -26,14 +26,14 @@ import {
 	IMPORTS_UPLOAD_COMPLETED,
 	IMPORTS_UPLOAD_SET_PROGRESS,
 	IMPORTS_UPLOAD_START,
-} from 'state/action-types';
-import { appStates } from 'state/imports/constants';
+} from 'calypso/state/action-types';
+import { appStates } from 'calypso/state/imports/constants';
 import { fromApi, toApi } from './common';
-import { reduxDispatch } from 'lib/redux-bridge';
+import { reduxDispatch } from 'calypso/lib/redux-bridge';
 
 // This library unfortunately relies on global Redux state directly, by e.g. creating actions.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
-import 'state/imports/init';
+import 'calypso/state/imports/init';
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 

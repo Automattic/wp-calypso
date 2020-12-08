@@ -1,14 +1,14 @@
 /**
  * External Dependencies
  */
-const { app, Menu } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { app, Menu } = require( 'electron' );
 
 /**
  * Internal dependencies
  */
-const appQuit = require( 'desktop/lib/app-quit' );
-const menuSetter = require( 'desktop/lib/menu-setter' );
-const log = require( 'desktop/lib/logger' )( 'platform:mac' );
+const appQuit = require( 'calypso/desktop/lib/app-quit' );
+const menuSetter = require( 'calypso/desktop/lib/menu-setter' );
+const log = require( 'calypso/desktop/lib/logger' )( 'platform:mac' );
 
 function MacPlatform( mainWindow ) {
 	this.window = mainWindow;
@@ -36,9 +36,10 @@ function MacPlatform( mainWindow ) {
 
 	mainWindow.on( 'close', function ( ev ) {
 		if ( appQuit.shouldQuitToBackground() ) {
-			log.info( 'Window close puts app into background' );
+			log.info( `User clicked 'close': hiding main window...` );
 			ev.preventDefault();
 			mainWindow.hide();
+			mainWindow.webContents.send( 'notifications-panel-show', false );
 		}
 	} );
 }
@@ -51,16 +52,22 @@ MacPlatform.prototype.restore = function () {
 	this.window.show();
 };
 
-MacPlatform.prototype.showNotificationsBadge = function ( count, bounceEnabled ) {
-	app.dock.setBadge( ' ' );
+MacPlatform.prototype.showNotificationsBadge = function ( count, bounce ) {
+	const badgeCount = app.getBadgeCount();
+	if ( count === badgeCount ) {
+		return;
+	}
 
-	if ( bounceEnabled ) {
+	app.setBadgeCount( count );
+
+	const shouldBounce = bounce && count > badgeCount;
+	if ( shouldBounce ) {
 		app.dock.bounce();
 	}
 };
 
 MacPlatform.prototype.clearNotificationsBadge = function () {
-	app.dock.setBadge( '' );
+	app.setBadgeCount( 0 );
 };
 
 MacPlatform.prototype.setDockMenu = function ( enabled ) {

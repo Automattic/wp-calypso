@@ -1,9 +1,8 @@
-Site Vouchers
-=============
+# Site Vouchers
 
 A module for managing site vouchers data.
 
-# Actions
+## Actions
 
 Used in combination with the Redux store instance `dispatch` function, actions can be used in manipulating the current global state.
 
@@ -35,65 +34,67 @@ Assign a `serviceType` voucher to the given site.
 
 ### `vouchersAssignRequestFailureAction( siteId, serviceType, error )`
 
-```es6
+```js
 import {
 	vouchersReceiveAction,
 	vouchersRequestAction,
 	vouchersRequestSuccessAction,
-	vouchersRequestFailureAction
-} from 'state/sites/vouchers/actions';
+	vouchersRequestFailureAction,
+} from 'calypso/state/sites/vouchers/actions';
 
 const siteId = 2916284;
 
-// dispacth a request action
+// dispatch a request action
 dispatch( vouchersRequestAction( siteId ) );
 
 wpcom
-.site( siteId )
-.vouchers()
-.get( error, response ) => {
-	if ( error ) {
-		// dispacth a failure action
-		return dispatch( vouchersRequestFailureAction( siteId, error.message );
-	}
+	.site( siteId )
+	.vouchers()
+	.get( ( error, response ) => {
+		if ( error ) {
+			// dispatch a failure action
+			return dispatch( vouchersRequestFailureAction( siteId, error.message ) );
+		}
 
-	// dispacth a success action ...
-	dispatch( vouchersRequestSuccessAction( siteId ) );
-	
-	// and populate the global tree dispatching a recieve action
-	dispatch( vouchersReceiveAction( site,id, response.vouchers ) );
+		// dispatch a success action ...
+		dispatch( vouchersRequestSuccessAction( siteId ) );
+
+		// and populate the global tree dispatching a recieve action
+		dispatch( vouchersReceiveAction( site, id, response.vouchers ) );
+	} );
 ```
 
-# Reducer
+## Reducer
+
 Data from the aforementioned actions is added to the global state tree, under `sites.vouchers`, with the following structure:
 
 ```js
 state.sites.vouchers = {
 	items: {
 		[ siteId ]: {
-			[ serviceType ] = [
+			[ serviceType ]: [
 				{
 					assigned: Date,
 					assigned_by: Number,
 					code: String,
-					status: String
-				}
-			]
-		}
+					status: String,
+				},
+			],
+		},
 	},
-	
-	requesting: [
-		[ siteId ]: {
-			getAll: Boolean,
-			assign: Boolean
-		}
-	],
 
-	errors: [
+	requesting: {
 		[ siteId ]: {
 			getAll: Boolean,
-			assign: Boolean
-		}
-	]
-}
+			assign: Boolean,
+		},
+	},
+
+	errors: {
+		[ siteId ]: {
+			getAll: Boolean,
+			assign: Boolean,
+		},
+	},
+};
 ```

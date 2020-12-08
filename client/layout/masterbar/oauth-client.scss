@@ -38,7 +38,7 @@
 
 .masterbar__oauth-client-wpcc-sign-in {
 	background-color: rgba( 255, 255, 255, 0.15 );
-	border-radius: 3px;
+	border-radius: 2px;
 	color: #fff;
 	display: block;
 	float: right;
@@ -102,7 +102,7 @@
 
 	.button {
 		background-color: var( --studio-gray-0 );
-		border-radius: 5px;
+		border-radius: 2px;
 		border-width: 1px 1px 2px;
 		box-shadow: none;
 		box-sizing: border-box;
@@ -226,7 +226,7 @@
 		}
 
 		.login__form-header {
-			font-family: 'Recoleta', serif;
+			@extend .wp-brand-font;
 			font-size: $font-title-medium;
 			color: var( --color-text );
 			font-weight: 600;
@@ -474,7 +474,7 @@
 
 		a {
 			color: #999;
-			font-size: 0.9em;
+			font-size: $font-body-small;
 			font-weight: 600;
 			padding: 32px 10px;
 			text-decoration: none;
@@ -495,7 +495,7 @@
 		border-radius: 100px;
 		border: none;
 		color: #fff;
-		font-size: 1.1em;
+		font-size: $font-body;
 		padding: 15px 50px;
 		text-decoration: none;
 		text-transform: capitalize;
@@ -540,10 +540,10 @@
 	textarea {
 		background-color: #fff;
 		border: 1px solid #e6e6e6;
-		border-radius: 3px;
+		border-radius: 2px;
 		box-sizing: border-box;
 		color: #666;
-		font-size: 1.25em;
+		font-size: $font-title-small;
 		line-height: 1.563;
 		padding: 0.7em;
 		transition: all ease-in-out 0.2s;
@@ -612,7 +612,7 @@
 	.step-wrapper {
 		background: #fff;
 		border: 1px solid #d3d3d3;
-		border-radius: 5px;
+		border-radius: 2px;
 		box-sizing: border-box;
 		padding: 20px $woo-form-whitespace;
 		width: 100%;
@@ -698,13 +698,13 @@
 	}
 
 	.formatted-header__title {
-		font-size: 1.6em;
+		font-size: $font-title-medium;
 		font-family: $sans;
 		margin: 0 0 8px;
 		padding: 0;
 
 		@include breakpoint-deprecated( '>480px' ) {
-			font-size: 2em;
+			font-size: $font-title-large;
 			margin: 2em 0 0;
 		}
 	}
@@ -780,12 +780,12 @@
 	}
 
 	.wp-login__links {
-		font-size: 16px;
+		font-size: $font-body;
 		font-weight: 400;
 	}
 
 	.login__form-action button {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 23px;
 	}
 
@@ -796,7 +796,7 @@
 	}
 
 	.login__form-signup-link {
-		font-size: 16px;
+		font-size: $font-body;
 		line-height: 24px;
 		padding-top: 0;
 	}
@@ -923,7 +923,7 @@
 		color: var( --studio-jetpack-green-60 );
 		background: var( --studio-white );
 		border: 1px solid var( --studio-jetpack-green-40 );
-		border-radius: 3px;
+		border-radius: 2px;
 
 		&:hover,
 		&:focus {

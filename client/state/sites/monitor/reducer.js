@@ -7,7 +7,7 @@ import { stubFalse, stubTrue } from 'lodash';
 /**
  * Internal dependencies
  */
-import { combineReducers, keyedReducer, withoutPersistence } from 'state/utils';
+import { combineReducers, keyedReducer, withoutPersistence } from 'calypso/state/utils';
 import {
 	SITE_MONITOR_SETTINGS_RECEIVE,
 	SITE_MONITOR_SETTINGS_REQUEST,
@@ -16,7 +16,7 @@ import {
 	SITE_MONITOR_SETTINGS_UPDATE,
 	SITE_MONITOR_SETTINGS_UPDATE_FAILURE,
 	SITE_MONITOR_SETTINGS_UPDATE_SUCCESS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 export const items = withoutPersistence( ( state = {}, action ) => {
 	switch ( action.type ) {

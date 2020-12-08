@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { endsWith, omit } from 'lodash';
+import { omit } from 'lodash';
 import deterministicStringify from 'fast-json-stable-stringify';
 import debugFactory from 'debug';
 const debug = debugFactory( 'calypso:wpcom-followers-store' );
@@ -9,8 +9,8 @@ const debug = debugFactory( 'calypso:wpcom-followers-store' );
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import emitter from 'lib/mixins/emitter';
+import Dispatcher from 'calypso/dispatcher';
+import emitter from 'calypso/lib/mixins/emitter';
 
 const _fetchingFollowersByNamespace = {}; // store fetching state (boolean)
 const _followersBySite = {}; // store user objects
@@ -110,7 +110,7 @@ function getNamespace( fetchOptions ) {
 function decrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
 		) {
 			_totalFollowersByNamespace[ namespace ]--;
@@ -123,7 +123,7 @@ function decrementPaginationData( siteId, followerId ) {
 function incrementPaginationData( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
 		) {
 			_totalFollowersByNamespace[ namespace ]++;
@@ -144,7 +144,7 @@ function removeFollowerFromSite( siteId, followerId ) {
 function removeFollowerFromNamespaces( siteId, followerId ) {
 	Object.keys( _followerIDsByNamespace ).forEach( function ( namespace ) {
 		if (
-			endsWith( namespace, 'siteId=' + siteId ) &&
+			namespace.endsWith( 'siteId=' + siteId ) &&
 			_followerIDsByNamespace[ namespace ].has( followerId )
 		) {
 			delete _followerIDsByNamespace[ namespace ][ followerId ];

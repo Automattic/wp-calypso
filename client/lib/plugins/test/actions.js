@@ -13,7 +13,7 @@ import { noop } from 'lodash';
  */
 import siteData from './fixtures/site';
 import mockedWpcom from './mocks/wpcom';
-import actions from 'lib/plugins/actions';
+import actions from 'calypso/lib/plugins/actions';
 
 jest.mock( 'lib/wp', () => require( './mocks/wpcom' ) );
 jest.mock( 'lib/analytics/tracks', () => ( {

@@ -1,5 +1,4 @@
-Notifications
-=============
+# Notifications
 
 The _**notifications panel**_ (also known as "masterbar notifications" and "the bell notifications") is a cross-environment app that runs directly inside of Calypso and in an `iframe` on WordPress.com sites which aren't Calypso.
 
@@ -29,11 +28,11 @@ When running in an iframe communication with the parent frame occurs through a `
 Messages we handle from the notifications iframe have the form:
 
 ```js
-{
-	type: "notesIframeMessage",
-	action: < varies >,
+const obj = {
+	type: 'notesIframeMessage',
+	action: action,
 	//... other properties depending on action ...
-}
+};
 ```
 
 - `togglePanel`: This is a message from the client that the panel open state
@@ -41,7 +40,7 @@ Messages we handle from the notifications iframe have the form:
   means we should close the panel.
 
 - `iFrameReady`: The client sends this message when it's code has loaded and
-it is ready to begin polling for notifications.
+  it is ready to begin polling for notifications.
 
 - `renderAllSeen`: A message to indicate that the user has seen all
   notifications (so we can clear the new notifications indicator).

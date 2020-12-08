@@ -1,5 +1,5 @@
 /**
- * Module dependencies.
+ * External dependencies
  */
 import debugFactory from 'debug';
 
@@ -30,13 +30,13 @@ export default function Pinghub( wpcom ) {
  */
 Pinghub.prototype.connect = function ( path, fn ) {
 	debug( 'connect', path, fn );
-	let pinghub = this,
-		params = {
-			action: 'connect',
-			path: '/pinghub' + path,
-		},
-		errorCallback = function () {}, // we want an xhr, not a promise
-		xhr = ( this.conns[ path ] = this.wpcom.req.get( params, errorCallback ) );
+	const pinghub = this;
+	const params = {
+		action: 'connect',
+		path: '/pinghub' + path,
+	};
+	const errorCallback = function () {}; // we want an xhr, not a promise
+	const xhr = ( this.conns[ path ] = this.wpcom.req.get( params, errorCallback ) );
 	xhr.onload = function ( e ) {
 		debug( 'onload', path, e );
 		fn( null, e );
@@ -56,11 +56,11 @@ Pinghub.prototype.connect = function ( path, fn ) {
  */
 Pinghub.prototype.disconnect = function ( path ) {
 	debug( 'disconnect', path );
-	let params = {
-			action: 'disconnect',
-			path: '/pinghub' + path,
-		},
-		errorCallback = function () {}; // no promises
+	const params = {
+		action: 'disconnect',
+		path: '/pinghub' + path,
+	};
+	const errorCallback = function () {}; // no promises
 	this.wpcom.req.get( params, errorCallback );
 };
 

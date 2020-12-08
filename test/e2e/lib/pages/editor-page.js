@@ -26,7 +26,6 @@ export default class EditorPage extends AsyncBaseContainer {
 	}
 
 	async _postInit() {
-		await this.dismissDeprecationDialog();
 		const contentSelector = by.css( 'div.is-section-post-editor' );
 		const cogSelector = by.css( 'button.editor-ground-control__toggle-sidebar' );
 		await driverHelper.waitTillPresentAndDisplayed( this.driver, contentSelector );
@@ -37,20 +36,6 @@ export default class EditorPage extends AsyncBaseContainer {
 		}
 		await this.waitForPage();
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, this.editorFrameName );
-	}
-
-	async dismissDeprecationDialog() {
-		const displayed = await driverHelper.isEventuallyPresentAndDisplayed(
-			this.driver,
-			by.css( '.editor-deprecation-dialog' ),
-			3000
-		);
-		if ( displayed ) {
-			await driverHelper.clickWhenClickable(
-				this.driver,
-				by.css( '.editor-deprecation-dialog .components-button.is-link' )
-			);
-		}
 	}
 
 	async enterTitle( blogPostTitle ) {

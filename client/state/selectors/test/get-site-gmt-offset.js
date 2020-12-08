@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getSiteGmtOffset from 'state/selectors/get-site-gmt-offset';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 
 describe( 'getSiteGmtOffset()', () => {
 	test( 'should return null if the site has never been fetched', () => {

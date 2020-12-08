@@ -1,0 +1,53 @@
+{
+	"name": "@automattic/calypso-stripe",
+	"version": "1.0.0",
+	"description": "A set of helper functions and components for using Stripe on WordPress.com",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist && tsc --build ./tsconfig.json --clean && tsc --build ./tsconfig-cjs.json --clean",
+		"build:esm": "tsc --build ./tsconfig.json",
+		"build:cjs": "tsc --build ./tsconfig-cjs.json",
+		"prepare": "yarn run build:esm",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/calypso-stripe"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/calypso-stripe#readme",
+	"dependencies": {
+		"@automattic/load-script": "^1.0.0",
+		"debug": "^4.1.1",
+		"react": "^16.12.0",
+		"react-stripe-elements": "^4.0.2"
+	},
+	"devDependencies": {
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"@testing-library/jest-dom": "^5.9.0",
+		"@testing-library/react": "^10.0.5",
+		"cache-loader": "^4.1.0",
+		"webpack": "^4.44.2"
+	},
+	"private": true
+}

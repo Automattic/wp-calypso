@@ -11,8 +11,8 @@ import { translate } from 'i18n-calypso';
  */
 import { PlanBillingPeriod } from '../billing-period';
 import page from 'page';
-import { planItem } from 'lib/cart-values/cart-items';
-import { addItem } from 'lib/cart/actions';
+import { planItem } from 'calypso/lib/cart-values/cart-items';
+import { addItem } from 'calypso/lib/cart/actions';
 
 const props = {
 	purchase: {
@@ -31,6 +31,7 @@ const props = {
 		ID: 123,
 		name: 'Site Name',
 	},
+	isProductOwner: true,
 	recordTracksEvent: jest.fn(),
 	translate,
 	moment,

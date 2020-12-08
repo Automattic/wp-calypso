@@ -8,7 +8,7 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import DocsExampleError from 'devdocs/docs-example/error';
+import DocsExampleError from 'calypso/devdocs/docs-example/error';
 
 const renderTitle = ( unique, name, url, onTitleClick ) =>
 	unique ? (

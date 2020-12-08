@@ -4,7 +4,7 @@
 /**
  * Internal dependencies
  */
-import * as DiscoverHelper from 'reader/discover/helper';
+import * as DiscoverHelper from 'calypso/reader/discover/helper';
 
 export function shouldShowComments( post ) {
 	if ( isCommentableDiscoverPost( post ) ) {

@@ -15,7 +15,7 @@ import {
 	SITE_PLANS_TRIAL_CANCEL_FAILED,
 	SITE_PLANS_TRIAL_CANCEL_COMPLETED,
 	SITE_PLANS_REMOVE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 describe( 'reducer', () => {
 	describe( '#plans()', () => {
@@ -26,8 +26,8 @@ describe( 'reducer', () => {
 		} );
 
 		test( 'should return an empty state when original state and action are empty', () => {
-			const original = Object.freeze( {} ),
-				state = plans( original, {} );
+			const original = Object.freeze( {} );
+			const state = plans( original, {} );
 
 			expect( state ).to.eql( original );
 		} );
@@ -43,17 +43,17 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state when action is unknown', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: 'MAKE_COFFEE',
-					siteId: 11111111,
-				} );
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: 'MAKE_COFFEE',
+				siteId: 11111111,
+			} );
 
 			expect( state ).to.eql( original );
 		} );
@@ -76,18 +76,18 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state with an error and requesting disabled when fetching failed', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: true,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_FETCH_FAILED,
-					siteId: 11111111,
-					error: 'Unable to fetch site plans',
-				} );
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: true,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_FETCH_FAILED,
+				siteId: 11111111,
+				error: 'Unable to fetch site plans',
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -118,17 +118,17 @@ describe( 'reducer', () => {
 
 		test( 'should accumulate plans for different sites', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_FETCH,
-					siteId: 55555555,
-				} );
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_FETCH,
+				siteId: 55555555,
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -148,17 +148,17 @@ describe( 'reducer', () => {
 
 		test( 'should override previous plans of the same site', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: 'Unable to fetch site plans',
-						hasLoadedFromServer: false,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_FETCH,
-					siteId: 11111111,
-				} );
+				11111111: {
+					data: null,
+					error: 'Unable to fetch site plans',
+					hasLoadedFromServer: false,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_FETCH,
+				siteId: 11111111,
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -172,17 +172,17 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state with updating enabled when trial cancelation is triggered', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: false,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_TRIAL_CANCEL,
-					siteId: 11111111,
-				} );
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: false,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_TRIAL_CANCEL,
+				siteId: 11111111,
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -196,18 +196,18 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state with an error and requesting disabled when trial cancelation failed', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: true,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_TRIAL_CANCEL_FAILED,
-					siteId: 11111111,
-					error: 'Unable to cancel plan trial',
-				} );
+				11111111: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: true,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_TRIAL_CANCEL_FAILED,
+				siteId: 11111111,
+				error: 'Unable to cancel plan trial',
+			} );
 
 			expect( state ).to.eql( {
 				11111111: {
@@ -247,40 +247,40 @@ describe( 'reducer', () => {
 
 		test( 'should return the original state when removal is triggered for an unknown site', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: 'Unable to fetch site plans',
-						hasLoadedFromServer: false,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_REMOVE,
-					siteId: 22222222,
-				} );
+				11111111: {
+					data: null,
+					error: 'Unable to fetch site plans',
+					hasLoadedFromServer: false,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_REMOVE,
+				siteId: 22222222,
+			} );
 
 			expect( state ).to.eql( original );
 		} );
 
 		test( 'should remove plans for a given site when removal is triggered', () => {
 			const original = Object.freeze( {
-					11111111: {
-						data: null,
-						error: 'Unable to fetch site plans',
-						hasLoadedFromServer: false,
-						isRequesting: false,
-					},
-					22222222: {
-						data: [],
-						error: null,
-						hasLoadedFromServer: true,
-						isRequesting: false,
-					},
-				} ),
-				state = plans( original, {
-					type: SITE_PLANS_REMOVE,
-					siteId: 11111111,
-				} );
+				11111111: {
+					data: null,
+					error: 'Unable to fetch site plans',
+					hasLoadedFromServer: false,
+					isRequesting: false,
+				},
+				22222222: {
+					data: [],
+					error: null,
+					hasLoadedFromServer: true,
+					isRequesting: false,
+				},
+			} );
+			const state = plans( original, {
+				type: SITE_PLANS_REMOVE,
+				siteId: 11111111,
+			} );
 
 			expect( state ).to.eql( {
 				22222222: {

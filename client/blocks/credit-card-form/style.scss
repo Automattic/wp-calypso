@@ -15,7 +15,6 @@
 
 	p {
 		font-size: $font-body-extra-small;
-		margin: 0;
 
 		@include breakpoint-deprecated( '>660px' ) {
 			margin-left: 24px;
@@ -33,16 +32,10 @@
 
 .credit-card-form__footer {
 	align-items: center;
-	border-top-color: var( --color-neutral-0 );
 	display: flex;
-	justify-content: space-between;
 
 	em {
 		color: var( --color-text-subtle );
-	}
-
-	button:first-of-type {
-		margin-left: auto;
 	}
 
 	@include breakpoint-deprecated( '<660px' ) {

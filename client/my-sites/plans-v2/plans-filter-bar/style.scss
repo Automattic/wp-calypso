@@ -1,9 +1,12 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@wordpress/base-styles/mixins';
+
 .plans-filter-bar {
 	$height: 36px;
-	$border-radius: 4px;
+	$border-radius: 2px;
 
 	display: flex;
-	justify-content: space-between;
+	justify-content: space-evenly;
 	align-items: center;
 	background: var( --color-surface );
 	padding: 16px 0;
@@ -70,13 +73,69 @@
 	}
 
 	.segmented-control {
-		width: 100%;
-		max-width: 180px;
-		margin-left: 8px;
+		margin-left: 15px;
 		margin-right: 16px;
+		flex: 0 0 200px;
 
 		.segmented-control__item {
 			flex: 1 1 50%;
 		}
+
+		.segmented-control__link {
+			padding: 8px 20px;
+		}
 	}
+}
+
+.plans-filter-bar__discount-message {
+	display: none;
+	padding-right: 15px;
+
+	color: var( --color-primary );
+
+	font-size: $font-body-extra-small;
+	font-style: italic;
+
+	@include break-mobile {
+		display: inline;
+	}
+}
+
+.plans-filter-bar.sticky {
+	position: fixed;
+	top: var( --masterbar-height );
+
+	width: 100%;
+	max-width: 1040px;
+
+	z-index: 2;
+
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 253px and a right padding of 24px which adds up to 277px.
+	@include breakpoint-deprecated( '>660px' ) {
+		width: calc( 100% - 277px );
+	}
+
+	// At this screen size, div#content (wraps div#primary and div#secondary)
+	// has a left padding of 305px and a right padding of 32px which adds up to 337px.
+	@include break-large {
+		width: calc( 100% - 337px );
+	}
+}
+
+// This margin fills the gap that making the filter bar sticky leaves. Without it,
+// there is a noticeable jump in the UI every time the filter bar goes from sticky
+// to its normal position.
+.plans-filter-bar.sticky + .plans-v2__columns {
+	margin-top: 100px;
+
+	@include breakpoint-deprecated( '>660px' ) {
+		margin-top: 80px;
+	}
+}
+.plans-filter-bar.sticky + .products-grid-alt-2 {
+	transform: translateY( 95px );
+}
+.plans-filter-bar.sticky + .products-grid-alt {
+	transform: translateY( 70px );
 }

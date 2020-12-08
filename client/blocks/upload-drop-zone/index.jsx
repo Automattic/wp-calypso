@@ -6,18 +6,18 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import classNames from 'classnames';
 
 /**
  * Internal dependencies
  */
-import FilePicker from 'components/file-picker';
-import DropZone from 'components/drop-zone';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import notices from 'notices';
+import FilePicker from 'calypso/components/file-picker';
+import DropZone from 'calypso/components/drop-zone';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import notices from 'calypso/notices';
 import debugFactory from 'debug';
-import { MAX_UPLOAD_ZIP_SIZE } from 'lib/automated-transfer/constants';
+import { MAX_UPLOAD_ZIP_SIZE } from 'calypso/lib/automated-transfer/constants';
 
 /**
  * Style dependencies

@@ -1,8 +1,8 @@
 /**
  * Internal dependencies
  */
-import { ACCOUNT_CLOSE_SUCCESS } from 'state/action-types';
-import { combineReducers, withoutPersistence, withStorageKey } from 'state/utils';
+import { ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/state/utils';
 
 export const isClosed = withoutPersistence( ( state = false, action ) => {
 	switch ( action.type ) {

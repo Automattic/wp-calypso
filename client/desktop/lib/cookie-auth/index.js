@@ -1,10 +1,14 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { ipcMain: ipc } = require( 'electron' );
 const https = require( 'https' ); // eslint-disable-line import/no-nodejs-modules
 const url = require( 'url' );
-const events = require( 'events' );
+
+/**
+ * Internal Dependencies
+ */
+const log = require( 'calypso/desktop/lib/logger' )( 'cookie-auth' );
 
 /**
  * Module variables
@@ -12,34 +16,27 @@ const events = require( 'events' );
 const noop = function () {};
 
 function authorize( username, token ) {
-	const responder = new events.EventEmitter();
 	const body = 'log=' + username;
-	const options = url.parse( 'https://wordpress.com/wp-login.php' );
-
-	responder.username = username;
-
-	options.method = 'POST';
-	options.headers = {
+	const params = url.parse( 'https://wordpress.com/wp-login.php' );
+	params.method = 'POST';
+	params.headers = {
 		Authorization: 'Bearer ' + token,
 		'Content-Type': 'application/x-www-form-urlencoded',
 		'Content-Length': body.length,
 	};
 
-	const req = https.request( options, function ( res ) {
-		let responseBody = '';
-
-		responder.emit( 'response', res );
-
-		res.on( 'data', function ( data ) {
-			responseBody += data;
+	return new Promise( ( resolve, reject ) => {
+		const req = https.request( params, ( res ) => {
+			if ( res.statusCode < 200 ) {
+				return reject( new Error( `Status Code: ${ res.statusCode }` ) );
+			}
+			return resolve( res );
 		} );
 
-		res.on( 'end', function () {
-			responder.emit( 'body', responseBody );
-		} );
+		req.on( 'error', reject );
+
+		req.end( body );
 	} );
-	req.end( body );
-	return responder;
 }
 
 function parseCookie( cookieStr ) {
@@ -70,9 +67,9 @@ function parseCookie( cookieStr ) {
 	}, cookie );
 }
 
-function setSessionCookies( window, onComplete ) {
-	return function ( response ) {
-		let cookieHeaders = response.headers[ 'set-cookie' ];
+function setSessionCookies( window, authorizeResponse ) {
+	return new Promise( ( resolve ) => {
+		let cookieHeaders = authorizeResponse.headers[ 'set-cookie' ];
 		let count = 0;
 		if ( ! Array.isArray( cookieHeaders ) ) {
 			cookieHeaders = [ cookieHeaders ];
@@ -80,39 +77,52 @@ function setSessionCookies( window, onComplete ) {
 
 		count = cookieHeaders.length;
 
-		cookieHeaders.map( parseCookie ).forEach( function ( cookie ) {
+		if ( count === 0 ) {
+			return resolve( true );
+		}
+
+		cookieHeaders.forEach( async function ( cookieStr ) {
+			const cookie = parseCookie( cookieStr );
 			cookie.url = 'https://wordpress.com/';
-			if ( cookie.httponly ) {
+			if ( cookie.HttpOnly || cookie.httpOnly || cookie.httponly ) {
 				cookie.session = true;
 			}
-			window.webContents.session.cookies.set( cookie, function () {
-				count--;
-				if ( count === 0 ) {
-					if ( onComplete ) onComplete();
-				}
-			} );
+			try {
+				await window.webContents.session.cookies.set( cookie );
+			} catch ( e ) {
+				const { value, ...logCookie } = cookie; // don't log sensitive "value" field
+				log.error( `Failed to set session cookie (${ e.message }): `, logCookie );
+			}
+			count--;
+			if ( count === 0 ) {
+				return resolve( true );
+			}
 		} );
-	};
+	} );
 }
 
 function auth( window, onAuthorized ) {
-	let currentRequest;
+	ipc.on( 'user-auth', async function ( _, user, token ) {
+		log.info( `Handling 'user-auth' IPC event, setting session cookies...` );
 
-	ipc.on( 'user-auth', function ( event, user, token ) {
 		if ( user && user.data ) {
 			const userData = user.data;
-			if ( currentRequest && currentRequest.username === userData.username ) {
-				// already authing
-				return;
+
+			try {
+				const response = await authorize( userData.username, token );
+				await setSessionCookies( window, response );
+				onAuthorized();
+
+				log.info( 'Session cookies set.' );
+			} catch ( e ) {
+				log.error( 'Failed to set session cookies: ', e );
 			}
-			currentRequest = authorize( userData.username, token ).on(
-				'response',
-				setSessionCookies( window, onAuthorized )
-			);
 		} else {
-			// retrieve all cookies
+			log.info( 'No user data, clearing session cookies...' );
+
 			window.webContents.session.cookies.get( {}, function ( e, cookies ) {
 				if ( e ) {
+					log.error( 'Failed to clear session cookies: ', e );
 					return;
 				}
 

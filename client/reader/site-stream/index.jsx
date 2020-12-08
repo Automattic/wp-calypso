@@ -10,17 +10,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import ReaderFeedHeader from 'blocks/reader-feed-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import ReaderFeedHeader from 'calypso/blocks/reader-feed-header';
 import EmptyContent from './empty';
-import Stream from 'reader/stream';
-import FeedError from 'reader/feed-error';
-import { getSite } from 'state/reader/sites/selectors';
-import { getFeed } from 'state/reader/feeds/selectors';
-import { isSiteBlocked } from 'state/reader/site-blocks/selectors';
-import SiteBlocked from 'reader/site-blocked';
-import QueryReaderSite from 'components/data/query-reader-site';
-import QueryReaderFeed from 'components/data/query-reader-feed';
+import Stream from 'calypso/reader/stream';
+import FeedError from 'calypso/reader/feed-error';
+import { getSite } from 'calypso/state/reader/sites/selectors';
+import { getFeed } from 'calypso/state/reader/feeds/selectors';
+import { isSiteBlocked } from 'calypso/state/reader/site-blocks/selectors';
+import SiteBlocked from 'calypso/reader/site-blocked';
+import QueryReaderSite from 'calypso/components/data/query-reader-site';
+import QueryReaderFeed from 'calypso/components/data/query-reader-feed';
 
 class SiteStream extends React.Component {
 	static propTypes = {

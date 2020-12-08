@@ -13,8 +13,8 @@ import {
 	USER_SUGGESTIONS_RECEIVE,
 	USER_SUGGESTIONS_REQUEST,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
-} from 'state/action-types';
-import useNock from 'test-helpers/use-nock';
+} from 'calypso/state/action-types';
+import useNock from 'calypso/test-helpers/use-nock';
 import sampleSuccessResponse from './sample-response.json';
 const siteId = 123;
 

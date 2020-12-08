@@ -7,30 +7,32 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import { debounce, get, flow, inRange, isEmpty } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { Card } from '@automattic/components';
-import FormButton from 'components/forms/form-button';
-import FormButtonsBar from 'components/forms/form-buttons-bar';
-import FormTextInputWithAffixes from 'components/forms/form-text-input-with-affixes';
-import FormInputValidation from 'components/forms/form-input-validation';
-import FormLabel from 'components/forms/form-label';
+import FormButton from 'calypso/components/forms/form-button';
+import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
+import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSelect from 'calypso/components/forms/form-select';
 import ConfirmationDialog from './dialog';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import { recordTracksEvent } from 'state/analytics/actions';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	requestSiteAddressChange,
 	requestSiteAddressAvailability,
 	clearValidationError,
-} from 'state/site-address-change/actions';
-import getSiteAddressAvailabilityPending from 'state/selectors/get-site-address-availability-pending';
-import getSiteAddressValidationError from 'state/selectors/get-site-address-validation-error';
-import isRequestingSiteAddressChange from 'state/selectors/is-requesting-site-address-change';
-import { getSelectedSite } from 'state/ui/selectors';
+} from 'calypso/state/site-address-change/actions';
+import { getSiteAddressAvailabilityPending } from 'calypso/state/site-address-change/selectors/get-site-address-availability-pending';
+import { getSiteAddressValidationError } from 'calypso/state/site-address-change/selectors/get-site-address-validation-error';
+import { isRequestingSiteAddressChange } from 'calypso/state/site-address-change/selectors/is-requesting-site-address-change';
+import { isSiteAddressValidationAvailable } from 'calypso/state/site-address-change/selectors/is-site-address-validation-available';
+import { getSelectedSite } from 'calypso/state/ui/selectors';
 
 /**
  * Style dependencies
@@ -245,7 +247,7 @@ export class SiteAddressChanger extends Component {
 			<span className="site-address-changer__affix">
 				{ newDomainSuffix }
 				<Gridicon icon="chevron-down" size={ 18 } className="site-address-changer__select-icon" />
-				<select
+				<FormSelect
 					className="site-address-changer__select"
 					value={ newDomainSuffix }
 					onChange={ this.onDomainSuffixChange }
@@ -255,7 +257,7 @@ export class SiteAddressChanger extends Component {
 							{ suffix }
 						</option>
 					) ) }
-				</select>
+				</FormSelect>
 			</span>
 		);
 	}
@@ -344,7 +346,6 @@ export class SiteAddressChanger extends Component {
 						<FormTextInputWithAffixes
 							id="site-address-changer__text-input"
 							className="site-address-changer__input"
-							type="text"
 							value={ domainFieldValue }
 							suffix={ this.renderDomainSuffix() }
 							onChange={ this.onFieldChange }
@@ -376,17 +377,11 @@ export default flow(
 			const selectedSite = getSelectedSite( state );
 			const siteId = selectedSite.ID;
 			const selectedSiteSlug = selectedSite.slug;
-			const isAvailable = get( state, [
-				'siteAddressChange',
-				'validation',
-				siteId,
-				'isAvailable',
-			] );
 
 			return {
 				siteId,
 				selectedSiteSlug,
-				isAvailable,
+				isAvailable: isSiteAddressValidationAvailable( state, siteId ),
 				isSiteAddressChangeRequesting: isRequestingSiteAddressChange( state, siteId ),
 				isAvailabilityPending: getSiteAddressAvailabilityPending( state, siteId ),
 				validationError: getSiteAddressValidationError( state, siteId ),

@@ -16,7 +16,7 @@
 	background-color: var( --color-surface );
 	position: fixed;
 	top: 0;
-	margin-top: 47px; // masterbar is exactly 47px
+	margin-top: var( --masterbar-height );
 	z-index: 20;
 	-webkit-font-smoothing: subpixel-antialiased; // Fixes fixed elements text aliasing in Safari
 

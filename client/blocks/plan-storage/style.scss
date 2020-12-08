@@ -39,3 +39,34 @@
 .plan-storage__bar.is-alert .progress-bar__progress {
 	background-color: var( --color-error );
 }
+
+.plan-storage__tooltip {
+	$border-width: 1px;
+
+	box-sizing: border-box;
+	//Note: This works because .plan-storage width always stays the same.
+	//If that were to change we'd need to set the max-width dynamically.
+	max-width: 211px;
+	padding: 8px 11px;
+	box-shadow: 0 0 0 $border-width var( --color-border-subtle );
+	border-radius: 3px;
+	background: var( --color-surface );
+	color: var( --color-text );
+	font-size: $font-body-extra-small;
+	line-height: 1.4;
+	z-index: z-index( 'root', '.plan-storage__tooltip' );
+
+	.tooltip__arrow {
+		margin-top: ( -$border-width );
+		margin-left: calc( 50% - 2em );
+
+		.stroke {
+			fill: var( --color-border-subtle );
+		}
+	
+		.fill {
+			fill: var( --color-surface );
+		}
+	}
+
+}

@@ -5,7 +5,7 @@ import { map } from 'lodash';
 import PropTypes from 'prop-types';
 import React from 'react';
 import classNames from 'classnames';
-import scrollIntoViewport from 'lib/scroll-into-viewport';
+import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 
 class SuggestionsList extends React.PureComponent {
 	static propTypes = {

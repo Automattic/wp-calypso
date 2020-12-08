@@ -1,12 +1,12 @@
 /**
  * Internal dependencies
  */
-import { registerReducer } from 'state/redux-store';
+import { registerReducer } from 'calypso/state/redux-store';
 import loginReducer from './reducer';
 
 /**
  * Internal dependencies
  */
-import 'state/login/init';
+import 'calypso/state/login/init';
 
 registerReducer( [ 'login' ], loginReducer );

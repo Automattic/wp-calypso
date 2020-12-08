@@ -1,0 +1,286 @@
+@import '~@wordpress/base-styles/breakpoints';
+@import '~@automattic/onboarding/styles/mixins';
+@import '~@automattic/typography/styles/variables';
+@import '../variables.scss';
+
+$plans-accordion-item-border-radius: 5px; /* stylelint-disable-line scales/radii */
+$plans-accordion-item-border-color: var( --studio-gray-5 );
+
+.plans-accordion-item {
+	display: block;
+	flex-grow: 1;
+	flex-basis: 0;
+	flex-direction: column;
+
+	&.is-disabled {
+		background-color: var( --studio-gray-5 );
+	}
+}
+
+.plans-accordion-item__viewport {
+	width: 100%;
+	height: 100%;
+	padding: 20px;
+	border: 1px solid $plans-accordion-item-border-color;
+
+	.plans-accordion-item + .plans-accordion-item & {
+		border-top: 0;
+	}
+
+	@include break-small {
+		padding: 32px;
+	}
+
+	.plans-accordion-item:first-of-type & {
+		border-top-left-radius: $plans-accordion-item-border-radius;
+		border-top-right-radius: $plans-accordion-item-border-radius;
+	}
+
+	.plans-accordion-item:last-of-type & {
+		border-bottom-left-radius: $plans-accordion-item-border-radius;
+		border-bottom-right-radius: $plans-accordion-item-border-radius;
+	}
+
+	// Badge will handle border-top in mobile.
+	.plans-accordion-item.has-badge & {
+		border-top-width: 0;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		border-bottom-left-radius: $plans-accordion-item-border-radius;
+		border-bottom-right-radius: $plans-accordion-item-border-radius;
+
+		@include break-small {
+			border-top-width: 1px;
+		}
+	}
+
+	.plans-accordion-item:not( .is-open ) & {
+		// Because .plans-accordion-item__header acts as a button
+		// to expand plan item, padding is applied there.
+		padding: 0;
+	}
+}
+
+.plans-accordion-item__name {
+	display: inline-block;
+	font-size: $font-body;
+	line-height: 1.2;
+
+	@include break-small {
+		font-size: $font-title-medium;
+	}
+
+	.plans-accordion-item:not( .is-open ) & {
+		font-size: $font-body-small;
+
+		@include break-small {
+			font-size: $font-body-small;
+		}
+	}
+
+	.plans-accordion-item.is-primary & {
+		font-size: $font-title-small;
+
+		@include break-small {
+			font-size: $font-title-medium;
+		}
+	}
+}
+
+.plans-accordion-item__description {
+	font-size: $font-body-small;
+	color: var( --studio-gray-50 );
+	margin-top: 4px;
+	display: none;
+
+	.plans-accordion-item:not( .is-open ) & {
+		display: none;
+	}
+
+	@include break-small {
+		display: block;
+	}
+}
+
+.plans-accordion-item__domain-name {
+	font-size: $font-body-small;
+}
+
+ul.plans-accordion-item__feature-item-group {
+	margin: 0;
+	column-count: 1;
+
+	@include break-small {
+		column-count: 2;
+	}
+
+	@include break-large {
+		column-count: 3;
+	}
+}
+
+.plans-accordion-item__badge {
+	border-top-left-radius: $plans-accordion-item-border-radius;
+	border-top-right-radius: $plans-accordion-item-border-radius;
+	margin-bottom: -1px;
+
+	> span {
+		display: block;
+		height: 24px;
+		line-height: 24px;
+		padding: 0 14px;
+		background: black;
+		color: white;
+		font-size: $font-body-extra-small;
+		font-weight: 600;
+		letter-spacing: 0.5px;
+		text-align: center;
+		text-transform: uppercase;
+	}
+
+	@include break-small {
+		position: relative;
+		top: -12px;
+		height: 0;
+		overflow: visible;
+		text-align: center;
+		border-radius: 0;
+
+		> span {
+			display: inline-block;
+			border-radius: 2px;
+		}
+	}
+}
+
+.plans-accordion-item__price-amount {
+	font-size: $font-title-medium;
+
+	@include break-small {
+		font-size: $font-title-large;
+	}
+
+	&.is-loading {
+		max-width: 60px;
+		@include break-small {
+			max-width: none;
+		}
+		@include onboarding-placeholder();
+	}
+
+	> span {
+		display: none;
+		font-size: $font-body;
+		line-height: 1.2;
+		color: var( --studio-gray-40 );
+		position: relative;
+		top: -1px;
+		margin-left: 1px;
+
+		@include break-small {
+			display: inline-block;
+		}
+	}
+
+	.plans-accordion-item:not( .is-open ) & {
+		font-size: $font-body-small;
+		line-height: 1.2;
+
+		> span {
+			display: none;
+		}
+	}
+}
+
+.plans-accordion-item__header {
+	display: block;
+	width: 100%;
+	cursor: pointer;
+
+	.plans-accordion-item:not( .is-open ) & {
+		display: flex;
+		align-items: baseline;
+		padding: 16px 12px;
+
+		@include break-small {
+			padding: 16px 24px;
+		}
+	}
+
+	.plans-accordion-item.is-primary & {
+		cursor: default;
+	}
+
+	@include break-small {
+		// Plan name & price side by side.
+		display: flex;
+	}
+}
+
+.plans-accordion-item__price {
+	margin-top: 12px;
+
+	.plans-accordion-item:not( .is-open ) & {
+		margin-top: 0;
+		margin-left: 8px;
+		color: var( --studio-gray-40 );
+	}
+
+	@include break-small {
+		margin-top: 0;
+		margin-left: auto;
+	}
+}
+
+.plans-accordion-item__disabled-label {
+	margin-left: 8px;
+	color: var( --studio-gray-40 );
+}
+
+.plans-accordion-item__price-note {
+	display: block;
+	font-size: $font-body-extra-small;
+	line-height: 1.5;
+	color: var( --studio-gray-40 );
+
+	.plans-accordion-item:not( .is-open ) & {
+		display: none;
+	}
+}
+
+.plans-accordion-item__actions {
+	margin-top: 16px;
+
+	@include break-small {
+		margin-top: 24px;
+	}
+}
+
+.plans-accordion-item__dropdown-chevron {
+	flex: 1;
+	text-align: right;
+	position: relative;
+	top: -2px;
+
+	@include break-small {
+		right: -8px;
+	}
+}
+
+.plans-accordion-item.is-open .plans-accordion-item__dropdown-chevron {
+	display: none;
+}
+
+.plans-accordion-item__placeholder {
+	@include onboarding-placeholder();
+	display: inline-block;
+	width: 64px;
+
+	&--narrow {
+		width: 32px;
+	}
+
+	&--wide {
+		width: 96px;
+	}
+}

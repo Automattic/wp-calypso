@@ -16,8 +16,8 @@ import {
 	POST_DELETE,
 	POST_SAVE,
 	POSTS_RECEIVE,
-} from 'state/action-types';
-import { combineReducers, withSchemaValidation } from 'state/utils';
+} from 'calypso/state/action-types';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { countsSchema } from './schema';
 
 /**

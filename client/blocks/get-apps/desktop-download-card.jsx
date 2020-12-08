@@ -12,7 +12,7 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const WINDOWS_LINK = 'https://apps.wordpress.com/d/windows?ref=getapps';
 const MAC_LINK = 'https://apps.wordpress.com/d/osx?ref=getapps';

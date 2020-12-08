@@ -1,18 +1,26 @@
-/* eslint import/no-extraneous-dependencies: [ "error", { packageDir: __dirname/.. } ] */
-
 /**
  * External Dependencies
  */
 const path = require( 'path' );
 const webpack = require( 'webpack' );
 
+/**
+ * Internal Dependencies
+ */
+const { workerCount } = require( './webpack.common' );
+const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
+const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
+const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
+
 const isDevelopment = process.env.NODE_ENV === 'development';
+const cacheDirectory = path.resolve( '.cache', 'babel-desktop' );
 
 module.exports = {
 	entry: path.join( __dirname, 'desktop' ),
 	output: {
 		path: path.resolve( 'desktop/build' ),
 		filename: 'desktop.js',
+		chunkFilename: 'desktop.[name].js',
 		libraryTarget: 'commonjs2',
 	},
 	target: 'electron-main',
@@ -22,7 +30,7 @@ module.exports = {
 			{
 				include: path.join( __dirname, 'sections.js' ),
 				use: {
-					loader: path.join( __dirname, 'server', 'bundler', 'sections-loader' ),
+					loader: path.join( __dirname, '../build-tools/webpack/sections-loader' ),
 					options: { useRequire: true, onlyIsomorphic: true },
 				},
 			},
@@ -30,25 +38,20 @@ module.exports = {
 				test: /\.html$/,
 				loader: 'html-loader',
 			},
-			{
-				test: /\.[jt]sx?$/,
-				loader: 'babel-loader',
-				exclude: /node_modules/,
-			},
-			{
-				test: /\.js$/,
-				loader: 'babel-loader',
-				include: ( filepath ) => {
-					// is it one of the npm dependencies we want to transpile?
-					const lastIndex = filepath.lastIndexOf( '/node_modules/' );
-					if ( lastIndex === -1 ) {
-						return false;
-					}
-					return [ 'chalk', '@automattic/calypso-polyfills' ].some( ( pkg ) =>
-						filepath.startsWith( `/node_modules/${ pkg }/`, lastIndex )
-					);
-				},
-			},
+			TranspileConfig.loader( {
+				workerCount,
+				configFile: path.resolve( 'babel.config.js' ),
+				cacheDirectory,
+				cacheIdentifier,
+				exclude: /node_modules\//,
+			} ),
+			TranspileConfig.loader( {
+				workerCount,
+				presets: [ require.resolve( '@automattic/calypso-build/babel/dependencies' ) ],
+				cacheDirectory,
+				cacheIdentifier,
+				include: shouldTranspileDependency,
+			} ),
 			{
 				test: /\.(sc|sa|c)ss$/,
 				loader: 'ignore-loader',
@@ -74,16 +77,21 @@ module.exports = {
 	externals: [
 		'webpack',
 		'electron',
+		'keytar',
 
 		// These are Calypso server modules we don't need, so let's not bundle them
 		'webpack.config',
-		'server/devdocs/search-index',
 	],
 	resolve: {
 		extensions: [ '.json', '.js', '.jsx', '.ts', '.tsx' ],
+		mainFields: [ 'calypso:src', 'module', 'main' ],
 		modules: [ __dirname, 'node_modules' ],
 		alias: {
 			config: 'server/config',
+			'calypso/config': 'server/config',
+			// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
+			// importing `./client/file.js` is the same thing than importing `calypso/file.js`
+			calypso: __dirname,
 		},
 	},
 	plugins: [
@@ -94,5 +102,10 @@ module.exports = {
 			/^my-sites[/\\]themes[/\\]theme-upload$/,
 			'components/empty-component'
 		), // Depends on BOM
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso[/\\]my-sites[/\\]themes[/\\]theme-upload$/,
+			'components/empty-component'
+		), // Depends on BOM
+		new webpack.IgnorePlugin( /^\.\/locale$/, /moment$/ ), // server doesn't use moment locales
 	],
 };

@@ -1,5 +1,4 @@
-Query Site Monitor Settings
-================
+# Query Site Monitor Settings
 
 `<QuerySiteMonitorSettings />` is a React component used in managing network requests for retrieving Monitor settings for a Jetpack site.
 
@@ -11,27 +10,23 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import QuerySiteMonitorSettings from 'components/data/query-site-monitor-settings';
-import getSiteMonitorSettings from 'state/selectors/get-site-monitor-settings';
+import QuerySiteMonitorSettings from 'calypso/components/data/query-site-monitor-settings';
+import getSiteMonitorSettings from 'calypso/state/selectors/get-site-monitor-settings';
 
 function ExampleSiteComponent( { siteMonitorSettings, translate } ) {
 	return (
 		<div>
 			<QuerySiteMonitorSettings siteId={ 12345678 } />
-			{
-				siteMonitorSettings && siteMonitorSettings.monitor_active
-					? translate( 'Monitor is enabled' )
-					: translate( 'Monitor is disabled' )
-			}
+			{ siteMonitorSettings && siteMonitorSettings.monitor_active
+				? translate( 'Monitor is enabled' )
+				: translate( 'Monitor is disabled' ) }
 		</div>
 	);
 }
 
-export default connect(
-	( state ) => ( {
-		siteMonitorSettings: getSiteMonitorSettings( state, 12345678 )
-	} )
-)( localize( ExampleSiteComponent ) );
+export default connect( ( state ) => ( {
+	siteMonitorSettings: getSiteMonitorSettings( state, 12345678 ),
+} ) )( localize( ExampleSiteComponent ) );
 ```
 
 ## Props

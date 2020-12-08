@@ -12,7 +12,7 @@ import {
 	FEATURE_ADVANCED_DESIGN,
 	FEATURE_ADVANCED_SEO,
 	FEATURE_VIDEO_UPLOADS,
-} from 'lib/plans/constants';
+} from 'calypso/lib/plans/constants';
 
 const wpcomFeaturesAsPlugins = ( translate = identity ) => [
 	{

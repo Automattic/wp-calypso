@@ -2,20 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import page from 'page';
 import { isEqual } from 'lodash';
 
 /**
  * Internal Dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { queryToFilterState } from 'state/activity-log/utils';
-import { recordTrack } from 'reader/stats';
-import { setFilter } from 'state/activity-log/actions';
-import ActivityLog from 'my-sites/activity/activity-log';
-import ActivityLogV2 from 'my-sites/activity/activity-log-v2';
-import config from 'config';
-import getActivityLogFilter from 'state/selectors/get-activity-log-filter';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { queryToFilterState } from 'calypso/state/activity-log/utils';
+import { recordTrack } from 'calypso/reader/stats';
+import { setFilter } from 'calypso/state/activity-log/actions';
+import ActivityLog from 'calypso/my-sites/activity/activity-log';
+import ActivityLogV2 from 'calypso/my-sites/activity/activity-log-v2';
+import config from 'calypso/config';
+import getActivityLogFilter from 'calypso/state/selectors/get-activity-log-filter';
 
 function queryFilterToStats( filter ) {
 	// These values are hardcoded so that the attributes that we collect via stats are not unbound
@@ -76,15 +75,4 @@ export function activity( context, next ) {
 	);
 
 	next();
-}
-
-// Add redirect
-export function redirect( context ) {
-	const state = context.store.getState();
-	const siteId = getSelectedSiteId( state );
-	if ( siteId ) {
-		page.redirect( '/activity-log/' + siteId );
-		return;
-	}
-	page.redirect( '/activity-log/' );
 }

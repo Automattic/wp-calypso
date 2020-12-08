@@ -9,8 +9,8 @@ import { map, zipObject, fill, size, filter, get, compact, partition, min, noop 
 /**
  * Internal dependencies
  */
-import PostComment from 'blocks/comments/post-comment';
-import { POST_COMMENT_DISPLAY_TYPES } from 'state/comments/constants';
+import PostComment from 'calypso/blocks/comments/post-comment';
+import { POST_COMMENT_DISPLAY_TYPES } from 'calypso/state/comments/constants';
 import {
 	commentsFetchingStatus,
 	getActiveReplyCommentId,
@@ -19,13 +19,17 @@ import {
 	getExpansionsForPost,
 	getHiddenCommentsForPost,
 	getPostCommentsTree,
-} from 'state/comments/selectors';
-import ConversationCaterpillar from 'blocks/conversation-caterpillar';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
-import PostCommentFormRoot from 'blocks/comments/form-root';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { getErrorKey } from 'state/comments/utils';
-import { getCurrentUserId } from 'state/current-user/selectors';
+} from 'calypso/state/comments/selectors';
+import ConversationCaterpillar from 'calypso/blocks/conversation-caterpillar';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import PostCommentFormRoot from 'calypso/blocks/comments/form-root';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
+import { getErrorKey } from 'calypso/state/comments/utils';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 
 /**
  * Style dependencies

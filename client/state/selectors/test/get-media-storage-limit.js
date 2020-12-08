@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import getMediaStorageLimit from 'state/selectors/get-media-storage-limit';
+import getMediaStorageLimit from 'calypso/state/selectors/get-media-storage-limit';
 
 describe( 'getMediaStorageLimit()', () => {
 	test( 'should return null if the site is unknown', () => {

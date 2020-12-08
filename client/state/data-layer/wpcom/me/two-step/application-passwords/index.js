@@ -6,14 +6,14 @@ import { noop } from 'lodash';
 /**
  * Internal dependencies
  */
-import makeJsonSchemaParser from 'lib/make-json-schema-parser';
+import makeJsonSchemaParser from 'calypso/lib/make-json-schema-parser';
 import schema from './schema';
-import { APPLICATION_PASSWORDS_REQUEST } from 'state/action-types';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { receiveApplicationPasswords } from 'state/application-passwords/actions';
+import { APPLICATION_PASSWORDS_REQUEST } from 'calypso/state/action-types';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { receiveApplicationPasswords } from 'calypso/state/application-passwords/actions';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const apiTransformer = ( data ) => data.application_passwords;
 

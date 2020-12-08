@@ -22,6 +22,8 @@ import getAllNotes from '../state/selectors/get-all-notes';
 import getIsNoteHidden from '../state/selectors/get-is-note-hidden';
 import getIsPanelOpen from '../state/selectors/get-is-panel-open';
 import getSelectedNoteId from '../state/selectors/get-selected-note-id';
+import getKeyboardShortcutsEnabled from '../state/selectors/get-keyboard-shortcuts-enabled';
+import { modifierKeyIsActive } from '../helpers/input';
 
 const KEY_ENTER = 13;
 const KEY_ESC = 27;
@@ -87,9 +89,8 @@ class Layout extends React.Component {
 			this.props.global.navigation = {};
 
 			/* Keyboard shortcutes */
-			this.props.global.keyboardShortcutsAreEnabled = true;
+			this.props.enableKeyboardShortcuts();
 			this.props.global.input = {
-				modifierKeyIsActive: this.modifierKeyIsActive,
 				lastInputWasKeyboard: false,
 			};
 		}
@@ -176,7 +177,7 @@ class Layout extends React.Component {
 	navigateByDirection = ( direction ) => {
 		const filteredNotes = this.filterController.getFilteredNotes( this.props.notes );
 
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -315,10 +316,6 @@ class Layout extends React.Component {
 		this.forceUpdate();
 	};
 
-	modifierKeyIsActive = ( e ) => {
-		return e.altKey || e.ctrlKey || e.metaKey;
-	};
-
 	handleKeyDown = ( event ) => {
 		if ( ! this.props.isShowing ) {
 			return;
@@ -342,7 +339,7 @@ class Layout extends React.Component {
 		}
 
 		/* otherwise bypass if shortcuts are disabled */
-		if ( ! this.props.global.keyboardShortcutsAreEnabled ) {
+		if ( ! this.props.keyboardShortcutsAreEnabled ) {
 			return;
 		}
 
@@ -352,7 +349,7 @@ class Layout extends React.Component {
 		 * that require a modifier key should be
 		 * captured above.
 		 */
-		if ( this.props.global.input.modifierKeyIsActive( event ) ) {
+		if ( modifierKeyIsActive( event ) ) {
 			return;
 		}
 
@@ -529,12 +526,14 @@ const mapStateToProps = ( state ) => ( {
 	isPanelOpen: getIsPanelOpen( state ),
 	notes: getAllNotes( state ),
 	selectedNoteId: getSelectedNoteId( state ),
+	keyboardShortcutsAreEnabled: getKeyboardShortcutsEnabled( state ),
 } );
 
 const mapDispatchToProps = {
 	closePanel: actions.ui.closePanel,
 	selectNote: actions.ui.selectNote,
 	unselectNote: actions.ui.unselectNote,
+	enableKeyboardShortcuts: actions.ui.enableKeyboardShortcuts,
 };
 
 export default connect( mapStateToProps, mapDispatchToProps )( Layout );

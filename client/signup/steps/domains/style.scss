@@ -9,7 +9,7 @@
 .is-section-signup .domains__step-content {
 	margin-bottom: 50px;
 
-	&.domains__step-content-domain-step-test {
+	&.domains__step-content-domain-step {
 		margin-bottom: 20px;
 	}
 
@@ -18,13 +18,13 @@
 	}
 
 	.register-domain-step__search-card {
-		border-radius: 3px;
+		border-radius: 2px;
 		@include elevation( 2dp );
 	}
 
 	.search.is-open.has-focus {
 		border: none;
-		border-radius: 3px;
+		border-radius: 2px;
 		box-shadow: 0 0 0 3px var( --color-accent-light );
 	}
 
@@ -49,7 +49,6 @@
  * The `is-white-signup` class is attached to the body when the user is assigned the `reskinned` group of the `reskinSignupFlow` a/b test
  */
 body.is-section-signup.is-white-signup {
-
 	$light-white: #f3f4f5;
 
 	.signup__step.is-domains .formatted-header {
@@ -58,7 +57,7 @@ body.is-section-signup.is-white-signup {
 
 	.domains__step-content {
 		.search.is-open.has-focus {
-			box-shadow: 0 0 0 2px  var( --color-accent );
+			box-shadow: 0 0 0 2px var( --color-accent );
 			background: var( --color-surface );
 			.search__input {
 				background: var( --color-surface );
@@ -66,8 +65,8 @@ body.is-section-signup.is-white-signup {
 		}
 		.register-domain-step__search-card {
 			background: $light-white;
-			box-shadow: 0 0 0 1.5px  var( --color-neutral-10 );
-			border-radius: 4px;
+			box-shadow: 0 0 0 1.5px var( --color-neutral-10 );
+			border-radius: 2px;
 			margin: 20px;
 
 			@include break-mobile {
@@ -75,7 +74,7 @@ body.is-section-signup.is-white-signup {
 			}
 		}
 		.search__input {
-			background:  $light-white;
+			background: $light-white;
 			&::placeholder {
 				color: var( --color-neutral-100 );
 			}
@@ -101,7 +100,8 @@ body.is-section-signup.is-white-signup {
 		.button {
 			flex-direction: row;
 
-			&:hover, &:focus {
+			&:hover,
+			&:focus {
 				box-shadow: none;
 			}
 

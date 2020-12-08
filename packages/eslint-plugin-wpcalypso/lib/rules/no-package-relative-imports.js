@@ -43,9 +43,9 @@ const getRelativeImports = ( relativeDir, automaticExtensions = [ '.js', '.json'
  *
  * Example:
  *
- * With mappings `[ {dir: '/app/client', module: 'wp-calypso-client'} ]`
+ * With mappings `[ {dir: '/app/client', module: 'calypso'} ]`
  * If the code is importing `foo` and `foo` is a subdirectory of `/app/client/`, this rule
- * will warn the user and optionally replace it with `wp-calypso-client/foo`
+ * will warn the user and optionally replace it with `calypso/foo`
  *
  * @param {object} arg Function arguments
  * @param {object} arg.context The context as provided by ESLint (https://eslint.org/docs/developer-guide/working-with-rules#the-context-object)

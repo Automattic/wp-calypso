@@ -2,11 +2,11 @@
  * Internal dependencies
  */
 import * as actions from '../actions';
-import * as tracks from 'lib/analytics/tracks';
-import { bumpStat } from 'lib/analytics/mc';
+import * as tracks from 'calypso/lib/analytics/tracks';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 
-import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'state/reader/action-types';
-import wp from 'lib/wp';
+import { READER_POSTS_RECEIVE, READER_POST_SEEN } from 'calypso/state/reader/action-types';
+import wp from 'calypso/lib/wp';
 
 jest.mock( 'reader/stats', () => ( { pageViewForPost: jest.fn() } ) );
 
@@ -31,7 +31,7 @@ jest.mock( 'lib/wp', () => {
 } );
 
 const undocumented = wp.undocumented;
-const { pageViewForPost } = require( 'reader/stats' );
+const { pageViewForPost } = require( 'calypso/reader/stats' );
 
 describe( 'actions', () => {
 	const dispatchSpy = jest.fn();
@@ -57,21 +57,6 @@ describe( 'actions', () => {
 						posts,
 					} );
 				} );
-		} );
-
-		// TODO: move to analytics middleware so that this doesn't cascade out the need for mocking
-		// eslint-disable-next-line jest/no-disabled-tests
-		test.skip( 'should fire tracks events for posts with railcars', () => {
-			const posts = [
-				{
-					ID: 1,
-					site_ID: 1,
-					global_ID: 1,
-					railcar: 'foo',
-				},
-			];
-			actions.receivePosts( posts )( dispatchSpy );
-			expect( trackingSpy ).toHaveBeenCalledWith( 'calypso_traintracks_render', 'foo' );
 		} );
 
 		test( 'should try to reload posts marked with should_reload', () => {

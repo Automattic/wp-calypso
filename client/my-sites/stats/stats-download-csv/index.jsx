@@ -8,18 +8,21 @@ import { connect } from 'react-redux';
 import { saveAs } from 'browser-filesaver';
 import { localize } from 'i18n-calypso';
 import { flowRight } from 'lodash';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
 import titlecase from 'to-title-case';
 import { Button } from '@automattic/components';
-import { getSiteStatsCSVData, isRequestingSiteStatsForQuery } from 'state/stats/lists/selectors';
-import { recordGoogleEvent } from 'state/analytics/actions';
-import QuerySiteStats from 'components/data/query-site-stats';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import { getSiteSlug } from 'state/sites/selectors';
+import {
+	getSiteStatsCSVData,
+	isRequestingSiteStatsForQuery,
+} from 'calypso/state/stats/lists/selectors';
+import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
 
 class StatsDownloadCsv extends Component {
 	static propTypes = {

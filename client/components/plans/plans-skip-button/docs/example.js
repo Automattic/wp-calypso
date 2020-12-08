@@ -6,7 +6,7 @@ import React, { PureComponent } from 'react';
 /**
  * Internal dependencies
  */
-import PlansSkipButton from 'components/plans/plans-skip-button';
+import PlansSkipButton from 'calypso/components/plans/plans-skip-button';
 
 class PlansSkipButtonExample extends PureComponent {
 	static displayName = 'PlansSkipButton';

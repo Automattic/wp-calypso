@@ -9,34 +9,36 @@ import wrapWithClickOutside from 'react-click-outside';
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
-import isSiteAutomatedTransfer from 'state/selectors/is-site-automated-transfer';
-import isSiteOnAtomicPlan from 'state/selectors/is-site-on-atomic-plan';
-import canSiteViewAtomicHosting from 'state/selectors/can-site-view-atomic-hosting';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Layout from 'calypso/components/layout';
+import Column from 'calypso/components/layout/column';
+import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteOnAtomicPlan from 'calypso/state/selectors/is-site-on-atomic-plan';
+import canSiteViewAtomicHosting from 'calypso/state/selectors/can-site-view-atomic-hosting';
 import SFTPCard from './sftp-card';
 import PhpMyAdminCard from './phpmyadmin-card';
 import SupportCard from './support-card';
 import PhpVersionCard from './php-version-card';
 import SiteBackupCard from './site-backup-card';
 import MiscellaneousCard from './miscellaneous-card';
-import NoticeAction from 'components/notice/notice-action';
-import TrackComponentView from 'lib/analytics/track-component-view';
-import Notice from 'components/notice';
-import UpsellNudge from 'blocks/upsell-nudge';
-import { recordTracksEvent } from 'state/analytics/actions';
+import NoticeAction from 'calypso/components/notice/notice-action';
+import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import Notice from 'calypso/components/notice';
+import UpsellNudge from 'calypso/blocks/upsell-nudge';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	getAutomatedTransferStatus,
 	isAutomatedTransferActive,
-} from 'state/automated-transfer/selectors';
-import { transferStates } from 'state/automated-transfer/constants';
-import { requestSite } from 'state/sites/actions';
-import FeatureExample from 'components/feature-example';
-import { PLAN_BUSINESS, FEATURE_SFTP } from 'lib/plans/constants';
+} from 'calypso/state/automated-transfer/selectors';
+import { transferStates } from 'calypso/state/automated-transfer/constants';
+import { requestSite } from 'calypso/state/sites/actions';
+import FeatureExample from 'calypso/components/feature-example';
+import { PLAN_BUSINESS, FEATURE_SFTP } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -159,18 +161,18 @@ class Hosting extends Component {
 
 			return (
 				<WrapperComponent>
-					<div className="hosting__layout">
-						<div className="hosting__layout-col">
+					<Layout className="hosting__layout">
+						<Column type="main" className="hosting__main-layout-col">
 							<SFTPCard disabled={ isDisabled } />
 							<PhpMyAdminCard disabled={ isDisabled } />
 							<PhpVersionCard disabled={ isDisabled } />
 							<MiscellaneousCard disabled={ isDisabled } />
-						</div>
-						<div className="hosting__layout-col">
+						</Column>
+						<Column type="sidebar">
 							<SiteBackupCard disabled={ isDisabled } />
 							<SupportCard />
-						</div>
-					</div>
+						</Column>
+					</Layout>
 				</WrapperComponent>
 			);
 		};

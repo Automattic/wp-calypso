@@ -12,14 +12,15 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import AutoDirection from 'components/auto-direction';
-import FormInputValidation from 'components/forms/form-input-validation';
-import Gravatar from 'components/gravatar';
-import { getCurrentUser } from 'state/current-user/selectors';
-import { writeComment, deleteComment, replyComment } from 'state/comments/actions';
-import { recordAction, recordGaEvent, recordTrackForPost } from 'reader/stats';
-import { isCommentableDiscoverPost } from 'blocks/comments/helper';
-import { ProtectFormGuard } from 'lib/protect-form';
+import AutoDirection from 'calypso/components/auto-direction';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormInputValidation from 'calypso/components/forms/form-input-validation';
+import Gravatar from 'calypso/components/gravatar';
+import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { writeComment, deleteComment, replyComment } from 'calypso/state/comments/actions';
+import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
+import { isCommentableDiscoverPost } from 'calypso/blocks/comments/helper';
+import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import PostCommentFormTextarea from './form-textarea';
 
 /**
@@ -191,7 +192,7 @@ class PostCommentForm extends React.Component {
 		return (
 			<form className="comments__form">
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
-				<fieldset>
+				<FormFieldset>
 					<Gravatar user={ this.props.currentUser } />
 					<div className={ expandingAreaClasses }>
 						<pre>
@@ -220,7 +221,7 @@ class PostCommentForm extends React.Component {
 						{ this.props.error ? translate( 'Resend' ) : translate( 'Send' ) }
 					</Button>
 					{ this.renderError() }
-				</fieldset>
+				</FormFieldset>
 			</form>
 		);
 	}

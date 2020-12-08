@@ -11,17 +11,17 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import getMediaLibrarySelectedItems from 'state/selectors/get-media-library-selected-items';
-import { getMimePrefix } from 'lib/media/utils';
+import getMediaLibrarySelectedItems from 'calypso/state/selectors/get-media-library-selected-items';
+import { getMimePrefix } from 'calypso/lib/media/utils';
 import ListItem from './list-item';
 import ListNoResults from './list-no-results';
 import ListNoContent from './list-no-content';
 import ListPlanUpgradeNudge from './list-plan-upgrade-nudge';
-import SortedGrid from 'components/sorted-grid';
-import { withLocalizedMoment } from 'components/localized-moment';
-import { getPreference } from 'state/preferences/selectors';
-import { setMediaLibrarySelectedItems } from 'state/media/actions';
-import isFetchingNextPage from 'state/selectors/is-fetching-next-page';
+import SortedGrid from 'calypso/components/sorted-grid';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { getPreference } from 'calypso/state/preferences/selectors';
+import { setMediaLibrarySelectedItems } from 'calypso/state/media/actions';
+import isFetchingNextPage from 'calypso/state/selectors/is-fetching-next-page';
 
 export class MediaLibraryList extends React.Component {
 	static displayName = 'MediaLibraryList';

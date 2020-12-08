@@ -6,13 +6,13 @@ import { assign, map, partial } from 'lodash';
 /**
  * Internal Dependencies
  */
-import { combineReducers, withoutPersistence } from 'state/utils';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
 import {
 	READER_RELATED_POSTS_RECEIVE,
 	READER_RELATED_POSTS_REQUEST,
 	READER_RELATED_POSTS_REQUEST_SUCCESS,
 	READER_RELATED_POSTS_REQUEST_FAILURE,
-} from 'state/reader/action-types';
+} from 'calypso/state/reader/action-types';
 import { key } from './utils';
 
 export const items = withoutPersistence( ( state = {}, action ) => {

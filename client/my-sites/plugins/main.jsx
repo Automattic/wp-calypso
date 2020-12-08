@@ -6,36 +6,44 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
  */
-import Main from 'components/main';
-import SidebarNavigation from 'my-sites/sidebar-navigation';
-import DocumentHead from 'components/data/document-head';
-import SectionNav from 'components/section-nav';
-import NavTabs from 'components/section-nav/tabs';
-import NavItem from 'components/section-nav/item';
-import Search from 'components/search';
-import urlSearch from 'lib/url-search';
-import EmptyContent from 'components/empty-content';
-import PluginsStore from 'lib/plugins/store';
-import { fetchPluginData as wporgFetchPluginData } from 'state/plugins/wporg/actions';
-import { getPlugin } from 'state/plugins/wporg/selectors';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
+import Main from 'calypso/components/main';
+import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
+import DocumentHead from 'calypso/components/data/document-head';
+import SectionNav from 'calypso/components/section-nav';
+import NavTabs from 'calypso/components/section-nav/tabs';
+import NavItem from 'calypso/components/section-nav/item';
+import Search from 'calypso/components/search';
+import urlSearch from 'calypso/lib/url-search';
+import EmptyContent from 'calypso/components/empty-content';
+import PluginsStore from 'calypso/lib/plugins/store';
+import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
+import { getAllPlugins as getAllWporgPlugins } from 'calypso/state/plugins/wporg/selectors';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginsList from './plugins-list';
-import { recordGoogleEvent, recordTracksEvent } from 'state/analytics/actions';
+import { recordGoogleEvent, recordTracksEvent } from 'calypso/state/analytics/actions';
 import PluginsBrowser from './plugins-browser';
 import NoPermissionsError from './no-permissions-error';
-import canCurrentUser from 'state/selectors/can-current-user';
-import canCurrentUserManagePlugins from 'state/selectors/can-current-user-manage-plugins';
-import getSelectedOrAllSitesWithPlugins from 'state/selectors/get-selected-or-all-sites-with-plugins';
-import hasJetpackSites from 'state/selectors/has-jetpack-sites';
-import { canJetpackSiteUpdateFiles, isJetpackSite, isRequestingSites } from 'state/sites/selectors';
-import { getSelectedSite, getSelectedSiteId, getSelectedSiteSlug } from 'state/ui/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import canCurrentUserManagePlugins from 'calypso/state/selectors/can-current-user-manage-plugins';
+import getSelectedOrAllSitesWithPlugins from 'calypso/state/selectors/get-selected-or-all-sites-with-plugins';
+import hasJetpackSites from 'calypso/state/selectors/has-jetpack-sites';
+import {
+	canJetpackSiteUpdateFiles,
+	isJetpackSite,
+	isRequestingSites,
+} from 'calypso/state/sites/selectors';
+import {
+	getSelectedSite,
+	getSelectedSiteId,
+	getSelectedSiteSlug,
+} from 'calypso/state/ui/selectors';
 import { Button } from '@automattic/components';
-import { isEnabled } from 'config';
+import { isEnabled } from 'calypso/config';
 
 /**
  * Style dependencies
@@ -99,7 +107,7 @@ export class PluginsMain extends Component {
 	// plugins for Jetpack sites require additional data from the wporg-data store
 	addWporgDataToPlugins( plugins ) {
 		return plugins.map( ( plugin ) => {
-			const pluginData = getPlugin( this.props.wporgPlugins, plugin.slug );
+			const pluginData = this.props.wporgPlugins?.[ plugin.slug ];
 			if ( ! pluginData ) {
 				this.props.wporgFetchPluginData( plugin.slug );
 			}
@@ -108,8 +116,8 @@ export class PluginsMain extends Component {
 	}
 
 	getPluginsState( nextProps ) {
-		const sites = this.props.sites,
-			pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
+		const sites = this.props.sites;
+		const pluginUpdate = PluginsStore.getPlugins( sites, 'updates' );
 		return {
 			plugins: this.getPluginsFromStore( nextProps, sites ),
 			pluginUpdateCount: pluginUpdate && pluginUpdate.length,
@@ -189,8 +197,8 @@ export class PluginsMain extends Component {
 
 	getEmptyContentUpdateData() {
 		const { translate } = this.props;
-		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' },
-			{ selectedSite } = this.props;
+		const emptyContentData = { illustration: '/calypso/images/illustrations/illustration-ok.svg' };
+		const { selectedSite } = this.props;
 
 		if ( selectedSite ) {
 			emptyContentData.title = translate(
@@ -486,7 +494,7 @@ export default flow(
 				canJetpackSiteUpdateFiles: ( siteId ) => canJetpackSiteUpdateFiles( state, siteId ),
 				isJetpackSite: ( siteId ) => isJetpackSite( state, siteId ),
 				/* eslint-enable wpcalypso/redux-no-bound-selectors */
-				wporgPlugins: state.plugins.wporg.items,
+				wporgPlugins: getAllWporgPlugins( state ),
 				isRequestingSites: isRequestingSites( state ),
 				userCanManagePlugins: selectedSiteId
 					? canCurrentUser( state, selectedSiteId, 'manage_options' )

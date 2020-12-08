@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { MEMBERSHIPS_EARNINGS_GET } from 'state/action-types';
+import { MEMBERSHIPS_EARNINGS_GET } from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/memberships';
-import 'state/memberships/init';
+import 'calypso/state/data-layer/wpcom/sites/memberships';
+import 'calypso/state/memberships/init';
 
 export const requestEarnings = ( siteId ) => ( {
 	siteId,

@@ -18,10 +18,12 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import LinkDialog from './dialog';
-import { renderWithReduxStore } from 'lib/react-helpers';
+import { renderWithReduxStore } from 'calypso/lib/react-helpers';
 
 function wpLink( editor ) {
-	let node, toolbar, firstLoadComplete;
+	let node;
+	let toolbar;
+	let firstLoadComplete;
 
 	function render( visible = true ) {
 		renderWithReduxStore(
@@ -123,7 +125,8 @@ function wpLink( editor ) {
 				);
 			},
 			setURL: function ( url ) {
-				let index, lastIndex;
+				let index;
+				let lastIndex;
 
 				if ( this.url !== url ) {
 					this.url = url;

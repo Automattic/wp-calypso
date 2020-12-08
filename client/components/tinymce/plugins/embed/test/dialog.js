@@ -11,7 +11,7 @@ import { spy } from 'sinon';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormTextInput from 'components/forms/form-text-input';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 const testSiteId = 5089392;
 
@@ -126,7 +126,8 @@ describe( 'EmbedDialog', () => {
 	} );
 
 	describe( 'EmbedDialog parseEmbedEndpointResult', () => {
-		let wrapper, instance;
+		let wrapper;
+		let instance;
 		const url = 'https://www.youtube.com/watch?v=JkOIhs2mHpc';
 
 		beforeEach( () => {

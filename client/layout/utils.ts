@@ -1,16 +1,132 @@
-const WEEK_IN_MS = 7 * 24 * 60 * 60 * 1000;
+const HOUR_IN_MS = 60 * 60 * 1000;
 
 /**
- * Returns false if the site is unlaunched or is younger than 1 week
+ * Returns false if the site is unlaunched or is younger than 1 hour
  *
  * @param site the site object
  */
 export function getShouldShowAppBanner( site: any ): boolean {
 	if ( site && site.options ) {
-		const olderThanAWeek = Date.now() - new Date( site.options.created_at ).getTime() > WEEK_IN_MS;
+		const olderThanAnHour = Date.now() - new Date( site.options.created_at ).getTime() > HOUR_IN_MS;
 		const isLaunched = site.launch_status !== 'unlaunched';
 
-		return olderThanAWeek && isLaunched;
+		return olderThanAnHour && isLaunched;
 	}
-	return false;
+	return true;
 }
+
+let lastScrollPosition = 0; // Used for calculating scroll direction.
+let sidebarTop = 0; // Current sidebar top position.
+let pinnedSidebarTop = true;
+let pinnedSidebarBottom = false;
+let ticking = false; // Used for Scroll event throttling.
+
+export const handleScroll = ( event: React.UIEvent< HTMLElement > ): void => {
+	// Do not run until next requestAnimationFrame
+	if ( ticking ) {
+		return;
+	}
+	const secondaryEl = document.getElementById( 'secondary' );
+	const windowHeight = window?.innerHeight;
+	const secondaryElHeight = secondaryEl?.scrollHeight;
+	const masterbarHeight = document.getElementById( 'header' )?.getBoundingClientRect().height;
+
+	if (
+		typeof window !== undefined &&
+		secondaryEl !== undefined &&
+		secondaryEl !== null &&
+		secondaryElHeight !== undefined &&
+		masterbarHeight !== undefined &&
+		window.innerWidth > 660 && // Do not run when sidebar is fullscreen
+		( secondaryElHeight + masterbarHeight > windowHeight || 'resize' === event.type ) // Only run when sidebar & masterbar are taller than window height OR we have a resize event
+	) {
+		// Throttle scroll event
+		window.requestAnimationFrame( function () {
+			const maxScroll = secondaryElHeight + masterbarHeight - windowHeight; // Max sidebar inner scroll.
+			const scrollY = -document.body.getBoundingClientRect().top; // Get current scroll position.
+
+			// Check for overscrolling, this happens when swiping up at the top of the document in modern browsers.
+			if ( scrollY < 0 ) {
+				// Stick the sidebar to the top.
+				if ( ! pinnedSidebarTop ) {
+					pinnedSidebarTop = true;
+					pinnedSidebarBottom = false;
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = '0';
+					secondaryEl.style.bottom = '0';
+				}
+
+				ticking = false;
+				return;
+			} else if ( scrollY + windowHeight > document.body.scrollHeight - 1 ) {
+				// When overscrolling at the bottom, stick the sidebar to the bottom.
+				if ( ! pinnedSidebarBottom ) {
+					pinnedSidebarBottom = true;
+					pinnedSidebarTop = false;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = 'inherit';
+					secondaryEl.style.bottom = '0';
+				}
+
+				ticking = false;
+				return;
+			}
+
+			if ( scrollY >= lastScrollPosition ) {
+				// When a down scroll has been detected.
+
+				if ( pinnedSidebarTop ) {
+					pinnedSidebarTop = false;
+					sidebarTop = masterbarHeight;
+
+					if ( scrollY > maxScroll ) {
+						//In case we have already passed the available scroll of the sidebar, add the current scroll
+						sidebarTop += scrollY;
+					}
+
+					secondaryEl.style.position = 'absolute';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				} else if (
+					! pinnedSidebarBottom &&
+					scrollY + masterbarHeight > maxScroll + secondaryEl.offsetTop
+				) {
+					// Pin it to the bottom.
+					pinnedSidebarBottom = true;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = 'inherit';
+					secondaryEl.style.bottom = '0';
+				}
+			} else if ( scrollY < lastScrollPosition ) {
+				// When a scroll up is detected.
+
+				// If it was pinned to the bottom, unpin and calculate relative scroll.
+				if ( pinnedSidebarBottom ) {
+					pinnedSidebarBottom = false;
+
+					// Calculate new offset position.
+					sidebarTop = scrollY + masterbarHeight - maxScroll;
+
+					secondaryEl.style.position = 'absolute';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				} else if ( ! pinnedSidebarTop && scrollY + masterbarHeight < sidebarTop ) {
+					// Pin it to the top.
+					pinnedSidebarTop = true;
+					sidebarTop = masterbarHeight;
+
+					secondaryEl.style.position = 'fixed';
+					secondaryEl.style.top = `${ sidebarTop }px`;
+					secondaryEl.style.bottom = 'inherit';
+				}
+			}
+
+			lastScrollPosition = scrollY;
+
+			ticking = false;
+		} );
+		ticking = true;
+	}
+};

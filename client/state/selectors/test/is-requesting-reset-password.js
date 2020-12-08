@@ -7,7 +7,7 @@ import deepFreeze from 'deep-freeze';
 /**
  * Internal dependencies
  */
-import isRequestingResetPassword from 'state/selectors/is-requesting-reset-password';
+import isRequestingResetPassword from 'calypso/state/selectors/is-requesting-reset-password';
 
 describe( 'isRequestingResetPassword()', () => {
 	test( 'should return isRequesting field under resetPassword state tree.', () => {

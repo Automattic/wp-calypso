@@ -10,8 +10,8 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { setLayoutFocus } from 'state/ui/layout-focus/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies

@@ -150,6 +150,7 @@ function I18N() {
 		tannin: undefined,
 		locale: undefined,
 		localeSlug: undefined,
+		localeVariant: undefined,
 		textDirection: undefined,
 		translations: LRU( { max: 100 } ),
 	};
@@ -270,6 +271,7 @@ I18N.prototype.setLocale = function ( localeData ) {
 	}
 
 	this.state.localeSlug = this.state.locale[ '' ].localeSlug;
+	this.state.localeVariant = this.state.locale[ '' ].localeVariant;
 
 	// extract the `textDirection` info (LTR or RTL) from either:
 	// - the translation for the special string "ltr" (standard in Core, not present in Calypso)
@@ -310,9 +312,19 @@ I18N.prototype.getLocale = function () {
  * Get the current locale slug.
  *
  * @returns {string} The string representing the currently loaded locale
- **/
+ */
 I18N.prototype.getLocaleSlug = function () {
 	return this.state.localeSlug;
+};
+
+/**
+ * Get the current locale variant. That's set for some special locales that don't have a
+ * standard ISO code, like `de_formal` or `sr_latin`.
+ *
+ * @returns {string|undefined} The string representing the currently loaded locale's variant
+ */
+I18N.prototype.getLocaleVariant = function () {
+	return this.state.localeVariant;
 };
 
 /**

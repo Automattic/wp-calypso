@@ -75,6 +75,9 @@
 	.status-error {
 		@include domain_status_color( var( --color-error ) );
 	}
+	.status-premium {
+		@include domain_status_color( var( --color-premium-domain ) );
+	}
 
 	.domain-status__card {
 		h2 {
@@ -137,6 +140,10 @@
 			> svg {
 				margin-right: 5px;
 			}
+
+			.badge {
+				margin-right: 5px;
+			}
 		}
 
 		.mapped-domain-type__name-server-list {
@@ -146,7 +153,6 @@
 		.mapped-domain-type__small-message {
 			font-size: $font-body-small;
 		}
-
 
 		> div {
 			margin-bottom: 1.5em;
@@ -198,7 +204,8 @@
 		margin-top: 0;
 	}
 
-	.domain-types__auto-renew-placeholder, .domain-types__expires-placeholder {
+	.domain-types__auto-renew-placeholder,
+	.domain-types__expires-placeholder {
 		width: 20%;
 		p {
 			@include placeholder( --color-neutral-5 );

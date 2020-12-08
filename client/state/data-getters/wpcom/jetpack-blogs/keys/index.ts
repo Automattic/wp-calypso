@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { empty, getHttpData, requestHttpData } from 'state/data-layer/http-data';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { SiteId } from 'types';
+import { empty, getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { SiteId } from 'calypso/types';
 
 export const dataKey = ( siteId: number ) => `wpcom__jetpack-blogs__keys:${ siteId }`;
 
@@ -14,10 +14,7 @@ interface ResponseData {
 	};
 }
 
-export function requestPluginKeys(
-	siteId: SiteId,
-	options: Parameters< typeof requestHttpData >[ 2 ] = {}
-) {
+export function requestPluginKeys( siteId: SiteId ) {
 	requestHttpData(
 		dataKey( siteId ),
 		http( {
@@ -26,10 +23,8 @@ export function requestPluginKeys(
 			apiVersion: '1.1',
 		} ),
 		{
-			// Defaults
 			fromApi: () => ( data: ResponseData ) => [ [ dataKey( siteId ), data.keys ] ],
-			// Allow overwrite
-			...options,
+			freshness: -Infinity,
 		}
 	);
 }

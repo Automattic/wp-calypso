@@ -9,8 +9,8 @@ import { useTranslate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Button } from '@automattic/components';
-import { toggleCartOnMobile } from 'state/ui/checkout/actions';
-import { isShowingCartOnMobile } from 'state/ui/checkout/selectors';
+import { toggleCartOnMobile } from 'calypso/state/ui/checkout/actions';
+import { isShowingCartOnMobile } from 'calypso/state/ui/checkout/selectors';
 
 function CartToggle( props ) {
 	const translate = useTranslate();

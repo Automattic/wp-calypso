@@ -12,7 +12,7 @@ import { noop } from 'lodash';
  * Internal Dependencies
  */
 import { Card, CompactCard, ScreenReaderText } from '@automattic/components';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies

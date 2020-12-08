@@ -6,13 +6,19 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { identity } from 'lodash';
 import { localize } from 'i18n-calypso';
-import { localizeUrl } from 'lib/i18n-utils';
+
+/**
+ * Internal dependencies
+ */
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 class SharingServiceDescription extends Component {
 	static propTypes = {
 		descriptions: PropTypes.object,
 		numberOfConnections: PropTypes.number,
 		translate: PropTypes.func,
+		moment: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -173,6 +179,26 @@ class SharingServiceDescription extends Component {
 				args: { service: this.props.service.label },
 				context: 'Sharing: Publicize',
 			} );
+		} else if ( 'refresh-failed' === this.props.status ) {
+			const nowInSeconds = Math.floor( Date.now() / 1000 );
+			if ( this.props.expires && this.props.expires > nowInSeconds ) {
+				description = this.props.translate(
+					'Please reconnect to %(service)s before your connection expires on %(expiryDate)s.',
+					{
+						args: {
+							service: this.props.service.label,
+							expiryDate: this.props.moment( this.props.expires * 1000 ).format( 'll' ),
+						},
+					}
+				);
+			} else {
+				description = this.props.translate(
+					'Your connection has expired. Please reconnect to %(service)s.',
+					{
+						args: { service: this.props.service.label },
+					}
+				);
+			}
 		} else if (
 			'function' === typeof this.props.descriptions[ this.props.service.ID.replace( /-/g, '_' ) ]
 		) {
@@ -191,4 +217,4 @@ class SharingServiceDescription extends Component {
 	}
 }
 
-export default localize( SharingServiceDescription );
+export default localize( withLocalizedMoment( SharingServiceDescription ) );

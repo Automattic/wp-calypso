@@ -13,9 +13,14 @@ import * as driverHelper from '../driver-helper.js';
 const searchInputSelectors = By.css(
 	'.inline-help__search input[type="search"], .help-search__search input[type="search"]'
 );
-const searchResultsSelectors = By.css(
-	'.inline-help__results-list .inline-help__results-item, .help-search__results-list .help-search__results-item'
+// A little confusing, but this is specific to the default results and _not_ including the errored results (which are the same results).
+// We're checking for the aria-label is set correctly and that the title for the error section is not present.
+const defaultResultsSelectors = By.css(
+	'[aria-label="Helpful resources for this section"] ul:not([aria-labelledby="inline-search--contextual_help"]) li'
 );
+const searchResultsSelectors = By.css( '[aria-labelledby="inline-search--api_help"] li' );
+const adminSearchResultsSelectors = By.css( '[aria-labelledby="inline-search--admin_section"] li' );
+const errorResultsSelectors = By.css( '[aria-labelledby="inline-search--contextual_help"] li' );
 
 class SupportSearchComponent extends AsyncBaseContainer {
 	constructor( driver ) {
@@ -42,6 +47,32 @@ class SupportSearchComponent extends AsyncBaseContainer {
 		);
 	}
 
+	async getDefaultResults() {
+		return await this.driver.findElements( defaultResultsSelectors );
+	}
+
+	async getDefaultResultsCount() {
+		const results = await this.getDefaultResults();
+		return results.length;
+	}
+
+	async waitForDefaultResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, defaultResultsSelectors );
+	}
+
+	async getErrorResults() {
+		return await this.driver.findElements( errorResultsSelectors );
+	}
+
+	async getErrorResultsCount() {
+		const results = await this.getErrorResults();
+		return results.length;
+	}
+
+	async waitForErrorResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, errorResultsSelectors );
+	}
+
 	async getSearchResults() {
 		return await this.driver.findElements( searchResultsSelectors );
 	}
@@ -49,6 +80,23 @@ class SupportSearchComponent extends AsyncBaseContainer {
 	async getSearchResultsCount() {
 		const results = await this.getSearchResults();
 		return results.length;
+	}
+
+	async waitForSearchResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, searchResultsSelectors );
+	}
+
+	async getAdminSearchResults() {
+		return await this.driver.findElements( adminSearchResultsSelectors );
+	}
+
+	async getAdminSearchResultsCount() {
+		const results = await this.getAdminSearchResults();
+		return results.length;
+	}
+
+	async waitForAdminResultsNotToBePresent() {
+		return driverHelper.waitTillNotPresent( this.driver, adminSearchResultsSelectors );
 	}
 
 	async searchFor( query = '' ) {

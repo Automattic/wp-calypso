@@ -8,7 +8,7 @@ import { omit } from 'lodash';
 /**
  * Internal dependencies
  */
-import FormCheckbox from 'components/forms/form-checkbox';
+import FormCheckbox from 'calypso/components/forms/form-checkbox';
 import FormField from './form-field';
 
 const CheckboxField = ( props ) => {

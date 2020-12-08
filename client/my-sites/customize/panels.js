@@ -13,6 +13,7 @@ export const PANEL_MAPPINGS = {
 	amp: [ 'section', 'amp_design' ],
 	menus: [ 'panel', 'nav_menus' ],
 	homepage: [ 'section', 'static_front_page' ],
+	jetpack_search: [ 'section', 'jetpack_search' ],
 };
 
 /**

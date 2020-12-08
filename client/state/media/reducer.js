@@ -25,11 +25,11 @@ import {
 	MEDIA_SET_QUERY,
 	MEDIA_CLEAR_SITE,
 	MEDIA_ITEM_EDIT,
-} from 'state/action-types';
-import { combineReducers, withoutPersistence } from 'state/utils';
-import MediaQueryManager from 'lib/query-manager/media';
-import { ValidationErrors as MediaValidationErrors } from 'lib/media/constants';
-import { transformSite as transformSiteTransientItems } from 'state/media/utils/transientItems';
+} from 'calypso/state/action-types';
+import { combineReducers, withoutPersistence } from 'calypso/state/utils';
+import MediaQueryManager from 'calypso/lib/query-manager/media';
+import { ValidationErrors as MediaValidationErrors } from 'calypso/lib/media/constants';
+import { transformSite as transformSiteTransientItems } from 'calypso/state/media/utils/transientItems';
 
 const isExternalMediaError = ( message ) =>
 	message.error && ( message.error === 'servicefail' || message.error === 'keyring_token_error' );

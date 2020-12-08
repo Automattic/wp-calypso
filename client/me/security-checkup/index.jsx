@@ -8,13 +8,13 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import DocumentHead from 'components/data/document-head';
-import FormattedHeader from 'components/formatted-header';
-import Main from 'components/main';
-import MeSidebarNavigation from 'me/sidebar-navigation';
-import PageViewTracker from 'lib/analytics/page-view-tracker';
-import ReauthRequired from 'me/reauth-required';
-import SectionHeader from 'components/section-header';
+import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
+import Main from 'calypso/components/main';
+import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
+import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import ReauthRequired from 'calypso/me/reauth-required';
+import SectionHeader from 'calypso/components/section-header';
 import SecurityCheckupAccountEmail from './account-email';
 import SecurityCheckupAccountRecoveryEmail from './account-recovery-email';
 import SecurityCheckupAccountRecoveryPhone from './account-recovery-phone';
@@ -23,8 +23,8 @@ import SecurityCheckupPassword from './password';
 import SecurityCheckupSocialLogins from './social-logins';
 import SecurityCheckupTwoFactorAuthentication from './two-factor-authentication';
 import SecurityCheckupTwoFactorBackupCodes from './two-factor-backup-codes';
-import twoStepAuthorization from 'lib/two-step-authorization';
-import VerticalNav from 'components/vertical-nav';
+import twoStepAuthorization from 'calypso/lib/two-step-authorization';
+import VerticalNav from 'calypso/components/vertical-nav';
 
 /**
  * Style dependencies
@@ -42,14 +42,14 @@ class SecurityCheckupComponent extends React.Component {
 		const { path, translate } = this.props;
 
 		return (
-			<Main className="security security-checkup">
+			<Main className="security security-checkup is-wide-layout">
 				<PageViewTracker path={ path } title="Me > Security Checkup" />
 				<ReauthRequired twoStepAuthorization={ twoStepAuthorization } />
 				<MeSidebarNavigation />
 
 				<DocumentHead title={ translate( 'Security' ) } />
 
-				<FormattedHeader headerText={ translate( 'Security' ) } align="left" />
+				<FormattedHeader brandFont headerText={ translate( 'Security' ) } align="left" />
 
 				<SectionHeader label={ translate( 'Security Checklist' ) } />
 

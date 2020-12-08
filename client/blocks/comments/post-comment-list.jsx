@@ -17,19 +17,23 @@ import {
 	getActiveReplyCommentId,
 	getCommentById,
 	getPostCommentsTree,
-} from 'state/comments/selectors';
-import { requestPostComments, requestComment, setActiveReply } from 'state/comments/actions';
-import { NUMBER_OF_COMMENTS_PER_FETCH } from 'state/comments/constants';
-import { recordAction, recordGaEvent, recordTrack } from 'reader/stats';
+} from 'calypso/state/comments/selectors';
+import {
+	requestPostComments,
+	requestComment,
+	setActiveReply,
+} from 'calypso/state/comments/actions';
+import { NUMBER_OF_COMMENTS_PER_FETCH } from 'calypso/state/comments/constants';
+import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
 import PostComment from './post-comment';
 import PostCommentFormRoot from './form-root';
 import CommentCount from './comment-count';
-import SegmentedControl from 'components/segmented-control';
-import Gridicon from 'components/gridicon';
-import ConversationFollowButton from 'blocks/conversation-follow-button';
-import { shouldShowConversationFollowButton } from 'blocks/conversation-follow-button/helper';
-import { getCurrentUserId } from 'state/current-user/selectors';
-import canCurrentUser from 'state/selectors/can-current-user';
+import SegmentedControl from 'calypso/components/segmented-control';
+import Gridicon from 'calypso/components/gridicon';
+import ConversationFollowButton from 'calypso/blocks/conversation-follow-button';
+import { shouldShowConversationFollowButton } from 'calypso/blocks/conversation-follow-button/helper';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import canCurrentUser from 'calypso/state/selectors/can-current-user';
 
 /**
  * Style dependencies
@@ -78,9 +82,11 @@ class PostCommentList extends React.Component {
 		commentsTree: PropTypes.object,
 		requestPostComments: PropTypes.func.isRequired,
 		requestComment: PropTypes.func.isRequired,
+		shouldHighlightNew: PropTypes.bool,
 	};
 
 	static defaultProps = {
+		shouldHighlightNew: false,
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
@@ -224,6 +230,7 @@ class PostCommentList extends React.Component {
 				depth={ 0 }
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
+				shouldHighlightNew={ this.props.shouldHighlightNew }
 			/>
 		);
 	};
@@ -400,9 +407,10 @@ class PostCommentList extends React.Component {
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
-			size( commentsTree.children ) > amountOfCommentsToTake ||
-			haveEarlierCommentsToFetch ||
-			haveLaterCommentsToFetch;
+			( size( commentsTree.children ) > amountOfCommentsToTake ||
+				haveEarlierCommentsToFetch ||
+				haveLaterCommentsToFetch ) &&
+			displayedCommentsCount > 0;
 
 		// If we're not yet fetched all comments from server, we can only rely on server's count.
 		// once we got all the comments tree, we can calculate the count of reachable comments

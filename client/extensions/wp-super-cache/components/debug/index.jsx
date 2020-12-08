@@ -11,14 +11,14 @@ import moment from 'moment';
  * Internal dependencies
  */
 import { Button, Card } from '@automattic/components';
-import ClipboardButtonInput from 'components/clipboard-button-input';
-import FormButton from 'components/forms/form-button';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormSettingExplanation from 'components/forms/form-setting-explanation';
-import FormTextInput from 'components/forms/form-text-input';
-import FormToggle from 'components/forms/form-toggle/compact';
-import SectionHeader from 'components/section-header';
+import ClipboardButtonInput from 'calypso/components/clipboard-button-input';
+import FormButton from 'calypso/components/forms/form-button';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
+import FormTextInput from 'calypso/components/forms/form-text-input';
+import FormToggle from 'calypso/components/forms/form-toggle';
+import SectionHeader from 'calypso/components/section-header';
 import WrapSettingsForm from '../wrap-settings-form';
 
 class DebugTab extends Component {

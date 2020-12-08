@@ -1,5 +1,4 @@
-Form Text Input
-===============
+# Form Text Input
 
 `<FormTextInput />` is a React component suited for rendering an `<input />` field enhanced with Calypso-specific styling and validity indicators.
 
@@ -9,7 +8,7 @@ Render as you would an `<input />` element. Any props passed not included in the
 
 ```jsx
 export default function MyForm() {
-	return <FormTextInput isValid initialValue="Hello World!" />;	
+	return <FormTextInput isValid initialValue="Hello World!" />;
 }
 ```
 

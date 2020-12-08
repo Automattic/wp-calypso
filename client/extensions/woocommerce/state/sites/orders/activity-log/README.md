@@ -1,5 +1,4 @@
-Activity Log
-===========
+# Activity Log
 
 This module is used to manage the events that should be displayed in the Activity Log section of an Order page.
 

@@ -10,7 +10,7 @@ import { getLocaleSlug } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { getLanguage } from 'lib/i18n-utils';
+import { getLanguage } from 'calypso/lib/i18n-utils';
 
 class LocaleSuggestionsListItem extends Component {
 	static propTypes = {
@@ -36,8 +36,8 @@ class LocaleSuggestionsListItem extends Component {
 	};
 
 	hasLocaleDirectionChanged( locale ) {
-		const localeData = assign( {}, getLanguage( locale.locale ) ),
-			currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
+		const localeData = assign( {}, getLanguage( locale.locale ) );
+		const currentLocaleData = assign( {}, getLanguage( getLocaleSlug() ) );
 
 		return localeData.rtl !== currentLocaleData.rtl;
 	}

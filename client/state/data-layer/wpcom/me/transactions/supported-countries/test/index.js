@@ -6,8 +6,8 @@ import {
 	updateCountriesTransactions,
 	showCountriesTransactionsLoadingError,
 } from '../';
-import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
+import { COUNTRIES_PAYMENTS_UPDATED, NOTICE_CREATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 
 describe( 'wpcom-api', () => {
 	describe( 'me transactions supported-countries', () => {

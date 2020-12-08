@@ -1,6 +1,32 @@
-input[type='email'].form-text-input,
-input[type='password'].form-text-input,
-input[type='url'].form-text-input,
-input[type='text'].form-text-input { // input[type="text"] is needed to override the default styles
-	-webkit-appearance: none;
+.form-text-input {
+	@at-root {
+		input[type='text']#{&},
+		input[type='url']#{&},
+		input[type='password']#{&},
+		input[type='email']#{&},
+		input[type='tel']#{&},
+		input[type='number']#{&},
+		input[type='search']#{&} {
+			@extend %form-field;
+		}
+
+		input[type='url']#{&},
+		input[type='password']#{&},
+		input[type='email']#{&} {
+			/*!rtl:ignore*/
+			direction: ltr;
+		}
+
+		input[type='url']#{&},
+		input[type='search']#{&} {
+			appearance: none;
+		}
+
+		input[type='search']#{&}::-webkit-search-decoration {
+			// We don't use the native results="" UI
+			// Ensures the input text is flush to the start of the element, as in regular text inputs
+			// See, for example, http://geek.michaelgrace.org/2011/06/webkit-search-input-styling/
+			display: none;
+		}
+	}
 }

@@ -9,7 +9,7 @@ import crypto from 'crypto';
 import { execSync } from 'child_process';
 import cookieParser from 'cookie-parser';
 import debugFactory from 'debug';
-import { endsWith, get, includes, pick, snakeCase, split } from 'lodash';
+import { get, includes, pick, snakeCase, split } from 'lodash';
 import bodyParser from 'body-parser';
 // eslint-disable-next-line no-restricted-imports
 import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
@@ -17,45 +17,47 @@ import superagent from 'superagent'; // Don't have Node.js fetch lib yet.
 /**
  * Internal dependencies
  */
-import config from 'config';
-import sanitize from 'server/sanitize';
-import utils from 'server/bundler/utils';
-import { pathToRegExp } from 'utils';
-import sections from 'sections';
-import isSectionEnabled from 'sections-filter';
-import loginRouter, { LOGIN_SECTION_DEFINITION } from 'login';
-import { serverRouter, getNormalizedPath } from 'server/isomorphic-routing';
+import config from 'calypso/config';
+import sanitize from 'calypso/server/sanitize';
+import utils from 'calypso/server/bundler/utils';
+import { pathToRegExp } from 'calypso/utils';
+import sections from 'calypso/sections';
+import isSectionEnabled from 'calypso/sections-filter';
+import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
+import { serverRouter, getNormalizedPath } from 'calypso/server/isomorphic-routing';
 import {
 	serverRender,
 	renderJsx,
 	attachBuildTimestamp,
 	attachHead,
 	attachI18n,
-} from 'server/render';
-import stateCache from 'server/state-cache';
-import getBootstrappedUser from 'server/user-bootstrap';
-import { createReduxStore } from 'state';
-import { setStore } from 'state/redux-store';
-import initialReducer from 'state/reducer';
-import { DESERIALIZE, LOCALE_SET } from 'state/action-types';
-import { setCurrentUser } from 'state/current-user/actions';
-import { login } from 'lib/paths';
+} from 'calypso/server/render';
+import stateCache from 'calypso/server/state-cache';
+import getBootstrappedUser from 'calypso/server/user-bootstrap';
+import { createReduxStore } from 'calypso/state';
+import { setDocumentHeadLink } from 'calypso/state/document-head/actions';
+import { setStore } from 'calypso/state/redux-store';
+import initialReducer from 'calypso/state/reducer';
+import { DESERIALIZE, LOCALE_SET } from 'calypso/state/action-types';
+import { setCurrentUser } from 'calypso/state/current-user/actions';
+import { login } from 'calypso/lib/paths';
 import { logSectionResponse } from './analytics';
-import analytics from 'server/lib/analytics';
-import { getLanguage, filterLanguageRevisions } from 'lib/i18n-utils';
-import { isWooOAuth2Client } from 'lib/oauth2-clients';
-import { GUTENBOARDING_SECTION_DEFINITION } from 'landing/gutenboarding/section';
-import wooDnaConfig from 'jetpack-connect/woo-dna-config';
+import analytics from 'calypso/server/lib/analytics';
+import { getLanguage, filterLanguageRevisions } from 'calypso/lib/i18n-utils';
+import { isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { GUTENBOARDING_SECTION_DEFINITION } from 'calypso/landing/gutenboarding/section';
+import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 
 import middlewareBuildTarget from '../middleware/build-target.js';
 import middlewareAssets from '../middleware/assets.js';
+import middlewareCache from '../middleware/cache.js';
 
 const debug = debugFactory( 'calypso:pages' );
 
 const SERVER_BASE_PATH = '/public';
 const calypsoEnv = config( 'env_id' );
 
-const staticFiles = [ { path: 'editor.css' }, { path: 'tinymce/skins/wordpress/wp-content.css' } ];
+const staticFiles = [ { path: 'tinymce/skins/wordpress/wp-content.css' } ];
 
 const staticFilesUrls = staticFiles.reduce( ( result, file ) => {
 	if ( ! file.hash ) {
@@ -155,7 +157,7 @@ function getDefaultContext( request, entrypoint = 'entry-main' ) {
 		badge: false,
 		lang,
 		entrypoint: request.getFilesForEntrypoint( entrypoint ),
-		manifest: request.getAssets().manifests.manifest,
+		manifests: request.getAssets().manifests,
 		abTestHelper: !! config.isEnabled( 'dev/test-helper' ),
 		preferencesHelper: !! config.isEnabled( 'dev/preferences-helper' ),
 		devDocsURL: '/devdocs',
@@ -267,7 +269,8 @@ function setUpLoggedOutRoute( req, res, next ) {
 }
 
 function setUpLoggedInRoute( req, res, next ) {
-	let redirectUrl, start;
+	let redirectUrl;
+	let start;
 
 	res.set( {
 		'X-Frame-Options': 'SAMEORIGIN',
@@ -503,8 +506,14 @@ const render404 = ( entrypoint = 'entry-main' ) => ( req, res ) => {
 	 eslint-disable. */
 // eslint-disable-next-line no-unused-vars
 const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next ) => {
-	if ( process.env.NODE_ENV !== 'production' ) {
-		console.error( err );
+	// If the response is not writable it means someone else already rendered a page, do nothing
+	// Hopefully they logged the error as well.
+	if ( res.writableEnded ) return;
+
+	try {
+		req.logger.error( err );
+	} catch ( error ) {
+		console.error( error );
 	}
 
 	const ctx = {
@@ -524,7 +533,7 @@ const renderServerError = ( entrypoint = 'entry-main' ) => ( err, req, res, next
  * @returns {Function|undefined} res.redirect if not logged in
  */
 function handleLocaleSubdomains( req, res, next ) {
-	const langSlug = endsWith( req.hostname, config( 'hostname' ) )
+	const langSlug = req.hostname?.endsWith( config( 'hostname' ) )
 		? split( req.hostname, '.' )[ 0 ]
 		: null;
 
@@ -561,6 +570,7 @@ export default function pages() {
 	app.use( cookieParser() );
 	app.use( middlewareBuildTarget( calypsoEnv ) );
 	app.use( middlewareAssets() );
+	app.use( middlewareCache() );
 	app.use( setupLoggedInContext );
 	app.use( handleLocaleSubdomains );
 
@@ -685,12 +695,14 @@ export default function pages() {
 				req.context.chunkFiles = req.getEmptyAssets();
 			}
 
-			if ( section.secondary && req.context ) {
-				req.context.hasSecondary = true;
-			}
-
 			if ( section.group && req.context ) {
 				req.context.sectionGroup = section.group;
+			}
+
+			if ( Array.isArray( section.links ) ) {
+				section.links.forEach( ( link ) =>
+					req.context.store.dispatch( setDocumentHeadLink( link ) )
+				);
 			}
 
 			next();
@@ -709,7 +721,7 @@ export default function pages() {
 
 			if ( section.isomorphic ) {
 				// section.load() uses require on the server side so we also need to access the
-				// default export of it. See webpack/bundler/sections-loader.js
+				// default export of it. See build-tools/webpack/sections-loader.js
 				// TODO: section initialization is async function since #28301. At the moment when
 				// some isomorphic section really starts doing something async, we should start
 				// awaiting the result here. Will be solved together with server-side dynamic reducers.

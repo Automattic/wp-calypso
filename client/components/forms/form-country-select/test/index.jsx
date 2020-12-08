@@ -9,7 +9,7 @@ import { shallow } from 'enzyme';
 /**
  * Internal dependencies
  */
-import { FormCountrySelect } from 'components/forms/form-country-select';
+import { FormCountrySelect } from 'calypso/components/forms/form-country-select';
 
 describe( 'FormCountrySelect', () => {
 	test( 'should render a select box with a placeholder when the country list provided is empty', () => {

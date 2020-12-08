@@ -7,10 +7,10 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
-import { registerHandlers } from 'state/data-layer/handler-registry';
-import { errorNotice, successNotice } from 'state/notices/actions';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import {
 	DOMAIN_PRIVACY_ENABLE,
 	DOMAIN_PRIVACY_DISABLE,
@@ -24,7 +24,7 @@ import {
 	DOMAIN_CONTACT_INFO_REDACT_SUCCESS,
 	DOMAIN_CONTACT_INFO_REDACT_FAILURE,
 	DOMAIN_CONTACT_INFO_REDACT,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
 const saveDomainPrivacySettings = ( verb ) => ( action ) =>
 	http(

@@ -55,17 +55,19 @@ program
 		}
 
 		// Replace `~` with actual home directory as glob can't use it.
-		const filesGlob = files.replace( /^~/, os.homedir() );
+		const filesGlob = files.trim().replace( /^~/, os.homedir() ).split( /\s/gm );
 		const ignore = program.ignore && program.ignore.split( ',' );
 
 		const { dir, base, output, linesFilter } = program;
 
-		glob.sync( filesGlob, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
-			makePot( filepath, {
-				base,
-				dir,
-			} )
-		);
+		filesGlob.forEach( ( pattern ) => {
+			glob.sync( pattern, { nodir: true, absolute: true, ignore } ).forEach( ( filepath ) =>
+				makePot( filepath, {
+					base,
+					dir,
+				} )
+			);
+		} );
 
 		if ( output && output !== 'false' ) {
 			concatPot( dir, output, linesFilter );

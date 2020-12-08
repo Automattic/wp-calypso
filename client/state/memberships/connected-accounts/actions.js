@@ -7,13 +7,13 @@ import { change } from 'redux-form';
 /**
  * Internal dependencies
  */
-import wpcom from 'lib/wp';
+import wpcom from 'calypso/lib/wp';
 import { listMembershipsConnectedAccounts } from '../actions';
-import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'state/action-types';
+import { MEMBERSHIPS_CONNECTED_ACCOUNTS_STRIPE_AUTHORIZE_REQUEST } from 'calypso/state/action-types';
 
-import 'state/memberships/init';
+import 'calypso/state/memberships/init';
 
-import 'state/form/init';
+import 'calypso/state/form/init';
 
 export function authorizeStripeAccount() {
 	return ( dispatch ) => {

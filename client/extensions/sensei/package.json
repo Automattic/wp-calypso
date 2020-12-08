@@ -13,7 +13,6 @@
 			"/extensions/sensei"
 		],
 		"module": "sensei",
-		"group": "sites",
-		"secondary": true
+		"group": "sites"
 	}
 }

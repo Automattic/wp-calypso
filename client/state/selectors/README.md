@@ -1,5 +1,4 @@
-State Selectors
-===============
+# State Selectors
 
 This folder contains all available state selectors. Each file includes a single default exported function which can be used as a helper in retrieving derived data from the global state tree.
 
@@ -14,5 +13,5 @@ When adding a new selector to this directory, make note of the following details
 To import specific selectors, use the exact path, which leverages the Babel "transform-imports" plugin to transform the import to its individual file:
 
 ```javascript
-import getSite from 'state/selectors/get-site';
+import getSite from 'calypso/state/selectors/get-site';
 ```

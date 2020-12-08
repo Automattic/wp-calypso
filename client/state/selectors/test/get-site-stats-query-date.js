@@ -6,7 +6,7 @@ import { expect } from 'chai';
 /**
  * Internal dependencies
  */
-import { getSiteStatsQueryDate } from 'state/stats/lists/selectors';
+import { getSiteStatsQueryDate } from 'calypso/state/stats/lists/selectors';
 
 describe( 'getSiteStatsQueryDate()', () => {
 	test( 'should return undefined if no request exists', () => {

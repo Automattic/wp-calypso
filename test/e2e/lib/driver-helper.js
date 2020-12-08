@@ -10,6 +10,7 @@ import { forEach } from 'lodash';
  */
 import * as SlackNotifier from './slack-notifier.js';
 import * as dataHelper from './data-helper';
+import * as driverManager from './driver-manager';
 
 const explicitWaitMS = config.get( 'explicitWaitMS' );
 const by = webdriver.By;
@@ -23,8 +24,14 @@ export async function highlightElement( driver, element ) {
 	}
 }
 
-export function clickWhenClickable( driver, selector, waitOverride ) {
+export function clickWhenClickable(
+	driver,
+	selector,
+	waitOverride = null,
+	extraErrorString = null
+) {
 	const timeoutWait = waitOverride ? waitOverride : explicitWaitMS;
+	const extraErrorStringAppend = extraErrorString ? ' ' + extraErrorString : '';
 
 	return driver.wait(
 		function () {
@@ -54,7 +61,7 @@ export function clickWhenClickable( driver, selector, waitOverride ) {
 			);
 		},
 		timeoutWait,
-		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable`
+		`Timed out waiting for element with ${ selector.using } of '${ selector.value }' to be clickable${ extraErrorStringAppend }`
 	);
 }
 
@@ -372,6 +379,18 @@ export function checkForConsoleErrors( driver ) {
 	}
 }
 
+export function printConsole( driver ) {
+	if ( config.get( 'printConsoleLogs' ) === true ) {
+		driver
+			.manage()
+			.logs()
+			.get( 'browser' )
+			.then( ( logs ) => {
+				logs.forEach( ( log ) => console.log( log ) );
+			} );
+	}
+}
+
 export function logPerformance( driver ) {
 	if ( config.get( 'logNetworkRequests' ) === true ) {
 		driver
@@ -422,8 +441,11 @@ export function waitForInfiniteListLoad( driver, elementSelector, { numElements 
 }
 
 export async function switchToWindowByIndex( driver, index ) {
+	const currentScreenSize = driverManager.currentScreenSize();
 	const handles = await driver.getAllWindowHandles();
-	return await driver.switchTo().window( handles[ index ] );
+	await driver.switchTo().window( handles[ index ] );
+	// Resize target window to ensure we stay in the same viewport size:
+	await driverManager.resizeBrowser( driver, currentScreenSize );
 }
 
 export async function numberOfOpenWindows( driver ) {
@@ -506,21 +528,15 @@ export async function scrollIntoView( driver, selector, position = 'center' ) {
 export async function selectElementByText( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
-	return await this.clickWhenClickable( driver, element );
+	return await this.clickWhenClickable( driver, element, null, `while looking for '${ text }'` );
 }
 
 export async function verifyTextPresent( driver, selector, text ) {
 	const element = async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 	return await this.isElementPresent( driver, element );
 }
@@ -528,10 +544,7 @@ export async function verifyTextPresent( driver, selector, text ) {
 export function getElementByText( driver, selector, text ) {
 	return async () => {
 		const allElements = await driver.findElements( selector );
-		return await webdriver.promise.filter(
-			allElements,
-			async ( e ) => ( await e.getText() ) === text
-		);
+		return await webdriver.promise.filter( allElements, getInnerTextMatcherFunction( text ) );
 	};
 }
 
@@ -565,4 +578,17 @@ export async function acceptAlertIfPresent( driver ) {
 
 export async function waitForAlertPresent( driver ) {
 	return await driver.wait( until.alertIsPresent(), this.explicitWaitMS, 'Alert is not present.' );
+}
+
+function getInnerTextMatcherFunction( match ) {
+	return async ( element ) => {
+		const elementText = await element.getText();
+		if ( typeof match === 'string' ) {
+			return elementText === match;
+		}
+		if ( match.test ) {
+			return match.test( elementText );
+		}
+		throw new Error( 'Unknown matcher type; must be a string or a regular expression' );
+	};
 }

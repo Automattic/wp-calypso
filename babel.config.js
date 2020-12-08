@@ -4,7 +4,7 @@ const isBrowser = process.env.BROWSERSLIST_ENV !== 'server';
 
 const babelConfig = {
 	presets: [ '@automattic/calypso-build/babel/default' ],
-	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: isBrowser } ] ],
+	plugins: [ [ '@automattic/transform-wpcalypso-async', { async: true, ignore: ! isBrowser } ] ],
 	env: {
 		production: {
 			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],
@@ -25,7 +25,7 @@ const babelConfig = {
 		},
 		test: {
 			presets: [ [ '@babel/env', { targets: { node: 'current' } } ] ],
-			plugins: [ 'add-module-exports', 'babel-plugin-dynamic-import-node' ],
+			plugins: [ 'babel-plugin-dynamic-import-node' ],
 		},
 	},
 };

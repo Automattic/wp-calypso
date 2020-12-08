@@ -4,11 +4,11 @@
 import {
 	JETPACK_SITE_ALERT_THREAT_FIX,
 	JETPACK_SITE_ALERT_THREAT_IGNORE,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/sites/alerts/fix';
-import 'state/data-layer/wpcom/sites/alerts/ignore';
-import 'state/jetpack/init';
+import 'calypso/state/data-layer/wpcom/sites/alerts/fix';
+import 'calypso/state/data-layer/wpcom/sites/alerts/ignore';
+import 'calypso/state/jetpack/init';
 
 export const fixThreatAlert = ( siteId, threatId ) => ( {
 	type: JETPACK_SITE_ALERT_THREAT_FIX,

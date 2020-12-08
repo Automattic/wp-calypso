@@ -11,15 +11,15 @@ import { connect } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { isEnabled as isConfigEnabled } from 'config';
-import { appStates } from 'state/imports/constants';
+import { isEnabled as isConfigEnabled } from 'calypso/config';
+import { appStates } from 'calypso/state/imports/constants';
 import { Card } from '@automattic/components';
 import ErrorPane from './error-pane';
 import ImporterHeader from './importer-header';
 import ImportingPane from './importing-pane';
 import UploadingPane from './uploading-pane';
-import { startImport } from 'lib/importer/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
+import { startImport } from 'calypso/lib/importer/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 /**
  * Style dependencies
@@ -29,20 +29,20 @@ import './file-importer.scss';
 /**
  * Module variables
  */
-const compactStates = [ appStates.DISABLED, appStates.INACTIVE ],
-	importingStates = [
-		appStates.IMPORT_FAILURE,
-		appStates.IMPORT_SUCCESS,
-		appStates.IMPORTING,
-		appStates.MAP_AUTHORS,
-	],
-	uploadingStates = [
-		appStates.UPLOAD_PROCESSING,
-		appStates.READY_FOR_UPLOAD,
-		appStates.UPLOAD_FAILURE,
-		appStates.UPLOAD_SUCCESS,
-		appStates.UPLOADING,
-	];
+const compactStates = [ appStates.DISABLED, appStates.INACTIVE ];
+const importingStates = [
+	appStates.IMPORT_FAILURE,
+	appStates.IMPORT_SUCCESS,
+	appStates.IMPORTING,
+	appStates.MAP_AUTHORS,
+];
+const uploadingStates = [
+	appStates.UPLOAD_PROCESSING,
+	appStates.READY_FOR_UPLOAD,
+	appStates.UPLOAD_FAILURE,
+	appStates.UPLOAD_SUCCESS,
+	appStates.UPLOADING,
+];
 
 class FileImporter extends React.PureComponent {
 	static propTypes = {

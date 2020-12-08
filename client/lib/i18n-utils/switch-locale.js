@@ -8,9 +8,9 @@ import { forEach, includes } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { isDefaultLocale, getLanguage } from './utils';
-import { getUrlFromParts, getUrlParts } from 'lib/url/url-parts';
+import { getUrlFromParts, getUrlParts } from 'calypso/lib/url/url-parts';
 
 const debug = debugFactory( 'calypso:i18n' );
 
@@ -189,7 +189,7 @@ export function getLanguageManifestFile( localeSlug, targetBuild = 'evergreen' )
  * @param {string} options.chunkId A chunk id. e.g. chunk-abc.min
  * @param {string} options.localeSlug A locale slug. e.g. fr, jp, zh-tw
  * @param {string} options.fileType The desired file type, js or json. Default to json.
- * @param {string} options.buildTarget The build target. e.g. fallback, evergreen, etc.
+ * @param {string} options.targetBuild The build target. e.g. fallback, evergreen, etc.
  * @param {string} options.hash Build hash string that will be used as cache buster.
  *
  * @returns {string} A translation chunk file URL.
@@ -244,8 +244,76 @@ export function getTranslationChunkFile( chunkId, localeSlug, targetBuild = 'eve
 	return getFile( url );
 }
 
+/**
+ * Get the ids of all loaded chunks via either script tag on the page
+ * or loaded asynchronously with dynamic imports.
+ *
+ * @returns {Array} Chunk ids
+ */
+function getInstalledChunks() {
+	const installedChunksFromContext = window.installedChunks ?? [];
+	const installedChunksAsync = window?.__requireChunkCallback__?.getInstalledChunks?.() ?? [];
+	const installedChunksSet = new Set(
+		[].concat( installedChunksFromContext, installedChunksAsync )
+	);
+
+	return Array.from( installedChunksSet );
+}
+
+/**
+ * Used to keep the reference to the require chunk translations handler.
+ */
+let lastRequireChunkTranslationsHandler = null;
+
+/**
+ * Adds require chunk handler for fetching translations.
+ *
+ * @param {string} localeSlug A locale slug. e.g. fr, jp, zh-tw
+ * @param {string} targetBuild The build target. e.g. fallback, evergreen, etc.
+ * @param {Object} options Handler additional options
+ * @param {Array}  options.translatedChunks Array of chunk ids that have available translation for the given locale
+ * @param {Object} options.userTranslations User translations data that will override chunk translations
+ */
+function addRequireChunkTranslationsHandler(
+	localeSlug = i18n.getLocaleSlug(),
+	targetBuild = 'evergreen',
+	options = {}
+) {
+	const { translatedChunks = [], userTranslations = {} } = options;
+	const loadedTranslationChunks = {};
+
+	const handler = ( { scriptSrc, publicPath }, promises ) => {
+		const chunkId = scriptSrc.replace( publicPath, '' ).replace( /\.js$/, '' );
+
+		if ( ! translatedChunks.includes( chunkId ) || loadedTranslationChunks[ chunkId ] ) {
+			return;
+		}
+
+		const translationChunkPromise = getTranslationChunkFile(
+			chunkId,
+			localeSlug,
+			targetBuild
+		).then( ( translations ) => {
+			i18n.addTranslations( { ...translations, ...userTranslations } );
+			loadedTranslationChunks[ chunkId ] = true;
+		} );
+
+		promises.push( translationChunkPromise );
+	};
+
+	window?.__requireChunkCallback__?.add?.( handler );
+	lastRequireChunkTranslationsHandler = handler;
+}
+
+/**
+ * Removes require chunk translations handler.
+ */
+function removeRequireChunkTranslationsHandler() {
+	window?.__requireChunkCallback__?.remove?.( lastRequireChunkTranslationsHandler );
+}
+
 let lastRequestedLocale = null;
-export default function switchLocale( localeSlug ) {
+export default async function switchLocale( localeSlug ) {
 	// check if the language exists in config.languages
 	const language = getLanguage( localeSlug );
 
@@ -276,42 +344,51 @@ export default function switchLocale( localeSlug ) {
 			return;
 		}
 
-		// Switching locale with translation chunks will require to fetch
-		// the manifest and all installed translation chunks for
-		// the requested locale
-		getLanguageManifestFile( localeSlug, window.BUILD_TARGET )
-			.then( ( { translatedChunks, locale } = {} ) => {
-				if ( ! locale ) {
-					return;
-				}
+		// Switching the locale requires fetching the translation chunks
+		// locale data, which consists of the locale manifest data and
+		// translations for currently installed chunks.
+		try {
+			const { translatedChunks, locale } =
+				( await getLanguageManifestFile( localeSlug, window?.BUILD_TARGET ) ) ?? {};
 
-				const installedChunks = new Set(
-					( window.installedChunks || [] )
-						.concat( window.__requireChunkCallback__.getInstalledChunks() )
-						.filter( ( chunkId ) => translatedChunks.includes( chunkId ) )
-				);
-				const chunksPromises = [ ...installedChunks ].map( ( chunkId ) =>
-					getTranslationChunkFile( chunkId, localeSlug, window.BUILD_TARGET )
-				);
+			if ( ! locale || ! translatedChunks ) {
+				return;
+			}
 
-				return Promise.all( [ Promise.resolve( locale ), ...chunksPromises ] );
-			} )
-			.then( ( localeArray ) => {
-				if ( ! localeArray ) {
-					return;
-				}
+			i18n.setLocale( locale );
+			setLocaleInDOM();
+			addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, { translatedChunks } );
 
-				const body = localeArray.reduce( ( acc, item ) => ( { ...acc, ...item } ), {} );
+			const translatedInstalledChunks = getInstalledChunks().filter( ( chunkId ) =>
+				translatedChunks.includes( chunkId )
+			);
 
-				i18n.setLocale( body );
-				setLocaleInDOM();
-				loadUserUndeployedTranslations( localeSlug );
-			} )
-			.catch( () => {
-				debug(
-					`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
-				);
-			} );
+			// Load individual translation chunks
+			translatedInstalledChunks.forEach( ( chunkId ) =>
+				getTranslationChunkFile( chunkId, localeSlug, window?.BUILD_TARGET )
+					.then( ( translations ) => i18n.addTranslations( translations ) )
+					.catch( ( error ) => {
+						debug( `Encountered an error loading translation chunk ${ chunkId }.` );
+						debug( error );
+					} )
+			);
+
+			const userTranslations = await loadUserUndeployedTranslations( localeSlug );
+
+			// Re-attach require chunk translations handler if user translations are available
+			if ( userTranslations ) {
+				removeRequireChunkTranslationsHandler();
+				addRequireChunkTranslationsHandler( localeSlug, window?.BUILD_TARGET, {
+					translatedChunks,
+					userTranslations,
+				} );
+			}
+		} catch ( error ) {
+			debug(
+				`Encountered an error loading language manifest and/or translation chunks for ${ localeSlug }. Falling back to English.`
+			);
+			debug( error );
+		}
 	} else {
 		getLanguageFile( localeSlug ).then(
 			// Success.

@@ -9,12 +9,12 @@ import { localize } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import EmptyContent from 'components/empty-content';
+import EmptyContent from 'calypso/components/empty-content';
 import HelpButton from './help-button';
 import JetpackConnectHappychatButton from './happychat-button';
-import LoggedOutFormLinks from 'components/logged-out-form/links';
-import Main from 'components/main';
-import { recordTracksEvent } from 'state/analytics/actions';
+import LoggedOutFormLinks from 'calypso/components/logged-out-form/links';
+import Main from 'calypso/components/main';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 class NoDirectAccessError extends PureComponent {
 	static propTypes = {

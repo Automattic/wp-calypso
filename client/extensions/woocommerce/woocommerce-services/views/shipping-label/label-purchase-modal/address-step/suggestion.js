@@ -10,10 +10,10 @@ import classNames from 'classnames';
 /**
  * Internal dependencies
  */
-import FormLabel from 'components/forms/form-label';
-import FormRadio from 'components/forms/form-radio';
-import FormButton from 'components/forms/form-button';
-import Notice from 'components/notice';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormButton from 'calypso/components/forms/form-button';
+import Notice from 'calypso/components/notice';
 import AddressSummary from './summary';
 
 const RadioButton = ( props ) => {
@@ -51,17 +51,15 @@ const AddressSuggestion = ( {
 				<RadioButton
 					checked={ ! selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( false ) }
+					label={ translate( 'Address entered' ) }
 				>
-					<span className="address-step__suggestion-title">{ translate( 'Address entered' ) }</span>
 					<AddressSummary values={ values } countryNames={ countryNames } />
 				</RadioButton>
 				<RadioButton
 					checked={ selectNormalized }
 					onChange={ onToggleSelectNormalizedAddress( true ) }
+					label={ translate( 'Suggested address' ) }
 				>
-					<span className="address-step__suggestion-title">
-						{ translate( 'Suggested address' ) }
-					</span>
 					<AddressSummary
 						values={ normalized }
 						originalValues={ values }

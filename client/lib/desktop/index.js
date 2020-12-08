@@ -6,27 +6,29 @@ import debugFactory from 'debug';
 /**
  * Internal dependencies
  */
-import { newPost } from 'lib/paths';
-import user from 'lib/user';
-import { ipcRenderer as ipc } from 'electron'; // eslint-disable-line import/no-extraneous-dependencies
-import * as oAuthToken from 'lib/oauth-token';
-import userUtilities from 'lib/user/utils';
-import { getStatsPathForTab } from 'lib/route';
-import { getReduxStore } from 'lib/redux-bridge';
-import hasUnseenNotifications from 'state/selectors/has-unseen-notifications';
-import { isEditorIframeLoaded } from 'state/editor/selectors';
-import isNotificationsOpen from 'state/selectors/is-notifications-open';
-import { toggleNotificationsPanel, navigate } from 'state/ui/actions';
+import { newPost } from 'calypso/lib/paths';
+import store from 'store';
+import user from 'calypso/lib/user';
+import { ipcRenderer as ipc } from 'electron';
+import userUtilities from 'calypso/lib/user/utils';
+import * as oAuthToken from 'calypso/lib/oauth-token';
+import { getStatsPathForTab } from 'calypso/lib/route';
+import { getReduxStore } from 'calypso/lib/redux-bridge';
+import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel, navigate } from 'calypso/state/ui/actions';
+import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 import {
 	NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
 	NOTIFY_DESKTOP_DID_REQUEST_SITE,
 	NOTIFY_DESKTOP_DID_ACTIVATE_JETPACK_MODULE,
 	NOTIFY_DESKTOP_SEND_TO_PRINTER,
+	NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
 	NOTIFY_DESKTOP_VIEW_POST_CLICKED,
-} from 'state/desktop/window-events';
-import { canCurrentUserManageSiteOptions } from 'state/sites/selectors';
-import { activateModule } from 'state/jetpack/modules/actions';
-import { requestSite } from 'state/sites/actions';
+} from 'calypso/state/desktop/window-events';
+import { canCurrentUserManageSiteOptions } from 'calypso/state/sites/selectors';
+import { activateModule } from 'calypso/state/jetpack/modules/actions';
+import { requestSite } from 'calypso/state/sites/actions';
+import { setForceRefresh as forceNotificationsRefresh } from 'calypso/state/notifications-panel/actions';
 
 /**
  * Module variables
@@ -47,10 +49,15 @@ const Desktop = {
 		ipc.on( 'new-post', this.onNewPost.bind( this ) );
 		ipc.on( 'signout', this.onSignout.bind( this ) );
 		ipc.on( 'toggle-notification-bar', this.onToggleNotifications.bind( this ) );
+		ipc.on( 'notifications-panel-show', this.onNotificationsPanelShow.bind( this ) );
+		ipc.on( 'notifications-panel-refresh', this.onNotificationsPanelRefresh.bind( this ) );
+		ipc.on( 'notification-clicked', this.onNotificationClicked.bind( this ) );
 		ipc.on( 'page-help', this.onShowHelp.bind( this ) );
 		ipc.on( 'navigate', this.onNavigate.bind( this ) );
 		ipc.on( 'request-site', this.onRequestSite.bind( this ) );
 		ipc.on( 'enable-site-option', this.onActivateJetpackSiteModule.bind( this ) );
+		ipc.on( 'enable-notification-badge', this.sendNotificationUnseenCount );
+		ipc.on( 'request-user-login-status', this.sendUserLoginStatus );
 
 		window.addEventListener(
 			NOTIFY_DESKTOP_CANNOT_USE_EDITOR,
@@ -62,24 +69,24 @@ const Desktop = {
 			this.onViewPostClicked.bind( this )
 		);
 
+		window.addEventListener(
+			NOTIFY_DESKTOP_NOTIFICATIONS_UNSEEN_COUNT_SET,
+			this.onUnseenCountUpdated.bind( this )
+		);
+
 		window.addEventListener( NOTIFY_DESKTOP_SEND_TO_PRINTER, this.onSendToPrinter.bind( this ) );
 
 		this.store = await getReduxStore();
 
-		this.editorLoadedStatus();
-
 		// Send some events immediately - this sets the app state
-		this.notificationStatus();
+		this.sendNotificationUnseenCount();
 		this.sendUserLoginStatus();
 	},
 
 	selectedSite: null,
 
 	navigate: function ( to ) {
-		if ( isNotificationsOpen( this.store.getState() ) ) {
-			this.toggleNotificationsPanel();
-		}
-
+		this.onNotificationsPanelShow( null, false );
 		this.store.dispatch( navigate( to ) );
 	},
 
@@ -91,21 +98,40 @@ const Desktop = {
 		this.selectedSite = site;
 	},
 
-	notificationStatus: function () {
-		let previousHasUnseen = hasUnseenNotifications( this.store.getState() );
+	sendNotificationUnseenCount: function () {
+		// Used to update unseen badge count when booting the app: no-op if not connected.
+		const navigator = window.navigator;
+		const connected = typeof navigator !== 'undefined' ? !! navigator.onLine : true;
+		if ( ! connected ) {
+			return;
+		}
+		const unseenCount = store.get( 'wpnotes_unseen_count' );
+		if ( unseenCount !== null ) {
+			debug( `Sending unseen count: ${ unseenCount }` );
+			ipc.send( 'unread-notices-count', unseenCount );
+		}
+	},
 
-		// Send initial status to main process
-		ipc.send( 'unread-notices-count', previousHasUnseen );
+	onUnseenCountUpdated: function ( event ) {
+		const { unseenCount } = event.detail;
+		debug( `Sending unseen count: ${ unseenCount }` );
+		ipc.send( 'unread-notices-count', unseenCount );
+	},
 
-		this.store.subscribe( () => {
-			const hasUnseen = hasUnseenNotifications( this.store.getState() );
+	onNotificationClicked: function ( _, notification ) {
+		debug( `Notification ${ notification.id } clicked` );
 
-			if ( hasUnseen !== previousHasUnseen ) {
-				ipc.send( 'unread-notices-count', hasUnseen );
+		const { id, type } = notification;
 
-				previousHasUnseen = hasUnseen;
-			}
+		// TODO: Make this a desktop-specific Tracks event.
+		this.store.dispatch( recordTracksEventAction( 'calypso_web_push_notification_clicked' ), {
+			push_notification_note_id: id,
+			push_notification_type: type,
 		} );
+	},
+
+	onNotificationsPanelRefresh: function () {
+		this.store.dispatch( forceNotificationsRefresh( true ) );
 	},
 
 	sendUserLoginStatus: function () {
@@ -117,14 +143,26 @@ const Desktop = {
 
 		debug( 'Sending logged-in = ' + status );
 
-		ipc.send( 'user-login-status', status );
-		ipc.send( 'user-auth', user(), oAuthToken.getToken() );
+		ipc.send( 'user-login-status', status, user(), oAuthToken.getToken() );
 	},
 
 	onToggleNotifications: function () {
 		debug( 'Toggle notifications' );
 
 		this.toggleNotificationsPanel();
+	},
+
+	onNotificationsPanelShow: function ( _, show ) {
+		const isOpen = isNotificationsOpen( this.store.getState() );
+
+		if ( show ) {
+			if ( isOpen ) {
+				return;
+			}
+			this.toggleNotificationsPanel();
+		} else if ( isOpen ) {
+			this.toggleNotificationsPanel();
+		}
 	},
 
 	onSignout: function () {
@@ -163,34 +201,6 @@ const Desktop = {
 		debug( 'Showing help' );
 
 		this.navigate( '/help' );
-	},
-
-	editorLoadedStatus: function () {
-		const sendLoadedEvt = () => {
-			debug( 'Editor iframe loaded' );
-
-			const evt = new window.Event( 'editor-iframe-loaded' );
-			window.dispatchEvent( evt );
-		};
-
-		let previousLoaded = isEditorIframeLoaded( this.store.getState() );
-
-		if ( previousLoaded ) {
-			sendLoadedEvt();
-		}
-
-		this.store.subscribe( () => {
-			const state = this.store.getState();
-			const loaded = isEditorIframeLoaded( state );
-
-			if ( loaded !== previousLoaded ) {
-				if ( loaded ) {
-					sendLoadedEvt();
-				}
-
-				previousLoaded = loaded;
-			}
-		} );
 	},
 
 	onCannotOpenEditor: function ( event ) {

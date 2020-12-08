@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { createReduxStore } from 'state';
-import * as wpcomHttpActions from 'state/data-layer/wpcom-http/actions';
-import * as jetpackScanActions from 'state/jetpack-scan/actions';
-import { JETPACK_SCAN_REQUEST } from 'state/action-types';
+import { createReduxStore } from 'calypso/state';
+import * as wpcomHttpActions from 'calypso/state/data-layer/wpcom-http/actions';
+import * as jetpackScanActions from 'calypso/state/jetpack-scan/actions';
+import { JETPACK_SCAN_REQUEST } from 'calypso/state/action-types';
 
 function setup( siteId ) {
 	// Set spy on action creator to verify it gets called when the component renders.

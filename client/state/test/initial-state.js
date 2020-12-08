@@ -11,13 +11,13 @@ import { useFakeTimers } from 'sinon';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import * as browserStorage from 'lib/browser-storage';
-import userFactory from 'lib/user';
-import { isSupportSession } from 'lib/user/support-user-interop';
-import { SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { createReduxStore } from 'state';
-import signupReducer from 'state/signup/reducer';
+import { isEnabled } from 'calypso/config';
+import * as browserStorage from 'calypso/lib/browser-storage';
+import userFactory from 'calypso/lib/user';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
+import { SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { createReduxStore } from 'calypso/state';
+import signupReducer from 'calypso/state/signup/reducer';
 import {
 	getInitialState,
 	getStateFromCache,
@@ -25,13 +25,13 @@ import {
 	loadAllState,
 	MAX_AGE,
 	SERIALIZE_THROTTLE,
-} from 'state/initial-state';
-import { combineReducers, withStorageKey } from 'state/utils';
-import { addReducerToStore } from 'state/add-reducer';
+} from 'calypso/state/initial-state';
+import { combineReducers, withStorageKey } from 'calypso/state/utils';
+import { addReducerToStore } from 'calypso/state/add-reducer';
 
-import currentUser from 'state/current-user/reducer';
-import postTypes from 'state/post-types/reducer';
-import reader from 'state/reader/reducer';
+import currentUser from 'calypso/state/current-user/reducer';
+import postTypes from 'calypso/state/post-types/reducer';
+import reader from 'calypso/state/reader/reducer';
 
 // Create a legacy initial reducer, with no modularization.
 const initialReducer = combineReducers( {
@@ -64,7 +64,9 @@ describe( 'initial-state', () => {
 	describe( 'getInitialState', () => {
 		describe( 'persist-redux disabled', () => {
 			describe( 'with recently persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+				let state;
+				let consoleErrorSpy;
+				let getStoredItemSpy;
 
 				const savedState = {
 					'redux-state-123456789': {
@@ -120,7 +122,9 @@ describe( 'initial-state', () => {
 		describe( 'persist-redux enabled', () => {
 			describe( 'switched user', () => {
 				describe( 'with recently persisted data and initial server data', () => {
-					let state, consoleErrorSpy, getStoredItemSpy;
+					let state;
+					let consoleErrorSpy;
+					let getStoredItemSpy;
 
 					const savedState = {
 						'redux-state-123456789': {
@@ -176,7 +180,9 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with recently persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+				let state;
+				let consoleErrorSpy;
+				let getStoredItemSpy;
 
 				const savedState = {
 					'redux-state-123456789': {
@@ -239,7 +245,9 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with stale persisted data and initial server data', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+				let state;
+				let consoleErrorSpy;
+				let getStoredItemSpy;
 
 				const savedState = {
 					'redux-state-123456789': {
@@ -302,7 +310,9 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with recently persisted data and no initial server data', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+				let state;
+				let consoleErrorSpy;
+				let getStoredItemSpy;
 
 				const savedState = {
 					'redux-state-123456789': {
@@ -356,7 +366,9 @@ describe( 'initial-state', () => {
 			} );
 
 			describe( 'with invalid persisted data and no initial server data', () => {
-				let state, consoleErrorSpy, getStoredItemSpy;
+				let state;
+				let consoleErrorSpy;
+				let getStoredItemSpy;
 
 				const userId = userFactory().get().ID + 1;
 				const savedState = {
@@ -414,7 +426,9 @@ describe( 'initial-state', () => {
 
 	describe( 'getStateFromCache', () => {
 		describe( 'with persisted data and no initial server data', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const savedState = {
 				'redux-state-123456789:reader': {
@@ -455,7 +469,9 @@ describe( 'initial-state', () => {
 		} );
 
 		describe( 'with initial server data and no persisted data', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const savedState = null;
 
@@ -495,7 +511,9 @@ describe( 'initial-state', () => {
 		} );
 
 		describe( 'with fresher server data than persisted data', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const oldDate = new Date();
 			oldDate.setDate( oldDate.getDate() - 1 );
@@ -543,7 +561,9 @@ describe( 'initial-state', () => {
 		} );
 
 		describe( 'with fresher persisted data than server data', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const newerDate = new Date();
 			newerDate.setDate( newerDate.getDate() + 1 );
@@ -591,7 +611,9 @@ describe( 'initial-state', () => {
 		} );
 
 		describe( 'with empty persisted signup state for logged in user, and persisted state for logged out user', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const _timestamp = Date.now();
 			const storedState = {
@@ -647,7 +669,9 @@ describe( 'initial-state', () => {
 		} );
 
 		describe( 'with existing persisted signup state for logged in user, and persisted state for logged out user', () => {
-			let state, consoleErrorSpy, getStoredItemSpy;
+			let state;
+			let consoleErrorSpy;
+			let getStoredItemSpy;
 
 			const _timestamp = Date.now();
 			const storedState = {
@@ -717,7 +741,9 @@ describe( 'initial-state', () => {
 	} );
 
 	describe( '#persistOnChange()', () => {
-		let store, clock, setStoredItemSpy;
+		let store;
+		let clock;
+		let setStoredItemSpy;
 
 		const dataReducer = ( state = null, { data } ) => {
 			if ( data && data !== state ) {

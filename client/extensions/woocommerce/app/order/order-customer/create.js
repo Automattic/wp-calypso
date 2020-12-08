@@ -22,8 +22,8 @@ import { editOrder } from 'woocommerce/state/ui/orders/actions';
 import { fetchLocations } from 'woocommerce/state/sites/data/locations/actions';
 import getAddressViewFormat from 'woocommerce/lib/get-address-view-format';
 import { getOrderWithEdits } from 'woocommerce/state/ui/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
-import SectionHeader from 'components/section-header';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SectionHeader from 'calypso/components/section-header';
 
 class OrderCustomerInfo extends Component {
 	static propTypes = {

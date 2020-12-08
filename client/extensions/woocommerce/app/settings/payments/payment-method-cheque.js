@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Dialog } from '@automattic/components';
-import FormFieldset from 'components/forms/form-fieldset';
-import FormLabel from 'components/forms/form-label';
-import FormTextarea from 'components/forms/form-textarea';
-import FormTextInput from 'components/forms/form-text-input';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormLabel from 'calypso/components/forms/form-label';
+import FormTextarea from 'calypso/components/forms/form-textarea';
+import FormTextInput from 'calypso/components/forms/form-text-input';
 
 class PaymentMethodCheque extends Component {
 	static propTypes = {

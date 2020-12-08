@@ -2,18 +2,19 @@
  * External dependencies
  */
 import React from 'react';
-import classNames from 'classnames';
 import { find, defer } from 'lodash';
+import { withStripeProps } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
  */
-import { gaRecordEvent } from 'lib/analytics/ga';
-import CreditCard from 'components/credit-card';
-import NewCardForm from './new-card-form';
-import { newCardPayment, newStripeCardPayment, storedCardPayment } from 'lib/transaction/payments';
-import { setPayment } from 'lib/transaction/actions';
-import { withStripeProps } from 'lib/stripe';
+import { gaRecordEvent } from 'calypso/lib/analytics/ga';
+import {
+	newCardPayment,
+	newStripeCardPayment,
+	storedCardPayment,
+} from 'calypso/lib/transaction/payments';
+import { setPayment } from 'calypso/lib/transaction/actions';
 
 class CreditCardSelector extends React.Component {
 	constructor( props ) {
@@ -22,34 +23,8 @@ class CreditCardSelector extends React.Component {
 	}
 
 	render() {
-		return (
-			// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-			<div className="payment-box-sections">
-				{ this.storedCards() }
-				{ this.newCardForm() }
-			</div>
-		);
+		return null;
 	}
-
-	storedCards = () => {
-		return this.props.cards.map( ( card ) => {
-			const onSelect = () => this.handleClickedSection( card.stored_details_id );
-			return (
-				<CreditCard
-					key={ card.stored_details_id }
-					className="checkout__payment-box-section"
-					card={ {
-						lastDigits: card.card,
-						cardType: card.card_type,
-						name: card.name,
-						expiry: card.expiry,
-					} }
-					selected={ card.stored_details_id === this.state.section }
-					onSelect={ onSelect }
-				/>
-			);
-		} );
-	};
 
 	componentDidMount() {
 		// This defer is needed to avoid a dispatch within a dispatch when
@@ -65,25 +40,6 @@ class CreditCardSelector extends React.Component {
 			defer( () => this.savePayment( this.state.section ) );
 		}
 	}
-
-	newCardForm = () => {
-		const onSelect = () => this.handleClickedSection( 'new-card' );
-		const classes = classNames( 'checkout__payment-box-section', {
-			'no-stored-cards': this.props.cards.length === 0,
-		} );
-		const selected = 'new-card' === this.state.section;
-
-		return (
-			<CreditCard key="new-card" className={ classes } selected={ selected } onSelect={ onSelect }>
-				<NewCardForm
-					countriesList={ this.props.countriesList }
-					transaction={ this.props.transaction }
-					hasStoredCards={ this.props.cards.length > 0 }
-					selected={ selected }
-				/>
-			</CreditCard>
-		);
-	};
 
 	handleClickedSection = ( section ) => {
 		if ( section === this.state.section ) {

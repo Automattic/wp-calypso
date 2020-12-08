@@ -12,19 +12,19 @@ import emailValidator from 'email-validator';
 /**
  * Internal dependencies
  */
-import QueryContactDetailsCache from 'components/data/query-contact-details-cache';
-import QueryTldValidationSchemas from 'components/data/query-tld-validation-schemas';
+import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
+import QueryTldValidationSchemas from 'calypso/components/data/query-tld-validation-schemas';
 import PaymentBox from './payment-box';
-import FormButton from 'components/forms/form-button';
+import FormButton from 'calypso/components/forms/form-button';
 import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder.jsx';
-import wp from 'lib/wp';
-import config from 'config';
-import ContactDetailsFormFields from 'components/domains/contact-details-form-fields';
+import wp from 'calypso/lib/wp';
+import config from 'calypso/config';
+import ContactDetailsFormFields from 'calypso/components/domains/contact-details-form-fields';
 import ExtraInfoForm, {
 	getApplicableTldsWithAdditionalDetailsForms,
-} from 'components/domains/registrant-extra-info';
-import { setDomainDetails } from 'lib/transaction/actions';
-import { addGoogleAppsRegistrationData } from 'lib/cart/actions';
+} from 'calypso/components/domains/registrant-extra-info';
+import { setDomainDetails } from 'calypso/lib/transaction/actions';
+import { addGoogleAppsRegistrationData } from 'calypso/lib/cart/actions';
 import {
 	getDomainRegistrations,
 	getDomainTransfers,
@@ -37,11 +37,11 @@ import {
 	hasTld,
 	hasSomeDomainProductsWithPrivacySupport,
 	hasAllDomainProductsWithPrivacySupport,
-} from 'lib/cart-values/cart-items';
-import getContactDetailsCache from 'state/selectors/get-contact-details-cache';
-import { updateContactDetailsCache } from 'state/domains/management/actions';
-import { recordTracksEvent } from 'state/analytics/actions';
-import { PUBLIC_VS_PRIVATE } from 'lib/url/support';
+} from 'calypso/lib/cart-values/cart-items';
+import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
+import { updateContactDetailsCache } from 'calypso/state/domains/management/actions';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { PUBLIC_VS_PRIVATE } from 'calypso/lib/url/support';
 
 const debug = debugFactory( 'calypso:my-sites:upgrades:checkout:domain-details' );
 const wpcom = wp.undocumented();

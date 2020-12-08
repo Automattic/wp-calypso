@@ -14,8 +14,8 @@ import {
 	STORED_CARDS_FETCH,
 	STORED_CARDS_FETCH_COMPLETED,
 	STORED_CARDS_FETCH_FAILED,
-} from 'state/action-types';
-import wp from 'lib/wp';
+} from 'calypso/state/action-types';
+import wp from 'calypso/lib/wp';
 
 export const addStoredCard = ( cardData ) => ( dispatch ) => {
 	return wp

@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TemplateSelectorPreview Basic rendering renders the preview and no placeholder when blocks are provided 1`] = `
+<div>
+  <div
+    class="template-selector-preview "
+  >
+    <div>
+      <iframe
+        class="editor-styles-wrapper block-iframe-preview"
+        style="transform: scale( 1 );"
+        tabindex="-1"
+        title="Preview"
+      />
+    </div>
+  </div>
+</div>
+`;

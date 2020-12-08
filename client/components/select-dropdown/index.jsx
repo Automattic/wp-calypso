@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { filter, find, get, noop } from 'lodash';
 import classNames from 'classnames';
-import Gridicon from 'components/gridicon';
+import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -13,8 +13,8 @@ import Gridicon from 'components/gridicon';
 import DropdownItem from './item';
 import DropdownSeparator from './separator';
 import DropdownLabel from './label';
-import Count from 'components/count';
-import TranslatableString from 'components/translatable/proptype';
+import Count from 'calypso/components/count';
+import TranslatableString from 'calypso/components/translatable/proptype';
 
 /**
  * Style dependencies
@@ -334,7 +334,8 @@ class SelectDropdown extends Component {
 			return;
 		}
 
-		let items, focusedIndex;
+		let items;
+		let focusedIndex;
 
 		if ( this.props.options.length ) {
 			items = filter( this.props.options, ( item ) => item && ! item.isLabel );

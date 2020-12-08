@@ -1,5 +1,4 @@
-Query Site Stats
-================
+# Query Site Stats
 
 `<QuerySiteStats />` is a React component used in managing network requests for site stats for a given site and stat type.
 
@@ -9,19 +8,15 @@ Render the component, passing `siteId` and `statType`. It does not accept any ch
 
 ```jsx
 import React from 'react';
-import QuerySiteStats from 'components/data/query-site-stats';
+import QuerySiteStats from 'calypso/components/data/query-site-stats';
 
 export default function AmazingVisualizationOfStats( { stats } ) {
 	return (
 		<ul>
-			<QuerySiteStats
-				siteId={ 3584907 }
-				statType="statsStreak" />
+			<QuerySiteStats siteId={ 3584907 } statType="statsStreak" />
 			{ stats.map( ( stat ) => {
-				return (
-					<span>A span o { stat }</span>
-				);
-			} }
+				return <span>A span o { stat }</span>;
+			} ) }
 		</ul>
 	);
 }

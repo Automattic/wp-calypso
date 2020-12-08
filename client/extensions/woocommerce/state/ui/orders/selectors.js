@@ -10,7 +10,7 @@ import { translate } from 'i18n-calypso';
  */
 import { getCurrencyFormatString } from 'woocommerce/lib/currency';
 import { getOrder } from 'woocommerce/state/sites/orders/selectors';
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
  * @param {object} state Whole Redux state tree

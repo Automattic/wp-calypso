@@ -37,15 +37,15 @@ import {
 	SITE_PLUGIN_UPDATED,
 	SITE_FRONT_PAGE_UPDATE,
 	SITE_MIGRATION_STATUS_UPDATE,
-} from 'state/action-types';
-import { THEME_ACTIVATE_SUCCESS } from 'state/themes/action-types';
+} from 'calypso/state/action-types';
+import { THEME_ACTIVATE_SUCCESS } from 'calypso/state/themes/action-types';
 import { sitesSchema, hasAllSitesListSchema } from './schema';
 import {
 	combineReducers,
 	keyedReducer,
 	withSchemaValidation,
 	withoutPersistence,
-} from 'state/utils';
+} from 'calypso/state/utils';
 
 /**
  * Tracks all known site objects, indexed by site ID.
@@ -133,7 +133,7 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 			let nextSite = site;
 
 			return reduce(
-				[ 'blog_public', 'wpcom_coming_soon', 'site_icon' ],
+				[ 'blog_public', 'wpcom_public_coming_soon', 'wpcom_coming_soon', 'site_icon' ],
 				( memo, key ) => {
 					// A site settings update may or may not include the icon or blog_public property.
 					// If not, we should simply return state unchanged.
@@ -155,8 +155,11 @@ export const items = withSchemaValidation( sitesSchema, ( state = null, action )
 							};
 							break;
 						}
-						case 'wpcom_coming_soon': {
-							const isComingSoon = parseInt( settings.wpcom_coming_soon, 10 ) === 1;
+						case 'wpcom_coming_soon':
+						case 'wpcom_public_coming_soon': {
+							const isComingSoon =
+								parseInt( settings.wpcom_public_coming_soon, 10 ) === 1 ||
+								parseInt( settings.wpcom_coming_soon, 10 ) === 1;
 
 							if ( site.is_coming_soon === isComingSoon ) {
 								return memo;

@@ -1,11 +1,11 @@
 /**
  * Internal dependencies
  */
-import { READER_TEAMS_REQUEST } from 'state/reader/action-types';
+import { READER_TEAMS_REQUEST } from 'calypso/state/reader/action-types';
 
-import 'state/data-layer/wpcom/read/teams';
+import 'calypso/state/data-layer/wpcom/read/teams';
 
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 export function requestTeams() {
 	return {

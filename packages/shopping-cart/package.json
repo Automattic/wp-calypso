@@ -1,0 +1,50 @@
+{
+	"name": "@automattic/shopping-cart",
+	"version": "1.0.0",
+	"description": "A library to use the WordPress.com shopping cart",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"types": "dist/types/index.d.ts",
+	"sideEffects": false,
+	"scripts": {
+		"clean": "npx rimraf dist \"../../.tsc-cache/packages__shopping-cart*\"",
+		"prepare": "tsc --build ./tsconfig.json && tsc --build ./tsconfig-cjs.json",
+		"prepublish": "yarn run clean",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"files": [
+		"dist",
+		"src"
+	],
+	"keywords": [
+		"checkout",
+		"payments",
+		"automattic"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/shopping-cart"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later",
+	"bugs": {
+		"url": "https://github.com/Automattic/wp-calypso/issues"
+	},
+	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/shopping-cart#readme",
+	"dependencies": {
+		"debug": "^4.1.1",
+		"react": "^16.12.0"
+	},
+	"devDependencies": {
+		"@automattic/calypso-polyfills": "^1.0.0",
+		"@testing-library/jest-dom": "^5.9.0",
+		"@testing-library/react": "^10.0.5",
+		"cache-loader": "^4.1.0",
+		"webpack": "^4.44.2"
+	},
+	"private": true
+}

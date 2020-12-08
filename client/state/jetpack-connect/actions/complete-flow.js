@@ -1,10 +1,10 @@
 /**
  * Internal dependencies
  */
-import { clearPlan } from 'jetpack-connect/persistence-utils';
-import { JETPACK_CONNECT_COMPLETE_FLOW } from 'state/jetpack-connect/action-types';
+import { clearPlan } from 'calypso/jetpack-connect/persistence-utils';
+import { JETPACK_CONNECT_COMPLETE_FLOW } from 'calypso/state/jetpack-connect/action-types';
 
-import 'state/jetpack-connect/init';
+import 'calypso/state/jetpack-connect/init';
 
 export function completeFlow( site ) {
 	return ( dispatch ) => {

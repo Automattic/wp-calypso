@@ -3,20 +3,12 @@
 }
 
 .security-2fa-backup-codes-list__print-agreement {
-	display: inline-block;
-	float: left;
-	min-width: 50%;
-	position: relative;
-	top: 8px;
-
+	display: block;
+	margin-bottom: 1.5em;
+	
 	.form-label {
 		font-weight: normal;
-		margin-left: 8px;
 		display: inline-block;
-	}
-
-	@include breakpoint-deprecated( '<660px' ) {
-		margin-bottom: 24px;
 	}
 }
 
@@ -24,10 +16,6 @@
 	.security-2fa-backup-codes-list__btn-group .button {
 		display: inline-block;
 	}
-}
-
-.security-2fa-backup-codes-list__btn-group {
-	float: right;
 }
 
 .security-2fa-backup-codes-list__generate {

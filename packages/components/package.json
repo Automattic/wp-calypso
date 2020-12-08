@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/components",
-	"version": "1.0.0-alpha.1",
+	"version": "1.0.0-alpha.3",
 	"description": "Automattic Components",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -39,9 +39,15 @@
 		"react": "^16.8",
 		"react-dom": "^16.8"
 	},
+	"devDependencies": {
+		"@storybook/addon-actions": "^6.0.28",
+		"enzyme": "^3.11.0",
+		"react-docgen-typescript-loader": "^3.7.2",
+		"ts-loader": "^8.0.8"
+	},
 	"scripts": {
-		"clean": "npx rimraf dist \"../../.tsc-cache/packages__components*\"",
+		"clean": "npx rimraf dist && tsc --build --clean",
 		"prepublish": "yarn run clean",
-		"prepare": "transpile && tsc && copy-assets"
+		"prepare": "transpile && tsc --build && copy-assets"
 	}
 }

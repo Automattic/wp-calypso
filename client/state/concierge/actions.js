@@ -11,12 +11,12 @@ import {
 	CONCIERGE_INITIAL_UPDATE,
 	CONCIERGE_SIGNUP_FORM_UPDATE,
 	CONCIERGE_UPDATE_BOOKING_STATUS,
-} from 'state/action-types';
+} from 'calypso/state/action-types';
 
-import 'state/data-layer/wpcom/concierge';
-import 'state/data-layer/wpcom/concierge/initial';
+import 'calypso/state/data-layer/wpcom/concierge';
+import 'calypso/state/data-layer/wpcom/concierge/initial';
 
-import 'state/concierge/init';
+import 'calypso/state/concierge/init';
 
 export const requestConciergeAppointmentDetails = ( scheduleId, appointmentId ) => ( {
 	type: CONCIERGE_APPOINTMENT_DETAILS_REQUEST,

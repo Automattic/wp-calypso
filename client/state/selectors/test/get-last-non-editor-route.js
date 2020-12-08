@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import getLastNonEditorRoute from 'state/selectors/get-last-non-editor-route';
+import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 
 describe( 'getLastNonEditorRoute()', () => {
 	test( 'should return empty if the previous path path is not set', () => {

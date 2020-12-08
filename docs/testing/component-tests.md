@@ -59,22 +59,15 @@ expect( wrapper.instance().shouldShowPlaceholder() ).toBe( true );
 
 When a user for example clicks an element does the component react like it should?
 
-Example test from `client/components/Accordion`:
+Example test from `calypso/client/components/token-field`:
 
 ```javascript
-test( 'should accept an onToggle function handler to be invoked when toggled', () => {
-	const toggleSpy = jest.fn();
-	const wrapper = shallow(
-		<Accordion title="Section" onToggle={ toggleSpy }>
-			Content
-		</Accordion>
-	);
+test( 'should remove tokens when X icon clicked', () => {
+	const wrapper = mount( <TokenFieldWrapper /> );
+	const tokenFieldNode = wrapper.find( '.token-field' );
 
-	wrapper.find( '.accordion__toggle' ).simulate( 'click' );
-
-	expect( toggleSpy ).toHaveBeenCalledTimes( 1 );
-	expect( toggleSpy ).toHaveBeenCalledWith( true );
-	expect( wrapper.state( 'isExpanded' ) ).toBe( true );
+	tokenFieldNode.find( '.token-field__remove-token' ).first().simulate( 'click' );
+	expect( wrapper.state( 'tokens' ) ).toEqual( [ 'bar' ] );
 } );
 ```
 

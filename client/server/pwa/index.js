@@ -18,9 +18,7 @@ export default () => {
 	// service-worker needs to be served from root to avoid scope issues
 	app.use(
 		'/service-worker.js',
-		express.static(
-			path.resolve( __dirname, '..', '..', 'lib', 'service-worker', 'service-worker.js' )
-		)
+		express.static( path.resolve( __dirname, '..', '..', '..', 'public', 'service-worker.js' ) )
 	);
 
 	return app;

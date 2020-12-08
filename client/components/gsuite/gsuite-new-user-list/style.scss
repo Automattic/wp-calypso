@@ -1,10 +1,17 @@
-.gsuite-new-user-list__new-user-remove-user-button {
-	width: 100%;
-	@include breakpoint-deprecated( '>800px' ) {
-		width: 75px;
+.gsuite-new-user-list__new-user {
+	fieldset {
+		margin-bottom: 0;
 	}
+}
+
+.gsuite-new-user-list__new-user-remove-user-button {
+	display: none; // TODO: Fix button displayed in the middle of form (see 1165571745647867-as-1198174007918339)
 
 	@include breakpoint-deprecated( '>800px' ) {
+		display: block;
+		height: 40px;
+		width: 50px;
+
 		span {
 			display: none;
 		}
@@ -31,6 +38,7 @@
 
 .gsuite-new-user-list__add-another-user-button {
 	width: 100%;
+
 	@include breakpoint-deprecated( '>480px' ) {
 		width: auto;
 	}
@@ -38,40 +46,43 @@
 
 .gsuite-new-user-list__domain-select {
 	width: 100%;
+
 	@include breakpoint-deprecated( '>800px' ) {
 		width: auto;
 	}
 }
 
 .gsuite-new-user-list__user-divider {
-	width: 100%;
-	margin: 1.5em 0;
+	margin-top: 1.5em;
 }
 
-.gsuite-new-user-list__new-user-name {
+.gsuite-new-user-list__new-user-section {
 	@include breakpoint-deprecated( '>800px' ) {
 		display: flex;
 		justify-content: space-between;
+
+		& > *:not(:first-child) {
+			margin-left: 15px;
+		}
 	}
 }
 
 .gsuite-new-user-list__new-user-email {
 	display: flex;
 	flex-direction: column;
-	flex: 1;
 
-	select {
+	select.form-select {
 		width: 100%;
 	}
 
 	@include breakpoint-deprecated( '>800px' ) {
 		flex-direction: row;
 
-		input {
+		input[type='text'].form-text-input {
 			margin: 0;
 		}
 
-		select {
+		select.form-select {
 			border-bottom-left-radius: 0;
 			border-bottom-width: 1px;
 			border-top-left-radius: 0;
@@ -83,10 +94,33 @@
 .gsuite-new-user-list__new-user-name-container {
 	display: flex;
 	flex-direction: column;
-	margin: 0 0 15px;
+	margin-bottom: 15px;
 
 	@include breakpoint-deprecated( '>800px' ) {
-		margin: 0 15px 0 0;
-		width: 42%;
+		margin-bottom: 20px;
+		width: 44%;
+	}
+}
+
+.gsuite-new-user-list__new-user-email-container,
+.gsuite-new-user-list__new-user-password-container {
+	@include breakpoint-deprecated( '>800px' ) {
+		margin-bottom: 0;
+	}
+}
+
+.gsuite-new-user-list__new-user-email-container {
+	@include breakpoint-deprecated( '>800px' ) {
+		width: 100%;
+	}
+}
+
+.gsuite-new-user-list__new-user-password-container {
+	margin-top: 15px;
+
+	@include breakpoint-deprecated( '>800px' ) {
+		margin-right: 0;
+		margin-top: 0;
+		width: 50%;
 	}
 }

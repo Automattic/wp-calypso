@@ -8,12 +8,12 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
-import createSelector from 'lib/create-selector';
-import getBillingTransactionsByType from 'state/selectors/get-billing-transactions-by-type';
-import getBillingTransactionFilters from 'state/selectors/get-billing-transaction-filters';
-import getCurrentLocaleSlug from 'state/selectors/get-current-locale-slug';
+import createSelector from 'calypso/lib/create-selector';
+import getBillingTransactionsByType from 'calypso/state/selectors/get-billing-transactions-by-type';
+import getBillingTransactionFilters from 'calypso/state/selectors/get-billing-transaction-filters';
+import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 
-import 'state/billing-transactions/init';
+import 'calypso/state/billing-transactions/init';
 
 const PAGE_SIZE = 5;
 
@@ -65,10 +65,11 @@ function search( transactions, searchQuery ) {
  *
  * @param   {object}  state           Global state tree
  * @param   {string}  transactionType Transaction type
+ * @param   {string}  [siteId]        An optional siteId on which to filter results (in addition to the other filters)
  * @returns {object}                  Filtered results in format {transactions, total, pageSize}
  */
 export default createSelector(
-	( state, transactionType ) => {
+	( state, transactionType, siteId = null ) => {
 		const transactions = getBillingTransactionsByType( state, transactionType );
 		if ( ! transactions ) {
 			return {
@@ -94,6 +95,14 @@ export default createSelector(
 
 		if ( app && app !== 'all' ) {
 			results = results.filter( ( transaction ) => transaction.service === app );
+		}
+
+		if ( siteId ) {
+			results = results.filter( ( transaction ) => {
+				return transaction.items.some( ( receiptItem ) => {
+					return String( receiptItem.site_id ) === String( siteId );
+				} );
+			} );
 		}
 
 		const total = results.length;

@@ -6,7 +6,7 @@ import { find, flatten, map } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { getSerializedProductsQuery } from './utils';
 
 function getRawProducts( state, siteId ) {

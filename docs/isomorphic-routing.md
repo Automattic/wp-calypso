@@ -54,7 +54,7 @@ We support error handling middleware on the server side. Among other things, thi
 so that server-side rendered sections can set an HTTP error status, such as 404 if something isn't found.
 
 An error handling middleware takes three instead of just two arguments, `err, context, next`.
-Invoke it with `router` at the end of your route definitions:
+Invoke it by adding it at the end of your route definitions:
 
 ```js
 export function notFoundError( err, context, next ) {
@@ -67,14 +67,12 @@ export function notFoundError( err, context, next ) {
 }
 
 export default function( router ) {
-  router( '/themes/:slug/:section?/:site_id?', details, makeLayout );
-  router( themeNotFound );
+  router( '/themes/:slug/:section?/:site_id?', details, makeLayout, themeNotFound );
 }
 ```
 
-Note that in `notFoundError`, `err` is passed as an argument to `next`. This is how error middleware chains skip regular middlewares. The rendering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status.
-
-On the other hand, an error-handling middleware like `themeNotFound` will be called if any other middleware before it calls `next` with an error object:
+Note that you can have multiple error-handling middlewares in your route defintion. When any of the regular middlewares throw an error (or call `next(err)`), only error-handling will be called from that point. This is how error middleware chains skip regular middlewares. The endering middleware that is implicitly called on the server after all other middlewares are invoked uses `err.status` to set the HTTP error status. It will also log an error in the server log, using
+severity `error` if status is >= 500, `info` otherwhise.
 
 ```js
 function details( context, next ) ) {
@@ -85,7 +83,7 @@ function details( context, next ) ) {
       message: 'Theme Not Found',
       context.params.slug
     };
-    return next( err );
+	return next( err );
   }
   /* Render theme section */
   next();

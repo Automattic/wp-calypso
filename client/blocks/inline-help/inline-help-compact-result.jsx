@@ -8,7 +8,7 @@ import { invoke } from 'lodash';
 /**
  * Internal dependencies
  */
-import { decodeEntities, preventWidows } from 'lib/formatting';
+import { decodeEntities, preventWidows } from 'calypso/lib/formatting';
 
 class InlineHelpCompactResult extends Component {
 	static propTypes = {

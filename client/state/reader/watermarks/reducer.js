@@ -6,8 +6,8 @@ import { max } from 'lodash';
 /**
  * Internal dependencies
  */
-import { READER_VIEW_STREAM } from 'state/reader/action-types';
-import { keyedReducer, withSchemaValidation } from 'state/utils';
+import { READER_VIEW_STREAM } from 'calypso/state/reader/action-types';
+import { keyedReducer, withSchemaValidation } from 'calypso/state/utils';
 import schema from './watermark-schema';
 
 export const watermarks = keyedReducer(

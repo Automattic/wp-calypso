@@ -3,18 +3,19 @@
  */
 import * as React from 'react';
 import classNames from 'classnames';
-import { Button, Tip } from '@wordpress/components';
-import { Icon, check, close } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { sprintf } from '@wordpress/i18n';
-import { useI18n } from '@automattic/react-i18n';
+import { __ } from '@wordpress/i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
+
+/**
+ * Internal dependencies
+ */
+import PlansFeatureList from '../plans-feature-list';
 
 // TODO: remove when all needed core types are available
 /*#__PURE__*/ import '../types-patch';
 
-const TickIcon = <Icon icon={ check } size={ 17 } />;
-const CrossIcon = <Icon icon={ close } size={ 17 } />;
 const ChevronDown = (
 	<svg width="8" viewBox="0 0 8 4">
 		<path d="M0 0 L8 0 L4 4 L0 0" fill="currentColor" />
@@ -33,59 +34,6 @@ const SPACE_BAR_KEYCODE = 32;
  * @param __ translate function
  */
 
-function domainMessageStateMachine(
-	isFreePlan: boolean,
-	domain: DomainSuggestions.DomainSuggestion | undefined,
-	__: Function
-) {
-	const states = {
-		NO_DOMAIN: {
-			FREE_PLAN: null,
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-cta',
-				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
-					</>
-				),
-			},
-		},
-		FREE_DOMAIN: {
-			FREE_PLAN: null,
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-cta',
-				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: (
-					<>
-						{ __( 'Pick a free domain (1 year)' ) } { ChevronDown }
-					</>
-				),
-			},
-		},
-		PAID_DOMAIN: {
-			FREE_PLAN: {
-				className: 'plan-item__domain-summary is-free',
-				icon: CrossIcon,
-				// translators: %s is a domain name eg: example.com is not included
-				domainMessage: sprintf( __( '%s is not included' ), domain?.domain_name ),
-			},
-			PAID_PLAN: {
-				className: 'plan-item__domain-summary is-picked',
-				icon: TickIcon,
-				// translators: %s is a domain name eg: example.com is included
-				domainMessage: sprintf( __( '%s is included' ), domain?.domain_name ),
-			},
-		},
-	};
-	const domainKey = domain && ( domain.is_free ? 'FREE_DOMAIN' : 'PAID_DOMAIN' );
-	const planKey = isFreePlan ? 'FREE_PLAN' : 'PAID_PLAN';
-
-	return states[ domainKey || 'NO_DOMAIN' ][ planKey ];
-}
-
 export interface Props {
 	slug: string;
 	name: string;
@@ -102,6 +50,9 @@ export interface Props {
 	disabledLabel?: string;
 }
 
+// NOTE: this component is used by PlansAccordion and contains some duplicated code from plans-table/plans-item.tsx
+// TODO: keep only this component when it can support also being used in PlansTable
+
 const PlanItem: React.FunctionComponent< Props > = ( {
 	slug,
 	name,
@@ -116,16 +67,12 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	allPlansExpanded,
 	disabledLabel,
 } ) => {
-	const { __ } = useI18n();
-
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );
 
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0';
-
-	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
 	React.useEffect( () => {
 		setIsOpenInternalState( allPlansExpanded );
@@ -135,7 +82,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 
 	return (
 		<div className={ classNames( 'plan-item', { 'is-popular': isPopular, 'is-open': isOpen } ) }>
-			{ isPopular && <span className="plan-item__badge">{ __( 'Popular' ) }</span> }
+			{ isPopular && (
+				<span className="plan-item__badge">{ __( 'Popular', __i18n_text_domain__ ) }</span>
+			) }
 			<div className={ classNames( 'plan-item__viewport', { 'is-popular': isPopular } ) }>
 				<div className="plan-item__details">
 					<div
@@ -159,7 +108,9 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div hidden={ ! isOpen }>
 						<div className="plan-item__price-note">
-							{ isFree ? __( 'free forever' ) : __( 'per month, billed yearly' ) }
+							{ isFree
+								? __( 'free forever', __i18n_text_domain__ )
+								: __( 'per month, billed yearly', __i18n_text_domain__ ) }
 						</div>
 
 						<div className="plan-item__actions">
@@ -171,43 +122,26 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 								isPrimary
 								disabled={ !! disabledLabel }
 							>
-								<span>{ __( 'Choose' ) }</span>
+								<span>{ __( 'Choose', __i18n_text_domain__ ) }</span>
 							</Button>
 						</div>
-						<div className="plan-item__features">
-							<ul className="plan-item__feature-item-group">
-								<li className="plan-item__feature-item">
-									{ disabledLabel ? (
-										<span className="plan-item__disabled-message">
-											<Tip>{ disabledLabel }</Tip>
-										</span>
-									) : (
-										domainMessage && (
-											<Button
-												className={ domainMessage.className }
-												onClick={ onPickDomainClick }
-												isLink
-											>
-												{ domainMessage.icon }
-												{ domainMessage.domainMessage }
-											</Button>
-										)
-									) }
-								</li>
-								{ features.map( ( feature, i ) => (
-									<li key={ i } className="plan-item__feature-item">
-										{ TickIcon } { feature }
-									</li>
-								) ) }
-							</ul>
-						</div>
+						<PlansFeatureList
+							features={ features }
+							domain={ domain }
+							isFree={ isFree }
+							isOpen={ isOpen }
+							onPickDomain={ onPickDomainClick }
+							disabledLabel={ disabledLabel }
+						/>
 					</div>
 				</div>
 			</div>
 
 			{ isPopular && ! isDesktop && (
 				<Button onClick={ onToggleExpandAll } className="plan-item__mobile-expand-all-plans" isLink>
-					{ allPlansExpanded ? __( 'Collapse all plans' ) : __( 'Expand all plans' ) }
+					{ allPlansExpanded
+						? __( 'Collapse all plans', __i18n_text_domain__ )
+						: __( 'Expand all plans', __i18n_text_domain__ ) }
 				</Button>
 			) }
 		</div>

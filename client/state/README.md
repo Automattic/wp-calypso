@@ -1,5 +1,4 @@
-State
-=====
+# State
 
 This directory contains all of the behavior describing the global application state. Folders within this directory reflect sub-trees of the global state tree, each with their own reducer, actions, and selectors.
 
@@ -12,7 +11,7 @@ Calypso started off with a monolithic state approach, following the guidelines o
 As such, Calypso now implements a modularized state approach, where reducers can be registered on demand. Each modularized portion of state has an `init` file that takes care of registration through a side effect. For example, for `reader`:
 
 ```js
-import { registerReducer } from 'state/redux-store';
+import { registerReducer } from 'calypso/state/redux-store';
 import reducer from './reducer';
 
 registerReducer( [ 'reader' ], reducer );
@@ -21,7 +20,7 @@ registerReducer( [ 'reader' ], reducer );
 This `init` file is then imported on every selector and action creator module that makes use of `reader` state:
 
 ```js
-import 'state/reader/init';
+import 'calypso/state/reader/init';
 
 function getStream( state, streamKey ) {
 	return state.reader.streams[ streamKey ] || emptyStream;
@@ -37,7 +36,7 @@ There is currently an ongoing migration effort in modularizing all of Calypso st
 ## Usage
 
 ```js
-import { createReduxStore } from 'state';
+import { createReduxStore } from 'calypso/state';
 
 const store = createReduxStore();
 ```
@@ -54,7 +53,7 @@ All the application information and data in Calypso should go through this data 
 
 Use `extendAction` to leverage the behavior of an existing action creator, extending any dispatched action via the original action creator with the provided data object. By using this helper, you avoid unnecessarily duplicating the original logic or tying the original action creator to your new (presumably optional) requirements. This is the equivalent of calling `Object.assign` on a plain-object action creator result, but also accepts an action thunk for which action objects should be extended.
 
-__Example:__
+**Example:**
 
 ```js
 function original() {
@@ -85,11 +84,11 @@ const widgetCount = ( state = {}, action ) => {
 		return {
 			...state,
 			[ action.siteId ]: state[ action.siteId ] + 1,
-		}
+		};
 	}
 
 	return state;
-}
+};
 ```
 
 Notice that the reducer _wants_ to operate on a simple integer, but because it has to store a collection of these things, identified by which `siteId` it belongs to, we have a complicated initial state and confusing syntax on the return value.
@@ -103,7 +102,7 @@ const widgetCount = ( state = 0, action ) => {
 	}
 
 	return state;
-}
+};
 ```
 
 …and somehow it would know to assign this to the proper site?
@@ -125,31 +124,26 @@ We are provided the opportunity to make straightforward tests without complicate
 #### Example
 
 ```js
-const age = ( state = 0, action ) =>
-    GROW === action.type
-        ? state + 1
-        : state
+const age = ( state = 0, action ) => ( GROW === action.type ? state + 1 : state );
 
-const title = ( state = 'grunt', action ) =>
-    PROMOTION === action.type
-        ? action.title
-        : state
+const title = ( state = 'grunt', action ) => ( PROMOTION === action.type ? action.title : state );
 
 const userReducer = combineReducers( {
-    age,
-    title,
-} )
+	age,
+	title,
+} );
 
-export default keyedReducer( 'username', userReducer )
+export default keyedReducer( 'username', userReducer );
 
-dispatch( { type: GROW, username: 'hunter02' } )
+dispatch( { type: GROW, username: 'hunter02' } );
 
-state.users === {
-    hunter02: {
-        age: 1,
-        title: 'grunt',
-    }
-}
+state.users ===
+	{
+		hunter02: {
+			age: 1,
+			title: 'grunt',
+		},
+	};
 ```
 
 **NOTE:** There may be some cases where you wish to respond to an action by removing a key. In those cases, you may return `undefined` from the reducer to explicitly indicate there is no longer state associated with the key, and `keyedReducer` will omit that key from the state.
@@ -158,22 +152,21 @@ state.users === {
 
 ```javascript
 const deleteableUserReducer = ( state, action ) =>
-    DELETE === action.type
-        ? undefined
-        : userReducer( state, action );
+	DELETE === action.type ? undefined : userReducer( state, action );
 
 export default keyedReducer( 'username', deleteableUserReducer );
 
-state.users === {
-    hunter02: {
-        age: 1,
-        title: 'grunt',
-    }
-}
+state.users ===
+	{
+		hunter02: {
+			age: 1,
+			title: 'grunt',
+		},
+	};
 
 dispatch( { type: DELETE, username: 'hunter02' } );
 
-state.users === {}
+state.users === {};
 ```
 
 Finally, it's sometimes desirable to apply specific actions to all items in the collection.
@@ -201,7 +194,7 @@ const hexPersister = ( state = 0, { type } ) => {
 		default:
 			return state;
 	}
-}
+};
 
 const hexNumbers = keyedReducer( 'counterId', hexPersister, [ DESERIALIZE, SERIALIZE ] );
 hexNumbers.hasCustomPersistence = true;
@@ -219,16 +212,13 @@ The new reducer will automatically validate the persisted state when Calypso loa
 #### Example
 
 ```js
-const ageReducer = ( state = 0, action ) =>
-	GROW === action.type
-		? state + 1
-		: state
+const ageReducer = ( state = 0, action ) => ( GROW === action.type ? state + 1 : state );
 
-const schema = { type: 'number', minimum: 0 }
+const schema = { type: 'number', minimum: 0 };
 
-export const age = withSchemaValidation( schema, ageReducer )
+export const age = withSchemaValidation( schema, ageReducer );
 
-ageReducer( -5, { type: DESERIALIZE } ) === -5
-age( -5, { type: DESERIALIZE } ) === 0
-age( 23, { type: DESERIALIZE } ) === 23
+ageReducer( -5, { type: DESERIALIZE } ) === -5;
+age( -5, { type: DESERIALIZE } ) === 0;
+age( 23, { type: DESERIALIZE } ) === 23;
 ```

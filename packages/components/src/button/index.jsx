@@ -12,6 +12,7 @@ import './style.scss';
 
 export default class Button extends PureComponent {
 	static propTypes = {
+		plain: PropTypes.bool,
 		compact: PropTypes.bool,
 		primary: PropTypes.bool,
 		scary: PropTypes.bool,
@@ -28,16 +29,18 @@ export default class Button extends PureComponent {
 	};
 
 	render() {
-		const className = classNames( 'button', this.props.className, {
-			'is-compact': this.props.compact,
-			'is-primary': this.props.primary,
-			'is-scary': this.props.scary,
-			'is-busy': this.props.busy,
-			'is-borderless': this.props.borderless,
-		} );
+		const className = this.props.plain
+			? classNames( 'button-plain', this.props.className )
+			: classNames( 'button', this.props.className, {
+					'is-compact': this.props.compact,
+					'is-primary': this.props.primary,
+					'is-scary': this.props.scary,
+					'is-busy': this.props.busy,
+					'is-borderless': this.props.borderless,
+			  } );
 
 		if ( this.props.href ) {
-			const { compact, primary, scary, busy, borderless, type, ...props } = this.props;
+			const { compact, primary, scary, busy, borderless, plain, type, ...props } = this.props;
 
 			// block referrers when external link
 			const rel = props.target
@@ -47,7 +50,7 @@ export default class Button extends PureComponent {
 			return <a { ...props } rel={ rel } className={ className } />;
 		}
 
-		const { compact, primary, scary, busy, borderless, target, rel, ...props } = this.props;
+		const { compact, primary, scary, busy, borderless, plain, target, rel, ...props } = this.props;
 
 		return <button { ...props } className={ className } />;
 	}

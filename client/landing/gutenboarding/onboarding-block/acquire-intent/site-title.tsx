@@ -7,7 +7,7 @@ import { useI18n } from '@automattic/react-i18n';
 import { Icon } from '@wordpress/icons';
 import classnames from 'classnames';
 import { useViewportMatch } from '@wordpress/compose';
-import config from 'config';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies

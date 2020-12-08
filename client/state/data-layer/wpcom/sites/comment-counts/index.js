@@ -6,11 +6,11 @@ import { mapValues } from 'lodash';
 /**
  * Internal dependencies
  */
-import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'state/action-types';
-import { http } from 'state/data-layer/wpcom-http/actions';
-import { dispatchRequest } from 'state/data-layer/wpcom-http/utils';
+import { COMMENT_COUNTS_REQUEST, COMMENT_COUNTS_UPDATE } from 'calypso/state/action-types';
+import { http } from 'calypso/state/data-layer/wpcom-http/actions';
+import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 
-import { registerHandlers } from 'state/data-layer/handler-registry';
+import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 
 export const fetchCommentCounts = ( action ) => {
 	const { siteId, postId } = action;

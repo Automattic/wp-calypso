@@ -8,6 +8,7 @@
 - [User account requirements](#user-account-requirements)
 - [List of wrapper repos & friends](#list-of-wrapper-repos--friends)
 - [What to name your branch](#what-to-name-your-branch)
+- [How to fix the `chromedriver not found` error when running e2e tests locally](#how-to-fix-the-chromedriver-not-found-error-when-running-e2e-tests-locally)
 
 ## NodeJS Version
 
@@ -15,7 +16,7 @@ The node version should be defined in the `.nvmrc` file for use with the [nvm](h
 
 ## Launch Logged-In Window
 
-To facilitate manual testing, the [launch-wpcom-login.js](/scripts/launch-wpcom-login.js) file in `/scripts` will launch a Chrome browser window to WordPress.com and log in with the account definition given on the command line.  The only config requirement for this is that the `local-${NODE_CONFIG_ENV}.json` file needs to have the `testAccounts` object defined.  If no account is given on the command line, `defaultUser` will be used.
+To facilitate manual testing, the [launch-wpcom-login.js](/scripts/launch-wpcom-login.js) file in `/scripts` will launch a Chrome browser window to WordPress.com and log in with the account definition given on the command line. The only config requirement for this is that the `local-${NODE_CONFIG_ENV}.json` file needs to have the `testAccounts` object defined. If no account is given on the command line, `defaultUser` will be used.
 
 Example:
 
@@ -35,7 +36,7 @@ Example:
 
 ## List of wrapper repos & friends
 
-Wrapper repo is basically the same Main repo but with parameterized `./run.sh` command which provide variety of ways to run the tests.  We set things up this way to make it easy to differentiate build types on Circle CI, for example: [history of WooCommerce e2e test runs](https://circleci.com/build-insights/gh/Automattic/wp-e2e-tests-woocommerce/master).
+Wrapper repo is basically the same Main repo but with parameterized `./run.sh` command which provide variety of ways to run the tests. We set things up this way to make it easy to differentiate build types on Circle CI, for example: [history of WooCommerce e2e test runs](https://circleci.com/build-insights/gh/Automattic/wp-e2e-tests-woocommerce/master).
 
 1. ~~[Main repo](https://github.com/Automattic/wp-e2e-tests) - Retired e2e repo~~
 1. [Canary tests](https://github.com/Automattic/wp-e2e-tests-canary) - `@canary` tagged tests which runs on every Calypso `master` merge
@@ -48,9 +49,9 @@ Wrapper repo is basically the same Main repo but with parameterized `./run.sh` c
 1. ~~[I18N tests](https://github.com/Automattic/wp-e2e-tests-i18n) - Runs I18N test suite. Triggered by `cron` job~~
 1. ~~[Jetpack Release Smoke test](https://github.com/Automattic/wp-e2e-tests-jetpack-smoke) - Manually triggered smoke test which is running against multiple set of WPORG hosts~~
 
-** Branches with strikethrough are now unnecessary with the move of e2e tests in to wp-calypso
+\*\* Branches with strikethrough are now unnecessary with the move of e2e tests in to wp-calypso
 
-**Note- If adding to this list, also add to /scripts/circleci-branch-update.sh to ensure they stay up to date on node version
+\*\*Note- If adding to this list, also add to /scripts/circleci-branch-update.sh to ensure they stay up to date on node version
 
 Friends:
 
@@ -61,3 +62,16 @@ Friends:
 
 - Use the same naming conventions as listed in [wp-calypso](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/git-workflow.md#branch-naming-scheme)
 - If you have changes to jetpack tests, be sure to add "jetpack" into your branch name so those tests are run on CI
+
+## How to fix the `chromedriver not found` error when running e2e tests locally
+
+When runnning e2e tests locally, an error can appear about chromedriver not being found in `/wp-calypso/node_modules/chromedriver/lib/chromedriver/chromedriver`
+
+This is likely due to a few `env` variables that are recommended by `yarn calypso-doctor`, since installing `chromedriver` is really slow and not needed most of the time. In particular:
+
+- `CHROMEDRIVER_SKIP_DOWNLOAD`
+- `PUPPETEER_SKIP_DOWNLOAD`
+
+You can force the download of `chromedriver` by overriding the environment variablew, and forcing a fresh install:
+
+`CHROMEDRIVER_SKIP_DOWNLOAD='' PUPPETEER_SKIP_DOWNLOAD='' yarn install --force`

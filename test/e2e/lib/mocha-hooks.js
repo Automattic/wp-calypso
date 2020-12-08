@@ -2,6 +2,7 @@
  * External dependencies
  */
 import config from 'config';
+import assert from 'assert';
 
 /**
  * Internal dependencies
@@ -16,6 +17,13 @@ import * as videoRecorder from '../lib/video-recorder';
 
 const afterHookTimeoutMS = config.get( 'afterHookTimeoutMS' );
 let allPassed = true; // For SauceLabs status
+
+before( function () {
+	if ( process.env.LIVEBRANCHES === 'true' ) {
+		const isCalypsoLiveURL = config.get( 'calypsoBaseURL' ).includes( 'calypso.live' );
+		assert.strictEqual( isCalypsoLiveURL, true );
+	}
+} );
 
 // Start xvfb display and recording
 before( async function () {
@@ -120,6 +128,12 @@ afterEach( async function () {
 	return await driverHelper.checkForConsoleErrors( driver );
 } );
 
+afterEach( async function () {
+	this.timeout( afterHookTimeoutMS );
+	const driver = global.__BROWSER__;
+	await driverHelper.printConsole( driver );
+} );
+
 // Update Sauce Job Status locally
 afterEach( function () {
 	const driver = global.__BROWSER__;
@@ -148,6 +162,11 @@ after( async function () {
 
 // Quit browser
 after( function () {
+	if ( ! global.__BROWSER__ ) {
+		// Early return if there's no browser, i.e. when all specs were skipped.
+		return;
+	}
+
 	this.timeout( afterHookTimeoutMS );
 	const driver = global.__BROWSER__;
 

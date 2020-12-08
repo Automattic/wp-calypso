@@ -11,8 +11,8 @@ import filesize from 'filesize';
  * Internal dependencies
  */
 import { ProgressBar } from '@automattic/components';
-import { planHasFeature } from 'lib/plans';
-import { FEATURE_UNLIMITED_STORAGE } from 'lib/plans/constants';
+import { planHasFeature } from 'calypso/lib/plans';
+import { FEATURE_UNLIMITED_STORAGE } from 'calypso/lib/plans/constants';
 
 const ALERT_PERCENT = 80;
 const WARN_PERCENT = 60;

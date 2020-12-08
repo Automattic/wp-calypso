@@ -1,46 +1,120 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' ); // eslint-disable-line import/no-extraneous-dependencies
+const { debounce } = require( 'lodash' );
+const { ipcMain: ipc, Notification } = require( 'electron' );
+const { promisify } = require( 'util' ); // eslint-disable-line import/no-nodejs-modules
 
 /**
  * Internal dependencies
  */
-const Settings = require( 'desktop/lib/settings' );
-const Platform = require( 'desktop/lib/platform' );
-const log = require( 'desktop/lib/logger' )( 'desktop:notifications' );
+const Settings = require( 'calypso/desktop/lib/settings' );
+const Platform = require( 'calypso/desktop/lib/platform' );
+const ViewModel = require( 'calypso/desktop/lib/notifications/viewmodel' );
+const log = require( 'calypso/desktop/lib/logger' )( 'desktop:notifications' );
 
 /**
- * Module variables
+ *
+ * Module dependencies
  */
-let unreadNotificationCount = 0;
+const delay = promisify( setTimeout );
 
-function updateNotificationBadge( badgeEnabled ) {
+function updateNotificationBadge( count ) {
+	const badgeEnabled = Settings.getSetting( 'notification-badge' );
+	if ( ! badgeEnabled ) {
+		return;
+	}
+
 	const bounceEnabled = Settings.getSetting( 'notification-bounce' );
 
-	log.info(
-		'Updating notification badge - badge enabled=' +
-			badgeEnabled +
-			' bounce enabled=' +
-			bounceEnabled
-	);
-
-	if ( badgeEnabled && unreadNotificationCount > 0 ) {
-		Platform.showNotificationsBadge( unreadNotificationCount, bounceEnabled );
+	if ( count > 0 ) {
+		Platform.showNotificationsBadge( count, bounceEnabled );
 	} else {
 		Platform.clearNotificationsBadge();
 	}
 }
 
-module.exports = function () {
-	ipc.on( 'unread-notices-count', function ( event, count ) {
+module.exports = function ( mainWindow ) {
+	ipc.on( 'unread-notices-count', function ( _, count ) {
 		log.info( 'Notification count received: ' + count );
-		unreadNotificationCount = count;
 
-		updateNotificationBadge( Settings.getSetting( 'notification-badge' ) );
+		updateNotificationBadge( count );
 	} );
 
-	ipc.on( 'preferences-changed-notification-badge', function ( event, arg ) {
-		updateNotificationBadge( arg );
+	ipc.on( 'preferences-changed-notification-badge', function ( _, enabled ) {
+		if ( enabled ) {
+			mainWindow.webContents.send( 'enable-notification-badge' );
+		} else {
+			updateNotificationBadge( 0 );
+		}
+	} );
+
+	// Calypso's renderer websocket connection does not work w/ Electron. Manually refresh
+	// the notifications panel when a new message is received so it's as up-to-date as possible.
+	// Invoke debounce directly, and not as nested fn.
+	ViewModel.on(
+		'notification',
+		debounce(
+			() => {
+				mainWindow.webContents.send( 'notifications-panel-refresh' );
+			},
+			100,
+			{ leading: true, trailing: false }
+		)
+	);
+
+	ViewModel.on( 'notification', function ( notification ) {
+		log.info( 'Received notification: ', notification );
+
+		if ( ! Settings.getSetting( 'notifications' ) ) {
+			log.info( 'Notifications disabled!' );
+
+			return;
+		}
+		const { id, type, title, subtitle, body, navigate } = notification;
+
+		log.info( `Received ${ type } notification for site ${ title }` );
+
+		if ( Notification.isSupported() ) {
+			const desktopNotification = new Notification( {
+				title: title,
+				subtitle: subtitle,
+				body: body,
+				silent: true,
+				hasReply: false,
+			} );
+
+			desktopNotification.on( 'click', async function () {
+				ViewModel.didClickNotification( id, () =>
+					// Manually refresh notifications panel when a message is clicked
+					// to reflect read/unread highlighting.
+					mainWindow.webContents.send( 'notifications-panel-refresh' )
+				);
+
+				if ( ! mainWindow.isVisible() ) {
+					mainWindow.show();
+					await delay( 300 );
+				}
+
+				mainWindow.focus();
+
+				if ( navigate ) {
+					// if we have a specific URL, then navigate Calypso there
+					mainWindow.webContents.send( 'navigate', navigate );
+				} else {
+					// else just display the notifications panel
+					mainWindow.webContents.send( 'navigate', '/' );
+
+					await delay( 300 );
+
+					mainWindow.webContents.send( 'notifications-panel-show', true );
+				}
+
+				// Tracks API call
+				mainWindow.webContents.send( 'notification-clicked', notification );
+			} );
+
+			desktopNotification.show();
+		}
 	} );
 };

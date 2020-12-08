@@ -1,0 +1,47 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"lib": [ "dom", "esnext" ],
+		"module": "esnext",
+		"isolatedModules": true,
+		"noEmit": true,
+
+		"allowJs": true,
+		"checkJs": false,
+
+		/* Strict Type-Checking Options */
+		"strict": true,
+		"strictNullChecks": true,
+		"noImplicitAny": true,
+
+		/* Additional Checks */
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true,
+
+		/* Module Resolution Options */
+		"moduleResolution": "node",
+
+		/* This needs to be false so our types are possible to consume without setting this */
+		"esModuleInterop": false,
+
+		// Some type helpers from our webpack/
+		"types": [ "fse", "jest" ],
+		"typeRoots": [ "./typings", "./node_modules/@types", "../../node_modules/@types" ],
+		// Preserve JSX, allows compatibility with wp-element jsx babel transforms
+		"jsx": "preserve"
+	},
+	"exclude": [ "node_modules" ],
+	"references": [
+		{ "path": "../../packages/data-stores" },
+		{ "path": "../../packages/calypso-analytics" },
+		{ "path": "../../packages/composite-checkout" },
+		{ "path": "../../packages/domain-picker" },
+		{ "path": "../../packages/format-currency" },
+		{ "path": "../../packages/onboarding" },
+		{ "path": "../../packages/launch" },
+		{ "path": "../../packages/plans-grid" },
+		{ "path": "../../packages/react-i18n" }
+	]
+}

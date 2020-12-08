@@ -7,8 +7,8 @@ import { translate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { isEnabled } from 'config';
-import { addQueryArgs } from 'lib/route';
+import { isEnabled } from 'calypso/config';
+import { addQueryArgs } from 'calypso/lib/route';
 
 export function generateFlows( {
 	getSiteDestination = noop,
@@ -122,15 +122,13 @@ export function generateFlows( {
 			showRecaptcha: true,
 		},
 
-		'onboarding-plan-first': {
-			steps: [ 'user', 'plans', 'domains' ],
+		'onboarding-secure-your-brand': {
+			steps: [ 'user', 'domains', 'secure-your-brand', 'plans' ],
 			destination: getSignupDestination,
-			description:
-				'Shows the plan step before the domains step. Read more in https://wp.me/pbxNRc-cj.',
-			lastModified: '2020-04-22',
+			description: 'Onboarding flow with an additional step to upsell domains',
+			lastModified: '2020-10-08',
 			showRecaptcha: true,
 		},
-
 		'onboarding-registrationless': {
 			steps: [ 'domains', 'plans-new', 'user-new' ],
 			destination: getSignupDestination,
@@ -261,23 +259,18 @@ export function generateFlows( {
 			description: 'WordPress.com Connect signup flow',
 			lastModified: '2017-08-24',
 			disallowResume: true, // don't allow resume so we don't clear query params when we go back in the history
+			showRecaptcha: true,
 		};
 	}
 
 	if ( isEnabled( 'signup/wpforteams' ) ) {
-		flows[ 'wp-for-teams' ] = {
-			steps: [ 'p2-site', 'user' ],
+		flows.p2 = {
+			steps: [ 'p2-site', 'p2-details', 'user' ],
 			destination: ( dependencies ) => `https://${ dependencies.siteSlug }`,
 			description: 'P2 signup flow',
-			lastModified: '2020-08-11',
+			lastModified: '2020-09-01',
 			showRecaptcha: true,
 		};
-
-		// Original name for the project was "WP for Teams". Since then, we've renamed it to "P2".
-		// However, backend and Marketing is expecting `wp-for-teams` as the `signup_flow_name` var
-		// so we force it in client/lib/signup/step-actions/index.js `createAccount` function.
-		// Keeping both flows for clarity.
-		flows.p2 = { ...flows[ 'wp-for-teams' ] };
 	}
 
 	flows.domain = {
@@ -376,6 +369,7 @@ export function generateFlows( {
 		lastModified: '2018-11-14',
 		disallowResume: true,
 		autoContinue: true,
+		showRecaptcha: true,
 	};
 
 	flows[ 'plan-no-domain' ] = {

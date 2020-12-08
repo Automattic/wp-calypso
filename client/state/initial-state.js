@@ -7,11 +7,11 @@ import { map, pick, throttle } from 'lodash';
 /**
  * Internal dependencies
  */
-import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'state/action-types';
-import { getAllStoredItems, setStoredItem, clearStorage } from 'lib/browser-storage';
-import { isSupportSession } from 'lib/user/support-user-interop';
-import config from 'config';
-import user from 'lib/user';
+import { APPLY_STORED_STATE, SERIALIZE, DESERIALIZE } from 'calypso/state/action-types';
+import { getAllStoredItems, setStoredItem, clearStorage } from 'calypso/lib/browser-storage';
+import { isSupportSession } from 'calypso/lib/user/support-user-interop';
+import config from 'calypso/config';
+import user from 'calypso/lib/user';
 
 /**
  * Module variables
@@ -302,6 +302,11 @@ export function getStateFromCache( reducer, subkey ) {
 	if ( ! persistedState && subkey === 'signup' ) {
 		reduxStateKey = getPersistenceKey( subkey, true );
 		persistedState = stateCache[ reduxStateKey ] ?? null;
+
+		// If we are logged in, we no longer need the 'user' step in signup progress tree.
+		if ( persistedState && persistedState.progress && persistedState.progress.user ) {
+			delete persistedState.progress.user;
+		}
 
 		debug( 'fetched signup state from logged out state', persistedState );
 	}

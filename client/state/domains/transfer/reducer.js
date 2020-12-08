@@ -1,9 +1,9 @@
 /**
  * Internal dependencies
  */
-import { combineReducers, withSchemaValidation } from 'state/utils';
+import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import { domainTransferSchema } from './schema';
-import { DOMAIN_TRANSFER_UPDATE } from 'state/action-types';
+import { DOMAIN_TRANSFER_UPDATE } from 'calypso/state/action-types';
 
 /**
  * Returns the updated state after an action has been dispatched. The

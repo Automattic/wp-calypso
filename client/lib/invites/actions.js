@@ -9,14 +9,14 @@ import i18n from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import Dispatcher from 'dispatcher';
-import wpcom from 'lib/wp';
-import { action as ActionTypes } from 'lib/invites/constants';
-import { recordTracksEvent } from 'lib/analytics/tracks';
-import { errorNotice, successNotice } from 'state/notices/actions';
-import { acceptedNotice } from 'my-sites/invites/utils';
-import { requestSites, receiveSites } from 'state/sites/actions';
-import { requestSiteInvites } from 'state/invites/actions';
+import Dispatcher from 'calypso/dispatcher';
+import wpcom from 'calypso/lib/wp';
+import { action as ActionTypes } from 'calypso/lib/invites/constants';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { acceptedNotice } from 'calypso/my-sites/invites/utils';
+import { requestSites, receiveSites } from 'calypso/state/sites/actions';
+import { requestSiteInvites } from 'calypso/state/invites/actions';
 
 /**
  * Module variables
@@ -67,7 +67,10 @@ export function createAccount( userData, invite, callback ) {
 							error: error.error,
 						} );
 					} else {
-						recordTracksEvent( 'calypso_invite_account_created' );
+						recordTracksEvent( 'calypso_invite_account_created', {
+							is_p2_site: get( invite, 'site.is_wpforteams_site', false ),
+							inviter_blog_id: get( invite, 'site.ID', false ),
+						} );
 					}
 					callback( error, bearerToken );
 				}

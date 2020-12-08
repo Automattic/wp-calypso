@@ -10,10 +10,10 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getOKIcon, getWarningIcon } from './icons.js';
-import getUserSetting from 'state/selectors/get-user-setting';
-import hasUserSettings from 'state/selectors/has-user-settings';
-import isTwoStepEnabled from 'state/selectors/is-two-step-enabled';
-import QueryUserSettings from 'components/data/query-user-settings';
+import getUserSetting from 'calypso/state/selectors/get-user-setting';
+import hasUserSettings from 'calypso/state/selectors/has-user-settings';
+import isTwoStepEnabled from 'calypso/state/selectors/is-two-step-enabled';
+import QueryUserSettings from 'calypso/components/data/query-user-settings';
 import SecurityCheckupNavigationItem from './navigation-item';
 
 class SecurityCheckupTwoFactorBackupCodes extends React.Component {
@@ -46,7 +46,8 @@ class SecurityCheckupTwoFactorBackupCodes extends React.Component {
 			return null;
 		}
 
-		let icon, description;
+		let icon;
+		let description;
 
 		if ( areBackupCodesPrinted ) {
 			icon = getOKIcon();

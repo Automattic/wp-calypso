@@ -1,5 +1,4 @@
-Query Sharing Buttons
-=====================
+# Query Sharing Buttons
 
 `<QuerySharingButtons />` is a React component used in managing network requests for site's sharing buttons.
 
@@ -9,7 +8,7 @@ Render the component, passing `siteId`. It does not accept any children, nor doe
 
 ```jsx
 import React from 'react';
-import QuerySharingButtons from 'components/data/query-sharing-buttons';
+import QuerySharingButtons from 'calypso/components/data/query-sharing-buttons';
 
 export default function MySettingsPage( { buttons } ) {
 	return (

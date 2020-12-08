@@ -30,6 +30,7 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	isPrimary,
 	title,
 	image,
+	icon,
 	body,
 	badge,
 	actions,
@@ -37,7 +38,13 @@ const PromoSectionCard: FunctionComponent< PromoSectionCardProps > = ( {
 	const cta = get( actions, 'cta', null );
 	const learnMoreLink = get( actions, 'learnMoreLink', null );
 	return (
-		<PromoCard isPrimary={ !! isPrimary } title={ title } image={ image } badge={ badge }>
+		<PromoCard
+			isPrimary={ !! isPrimary }
+			title={ title }
+			image={ image }
+			badge={ badge }
+			icon={ icon }
+		>
 			<p>{ body }</p>
 			{ cta && ( cta.component || <PromoCardCta cta={ cta } learnMoreLink={ learnMoreLink } /> ) }
 		</PromoCard>

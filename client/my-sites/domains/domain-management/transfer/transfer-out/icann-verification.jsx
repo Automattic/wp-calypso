@@ -9,9 +9,9 @@ import { localize } from 'i18n-calypso';
  * Internal dependencies
  */
 import { Card, Button } from '@automattic/components';
-import { resendIcannVerification } from 'lib/domains';
-import notices from 'notices';
-import { TRANSFER_DOMAIN_REGISTRATION } from 'lib/url/support';
+import { resendIcannVerification } from 'calypso/lib/domains';
+import notices from 'calypso/notices';
+import { TRANSFER_DOMAIN_REGISTRATION } from 'calypso/lib/url/support';
 
 class IcannVerification extends React.Component {
 	state = {
