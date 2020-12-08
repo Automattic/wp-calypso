@@ -73,7 +73,8 @@ function add_public_coming_soon_to_settings_endpoint_get( $options ) {
 add_filter( 'site_settings_endpoint_get', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_get' );
 
 /**
- * This filter makes sure it's possible to change `wpcom_public_coming_soon` option via public-api.wordpress.com.
+ * This filter makes sure it's possible to change `wpcom_public_coming_soon` option via public-api.wordpress.com settings endpoint.
+ * The settings endpoint updates the option.
  *
  * @param object $input Filtered POST input.
  * @param object $unfiltered_input Raw and unfiltered POST input.
@@ -87,23 +88,6 @@ function add_public_coming_soon_to_settings_endpoint_post( $input, $unfiltered_i
 	return $input;
 }
 add_filter( 'rest_api_update_site_settings', __NAMESPACE__ . '\add_public_coming_soon_to_settings_endpoint_post', 10, 2 );
-
-/**
- * Launch the site when the privacy mode changes from public-not-indexed
- * This can happen due to clicking the launch button from the banner
- * Or due to manually updating the setting in wp-admin or calypso settings page.
- *
- * @param string $old_value the old value of blog_public.
- * @param string $value     the new value of blog_public.
- */
-function disable_coming_soon_on_privacy_change( $old_value, $value ) {
-	if ( 0 !== (int) $old_value || 0 === (int) $value ) {
-		// Do nothing if not moving from public-not-indexed.
-		return;
-	}
-	update_option( 'wpcom_public_coming_soon', 0 );
-}
-add_action( 'update_option_blog_public', __NAMESPACE__ . '\disable_coming_soon_on_privacy_change', 10, 2 );
 
 // phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter.FoundBeforeLastUsed
 /**
