@@ -1,7 +1,7 @@
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_TREATMENT } from '../experiments';
+import { REVERSE_PLANS_VARIANT } from '../experiments';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -100,7 +100,7 @@ export function getProductPosition(
 		case 'v2':
 			return PRODUCT_POSITION_IN_GRID_V2[ slug ];
 		case 'i5':
-			return SWITCH_PLAN_SIDES_TREATMENT === variation
+			return REVERSE_PLANS_VARIANT === variation
 				? PRODUCT_POSITION_IN_GRID_I5_TREATMENT[ slug ]
 				: PRODUCT_POSITION_IN_GRID_I5_CONTROL[ slug ];
 		default:

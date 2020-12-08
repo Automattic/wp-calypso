@@ -10,7 +10,11 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import { SWITCH_PLAN_SIDES_EXPERIMENT } from '../experiments';
+import {
+	REVERSE_PLANS_AB_TEST,
+	SWITCH_PLAN_SIDES_EXPERIMENT,
+	SWITCH_PLAN_SIDES_TREATMENT,
+} from '../experiments';
 import PlansFilterBarI5 from '../plans-filter-bar-i5';
 import ProductCardI5 from '../product-card-i5';
 import { getProductPosition } from '../product-grid/products-order';
@@ -18,13 +22,14 @@ import { getPlansToDisplay, getProductsToDisplay, isConnectionFlow } from '../pr
 import useGetPlansGridProducts from '../use-get-plans-grid-products';
 import Experiment from 'calypso/components/experiment';
 import JetpackFreeCard from 'calypso/components/jetpack/card/jetpack-free-card-i5';
+import { abtest } from 'calypso/lib/abtest';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import {
 	PLAN_JETPACK_SECURITY_REALTIME,
 	PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
 } from 'calypso/lib/plans/constants';
 import { getCurrentUserCurrencyCode } from 'calypso/state/current-user/selectors';
-import { getVariationForUser, isLoading } from 'calypso/state/experiments/selectors';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 import getSitePlan from 'calypso/state/sites/selectors/get-site-plan';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import MoreInfoBox from '../more-info-box';
@@ -58,9 +63,9 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
-	const variation =
+	const tracksVariation = abtest( REVERSE_PLANS_AB_TEST );
+	const exPlatVariation =
 		useSelector( ( state ) => getVariationForUser( state, SWITCH_PLAN_SIDES_EXPERIMENT ) ) || '';
-	const isVariationLoading = useSelector( isLoading );
 
 	const { availableProducts, purchasedProducts, includedInPlanProducts } = useGetPlansGridProducts(
 		siteId
@@ -71,9 +76,9 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	const sortedPlans = useMemo(
 		() =>
 			sortBy( getPlansToDisplay( { duration, currentPlanSlug } ), ( item ) =>
-				getProductPosition( item.productSlug as JetpackPlanSlugs, variation )
+				getProductPosition( item.productSlug as JetpackPlanSlugs, tracksVariation )
 			),
-		[ duration, currentPlanSlug, variation ]
+		[ duration, currentPlanSlug, tracksVariation ]
 	);
 	const sortedProducts = useMemo(
 		() =>
@@ -84,9 +89,9 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					purchasedProducts,
 					includedInPlanProducts,
 				} ),
-				( item ) => getProductPosition( item.productSlug as JetpackProductSlug, variation )
+				( item ) => getProductPosition( item.productSlug as JetpackProductSlug, tracksVariation )
 			),
-		[ duration, availableProducts, includedInPlanProducts, purchasedProducts, variation ]
+		[ duration, availableProducts, includedInPlanProducts, purchasedProducts, tracksVariation ]
 	);
 
 	const scrollToComparison = () => {
@@ -129,64 +134,59 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						showDiscountMessage
 						onDurationChange={ onDurationChange }
 						duration={ duration }
+						withTreatmentVariant={ exPlatVariation === SWITCH_PLAN_SIDES_TREATMENT }
 					/>
 				</div>
-				{ ! isVariationLoading && (
-					<>
-						<ul
-							className={ classNames( 'products-grid-i5__plan-grid', {
-								'is-wrapping': isPlanRowWrapping,
-							} ) }
-							ref={ planGridRef }
-						>
-							{ sortedPlans.map( ( product ) => (
-								<li key={ product.iconSlug }>
-									<ProductCardI5
-										item={ product }
-										onClick={ onSelectProduct }
-										siteId={ siteId }
-										currencyCode={ currencyCode }
-										selectedTerm={ duration }
-										isAligned={ ! isPlanRowWrapping }
-										featuredPlans={ [
-											PLAN_JETPACK_SECURITY_REALTIME,
-											PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
-										] }
-									/>
-								</li>
-							) ) }
-						</ul>
-						<div
-							className={ classNames( 'products-grid-i5__more', {
-								'is-detached': isPlanRowWrapping,
-							} ) }
-						>
-							<MoreInfoBox
-								headline={ translate( 'Need more info?' ) }
-								buttonLabel={ translate( 'Compare all product bundles' ) }
-								onButtonClick={ scrollToComparison }
+				<ul
+					className={ classNames( 'products-grid-i5__plan-grid', {
+						'is-wrapping': isPlanRowWrapping,
+					} ) }
+					ref={ planGridRef }
+				>
+					{ sortedPlans.map( ( product ) => (
+						<li key={ product.iconSlug }>
+							<ProductCardI5
+								item={ product }
+								onClick={ onSelectProduct }
+								siteId={ siteId }
+								currencyCode={ currencyCode }
+								selectedTerm={ duration }
+								isAligned={ ! isPlanRowWrapping }
+								featuredPlans={ [
+									PLAN_JETPACK_SECURITY_REALTIME,
+									PLAN_JETPACK_SECURITY_REALTIME_MONTHLY,
+								] }
 							/>
-						</div>
-					</>
-				) }
+						</li>
+					) ) }
+				</ul>
+				<div
+					className={ classNames( 'products-grid-i5__more', {
+						'is-detached': isPlanRowWrapping,
+					} ) }
+				>
+					<MoreInfoBox
+						headline={ translate( 'Need more info?' ) }
+						buttonLabel={ translate( 'Compare all product bundles' ) }
+						onButtonClick={ scrollToComparison }
+					/>
+				</div>
 			</section>
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
-				{ ! isVariationLoading && (
-					<ul className="products-grid-i5__product-grid">
-						{ sortedProducts.map( ( product ) => (
-							<li key={ product.iconSlug }>
-								<ProductCardI5
-									item={ product }
-									onClick={ onSelectProduct }
-									siteId={ siteId }
-									currencyCode={ currencyCode }
-									selectedTerm={ duration }
-								/>
-							</li>
-						) ) }
-					</ul>
-				) }
+				<ul className="products-grid-i5__product-grid">
+					{ sortedProducts.map( ( product ) => (
+						<li key={ product.iconSlug }>
+							<ProductCardI5
+								item={ product }
+								onClick={ onSelectProduct }
+								siteId={ siteId }
+								currencyCode={ currencyCode }
+								selectedTerm={ duration }
+							/>
+						</li>
+					) ) }
+				</ul>
 				<div className="products-grid-i5__free">
 					{ ( isInConnectFlow || isInJetpackCloud ) && (
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
