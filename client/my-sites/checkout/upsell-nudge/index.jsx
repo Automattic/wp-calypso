@@ -60,6 +60,29 @@ export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 export class UpsellNudge extends React.Component {
 	static propTypes = {
 		receiptId: PropTypes.number,
+		upsellType: PropTypes.string,
+		upgradeItem: PropTypes.string,
+		siteSlugParam: PropTypes.string,
+
+		// Below are provided by HOCs
+		currencyCode: PropTypes.string,
+		isLoading: PropTypes.bool,
+		hasProductsList: PropTypes.bool,
+		hasSitePlans: PropTypes.bool,
+		product: PropTypes.object,
+		productCost: PropTypes.number,
+		productDisplayCost: PropTypes.string,
+		planRawPrice: PropTypes.string,
+		planDiscountedRawPrice: PropTypes.string,
+		isLoggedIn: PropTypes.bool,
+		siteSlug: PropTypes.string,
+		selectedSiteId: PropTypes.oneOfType( [ PropTypes.string, PropTypes.number ] ).isRequired,
+		hasSevenDayRefundPeriod: PropTypes.bool,
+		trackUpsellButtonClick: PropTypes.func.isRequired,
+		translate: PropTypes.func.isRequired,
+		cards: PropTypes.arrayOf( PropTypes.object ),
+		cart: PropTypes.object,
+		isFetchingStoredCards: PropTypes.bool,
 		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	};
 
