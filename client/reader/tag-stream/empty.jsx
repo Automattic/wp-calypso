@@ -4,14 +4,16 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import EmptyContent from 'calypso/components/empty-content';
-import { recordAction, recordGaEvent, recordTrack } from 'calypso/reader/stats';
+import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isDiscoverEnabled } from 'calypso/reader/discover/helper';
 import { withPerformanceTrackerStop } from 'calypso/lib/performance-tracking';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 
 class TagEmptyContent extends React.Component {
 	static propTypes = {
@@ -25,13 +27,13 @@ class TagEmptyContent extends React.Component {
 	recordAction = () => {
 		recordAction( 'clicked_following_on_empty' );
 		recordGaEvent( 'Clicked Following on EmptyContent' );
-		recordTrack( 'calypso_reader_following_on_empty_tag_stream_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_following_on_empty_tag_stream_clicked' );
 	};
 
 	recordSecondaryAction = () => {
 		recordAction( 'clicked_discover_on_empty' );
 		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		recordTrack( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
+		this.props.recordReaderTracksEvent( 'calypso_reader_discover_on_empty_tag_stream_clicked' );
 	};
 
 	render() {
@@ -80,4 +82,6 @@ class TagEmptyContent extends React.Component {
 	}
 }
 
-export default withPerformanceTrackerStop( localize( TagEmptyContent ) );
+export default connect( null, {
+	recordReaderTracksEvent,
+} )( withPerformanceTrackerStop( localize( TagEmptyContent ) ) );
