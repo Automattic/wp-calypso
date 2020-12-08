@@ -18,7 +18,7 @@ import { getVariationForUser, isLoading, nextRefresh } from './selectors';
 let hasAnonIdGeneratingTracksEventFired = false;
 
 /**
- * Gets (and initialises if not yet initialised) a users assignment to an experiment.
+ * Gets (and initialises if not yet initialised) a user's assignment to an experiment.
  *
  * Usage tips:
  * - Account for loading state as assignment is now server-side.
