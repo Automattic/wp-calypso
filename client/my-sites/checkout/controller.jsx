@@ -14,6 +14,7 @@ import { getSiteBySlug } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import GSuiteNudge from './gsuite-nudge';
 import CheckoutContainer from './checkout/checkout-container';
+import CalypsoShoppingCartProvider from './calypso-shopping-cart-provider';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
@@ -219,14 +220,14 @@ export function upsellNudge( context, next ) {
 	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CheckoutContainer purchaseId={ Number( receiptId ) }>
+		<CalypsoShoppingCartProvider>
 			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }
 				upsellType={ upsellType }
 				upgradeItem={ upgradeItem }
 			/>
-		</CheckoutContainer>
+		</CalypsoShoppingCartProvider>
 	);
 
 	next();
