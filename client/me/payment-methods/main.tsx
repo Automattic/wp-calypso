@@ -10,7 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { addCreditCard, addNewPaymentMethod } from 'calypso/me/purchases/paths';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PaymentMethodList from 'calypso/me/payment-methods/payment-method-list';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -32,7 +32,7 @@ export default function PaymentMethods(): JSX.Element {
 			<PageViewTracker path="/me/purchases/payment-methods" title="Me > Payment Methods" />
 			<MeSidebarNavigation />
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<PurchasesHeader section={ 'payment-methods' } />
+			<PurchasesNavigation section={ 'payment-methods' } />
 			<PaymentMethodList
 				addPaymentMethodUrl={
 					isEnabled( 'purchases/new-payment-methods' ) ? addNewPaymentMethod : addCreditCard

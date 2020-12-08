@@ -1,6 +1,7 @@
 /**
  * External dependencies
  */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import { useTranslate } from 'i18n-calypso';
@@ -22,7 +23,7 @@ import { isEnabled } from 'calypso/config';
 import Search from 'calypso/components/search';
 import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 
-export default function PurchasesHeader( { section } ) {
+export default function PurchasesNavigation( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	let text = translate( 'Billing History' );
@@ -72,6 +73,6 @@ export default function PurchasesHeader( { section } ) {
 	);
 }
 
-PurchasesHeader.propTypes = {
+PurchasesNavigation.propTypes = {
 	section: PropTypes.string.isRequired,
 };
