@@ -72,6 +72,10 @@ export class PurchasePlanDetails extends Component {
 		}
 	}
 
+	isDataLoading( props ) {
+		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
+	}
+
 	render() {
 		const { pluginList, purchase, site, siteId, translate, isProductOwner } = this.props;
 
@@ -80,7 +84,7 @@ export class PurchasePlanDetails extends Component {
 			return null;
 		}
 
-		if ( ! this.props.hasLoadedPurchasesFromServer || this.props.isPlaceholder ) {
+		if ( this.isDataLoading( this.props ) || this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
 
