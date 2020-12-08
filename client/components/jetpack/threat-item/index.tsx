@@ -97,7 +97,8 @@ const ThreatItem: React.FC< Props > = ( {
 					</p>
 					<p className="threat-description__section-text">
 						{ translate(
-							'If you need more help on resolving this threat, we recommend {{strong}}Codeable{{/strong}}, a WordPress freelancer marketplace of 530+ highly vetted security experts. ' +
+							'If you need more help to resolve this threat, we recommend {{strong}}Codeable{{/strong}}, a trusted freelancer marketplace of highly vetted WordPress experts. ' +
+								'They have identified a select group of security experts to help with these projects. ' +
 								'Pricing ranges from $70-120/hour, and you can get a free estimate with no obligation to hire.',
 							{
 								components: {
