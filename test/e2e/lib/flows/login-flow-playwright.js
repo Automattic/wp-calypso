@@ -50,9 +50,8 @@ export default class LoginFlow {
 		// Perform the login action.
 		await loginPage.login( this.account.email || this.account.username, this.account.password );
 
-		// Upon successful login, assign page as class property.
-		// this.page = page;
-		return await page;
+		// Upon successful login, return the page object to the caller for additional steps.
+		return page;
 	}
 
 	async loginAndStartNewPost() {

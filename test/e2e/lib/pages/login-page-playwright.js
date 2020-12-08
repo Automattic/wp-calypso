@@ -6,49 +6,49 @@ import * as dataHelper from '../data-helper';
 // This is the Calypso WordPress.com login page
 // For the wp-admin login page see /wp-admin/wp-admin-logon-page
 export default class LoginPage {
-    constructor( page ) {
-        // Accepts an instance of a page object.
-        this.page = page;
-        // Set the login URL as an attribute of this page.
-        this.url = LoginPage.getLoginURL();
-    }
+	constructor( page ) {
+		// Accepts an instance of a page object.
+		this.page = page;
+		// Set the login URL as an attribute of this page.
+		this.url = LoginPage.getLoginURL();
+	}
 
-    async login( username, password ) {
-        // Establish CSS class selectors.
-        const userNameSelector = "#usernameOrEmail";
-        const passwordSelector = "#password";
-        const loginContainer = ".wp-login__container";
-        const changeAccountSelector = "#loginAsAnotherUser";
-        
-        // Retrive the page object.
-        const page = this.page;
+	async login( username, password ) {
+		// Establish CSS class selectors.
+		const userNameSelector = '#usernameOrEmail';
+		const passwordSelector = '#password';
+		const loginContainer = '.wp-login__container';
+		const changeAccountSelector = '#loginAsAnotherUser';
 
-        // If there is already a logged in session.
-        const alredyLoggedIn = await page.$( changeAccountSelector );
-        if ( alredyLoggedIn ) {
-            await page.click( changeAccountSelector );
-        }
-        
-        // Begin the process of logging in.
-        await page.waitForSelector( loginContainer );
-        await page.waitForSelector( userNameSelector );
+		// Retrive the page object.
+		const page = this.page;
 
-        await page.fill( userNameSelector, username );
-        await page.keyboard.press("Enter")
-        
-        await page.waitForSelector( passwordSelector) ;
-        await page.fill( passwordSelector, password );
-        await page.keyboard.press("Enter");
+		// If there is already a logged in session.
+		const alredyLoggedIn = await page.$( changeAccountSelector );
+		if ( alredyLoggedIn ) {
+			await page.click( changeAccountSelector );
+		}
 
-        // Check if My Home header appears to verify that login was successful.
-        // Note, I am not fond of this method, as the page element specified does not
-        // belong to the Login Page and therefore should have no business being here.
-        // Alternatively it may be better to check for lack of an element that should be 
-        // present at login page or check that URL string no longer contains wp-login.
-        return await page.waitForSelector( ".customer-home__heading", { visible: true } );
-    }
+		// Begin the process of logging in.
+		await page.waitForSelector( loginContainer );
+		await page.waitForSelector( userNameSelector );
 
-    static getLoginURL() {
+		await page.fill( userNameSelector, username );
+		await page.keyboard.press( 'Enter' );
+
+		await page.waitForSelector( passwordSelector );
+		await page.fill( passwordSelector, password );
+
+		// Wait for the sidebar to be loaded in the dashbaord before resolving the promise.
+		return await Promise.all( [
+			page.waitForResponse(
+				'https://wordpress.com/calypso/evergreen/async-load-calypso-my-sites-sidebar**'
+			),
+			page.keyboard.press( 'Enter' ),
+		] );
+	}
+
+	static getLoginURL() {
 		return dataHelper.getCalypsoURL( 'log-in' );
 	}
 }
