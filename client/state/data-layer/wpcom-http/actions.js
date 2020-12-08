@@ -16,6 +16,7 @@ import { WPCOM_HTTP_REQUEST } from 'calypso/state/action-types';
  * @property {object}   [onSuccess] Redux action to call when request succeeds
  * @property {object}   [onFailure] Redux action to call when request fails
  * @property {object}   [onProgress] Redux action to call on progress events from an upload
+ * @property {object}   [onStreamRecord] callback for each record of a streamed response (implies processResponseInStreamMode)
  * @property {object}   [options] extra options to send to the middleware, e.g. retry policy or offline policy
  */
 
@@ -38,7 +39,6 @@ export const http = (
 		onSuccess,
 		onFailure,
 		onProgress,
-		processResponseInStreamMode,
 		onStreamRecord,
 		...options
 	},
@@ -54,14 +54,6 @@ export const http = (
 				path
 			);
 		}
-
-		if ( processResponseInStreamMode && ! onStreamRecord ) {
-			// eslint-disable-next-line no-console
-			console.warn(
-				'No onStreamRecord provided, but processResponseInStreamMode on. Path: %s',
-				path
-			);
-		}
 	}
 
 	return {
@@ -74,8 +66,8 @@ export const http = (
 		onSuccess: onSuccess || action,
 		onFailure: onFailure || action,
 		onProgress: onProgress || action,
-		processResponseInStreamMode,
 		onStreamRecord,
+		processResponseInStreamMode: !! onStreamRecord,
 		options,
 	};
 };

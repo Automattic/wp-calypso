@@ -73,7 +73,6 @@ export const request = ( action ) => {
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: true },
-				processResponseInStreamMode: true,
 
 				// TODO @azabani make this a requestDispatcher option to fully integrate with wpcom-http
 				onStreamRecord: ( record ) => debug( 'onStreamRecord: record=%o', record ),
