@@ -52,12 +52,13 @@ export const TemplateSelectorControl = ( {
 				data-testid="template-selector-control-options"
 				aria-label={ legendLabel }
 			>
-				{ map( templates, ( { slug, title, preview, previewAlt } ) => (
+				{ map( templates, ( { slug, title, description, preview, previewAlt } ) => (
 					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
 							value={ slug }
-							label={ replacePlaceholders( title, siteInformation ) }
+							title={ replacePlaceholders( title, siteInformation ) }
+							description={ description }
 							help={ help }
 							onSelect={ onTemplateSelect }
 							staticPreviewImg={ preview }
