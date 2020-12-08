@@ -11,7 +11,8 @@
 			},
 			"categories": [ "featured" ],
 			"is_premium": false,
-			"is_fse": true
+			"is_fse": true,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Twenty Twenty One",
@@ -24,7 +25,8 @@
 			},
 			"categories": [ "featured" ],
 			"is_premium": false,
-			"is_fse": true
+			"is_fse": true,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Cassel",
@@ -36,7 +38,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "blog" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Edison",
@@ -48,7 +51,8 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "blog" ],
-			"is_premium": true
+			"is_premium": true,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Vesta",
@@ -60,7 +64,8 @@
 				"base": "Raleway"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Doyle",
@@ -72,7 +77,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": true
+			"is_premium": true,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Bowen",
@@ -84,7 +90,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "blog" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Easley",
@@ -96,7 +103,8 @@
 				"base": "Roboto"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Camdem",
@@ -108,7 +116,8 @@
 				"base": "Roboto"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Reynolds",
@@ -120,7 +129,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Overton",
@@ -132,7 +142,8 @@
 				"base": "Raleway"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Brice",
@@ -144,7 +155,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "charity", "non-profit" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Barnsbury",
@@ -156,7 +168,8 @@
 				"base": "Chivo"
 			},
 			"categories": [ "featured", "business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Alves",
@@ -168,7 +181,8 @@
 				"base": "Montserrat"
 			},
 			"categories": [ "featured", "non-profit", "charity" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Mayland",
@@ -180,7 +194,8 @@
 				"base": "Cabin"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Rivington",
@@ -192,7 +207,8 @@
 				"base": "Montserrat"
 			},
 			"categories": [ "featured", "real estate listing" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Maywood",
@@ -204,7 +220,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant, small business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Balasana",
@@ -216,7 +233,8 @@
 				"base": "Chivo"
 			},
 			"categories": [ "featured", "restaurant, small business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Stratford",
@@ -228,7 +246,8 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "school" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Rockfield",
@@ -240,7 +259,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Coutoire",
@@ -252,7 +272,8 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "portfolio" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Leven",
@@ -264,7 +285,8 @@
 				"base": "Open Sans"
 			},
 			"categories": [ "featured", "portfolio", "small business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
 		},
 		{
 			"title": "Gibbs",
@@ -276,7 +298,34 @@
 				"base": "Fira Sans"
 			},
 			"categories": [ "featured", "restaurant", "small business" ],
-			"is_premium": false
+			"is_premium": false,
+			"is_anchorfm": false
+		},
+		{
+			"title": "Leven (Anchor Placeholder, to be removed)",
+			"slug": "leven",
+			"template": "leven",
+			"theme": "leven",
+			"fonts": {
+				"headings": "Chivo",
+				"base": "Open Sans"
+			},
+			"categories": [ "featured", "portfolio", "small business" ],
+			"is_premium": false,
+			"is_anchorfm": true
+		},
+		{
+			"title": "Gibbs (Anchor Placeholder, to be removed)",
+			"slug": "gibbs",
+			"template": "gibbs",
+			"theme": "rockfield",
+			"fonts": {
+				"headings": "Fira Sans",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured", "restaurant", "small business" ],
+			"is_premium": false,
+			"is_anchorfm": true
 		}
 	]
 }

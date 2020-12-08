@@ -9,6 +9,8 @@ import { useHistory } from 'react-router-dom';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
+import { USER_STORE } from '../stores/user';
+import { useIsAnchorFm } from '../path';
 
 /**
  * When a new user completes Gutenboarding, before creating a site we show signup dialog.
@@ -25,6 +27,9 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 export default function useSignup() {
 	const { showSignupDialog } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const { setShowSignupDialog } = useDispatch( ONBOARD_STORE );
+	const isAnchorFmSignup = useIsAnchorFm();
+	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
+	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 
 	const {
 		location: { pathname, search },
@@ -34,7 +39,12 @@ export default function useSignup() {
 		// This handles opening the signup modal when there is a ?signup query parameter
 		// The use case is a user clicking "Create account" from login
 		// TODO: We can remove this condition when we've converted signup into it's own page
-		if ( new URLSearchParams( search ).has( 'signup' ) ) {
+		// We also open the signup modal when this is an Anchor.fm signup and
+		// we don't have a user yet.
+		if (
+			new URLSearchParams( search ).has( 'signup' ) ||
+			( isAnchorFmSignup && ! newUser && ! currentUser )
+		) {
 			setShowSignupDialog( true );
 		} else {
 			// Dialogs usually close naturally when the user clicks the browser's
