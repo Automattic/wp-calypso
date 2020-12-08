@@ -26,7 +26,7 @@ let browser;
 let context;
 
 before( async function () {
-	browser = await playwright.chromium.launch( { headless: false, devtools: true, slowMo: 100 } );
+	browser = await playwright.chromium.launch( { headless: false, devtools: false } );
 	context = await browser.newContext();
 } );
 
@@ -67,8 +67,8 @@ describe( `[${ host }] Inline Help: (${ screenSize })`, function () {
 
 	describe( `Performing searches`, function () {
 		it( `Open Inline Help popover`, async function () {
-			await this.supportPage.openInlineHelp();
-			return await this.supportPage.inlineHelpPopoverVisible();
+			const inlineHelpVisible = await this.supportPage.openInlineHelp();
+			assert.strictEqual( inlineHelpVisible, true, 'Inline Help popover could not be opened.' );
 		} );
 
 		it( `Displays contextual search results by default`, async function () {
@@ -125,9 +125,8 @@ describe( `[${ host }] Inline Help: (${ screenSize })`, function () {
 		} );
 
 		it( `Close Inline Help popover`, async function () {
-			await this.supportPage.closeInlineHelp();
-			const visible = await this.supportPage.inlineHelpPopoverVisible();
-			assert.strictEqual( visible, false, 'The Inline Help popover was not closed correctly.' );
+			const closed = await this.supportPage.closeInlineHelp();
+			assert.strictEqual( closed, true, 'The Inline Help popover was not closed correctly.' );
 		} );
 	} );
 } );
