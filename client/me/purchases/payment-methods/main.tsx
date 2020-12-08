@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import { addCreditCard, addNewPaymentMethod } from 'calypso/me/purchases/paths';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
-import PaymentMethodList from 'calypso/me/payment-methods/payment-method-list';
+import PaymentMethodList from 'calypso/me/purchases/payment-methods/payment-method-list';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';

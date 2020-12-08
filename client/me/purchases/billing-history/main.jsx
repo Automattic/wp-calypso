@@ -11,7 +11,6 @@ import { billingHistoryReceipt } from 'calypso/me/purchases/paths';
 import { Card } from '@automattic/components';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
-import BillingHistoryTable from './billing-history-table';
 import Main from 'calypso/components/main';
 import DocumentHead from 'calypso/components/data/document-head';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
