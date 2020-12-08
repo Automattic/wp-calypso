@@ -50,6 +50,7 @@ export const ItemGroupLabel: FunctionComponent = function ItemGroupLabel( { chil
 	return <p className="domain-picker__suggestion-group-label">{ children }</p>;
 };
 
+// For free sub-domains we mock the DomainSuggestion object and set the price as an empty string ''
 function domainIsFree( suggestion: DomainSuggestion ): boolean {
 	return ! suggestion.cost || suggestion.cost === '';
 }
