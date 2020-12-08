@@ -51,7 +51,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import FormattedHeader from 'calypso/components/formatted-header';
 import JetpackChecklist from 'calypso/my-sites/plans/current-plan/jetpack-checklist';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import PaidPlanThankYou from './current-plan-thank-you/paid-plan-thank-you';
 import FreePlanThankYou from './current-plan-thank-you/free-plan-thank-you';

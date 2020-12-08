@@ -132,9 +132,11 @@ function getSubscriptionEndDate( purchase ) {
  *
  * @param {object} purchase - the purchase to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
+function handleRenewNowClick( purchase, siteSlug, options = {} ) {
 	const renewItem = getRenewalItemFromProduct( purchase, {
 		domain: purchase.meta,
 	} );
@@ -142,7 +144,7 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	// Track the renew now submit.
 	recordTracksEvent( 'calypso_purchases_renew_now_click', {
 		product_slug: purchase.productSlug,
-		...tracksProps,
+		...options.tracksProps,
 	} );
 
 	if ( ! renewItem.extra.purchaseId ) {
@@ -155,9 +157,12 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
 	}
 	const { productSlugs, purchaseIds } = getProductSlugsAndPurchaseIds( [ renewItem ] );
 
-	const renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
+	let renewalUrl = `/checkout/${ productSlugs[ 0 ] }/renew/${ purchaseIds[ 0 ] }/${
 		siteSlug || renewItem.extra.purchaseDomain || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchase, siteSlug, renewItem, renewalUrl );
 
 	page( renewalUrl );
@@ -168,14 +173,16 @@ function handleRenewNowClick( purchase, siteSlug, tracksProps = {} ) {
  *
  * @param {Array} purchases - the purchases to be renewed
  * @param {string} siteSlug - the site slug to renew the purchase for
- * @param {object} tracksProps - where was the renew button clicked from
+ * @param {object} [options] - optional information
+ * @param {string} [options.redirectTo] - Passed as redirect_to in checkout
+ * @param {object} [options.tracksProps] - where was the renew button clicked from
  */
-function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {} ) {
+function handleRenewMultiplePurchasesClick( purchases, siteSlug, options = {} ) {
 	purchases.forEach( ( purchase ) => {
 		// Track the renew now submit.
 		recordTracksEvent( 'calypso_purchases_renew_multiple_click', {
 			product_slug: purchase.productSlug,
-			...tracksProps,
+			...options.tracksProps,
 		} );
 	} );
 
@@ -191,9 +198,12 @@ function handleRenewMultiplePurchasesClick( purchases, siteSlug, tracksProps = {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
 
-	const renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
+	let renewalUrl = `/checkout/${ productSlugs.join( ',' ) }/renew/${ purchaseIds.join( ',' ) }/${
 		siteSlug || renewItems[ 0 ].extra.purchaseDomain || ''
 	}`;
+	if ( options.redirectTo ) {
+		renewalUrl += '?redirect_to=' + encodeURIComponent( options.redirectTo );
+	}
 	debug( 'handling renewal click', purchases, siteSlug, renewItems, renewalUrl );
 
 	page( renewalUrl );

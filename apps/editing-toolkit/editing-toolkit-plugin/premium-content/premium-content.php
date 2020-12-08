@@ -79,6 +79,7 @@ function premium_content_block_enqueue_block_editor_assets() {
 		filemtime( PREMIUM_CONTENT__PLUGIN_DIR . '/' . $editor_css ),
 		false
 	);
+	wp_set_script_translations( 'premium-content-editor', 'full-site-editing' );
 }
 
 /**

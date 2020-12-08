@@ -1,12 +1,13 @@
 /**
  * Internal dependencies
  */
-
 import {
 	LAYOUT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_SET,
 	LAYOUT_NEXT_FOCUS_ACTIVATE,
 } from 'calypso/state/action-types';
+
+import 'calypso/state/ui/init';
 
 export function setLayoutFocus( area ) {
 	return {

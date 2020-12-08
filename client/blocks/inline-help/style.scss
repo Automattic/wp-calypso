@@ -61,6 +61,20 @@
 	border: 1px solid var( --color-primary-dark );
 	transition: all 0.2s ease-in-out;
 	overflow: visible;
+	width: 40px;
+	height: 40px;
+
+	&::before {
+		width: 28px;
+		height: 28px;
+		display: block;
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		content: '';
+		background: var( --color-surface );
+		border-radius: 100%;
+	}
 
 	&:focus {
 		background-color: var( --color-primary );
@@ -68,11 +82,11 @@
 	}
 
 	.gridicon {
-		fill: var( --color-text-inverted );
-		margin: 0;
+		fill: var( --color-primary );
+		margin: -3px 0 0 -3px;
 		top: 0;
-		height: 36px;
-		width: 36px;
+		height: 42px;
+		width: 42px;
 
 		> use:first-child,
 		> g:first-child {
@@ -164,13 +178,24 @@
 
 		.search {
 			border-radius: 2px 2px 0 0;
+			border: 6px solid var( --color-surface );
+
+			&.is-open {
+				width: auto;
+				max-width: 100%;
+			}
 
 			&.is-open.has-focus {
-				box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 6px var( --color-primary-light );
+				box-shadow: none;
+				border-color: var( --color-primary-light );
 
 				@include breakpoint-deprecated( '>660px' ) {
-					box-shadow: 0 0 0 1px var( --color-primary ), 0 0 0 4px var( --color-primary-light );
+					box-shadow: none;
 				}
+			}
+
+			@include breakpoint-deprecated( '>660px' ) {
+				border-width: 4px;
 			}
 
 			.search__input {
@@ -459,7 +484,7 @@
 .inline-help__results-placeholder-item {
 	height: 16px;
 	margin: 16px 0;
-	border-radius: 16px;
+	border-radius: 16px; /* stylelint-disable-line scales/radii */
 	background-color: var( --color-neutral-0 );
 	color: transparent;
 	animation: inline-help__results-placeholder-loading 2s cubic-bezier( 0.175, 0.885, 0.32, 1.275 ) infinite;

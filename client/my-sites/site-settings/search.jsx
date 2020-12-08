@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React, { Component, Fragment } from 'react';
 import { localize } from 'i18n-calypso';
@@ -42,8 +41,8 @@ import {
 import { planHasJetpackSearch } from 'calypso/lib/plans';
 import { FEATURE_SEARCH } from 'calypso/lib/plans/constants';
 import {
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_WPCOM_SEARCH,
+	PRODUCT_JETPACK_SEARCH_MONTHLY,
+	PRODUCT_WPCOM_SEARCH_MONTHLY,
 } from 'calypso/lib/products-values/constants';
 
 class Search extends Component {
@@ -114,8 +113,8 @@ class Search extends Component {
 		const { siteIsJetpack, siteSlug, translate } = this.props;
 
 		const href = siteIsJetpack
-			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH }`
-			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH }`;
+			? `/checkout/${ siteSlug }/${ PRODUCT_JETPACK_SEARCH_MONTHLY }`
+			: `/checkout/${ siteSlug }/${ PRODUCT_WPCOM_SEARCH_MONTHLY }`;
 
 		return (
 			<Fragment>
@@ -127,7 +126,7 @@ class Search extends Component {
 					href={ href }
 					event={ 'calypso_jetpack_search_settings_upgrade_nudge' }
 					feature={ FEATURE_SEARCH }
-					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH : PRODUCT_WPCOM_SEARCH }
+					plan={ siteIsJetpack ? PRODUCT_JETPACK_SEARCH_MONTHLY : PRODUCT_WPCOM_SEARCH_MONTHLY }
 					showIcon={ true }
 				/>
 			</Fragment>

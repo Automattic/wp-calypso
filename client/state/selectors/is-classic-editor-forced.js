@@ -9,6 +9,8 @@ import { isEnabled } from 'calypso/config';
  */
 import isVipSite from 'calypso/state/selectors/is-vip-site';
 
+import 'calypso/state/selected-editor/init';
+
 /**
  * Indicates if the classic editor should be always loaded even if the selected editor for the given site is Gutenberg.
  *

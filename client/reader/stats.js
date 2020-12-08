@@ -1,11 +1,11 @@
 /**
- * External Dependencies
+ * External dependencies
  */
 import { assign, partial, pick } from 'lodash';
 import debugFactory from 'debug';
 
 /**
- * Internal Dependencies
+ * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
@@ -50,6 +50,9 @@ function getLocation( path ) {
 	}
 	if ( path.indexOf( '/read/a8c' ) === 0 ) {
 		return 'following_a8c';
+	}
+	if ( path.indexOf( '/read/p2' ) === 0 ) {
+		return 'following_p2';
 	}
 	if ( path.indexOf( '/tag/' ) === 0 ) {
 		return 'topic_page';
@@ -102,6 +105,8 @@ function getLocation( path ) {
  *   recordTrack after changing windows and would result in a `ui_algo: single_post`
  *   regardless of the stream the post was opened. This now allows the article_opened
  *   Tracks event to correctly specify which stream the post was opened.
+ *
+ * @deprecated Use the recordReaderTracksEvent action instead.
  */
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
@@ -158,6 +163,7 @@ export const recordTracksRailcarRender = partial(
 	recordTracksRailcar,
 	'calypso_traintracks_render'
 );
+
 export const recordTracksRailcarInteract = partial(
 	recordTracksRailcar,
 	'calypso_traintracks_interact'
@@ -187,13 +193,17 @@ export function getTracksPropertiesForPost( post = {} ) {
 	};
 }
 
-export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
-	recordTrack( eventName, eventProperties );
+export function recordRailcar( eventName, railcar, eventProperties ) {
 	recordTracksRailcarInteract(
 		eventName,
 		railcar,
 		pick( eventProperties, [ 'ui_position', 'ui_algo' ] )
 	);
+}
+
+export function recordTrackWithRailcar( eventName, railcar, eventProperties ) {
+	recordTrack( eventName, eventProperties );
+	recordRailcar( eventName, railcar, eventProperties );
 }
 
 export function pageViewForPost( blogId, blogUrl, postId, isPrivate ) {

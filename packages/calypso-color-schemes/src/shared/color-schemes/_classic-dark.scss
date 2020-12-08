@@ -1,4 +1,5 @@
-.color-scheme.is-classic-dark {
+.color-scheme.is-classic-dark,
+.color-scheme.is-classic-dark .is-nav-unification {
 	/* Theme Properties */
 	--color-primary: var( --studio-gray-90 );
 	--color-primary-rgb: var( --studio-gray-90-rgb );
@@ -325,4 +326,10 @@
 	/* WP Admin */
 	--color-wp-admin-button-background: #008ec2;
 	--color-wp-admin-button-border: #006799;
+
+	/* Sidebar Submenu - Nav Unification */
+	--color-sidebar-submenu-background: #32373c;
+	--color-sidebar-submenu-text: #b4b9be;
+	--color-sidebar-submenu-hover-text: #00b9eb;
+	--color-sidebar-submenu-selected-text: var( --studio-white );
 }

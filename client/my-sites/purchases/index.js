@@ -15,16 +15,19 @@ import {
 	purchaseCancel,
 	purchaseCancelDomain,
 	purchaseAddPaymentMethod,
-	purchaseEditPaymentMethod,
+	purchaseChangePaymentMethod,
 	billingHistory,
 	receiptView,
 	paymentMethods,
-	addCreditCard,
+	addPaymentMethod,
 } from './controller';
+import { isEnabled } from 'calypso/config';
 
 export default ( router ) => {
 	page( '/purchases', siteSelection, navigation, sites, makeLayout, clientRender );
+
 	page( '/purchases/subscriptions', siteSelection, navigation, sites, makeLayout, clientRender );
+
 	page(
 		'/purchases/:site',
 		siteSelection,
@@ -33,6 +36,7 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/purchases/subscriptions/:site',
 		siteSelection,
@@ -41,6 +45,7 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/purchases/subscriptions/:site/:purchaseId',
 		siteSelection,
@@ -49,6 +54,7 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/cancel',
 		siteSelection,
@@ -57,6 +63,7 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
+
 	page(
 		'/purchases/subscriptions/:site/:purchaseId/confirm-cancel-domain',
 		siteSelection,
@@ -65,22 +72,62 @@ export default ( router ) => {
 		makeLayout,
 		clientRender
 	);
-	page(
-		'/purchases/subscriptions/:site/:purchaseId/payment/add',
-		siteSelection,
-		navigation,
-		purchaseAddPaymentMethod,
-		makeLayout,
-		clientRender
-	);
-	page(
-		'/purchases/subscriptions/:site/:purchaseId/payment/edit/:cardId',
-		siteSelection,
-		navigation,
-		purchaseEditPaymentMethod,
-		makeLayout,
-		clientRender
-	);
+
+	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/payment-method/add',
+			siteSelection,
+			navigation,
+			purchaseAddPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/payment-method/change/:cardId',
+			siteSelection,
+			navigation,
+			purchaseChangePaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/purchases/add-payment-method/:site',
+			siteSelection,
+			navigation,
+			addPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+	} else {
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/payment/add',
+			siteSelection,
+			navigation,
+			purchaseAddPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/purchases/subscriptions/:site/:purchaseId/payment/edit/:cardId',
+			siteSelection,
+			navigation,
+			purchaseChangePaymentMethod,
+			makeLayout,
+			clientRender
+		);
+
+		page(
+			'/purchases/add-credit-card/:site',
+			siteSelection,
+			navigation,
+			addPaymentMethod,
+			makeLayout,
+			clientRender
+		);
+	}
 
 	page(
 		'/purchases/billing-history/:site',
@@ -109,15 +156,6 @@ export default ( router ) => {
 		clientRender
 	);
 
-	page(
-		'/purchases/add-credit-card/:site',
-		siteSelection,
-		navigation,
-		addCreditCard,
-		makeLayout,
-		clientRender
-	);
-
 	// Redirect legacy urls
 	router( '/purchases/:siteName/:purchaseId', ( { params: { siteName, purchaseId } } ) =>
 		page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }` )
@@ -135,13 +173,21 @@ export default ( router ) => {
 	router(
 		'/purchases/:siteName/:purchaseId/payment/add',
 		( { params: { siteName, purchaseId } } ) =>
-			page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/add` )
+			isEnabled( 'purchases/new-payment-methods' )
+				? page.redirect(
+						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/add`
+				  )
+				: page.redirect( `/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/add` )
 	);
 	router(
 		'/purchases/:siteName/:purchaseId/payment/edit/:cardId',
 		( { params: { siteName, purchaseId, cardId } } ) =>
-			page.redirect(
-				`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/edit/${ cardId }`
-			)
+			isEnabled( 'purchases/new-payment-methods' )
+				? page.redirect(
+						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment-method/change/${ cardId }`
+				  )
+				: page.redirect(
+						`/purchases/subscriptions/${ siteName }/${ purchaseId }/payment/edit/${ cardId }`
+				  )
 	);
 };

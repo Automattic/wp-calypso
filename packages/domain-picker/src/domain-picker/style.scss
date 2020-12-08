@@ -119,12 +119,12 @@ $accent-blue: #117ac9;
 		border-bottom-right-radius: 5px; /* stylelint-disable-line scales/radii */
 	}
 
-	+ .domain-picker__suggestion-item {
+	& + & {
 		margin-top: -1px;
 	}
 
-	+ .domain-picker__suggestion-item.type-individual-item {
-		margin: 12px 0;
+	& + &.type-individual-item {
+		margin-top: 12px;
 	}
 
 	&.is-unavailable {
@@ -226,7 +226,7 @@ $accent-blue: #117ac9;
 		flex-wrap: wrap;
 	}
 
-	.domain-picker__domain-name {
+	.domain-picker__sub-domain {
 		word-break: break-word; // use hyphens if any to break domain name
 	}
 
@@ -246,6 +246,14 @@ $accent-blue: #117ac9;
 .domain-picker__domain-tld {
 	color: var( --studio-blue-40 );
 
+	.domain-picker__suggestion-item.is-unavailable & {
+		color: var( --studio-gray-40 );
+	}
+}
+
+.domain-picker__domain-wrapper {
+	direction: ltr;
+
 	&.with-margin {
 		// margin for recommended badge. this margin shouldn't
 		// be placed on the badge because if the badge falls
@@ -253,10 +261,6 @@ $accent-blue: #117ac9;
 		// margin isnt applied if hstsRequired is truthy as InfoTooltip component
 		// provides equal spacing between this and the recommended badge.
 		margin-right: 10px;
-	}
-
-	.domain-picker__suggestion-item.is-unavailable & {
-		color: var( --studio-gray-40 );
 	}
 }
 
@@ -418,7 +422,9 @@ $accent-blue: #117ac9;
 }
 
 .domain-picker__error {
-	margin-top: 24px;
+	&.components-notice {
+		margin: 0;
+	}
 
 	#{&}-message {
 		@include onboarding-medium-text;

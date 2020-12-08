@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
@@ -19,9 +18,10 @@ import {
 	getSelectedPostType,
 	isDateRangeValid as isExportDateRangeValid,
 } from 'calypso/state/exporter/selectors';
+import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 const mapStateToProps = ( state, ownProps ) => {
-	const siteId = state.ui.selectedSiteId;
+	const siteId = getSelectedSiteId( state );
 
 	return {
 		siteId,

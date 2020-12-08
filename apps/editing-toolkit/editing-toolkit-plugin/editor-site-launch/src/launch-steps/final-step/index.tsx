@@ -9,7 +9,7 @@ import { __ } from '@wordpress/i18n';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { Button, Tip } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
-import { useSite, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
+import { useSiteDomains, useDomainSuggestion, useDomainSearch, useTitle } from '@automattic/launch';
 import { Title, SubTitle, ActionButtons, BackButton } from '@automattic/onboarding';
 import {
 	CheckoutStepBody,
@@ -43,7 +43,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
 
 	const { title } = useTitle();
-	const { currentDomainName } = useSite();
+	const { siteSubdomain } = useSiteDomains();
 	const domainSuggestion = useDomainSuggestion();
 	const { domainSearch } = useDomainSearch();
 
@@ -66,7 +66,7 @@ const FinalStep: React.FunctionComponent< LaunchStepProps > = ( { onNextStep, on
 			) : (
 				<>
 					<p>
-						{ __( 'Free site address', 'full-site-editing' ) }: { currentDomainName }
+						{ __( 'Free site address', 'full-site-editing' ) }: { siteSubdomain?.domain }
 					</p>
 					<Tip>
 						{ domainSearch

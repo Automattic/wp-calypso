@@ -1,3 +1,8 @@
+/**
+ * Internal Dependencies
+ */
+import { isEnabled } from 'calypso/config';
+
 export const getManagePurchaseUrlFor = (
 	targetSiteSlug: string,
 	targetPurchaseId: string | number
@@ -19,20 +24,27 @@ export const getPurchaseListUrlFor = ( targetSiteSlug: string ) =>
 export const getAddPaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number }
-) => `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
+) =>
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/add`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/add`;
 
 export const getAddNewPaymentMethod = ( targetSiteSlug: string ) =>
-	`/purchases/add-credit-card/${ targetSiteSlug }`;
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/add-payment-method/${ targetSiteSlug }`
+		: `/purchases/add-credit-card/${ targetSiteSlug }`;
 
 export const getPaymentMethodsUrlFor = ( targetSiteSlug: string ) =>
 	`/purchases/payment-methods/${ targetSiteSlug }`;
 
-export const getEditPaymentMethodUrlFor = (
+export const getChangePaymentMethodUrlFor = (
 	targetSiteSlug: string,
 	targetPurchase: { id: string | number },
 	targetCardId: { id: string | number }
 ) =>
-	`/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
+	isEnabled( 'purchases/new-payment-methods' )
+		? `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment-method/change/${ targetCardId }`
+		: `/purchases/subscriptions/${ targetSiteSlug }/${ targetPurchase }/payment/edit/${ targetCardId }`;
 
 export const getReceiptUrlFor = ( targetSiteSlug: string, targetReceiptId: string | number ) =>
 	`/purchases/billing-history/${ targetSiteSlug }/${ targetReceiptId }`;

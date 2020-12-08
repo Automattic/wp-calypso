@@ -39,13 +39,15 @@ import {
 	purchaseType,
 	getName,
 } from 'calypso/lib/purchases';
-import { canEditPaymentDetails, getEditCardDetailsPath, isDataLoading } from '../utils';
+import { canEditPaymentDetails, getChangePaymentMethodPath } from '../utils';
 import {
 	getByPurchaseId,
 	hasLoadedUserPurchasesFromServer,
+	hasLoadedSitePurchasesFromServer,
 	getRenewableSitePurchases,
 } from 'calypso/state/purchases/selectors';
 import { getCanonicalTheme } from 'calypso/state/themes/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import isSiteAtomic from 'calypso/state/selectors/is-site-automated-transfer';
 import Gridicon from 'calypso/components/gridicon';
 import HeaderCake from 'calypso/components/header-cake';
@@ -57,6 +59,7 @@ import {
 	isBusiness,
 	isEcommerce,
 	isPlan,
+	isComplete,
 	isDomainProduct,
 	isDomainRegistration,
 	isDomainMapping,
@@ -79,13 +82,14 @@ import PurchaseSiteHeader from '../purchases-site/header';
 import QueryCanonicalTheme from 'calypso/components/data/query-canonical-theme';
 import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import RemovePurchase from '../remove-purchase';
 import VerticalNavItem from 'calypso/components/vertical-nav/item';
 import { cancelPurchase, managePurchase, purchasesRoot } from '../paths';
 import { CALYPSO_CONTACT } from 'calypso/lib/url/support';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
-import PlanRenewalMessage from 'calypso/my-sites/plans-v2/plan-renewal-message';
+import PlanRenewalMessage from 'calypso/my-sites/plans/jetpack-plans/plan-renewal-message';
 import {
 	currentUserHasFlag,
 	getCurrentUser,
@@ -107,17 +111,18 @@ class ManagePurchase extends Component {
 		cardTitle: PropTypes.string,
 		getAddPaymentMethodUrlFor: PropTypes.func,
 		getCancelPurchaseUrlFor: PropTypes.func,
-		getEditPaymentMethodUrlFor: PropTypes.func,
+		getChangePaymentMethodUrlFor: PropTypes.func,
 		getManagePurchaseUrlFor: PropTypes.func,
 		hasLoadedDomains: PropTypes.bool,
 		hasLoadedSites: PropTypes.bool.isRequired,
-		hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
+		hasLoadedPurchasesFromServer: PropTypes.bool.isRequired,
 		hasNonPrimaryDomainsFlag: PropTypes.bool,
 		isAtomicSite: PropTypes.bool,
 		renewableSitePurchases: PropTypes.arrayOf( PropTypes.object ),
 		purchase: PropTypes.object,
 		purchaseAttachedTo: PropTypes.object,
 		purchaseListUrl: PropTypes.string,
+		redirectTo: PropTypes.string,
 		showHeader: PropTypes.bool,
 		site: PropTypes.object,
 		siteId: PropTypes.number,
@@ -128,8 +133,8 @@ class ManagePurchase extends Component {
 	static defaultProps = {
 		showHeader: true,
 		purchaseListUrl: purchasesRoot,
-		getAddPaymentMethodUrlFor: getEditCardDetailsPath,
-		getEditPaymentMethodUrlFor: getEditCardDetailsPath,
+		getAddPaymentMethodUrlFor: getChangePaymentMethodPath,
+		getChangePaymentMethodUrlFor: getChangePaymentMethodPath,
 		cardTitle: titles.managePurchase,
 		getCancelPurchaseUrlFor: cancelPurchase,
 		getManagePurchaseUrlFor: managePurchase,
@@ -166,8 +171,12 @@ class ManagePurchase extends Component {
 		}
 	}
 
+	isDataLoading( props = this.props ) {
+		return ! props.hasLoadedSites || ! props.hasLoadedPurchasesFromServer;
+	}
+
 	isDataValid( props = this.props ) {
-		if ( isDataLoading( props ) ) {
+		if ( this.isDataLoading( props ) ) {
 			return true;
 		}
 
@@ -175,11 +184,15 @@ class ManagePurchase extends Component {
 	}
 
 	handleRenew = () => {
-		handleRenewNowClick( this.props.purchase, this.props.siteSlug );
+		const { purchase, siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewNowClick( purchase, siteSlug, options );
 	};
 
 	handleRenewMultiplePurchases = ( purchases ) => {
-		handleRenewMultiplePurchasesClick( purchases, this.props.siteSlug );
+		const { siteSlug, redirectTo } = this.props;
+		const options = redirectTo ? { redirectTo } : undefined;
+		handleRenewMultiplePurchasesClick( purchases, siteSlug, options );
 	};
 
 	shouldShowNonPrimaryDomainWarning() {
@@ -252,7 +265,7 @@ class ManagePurchase extends Component {
 			? translate( 'Pick Another Plan' )
 			: translate( 'Upgrade Plan' );
 
-		if ( ! isPlan( purchase ) || isEcommerce( purchase ) ) {
+		if ( ! isPlan( purchase ) || isEcommerce( purchase ) || isComplete( purchase ) ) {
 			return null;
 		}
 
@@ -283,15 +296,18 @@ class ManagePurchase extends Component {
 	};
 
 	renderEditPaymentMethodNavItem() {
-		const { purchase, translate, siteSlug, getEditPaymentMethodUrlFor } = this.props;
+		const { purchase, translate, siteSlug, getChangePaymentMethodUrlFor } = this.props;
 
 		if ( ! this.props.site ) {
 			return null;
 		}
 
 		if ( canEditPaymentDetails( purchase ) ) {
-			const path = getEditPaymentMethodUrlFor( siteSlug, purchase );
+			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
+			const addPaymentMethodCopy = config.isEnabled( 'purchases/new-payment-methods' )
+				? translate( 'Add Payment Method' )
+				: translate( 'Add Credit Card' );
 
 			if (
 				renewing &&
@@ -305,7 +321,7 @@ class ManagePurchase extends Component {
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
 					{ hasPaymentMethod( purchase )
 						? translate( 'Change Payment Method' )
-						: translate( 'Add Credit Card' ) }
+						: addPaymentMethodCopy }
 				</CompactCard>
 			);
 		}
@@ -326,7 +342,7 @@ class ManagePurchase extends Component {
 		return (
 			<RemovePurchase
 				hasLoadedSites={ hasLoadedSites }
-				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedUserPurchasesFromServer }
+				hasLoadedUserPurchasesFromServer={ this.props.hasLoadedPurchasesFromServer }
 				hasNonPrimaryDomainsFlag={ hasNonPrimaryDomainsFlag }
 				hasCustomPrimaryDomain={ hasCustomPrimaryDomain }
 				site={ site }
@@ -515,10 +531,9 @@ class ManagePurchase extends Component {
 	renderPlaceholder() {
 		const {
 			siteSlug,
+			hasLoadedPurchasesFromServer,
 			getManagePurchaseUrlFor,
-			getAddCardDetailsPathFor,
-			getAddPaymentMethodUrlFor,
-			getEditCardDetailsPathFor,
+			getChangePaymentMethodUrlFor,
 		} = this.props;
 
 		return (
@@ -538,10 +553,9 @@ class ManagePurchase extends Component {
 					<PurchaseMeta
 						purchaseId={ false }
 						siteSlug={ siteSlug }
+						hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-						getAddCardDetailsPathFor={ getAddCardDetailsPathFor }
-						getEditCardDetailsPathFor={ getEditCardDetailsPathFor }
-						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
+						getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					/>
 				</Card>
 				<PurchasePlanDetails isPlaceholder />
@@ -563,7 +577,7 @@ class ManagePurchase extends Component {
 	}
 
 	renderPurchaseDetail( preventRenewal ) {
-		if ( isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
+		if ( this.isDataLoading( this.props ) || this.isDomainsLoading( this.props ) ) {
 			return this.renderPlaceholder();
 		}
 
@@ -574,7 +588,8 @@ class ManagePurchase extends Component {
 			isProductOwner,
 			getManagePurchaseUrlFor,
 			siteSlug,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
+			hasLoadedPurchasesFromServer,
 		} = this.props;
 
 		const classes = classNames( 'manage-purchase__info', {
@@ -621,8 +636,9 @@ class ManagePurchase extends Component {
 						<PurchaseMeta
 							purchaseId={ purchase.id }
 							siteSlug={ siteSlug }
+							hasLoadedPurchasesFromServer={ hasLoadedPurchasesFromServer }
 							getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					) }
 					{ isProductOwner && preventRenewal && this.renderSelectNewButton() }
@@ -658,13 +674,13 @@ class ManagePurchase extends Component {
 			translate,
 			getManagePurchaseUrlFor,
 			getAddPaymentMethodUrlFor,
-			getEditPaymentMethodUrlFor,
+			getChangePaymentMethodUrlFor,
 			isProductOwner,
 		} = this.props;
 
-		let editCardDetailsPath = false;
-		if ( ! isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
-			editCardDetailsPath = getEditPaymentMethodUrlFor( siteSlug, purchase );
+		let changePaymentMethodPath = false;
+		if ( ! this.isDataLoading( this.props ) && site && canEditPaymentDetails( purchase ) ) {
+			changePaymentMethodPath = getChangePaymentMethodUrlFor( siteSlug, purchase );
 		}
 
 		let showExpiryNotice = false;
@@ -681,7 +697,11 @@ class ManagePurchase extends Component {
 					eventName="calypso_manage_purchase_view"
 					purchaseId={ this.props.purchaseId }
 				/>
-				<QueryUserPurchases userId={ this.props.userId } />
+				{ this.props.siteId ? (
+					<QuerySitePurchases siteId={ this.props.siteId } />
+				) : (
+					<QueryUserPurchases userId={ this.props.userId } />
+				) }
 				{ siteId && <QuerySiteDomains siteId={ siteId } /> }
 				{ isPurchaseTheme && <QueryCanonicalTheme siteId={ siteId } themeId={ purchase.meta } /> }
 
@@ -694,14 +714,14 @@ class ManagePurchase extends Component {
 					</Notice>
 				) : (
 					<PurchaseNotice
-						isDataLoading={ isDataLoading( this.props ) }
+						isDataLoading={ this.isDataLoading( this.props ) }
 						handleRenew={ this.handleRenew }
 						handleRenewMultiplePurchases={ this.handleRenewMultiplePurchases }
 						selectedSite={ site }
 						purchase={ purchase }
 						purchaseAttachedTo={ purchaseAttachedTo }
 						renewableSitePurchases={ renewableSitePurchases }
-						editCardDetailsPath={ editCardDetailsPath }
+						changePaymentMethodPath={ changePaymentMethodPath }
 						getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 						isProductOwner={ isProductOwner }
 						getAddPaymentMethodUrlFor={ getAddPaymentMethodUrlFor }
@@ -728,7 +748,8 @@ export default connect( ( state, props ) => {
 		purchase && purchase.attachedToPurchaseId
 			? getByPurchaseId( state, purchase.attachedToPurchaseId )
 			: null;
-	const siteId = purchase ? purchase.siteId : null;
+	const selectedSiteId = getSelectedSiteId( state );
+	const siteId = selectedSiteId || ( purchase ? purchase.siteId : null );
 	const userId = getCurrentUserId( state );
 	const isProductOwner = purchase && purchase.userId === userId;
 	const renewableSitePurchases = getRenewableSitePurchases( state, siteId );
@@ -740,7 +761,9 @@ export default connect( ( state, props ) => {
 	return {
 		hasLoadedDomains,
 		hasLoadedSites,
-		hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
+		hasLoadedPurchasesFromServer: selectedSiteId
+			? hasLoadedSitePurchasesFromServer( state )
+			: hasLoadedUserPurchasesFromServer( state ),
 		hasNonPrimaryDomainsFlag: getCurrentUser( state )
 			? currentUserHasFlag( state, NON_PRIMARY_DOMAINS_TO_FREE_USERS )
 			: false,

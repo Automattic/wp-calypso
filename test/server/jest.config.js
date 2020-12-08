@@ -12,7 +12,7 @@ module.exports = {
 		),
 	},
 	transformIgnorePatterns: [
-		'node_modules[\\/\\\\](?!redux-form|draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
+		'node_modules[\\/\\\\](?!draft-js|calypso)(?!.*\\.(?:gif|jpg|jpeg|png|svg|scss|sass|css))',
 	],
 	moduleNameMapper: {
 		'^calypso/config$': 'calypso/server/config',

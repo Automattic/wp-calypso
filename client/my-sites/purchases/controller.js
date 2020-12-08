@@ -13,7 +13,7 @@ import {
 	PurchaseCancel,
 	PurchaseCancelDomain,
 	PurchaseAddPaymentMethod,
-	PurchaseEditPaymentMethod,
+	PurchaseChangePaymentMethod,
 } from 'calypso/my-sites/purchases/main';
 import { BillingHistory, ReceiptView } from 'calypso/my-sites/purchases/billing-history';
 import { PaymentMethods, AddNewPaymentMethod } from 'calypso/my-sites/purchases/payment-methods';
@@ -73,9 +73,9 @@ export const purchaseAddPaymentMethod = ( context, next ) => {
 	next();
 };
 
-export const purchaseEditPaymentMethod = ( context, next ) => {
+export const purchaseChangePaymentMethod = ( context, next ) => {
 	context.primary = (
-		<PurchaseEditPaymentMethod
+		<PurchaseChangePaymentMethod
 			cardId={ context.params.cardId }
 			siteSlug={ context.params.site }
 			purchaseId={ parseInt( context.params.purchaseId, 10 ) }
@@ -89,7 +89,7 @@ export const paymentMethods = ( context, next ) => {
 	next();
 };
 
-export const addCreditCard = ( context, next ) => {
+export const addPaymentMethod = ( context, next ) => {
 	context.primary = <AddNewPaymentMethod siteSlug={ context.params.site } />;
 	next();
 };

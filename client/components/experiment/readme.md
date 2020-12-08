@@ -4,6 +4,8 @@ A component for wrapping experiment variations and making the variations easier 
 You can use this component as a reference implementation in your own component or simply use this
 component to take advantage of current and future best-practices.
 
+For more info see pbxNRc-sZ-p2 or visit #a8c-experiments and ask around!
+
 Usage:
 
 ```jsx

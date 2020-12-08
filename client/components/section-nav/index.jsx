@@ -40,6 +40,8 @@ class SectionNav extends Component {
 		mobileOpen: false,
 	};
 
+	hasPinnedSearch = false;
+
 	UNSAFE_componentWillMount() {
 		this.checkForSiblingControls( this.props.children );
 	}
@@ -95,6 +97,7 @@ class SectionNav extends Component {
 	}
 
 	getChildren() {
+		this.hasPinnedSearch = false;
 		return React.Children.map( this.props.children, ( child ) => {
 			const extraProps = {
 				hasSiblingControls: this.hasSiblingControls,

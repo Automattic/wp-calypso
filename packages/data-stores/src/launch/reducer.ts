@@ -57,20 +57,7 @@ const plan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) 
 	return state;
 };
 
-/**
- * To keep track of the last paid plan the user has picked
- * This is useful information as this paid plan can be suggested later
- *
- * @param state the state
- * @param action the action
- */
-const paidPlan: Reducer< Plans.Plan | undefined, LaunchAction > = ( state, action ) => {
-	if ( action.type === 'SET_PLAN' && ! action.plan?.isFree ) {
-		return action.plan;
-	}
-	return state;
-};
-
+// Check if focused launch modal is open
 const isFocusedLaunchOpen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'OPEN_FOCUSED_LAUNCH' ) {
 		return true;
@@ -82,6 +69,7 @@ const isFocusedLaunchOpen: Reducer< boolean, LaunchAction > = ( state = false, a
 	return state;
 };
 
+// Check if step-by-step launch modal is open
 const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'OPEN_SIDEBAR' ) {
 		return true;
@@ -93,6 +81,7 @@ const isSidebarOpen: Reducer< boolean, LaunchAction > = ( state = false, action 
 	return state;
 };
 
+// Check if step-by-step launch modal is full screen
 const isSidebarFullscreen: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'SET_SIDEBAR_FULLSCREEN' ) {
 		return true;
@@ -111,6 +100,7 @@ const isExperimental: Reducer< boolean, LaunchAction > = ( state = false, action
 	return state;
 };
 
+// Check if site title step should be displayed
 const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
 	if ( action.type === 'SHOW_SITE_TITLE_STEP' ) {
 		return true;
@@ -119,6 +109,7 @@ const isSiteTitleStepVisible: Reducer< boolean, LaunchAction > = ( state = false
 	return state;
 };
 
+// Check if launch modal can be dismissed
 const isModalDismissible: Reducer< boolean, LaunchAction > = ( state = true, action ) => {
 	if ( action.type === 'SET_MODAL_DISMISSIBLE' ) {
 		return true;
@@ -131,6 +122,7 @@ const isModalDismissible: Reducer< boolean, LaunchAction > = ( state = true, act
 	return state;
 };
 
+// Check if launch modal title should be visible
 const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, action ) => {
 	if ( action.type === 'SHOW_MODAL_TITLE' ) {
 		return true;
@@ -143,13 +135,25 @@ const isModalTitleVisible: Reducer< boolean, LaunchAction > = ( state = true, ac
 	return state;
 };
 
+// Check if launch Success view should be displayed (user didn't dismissed the Success View modal)
+const shouldDisplaySuccessView: Reducer< boolean, LaunchAction > = ( state = false, action ) => {
+	if ( action.type === 'ENABLE_SUCCESS_VIEW' ) {
+		return true;
+	}
+
+	if ( action.type === 'DISABLE_SUCCESS_VIEW' ) {
+		return false;
+	}
+
+	return state;
+};
+
 const reducer = combineReducers( {
 	step,
 	domain,
 	confirmedDomainSelection,
 	domainSearch,
 	plan,
-	paidPlan,
 	isSidebarOpen,
 	isSidebarFullscreen,
 	isExperimental,
@@ -157,6 +161,7 @@ const reducer = combineReducers( {
 	isSiteTitleStepVisible,
 	isModalDismissible,
 	isModalTitleVisible,
+	shouldDisplaySuccessView,
 } );
 
 export type State = ReturnType< typeof reducer >;

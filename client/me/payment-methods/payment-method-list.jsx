@@ -66,7 +66,9 @@ class PaymentMethodList extends Component {
 
 		return (
 			<Button primary compact onClick={ this.goToAddPaymentMethod }>
-				{ this.props.translate( 'Add credit card' ) }
+				{ config.isEnabled( 'purchases/new-payment-methods' )
+					? this.props.translate( 'Add payment method' )
+					: this.props.translate( 'Add credit card' ) }
 			</Button>
 		);
 	}

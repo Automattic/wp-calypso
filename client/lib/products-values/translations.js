@@ -8,7 +8,7 @@ import { numberFormat, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans-v2/abtest';
+import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as CONSTANTS from './constants.js';
 
 // Translatable strings
@@ -337,78 +337,77 @@ export const getJetpackProducts = () => {
 			optionsLabel: translate( 'Select a product option:' ),
 			slugs: CONSTANTS.JETPACK_ANTI_SPAM_PRODUCTS,
 		} );
-	isEnabled( 'jetpack/search-product' ) &&
-		output.push( {
-			title: translate( 'Jetpack Search' ),
-			description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
-			// There is only one option per billing interval, but this
-			// component still needs the full display with radio buttons.
-			forceRadios: true,
-			hasPromo: false,
-			id: CONSTANTS.PRODUCT_JETPACK_SEARCH,
-			link: {
-				label: translate( 'Learn more' ),
-				props: {
-					location: 'product_jetpack_search_description',
-					slug: 'learn-more-search',
-				},
-				url: CONSTANTS.JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+
+	output.push( {
+		title: translate( 'Jetpack Search' ),
+		description: getJetpackProductsDescriptions()[ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
+		// There is only one option per billing interval, but this
+		// component still needs the full display with radio buttons.
+		forceRadios: true,
+		hasPromo: false,
+		id: CONSTANTS.PRODUCT_JETPACK_SEARCH,
+		link: {
+			label: translate( 'Learn more' ),
+			props: {
+				location: 'product_jetpack_search_description',
+				slug: 'learn-more-search',
 			},
-			options: {
-				yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
-				monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
-			},
-			optionShortNamesCallback: ( productObject ) => {
-				const numberOfDefinedTiers = 5;
-				switch ( productObject.price_tier_slug ) {
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
-						return translate( 'Pricing Tier 1: Up to 100 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
-						return translate( 'Pricing Tier 2: Up to 1,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
-						return translate( 'Pricing Tier 3: Up to 10,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
-						return translate( 'Pricing Tier 4: Up to 100,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
-						return translate( 'Pricing Tier 5: Up to 1,000,000 records' );
-					case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
-						// This is a catch-all tier with prices increasing
-						// proportionally per million records, so define fake
-						// tiers here to show the user what they will actually
-						// pay and why.
-						const tierNumber =
-							numberOfDefinedTiers +
-							Math.floor( productObject.price_tier_usage_quantity / 1000000 );
-						const tierMaximumRecords =
-							1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
-						return translate( 'Pricing Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
-							args: {
-								tierNumber,
-								tierMaximumRecords: numberFormat( tierMaximumRecords ),
-							},
-						} );
-					}
-					default:
-						return null;
-				}
-			},
-			optionActionButtonNames: getJetpackProductsShortNames(),
-			optionDisplayNames: getJetpackProductsDisplayNames(),
-			optionDescriptions: getJetpackProductsDescriptions(),
-			optionsLabelCallback: ( productObject ) => {
-				return translate(
-					'Your current site record size: %(numberOfRecords)s record',
-					'Your current site record size: %(numberOfRecords)s records',
-					{
-						count: productObject.price_tier_usage_quantity,
+			url: CONSTANTS.JETPACK_SEARCH_PRODUCT_LANDING_PAGE_URL,
+		},
+		options: {
+			yearly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH ],
+			monthly: [ CONSTANTS.PRODUCT_JETPACK_SEARCH_MONTHLY ],
+		},
+		optionShortNamesCallback: ( productObject ) => {
+			const numberOfDefinedTiers = 5;
+			switch ( productObject.price_tier_slug ) {
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100_RECORDS:
+					return translate( 'Pricing Tier 1: Up to 100 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1K_RECORDS:
+					return translate( 'Pricing Tier 2: Up to 1,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_10K_RECORDS:
+					return translate( 'Pricing Tier 3: Up to 10,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_100K_RECORDS:
+					return translate( 'Pricing Tier 4: Up to 100,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_UP_TO_1M_RECORDS:
+					return translate( 'Pricing Tier 5: Up to 1,000,000 records' );
+				case CONSTANTS.JETPACK_SEARCH_TIER_MORE_THAN_1M_RECORDS: {
+					// This is a catch-all tier with prices increasing
+					// proportionally per million records, so define fake
+					// tiers here to show the user what they will actually
+					// pay and why.
+					const tierNumber =
+						numberOfDefinedTiers + Math.floor( productObject.price_tier_usage_quantity / 1000000 );
+					const tierMaximumRecords =
+						1000000 * Math.ceil( productObject.price_tier_usage_quantity / 1000000 );
+					return translate( 'Pricing Tier %(tierNumber)d: Up to %(tierMaximumRecords)s records', {
 						args: {
-							numberOfRecords: numberFormat( productObject.price_tier_usage_quantity ),
+							tierNumber,
+							tierMaximumRecords: numberFormat( tierMaximumRecords ),
 						},
-					}
-				);
-			},
-			slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
-		} );
+					} );
+				}
+				default:
+					return null;
+			}
+		},
+		optionActionButtonNames: getJetpackProductsShortNames(),
+		optionDisplayNames: getJetpackProductsDisplayNames(),
+		optionDescriptions: getJetpackProductsDescriptions(),
+		optionsLabelCallback: ( productObject ) => {
+			return translate(
+				'Your current site record size: %(numberOfRecords)s record',
+				'Your current site record size: %(numberOfRecords)s records',
+				{
+					count: productObject.price_tier_usage_quantity,
+					args: {
+						numberOfRecords: numberFormat( productObject.price_tier_usage_quantity ),
+					},
+				}
+			);
+		},
+		slugs: CONSTANTS.JETPACK_SEARCH_PRODUCTS,
+	} );
 
 	return output;
 };

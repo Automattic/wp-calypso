@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-
 import { castArray } from 'lodash';
 
 /**
@@ -31,6 +30,7 @@ import {
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/sites/media';
+import 'calypso/state/media/init';
 
 /**
  * Returns an action object used in signalling that media item(s) for the site

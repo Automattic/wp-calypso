@@ -31,3 +31,4 @@ export { requestGdprConsentManagementLink } from './request-gdpr-consent-managem
 export { resendIcannVerification } from './resend-icann-verification';
 export { resolveDomainStatus } from './resolve-domain-status';
 export { startInboundTransfer } from './start-inbound-transfer';
+export { TRUENAME_TLDS, TRUENAME_COUPONS } from './truename-promo';

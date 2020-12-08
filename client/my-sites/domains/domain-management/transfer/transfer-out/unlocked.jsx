@@ -2,8 +2,8 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { noop } from 'lodash';
 
 /**
  * Internal dependencies
@@ -11,127 +11,46 @@ import { noop } from 'lodash';
 import { Card, Button } from '@automattic/components';
 import { getSelectedDomain } from 'calypso/lib/domains';
 import {
-	cancelTransferRequest,
+	cancelDomainTransferRequest,
 	fetchWapiDomainInfo,
-	requestTransferCode,
-} from 'calypso/lib/domains/wapi-domain-info/actions';
-import notices from 'calypso/notices';
-import { displayRequestTransferCodeResponseNotice } from './shared';
-import {
-	CALYPSO_CONTACT,
-	TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR,
-} from 'calypso/lib/url/support';
+	requestDomainTransferCode,
+} from 'calypso/state/domains/transfer/actions';
+import { TRANSFER_DOMAIN_REGISTRATION_WITH_NEW_REGISTRAR } from 'calypso/lib/url/support';
+import { getDomainWapiInfoByDomainName } from 'calypso/state/domains/transfer/selectors';
 
 class Unlocked extends React.Component {
 	state = {
-		submitting: false,
 		sent: ! this.isDomainAlwaysTransferrable(),
 	};
 
-	componentWillUnmount() {
-		this.setStateIfMounted = noop;
-	}
-
-	setStateIfMounted( ...args ) {
-		/**
-		 * Wrap setState calls that might occur after unmounting.
-		 *
-		 * When we cancel a transfer, that might update locking or privacy,
-		 * but errors mean we can't know in time - the store gets the information
-		 * before we do.
-		 *
-		 * The recommended solution is cancellable promises, but we don't want to
-		 * cancel these requests if we navigate away, so that won't work for us here.
-		 */
-		this.setState( ...args );
+	componentDidUpdate( prevProps ) {
+		if (
+			this.state.sent &&
+			prevProps.isCancelingTransfer &&
+			! this.props.isCancelingTransfer &&
+			! this.props.isDomainPendingTransfer
+		) {
+			// eslint-disable-next-line react/no-did-update-set-state
+			this.setState( {
+				sent: false,
+			} );
+		}
 	}
 
 	handleCancelTransferClick = () => {
-		const { translate } = this.props;
 		const { privateDomain, pendingTransfer, domainLockingAvailable } = getSelectedDomain(
 			this.props
 		);
 
-		this.setState( { submitting: true } );
-
 		const enablePrivacy = ! privateDomain;
 		const lockDomain = domainLockingAvailable;
 
-		cancelTransferRequest(
-			{
-				domainName: this.props.selectedDomainName,
-				declineTransfer: pendingTransfer,
-				siteId: this.props.selectedSite.ID,
-				enablePrivacy,
-				lockDomain,
-			},
-			( error ) => {
-				this.setStateIfMounted( { submitting: false } );
-
-				if ( error ) {
-					const contactLink = (
-						<a href={ CALYPSO_CONTACT } target="_blank" rel="noopener noreferrer" />
-					);
-					let errorMessage;
-
-					switch ( error.error ) {
-						case 'enable_private_reg_failed':
-							errorMessage = translate(
-								'We were unable to enable Privacy Protection for your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						case 'decline_transfer_failed':
-							errorMessage = translate(
-								'We were unable to stop the transfer for your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						case 'lock_domain_failed':
-							errorMessage = translate(
-								'We were unable to lock your domain. ' +
-									'Please try again or {{contactLink}}Contact Support{{/contactLink}} if you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-						default:
-							errorMessage = translate(
-								'Oops! Something went wrong and your request could not be ' +
-									'processed. Please try again or {{contactLink}}Contact Support{{/contactLink}} if ' +
-									'you continue to have trouble.',
-								{ components: { contactLink } }
-							);
-							break;
-					}
-					notices.error( errorMessage );
-				} else {
-					// Success.
-					this.setStateIfMounted( { sent: false } );
-
-					let successMessage;
-					if ( enablePrivacy && lockDomain ) {
-						successMessage = translate(
-							"We've canceled your domain transfer. Your domain is now re-locked and " +
-								'Privacy Protection has been enabled.'
-						);
-					} else if ( enablePrivacy ) {
-						successMessage = translate(
-							"We've canceled your domain transfer and " + 'Privacy Protection has been re-enabled.'
-						);
-					} else if ( lockDomain ) {
-						successMessage = translate(
-							"We've canceled your domain transfer and " + 're-locked your domain.'
-						);
-					} else {
-						successMessage = translate( "We've canceled your domain transfer. " );
-					}
-
-					notices.success( successMessage );
-				}
-			}
-		);
+		this.props.cancelDomainTransferRequest( this.props.selectedDomainName, {
+			declineTransfer: pendingTransfer,
+			siteId: this.props.selectedSite.ID,
+			enablePrivacy,
+			lockDomain,
+		} );
 	};
 
 	isDomainAlwaysTransferrable() {
@@ -151,7 +70,7 @@ class Unlocked extends React.Component {
 			<Button
 				className="transfer-out__action-button"
 				onClick={ this.handleCancelTransferClick }
-				disabled={ this.state.submitting || ! this.state.sent }
+				disabled={ this.props.isSubmitting || ! this.state.sent }
 			>
 				{ this.props.translate( 'Cancel Transfer' ) }
 			</Button>
@@ -170,7 +89,7 @@ class Unlocked extends React.Component {
 			<Button
 				className="transfer-out__action-button"
 				onClick={ this.handleSendConfirmationCodeClick }
-				disabled={ this.state.submitting }
+				disabled={ this.props.isSubmitting }
 				primary
 			>
 				{ this.state.sent
@@ -183,21 +102,11 @@ class Unlocked extends React.Component {
 	handleSendConfirmationCodeClick = () => {
 		const options = {
 			siteId: this.props.selectedSite.ID,
-			domainName: this.props.selectedDomainName,
 			unlock: false,
 			disablePrivacy: false,
 		};
 
-		this.setState( { submitting: true } );
-
-		requestTransferCode( options, ( error ) => {
-			this.setState( { submitting: false } );
-			if ( ! error ) {
-				this.setState( { sent: true } );
-			}
-			displayRequestTransferCodeResponseNotice( error, getSelectedDomain( this.props ) );
-			fetchWapiDomainInfo( this.props.selectedDomainName );
-		} );
+		this.props.requestDomainTransferCode( this.props.selectedDomainName, options );
 	};
 
 	renderPendingTransferBody() {
@@ -231,8 +140,8 @@ class Unlocked extends React.Component {
 	}
 
 	renderAuthorizationCodeBody() {
-		const { translate } = this.props;
-		const { submitting, sent } = this.state;
+		const { isSubmitting, translate } = this.props;
+		const { sent } = this.state;
 
 		const sentStatement =
 			sent &&
@@ -242,7 +151,7 @@ class Unlocked extends React.Component {
 			) + ' ';
 		return (
 			<div>
-				{ ! ( submitting || sent ) && (
+				{ ! ( isSubmitting || sent ) && (
 					<p>
 						{ translate( 'Please press the button to request a transfer authorization code.' ) }
 					</p>
@@ -259,8 +168,7 @@ class Unlocked extends React.Component {
 	}
 
 	render() {
-		const { translate } = this.props;
-		const { submitting } = this.state;
+		const { isSubmitting, translate } = this.props;
 		const domain = getSelectedDomain( this.props );
 		const { privateDomain, domainLockingAvailable } = domain;
 		const privacyDisabled = ! privateDomain;
@@ -283,7 +191,7 @@ class Unlocked extends React.Component {
 			<div>
 				<Card className="transfer-out__card">
 					<div className="transfer-out__content">
-						{ submitting && <p>{ translate( 'Sending request…' ) }</p> }
+						{ isSubmitting && <p>{ translate( 'Sending request…' ) }</p> }
 						{ domainStateMessage && <p>{ domainStateMessage }</p> }
 						{ this.renderBody( domain ) }
 						<a
@@ -316,4 +224,22 @@ class Unlocked extends React.Component {
 	}
 }
 
-export default localize( Unlocked );
+export default connect(
+	( state, { selectedDomainName } ) => {
+		const domainInfo = getDomainWapiInfoByDomainName( state, selectedDomainName );
+		const isRequestingTransferCode = !! domainInfo.isRequestingTransferCode;
+		const isCancelingTransfer = !! domainInfo.isCancelingTransfer;
+		const isDomainPendingTransfer = !! domainInfo.data?.pendingTransfer;
+
+		return {
+			isCancelingTransfer,
+			isDomainPendingTransfer,
+			isSubmitting: isRequestingTransferCode || isCancelingTransfer,
+		};
+	},
+	{
+		cancelDomainTransferRequest,
+		fetchWapiDomainInfo,
+		requestDomainTransferCode,
+	}
+)( localize( Unlocked ) );

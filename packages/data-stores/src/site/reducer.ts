@@ -101,12 +101,15 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	return state;
 };
 
-export const launchStatus: Reducer< { [ key: number ]: boolean }, Action > = (
-	state = {},
-	action
-) => {
-	if ( action.type === 'LAUNCHED_SITE' ) {
-		return { ...state, [ action.siteId ]: true };
+export const launchStatus: Reducer<
+	{ [ key: number ]: { isSiteLaunched: boolean; isSiteLaunching: boolean } },
+	Action
+> = ( state = {}, action ) => {
+	if ( action.type === 'LAUNCH_SITE_START' ) {
+		return { ...state, [ action.siteId ]: { isSiteLaunched: false, isSiteLaunching: true } };
+	}
+	if ( action.type === 'LAUNCH_SITE_COMPLETE' ) {
+		return { ...state, [ action.siteId ]: { isSiteLaunched: true, isSiteLaunching: false } };
 	}
 	return state;
 };

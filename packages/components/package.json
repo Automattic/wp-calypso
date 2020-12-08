@@ -29,7 +29,7 @@
 	],
 	"types": "dist/types",
 	"dependencies": {
-		"@babel/runtime": "^7.11.1",
+		"@babel/runtime": "^7.12.5",
 		"classnames": "^2.2.6",
 		"gridicons": "^3.3.1",
 		"lodash": "^4.17.15",
@@ -41,7 +41,7 @@
 		"react-dom": "^16.8"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.0.28",
+		"@storybook/addon-actions": "^6.1.10",
 		"enzyme": "^3.11.0",
 		"react-docgen-typescript-loader": "^3.7.2",
 		"ts-loader": "^8.0.8"

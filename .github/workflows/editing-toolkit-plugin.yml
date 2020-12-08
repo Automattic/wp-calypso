@@ -2,7 +2,7 @@ on:
   pull_request:
     # only trigger this workflow if Editing Toolkit plugin files have been modified, or if packages have been updated.
     paths:
-    - 'apps/editing-toolkit/**'
+      - 'apps/editing-toolkit/**'
 
 name: Editing Toolkit Plugin
 
@@ -11,78 +11,78 @@ jobs:
     name: Build plugin
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '^12.18.4'
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '^12.19.1'
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    - name: Composer install
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
+      - name: Composer install
+        uses: nick-zh/composer-php@HEAD
+        with:
+          action: 'install'
 
-    # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
-    - name: Restore node_modules cache
-      id: cache
-      uses: actions/cache@HEAD
-      with:
-        path: |
-          node_modules
-          */*/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
+      - name: Restore node_modules cache
+        id: cache
+        uses: actions/cache@HEAD
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile # Not needed when restoring from cache.
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
-    - name: Build packages
-      if: steps.cache.outputs.cache-hit == 'true'
-      run: yarn run postinstall # Needed only when not running yarn install.
+      - name: Build packages
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: yarn run postinstall # Needed only when not running yarn install.
 
-    - name: Build JavaScript
-      run: yarn build
-      working-directory: apps/editing-toolkit
+      - name: Build JavaScript
+        run: yarn build
+        working-directory: apps/editing-toolkit
 
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: editing-toolkit-build-archive
-        path: apps/editing-toolkit/editing-toolkit-plugin
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: editing-toolkit-build-archive
+          path: apps/editing-toolkit/editing-toolkit-plugin
 
   jest:
     name: Run JS tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
-    - name: Restore node_modules cache
-      id: cache
-      uses: actions/cache@HEAD
-      with:
-        path: |
-          node_modules
-          */*/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      # https://github.com/actions/cache/blob/HEAD/examples.md#node---lerna
+      - name: Restore node_modules cache
+        id: cache
+        uses: actions/cache@HEAD
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile # Not needed when restoring from cache.
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile # Not needed when restoring from cache.
 
-    # It saves a bit of time to download the artifact rather than doing a build.
-    - name: Get build
-      uses: actions/download-artifact@HEAD
-      with:
-        name: editing-toolkit-build-archive
-        path: apps/editing-toolkit/editing-toolkit-plugin
+      # It saves a bit of time to download the artifact rather than doing a build.
+      - name: Get build
+        uses: actions/download-artifact@HEAD
+        with:
+          name: editing-toolkit-build-archive
+          path: apps/editing-toolkit/editing-toolkit-plugin
 
-    - name: Test JavaScript
-      run: yarn run test:js
-      working-directory: apps/editing-toolkit
+      - name: Test JavaScript
+        run: yarn run test:js
+        working-directory: apps/editing-toolkit
 
   mc_upload:
     name: Create wpcom sync diff
@@ -92,123 +92,123 @@ jobs:
       CALYPSO_APP: editing_toolkit_plugin
       TRIGGER_CALYPSO_APP_BUILD_ENDPOINT: ${{ secrets.TRIGGER_CALYPSO_APP_BUILD_ENDPOINT }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    # It saves a bit of time to download the artifact rather than doing a build.
-    - name: Get build
-      uses: actions/download-artifact@HEAD
-      with:
-        name: editing-toolkit-build-archive
-        path: apps/editing-toolkit/editing-toolkit-plugin
+      # It saves a bit of time to download the artifact rather than doing a build.
+      - name: Get build
+        uses: actions/download-artifact@HEAD
+        with:
+          name: editing-toolkit-build-archive
+          path: apps/editing-toolkit/editing-toolkit-plugin
 
-    - name: Send hook to Mission Control
-      run: .github/workflows/send-calypso-app-build-trigger.sh
+      - name: Send hook to Mission Control
+        run: .github/workflows/send-calypso-app-build-trigger.sh
 
   phpunit:
     name: Run phpunit tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-    # Pin to Node v12 to work around issue: https://github.com/Automattic/wp-calypso/issues/47255
-    # We should be able to remove this once a wp-env update is released that includes an updated nodegit
-    # More info at: https://github.com/WordPress/gutenberg/pull/26712
-    - name: Set up Node
-      uses: actions/setup-node@v1
-      with:
-        node-version: '12.18.4'
+      # Pin to Node v12 to work around issue: https://github.com/Automattic/wp-calypso/issues/47255
+      # We should be able to remove this once a wp-env update is released that includes an updated nodegit
+      # More info at: https://github.com/WordPress/gutenberg/pull/26712
+      - name: Set up Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.19.1'
 
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    # It saves a bit of time to download the artifact rather than doing a build.
-    - name: Get build
-      uses: actions/download-artifact@HEAD
-      with:
-        name: editing-toolkit-build-archive
-        path: apps/editing-toolkit/editing-toolkit-plugin
+      # It saves a bit of time to download the artifact rather than doing a build.
+      - name: Get build
+        uses: actions/download-artifact@HEAD
+        with:
+          name: editing-toolkit-build-archive
+          path: apps/editing-toolkit/editing-toolkit-plugin
 
-    - name: Composer install
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
+      - name: Composer install
+        uses: nick-zh/composer-php@HEAD
+        with:
+          action: 'install'
 
-    # We still need to access some local node modules to run things.
-    - name: Restore node_modules cache
-      id: cache
-      uses: actions/cache@HEAD
-      with:
-        path: |
-          node_modules
-          */*/node_modules
-        key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      # We still need to access some local node modules to run things.
+      - name: Restore node_modules cache
+        id: cache
+        uses: actions/cache@HEAD
+        with:
+          path: |
+            node_modules
+            */*/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
 
-    - name: Install dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
 
-    - name: Setup wp-env dependencies
-      run: |
-        echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
-      working-directory: apps/editing-toolkit
+      - name: Setup wp-env dependencies
+        run: |
+          echo '{ "plugins": [ "./dev-plugin", "./editing-toolkit-plugin", "https://downloads.wordpress.org/plugin/gutenberg.latest-stable.zip" ], "themes": [] }' > .wp-env.override.json
+        working-directory: apps/editing-toolkit
 
-    - name: Start wp-env
-      run: npx wp-env start || npx wp-env start # Retry if failed.
-      working-directory: apps/editing-toolkit
+      - name: Start wp-env
+        run: npx wp-env start || npx wp-env start # Retry if failed.
+        working-directory: apps/editing-toolkit
 
-    - name: Run phpunit command
-      run: yarn test:php
-      working-directory: apps/editing-toolkit
+      - name: Run phpunit command
+        run: yarn test:php
+        working-directory: apps/editing-toolkit
 
   phpcs:
     name: Run phpcs
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    - name: Composer install
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
+      - name: Composer install
+        uses: nick-zh/composer-php@HEAD
+        with:
+          action: 'install'
 
-    - name: Get changed files
-      id: changes
-      uses: lots0logs/gh-action-get-changed-files@2.1.4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get changed files
+        id: changes
+        uses: lots0logs/gh-action-get-changed-files@2.1.4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Execute phpcs on changed files
-      run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
-      if: ${{ steps.changes.outputs.all != '' }}
+      - name: Execute phpcs on changed files
+        run: ./vendor/bin/phpcs --standard=apps/phpcs.xml ${{ join( fromJson( steps.changes.outputs.modified ), ' ' ) }} ${{ join( fromJson( steps.changes.outputs.added ), ' ' ) }}
+        if: ${{ steps.changes.outputs.all != '' }}
 
-    - name: No changes found
-      run: echo "No changes found to check!"
-      if: ${{ steps.changes.outputs.all == '' }}
+      - name: No changes found
+        run: echo "No changes found to check!"
+        if: ${{ steps.changes.outputs.all == '' }}
 
   newspack-blocks:
     name: Check newspack-blocks sync
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@HEAD
+      - name: Checkout code
+        uses: actions/checkout@HEAD
 
-    # It saves a bit of time to download the artifact rather than doing a build.
-    - name: Get build
-      uses: actions/download-artifact@HEAD
-      with:
-        name: editing-toolkit-build-archive
-        path: apps/editing-toolkit/editing-toolkit-plugin
+      # It saves a bit of time to download the artifact rather than doing a build.
+      - name: Get build
+        uses: actions/download-artifact@HEAD
+        with:
+          name: editing-toolkit-build-archive
+          path: apps/editing-toolkit/editing-toolkit-plugin
 
-    - name: Check if newspack-blocks exists
-      run: test -f ./apps/editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
+      - name: Check if newspack-blocks exists
+        run: test -f ./apps/editing-toolkit/editing-toolkit-plugin/newspack-blocks/synced-newspack-blocks/class-newspack-blocks.php
 
-    - name: Composer install
-      uses: nick-zh/composer-php@HEAD
-      with:
-        action: 'install'
+      - name: Composer install
+        uses: nick-zh/composer-php@HEAD
+        with:
+          action: 'install'
 
-    # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
-    - name: Execute phpcs on newspack-blocks PHP files.
-      run: ./vendor/bin/phpcs --standard=apps/editing-toolkit/bin/newspack-block-sync-phpcs.xml
+      # This will fail if the textdomain has not been changed to "full-site-editing", which indicates an issue with the sync or build scripts.
+      - name: Execute phpcs on newspack-blocks PHP files.
+        run: ./vendor/bin/phpcs --standard=apps/editing-toolkit/bin/newspack-block-sync-phpcs.xml

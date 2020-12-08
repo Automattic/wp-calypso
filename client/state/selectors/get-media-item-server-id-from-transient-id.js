@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/media/init';
+
+/**
  * Retrieves the server ID for a given transient ID and site ID.
  *
  * @param {object} state The current state

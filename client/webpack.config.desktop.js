@@ -76,7 +76,6 @@ module.exports = {
 	},
 	externals: [
 		'webpack',
-		'electron',
 		'keytar',
 
 		// These are Calypso server modules we don't need, so let's not bundle them

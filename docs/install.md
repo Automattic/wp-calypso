@@ -4,19 +4,19 @@ You can install Calypso directly on your machine by following the next steps, or
 
 ## Quick Summary of Steps
 
-1.	Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details. Pay close attention to software versions.
-2.	Clone this repository locally.
-3.	Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
-4.	Execute `yarn start` from the root directory of the repository.
-5.	Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
+1. Check that you have all prerequisites (Git, Node, NPM). See [below](install.md#prerequisites) for more details. Pay close attention to software versions.
+2. Clone this repository locally.
+3. Add `127.0.0.1 calypso.localhost` to your local `hosts` file.
+4. Execute `yarn start` from the root directory of the repository.
+5. Open [`calypso.localhost:3000`](http://calypso.localhost:3000/) in your browser.
 
 ## Prerequisites
 
 To be able to clone the repository and run the application you need:
 
--	Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the `"engines"` section of [package.json](https://github.com/Automattic/wp-calypso/blob/HEAD/package.json) **(this bit about versions is important, that's why I'm using bold)**. On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
--	Please note that in Debian/Ubuntu versions of Linux, `node` command is renamed to `nodejs`. This will cause Calypso to fail during installation. Follow the instructions [here](https://stackoverflow.com/a/18130296) to create a symlink to `node`.
--	[Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
+- Install the [Node.js](http://nodejs.org/) and matching [NPM](https://www.npmjs.com/) [versions](https://nodejs.org/en/download/releases/) listed in the `"engines"` section of [package.json](https://github.com/Automattic/wp-calypso/blob/HEAD/package.json) **(this bit about versions is important, that's why I'm using bold)**. On Mac OS X and Linux using [nvm](https://github.com/creationix/nvm) or [n](https://github.com/tj/n) makes it easy to manage `node` versions. On Windows you may want to try [nvm-windows](https://github.com/coreybutler/nvm-windows) or [nodist](https://github.com/marcelklehr/nodist).
+- Please note that in Debian/Ubuntu versions of Linux, `node` command is renamed to `nodejs`. This will cause Calypso to fail during installation. Follow the instructions [here](https://stackoverflow.com/a/18130296) to create a symlink to `node`.
+- [Git](http://git-scm.com/). Try the `git` command from your terminal, if it's not found then use this [installer](http://git-scm.com/download/).
 
 ## Installing and Running
 
@@ -28,7 +28,9 @@ $ cd wp-calypso
 $ yarn start
 ```
 
-_Note - if you are planning on pushing changes back to Calypso, this workflow will ask you for a username and password every time you push a change, which will not work if you have GitHub 2-factor auth enabled.  In this case you should use `git clone git@github.com:Automattic/wp-calypso.git` instead, and follow the instructions [here](https://help.github.com/articles/about-ssh/) to set up authentication._
+<!--eslint ignore no-emphasis-as-heading-->
+
+_Note - if you are planning on pushing changes back to Calypso, this workflow will ask you for a username and password every time you push a change, which will not work if you have GitHub 2-factor auth enabled. In this case you should use `git clone git@github.com:Automattic/wp-calypso.git` instead, and follow the instructions [here](https://help.github.com/articles/about-ssh/) to set up authentication._
 
 The `yarn start` command will install any `npm` dependencies and start the development server. When changes are made to either the JavaScript files or the Sass stylesheets, the build process will run automatically. The build process compiles both the JavaScript and CSS to make sure that you have the latest versions of both.
 
@@ -57,7 +59,7 @@ To find all available entry points, you can refer to the `entry` option in Calyp
 
 ### Starting the node debugger
 
-The `yarn start` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command.  This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" yarn start`.  Starting the built-in inspector can also be done by running `NODE_ARGS="--inspect" yarn start`.  In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you.  In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" yarn start`.
+The `yarn start` command will pass anything set in the `NODE_ARGS` environment variable as an option to the Node command. This means that if you want to start up the debugger on a specific port you can run `NODE_ARGS="--debug=5858" yarn start`. Starting the built-in inspector can also be done by running `NODE_ARGS="--inspect" yarn start`. In either case, if you would like to debug the build process as well, it might be convenient to have the inspector break on the first line and wait for you. In that case, you should also pass in the `--debug-brk` option like so `NODE_ARGS="--inspect --debug-brk" yarn start`.
 
 ## Using a portable development environment
 

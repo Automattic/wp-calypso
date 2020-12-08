@@ -37,14 +37,21 @@ export const addFeature = ( featureId: FeatureId ) => ( {
 	featureId,
 } );
 
-export function* createSite(
-	username: string,
-	languageSlug: string,
-	bearerToken?: string,
-	visibility: number = isEnabled( 'coming-soon-v2' )
+export interface CreateSiteActionParameters {
+	username: string;
+	languageSlug: string;
+	bearerToken?: string;
+	visibility: number;
+}
+
+export function* createSite( {
+	username,
+	languageSlug,
+	bearerToken = undefined,
+	visibility = isEnabled( 'coming-soon-v2' )
 		? Site.Visibility.PublicNotIndexed
-		: Site.Visibility.Private
-) {
+		: Site.Visibility.Private,
+}: CreateSiteActionParameters ) {
 	const {
 		domain,
 		selectedDesign,
@@ -71,7 +78,7 @@ export function* createSite(
 			// so we can match directories in
 			// https://github.com/Automattic/wp-calypso/tree/HEAD/static/page-templates/verticals
 			// TODO: determine default vertical should user input match no official vertical
-			site_vertical_slug: siteVertical?.slug || 'football',
+			site_vertical_slug: siteVertical?.slug,
 			site_information: {
 				title: blogTitle,
 			},
@@ -87,6 +94,10 @@ export function* createSite(
 			} ),
 			use_patterns: true,
 			selected_features: selectedFeatures,
+			...( ! isEnabled( 'coming-soon-v2' ) &&
+				visibility === Site.Visibility.Private && {
+					wpcom_coming_soon: 1,
+				} ),
 			...( isEnabled( 'coming-soon-v2' ) &&
 				visibility === Site.Visibility.PublicNotIndexed && {
 					wpcom_public_coming_soon: 1,

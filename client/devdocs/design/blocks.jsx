@@ -22,7 +22,6 @@ import { isEnabled } from 'calypso/config';
  * Docs examples
  */
 import AllSites from 'calypso/blocks/all-sites/docs/example';
-import CreditCardForm from 'calypso/blocks/credit-card-form/docs/example';
 import CalendarButton from 'calypso/blocks/calendar-button/docs/example';
 import CalendarPopover from 'calypso/blocks/calendar-popover/docs/example';
 import AuthorSelector from 'calypso/blocks/author-selector/docs/example';
@@ -139,7 +138,6 @@ export default class AppComponents extends React.Component {
 					<CalendarButton readmeFilePath="calendar-button" />
 					<CalendarPopover readmeFilePath="calendar-popover" />
 					<CommentButtons readmeFilePath="comment-button" />
-					<CreditCardForm readmeFilePath="credit-card-form" />
 					<FollowButton readmeFilePath="follow-button" />
 					<HappinessSupport />
 					<ImageEditor readmeFilePath="image-editor" />
@@ -190,9 +188,7 @@ export default class AppComponents extends React.Component {
 					<PostComment />
 					<ConversationCaterpillar readmeFilePath="conversation-caterpillar" />
 					<ConversationFollowButton />
-					{ isEnabled( 'reader/user-mention-suggestions' ) && (
-						<UserMentions readmeFilePath="user-mentions" />
-					) }
+					<UserMentions readmeFilePath="user-mentions" />
 					<SupportArticleDialog />
 					<ImageSelector readmeFilePath="image-selector" />
 					<TimeMismatchWarning readmeFilePath="time-mismatch-warning" />

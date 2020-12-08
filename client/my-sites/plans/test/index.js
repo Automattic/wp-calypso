@@ -18,7 +18,7 @@ jest.mock( 'my-sites/controller', () => ( {
 	siteSelection: jest.fn(),
 	sites: jest.fn(),
 } ) );
-jest.mock( 'my-sites/plans-v2', () => jest.fn() );
+jest.mock( 'my-sites/plans/jetpack-plans', () => jest.fn() );
 
 /**
  * External dependencies
@@ -43,7 +43,7 @@ import {
 	sites,
 	wpForTeamsP2PlusNotSupportedRedirect,
 } from 'calypso/my-sites/controller';
-import plansV2 from 'calypso/my-sites/plans-v2';
+import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
 import router from '../index';
 
@@ -133,9 +133,9 @@ describe( 'Sets all routes', () => {
 } );
 
 describe( 'Loads Jetpack plan page', () => {
-	it( 'Loads plans-v2', () => {
+	it( 'Loads plans', () => {
 		router();
-		expect( plansV2 ).toHaveBeenCalledWith(
+		expect( jetpackPlans ).toHaveBeenCalledWith(
 			'/plans',
 			siteSelection,
 			wpForTeamsP2PlusNotSupportedRedirect,

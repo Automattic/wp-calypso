@@ -1,13 +1,14 @@
 /**
  * External dependencies
  */
-import { filter, find, has, includes, sortBy } from 'lodash';
+import { filter, find, has, includes } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { withoutHttp } from 'calypso/lib/url';
 import createSelector from 'calypso/lib/create-selector';
+import getCurrentIntlCollator from 'calypso/state/selectors/get-current-intl-collator';
 import 'calypso/state/reader/init';
 
 /**
@@ -56,19 +57,24 @@ export function isUpdatingList( state ) {
  * Returns the user's subscribed Reader lists.
  *
  * @param  {object}  state  Global state tree
- * @returns {?object}        Reader lists
+ * @returns {Array}         Reader lists
  */
 export const getSubscribedLists = createSelector(
-	( state ) =>
-		sortBy(
-			filter( state.reader.lists.items, ( item ) => {
-				// Is the user subscribed to this list?
-				return state.reader.lists.subscribedLists.includes( item.ID );
-			} ),
-			// Enable case-insensitive sort by title
-			( item ) => item.title?.toLowerCase()
-		),
-	( state ) => [ state.reader.lists.items, state.reader.lists.subscribedLists ]
+	( state ) => {
+		const collator = getCurrentIntlCollator( state );
+
+		return filter( Object.values( state.reader.lists.items ), ( item ) => {
+			// Is the user subscribed to this list?
+			return state.reader.lists.subscribedLists.includes( item.ID );
+		} ).sort( ( a, b ) => {
+			return collator.compare( a.title, b.title );
+		} );
+	},
+	( state ) => [
+		state.reader.lists.items,
+		state.reader.lists.subscribedLists,
+		state.ui?.language?.localeSlug,
+	]
 );
 
 /**

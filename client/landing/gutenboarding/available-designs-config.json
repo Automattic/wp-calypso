@@ -14,6 +14,19 @@
 			"is_fse": true
 		},
 		{
+			"title": "Twenty Twenty One",
+			"slug": "twentytwentyone-blocks",
+			"template": "twentytwentyone-blocks",
+			"theme": "twentytwentyone-blocks",
+			"fonts": {
+				"headings": "Playfair Display",
+				"base": "Fira Sans"
+			},
+			"categories": [ "featured" ],
+			"is_premium": false,
+			"is_fse": true
+		},
+		{
 			"title": "Cassel",
 			"slug": "cassel",
 			"template": "cassel",

@@ -156,7 +156,7 @@ export default function () {
 	);
 
 	// Visiting /checkout without a plan or product should be redirected to /plans
-	page( '/checkout', '/plans' );
+	page( '/checkout', config.isEnabled( 'jetpack-cloud/connect' ) ? '/plans' : '/pricing' );
 
 	page(
 		'/checkout/:site/offer-plan-upgrade/:upgradeItem/:receiptId?',
