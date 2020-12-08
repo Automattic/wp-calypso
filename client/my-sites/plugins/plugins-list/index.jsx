@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -443,15 +442,6 @@ export const PluginsList = createReactClass( {
 				)
 			);
 		}
-	},
-
-	closeDialog( action ) {
-		if ( 'continue' === action ) {
-			page.redirect( '/settings/general/' + this.props.selectedSiteSlug );
-			return;
-		}
-		this.setState( { showJetpackDisconnectDialog: false } );
-		this.forceUpdate();
 	},
 
 	// Renders
