@@ -94,6 +94,11 @@ function FormattedSuggestion( translate, suggestion, isRecommended ) {
 function RecommendedDomains( props ) {
 	const {
 		signupDependencies: { siteSlug },
+		additionalStepData,
+		stepSectionName,
+		stepName,
+		submitSignupStep,
+		goToNextStep,
 	} = props;
 	const translate = useTranslate();
 	const [ selectedDomain, setSelectedDomain ] = useState( null );
@@ -113,7 +118,6 @@ function RecommendedDomains( props ) {
 	}, [ productData, selectedDomain, setSelectedDomain ] );
 
 	const handleUpgradeButtonClick = () => {
-		const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
 		if ( ! selectedProduct ) {
 			return;
 		}
@@ -134,8 +138,6 @@ function RecommendedDomains( props ) {
 	};
 
 	const handleSkipButtonClick = () => {
-		const { additionalStepData, stepSectionName, stepName, submitSignupStep, goToNextStep } = props;
-
 		const step = {
 			stepName,
 			stepSectionName,
@@ -176,7 +178,9 @@ function RecommendedDomains( props ) {
 				) }
 				<div className="free-plans-domain-discount-launch__buttons">
 					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
-						{ isLoading ? '' : translate( 'Use %s', { args: [ selectedDomain ] } ) }
+						{ isLoading
+							? translate( 'Loading' )
+							: translate( 'Use %s', { args: [ selectedDomain ] } ) }
 					</Button>
 				</div>
 			</Card>
