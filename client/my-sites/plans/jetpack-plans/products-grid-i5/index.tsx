@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classNames from 'classnames';
-import { sortBy } from 'lodash';
+import { range, sortBy } from 'lodash';
 import { useTranslate } from 'i18n-calypso';
 import React, { useMemo, useRef, useState, useEffect, useCallback, RefObject } from 'react';
 import { useSelector } from 'react-redux';
@@ -131,15 +131,17 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 						duration={ duration }
 					/>
 				</div>
-				{ ! isVariationLoading && (
-					<>
-						<ul
-							className={ classNames( 'products-grid-i5__plan-grid', {
-								'is-wrapping': isPlanRowWrapping,
-							} ) }
-							ref={ planGridRef }
-						>
-							{ sortedPlans.map( ( product ) => (
+				<ul
+					className={ classNames( 'products-grid-i5__plan-grid', {
+						'is-wrapping': isPlanRowWrapping,
+					} ) }
+					ref={ planGridRef }
+				>
+					{ isVariationLoading
+						? range( 3 ).map( ( n, index ) => (
+								<li className="products-grid-i5__placeholder" key={ index }></li>
+						  ) )
+						: sortedPlans.map( ( product ) => (
 								<li key={ product.iconSlug }>
 									<ProductCardI5
 										item={ product }
@@ -154,39 +156,39 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 										] }
 									/>
 								</li>
-							) ) }
-						</ul>
-						<div
-							className={ classNames( 'products-grid-i5__more', {
-								'is-detached': isPlanRowWrapping,
-							} ) }
-						>
-							<MoreInfoBox
-								headline={ translate( 'Need more info?' ) }
-								buttonLabel={ translate( 'Compare all product bundles' ) }
-								onButtonClick={ scrollToComparison }
-							/>
-						</div>
-					</>
-				) }
+						  ) ) }
+				</ul>
+				<div
+					className={ classNames( 'products-grid-i5__more', {
+						'is-detached': isPlanRowWrapping,
+					} ) }
+				>
+					<MoreInfoBox
+						headline={ translate( 'Need more info?' ) }
+						buttonLabel={ translate( 'Compare all product bundles' ) }
+						onButtonClick={ scrollToComparison }
+					/>
+				</div>
 			</section>
 			<section className="products-grid-i5__section">
 				<h2 className="products-grid-i5__section-title">{ translate( 'Individual Products' ) }</h2>
-				{ ! isVariationLoading && (
-					<ul className="products-grid-i5__product-grid">
-						{ sortedProducts.map( ( product ) => (
-							<li key={ product.iconSlug }>
-								<ProductCardI5
-									item={ product }
-									onClick={ onSelectProduct }
-									siteId={ siteId }
-									currencyCode={ currencyCode }
-									selectedTerm={ duration }
-								/>
-							</li>
-						) ) }
-					</ul>
-				) }
+				<ul className="products-grid-i5__product-grid">
+					{ isVariationLoading
+						? range( 3 ).map( ( n, index ) => (
+								<li className="products-grid-i5__placeholder" key={ index }></li>
+						  ) )
+						: sortedProducts.map( ( product ) => (
+								<li key={ product.iconSlug }>
+									<ProductCardI5
+										item={ product }
+										onClick={ onSelectProduct }
+										siteId={ siteId }
+										currencyCode={ currencyCode }
+										selectedTerm={ duration }
+									/>
+								</li>
+						  ) ) }
+				</ul>
 				<div className="products-grid-i5__free">
 					{ ( isInConnectFlow || isInJetpackCloud ) && (
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />

@@ -58,12 +58,24 @@
 			position: relative;
 			left: -8px;
 		}
+
+		&.products-grid-i5__placeholder {
+			position: static;
+
+			width: 96%;
+		}
 	}
 }
 
 .products-grid-i5__product-grid {
 	> li {
 		height: 100%;
+
+		&.products-grid-i5__placeholder {
+			position: static;
+
+			width: 100%;
+		}
 	}
 }
 
@@ -82,4 +94,12 @@
 
 .products-grid-i5__more.is-detached {
 	margin-top: 48px;
+}
+
+.products-grid-i5__placeholder {
+	@include placeholder();
+
+	min-height: 550px;
+
+	border-radius: 8px;
 }
