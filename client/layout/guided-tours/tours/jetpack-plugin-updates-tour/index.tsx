@@ -10,6 +10,7 @@ import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
 import PluginsStore from 'calypso/lib/plugins/store';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { isRequesting } from 'calypso/state/plugins/installed/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -36,8 +37,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 		{ ...meta }
 		when={ ( state ) => {
 			const site = getSelectedSite( state );
-			const res =
-				! PluginsStore.isFetchingSite( site ) && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+			const isRequestingPlugins = isRequesting( state, site.ID );
+			const res = ! isRequestingPlugins && !! PluginsStore.getSitePlugin( site, 'jetpack' );
 			return res;
 		} }
 	>
