@@ -59,7 +59,7 @@ class PluginItem extends Component {
 		const { translate, progress } = this.props;
 		const log = progress[ 0 ];
 		const uniqLogs = uniqBy( progress, function ( uniqLog ) {
-			return uniqLog.site.ID;
+			return uniqLog.siteId;
 		} );
 		const translationArgs = {
 			args: { count: uniqLogs.length },

@@ -33,5 +33,4 @@ function render() {
 - `allowedActions`: an object of allowed plugin actions: `activation`, `autoupdate`. Used to display/hide plugin actions.
 - `isAutoManaged`: a boolean if the plugin is auto managed. If true it will dispaly an auto managed message. Defaults to false.
 - `progress`: an array of progress steps.
-- `notices`: an object of plugin notices: `completed`, `errors`, `inProgress`.
 - `hasUpdate`: a function to determine if a plugin has an update available. Defaults to a function returning false.

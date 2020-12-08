@@ -260,7 +260,6 @@ const SinglePlugin = createReactClass( {
 					} ) }
 					sites={ this.state.sites }
 					plugin={ plugin }
-					notices={ this.state.notices }
 				/>
 				{ plugin.wporg && (
 					<PluginSiteList
@@ -270,7 +269,6 @@ const SinglePlugin = createReactClass( {
 						} ) }
 						sites={ this.state.notInstalledSites }
 						plugin={ plugin }
-						notices={ this.state.notices }
 					/>
 				) }
 			</div>

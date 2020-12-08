@@ -402,4 +402,21 @@ describe( 'Installed plugin selectors', () => {
 			).to.be.true;
 		} );
 	} );
+
+	describe( 'getPluginStatusesByType', () => {
+		test( 'Should return a list of all plugin statuses, and add siteId and pluginId to each status.', () => {
+			expect( selectors.getPluginStatusesByType( state, 'completed' ) ).to.deep.equal( [
+				{
+					siteId: 'site.one',
+					pluginId: 'jetpack/jetpack',
+					action: DEACTIVATE_PLUGIN,
+					status: 'completed',
+				},
+			] );
+		} );
+
+		test( 'Should return an empty array if there are no matching statuses of that type.', () => {
+			expect( selectors.getPluginStatusesByType( state, 'someOtherType' ) ).to.eql( [] );
+		} );
+	} );
 } );

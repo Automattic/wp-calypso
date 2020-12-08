@@ -7,9 +7,5 @@ export default {
 	plugin: {
 		slug: 'test',
 	},
-	notices: {
-		completed: [],
-		errors: [],
-	},
 	action: function () {},
 };
