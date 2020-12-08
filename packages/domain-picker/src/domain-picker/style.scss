@@ -97,6 +97,10 @@ $accent-blue: #117ac9;
 		outline: none;
 	}
 
+	&.contains-link {
+		cursor: default;
+	}
+
 	&.type-individual-item {
 		min-height: 64px;
 		border-width: 2px;
@@ -465,7 +469,8 @@ $accent-blue: #117ac9;
 	padding-right: 30px;
 }
 
-.domain-picker__change-subdomain-tip {
+.domain-picker__change-subdomain-tip,
+.domain-picker__item-tip {
 	font-size: $font-body-extra-small;
 	color: var( --studio-gray-40 );
 }
@@ -510,5 +515,19 @@ $accent-blue: #117ac9;
 	@include break-medium {
 		margin-top: 0;
 		width: auto;
+	}
+}
+
+.domain-picker__action-link {
+	display: flex;
+	align-items: center;
+
+	&.with-underline {
+		text-decoration: underline;
+	}
+
+	a,
+	a:hover {
+		color: var(--mainColor);
 	}
 }
