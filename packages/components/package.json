@@ -41,7 +41,7 @@
 		"react-dom": "^16.8"
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.0.28",
+		"@storybook/addon-actions": "^6.1.10",
 		"enzyme": "^3.11.0",
 		"react-docgen-typescript-loader": "^3.7.2",
 		"ts-loader": "^8.0.8"
