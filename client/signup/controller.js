@@ -130,7 +130,7 @@ export default {
 				// Assign to the experiment only logged-in users creating a site using 'onboarding' flow.
 				const existingUsersOnboardingVariant = getVariationForUser(
 					state,
-					'new_onboarding_existing_users_non_en'
+					'new_onboarding_existing_users_non_en_v2'
 				);
 
 				if (
