@@ -9,17 +9,36 @@ import { useLocale } from '@automattic/i18n-utils';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { PLANS_STORE } from '../stores/plans';
+import { PLANS_STORE, Plan } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
 import { isEnabled } from 'calypso/config';
 
-export function usePlanFromPath() {
+/**
+ * A React hook that returns the WordPress.com plan from path.
+ *
+ * Exception: Free plan is not returned while a paid domain is selected
+ *
+ * @returns { Plan } An object describing a WordPress.com plan
+ */
+export function usePlanFromPath(): Plan | undefined {
 	const planPath = usePlanRouteParam();
-	return useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
+
+	const [ isPlanFree, planFromPath, hasPaidDomain ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).isPlanFree,
+		select( PLANS_STORE ).getPlanByPath( planPath ),
+		select( ONBOARD_STORE ).hasPaidDomain(),
+	] );
+
+	// don't return Free plan if paid domain is currently selected
+	if ( isPlanFree( planFromPath?.storeSlug ) && hasPaidDomain ) {
+		return;
+	}
+
+	return planFromPath;
 }
 
-export function useSelectedPlan() {
+export function useSelectedPlan(): Plan {
 	const locale = useLocale();
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
 	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( locale ) );
@@ -43,12 +62,6 @@ export function useSelectedPlan() {
 	 * 3. selecting paid features
 	 */
 	return selectedPlan || planFromPath || recommendedPlan;
-}
-
-export function useHasPaidPlanFromPath() {
-	const planFromPath = usePlanFromPath();
-	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
-	return planFromPath && ! isPlanFree( planFromPath?.storeSlug );
 }
 
 export function useNewSiteVisibility(): Site.Visibility {
