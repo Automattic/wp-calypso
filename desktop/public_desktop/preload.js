@@ -4,6 +4,7 @@ const { ipcRenderer, contextBridge } = require( 'electron' );
 // Maintain this list in alphabetical order.
 const sendChannels = [
 	'cannot-use-editor',
+	'enable-site-option-response',
 	'get-config',
 	'get-settings',
 	'log',
@@ -11,6 +12,10 @@ const sendChannels = [
 	'unread-notices-count',
 	'user-auth',
 	'user-login-status',
+	'view-post-clicked',
+	'print',
+	'secrets',
+	'toggle-dev-tools',
 ];
 
 // Incoming IPC message channels from Main process to Renderer.
