@@ -804,7 +804,7 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 }
 
-export function isFreePlansDomainUpselFulfilled( stepName, defaultDependencies, nextProps ) {
+export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies, nextProps ) {
 	const { submitSignupStep, isPaidPlan } = nextProps;
 	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
 	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );

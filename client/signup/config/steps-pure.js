@@ -33,7 +33,7 @@ export function generateSteps( {
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	isFreePlansDomainUpselFulfilled = noop,
+	isFreePlansDomainUpsellFulfilled = noop,
 	isDomainFulfilled = noop,
 	isSiteTypeFulfilled = noop,
 	isSiteTopicFulfilled = noop,
@@ -119,7 +119,7 @@ export function generateSteps( {
 		'free-plans-domain-discount-launch': {
 			stepName: 'free-plans-domain-discount-launch',
 			apiRequestFunction: addDomainUpsellToCart,
-			fulfilledStepCallback: isFreePlansDomainUpselFulfilled,
+			fulfilledStepCallback: isFreePlansDomainUpsellFulfilled,
 			dependencies: [ 'domainItem', 'cartItem', 'siteSlug' ],
 			providesDependencies: [ 'selectedDomainUpsellItem' ],
 		},
