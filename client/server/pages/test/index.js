@@ -70,6 +70,7 @@ jest.mock( 'calypso/state', () => ( {
 
 jest.mock( 'calypso/state/redux-store', () => ( {
 	setStore: jest.fn(),
+	registerReducer: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/state/reducer', () => jest.fn() );

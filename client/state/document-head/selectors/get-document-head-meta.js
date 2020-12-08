@@ -1,4 +1,9 @@
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/document-head/init';
+
+/**
  * Returns an array of document meta objects as set by the DocumentHead
  * component or setDocumentHeadMeta action.
  *

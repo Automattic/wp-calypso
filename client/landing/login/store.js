@@ -14,14 +14,12 @@ import {
 	enhancer as httpDataEnhancer,
 } from 'calypso/state/data-layer/http-data';
 import { combineReducers, addReducerEnhancer } from 'calypso/state/utils';
-import documentHead from 'calypso/state/document-head/reducer';
 import i18n from 'calypso/state/i18n/reducer';
 import currentUser from 'calypso/state/current-user/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
 const rootReducer = combineReducers( {
-	documentHead,
 	httpData,
 	i18n,
 	currentUser,
