@@ -19,7 +19,7 @@ interface Currency {
 
 export const plansOrder = [ PLAN_PERSONAL, PLAN_PREMIUM, PLAN_BUSINESS, PLAN_ECOMMERCE ];
 
-export const plansPaths = [ 'beginner', 'personal', 'premium', 'business', 'ecommerce' ];
+export const plansPaths = [ 'free', 'personal', 'premium', 'business', 'ecommerce' ];
 
 export const plansProductSlugs = [
 	PLAN_FREE,
