@@ -286,10 +286,14 @@ export const PluginsList = createReactClass( {
 	deactiveAndDisconnectSelected() {
 		let waitForDeactivate = false;
 
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			this.props.deactivatePlugin( site, plugin, true );
-		} );
+		this.doActionOverSelected(
+			'deactivating',
+			( site, plugin ) => {
+				waitForDeactivate = true;
+				this.props.deactivatePlugin( site, plugin, true );
+			},
+			true
+		);
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
 			this.setState( { disconnectJetpackDialog: true } );
