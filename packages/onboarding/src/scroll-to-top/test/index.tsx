@@ -3,28 +3,26 @@
  */
 import * as React from 'react';
 import { render } from '@testing-library/react';
-import { MemoryRouter as Router } from 'react-router-dom';
-
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
 /**
  * Internal dependencies
  */
 import ScrollToTop from '../';
 
-const renderComponent = ( { path } ) =>
-	render(
-		<Router initialEntries={ [ path ] }>
-			<ScrollToTop />
-		</Router>
-	);
-
 describe( 'ScrollToTop', () => {
 	test( 'should scroll to the top on every route changes', () => {
 		const spy = jest.spyOn( document, 'querySelector' );
+		const history = createMemoryHistory();
+		render(
+			<Router history={ history }>
+				<ScrollToTop selector=".foo" />
+			</Router>
+		);
 
-		renderComponent( { path: '/foo' } );
-		renderComponent( { path: '/bar' } );
-		renderComponent( { path: '/baz' } );
+		// Trigger a route change by pushing a new path to the router's history
+		history.push( '/bar' );
 
-		expect( spy ).toHaveBeenCalledTimes( 3 );
+		expect( spy ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

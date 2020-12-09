@@ -31,8 +31,8 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
+		"@automattic/react-i18n": "^1.0.0-alpha.0",
 		"@wordpress/components": "^10.0.5",
 		"@wordpress/icons": "^2.4.0",
 		"classnames": "^2.2.6",
@@ -40,9 +40,10 @@
 	},
 	"devDependencies": {
 		"@automattic/typography": "^1.0.0",
-		"@wordpress/base-styles": "^2.0.1",
 		"@testing-library/react": "^10.0.5",
-		"copyfiles": "^2.3.0"
+		"@wordpress/base-styles": "^2.0.1",
+		"copyfiles": "^2.3.0",
+		"history": "^5.0.0"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^3.14.0",

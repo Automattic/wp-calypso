@@ -68,7 +68,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
 			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
 		>
-			<ScrollToTop />
+			<ScrollToTop selector=".components-modal__content" />
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>
