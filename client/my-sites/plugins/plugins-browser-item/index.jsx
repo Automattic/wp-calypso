@@ -75,7 +75,7 @@ class PluginsBrowserListElement extends Component {
 
 		return (
 			<div className="plugins-browser-item__supported">
-				{ this.props.translate( 'Supported by WordPress.com' ) }
+				{ this.props.translate( 'Support by WordPress.com' ) }
 			</div>
 		);
 	}
