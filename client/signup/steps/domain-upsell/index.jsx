@@ -25,7 +25,7 @@ import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormRadio from 'calypso/components/forms/form-radio';
 import FormLabel from 'calypso/components/forms/form-label';
 
-export default function FreePlansDomainDiscountLaunchStep( props ) {
+export default function DomainUpsellStep( props ) {
 	const translate = useTranslate();
 	const {
 		flowName,
@@ -42,7 +42,7 @@ export default function FreePlansDomainDiscountLaunchStep( props ) {
 	} );
 
 	return (
-		<div className="launch-flow-domain-upsell__step-secton-wrapper">
+		<div className="domain-upsell__step-secton-wrapper">
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
@@ -65,14 +65,12 @@ function getDomainName( siteSlug ) {
 function FormattedSuggestion( translate, suggestion, isRecommended ) {
 	const currency = suggestion.currency;
 	return (
-		<div className="launch-flow-domain-upsell__domain-radio-label">
-			<div className="launch-flow-domain-upsell__domain-radio-label-domain-wrapper">
-				<div className="launch-flow-domain-upsell__domain-radio-label-domain">
-					{ suggestion.domain }
-				</div>
+		<div className="domain-upsell__domain-radio-label">
+			<div className="domain-upsell__domain-radio-label-domain-wrapper">
+				<div className="domain-upsell__domain-radio-label-domain">{ suggestion.domain }</div>
 				{ isRecommended && <Badge type="success">{ translate( 'Recommended' ) }</Badge> }
 			</div>
-			<div className="launch-flow-domain-upsell__registration-fee">
+			<div className="domain-upsell__registration-fee">
 				<div>
 					{ translate( 'Registration fee: {{strong}}%(originalCost)s{{/strong}}', {
 						args: {
@@ -150,22 +148,19 @@ function RecommendedDomains( props ) {
 	};
 
 	return (
-		<div className="launch-flow-domain-upsell">
+		<div className="domain-upsell">
 			{ ! productData && <QuerySecureYourBrand domain={ domain } /> }
-			<Card style={ { maxWidth: '615px' } } className="launch-flow-domain-upsell__card">
+			<Card style={ { maxWidth: '615px' } } className="domain-upsell__card">
 				{ isLoading ? (
-					[ ...Array( 3 ) ].map( ( i ) => (
-						<div key={ i } className="launch-flow-domain-upsell__placeholder">
-							<div className="launch-flow-domain-upsell__placeholder-animation"></div>
+					[ ...Array( 3 ) ].map( ( e, i ) => (
+						<div key={ `${ i }` } className="domain-upsell__placeholder">
+							<div className="domain-upsell__placeholder-animation"></div>
 						</div>
 					) )
 				) : (
 					<FormFieldset>
 						{ productData?.map( ( suggestion, index ) => (
-							<FormLabel
-								className="launch-flow-domain-upsell__domain-radio"
-								key={ suggestion.domain }
-							>
+							<FormLabel className="domain-upsell__domain-radio" key={ suggestion.domain }>
 								<FormRadio
 									checked={ selectedDomain === suggestion.domain }
 									onChange={ selectDomain }
@@ -176,7 +171,7 @@ function RecommendedDomains( props ) {
 						) ) }
 					</FormFieldset>
 				) }
-				<div className="launch-flow-domain-upsell__buttons">
+				<div className="domain-upsell__buttons">
 					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
 						{ isLoading
 							? translate( 'Loading' )
@@ -184,7 +179,7 @@ function RecommendedDomains( props ) {
 					</Button>
 				</div>
 			</Card>
-			<div className="launch-flow-domain-upsell__continue-link">
+			<div className="domain-upsell__continue-link">
 				<Button compact borderless plain onClick={ handleSkipButtonClick }>
 					{ translate( 'No thanks, continue to %s', {
 						args: [ siteSlug ],

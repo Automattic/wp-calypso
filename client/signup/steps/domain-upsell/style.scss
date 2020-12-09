@@ -1,15 +1,15 @@
-.launch-flow-domain-upsell__step-secton-wrapper {
-    .launch-flow-domain-upsell {
+.domain-upsell__step-secton-wrapper {
+    .domain-upsell {
         @media screen and ( min-width: 660px ) {
             margin-top: 38px;
         }
-        .launch-flow-domain-upsell__card {
+        .domain-upsell__card {
             padding: 0;
             .form-fieldset {
                 margin-bottom: 0;
             }
         }
-        .launch-flow-domain-upsell__domain-radio {
+        .domain-upsell__domain-radio {
             box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
             cursor: pointer;
             margin-bottom: 0;
@@ -17,31 +17,31 @@
             .form-radio {
                 margin: 5px 0;
             }
-            .launch-flow-domain-upsell__domain-radio-label {
+            .domain-upsell__domain-radio-label {
                 justify-content: space-between;
                 font-size: $font-body;
             }
             @media screen and ( min-width: 660px ) {
-                .launch-flow-domain-upsell__domain-radio-label {
+                .domain-upsell__domain-radio-label {
                     display: flex;
                 }
-                .launch-flow-domain-upsell__domain-radio-label-domain-wrapper {
+                .domain-upsell__domain-radio-label-domain-wrapper {
                     margin-left: 30px;
                 }
             }
         }
-        .launch-flow-domain-upsell__placeholder {
+        .domain-upsell__placeholder {
             box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
             margin-bottom: 0;
             padding: 19px 40px 22px 36px;
-            .launch-flow-domain-upsell__placeholder-animation {
+            .domain-upsell__placeholder-animation {
                 animation: loading-fade 1.6s ease-in-out infinite;
                 background-color: var( --color-neutral-10 );
                 color: transparent;
                 min-height: 44px;
             }
         }
-        .launch-flow-domain-upsell__buttons {
+        .domain-upsell__buttons {
             padding: 20px;
             text-align: center;
             .button {
@@ -50,7 +50,7 @@
                 min-width: 340px;
             }
         }
-        .launch-flow-domain-upsell__continue-link {
+        .domain-upsell__continue-link {
             padding: 20px;
             text-align: center;
             .button-plain {
@@ -58,7 +58,7 @@
                 cursor: pointer;
             }
         }
-        .launch-flow-domain-upsell__registration-fee {
+        .domain-upsell__registration-fee {
             color: var( --color-neutral-60 );
         }
     }

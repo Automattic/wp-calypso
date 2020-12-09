@@ -67,7 +67,7 @@ const stepNameToModuleName = {
 	passwordless: 'passwordless',
 	'p2-details': 'p2-details',
 	'p2-site': 'p2-site',
-	'launch-flow-domain-upsell': 'launch-flow-domain-upsell',
+	'domain-upsell': 'domain-upsell',
 };
 
 export function getStepModuleName( stepName ) {
