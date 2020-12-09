@@ -152,6 +152,11 @@
 		margin-left: #{$onboarding-block-margin-medium * -1};
 		margin-right: #{$onboarding-block-margin-medium * -1};
 	}
+
+	@include break-huge {
+		margin-left: 0;
+		margin-right: 0;
+	}
 }
 
 @mixin onboarding-block-edge2edge-container {
@@ -165,6 +170,10 @@
 
 	@include break-medium {
 		width: calc( 100% + #{$onboarding-block-margin-medium * 2} );
+	}
+
+	@include break-huge {
+		width: 100%;
 	}
 }
 

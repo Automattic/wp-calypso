@@ -10,10 +10,5 @@
 	.plans-grid__details-container {
 		position: relative;
 		@include onboarding-block-edge2edge-container;
-		@include break-huge {
-			width: 100%;
-			margin-left: 0;
-			margin-right: 0;
-		}
 	}
 }
