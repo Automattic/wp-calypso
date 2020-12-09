@@ -3,18 +3,13 @@ const { BrowserWindow } = require( 'electron' );
 /**
  * Internal dependencies
  */
-const Config = require( 'calypso/desktop/lib/config' );
 const debugMenu = require( './debug-menu' );
 const platform = require( 'calypso/desktop/lib/platform' );
 
 /**
  * Module variables
  */
-let menuItems = [];
-
-if ( Config.debug ) {
-	menuItems = debugMenu;
-}
+const menuItems = [];
 
 menuItems.push(
 	{
@@ -72,5 +67,14 @@ menuItems.push(
 		accelerator: 'CommandOrControl+num0',
 	}
 );
+
+if ( process.env.WP_DESKTOP_DEBUG ) {
+	menuItems.push(
+		{
+			type: 'separator',
+		},
+		...debugMenu
+	);
+}
 
 module.exports = menuItems;
