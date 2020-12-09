@@ -31,14 +31,6 @@ let hasAnonIdGeneratingTracksEventFired = false;
 export function useExperiment( experimentName: string ): [ boolean, string | null ] {
 	const dispatch = useDispatch();
 
-	if ( ! experimentName ) {
-		if ( ! process.env.NODE_ENV || process.env.NODE_ENV === 'development' ) {
-			throw 'Experiment name is not defined!';
-		}
-		return [ false, null ];
-	}
-	// TODO: LogStash if missing an experiment name
-
 	const { variation, isLoading: isVariationLoading, updateAfter } = useSelector( ( state ) => ( {
 		variation: getVariationForUser( state, experimentName ),
 		isLoading: isLoading( state ),
@@ -63,6 +55,14 @@ export function useExperiment( experimentName: string ): [ boolean, string | nul
 			dispatch( fetchExperiments() );
 		}
 	}, [ updateAfter ] );
+
+	if ( ! experimentName ) {
+		if ( ! process.env.NODE_ENV || process.env.NODE_ENV === 'development' ) {
+			throw 'Experiment name is not defined!';
+		}
+		// TODO: LogStash if missing an experiment name
+		return [ false, null ];
+	}
 
 	return [ isVariationLoading, variation ];
 }
