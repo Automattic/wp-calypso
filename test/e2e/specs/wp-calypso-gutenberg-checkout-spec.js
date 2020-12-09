@@ -39,7 +39,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) i
 	this.timeout( mochaTimeOut );
 	let editorUrl;
 
-	describe( 'Can trigger the checkout modal via post editor', function () {
+	describe.skip( 'Can trigger the checkout modal via post editor', function () {
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
