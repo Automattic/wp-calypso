@@ -1637,7 +1637,7 @@ export const FEATURES_LIST = {
 
 	[ constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT ]: {
 		getSlug: () => constants.FEATURE_P2_PRIORITY_CHAT_EMAIL_SUPPORT,
-		getTitle: () => i18n.translate( 'Priority chat and email support' ),
+		getTitle: () => i18n.translate( 'Priority customer support' ),
 		getDescription: () =>
 			i18n.translate(
 				'Live chat is available 24 hours a day from Monday through Friday. You can also email us any day of the week for personalized support.'
