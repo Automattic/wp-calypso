@@ -125,14 +125,14 @@ class PluginNotices extends React.Component {
 		}
 	};
 
-	getMessage( logs, messageFunction, typeFilter ) {
+	getMessage = ( logs, messageFunction, typeFilter ) => {
 		const sampleLog = logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ];
 		const translateArg = getTranslateArg( logs, sampleLog, typeFilter );
 		const combination = getCombination( translateArg );
 		return messageFunction( sampleLog.action, combination, translateArg, sampleLog );
-	}
+	};
 
-	successMessage( action, combination, translateArg ) {
+	successMessage = ( action, combination, translateArg ) => {
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				if ( translateArg.isMultiSite ) {
@@ -369,9 +369,9 @@ class PluginNotices extends React.Component {
 					args: translateArg,
 				} );
 		}
-	}
+	};
 
-	inProgressMessage( action, combination, translateArg ) {
+	inProgressMessage = ( action, combination, translateArg ) => {
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
 				switch ( combination ) {
@@ -569,9 +569,9 @@ class PluginNotices extends React.Component {
 				}
 				break;
 		}
-	}
+	};
 
-	erroredAndCompletedMessage( logNotices ) {
+	erroredAndCompletedMessage = ( logNotices ) => {
 		const completedMessage = this.getMessage(
 			logNotices.completed,
 			this.successMessage,
@@ -579,9 +579,9 @@ class PluginNotices extends React.Component {
 		);
 		const errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
 		return ' ' + completedMessage + ' ' + errorMessage;
-	}
+	};
 
-	errorMessage( action, combination, translateArg, sampleLog ) {
+	errorMessage = ( action, combination, translateArg, sampleLog ) => {
 		if ( combination === '1 site 1 plugin' ) {
 			return this.singleErrorMessage( action, translateArg, sampleLog );
 		}
@@ -771,9 +771,9 @@ class PluginNotices extends React.Component {
 					}
 				);
 		}
-	}
+	};
 
-	additionalExplanation( error_code ) {
+	additionalExplanation = ( error_code ) => {
 		switch ( error_code ) {
 			case 'no_package':
 				return i18n.translate( "Plugin doesn't exist in the plugin repo." );
@@ -843,9 +843,9 @@ class PluginNotices extends React.Component {
 		}
 
 		return null;
-	}
+	};
 
-	singleErrorMessage( action, translateArg, sampleLog ) {
+	singleErrorMessage = ( action, translateArg, sampleLog ) => {
 		const additionalExplanation = this.additionalExplanation( sampleLog.error.error );
 		switch ( action ) {
 			case 'INSTALL_PLUGIN':
@@ -983,7 +983,7 @@ class PluginNotices extends React.Component {
 					args: translateArg,
 				} );
 		}
-	}
+	};
 
 	getErrorButton( log ) {
 		if ( log.length > 1 ) {
