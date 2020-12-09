@@ -239,6 +239,7 @@ export default function CompositeCheckout( {
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
+		transactionResult,
 		redirectTo,
 		purchaseId,
 		feature,
