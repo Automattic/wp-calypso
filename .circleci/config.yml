@@ -1105,8 +1105,8 @@ workflows:
             branches:
               only:
                 - trunk
-                - release/*
-                - desktop/*
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-source
