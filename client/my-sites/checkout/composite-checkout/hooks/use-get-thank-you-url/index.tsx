@@ -3,7 +3,6 @@
  */
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { useTransactionStatus } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -13,7 +12,7 @@ import type { ResponseCart } from '@automattic/shopping-cart';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import getThankYouPageUrl from './get-thank-you-page-url';
-import normalizeTransactionResponse from '../../lib/normalize-transaction-response';
+import type { TransactionResponse } from '../../types/wpcom-store-state';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -21,6 +20,7 @@ export type GetThankYouUrl = () => string;
 
 export default function useGetThankYouUrl( {
 	siteSlug,
+	transactionResult,
 	redirectTo,
 	purchaseId,
 	feature,
@@ -33,8 +33,6 @@ export default function useGetThankYouUrl( {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
-	const { transactionLastResponse } = useTransactionStatus();
-	const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
 	const getThankYouUrl = useCallback( () => {
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
