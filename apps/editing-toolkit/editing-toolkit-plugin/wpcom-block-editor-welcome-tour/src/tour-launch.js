@@ -17,7 +17,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
-// import { registerPlugin } from '@wordpress/plugins';
+import { registerPlugin } from '@wordpress/plugins';
 
 function LaunchWpcomWelcomeTour() {
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
@@ -100,6 +100,6 @@ function WelcomeTourMinimized( { onMaximize } ) {
 
 export default LaunchWpcomWelcomeTour;
 
-// registerPlugin( 'wpcom-block-editor-nux', {
-// 	render: () => <LaunchWpcomWelcomeTour />,
-// } );
+registerPlugin( 'wpcom-block-editor-welcome-tour', {
+	render: () => <LaunchWpcomWelcomeTour />,
+} );

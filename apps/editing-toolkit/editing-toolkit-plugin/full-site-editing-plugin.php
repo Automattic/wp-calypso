@@ -241,8 +241,13 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 function load_wpcom_block_editor_nux() {
-
-	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+	// TODO: if ( apply_filters( 'a8c_enable_wpcom_welcome_tour', false ) ) {
+	if ( true ) {
+		// Show the Welcome Tour, intended to replace NUX modal after A/B testing
+		require_once __DIR__ . '/wpcom-block-editor-welcome-tour/class-wpcom-block-editor-welcome-tour.php';
+	} else {
+		require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 

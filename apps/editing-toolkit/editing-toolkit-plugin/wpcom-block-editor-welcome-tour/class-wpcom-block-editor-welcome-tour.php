@@ -75,8 +75,8 @@ class WPCOM_Block_Editor_Welcome_Tour {
 	 * Register the WPCOM Block Editor NUX endpoints.
 	 */
 	public function register_rest_api() {
-		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-welcome-tour-status-controller.php';
-		$controller = new WP_REST_WPCOM_Block_Editor_Welcome_Tour_Status_Controller();
+		require_once __DIR__ . '/class-wp-rest-wpcom-block-editor-nux-status-controller.php';
+		$controller = new WP_REST_WPCOM_Block_Editor_NUX_Status_Controller();
 		$controller->register_rest_route();
 	}
 }
