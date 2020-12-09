@@ -7,7 +7,6 @@ import page from 'page';
 import { filter, flowRight, get, groupBy, includes, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -115,9 +114,9 @@ class InvitePeople extends React.Component {
 		if ( errorKeys.length && 'object' === typeof errors ) {
 			const updatedState = {
 				sendingInvites: false,
-					usernamesOrEmails: errorKeys,
-					errorToDisplay: errorKeys[ 0 ],
-					errors,
+				usernamesOrEmails: errorKeys,
+				errorToDisplay: errorKeys[ 0 ],
+				errors,
 			};
 
 			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
@@ -746,48 +745,45 @@ class InvitePeople extends React.Component {
 	}
 }
 
-const connectComponent = connect(
-	( state ) => {
-		const siteId = getSelectedSiteId( state );
-		const activating = isActivatingJetpackModule( state, siteId, 'sso' );
-		const active = isJetpackModuleActive( state, siteId, 'sso' );
+const mapStateToProps = ( state ) => {
+	const siteId = getSelectedSiteId( state );
+	const activating = isActivatingJetpackModule( state, siteId, 'sso' );
+	const active = isJetpackModuleActive( state, siteId, 'sso' );
 
-		return {
-			siteId,
-			needsVerification: ! isCurrentUserEmailVerified( state ),
-			showSSONotice: ! ( activating || active ),
-			isJetpack: isJetpackSite( state, siteId ),
-			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
-			isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
-			inviteLinks: getInviteLinksForSite( state, siteId ),
-			siteRoles: getSiteRoles( state, siteId ),
-			wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
-		};
-	},
-	( dispatch ) => ( {
-		...bindActionCreators(
-			{
-				activateModule,
-				generateInviteLinks,
-				disableInviteLinks,
-				errorNotice,
-				successNotice,
-			},
-			dispatch
-		),
-		recordTracksEventAction,
-		onFocusTokenField: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
-		onFocusRoleSelect: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
-		onFocusCustomMessage: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
-		onClickSendInvites: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
-		onClickRoleExplanation: () =>
-			dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
-	} )
-);
+	return {
+		siteId,
+		needsVerification: ! isCurrentUserEmailVerified( state ),
+		showSSONotice: ! ( activating || active ),
+		isJetpack: isJetpackSite( state, siteId ),
+		isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, siteId ),
+		isWPForTeamsSite: isSiteWPForTeams( state, siteId ),
+		inviteLinks: getInviteLinksForSite( state, siteId ),
+		siteRoles: getSiteRoles( state, siteId ),
+		wpcomFollowerRole: getWpcomFollowerRole( state, siteId ),
+	};
+};
+
+const mapDispatchToProps = ( dispatch ) => ( {
+	activateModule,
+	generateInviteLinks,
+	disableInviteLinks,
+	errorNotice,
+	successNotice,
+	recordTracksEventAction,
+
+	onFocusTokenField: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_token_field_focus' ) ),
+	onFocusRoleSelect: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_role_select_focus' ) ),
+	onFocusCustomMessage: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_custom_message_focus' ) ),
+	onClickSendInvites: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_send_invite_button_click' ) ),
+	onClickRoleExplanation: () =>
+		dispatch( recordTracksEventAction( 'calypso_invite_people_role_explanation_link_click' ) ),
+} );
+
+const connectComponent = connect( mapStateToProps, mapDispatchToProps );
 
 export default flowRight(
 	connectComponent,
