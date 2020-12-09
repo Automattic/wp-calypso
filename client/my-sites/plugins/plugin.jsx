@@ -41,7 +41,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
-import { getSitesWithoutPlugin } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSites, getSitesWithoutPlugin } from 'calypso/state/plugins/installed/selectors';
 
 /* eslint-disable react/prefer-es6-class */
 
@@ -87,14 +87,13 @@ const SinglePlugin = createReactClass( {
 		const props = nextProps || this.props;
 
 		const sites = uniq( props.sites );
-		const sitePlugin = PluginsStore.getPlugin( sites, props.pluginSlug );
 		const plugin = Object.assign(
 			{
 				name: props.pluginSlug,
 				id: props.pluginSlug,
 				slug: props.pluginSlug,
 			},
-			sitePlugin
+			props.plugin
 		);
 
 		const notInstalledSites = props.sitesWithoutPlugin.map( ( siteId ) =>
@@ -178,7 +177,8 @@ const SinglePlugin = createReactClass( {
 		const sites = this.props.sites;
 
 		// If the plugin has at least one site then we know it exists
-		if ( plugin.sites && plugin.sites[ 0 ] ) {
+		const pluginSites = Object.values( plugin.sites );
+		if ( pluginSites && pluginSites[ 0 ] ) {
 			return true;
 		}
 
@@ -360,6 +360,7 @@ export default connect(
 		const siteIds = uniq( sites.map( ( site ) => site.ID ) );
 
 		return {
+			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),
 			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
 			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
 			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),

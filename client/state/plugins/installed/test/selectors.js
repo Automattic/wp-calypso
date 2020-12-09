@@ -223,6 +223,27 @@ describe( 'Installed plugin selectors', () => {
 		} );
 	} );
 
+	describe( 'getPluginOnSites', () => {
+		test( 'Should get an undefined value if the requested sites are not in the current state', () => {
+			const siteIds = [ 'no.site', 'some.site' ];
+			expect( selectors.getPluginOnSites( state, siteIds, 'akismet' ) ).to.be.undefined;
+		} );
+
+		test( 'Should get an undefined value if the requested plugin on these sites is not in the current state', () => {
+			expect( selectors.getPluginOnSites( state, [ 'site.one' ], 'jetpack' ) ).to.be.undefined;
+		} );
+
+		test( 'Should get the plugin if the it exists on one or more of the requested sites', () => {
+			const siteIds = [ 'site.one', 'site.two' ];
+			const plugin = selectors.getPluginOnSites( state, siteIds, 'hello-dolly' );
+			const sitesWithPlugins = {
+				[ 'site.one' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
+				[ 'site.two' ]: pick( helloDolly, [ 'active', 'autoupdate', 'update' ] ),
+			};
+			expect( plugin ).to.eql( { ...helloDolly, sites: sitesWithPlugins } );
+		} );
+	} );
+
 	describe( 'getSitesWithPlugin', () => {
 		test( 'Should get an empty array if the requested site is not in the current state', () => {
 			expect( selectors.getSitesWithPlugin( state, [ 'no.site' ], 'akismet' ) ).to.have.lengthOf(
