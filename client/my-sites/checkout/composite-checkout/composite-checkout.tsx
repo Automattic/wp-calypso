@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	useSelect,
+	useTransactionStatus,
 	CheckoutProvider,
 	CheckoutStepAreaWrapper,
 	MainContentWrapper,
@@ -86,7 +86,7 @@ import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import type { TransactionResponse } from './types/wpcom-store-state';
+import normalizeTransactionResponse from './lib/normalize-transaction-response';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -233,9 +233,8 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
 
-	const transactionResult: TransactionResponse | undefined = useSelect( ( wpSelect ) =>
-		wpSelect( 'wpcom' )?.getTransactionResult()
-	);
+	const { transactionLastResponse } = useTransactionStatus();
+	const transactionResult = normalizeTransactionResponse( transactionLastResponse );
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
