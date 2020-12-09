@@ -110,7 +110,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			error,
 			wpcomError: error,
 			translatedError: message,
-			transportError: progress.lastError,
+			transportError: progress.lastError ?? undefined,
 		} );
 	};
 

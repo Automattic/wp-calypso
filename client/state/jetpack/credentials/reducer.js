@@ -9,6 +9,7 @@ import {
 	JETPACK_CREDENTIALS_UPDATE,
 	JETPACK_CREDENTIALS_UPDATE_SUCCESS,
 	JETPACK_CREDENTIALS_UPDATE_FAILURE,
+	JETPACK_CREDENTIALS_UPDATE_RESET,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 	JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE,
 } from 'calypso/state/action-types';
@@ -50,6 +51,9 @@ export const updateRequestStatus = keyedReducer( 'siteId', ( state, { type } ) =
 
 		case JETPACK_CREDENTIALS_UPDATE_FAILURE:
 			return 'failed';
+
+		case JETPACK_CREDENTIALS_UPDATE_RESET:
+			return;
 	}
 
 	return state;
@@ -64,6 +68,9 @@ export const errors = keyedReducer(
 
 			case JETPACK_CREDENTIALS_UPDATE_FAILURE:
 				return { wpcomError, translatedError, transportError };
+
+			case JETPACK_CREDENTIALS_UPDATE_RESET:
+				return;
 		}
 
 		return state;
@@ -77,6 +84,9 @@ export const progressUpdates = keyedReducer( 'siteId', ( state, { type, update }
 
 		case JETPACK_CREDENTIALS_UPDATE_PROGRESS_UPDATE:
 			return [ ...state, update ];
+
+		case JETPACK_CREDENTIALS_UPDATE_RESET:
+			return;
 	}
 
 	return state;

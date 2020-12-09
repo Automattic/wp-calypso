@@ -24,6 +24,7 @@ import getJetpackCredentials from 'calypso/state/selectors/get-jetpack-credentia
 import getJetpackCredentialsUpdateError from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 import isRequestingSiteCredentials from 'calypso/state/selectors/is-requesting-site-credentials';
+import { JETPACK_CREDENTIALS_UPDATE_RESET } from 'calypso/state/action-types';
 import Gridicon from 'calypso/components/gridicon';
 import HostSelection from './host-selection';
 import Main from 'calypso/components/main';
@@ -114,7 +115,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const currentStep = useMemo( (): Step => {
 		if ( statusState === StatusState.Connected ) {
 			if ( 'edit' === action ) {
-				if ( 'pending' === formSubmissionStatus ) {
+				if ( 'unsubmitted' !== formSubmissionStatus ) {
 					return Step.Verification;
 				}
 				return Step.ConnectedEdit;
@@ -229,7 +230,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				compact
 				borderless
 				disabled={ disableForm }
-				href={ settingsPath( siteSlug ?? undefined ) }
+				href={ settingsPath( siteSlug || undefined ) }
 				onClick={ () => {
 					dispatch(
 						recordTracksEvent( 'calypso_jetpack_advanced_credentials_flow_switch_host', { host } )
@@ -294,7 +295,16 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 						formSubmissionError={ formSubmissionError }
 						formSubmissionStatus={ formSubmissionStatus }
 						onFinishUp={ () => {
-							/* TODO @azabani */
+							dispatch( {
+								type: JETPACK_CREDENTIALS_UPDATE_RESET,
+								siteId,
+							} );
+						} }
+						onReview={ () => {
+							dispatch( {
+								type: JETPACK_CREDENTIALS_UPDATE_RESET,
+								siteId,
+							} );
 						} }
 					/>
 				);

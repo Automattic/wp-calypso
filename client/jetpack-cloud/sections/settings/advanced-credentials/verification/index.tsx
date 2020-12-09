@@ -11,32 +11,82 @@ import classNames from 'classnames';
  */
 import { Button } from '@automattic/components';
 import { getSelectedSiteSlug, getSelectedSiteId } from 'calypso/state/ui/selectors';
+import getJetpackCredentialsUpdateError, {
+	UpdateError,
+} from 'calypso/state/selectors/get-jetpack-credentials-update-error';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
 import { CredentialsTestProgress as Progress } from 'calypso/state/data-layer/wpcom/activity-log/update-credentials/vendor';
+import { settingsPath } from 'calypso/lib/jetpack/paths';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+import getJetpackCredentialsUpdateStatus from 'calypso/state/selectors/get-jetpack-credentials-update-status';
 
 interface Props {
 	formSubmissionError: Error | null;
 	formSubmissionStatus: 'unsubmitted' | 'pending' | 'success' | 'failed';
 	onFinishUp: () => void;
+	onReview: () => void;
 }
 
-const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
+const UpdateErrorView: FunctionComponent< UpdateError > = ( {
+	wpcomError,
+	translatedError,
+	transportError,
+} ) => {
+	const translate = useTranslate();
+	const transportText = transportError?.trace ?? transportError?.stack;
+
+	const offset = transportText?.indexOf( '\n' ) ?? -1;
+	const transportMessage = offset > -1 ? transportText?.slice( 0, offset ) : transportText;
+	const transportTrace = offset > -1 ? transportText?.slice( offset + 1 ) : '';
+
+	return (
+		<div className="verification__error">
+			<p>{ translatedError }</p>
+			<details>
+				<summary>{ translate( 'More details' ) }</summary>
+				{ wpcomError && (
+					<p>
+						{ wpcomError.message }{ ' ' }
+						<span>{ `[${ wpcomError.code }, ${ JSON.stringify( wpcomError.data ) }]` }</span>
+					</p>
+				) }
+				{ transportMessage && (
+					<p>
+						{ transportMessage }
+						{ transportTrace && (
+							<>
+								{ '\n' }
+								<span>{ transportTrace }</span>
+							</>
+						) }
+					</p>
+				) }
+			</details>
+		</div>
+	);
+};
+
+const Verification: FunctionComponent< Props > = ( { onFinishUp, onReview } ) => {
 	const translate = useTranslate();
 
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const siteId = useSelector( getSelectedSiteId );
+	const updateError = useSelector( ( state ) => getJetpackCredentialsUpdateError( state, siteId ) );
 	const updateProgress = useSelector( ( state ) =>
 		getJetpackCredentialsUpdateProgress( state, siteId )
 	);
 
 	// TODO @azabani change this when implementing proper success/failure screens
-	const showFinishUp = false;
+	const updateStatus = useSelector( ( state ) =>
+		getJetpackCredentialsUpdateStatus( state, siteId )
+	);
+	const showFinishUp = updateStatus === 'success';
+	const showReview = updateStatus === 'failed';
 
 	const stepLabels = new Map( [
 		[ 'check jetpack site', translate( 'Checking Jetpack site' ) ],
@@ -79,13 +129,19 @@ const Verification: FunctionComponent< Props > = ( { onFinishUp } ) => {
 					);
 				} ) }
 			</ul>
-			{ showFinishUp && (
-				<div className="verification__buttons">
-					<Button primary onClick={ onFinishUp }>
+			{ updateError && <UpdateErrorView { ...updateError } /> }
+			<div className="verification__buttons">
+				{ showFinishUp && (
+					<Button primary onClick={ onFinishUp } href={ settingsPath( siteSlug || undefined ) }>
 						{ translate( 'Finish up' ) }
 					</Button>
-				</div>
-			) }
+				) }
+				{ showReview && (
+					<Button primary onClick={ onReview }>
+						{ translate( 'Review credentials' ) }
+					</Button>
+				) }
+			</div>
 		</div>
 	);
 };
