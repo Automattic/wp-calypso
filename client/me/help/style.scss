@@ -23,7 +23,11 @@
 
 .help__section-title {
 	font-size: $font-title-small;
-	margin: 32px 0 16px;
+	margin: 32px 16px 16px;
+
+	@include break-small {
+		margin: 32px 0 16px;
+	}
 }
 
 .help__support-link .gridicons-external {
@@ -43,11 +47,10 @@
 }
 
 .help__support-links {
-	@include break-large {
+	@include break-xlarge {
 		display: grid;
-		grid-template-columns: 1fr 1fr 1fr 1fr;
+		grid-template-columns: repeat( 4, 1fr );
 		gap: 24px;
-		justify-items: start;
 		align-items: end;
 	}
 }
@@ -64,8 +67,12 @@
 	margin-right: 16px;
 	position: relative;
 	left: -2px;
+	width: 24px;
+	height: 24px;
 
-	@include break-large {
+	@include break-xlarge {
+		width: 36px;
+		height: 36px;
 		margin-right: 0;
 		margin-bottom: 24px;
 	}
@@ -74,6 +81,7 @@
 .help__support-link-section {
 	margin: auto;
 	margin-bottom: 0;
+	width: 100%;
 }
 
 .help__support-links.is-placeholder {
