@@ -12,7 +12,7 @@
 .help__support-link {
 	display: flex;
 
-	@include break-large {
+	@include break-xlarge {
 		flex-direction: column;
 	}
 
@@ -25,7 +25,7 @@
 	font-size: $font-title-small;
 	margin: 32px 16px 16px;
 
-	@include break-small {
+	@include breakpoint-deprecated( '>660px' ) {
 		margin: 32px 0 16px;
 	}
 }
@@ -66,7 +66,7 @@
 	margin-top: 0;
 	margin-right: 16px;
 	position: relative;
-	left: -2px;
+	left: -3px;
 	width: 24px;
 	height: 24px;
 
