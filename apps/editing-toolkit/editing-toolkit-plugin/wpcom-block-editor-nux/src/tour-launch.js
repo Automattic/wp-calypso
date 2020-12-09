@@ -43,6 +43,10 @@ function LaunchWpcomNuxTour() {
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	useEffect( () => {
+		if ( ! isWpcomNuxEnabled ) {
+			return;
+		}
+
 		document.body.appendChild( portalParent );
 		return () => {
 			// TODO: figure out how to unmount the LaunchWpcomNuxTour as this is not running when modal is closed
@@ -58,18 +62,11 @@ function WelcomeTourFrame() {
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCard, setCurrentCard ] = useState( 0 );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
-	const isWpcomNuxEnabled = useSelect( ( select ) =>
-		select( 'automattic/nux' ).isWpcomNuxEnabled()
-	);
 
 	const dismissWpcomNuxTour = () => {
 		// TODO recordTracksEvent
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
-
-	if ( ! isWpcomNuxEnabled ) {
-		return null;
-	}
 
 	return (
 		<div className="wpcom-editor-welcome-tour-frame">
