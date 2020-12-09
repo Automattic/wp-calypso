@@ -12,6 +12,7 @@ import { some } from 'lodash';
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, CompactCard, Card } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import HappinessEngineers from 'calypso/me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
@@ -124,88 +125,101 @@ class Help extends React.PureComponent {
 
 	getSupportLinks = () => {
 		return (
-			<div className="help__support-links">
-				<CompactCard
-					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/' ) }
-					target="__blank"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'All support articles' ) }
-						</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Looking to learn more about a feature? Our docs have all the details.'
-							) }
-						</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					className="help__support-link"
-					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-					target="__blank"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Quick help video tutorials' ) }
-						</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								'These short videos will demonstrate some of our most popular features.'
-							) }
-						</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					className="help__support-link"
-					href="https://dailypost.wordpress.com/blogging-university/"
-					target="__blank"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided email courses for site owners and bloggers' ) }
-						</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								'Pick from our ever-growing list of free email courses to improve your knowledge.'
-							) }
-						</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					className="help__support-link"
-					href="https://learn.wordpress.com"
-					target="__blank"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">
-							{ this.props.translate( 'Self-guided online tutorial' ) }
-						</h2>
-						<p className="help__support-link-content">
-							{ this.props.translate(
-								'A step-by-step guide to getting familiar with the platform.'
-							) }
-						</p>
-					</div>
-				</CompactCard>
-				<CompactCard
-					className="help__support-link help__support-link-contact"
-					href="/help/contact/"
-				>
-					<div className="help__support-link-section">
-						<h2 className="help__support-link-title">{ this.props.translate( 'Get in touch' ) }</h2>
-						<p className="help__support-link-content">
+			<>
+				<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
+				<div className="help__support-links">
+					<CompactCard
+						className="help__support-link"
+						href={ localizeUrl( 'https://wordpress.com/support/' ) }
+						target="__blank"
+					>
+						<Gridicon icon="book" size={ 36 } />
+						<div className="help__support-link-section">
+							<h2 className="help__support-link-title">
+								{ this.props.translate( 'All articles' ) }
+							</h2>
+							<p className="help__support-link-content">
+								{ this.props.translate(
+									'Looking to learn more about a feature? Our docs have all the details.'
+								) }
+							</p>
+						</div>
+					</CompactCard>
+					<CompactCard
+						className="help__support-link"
+						href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+						target="__blank"
+					>
+						<Gridicon icon="video" size={ 36 } />
+						<div className="help__support-link-section">
+							<h2 className="help__support-link-title">
+								{ this.props.translate( 'Video tutorials' ) }
+							</h2>
+							<p className="help__support-link-content">
+								{ this.props.translate(
+									'These short videos will demonstrate some of our most popular features.'
+								) }
+							</p>
+						</div>
+					</CompactCard>
+					<CompactCard
+						className="help__support-link"
+						href="https://dailypost.wordpress.com/blogging-university/"
+						target="__blank"
+					>
+						<Gridicon icon="mail" size={ 36 } />
+						<div className="help__support-link-section">
+							<h2 className="help__support-link-title">
+								{ this.props.translate( 'Email courses' ) }
+							</h2>
+							<p className="help__support-link-content">
+								{ this.props.translate(
+									'Pick from our ever-growing list of free email courses to improve your knowledge.'
+								) }
+							</p>
+						</div>
+					</CompactCard>
+					<CompactCard
+						className="help__support-link"
+						href="https://learn.wordpress.com"
+						target="__blank"
+					>
+						<Gridicon icon="list-ordered" size={ 36 } />
+						<div className="help__support-link-section">
+							<h2 className="help__support-link-title">{ this.props.translate( 'Guides' ) }</h2>
+							<p className="help__support-link-content">
+								{ this.props.translate(
+									'A step-by-step guide to getting familiar with the platform.'
+								) }
+							</p>
+						</div>
+					</CompactCard>
+				</div>
+			</>
+		);
+	};
+
+	getContactUs = () => {
+		return (
+			<>
+				<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
+				<CompactCard className="help__contact-us-card" href="/help/contact/">
+					<Gridicon icon="help" size={ 36 } />
+					<div className="help__contact-us-section">
+						<h3 className="help__contact-us-title">
+							{ this.props.translate( 'Contact support' ) }
+						</h3>
+						<p className="help__contact-us-content">
 							{ this.props.translate(
 								"Can't find the answer? Drop us a line and we'll lend a hand."
 							) }
 						</p>
 					</div>
-					<Button className="help__support-link-button" primary>
-						{ this.props.translate( 'Contact Us' ) }
+					<Button className="help__contact-us-button">
+						{ this.props.translate( 'Contact support' ) }
 					</Button>
 				</CompactCard>
-			</div>
+			</>
 		);
 	};
 
@@ -313,6 +327,7 @@ class Help extends React.PureComponent {
 				{ this.supportSessionCard() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
+				{ this.getContactUs() }
 				<HappinessEngineers />
 				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
