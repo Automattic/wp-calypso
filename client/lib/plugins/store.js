@@ -200,10 +200,6 @@ const PluginsStore = {
 		} );
 	},
 
-	isFetchingSite: function ( site ) {
-		return _fetching[ site.ID ];
-	},
-
 	emitChange: function () {
 		this.emit( 'change' );
 	},

@@ -51,6 +51,7 @@ import {
 	isRequesting,
 	hasRequested,
 } from 'calypso/state/plugins/premium/selectors';
+import { isRequesting as isRequestingInstalledPlugins } from 'calypso/state/plugins/installed/selectors';
 // Store for existing plugins
 import PluginsStore from 'calypso/lib/plugins/store';
 
@@ -165,7 +166,7 @@ class PlansSetup extends React.Component {
 
 		const getPluginFromStore = function () {
 			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
-			if ( ! sitePlugin && PluginsStore.isFetchingSite( site ) ) {
+			if ( ! sitePlugin && this.props.requestingInstalledPlugins ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
 				// store events because it would be more messy to handle the one-time-only
 				// callback with bound parameters than to do it this way.
@@ -245,8 +246,7 @@ class PlansSetup extends React.Component {
 	};
 
 	renderPlugins = ( hidden = false ) => {
-		const site = this.props.selectedSite;
-		if ( this.props.isRequesting || PluginsStore.isFetchingSite( site ) ) {
+		if ( this.props.isRequesting || this.props.requestingInstalledPlugins ) {
 			return this.renderPluginsPlaceholders();
 		}
 
@@ -529,7 +529,7 @@ class PlansSetup extends React.Component {
 			site &&
 			! this.props.isRequestingSites &&
 			! this.props.isRequesting &&
-			! PluginsStore.isFetchingSite( site ) &&
+			! this.props.requestingInstalledPlugins &&
 			! this.props.plugins.length
 		) {
 			return this.renderNoJetpackPlan();
@@ -563,6 +563,7 @@ export default connect(
 		return {
 			wporgPlugins: getAllWporgPlugins( state ),
 			isRequesting: isRequesting( state, siteId ),
+			requestingInstalledPlugins: isRequestingInstalledPlugins( state, siteId ),
 			hasRequested: hasRequested( state, siteId ),
 			isInstalling: isInstalling( state, siteId, forSpecificPlugin ),
 			isFinished: isFinished( state, siteId, forSpecificPlugin ),
