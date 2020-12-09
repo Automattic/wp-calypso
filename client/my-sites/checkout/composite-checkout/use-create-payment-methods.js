@@ -47,12 +47,12 @@ import { createFullCreditsMethod } from './payment-methods/full-credits';
 import { createFreePaymentMethod } from './payment-methods/free-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
-function useCreatePayPal() {
+export function useCreatePayPal() {
 	const paypalMethod = useMemo( createPayPalMethod, [] );
 	return paypalMethod;
 }
 
-function useCreateCreditCard( {
+export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
@@ -282,7 +282,7 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
-function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
+export function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
 	const existingCardMethods = useMemo( () => {
 		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
