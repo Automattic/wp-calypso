@@ -166,22 +166,22 @@ class PluginsBrowserListElement extends Component {
 	renderDownloaded() {
 		let downloaded = this.props.plugin.downloaded;
 		if ( downloaded > 1000000 ) {
-			downloaded = this.props.numberFormat( Math.floor( downloaded / 100000 ) * 100000 ) + '+';
-		} else if ( downloaded > 100000 ) {
-			downloaded = this.props.numberFormat( Math.floor( downloaded / 10000 ) * 10000 ) + '+';
+			downloaded = this.props.translate( '%(installs)s million+ installs', {
+				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000000 ) ) },
+			} );
+		} else if ( downloaded > 1000 ) {
+			downloaded = this.props.translate( '%(installs)s thousand+ installs', {
+				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000 ) ) },
+			} );
 		} else if ( downloaded > 0 ) {
-			downloaded = this.props.numberFormat( downloaded );
+			downloaded = this.props.translate( '%(installs)s installs', {
+				args: { installs: this.props.numberFormat( downloaded ) },
+			} );
 		} else {
 			return;
 		}
 
-		return (
-			<div className="plugins-browser-item__downloads">
-				{ this.props.translate( '%(installs)s installs', {
-					args: { installs: downloaded },
-				} ) }
-			</div>
-		);
+		return <div className="plugins-browser-item__downloads">{ downloaded }</div>;
 	}
 
 	render() {
