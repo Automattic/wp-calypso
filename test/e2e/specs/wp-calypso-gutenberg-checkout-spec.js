@@ -35,11 +35,11 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive @parallel`, function () {
+describe.skip( `[${ host }] Calypso Gutenberg Editor: Checkout on (${ screenSize }) is interactive @parallel`, function () {
 	this.timeout( mochaTimeOut );
 	let editorUrl;
 
-	describe.skip( 'Can trigger the checkout modal via post editor', function () {
+	describe( 'Can trigger the checkout modal via post editor', function () {
 		step( 'Can log in', async function () {
 			this.timeout( mochaTimeOut * 12 );
 			const loginFlow = new LoginFlow( driver, 'gutenbergSimpleSiteFreePlanUser' );
