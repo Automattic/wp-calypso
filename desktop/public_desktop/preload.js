@@ -21,9 +21,12 @@ const sendChannels = [
 // Incoming IPC message channels from Main process to Renderer.
 // Maintain this list in alphabetical order.
 const receiveChannels = [
+	'app-config',
 	'cookie-auth-complete',
 	'enable-notification-badge',
 	'enable-site-option',
+	'is-calypso',
+	'is-calypso-response',
 	'navigate',
 	'new-post',
 	'notification-clicked',
