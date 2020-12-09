@@ -178,7 +178,7 @@ class PurchasesList extends Component {
 				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-				<PurchasesNavigation section="purchases" />
+				<PurchasesNavigation section="activeUpgrades" />
 				{ content }
 				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />

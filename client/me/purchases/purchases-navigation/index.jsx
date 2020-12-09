@@ -26,34 +26,32 @@ import { setQuery } from 'calypso/state/billing-transactions/ui/actions';
 export default function PurchasesNavigation( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	let text = translate( 'Billing History' );
 
-	if ( section === 'purchases' ) {
-		text = translate( 'Purchases' );
-	} else if ( section === 'pending' ) {
-		text = translate( 'Pending Payments' );
-	} else if ( section === 'payment-methods' ) {
-		text = translate( 'Payment Methods' );
-	}
+	const navItems = {
+		activeUpgrades: translate( 'Active Upgrades' ),
+		billingHistory: translate( 'Billing History' ),
+		paymentMethods: translate( 'Payment Methods' ),
+		pendingPayments: translate( 'Pending Payments' ),
+	};
 
 	return (
-		<SectionNav selectedText={ text }>
+		<SectionNav selectedText={ navItems[ section ] }>
 			<NavTabs>
-				<NavItem path={ purchasesRoot } selected={ section === 'purchases' }>
-					{ translate( 'Purchases' ) }
+				<NavItem path={ purchasesRoot } selected={ section === 'activeUpgrades' }>
+					{ navItems.activeUpgrades }
 				</NavItem>
 
-				<NavItem path={ billingHistory } selected={ section === 'billing' }>
-					{ translate( 'Billing History' ) }
+				<NavItem path={ billingHistory } selected={ section === 'billingHistory' }>
+					{ navItems.billingHistory }
 				</NavItem>
 
-				<NavItem path={ paymentMethods } selected={ section === 'payment-methods' }>
+				<NavItem path={ paymentMethods } selected={ section === 'paymentMethods' }>
 					{ translate( 'Payment Methods' ) }
 				</NavItem>
 
 				{ isEnabled( 'async-payments' ) && (
-					<NavItem path={ pendingPayments } selected={ section === 'pending' }>
-						{ translate( 'Pending Payments' ) }
+					<NavItem path={ pendingPayments } selected={ section === 'pendingPayments' }>
+						{ navItems.pendingPayments }
 					</NavItem>
 				) }
 			</NavTabs>

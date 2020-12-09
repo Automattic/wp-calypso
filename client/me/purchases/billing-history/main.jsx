@@ -42,7 +42,7 @@ const BillingHistory = ( { translate } ) => (
 		<MeSidebarNavigation />
 		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
-		<PurchasesNavigation section={ 'billing' } />
+		<PurchasesNavigation section={ 'billingHistory' } />
 		<BillingHistoryContent />
 	</Main>
 );
