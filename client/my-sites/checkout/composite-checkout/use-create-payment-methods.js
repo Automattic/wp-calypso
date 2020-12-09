@@ -20,8 +20,8 @@ import {
 	createEpsPaymentMethodStore,
 	createApplePayMethod,
 	createExistingCardMethod,
-	useShoppingCart,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
