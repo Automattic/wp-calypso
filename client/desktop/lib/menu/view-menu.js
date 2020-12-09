@@ -16,19 +16,33 @@ if ( Config.debug ) {
 	menuItems = debugMenu;
 }
 
-menuItems.push( {
-	label: 'Toggle Full Screen',
-	accelerator: platform.isOSX() ? 'Command+Ctrl+F' : undefined,
-	fullscreen: true,
-	click: function () {
-		const focusedWindow = BrowserWindow.getFocusedWindow();
+menuItems.push(
+	{
+		label: 'Toggle Full Screen',
+		accelerator: platform.isOSX() ? 'Command+Ctrl+F' : undefined,
+		fullscreen: true,
+		click: function () {
+			const focusedWindow = BrowserWindow.getFocusedWindow();
 
-		if ( focusedWindow ) {
-			const toggle = ! focusedWindow.isFullScreen();
+			if ( focusedWindow ) {
+				const toggle = ! focusedWindow.isFullScreen();
 
-			focusedWindow.setFullScreen( toggle );
-		}
+				focusedWindow.setFullScreen( toggle );
+			}
+		},
 	},
-} );
+	{
+		type: 'separator',
+	},
+	{
+		role: 'zoomIn',
+	},
+	{
+		role: 'zoomOut',
+	},
+	{
+		role: 'resetZoom',
+	}
+);
 
 module.exports = menuItems;
