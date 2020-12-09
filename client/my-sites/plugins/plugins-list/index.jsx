@@ -17,7 +17,7 @@ import acceptDialog from 'calypso/lib/accept';
 import { warningNotice } from 'calypso/state/notices/actions';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
-import PluginNotices from 'calypso/lib/plugins/notices';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
 import { Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
 import { getSelectedSite, getSelectedSiteSlug } from 'calypso/state/ui/selectors';

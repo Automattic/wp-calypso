@@ -23,7 +23,7 @@ import {
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import PluginNotices from 'calypso/lib/plugins/notices';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
 import MainComponent from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
