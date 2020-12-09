@@ -942,10 +942,10 @@ electron-window@^0.8.0:
   dependencies:
     is-electron-renderer "^2.0.0"
 
-electron@11.0.0:
-  version "11.0.0"
-  resolved "https://registry.yarnpkg.com/electron/-/electron-11.0.0.tgz#e4966d358832e47189069444799e3b72224e37d9"
-  integrity sha512-bbT6vmc04I0+cuG5e26+2rAOQYLH90Exf11a+NpGCSMTXsSjSpSZdjWGffWRIowOJzSwcSk8EHdCKdeet1rz9A==
+electron@11.0.4:
+  version "11.0.4"
+  resolved "https://registry.yarnpkg.com/electron/-/electron-11.0.4.tgz#78b54760294eb42a36f33308a7987bf0b3dd6125"
+  integrity sha512-ipfQ28Km52iuDSe9VK0G5uuyxi8qy8szg+01kQTRXZFCLlpgsgU+vQxWkld2tkhXWdu+H3dmgYHvWtoijOvhjw==
   dependencies:
     "@electron/get" "^1.0.1"
     "@types/node" "^12.0.12"
