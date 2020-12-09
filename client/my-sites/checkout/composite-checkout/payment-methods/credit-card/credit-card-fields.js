@@ -136,7 +136,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 						handleStripeFieldChange={ handleStripeFieldChange }
 						stripeElementStyle={ stripeElementStyle }
-						countryCode={ getFieldValue( 'countryCode' ) }
+						shouldUseEbanx={ shouldUseEbanx }
 						getErrorMessagesForField={ getErrorMessagesForField }
 						setFieldValue={ setFieldValue }
 						getFieldValue={ getFieldValue }
@@ -147,7 +147,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 							<CreditCardExpiryField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -157,7 +157,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 							<CreditCardCvvField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -172,6 +172,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 						getFieldValue={ getFieldValue }
 						setFieldValue={ setFieldValue }
 						getErrorMessagesForField={ getErrorMessagesForField }
+						shouldUseEbanx={ shouldUseEbanx }
 					/>
 				) }
 			</CreditCardFieldsWrapper>
