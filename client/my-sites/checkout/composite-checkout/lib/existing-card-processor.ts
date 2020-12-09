@@ -50,7 +50,7 @@ export default async function existingCardProcessor(
 }
 
 async function submitExistingCardPayment(
-	transactionData: TransactionRequestWithLineItems,
+	transactionData: ExistingCardTransactionRequest,
 	transactionOptions: CardProcessorOptions
 ) {
 	debug( 'formatting existing card transaction', transactionData );
@@ -63,10 +63,12 @@ async function submitExistingCardPayment(
 	return wpcomTransaction( formattedTransactionData, transactionOptions );
 }
 
+type ExistingCardTransactionRequest = Omit< TransactionRequestWithLineItems, 'paymentMethodType' >;
+
 function isValidTransactionData(
 	submitData: unknown
-): submitData is TransactionRequestWithLineItems {
-	const data = submitData as TransactionRequestWithLineItems;
+): submitData is ExistingCardTransactionRequest {
+	const data = submitData as ExistingCardTransactionRequest;
 	if ( ! ( data?.items?.length > 0 ) ) {
 		return false;
 	}
@@ -79,7 +81,6 @@ function isValidTransactionData(
 		! data.postalCode ||
 		! data.storedDetailsId ||
 		! data.name ||
-		! data.paymentMethodType ||
 		! data.paymentMethodToken ||
 		! data.paymentPartnerProcessorId
 	) {
