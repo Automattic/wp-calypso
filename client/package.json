@@ -226,6 +226,7 @@
 		"autoprefixer": "^9.7.3",
 		"component-event": "^0.1.4",
 		"component-query": "^0.0.3",
+		"pkg-dir": "^5.0.0",
 		"postcss-custom-properties": "^9.1.1"
 	}
 }
