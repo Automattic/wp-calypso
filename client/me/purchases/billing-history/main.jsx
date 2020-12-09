@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -39,10 +40,9 @@ const BillingHistory = ( { translate } ) => (
 		<DocumentHead title={ translate( 'Billing History' ) } />
 		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
 		<MeSidebarNavigation />
-
 		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 		<QueryBillingTransactions />
-		<PurchasesNavigation section={ 'billingHistory' } />
+		<PurchasesNavigation section={ 'billing' } />
 		<BillingHistoryContent />
 	</Main>
 );
