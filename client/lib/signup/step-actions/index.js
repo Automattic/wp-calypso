@@ -388,6 +388,31 @@ export function addDomainToCart(
 	processItemCart( providedDependencies, newCartItems, callback, reduxStore, slug, null, null );
 }
 
+export function addDomainUpsellToCart(
+	callback,
+	dependencies,
+	stepProvidedItems,
+	reduxStore,
+	siteSlug,
+	stepProvidedDependencies
+) {
+	const slug = siteSlug || dependencies.siteSlug;
+	const { selectedDomainUpsellItem } = stepProvidedItems;
+
+	if ( isEmpty( selectedDomainUpsellItem ) ) {
+		defer( callback );
+		return;
+	}
+	processItemCart(
+		stepProvidedDependencies,
+		[ selectedDomainUpsellItem ],
+		callback,
+		reduxStore,
+		slug,
+		null,
+		null
+	);
+}
 function processItemCart(
 	providedDependencies,
 	newCartItems,
@@ -775,6 +800,27 @@ export function isPlanFulfilled( stepName, defaultDependencies, nextProps ) {
 	}
 
 	if ( shouldExcludeStep( stepName, fulfilledDependencies ) ) {
+		flows.excludeStep( stepName );
+	}
+}
+
+export function isFreePlansDomainUpsellFulfilled( stepName, defaultDependencies, nextProps ) {
+	const { submitSignupStep, isPaidPlan } = nextProps;
+	const hasDomain = has( nextProps, 'signupDependencies.domainItem' );
+	const hasPlan = has( nextProps, 'signupDependencies.cartItem' );
+	const domainItem = get( nextProps, 'signupDependencies.domainItem', false );
+	const cartItem = get( nextProps, 'signupDependencies.cartItem', false );
+
+	if ( ! hasDomain || ! hasPlan ) {
+		return;
+	}
+
+	if ( isPaidPlan || domainItem || cartItem || 'test' !== abtest( 'freePlansDomainUpsell' ) ) {
+		const selectedDomainUpsellItem = null;
+		submitSignupStep(
+			{ stepName, selectedDomainUpsellItem, wasSkipped: true },
+			{ selectedDomainUpsellItem }
+		);
 		flows.excludeStep( stepName );
 	}
 }

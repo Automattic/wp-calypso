@@ -1,0 +1,191 @@
+/**
+ * External dependencies
+ */
+
+import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useTranslate } from 'i18n-calypso';
+
+import StepWrapper from 'calypso/signup/step-wrapper';
+import {
+	getSecureYourBrand,
+	isRequestingSecureYourBrand,
+} from 'calypso/state/secure-your-brand/selectors';
+import { Button, Card } from '@automattic/components';
+import formatCurrency from '@automattic/format-currency';
+import QuerySecureYourBrand from 'calypso/components/data/query-secure-your-brand';
+import Badge from 'calypso/components/badge';
+import { domainRegistration } from 'calypso/lib/cart-values/cart-items';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
+import FormFieldset from 'calypso/components/forms/form-fieldset';
+import FormRadio from 'calypso/components/forms/form-radio';
+import FormLabel from 'calypso/components/forms/form-label';
+
+export default function DomainUpsellStep( props ) {
+	const translate = useTranslate();
+	const {
+		flowName,
+		stepName,
+		positionInFlow,
+		signupDependencies: { siteSlug },
+	} = props;
+
+	const subHeaderText = translate(
+		'You can select an easier-to-remember name below at a one-time discounted price:'
+	);
+	const headerText = translate( 'Congrats, %s is almost ready!', {
+		args: [ siteSlug ],
+	} );
+
+	return (
+		<div className="domain-upsell__step-secton-wrapper">
+			<StepWrapper
+				flowName={ flowName }
+				stepName={ stepName }
+				positionInFlow={ positionInFlow }
+				headerText={ headerText }
+				fallbackHeaderText={ headerText }
+				subHeaderText={ subHeaderText }
+				fallbackSubHeaderText={ subHeaderText }
+				isWideLayout={ false }
+				stepContent={ RecommendedDomains( props ) }
+			/>
+		</div>
+	);
+}
+
+function getDomainName( siteSlug ) {
+	return siteSlug.replace( '.wordpress.com', '.blog' );
+}
+
+function FormattedSuggestion( translate, suggestion, isRecommended ) {
+	const currency = suggestion.currency;
+	return (
+		<div className="domain-upsell__domain-radio-label">
+			<div className="domain-upsell__domain-radio-label-domain-wrapper">
+				<div className="domain-upsell__domain-radio-label-domain">{ suggestion.domain }</div>
+				{ isRecommended && <Badge type="success">{ translate( 'Recommended' ) }</Badge> }
+			</div>
+			<div className="domain-upsell__registration-fee">
+				<div>
+					{ translate( 'Registration fee: {{strong}}%(originalCost)s{{/strong}}', {
+						args: {
+							originalCost: formatCurrency( suggestion.cost, currency, { stripZeros: true } ),
+						},
+						components: { strike: <strike />, strong: <strong /> },
+					} ) }
+				</div>
+				<small>
+					{ translate( 'Renews at %(cost)s / year', {
+						args: { cost: formatCurrency( suggestion.cost, currency, { stripZeros: true } ) },
+					} ) }
+				</small>
+			</div>
+		</div>
+	);
+}
+
+function RecommendedDomains( props ) {
+	const {
+		signupDependencies: { siteSlug },
+		additionalStepData,
+		stepSectionName,
+		stepName,
+		submitSignupStep,
+		goToNextStep,
+	} = props;
+	const translate = useTranslate();
+	const [ selectedDomain, setSelectedDomain ] = useState( null );
+	const selectDomain = ( event ) => setSelectedDomain( event.target.value );
+	const secureYourBrand = useSelector( ( state ) => getSecureYourBrand( state ) );
+	const isLoading = useSelector( ( state ) => isRequestingSecureYourBrand( state ) );
+	const domain = getDomainName( siteSlug );
+	const productData = secureYourBrand.product_data;
+	const selectedProduct = productData?.filter(
+		( product ) => product.domain === selectedDomain
+	)[ 0 ];
+
+	useEffect( () => {
+		if ( productData && ! selectedDomain ) {
+			setSelectedDomain( productData[ 0 ].domain );
+		}
+	}, [ productData, selectedDomain, setSelectedDomain ] );
+
+	const handleUpgradeButtonClick = () => {
+		if ( ! selectedProduct ) {
+			return;
+		}
+
+		const selectedDomainUpsellItem = domainRegistration( {
+			domain: selectedProduct.domain,
+			productSlug: selectedProduct.product_slug,
+		} );
+		const step = {
+			stepName,
+			stepSectionName,
+			selectedDomainUpsellItem,
+			...additionalStepData,
+		};
+
+		submitSignupStep( step, { selectedDomainUpsellItem } );
+		goToNextStep();
+	};
+
+	const handleSkipButtonClick = () => {
+		const step = {
+			stepName,
+			stepSectionName,
+			selectedDomainUpsellItem: null,
+			...additionalStepData,
+		};
+
+		submitSignupStep( step, { selectedDomainUpsellItem: null } );
+		goToNextStep();
+	};
+
+	return (
+		<div className="domain-upsell">
+			{ ! productData && <QuerySecureYourBrand domain={ domain } /> }
+			<Card style={ { maxWidth: '615px' } } className="domain-upsell__card">
+				{ isLoading ? (
+					[ ...Array( 3 ) ].map( ( e, i ) => (
+						<div key={ `${ i }` } className="domain-upsell__placeholder">
+							<div className="domain-upsell__placeholder-animation"></div>
+						</div>
+					) )
+				) : (
+					<FormFieldset>
+						{ productData?.map( ( suggestion, index ) => (
+							<FormLabel className="domain-upsell__domain-radio" key={ suggestion.domain }>
+								<FormRadio
+									checked={ selectedDomain === suggestion.domain }
+									onChange={ selectDomain }
+									label={ FormattedSuggestion( translate, suggestion, index === 0 ) }
+									value={ suggestion.domain }
+								/>
+							</FormLabel>
+						) ) }
+					</FormFieldset>
+				) }
+				<div className="domain-upsell__buttons">
+					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
+						{ isLoading
+							? translate( 'Loading' )
+							: translate( 'Use %s', { args: [ selectedDomain ] } ) }
+					</Button>
+				</div>
+			</Card>
+			<div className="domain-upsell__continue-link">
+				<Button compact borderless plain onClick={ handleSkipButtonClick }>
+					{ translate( 'No thanks, continue to %s', {
+						args: [ siteSlug ],
+					} ) }
+				</Button>
+			</div>
+		</div>
+	);
+}
