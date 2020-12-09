@@ -17,7 +17,6 @@ import { LAUNCH_STORE } from '../../stores';
 import { useDomainSelection, useSiteDomains, useDomainSearch } from '@automattic/launch';
 
 import { FLOW_ID } from '../../constants';
-import './styles.scss';
 
 const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, onNextStep } ) => {
 	const { plan } = useSelect( ( select ) => select( LAUNCH_STORE ).getState() );

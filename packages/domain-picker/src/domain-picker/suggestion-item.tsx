@@ -8,7 +8,6 @@ import { Spinner } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import classnames from 'classnames';
 import { sprintf } from '@wordpress/i18n';
-import { v4 as uuid } from 'uuid';
 import { recordTrainTracksInteract } from '@automattic/calypso-analytics';
 import { Button } from '@wordpress/components';
 import { useLocalizeUrl } from '@automattic/i18n-utils';
@@ -71,8 +70,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	const [ previousDomain, setPreviousDomain ] = useState< string | undefined >();
 	const [ previousRailcarId, setPreviousRailcarId ] = useState< string | undefined >();
 
-	const labelId = uuid();
-
 	const freeDomainLabel =
 		type === ITEM_TYPE_INDIVIDUAL_ITEM
 			? __( 'Default', __i18n_text_domain__ )
@@ -114,7 +111,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 	};
 
 	return (
-		<label
+		<button
 			className={ classnames(
 				'domain-picker__suggestion-item',
 				{
@@ -124,19 +121,18 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				},
 				`type-${ type }`
 			) }
+			onClick={ onDomainSelect }
+			disabled={ isUnavailable }
 		>
-			{ [ ITEM_TYPE_RADIO, ITEM_TYPE_INDIVIDUAL_ITEM ].indexOf( type ) > -1 &&
+			{ type === ITEM_TYPE_RADIO &&
 				( isLoading ? (
 					<Spinner />
 				) : (
-					<input
-						aria-labelledby={ labelId }
-						className="domain-picker__suggestion-radio-button"
-						type="radio"
-						disabled={ isUnavailable }
-						name="domain-picker-suggestion-option"
-						onChange={ onDomainSelect }
-						checked={ selected && ! isUnavailable }
+					<span
+						className={ classnames( 'adomain-picker__suggestion-radio-circle', {
+							'is-checked': selected,
+							'is-unavailable': isUnavailable,
+						} ) }
 					/>
 				) ) }
 			<div className="domain-picker__suggestion-item-name">
@@ -217,7 +213,6 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					<div className="domain-picker__action">
 						<Button
 							isSecondary
-							aria-labelledby={ labelId }
 							className={ classnames( 'domain-picker__suggestion-select-button', {
 								'is-selected': selected && ! isUnavailable,
 							} ) }
@@ -230,7 +225,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 				) ) }
-		</label>
+		</button>
 	);
 };
 
