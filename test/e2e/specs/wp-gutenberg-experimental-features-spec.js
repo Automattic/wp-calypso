@@ -23,7 +23,11 @@ const gutenbergUser =
 // of the @wordpress/* packages. The purpose of these tests is to give us an early
 // warning if an experimental feature has been removed or renamed.
 const EXPERIMENTAL_FEATURES = {
-	'@wordpress/block-editor': [ '__experimentalBlock', '__experimentalInserterMenuExtension' ],
+	'@wordpress/block-editor': [
+		'__experimentalBlock',
+		'__experimentalBlockPatternsMissing',
+		'__experimentalInserterMenuExtension',
+	],
 	'@wordpress/date': [ '__experimentalGetSettings' ],
 	'@wordpress/interface': [ '__experimentalMainDashboardButton' ],
 	'@wordpress/components': [ '__experimentalNavigationBackButton' ],
@@ -58,36 +62,71 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		return await this.loginFlow.loginAndStartNewPost( null, true );
 	} );
 
-	for ( const [ packageName, features ] of Object.entries( EXPERIMENTAL_FEATURES ) ) {
-		// Removes the `@wordpress/` prefix and hyphens from package name
-		// The algorithm WP uses to convert package names to variable names is here: https://github.com/WordPress/gutenberg/blob/a03ea51e11a36d0abeecb4ce4e4cea5ffebdffc5/packages/dependency-extraction-webpack-plugin/lib/util.js#L40-L45
-		const wpGlobalName = camelCaseDash( packageName.substr( '@wordpress/'.length ) );
+	step( 'Can find experimental package features', function () {
+		for ( const [ packageName, features ] of Object.entries( EXPERIMENTAL_FEATURES ) ) {
+			// Removes the `@wordpress/` prefix and hyphens from package name
+			// The algorithm WP uses to convert package names to variable names is here: https://github.com/WordPress/gutenberg/blob/a03ea51e11a36d0abeecb4ce4e4cea5ffebdffc5/packages/dependency-extraction-webpack-plugin/lib/util.js#L40-L45
+			const wpGlobalName = camelCaseDash( packageName.substr( '@wordpress/'.length ) );
 
-		describe( packageName, () => {
-			step(
-				`"${ wpGlobalName }" package should be available in the global window object`,
-				async () => {
-					const typeofPackage = await driver.executeScript(
-						`typeof window.wp['${ wpGlobalName }']`
-					);
-					assert.notStrictEqual( typeofPackage, 'undefined'`${ wpGlobalName } is undefined` );
+			step( packageName, () => {
+				step(
+					`"${ wpGlobalName }" package should be available in the global window object`,
+					async () => {
+						const typeofPackage = await driver.executeScript(
+							`return typeof window.wp['${ wpGlobalName }']`
+						);
+						console.log( wpGlobalName, 'typeofPackage:', typeofPackage );
+						assert( typeofPackage !== 'undefined', `${ wpGlobalName } is undefined` );
+					}
+				);
+
+				for ( const feature of features ) {
+					step( `${ feature } should be available in ${ packageName }`, async () => {
+						const typeofExperimentalFeature = await driver.executeScript(
+							`typeof window.wp['${ wpGlobalName }']['${ feature }']`
+						);
+						assert.notStrictEqual(
+							typeofExperimentalFeature,
+							'undedfined',
+							`${ feature } is undefined`
+						);
+					} );
 				}
-			);
+			} );
+		}
+	} );
 
-			for ( const feature of features ) {
-				step( `${ feature } should be available in ${ packageName }`, async () => {
-					const typeofExperimentalFeature = await driver.executeScript(
-						`typeof window.wp['${ wpGlobalName }']['${ feature }']`
-					);
-					assert.notStrictEqual(
-						typeofExperimentalFeature,
-						'undefined',
-						`${ feature } is undefined`
-					);
-				} );
+	step( 'Experimental data we depend on is available', function () {
+		// step( 'Can log in', async function () {
+		// 	this.loginFlow = new LoginFlow( driver, gutenbergUser );
+		// 	return await this.loginFlow.loginAndStartNewPost( null, true );
+		// } );
+
+		step(
+			`wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
+			async () => {
+				const __experimentalBlockPatternsArePresent = await driver.executeScript(
+					`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
+				);
+				assert(
+					__experimentalBlockPatternsArePresent,
+					'__experimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
+				);
 			}
-		} );
-	}
+		);
+		step(
+			`wp.data.select( 'core/editor' ).getEditorSettings().__missingExperimentalBlockPatterns`,
+			async () => {
+				const __missingExperimentalBlockPatternsArePresent = await driver.executeScript(
+					`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().___missingExperimentalBlockPatterns )`
+				);
+				assert(
+					__missingExperimentalBlockPatternsArePresent,
+					'___missingExperimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
+				);
+			}
+		);
+	} );
 
 	after( async () => {
 		return await driver.switchTo().defaultContent();
