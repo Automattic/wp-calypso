@@ -436,7 +436,7 @@ export const PluginsList = createReactClass( {
 					'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
 					{
 						components: {
-							link: <a href={ '/settings/general/' + this.props.selectedSiteSlug } />,
+							link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
 						},
 					}
 				)
