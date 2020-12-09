@@ -211,7 +211,7 @@ const DomainStep: React.FunctionComponent< DomainStepProps > = ( {
 							quantityExpanded={ 3 }
 							itemType="individual-item"
 							locale={ locale }
-							orderFreeDomainsLast={ true }
+							orderSubDomainsLast={ true }
 						/>
 						<Link to={ Route.DomainDetails } className="focused-launch-summary__details-link">
 							{ __( 'View all domains', __i18n_text_domain__ ) }
