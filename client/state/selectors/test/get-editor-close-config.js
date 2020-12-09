@@ -3,7 +3,7 @@
  */
 import getEditorCloseConfig from 'calypso/state/selectors/get-editor-close-config';
 import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
 import PostQueryManager from 'calypso/lib/query-manager/post';
 
 const postType = 'post';
@@ -78,7 +78,7 @@ describe( 'getEditorCloseConfig()', () => {
 			ui: { selectedSiteId: siteId },
 		};
 
-		const parentPostEditorUrl = getEditorUrl( state, siteId, parentPostId, pagePostType );
+		const parentPostEditorUrl = getGutenbergEditorUrl( state, siteId, parentPostId, pagePostType );
 
 		expect( getEditorCloseConfig( state, siteId, templatePostType, parentPostId ).url ).toEqual(
 			parentPostEditorUrl

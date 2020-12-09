@@ -8,7 +8,7 @@ import { translate } from 'i18n-calypso';
  */
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import getPostTypeAllPostsUrl from 'calypso/state/selectors/get-post-type-all-posts-url';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
 import getLastNonEditorRoute from 'calypso/state/selectors/get-last-non-editor-route';
 
 /**
@@ -28,7 +28,7 @@ export default function getEditorCloseConfig( state, siteId, postType, fseParent
 	if ( 'wp_template_part' === postType && fseParentPageId ) {
 		// Note: the label is handled correctly by the FSE plugin in this case.
 		return {
-			url: getEditorUrl( state, siteId, fseParentPageId, 'page' ),
+			url: getGutenbergEditorUrl( state, siteId, fseParentPageId, 'page' ),
 		};
 	}
 

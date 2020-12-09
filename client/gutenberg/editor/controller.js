@@ -11,7 +11,7 @@ import { isEligibleForGutenframe } from 'calypso/state/gutenberg-iframe-eligible
 import { EDITOR_START, POST_EDIT } from 'calypso/state/action-types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import CalypsoifyIframe from './calypsoify-iframe';
-import getEditorUrl from 'calypso/state/selectors/get-editor-url';
+import getGutenbergEditorUrl from 'calypso/state/selectors/get-gutenberg-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getSelectedEditor } from 'calypso/state/selectors/get-selected-editor';
 import { requestSelectedEditor } from 'calypso/state/selected-editor/actions';
@@ -184,7 +184,7 @@ export const redirect = async ( context, next ) => {
 
 		const url =
 			postType || ! isSiteUsingCoreSiteEditor( state, siteId )
-				? getEditorUrl( state, siteId, postId, postType )
+				? getGutenbergEditorUrl( state, siteId, postId, postType )
 				: getSiteEditorUrl( state, siteId );
 		// pass along parameters, for example press-this
 		return window.location.replace( addQueryArgs( context.query, url ) );
