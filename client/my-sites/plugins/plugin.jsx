@@ -23,7 +23,7 @@ import {
 	getPlugin as getWporgPlugin,
 } from 'calypso/state/plugins/wporg/selectors';
 import { fetchPluginData as wporgFetchPluginData } from 'calypso/state/plugins/wporg/actions';
-import PluginNotices from 'calypso/lib/plugins/notices';
+import PluginNotices from 'calypso/my-sites/plugins/notices';
 import MainComponent from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import JetpackManageErrorPage from 'calypso/my-sites/jetpack-manage-error-page';
@@ -52,7 +52,6 @@ function goBack() {
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
-	mixins: [ PluginNotices ],
 
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
@@ -297,7 +296,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
+		const { pluginSlug, selectedSite } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -327,6 +326,8 @@ const SinglePlugin = createReactClass( {
 				<DocumentHead title={ this.getPageTitle() } />
 				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 				<SidebarNavigation />
+				<PluginNotices pluginSlug={ pluginSlug } />
+
 				<div className="plugin__page">
 					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
