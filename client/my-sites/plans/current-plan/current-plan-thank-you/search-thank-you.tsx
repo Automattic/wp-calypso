@@ -13,22 +13,30 @@ import ThankYou, { ThankYouCtaType } from './thank-you';
 import versionCompare from 'calypso/lib/version-compare';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 
-const ThankYouCta: ThankYouCtaType = ( { jetpackVersion, recordThankYouClick, siteAdminUrl } ) => {
+const ThankYouCta: ThankYouCtaType = ( {
+	dismissUrl,
+	jetpackVersion,
+	recordThankYouClick,
+	siteAdminUrl,
+} ) => {
 	const translate = useTranslate();
 	return (
-		<Button
-			primary
-			href={
-				jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-					? siteAdminUrl + 'plugins.php'
-					: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
-			}
-			onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
-		>
-			{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
-				? translate( 'Update Jetpack' )
-				: translate( 'Try Search and customize it now' ) }
-		</Button>
+		<>
+			<Button
+				primary
+				href={
+					jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
+						? siteAdminUrl + 'plugins.php'
+						: siteAdminUrl + 'customize.php?autofocus[section]=jetpack_search'
+				}
+				onClick={ () => recordThankYouClick( 'search', 'customizer' ) }
+			>
+				{ jetpackVersion && versionCompare( jetpackVersion, '8.4', '<' )
+					? translate( 'Update Jetpack' )
+					: translate( 'Try Search and customize it now' ) }
+			</Button>
+			<Button href={ dismissUrl }>{ translate( 'Close' ) }</Button>
+		</>
 	);
 };
 
