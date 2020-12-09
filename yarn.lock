@@ -19700,9 +19700,9 @@ new-github-issue-url@^0.2.1:
   resolved "https://registry.yarnpkg.com/new-github-issue-url/-/new-github-issue-url-0.2.1.tgz#e17be1f665a92de465926603e44b9f8685630c1d"
   integrity sha512-md4cGoxuT4T4d/HDOXbrUHkTKrp/vp+m3aOA7XXVYwNsUNMK49g3SQicTSeV5GIz/5QVGAeYRAOlyp9OvlgsYA==
 
-"newspack-blocks@github:Automattic/newspack-blocks#v1.8.0":
-  version "1.8.0"
-  resolved "https://codeload.github.com/Automattic/newspack-blocks/tar.gz/fee002b48e8085cddc13d507d4bfccf7d8e53cea"
+"newspack-blocks@github:Automattic/newspack-blocks#v1.17.0":
+  version "1.17.0"
+  resolved "https://codeload.github.com/Automattic/newspack-blocks/tar.gz/fa3ffa7995465cad91af380b43f50a1d4a3c4ee0"
   dependencies:
     "@wordpress/a11y" "^2.9.0"
     "@wordpress/compose" "^3.9.0"
