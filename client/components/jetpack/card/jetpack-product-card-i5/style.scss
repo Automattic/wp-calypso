@@ -11,7 +11,6 @@
 
 	&.is-featured.is-aligned {
 		position: relative;
-		top: 8px;
 		z-index: 1;
 
 		margin-left: -8px;
@@ -35,7 +34,7 @@
 
 	.is-aligned & {
 		position: absolute;
-		top: -16px;
+		bottom: 100%;
 		left: 0;
 	}
 }
@@ -52,6 +51,13 @@
 		border-top: none;
 		border-bottom-left-radius: inherit;
 		border-bottom-right-radius: inherit;
+	}
+
+	.is-featured.is-aligned & {
+		box-sizing: border-box;
+		height: calc( 100% + 8px );
+
+		background-color: inherit;
 	}
 }
 
