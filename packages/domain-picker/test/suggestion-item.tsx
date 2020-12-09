@@ -421,7 +421,7 @@ describe( 'test that suggested items are rendered correctly based on availabilit
 
 		expect( screen.queryByText( /Unavailable/i ) ).toBeTruthy();
 		expect( screen.queryByText( /Recommended/i ) ).toBeFalsy();
-		expect( screen.queryByRole( 'radio' ).getAttribute( 'disabled' ) ).not.toBe( null );
+		expect( screen.queryByRole( 'button' )?.getAttribute( 'disabled' ) ).not.toBe( null );
 	} );
 
 	it( 'should have the enabled UI state when provided an availabilityStatus that is available', () => {
@@ -444,6 +444,6 @@ describe( 'test that suggested items are rendered correctly based on availabilit
 		expect( screen.queryByText( /Unavailable/i ) ).toBeFalsy();
 		expect( screen.queryByText( /€12.00/i ) ).toBeTruthy();
 		expect( screen.queryByText( /Recommended/i ) ).toBeTruthy();
-		expect( screen.queryByRole( 'radio' ).getAttribute( 'disabled' ) ).toBe( null );
+		expect( screen.queryByRole( 'button' )?.getAttribute( 'disabled' ) ).toBe( null );
 	} );
 } );
