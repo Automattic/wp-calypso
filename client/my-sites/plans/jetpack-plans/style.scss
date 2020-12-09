@@ -1,13 +1,10 @@
-@import '~@wordpress/base-styles/breakpoints';
-@import '~@wordpress/base-styles/mixins';
-
-.selector-alt__main {
+.selector__main {
 	position: relative;
 }
 
 // Override WordPress.com primary colors with Jetpack Cloud primary colors.
 // This only affects the Plans grid and the Filter bar.
-.selector-alt__main {
+.selector__main {
 	.plans-filter-bar,
 	.plans-filter-bar-i5,
 	.products-grid-alt,
@@ -21,86 +18,6 @@
 	}
 }
 
-.selector-alt__divider {
-	margin: 40px 0;
-
-	border-bottom: solid 1px var( --color-border-subtle );
-	visibility: hidden;
-
-	@include break-large {
-		visibility: visible;
-	}
-}
-
 .jetpack-plans__heading {
 	padding: 1rem 0;
-}
-
-/**
- * Record slider
- */
-
-.records-details {
-	background-color: var( --studio-gray-0 );
-	border: solid 1px var( --studio-wordpress-blue-30 );
-	color: var( --color-text-subtle );
-}
-
-.records-details__records {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
-	padding: 14px;
-
-	border-bottom: solid 1px var( --studio-gray-5 );
-
-	.info-popover {
-		margin-top: 3px;
-		margin-left: 6px;
-
-		fill: var( --studio-gray-20 );
-	}
-}
-
-.records-details__details {
-	padding: 16px;
-
-	text-align: center;
-}
-
-.records-details__tier {
-	margin-bottom: 8px;
-
-	color: var( --color-text );
-	font-weight: 600;
-}
-
-.records-details-alt {
-	text-align: center;
-
-	color: var( --color-text );
-}
-
-.records-details-alt__records {
-	font-size: $font-body;
-	font-weight: 600;
-}
-
-.records-details-alt__tier {
-	margin: 8px 0 0;
-
-	font-size: $font-body-small;
-
-	color: var( --color-text-subtle );
-}
-
-.records-details__price {
-	display: flex;
-	justify-content: center;
-}
-
-.records-details__timeframe {
-	margin-top: -4px;
-	font-size: 0.75rem;
 }
