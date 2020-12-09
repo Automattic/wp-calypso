@@ -42,7 +42,6 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 = 2.8.13 =
 * Removes unnecessary site editor implemtation from the plugin. (https://github.com/Automattic/wp-calypso/pull/47301)
-* Updates newspack blocks to v1.17.0. (https://github.com/Automattic/wp-calypso/pull/48179)
 
 = 2.8.12 =
 * New onboarding Launch: Fix subdomain selection and update menu (https://github.com/Automattic/wp-calypso/pull/47913)
