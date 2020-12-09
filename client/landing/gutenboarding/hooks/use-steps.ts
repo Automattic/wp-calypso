@@ -53,8 +53,8 @@ export default function useSteps(): Array< StepType > {
 	}
 
 	// Don't show the mandatory Plans steps:
-	// - if the user landed from a marketing page after selecting a plan (in this case, hide also the Features step)
-	// - if a plan has been selected using the PlansModal but only if there is no Features step
+	// - if the user landed from a marketing page after selecting a plan
+	// - if a plan has been explicitly selected using the PlansModal
 	if ( ( hasPlanFromPath || plan ) && ! hasUsedPlansStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}

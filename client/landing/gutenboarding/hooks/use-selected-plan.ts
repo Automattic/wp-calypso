@@ -17,21 +17,21 @@ import { isEnabled } from 'calypso/config';
 /**
  * A React hook that returns the WordPress.com plan from path.
  *
- * Exception: Free plan is not returned while a paid domain is selected
+ * Exception: Free plan is not returned while features are selected
  *
  * @returns { Plan } An object describing a WordPress.com plan
  */
 export function usePlanFromPath(): Plan | undefined {
 	const planPath = usePlanRouteParam();
 
-	const [ isPlanFree, planFromPath, hasPaidDomain ] = useSelect( ( select ) => [
+	const [ isPlanFree, planFromPath, selectedFeatures ] = useSelect( ( select ) => [
 		select( PLANS_STORE ).isPlanFree,
 		select( PLANS_STORE ).getPlanByPath( planPath ),
-		select( ONBOARD_STORE ).hasPaidDomain(),
+		select( ONBOARD_STORE ).getSelectedFeatures(),
 	] );
 
-	// don't return Free plan if paid domain is currently selected
-	if ( isPlanFree( planFromPath?.storeSlug ) && hasPaidDomain ) {
+	// don't return Free plan if any feature is currently selected
+	if ( isPlanFree( planFromPath?.storeSlug ) && selectedFeatures.length ) {
 		return;
 	}
 
