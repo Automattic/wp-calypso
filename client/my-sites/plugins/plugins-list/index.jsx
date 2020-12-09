@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -18,7 +17,6 @@ import acceptDialog from 'calypso/lib/accept';
 import { warningNotice } from 'calypso/state/notices/actions';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginNotices from 'calypso/lib/plugins/notices';
 import { Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
@@ -95,7 +93,7 @@ export const PluginsList = createReactClass( {
 			return true;
 		}
 
-		if ( this.state.disconnectJetpackDialog !== nextState.disconnectJetpackDialog ) {
+		if ( this.state.disconnectJetpackNotice !== nextState.disconnectJetpackNotice ) {
 			return true;
 		}
 
@@ -110,20 +108,16 @@ export const PluginsList = createReactClass( {
 		return false;
 	},
 
+	componentDidUpdate() {
+		this.maybeShowDisconnectNotice();
+	},
+
 	getInitialState() {
 		return {
-			disconnectJetpackDialog: false,
+			disconnectJetpackNotice: false,
 			bulkManagementActive: false,
 			selectedPlugins: {},
 		};
-	},
-
-	componentDidMount() {
-		PluginsLog.on( 'change', this.showDisconnectDialog );
-	},
-
-	componentWillUnmount() {
-		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
 	},
 
 	isSelected( { slug } ) {
@@ -296,7 +290,7 @@ export const PluginsList = createReactClass( {
 		);
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
-			this.setState( { disconnectJetpackDialog: true } );
+			this.setState( { disconnectJetpackNotice: true } );
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
@@ -429,12 +423,12 @@ export const PluginsList = createReactClass( {
 		}
 	},
 
-	showDisconnectDialog() {
+	maybeShowDisconnectNotice() {
 		const { translate } = this.props;
 
-		if ( this.state.disconnectJetpackDialog && ! this.props.inProgressStatuses.length ) {
+		if ( this.state.disconnectJetpackNotice && ! this.props.inProgressStatuses.length ) {
 			this.setState( {
-				disconnectJetpackDialog: false,
+				disconnectJetpackNotice: false,
 			} );
 
 			this.props.warningNotice(
@@ -448,15 +442,6 @@ export const PluginsList = createReactClass( {
 				)
 			);
 		}
-	},
-
-	closeDialog( action ) {
-		if ( 'continue' === action ) {
-			page.redirect( '/settings/general/' + this.props.selectedSiteSlug );
-			return;
-		}
-		this.setState( { showJetpackDisconnectDialog: false } );
-		this.forceUpdate();
 	},
 
 	// Renders
