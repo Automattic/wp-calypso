@@ -1,12 +1,13 @@
 /**
  * External dependencies
  */
-import { keyBy, union } from 'lodash';
+import { keyBy, omit, union } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
+	VIEWER_REMOVE_SUCCESS,
 	VIEWERS_REQUEST,
 	VIEWERS_REQUEST_FAILURE,
 	VIEWERS_REQUEST_SUCCESS,
@@ -22,8 +23,10 @@ export const items = ( state = {}, action ) => {
 				keyBy( action.data?.viewers, ( viewer ) => viewer.ID )
 			);
 		}
+		case VIEWER_REMOVE_SUCCESS: {
+			return Object.assign( {}, omit( state, action.viewerId ) );
+		}
 	}
-
 	return state;
 };
 
@@ -40,8 +43,17 @@ export const queries = ( state = {}, action ) => {
 				},
 			};
 		}
+		case VIEWER_REMOVE_SUCCESS: {
+			const { siteId, viewerId } = action;
+			return {
+				...state,
+				[ siteId ]: {
+					ids: state[ siteId ].ids.filter( ( id ) => id !== viewerId ),
+					found: state[ siteId ].found - 1,
+				},
+			};
+		}
 	}
-
 	return state;
 };
 

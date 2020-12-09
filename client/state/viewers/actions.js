@@ -5,6 +5,9 @@ import {
 	VIEWERS_REQUEST,
 	VIEWERS_REQUEST_SUCCESS,
 	VIEWERS_REQUEST_FAILURE,
+	VIEWER_REMOVE,
+	VIEWER_REMOVE_SUCCESS,
+	VIEWER_REMOVE_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/viewers';
@@ -27,5 +30,25 @@ export const requestViewersFailure = ( siteId, query, error ) => ( {
 	type: VIEWERS_REQUEST_FAILURE,
 	siteId,
 	query,
+	error,
+} );
+
+export const removeViewer = ( siteId, viewerId ) => ( {
+	type: VIEWER_REMOVE,
+	siteId,
+	viewerId,
+} );
+
+export const removeViewerSuccess = ( siteId, viewerId, data ) => ( {
+	type: VIEWER_REMOVE_SUCCESS,
+	siteId,
+	viewerId,
+	data,
+} );
+
+export const removeViewerFailure = ( siteId, viewerId, error ) => ( {
+	type: VIEWER_REMOVE_FAILURE,
+	siteId,
+	viewerId,
 	error,
 } );

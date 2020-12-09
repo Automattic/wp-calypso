@@ -113,7 +113,7 @@ ViewersStore.dispatchToken = Dispatcher.register( function ( payload ) {
 			}
 			ViewersStore.emitChange();
 			break;
-		case 'REMOVE_VIEWER':
+		case 'VIEWER_REMOVE':
 			_removingFromSite[ action.siteId ] = true;
 			removeViewerFromSite( action.siteId, action.viewer.ID );
 			ViewersStore.emitChange();

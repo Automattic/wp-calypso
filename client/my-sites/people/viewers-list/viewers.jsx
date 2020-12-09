@@ -11,7 +11,6 @@ import { connect } from 'react-redux';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card } from '@automattic/components';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
-import ViewersActions from 'calypso/lib/viewers/actions';
 import InfiniteList from 'calypso/components/infinite-list';
 import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
@@ -20,6 +19,7 @@ import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import getViewers from 'calypso/state/selectors/get-viewers';
 import isFetchingViewers from 'calypso/state/selectors/is-fetching-viewers';
 import getTotalViewers from 'calypso/state/selectors/get-total-viewers';
+import { removeViewer } from 'calypso/state/viewers/actions';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
@@ -63,7 +63,7 @@ class Viewers extends React.PureComponent {
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
-					ViewersActions.remove( this.props.site.ID, viewer );
+					this.props.removeViewer( this.props.site.ID, viewer.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -162,4 +162,9 @@ const mapStateToProps = ( state, ownProps ) => ( {
 	totalViewers: getTotalViewers( state, ownProps.site.ID ),
 } );
 
-export default connect( mapStateToProps, { recordGoogleEvent } )( localize( Viewers ) );
+const mapDispatchToProps = {
+	recordGoogleEvent,
+	removeViewer,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Viewers ) );

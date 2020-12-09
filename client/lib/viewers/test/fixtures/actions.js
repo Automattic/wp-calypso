@@ -32,7 +32,7 @@ export default {
 	},
 
 	removeViewer: {
-		type: 'REMOVE_VIEWER',
+		type: 'VIEWER_REMOVE',
 		siteId: site.ID,
 		viewer: viewerData.viewers[ 0 ],
 	},

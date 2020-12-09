@@ -39,7 +39,7 @@ const ViewersActions = {
 
 	remove: function ( siteId, viewer ) {
 		Dispatcher.handleViewAction( {
-			type: 'REMOVE_VIEWER',
+			type: 'VIEWER_REMOVE',
 			siteId: siteId,
 			viewer: viewer,
 		} );
