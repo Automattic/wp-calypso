@@ -70,18 +70,14 @@ const apiStart = () => {
 	Dispatcher.handleViewAction( action );
 };
 
-const apiSuccess = ( data ) => {
+const apiSuccess = () => {
 	const action = { type: IMPORTS_FETCH_COMPLETED };
 	Dispatcher.handleViewAction( action );
-
-	return data;
 };
 
-const apiFailure = ( data ) => {
+const apiFailure = () => {
 	const action = { type: IMPORTS_FETCH_FAILED };
 	Dispatcher.handleViewAction( action );
-
-	return data;
 };
 
 function receiveImporterStatus( importerStatus ) {
@@ -115,9 +111,10 @@ export function cancelImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, createCancelOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( ( data ) => {
+			apiSuccess();
+			receiveImporterStatus( fromApi( data ) );
+		} )
 		.catch( apiFailure );
 }
 
@@ -126,10 +123,12 @@ export function fetchState( siteId ) {
 
 	return wpcom
 		.fetchImporterState( siteId )
-		.then( apiSuccess )
-		.then( castArray )
-		.then( ( importers ) => importers.map( fromApi ) )
-		.then( ( importers ) => importers.map( receiveImporterStatus ) )
+		.then( ( data ) => {
+			apiSuccess();
+			castArray( data ).forEach( ( importerData ) => {
+				receiveImporterStatus( fromApi( importerData ) );
+			} );
+		} )
 		.catch( apiFailure );
 }
 
@@ -165,9 +164,10 @@ export function resetImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, createExpiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( ( data ) => {
+			apiSuccess();
+			receiveImporterStatus( fromApi( data ) );
+		} )
 		.catch( apiFailure );
 }
 
@@ -189,9 +189,10 @@ export function clearImport( siteId, importerId ) {
 	apiStart();
 	wpcom
 		.updateImporter( siteId, clearOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
+		.then( ( data ) => {
+			apiSuccess();
+			receiveImporterStatus( fromApi( data ) );
+		} )
 		.catch( apiFailure );
 }
 
@@ -280,10 +281,11 @@ export const startUpload = ( importerStatus, file ) => {
 			},
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
-		.then( ( data ) => ( { ...data, siteId } ) )
-		.then( fromApi )
-		.then( ( importerData ) => {
-			const finishUploadAction = createFinishUploadAction( importerId, importerData );
+		.then( ( data ) => {
+			const finishUploadAction = createFinishUploadAction(
+				importerId,
+				fromApi( { ...data, siteId } )
+			);
 
 			Dispatcher.handleViewAction( finishUploadAction );
 			reduxDispatch( finishUploadAction );
