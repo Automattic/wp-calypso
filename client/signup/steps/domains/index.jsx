@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
+import validUrl from 'valid-url';
 
 /**
  * Internal dependencies
@@ -711,8 +712,11 @@ class DomainsStep extends React.Component {
 		};
 		const source = get( this.props, 'queryObject.source' );
 
-		if ( source && backUrlSourceOverrides[ source ] ) {
-			backUrl = backUrlSourceOverrides[ source ];
+		if (
+			( source && backUrlSourceOverrides[ source ] ) ||
+			( source && validUrl.isWebUri( source ) )
+		) {
+			backUrl = validUrl.isWebUri( source ) ? source : backUrlSourceOverrides[ source ];
 			backLabelText = translate( 'Back' );
 
 			// Solves route conflicts between LP and calypso (ex. /domains).
