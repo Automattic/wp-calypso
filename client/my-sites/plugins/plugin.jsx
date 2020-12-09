@@ -52,7 +52,6 @@ function goBack() {
 const SinglePlugin = createReactClass( {
 	displayName: 'SinglePlugin',
 	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
-	mixins: [ PluginNotices ],
 
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
@@ -297,7 +296,7 @@ const SinglePlugin = createReactClass( {
 	},
 
 	render() {
-		const { selectedSite } = this.props;
+		const { pluginSlug, selectedSite } = this.props;
 		if ( ! this.props.isRequestingSites && ! this.props.userCanManagePlugins ) {
 			return <NoPermissionsError title={ this.getPageTitle() } />;
 		}
@@ -327,6 +326,8 @@ const SinglePlugin = createReactClass( {
 				<DocumentHead title={ this.getPageTitle() } />
 				<PageViewTracker path={ analyticsPath } title="Plugins > Plugin Details" />
 				<SidebarNavigation />
+				<PluginNotices pluginSlug={ pluginSlug } />
+
 				<div className="plugin__page">
 					{ this.displayHeader( calypsoify ) }
 					<PluginMeta
