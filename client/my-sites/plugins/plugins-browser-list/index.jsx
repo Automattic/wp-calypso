@@ -46,7 +46,7 @@ class PluginsBrowserList extends Component {
 		}
 
 		// We need to complete the list with empty elements to keep the grid drawn.
-		while ( pluginsViewsList.length % 3 !== 0 || pluginsViewsList.length % 2 !== 0 ) {
+		while ( pluginsViewsList.length % 2 !== 0 ) {
 			/* eslint-disable wpcalypso/jsx-classname-namespace */
 			pluginsViewsList.push(
 				<div className="plugins-browser-item is-empty" key={ 'empty-item-' + emptyCounter++ } />

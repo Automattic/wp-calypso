@@ -25,7 +25,11 @@ import { withLocalizedMoment } from 'calypso/components/localized-moment';
  */
 import './style.scss';
 
-const PREINSTALLED_PLUGINS = [ 'Jetpack by WordPress.com', 'Akismet', 'VaultPress' ];
+const PREINSTALLED_PLUGINS = [
+	'Jetpack by WordPress.com',
+	'Akismet Spam Protection',
+	'VaultPress',
+];
 
 class PluginsBrowserListElement extends Component {
 	static defaultProps = {
