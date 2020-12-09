@@ -33,6 +33,20 @@
 	.hidden {
 		display: none;
 	}
+
+	padding-right: $onboarding-block-margin-mobile;
+
+	@include break-small {
+		padding-right: $onboarding-block-margin-small;
+	}
+
+	@include break-medium {
+		padding-right: $onboarding-block-margin-medium;
+	}
+
+	@include break-huge {
+		padding-right: 0;
+	}
 }
 
 .plans-details__header-row {
