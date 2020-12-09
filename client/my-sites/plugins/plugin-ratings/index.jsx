@@ -5,8 +5,6 @@ import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
 
-import createReactClass from 'create-react-class';
-
 /**
  * Internal dependencies
  */
@@ -19,27 +17,25 @@ import { gaRecordEvent } from 'calypso/lib/analytics/ga';
  */
 import './style.scss';
 
-const PluginRatings = createReactClass( {
-	displayName: 'PluginRatings',
+const ratingTiers = [ 5, 4, 3, 2, 1 ];
 
-	propTypes: {
+class PluginRatings extends React.Component {
+	static propTypes = {
 		rating: PropTypes.number,
 		ratings: PropTypes.oneOfType( [ PropTypes.object, PropTypes.array ] ),
 		downloaded: PropTypes.number,
 		slug: PropTypes.string,
 		numRatings: PropTypes.number,
-	},
+	};
 
-	ratingTiers: [ 5, 4, 3, 2, 1 ],
-
-	getDefaultProps() {
-		return { barWidth: 88 };
-	},
+	static defaultProps = {
+		barWidth: 88,
+	};
 
 	buildReviewUrl( ratingTier ) {
 		const { slug } = this.props;
 		return `https://wordpress.org/support/plugin/${ slug }/reviews/?filter=${ ratingTier }`;
-	},
+	}
 
 	renderPlaceholder() {
 		return (
@@ -51,7 +47,7 @@ const PluginRatings = createReactClass( {
 				<div className="plugin-ratings__rating-text">{ this.props.translate( 'Based on' ) }</div>
 			</div>
 		);
-	},
+	}
 
 	renderRatingTier( ratingTier ) {
 		const { ratings, slug, numRatings } = this.props;
@@ -86,7 +82,7 @@ const PluginRatings = createReactClass( {
 				</span>
 			</a>
 		);
-	},
+	}
 
 	renderDownloaded() {
 		let downloaded = this.props.downloaded;
@@ -105,7 +101,7 @@ const PluginRatings = createReactClass( {
 				} ) }
 			</div>
 		);
-	},
+	}
 
 	render() {
 		const { placeholder, ratings, rating, numRatings } = this.props;
@@ -118,7 +114,7 @@ const PluginRatings = createReactClass( {
 			return null;
 		}
 
-		const tierViews = this.ratingTiers.map( ( tierLevel ) => this.renderRatingTier( tierLevel ) );
+		const tierViews = ratingTiers.map( ( tierLevel ) => this.renderRatingTier( tierLevel ) );
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
@@ -138,7 +134,7 @@ const PluginRatings = createReactClass( {
 				{ this.renderDownloaded() }
 			</div>
 		);
-	},
-} );
+	}
+}
 
 export default localize( PluginRatings );
