@@ -3,7 +3,7 @@
  */
 import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { defaultRegistry, useTransactionStatus } from '@automattic/composite-checkout';
+import { useTransactionStatus } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -15,14 +15,12 @@ import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-
 import getThankYouPageUrl from './get-thank-you-page-url';
 import normalizeTransactionResponse from '../../lib/normalize-transaction-response';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
 export type GetThankYouUrl = () => string;
 
 export default function useGetThankYouUrl( {
 	siteSlug,
-	transactionResult,
 	redirectTo,
 	purchaseId,
 	feature,
@@ -42,11 +40,6 @@ export default function useGetThankYouUrl( {
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
 		const receiptId = transactionResult?.receipt_id;
 		const orderId = transactionResult?.order_id;
-
-		if ( siteSlug === 'no-user' || ! siteSlug ) {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			siteSlug = select( 'wpcom' ).getSiteSlug();
-		}
 
 		const getThankYouPageUrlArguments = {
 			siteSlug,
@@ -68,6 +61,8 @@ export default function useGetThankYouUrl( {
 		debug( 'getThankYouUrl returned', url );
 		return url;
 	}, [
+		isInEditor,
+		transactionResult,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,
