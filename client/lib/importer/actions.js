@@ -173,16 +173,18 @@ export function resetImport( siteId, importerId ) {
 
 export function clearImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	Dispatcher.handleViewAction( {
+	const lockImportAction = {
 		type: IMPORTS_IMPORT_LOCK,
 		importerId,
-	} );
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 
-	Dispatcher.handleViewAction( {
+	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
-	} );
+	};
+	Dispatcher.handleViewAction( resetImportAction );
 
 	apiStart();
 	wpcom
