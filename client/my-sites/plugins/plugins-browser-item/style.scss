@@ -109,6 +109,15 @@
 	font-size: $font-body-small;
 }
 
+.plugins-browser-item__support {
+	display: flex;
+
+	img {
+		flex-shrink: 0;
+		margin-left: 6px;
+	}
+}
+
 .plugins-browser-item .rating {
 	fill: var( --color-text );
 	margin-right: 6px;
