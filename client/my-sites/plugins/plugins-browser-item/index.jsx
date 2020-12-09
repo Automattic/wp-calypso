@@ -222,7 +222,7 @@ class PluginsBrowserListElement extends Component {
 							<Rating rating={ this.props.plugin.rating } size={ 16 } />
 							{ this.props.plugin.num_ratings > 0 && (
 								<div className="plugins-browser-item__rating-number">
-									({ this.props.plugin.num_ratings })
+									({ this.props.numberFormat( this.props.plugin.num_ratings ) })
 								</div>
 							) }
 						</div>
