@@ -30,7 +30,7 @@ import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layou
 import CreditCardLoading from './credit-card-loading';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
-export default function CreditCardFields() {
+export default function CreditCardFields( { shouldUseEbanx } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();

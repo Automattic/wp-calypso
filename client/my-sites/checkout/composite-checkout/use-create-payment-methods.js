@@ -20,6 +20,7 @@ import {
 	createEpsPaymentMethodStore,
 	createApplePayMethod,
 	createExistingCardMethod,
+	useShoppingCart,
 } from '@automattic/composite-checkout';
 
 /**
@@ -44,6 +45,7 @@ import {
 } from './payment-methods/netbanking';
 import { createFullCreditsMethod } from './payment-methods/full-credits';
 import { createFreePaymentMethod } from './payment-methods/free-purchase';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
 function useCreatePayPal() {
 	const paypalMethod = useMemo( createPayPalMethod, [] );
@@ -55,6 +57,7 @@ function useCreateCreditCard( {
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
+	shouldUseEbanx,
 } ) {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
@@ -65,9 +68,16 @@ function useCreateCreditCard( {
 						store: stripePaymentMethodStore,
 						stripe,
 						stripeConfiguration,
+						shouldUseEbanx,
 				  } )
 				: null,
-		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
+		[
+			shouldLoadStripeMethod,
+			stripePaymentMethodStore,
+			stripe,
+			stripeConfiguration,
+			shouldUseEbanx,
+		]
 	);
 	return stripeMethod;
 }
@@ -301,6 +311,8 @@ export default function useCreatePaymentMethods( {
 	storedCards,
 	siteSlug,
 } ) {
+	const { responseCart } = useShoppingCart();
+
 	const paypalMethod = useCreatePayPal();
 
 	const idealMethod = useCreateIdeal( {
@@ -366,11 +378,17 @@ export default function useCreatePaymentMethods( {
 		siteSlug,
 	} );
 
+	const shouldUseEbanx = Boolean(
+		responseCart?.allowed_payment_methods?.includes(
+			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+		)
+	);
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
+		shouldUseEbanx,
 	} );
 
 	const fullCreditsPaymentMethod = useCreateFullCredits();
