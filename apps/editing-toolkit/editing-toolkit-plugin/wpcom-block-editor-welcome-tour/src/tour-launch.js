@@ -17,9 +17,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
-import { registerPlugin } from '@wordpress/plugins';
+// import { registerPlugin } from '@wordpress/plugins';
 
-function LaunchWpcomNuxTour() {
+function LaunchWpcomWelcomeTour() {
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
@@ -49,7 +49,7 @@ function LaunchWpcomNuxTour() {
 
 		document.body.appendChild( portalParent );
 		return () => {
-			// TODO: figure out how to unmount the LaunchWpcomNuxTour as this is not running when modal is closed
+			// TODO: figure out how to unmount the LaunchWpcomWelcomeTour as this is not running when modal is closed
 			document.body.removeChild( portalParent );
 		};
 	} );
@@ -98,8 +98,8 @@ function WelcomeTourMinimized( { onMaximize } ) {
 	);
 }
 
-export default LaunchWpcomNuxTour;
+export default LaunchWpcomWelcomeTour;
 
-registerPlugin( 'wpcom-block-editor-nux', {
-	render: () => <LaunchWpcomNuxTour />,
-} );
+// registerPlugin( 'wpcom-block-editor-nux', {
+// 	render: () => <LaunchWpcomWelcomeTour />,
+// } );

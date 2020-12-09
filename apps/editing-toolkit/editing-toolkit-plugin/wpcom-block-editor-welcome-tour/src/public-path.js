@@ -6,7 +6,7 @@
  *
  * @see https://webpack.js.org/guides/public-path/#on-the-fly
  */
-if ( typeof window === 'object' && window.wpcomBlockEditorNuxAssetsUrl ) {
+if ( typeof window === 'object' && window.wpcomBlockEditorWelcomeTourAssetsUrl ) {
 	// eslint-disable-next-line no-global-assign
-	__webpack_public_path__ = window.wpcomBlockEditorNuxAssetsUrl;
+	__webpack_public_path__ = window.wpcomBlockEditorWelcomeTourAssetsUrl;
 }
