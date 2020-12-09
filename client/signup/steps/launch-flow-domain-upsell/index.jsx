@@ -42,7 +42,7 @@ export default function FreePlansDomainDiscountLaunchStep( props ) {
 	} );
 
 	return (
-		<div className="free-plans-domain-discount-launch__step-secton-wrapper">
+		<div className="launch-flow-domain-upsell__step-secton-wrapper">
 			<StepWrapper
 				flowName={ flowName }
 				stepName={ stepName }
@@ -65,14 +65,14 @@ function getDomainName( siteSlug ) {
 function FormattedSuggestion( translate, suggestion, isRecommended ) {
 	const currency = suggestion.currency;
 	return (
-		<div className="free-plans-domain-discount-launch__domain-radio-label">
-			<div className="free-plans-domain-discount-launch__domain-radio-label-domain-wrapper">
-				<div className="free-plans-domain-discount-launch__domain-radio-label-domain">
+		<div className="launch-flow-domain-upsell__domain-radio-label">
+			<div className="launch-flow-domain-upsell__domain-radio-label-domain-wrapper">
+				<div className="launch-flow-domain-upsell__domain-radio-label-domain">
 					{ suggestion.domain }
 				</div>
 				{ isRecommended && <Badge type="success">{ translate( 'Recommended' ) }</Badge> }
 			</div>
-			<div className="free-plans-domain-discount-launch__registration-fee">
+			<div className="launch-flow-domain-upsell__registration-fee">
 				<div>
 					{ translate( 'Registration fee: {{strong}}%(originalCost)s{{/strong}}', {
 						args: {
@@ -150,20 +150,20 @@ function RecommendedDomains( props ) {
 	};
 
 	return (
-		<div className="free-plans-domain-discount-launch">
+		<div className="launch-flow-domain-upsell">
 			{ ! productData && <QuerySecureYourBrand domain={ domain } /> }
-			<Card style={ { maxWidth: '615px' } } className="free-plans-domain-discount-launch__card">
+			<Card style={ { maxWidth: '615px' } } className="launch-flow-domain-upsell__card">
 				{ isLoading ? (
 					[ ...Array( 3 ) ].map( ( i ) => (
-						<div key={ i } className="free-plans-domain-discount-launch__placeholder">
-							<div className="free-plans-domain-discount-launch__placeholder-animation"></div>
+						<div key={ i } className="launch-flow-domain-upsell__placeholder">
+							<div className="launch-flow-domain-upsell__placeholder-animation"></div>
 						</div>
 					) )
 				) : (
 					<FormFieldset>
 						{ productData?.map( ( suggestion, index ) => (
 							<FormLabel
-								className="free-plans-domain-discount-launch__domain-radio"
+								className="launch-flow-domain-upsell__domain-radio"
 								key={ suggestion.domain }
 							>
 								<FormRadio
@@ -176,7 +176,7 @@ function RecommendedDomains( props ) {
 						) ) }
 					</FormFieldset>
 				) }
-				<div className="free-plans-domain-discount-launch__buttons">
+				<div className="launch-flow-domain-upsell__buttons">
 					<Button busy={ isLoading } primary onClick={ handleUpgradeButtonClick }>
 						{ isLoading
 							? translate( 'Loading' )
@@ -184,7 +184,7 @@ function RecommendedDomains( props ) {
 					</Button>
 				</div>
 			</Card>
-			<div className="free-plans-domain-discount-launch__continue-link">
+			<div className="launch-flow-domain-upsell__continue-link">
 				<Button compact borderless plain onClick={ handleSkipButtonClick }>
 					{ translate( 'No thanks, continue to %s', {
 						args: [ siteSlug ],

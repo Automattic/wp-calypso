@@ -1,15 +1,15 @@
-.free-plans-domain-discount-launch__step-secton-wrapper {
-    .free-plans-domain-discount-launch {
+.launch-flow-domain-upsell__step-secton-wrapper {
+    .launch-flow-domain-upsell {
         @media screen and ( min-width: 660px ) {
             margin-top: 38px;
         }
-        .free-plans-domain-discount-launch__card {
+        .launch-flow-domain-upsell__card {
             padding: 0;
             .form-fieldset {
                 margin-bottom: 0;
             }
         }
-        .free-plans-domain-discount-launch__domain-radio {
+        .launch-flow-domain-upsell__domain-radio {
             box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
             cursor: pointer;
             margin-bottom: 0;
@@ -17,31 +17,31 @@
             .form-radio {
                 margin: 5px 0;
             }
-            .free-plans-domain-discount-launch__domain-radio-label {
+            .launch-flow-domain-upsell__domain-radio-label {
                 justify-content: space-between;
                 font-size: $font-body;
             }
             @media screen and ( min-width: 660px ) {
-                .free-plans-domain-discount-launch__domain-radio-label {
+                .launch-flow-domain-upsell__domain-radio-label {
                     display: flex;
                 }
-                .free-plans-domain-discount-launch__domain-radio-label-domain-wrapper {
+                .launch-flow-domain-upsell__domain-radio-label-domain-wrapper {
                     margin-left: 30px;
                 }
             }
         }
-        .free-plans-domain-discount-launch__placeholder {
+        .launch-flow-domain-upsell__placeholder {
             box-shadow: 0 0 0 1px #dcdcde, 0 2px 2px rgba( 0, 0, 0, 0.14 );
             margin-bottom: 0;
             padding: 19px 40px 22px 36px;
-            .free-plans-domain-discount-launch__placeholder-animation {
+            .launch-flow-domain-upsell__placeholder-animation {
                 animation: loading-fade 1.6s ease-in-out infinite;
                 background-color: var( --color-neutral-10 );
                 color: transparent;
                 min-height: 44px;
             }
         }
-        .free-plans-domain-discount-launch__buttons {
+        .launch-flow-domain-upsell__buttons {
             padding: 20px;
             text-align: center;
             .button {
@@ -50,7 +50,7 @@
                 min-width: 340px;
             }
         }
-        .free-plans-domain-discount-launch__continue-link {
+        .launch-flow-domain-upsell__continue-link {
             padding: 20px;
             text-align: center;
             .button-plain {
@@ -58,7 +58,7 @@
                 cursor: pointer;
             }
         }
-        .free-plans-domain-discount-launch__registration-fee {
+        .launch-flow-domain-upsell__registration-fee {
             color: var( --color-neutral-60 );
         }
     }

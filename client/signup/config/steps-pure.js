@@ -116,8 +116,8 @@ export function generateSteps( {
 			dependencies: [ 'siteSlug' ],
 		},
 
-		'free-plans-domain-discount-launch': {
-			stepName: 'free-plans-domain-discount-launch',
+		'launch-flow-domain-upsell': {
+			stepName: 'launch-flow-domain-upsell',
 			apiRequestFunction: addDomainUpsellToCart,
 			fulfilledStepCallback: isFreePlansDomainUpsellFulfilled,
 			dependencies: [ 'domainItem', 'cartItem', 'siteSlug' ],
