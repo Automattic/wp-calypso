@@ -19,9 +19,10 @@ import {
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
-import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
+import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
 import getSelectedSiteSlug from 'calypso/state/ui/selectors/get-selected-site-slug';
 import contactSupportUrl from 'calypso/lib/jetpack/contact-support-url';
 
@@ -93,18 +94,25 @@ export const success = ( action, { rewind_state } ) => [
 ];
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
-	dispatch( {
-		type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
-		error,
-		siteId: action.siteId,
-	} );
-
 	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
 
 	const baseOptions = { duration: 10000 };
 
-	const announce = ( message, options = {} ) =>
+	const dispatchFailure = ( message, options = {} ) => {
 		dispatch( errorNotice( message, { ...baseOptions, ...options } ) );
+
+		const state = getState();
+		const progress = getJetpackCredentialsUpdateProgress( state, action.siteId );
+
+		dispatch( {
+			type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
+			siteId: action.siteId,
+			error,
+			wpcomError: error,
+			translatedError: message,
+			transportError: progress.lastError,
+		} );
+	};
 
 	dispatch(
 		recordTracksEvent( 'calypso_rewind_creds_update_failure', {
@@ -124,7 +132,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 
 	switch ( error.code ) {
 		case 'service_unavailable':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'A error occurred when we were trying to validate your site information. ' +
 						'Please make sure your credentials and host URL are correct and try again. ' +
@@ -135,13 +143,13 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		case 'missing_args':
-			announce(
+			dispatchFailure(
 				i18n.translate( 'Something seems to be missing — please fill out all the required fields.' )
 			);
 			break;
 
 		case 'invalid_args':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					"The information you entered seems to be incorrect. Let's take " +
 						'another look to ensure everything is in the right place.'
@@ -150,7 +158,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		case 'invalid_credentials':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					"We couldn't connect to your site. Please verify your credentials and give it another try."
 				)
@@ -158,7 +166,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		case 'invalid_wordpress_path':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'We looked for `wp-config.php` in the WordPress installation ' +
 						"path you provided but couldn't find it."
@@ -168,7 +176,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		case 'read_only_install':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'It looks like your server is read-only. ' +
 						'To create backups and restore your site, we need permission to write to your server.'
@@ -178,7 +186,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		case 'unreachable_path':
-			announce(
+			dispatchFailure(
 				i18n.translate(
 					'We tried to access your WordPress installation through its publicly available URL, ' +
 						"but it didn't work. Please make sure the directory is accessible and try again."
@@ -187,7 +195,9 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			break;
 
 		default:
-			announce( i18n.translate( 'Error saving. Please check your credentials and try again.' ) );
+			dispatchFailure(
+				i18n.translate( 'Error saving. Please check your credentials and try again.' )
+			);
 	}
 };
 
