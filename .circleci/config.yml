@@ -867,6 +867,9 @@ jobs:
       - store_artifacts:
           when: always
           path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:

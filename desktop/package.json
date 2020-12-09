@@ -27,10 +27,10 @@
 	"devDependencies": {
 		"asana-phrase": "0.0.8",
 		"chai": "3.5.0",
-		"electron": "8.3.0",
+		"electron": "11.0.4",
 		"electron-builder": "^22.4.0",
 		"electron-chromedriver": "4.2.0",
-		"electron-mocha": "8.0.0",
+		"electron-mocha": "9.3.1",
 		"electron-notarize": "^0.1.1",
 		"ffmpeg-static": "2.4.0",
 		"lodash": "^4.17.15",
@@ -42,6 +42,6 @@
 		"selenium-webdriver": "4.0.0-alpha.1"
 	},
 	"dependencies": {
-		"keytar": "6.0.1"
+		"keytar": "7.1.0"
 	}
 }
