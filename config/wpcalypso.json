@@ -116,6 +116,7 @@
 		"network-connection": true,
 		"nps-survey/devdocs": true,
 		"nps-survey/dev-trigger": true,
+		"p2/p2-plus": true,
 		"perfmon": true,
 		"plans/personal-plan": true,
 		"post-editor/checkout-overlay": true,
