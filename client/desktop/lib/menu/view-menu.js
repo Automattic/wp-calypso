@@ -47,6 +47,26 @@ menuItems.push(
 	},
 	{
 		role: 'resetZoom',
+	},
+	// backup shortcuts for numeric keypad,
+	// see https://github.com/electron/electron/issues/5256#issuecomment-692068367
+	{
+		role: 'zoomIn',
+		visible: false,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+numadd',
+	},
+	{
+		role: 'zoomOut',
+		visible: false,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+numsub',
+	},
+	{
+		role: 'resetZoom',
+		visible: false,
+		acceleratorWorksWhenHidden: true,
+		accelerator: 'CommandOrControl+num0',
 	}
 );
 
