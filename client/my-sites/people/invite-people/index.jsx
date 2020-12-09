@@ -4,7 +4,7 @@
 
 import React from 'react';
 import page from 'page';
-import { filter, flowRight, get, groupBy, includes, isEmpty, pickBy, some } from 'lodash';
+import { filter, flowRight, get, groupBy, includes, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -103,23 +103,22 @@ class InvitePeople extends React.Component {
 	};
 
 	refreshFormState = ( errors = {}, success = [] ) => {
-		if ( success.length && ! Object.keys( errors ).length ) {
+		const errorKeys = Object.keys( errors );
+
+		if ( success.length && ! errorKeys.length ) {
 			this.setState( this.resetState() );
 			this.props.recordTracksEventAction( 'calypso_invite_people_form_refresh_initial' );
 			debug( 'Submit successful. Resetting form.' );
 			return;
 		}
 
-		if ( Object.keys( errors ).length ) {
-			const updatedState = { sendingInvites: false };
-			if ( ! isEmpty( errors ) && 'object' === typeof errors ) {
-				const errorKeys = Object.keys( errors );
-				Object.assign( updatedState, {
+		if ( errorKeys.length && 'object' === typeof errors ) {
+			const updatedState = {
+				sendingInvites: false,
 					usernamesOrEmails: errorKeys,
 					errorToDisplay: errorKeys[ 0 ],
 					errors,
-				} );
-			}
+			};
 
 			debug( 'Submit errored. Updating state to:  ' + JSON.stringify( updatedState ) );
 
