@@ -56,7 +56,6 @@ function checkPropsChange( nextProps, propArr ) {
 // eslint-disable-next-line react/prefer-es6-class
 export const PluginsList = createReactClass( {
 	displayName: 'PluginsList',
-	mixins: [ PluginNotices ],
 
 	propTypes: {
 		plugins: PropTypes.arrayOf(
@@ -471,6 +470,7 @@ export const PluginsList = createReactClass( {
 
 		return (
 			<div className="plugins-list">
+				<PluginNotices />
 				<PluginsListHeader
 					label={ this.props.header }
 					isBulkManagementActive={ this.state.bulkManagementActive }
