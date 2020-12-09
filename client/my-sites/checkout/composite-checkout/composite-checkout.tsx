@@ -7,6 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
+	useSelect,
 	CheckoutProvider,
 	CheckoutStepAreaWrapper,
 	MainContentWrapper,
@@ -231,6 +232,10 @@ export default function CompositeCheckout( {
 		subtotal,
 		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
+
+	const transactionResult: TransactionResponse | undefined = useSelect( ( wpSelect ) =>
+		wpSelect( 'wpcom' )?.getTransactionResult()
+	);
 
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
@@ -514,9 +519,6 @@ export default function CompositeCheckout( {
 		productAliasFromUrl,
 	} );
 
-	const transactionResult: TransactionResponse | undefined = select(
-		'wpcom'
-	).getTransactionResult?.();
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
 		siteId,
 		transactionResult,
