@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import { includes, uniq } from 'lodash';
@@ -51,26 +50,24 @@ function goBack() {
 	window.history.back();
 }
 
-/* eslint-disable react/prefer-es6-class */
-const SinglePlugin = createReactClass( {
-	displayName: 'SinglePlugin',
-	_DEFAULT_PLUGINS_BASE_PATH: 'http://wordpress.org/plugins/',
+class SinglePlugin extends React.Component {
+	constructor( props ) {
+		super( props );
+
+		this.state = this.getSitesPlugin();
+	}
 
 	UNSAFE_componentWillMount() {
 		if ( ! this.isFetched() ) {
 			this.props.wporgFetchPluginData( this.props.pluginSlug );
 		}
-	},
+	}
 
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
 		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
-	},
-
-	getInitialState() {
-		return this.getSitesPlugin();
-	},
+	}
 
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
@@ -79,13 +76,13 @@ const SinglePlugin = createReactClass( {
 		if ( this.pluginRefreshTimeout ) {
 			clearTimeout( this.pluginRefreshTimeout );
 		}
-	},
+	}
 
 	UNSAFE_componentWillReceiveProps( nextProps ) {
 		this.refreshSitesAndPlugins( nextProps );
-	},
+	}
 
-	getSitesPlugin( nextProps ) {
+	getSitesPlugin = ( nextProps ) => {
 		const props = nextProps || this.props;
 
 		const sites = uniq( props.sites );
@@ -107,11 +104,11 @@ const SinglePlugin = createReactClass( {
 			notInstalledSites,
 			plugin,
 		};
-	},
+	};
 
-	refreshSitesAndPlugins( nextProps ) {
+	refreshSitesAndPlugins = ( nextProps ) => {
 		this.setState( this.getSitesPlugin( nextProps ) );
-	},
+	};
 
 	getPageTitle() {
 		const plugin = this.getPlugin();
@@ -120,11 +117,11 @@ const SinglePlugin = createReactClass( {
 			textOnly: true,
 			context: 'Page title: Plugin detail',
 		} );
-	},
+	}
 
 	recordEvent( eventAction ) {
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', this.props.pluginSlug );
-	},
+	}
 
 	getPreviousListUrl() {
 		const splitPluginUrl = this.props.prevPath.split( '/' + this.props.pluginSlug + '/' );
@@ -140,7 +137,7 @@ const SinglePlugin = createReactClass( {
 			( this.props.siteUrl || '' ) +
 			( this.props.prevQuerystring ? '?' + this.props.prevQuerystring : '' )
 		);
-	},
+	}
 
 	backHref( shouldUseHistoryBack ) {
 		const { prevPath, siteUrl } = this.props;
@@ -148,7 +145,7 @@ const SinglePlugin = createReactClass( {
 			return this.getPreviousListUrl();
 		}
 		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
-	},
+	}
 
 	displayHeader( calypsoify ) {
 		if ( ! this.props.selectedSite || calypsoify ) {
@@ -166,7 +163,7 @@ const SinglePlugin = createReactClass( {
 				onClick={ shouldUseHistoryBack ? goBack : undefined }
 			/>
 		);
-	},
+	}
 
 	pluginExists( plugin ) {
 		if ( this.isFetching() ) {
@@ -187,20 +184,20 @@ const SinglePlugin = createReactClass( {
 		}
 
 		return false;
-	},
+	}
 
 	isFetching() {
 		return this.props.wporgFetching;
-	},
+	}
 
 	isFetched() {
 		return this.props.wporgFetched;
-	},
+	}
 
 	getPlugin() {
 		// assign it .org details
 		return { ...this.state.plugin, ...this.props.wporgPlugin };
-	},
+	}
 
 	getPluginDoesNotExistView( selectedSite ) {
 		const { translate } = this.props;
@@ -218,7 +215,7 @@ const SinglePlugin = createReactClass( {
 				/>
 			</MainComponent>
 		);
-	},
+	}
 
 	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
@@ -230,7 +227,7 @@ const SinglePlugin = createReactClass( {
 			activation: ! hiddenForAutomatedTransfer,
 			remove: ! hiddenForAutomatedTransfer,
 		};
-	},
+	}
 
 	isPluginInstalledOnsite() {
 		if ( this.props.requestingPluginsForSites ) {
@@ -238,7 +235,7 @@ const SinglePlugin = createReactClass( {
 		}
 
 		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
-	},
+	}
 
 	renderSitesList( plugin ) {
 		if ( this.props.siteUrl || this.isFetching() ) {
@@ -269,7 +266,7 @@ const SinglePlugin = createReactClass( {
 				) }
 			</div>
 		);
-	},
+	}
 
 	renderPluginPlaceholder() {
 		const { selectedSite } = this.props;
@@ -290,7 +287,7 @@ const SinglePlugin = createReactClass( {
 				</div>
 			</MainComponent>
 		);
-	},
+	}
 
 	render() {
 		const { pluginSlug, selectedSite } = this.props;
@@ -346,8 +343,8 @@ const SinglePlugin = createReactClass( {
 				</div>
 			</MainComponent>
 		);
-	},
-} );
+	}
+}
 
 export default connect(
 	( state, props ) => {
