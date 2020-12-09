@@ -16,6 +16,5 @@ export function mockDomainSuggestion(
 		cost: '',
 		product_id: 0,
 		product_slug: '',
-		is_free: true,
 	};
 }
