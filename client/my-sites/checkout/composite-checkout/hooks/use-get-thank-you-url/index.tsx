@@ -22,6 +22,7 @@ export type GetThankYouUrl = () => string;
 
 export default function useGetThankYouUrl( {
 	siteSlug,
+	transactionResult,
 	redirectTo,
 	purchaseId,
 	feature,
@@ -39,8 +40,8 @@ export default function useGetThankYouUrl( {
 
 	const getThankYouUrl = useCallback( () => {
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const receiptId = transactionResult.receipt_id;
-		const orderId = transactionResult.order_id;
+		const receiptId = transactionResult?.receipt_id;
+		const orderId = transactionResult?.order_id;
 
 		if ( siteSlug === 'no-user' || ! siteSlug ) {
 			// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,6 +84,7 @@ export default function useGetThankYouUrl( {
 
 export interface WithGetThankYouUrlProps {
 	siteSlug: string | undefined;
+	transactionResult: TransactionResponse | undefined;
 	redirectTo?: string | undefined;
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
@@ -97,6 +99,7 @@ export function withGetThankYouUrl< P >( Component: React.ComponentType< P > ) {
 	return function CreatePaymentCompleteWrapper( props: WithGetThankYouUrlProps & P ): JSX.Element {
 		const {
 			siteSlug,
+			transactionResult,
 			redirectTo,
 			purchaseId,
 			feature,
@@ -108,6 +111,7 @@ export function withGetThankYouUrl< P >( Component: React.ComponentType< P > ) {
 		} = props;
 		const getThankYouUrl = useGetThankYouUrl( {
 			siteSlug,
+			transactionResult,
 			redirectTo,
 			purchaseId,
 			feature,
