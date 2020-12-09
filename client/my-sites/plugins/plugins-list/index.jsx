@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import createReactClass from 'create-react-class';
-import page from 'page';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -17,9 +16,7 @@ import { find, get, includes, isEmpty, isEqual, negate, range, reduce, sortBy } 
 import acceptDialog from 'calypso/lib/accept';
 import { warningNotice } from 'calypso/state/notices/actions';
 import PluginItem from 'calypso/my-sites/plugins/plugin-item/plugin-item';
-import PluginsActions from 'calypso/lib/plugins/actions';
 import PluginsListHeader from 'calypso/my-sites/plugins/plugin-list-header';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginNotices from 'calypso/lib/plugins/notices';
 import { Card } from '@automattic/components';
 import SectionHeader from 'calypso/components/section-header';
@@ -34,6 +31,8 @@ import {
 	removePlugin,
 	updatePlugin,
 } from 'calypso/state/plugins/installed/actions';
+import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
+import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 
 /**
  * Style dependencies
@@ -94,34 +93,31 @@ export const PluginsList = createReactClass( {
 			return true;
 		}
 
-		if ( this.state.disconnectJetpackDialog !== nextState.disconnectJetpackDialog ) {
+		if ( this.state.disconnectJetpackNotice !== nextState.disconnectJetpackNotice ) {
 			return true;
 		}
 
 		if ( ! isEqual( this.state.selectedPlugins, nextState.selectedPlugins ) ) {
 			return true;
 		}
-		if ( this.shouldComponentUpdateNotices( this.state.notices, nextState.notices ) ) {
+
+		if ( ! isEqual( this.props.inProgressStatuses, nextProps.inProgressStatuses ) ) {
 			return true;
 		}
 
 		return false;
 	},
 
+	componentDidUpdate() {
+		this.maybeShowDisconnectNotice();
+	},
+
 	getInitialState() {
 		return {
-			disconnectJetpackDialog: false,
+			disconnectJetpackNotice: false,
 			bulkManagementActive: false,
 			selectedPlugins: {},
 		};
-	},
-
-	componentDidMount() {
-		PluginsLog.on( 'change', this.showDisconnectDialog );
-	},
-
-	componentWillUnmount() {
-		PluginsLog.removeListener( 'change', this.showDisconnectDialog );
 	},
 
 	isSelected( { slug } ) {
@@ -225,13 +221,13 @@ export const PluginsList = createReactClass( {
 			this.recordEvent( 'Clicked Manage' );
 		} else {
 			this.setState( { bulkManagementActive: false } );
-			this.removePluginsNotices();
+			this.removePluginStatuses();
 			this.recordEvent( 'Clicked Manage Done' );
 		}
 	},
 
-	removePluginsNotices() {
-		PluginsActions.removePluginsNotices( 'completed', 'error' );
+	removePluginStatuses() {
+		this.props.removePluginStatuses( 'completed', 'error' );
 	},
 
 	doActionOverSelected( actionName, action, siteIdOnly = false ) {
@@ -239,7 +235,7 @@ export const PluginsList = createReactClass( {
 			( 'deactivating' === actionName || 'activating' === actionName ) && 'jetpack' === slug;
 
 		const flattenArrays = ( full, partial ) => [ ...full, ...partial ];
-		this.removePluginsNotices();
+		this.removePluginStatuses();
 		this.props.plugins
 			.filter( this.isSelected ) // only use selected sites
 			.filter( negate( isDeactivatingAndJetpackSelected ) ) // ignore sites that are deactiving or activating jetpack
@@ -259,7 +255,7 @@ export const PluginsList = createReactClass( {
 	},
 
 	updateAllPlugins() {
-		this.removePluginsNotices();
+		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
 			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
@@ -284,13 +280,17 @@ export const PluginsList = createReactClass( {
 	deactiveAndDisconnectSelected() {
 		let waitForDeactivate = false;
 
-		this.doActionOverSelected( 'deactivating', ( site, plugin ) => {
-			waitForDeactivate = true;
-			this.props.deactivatePlugin( site, plugin, true );
-		} );
+		this.doActionOverSelected(
+			'deactivating',
+			( site, plugin ) => {
+				waitForDeactivate = true;
+				this.props.deactivatePlugin( site, plugin, true );
+			},
+			true
+		);
 
 		if ( waitForDeactivate && this.props.selectedSite ) {
-			this.setState( { disconnectJetpackDialog: true } );
+			this.setState( { disconnectJetpackNotice: true } );
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
@@ -423,12 +423,12 @@ export const PluginsList = createReactClass( {
 		}
 	},
 
-	showDisconnectDialog() {
+	maybeShowDisconnectNotice() {
 		const { translate } = this.props;
 
-		if ( this.state.disconnectJetpackDialog && ! this.state.notices.inProgress.length ) {
+		if ( this.state.disconnectJetpackNotice && ! this.props.inProgressStatuses.length ) {
 			this.setState( {
-				disconnectJetpackDialog: false,
+				disconnectJetpackNotice: false,
 			} );
 
 			this.props.warningNotice(
@@ -436,21 +436,12 @@ export const PluginsList = createReactClass( {
 					'Jetpack cannot be deactivated from WordPress.com. {{link}}Manage connection{{/link}}',
 					{
 						components: {
-							link: <a href={ '/settings/general/' + this.props.selectedSiteSlug } />,
+							link: <a href={ '/settings/manage-connection/' + this.props.selectedSiteSlug } />,
 						},
 					}
 				)
 			);
 		}
-	},
-
-	closeDialog( action ) {
-		if ( 'continue' === action ) {
-			page.redirect( '/settings/general/' + this.props.selectedSiteSlug );
-			return;
-		}
-		this.setState( { showJetpackDisconnectDialog: false } );
-		this.forceUpdate();
 	},
 
 	// Renders
@@ -541,8 +532,8 @@ export const PluginsList = createReactClass( {
 				key={ plugin.slug }
 				plugin={ plugin }
 				sites={ plugin.sites }
-				progress={ this.state.notices.inProgress.filter(
-					( log ) => log.plugin.slug === plugin.slug
+				progress={ this.props.inProgressStatuses.filter(
+					( status ) => status.pluginId === plugin.id
 				) }
 				isSelected={ this.isSelected( plugin ) }
 				isSelectable={ isSelectable }
@@ -565,9 +556,11 @@ export const PluginsList = createReactClass( {
 export default connect(
 	( state ) => {
 		const selectedSite = getSelectedSite( state );
+
 		return {
 			selectedSite,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
+			inProgressStatuses: getPluginStatusesByType( state, 'inProgress' ),
 			isSiteAutomatedTransfer: isSiteAutomatedTransfer( state, get( selectedSite, 'ID' ) ),
 		};
 	},
@@ -578,6 +571,7 @@ export default connect(
 		enableAutoupdatePlugin,
 		recordGoogleEvent,
 		removePlugin,
+		removePluginStatuses,
 		updatePlugin,
 		warningNotice,
 	}

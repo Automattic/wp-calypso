@@ -41,7 +41,6 @@ import {
 import { getPlan } from 'calypso/lib/plans';
 import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getSite, isRequestingSites } from 'calypso/state/sites/selectors';
-import { getUser } from 'calypso/state/users/selectors';
 import { managePurchase } from '../paths';
 import AutoRenewToggle from './auto-renew-toggle';
 import PaymentLogo from 'calypso/components/payment-logo';
@@ -50,14 +49,14 @@ import UserItem from 'calypso/components/user';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { canEditPaymentDetails } from '../utils';
 import { TERM_BIENNIALLY, TERM_MONTHLY, JETPACK_LEGACY_PLANS } from 'calypso/lib/plans/constants';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { getCurrentUser, getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 
 export default function PurchaseMeta( {
 	purchaseId = false,
 	hasLoadedPurchasesFromServer = false,
 	siteSlug,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor = managePurchase,
 } ) {
 	const translate = useTranslate();
@@ -65,7 +64,10 @@ export default function PurchaseMeta( {
 
 	const purchase = useSelector( ( state ) => getByPurchaseId( state, purchaseId ) );
 	const site = useSelector( ( state ) => getSite( state, purchase?.siteId ) ) || null;
-	const owner = useSelector( ( state ) => getUser( state, purchase?.userId ) ) || null;
+
+	// TODO: if the owner is not the currently logged-in user, retrieve their info from users list
+	const currentUser = useSelector( getCurrentUser );
+	const owner = currentUser && purchase?.userId === currentUser.ID ? currentUser : null;
 
 	const isDataLoading = useSelector( isRequestingSites ) || ! hasLoadedPurchasesFromServer;
 
@@ -89,13 +91,13 @@ export default function PurchaseMeta( {
 					siteSlug={ siteSlug }
 					translate={ translate }
 					moment={ moment }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 				/>
 				<PurchaseMetaPaymentDetails
 					purchase={ purchase }
 					translate={ translate }
-					getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+					getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 					siteSlug={ siteSlug }
 					site={ site }
 					moment={ moment }
@@ -111,7 +113,7 @@ PurchaseMeta.propTypes = {
 	purchaseId: PropTypes.oneOfType( [ PropTypes.number, PropTypes.bool ] ).isRequired,
 	siteSlug: PropTypes.string.isRequired,
 	getManagePurchaseUrlFor: PropTypes.func,
-	getEditPaymentMethodUrlFor: PropTypes.func,
+	getChangePaymentMethodUrlFor: PropTypes.func,
 };
 
 function renderRenewsOrExpiresOnLabel( { purchase, translate } ) {
@@ -304,7 +306,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 function PurchaseMetaPaymentDetails( {
 	purchase,
 	translate,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	siteSlug,
 	site,
 	moment,
@@ -338,7 +340,7 @@ function PurchaseMetaPaymentDetails( {
 	return (
 		<li>
 			<a
-				href={ getEditPaymentMethodUrlFor( siteSlug, purchase ) }
+				href={ getChangePaymentMethodUrlFor( siteSlug, purchase ) }
 				onClick={ handleEditPaymentMethodClick }
 			>
 				{ paymentDetails }
@@ -407,7 +409,7 @@ function PurchaseMetaExpiration( {
 	siteSlug,
 	translate,
 	moment,
-	getEditPaymentMethodUrlFor,
+	getChangePaymentMethodUrlFor,
 	getManagePurchaseUrlFor,
 } ) {
 	const isProductOwner = purchase?.userId === useSelector( getCurrentUserId );
@@ -464,7 +466,7 @@ function PurchaseMetaExpiration( {
 							siteSlug={ site.slug }
 							purchase={ purchase }
 							toggleSource="manage-purchase"
-							getEditPaymentMethodUrlFor={ getEditPaymentMethodUrlFor }
+							getChangePaymentMethodUrlFor={ getChangePaymentMethodUrlFor }
 						/>
 					</span>
 				) }

@@ -1,12 +1,10 @@
 /**
- * External dependencies
- */
-
-/**
  * Internal dependencies
  */
 import { EDITOR_TYPE_REQUEST, EDITOR_TYPE_UPDATE } from 'calypso/state/action-types';
+
 import 'calypso/state/data-layer/wpcom/sites/gutenberg';
+import 'calypso/state/selected-editor/init';
 
 export const requestSelectedEditor = ( siteId ) => ( {
 	type: EDITOR_TYPE_REQUEST,

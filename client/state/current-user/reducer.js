@@ -47,6 +47,15 @@ export const id = withSchemaValidation( idSchema, ( state = null, action ) => {
 	return state;
 } );
 
+export const user = ( state = null, action ) => {
+	switch ( action.type ) {
+		case CURRENT_USER_RECEIVE:
+			return action.user;
+	}
+
+	return state;
+};
+
 export const flags = withSchemaValidation( flagsSchema, ( state = [], action ) => {
 	switch ( action.type ) {
 		case CURRENT_USER_RECEIVE:
@@ -131,6 +140,7 @@ export const lasagnaJwt = withSchemaValidation( lasagnaSchema, ( state = null, a
 
 export default combineReducers( {
 	id,
+	user,
 	currencyCode,
 	capabilities,
 	flags,

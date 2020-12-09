@@ -29,6 +29,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": true,
 		"jetpack/backups-date-picker": true,
@@ -46,6 +47,7 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": false,
+		"purchases/new-payment-methods": false,
 		"site-indicator": false,
 		"support-user": true,
 		"upgrades/redirect-payments": true

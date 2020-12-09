@@ -151,6 +151,7 @@
 		"press-this": true,
 		"privacy-policy": true,
 		"publicize-preview": true,
+		"purchases/new-payment-methods": true,
 		"push-notifications": true,
 		"reader": true,
 		"reader/comment-polling": false,

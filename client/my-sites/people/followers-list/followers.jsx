@@ -76,7 +76,7 @@ class Followers extends Component {
 						'People',
 						'Clicked Remove Button In Remove ' + listType + ' Confirmation'
 					);
-					this.props.requestRemoveFollower( this.props.site.ID, follower );
+					this.props.requestRemoveFollower( this.props.site.ID, follower, this.props.type );
 				} else {
 					gaRecordEvent(
 						'People',
@@ -122,7 +122,7 @@ class Followers extends Component {
 		const { site, translate } = this.props;
 
 		return (
-			<Button primary={ isPrimary } href={ `/people/new/${ site.domain }` }>
+			<Button primary={ isPrimary } href={ `/people/new/${ site.slug }` }>
 				<Gridicon icon="user-add" />
 				<span>{ translate( 'Invite', { context: 'Verb. Button to invite more users.' } ) }</span>
 			</Button>

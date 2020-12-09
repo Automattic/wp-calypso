@@ -24,7 +24,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 	const LaunchStep = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchStep() );
 	const LaunchSequence = useSelect( ( select ) => select( LAUNCH_STORE ).getLaunchSequence() );
 	const isStepCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isStepCompleted );
-	const isFlowStarted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowStarted() );
+	const isFlowCompleted = useSelect( ( select ) => select( LAUNCH_STORE ).isFlowCompleted() );
 
 	const LaunchStepMenuItemTitles = {
 		[ LaunchStep.Name ]: __( 'Name your site', 'full-site-editing' ),
@@ -51,7 +51,7 @@ const LaunchMenu: React.FunctionComponent< Props > = ( { onMenuItemClick } ) => 
 						isCompleted={ isStepCompleted( step ) }
 						isCurrent={ step === currentStep }
 						onClick={ () => handleClick( step ) }
-						isDisabled={ step === LaunchStep.Final && ! isFlowStarted }
+						isDisabled={ step === LaunchStep.Final && ! isFlowCompleted }
 					/>
 				) ) }
 			</div>

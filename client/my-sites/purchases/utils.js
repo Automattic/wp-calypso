@@ -1,16 +1,16 @@
 /**
  * Internal dependencies
  */
-import { getAddPaymentMethodUrlFor, getEditPaymentMethodUrlFor } from './paths';
+import { getAddPaymentMethodUrlFor, getChangePaymentMethodUrlFor } from './paths';
 import { isPaidWithCreditCard } from 'calypso/lib/purchases';
 
-export function getEditOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
+export function getChangeOrAddPaymentMethodUrlFor( siteSlug, purchase ) {
 	if ( isPaidWithCreditCard( purchase ) ) {
 		const {
 			payment: { creditCard },
 		} = purchase;
 
-		return getEditPaymentMethodUrlFor( siteSlug, purchase.id, creditCard.id );
+		return getChangePaymentMethodUrlFor( siteSlug, purchase.id, creditCard.id );
 	}
 	return getAddPaymentMethodUrlFor( siteSlug, purchase.id );
 }

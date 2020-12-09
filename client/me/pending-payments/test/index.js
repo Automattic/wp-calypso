@@ -39,7 +39,7 @@ describe( 'PendingPayments', () => {
 
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesHeader[section="pending"]',
+			'Main.pending-payments PurchasesNavigation[section="pending"]',
 			'Connect(PurchasesSite)[isPlaceholder=true]',
 		];
 
@@ -57,7 +57,7 @@ describe( 'PendingPayments', () => {
 
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesHeader[section="pending"]',
+			'Main.pending-payments PurchasesNavigation[section="pending"]',
 			'.pending-payments .pending-payments__no-content EmptyContent',
 		];
 
@@ -82,7 +82,7 @@ describe( 'PendingPayments', () => {
 
 		const rules = [
 			'Main.pending-payments Connect(MeSidebarNavigation)',
-			'Main.pending-payments PurchasesHeader[section="pending"]',
+			'Main.pending-payments PurchasesNavigation[section="pending"]',
 			'Main.pending-payments Connect(PendingListItem)',
 		];
 

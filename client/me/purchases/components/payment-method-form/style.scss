@@ -1,0 +1,45 @@
+.payment-method-form__content {
+	margin-bottom: 0;
+}
+
+.payment-method-form__terms {
+	color: var( --color-text-subtle );
+	margin: 5px 0 0;
+	padding: 0;
+
+	p {
+		font-size: $font-body-extra-small;
+		margin-left: 24px;
+		
+	}
+
+	.gridicon {
+		float: left;
+	}
+}
+
+.payment-method-form__footer {
+	align-items: center;
+	display: flex;
+
+	em {
+		color: var( --color-text-subtle );
+	}
+
+	@include breakpoint-deprecated( '<660px' ) {
+		flex-direction: column-reverse;
+
+		em {
+			margin-top: 10px;
+		}
+
+		button {
+			width: 100%;
+		}
+	}
+}
+
+.payment-method-form__heading {
+	font-size: $font-title-small;
+	padding: 0 0 16px;
+}

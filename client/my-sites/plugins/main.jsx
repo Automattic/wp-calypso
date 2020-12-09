@@ -6,7 +6,6 @@ import page from 'page';
 import { connect } from 'react-redux';
 import { capitalize, find, flow, isEmpty, some } from 'lodash';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
 
 /**
  * Internal dependencies
@@ -14,6 +13,7 @@ import Gridicon from 'calypso/components/gridicon';
 import Main from 'calypso/components/main';
 import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import DocumentHead from 'calypso/components/data/document-head';
+import FormattedHeader from 'calypso/components/formatted-header';
 import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
@@ -356,6 +356,7 @@ export class PluginsMain extends Component {
 		const suggestedPluginsList = showSuggestedPluginsList && (
 			<PluginsBrowser
 				hideSearchForm
+				hideHeader
 				path={ this.props.context.path }
 				search={ search }
 				searchTitle={ searchTitle }
@@ -383,12 +384,10 @@ export class PluginsMain extends Component {
 		return (
 			<Button
 				className="plugins__button"
-				compact
 				href={ browserUrl }
 				onClick={ this.handleAddPluginButtonClick }
 			>
-				<Gridicon icon="plus" />
-				<span className="plugins__button-text">{ translate( 'Add Plugin' ) }</span>
+				<span className="plugins__button-text">{ translate( 'Browse plugins' ) }</span>
 			</Button>
 		);
 	}
@@ -409,11 +408,9 @@ export class PluginsMain extends Component {
 		return (
 			<Button
 				className="plugins__button"
-				compact
 				href={ uploadUrl }
 				onClick={ this.handleUploadPluginButtonClick }
 			>
-				<Gridicon icon="cloud-upload" />
 				<span className="plugins__button-text">{ translate( 'Install plugin' ) }</span>
 			</Button>
 		);
@@ -447,6 +444,21 @@ export class PluginsMain extends Component {
 				{ this.renderPageViewTracking() }
 				<SidebarNavigation />
 				<div className="plugins__main">
+					<div className="plugins__header">
+						<FormattedHeader
+							brandFont
+							className="plugins__page-heading"
+							headerText={ this.props.translate( 'Plugins' ) }
+							align="left"
+							subHeaderText={ this.props.translate(
+								'Plugins are extensions that add useful features to your site.'
+							) }
+						/>
+						<div className="plugins__main-buttons">
+							{ this.renderAddPluginButton() }
+							{ this.renderUploadPluginButton() }
+						</div>
+					</div>
 					<div className="plugins__main-header">
 						<SectionNav selectedText={ this.getSelectedText() }>
 							<NavTabs>{ navItems }</NavTabs>
@@ -460,10 +472,6 @@ export class PluginsMain extends Component {
 								placeholder={ this.getSearchPlaceholder() }
 							/>
 						</SectionNav>
-					</div>
-					<div className="plugins__main-buttons">
-						{ this.renderAddPluginButton() }
-						{ this.renderUploadPluginButton() }
 					</div>
 				</div>
 				{ this.renderPluginsContent() }

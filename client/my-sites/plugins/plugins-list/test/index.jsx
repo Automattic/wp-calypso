@@ -49,6 +49,7 @@ describe( 'PluginsList', () => {
 				selectedSite: sites[ 0 ],
 				isPlaceholder: false,
 				pluginUpdateCount: plugins.length,
+				inProgressStatuses: [],
 			};
 		} );
 

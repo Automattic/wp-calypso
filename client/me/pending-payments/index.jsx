@@ -15,7 +15,7 @@ import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PendingListItem from './pending-list-item';
-import PurchasesHeader from '../purchases/purchases-list/header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import PurchasesSite from '../purchases/purchases-site';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getHttpData, requestHttpData } from 'calypso/state/data-layer/http-data';
@@ -114,7 +114,7 @@ export class PendingPayments extends Component {
 			<Main className="pending-payments is-wide-layout">
 				<PageViewTracker path="/me/purchases/pending" title="Pending Payments" />
 				<MeSidebarNavigation />
-				<PurchasesHeader section="pending" />
+				<PurchasesNavigation section="pending" />
 				{ content }
 			</Main>
 		);

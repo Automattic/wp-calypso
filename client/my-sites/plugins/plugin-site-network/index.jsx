@@ -1,10 +1,10 @@
 /**
  * External dependencies
  */
-
-import PropTypes from 'prop-types';
-import { localize } from 'i18n-calypso';
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -12,13 +12,13 @@ import React from 'react';
 import FoldableCard from 'calypso/components/foldable-card';
 import { CompactCard } from '@automattic/components';
 import AllSites from 'calypso/blocks/all-sites';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
 import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button';
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import Site from 'calypso/blocks/site';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -31,23 +31,16 @@ class PluginSiteNetwork extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
-		notices: PropTypes.object,
 		secondarySites: PropTypes.array,
 	};
 
 	renderInstallButton = () => {
-		const installInProgress = PluginsLog.isInProgressAction(
-			this.props.site.ID,
-			this.props.plugin.slug,
-			'INSTALL_PLUGIN'
-		);
-
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
-				isInstalling={ installInProgress }
+				isInstalling={ this.props.installInProgress }
 			/>
 		);
 	};
@@ -105,7 +98,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ false }
 					/>
 				}
@@ -113,7 +105,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ true }
 					/>
 				}
@@ -162,4 +153,6 @@ class PluginSiteNetwork extends React.Component {
 	}
 }
 
-export default localize( PluginSiteNetwork );
+export default connect( ( state, { site, plugin } ) => ( {
+	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
+} ) )( localize( PluginSiteNetwork ) );

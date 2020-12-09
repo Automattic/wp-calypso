@@ -19,15 +19,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	ATPromptOnCancel: {
-		datestamp: '20170515',
-		variations: {
-			hide: 20,
-			show: 80,
-		},
-		defaultVariation: 'hide',
-		allowExistingUsers: true,
-	},
 	builderReferralThemesBanner: {
 		datestamp: '20181218',
 		variations: {
@@ -54,14 +45,6 @@ export default {
 		},
 		defaultVariation: 'noOffer',
 		allowExistingUsers: true,
-	},
-	passwordlessSignup: {
-		datestamp: '20291029',
-		variations: {
-			passwordless: 0,
-			default: 100,
-		},
-		defaultVariation: 'default',
 	},
 	userlessCheckout: {
 		datestamp: '20210806',
@@ -90,5 +73,14 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: false,
+	},
+	jetpackPricingReversePlans: {
+		datestamp: '20201208',
+		variations: {
+			priceAsc: 50,
+			control: 50,
+		},
+		defaultVariation: 'control',
+		allowExistingUsers: true,
 	},
 };

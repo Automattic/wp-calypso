@@ -6,6 +6,10 @@ import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
 import type { ValuesType } from 'utility-types';
 
+/**
+ * Internal dependencies
+ */
+import config from 'calypso/config';
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
 const plansPaths = Plans.plansPaths;
@@ -42,6 +46,10 @@ export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
 
 export type StepType = ValuesType< typeof Step >;
 export type StepNameType = keyof typeof Step;
+
+export interface GutenLocationStateType {
+	anchorFmPodcastId?: string;
+}
 
 export function usePath() {
 	const langParam = useLangRouteParam();
@@ -95,4 +103,33 @@ export function useCurrentStep() {
 // be triggered.
 export function useNewQueryParam() {
 	return new URLSearchParams( useLocation().search ).has( 'new' );
+}
+
+export function useIsAnchorFm(): boolean {
+	const podcastId = useAnchorFmPodcastId();
+	return Boolean( podcastId && podcastId.match( /^[0-9a-f]{7,8}$/i ) );
+}
+
+// Returns the anchor podcast id. First looks in "location state",
+// provided by react-router-dom, if not available there, checks the query string.
+export function useAnchorFmPodcastId(): string | null {
+	const { state: locationState, search } = useLocation< GutenLocationStateType >();
+	const sanitizePodcastId = ( id: string ) => id.replace( /[^a-zA-Z0-9]/g, '' );
+
+	// Feature flag 'anchor-fm-dev' is required for anchor podcast id to be read
+	if ( ! config.isEnabled( 'anchor-fm-dev' ) ) {
+		return null;
+	}
+
+	// Use location state if available
+	if ( locationState && locationState.anchorFmPodcastId ) {
+		return sanitizePodcastId( locationState.anchorFmPodcastId );
+	}
+
+	// Fall back to looking in query param
+	const queryParam = new URLSearchParams( search ).get( 'anchor_podcast' );
+	if ( queryParam ) {
+		return sanitizePodcastId( queryParam );
+	}
+	return null;
 }

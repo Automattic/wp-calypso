@@ -1,16 +1,15 @@
 /**
  * External dependencies
  */
-
 import PropTypes from 'prop-types';
 import React from 'react';
+import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
  */
 import FoldableCard from 'calypso/components/foldable-card';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import PluginActivateToggle from 'calypso/my-sites/plugins/plugin-activate-toggle';
 import PluginAutoupdateToggle from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 import PluginUpdateIndicator from 'calypso/my-sites/plugins/plugin-site-update-indicator';
@@ -18,6 +17,7 @@ import PluginInstallButton from 'calypso/my-sites/plugins/plugin-install-button'
 import PluginRemoveButton from 'calypso/my-sites/plugins/plugin-remove-button';
 import Site from 'calypso/blocks/site';
 import { Button } from '@automattic/components';
+import { isPluginActionInProgress } from 'calypso/state/plugins/installed/selectors';
 
 /**
  * Style dependencies
@@ -28,7 +28,6 @@ class PluginSiteJetpack extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
-		notices: PropTypes.object,
 		allowedActions: PropTypes.shape( {
 			activation: PropTypes.bool,
 			autoupdate: PropTypes.bool,
@@ -47,18 +46,12 @@ class PluginSiteJetpack extends React.Component {
 	};
 
 	renderInstallButton = () => {
-		const installInProgress = PluginsLog.isInProgressAction(
-			this.props.site.ID,
-			this.props.plugin.slug,
-			'INSTALL_PLUGIN'
-		);
-
 		return (
 			<PluginInstallButton
 				isEmbed={ true }
 				selectedSite={ this.props.site }
 				plugin={ this.props.plugin }
-				isInstalling={ installInProgress }
+				isInstalling={ this.props.installInProgress }
 			/>
 		);
 	};
@@ -95,7 +88,6 @@ class PluginSiteJetpack extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ false }
 					/>
 				}
@@ -103,7 +95,6 @@ class PluginSiteJetpack extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ true }
 					/>
 				}
@@ -150,4 +141,6 @@ class PluginSiteJetpack extends React.Component {
 	}
 }
 
-export default localize( PluginSiteJetpack );
+export default connect( ( state, { site, plugin } ) => ( {
+	installInProgress: isPluginActionInProgress( state, site.ID, plugin.id, 'INSTALL_PLUGIN' ),
+} ) )( localize( PluginSiteJetpack ) );

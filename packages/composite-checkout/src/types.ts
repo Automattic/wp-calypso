@@ -85,7 +85,7 @@ export interface CheckoutProviderProps {
 	total: LineItem;
 	items: LineItem[];
 	paymentMethods: PaymentMethod[];
-	onPaymentComplete: ( { paymentMethodId }: { paymentMethodId: string | null } ) => void;
+	onPaymentComplete: PaymentCompleteCallback;
 	showErrorMessage: ( message: string ) => void;
 	showInfoMessage: ( message: string ) => void;
 	showSuccessMessage: ( message: string ) => void;
@@ -99,6 +99,12 @@ export interface CheckoutProviderProps {
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
+
+export type PaymentCompleteCallback = ( {
+	paymentMethodId,
+}: {
+	paymentMethodId: string | null;
+} ) => void;
 
 export type PaymentProcessorResponseData = unknown;
 

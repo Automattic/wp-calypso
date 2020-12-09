@@ -41,6 +41,7 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
+import { getSitesWithoutPlugin } from 'calypso/state/plugins/installed/selectors';
 
 /* eslint-disable react/prefer-es6-class */
 
@@ -96,9 +97,13 @@ const SinglePlugin = createReactClass( {
 			sitePlugin
 		);
 
+		const notInstalledSites = props.sitesWithoutPlugin.map( ( siteId ) =>
+			sites.find( ( site ) => site.ID === siteId )
+		);
+
 		return {
 			sites: PluginsStore.getSites( sites, props.pluginSlug ) || [],
-			notInstalledSites: PluginsStore.getNotInstalledSites( sites, props.pluginSlug ) || [],
+			notInstalledSites,
 			plugin,
 		};
 	},
@@ -255,7 +260,6 @@ const SinglePlugin = createReactClass( {
 					} ) }
 					sites={ this.state.sites }
 					plugin={ plugin }
-					notices={ this.state.notices }
 				/>
 				{ plugin.wporg && (
 					<PluginSiteList
@@ -265,7 +269,6 @@ const SinglePlugin = createReactClass( {
 						} ) }
 						sites={ this.state.notInstalledSites }
 						plugin={ plugin }
-						notices={ this.state.notices }
 					/>
 				) }
 			</div>
@@ -351,19 +354,24 @@ const SinglePlugin = createReactClass( {
 export default connect(
 	( state, props ) => {
 		const selectedSiteId = getSelectedSiteId( state );
+		const sites = getSelectedOrAllSitesWithPlugins( state );
+
+		// eslint-disable-next-line wpcalypso/redux-no-bound-selectors
+		const siteIds = uniq( sites.map( ( site ) => site.ID ) );
 
 		return {
 			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
 			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
 			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),
 			selectedSite: getSelectedSite( state ),
+			sitesWithoutPlugin: getSitesWithoutPlugin( state, siteIds, props.pluginSlug ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
 			isRequestingSites: isRequestingSites( state ),
 			userCanManagePlugins: selectedSiteId
 				? canCurrentUser( state, selectedSiteId, 'manage_options' )
 				: canCurrentUserManagePlugins( state ),
-			sites: getSelectedOrAllSitesWithPlugins( state ),
+			sites,
 			toursHistory: getToursHistory( state ),
 			navigated: hasNavigated( state ),
 		};

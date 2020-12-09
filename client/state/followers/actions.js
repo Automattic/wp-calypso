@@ -58,11 +58,13 @@ export const requestFollowersFailure = ( query, error ) => ( {
  *
  * @param {number} siteId Site identifier
  * @param {object} follower Object containing follower data
+ * @param {string} followerType Either `email` or `wpcom` (default)
  */
-export const requestRemoveFollower = ( siteId, follower ) => ( {
+export const requestRemoveFollower = ( siteId, follower, followerType ) => ( {
 	type: FOLLOWER_REMOVE_REQUEST,
 	siteId,
 	follower,
+	followerType,
 } );
 
 /**

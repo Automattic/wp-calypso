@@ -970,12 +970,16 @@ jobs:
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
+            chmod +x desktop/bin/make-changelog.sh
+            ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
+
             ghr \
               --token "${GH_TOKEN}" \
               --username "${CIRCLE_PROJECT_USERNAME}" \
               --repository "${CIRCLE_PROJECT_REPONAME}" \
               --commitish "${CIRCLE_SHA1}" \
               --name "${NAME}" \
+              --body "$(cat desktop/CHANGELOG.md)" \
               --delete \
               --draft \
               "${VERSION}" desktop/release/

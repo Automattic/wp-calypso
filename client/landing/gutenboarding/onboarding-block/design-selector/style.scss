@@ -24,6 +24,10 @@
 		margin: 0 -32px 30px;
 	}
 
+	.design-selector__grid-minimal {
+		margin: 0 -32px 30px;
+	}
+
 	.design-selector__design-option {
 		cursor: pointer;
 		font-family: inherit;
@@ -70,6 +74,22 @@
 
 			@include onboarding-break-gigantic {
 				grid-template-columns: 1fr 1fr 1fr 1fr;
+			}
+		}
+
+		.design-selector__grid-minimal {
+			display: grid;
+			grid-template-columns: 1fr;
+			row-gap: 48px;
+			margin: 0 0 30px;
+
+			@include break-mobile {
+				grid-template-columns: 1fr 1fr;
+				column-gap: 32px;
+			}
+
+			@include break-large {
+				column-gap: 64px;
 			}
 		}
 
@@ -141,6 +161,7 @@
 
 	.design-selector__premium-badge {
 		background-color: var( --studio-gray-80 );
+		/* stylelint-disable-next-line scales/radii */
 		border-radius: 1em;
 		color: var( --studio-white );
 		margin: 0;
