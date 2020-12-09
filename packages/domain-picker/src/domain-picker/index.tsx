@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useState, useEffect } from 'react';
+import React, { FunctionComponent, useState, useEffect, Fragment } from 'react';
 import { useSelect } from '@wordpress/data';
 import { noop, times } from 'lodash';
 import { Button, TextControl, Notice } from '@wordpress/components';
@@ -35,7 +35,7 @@ import { ITEM_TYPE_RADIO } from './suggestion-item';
 import './style.scss';
 
 type DomainSuggestion = DomainSuggestions.DomainSuggestion;
-type DomainGroups = 'free' | 'premium';
+type DomainGroups = 'sub-domain' | 'professional';
 
 export const ItemGrouper: FunctionComponent< {
 	groupItems: boolean;
@@ -106,7 +106,7 @@ export interface Props {
 	locale?: string;
 
 	/** Whether we show the free .wordpress.com sub-domain first or last */
-	orderFreeDomainsLast?: boolean;
+	orderSubDomainsLast?: boolean;
 }
 
 const DomainPicker: FunctionComponent< Props > = ( {
@@ -129,7 +129,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	itemType = ITEM_TYPE_RADIO,
 	locale,
 	areDependenciesLoading = false,
-	orderFreeDomainsLast = false,
+	orderSubDomainsLast = false,
 } ) => {
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
@@ -247,10 +247,10 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const neededPlaceholdersCount =
 		( persistentSelectedDomain ? quantity + 1 : quantity ) - ( existingSubdomain ? 1 : 0 );
 
-	// We are specifcying the order of domains by cost. By default free domains (typically .wordpress.com) are first.
-	const groupOrder: DomainGroups[] = [ 'free', 'premium' ];
+	// We are specifcying the order of domains by sub-domains and professional domains.
+	const groupOrder: DomainGroups[] = [ 'sub-domain', 'professional' ];
 
-	if ( orderFreeDomainsLast ) {
+	if ( orderSubDomainsLast ) {
 		groupOrder.reverse();
 	}
 
@@ -301,12 +301,19 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					<div className="domain-picker__suggestion-sections">
 						{ groupOrder.map( ( group: DomainGroups ) => {
 							const groupedSuggestions = domainSuggestionsWithSubdomain?.filter( ( suggestion ) =>
-								group === 'free' ? suggestion?.is_free : ! suggestion?.is_free
+								group === 'sub-domain'
+									? suggestion?.domain_name === existingSubdomain?.domain_name
+									: suggestion?.domain_name !== existingSubdomain?.domain_name
 							);
 
-							if ( group === 'free' ) {
+							if ( groupedSuggestions?.length === 0 ) {
+								// If the group has no domains in then don't render just an <ItemGroupLabel>
+								return null;
+							}
+
+							if ( group === 'sub-domain' ) {
 								return (
-									<>
+									<Fragment key={ group }>
 										{ segregateFreeAndPaid && (
 											<ItemGroupLabel>
 												{ __( 'Keep sub-domain', __i18n_text_domain__ ) }
@@ -337,12 +344,12 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												/>
 											) ) }
 										</ItemGrouper>
-									</>
+									</Fragment>
 								);
 							}
 
 							return (
-								<>
+								<Fragment key={ group }>
 									{ segregateFreeAndPaid && (
 										<ItemGroupLabel>
 											{ __( 'Professional domains', __i18n_text_domain__ ) }
@@ -393,7 +400,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 												<SuggestionItemPlaceholder type={ itemType } key={ i } />
 											) ) }
 									</ItemGrouper>
-								</>
+								</Fragment>
 							);
 						} ) }
 
