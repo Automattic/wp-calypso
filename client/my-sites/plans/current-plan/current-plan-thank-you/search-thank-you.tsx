@@ -35,7 +35,7 @@ const ThankYouCta: ThankYouCtaType = ( {
 					? translate( 'Update Jetpack' )
 					: translate( 'Try Search and customize it now' ) }
 			</Button>
-			<Button href={ dismissUrl }>{ translate( 'Close' ) }</Button>
+			<Button href={ dismissUrl }>{ translate( 'Skip for now' ) }</Button>
 		</>
 	);
 };
