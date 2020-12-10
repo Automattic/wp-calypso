@@ -64,7 +64,7 @@ export default function getThankYouPageUrl( {
 	productAliasFromUrl: string | undefined;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult: boolean;
+	isEligibleForSignupDestinationResult?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
 } ): string {
