@@ -4,6 +4,11 @@
 import { get } from 'lodash';
 
 /**
+ * Internal dependencies
+ */
+import 'calypso/state/user-suggestions/init';
+
+/**
  * Returns true if requesting user suggestions for the specified site ID, or
  * false otherwise.
  *
@@ -12,7 +17,7 @@ import { get } from 'lodash';
  * @returns {boolean}         Whether user suggestions are being requested
  */
 export function isRequestingUserSuggestions( state, siteId ) {
-	return get( state.users.suggestions.requesting, [ siteId ], false );
+	return get( state.userSuggestions.requesting, [ siteId ], false );
 }
 
 /**
@@ -23,5 +28,5 @@ export function isRequestingUserSuggestions( state, siteId ) {
  * @returns {Array}           Site user suggestions
  */
 export function getUserSuggestions( state, siteId ) {
-	return get( state.users.suggestions.items, [ siteId ], [] );
+	return get( state.userSuggestions.items, [ siteId ], [] );
 }

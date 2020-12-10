@@ -7,7 +7,12 @@ import {
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers, withSchemaValidation, withoutPersistence } from 'calypso/state/utils';
+import {
+	combineReducers,
+	withoutPersistence,
+	withSchemaValidation,
+	withStorageKey,
+} from 'calypso/state/utils';
 import { itemsSchema } from './schema';
 
 /**
@@ -57,7 +62,9 @@ export const items = withSchemaValidation( itemsSchema, ( state = {}, action ) =
 	return state;
 } );
 
-export default combineReducers( {
+const combinedReducer = combineReducers( {
 	requesting,
 	items,
 } );
+
+export default withStorageKey( 'userSuggestions', combinedReducer );

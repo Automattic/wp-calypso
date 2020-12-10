@@ -23,7 +23,6 @@ import mySites from './my-sites/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
 import userSettings from './user-settings/reducer';
-import users from './users/reducer';
 
 // Legacy reducers
 // The reducers in this list are not modularized, and are always loaded on boot.
@@ -39,7 +38,6 @@ const reducers = {
 	sites,
 	support,
 	userSettings,
-	users,
 };
 
 export default combineReducers( reducers );
