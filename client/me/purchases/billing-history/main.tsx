@@ -2,7 +2,6 @@
  * External dependencies
  */
 import React from 'react';
-import { localize } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -27,7 +26,10 @@ import './style.scss';
 export function BillingHistoryContent( {
 	siteId = null,
 	getReceiptUrlFor = billingHistoryReceipt,
-} ) {
+}: {
+	siteId: number | null;
+	getReceiptUrlFor: ( receiptId: string | number ) => string;
+} ): JSX.Element {
 	return (
 		<Card className="billing-history__receipts">
 			<BillingHistoryList header siteId={ siteId } getReceiptUrlFor={ getReceiptUrlFor } />
@@ -35,16 +37,16 @@ export function BillingHistoryContent( {
 	);
 }
 
-const BillingHistory = ( { translate } ) => (
-	<Main className="billing-history is-wide-layout">
-		<DocumentHead title={ translate( 'Billing History' ) } />
-		<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
-		<MeSidebarNavigation />
-		<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-		<QueryBillingTransactions />
-		<PurchasesNavigation section={ 'billingHistory' } />
-		<BillingHistoryContent />
-	</Main>
-);
-
-export default localize( BillingHistory );
+export default function BillingHistory(): JSX.Element {
+	return (
+		<Main className="billing-history is-wide-layout">
+			<DocumentHead title={ titles.billingHistory } />
+			<PageViewTracker path="/me/purchases/billing" title="Me > Billing History" />
+			<MeSidebarNavigation />
+			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
+			<QueryBillingTransactions />
+			<PurchasesNavigation section="billingHistory" />
+			<BillingHistoryContent siteId={ null } getReceiptUrlFor={ billingHistoryReceipt } />
+		</Main>
+	);
+}
