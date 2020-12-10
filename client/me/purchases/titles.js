@@ -14,7 +14,8 @@ export default {
 	addCardDetails: i18n.translate( 'Add Credit Card' ),
 	managePurchase: i18n.translate( 'Purchase Settings' ),
 	sectionTitle: i18n.translate( 'Purchases' ),
-	purchases: i18n.translate( 'Active Upgrades' ),
+	activeUpgrades: i18n.translate( 'Active Upgrades' ),
 	billingHistory: i18n.translate( 'Billing History' ),
 	paymentMethods: i18n.translate( 'Payment Methods' ),
+	pendingPayments: i18n.translate( 'Pending Payments' ),
 };

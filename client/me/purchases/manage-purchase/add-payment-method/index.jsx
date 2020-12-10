@@ -78,7 +78,7 @@ function AddPaymentMethod( props ) {
 						? '/me/purchases/:site/:purchaseId/payment-method/add'
 						: '/me/purchases/:site/:purchaseId/payment/add'
 				}
-				title={ concatTitle( titles.purchases, addPaymentMethodTitle ) }
+				title={ concatTitle( titles.activeUpgrades, addPaymentMethodTitle ) }
 			/>
 
 			<HeaderCake backHref={ props.getManagePurchaseUrlFor( props.siteSlug, props.purchaseId ) }>

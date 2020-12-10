@@ -118,7 +118,7 @@ const MembershipsHistory = ( { translate, subscriptions, moment } ) => {
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<MeSidebarNavigation />
 			<QueryMembershipsSubscriptions />
-			<PurchasesNavigation section={ 'memberships' } />
+			<PurchasesNavigation section="activeUpgrades" />
 			{ content }
 		</Main>
 	);
