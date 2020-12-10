@@ -167,8 +167,8 @@
 		"woocommerce/extension-wcservices": true,
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
-		"woocommerce/store-pre-sunset": false,
-		"woocommerce/store-post-sunset": false,
+		"woocommerce/store-deprecated": false,
+		"woocommerce/store-removed": false,
 		"wpcom-user-bootstrap": true
 	},
 	"rtl": false,

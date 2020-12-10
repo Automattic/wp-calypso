@@ -107,11 +107,11 @@ class StoreSidebar extends Component {
 	};
 
 	products = () => {
-		const { site, siteSuffix, translate, isPostSunset } = this.props;
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
 		let link;
 		let selected;
 
-		if ( isPostSunset ) {
+		if ( isStoreRemoved ) {
 			link = site.URL + '/wp-admin/edit.php?post_type=product';
 			selected = false;
 		} else {
@@ -286,7 +286,7 @@ function mapStateToProps( state ) {
 	const storeLocation = getStoreLocation( state, siteId );
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
 	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
-	const isPostSunset = config.isEnabled( 'woocommerce/store-post-sunset' );
+	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
 
 	return {
 		allRequiredPluginsActive,
@@ -301,7 +301,7 @@ function mapStateToProps( state ) {
 		siteId,
 		siteSuffix: site ? '/' + site.slug : '',
 		storeLocation,
-		isPostSunset,
+		isStoreRemoved,
 	};
 }
 
