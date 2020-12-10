@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { assign, get, includes, indexOf, reject } from 'lodash';
+import validUrl from 'valid-url';
 
 /**
  * Internal dependencies
@@ -29,7 +30,7 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 			} ),
 			...( dependencies.isPreLaunch &&
 				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
-					redirect_to: dependencies.redirectTo
+					redirect_to: validUrl.isWebUri( dependencies.redirectTo )
 						? dependencies.redirectTo
 						: `/home/${ dependencies.siteSlug }`,
 				} ),
