@@ -1,18 +1,21 @@
 /**
  * External dependencies
  */
-import { localize } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
+import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import { withLocalizedMoment } from 'calypso/components/localized-moment';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
+import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import Button from 'calypso/components/forms/form-button';
 import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'calypso/components/gridicon';
@@ -22,78 +25,120 @@ import Gridicon from 'calypso/components/gridicon';
  */
 import './style.scss';
 
-const BackupDatePicker = ( {
-	siteId,
-	siteSlug,
-	today,
-	selectedDate,
-	onDateChange,
-	oldestDateAvailable,
-	moment,
-	translate,
-	dispatchRecordTracksEvent,
-} ) => {
-	const getDisplayDate = ( date, showTodayYesterday = true ) => {
-		if ( showTodayYesterday ) {
-			const isToday = today.isSame( date, 'day' );
-			const isYesterday = moment( today ).add( -1, 'day' ).isSame( date, 'day' );
+const SEARCH_LINK_CLICK = recordTracksEvent( 'calypso_jetpack_backup_search' );
+const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
+const NEXT_DATE_CLCK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
 
-			if ( isToday ) {
-				return translate( 'Today' );
+const useTodayForSelectedSite = () => {
+	const moment = useLocalizedMoment();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
+
+	return applySiteOffset( moment(), { gmtOffset, timezone } );
+};
+
+const useCanGoToDate = ( selectedDate, oldestDateAvailable ) => {
+	const today = useTodayForSelectedSite();
+
+	return useCallback(
+		( desiredDate ) => {
+			// If we're somehow further back than the oldest available date,
+			// only allow forward movement
+			if ( selectedDate.isBefore( oldestDateAvailable, 'day' ) ) {
+				return desiredDate.isAfter( selectedDate, 'day' );
 			}
-			if ( isYesterday ) {
-				return translate( 'Yesterday' );
+
+			// If we're somehow further forward than today,
+			// only allow backward movement
+			if ( selectedDate.isAfter( today, 'day' ) ) {
+				return desiredDate.isBefore( selectedDate, 'day' );
 			}
+
+			// If we don't know the oldest available date,
+			// allow infinite backward navigation
+			if ( ! oldestDateAvailable ) {
+				return desiredDate.isSameOrBefore( today, 'day' );
+			}
+
+			// Allow any movement within the range of "valid" dates
+			// (i.e., between the oldest date and the present date)
+			return desiredDate.isBetween( oldestDateAvailable, today, 'day', '[]' );
+		},
+		[ selectedDate, today, oldestDateAvailable ]
+	);
+};
+
+const onSpace = ( evt, fn ) => {
+	if ( evt.key === ' ' ) {
+		return fn;
+	}
+
+	return () => {};
+};
+
+const BackupDatePicker = ( { selectedDate, onDateChange, oldestDateAvailable } ) => {
+	const dispatch = useDispatch();
+	const trackSearchLinkClick = () => dispatch( SEARCH_LINK_CLICK );
+
+	const moment = useLocalizedMoment();
+	const translate = useTranslate();
+	const canGoToDate = useCanGoToDate( selectedDate, oldestDateAvailable );
+	const today = useTodayForSelectedSite();
+
+	const siteId = useSelector( getSelectedSiteId );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+
+	const previousDate = moment( selectedDate ).subtract( 1, 'day' );
+	const nextDate = moment( selectedDate ).add( 1, 'day' );
+
+	const { previousDisplayDate, nextDisplayDate } = useMemo( () => {
+		const yesterday = moment( today ).subtract( 1, 'day' );
+
+		const dateFormat = today.year() === selectedDate.year() ? 'MMM D' : 'MMM D, YYYY';
+
+		let _previousDisplayDate;
+		if ( previousDate.isSame( today, 'day' ) ) {
+			// Should never happen unless we manually change
+			// the URL to travel into the future
+			_previousDisplayDate = translate( 'Today' );
+		} else if ( previousDate.isSame( yesterday, 'day' ) ) {
+			_previousDisplayDate = translate( 'Yesterday' );
+		} else {
+			_previousDisplayDate = previousDate.format( dateFormat );
 		}
-		const yearToday = moment( today ).format( 'YYYY' );
-		const yearDate = moment( date ).format( 'YYYY' );
 
-		const dateFormat = yearToday === yearDate ? 'MMM D' : 'MMM D, YYYY';
+		return {
+			previousDisplayDate: _previousDisplayDate,
+			nextDisplayDate: nextDate.format( dateFormat ),
+		};
+	}, [ moment, today, selectedDate, previousDate, nextDate, translate ] );
 
-		return moment( date ).format( dateFormat );
-	};
+	const { canGoToPreviousDate, canGoToNextDate } = useMemo( () => {
+		return {
+			canGoToPreviousDate: canGoToDate( previousDate ),
+			canGoToNextDate: canGoToDate( nextDate ),
+		};
+	}, [ canGoToDate, previousDate, nextDate ] );
 
-	const previousDate = moment( selectedDate ).subtract( 1, 'days' );
-	const nextDate = moment( selectedDate ).add( 1, 'days' );
-
-	const previousDisplayDate = getDisplayDate( previousDate );
-	const nextDisplayDate = getDisplayDate( nextDate, false );
-
-	const canGoToPreviousDay = () =>
-		! oldestDateAvailable || ! moment( selectedDate ).isSame( oldestDateAvailable, 'day' );
-	const canGoToNextDay = () => ! moment( today ).isSame( moment( selectedDate ), 'day' );
-
-	const goToPreviousDay = () => {
-		if ( ! canGoToPreviousDay() ) {
+	const goToPreviousDate = useCallback( () => {
+		if ( ! canGoToPreviousDate ) {
 			return false;
 		}
 
-		const newSelectedDate = moment( selectedDate ).subtract( 1, 'days' );
+		dispatch( PREV_DATE_CLICK );
+		onDateChange( previousDate );
+	}, [ canGoToPreviousDate, dispatch, onDateChange, previousDate ] );
 
-		dispatchRecordTracksEvent( 'calypso_jetpack_backup_date_previous' );
-
-		onDateChange( newSelectedDate );
-	};
-
-	const goToNextDay = () => {
-		if ( ! canGoToNextDay() ) {
+	const goToNextDate = useCallback( () => {
+		if ( ! canGoToNextDate ) {
 			return false;
 		}
 
-		const newSelectedDate = moment( selectedDate ).add( 1, 'days' );
-
-		dispatchRecordTracksEvent( 'calypso_jetpack_backup_date_next' );
-
-		onDateChange( newSelectedDate );
-	};
-
-	const onSpace = ( evt, fn ) => {
-		if ( evt.key === ' ' ) {
-			return fn;
-		}
-
-		return () => {};
-	};
+		dispatch( NEXT_DATE_CLCK );
+		onDateChange( nextDate );
+	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
 	return (
 		<div className="backup-date-picker">
@@ -102,16 +147,16 @@ const BackupDatePicker = ( {
 					className="backup-date-picker__select-date--previous"
 					role="button"
 					tabIndex={ 0 }
-					onClick={ goToPreviousDay }
-					onKeyDown={ onSpace( goToPreviousDay ) }
+					onClick={ goToPreviousDate }
+					onKeyDown={ onSpace( goToPreviousDate ) }
 				>
 					<Button compact borderless className="backup-date-picker__button--previous">
-						<Gridicon icon="chevron-left" className={ ! canGoToPreviousDay() && 'disabled' } />
+						<Gridicon icon="chevron-left" className={ ! canGoToPreviousDate && 'disabled' } />
 					</Button>
 
 					<span
 						className={ classNames( 'backup-date-picker__display-date', {
-							disabled: ! canGoToPreviousDay(),
+							disabled: ! canGoToPreviousDate,
 						} ) }
 					>
 						{ previousDisplayDate }
@@ -130,29 +175,27 @@ const BackupDatePicker = ( {
 					className="backup-date-picker__select-date--next"
 					role="button"
 					tabIndex={ 0 }
-					onClick={ goToNextDay }
-					onKeyDown={ onSpace( goToNextDay ) }
+					onClick={ goToNextDate }
+					onKeyDown={ onSpace( goToNextDate ) }
 				>
 					<div className="backup-date-picker__next-date-link">
 						<span
 							className={ classNames( 'backup-date-picker__display-date', {
-								disabled: ! canGoToNextDay(),
+								disabled: ! canGoToNextDate,
 							} ) }
 						>
 							{ nextDisplayDate }
 						</span>
 
 						<Button compact borderless className="backup-date-picker__button--next">
-							<Gridicon icon="chevron-right" className={ ! canGoToNextDay() && 'disabled' } />
+							<Gridicon icon="chevron-right" className={ ! canGoToNextDate && 'disabled' } />
 						</Button>
 					</div>
 					{ isEnabled( 'jetpack/backups-date-picker' ) && (
 						<a
 							className="backup-date-picker__search-link"
 							href={ `/activity-log/${ siteSlug }` }
-							onClick={ () => {
-								dispatchRecordTracksEvent( 'calypso_jetpack_backup_search' );
-							} }
+							onClick={ trackSearchLinkClick }
 						>
 							<Gridicon icon="search" className="backup-date-picker__search-icon" />
 						</a>
@@ -163,14 +206,4 @@ const BackupDatePicker = ( {
 	);
 };
 
-export default connect(
-	( state ) => {
-		return {
-			siteId: getSelectedSiteId( state ),
-			siteSlug: getSelectedSiteSlug( state ),
-		};
-	},
-	{
-		dispatchRecordTracksEvent: recordTracksEvent,
-	}
-)( localize( withLocalizedMoment( BackupDatePicker ) ) );
+export default BackupDatePicker;
