@@ -11,16 +11,14 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
 import Button from 'calypso/components/forms/form-button';
 import DateRangeSelector from 'calypso/my-sites/activity/filterbar/date-range-selector';
 import Gridicon from 'calypso/components/gridicon';
-import { useDateWithOffset, useFirstMatchingBackupAttempt } from '../hooks';
+import { useDateWithOffset } from '../hooks';
+import { useCanGoToDate, useFirstKnownBackupAttempt } from './hooks';
 
 /**
  * Style dependencies
@@ -29,55 +27,7 @@ import './style.scss';
 
 const SEARCH_LINK_CLICK = recordTracksEvent( 'calypso_jetpack_backup_search' );
 const PREV_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_previous' );
-const NEXT_DATE_CLCK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
-
-const useTodayForSelectedSite = () => {
-	const moment = useLocalizedMoment();
-
-	const siteId = useSelector( getSelectedSiteId ) as number;
-
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-
-	return applySiteOffset( moment(), { gmtOffset, timezone } );
-};
-
-const useCanGoToDate = ( selectedDate: Moment, oldestDateAvailable?: Moment ) => {
-	const today = useTodayForSelectedSite();
-
-	return useCallback(
-		( desiredDate ) => {
-			// If we're somehow further back than the oldest available date,
-			// only allow forward movement
-			if ( selectedDate.isBefore( oldestDateAvailable, 'day' ) ) {
-				return desiredDate.isAfter( selectedDate, 'day' );
-			}
-
-			// If we're somehow further forward than today,
-			// only allow backward movement
-			if ( selectedDate.isAfter( today, 'day' ) ) {
-				return desiredDate.isBefore( selectedDate, 'day' );
-			}
-
-			// If we don't know the oldest available date,
-			// allow infinite backward navigation
-			if ( ! oldestDateAvailable ) {
-				return desiredDate.isSameOrBefore( today, 'day' );
-			}
-
-			// Allow any movement within the range of "valid" dates
-			// (i.e., between the oldest date and the present date)
-			return desiredDate.isBetween( oldestDateAvailable, today, 'day', '[]' );
-		},
-		[ selectedDate, today, oldestDateAvailable ]
-	);
-};
-
-const useFirstKnownBackupAttempt = ( siteId: number ) => {
-	// @ts-expect-error: TypeScript thinks the options argument here
-	// needs all its properties to be present, but they really don't
-	return useFirstMatchingBackupAttempt( siteId, { sortOrder: 'asc' } );
-};
+const NEXT_DATE_CLICK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
 
 const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
 	if ( key === ' ' ) {
@@ -95,7 +45,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
-	const today = useTodayForSelectedSite();
+	const today = useDateWithOffset( moment() ) as Moment;
 	const previousDate = moment( selectedDate ).subtract( 1, 'day' );
 	const nextDate = moment( selectedDate ).add( 1, 'day' );
 
@@ -150,7 +100,7 @@ const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) =
 			return false;
 		}
 
-		dispatch( NEXT_DATE_CLCK );
+		dispatch( NEXT_DATE_CLICK );
 		onDateChange( nextDate );
 	}, [ canGoToNextDate, dispatch, onDateChange, nextDate ] );
 
