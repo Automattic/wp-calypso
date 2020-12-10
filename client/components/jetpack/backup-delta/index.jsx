@@ -57,7 +57,6 @@ const BackupDelta = ( { realtimeBackups, translate, isToday } ) => {
 					</div>
 				) }
 			</div>
-			);
 		</div>
 	);
 };
