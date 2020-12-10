@@ -31,7 +31,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { useDateWithOffset } from './hooks';
 import { backupMainPath } from './paths';
-import DatePicker from './date-picker';
+import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
@@ -104,7 +104,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
-	const onSelectDate = ( date ) =>
+	const onDateChange = ( date ) =>
 		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
 
 	return (
@@ -123,7 +123,7 @@ const AdminContent = ( { selectedDate } ) => {
 						<div className="backup__last-backup-status">
 							{ needCredentials && <EnableRestoresBanner /> }
 
-							<DatePicker onSelectDate={ onSelectDate } selectedDate={ selectedDate } />
+							<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 							<BackupStatus selectedDate={ selectedDate } />
 						</div>
 					</div>
