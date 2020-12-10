@@ -179,6 +179,11 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	margin-bottom: 48px;
+
+	&:hover .gridicon {
+		fill: var( --color-primary );
+	}
 }
 
 .help__contact-us-card .gridicons-chevron-right {
@@ -189,7 +194,7 @@
 	flex-shrink: 0;
 	margin-right: 16px;
 	position: relative;
-	left: -2px;
+	left: -4px;
 }
 
 .help__contact-us-section {

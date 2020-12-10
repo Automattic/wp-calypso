@@ -13,7 +13,6 @@ import { some } from 'lodash';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { Button, CompactCard, Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
-import HappinessEngineers from 'calypso/me/help/help-happiness-engineers';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
 import HelpTeaserButton from './help-teaser-button';
@@ -328,7 +327,6 @@ class Help extends React.PureComponent {
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
 				{ this.getContactUs() }
-				<HappinessEngineers />
 				<QueryConciergeInitial />
 				<QueryUserPurchases userId={ userId } />
 			</Main>
