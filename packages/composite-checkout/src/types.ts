@@ -95,6 +95,7 @@ export interface CheckoutProviderProps {
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
 	initiallySelectedPaymentMethodId?: string | null;
+	children: React.ReactNode;
 }
 
 export interface PaymentProcessorProp {
