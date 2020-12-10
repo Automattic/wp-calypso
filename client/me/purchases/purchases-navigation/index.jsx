@@ -18,6 +18,7 @@ import {
 	pendingPayments,
 	purchasesRoot,
 } from 'calypso/me/purchases/paths.js';
+import titles from 'calypso/me/purchases/titles';
 import SectionNav from 'calypso/components/section-nav';
 import { isEnabled } from 'calypso/config';
 import Search from 'calypso/components/search';
@@ -27,36 +28,29 @@ export default function PurchasesNavigation( { section } ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const navItems = {
-		activeUpgrades: translate( 'Active Upgrades' ),
-		billingHistory: translate( 'Billing History' ),
-		paymentMethods: translate( 'Payment Methods' ),
-		pendingPayments: translate( 'Pending Payments' ),
-	};
-
 	return (
-		<SectionNav selectedText={ navItems[ section ] }>
+		<SectionNav selectedText={ titles[ section ] }>
 			<NavTabs>
 				<NavItem path={ purchasesRoot } selected={ section === 'activeUpgrades' }>
-					{ navItems.activeUpgrades }
+					{ titles.activeUpgrades }
 				</NavItem>
 
 				<NavItem path={ billingHistory } selected={ section === 'billingHistory' }>
-					{ navItems.billingHistory }
+					{ titles.billingHistory }
 				</NavItem>
 
 				<NavItem path={ paymentMethods } selected={ section === 'paymentMethods' }>
-					{ translate( 'Payment Methods' ) }
+					{ titles.paymentMethods }
 				</NavItem>
 
 				{ isEnabled( 'async-payments' ) && (
 					<NavItem path={ pendingPayments } selected={ section === 'pendingPayments' }>
-						{ navItems.pendingPayments }
+						{ titles.pendingPayments }
 					</NavItem>
 				) }
 			</NavTabs>
 
-			{ section === 'billing' && (
+			{ section === 'billingHistory' && (
 				<Search
 					pinned
 					fitsContainer
