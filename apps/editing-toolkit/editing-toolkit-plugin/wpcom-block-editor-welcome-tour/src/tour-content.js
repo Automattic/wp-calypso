@@ -85,7 +85,7 @@ function getTourContent() {
 		{
 			heading: __( 'Congratulations!', 'full-site-editing' ),
 			description: __(
-				'You’ve now learned the basics. Remember, your site is always private until you decide to launch. <a>TODO:Restart tour</a>.',
+				'You’ve now learned the basics. Remember, your site is always private until you decide to launch.',
 				'full-site-editing'
 			),
 			imgSrc: finish,

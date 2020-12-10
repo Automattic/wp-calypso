@@ -34,8 +34,18 @@ function WelcomeTourCard( {
 			</CardMedia>
 			<CardBody>
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
-				<p className="welcome-tour-card__description">{ description }</p>
-				{ /* TODO: add conditional "Restart tour" functionality for last slide" */ }
+				<p className="welcome-tour-card__description">
+					{ description }
+					{ cardIndex === lastCardIndex ? (
+						<Button
+							className="welcome-tour-card__description"
+							isTertiary
+							onClick={ () => setCurrentCard( 0 ) }
+						>
+							Restart tour
+						</Button>
+					) : null }
+				</p>
 			</CardBody>
 			<CardFooter>
 				<PaginationControl

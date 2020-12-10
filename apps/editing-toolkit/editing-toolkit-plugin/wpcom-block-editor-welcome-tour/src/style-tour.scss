@@ -21,6 +21,13 @@
 	font-size: 0.875rem;
 	line-height: 1.5rem;
 	margin: 0;
+
+	.components-button {
+		height: auto;
+		line-height: 1;
+		text-decoration: underline;
+		padding: 0 0 0 4px;
+	}
 }
 
 .wpcom-editor-welcome-tour__resume-btn {
