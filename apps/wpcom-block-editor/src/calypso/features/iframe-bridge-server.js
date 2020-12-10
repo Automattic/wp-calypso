@@ -11,7 +11,6 @@ import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
-import { __experimentalMainDashboardButton as SiteEditorDashboardFill } from '@wordpress/edit-site';
 import {
 	Button,
 	__experimentalNavigationBackButton as NavigationBackButton,
@@ -27,6 +26,13 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/
  * Internal dependencies
  */
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+
+/**
+ * Conditional dependency.  We cannot use the standard 'import' since this package is
+ * not available in the post editor and causes WSOD in that case.  Instead, we can
+ * define it from 'require' and conditionally check if it is available for use.
+ */
+const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -553,25 +559,6 @@ function handleCloseEditor( calypsoPort ) {
 	};
 
 	handleCloseInLegacyEditors( dispatchAction );
-
-	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-		render: () => {
-			if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
-				return;
-			}
-
-			return (
-				<SiteEditorDashboardFill>
-					<NavigationBackButton
-						backButtonLabel={ __( 'Dashboard' ) }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className="edit-site-navigation-panel__back-to-dashboard"
-						href={ calypsoifyGutenberg.closeUrl }
-					/>
-				</SiteEditorDashboardFill>
-			);
-		},
-	} );
 
 	if ( typeof MainDashboardButton !== 'undefined' ) {
 		return;
@@ -1110,3 +1097,26 @@ $( () => {
 	//signal module loaded
 	sendMessage( { action: 'loaded' } );
 } );
+
+// Add back to dashboard fill for Site Editor when edit-site package is available.
+if ( editSitePackage ) {
+	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
+		render: () => {
+			const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
+			if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
+				return null;
+			}
+
+			return (
+				<SiteEditorDashboardFill>
+					<NavigationBackButton
+						backButtonLabel={ __( 'Dashboard' ) }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="edit-site-navigation-panel__back-to-dashboard"
+						href={ calypsoifyGutenberg.closeUrl }
+					/>
+				</SiteEditorDashboardFill>
+			);
+		},
+	} );
+}
