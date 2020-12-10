@@ -89,27 +89,23 @@ const MembershipType = ( { subscription }: { subscription: MembershipSubscriptio
 const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const [ hasError, setErrors ] = useState( false );
 	const [ site, setSite ] = useState( null );
-	const [ loadData, setLoadData ] = useState( true );
-
-	async function fetchData() {
-		const data = await fetch(
-			'https://public-api.wordpress.com/rest/v1.1/sites/' + subscription.site_id
-		);
-
-		data
-			.json()
-			.then( ( data ) => {
-				setSite( data );
-				setLoadData( false );
-			} )
-			.catch( ( err ) => setErrors( err ) );
-	}
 
 	useEffect( () => {
-		if ( loadData ) {
-			fetchData();
+		async function fetchData() {
+			const data = await fetch(
+				'https://public-api.wordpress.com/rest/v1.1/sites/' + subscription.site_id
+			);
+
+			data
+				.json()
+				.then( ( data ) => {
+					setSite( data );
+				} )
+				.catch( ( err ) => setErrors( err ) );
 		}
-	} );
+
+		fetchData();
+	}, [] );
 
 	if ( site && ! hasError ) {
 		return <img src={ site.icon.ico } width="36" height="36" alt="" />;
