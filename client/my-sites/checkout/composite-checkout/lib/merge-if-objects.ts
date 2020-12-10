@@ -1,4 +1,4 @@
-export default function mergeIfObjects( objects: unknown[] ): MergedObject {
+export default function mergeIfObjects( ...objects: unknown[] ): MergedObject {
 	return objects.reduce( ( merged: MergedObject, obj: unknown ): MergedObject => {
 		if ( typeof obj !== 'object' ) {
 			return merged;
