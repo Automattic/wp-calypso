@@ -204,11 +204,7 @@ function ChangePaymentMethodList() {
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
 
-				<CheckoutPaymentMethods
-					summary={ false }
-					isComplete={ false }
-					className={ 'change-payment-method__list' }
-				/>
+				<CheckoutPaymentMethods className="change-payment-method__list" />
 				<div className="change-payment-method__terms">
 					<Gridicon icon="info-outline" size={ 18 } />
 					<p>
