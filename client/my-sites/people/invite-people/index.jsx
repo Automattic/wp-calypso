@@ -770,11 +770,11 @@ const mapDispatchToProps = ( dispatch ) => ( {
 			activateModule,
 			generateInviteLinks,
 			disableInviteLinks,
+			errorNotice,
+			successNotice,
 		},
 		dispatch
 	),
-	errorNotice,
-	successNotice,
 	recordTracksEventAction,
 
 	onFocusTokenField: () =>
