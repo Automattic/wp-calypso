@@ -3,6 +3,7 @@
  */
 import { useTranslate } from 'i18n-calypso';
 import classNames from 'classnames';
+import { Moment } from 'moment';
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -33,14 +34,15 @@ const NEXT_DATE_CLCK = recordTracksEvent( 'calypso_jetpack_backup_date_next' );
 const useTodayForSelectedSite = () => {
 	const moment = useLocalizedMoment();
 
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 
 	return applySiteOffset( moment(), { gmtOffset, timezone } );
 };
 
-const useCanGoToDate = ( selectedDate, oldestDateAvailable ) => {
+const useCanGoToDate = ( selectedDate: Moment, oldestDateAvailable?: Moment ) => {
 	const today = useTodayForSelectedSite();
 
 	return useCallback(
@@ -71,26 +73,26 @@ const useCanGoToDate = ( selectedDate, oldestDateAvailable ) => {
 	);
 };
 
-const useFirstKnownBackupAttempt = ( siteId ) => {
+const useFirstKnownBackupAttempt = ( siteId: number ) => {
+	// @ts-expect-error: TypeScript thinks the options argument here
+	// needs all its properties to be present, but they really don't
 	return useFirstMatchingBackupAttempt( siteId, { sortOrder: 'asc' } );
 };
 
-const onSpace = ( evt, fn ) => {
-	if ( evt.key === ' ' ) {
-		return fn;
+const onSpace = ( fn: () => void ) => ( { key }: { key?: string } ) => {
+	if ( key === ' ' ) {
+		fn();
 	}
-
-	return () => {};
 };
 
-const BackupDatePicker = ( { selectedDate, onDateChange } ) => {
+const BackupDatePicker: React.FC< Props > = ( { selectedDate, onDateChange } ) => {
 	const dispatch = useDispatch();
 	const trackSearchLinkClick = () => dispatch( SEARCH_LINK_CLICK );
 
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 
-	const siteId = useSelector( getSelectedSiteId );
+	const siteId = useSelector( getSelectedSiteId ) as number;
 	const siteSlug = useSelector( getSelectedSiteSlug );
 
 	const today = useTodayForSelectedSite();
@@ -163,7 +165,10 @@ const BackupDatePicker = ( { selectedDate, onDateChange } ) => {
 					onKeyDown={ onSpace( goToPreviousDate ) }
 				>
 					<Button compact borderless className="backup-date-picker__button--previous">
-						<Gridicon icon="chevron-left" className={ ! canGoToPreviousDate && 'disabled' } />
+						<Gridicon
+							icon="chevron-left"
+							className={ ! canGoToPreviousDate ? 'disabled' : undefined }
+						/>
 					</Button>
 
 					<span
@@ -200,7 +205,10 @@ const BackupDatePicker = ( { selectedDate, onDateChange } ) => {
 						</span>
 
 						<Button compact borderless className="backup-date-picker__button--next">
-							<Gridicon icon="chevron-right" className={ ! canGoToNextDate && 'disabled' } />
+							<Gridicon
+								icon="chevron-right"
+								className={ ! canGoToNextDate ? 'disabled' : undefined }
+							/>
 						</Button>
 					</div>
 					{ isEnabled( 'jetpack/backups-date-picker' ) && (
@@ -216,6 +224,11 @@ const BackupDatePicker = ( { selectedDate, onDateChange } ) => {
 			</div>
 		</div>
 	);
+};
+
+type Props = {
+	selectedDate: Moment;
+	onDateChange: ( m: Moment ) => void;
 };
 
 export default BackupDatePicker;
