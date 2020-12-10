@@ -11,7 +11,12 @@ import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
-import { Button } from '@wordpress/components';
+import { __experimentalMainDashboardButton as SiteEditorDashboardFill } from '@wordpress/edit-site';
+import {
+	Button,
+	__experimentalNavigationBackButton as NavigationBackButton,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -548,6 +553,25 @@ function handleCloseEditor( calypsoPort ) {
 	};
 
 	handleCloseInLegacyEditors( dispatchAction );
+
+	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
+		render: () => {
+			if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
+				return;
+			}
+
+			return (
+				<SiteEditorDashboardFill>
+					<NavigationBackButton
+						backButtonLabel={ __( 'Dashboard' ) }
+						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+						className="edit-site-navigation-panel__back-to-dashboard"
+						href={ calypsoifyGutenberg.closeUrl }
+					/>
+				</SiteEditorDashboardFill>
+			);
+		},
+	} );
 
 	if ( typeof MainDashboardButton !== 'undefined' ) {
 		return;
