@@ -14,9 +14,10 @@ import { useLocalizeUrl } from '@automattic/i18n-utils';
 interface Props {
 	siteSlug: string;
 	source: string;
+	redirectTo?: string;
 }
 
-const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) => {
+const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source, redirectTo } ) => {
 	const localizeUrl = useLocalizeUrl();
 
 	return (
@@ -49,7 +50,9 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source } ) =>
 								target="_blank"
 								rel="noreferrer"
 								href={ localizeUrl(
-									`https://wordpress.com/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSlug }&source=${ source }`
+									`https://wordpress.com/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSlug }&source=${ source }${
+										redirectTo ? `&redirectTo=${ redirectTo }` : ''
+									}`
 								) }
 							/>
 						),
