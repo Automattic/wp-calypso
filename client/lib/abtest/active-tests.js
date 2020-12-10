@@ -9,6 +9,15 @@
 /* See /client/components/experiment/readme.md for more info!
 /**************************************************************************************************/
 
+/**
+ * Internal dependencies
+ */
+import { getLanguageSlugs } from '../../lib/i18n-utils/utils';
+
+const nonENLanguageSlugs = getLanguageSlugs().filter(
+	( slug ) => ! [ 'en', 'en-gb' ].includes( slug )
+);
+
 export default {
 	cartNudgeUpdateToPremium: {
 		datestamp: '20180917',
@@ -73,5 +82,15 @@ export default {
 		},
 		defaultVariation: 'control',
 		allowExistingUsers: true,
+	},
+	newUsersWithFreePlan: {
+		datestamp: '20201218',
+		variations: {
+			newOnboarding: 50,
+			control: 50,
+		},
+		localeTargets: nonENLanguageSlugs,
+		defaultVariation: 'control',
+		allowExistingUsers: false,
 	},
 };
