@@ -24,14 +24,21 @@ import {
 	validateTotal,
 } from '../lib/validation';
 import TransactionStatusHandler from './transaction-status-handler';
-import { CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
+import { LineItem, CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
+const emptyTotal: LineItem = {
+	id: 'total',
+	type: 'total',
+	amount: { value: 0, displayValue: '0', currency: 'USD' },
+	label: 'Total',
+};
+
 export function CheckoutProvider( props: CheckoutProviderProps ): JSX.Element {
 	const {
-		total,
-		items,
+		total = emptyTotal,
+		items = [],
 		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
