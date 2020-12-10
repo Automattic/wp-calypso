@@ -765,8 +765,8 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => ( {
 	activateModule,
-	generateInviteLinks,
-	disableInviteLinks,
+	generateInviteLinks: ( siteId ) => dispatch( generateInviteLinks( siteId ) ),
+	disableInviteLinks: ( siteId ) => dispatch( disableInviteLinks( siteId ) ),
 	errorNotice,
 	successNotice,
 	recordTracksEventAction,
