@@ -122,6 +122,7 @@ class StoreSidebar extends Component {
 		const classes = classNames( {
 			products: true,
 			'is-placeholder': ! site,
+			selected,
 		} );
 
 		return (
