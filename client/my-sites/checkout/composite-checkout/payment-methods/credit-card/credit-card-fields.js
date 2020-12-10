@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
@@ -12,7 +12,6 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -28,9 +27,8 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
-export default function CreditCardFields() {
+export default function CreditCardFields( { shouldUseEbanx } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
@@ -48,7 +46,6 @@ export default function CreditCardFields() {
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const { responseCart: cart } = useShoppingCart();
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
@@ -77,23 +74,9 @@ export default function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
-	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
-	);
-	const shouldShowContactFields =
-		contactCountryCode === 'BR' &&
-		Boolean(
-			cart?.allowed_payment_methods?.includes(
-				translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
-			)
-		);
+	const shouldShowContactFields = shouldUseEbanx;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-
-	// Cache the country code in our store for use by the processor function
-	useEffect( () => {
-		setFieldValue( 'countryCode', contactCountryCode );
-	}, [ contactCountryCode, setFieldValue ] );
 
 	const stripeElementStyle = {
 		base: {
@@ -136,7 +119,7 @@ export default function CreditCardFields() {
 						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 						handleStripeFieldChange={ handleStripeFieldChange }
 						stripeElementStyle={ stripeElementStyle }
-						countryCode={ getFieldValue( 'countryCode' ) }
+						shouldUseEbanx={ shouldUseEbanx }
 						getErrorMessagesForField={ getErrorMessagesForField }
 						setFieldValue={ setFieldValue }
 						getFieldValue={ getFieldValue }
@@ -147,7 +130,7 @@ export default function CreditCardFields() {
 							<CreditCardExpiryField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -157,7 +140,7 @@ export default function CreditCardFields() {
 							<CreditCardCvvField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -172,6 +155,7 @@ export default function CreditCardFields() {
 						getFieldValue={ getFieldValue }
 						setFieldValue={ setFieldValue }
 						getErrorMessagesForField={ getErrorMessagesForField }
+						shouldUseEbanx={ shouldUseEbanx }
 					/>
 				) }
 			</CreditCardFieldsWrapper>

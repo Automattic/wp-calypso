@@ -3,7 +3,7 @@
  *
  */
 import i18n from 'i18n-calypso';
-import { isUndefined, isEmpty, pick } from 'lodash';
+import { isUndefined, pick } from 'lodash';
 import { CPF, CNPJ } from 'cpf_cnpj';
 
 /**
@@ -31,20 +31,6 @@ export function isEbanxCreditCardProcessingEnabledForCountry( countryCode = '', 
 			'ebanx',
 			cart.allowed_payment_methods?.map( translateWpcomPaymentMethodToCheckoutPaymentMethod )
 		)
-	);
-}
-
-/**
- * Returns whether
- *
- * @param {string} countryCode - a two-letter country code, e.g., 'DE', 'BR'
- * @param {import('@automattic/shopping-cart').ResponseCart} [cart] - The shopping cart
- * @returns {boolean} Whether the country requires additional fields
- */
-export function shouldRenderAdditionalCountryFields( countryCode = '', cart = null ) {
-	return (
-		isEbanxCreditCardProcessingEnabledForCountry( countryCode, cart ) &&
-		! isEmpty( PAYMENT_PROCESSOR_COUNTRIES_FIELDS[ countryCode ].fields )
 	);
 }
 
