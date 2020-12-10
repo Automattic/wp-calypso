@@ -243,9 +243,9 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	const showDomainSuggestionsResults = ! showErrorMessage && ! isDomainSearchEmpty;
 	const showDomainSuggestionsEmpty = ! showErrorMessage && isDomainSearchEmpty;
 
-	// If we know the existing domain while the suggestions are loading, we need one less placeholder although the persistent domain is in addition to the quantity.
-	const neededPlaceholdersCount =
-		( persistentSelectedDomain ? quantity + 1 : quantity ) - ( existingSubdomain ? 1 : 0 );
+	const neededPlaceholdersCount = domainSuggestionsWithSubdomain
+		? domainSuggestionsWithSubdomain?.length
+		: quantity + ( persistentSelectedDomain ? 1 : 0 );
 
 	// We are specifcying the order of domains by sub-domains and professional domains.
 	const groupOrder: DomainGroups[] = [ 'sub-domain', 'professional' ];
@@ -300,6 +300,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 					) }
 					<div className="domain-picker__suggestion-sections">
 						{ groupOrder.map( ( group: DomainGroups ) => {
+							// There will only one domain max in the sub-domain group so we alter the placeholder renders to reflect this below.
 							const groupedSuggestions = domainSuggestionsWithSubdomain?.filter( ( suggestion ) =>
 								group === 'sub-domain'
 									? suggestion?.domain_name === existingSubdomain?.domain_name
@@ -320,29 +321,32 @@ const DomainPicker: FunctionComponent< Props > = ( {
 											</ItemGroupLabel>
 										) }
 										<ItemGrouper groupItems={ segregateFreeAndPaid }>
-											{ groupedSuggestions?.map( ( suggestion ) => (
-												<SuggestionItem
-													key={ suggestion?.domain_name }
-													domain={ suggestion?.domain_name }
-													cost="Free"
-													isFree
-													isExistingSubdomain
-													railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
-													onRender={ () =>
-														handleItemRender(
-															suggestion?.domain_name,
-															`${ baseRailcarId }${ 0 }`,
-															0,
-															false
-														)
-													}
-													selected={ currentDomain?.domain_name === suggestion?.domain_name }
-													onSelect={ () => {
-														onExistingSubdomainSelect?.( suggestion?.domain_name );
-													} }
-													type={ itemType }
-												/>
-											) ) }
+											{ ( ! areDependenciesLoading &&
+												groupedSuggestions?.map( ( suggestion ) => {
+													return (
+														<SuggestionItem
+															key={ suggestion?.domain_name }
+															domain={ suggestion?.domain_name }
+															cost="Free"
+															isFree
+															isExistingSubdomain
+															railcarId={ baseRailcarId ? `${ baseRailcarId }${ 0 }` : undefined }
+															onRender={ () =>
+																handleItemRender(
+																	suggestion?.domain_name,
+																	`${ baseRailcarId }${ 0 }`,
+																	0,
+																	false
+																)
+															}
+															selected={ currentDomain?.domain_name === suggestion?.domain_name }
+															onSelect={ () => {
+																onExistingSubdomainSelect?.( suggestion?.domain_name );
+															} }
+															type={ itemType }
+														/>
+													);
+												} ) ) || <SuggestionItemPlaceholder type={ itemType } /> }
 										</ItemGrouper>
 									</Fragment>
 								);
@@ -396,7 +400,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 													/>
 												);
 											} ) ) ||
-											times( neededPlaceholdersCount, ( i ) => (
+											times( neededPlaceholdersCount - 1, ( i ) => (
 												<SuggestionItemPlaceholder type={ itemType } key={ i } />
 											) ) }
 									</ItemGrouper>
