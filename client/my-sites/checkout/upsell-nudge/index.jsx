@@ -198,7 +198,6 @@ export class UpsellNudge extends React.Component {
 						translate={ translate }
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
-						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
 					/>
 				);
 		}

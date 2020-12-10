@@ -61,24 +61,18 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 		return (
 			<header className="premium-plan-upgrade-upsell__small-header">
 				<h2 className="premium-plan-upgrade-upsell__title">
-					{ translate( 'This is a one time offer just for you' ) }
+					{ translate( 'This is a special offer' ) }
 				</h2>
 			</header>
 		);
 	}
 
 	body() {
-		const {
-			translate,
-			planRawPrice,
-			planDiscountedRawPrice,
-			currencyCode,
-			hasSevenDayRefundPeriod,
-		} = this.props;
+		const { translate, planRawPrice, planDiscountedRawPrice, currencyCode } = this.props;
 		return (
 			<>
 				<h2 className="premium-plan-upgrade-upsell__header">
-					{ translate( 'Get access to Premium designs with this special offer', {
+					{ translate( 'Upgrade now and get {{br/}} instant expert help to build your site', {
 						components: { br: <br /> },
 					} ) }
 				</h2>
@@ -86,25 +80,48 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 				<div className="premium-plan-upgrade-upsell__column-pane">
 					<div className="premium-plan-upgrade-upsell__column-content">
 						<p>
-							<b>
+							{ translate(
+								'Imagine being able to pick up the phone and call your website expert friend to ask any question you have when building your site.'
+							) }
+						</p>
+						<p>
+							<em>
 								{ translate(
-									'According to Google, design is possibly the best investment you can make for your website.'
+									'Hey, I want to change this thing here… but I don’t know where or how to do it!'
 								) }
-							</b>
+							</em>
 						</p>
 						<p>
 							{ translate(
-								"Wouldn't you like to make a great first impression in those three seconds?"
+								'Now imagine you can text your friend day or night, no matter the time, and they will always have an answer for you, cheering you on and rooting for your success.'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'That’s exactly why we’ve partnered with some of the world’s greatest designers to offer nearly 200 high-end designs that you can use to make your site looks incredible.'
+								'That’s exactly what you’ll get when you upgrade to the Premium plan:'
 							) }
 						</p>
 						<p>
 							{ translate(
-								'You’ll also gain access to some of the most powerful features on WordPress.com:'
+								'{{strong}}Instant help to build your site, just a click away.{{/strong}}',
+								{
+									components: { strong: <strong /> },
+								}
+							) }
+						</p>
+						<p>
+							{ translate(
+								'With our world-class Live Chat support you’ll be in touch with a real human usually within three minutes. No annoying menu to fight through when you want help.'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'With expert help steering you in the right direction, imagine how quick you’ll get things done!'
+							) }
+						</p>
+						<p>
+							{ translate(
+								'The Premium plan will also get you access to some of the most powerful features on WordPress.com:'
 							) }
 						</p>
 						<ul className="premium-plan-upgrade-upsell__checklist">
@@ -115,8 +132,9 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 								/>
 								<span className="premium-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'More ways to monetize your site. You can sell stuff on your site without any hassle. Or earn through our special advertising program. Or why not both?',
+										'{{strong}}Instant access to the world’s largest group of WordPress experts{{/strong}}. Our Happiness Engineers are available one click away, 24 hours-a-day, five days per week.',
 										{
+											components: { strong: <strong /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
 										}
 									) }
@@ -129,8 +147,9 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 								/>
 								<span className="premium-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'Advanced tools to become a social media pro. Schedule posts in advance, resurface your older content, to scheduling multiple social posts at a time.',
+										'{{strong}}More ways to earn money with your site{{/strong}}. With WordPress.com Payments you can sell things on your site without any hassle and / or earn through our special advertising program.',
 										{
+											components: { strong: <strong /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
 										}
 									) }
@@ -143,8 +162,24 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 								/>
 								<span className="premium-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
-										'Customize your premium theme to your exact needs. With advanced design features, you can create a bespoke site that channels your brand.',
+										'{{strong}}Advanced social media tools{{/strong}}. Schedule posts in advance, resurface your older content, or schedule multiple social posts at a time.',
 										{
+											components: { strong: <strong /> },
+											comment: "This is a benefit listed on a 'Upgrade your plan' page",
+										}
+									) }
+								</span>
+							</li>
+							<li className="premium-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="premium-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="premium-plan-upgrade-upsell__checklist-item-text">
+									{ translate(
+										'{{strong}}Unlimited premium designs{{/strong}}. Create a website that’s all you and helps your brand stand out.',
+										{
+											components: { strong: <strong /> },
 											comment: "This is a benefit listed on a 'Upgrade your plan' page",
 										}
 									) }
@@ -152,61 +187,30 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 							</li>
 						</ul>
 						<p>
-							{ hasSevenDayRefundPeriod && // @todo - Remove the duplicate translations once the new string is translated
-								translate(
-									'Give the Premium plan a risk-free test drive with our {{b}}%(days)d-day money-back guarantee{{/b}}.',
-									{
-										args: { days: 7 },
-										components: { b: <b /> },
-									}
-								) }
-							{ ! hasSevenDayRefundPeriod &&
-								translate(
-									'Give the Premium plan a risk-free test drive with our {{b}}30-day money-back guarantee{{/b}}.',
-									{
-										components: { b: <b /> },
-									}
-								) }
-						</p>
-						<p>
-							{ hasSevenDayRefundPeriod &&
-								translate(
-									'Simply click the link below and select the Premium plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have %(days)d days to evaluate the plan and decide if it’s right for you.',
-									{
-										components: {
-											del: <del />,
-											b: <b />,
-										},
-										args: {
-											days: 7,
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
-										},
-									}
-								) }
-							{ ! hasSevenDayRefundPeriod &&
-								translate(
-									'Simply click the link below and select the Premium plan option to upgrade today {{b}}for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more{{/b}}. Once you upgrade, you’ll have 30 days to evaluate the plan and decide if it’s right for you.',
-									{
-										components: {
-											del: <del />,
-											b: <b />,
-										},
-										args: {
-											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
-											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
-												stripZeros: true,
-											} ),
-										},
-									}
-								) }
-						</p>
-						<p>
 							{ translate(
-								'Are you ready to get started? Go for it now -- this one-time offer will be gone once you leave this screen.'
+								'Try Premium risk-free with our {{strong}}30-day money-back guarantee{{/strong}}. If you don’t love it, you can return to the Personal Plan.',
+								{
+									components: { strong: <strong /> },
+								}
 							) }
+						</p>
+						<p>
+							<strong>
+								{ translate(
+									'Upgrade now to the Premium plan (and get instant live chat access to our trusted WordPress.com experts) for just {{del}}%(fullPrice)s{{/del}} %(discountPrice)s more.',
+									{
+										components: {
+											del: <del />,
+										},
+										args: {
+											fullPrice: formatCurrency( planRawPrice, currencyCode, { stripZeros: true } ),
+											discountPrice: formatCurrency( planDiscountedRawPrice, currencyCode, {
+												stripZeros: true,
+											} ),
+										},
+									}
+								) }
+							</strong>
 						</p>
 					</div>
 					<div className="premium-plan-upgrade-upsell__column-doodle">
@@ -229,14 +233,14 @@ export class PremiumPlanUpgradeUpsell extends PureComponent {
 					className="premium-plan-upgrade-upsell__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
-					{ translate( 'No thanks, I’ll stick with the free themes' ) }
+					{ translate( 'No thanks' ) }
 				</Button>
 				<Button
 					primary
 					className="premium-plan-upgrade-upsell__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
-					{ translate( 'Yes, I’d love to try those Premium designs!' ) }
+					{ translate( 'Yes, I want to get instant help when needed' ) }
 				</Button>
 			</footer>
 		);
