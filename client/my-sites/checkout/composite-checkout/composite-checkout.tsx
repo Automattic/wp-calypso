@@ -7,7 +7,6 @@ import { useTranslate } from 'i18n-calypso';
 import debugFactory from 'debug';
 import { useSelector, useDispatch } from 'react-redux';
 import {
-	useTransactionStatus,
 	CheckoutProvider,
 	CheckoutStepAreaWrapper,
 	MainContentWrapper,
@@ -86,7 +85,6 @@ import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
-import normalizeTransactionResponse from './lib/normalize-transaction-response';
 
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
@@ -138,7 +136,6 @@ export default function CompositeCheckout( {
 		) || false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const hideNudge = !! isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
@@ -233,19 +230,15 @@ export default function CompositeCheckout( {
 		allowedPaymentMethods,
 	} = useMemo( () => translateResponseCartToWPCOMCart( responseCart ), [ responseCart ] );
 
-	const { transactionLastResponse } = useTransactionStatus();
-	const transactionResult = normalizeTransactionResponse( transactionLastResponse );
-
 	const getThankYouUrlBase = useGetThankYouUrl( {
 		siteSlug,
-		transactionResult,
 		redirectTo,
 		purchaseId,
 		feature,
 		cart: responseCart,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
-		hideNudge,
+		hideNudge: !! isComingFromUpsell,
 		isInEditor,
 	} );
 	const getThankYouUrl = useCallback( () => {
@@ -520,10 +513,13 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
-		siteId,
-		transactionResult,
-		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
+		productAliasFromUrl,
+		redirectTo,
+		purchaseId,
+		feature,
+		isInEditor,
+		isComingFromUpsell,
 	} );
 
 	if (
