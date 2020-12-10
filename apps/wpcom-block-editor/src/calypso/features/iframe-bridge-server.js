@@ -619,10 +619,7 @@ function handleCloseInLegacyEditors( handleClose ) {
 	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
 	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
 
-	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
-
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
-	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
 }
 
 /**
