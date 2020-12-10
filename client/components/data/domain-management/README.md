@@ -32,7 +32,6 @@ export default MyComponent;
 
 Currently we have both Flux and Redux mixed. Props for loading data:
 
-- `needsCart` - Loads the `CartStore` (Flux)
 - `needsContactDetails` - Loads Contact Details for current user (Redux)
 - `needsDomains` - Loads domain for currently selected site (Redux)
 - `needsPlans` - Loads plans for given site (Redux)
