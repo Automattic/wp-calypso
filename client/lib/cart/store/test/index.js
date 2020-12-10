@@ -4,7 +4,6 @@
 
 jest.mock( 'lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
-	recordUnrecognizedPaymentMethod: jest.fn(),
 } ) );
 jest.mock( '../cart-synchronizer', () => () => {
 	return {
