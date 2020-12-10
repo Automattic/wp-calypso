@@ -217,7 +217,7 @@ export const editComment = ( action ) => ( dispatch, getState ) => {
 					content: comment.commentContent,
 					date: comment.commentDate,
 			  }
-			: comment;
+			: omit( comment, 'isSaved' );
 
 	dispatch(
 		http(
@@ -234,7 +234,9 @@ export const editComment = ( action ) => ( dispatch, getState ) => {
 
 export const updateComment = ( action, data ) => [
 	removeNotice( `comment-notice-error-${ action.commentId }` ),
-	bypassDataLayer( editCommentAction( action.siteId, action.postId, action.commentId, data ) ),
+	bypassDataLayer(
+		editCommentAction( action.siteId, action.postId, action.commentId, data, true )
+	),
 ];
 
 export const announceEditFailure = ( action ) => [

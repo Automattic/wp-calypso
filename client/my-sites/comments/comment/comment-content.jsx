@@ -56,6 +56,7 @@ export class CommentContent extends Component {
 			commentId,
 			commentStatus,
 			isBulkMode,
+			isCommentSaved,
 			isParentCommentLoaded,
 			isPostView,
 			parentCommentContent,
@@ -101,10 +102,25 @@ export class CommentContent extends Component {
 
 						<AutoDirection>
 							<Emojify>
-								<div
-									className="comment__content-body"
-									dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
-								/>
+								{ /* Don't trust comment content unless it was provided by the API */ }
+								{ isCommentSaved ? (
+									<div
+										className="comment__content-body"
+										dangerouslySetInnerHTML={ { __html: commentContent } } //eslint-disable-line react/no-danger
+									/>
+								) : (
+									<div className="comment__content-body">
+										{ commentContent &&
+											commentContent.split( '\n' ).map( ( item, key ) => {
+												return (
+													<span key={ key }>
+														{ item }
+														<br />
+													</span>
+												);
+											} ) }
+									</div>
+								) }
 							</Emojify>
 						</AutoDirection>
 					</div>
@@ -133,6 +149,7 @@ const mapStateToProps = ( state, { commentId } ) => {
 	return {
 		commentContent: get( comment, 'content' ),
 		commentStatus: get( comment, 'status' ),
+		isCommentSaved: get( comment, 'isSaved' ),
 		isJetpack,
 		isParentCommentLoaded: ! parentCommentId || !! parentCommentContent,
 		parentCommentContent,

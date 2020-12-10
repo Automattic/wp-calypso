@@ -79,6 +79,7 @@ const updateComment = ( commentId, newProperties ) => ( comment ) => {
 					url: newProperties.authorUrl,
 				},
 				content: newProperties.commentContent,
+				isSaved: newProperties.isSaved,
 		  }
 		: { ...comment, ...newProperties };
 
@@ -128,6 +129,7 @@ export function items( state = {}, action ) {
 				..._comment,
 				contiguous: ! action.commentById,
 				has_link: commentHasLink( _comment.content, _comment.has_link ),
+				isSaved: true,
 			} ) );
 			const allComments = unionBy( state[ stateKey ], comments, 'ID' );
 			return {

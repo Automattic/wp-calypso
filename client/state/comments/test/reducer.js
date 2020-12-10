@@ -200,6 +200,19 @@ describe( 'reducer', () => {
 			} );
 			expect( result[ '1-1' ] ).toHaveLength( 1 );
 		} );
+
+		test( 'should set all comments as saved', () => {
+			const response = items( undefined, {
+				type: COMMENTS_RECEIVE,
+				siteId: 1,
+				postId: 1,
+				comments: [ ...commentsNestedTree ].sort( () => ( ( Math.random() * 2 ) % 2 ? -1 : 1 ) ),
+			} );
+			const areSaved = map( response[ '1-1' ], 'isSaved' );
+
+			expect( response[ '1-1' ] ).toHaveLength( 6 );
+			expect( areSaved ).toEqual( [ true, true, true, true, true, true ] );
+		} );
 	} );
 
 	describe( '#pendingItems', () => {

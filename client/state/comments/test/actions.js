@@ -10,6 +10,7 @@ import {
 	COMMENTS_REPLY_WRITE,
 	COMMENTS_SET_ACTIVE_REPLY,
 	COMMENTS_CHANGE_STATUS,
+	COMMENTS_EDIT,
 } from '../../action-types';
 import {
 	requestPostComments,
@@ -20,6 +21,7 @@ import {
 	unlikeComment,
 	setActiveReply,
 	changeCommentStatus,
+	editComment,
 } from '../actions';
 import { NUMBER_OF_COMMENTS_PER_FETCH } from '../constants';
 import { setFeatureFlag } from 'calypso/test-helpers/config';
@@ -220,6 +222,20 @@ describe( 'actions', () => {
 					postId: POST_ID,
 					commentId: 1,
 				},
+			} );
+		} );
+	} );
+
+	describe( '#editComment()', () => {
+		test( 'should return an action to edit a comment', () => {
+			const action = editComment( SITE_ID, POST_ID, 1, { ID: 1 } );
+
+			expect( action ).toMatchObject( {
+				type: COMMENTS_EDIT,
+				siteId: SITE_ID,
+				postId: POST_ID,
+				commentId: 1,
+				comment: { ID: 1, isSaved: false },
 			} );
 		} );
 	} );

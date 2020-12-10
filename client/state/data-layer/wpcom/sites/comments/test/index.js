@@ -14,6 +14,7 @@ import {
 	requestComment,
 	receiveCommentError,
 	receiveCommentSuccess,
+	updateComment,
 } from '../';
 import { COMMENTS_EDIT, NOTICE_REMOVE, COMMENTS_RECEIVE } from 'calypso/state/action-types';
 import {
@@ -248,7 +249,10 @@ describe( '#announceEditFailure', () => {
 				siteId: 1,
 				postId: 1,
 				commentId: 123,
-				comment: originalComment,
+				comment: {
+					...originalComment,
+					isSaved: false,
+				},
 			} )
 		);
 	} );
@@ -308,5 +312,29 @@ describe( '#handleChangeCommentStatusSuccess', () => {
 				},
 			},
 		] );
+	} );
+} );
+
+describe( '#updateComment', () => {
+	const comment = { ID: 123, text: 'lorem ipsum' };
+	const action = {
+		siteId: 1,
+		postId: 1,
+		commentId: 123,
+	};
+
+	test( 'should set the comment as saved', () => {
+		expect( updateComment( action, comment ) ).toContainEqual(
+			bypassDataLayer( {
+				type: COMMENTS_EDIT,
+				siteId: 1,
+				postId: 1,
+				commentId: 123,
+				comment: {
+					...comment,
+					isSaved: true,
+				},
+			} )
+		);
 	} );
 } );

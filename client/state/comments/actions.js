@@ -86,6 +86,8 @@ export const receiveCommentsError = ( { siteId, commentId } ) => ( {
  * @param {number} options.siteId site identifier
  * @param {number} options.postId post identifier
  * @param {string} options.status status filter. Defaults to approved posts
+ * @param {string} options.direction Determines how the returned comments are sorted. Defaults to before (descending order).
+ * @param {boolean} options.isPoll Whether to include poll comments. Defaults to false.
  * @returns {Function} action that requests comments for a given post
  */
 export function requestPostComments( {
@@ -326,14 +328,18 @@ export const changeCommentStatus = (
  * @param {number} postId Post identifier
  * @param {number} commentId Comment identifier
  * @param {Comment} comment New comment data
+ * @param {boolean} isSaved Whether the comment has been already saved in the server
  * @returns {object} Action that edits a comment
  */
-export const editComment = ( siteId, postId, commentId, comment ) => ( {
+export const editComment = ( siteId, postId, commentId, comment, isSaved = false ) => ( {
 	type: COMMENTS_EDIT,
 	siteId,
 	postId,
 	commentId,
-	comment,
+	comment: {
+		...comment,
+		isSaved,
+	},
 } );
 
 /**
