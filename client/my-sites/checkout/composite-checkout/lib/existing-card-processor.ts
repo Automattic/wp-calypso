@@ -68,21 +68,31 @@ function isValidTransactionData(
 ): submitData is ExistingCardTransactionRequest {
 	const data = submitData as ExistingCardTransactionRequest;
 	if ( ! ( data?.items?.length > 0 ) ) {
-		return false;
+		throw new Error( 'Transaction requires items and none were provided' );
 	}
 	// Validate data required for this payment method type. Some other data may
 	// be required by the server but not required here since the server will give
 	// a better localized error message than we can provide.
-	if (
-		! data.siteId ||
-		! data.country ||
-		! data.postalCode ||
-		! data.storedDetailsId ||
-		! data.name ||
-		! data.paymentMethodToken ||
-		! data.paymentPartnerProcessorId
-	) {
-		return false;
+	if ( ! data.siteId ) {
+		throw new Error( 'Transaction requires siteId and none was provided' );
+	}
+	if ( ! data.country ) {
+		throw new Error( 'Transaction requires country code and none was provided' );
+	}
+	if ( ! data.postalCode ) {
+		throw new Error( 'Transaction requires postal code and none was provided' );
+	}
+	if ( ! data.storedDetailsId ) {
+		throw new Error( 'Transaction requires saved card information and none was provided' );
+	}
+	if ( ! data.name ) {
+		throw new Error( 'Transaction requires cardholder name and none was provided' );
+	}
+	if ( ! data.paymentMethodToken ) {
+		throw new Error( 'Transaction requires a Stripe token and none was provided' );
+	}
+	if ( ! data.paymentPartnerProcessorId ) {
+		throw new Error( 'Transaction requires a processor id and none was provided' );
 	}
 	return true;
 }
