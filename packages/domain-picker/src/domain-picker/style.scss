@@ -156,7 +156,7 @@ $accent-blue: #117ac9;
 
 	$radio-button-size: 16px;
 
-	.adomain-picker__suggestion-radio-circle {
+	.domain-picker__suggestion-radio-circle {
 		@include radio-control; // explicitly include Gutenberg's radio-control style mixin, see https://github.com/WordPress/gutenberg/pull/22596
 
 		width: $radio-button-size;
@@ -206,7 +206,7 @@ $accent-blue: #117ac9;
 
 	// in radio mode, pass down the button focus to the radio circle
 	&:focus {
-		.adomain-picker__suggestion-radio-circle {
+		.domain-picker__suggestion-radio-circle {
 			border-color: var( --studio-blue-30 );
 			box-shadow: 0 0 0 1px var( --studio-blue-30 );
 		}
@@ -284,7 +284,7 @@ $accent-blue: #117ac9;
 .domain-picker__info-tooltip {
 	margin-right: 10px;
 	cursor: pointer;
-	z-index: 1;
+	z-index: 100001;
 }
 
 .domain-picker__badge {
@@ -447,12 +447,11 @@ $accent-blue: #117ac9;
 .domain-picker__suggestion-select-button.components-button.is-secondary {
 	min-width: 140px;
 	justify-content: center;
+	box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
+	color: var( --mainColor );
 
-	&:not( :hover ):not( .is-selected ) {
-		box-shadow: inset 0 0 0 1px var( --studio-gray-10 );
-		color: var( --mainColor );
-	}
-
+	&:focus,
+	&:hover,
 	&.is-selected {
 		box-shadow: inset 0 0 0 1px var( --wp-admin-theme-color-darker-10 );
 		color: var( --wp-admin-theme-color-darker-10 );

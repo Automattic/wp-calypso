@@ -110,8 +110,15 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 		onSelect( domain );
 	};
 
+	// to avoid nesting buttons, wrap the item with a div instead of button in button mode
+	// (button mode means there is a Select button, not the whole item being a button)
+	const WrappingComponent =
+		type === 'button'
+			? ( props: React.HTMLAttributes< HTMLDivElement > ) => <div { ...props } />
+			: ( props: React.ButtonHTMLAttributes< HTMLButtonElement > ) => <button { ...props } />;
+
 	return (
-		<button
+		<WrappingComponent
 			className={ classnames(
 				'domain-picker__suggestion-item',
 				{
@@ -121,7 +128,8 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 				},
 				`type-${ type }`
 			) }
-			onClick={ onDomainSelect }
+			// if the wrapping element is a div, don't assign a click listener
+			onClick={ type !== 'button' ? onDomainSelect : undefined }
 			disabled={ isUnavailable }
 		>
 			{ type === ITEM_TYPE_RADIO &&
@@ -129,7 +137,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 					<Spinner />
 				) : (
 					<span
-						className={ classnames( 'adomain-picker__suggestion-radio-circle', {
+						className={ classnames( 'domain-picker__suggestion-radio-circle', {
 							'is-checked': selected,
 							'is-unavailable': isUnavailable,
 						} ) }
@@ -225,7 +233,7 @@ const DomainPickerSuggestionItem: FunctionComponent< Props > = ( {
 						</Button>
 					</div>
 				) ) }
-		</button>
+		</WrappingComponent>
 	);
 };
 
