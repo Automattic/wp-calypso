@@ -69,6 +69,7 @@
 		"google-my-business": true,
 		"google-drive": true,
 		"gutenboarding/alpha-templates": true,
+		"gutenboarding/language-picker": true,
 		"gutenboarding/feature-picker": true,
 		"gutenboarding/new-launch-mobile": true,
 		"gutenboarding/show-vertical-input": false,
