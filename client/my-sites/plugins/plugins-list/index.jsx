@@ -4,7 +4,6 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
-import createReactClass from 'create-react-class';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import classNames from 'classnames';
@@ -53,11 +52,8 @@ function checkPropsChange( nextProps, propArr ) {
 	return false;
 }
 
-// eslint-disable-next-line react/prefer-es6-class
-export const PluginsList = createReactClass( {
-	displayName: 'PluginsList',
-
-	propTypes: {
+export class PluginsList extends React.Component {
+	static propTypes = {
 		plugins: PropTypes.arrayOf(
 			PropTypes.shape( {
 				sites: PropTypes.array,
@@ -70,13 +66,11 @@ export const PluginsList = createReactClass( {
 		selectedSiteSlug: PropTypes.string,
 		pluginUpdateCount: PropTypes.number,
 		isPlaceholder: PropTypes.bool.isRequired,
-	},
+	};
 
-	getDefaultProps() {
-		return {
-			recordGoogleEvent: () => {},
-		};
-	},
+	static defaultProps = {
+		recordGoogleEvent: () => {},
+	};
 
 	shouldComponentUpdate( nextProps, nextState ) {
 		const propsToCheck = [ 'plugins', 'sites', 'selectedSite', 'pluginUpdateCount' ];
@@ -105,25 +99,23 @@ export const PluginsList = createReactClass( {
 		}
 
 		return false;
-	},
+	}
 
 	componentDidUpdate() {
 		this.maybeShowDisconnectNotice();
-	},
+	}
 
-	getInitialState() {
-		return {
-			disconnectJetpackNotice: false,
-			bulkManagementActive: false,
-			selectedPlugins: {},
-		};
-	},
+	state = {
+		disconnectJetpackNotice: false,
+		bulkManagementActive: false,
+		selectedPlugins: {},
+	};
 
-	isSelected( { slug } ) {
+	isSelected = ( { slug } ) => {
 		return !! this.state.selectedPlugins[ slug ];
-	},
+	};
 
-	togglePlugin( plugin ) {
+	togglePlugin = ( plugin ) => {
 		const { slug } = plugin;
 		const { selectedPlugins } = this.state;
 		const oldValue = selectedPlugins[ slug ];
@@ -133,16 +125,16 @@ export const PluginsList = createReactClass( {
 			selectedPlugins: Object.assign( {}, selectedPlugins, { [ slug ]: ! oldValue } ),
 		} );
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', slug );
-	},
+	};
 
 	canBulkSelect( plugin ) {
 		const { autoupdate: canAutoupdate, activation: canActivate } = this.getAllowedPluginActions(
 			plugin
 		);
 		return canAutoupdate || canActivate;
-	},
+	}
 
-	setBulkSelectionState( plugins, selectionState ) {
+	setBulkSelectionState = ( plugins, selectionState ) => {
 		const slugsToBeUpdated = reduce(
 			plugins,
 			( slugs, plugin ) => {
@@ -155,14 +147,14 @@ export const PluginsList = createReactClass( {
 		this.setState( {
 			selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ),
 		} );
-	},
+	};
 
 	getPluginBySlug( slug ) {
 		const { plugins } = this.props;
 		return find( plugins, ( plugin ) => plugin.slug === slug );
-	},
+	}
 
-	filterSelection: {
+	filterSelection = {
 		active( plugin ) {
 			if ( this.isSelected( plugin ) && plugin.slug !== 'jetpack' ) {
 				return plugin.sites.some( ( site ) => site.plugin && site.plugin.active );
@@ -190,15 +182,15 @@ export const PluginsList = createReactClass( {
 		selected( plugin ) {
 			return this.isSelected( plugin );
 		},
-	},
+	};
 
 	getSelected() {
 		return this.props.plugins.filter( this.filterSelection.selected.bind( this ) );
-	},
+	}
 
 	siteSuffix() {
 		return this.props.selectedSiteSlug ? '/' + this.props.selectedSiteSlug : '';
-	},
+	}
 
 	recordEvent( eventAction, includeSelectedPlugins ) {
 		eventAction += this.props.selectedSite ? '' : ' on Multisite';
@@ -208,10 +200,10 @@ export const PluginsList = createReactClass( {
 		} else {
 			this.props.recordGoogleEvent( 'Plugins', eventAction );
 		}
-	},
+	}
 
 	// Actions
-	toggleBulkManagement() {
+	toggleBulkManagement = () => {
 		const activateBulkManagement = ! this.state.bulkManagementActive;
 
 		if ( activateBulkManagement ) {
@@ -223,11 +215,11 @@ export const PluginsList = createReactClass( {
 			this.removePluginStatuses();
 			this.recordEvent( 'Clicked Manage Done' );
 		}
-	},
+	};
 
 	removePluginStatuses() {
 		this.props.removePluginStatuses( 'completed', 'error' );
-	},
+	}
 
 	doActionOverSelected( actionName, action, siteIdOnly = false ) {
 		const isDeactivatingAndJetpackSelected = ( { slug } ) =>
@@ -245,38 +237,38 @@ export const PluginsList = createReactClass( {
 				const siteArg = siteIdOnly ? site.ID : site;
 				return action( siteArg, site.plugin );
 			} );
-	},
+	}
 
 	pluginHasUpdate( plugin ) {
 		return plugin.sites.some(
 			( site ) => site.plugin && site.plugin.update && site.canUpdateFiles
 		);
-	},
+	}
 
-	updateAllPlugins() {
+	updateAllPlugins = () => {
 		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
 			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
-	},
+	};
 
-	updateSelected() {
+	updateSelected = () => {
 		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
-	},
+	};
 
-	activateSelected() {
+	activateSelected = () => {
 		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
-	},
+	};
 
-	deactivateSelected() {
+	deactivateSelected = () => {
 		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
-	},
+	};
 
-	deactiveAndDisconnectSelected() {
+	deactiveAndDisconnectSelected = () => {
 		let waitForDeactivate = false;
 
 		this.doActionOverSelected(
@@ -293,17 +285,17 @@ export const PluginsList = createReactClass( {
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
-	},
+	};
 
-	setAutoupdateSelected() {
+	setAutoupdateSelected = () => {
 		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
-	},
+	};
 
-	unsetAutoupdateSelected() {
+	unsetAutoupdateSelected = () => {
 		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
-	},
+	};
 
 	getConfirmationText() {
 		const pluginsList = {};
@@ -396,9 +388,9 @@ export const PluginsList = createReactClass( {
 					}
 				);
 		}
-	},
+	}
 
-	removePluginDialog() {
+	removePluginDialog = () => {
 		const { translate } = this.props;
 
 		const message = (
@@ -413,14 +405,14 @@ export const PluginsList = createReactClass( {
 			this.removeSelected,
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
-	},
+	};
 
-	removeSelected( accepted ) {
+	removeSelected = ( accepted ) => {
 		if ( accepted ) {
 			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
-	},
+	};
 
 	maybeShowDisconnectNotice() {
 		const { translate } = this.props;
@@ -441,7 +433,7 @@ export const PluginsList = createReactClass( {
 				)
 			);
 		}
-	},
+	}
 
 	// Renders
 	render() {
@@ -501,7 +493,7 @@ export const PluginsList = createReactClass( {
 				</Card>
 			</div>
 		);
-	},
+	}
 
 	getAllowedPluginActions( plugin ) {
 		const autoManagedPlugins = [ 'jetpack', 'vaultpress', 'akismet' ];
@@ -512,16 +504,16 @@ export const PluginsList = createReactClass( {
 			autoupdate: ! hiddenForAutomatedTransfer,
 			activation: ! hiddenForAutomatedTransfer,
 		};
-	},
+	}
 
 	orderPluginsByUpdates( plugins ) {
 		return sortBy( plugins, ( plugin ) => {
 			// Bring the plugins requiring updates to the front of the array
 			return this.pluginHasUpdate( plugin ) ? 0 : 1;
 		} );
-	},
+	}
 
-	renderPlugin( plugin ) {
+	renderPlugin = ( plugin ) => {
 		const selectThisPlugin = this.togglePlugin.bind( this, plugin );
 		const allowedPluginActions = this.getAllowedPluginActions( plugin );
 		const isSelectable =
@@ -545,13 +537,13 @@ export const PluginsList = createReactClass( {
 				isAutoManaged={ ! allowedPluginActions.autoupdate }
 			/>
 		);
-	},
+	};
 
 	renderPlaceholders() {
 		const placeholderCount = 18;
 		return range( placeholderCount ).map( ( i ) => <PluginItem key={ 'placeholder-' + i } /> );
-	},
-} );
+	}
+}
 
 export default connect(
 	( state ) => {
