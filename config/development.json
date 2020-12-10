@@ -213,7 +213,7 @@
 		"woocommerce/extension-wcservices/international-labels": true,
 		"woocommerce/onboarding-oauth": true,
 		"woocommerce/store-on-non-atomic-sites": true,
-		"woocommerce/store-pre-sunset": true,
+		"woocommerce/store-pre-sunset": false,
 		"woocommerce/store-post-sunset": true,
 		"wpcom-user-bootstrap": false
 	}
