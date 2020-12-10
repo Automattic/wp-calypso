@@ -14,7 +14,7 @@ import { useLocale } from '@automattic/i18n-utils';
 import { STORE_KEY as ONBOARD_STORE } from '../../stores/onboard';
 import DomainPickerButton from '../domain-picker-button';
 import PlansButton from '../plans-button';
-import { useCurrentStep, useIsAnchorFm, Step } from '../../path';
+import { useCurrentStep, useIsAnchorFm, usePath, Step } from '../../path';
 import { isEnabled } from '../../../../config';
 import Link from '../link';
 
@@ -28,6 +28,7 @@ const Header: React.FunctionComponent = () => {
 	const locale = useLocale();
 	const currentStep = useCurrentStep();
 	const isAnchorFmSignup = useIsAnchorFm();
+	const makePath = usePath();
 
 	const { siteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 
@@ -51,7 +52,7 @@ const Header: React.FunctionComponent = () => {
 		if ( isEnabled( 'gutenboarding/language-picker' ) ) {
 			return (
 				<div className="gutenboarding__header-section-item gutenboarding__header-language-section">
-					<Link to={ Step.LanguageModal }>
+					<Link to={ makePath( Step.LanguageModal ) }>
 						<span>{ __( 'Site Language' ) } </span>
 						<span className="gutenboarding__header-site-language-badge">{ locale }</span>
 					</Link>
