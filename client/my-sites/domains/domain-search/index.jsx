@@ -211,7 +211,6 @@ class DomainSearch extends Component {
 							{ ! isManagingAllDomains /* eslint-disable-next-line wpcalypso/jsx-classname-namespace */ && (
 								<div className="domains__header-buttons">
 									<HeaderCart
-										cart={ this.props.cart }
 										selectedSite={ this.props.selectedSite }
 										currentRoute={ this.props.currentRoute }
 									/>
