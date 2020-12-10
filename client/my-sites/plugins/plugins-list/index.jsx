@@ -111,9 +111,9 @@ export class PluginsList extends React.Component {
 		selectedPlugins: {},
 	};
 
-	isSelected( { slug } ) {
+	isSelected = ( { slug } ) => {
 		return !! this.state.selectedPlugins[ slug ];
-	}
+	};
 
 	togglePlugin = ( plugin ) => {
 		const { slug } = plugin;
@@ -134,7 +134,7 @@ export class PluginsList extends React.Component {
 		return canAutoupdate || canActivate;
 	}
 
-	setBulkSelectionState( plugins, selectionState ) {
+	setBulkSelectionState = ( plugins, selectionState ) => {
 		const slugsToBeUpdated = reduce(
 			plugins,
 			( slugs, plugin ) => {
@@ -147,7 +147,7 @@ export class PluginsList extends React.Component {
 		this.setState( {
 			selectedPlugins: Object.assign( {}, this.state.selectedPlugins, slugsToBeUpdated ),
 		} );
-	}
+	};
 
 	getPluginBySlug( slug ) {
 		const { plugins } = this.props;
@@ -203,7 +203,7 @@ export class PluginsList extends React.Component {
 	}
 
 	// Actions
-	toggleBulkManagement() {
+	toggleBulkManagement = () => {
 		const activateBulkManagement = ! this.state.bulkManagementActive;
 
 		if ( activateBulkManagement ) {
@@ -215,7 +215,7 @@ export class PluginsList extends React.Component {
 			this.removePluginStatuses();
 			this.recordEvent( 'Clicked Manage Done' );
 		}
-	}
+	};
 
 	removePluginStatuses() {
 		this.props.removePluginStatuses( 'completed', 'error' );
@@ -245,30 +245,30 @@ export class PluginsList extends React.Component {
 		);
 	}
 
-	updateAllPlugins() {
+	updateAllPlugins = () => {
 		this.removePluginStatuses();
 		this.props.plugins.forEach( ( plugin ) => {
 			plugin.sites.forEach( ( site ) => this.props.updatePlugin( site.ID, site.plugin ) );
 		} );
 		this.recordEvent( 'Clicked Update all Plugins', true );
-	}
+	};
 
-	updateSelected() {
+	updateSelected = () => {
 		this.doActionOverSelected( 'updating', this.props.updatePlugin, true );
 		this.recordEvent( 'Clicked Update Plugin(s)', true );
-	}
+	};
 
-	activateSelected() {
+	activateSelected = () => {
 		this.doActionOverSelected( 'activating', this.props.activatePlugin, true );
 		this.recordEvent( 'Clicked Activate Plugin(s)', true );
-	}
+	};
 
-	deactivateSelected() {
+	deactivateSelected = () => {
 		this.doActionOverSelected( 'deactivating', this.props.deactivatePlugin, true );
 		this.recordEvent( 'Clicked Deactivate Plugin(s)', true );
-	}
+	};
 
-	deactiveAndDisconnectSelected() {
+	deactiveAndDisconnectSelected = () => {
 		let waitForDeactivate = false;
 
 		this.doActionOverSelected(
@@ -285,17 +285,17 @@ export class PluginsList extends React.Component {
 		}
 
 		this.recordEvent( 'Clicked Deactivate Plugin(s) and Disconnect Jetpack', true );
-	}
+	};
 
-	setAutoupdateSelected() {
+	setAutoupdateSelected = () => {
 		this.doActionOverSelected( 'enablingAutoupdates', this.props.enableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Enable Autoupdate Plugin(s)', true );
-	}
+	};
 
-	unsetAutoupdateSelected() {
+	unsetAutoupdateSelected = () => {
 		this.doActionOverSelected( 'disablingAutoupdates', this.props.disableAutoupdatePlugin, true );
 		this.recordEvent( 'Clicked Disable Autoupdate Plugin(s)', true );
-	}
+	};
 
 	getConfirmationText() {
 		const pluginsList = {};
@@ -390,7 +390,7 @@ export class PluginsList extends React.Component {
 		}
 	}
 
-	removePluginDialog() {
+	removePluginDialog = () => {
 		const { translate } = this.props;
 
 		const message = (
@@ -405,14 +405,14 @@ export class PluginsList extends React.Component {
 			this.removeSelected,
 			translate( 'Remove', { context: 'Verb. Presented to user as a label for a button.' } )
 		);
-	}
+	};
 
-	removeSelected( accepted ) {
+	removeSelected = ( accepted ) => {
 		if ( accepted ) {
 			this.doActionOverSelected( 'removing', this.props.removePlugin, true );
 			this.recordEvent( 'Clicked Remove Plugin(s)', true );
 		}
-	}
+	};
 
 	maybeShowDisconnectNotice() {
 		const { translate } = this.props;

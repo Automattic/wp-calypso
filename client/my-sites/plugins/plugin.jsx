@@ -119,9 +119,9 @@ class SinglePlugin extends React.Component {
 		} );
 	}
 
-	recordEvent( eventAction ) {
+	recordEvent = ( eventAction ) => {
 		this.props.recordGoogleEvent( 'Plugins', eventAction, 'Plugin Name', this.props.pluginSlug );
-	}
+	};
 
 	getPreviousListUrl() {
 		const splitPluginUrl = this.props.prevPath.split( '/' + this.props.pluginSlug + '/' );
@@ -139,13 +139,13 @@ class SinglePlugin extends React.Component {
 		);
 	}
 
-	backHref( shouldUseHistoryBack ) {
+	backHref = ( shouldUseHistoryBack ) => {
 		const { prevPath, siteUrl } = this.props;
 		if ( prevPath ) {
 			return this.getPreviousListUrl();
 		}
 		return ! shouldUseHistoryBack ? '/plugins/manage/' + ( siteUrl || '' ) : null;
-	}
+	};
 
 	displayHeader( calypsoify ) {
 		if ( ! this.props.selectedSite || calypsoify ) {
