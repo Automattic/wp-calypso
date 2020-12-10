@@ -12,7 +12,6 @@ import {
 	MEDIA_ITEM_ERRORS_CLEAR,
 	MEDIA_ITEM_ERRORS_SET,
 	MEDIA_ITEM_CREATE,
-	MEDIA_ITEM_REQUEST,
 	MEDIA_ITEM_REQUEST_FAILURE,
 	MEDIA_ITEM_REQUEST_SUCCESS,
 	MEDIA_LIBRARY_SELECTED_ITEMS_UPDATE,
@@ -195,37 +194,6 @@ export const queries = ( () => {
 		return state;
 	} );
 } )();
-
-export const queryRequests = withoutPersistence( ( state = {}, action ) => {
-	switch ( action.type ) {
-		case MEDIA_REQUEST: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ MediaQueryManager.QueryKey.stringify( query ) ]: true,
-				},
-			};
-		}
-		case MEDIA_REQUEST_SUCCESS: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
-			};
-		}
-		case MEDIA_REQUEST_FAILURE: {
-			const { siteId, query } = action;
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], MediaQueryManager.QueryKey.stringify( query ) ),
-			};
-		}
-	}
-
-	return state;
-} );
 
 /**
  * Returns the media library selected items state after an action has been
@@ -473,29 +441,6 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 			};
 		}
 
-		case MEDIA_ITEM_REQUEST: {
-			const { siteId, mediaId } = action;
-
-			return {
-				...state,
-				[ siteId ]: merge( {}, state[ siteId ], {
-					items: {
-						[ mediaId ]: true,
-					},
-				} ),
-			};
-		}
-
-		case MEDIA_ITEM_REQUEST_SUCCESS:
-		case MEDIA_ITEM_REQUEST_FAILURE: {
-			const { siteId, mediaId } = action;
-
-			return {
-				...state,
-				[ siteId ]: omit( state[ siteId ], [ `items[${ mediaId }]` ] ),
-			};
-		}
-
 		case MEDIA_SET_NEXT_PAGE_HANDLE: {
 			const { siteId, mediaRequestMeta } = action;
 
@@ -530,7 +475,6 @@ export const fetching = withoutPersistence( ( state = {}, action ) => {
 const combinedReducer = combineReducers( {
 	errors,
 	queries,
-	queryRequests,
 	selectedItems,
 	transientItems,
 	fetching,

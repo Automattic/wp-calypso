@@ -41,8 +41,6 @@ describe( 'MediaLibrary', () => {
 			media: {
 				errors: {},
 				queries: {},
-				queryRequests: {},
-				mediaItemRequests: {},
 				selectedItems: {},
 			},
 		} ),
