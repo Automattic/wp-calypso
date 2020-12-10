@@ -44,7 +44,7 @@ import useIsApplePayAvailable from './hooks/use-is-apple-pay-available';
 import filterAppropriatePaymentMethods from './lib/filter-appropriate-payment-methods';
 import useStoredCards from './hooks/use-stored-cards';
 import usePrepareProductsForCart from './hooks/use-prepare-products-for-cart';
-import useCreatePaymentMethodsForCheckout from './use-create-payment-methods';
+import useCreatePaymentMethods from './use-create-payment-methods';
 import {
 	applePayProcessor,
 	freePurchaseProcessor,
@@ -330,7 +330,7 @@ export default function CompositeCheckout( {
 		isLoading: isApplePayLoading,
 	} = useIsApplePayAvailable( stripe, stripeConfiguration, !! stripeLoadingError, items );
 
-	const paymentMethodObjects = useCreatePaymentMethodsForCheckout( {
+	const paymentMethodObjects = useCreatePaymentMethods( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,

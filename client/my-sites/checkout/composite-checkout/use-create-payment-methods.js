@@ -301,7 +301,7 @@ export function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
 	return existingCardMethods;
 }
 
-export default function useCreatePaymentMethodsForCheckout( {
+export default function useCreatePaymentMethods( {
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
