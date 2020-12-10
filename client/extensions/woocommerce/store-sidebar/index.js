@@ -107,13 +107,11 @@ class StoreSidebar extends Component {
 	};
 
 	products = () => {
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/products' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link, '/store/products/categories' + siteSuffix ] );
+		const { site, translate } = this.props;
+		const link = site.URL + '/wp-admin/edit.php?post_type=product';
 		const classes = classNames( {
 			products: true,
 			'is-placeholder': ! site,
-			selected,
 		} );
 
 		return (
