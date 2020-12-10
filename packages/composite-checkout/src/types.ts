@@ -82,13 +82,13 @@ export type ReactStandardAction< T = string, P = unknown > = P extends void
 export interface CheckoutProviderProps {
 	theme?: Theme;
 	registry?: DataRegistry;
-	total: LineItem;
-	items: LineItem[];
+	total?: LineItem;
+	items?: LineItem[];
 	paymentMethods: PaymentMethod[];
 	onPaymentComplete: PaymentCompleteCallback;
-	showErrorMessage: ( message: string ) => void;
-	showInfoMessage: ( message: string ) => void;
-	showSuccessMessage: ( message: string ) => void;
+	showErrorMessage: ShowNoticeFunction;
+	showInfoMessage: ShowNoticeFunction;
+	showSuccessMessage: ShowNoticeFunction;
 	onEvent?: ( event: ReactStandardAction ) => void;
 	isLoading?: boolean;
 	redirectToUrl?: ( url: string ) => void;
@@ -97,6 +97,8 @@ export interface CheckoutProviderProps {
 	initiallySelectedPaymentMethodId?: string | null;
 	children: React.ReactNode;
 }
+
+export type ShowNoticeFunction = ( message: string ) => void;
 
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
