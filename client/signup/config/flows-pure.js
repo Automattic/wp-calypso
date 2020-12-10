@@ -389,6 +389,7 @@ export function generateFlows( {
 		lastModified: '2020-04-28',
 		pageTitle: translate( 'Launch your site' ),
 		providesDependenciesInQuery: [ 'siteSlug', 'source' ],
+		providesOptionalDependenciesInQuery: [ 'redirectTo' ],
 	};
 
 	flows[ 'launch-only' ] = {

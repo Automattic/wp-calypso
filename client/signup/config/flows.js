@@ -29,7 +29,9 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 			} ),
 			...( dependencies.isPreLaunch &&
 				! isEcommercePlan( dependencies.cartItem.product_slug ) && {
-					redirect_to: `/home/${ dependencies.siteSlug }`,
+					redirect_to: dependencies.redirectTo
+						? dependencies.redirectTo
+						: `/home/${ dependencies.siteSlug }`,
 				} ),
 			...( dependencies.isGutenboardingCreate && { isGutenboardingCreate: 1 } ),
 			...( 'domain' === flowName && { isDomainOnly: 1 } ),

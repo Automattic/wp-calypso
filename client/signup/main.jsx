@@ -174,6 +174,18 @@ class Signup extends React.Component {
 			providedDependencies = pick( queryObject, flow.providesDependenciesInQuery );
 		}
 
+		// Combine providesDependenciesInQuery & providesOptionalDependenciesInQuery
+		if ( flow.providesOptionalDependenciesInQuery ) {
+			if ( Object.keys( providedDependencies || {} ).length > 0 ) {
+				providedDependencies = {
+					...providedDependencies,
+					...pick( queryObject, flow.providesOptionalDependenciesInQuery ),
+				};
+			} else {
+				providedDependencies = pick( queryObject, flow.providesOptionalDependenciesInQuery );
+			}
+		}
+
 		const searchParams = new URLSearchParams( window.location.search );
 		const isAddNewSiteFlow = searchParams.has( 'ref' );
 
