@@ -18,7 +18,6 @@ jest.mock( '../cart-synchronizer', () => () => {
 } );
 jest.mock( 'lib/cart-values', () => {
 	return {
-		setTaxLocation: jest.fn( () => () => ( {} ) ),
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
 		removeCoupon: jest.fn( () => ( i ) => i ),
 	};

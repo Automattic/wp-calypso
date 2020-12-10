@@ -154,24 +154,6 @@ export function setTaxPostalCode( postalCode ) {
 	};
 }
 
-export function setTaxLocation( { postalCode, countryCode } ) {
-	return function ( cart ) {
-		return update( cart, {
-			$auto: {
-				tax: {
-					$auto: {
-						location: {
-							$auto: {
-								$set: { postal_code: postalCode, country_code: countryCode },
-							},
-						},
-					},
-				},
-			},
-		} );
-	};
-}
-
 export function canRemoveFromCart( cart, cartItem ) {
 	if ( isCredits( cartItem ) ) {
 		return false;
