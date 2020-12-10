@@ -14,7 +14,12 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
+import {
+	errorNotice,
+	infoNotice,
+	successNotice,
+	warningNotice,
+} from 'calypso/state/notices/actions';
 import { filterNotices } from 'calypso/lib/plugins/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
@@ -84,26 +89,34 @@ class PluginNotices extends React.Component {
 		const currentNotices = this.getCurrentNotices();
 
 		if ( currentNotices.inProgress.length > 0 ) {
-			notices.info(
-				this.getMessage( currentNotices.inProgress, this.inProgressMessage, 'inProgress' )
+			this.props.infoNotice(
+				this.getMessage( currentNotices.inProgress, this.inProgressMessage, 'inProgress' ),
+				{
+					id: 'plugin-notice',
+				}
 			);
 			return;
 		}
 
 		if ( currentNotices.completed.length > 0 && currentNotices.errors.length > 0 ) {
-			notices.warning( this.erroredAndCompletedMessage( currentNotices ), {
-				onRemoveCallback: () => this.props.removePluginStatuses( 'completed', 'error' ),
+			this.props.warningNotice( this.erroredAndCompletedMessage( currentNotices ), {
+				onDismissClick: () => this.props.removePluginStatuses( 'completed', 'error' ),
+				id: 'plugin-notice',
 			} );
 		} else if ( currentNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( currentNotices.errors, this.errorMessage, 'error' ), {
-				onRemoveCallback: () => this.props.removePluginStatuses( 'error' ),
-			} );
+			this.props.errorNotice(
+				this.getMessage( currentNotices.errors, this.errorMessage, 'error' ),
+				{
+					onDismissClick: () => this.props.removePluginStatuses( 'error' ),
+					id: 'plugin-notice',
+				}
+			);
 		} else if ( currentNotices.completed.length > 0 ) {
-			notices.success(
+			this.props.successNotice(
 				this.getMessage( currentNotices.completed, this.successMessage, 'completed' ),
 				{
-					onRemoveCallback: () => this.props.removePluginStatuses( 'completed' ),
-					showDismiss: true,
+					onDismissClick: () => this.props.removePluginStatuses( 'completed' ),
+					id: 'plugin-notice',
 				}
 			);
 		}
@@ -982,6 +995,10 @@ export default connect(
 		siteId: getSelectedSiteId( state ),
 	} ),
 	{
+		errorNotice,
+		infoNotice,
 		removePluginStatuses,
+		successNotice,
+		warningNotice,
 	}
 )( PluginNotices );
