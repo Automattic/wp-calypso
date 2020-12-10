@@ -7,6 +7,7 @@ import page from 'page';
 import { filter, flowRight, get, groupBy, includes, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -764,9 +765,14 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	activateModule,
-	generateInviteLinks: ( siteId ) => dispatch( generateInviteLinks( siteId ) ),
-	disableInviteLinks: ( siteId ) => dispatch( disableInviteLinks( siteId ) ),
+	...bindActionCreators(
+		{
+			activateModule,
+			generateInviteLinks,
+			disableInviteLinks,
+		},
+		dispatch
+	),
 	errorNotice,
 	successNotice,
 	recordTracksEventAction,
