@@ -3,132 +3,117 @@
  */
 import React from 'react';
 import { connect } from 'react-redux';
-import { get, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import i18n from 'i18n-calypso';
+
+/**
+ * WordPress dependencies
+ */
+import isShallowEqual from '@wordpress/is-shallow-equal';
 
 /**
  * Internal dependencies
  */
 import notices from 'calypso/notices';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import { filterNotices } from 'calypso/lib/plugins/utils';
-import versionCompare from 'calypso/lib/version-compare';
-import { getSelectedSite } from 'calypso/state/ui/selectors';
+import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
-
-function getCombination( translateArg ) {
-	return (
-		( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) +
-		' ' +
-		( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' )
-	);
-}
-
-function getTranslateArg( logs, sampleLog, typeFilter ) {
-	const filteredLogs = logs.filter( ( log ) => {
-		return log.status === typeFilter ? typeFilter : sampleLog.type;
-	} );
-
-	const numberOfSites = uniqBy( filteredLogs, 'site.ID' ).length;
-	const numberOfPlugins = uniqBy( filteredLogs, 'plugin.slug' ).length;
-
-	return {
-		plugin: get( sampleLog, 'plugin.name' ),
-		wp_admin_settings_page_url: get( sampleLog, 'plugin.wp_admin_settings_page_url' ),
-		numberOfPlugins,
-		site: get( sampleLog, 'site.title' ),
-		isMultiSite: get( sampleLog, 'site.is_multi_site' ),
-		numberOfSites,
-	};
-}
+import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
 
 class PluginNotices extends React.Component {
-	constructor( props ) {
-		super( props );
+	componentDidUpdate( prevProps ) {
+		const currentNotices = this.extractNoticeProps( this.props );
+		const prevNotices = this.extractNoticeProps( prevProps );
 
-		this.state = { notices: this.refreshPluginNotices() };
-	}
-
-	componentDidMount() {
-		PluginsLog.on( 'change', this.showNotification );
-	}
-
-	componentWillUnmount() {
-		PluginsLog.removeListener( 'change', this.showNotification );
-	}
-
-	shouldComponentUpdateNotices( currentNotices, nextNotices ) {
-		if ( currentNotices.errors && currentNotices.errors.length !== nextNotices.errors.length ) {
-			return true;
+		if ( ! isShallowEqual( currentNotices, prevNotices ) ) {
+			this.showNotification();
 		}
-		if (
-			currentNotices.inProgress &&
-			currentNotices.inProgress.length !== nextNotices.inProgress.length
-		) {
-			return true;
-		}
-		if (
-			currentNotices.completed &&
-			currentNotices.completed.length !== nextNotices.completed.length
-		) {
-			return true;
-		}
-		return false;
 	}
 
-	refreshPluginNotices = () => {
-		const site = this.props.selectedSite;
+	extractNoticeProps( { completedNotices, errorNotices, inProgressNotices } ) {
 		return {
-			errors: filterNotices( PluginsLog.getErrors(), site, this.props.pluginSlug ),
-			inProgress: filterNotices( PluginsLog.getInProgress(), site, this.props.pluginSlug ),
-			completed: filterNotices( PluginsLog.getCompleted(), site, this.props.pluginSlug ),
+			completedNotices,
+			errorNotices,
+			inProgressNotices,
+		};
+	}
+
+	getCurrentNotices = () => {
+		const { completedNotices, errorNotices, inProgressNotices, pluginId, siteId } = this.props;
+
+		return {
+			errors: filterNotices( errorNotices, siteId, pluginId ),
+			inProgress: filterNotices( inProgressNotices, siteId, pluginId ),
+			completed: filterNotices( completedNotices, siteId, pluginId ),
 		};
 	};
 
+	getPluginById( pluginId ) {
+		return this.props.plugins.find( ( plugin ) => plugin.id === pluginId );
+	}
+
+	getCombination( translateArg ) {
+		return (
+			( translateArg.numberOfSites > 1 ? 'n sites' : '1 site' ) +
+			' ' +
+			( translateArg.numberOfPlugins > 1 ? 'n plugins' : '1 plugin' )
+		);
+	}
+
+	getTranslateArg( logs, sampleLog, typeFilter ) {
+		const filteredLogs = logs.filter( ( log ) => {
+			return log.status === typeFilter ? typeFilter : sampleLog.type;
+		} );
+
+		const numberOfSites = uniqBy( filteredLogs, 'siteId' ).length;
+		const numberOfPlugins = uniqBy( filteredLogs, 'pluginId' ).length;
+
+		const logSite = this.props.sites.find( ( site ) => parseInt( sampleLog.siteId ) === site?.ID );
+		const logPlugin = this.getPluginById( sampleLog.pluginId );
+
+		return {
+			plugin: logPlugin?.name,
+			numberOfPlugins,
+			site: logSite?.title,
+			isMultiSite: logSite?.is_multi_site,
+			numberOfSites,
+		};
+	}
+
 	showNotification = () => {
-		const logNotices = this.refreshPluginNotices();
-		this.setState( { notices: logNotices } );
-		if ( logNotices.inProgress.length > 0 ) {
+		const currentNotices = this.getCurrentNotices();
+
+		if ( currentNotices.inProgress.length > 0 ) {
 			notices.info(
-				this.getMessage( logNotices.inProgress, this.inProgressMessage, 'inProgress' )
+				this.getMessage( currentNotices.inProgress, this.inProgressMessage, 'inProgress' )
 			);
 			return;
 		}
 
-		if ( logNotices.completed.length > 0 && logNotices.errors.length > 0 ) {
-			notices.warning( this.erroredAndCompletedMessage( logNotices ), {
+		if ( currentNotices.completed.length > 0 && currentNotices.errors.length > 0 ) {
+			notices.warning( this.erroredAndCompletedMessage( currentNotices ), {
 				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed', 'error' ) ),
 			} );
-		} else if ( logNotices.errors.length > 0 ) {
-			notices.error( this.getMessage( logNotices.errors, this.errorMessage, 'error' ), {
-				button: this.getErrorButton( logNotices.errors ),
-				href: this.getErrorHref( logNotices.errors ),
+		} else if ( currentNotices.errors.length > 0 ) {
+			notices.error( this.getMessage( currentNotices.errors, this.errorMessage, 'error' ), {
 				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'error' ) ),
 			} );
-		} else if ( logNotices.completed.length > 0 ) {
-			const sampleLog =
-				logNotices.completed[ 0 ].status === 'inProgress'
-					? logNotices.completed[ 0 ]
-					: logNotices.completed[ logNotices.completed.length - 1 ];
-			// the dismiss button would overlap the link to the settings page when activating
-			const showDismiss =
-				sampleLog.action !== 'ACTIVATE_PLUGIN' ||
-				! get( sampleLog, 'plugin.wp_admin_settings_page_url' );
-
-			notices.success( this.getMessage( logNotices.completed, this.successMessage, 'completed' ), {
-				button: this.getSuccessButton( logNotices.completed ),
-				href: this.getSuccessHref( logNotices.completed ),
-				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed' ) ),
-				showDismiss,
-			} );
+		} else if ( currentNotices.completed.length > 0 ) {
+			notices.success(
+				this.getMessage( currentNotices.completed, this.successMessage, 'completed' ),
+				{
+					onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed' ) ),
+					showDismiss: true,
+				}
+			);
 		}
 	};
 
 	getMessage = ( logs, messageFunction, typeFilter ) => {
 		const sampleLog = logs[ 0 ].status === 'inProgress' ? logs[ 0 ] : logs[ logs.length - 1 ];
-		const translateArg = getTranslateArg( logs, sampleLog, typeFilter );
-		const combination = getCombination( translateArg );
+		const translateArg = this.getTranslateArg( logs, sampleLog, typeFilter );
+		const combination = this.getCombination( translateArg );
 		return messageFunction( sampleLog.action, combination, translateArg, sampleLog );
 	};
 
@@ -571,13 +556,13 @@ class PluginNotices extends React.Component {
 		}
 	};
 
-	erroredAndCompletedMessage = ( logNotices ) => {
+	erroredAndCompletedMessage = ( currentNotices ) => {
 		const completedMessage = this.getMessage(
-			logNotices.completed,
+			currentNotices.completed,
 			this.successMessage,
 			'completed'
 		);
-		const errorMessage = this.getMessage( logNotices.errors, this.errorMessage, 'error' );
+		const errorMessage = this.getMessage( currentNotices.errors, this.errorMessage, 'error' );
 		return ' ' + completedMessage + ' ' + errorMessage;
 	};
 
@@ -985,63 +970,14 @@ class PluginNotices extends React.Component {
 		}
 	};
 
-	getErrorButton( log ) {
-		if ( log.length > 1 ) {
-			return null;
-		}
-		log = log.length ? log[ 0 ] : log;
-		if ( log.error.error === 'unauthorized_full_access' ) {
-			return i18n.translate( 'Turn On.' );
-		}
-		return null;
-	}
-
-	getErrorHref( log ) {
-		if ( log.length > 1 ) {
-			return null;
-		}
-		log = log.length ? log[ 0 ] : log;
-		if ( log.error.error !== 'unauthorized_full_access' ) {
-			return null;
-		}
-		let remoteManagementUrl =
-			log.site.options.admin_url + 'admin.php?page=jetpack&configure=json-api';
-		if ( versionCompare( log.site.options.jetpack_version, 3.4 ) >= 0 ) {
-			remoteManagementUrl = log.site.options.admin_url + 'admin.php?page=jetpack&configure=manage';
-		}
-		return remoteManagementUrl;
-	}
-
-	getSuccessButton( log ) {
-		if ( log.length > 1 ) {
-			return null;
-		}
-		log = log.length ? log[ 0 ] : log;
-
-		if ( log.action !== 'ACTIVATE_PLUGIN' || ! get( log, 'plugin.wp_admin_settings_page_url' ) ) {
-			return null;
-		}
-
-		return i18n.translate( 'Setup' );
-	}
-
-	getSuccessHref( log ) {
-		if ( log.length > 1 ) {
-			return null;
-		}
-		log = log.length ? log[ 0 ] : log;
-
-		if ( log.action !== 'ACTIVATE_PLUGIN' || ! get( log, 'plugin.wp_admin_settings_page_url' ) ) {
-			return null;
-		}
-		return get( log, 'plugin.wp_admin_settings_page_url' );
-	}
-
 	render() {
 		return null;
 	}
 }
 
 export default connect( ( state ) => ( {
-	selectedSite: getSelectedSite( state ),
+	completedNotices: getPluginStatusesByType( state, 'completed' ),
+	errorNotices: getPluginStatusesByType( state, 'error' ),
+	inProgressNotices: getPluginStatusesByType( state, 'inProgress' ),
+	siteId: getSelectedSiteId( state ),
 } ) )( PluginNotices );
