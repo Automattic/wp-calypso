@@ -20,7 +20,7 @@
 .welcome-tour-card__description {
 	font-size: 0.875rem;
 	line-height: 1.5rem;
-	margin-top: 6px;
+	margin: 0;
 }
 
 .wpcom-editor-welcome-tour__resume-btn {
@@ -53,18 +53,30 @@
 
 .welcome-tour-card {
 	width: 400px;
-	
+
 	&.welcome-tour-card.is-elevated {
 		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
 	}
+
+	&.components-card {
+		border: none;
+		border-radius: 4px;
+	}
+
+	.components-card__body {
+		min-height: 114px;
+	}
+
 	.components-card__body,
 	.components-card__footer {
 		border-top: none;
 		padding: $grid-unit-20 !important;
 	}
+
 	.components-card__media {
-		min-height: 259px;
+		min-height: 260px;
 	}
+
 	.components-guide__page-control {
 		margin: 0;
 
