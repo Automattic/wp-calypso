@@ -7,7 +7,10 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import debugFactory from 'debug';
-import type { PaymentCompleteCallback } from '@automattic/composite-checkout';
+import type {
+	PaymentCompleteCallback,
+	PaymentCompleteCallbackArguments,
+} from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -32,32 +35,76 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
 import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
+import {
+	getSelectedSite,
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+} from 'calypso/state/ui/selectors';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
 export default function useCreatePaymentCompleteCallback( {
-	siteId,
-	transactionResult,
-	getThankYouUrl,
 	createUserAndSiteBeforeTransaction,
+	productAliasFromUrl,
+	redirectTo,
+	purchaseId,
+	feature,
+	isInEditor,
+	isComingFromUpsell,
 }: {
-	siteId: undefined | number;
-	transactionResult: TransactionResponse | undefined;
-	getThankYouUrl: () => string;
 	createUserAndSiteBeforeTransaction?: boolean;
+	productAliasFromUrl?: string | undefined;
+	redirectTo?: string | undefined;
+	purchaseId?: number | undefined;
+	feature?: string | undefined;
+	isInEditor?: boolean;
+	isComingFromUpsell?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId );
 	const isDomainOnly =
 		useSelector( ( state ) => siteId && isDomainOnlySite( state, siteId ) ) || false;
 	const reduxStore = useStore();
+	const selectedSiteData = useSelector( getSelectedSite );
+	const adminUrl = selectedSiteData?.options?.admin_url;
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isJetpackNotAtomic =
+		useSelector(
+			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+		) || false;
 
 	return useCallback(
-		( { paymentMethodId }: { paymentMethodId: string | null } ): void => {
+		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
-			const url = getThankYouUrl();
+			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
+			const getThankYouPageUrlArguments = {
+				siteSlug: siteSlug || undefined,
+				adminUrl,
+				receiptId: transactionResult.receipt_id,
+				orderId: transactionResult.order_id,
+				redirectTo,
+				purchaseId,
+				feature,
+				cart: responseCart,
+				isJetpackNotAtomic,
+				productAliasFromUrl,
+				isEligibleForSignupDestinationResult,
+				hideNudge: !! isComingFromUpsell,
+				isInEditor,
+			};
+			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
+			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+			debug( 'getThankYouUrl returned', url );
+
 			recordPaymentCompleteAnalytics( {
 				paymentMethodId,
 				transactionResult,
@@ -134,14 +181,22 @@ export default function useCreatePaymentCompleteCallback( {
 			page.redirect( url );
 		},
 		[
-			transactionResult,
+			siteSlug,
+			adminUrl,
+			redirectTo,
+			purchaseId,
+			feature,
+			isJetpackNotAtomic,
+			productAliasFromUrl,
+			isEligibleForSignupDestinationResult,
+			isComingFromUpsell,
+			isInEditor,
 			reduxStore,
 			isDomainOnly,
 			moment,
 			reduxDispatch,
 			siteId,
 			translate,
-			getThankYouUrl,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 		]
@@ -255,26 +310,4 @@ function recordPaymentCompleteAnalytics( {
 				) || '',
 		} )
 	);
-}
-
-export interface WithCreatePaymentCompleteCallbackProps {
-	siteId: undefined | number;
-	transactionResult: TransactionResponse | undefined;
-	getThankYouUrl: () => string;
-	createUserAndSiteBeforeTransaction?: boolean;
-}
-
-export function withCreatePaymentCompleteCallback< P >( Component: React.ComponentType< P > ) {
-	return function CreatePaymentCompleteWrapper(
-		props: WithCreatePaymentCompleteCallbackProps & P
-	): JSX.Element {
-		const { siteId, transactionResult, getThankYouUrl, createUserAndSiteBeforeTransaction } = props;
-		const onPaymentComplete = useCreatePaymentCompleteCallback( {
-			siteId,
-			transactionResult,
-			getThankYouUrl,
-			createUserAndSiteBeforeTransaction,
-		} );
-		return <Component { ...props } onPaymentComplete={ onPaymentComplete } />;
-	};
 }
