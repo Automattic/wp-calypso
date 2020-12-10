@@ -24,7 +24,6 @@ import {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isSecureYourBrandFulfilled,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
@@ -46,7 +45,6 @@ export default generateSteps( {
 	isSiteTypeFulfilled,
 	isSiteTopicFulfilled,
 	maybeRemoveStepForUserlessCheckout,
-	isSecureYourBrandFulfilled,
 } );
 
 export function isDomainStepSkippable( flowName ) {

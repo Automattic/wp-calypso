@@ -36,7 +36,6 @@ const stepNameToModuleName = {
 	'rewind-migrate': 'rewind-migrate',
 	'rewind-were-backing': 'rewind-were-backing',
 	'rewind-form-creds': 'rewind-form-creds',
-	'secure-your-brand': 'secure-your-brand',
 	'site-or-domain': 'site-or-domain',
 	'site-picker': 'site-picker',
 	'site-style': 'site-style',

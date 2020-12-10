@@ -74,15 +74,6 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	secureYourBrand: {
-		datestamp: '20201124',
-		variations: {
-			test: 50,
-			control: 50,
-		},
-		defaultVariation: 'control',
-		allowExistingUsers: false,
-	},
 	jetpackPricingReversePlans: {
 		datestamp: '20201208',
 		variations: {
