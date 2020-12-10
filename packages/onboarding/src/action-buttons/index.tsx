@@ -4,7 +4,7 @@
 import * as React from 'react';
 import classnames from 'classnames';
 import { Button } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 
 /**
  * Style dependencies
@@ -40,6 +40,8 @@ export const BackButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	children,
 	...buttonProps
 } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__back', className ) }
@@ -58,6 +60,8 @@ export const NextButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	children,
 	...buttonProps
 } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__next', className ) }
@@ -76,6 +80,8 @@ export const SkipButton: React.FunctionComponent< Button.ButtonProps > = ( {
 	children,
 	...buttonProps
 } ) => {
+	const { __ } = useI18n();
+
 	return (
 		<Button
 			className={ classnames( 'action_buttons__button action-buttons__skip', className ) }
