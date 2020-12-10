@@ -4,13 +4,14 @@
 import { findKey } from 'lodash';
 import { generatePath, useLocation, useRouteMatch } from 'react-router-dom';
 import { Plans } from '@automattic/data-stores';
+import languages from '@automattic/languages';
+
 import type { ValuesType } from 'utility-types';
 
 /**
  * Internal dependencies
  */
 import config from 'calypso/config';
-import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
 type PlanPath = Plans.PlanPath;
 
@@ -41,7 +42,7 @@ const routeFragments = {
 	// We add the possibility of an empty step fragment through the `?` question mark at the end of that fragment.
 	step: `:step(${ steps.join( '|' ) })?`,
 	plan: `:plan(${ plansPaths.join( '|' ) })?`,
-	lang: getLanguageRouteParam(),
+	lang: `:lang(${ languages.map( ( lang ) => lang.langSlug ).join( '|' ) })?`,
 };
 
 export const path = [ '', ...Object.values( routeFragments ) ].join( '/' );
