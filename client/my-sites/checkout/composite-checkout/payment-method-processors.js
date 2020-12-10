@@ -8,7 +8,7 @@ import {
 	makeManualResponse,
 } from '@automattic/composite-checkout';
 import { format as formatUrl, parse as parseUrl, resolve as resolveUrl } from 'url'; // eslint-disable-line no-restricted-imports
-import { showStripeModalAuth } from '@automattic/calypso-stripe';
+import { confirmStripePaymentIntent } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -31,7 +31,7 @@ import {
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
 
-const { select, dispatch } = defaultRegistry;
+const { select } = defaultRegistry;
 
 export async function genericRedirectProcessor(
 	paymentMethodId,
@@ -76,11 +76,9 @@ export async function genericRedirectProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return makeRedirectResponse( response?.redirect_url );
-		} );
+	).then( ( response ) => {
+		return makeRedirectResponse( response?.redirect_url );
+	} );
 }
 
 export async function weChatProcessor(
@@ -126,16 +124,14 @@ export async function weChatProcessor(
 			domainDetails: getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ),
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			// The WeChat payment type should only redirect when on mobile as redirect urls
-			// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
-			if ( userAgent.isMobile ) {
-				return makeRedirectResponse( response?.redirect_url );
-			}
-			return makeManualResponse( response );
-		} );
+	).then( ( response ) => {
+		// The WeChat payment type should only redirect when on mobile as redirect urls
+		// are mobile app urls: e.g. weixin://wxpay/bizpayurl?pr=RaXzhu4
+		if ( userAgent.isMobile ) {
+			return makeRedirectResponse( response?.redirect_url );
+		}
+		return makeManualResponse( response );
+	} );
 }
 
 export async function applePayProcessor(
@@ -153,9 +149,7 @@ export async function applePayProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
 export async function stripeCardProcessor(
@@ -181,15 +175,14 @@ export async function stripeCardProcessor(
 		wpcomTransaction,
 		transactionOptions
 	)
-		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
 				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return showStripeModalAuth( {
-					stripeConfiguration: submitData.stripeConfiguration,
-					response: stripeResponse,
-				} );
+				return confirmStripePaymentIntent(
+					submitData.stripeConfiguration,
+					stripeResponse?.message?.payment_intent_client_secret
+				);
 			}
 			return stripeResponse;
 		} )
@@ -221,11 +214,7 @@ export async function ebanxCardProcessor(
 			paymentMethodToken,
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( ( response ) => {
-			return makeSuccessResponse( response );
-		} );
+	).then( makeSuccessResponse );
 }
 
 export async function multiPartnerCardProcessor(
@@ -268,15 +257,14 @@ export async function existingCardProcessor(
 		wpcomTransaction,
 		transactionOptions
 	)
-		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
 				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
-				return showStripeModalAuth( {
-					stripeConfiguration: submitData.stripeConfiguration,
-					response: stripeResponse,
-				} );
+				return confirmStripePaymentIntent(
+					submitData.stripeConfiguration,
+					stripeResponse?.message?.payment_intent_client_secret
+				);
 			}
 			return stripeResponse;
 		} )
@@ -302,9 +290,7 @@ export async function freePurchaseProcessor(
 			postalCode: null,
 		},
 		wpcomTransaction
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
 export async function fullCreditsProcessor(
@@ -323,9 +309,7 @@ export async function fullCreditsProcessor(
 		},
 		wpcomTransaction,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeSuccessResponse );
+	).then( makeSuccessResponse );
 }
 
 export async function payPalProcessor(
@@ -360,13 +344,5 @@ export async function payPalProcessor(
 		},
 		wpcomPayPalExpress,
 		transactionOptions
-	)
-		.then( saveTransactionResponseToWpcomStore )
-		.then( makeRedirectResponse );
-}
-
-async function saveTransactionResponseToWpcomStore( result ) {
-	// save result so we can get receipt_id and failed_purchases in getThankYouPageUrl
-	dispatch( 'wpcom' ).setTransactionResponse( result );
-	return result;
+	).then( makeRedirectResponse );
 }

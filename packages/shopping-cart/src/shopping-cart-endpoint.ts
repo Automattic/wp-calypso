@@ -58,6 +58,7 @@ export interface ResponseCart< P = ResponseCartProduct > {
 	create_new_blog: boolean;
 	cart_key: string;
 	products: P[];
+	total_tax: string; // Please try not to use this
 	total_tax_integer: number;
 	total_tax_display: string;
 	total_cost: number; // Please try not to use this

@@ -3,7 +3,6 @@
  */
 import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
@@ -12,16 +11,16 @@ import type { ResponseCart } from '@automattic/shopping-cart';
  */
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
-import { TransactionResponse } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
 import getThankYouPageUrl from './get-thank-you-page-url';
+import type { TransactionResponse } from '../../types/wpcom-store-state';
 
-const { select } = defaultRegistry;
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
-type GetThankYouUrl = () => string;
+export type GetThankYouUrl = () => string;
 
 export default function useGetThankYouUrl( {
 	siteSlug,
+	transactionResult,
 	redirectTo,
 	purchaseId,
 	feature,
@@ -30,31 +29,15 @@ export default function useGetThankYouUrl( {
 	productAliasFromUrl,
 	hideNudge,
 	isInEditor,
-}: {
-	siteSlug: string | undefined;
-	redirectTo: string | undefined;
-	purchaseId?: number | undefined;
-	feature: string | undefined;
-	cart: ResponseCart;
-	isJetpackNotAtomic: boolean;
-	productAliasFromUrl: string | undefined;
-	hideNudge: boolean;
-	isInEditor?: boolean;
-} ): GetThankYouUrl {
+}: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
 
 	const getThankYouUrl = useCallback( () => {
-		const transactionResult: TransactionResponse = select( 'wpcom' ).getTransactionResult();
 		debug( 'for getThankYouUrl, transactionResult is', transactionResult );
-		const receiptId = transactionResult.receipt_id;
-		const orderId = transactionResult.order_id;
-
-		if ( siteSlug === 'no-user' || ! siteSlug ) {
-			// eslint-disable-next-line react-hooks/exhaustive-deps
-			siteSlug = select( 'wpcom' ).getSiteSlug();
-		}
+		const receiptId = transactionResult?.receipt_id;
+		const orderId = transactionResult?.order_id;
 
 		const getThankYouPageUrlArguments = {
 			siteSlug,
@@ -76,6 +59,8 @@ export default function useGetThankYouUrl( {
 		debug( 'getThankYouUrl returned', url );
 		return url;
 	}, [
+		isInEditor,
+		transactionResult,
 		isEligibleForSignupDestinationResult,
 		siteSlug,
 		adminUrl,
@@ -88,4 +73,17 @@ export default function useGetThankYouUrl( {
 		hideNudge,
 	] );
 	return getThankYouUrl;
+}
+
+export interface GetThankYouUrlProps {
+	siteSlug: string | undefined;
+	transactionResult?: TransactionResponse | undefined;
+	redirectTo?: string | undefined;
+	purchaseId?: number | undefined;
+	feature?: string | undefined;
+	cart: ResponseCart;
+	isJetpackNotAtomic?: boolean;
+	productAliasFromUrl?: string | undefined;
+	hideNudge?: boolean;
+	isInEditor?: boolean;
 }

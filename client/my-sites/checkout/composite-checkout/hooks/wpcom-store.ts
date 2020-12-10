@@ -9,7 +9,6 @@ import { StoreConfig } from '@wordpress/data';
  */
 import {
 	WpcomStoreState,
-	TransactionResponse,
 	getInitialWpcomStoreState,
 	ManagedContactDetails,
 	ManagedContactDetailsErrors,
@@ -28,7 +27,6 @@ type WpcomStoreAction =
 	| { type: 'UPDATE_DOMAIN_CONTACT_FIELDS'; payload: DomainContactDetails }
 	| { type: 'SET_SITE_ID'; payload: string }
 	| { type: 'SET_SITE_SLUG'; payload: string }
-	| { type: 'TRANSACTION_COMPLETE'; payload: TransactionResponse }
 	| { type: 'SET_RECAPTCHA_CLIENT_ID'; payload: number }
 	| { type: 'UPDATE_VAT_ID'; payload: string }
 	| { type: 'UPDATE_EMAIL'; payload: string }
@@ -116,18 +114,6 @@ export function useWpcomStore(
 		}
 	}
 
-	function transactionResultReducer(
-		state: TransactionResponse,
-		action: WpcomStoreAction
-	): TransactionResponse {
-		switch ( action.type ) {
-			case 'TRANSACTION_COMPLETE':
-				return action.payload;
-			default:
-				return state;
-		}
-	}
-
 	registerStore( 'wpcom', {
 		reducer( state: WpcomStoreState | undefined, action: WpcomStoreAction ): WpcomStoreState {
 			const checkedState =
@@ -137,7 +123,6 @@ export function useWpcomStore(
 				siteId: siteIdReducer( checkedState.siteId, action ),
 				siteSlug: siteSlugReducer( checkedState.siteSlug, action ),
 				recaptchaClientId: recaptchaClientIdReducer( checkedState.recaptchaClientId, action ),
-				transactionResult: transactionResultReducer( checkedState.transactionResult, action ),
 			};
 		},
 
@@ -154,10 +139,6 @@ export function useWpcomStore(
 
 			setSiteSlug( payload: string ): WpcomStoreAction {
 				return { type: 'SET_SITE_SLUG', payload };
-			},
-
-			setTransactionResponse( payload: TransactionResponse ): WpcomStoreAction {
-				return { type: 'TRANSACTION_COMPLETE', payload };
 			},
 
 			setRecaptchaClientId( payload: number ): WpcomStoreAction {
@@ -214,10 +195,6 @@ export function useWpcomStore(
 
 			getSiteSlug( state: WpcomStoreState ): string {
 				return state.siteSlug;
-			},
-
-			getTransactionResult( state: WpcomStoreState ): TransactionResponse {
-				return state.transactionResult;
 			},
 
 			getContactInfo( state: WpcomStoreState ): ManagedContactDetails {

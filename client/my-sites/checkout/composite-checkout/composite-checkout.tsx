@@ -137,7 +137,6 @@ export default function CompositeCheckout( {
 		) || false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const hideNudge = !! isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
@@ -240,7 +239,7 @@ export default function CompositeCheckout( {
 		cart: responseCart,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
-		hideNudge,
+		hideNudge: !! isComingFromUpsell,
 		isInEditor,
 	} );
 	const getThankYouUrl = useCallback( () => {
@@ -515,12 +514,13 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
-		siteId,
-		getThankYouUrl,
-		recordEvent,
-		couponItem,
-		total,
 		createUserAndSiteBeforeTransaction,
+		productAliasFromUrl,
+		redirectTo,
+		purchaseId,
+		feature,
+		isInEditor,
+		isComingFromUpsell,
 	} );
 
 	if (
