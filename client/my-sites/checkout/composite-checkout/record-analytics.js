@@ -12,8 +12,7 @@ import {
  * Internal dependencies
  */
 import { recordAddEvent } from 'calypso/lib/analytics/cart';
-import { logToLogstash } from 'calypso/state/logstash/actions';
-import config from 'calypso/config';
+import { logStashLoadErrorEventAction, logStashEventAction } from './lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-analytics' );
 
@@ -404,24 +403,4 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 			);
 		}
 	};
-}
-
-function logStashLoadErrorEventAction( errorType, errorMessage, additionalData = {} ) {
-	return logStashEventAction( 'composite checkout load error', {
-		...additionalData,
-		type: errorType,
-		message: errorMessage,
-	} );
-}
-
-function logStashEventAction( message, dataForLog = {} ) {
-	return logToLogstash( {
-		feature: 'calypso_client',
-		message,
-		severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
-		extra: {
-			env: config( 'env_id' ),
-			...dataForLog,
-		},
-	} );
 }
