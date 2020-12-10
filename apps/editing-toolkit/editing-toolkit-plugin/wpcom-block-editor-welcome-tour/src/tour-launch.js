@@ -43,9 +43,10 @@ function LaunchWpcomWelcomeTour() {
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	useEffect( () => {
-		if ( ! isWpcomNuxEnabled ) {
-			return;
-		}
+		// TODO: UNCOMMENT after Jon testing
+		// if ( ! isWpcomNuxEnabled ) {
+		// 	return;
+		// }
 
 		document.body.appendChild( portalParent );
 		return () => {
