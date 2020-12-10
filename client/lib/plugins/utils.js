@@ -11,40 +11,40 @@ import { decodeEntities, parseHtml } from 'calypso/lib/formatting';
 import { sanitizeSectionContent } from './sanitize-section-content';
 
 /**
- * @param  {object} site       Site Object
+ * @param  {number} siteId     Site Object
  * @param  {object} log        Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
-function isSameSiteNotice( site, log ) {
-	return site && log.site && log.site.ID === site.ID;
+function isSameSiteNotice( siteId, log ) {
+	return siteId && log.siteId && parseInt( log.siteId ) === siteId;
 }
 
 /**
- * @param  {string} pluginSlug Plugin Slug
- * @param  {object} log        Notice log Object
+ * @param  {string} pluginId Plugin ID
+ * @param  {object} log      Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
-function isSamePluginNotice( pluginSlug, log ) {
-	return pluginSlug && log.plugin && log.plugin.slug === pluginSlug;
+function isSamePluginNotice( pluginId, log ) {
+	return pluginId && log.pluginId && log.pluginId === pluginId;
 }
 
 /**
  * Filter function that return notices that fit a certain criteria.
  *
- * @param  {object} site       Site Object
- * @param  {string} pluginSlug Plugin Slug
- * @param  {object} log        Notice log Object
+ * @param  {number} siteId   Site Object
+ * @param  {string} pluginId Plugin Id
+ * @param  {object} log      Notice log Object
  * @returns {boolean} True if notice matches criteria
  */
-function filterNoticesBy( site, pluginSlug, log ) {
-	if ( ! site && ! pluginSlug ) {
+function filterNoticesBy( siteId, pluginId, log ) {
+	if ( ! siteId && ! pluginId ) {
 		return true;
 	}
-	if ( isSameSiteNotice( site, log ) && isSamePluginNotice( pluginSlug, log ) ) {
+	if ( isSameSiteNotice( siteId, log ) && isSamePluginNotice( pluginId, log ) ) {
 		return true;
-	} else if ( ! pluginSlug && isSameSiteNotice( site, log ) ) {
+	} else if ( ! pluginId && isSameSiteNotice( siteId, log ) ) {
 		return true;
-	} else if ( ! site && isSamePluginNotice( pluginSlug, log ) ) {
+	} else if ( ! siteId && isSamePluginNotice( pluginId, log ) ) {
 		return true;
 	}
 	return false;
@@ -213,12 +213,12 @@ export function normalizePluginsList( pluginsList ) {
 /**
  * Return logs that match a certain critia.
  *
- * @param  {Array} logs        List of all notices
- * @param  {object} site       Site Object
- * @param  {string} pluginSlug Plugin Slug
+ * @param  {Array} logs      List of all notices
+ * @param  {number} siteId   Site Object
+ * @param  {string} pluginId Plugin ID
  *
  * @returns {Array} Array of filtered logs that match the criteria
  */
-export function filterNotices( logs, site, pluginSlug ) {
-	return filter( logs, filterNoticesBy.bind( this, site, pluginSlug ) );
+export function filterNotices( logs, siteId, pluginId ) {
+	return filter( logs, filterNoticesBy.bind( this, siteId, pluginId ) );
 }
