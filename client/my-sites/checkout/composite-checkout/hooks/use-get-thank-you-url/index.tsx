@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import debugFactory from 'debug';
 import type { ResponseCart } from '@automattic/shopping-cart';
@@ -29,7 +29,7 @@ export default function useGetThankYouUrl( {
 	productAliasFromUrl,
 	hideNudge,
 	isInEditor,
-}: WithGetThankYouUrlProps ): GetThankYouUrl {
+}: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
@@ -75,9 +75,9 @@ export default function useGetThankYouUrl( {
 	return getThankYouUrl;
 }
 
-export interface WithGetThankYouUrlProps {
+export interface GetThankYouUrlProps {
 	siteSlug: string | undefined;
-	transactionResult: TransactionResponse | undefined;
+	transactionResult?: TransactionResponse | undefined;
 	redirectTo?: string | undefined;
 	purchaseId?: number | undefined;
 	feature?: string | undefined;
@@ -86,34 +86,4 @@ export interface WithGetThankYouUrlProps {
 	productAliasFromUrl?: string | undefined;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
-}
-
-export function withGetThankYouUrl< P >( Component: React.ComponentType< P > ) {
-	return function CreatePaymentCompleteWrapper( props: WithGetThankYouUrlProps & P ): JSX.Element {
-		const {
-			siteSlug,
-			transactionResult,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			productAliasFromUrl,
-			hideNudge,
-			isInEditor,
-		} = props;
-		const getThankYouUrl = useGetThankYouUrl( {
-			siteSlug,
-			transactionResult,
-			redirectTo,
-			purchaseId,
-			feature,
-			cart,
-			isJetpackNotAtomic,
-			productAliasFromUrl,
-			hideNudge,
-			isInEditor,
-		} );
-		return <Component { ...props } getThankYouUrl={ getThankYouUrl } />;
-	};
 }
