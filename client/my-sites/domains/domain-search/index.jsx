@@ -19,7 +19,6 @@ import SidebarNavigation from 'calypso/my-sites/sidebar-navigation';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
 import Main from 'calypso/components/main';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { addItem, removeItem } from 'calypso/lib/cart/actions';
 import { canDomainAddGSuite } from 'calypso/lib/gsuite';
 import {
 	hasPlan,
@@ -89,13 +88,19 @@ class DomainSearch extends Component {
 	};
 
 	handleAddMapping = ( domain ) => {
-		addItem( domainMapping( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [ domainMapping( { domain } ) ] )
+			.then( () => {
+				page( '/checkout/' + this.props.selectedSiteSlug );
+			} );
 	};
 
 	handleAddTransfer = ( domain ) => {
-		addItem( domainTransfer( { domain } ) );
-		page( '/checkout/' + this.props.selectedSiteSlug );
+		this.props.shoppingCartManager
+			.addProductsToCart( [ domainTransfer( { domain } ) ] )
+			.then( () => {
+				page( '/checkout/' + this.props.selectedSiteSlug );
+			} );
 	};
 
 	UNSAFE_componentWillMount() {
@@ -134,23 +139,31 @@ class DomainSearch extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		addItem( registration );
-
-		if ( canDomainAddGSuite( domain ) ) {
-			page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
-		} else {
-			page( '/checkout/' + this.props.selectedSiteSlug );
-		}
+		this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
+			if ( canDomainAddGSuite( domain ) ) {
+				page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+			} else {
+				page( '/checkout/' + this.props.selectedSiteSlug );
+			}
+		} );
 	}
 
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
-		removeItem(
-			domainRegistration( {
-				domain: suggestion.domain_name,
-				productSlug: suggestion.product_slug,
-			} )
-		);
+
+		const productToRemove = this.props.cart.products.find( ( product ) => {
+			if (
+				product.meta === suggestion.domain_name &&
+				product.product_slug === suggestion.product_slug
+			) {
+				return true;
+			}
+			return false;
+		} );
+		if ( productToRemove ) {
+			const uuidToRemove = productToRemove.uuid;
+			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
+		}
 	}
 
 	getInitialSuggestion() {
