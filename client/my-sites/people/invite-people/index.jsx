@@ -7,6 +7,7 @@ import page from 'page';
 import { filter, flowRight, get, groupBy, includes, pickBy, some } from 'lodash';
 import debugModule from 'debug';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import { localize } from 'i18n-calypso';
 
 /**
@@ -764,11 +765,16 @@ const mapStateToProps = ( state ) => {
 };
 
 const mapDispatchToProps = ( dispatch ) => ( {
-	activateModule,
-	generateInviteLinks,
-	disableInviteLinks,
-	errorNotice,
-	successNotice,
+	...bindActionCreators(
+		{
+			activateModule,
+			generateInviteLinks,
+			disableInviteLinks,
+			errorNotice,
+			successNotice,
+		},
+		dispatch
+	),
 	recordTracksEventAction,
 
 	onFocusTokenField: () =>
