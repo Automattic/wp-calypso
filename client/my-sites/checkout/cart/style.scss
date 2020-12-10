@@ -341,7 +341,7 @@ div.popover-cart__popover {
 	}
 
 	.cart-buttons {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 		padding: 0 15px 15px;
 	}
 
@@ -385,7 +385,7 @@ div.popover-cart__popover {
 	}
 
 	.cart-buttons {
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 2px 2px;
 		padding: 0 15px 15px;
 	}
 
@@ -418,43 +418,6 @@ div.popover-cart__popover {
 			position: absolute;
 			top: 2px;
 		}
-	}
-}
-
-.secondary-cart {
-	@include breakpoint-deprecated( '<660px' ) {
-		left: 0;
-		margin-left: 0;
-		margin-top: 10px;
-		// Create space for the inline help button
-		margin-bottom: 65px;
-		max-height: 100%;
-		position: relative;
-		top: 0;
-	}
-
-	.cart__upsell-body {
-		padding: 16px;
-	}
-}
-
-.secondary-cart__item {
-	background: var( --color-surface );
-	margin: 20px 0 0;
-	box-shadow: 0 1px 0 var( --color-border-subtle );
-
-	.jetpack-logo {
-		margin: 32px 0;
-	}
-}
-
-.secondary-cart__item:first-child {
-	margin-top: 0;
-}
-
-@include breakpoint-deprecated( '<660px' ) {
-	.secondary-cart__hidden {
-		display: none;
 	}
 }
 

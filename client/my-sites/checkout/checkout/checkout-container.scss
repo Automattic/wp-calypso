@@ -5,10 +5,6 @@
 		border-bottom: 1px solid var( --color-border-subtle );
 	}
 
-	.secondary-cart .card {
-		box-shadow: none;
-	}
-
 	.section-header.card {
 		padding-top: 14px;
 		padding-bottom: 13px;
@@ -26,13 +22,6 @@
 			margin-top: 0;
 			margin-right: 0;
 			width: 100%;
-		}
-
-		.secondary-cart {
-			margin: 0 auto;
-			margin-left: 20px;
-			margin-bottom: 16px;
-			width: 272px;
 		}
 	}
 }

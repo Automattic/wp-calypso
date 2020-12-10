@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { connect } from 'react-redux';
-import { find, get, isEmpty, isEqual, reduce, startsWith } from 'lodash';
+import { find, get, isEmpty, reduce } from 'lodash';
 import { localize } from 'i18n-calypso';
 import page from 'page';
 import PropTypes from 'prop-types';
@@ -14,30 +14,18 @@ import { format as formatUrl, parse as parseUrl } from 'url';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { shouldShowTax, hasPendingPayment } from 'calypso/lib/cart-values';
 import {
-	conciergeSessionItem,
-	domainMapping,
-	planItem as getCartItemForPlan,
-	themeItem,
-	hasGoogleApps,
-	getGoogleApps,
 	hasRenewalItem,
-	getRenewalItemFromCartItem,
 	getAllCartItems,
 	getRenewalItems,
 	hasFreeTrial,
 	hasConciergeSession,
-	hasDomainRegistration,
 	hasJetpackPlan,
 	hasBloggerPlan,
 	hasPersonalPlan,
 	hasPremiumPlan,
 	hasEcommercePlan,
 	hasPlan,
-	hasOnlyRenewalItems,
-	hasTransferProduct,
-	jetpackProductItem,
 } from 'calypso/lib/cart-values/cart-items';
 import {
 	isJetpackProductSlug,
@@ -46,62 +34,29 @@ import {
 	isJetpackCloudProductSlug,
 	isJetpackAntiSpamSlug,
 } from 'calypso/lib/products-values';
-import {
-	JETPACK_PRODUCTS_LIST,
-	JETPACK_SEARCH_PRODUCTS,
-	PRODUCT_JETPACK_SEARCH,
-	PRODUCT_JETPACK_SEARCH_MONTHLY,
-	PRODUCT_WPCOM_SEARCH,
-	PRODUCT_WPCOM_SEARCH_MONTHLY,
-} from 'calypso/lib/products-values/constants';
-import PendingPaymentBlocker from './pending-payment-blocker';
 import { clearSitePlans } from 'calypso/state/sites/plans/actions';
 import { clearPurchases } from 'calypso/state/purchases/actions';
-import DomainDetailsForm from './domain-details-form';
 import { fetchReceiptCompleted } from 'calypso/state/receipts/actions';
-import { getExitCheckoutUrl } from 'calypso/lib/checkout';
-import { hasDomainDetails } from 'calypso/lib/transaction/selectors';
 import notices from 'calypso/notices';
 import { managePurchase } from 'calypso/me/purchases/paths';
-import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker';
-import QueryContactDetailsCache from 'calypso/components/data/query-contact-details-cache';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
-import QuerySitePlans from 'calypso/components/data/query-site-plans';
-import QueryPlans from 'calypso/components/data/query-plans';
-import SecurePaymentForm from './secure-payment-form';
-import SecurePaymentFormPlaceholder from './secure-payment-form-placeholder';
 import { AUTO_RENEWAL } from 'calypso/lib/url/support';
-import {
-	RECEIVED_WPCOM_RESPONSE,
-	SUBMITTING_WPCOM_REQUEST,
-} from 'calypso/lib/store-transactions/step-types';
-import { addItem, replaceCartWithItems, replaceItem, applyCoupon } from 'calypso/lib/cart/actions';
-import { resetTransaction, setDomainDetails } from 'calypso/lib/transaction/actions';
-import getContactDetailsCache from 'calypso/state/selectors/get-contact-details-cache';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { getStoredCards, isFetchingStoredCards } from 'calypso/state/stored-cards/selectors';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
-import { getPlan, findPlansKeys } from 'calypso/lib/plans';
-import { GROUP_WPCOM } from 'calypso/lib/plans/constants';
 import { recordViewCheckout } from 'calypso/lib/analytics/ad-tracking';
 import { requestSite } from 'calypso/state/sites/actions';
-import { isJetpackSite, isNewSite } from 'calypso/state/sites/selectors';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
 import {
 	getSelectedSite,
 	getSelectedSiteId,
 	getSelectedSiteSlug,
 } from 'calypso/state/ui/selectors';
-import { getCurrentUserCountryCode } from 'calypso/state/current-user/selectors';
 import { getDomainNameFromReceiptOrCart } from 'calypso/lib/domains/cart-utils';
 import { fetchSitesAndUser } from 'calypso/lib/signup/step-actions/fetch-sites-and-user';
-import { getProductsList, isProductsListFetching } from 'calypso/state/products-list/selectors';
-import QueryProducts from 'calypso/components/data/query-products-list';
-import { isRequestingSitePlans } from 'calypso/state/sites/plans/selectors';
-import { isRequestingPlans } from 'calypso/state/plans/selectors';
 import { isApplePayAvailable } from 'calypso/lib/web-payment';
-import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import config from 'calypso/config';
 import { loadTrackingTool } from 'calypso/state/analytics/actions';
@@ -131,86 +86,16 @@ export class Checkout extends React.Component {
 	};
 
 	state = {
-		previousCart: null,
 		cartSettled: false,
-		isRedirecting: false,
 	};
 
-	// TODO: update this component to not use deprecated life cycle methods
-	/* eslint-disable-next-line react/no-deprecated */
-	UNSAFE_componentWillMount() {
-		resetTransaction();
-	}
-
 	componentDidMount() {
-		if ( this.redirectIfEmptyCart() ) {
-			return;
-		}
-
 		if ( this.props.cart.hasLoadedFromServer ) {
 			this.trackPageView();
 		}
 
-		if ( this.props.cart.hasLoadedFromServer && this.props.product ) {
-			this.addProductToCart();
-		} else if ( this.props.couponCode ) {
-			applyCoupon( this.props.couponCode );
-		}
-
 		this.props.loadTrackingTool( 'HotJar' );
 		window.scrollTo( 0, 0 );
-	}
-
-	// TODO: update this component to not use deprecated life cycle methods
-	/* eslint-disable-next-line react/no-deprecated */
-	UNSAFE_componentWillReceiveProps( nextProps ) {
-		if ( ! this.props.cart.hasLoadedFromServer && nextProps.cart.hasLoadedFromServer ) {
-			if ( this.props.product ) {
-				this.addProductToCart();
-			}
-
-			this.trackPageView( nextProps );
-		}
-
-		if ( ! this.state.cartSettled && ! nextProps.cart.hasPendingServerUpdates ) {
-			this.setState( {
-				cartSettled: true,
-			} );
-		}
-	}
-
-	componentDidUpdate() {
-		if ( ! this.props.cart.hasLoadedFromServer ) {
-			return false;
-		}
-
-		const previousCart = this.state.previousCart;
-		const nextCart = this.props.cart;
-
-		if ( ! isEqual( previousCart, nextCart ) ) {
-			this.redirectIfEmptyCart();
-			// TODO: rewrite state management so we don't have to call setState here
-			/* eslint-disable-next-line react/no-did-update-set-state */
-			this.setState( { previousCart: nextCart } );
-		}
-
-		if (
-			this.props.isNewlyCreatedSite &&
-			this.props.contactDetails &&
-			hasGoogleApps( this.props.cart ) &&
-			this.needsDomainDetails()
-		) {
-			this.setDomainDetailsForGSuiteCart();
-		}
-	}
-
-	setDomainDetailsForGSuiteCart() {
-		const { contactDetails, cart } = this.props;
-		const domainReceiptId = get( getGoogleApps( cart ), '[0].extra.receipt_for_domain', 0 );
-
-		if ( domainReceiptId ) {
-			setDomainDetails( contactDetails );
-		}
 	}
 
 	trackPageView( props ) {
@@ -224,176 +109,6 @@ export class Checkout extends React.Component {
 		} );
 
 		recordViewCheckout( props.cart );
-	}
-
-	getPlanProducts() {
-		return this.props.cart.products.filter( ( { product_slug } ) => getPlan( product_slug ) );
-	}
-
-	getProductSlugFromSynonym( slug ) {
-		if ( 'no-ads' === slug ) {
-			return 'no-adverts/no-adverts.php';
-		}
-		return slug;
-	}
-
-	addProductToCart() {
-		if ( this.props.purchaseId ) {
-			this.addRenewItemsToCart();
-		} else {
-			this.addNewItemToCart();
-		}
-		if ( this.props.couponCode ) {
-			applyCoupon( this.props.couponCode );
-		}
-	}
-
-	addRenewItemsToCart() {
-		const { product, purchaseId, selectedSiteSlug } = this.props;
-		// products can sometimes contain multiple items separated by commas
-		const products = product.split( ',' );
-
-		if ( ! purchaseId ) {
-			return;
-		}
-
-		// purchaseId can sometimes contain multiple items separated by commas
-		const purchaseIds = purchaseId.split( ',' );
-
-		const itemsToAdd = purchaseIds
-			.map( ( subscriptionId, currentIndex ) => {
-				const productSlug = products[ currentIndex ];
-				if ( ! productSlug ) {
-					return null;
-				}
-				return this.getRenewalItemForProductAndSubscription(
-					productSlug,
-					subscriptionId,
-					selectedSiteSlug
-				);
-			} )
-			.filter( ( item ) => item );
-		replaceCartWithItems( itemsToAdd );
-	}
-
-	getRenewalItemForProductAndSubscription( product, purchaseId, selectedSiteSlug ) {
-		const [ slug, meta ] = product.split( ':' );
-		const productSlug = this.getProductSlugFromSynonym( slug );
-
-		if ( ! purchaseId ) {
-			return;
-		}
-
-		return getRenewalItemFromCartItem(
-			{
-				meta,
-				product_slug: productSlug,
-			},
-			{
-				id: purchaseId,
-				domain: selectedSiteSlug,
-			}
-		);
-	}
-
-	addNewItemToCart() {
-		const { planSlug, product, cart, isJetpackNotAtomic } = this.props;
-
-		let cartItem;
-		let cartMeta;
-
-		if ( planSlug ) {
-			cartItem = getCartItemForPlan( planSlug );
-		}
-
-		if ( startsWith( product, 'theme' ) ) {
-			cartMeta = product.split( ':' )[ 1 ];
-			cartItem = themeItem( cartMeta );
-		}
-
-		if ( startsWith( product, 'domain-mapping' ) ) {
-			cartMeta = product.split( ':' )[ 1 ];
-			cartItem = domainMapping( { domain: cartMeta } );
-		}
-
-		if ( startsWith( product, 'concierge-session' ) ) {
-			cartItem = ! hasConciergeSession( cart ) && conciergeSessionItem();
-		}
-		// Search product
-		if ( JETPACK_SEARCH_PRODUCTS.includes( product ) ) {
-			cartItem = null;
-			if ( isJetpackNotAtomic ) {
-				cartItem = product.includes( 'monthly' )
-					? jetpackProductItem( PRODUCT_JETPACK_SEARCH_MONTHLY )
-					: jetpackProductItem( PRODUCT_JETPACK_SEARCH );
-			} else {
-				cartItem = product.includes( 'monthly' )
-					? jetpackProductItem( PRODUCT_WPCOM_SEARCH_MONTHLY )
-					: jetpackProductItem( PRODUCT_WPCOM_SEARCH );
-			}
-		}
-		// non-Search product
-		else if ( JETPACK_PRODUCTS_LIST.includes( product ) && isJetpackNotAtomic ) {
-			cartItem = jetpackProductItem( product );
-		}
-
-		if ( cartItem ) {
-			addItem( cartItem );
-		}
-	}
-
-	redirectIfEmptyCart() {
-		if ( this.state.isRedirecting ) {
-			return true;
-		}
-
-		const { selectedSiteSlug, transaction, returnToBlockEditor, returnToHome } = this.props;
-
-		if ( ! transaction ) {
-			return true;
-		}
-
-		if ( ! this.state.previousCart && this.props.product ) {
-			// the plan hasn't been added to the cart yet
-			return false;
-		}
-
-		if (
-			! this.props.cart.hasLoadedFromServer ||
-			! isEmpty( getAllCartItems( this.props.cart ) )
-		) {
-			return false;
-		}
-
-		if ( SUBMITTING_WPCOM_REQUEST === transaction.step.name ) {
-			return false;
-		}
-
-		if ( RECEIVED_WPCOM_RESPONSE === transaction.step.name && isEmpty( transaction.errors ) ) {
-			// If the cart is emptied by the server after the transaction is
-			// complete without errors, do not redirect as we're waiting for
-			// some post-transaction requests to complete.
-			return false;
-		}
-
-		let redirectTo = '/plans/';
-
-		if ( this.state.previousCart ) {
-			redirectTo = getExitCheckoutUrl(
-				this.state.previousCart,
-				selectedSiteSlug,
-				this.props.upgradeIntent,
-				this.props.redirectTo,
-				returnToBlockEditor,
-				returnToHome,
-				this.props.previousRoute
-			);
-		}
-
-		this.setState( { isRedirecting: true } );
-		page.redirect( redirectTo );
-
-		return true;
 	}
 
 	getUrlWithQueryParam( url, queryParams ) {
@@ -454,7 +169,6 @@ export class Checkout extends React.Component {
 	 *
 	 * @param {string} pendingOrReceiptId The receipt id for the transaction
 	 */
-
 	setDestinationIfEcommPlan( pendingOrReceiptId ) {
 		const { cart, selectedSiteSlug } = this.props;
 
@@ -788,196 +502,23 @@ export class Checkout extends React.Component {
 		page( redirectPath );
 	};
 
-	content() {
-		const {
-			selectedSite,
-			transaction,
-			cart,
-			cards,
-			productsList,
-			setHeaderText,
-			userCountryCode,
-			infoMessage,
-		} = this.props;
-
-		if ( this.isLoading() ) {
-			return <SecurePaymentFormPlaceholder />;
-		}
-
-		if ( config.isEnabled( 'async-payments' ) && hasPendingPayment( this.props.cart ) ) {
-			return <PendingPaymentBlocker />;
-		}
-
-		if ( this.needsDomainDetails() ) {
-			return (
-				<DomainDetailsForm
-					cart={ cart }
-					productsList={ productsList }
-					userCountryCode={ userCountryCode }
-				/>
-			);
-		}
-
-		return (
-			<SecurePaymentForm
-				cart={ cart }
-				transaction={ transaction }
-				cards={ cards }
-				products={ productsList }
-				selectedSite={ selectedSite }
-				setHeaderText={ setHeaderText }
-				redirectTo={ this.getCheckoutCompleteRedirectPath }
-				handleCheckoutCompleteRedirect={ this.handleCheckoutCompleteRedirect }
-				handleCheckoutExternalRedirect={ this.handleCheckoutExternalRedirect }
-				infoMessage={ infoMessage }
-			>
-				{ this.renderSubscriptionLengthPicker() }
-			</SecurePaymentForm>
-		);
-	}
-
-	renderSubscriptionLengthPicker() {
-		const planInCart = this.getPlanProducts()[ 0 ];
-		if ( ! planInCart ) {
-			return false;
-		}
-
-		const currentPlanSlug = this.props.selectedSite.plan.product_slug;
-		const chosenPlan = getPlan( planInCart.product_slug );
-
-		// Only render this for WP.com plans
-		if ( chosenPlan.group !== GROUP_WPCOM ) {
-			return false;
-		}
-
-		// Don't render when we're renewing a plan. Stick with the current period.
-		if ( planInCart.product_slug === currentPlanSlug ) {
-			return false;
-		}
-
-		const availableTerms = findPlansKeys( {
-			group: chosenPlan.group,
-			type: chosenPlan.type,
-		} ).filter( ( planSlug ) => getPlan( planSlug ).availableFor( currentPlanSlug ) );
-
-		if ( availableTerms.length < 2 ) {
-			return false;
-		}
-
-		return (
-			<React.Fragment>
-				<SubscriptionLengthPicker
-					cart={ this.props.cart }
-					plans={ availableTerms }
-					initialValue={ planInCart.product_slug }
-					onChange={ this.handleTermChange }
-					shouldShowTax={ shouldShowTax( this.props.cart ) }
-					key="picker"
-				/>
-			</React.Fragment>
-		);
-	}
-
-	handleTermChange = ( { value: planSlug } ) => {
-		const product = this.getPlanProducts()[ 0 ];
-		const cartItem = getCartItemForPlan( planSlug, {
-			domainToBundle: get( product, 'extra.domain_to_bundle', '' ),
-		} );
-		recordTracksEvent( 'calypso_signup_plan_select', {
-			product_slug: cartItem.product_slug,
-			free_trial: cartItem.free_trial,
-			from_section: 'checkout',
-		} );
-		replaceItem( product, cartItem );
-	};
-
-	isLoading() {
-		const isLoadingCart = ! this.props.cart.hasLoadedFromServer;
-		const isLoadingProducts = this.props.isProductsListFetching;
-		const isLoadingPlans = this.props.isPlansListFetching;
-		const isLoadingSitePlans = this.props.isSitePlansListFetching;
-		const isCartSettled = this.state.cartSettled;
-
-		return (
-			isLoadingCart || isLoadingProducts || isLoadingPlans || isLoadingSitePlans || ! isCartSettled
-		);
-	}
-
-	needsDomainDetails() {
-		const { cart, transaction } = this.props;
-
-		if ( cart && hasOnlyRenewalItems( cart ) ) {
-			return false;
-		}
-
-		return (
-			cart &&
-			transaction &&
-			! hasDomainDetails( transaction ) &&
-			( hasDomainRegistration( cart ) || hasGoogleApps( cart ) || hasTransferProduct( cart ) )
-		);
-	}
-
 	render() {
-		const { plan, product, purchaseId, selectedFeature, selectedSiteSlug } = this.props;
-
-		let analyticsPath = '';
-		let analyticsProps = {};
-		if ( purchaseId && product ) {
-			analyticsPath = '/checkout/:product/renew/:purchase_id/:site';
-			analyticsProps = { product, purchase_id: purchaseId, site: selectedSiteSlug };
-		} else if ( selectedFeature && plan ) {
-			analyticsPath = '/checkout/features/:feature/:site/:plan';
-			analyticsProps = { feature: selectedFeature, plan, site: selectedSiteSlug };
-		} else if ( selectedFeature && ! plan ) {
-			analyticsPath = '/checkout/features/:feature/:site';
-			analyticsProps = { feature: selectedFeature, site: selectedSiteSlug };
-		} else if ( product && ! purchaseId ) {
-			analyticsPath = '/checkout/:site/:product';
-			analyticsProps = { product, site: selectedSiteSlug };
-		} else if ( selectedSiteSlug ) {
-			analyticsPath = '/checkout/:site';
-			analyticsProps = { site: selectedSiteSlug };
-		} else {
-			analyticsPath = '/checkout/no-site';
-		}
-
-		if ( this.props.children ) {
-			this.props.setHeaderText( '' );
-			const children = React.Children.map( this.props.children, ( child ) => {
-				return React.cloneElement( child, {
-					cart: this.props.cart,
-					cards: this.props.cards,
-					isFetchingStoredCards: this.props.isFetchingStoredCards,
-					handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
-				} );
+		this.props.setHeaderText( '' );
+		const children = React.Children.map( this.props.children, ( child ) => {
+			return React.cloneElement( child, {
+				cart: this.props.cart,
+				cards: this.props.cards,
+				isFetchingStoredCards: this.props.isFetchingStoredCards,
+				handleCheckoutCompleteRedirect: this.handleCheckoutCompleteRedirect,
 			} );
+		} );
 
-			return (
-				<>
-					<QueryStoredCards />
-					{ children }
-				</>
-			);
-		}
-
-		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
-			<div className="main main-column" role="main">
-				<div className="checkout">
-					<QuerySitePlans siteId={ this.props.selectedSiteId } />
-					<QueryPlans />
-					<QueryProducts />
-					<QueryContactDetailsCache />
-					<QueryStoredCards />
-
-					<PageViewTracker path={ analyticsPath } title="Checkout" properties={ analyticsProps } />
-
-					{ this.content() }
-				</div>
-			</div>
+			<>
+				<QueryStoredCards />
+				{ children }
+			</>
 		);
-		/* eslint-enable wpcalypso/jsx-classname-namespace */
 	}
 }
 
@@ -991,15 +532,8 @@ export default connect(
 			selectedSite: getSelectedSite( state ),
 			selectedSiteId,
 			selectedSiteSlug: getSelectedSiteSlug( state ),
-			isNewlyCreatedSite: isNewSite( state, selectedSiteId ),
-			contactDetails: getContactDetailsCache( state ),
-			userCountryCode: getCurrentUserCountryCode( state ),
 			isEligibleForSignupDestination: isEligibleForSignupDestination( props.cart ),
-			productsList: getProductsList( state ),
-			isProductsListFetching: isProductsListFetching( state ),
-			isPlansListFetching: isRequestingPlans( state ),
 			isFetchingStoredCards: isFetchingStoredCards( state ),
-			isSitePlansListFetching: isRequestingSitePlans( state, selectedSiteId ),
 			planSlug: getUpgradePlanSlugFromPath( state, selectedSiteId, props.product ),
 			isJetpackNotAtomic:
 				isJetpackSite( state, selectedSiteId ) && ! isAtomicSite( state, selectedSiteId ),

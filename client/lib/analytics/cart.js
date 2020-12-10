@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { differenceWith, get, isEqual, each, omit } from 'lodash';
+import { differenceWith, isEqual, each, omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,15 +29,4 @@ export function recordAddEvent( cartItem ) {
 
 function recordRemoveEvent( cartItem ) {
 	recordTracksEvent( 'calypso_cart_product_remove', removeNestedProperties( cartItem ) );
-}
-
-export function recordUnrecognizedPaymentMethod( action ) {
-	const payment = get( action, 'payment' );
-
-	const eventArgs = {
-		payment_method: get( payment, 'paymentMethod', 'missing' ),
-		extra: JSON.stringify( payment ? omit( payment, 'paymentMethod' ) : action ),
-	};
-
-	recordTracksEvent( 'calypso_cart_unrecognized_payment_method', eventArgs );
 }
