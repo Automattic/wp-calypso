@@ -102,9 +102,13 @@ export interface PaymentProcessorProp {
 
 export type PaymentCompleteCallback = ( {
 	paymentMethodId,
-}: {
+	transactionLastResponse,
+}: PaymentCompleteCallbackArguments ) => void;
+
+export type PaymentCompleteCallbackArguments = {
 	paymentMethodId: string | null;
-} ) => void;
+	transactionLastResponse: PaymentProcessorResponseData;
+};
 
 export type PaymentProcessorResponseData = unknown;
 
