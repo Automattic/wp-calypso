@@ -35,10 +35,13 @@ menuItems.push(
 		type: 'separator',
 	},
 	{
+		role: 'zoomIn',
+	},
+	{
 		// enable ZoomIn shortcut to work both with and without Shift
 		// the default accelerator added by Electron is CommandOrControl+Shift+=
 		role: 'zoomIn',
-		visible: true,
+		visible: false,
 		acceleratorWorksWhenHidden: true,
 		accelerator: 'CommandOrControl+=',
 	},
