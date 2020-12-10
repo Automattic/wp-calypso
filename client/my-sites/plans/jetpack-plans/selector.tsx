@@ -9,10 +9,10 @@ import { useDispatch, useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
-import PlansFilterBar from './plans-filter-bar';
-import { EXTERNAL_PRODUCTS_LIST } from './constants';
-import { checkout } from './utils';
-import QueryProducts from './query-products';
+import PlansFilterBar from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar';
+import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { checkout } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import QueryProducts from 'calypso/my-sites/plans/jetpack-plans/query-products';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { getProductYearlyVariant, isJetpackPlan } from 'calypso/lib/products-values';
@@ -23,17 +23,25 @@ import Main from 'calypso/components/main';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QuerySites from 'calypso/components/data/query-sites';
 import QueryProductsList from 'calypso/components/data/query-products-list';
-import { getGridComponent, showFilterBarInSelector } from './iterations';
+import {
+	getGridComponent,
+	showFilterBarInSelector,
+} from 'calypso/my-sites/plans/jetpack-plans/iterations';
 
 /**
  * Type dependencies
  */
-import type { Duration, SelectorPageProps, SelectorProduct, PurchaseCallback } from './types';
+import type {
+	Duration,
+	SelectorPageProps,
+	SelectorProduct,
+	PurchaseCallback,
+} from 'calypso/my-sites/plans/jetpack-plans/types';
 import type { ProductSlug } from 'calypso/lib/products-values/types';
 
 import './style.scss';
 
-const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
+const SelectorPage: React.FC< SelectorPageProps > = ( {
 	defaultDuration = TERM_ANNUALLY,
 	siteSlug: siteSlugProp,
 	rootUrl,
@@ -132,7 +140,7 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 	const viewTrackerProps = siteId ? { site: siteSlug } : {};
 
 	return (
-		<Main className="selector-alt__main" wideLayout>
+		<Main className="selector__main" wideLayout>
 			<PageViewTracker path={ viewTrackerPath } properties={ viewTrackerProps } title="Plans" />
 
 			{ header }
@@ -160,4 +168,4 @@ const SelectorPageAlt: React.FC< SelectorPageProps > = ( {
 	);
 };
 
-export default SelectorPageAlt;
+export default SelectorPage;
