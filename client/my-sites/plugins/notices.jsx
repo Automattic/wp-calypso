@@ -17,7 +17,6 @@ import isShallowEqual from '@wordpress/is-shallow-equal';
 import notices from 'calypso/notices';
 import { filterNotices } from 'calypso/lib/plugins/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { reduxDispatch } from 'calypso/lib/redux-bridge';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
 
@@ -93,17 +92,17 @@ class PluginNotices extends React.Component {
 
 		if ( currentNotices.completed.length > 0 && currentNotices.errors.length > 0 ) {
 			notices.warning( this.erroredAndCompletedMessage( currentNotices ), {
-				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed', 'error' ) ),
+				onRemoveCallback: () => this.props.removePluginStatuses( 'completed', 'error' ),
 			} );
 		} else if ( currentNotices.errors.length > 0 ) {
 			notices.error( this.getMessage( currentNotices.errors, this.errorMessage, 'error' ), {
-				onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'error' ) ),
+				onRemoveCallback: () => this.props.removePluginStatuses( 'error' ),
 			} );
 		} else if ( currentNotices.completed.length > 0 ) {
 			notices.success(
 				this.getMessage( currentNotices.completed, this.successMessage, 'completed' ),
 				{
-					onRemoveCallback: () => reduxDispatch( removePluginStatuses( 'completed' ) ),
+					onRemoveCallback: () => this.props.removePluginStatuses( 'completed' ),
 					showDismiss: true,
 				}
 			);
@@ -975,9 +974,14 @@ class PluginNotices extends React.Component {
 	}
 }
 
-export default connect( ( state ) => ( {
-	completedNotices: getPluginStatusesByType( state, 'completed' ),
-	errorNotices: getPluginStatusesByType( state, 'error' ),
-	inProgressNotices: getPluginStatusesByType( state, 'inProgress' ),
-	siteId: getSelectedSiteId( state ),
-} ) )( PluginNotices );
+export default connect(
+	( state ) => ( {
+		completedNotices: getPluginStatusesByType( state, 'completed' ),
+		errorNotices: getPluginStatusesByType( state, 'error' ),
+		inProgressNotices: getPluginStatusesByType( state, 'inProgress' ),
+		siteId: getSelectedSiteId( state ),
+	} ),
+	{
+		removePluginStatuses,
+	}
+)( PluginNotices );
