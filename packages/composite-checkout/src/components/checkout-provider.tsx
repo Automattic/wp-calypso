@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ThemeProvider } from 'emotion-theming';
 import debugFactory from 'debug';
 import { useI18n } from '@automattic/react-i18n';
@@ -28,7 +28,7 @@ import { CheckoutProviderProps, FormStatus, PaymentMethod } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout-provider' );
 
-export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( props ) => {
+export function CheckoutProvider( props: CheckoutProviderProps ): JSX.Element {
 	const {
 		total,
 		items,
@@ -137,7 +137,7 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 			</ThemeProvider>
 		</CheckoutErrorBoundary>
 	);
-};
+}
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop(): void {}
