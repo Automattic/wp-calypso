@@ -34,12 +34,15 @@ export default function DomainUpsellStep( props ) {
 		signupDependencies: { siteSlug },
 	} = props;
 
-	const subHeaderText = translate(
-		'You can select an easier-to-remember name below at a one-time discounted price:'
-	);
 	const headerText = translate( 'Congrats, %s is almost ready!', {
 		args: [ siteSlug ],
 	} );
+	const subHeaderText = translate(
+		'You can buy a custom domain to make your site address easier to share and remember. When a visitor uses your custom domain they will be re-directed to %s',
+		{
+			args: [ siteSlug ],
+		}
+	);
 
 	return (
 		<div className="domain-upsell__step-secton-wrapper">
@@ -181,7 +184,7 @@ function RecommendedDomains( props ) {
 			</Card>
 			<div className="domain-upsell__continue-link">
 				<Button compact borderless plain onClick={ handleSkipButtonClick }>
-					{ translate( 'No thanks, continue to %s', {
+					{ translate( `No thanks, I'll stick with %s`, {
 						args: [ siteSlug ],
 					} ) }
 				</Button>
