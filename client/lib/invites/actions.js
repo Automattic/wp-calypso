@@ -55,7 +55,6 @@ export function generateInviteLinks( siteId ) {
 	debug( 'generateInviteLinks', siteId );
 
 	return ( dispatch ) => {
-		debug( 'generateInviteLinks API request', siteId );
 		wpcom
 			.undocumented()
 			.site( siteId )
