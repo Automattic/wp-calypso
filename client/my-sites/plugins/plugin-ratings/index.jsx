@@ -49,7 +49,7 @@ class PluginRatings extends React.Component {
 		);
 	}
 
-	renderRatingTier( ratingTier ) {
+	renderRatingTier = ( ratingTier ) => {
 		const { ratings, slug, numRatings } = this.props;
 		const numberOfRatings = ratings && ratings[ ratingTier ] ? ratings[ ratingTier ] : 0;
 		const onClickPluginRatingsLink = () => {
@@ -82,7 +82,7 @@ class PluginRatings extends React.Component {
 				</span>
 			</a>
 		);
-	}
+	};
 
 	renderDownloaded() {
 		let downloaded = this.props.downloaded;
