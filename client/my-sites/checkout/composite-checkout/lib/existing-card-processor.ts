@@ -11,7 +11,6 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
  */
 import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
 import { wpcomTransaction } from '../payment-method-helpers';
-import saveTransactionResponseToWpcomStore from './save-transaction-response-to-wpcom-store';
 import type { CardProcessorOptions } from '../types/payment-processors';
 import type { TransactionRequestWithLineItems } from '../types/transaction-endpoint';
 
@@ -29,7 +28,6 @@ export default async function existingCardProcessor(
 		throw new Error( 'Stripe configuration is required' );
 	}
 	return submitExistingCardPayment( transactionData, dataForProcessor )
-		.then( saveTransactionResponseToWpcomStore )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
