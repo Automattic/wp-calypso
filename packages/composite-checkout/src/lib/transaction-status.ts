@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { useCallback, useContext, useMemo, useReducer } from 'react';
+import debugFactory from 'debug';
 
 /**
  * Internal dependencies
@@ -15,8 +16,13 @@ import {
 	TransactionStatusPayloads,
 } from '../types';
 
+const debug = debugFactory( 'composite-checkout:transaction-status' );
+
 export function useTransactionStatus(): TransactionStatusManager {
 	const { transactionStatusManager } = useContext( CheckoutContext );
+	if ( ! transactionStatusManager ) {
+		throw new Error( 'useTransactionStatus can only be called inside CheckoutProvider' );
+	}
 	return transactionStatusManager;
 }
 
