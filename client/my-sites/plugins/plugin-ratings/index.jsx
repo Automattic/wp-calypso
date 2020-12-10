@@ -114,7 +114,7 @@ class PluginRatings extends React.Component {
 			return null;
 		}
 
-		const tierViews = ratingTiers.map( ( tierLevel ) => this.renderRatingTier( tierLevel ) );
+		const tierViews = ratingTiers.map( this.renderRatingTier );
 		return (
 			<div className="plugin-ratings">
 				<div className="plugin-ratings__rating-stars">
