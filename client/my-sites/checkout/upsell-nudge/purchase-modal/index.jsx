@@ -2,32 +2,39 @@
  * External dependencies
  */
 import React, { useState } from 'react';
+import { Dialog } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
+import { CheckoutProvider } from '@automattic/composite-checkout';
 
 /**
  * Internal dependencies
  */
-import { Dialog } from '@automattic/components';
 import { useSubmitTransaction } from './util';
 import { BEFORE_SUBMIT } from './constants';
 import Content from './content';
 import Placeholder from './placeholder';
+import useCreatePaymentCompleteCallback from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
+import existingCardProcessor from 'calypso/my-sites/checkout/composite-checkout/lib/existing-card-processor';
 
 /**
  * Style dependencies
  */
 import './style.scss';
 
-export function PurchaseModal( { cart, cards, isCartUpdating, onComplete, onClose, siteSlug } ) {
+const noop = () => null;
+
+export function PurchaseModal( { cart, cards, isCartUpdating, onClose, siteSlug } ) {
 	const translate = useTranslate();
 	const [ step, setStep ] = useState( BEFORE_SUBMIT );
 	const submitTransaction = useSubmitTransaction( {
 		cart,
 		setStep,
 		storedCard: cards?.[ 0 ],
-		onComplete,
 		onClose,
 		successMessage: translate( 'Your purchase has been completed!' ),
+	} );
+	const onComplete = useCreatePaymentCompleteCallback( {
+		isComingFromUpsell: true,
 	} );
 	const contentProps = {
 		cards,
@@ -39,8 +46,19 @@ export function PurchaseModal( { cart, cards, isCartUpdating, onComplete, onClos
 	};
 
 	return (
-		<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
-			{ isCartUpdating ? <Placeholder /> : <Content { ...contentProps } /> }
-		</Dialog>
+		<CheckoutProvider
+			paymentMethods={ {
+				'existing-card': existingCardProcessor,
+			} }
+			onPaymentComplete={ onComplete }
+			showErrorMessage={ noop }
+			showInfoMessage={ noop }
+			showSuccessMessage={ noop }
+			paymentProcessors={ noop }
+		>
+			<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
+				{ isCartUpdating ? <Placeholder /> : <Content { ...contentProps } /> }
+			</Dialog>
+		</CheckoutProvider>
 	);
 }
