@@ -112,14 +112,10 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	}, [ hasCredentials, isRequestingCredentials ] );
 
 	const currentStep = useMemo( (): Step => {
-		if ( statusState === StatusState.Connected ) {
-			if ( 'edit' === action ) {
-				if ( 'pending' === formSubmissionStatus ) {
-					return Step.Verification;
-				}
-				return Step.ConnectedEdit;
-			}
-			return Step.Connected;
+		if ( 'pending' === formSubmissionStatus ) {
+			return Step.Verification;
+		} else if ( statusState === StatusState.Connected ) {
+			return 'edit' === action ? Step.ConnectedEdit : Step.Connected;
 		} else if ( undefined === host ) {
 			return Step.HostSelection;
 		}
