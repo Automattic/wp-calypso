@@ -35,10 +35,27 @@ const emptyTotal: LineItem = {
 	label: 'Total',
 };
 
-export function CheckoutProvider( props: CheckoutProviderProps ): JSX.Element {
-	const {
-		total = emptyTotal,
-		items = [],
+export function CheckoutProvider( {
+	total = emptyTotal,
+	items = [],
+	onPaymentComplete,
+	showErrorMessage,
+	showInfoMessage,
+	showSuccessMessage,
+	redirectToUrl,
+	theme,
+	paymentMethods,
+	paymentProcessors,
+	registry,
+	onEvent,
+	isLoading,
+	isValidating,
+	initiallySelectedPaymentMethodId = null,
+	children,
+}: CheckoutProviderProps ): JSX.Element {
+	const propsToValidate = {
+		total,
+		items,
 		onPaymentComplete,
 		showErrorMessage,
 		showInfoMessage,
@@ -51,9 +68,9 @@ export function CheckoutProvider( props: CheckoutProviderProps ): JSX.Element {
 		onEvent,
 		isLoading,
 		isValidating,
+		initiallySelectedPaymentMethodId,
 		children,
-		initiallySelectedPaymentMethodId = null,
-	} = props;
+	};
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
 		initiallySelectedPaymentMethodId
 	);
@@ -131,7 +148,7 @@ export function CheckoutProvider( props: CheckoutProviderProps ): JSX.Element {
 	);
 	return (
 		<CheckoutErrorBoundary errorMessage={ errorMessage } onError={ onError }>
-			<CheckoutProviderPropValidator propsToValidate={ props } />
+			<CheckoutProviderPropValidator propsToValidate={ propsToValidate } />
 			<ThemeProvider theme={ theme || defaultTheme }>
 				<RegistryProvider value={ registryRef.current }>
 					<LineItemsProvider items={ items } total={ total }>
