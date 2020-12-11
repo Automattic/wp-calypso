@@ -380,16 +380,16 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 									plan && (
 										<FocusedLaunchSummaryItem
 											isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
-											onClick={ () => plan && setPlan( plan ) }
-											isSelected={ plan && isPlanSelected( plan ) }
+											onClick={ () => setPlan( plan ) }
+											isSelected={ isPlanSelected( plan ) }
 											readOnly={ plan.isFree && ( hasPaidDomain || selectedPaidDomain ) }
 										>
 											<LeadingContentSide
 												label={
 													/* translators: %s is WordPress.com plan name (eg: Premium Plan) */
-													sprintf( __( '%s Plan', __i18n_text_domain__ ), plan?.title ?? '' )
+													sprintf( __( '%s Plan', __i18n_text_domain__ ), plan.title ?? '' )
 												}
-												badgeText={ plan?.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
+												badgeText={ plan.isPopular ? __( 'Popular', __i18n_text_domain__ ) : '' }
 											/>
 											{ plan.isFree ? (
 												<TrailingContentSide
@@ -401,7 +401,7 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 												</TrailingContentSide>
 											) : (
 												<TrailingContentSide nodeType="PRICE">
-													<span>{ plan && planPrices[ plan?.storeSlug ] }</span>
+													<span>{ planPrices[ plan.storeSlug ] }</span>
 													<span>
 														{
 															// translators: /mo is short for "per-month"
