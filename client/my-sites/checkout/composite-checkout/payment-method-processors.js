@@ -91,9 +91,13 @@ export async function genericRedirectProcessor(
 
 export async function weChatProcessor(
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const paymentMethodId = 'wechat';
+	recordRedirectTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId,
+	} );
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
 		true
@@ -284,12 +288,20 @@ export async function fullCreditsProcessor(
 	).then( makeSuccessResponse );
 }
 
-export async function payPalProcessor(
-	submitData,
-	{ getThankYouUrl, couponItem, includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
-	const { createUserAndSiteBeforeTransaction } = transactionOptions;
+export async function payPalProcessor( submitData, transactionOptions ) {
+	const {
+		getThankYouUrl,
+		couponItem,
+		includeDomainDetails,
+		includeGSuiteDetails,
+		createUserAndSiteBeforeTransaction,
+		reduxDispatch,
+	} = transactionOptions;
+	recordRedirectTransactionBeginAnalytics( {
+		reduxDispatch,
+		paymentMethodId: 'paypal',
+	} );
+
 	const { protocol, hostname, port, pathname } = parseUrl( window.location.href, true );
 
 	const successUrl = resolveUrl( window.location.href, getThankYouUrl() );
