@@ -15,6 +15,11 @@ import StylePreviewPage from '../lib/pages/gutenboarding/style-preview-page.js';
 import PlansPage from '../lib/pages/gutenboarding/plans-page.js';
 import DomainsPage from '../lib/pages/gutenboarding/domains-page.js';
 import FeaturesPage from '../lib/pages/gutenboarding/features-page.js';
+import SignupPage from '../lib/pages/gutenboarding/signup-page.js';
+
+import DeleteAccountFlow from '../lib/flows/delete-account-flow';
+
+import GutenbergEditorComponent from '../lib/gutenberg/gutenberg-editor-component';
 
 import * as driverManager from '../lib/driver-manager.js';
 import * as dataHelper from '../lib/data-helper.js';
@@ -22,6 +27,8 @@ import * as dataHelper from '../lib/data-helper.js';
 const mochaTimeOut = config.get( 'mochaTimeoutMS' );
 const startBrowserTimeoutMS = config.get( 'startBrowserTimeoutMS' );
 const screenSize = driverManager.currentScreenSize();
+const signupInboxId = config.get( 'signupInboxId' );
+const password = config.get( 'passwordForNewTestSignUps' );
 
 let driver;
 
@@ -32,7 +39,9 @@ before( async function () {
 
 describe( 'Gutenboarding: (' + screenSize + ')', function () {
 	this.timeout( mochaTimeOut );
-	describe( 'Visit Gutenboarding page as a new user @parallel @canary', function () {
+	describe( 'Visit Gutenboarding page as a new user and create a site @signup @parallel @canary', function () {
+		const accountName = dataHelper.getNewBlogName();
+		const emailAddress = dataHelper.getEmailAddress( accountName, signupInboxId );
 		const siteTitle = dataHelper.randomPhrase();
 
 		before( async function () {
@@ -68,21 +77,38 @@ describe( 'Gutenboarding: (' + screenSize + ')', function () {
 		} );
 
 		step( 'Can see Feature picker and skip', async function () {
-			const featureswPage = await FeaturesPage.Expect( driver );
-			await featureswPage.skipStep();
+			const featuresPage = await FeaturesPage.Expect( driver );
+			await featuresPage.skipStep();
 		} );
 
-		step( 'Can see Plans Grid with no selected plan', async function () {
+		step( 'Can see Plans Grid with no selected plan and select Free plan', async function () {
 			const plansPage = await PlansPage.Expect( driver );
 			const hasSelectedPlan = await plansPage.hasSelectedPlan();
 			assert.strictEqual( hasSelectedPlan, false, 'There is a preselected plan' );
+			await plansPage.expandAllPlans();
+			await plansPage.selectFreePlan();
+		} );
+
+		step( 'Can see Signup form and create account', async function () {
+			const signupPage = await SignupPage.Expect( driver );
+			await signupPage.enterEmail( emailAddress );
+			await signupPage.enterPassword( password );
+			await signupPage.createAccount();
+		} );
+
+		step( 'Can see block editor', async function () {
+			const gEditorComponent = await GutenbergEditorComponent.Expect( driver );
+			await gEditorComponent.initEditor();
+		} );
+
+		after( 'Can delete our newly created account', async function () {
+			return await new DeleteAccountFlow( driver ).deleteAccount();
 		} );
 	} );
 
 	describe( 'Visit Gutenboarding page as a logged in user', function () {
 		step( 'Can log in as user', async function () {
-			this.loginFlow = new LoginFlow( driver );
-			this.loginFlow.login();
+			await new LoginFlow( driver ).login();
 		} );
 		step( 'Can visit Gutenboarding', async function () {
 			await NewPage.Visit( driver );
