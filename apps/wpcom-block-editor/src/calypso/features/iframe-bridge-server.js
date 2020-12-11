@@ -560,6 +560,30 @@ function handleCloseEditor( calypsoPort ) {
 
 	handleCloseInLegacyEditors( dispatchAction );
 
+	// Add back to dashboard fill for Site Editor when edit-site package is available.
+	if ( editSitePackage ) {
+		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
+			render: () => {
+				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
+				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
+					return null;
+				}
+
+				return (
+					<SiteEditorDashboardFill>
+						<NavigationBackButton
+							backButtonLabel={ __( 'Dashboard' ) }
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className="edit-site-navigation-panel__back-to-dashboard"
+							href={ calypsoifyGutenberg.closeUrl }
+							onClick={ dispatchAction }
+						/>
+					</SiteEditorDashboardFill>
+				);
+			},
+		} );
+	}
+
 	if ( typeof MainDashboardButton !== 'undefined' ) {
 		return;
 	}
@@ -1094,26 +1118,3 @@ $( () => {
 	//signal module loaded
 	sendMessage( { action: 'loaded' } );
 } );
-
-// Add back to dashboard fill for Site Editor when edit-site package is available.
-if ( editSitePackage ) {
-	registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
-		render: () => {
-			const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
-			if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
-				return null;
-			}
-
-			return (
-				<SiteEditorDashboardFill>
-					<NavigationBackButton
-						backButtonLabel={ __( 'Dashboard' ) }
-						// eslint-disable-next-line wpcalypso/jsx-classname-namespace
-						className="edit-site-navigation-panel__back-to-dashboard"
-						href={ calypsoifyGutenberg.closeUrl }
-					/>
-				</SiteEditorDashboardFill>
-			);
-		},
-	} );
-}
