@@ -29,9 +29,7 @@ import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
-import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
+import { recordTransactionBeginAnalytics } from '../lib/analytics';
 
 const { select } = defaultRegistry;
 
@@ -66,7 +64,7 @@ export async function genericRedirectProcessor(
 		query: cancelUrlQuery,
 	} );
 
-	recordRedirectTransactionBeginAnalytics( {
+	recordTransactionBeginAnalytics( {
 		paymentMethodId,
 		reduxDispatch,
 	} );
@@ -94,7 +92,7 @@ export async function weChatProcessor(
 	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const paymentMethodId = 'wechat';
-	recordRedirectTransactionBeginAnalytics( {
+	recordTransactionBeginAnalytics( {
 		reduxDispatch,
 		paymentMethodId,
 	} );
@@ -148,7 +146,7 @@ export async function weChatProcessor(
 
 export async function applePayProcessor( submitData, transactionOptions ) {
 	const { includeDomainDetails, includeGSuiteDetails, reduxDispatch } = transactionOptions;
-	recordApplePayTransactionBeginAnalytics( { reduxDispatch } );
+	recordTransactionBeginAnalytics( { reduxDispatch, paymentMethodId: 'apple-pay' } );
 	return submitApplePayPayment(
 		{
 			...submitData,
@@ -295,7 +293,7 @@ export async function payPalProcessor( submitData, transactionOptions ) {
 		createUserAndSiteBeforeTransaction,
 		reduxDispatch,
 	} = transactionOptions;
-	recordRedirectTransactionBeginAnalytics( {
+	recordTransactionBeginAnalytics( {
 		reduxDispatch,
 		paymentMethodId: 'paypal',
 	} );
@@ -327,61 +325,4 @@ export async function payPalProcessor( submitData, transactionOptions ) {
 		wpcomPayPalExpress,
 		transactionOptions
 	).then( makeRedirectResponse );
-}
-
-function recordRedirectTransactionBeginAnalytics( { reduxDispatch, paymentMethodId } ) {
-	try {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_form_submit', {
-				credits: null,
-				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-			} )
-		);
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-				credits: null,
-				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-			} )
-		);
-		const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
-		return reduxDispatch(
-			recordTracksEvent(
-				`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
-				{}
-			)
-		);
-	} catch ( errorObject ) {
-		recordCompositeCheckoutErrorDuringAnalytics( {
-			reduxDispatch,
-			errorObject,
-			failureDescription: 'redirect',
-		} );
-	}
-}
-
-function recordApplePayTransactionBeginAnalytics( { reduxDispatch } ) {
-	try {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_form_submit', {
-				credits: null,
-				payment_method: 'WPCOM_Billing_Web_Payment',
-			} )
-		);
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-				credits: null,
-				payment_method: 'WPCOM_Billing_Web_Payment',
-			} )
-		);
-		return reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
-		);
-	} catch ( errorObject ) {
-		recordCompositeCheckoutErrorDuringAnalytics( {
-			reduxDispatch,
-			errorObject,
-			failureDescription: 'apple-pay',
-		} );
-	}
 }
