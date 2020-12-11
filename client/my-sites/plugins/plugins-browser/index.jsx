@@ -319,7 +319,6 @@ export class PluginsBrowser extends Component {
 					: this.getPluginSingleListView( 'featured' ) }
 
 				{ this.getPluginSingleListView( 'popular' ) }
-				{ this.getPluginSingleListView( 'new' ) }
 			</span>
 		);
 	}
