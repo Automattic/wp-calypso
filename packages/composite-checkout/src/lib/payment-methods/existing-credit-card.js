@@ -11,7 +11,7 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { useFormStatus } from '../form-status';
 import PaymentLogo from './payment-logo.js';
@@ -112,14 +112,12 @@ function ExistingCardPayButton( {
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 
 	return (
 		<Button
 			disabled={ disabled }
 			onClick={ () => {
 				debug( 'submitting existing card payment' );
-				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 				onClick( 'existing-card', {
 					items,
 					name: cardholderName,

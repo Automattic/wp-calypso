@@ -13,6 +13,7 @@ import { createTransactionEndpointRequestPayloadFromLineItems } from './translat
 import { wpcomTransaction } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
 import type { ExistingCardTransactionRequestWithLineItems } from '../types/transaction-endpoint';
+import { recordTransactionBeginAnalytics } from './analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -20,6 +21,10 @@ export default async function existingCardProcessor(
 	transactionData: unknown,
 	dataForProcessor: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
+	recordTransactionBeginAnalytics( {
+		reduxDispatch: dataForProcessor.reduxDispatch,
+		paymentMethodId: 'card',
+	} );
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}

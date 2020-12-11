@@ -274,23 +274,6 @@ export default function createAnalyticsEventHandler( reduxDispatch ) {
 						recordTracksEvent( 'calypso_checkout_composite_full_credits_submit_clicked', {} )
 					);
 				}
-				case 'EXISTING_CARD_TRANSACTION_BEGIN': {
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_MoneyPress_Stored',
-						} )
-					);
-					reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-							credits: null,
-							payment_method: 'WPCOM_Billing_MoneyPress_Stored',
-						} )
-					);
-					return reduxDispatch(
-						recordTracksEvent( 'calypso_checkout_composite_existing_card_submit_clicked', {} )
-					);
-				}
 				case 'VALIDATE_DOMAIN_CONTACT_INFO': {
 					// TODO: Decide what to do here
 					return;
