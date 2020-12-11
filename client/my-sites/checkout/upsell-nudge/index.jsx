@@ -44,7 +44,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
-import { withPaymentCompleteCallback } from 'calypso/my-sites/checkout/composite-checkout/hooks/use-create-payment-complete-callback';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 
 /**
  * Style dependencies
@@ -231,10 +231,13 @@ export class UpsellNudge extends React.Component {
 		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
-		this.props.paymentCompleteCallback( {
-			paymentMethodId: null,
-			transactionLastResponse: { isComingFromUpsell: shouldHideUpsellNudges },
-		} );
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			cart: this.props.cart,
+			hideNudge: shouldHideUpsellNudges,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		page.redirect( url );
 	};
 
 	handleClickAccept = ( buttonAction ) => {
@@ -361,4 +364,4 @@ export default connect(
 	{
 		trackUpsellButtonClick,
 	}
-)( withShoppingCart( withPaymentCompleteCallback( localize( UpsellNudge ) ) ) );
+)( withShoppingCart( localize( UpsellNudge ) ) );
