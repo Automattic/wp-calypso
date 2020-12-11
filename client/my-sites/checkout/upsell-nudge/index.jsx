@@ -263,8 +263,11 @@ export class UpsellNudge extends React.Component {
 	};
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
-		const { cards, siteSlug, upsellType } = this.props;
+		const { product, cards, siteSlug, upsellType } = this.props;
 		const supportedUpsellTypes = [ 'concierge-quickstart-session', 'premium-plan-upgrade-upsell' ];
+		if ( ! product ) {
+			return false;
+		}
 
 		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			return false;
@@ -337,8 +340,15 @@ export default connect(
 			isMonthly: false,
 		} );
 		const isFetchingCards = isFetchingStoredCards( state );
-
 		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+		const productProperties = pick( getProductBySlug( state, productSlug ), [
+			'product_slug',
+			'product_id',
+		] );
+		const product =
+			productProperties.product_slug && productProperties.product_id
+				? createRequestCartProduct( productProperties )
+				: null;
 
 		return {
 			isFetchingStoredCards: isFetchingCards,
@@ -350,9 +360,7 @@ export default connect(
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			product: createRequestCartProduct(
-				pick( getProductBySlug( state, productSlug ), [ 'product_slug', 'product_id' ] )
-			),
+			product,
 			productCost: getProductCost( state, productSlug ),
 			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
