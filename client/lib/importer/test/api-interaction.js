@@ -1,8 +1,7 @@
 /**
  * External dependencies
  */
-import { expect } from 'chai';
-import { get, partial } from 'lodash';
+import nock from 'nock';
 
 /**
  * Internal dependencies
@@ -11,11 +10,9 @@ import { fetchState } from '../actions';
 import store from '../store';
 import Dispatcher from 'calypso/dispatcher';
 import { IMPORTS_STORE_RESET } from 'calypso/state/action-types';
-import { nock, useNock } from 'calypso/test-helpers/use-nock';
 
 const testSiteId = 'en.blog.wordpress.com';
-const fetchTestState = partial( fetchState, testSiteId );
-const hydratedState = () => get( store.get(), [ 'api', 'isHydrated' ] );
+const hydratedState = () => store.get().api.isHydrated;
 const resetStore = () => Dispatcher.handleViewAction( { type: IMPORTS_STORE_RESET } );
 
 const queuePayload = ( payload ) =>
@@ -24,37 +21,21 @@ const queuePayload = ( payload ) =>
 		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
 
 describe( 'Importer store', () => {
-	useNock();
-
 	beforeEach( resetStore );
 
 	describe( 'API integration', () => {
-		test( 'should hydrate if the API returns a blank body', () => {
-			return new Promise( ( done ) => {
-				expect( hydratedState(), 'before fetch' ).to.be.false;
-
-				queuePayload( 'no-imports' );
-				fetchTestState()
-					.then( () => {
-						expect( hydratedState(), 'after fetch' ).to.be.true;
-					} )
-					.then( done )
-					.catch( done );
-			} );
+		test( 'should hydrate if the API returns a blank body', async () => {
+			expect( hydratedState() ).toBe( false );
+			queuePayload( 'no-imports' );
+			await fetchState( testSiteId );
+			expect( hydratedState() ).toBe( true );
 		} );
 
-		test( 'should hydrate if the API returns a defunct importer', () => {
-			return new Promise( ( done ) => {
-				expect( hydratedState(), 'before fetch' ).to.be.false;
-
-				queuePayload( 'defunct-importer' );
-				fetchTestState()
-					.then( () => {
-						expect( hydratedState(), 'after fetch' ).to.be.true;
-					} )
-					.then( done )
-					.catch( done );
-			} );
+		test( 'should hydrate if the API returns a defunct importer', async () => {
+			expect( hydratedState() ).toBe( false );
+			queuePayload( 'defunct-importer' );
+			await fetchState( testSiteId );
+			expect( hydratedState() ).toBe( true );
 		} );
 	} );
 } );
