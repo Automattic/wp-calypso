@@ -122,6 +122,7 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 					</div>
 					<div className="plans-accordion-item__actions" hidden={ ! isOpen }>
 						<NextButton
+							data-e2e-button={ isFree ? 'freePlan' : 'paidPlan' }
 							onClick={ () => {
 								onSelect( slug );
 							} }
