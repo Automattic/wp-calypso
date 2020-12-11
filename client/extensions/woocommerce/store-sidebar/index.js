@@ -201,15 +201,23 @@ class StoreSidebar extends Component {
 	};
 
 	settings = () => {
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/settings' + siteSuffix;
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
 		const childLinks = [
 			'/store/settings/payments',
 			'/store/settings/shipping',
 			'/store/settings/taxes',
 			'/store/settings/email',
 		];
-		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		let link;
+		let selected;
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/admin.php?page=wc-settings';
+			selected = false;
+		} else {
+			link = '/store/settings' + siteSuffix;
+			selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		}
+
 		const classes = classNames( {
 			settings: true,
 			'is-placeholder': ! site,
