@@ -51,7 +51,9 @@ const BackupPage = ( { queryDate } ) => {
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
-	const selectedDate = useDateWithOffset( parsedQueryDate );
+	const selectedDate = useDateWithOffset( parsedQueryDate, {
+		keepLocalTime: true,
+	} );
 
 	return (
 		<div
