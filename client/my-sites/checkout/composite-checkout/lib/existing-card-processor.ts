@@ -21,10 +21,6 @@ export default async function existingCardProcessor(
 	transactionData: unknown,
 	dataForProcessor: PaymentProcessorOptions
 ): Promise< PaymentProcessorResponse > {
-	recordTransactionBeginAnalytics( {
-		reduxDispatch: dataForProcessor.reduxDispatch,
-		paymentMethodId: 'card',
-	} );
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
@@ -32,6 +28,10 @@ export default async function existingCardProcessor(
 	if ( ! stripeConfiguration ) {
 		throw new Error( 'Stripe configuration is required' );
 	}
+	recordTransactionBeginAnalytics( {
+		reduxDispatch: dataForProcessor.reduxDispatch,
+		paymentMethodId: 'card',
+	} );
 	return submitExistingCardPayment( transactionData, dataForProcessor )
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
