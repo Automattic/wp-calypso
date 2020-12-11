@@ -60,7 +60,7 @@ function useHandlePaymentProcessorResponse() {
 		async (
 			paymentProcessorId: string,
 			processorPromise: Promise< PaymentProcessorResponse >
-		): Promise< PaymentProcessorResponse | void > => {
+		): Promise< PaymentProcessorResponse > => {
 			return processorPromise
 				.then( ( response ) =>
 					handlePaymentProcessorResponse( response, paymentProcessorId, redirectErrorMessage, {
@@ -70,6 +70,7 @@ function useHandlePaymentProcessorResponse() {
 				)
 				.catch( ( error: Error ) => {
 					setTransactionError( error.message );
+					throw error;
 				} );
 		},
 		[ redirectErrorMessage, setTransactionError, setTransactionComplete, setTransactionRedirecting ]

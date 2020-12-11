@@ -211,7 +211,7 @@ export interface TransactionStatusManager extends TransactionStatusState {
 export type PaymentProcessorOnClick = (
 	paymentProcessorId: string,
 	processorData: PaymentProcessorSubmitData
-) => Promise< PaymentProcessorResponse | void >;
+) => Promise< PaymentProcessorResponse >;
 
 export type SetTransactionRedirecting = ( url: string ) => void;
 
