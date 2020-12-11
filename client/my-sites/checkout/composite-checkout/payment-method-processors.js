@@ -29,13 +29,16 @@ import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
 const { select } = defaultRegistry;
 
 export async function genericRedirectProcessor(
 	paymentMethodId,
 	submitData,
-	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails }
+	{ getThankYouUrl, siteSlug, includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
 	const { protocol, hostname, port, pathname } = parseUrl(
 		typeof window !== 'undefined' ? window.location.href : 'https://wordpress.com',
@@ -62,6 +65,20 @@ export async function genericRedirectProcessor(
 		pathname,
 		query: cancelUrlQuery,
 	} );
+
+	try {
+		recordRedirectTransactionBeginAnalytics( {
+			paymentMethodId,
+			reduxDispatch,
+		} );
+	} catch ( err ) {
+		recordCompositeCheckoutErrorDuringAnalytics( {
+			reduxDispatch,
+			errorObject: err,
+			failureDescription: 'useCreatePaymentCompleteCallback',
+		} );
+	}
+
 	return submitRedirectTransaction(
 		paymentMethodId,
 		{
@@ -308,4 +325,27 @@ export async function payPalProcessor(
 		wpcomPayPalExpress,
 		transactionOptions
 	).then( makeRedirectResponse );
+}
+
+function recordRedirectTransactionBeginAnalytics( { reduxDispatch, paymentMethodId } ) {
+	reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+	reduxDispatch(
+		recordTracksEvent( 'calypso_checkout_form_submit', {
+			credits: null,
+			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+		} )
+	);
+	reduxDispatch(
+		recordTracksEvent( 'calypso_checkout_composite_form_submit', {
+			credits: null,
+			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+		} )
+	);
+	const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
+	return reduxDispatch(
+		recordTracksEvent(
+			`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
+			{}
+		)
+	);
 }
