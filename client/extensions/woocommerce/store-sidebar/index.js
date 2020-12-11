@@ -181,9 +181,18 @@ class StoreSidebar extends Component {
 			return null;
 		}
 
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/promotions' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link ] );
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit.php?post_type=shop_coupon';
+			selected = false;
+		} else {
+			link = '/store/promotions' + siteSuffix;
+			selected = this.isItemLinkSelected( [ link ] );
+		}
+
 		const classes = classNames( {
 			promotions: true,
 			'is-placeholder': ! site,
