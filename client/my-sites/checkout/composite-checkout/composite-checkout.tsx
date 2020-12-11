@@ -455,7 +455,7 @@ export default function CompositeCheckout( {
 	const paymentProcessors = useMemo(
 		() => ( {
 			'apple-pay': ( transactionData: unknown ) =>
-				applePayProcessor( transactionData, dataForProcessor, transactionOptions ),
+				applePayProcessor( transactionData, dataForRedirectProcessor ),
 			'free-purchase': ( transactionData: unknown ) =>
 				freePurchaseProcessor( transactionData, dataForProcessor ),
 			card: ( transactionData: unknown ) =>

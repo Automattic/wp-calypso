@@ -8,7 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { useLineItems, useEvents } from '../../public-api';
+import { useLineItems } from '../../public-api';
 import PaymentRequestButton from '../../components/payment-request-button';
 import { PaymentMethodLogos } from '../styled-components/payment-method-logos';
 
@@ -40,14 +40,11 @@ export function ApplePayLabel() {
 }
 
 export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfiguration } ) {
-	const { __ } = useI18n();
 	const paymentRequestOptions = usePaymentRequestOptions( stripeConfiguration );
 	const [ items, total ] = useLineItems();
-	const onEvent = useEvents();
 	const onSubmit = useCallback(
 		( { name, paymentMethodToken } ) => {
 			debug( 'submitting stripe payment with key', paymentMethodToken );
-			onEvent( { type: 'APPLE_PAY_TRANSACTION_BEGIN' } );
 			onClick( 'apple-pay', {
 				stripe,
 				paymentMethodToken,
@@ -57,7 +54,7 @@ export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfigu
 				stripeConfiguration,
 			} );
 		},
-		[ onClick, onEvent, items, total, stripe, stripeConfiguration ]
+		[ onClick, items, total, stripe, stripeConfiguration ]
 	);
 	const { paymentRequest, canMakePayment, isLoading } = useStripePaymentRequest( {
 		paymentRequestOptions,
@@ -67,15 +64,7 @@ export function ApplePaySubmitButton( { disabled, onClick, stripe, stripeConfigu
 	debug( 'apple-pay button isLoading', isLoading );
 
 	if ( ! isLoading && ! canMakePayment ) {
-		onEvent( { type: 'APPLE_PAY_LOADING_ERROR', payload: 'This payment type is not supported' } );
-		return (
-			<PaymentRequestButton
-				paymentRequest={ paymentRequest }
-				paymentType="apple-pay"
-				disabled
-				disabledReason={ __( 'This payment type is not supported' ) }
-			/>
-		);
+		throw new Error( 'This payment type is not supported' );
 	}
 
 	return (

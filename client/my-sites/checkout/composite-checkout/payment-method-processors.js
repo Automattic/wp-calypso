@@ -146,11 +146,9 @@ export async function weChatProcessor(
 	} );
 }
 
-export async function applePayProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails },
-	transactionOptions
-) {
+export async function applePayProcessor( submitData, transactionOptions ) {
+	const { includeDomainDetails, includeGSuiteDetails, reduxDispatch } = transactionOptions;
+	recordApplePayTransactionBeginAnalytics( { reduxDispatch } );
 	return submitApplePayPayment(
 		{
 			...submitData,
@@ -353,11 +351,37 @@ function recordRedirectTransactionBeginAnalytics( { reduxDispatch, paymentMethod
 				{}
 			)
 		);
-	} catch ( err ) {
+	} catch ( errorObject ) {
 		recordCompositeCheckoutErrorDuringAnalytics( {
 			reduxDispatch,
-			errorObject: err,
-			failureDescription: 'useCreatePaymentCompleteCallback',
+			errorObject,
+			failureDescription: 'redirect',
+		} );
+	}
+}
+
+function recordApplePayTransactionBeginAnalytics( { reduxDispatch } ) {
+	try {
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_form_submit', {
+				credits: null,
+				payment_method: 'WPCOM_Billing_Web_Payment',
+			} )
+		);
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
+				credits: null,
+				payment_method: 'WPCOM_Billing_Web_Payment',
+			} )
+		);
+		return reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_composite_apple_pay_submit_clicked', {} )
+		);
+	} catch ( errorObject ) {
+		recordCompositeCheckoutErrorDuringAnalytics( {
+			reduxDispatch,
+			errorObject,
+			failureDescription: 'apple-pay',
 		} );
 	}
 }
