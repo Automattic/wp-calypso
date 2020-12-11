@@ -160,11 +160,14 @@ export async function applePayProcessor( submitData, transactionOptions ) {
 	).then( makeSuccessResponse );
 }
 
-export async function stripeCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent: onEvent },
-	transactionOptions
-) {
+export async function stripeCardProcessor( submitData, transactionOptions ) {
+	const {
+		includeDomainDetails,
+		includeGSuiteDetails,
+		recordEvent,
+		reduxDispatch,
+	} = transactionOptions;
+	recordTransactionBeginAnalytics( { reduxDispatch, paymentMethodId: 'card' } );
 	const paymentMethodToken = await createStripePaymentMethodToken( {
 		...submitData,
 		country: select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value,
@@ -186,7 +189,7 @@ export async function stripeCardProcessor(
 		.then( ( stripeResponse ) => {
 			if ( stripeResponse?.message?.payment_intent_client_secret ) {
 				// 3DS authentication required
-				onEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
+				recordEvent( { type: 'SHOW_MODAL_AUTHORIZATION' } );
 				return confirmStripePaymentIntent(
 					submitData.stripeConfiguration,
 					stripeResponse?.message?.payment_intent_client_secret
@@ -204,8 +207,9 @@ export async function stripeCardProcessor(
 
 export async function ebanxCardProcessor(
 	submitData,
-	{ includeDomainDetails, includeGSuiteDetails }
+	{ includeDomainDetails, includeGSuiteDetails, reduxDispatch }
 ) {
+	recordTransactionBeginAnalytics( { reduxDispatch, paymentMethodId: 'ebanx' } );
 	const paymentMethodToken = await createEbanxToken( 'new_purchase', {
 		country: submitData.countryCode,
 		name: submitData.name,
@@ -225,25 +229,13 @@ export async function ebanxCardProcessor(
 	).then( makeSuccessResponse );
 }
 
-export async function multiPartnerCardProcessor(
-	submitData,
-	{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-	transactionOptions
-) {
+export async function multiPartnerCardProcessor( submitData, transactionOptions ) {
 	const paymentPartner = submitData.paymentPartner;
 	if ( paymentPartner === 'stripe' ) {
-		return stripeCardProcessor(
-			submitData,
-			{ includeDomainDetails, includeGSuiteDetails, recordEvent },
-			transactionOptions
-		);
+		return stripeCardProcessor( submitData, transactionOptions );
 	}
 	if ( paymentPartner === 'ebanx' ) {
-		return ebanxCardProcessor( submitData, {
-			includeDomainDetails,
-			includeGSuiteDetails,
-			recordEvent,
-		} );
+		return ebanxCardProcessor( submitData, transactionOptions );
 	}
 	throw new RangeError( 'Unrecognized card payment partner: "' + paymentPartner + '"' );
 }

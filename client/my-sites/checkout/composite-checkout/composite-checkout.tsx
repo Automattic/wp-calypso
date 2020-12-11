@@ -89,6 +89,7 @@ import getPostalCode from './lib/get-postal-code';
 import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
+import type { PaymentProcessorOptions } from './types/payment-processors';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
@@ -420,7 +421,7 @@ export default function CompositeCheckout( {
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
-	const dataForProcessor = useMemo(
+	const dataForProcessor: PaymentProcessorOptions = useMemo(
 		() => ( {
 			includeDomainDetails,
 			includeGSuiteDetails,
@@ -460,7 +461,7 @@ export default function CompositeCheckout( {
 			'free-purchase': ( transactionData: unknown ) =>
 				freePurchaseProcessor( transactionData, dataForProcessor ),
 			card: ( transactionData: unknown ) =>
-				multiPartnerCardProcessor( transactionData, dataForProcessor, transactionOptions ),
+				multiPartnerCardProcessor( transactionData, dataForProcessor ),
 			alipay: ( transactionData: unknown ) =>
 				genericRedirectProcessor( 'alipay', transactionData, dataForRedirectProcessor ),
 			p24: ( transactionData: unknown ) =>
