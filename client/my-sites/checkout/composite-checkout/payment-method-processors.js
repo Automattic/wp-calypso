@@ -66,18 +66,10 @@ export async function genericRedirectProcessor(
 		query: cancelUrlQuery,
 	} );
 
-	try {
-		recordRedirectTransactionBeginAnalytics( {
-			paymentMethodId,
-			reduxDispatch,
-		} );
-	} catch ( err ) {
-		recordCompositeCheckoutErrorDuringAnalytics( {
-			reduxDispatch,
-			errorObject: err,
-			failureDescription: 'useCreatePaymentCompleteCallback',
-		} );
-	}
+	recordRedirectTransactionBeginAnalytics( {
+		paymentMethodId,
+		reduxDispatch,
+	} );
 
 	return submitRedirectTransaction(
 		paymentMethodId,
@@ -328,24 +320,32 @@ export async function payPalProcessor(
 }
 
 function recordRedirectTransactionBeginAnalytics( { reduxDispatch, paymentMethodId } ) {
-	reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_form_submit', {
-			credits: null,
-			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-		} )
-	);
-	reduxDispatch(
-		recordTracksEvent( 'calypso_checkout_composite_form_submit', {
-			credits: null,
-			payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
-		} )
-	);
-	const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
-	return reduxDispatch(
-		recordTracksEvent(
-			`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
-			{}
-		)
-	);
+	try {
+		reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_form_submit', {
+				credits: null,
+				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+			} )
+		);
+		reduxDispatch(
+			recordTracksEvent( 'calypso_checkout_composite_form_submit', {
+				credits: null,
+				payment_method: translateCheckoutPaymentMethodToWpcomPaymentMethod( paymentMethodId ) || '',
+			} )
+		);
+		const paymentMethodIdForTracks = paymentMethodId.replace( /-/, '_' ).toLowerCase();
+		return reduxDispatch(
+			recordTracksEvent(
+				`calypso_checkout_composite_${ paymentMethodIdForTracks }_submit_clicked`,
+				{}
+			)
+		);
+	} catch ( err ) {
+		recordCompositeCheckoutErrorDuringAnalytics( {
+			reduxDispatch,
+			errorObject: err,
+			failureDescription: 'useCreatePaymentCompleteCallback',
+		} );
+	}
 }
