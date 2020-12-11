@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import { pick } from 'lodash';
 import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping-cart';
+import { StripeHookProvider } from '@automattic/calypso-stripe';
 
 /**
  * Internal dependencies
@@ -47,6 +48,7 @@ import { getPlanByPathSlug } from 'calypso/lib/plans';
 import { isFetchingStoredCards, getStoredCards } from 'calypso/state/stored-cards/selectors';
 import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 import { extractStoredCardMetaValue } from './purchase-modal/util';
+import { getStripeConfiguration } from 'calypso/lib/store-transactions';
 
 /**
  * Style dependencies
@@ -298,14 +300,16 @@ export class UpsellNudge extends React.Component {
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
 
 		return (
-			<PurchaseModal
-				cart={ this.props.cart }
-				cards={ this.props.cards }
-				onClose={ () => this.setState( { showPurchaseModal: false } ) }
-				siteId={ this.props.selectedSiteId }
-				siteSlug={ this.props.siteSlug }
-				isCartUpdating={ isCartUpdating }
-			/>
+			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
+				<PurchaseModal
+					cart={ this.props.cart }
+					cards={ this.props.cards }
+					onClose={ () => this.setState( { showPurchaseModal: false } ) }
+					siteId={ this.props.selectedSiteId }
+					siteSlug={ this.props.siteSlug }
+					isCartUpdating={ isCartUpdating }
+				/>
+			</StripeHookProvider>
 		);
 	};
 
