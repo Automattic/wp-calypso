@@ -13,7 +13,6 @@ import Button from '../../components/button';
 import {
 	FormStatus,
 	TransactionStatus,
-	useEvents,
 	useTransactionStatus,
 	useLineItems,
 } from '../../public-api';
@@ -48,12 +47,10 @@ export function PaypalLabel() {
 
 export function PaypalSubmitButton( { disabled, onClick } ) {
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const { transactionStatus } = useTransactionStatus();
 	const [ items ] = useLineItems();
 
 	const handleButtonPress = () => {
-		onEvent( { type: 'REDIRECT_TRANSACTION_BEGIN', payload: { paymentMethodId: 'paypal' } } );
 		onClick( 'paypal', {
 			items,
 		} );
