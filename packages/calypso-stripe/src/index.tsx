@@ -538,20 +538,10 @@ export function StripeHookProvider( {
  */
 export function useStripe(): StripeData {
 	const stripeData = useContext( StripeContext );
-	return (
-		stripeData || {
-			stripe: null,
-			stripeConfiguration: null,
-			isStripeLoading: false,
-			stripeLoadingError: null,
-			reloadStripeConfiguration: () => {
-				// eslint-disable-next-line no-console
-				console.error(
-					`You cannot use reloadStripeConfiguration until stripe has been initialized.`
-				);
-			},
-		}
-	);
+	if ( ! stripeData ) {
+		throw new Error( 'useStripe can only be used inside a StripeHookProvider' );
+	}
+	return stripeData;
 }
 
 /**
