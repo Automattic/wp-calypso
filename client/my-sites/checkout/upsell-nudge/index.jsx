@@ -13,6 +13,7 @@ import { withShoppingCart, createRequestCartProduct } from '@automattic/shopping
  */
 import Main from 'calypso/components/main';
 import QuerySites from 'calypso/components/data/query-sites';
+import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryProductsList from 'calypso/components/data/query-products-list';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
 import { CompactCard } from '@automattic/components';
@@ -97,6 +98,7 @@ export class UpsellNudge extends React.Component {
 		return (
 			<Main className={ upsellType }>
 				<QuerySites siteId={ selectedSiteId } />
+				<QueryStoredCards />
 				{ ! hasProductsList && <QueryProductsList /> }
 				{ ! hasSitePlans && <QuerySitePlans siteId={ selectedSiteId } /> }
 				{ isLoading ? this.renderPlaceholders() : this.renderContent() }
