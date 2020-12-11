@@ -62,37 +62,39 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		return await this.loginFlow.loginAndStartNewPost( null, true );
 	} );
 
-	step( 'Can find experimental package features', function () {
+	describe( 'Can find experimental package features', async function () {
 		for ( const [ packageName, features ] of Object.entries( EXPERIMENTAL_FEATURES ) ) {
 			// Removes the `@wordpress/` prefix and hyphens from package name
 			// The algorithm WP uses to convert package names to variable names is here: https://github.com/WordPress/gutenberg/blob/a03ea51e11a36d0abeecb4ce4e4cea5ffebdffc5/packages/dependency-extraction-webpack-plugin/lib/util.js#L40-L45
 			const wpGlobalName = camelCaseDash( packageName.substr( '@wordpress/'.length ) );
 
-			step( packageName, () => {
-				step(
-					`"${ wpGlobalName }" package should be available in the global window object`,
-					async () => {
-						const typeofPackage = await driver.executeScript(
-							`return typeof window.wp['${ wpGlobalName }']`
-						);
-						console.log( wpGlobalName, 'typeofPackage:', typeofPackage );
-						assert( typeofPackage !== 'undefined', `${ wpGlobalName } is undefined` );
-					}
-				);
-
-				for ( const feature of features ) {
-					step( `${ feature } should be available in ${ packageName }`, async () => {
-						const typeofExperimentalFeature = await driver.executeScript(
-							`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
-						);
-						assert.notStrictEqual(
-							typeofExperimentalFeature,
-							'undefined',
-							`${ feature } is undefined`
-						);
-					} );
+			step(
+				`"${ wpGlobalName }" package should be available in the global window object`,
+				async function () {
+					const typeofPackage = await driver.executeScript(
+						`return typeof window.wp['${ wpGlobalName }']`
+					);
+					assert.notStrictEqual(
+						typeofPackage,
+						'undefined',
+						`${ wpGlobalName } is ${ typeofPackage }`
+					);
 				}
-			} );
+			);
+
+			for ( const feature of features ) {
+				step( `${ feature } should be available in ${ packageName }`, async function () {
+					const typeofExperimentalFeature = await driver.executeScript(
+						`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
+					);
+					// assert(false);
+					assert.notStrictEqual(
+						typeofExperimentalFeature,
+						'undefined',
+						`${ feature } is undefined`
+					);
+				} );
+			}
 		}
 	} );
 
