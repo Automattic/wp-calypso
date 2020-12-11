@@ -160,11 +160,10 @@ export const useDateWithOffset = ( date, shouldExecute = true ) => {
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
-	const dateWithOffset = useMemo( () => applySiteOffset( date, { timezone, gmtOffset } ), [
-		date,
-		timezone,
-		gmtOffset,
-	] );
+	const dateWithOffset = useMemo(
+		() => applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: true } ),
+		[ date, timezone, gmtOffset ]
+	);
 
 	return shouldExecute ? dateWithOffset : undefined;
 };
