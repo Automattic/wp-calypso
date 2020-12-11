@@ -34,19 +34,6 @@ describe( `[${ host }] Experimental data we depend on is available (${ screenSiz
 	} );
 
 	step(
-		`is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__missingExperimentalBlockPatterns exists`,
-		async function () {
-			const __missingExperimentalBlockPatternsArePresent = await driver.executeScript(
-				`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().___missingExperimentalBlockPatterns )`
-			);
-			assert(
-				__missingExperimentalBlockPatternsArePresent,
-				'___missingExperimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
-			);
-		}
-	);
-
-	step(
 		`is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
 		async function () {
 			const __experimentalBlockPatternsArePresent = await driver.executeScript(
