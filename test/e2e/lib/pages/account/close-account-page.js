@@ -55,6 +55,12 @@ export default class CloseAccountPage extends AsyncBaseContainer {
 		);
 	}
 
+	async getAccountName() {
+		return await this.driver
+			.findElement( by.css( '.account-close__confirm-dialog-target-username' ) )
+			.getText();
+	}
+
 	async ConfirmAccountHasBeenClosed() {
 		await driverHelper.verifyTextPresent(
 			this.driver,

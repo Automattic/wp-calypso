@@ -18,7 +18,12 @@ export default class DeleteAccountFlow {
 			await accountSettingsPage.chooseCloseYourAccount();
 			const closeAccountPage = await CloseAccountPage.Expect( this.driver );
 			await closeAccountPage.chooseCloseAccount();
+
+			if ( ! name ) {
+				name = await closeAccountPage.getAccountName();
+			}
 			await closeAccountPage.enterAccountNameAndClose( name );
+
 			await closeAccountPage.ConfirmAccountHasBeenClosed();
 			return await LoggedOutMasterbarComponent.Expect( this.driver );
 		} )().catch( ( err ) => {
