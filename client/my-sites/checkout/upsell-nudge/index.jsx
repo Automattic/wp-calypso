@@ -299,12 +299,17 @@ export class UpsellNudge extends React.Component {
 	renderPurchaseModal = () => {
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
 
+		const onCloseModal = () => {
+			this.props.shoppingCartManager.replaceProductsInCart( [] );
+			this.setState( { showPurchaseModal: false } );
+		};
+
 		return (
 			<StripeHookProvider fetchStripeConfiguration={ getStripeConfiguration }>
 				<PurchaseModal
 					cart={ this.props.cart }
 					cards={ this.props.cards }
-					onClose={ () => this.setState( { showPurchaseModal: false } ) }
+					onClose={ onCloseModal }
 					siteId={ this.props.selectedSiteId }
 					siteSlug={ this.props.siteSlug }
 					isCartUpdating={ isCartUpdating }
