@@ -9,7 +9,7 @@
 	}
 	&__placeholder {
 		margin-bottom: 1.5em;
-		&__placeholder-animation {
+		&-animation {
 			animation: pulse-light 1.6s ease-in-out infinite;
 			background-color: var( --color-neutral-10 );
 			color: transparent;
