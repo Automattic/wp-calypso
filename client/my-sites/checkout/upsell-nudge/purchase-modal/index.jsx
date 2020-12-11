@@ -33,9 +33,6 @@ export function PurchaseModal( { cart, cards, isCartUpdating, onClose, siteSlug 
 		onClose,
 		successMessage: translate( 'Your purchase has been completed!' ),
 	} );
-	const onComplete = useCreatePaymentCompleteCallback( {
-		isComingFromUpsell: true,
-	} );
 	const contentProps = {
 		cards,
 		cart,
@@ -46,19 +43,26 @@ export function PurchaseModal( { cart, cards, isCartUpdating, onClose, siteSlug 
 	};
 
 	return (
+		<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
+			{ isCartUpdating ? <Placeholder /> : <Content { ...contentProps } /> }
+		</Dialog>
+	);
+}
+
+export default function PurchaseModalWrapper( props ) {
+	const onComplete = useCreatePaymentCompleteCallback( {
+		isComingFromUpsell: true,
+	} );
+	return (
 		<CheckoutProvider
-			paymentMethods={ {
-				'existing-card': existingCardProcessor,
-			} }
+			paymentMethods={ [] }
 			onPaymentComplete={ onComplete }
 			showErrorMessage={ noop }
 			showInfoMessage={ noop }
 			showSuccessMessage={ noop }
-			paymentProcessors={ noop }
+			paymentProcessors={ { 'existing-card': existingCardProcessor } }
 		>
-			<Dialog isVisible={ true } baseClassName="purchase-modal dialog" onClose={ onClose }>
-				{ isCartUpdating ? <Placeholder /> : <Content { ...contentProps } /> }
-			</Dialog>
+			<PurchaseModal { ...props } />;
 		</CheckoutProvider>
 	);
 }

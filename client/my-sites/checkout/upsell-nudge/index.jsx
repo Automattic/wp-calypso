@@ -40,7 +40,7 @@ import { ConciergeSupportSession } from './concierge-support-session';
 import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
 import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
-import { PurchaseModal } from './purchase-modal';
+import PurchaseModal from './purchase-modal';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
 import { getPlanByPathSlug } from 'calypso/lib/plans';
