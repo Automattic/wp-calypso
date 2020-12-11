@@ -298,6 +298,7 @@ export class UpsellNudge extends React.Component {
 				cart={ this.props.cart }
 				cards={ this.props.cards }
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
+				siteId={ this.props.selectedSiteId }
 				siteSlug={ this.props.siteSlug }
 				isCartUpdating={ isCartUpdating }
 			/>
