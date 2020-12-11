@@ -31,7 +31,10 @@ import {
 	validateAgainstExistingUsers,
 } from 'calypso/lib/gsuite/new-users';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import GSuiteNewUserList from 'calypso/components/gsuite/gsuite-new-user-list';
 import Main from 'calypso/components/main';
 import Notice from 'calypso/components/notice';
@@ -80,7 +83,7 @@ class GSuiteAddUsers extends React.Component {
 			addItems(
 				getItemsForCart(
 					domains,
-					'business' === planType ? GSUITE_BUSINESS_SLUG : GSUITE_BASIC_SLUG,
+					'basic' === planType ? GSUITE_BASIC_SLUG : GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 					users
 				)
 			);
@@ -265,7 +268,7 @@ GSuiteAddUsers.propTypes = {
 	domains: PropTypes.array.isRequired,
 	gsuiteUsers: PropTypes.array,
 	isRequestingDomains: PropTypes.bool.isRequired,
-	planType: PropTypes.oneOf( [ 'basic', 'business' ] ),
+	planType: PropTypes.oneOf( [ 'basic', 'starter' ] ),
 	selectedDomainName: PropTypes.string.isRequired,
 	selectedSite: PropTypes.shape( {
 		slug: PropTypes.string.isRequired,

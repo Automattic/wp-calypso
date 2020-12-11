@@ -20,7 +20,11 @@ import { useSelector } from 'react-redux';
 import joinClasses from './join-classes';
 import { useHasDomainsInCart } from '../hooks/has-domains';
 import { ItemVariationPicker } from './item-variation-picker';
-import { isGSuiteProductSlug, isGSuiteOrExtraLicenseProductSlug } from 'calypso/lib/gsuite';
+import {
+	isGoogleWorkspaceProductSlug,
+	isGSuiteOrExtraLicenseProductSlug,
+	isGSuiteOrGoogleWorkspaceProductSlug,
+} from 'calypso/lib/gsuite';
 import { planMatches, isWpComPlan } from 'calypso/lib/plans';
 import {
 	isMonthly as isMonthlyPlan,
@@ -73,9 +77,11 @@ function WPLineItem( {
 	const isRenewal = item.wpcom_meta?.extra?.purchaseId;
 	// Show the variation picker when this is not a renewal
 	const shouldShowVariantSelector = getItemVariants && item.wpcom_meta && ! isRenewal;
-	const isGSuite = isGSuiteOrExtraLicenseProductSlug( item.wpcom_meta?.product_slug );
 
 	const productSlug = item.wpcom_meta?.product_slug;
+
+	const isGSuite =
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	// Unless a user in the monthly pricing test, reset the related monthly plan costs
 	if ( ! isMonthlyPricingTest && item.wpcom_meta ) {
@@ -503,7 +509,10 @@ function LineItemSublabelAndPrice( { item, isMonthlyPricingTest = false } ) {
 	const translate = useTranslate();
 	const isDomainRegistration = item.wpcom_meta?.is_domain_registration;
 	const isDomainMap = item.type === 'domain_map';
-	const isGSuite = isGSuiteOrExtraLicenseProductSlug( item.wpcom_meta?.product_slug );
+	const productSlug = item.wpcom_meta?.product_slug;
+
+	const isGSuite =
+		isGSuiteOrExtraLicenseProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 
 	if ( item.type === 'plan' && item.wpcom_meta?.months_per_bill_period > 1 ) {
 		if ( isMonthlyPricingTest ) {
@@ -597,7 +606,9 @@ function DomainDiscountCallout( { item } ) {
 
 function GSuiteDiscountCallout( { item } ) {
 	const translate = useTranslate();
-	const isGSuite = isGSuiteProductSlug( item.wpcom_meta?.product_slug );
+
+	const isGSuite = isGSuiteOrGoogleWorkspaceProductSlug( item.wpcom_meta?.product_slug );
+
 	if (
 		isGSuite &&
 		item.amount.value < item.wpcom_meta?.item_original_subtotal_integer &&

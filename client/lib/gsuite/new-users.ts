@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Internal dependencies
  */
 import { CartItemValue } from 'calypso/lib/cart-values/types';
+import config from 'calypso/config';
 import { googleApps, googleAppsExtraLicenses } from 'calypso/lib/cart-values/cart-items';
 import { hasGSuiteWithUs } from './has-gsuite-with-us';
 
@@ -346,9 +347,17 @@ const getItemsForCart = (
 	return map( usersGroupedByDomain, ( groupedUsers: GSuiteProductUser[], domain: string ) => {
 		const domainInfo = find( domains, [ 'name', domain ] );
 
-		return domainInfo && hasGSuiteWithUs( domainInfo )
-			? googleAppsExtraLicenses( { domain, users: groupedUsers } )
-			: googleApps( { domain, product_slug: productSlug, users: groupedUsers } );
+		const properties = { domain, users: groupedUsers };
+
+		if ( domainInfo && hasGSuiteWithUs( domainInfo ) ) {
+			return googleAppsExtraLicenses( properties );
+		}
+
+		if ( config.isEnabled( 'google-workspace-migration' ) ) {
+			properties[ 'quantity' ] = groupedUsers.length;
+		}
+
+		return googleApps( { ...properties, product_slug: productSlug } );
 	} );
 };
 

@@ -26,8 +26,12 @@ import {
 	isBundled,
 	isDomainProduct,
 } from 'calypso/lib/products-values';
-import { isGSuiteProductSlug } from 'calypso/lib/gsuite';
-import { GSUITE_BASIC_SLUG, GSUITE_BUSINESS_SLUG } from 'calypso/lib/gsuite/constants';
+import { isGSuiteOrGoogleWorkspaceProductSlug } from 'calypso/lib/gsuite';
+import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
+	GSUITE_BASIC_SLUG,
+	GSUITE_BUSINESS_SLUG,
+} from 'calypso/lib/gsuite/constants';
 import { calculateMonthlyPriceForPlan, getBillingMonthsForPlan } from 'calypso/lib/plans';
 
 export class CartItem extends React.Component {
@@ -63,7 +67,7 @@ export class CartItem extends React.Component {
 			return <span className="cart__free-text">{ translate( 'Free' ) }</span>;
 		}
 
-		if ( isGSuiteProductSlug( cartItem.product_slug ) ) {
+		if ( isGSuiteOrGoogleWorkspaceProductSlug( cartItem.product_slug ) ) {
 			const {
 				cost_before_coupon: costPerProductBeforeCoupon,
 				is_sale_coupon_applied: isSaleCouponApplied,
@@ -306,6 +310,7 @@ export class CartItem extends React.Component {
 			return cartItem.product_name;
 		} else if ( cartItem.volume === 1 ) {
 			switch ( cartItem.product_slug ) {
+				case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
 				case GSUITE_BASIC_SLUG:
 				case GSUITE_BUSINESS_SLUG:
 					return translate( '%(productName)s (1 User)', {
@@ -319,6 +324,7 @@ export class CartItem extends React.Component {
 			}
 		} else {
 			switch ( cartItem.product_slug ) {
+				case GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY:
 				case GSUITE_BASIC_SLUG:
 				case GSUITE_BUSINESS_SLUG:
 					return translate(

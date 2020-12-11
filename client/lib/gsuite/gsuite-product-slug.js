@@ -2,10 +2,21 @@
  * Internal dependencies
  */
 import {
+	GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY,
 	GSUITE_BASIC_SLUG,
 	GSUITE_BUSINESS_SLUG,
 	GSUITE_EXTRA_LICENSE_SLUG,
 } from 'calypso/lib/gsuite/constants';
+
+/**
+ * Determines whether the specified product slug is for Google Workspace Business Starter.
+ *
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to Google Workspace Business Starter, false otherwise
+ */
+export function isGoogleWorkspaceProductSlug( productSlug ) {
+	return productSlug === GOOGLE_WORKSPACE_BUSINESS_STARTER_YEARLY;
+}
 
 /**
  * Determines whether the specified product slug is for G Suite Basic or Business.
@@ -35,4 +46,14 @@ export function isGSuiteExtraLicenseProductSlug( productSlug ) {
  */
 export function isGSuiteOrExtraLicenseProductSlug( productSlug ) {
 	return isGSuiteProductSlug( productSlug ) || isGSuiteExtraLicenseProductSlug( productSlug );
+}
+
+/**
+ * Determines whether the specified product slug refers to either G Suite or Google Workspace.
+ *
+ * @param {string} productSlug - slug of the product
+ * @returns {boolean} true if the slug refers to G Suite or Google Workspace, false otherwise
+ */
+export function isGSuiteOrGoogleWorkspaceProductSlug( productSlug ) {
+	return isGSuiteProductSlug( productSlug ) || isGoogleWorkspaceProductSlug( productSlug );
 }
