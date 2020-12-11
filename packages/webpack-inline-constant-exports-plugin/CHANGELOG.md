@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Breaking
 
-- Drop support for Webpack 4, this plugin works with Webpack 5 only.
+- Drop support for webpack 4, this plugin works with webpack 5 only.
 
 ## 0.0.1 - 2019-06-03
 

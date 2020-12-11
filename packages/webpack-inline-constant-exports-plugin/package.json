@@ -5,7 +5,7 @@
 	"description": "Webpack plugin to inline constant exports from modules",
 	"license": "GPL-2.0-or-later",
 	"keywords": [
-		"Webpack"
+		"webpack"
 	],
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/webpack-inline-constant-exports-plugin",
 	"publishConfig": {

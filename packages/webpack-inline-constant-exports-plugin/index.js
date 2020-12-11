@@ -152,7 +152,7 @@ class InlineConstantExportsPlugin {
 							 *
 							 * ---
 							 *
-							 * Webpack 5 keep tracks of re-exported dependencies:
+							 * webpack 5 keep tracks of re-exported dependencies:
 							 *   //const.js
 							 *   export const FOO=1;
 							 *
