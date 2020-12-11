@@ -19,7 +19,7 @@ import {
 	JETPACK_CREDENTIALS_STORE,
 	REWIND_STATE_UPDATE,
 } from 'calypso/state/action-types';
-import { successNotice, errorNotice } from 'calypso/state/notices/actions';
+import { successNotice, errorNotice, infoNotice } from 'calypso/state/notices/actions';
 import { transformApi } from 'calypso/state/data-layer/wpcom/sites/rewind/api-transformer';
 import { registerHandlers } from 'calypso/state/data-layer/handler-registry';
 import getJetpackCredentialsUpdateProgress from 'calypso/state/selectors/get-jetpack-credentials-update-progress';
@@ -31,7 +31,27 @@ const navigateTo =
 		? ( path ) => window.open( path, '_blank' )
 		: ( path ) => page( path );
 
+const getMaybeNoticeId = ( action ) =>
+	'noticeId' in action ? { noticeId: action.noticeId } : {};
+
 export const request = ( action ) => {
+	const maybeNotice = [];
+	const maybeNoticeId = {};
+
+	if ( action.shouldUseNotices ) {
+		const notice = infoNotice( i18n.translate( 'Testing connection…' ), {
+			duration: 30000,
+			showDismiss: false,
+		} );
+
+		const {
+			notice: { noticeId },
+		} = notice;
+
+		maybeNotice.push( notice );
+		Object.assign( maybeNoticeId, { noticeId } );
+	}
+
 	const { path, ...otherCredentials } = action.credentials;
 	const credentials = { ...otherCredentials, abspath: path };
 
@@ -41,11 +61,12 @@ export const request = ( action ) => {
 	} );
 
 	return [
+		...maybeNotice,
+		tracksEvent,
 		{
 			type: JETPACK_CREDENTIALS_UPDATE_PROGRESS_START,
 			siteId: action.siteId,
 		},
-		tracksEvent,
 		http(
 			{
 				apiNamespace: 'wpcom/v2',
@@ -53,7 +74,7 @@ export const request = ( action ) => {
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: true },
 			},
-			{ ...action }
+			{ ...action, ...maybeNoticeId }
 		),
 	];
 };
@@ -73,6 +94,7 @@ export const success = ( action, { rewind_state } ) => [
 	},
 	successNotice( i18n.translate( 'Your site is now connected.' ), {
 		duration: 4000,
+		...getMaybeNoticeId( action ),
 	} ),
 	recordTracksEvent( 'calypso_rewind_creds_update_success', {
 		site_id: action.siteId,
@@ -95,7 +117,7 @@ export const success = ( action, { rewind_state } ) => [
 export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
 
-	const baseOptions = { duration: 10000 };
+	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
 
 	const dispatchFailure = ( message, options = {} ) => {
 		dispatch( errorNotice( message, { ...baseOptions, ...options } ) );
