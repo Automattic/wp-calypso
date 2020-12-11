@@ -449,6 +449,10 @@ The `registerStore` function on the [#defaultRegistry](default registry). Don't 
 
 A React Hook that will return an array of all payment method objects. See `usePaymentMethod()`, which returns the active object only. Only works within [CheckoutProvider](#CheckoutProvider).
 
+### useCreatePaymentProcessorOnClick
+
+A React Hook that will return the function passed to each [payment method's submitButton component](#payment-methods). Call it with a payment method ID and data for the payment processor and it will handle the transaction.
+
 ### useDispatch
 
 A React Hook that will return all the bound action creators for a [Data store](#data-stores). Only works within [CheckoutProvider](#CheckoutProvider).

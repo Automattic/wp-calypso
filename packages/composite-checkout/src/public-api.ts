@@ -81,6 +81,7 @@ import {
 	makeSuccessResponse,
 	makeRedirectResponse,
 } from './lib/payment-processors';
+import useCreatePaymentProcessorOnClick from './components/use-payment-processor-on-click';
 import RadioButton from './components/radio-button';
 import checkoutTheme from './lib/theme';
 export * from './types';
@@ -143,6 +144,7 @@ export {
 	makeSuccessResponse,
 	registerStore,
 	useAllPaymentMethods,
+	useCreatePaymentProcessorOnClick,
 	useDispatch,
 	useEvents,
 	useFormStatus,
