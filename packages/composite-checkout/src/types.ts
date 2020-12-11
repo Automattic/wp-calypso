@@ -101,10 +101,7 @@ export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentCompleteCallback = ( {
-	paymentMethodId,
-	transactionLastResponse,
-}: PaymentCompleteCallbackArguments ) => void;
+export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
 
 export type PaymentCompleteCallbackArguments = {
 	paymentMethodId: string | null;
