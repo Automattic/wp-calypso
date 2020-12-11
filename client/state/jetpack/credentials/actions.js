@@ -19,10 +19,11 @@ export const getCredentials = ( siteId ) => ( {
 	siteId,
 } );
 
-export const updateCredentials = ( siteId, credentials ) => ( {
+export const updateCredentials = ( siteId, credentials, shouldUseNotices = true ) => ( {
 	type: JETPACK_CREDENTIALS_UPDATE,
 	siteId,
 	credentials,
+	shouldUseNotices,
 } );
 
 export const autoConfigCredentials = ( siteId ) => ( {
