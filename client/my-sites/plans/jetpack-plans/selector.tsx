@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { getGridIteration } from './_iterations';
 import { recordTracksEvent } from 'calypso/state/analytics/actions/record';
 import PlansFilterBar from 'calypso/my-sites/plans/jetpack-plans/plans-filter-bar';
 import { EXTERNAL_PRODUCTS_LIST } from 'calypso/my-sites/plans/jetpack-plans/constants';
@@ -56,7 +57,7 @@ const SelectorPage: React.FC< SelectorPageProps > = ( {
 	const siteSlug = siteSlugProp || siteSlugState;
 	const [ currentDuration, setDuration ] = useState< Duration >( defaultDuration );
 
-	const Grid = useMemo( () => getGridComponent(), [] );
+	const Grid = useMemo( () => getGridIteration() || getGridComponent(), [] );
 
 	useEffect( () => {
 		setDuration( defaultDuration );

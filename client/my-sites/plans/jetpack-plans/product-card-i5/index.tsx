@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
+import { getButtonLabelIteration } from '../_iterations';
 import PlanRenewalMessage from '../plan-renewal-message';
 import useItemPrice from '../use-item-price';
 import { productButtonLabel } from '../utils';
@@ -84,6 +85,7 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 
 	const isUpgradeableToYearly =
 		isOwned && selectedTerm === TERM_ANNUALLY && item.term === TERM_MONTHLY;
+	const ButtonLabelIteration = getButtonLabelIteration();
 
 	return (
 		<JetpackProductCard
@@ -95,7 +97,13 @@ const ProductCardI5: React.FC< ProductCardProps > = ( {
 			originalPrice={ originalPrice }
 			discountedPrice={ discountedPrice }
 			billingTerm={ item.displayTerm || item.term }
-			buttonLabel={ productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan ) }
+			buttonLabel={
+				ButtonLabelIteration ? (
+					<ButtonLabelIteration />
+				) : (
+					productButtonLabel( item, isOwned, isUpgradeableToYearly, sitePlan )
+				)
+			}
 			buttonPrimary={ ! ( isOwned || isItemPlanFeature ) }
 			onButtonClick={ () => onClick( item, isUpgradeableToYearly, purchase ) }
 			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }

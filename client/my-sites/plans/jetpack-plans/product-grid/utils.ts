@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { getPlansToDisplayIteration } from '../_iterations';
 import { getMonthlyPlanByYearly, getYearlyPlanByMonthly } from 'calypso/lib/plans';
 import { JETPACK_RESET_PLANS, JETPACK_SECURITY_PLANS } from 'calypso/lib/plans/constants';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
@@ -21,6 +22,15 @@ export const getPlansToDisplay = ( {
 	duration: Duration;
 	currentPlanSlug: string | null;
 } ): SelectorProduct[] => {
+	const iterationResult = getPlansToDisplayIteration( {
+		duration,
+		currentPlanSlug,
+	} );
+
+	if ( iterationResult ) {
+		return iterationResult;
+	}
+
 	const iteration = getJetpackCROActiveVersion() as Iterations;
 	const plans =
 		{

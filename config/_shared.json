@@ -148,5 +148,6 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "#135e96"
+	"theme_color": "#135e96",
+	"pricing-page-iteration": "i7"
 }
