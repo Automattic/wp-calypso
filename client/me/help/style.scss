@@ -58,6 +58,10 @@
 .help__support-link.card.is-card-link {
 	height: 100%;
 	padding: 16px;
+
+	@include break-xlarge {
+		padding: 16px 24px;
+	}
 }
 
 .help__support-link .gridicon {

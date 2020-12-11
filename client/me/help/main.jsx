@@ -15,7 +15,6 @@ import { Button, CompactCard, Card } from '@automattic/components';
 import Gridicon from 'calypso/components/gridicon';
 import HelpResult from './help-results/item';
 import HelpSearch from './help-search';
-import HelpTeaserButton from './help-teaser-button';
 import HelpUnverifiedWarning from './help-unverified-warning';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
@@ -127,23 +126,7 @@ class Help extends React.PureComponent {
 			<>
 				<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
 				<div className="help__support-links">
-					<CompactCard
-						className="help__support-link"
-						href={ localizeUrl( 'https://wordpress.com/support/' ) }
-						target="__blank"
-					>
-						<Gridicon icon="book" size={ 36 } />
-						<div className="help__support-link-section">
-							<h2 className="help__support-link-title">
-								{ this.props.translate( 'All articles' ) }
-							</h2>
-							<p className="help__support-link-content">
-								{ this.props.translate(
-									'Looking to learn more about a feature? Our docs have all the details.'
-								) }
-							</p>
-						</div>
-					</CompactCard>
+					{ this.getCoursesTeaser() }
 					<CompactCard
 						className="help__support-link"
 						href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
@@ -230,15 +213,20 @@ class Help extends React.PureComponent {
 		}
 
 		return (
-			<HelpTeaserButton
+			<CompactCard
+				className="help__support-link"
+				href={ localizeUrl( 'https://wordpress.com/webinars' ) }
 				onClick={ this.trackCoursesButtonClick }
-				href="https://wordpress.com/webinars"
-				target="_blank"
-				title={ translate( 'Courses' ) }
-				description={ translate(
-					'Learn how to make the most of your site with these courses and webinars'
-				) }
-			/>
+				target="__blank"
+			>
+				<Gridicon icon="chat" size={ 36 } />
+				<div className="help__support-link-section">
+					<h2 className="help__support-link-title">{ this.props.translate( 'Webinars' ) }</h2>
+					<p className="help__support-link-content">
+						{ this.props.translate( 'Make the most of your site with courses and webinars.' ) }
+					</p>
+				</div>
+			</CompactCard>
 		);
 	};
 
@@ -322,7 +310,6 @@ class Help extends React.PureComponent {
 				<MeSidebarNavigation />
 				<HelpSearch />
 				{ ! isEmailVerified && <HelpUnverifiedWarning /> }
-				{ this.getCoursesTeaser() }
 				{ this.supportSessionCard() }
 				{ this.getHelpfulArticles() }
 				{ this.getSupportLinks() }
