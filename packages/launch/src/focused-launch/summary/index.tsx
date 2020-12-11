@@ -376,9 +376,10 @@ const PlanStep: React.FunctionComponent< PlanStepProps > = ( {
 						</p>
 						<div>
 							{ allAvailablePlans.map(
-								( plan ) =>
+								( plan, idx ) =>
 									plan && (
 										<FocusedLaunchSummaryItem
+											key={ idx }
 											isLoading={ ! defaultFreePlan || ! defaultPaidPlan }
 											onClick={ () => setPlan( plan ) }
 											isSelected={ isPlanSelected( plan ) }
