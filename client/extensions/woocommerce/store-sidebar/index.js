@@ -136,9 +136,18 @@ class StoreSidebar extends Component {
 	};
 
 	reviews = () => {
-		const { site, siteSuffix, translate, totalPendingReviews } = this.props;
-		const link = '/store/reviews' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ '/store/reviews' ] );
+		const { site, siteSuffix, translate, totalPendingReviews, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit-comments.php';
+			selected = false;
+		} else {
+			link = '/store/reviews' + siteSuffix;
+			selected = this.isItemLinkSelected( [ '/store/reviews' ] );
+		}
+
 		const classes = classNames( {
 			reviews: true,
 			'is-placeholder': ! site,
