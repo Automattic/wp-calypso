@@ -167,10 +167,18 @@ class StoreSidebar extends Component {
 	};
 
 	orders = () => {
-		const { totalNewOrders, site, siteSuffix, translate } = this.props;
-		const link = '/store/orders' + siteSuffix;
-		const childLinks = [ '/store/order', '/store/orders' ];
-		const selected = this.isItemLinkSelected( childLinks );
+		const { totalNewOrders, site, siteSuffix, translate, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit.php?post_type=shop_order';
+			selected = false;
+		} else {
+			link = '/store/orders' + siteSuffix;
+			selected = this.isItemLinkSelected( [ '/store/order', '/store/orders' ] );
+		}
+
 		const classes = classNames( {
 			orders: true,
 			'is-placeholder': ! site,
