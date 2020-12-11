@@ -84,7 +84,6 @@ export class UpsellNudge extends React.Component {
 		cards: PropTypes.arrayOf( PropTypes.object ),
 		cart: PropTypes.object,
 		isFetchingStoredCards: PropTypes.bool,
-		handleCheckoutCompleteRedirect: PropTypes.func.isRequired,
 	};
 
 	state = {
@@ -228,7 +227,7 @@ export class UpsellNudge extends React.Component {
 	}
 
 	handleClickDecline = ( shouldHideUpsellNudges = true ) => {
-		const { trackUpsellButtonClick, upsellType, handleCheckoutCompleteRedirect } = this.props;
+		const { trackUpsellButtonClick, upsellType } = this.props;
 
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 		handleCheckoutCompleteRedirect( shouldHideUpsellNudges );
@@ -274,10 +273,6 @@ export class UpsellNudge extends React.Component {
 		return true;
 	};
 
-	handleOneClickUpsellComplete = () => {
-		this.props.handleCheckoutCompleteRedirect( true );
-	};
-
 	renderPurchaseModal = () => {
 		const isCartUpdating = this.props.shoppingCartManager.isPendingUpdate;
 
@@ -285,7 +280,6 @@ export class UpsellNudge extends React.Component {
 			<PurchaseModal
 				cart={ this.props.cart }
 				cards={ this.props.cards }
-				onComplete={ this.handleOneClickUpsellComplete }
 				onClose={ () => this.setState( { showPurchaseModal: false } ) }
 				siteSlug={ this.props.siteSlug }
 				isCartUpdating={ isCartUpdating }
