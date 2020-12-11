@@ -5,16 +5,15 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 
 type ScrollToTopProps = {
-	selector: string;
+	selector?: string;
 };
 
 const ScrollToTop: React.FunctionComponent< ScrollToTopProps > = ( { selector } ) => {
 	const { pathname } = useLocation();
 
-	React.useEffect( () => document.querySelector( selector )?.scrollTo( 0, 0 ), [
-		selector,
-		pathname,
-	] );
+	React.useEffect( () => {
+		selector ? document.querySelector( selector )?.scrollTo( 0, 0 ) : window.scrollTo( 0, 0 );
+	}, [ selector, pathname ] );
 
 	return null;
 };
