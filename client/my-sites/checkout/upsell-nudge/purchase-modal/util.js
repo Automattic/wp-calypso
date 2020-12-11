@@ -29,6 +29,7 @@ export function useSubmitTransaction( {
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
 		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
 		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
+		setStep( 'processing' );
 		callPaymentProcessor( 'existing-card', {
 			items: wpcomCart.items,
 			name: storedCard.name,
@@ -40,7 +41,6 @@ export function useSubmitTransaction( {
 			siteId: siteId ? String( siteId ) : undefined,
 		} )
 			.then( () => {
-				setStep( name );
 				notices.success( successMessage, {
 					persistent: true,
 				} );
