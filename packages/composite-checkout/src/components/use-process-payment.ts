@@ -14,12 +14,12 @@ import {
 	PaymentProcessorResponseType,
 	SetTransactionComplete,
 	SetTransactionRedirecting,
-	PaymentProcessorOnClick,
+	ProcessPayment,
 } from '../types';
 
 const debug = debugFactory( 'composite-checkout:use-create-payment-processor-on-click' );
 
-export default function useCreatePaymentProcessorOnClick(): PaymentProcessorOnClick {
+export default function useProcessPayment(): ProcessPayment {
 	const paymentProcessors = usePaymentProcessors();
 	const { setTransactionPending } = useTransactionStatus();
 	const handlePaymentProcessorPromise = useHandlePaymentProcessorResponse();

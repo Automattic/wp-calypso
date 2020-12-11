@@ -205,7 +205,7 @@ export interface TransactionStatusManager extends TransactionStatusState {
 	setTransactionRedirecting: SetTransactionRedirecting;
 }
 
-export type PaymentProcessorOnClick = (
+export type ProcessPayment = (
 	paymentProcessorId: string,
 	processorData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;

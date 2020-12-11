@@ -10,7 +10,7 @@ import { useI18n } from '@automattic/react-i18n';
 import joinClasses from '../lib/join-classes';
 import { useFormStatus, FormStatus } from '../public-api';
 import CheckoutErrorBoundary from './checkout-error-boundary';
-import { usePaymentMethod, useCreatePaymentProcessorOnClick } from '../public-api';
+import { usePaymentMethod, useProcessPayment } from '../public-api';
 
 export default function CheckoutSubmitButton( {
 	className,
@@ -24,7 +24,7 @@ export default function CheckoutSubmitButton( {
 	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const isDisabled = disabled || formStatus !== FormStatus.READY;
-	const onClick = useCreatePaymentProcessorOnClick();
+	const onClick = useProcessPayment();
 
 	const paymentMethod = usePaymentMethod();
 	if ( ! paymentMethod ) {
