@@ -138,11 +138,13 @@ class PluginsBrowserListElement extends Component {
 						</div>
 						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
 					</div>
-					<div className="plugins-browser-item__meta is-placeholder">
-						<div className="plugins-browser-item__ratings">
-							<Rating rating={ 0 } size={ 16 } />
+					{ this.props.showMeta && (
+						<div className="plugins-browser-item__meta is-placeholder">
+							<div className="plugins-browser-item__ratings">
+								<Rating rating={ 0 } size={ 16 } />
+							</div>
 						</div>
-					</div>
+					) }
 				</span>
 			</Card>
 		);
@@ -188,6 +190,7 @@ class PluginsBrowserListElement extends Component {
 		if ( this.props.isPlaceholder ) {
 			return this.renderPlaceholder();
 		}
+		const { plugin, iconSize, isPlaceholder, showMeta } = this.props;
 		return (
 			<Card className="plugins-browser-item">
 				<a
@@ -197,32 +200,28 @@ class PluginsBrowserListElement extends Component {
 				>
 					<div className="plugins-browser-item__info">
 						<div className="plugins-browser-item__title-wrapper">
-							<div className="plugins-browser-item__title">{ this.props.plugin.name }</div>
-							<div className="plugins-browser-item__description">
-								{ this.props.plugin.short_description }
-							</div>
+							<div className="plugins-browser-item__title">{ plugin.name }</div>
+							<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 						</div>
-						<PluginIcon
-							size={ this.props.iconSize }
-							image={ this.props.plugin.icon }
-							isPlaceholder={ this.props.isPlaceholder }
-						/>
+						<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 					</div>
 					<div className="plugins-browser-item__author-wrapper">
 						<div className="plugins-browser-item__author">
-							<a href={ this.props.plugin.author_url }>{ this.props.plugin.author_name }</a>
+							<a href={ plugin.author_url }>{ plugin.author_name }</a>
 						</div>
 						{ this.renderSupportedFlag() }
 					</div>
-					<div className="plugins-browser-item__meta">
-						<div className="plugins-browser-item__ratings">
-							<Rating rating={ this.props.plugin.rating } size={ 16 } />
-							{ this.renderDownloaded() }
-							{ this.renderLastUpdated() }
-							{ this.renderInstalledIn() }
-							{ this.renderUpgradeButton() }
+					{ showMeta && (
+						<div className="plugins-browser-item__meta">
+							<div className="plugins-browser-item__ratings">
+								<Rating rating={ plugin.rating } size={ 16 } />
+								{ this.renderDownloaded() }
+								{ this.renderLastUpdated() }
+								{ this.renderInstalledIn() }
+								{ this.renderUpgradeButton() }
+							</div>
 						</div>
-					</div>
+					) }
 				</a>
 			</Card>
 		);

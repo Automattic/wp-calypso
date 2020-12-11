@@ -24,6 +24,11 @@ class PluginsBrowserList extends Component {
 
 	static propTypes = {
 		plugins: PropTypes.array.isRequired,
+		showMeta: PropTypes.bool,
+	};
+
+	static defaultProps = {
+		showMeta: true,
 	};
 
 	renderPluginsViewList() {
@@ -37,6 +42,7 @@ class PluginsBrowserList extends Component {
 					plugin={ plugin }
 					currentSites={ this.props.currentSites }
 					listName={ this.props.listName }
+					showMeta={ this.props.showMeta }
 				/>
 			);
 		} );

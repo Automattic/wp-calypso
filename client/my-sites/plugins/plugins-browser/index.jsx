@@ -231,6 +231,7 @@ export class PluginsBrowser extends Component {
 				size={ SHORT_LIST_LENGTH }
 				showPlaceholders={ isFetching }
 				currentSites={ this.props.sites }
+				showMeta={ category !== 'featured' ? true : false }
 			/>
 		);
 	}

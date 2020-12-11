@@ -107,6 +107,7 @@
 	border-top: 1px solid var( --color-border-subtle );
 	color: var( --color-text-subtle );
 	font-size: $font-body-small;
+	min-height: 28px;
 }
 
 .plugins-browser-item__support {
