@@ -3,6 +3,7 @@
  */
 import i18n from 'i18n-calypso';
 import page from 'page';
+import { compact } from 'lodash';
 
 /**
  * Internal dependencies
@@ -79,40 +80,41 @@ export const request = ( action ) => {
 	];
 };
 
-export const success = ( action, { rewind_state } ) => [
-	{
-		type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
-		siteId: action.siteId,
-	},
-
-	{
-		type: JETPACK_CREDENTIALS_STORE,
-		credentials: {
-			main: action.credentials,
+export const success = ( action, { rewind_state } ) =>
+	compact( [
+		{
+			type: JETPACK_CREDENTIALS_UPDATE_SUCCESS,
+			siteId: action.siteId,
 		},
-		siteId: action.siteId,
-	},
-	successNotice( i18n.translate( 'Your site is now connected.' ), {
-		duration: 4000,
-		...getMaybeNoticeId( action ),
-	} ),
-	recordTracksEvent( 'calypso_rewind_creds_update_success', {
-		site_id: action.siteId,
-		protocol: action.credentials.protocol,
-	} ),
-	// the API transform could fail and the rewind data might
-	// be unavailable so if that's the case just let it go
-	// for now. we'll improve our rigor as time goes by.
-	( () => {
-		try {
-			return {
-				type: REWIND_STATE_UPDATE,
-				siteId: action.siteId,
-				data: transformApi( rewind_state ),
-			};
-		} catch ( e ) {}
-	} )(),
-];
+		{
+			type: JETPACK_CREDENTIALS_STORE,
+			credentials: {
+				main: action.credentials,
+			},
+			siteId: action.siteId,
+		},
+		action.shouldUseNotices &&
+			successNotice( i18n.translate( 'Your site is now connected.' ), {
+				duration: 4000,
+				...getMaybeNoticeId( action ),
+			} ),
+		recordTracksEvent( 'calypso_rewind_creds_update_success', {
+			site_id: action.siteId,
+			protocol: action.credentials.protocol,
+		} ),
+		// the API transform could fail and the rewind data might
+		// be unavailable so if that's the case just let it go
+		// for now. we'll improve our rigor as time goes by.
+		( () => {
+			try {
+				return {
+					type: REWIND_STATE_UPDATE,
+					siteId: action.siteId,
+					data: transformApi( rewind_state ),
+				};
+			} catch ( e ) {}
+		} )(),
+	] );
 
 export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const getHelp = () => navigateTo( contactSupportUrl( getSelectedSiteSlug( getState() ) ) );
@@ -120,7 +122,9 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 	const baseOptions = { duration: 10000, ...getMaybeNoticeId( action ) };
 
 	const dispatchFailure = ( message, options = {} ) => {
-		dispatch( errorNotice( message, { ...baseOptions, ...options } ) );
+		if ( action.shouldUseNotices ) {
+			dispatch( errorNotice( message, { ...baseOptions, ...options } ) );
+		}
 
 		const state = getState();
 		const progress = getJetpackCredentialsUpdateProgress( state, action.siteId );
