@@ -21,5 +21,5 @@ export function isTreatmentInMonthlyPricingTest( state: AppState ): boolean {
 }
 
 export function isTreatmentOneClickTest( state: AppState ): boolean {
-	return 'treatment' === getVariationForUser( state, 'one_click_premium_plan_upgrade' );
+	return 'treatment' === getVariationForUser( state, 'one_click_premium_plan_upgrade_v2' );
 }
