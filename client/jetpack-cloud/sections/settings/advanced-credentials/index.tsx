@@ -253,7 +253,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 	const renderConnectedButtons = () => (
 		<>
 			<Button scary disabled={ disableForm } onClick={ handleDeleteCredentials }>
-				{ translate( 'Delete Credentials' ) }
+				{ translate( 'Delete credentials' ) }
 			</Button>
 			<Button
 				onClick={ handleUpdateCredentials }
