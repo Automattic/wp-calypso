@@ -22,7 +22,7 @@ import moment, { MomentInput, Moment } from 'moment-timezone';
  */
 export function applySiteOffset( input, { timezone, gmtOffset, keepLocalTime = false } ) {
 	if ( timezone ) {
-		return moment.tz( input, timezone );
+		return moment( input ).tz( timezone, keepLocalTime );
 	}
 	if ( gmtOffset || gmtOffset === 0 ) {
 		return moment( input ).utcOffset( gmtOffset, keepLocalTime );
