@@ -427,6 +427,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
+			reduxDispatch,
 		} ),
 		[
 			includeDomainDetails,
@@ -434,6 +435,7 @@ export default function CompositeCheckout( {
 			recordEvent,
 			createUserAndSiteBeforeTransaction,
 			stripeConfiguration,
+			reduxDispatch,
 		]
 	);
 	const dataForRedirectProcessor = useMemo(
