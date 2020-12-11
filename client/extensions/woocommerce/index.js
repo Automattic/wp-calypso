@@ -194,11 +194,11 @@ function getAnalyticsPath( path, params ) {
 	}
 
 	if ( '/store/settings/email/:site/:setup?' === path ) {
-		return !! params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
+		return params.setup ? '/store/settings/email/:site/:setup' : '/store/settings/email/:site';
 	}
 
 	if ( '/store/settings/shipping/zone/:site/:zone?' === path ) {
-		return !! params.zone
+		return params.zone
 			? '/store/settings/shipping/zone/:site/:zone'
 			: '/store/settings/shipping/zone/:site';
 	}
@@ -262,14 +262,32 @@ export default async function ( _, addReducer ) {
 
 	page( '/store', siteSelection, sites, makeLayout, clientRender );
 
-	// Add pages that use the store navigation
-	getStorePages().forEach( function ( storePage ) {
-		if ( config.isEnabled( storePage.configKey ) ) {
-			addStorePage( storePage, ( context, next ) =>
-				createStoreNavigation( context, next, storePage )
-			);
-		}
-	} );
+	const storePages = getStorePages();
+
+	if ( config.isEnabled( 'store-removed' ) ) {
+		// Register Dashboard and redirect other routes to the dashboard
+		// If 'store-removed' flag is true
+		const dashboardPage = storePages.shift();
+		addStorePage( dashboardPage, ( context, next ) =>
+			createStoreNavigation( context, next, dashboardPage )
+		);
+		storePages.forEach( function ( storePage ) {
+			if ( config.isEnabled( storePage.configKey ) ) {
+				page( storePage.path, function ( context ) {
+					page.redirect( '/store/' + context.params.site );
+				} );
+			}
+		} );
+	} else {
+		// Add pages that use the store navigation
+		storePages.forEach( function ( storePage ) {
+			if ( config.isEnabled( storePage.configKey ) ) {
+				addStorePage( storePage, ( context, next ) =>
+					createStoreNavigation( context, next, storePage )
+				);
+			}
+		} );
+	}
 
 	// Add pages that use my-sites navigation instead
 	page(
