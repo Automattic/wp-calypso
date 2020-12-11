@@ -83,11 +83,11 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 				for ( const feature of features ) {
 					step( `${ feature } should be available in ${ packageName }`, async () => {
 						const typeofExperimentalFeature = await driver.executeScript(
-							`typeof window.wp['${ wpGlobalName }']['${ feature }']`
+							`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
 						);
 						assert.notStrictEqual(
 							typeofExperimentalFeature,
-							'undedfined',
+							'undefined',
 							`${ feature } is undefined`
 						);
 					} );
