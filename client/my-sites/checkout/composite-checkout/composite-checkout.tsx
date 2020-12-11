@@ -497,18 +497,13 @@ export default function CompositeCheckout( {
 					dataForProcessor
 				),
 			paypal: ( transactionData: unknown ) =>
-				payPalProcessor(
-					transactionData,
-					{ ...dataForProcessor, getThankYouUrl, couponItem },
-					transactionOptions
-				),
+				payPalProcessor( transactionData, { ...dataForRedirectProcessor, couponItem } ),
 		} ),
 		[
 			siteId,
 			couponItem,
 			dataForProcessor,
 			dataForRedirectProcessor,
-			getThankYouUrl,
 			transactionOptions,
 			countryCode,
 			subdivisionCode,
