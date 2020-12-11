@@ -206,8 +206,6 @@ class Help extends React.PureComponent {
 	};
 
 	getCoursesTeaser = () => {
-		const { translate } = this.props;
-
 		if ( ! this.props.showCoursesTeaser ) {
 			return null;
 		}
