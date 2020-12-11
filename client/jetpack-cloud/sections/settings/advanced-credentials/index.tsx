@@ -66,9 +66,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 			show: 'onComplete',
 		},
 		translate( 'Credentials' ),
-		translate( 'Saved' ),
-		// TODO: moved Verification to future work
-		// translate( 'Verification' ),
+		translate( 'Verification' ),
 		translate( 'Connected' ),
 	];
 
