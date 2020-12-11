@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from '@emotion/styled';
 import { useTheme } from 'emotion-theming';
 import { useI18n } from '@automattic/react-i18n';
@@ -46,6 +46,16 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
+
+	// We need the countryCode for the country specific payment fields which have
+	// no country selector but require country data during validation and submit
+	// as well as the code that decides which fields to display. Since Ebanx is
+	// only available in BR, we will hard-code it here, but if we ever expand
+	// Ebanx to other countries, this will need to be changed.
+	const contactCountryCode = shouldUseEbanx ? 'BR' : '';
+	useEffect( () => {
+		setFieldValue( 'countryCode', contactCountryCode );
+	}, [ contactCountryCode, setFieldValue ] );
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
