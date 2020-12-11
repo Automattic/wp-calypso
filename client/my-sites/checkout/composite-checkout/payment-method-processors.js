@@ -29,7 +29,7 @@ import getPostalCode from './lib/get-postal-code';
 import getDomainDetails from './lib/get-domain-details';
 import { createEbanxToken } from 'calypso/lib/store-transactions';
 import userAgent from 'calypso/lib/user-agent';
-import { recordTransactionBeginAnalytics } from '../lib/analytics';
+import { recordTransactionBeginAnalytics } from './lib/analytics';
 
 const { select } = defaultRegistry;
 
