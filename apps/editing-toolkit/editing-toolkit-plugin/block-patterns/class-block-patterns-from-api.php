@@ -89,7 +89,8 @@ class Block_Patterns_From_API {
 
 		foreach ( (array) $block_patterns as $pattern ) {
 			if ( $this->can_register_pattern( $pattern ) ) {
-				$is_premium = in_array( 'premium_block_pattern', array_keys( $pattern['tags'] ), true );
+				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
+
 				register_block_pattern(
 					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
 					array(
@@ -127,6 +128,8 @@ class Block_Patterns_From_API {
 					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
 				)
 			);
+
+			$args = array( 'timeout' => 20 );
 
 			if ( function_exists( 'wpcom_json_api_get' ) ) {
 				$response = wpcom_json_api_get( $request_url, $args );
