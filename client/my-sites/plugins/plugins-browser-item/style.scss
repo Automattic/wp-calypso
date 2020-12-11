@@ -120,7 +120,7 @@
 
 .plugins-browser-item .rating {
 	fill: var( --color-text );
-	margin-right: 6px;
+	margin-right: 16px;
 }
 
 .plugins-browser-item__ratings {
@@ -134,10 +134,6 @@
 	color: var( --color-text-subtle );
 }
 
-.plugins-browser-item__secondary-meta {
-	display: flex;
-}
-
 .plugins-browser-item__downloads {
 	margin-right: 16px;
 }
@@ -148,10 +144,6 @@
 	margin: auto;
 	margin-right: 0;
 	justify-self: flex-end;
-	color: var( --color-success );
-	font-size: $font-body-extra-small;
-	font-weight: 600;
-	animation: appear 0.15s ease-in;
 
 	.gridicon {
 		margin-right: 3px;
@@ -159,7 +151,7 @@
 }
 
 .button.plugins-browser-item__upgrade-button {
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
+	margin: auto;
+	margin-right: 0;
+	justify-self: flex-end;
 }

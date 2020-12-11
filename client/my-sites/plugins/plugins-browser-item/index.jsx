@@ -103,10 +103,10 @@ class PluginsBrowserListElement extends Component {
 		const { sitesWithPlugin } = this.props;
 		if ( ( sitesWithPlugin && sitesWithPlugin.length > 0 ) || this.isWpcomPreinstalled() ) {
 			return (
-				<div className="plugins-browser-item__installed">
+				<Button className="plugins-browser-item__installed" compact>
 					<Gridicon icon="checkmark" size={ 18 } />
 					{ this.props.translate( 'Installed' ) }
-				</div>
+				</Button>
 			);
 		}
 		return null;
@@ -166,11 +166,11 @@ class PluginsBrowserListElement extends Component {
 	renderDownloaded() {
 		let downloaded = this.props.plugin.downloaded;
 		if ( downloaded > 1000000 ) {
-			downloaded = this.props.translate( '%(installs)s million+ installs', {
+			downloaded = this.props.translate( '%(installs)sM+ installs', {
 				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000000 ) ) },
 			} );
 		} else if ( downloaded > 1000 ) {
-			downloaded = this.props.translate( '%(installs)s thousand+ installs', {
+			downloaded = this.props.translate( '%(installs)sK+ installs', {
 				args: { installs: this.props.numberFormat( Math.floor( downloaded / 1000 ) ) },
 			} );
 		} else if ( downloaded > 0 ) {
@@ -210,30 +210,20 @@ class PluginsBrowserListElement extends Component {
 					</div>
 					<div className="plugins-browser-item__author-wrapper">
 						<div className="plugins-browser-item__author">
-							{ this.props.translate( 'By {{a}}%(authorName)s{{/a}}', {
-								args: { authorName: this.props.plugin.author_name },
-								components: { a: <a href={ this.props.plugin.author_url } /> },
-							} ) }
+							<a href={ this.props.plugin.author_url }>{ this.props.plugin.author_name }</a>
 						</div>
 						{ this.renderSupportedFlag() }
 					</div>
 					<div className="plugins-browser-item__meta">
 						<div className="plugins-browser-item__ratings">
 							<Rating rating={ this.props.plugin.rating } size={ 16 } />
-							{ this.props.plugin.num_ratings > 0 && (
-								<div className="plugins-browser-item__rating-number">
-									({ this.props.numberFormat( this.props.plugin.num_ratings ) })
-								</div>
-							) }
-						</div>
-						<div className="plugins-browser-item__secondary-meta">
 							{ this.renderDownloaded() }
 							{ this.renderLastUpdated() }
 							{ this.renderInstalledIn() }
+							{ this.renderUpgradeButton() }
 						</div>
 					</div>
 				</a>
-				{ this.renderUpgradeButton() }
 			</Card>
 		);
 	}
