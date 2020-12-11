@@ -6,7 +6,7 @@ import { localize } from 'i18n-calypso';
 import React from 'react';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import { defer, flow, includes, noop, truncate } from 'lodash';
+import { defer, includes, noop, truncate } from 'lodash';
 import Gridicon from 'calypso/components/gridicon';
 
 /**
@@ -176,10 +176,7 @@ class UploadingPane extends React.PureComponent {
 	}
 }
 
-export default flow(
-	connect( ( state ) => ( {
-		filename: getUploadFilename( state ),
-		percentComplete: getUploadPercentComplete( state ),
-	} ) ),
-	localize
-)( UploadingPane );
+export default connect( ( state ) => ( {
+	filename: getUploadFilename( state ),
+	percentComplete: getUploadPercentComplete( state ),
+} ) )( localize( UploadingPane ) );
