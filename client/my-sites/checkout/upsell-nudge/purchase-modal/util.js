@@ -11,17 +11,33 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import notices from 'calypso/notices';
 import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 
-export function useSubmitTransaction( { cart, storedCard, setStep, onClose, successMessage } ) {
+function extractStoredCardMetaValue( card, key ) {
+	return card.meta?.find( ( meta ) => meta.meta_key === key )?.meta_value;
+}
+
+export function useSubmitTransaction( {
+	cart,
+	siteId,
+	storedCard,
+	setStep,
+	onClose,
+	successMessage,
+} ) {
 	const callPaymentProcessor = useProcessPayment();
 
 	return useCallback( () => {
 		const wpcomCart = translateResponseCartToWPCOMCart( cart );
+		const countryCode = extractStoredCardMetaValue( storedCard, 'country_code' );
+		const postalCode = extractStoredCardMetaValue( storedCard, 'card_zip' );
 		callPaymentProcessor( 'existing-card', {
 			items: wpcomCart.items,
 			name: storedCard.name,
 			storedDetailsId: storedCard.stored_details_id,
 			paymentMethodToken: storedCard.mp_ref,
 			paymentPartnerProcessorId: storedCard.payment_partner,
+			country: countryCode,
+			postalCode,
+			siteId: siteId ? String( siteId ) : undefined,
 		} )
 			.then( () => {
 				setStep( name );
@@ -38,7 +54,7 @@ export function useSubmitTransaction( { cart, storedCard, setStep, onClose, succ
 				notices.error( error.message );
 				onClose();
 			} );
-	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, successMessage ] );
+	}, [ siteId, callPaymentProcessor, cart, storedCard, setStep, onClose, successMessage ] );
 }
 
 export function formatDate( cardExpiry ) {
