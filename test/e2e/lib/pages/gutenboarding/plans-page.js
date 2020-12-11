@@ -27,7 +27,7 @@ export default class PlansPage extends AsyncBaseContainer {
 
 	async selectFreePlan() {
 		const freePlanSelector = By.css( 'button[data-e2e-button="freePlan"]' );
-		await driverHelper.waitTillPresentAndDisplayed( this.driver, freePlanSelector, 5000 );
+		await driverHelper.scrollIntoView( this.driver, freePlanSelector );
 		return await driverHelper.clickWhenClickable( this.driver, freePlanSelector );
 	}
 }
