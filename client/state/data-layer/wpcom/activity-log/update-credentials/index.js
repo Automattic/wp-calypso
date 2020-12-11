@@ -52,7 +52,6 @@ export const request = ( action ) => {
 				method: 'POST',
 				path: `/sites/${ action.siteId }/rewind/credentials/update`,
 				body: { credentials, stream: true },
-				processResponseInStreamMode: true,
 			},
 			{ ...action }
 		),
