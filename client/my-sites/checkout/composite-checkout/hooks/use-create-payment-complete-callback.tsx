@@ -45,9 +45,9 @@ import {
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { logStashLoadErrorEventAction } from '../lib/analytics';
 import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
 import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
+import { recordCompositeCheckoutErrorDuringAnalytics } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -121,24 +121,11 @@ export default function useCreatePaymentCompleteCallback( {
 					reduxDispatch,
 				} );
 			} catch ( err ) {
-				// This is a fallback to catch any errors caused by the analytics code
-				// Anything in this block should remain very simple and extremely
-				// tolerant of any kind of data. It should make no assumptions about
-				// the data it uses.  There's no fallback for the fallback!
-				debug( 'checkout event error', err.message );
-				reduxDispatch(
-					recordTracksEvent( 'calypso_checkout_composite_error', {
-						error_message: err.message,
-						action_type: 'useCreatePaymentCompleteCallback',
-						action_payload: '',
-					} )
-				);
-				reduxDispatch(
-					logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
-						action_type: 'useCreatePaymentCompleteCallback',
-						action_payload: '',
-					} )
-				);
+				recordCompositeCheckoutErrorDuringAnalytics( {
+					reduxDispatch,
+					errorObject: err,
+					failureDescription: 'useCreatePaymentCompleteCallback',
+				} );
 			}
 
 			const receiptId = transactionResult?.receipt_id;
