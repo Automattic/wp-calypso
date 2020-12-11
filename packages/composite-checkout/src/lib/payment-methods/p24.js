@@ -12,7 +12,7 @@ import { useI18n } from '@automattic/react-i18n';
  */
 import Field from '../../components/field';
 import Button from '../../components/button';
-import { FormStatus, useLineItems, useEvents } from '../../public-api';
+import { FormStatus, useLineItems } from '../../public-api';
 import { useFormStatus } from '../form-status';
 import { SummaryLine, SummaryDetails } from '../styled-components/summary-details';
 import { registerStore, useSelect, useDispatch } from '../../lib/registry';
@@ -145,7 +145,6 @@ const P24Field = styled( Field )`
 function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
-	const onEvent = useEvents();
 	const customerName = useSelect( ( select ) => select( 'p24' ).getCustomerName() );
 	const customerEmail = useSelect( ( select ) => select( 'p24' ).getCustomerEmail() );
 
@@ -155,10 +154,6 @@ function P24PayButton( { disabled, onClick, store, stripe, stripeConfiguration }
 			onClick={ () => {
 				if ( isFormValid( store ) ) {
 					debug( 'submitting p24 payment' );
-					onEvent( {
-						type: 'REDIRECT_TRANSACTION_BEGIN',
-						payload: { paymentMethodId: 'p24' },
-					} );
 					onClick( 'p24', {
 						stripe,
 						name: customerName?.value,
