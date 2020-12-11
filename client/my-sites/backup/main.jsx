@@ -51,8 +51,16 @@ const BackupPage = ( { queryDate } ) => {
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
+
+	// If a date is specified, it'll be in a timezone-agnostic string format,
+	// so we'll need to add the site's TZ info in without affecting the date
+	// we were given.
+	//
+	// Otherwise, if no date is specified, we're talking about the current date.
+	// This is the same point in time for everyone, but we should make sure to
+	// store it in terms of the selected site's time zone.
 	const selectedDate = useDateWithOffset( parsedQueryDate, {
-		keepLocalTime: true,
+		keepLocalTime: !! queryDate,
 	} );
 
 	return (
