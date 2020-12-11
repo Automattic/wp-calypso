@@ -129,6 +129,22 @@ export class CheckoutThankYouHeader extends PureComponent {
 				);
 			}
 
+			if ( 'traffic-guide' === displayMode ) {
+				return translate(
+					// eslint-disable-next-line inclusive-language/use-inclusive-words
+					'{{p}}Congratulations for taking this important step towards mastering the art of online marketing!' +
+						'To download your copy of The Ultimate Traffic Guide, simply click the button below and confirm the download prompt.{{/p}}' +
+						'{{p}}The Ultimate Traffic Guide is a goldmine of traffic tips and how-tos that reveals the exact “Breakthrough Traffic” process we’ve developed over the past decade.{{/p}}' +
+						'{{p}}We’ve done all the hard work for you.' +
+						'We’ve sifted through an ocean of marketing articles, tested the ideas to see if they actually work, and then distilled the very best ideas into this printable guide.{{/p}}',
+					{
+						components: {
+							p: <p />,
+						},
+					}
+				);
+			}
+
 			return translate( 'You will receive an email confirmation shortly.' );
 		}
 
@@ -328,6 +344,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
+	downloadTrafficGuide = ( event ) => {
+		event.preventDefault();
+
+		//TODO redirect to download page
+	};
+
 	startTransfer = ( event ) => {
 		event.preventDefault();
 
@@ -378,6 +400,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if ( 'concierge' === displayMode ) {
 			return translate( 'Schedule my session' );
+		}
+
+		if ( 'traffic-guide' === displayMode ) {
+			return translate( 'Click here to download your copy now.' );
 		}
 
 		if ( ! selectedSite.slug && hasFailedPurchases ) {
@@ -441,6 +467,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} = this.props;
 		const headerButtonClassName = 'button is-primary';
 		const isConciergePurchase = 'concierge' === displayMode;
+		const isTrafficGuidePurchase = 'traffic-guide' === displayMode;
 		const isSearch = purchases?.length > 0 && purchases[ 0 ].productType === 'search';
 
 		if ( isSearch ) {
@@ -455,6 +482,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		if (
 			! isConciergePurchase &&
+			! isTrafficGuidePurchase &&
 			( hasFailedPurchases ||
 				! primaryPurchase ||
 				! selectedSite ||
@@ -475,10 +503,12 @@ export class CheckoutThankYouHeader extends PureComponent {
 
 		let clickHandler = this.visitSite;
 
-		if ( 'concierge' === displayMode ) {
+		if ( isConciergePurchase ) {
 			clickHandler = this.visitScheduler;
 		} else if ( this.isSingleDomainPurchase() ) {
 			clickHandler = this.visitDomain;
+		} else if ( isTrafficGuidePurchase ) {
+			clickHandler = this.downloadTrafficGuide;
 		}
 
 		return (

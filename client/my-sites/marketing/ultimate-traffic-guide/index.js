@@ -41,8 +41,12 @@ const SalesPage = ( { translate } ) => {
 
 	return (
 		<>
-			<h1>{ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }</h1>
-			<h2>{ translate( 'Discover today’s most important traffic secrets' ) }</h2>
+			<h1 className="ultimate-traffic-guide__header">
+				{ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+			</h1>
+			<h2 className="ultimate-traffic-guide__sub-header">
+				{ translate( 'Discover today’s most important traffic secrets' ) }
+			</h2>
 			<p>
 				{ translate(
 					'We developed this 96 page guide to teach you every modern website traffic trick you need to know in 2020 and beyond.'

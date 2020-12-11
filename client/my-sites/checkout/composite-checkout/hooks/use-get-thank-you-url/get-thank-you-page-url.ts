@@ -24,6 +24,7 @@ import {
 	hasBusinessPlan,
 	hasEcommercePlan,
 	hasMonthlyCartItem,
+	hasTrafficGuide,
 } from 'calypso/lib/cart-values/cart-items';
 import { managePurchase } from 'calypso/me/purchases/paths';
 import { isValidFeatureKey } from 'calypso/lib/plans/features-list';
@@ -378,6 +379,9 @@ function getQuickstartUrl( {
 function getDisplayModeParamFromCart( cart: ResponseCart | undefined ): Record< string, string > {
 	if ( cart && hasConciergeSession( cart ) ) {
 		return { d: 'concierge' };
+	}
+	if ( cart && hasTrafficGuide( cart ) ) {
+		return { d: 'traffic-guide' };
 	}
 	return {};
 }
