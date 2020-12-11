@@ -199,12 +199,22 @@ export type TransactionStatusPayload =
 export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
 
 export interface TransactionStatusManager extends TransactionStatusState {
-	resetTransaction: () => void;
-	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: PaymentProcessorResponseData ) => void;
-	setTransactionPending: () => void;
-	setTransactionRedirecting: ( url: string ) => void;
+	resetTransaction: ResetTransaction;
+	setTransactionError: SetTransactionError;
+	setTransactionComplete: SetTransactionComplete;
+	setTransactionPending: SetTransactionPending;
+	setTransactionRedirecting: SetTransactionRedirecting;
 }
+
+export type SetTransactionRedirecting = ( url: string ) => void;
+
+export type SetTransactionPending = () => void;
+
+export type SetTransactionComplete = ( response: PaymentProcessorResponseData ) => void;
+
+export type SetTransactionError = ( message: string ) => void;
+
+export type ResetTransaction = () => void;
 
 export interface LineItemsState {
 	items: LineItem[];
