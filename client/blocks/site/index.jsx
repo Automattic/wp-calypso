@@ -119,7 +119,7 @@ class Site extends React.Component {
 
 		// We show public coming soon badge only when the site is not private and the editing toolkit is available.
 		// Check for `! site.is_private` to ensure two Coming Soon badges don't appear while we introduce public coming soon.
-		const shouldPublicShowComingSoonSiteBadge =
+		const shouldShowPublicComingSoonSiteBadge =
 			! site.is_private && this.props.site.is_coming_soon && ! isAtomicAndEditingToolkitDeactivated;
 
 		// Cover the coming Soon v1 cases for sites still unlaunched and/or in Coming Soon private by default.
@@ -175,7 +175,7 @@ class Site extends React.Component {
 									: translate( 'Private' ) }
 							</span>
 						) }
-						{ shouldPublicShowComingSoonSiteBadge && (
+						{ shouldShowPublicComingSoonSiteBadge && (
 							<span className="site__badge site__badge-coming-soon">
 								{ translate( 'Coming Soon' ) }
 							</span>
