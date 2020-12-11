@@ -11,14 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import notices from 'calypso/notices';
 import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 
-export function useSubmitTransaction( {
-	cart,
-	storedCard,
-	setStep,
-	onClose,
-	onComplete,
-	successMessage,
-} ) {
+export function useSubmitTransaction( { cart, storedCard, setStep, onClose, successMessage } ) {
 	const callPaymentProcessor = useProcessPayment();
 
 	return useCallback( () => {
@@ -36,7 +29,6 @@ export function useSubmitTransaction( {
 					persistent: true,
 				} );
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_success', {} );
-				onComplete?.();
 			} )
 			.catch( ( error ) => {
 				recordTracksEvent( 'calypso_oneclick_upsell_payment_error', {
@@ -46,7 +38,7 @@ export function useSubmitTransaction( {
 				notices.error( error.message );
 				onClose();
 			} );
-	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, onComplete, successMessage ] );
+	}, [ callPaymentProcessor, cart, storedCard, setStep, onClose, successMessage ] );
 }
 
 export function formatDate( cardExpiry ) {
