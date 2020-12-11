@@ -233,6 +233,13 @@ export default function useCreatePaymentCompleteCallback( {
 	);
 }
 
+export function withPaymentCompleteCallback< P >( Component: React.ComponentType< P > ) {
+	return function PaymentCompleteWrapper( props: P ): JSX.Element {
+		const paymentCompleteCallback = useCreatePaymentCompleteCallback( {} );
+		return <Component { ...props } paymentCompleteCallback={ paymentCompleteCallback } />;
+	};
+}
+
 function displayRenewalSuccessNotice(
 	responseCart: ResponseCart,
 	purchases: Record< number, Purchase >,
