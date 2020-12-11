@@ -230,9 +230,13 @@ const DomainPicker: FunctionComponent< Props > = ( {
 
 	let placeholdersCount = quantity;
 	// If persistentSelectedDomain exists, a placeholder will be appended to the list when doing next search
-	if ( persistentSelectedDomain ) placeholdersCount += 1;
+	if ( persistentSelectedDomain ) {
+		placeholdersCount += 1;
+	}
 	// If existingSubdomain is defined, it will be rendered separately with its own placeholder
-	if ( existingSubdomain ) placeholdersCount -= 1;
+	if ( existingSubdomain ) {
+		placeholdersCount -= 1;
+	}
 
 	// We are specifcying the order of domains by sub-domains and professional domains.
 	const groupOrder: DomainGroup[] = [ 'professional' ];
