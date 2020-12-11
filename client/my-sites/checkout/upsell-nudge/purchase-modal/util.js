@@ -11,7 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import notices from 'calypso/notices';
 import { translateResponseCartToWPCOMCart } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
 
-function extractStoredCardMetaValue( card, key ) {
+export function extractStoredCardMetaValue( card, key ) {
 	return card.meta?.find( ( meta ) => meta.meta_key === key )?.meta_value;
 }
 
