@@ -258,6 +258,7 @@ function addTracksContext( context, next ) {
 }
 
 export default async function ( _, addReducer ) {
+	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
 	await addReducer( [ 'extensions', 'woocommerce' ], reducer );
 	installActionHandlers();
 
@@ -266,9 +267,18 @@ export default async function ( _, addReducer ) {
 	// Add pages that use the store navigation
 	getStorePages().forEach( function ( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
-			addStorePage( storePage, ( context, next ) =>
-				createStoreNavigation( context, next, storePage )
-			);
+			// Store deprecation would redirect most store pages to dashboard
+			if ( isStoreRemoved && ! '/store/:site' === storePage.path ) {
+				page( storePage.path, ( context ) => {
+					// Todo: We could implement analytics here to identify
+					// how many users are still navigating to deprecated pages
+					page.redirect( `/store/${ context.params.site }?${ context.querystring }` );
+				} );
+			} else {
+				addStorePage( storePage, ( context, next ) => {
+					createStoreNavigation( context, next, storePage );
+				} );
+			}
 		}
 	} );
 
