@@ -441,8 +441,9 @@ export default function CompositeCheckout( {
 			...dataForProcessor,
 			getThankYouUrl,
 			siteSlug,
+			reduxDispatch,
 		} ),
-		[ dataForProcessor, getThankYouUrl, siteSlug ]
+		[ dataForProcessor, getThankYouUrl, siteSlug, reduxDispatch ]
 	);
 
 	const domainDetails = getDomainDetails( {
