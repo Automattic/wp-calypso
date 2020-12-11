@@ -1,0 +1,19 @@
+.ultimate-traffic-guide {
+	h1 {
+		font-size: $font-title-large;
+	}
+
+	h2 {
+		font-size: $font-title-medium;
+		margin-bottom: 1em;
+	}
+	.ultimate-traffic-guide__placeholder {
+		margin-bottom: 1.5em;
+		.ultimate-traffic-guide__placeholder-animation {
+			animation: pulse-light 1.6s ease-in-out infinite;
+			background-color: var( --color-neutral-10 );
+			color: transparent;
+			min-height: $font-title-small;
+		}
+	}
+}
