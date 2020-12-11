@@ -138,7 +138,7 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 				transport_message: progress.lastError?.message ?? null,
 				transport_stack: progress.lastError?.stack ?? null,
 				host: action.credentials.host,
-				kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
+				kpri: action.credentials.kpri ? 'provided but [omitted here]' : 'not provided',
 				pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
 				path: action.credentials.path,
 				port: action.credentials.port,
