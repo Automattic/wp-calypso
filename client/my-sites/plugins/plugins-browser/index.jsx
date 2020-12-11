@@ -255,6 +255,61 @@ export class PluginsBrowser extends Component {
 		);
 	}
 
+	isWpcomPluginActive( plugin ) {
+		return (
+			'standard' === plugin.plan ||
+			( 'premium' === plugin.plan && this.props.hasPremiumPlan ) ||
+			( 'business' === plugin.plan && this.props.hasBusinessPlan )
+		);
+	}
+
+	getWpcomFeaturesAsJetpackPluginsList( searchTerm ) {
+		// show only for Simple sites
+		if ( ! this.props.selectedSiteId || this.props.isJetpackSite ) {
+			return [];
+		}
+
+		// show only if search is active
+		if ( ! searchTerm ) {
+			return [];
+		}
+
+		const { siteSlug, translate } = this.props;
+		searchTerm = searchTerm.toLocaleLowerCase();
+		let matchingPlugins;
+		const plugins = wpcomFeaturesAsPlugins( translate );
+
+		// Is the search term exactly equal to one of group category names (Engagement, Writing, ...)?
+		// Then return the whole group as search results.
+		// Otherwise, search plugin names and descriptions for the search term.
+		const matchingGroup = find( plugins, ( group ) => group.category === searchTerm );
+		if ( matchingGroup ) {
+			matchingPlugins = matchingGroup.plugins;
+		} else {
+			// Flatten plugins from all groups into one long list and the filter it
+			const allPlugins = flatMap( plugins, ( group ) => group.plugins );
+			const includesSearchTerm = ( s ) => includes( s.toLocaleLowerCase(), searchTerm );
+			matchingPlugins = allPlugins.filter(
+				( plugin ) => includesSearchTerm( plugin.name ) || includesSearchTerm( plugin.description )
+			);
+		}
+
+		// Convert the list members into shapes expected by PluginsBrowserItem
+		return matchingPlugins.map( ( plugin ) => ( {
+			name: translate( '%(feature)s by Jetpack', {
+				args: { feature: plugin.name },
+				context: 'Presenting WordPress.com feature as a Jetpack pseudo-plugin',
+			} ),
+			short_description: plugin.description,
+			author_name: 'Automattic',
+			icon: '//ps.w.org/jetpack/assets/icon-256x256.png',
+			rating: 82, // Jetpack rating on WP.org on 2017-09-27
+			slug: 'jetpack',
+			isPreinstalled: this.isWpcomPluginActive( plugin ),
+			upgradeLink: '/plans/' + siteSlug + ( plugin.feature ? `?feature=${ plugin.feature }` : '' ),
+		} ) );
+	}
+
 	getShortListsView() {
 		return (
 			<span>
