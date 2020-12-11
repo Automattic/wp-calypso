@@ -13,6 +13,7 @@ import { IMPORTS_STORE_RESET } from 'calypso/state/action-types';
 
 const testSiteId = 'en.blog.wordpress.com';
 const hydratedState = () => store.get().api.isHydrated;
+const importersState = () => store.get().importers;
 const resetStore = () => Dispatcher.handleViewAction( { type: IMPORTS_STORE_RESET } );
 
 const queuePayload = ( payload ) =>
@@ -29,6 +30,7 @@ describe( 'Importer store', () => {
 			queuePayload( 'no-imports' );
 			await fetchState( testSiteId );
 			expect( hydratedState() ).toBe( true );
+			expect( importersState() ).toEqual( {} );
 		} );
 
 		test( 'should hydrate if the API returns a defunct importer', async () => {
@@ -36,6 +38,7 @@ describe( 'Importer store', () => {
 			queuePayload( 'defunct-importer' );
 			await fetchState( testSiteId );
 			expect( hydratedState() ).toBe( true );
+			expect( importersState() ).toEqual( {} );
 		} );
 	} );
 } );
