@@ -154,15 +154,15 @@ export const useFirstMatchingBackupAttempt = (
 // Tolerates null settings values, unlike the implementation in `calypso/components/site-offset`;
 // I don't want to disturb existing behavior, but we may want to come back later
 // and DRY up this bit of code.
-export const useDateWithOffset = ( date, shouldExecute = true ) => {
+export const useDateWithOffset = ( date, { shouldExecute = true, keepLocalTime = false } = {} ) => {
 	const siteId = useSelector( getSelectedSiteId );
 
 	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
 	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
 
 	const dateWithOffset = useMemo(
-		() => applySiteOffset( date, { timezone, gmtOffset, keepLocalTime: true } ),
-		[ date, timezone, gmtOffset ]
+		() => applySiteOffset( date, { timezone, gmtOffset, keepLocalTime } ),
+		[ date, timezone, gmtOffset, keepLocalTime ]
 	);
 
 	return shouldExecute ? dateWithOffset : undefined;
