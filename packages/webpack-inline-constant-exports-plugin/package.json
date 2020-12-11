@@ -26,5 +26,8 @@
 	"devDependencies": {
 		"rimraf": "^3.0.0",
 		"webpack": "^5.7.0"
-	}
+	},
+	"files": [
+		"index.js"
+	]
 }
