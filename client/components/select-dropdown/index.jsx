@@ -41,7 +41,7 @@ class SelectDropdown extends Component {
 		options: PropTypes.arrayOf(
 			PropTypes.shape( {
 				value: PropTypes.string.isRequired,
-				label: TranslatableString.isRequired,
+				label: PropTypes.oneOfType( [ TranslatableString, PropTypes.node ] ).isRequired,
 				path: PropTypes.string,
 				icon: PropTypes.element,
 			} )
