@@ -223,7 +223,7 @@ class SelectDropdown extends Component {
 					<ul
 						id={ 'select-submenu-' + this.instanceId }
 						className="select-dropdown__options"
-						role="menu"
+						role="listbox"
 						aria-labelledby={ 'select-dropdown-' + this.instanceId }
 						aria-expanded={ this.state.isOpen }
 					>
