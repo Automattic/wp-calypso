@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { localize } from 'i18n-calypso';
 import { connect } from 'react-redux';
-import { includes, some, trim, trimEnd } from 'lodash';
+import { includes, some } from 'lodash';
 
 /**
  * Internal dependencies
@@ -42,7 +42,7 @@ class Protect extends Component {
 
 	handleAddToAllowedList = () => {
 		const { setFieldValue } = this.props;
-		let allowedIps = trimEnd( this.getProtectAllowedIps() );
+		let allowedIps = this.getProtectAllowedIps().trimEnd();
 
 		if ( allowedIps.length ) {
 			allowedIps += '\n';
@@ -79,7 +79,7 @@ class Protect extends Component {
 					return false;
 				}
 
-				const range = entry.split( '-' ).map( trim );
+				const range = entry.split( '-' ).map( ( ip ) => ip.trim() );
 				return includes( range, ipAddress );
 			} )
 		);
