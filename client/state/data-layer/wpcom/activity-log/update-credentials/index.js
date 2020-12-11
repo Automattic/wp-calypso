@@ -129,6 +129,24 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 		const state = getState();
 		const progress = getJetpackCredentialsUpdateProgress( state, action.siteId );
 
+		dispatch(
+			recordTracksEvent( 'calypso_rewind_creds_update_failure', {
+				site_id: action.siteId,
+				error: error.code,
+				error_message: error.message,
+				status_code: error.data ?? error.statusCode,
+				transport_message: progress.lastError?.message ?? null,
+				transport_stack: progress.lastError?.stack ?? null,
+				host: action.credentials.host,
+				kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
+				pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
+				path: action.credentials.path,
+				port: action.credentials.port,
+				protocol: action.credentials.protocol,
+				user: action.credentials.user,
+			} )
+		);
+
 		dispatch( {
 			type: JETPACK_CREDENTIALS_UPDATE_FAILURE,
 			siteId: action.siteId,
@@ -138,22 +156,6 @@ export const failure = ( action, error ) => ( dispatch, getState ) => {
 			transportError: progress.lastError ?? undefined,
 		} );
 	};
-
-	dispatch(
-		recordTracksEvent( 'calypso_rewind_creds_update_failure', {
-			site_id: action.siteId,
-			error: error.code,
-			error_message: error.message,
-			status_code: error.data ?? error.statusCode,
-			host: action.credentials.host,
-			kpri: action.credentials.krpi ? 'provided but [omitted here]' : 'not provided',
-			pass: action.credentials.pass ? 'provided but [omitted here]' : 'not provided',
-			path: action.credentials.path,
-			port: action.credentials.port,
-			protocol: action.credentials.protocol,
-			user: action.credentials.user,
-		} )
-	);
 
 	switch ( error.code ) {
 		case 'service_unavailable':

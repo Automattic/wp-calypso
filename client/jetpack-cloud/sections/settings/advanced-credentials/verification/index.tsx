@@ -38,34 +38,20 @@ const UpdateErrorView: FunctionComponent< UpdateError > = ( {
 	transportError,
 } ) => {
 	const translate = useTranslate();
-	const transportText = transportError?.trace ?? transportError?.stack;
-
-	const offset = transportText?.indexOf( '\n' ) ?? -1;
-	const transportMessage = offset > -1 ? transportText?.slice( 0, offset ) : transportText;
-	const transportTrace = offset > -1 ? transportText?.slice( offset + 1 ) : '';
+	const transportMessage = transportError?.message;
+	const wpcomMessage = wpcomError?.message;
+	const showTransportMessage = ( transportMessage ?? wpcomMessage ) !== wpcomMessage;
 
 	return (
 		<div className="verification__error">
 			<p>{ translatedError }</p>
 			<details>
 				<summary>{ translate( 'More details' ) }</summary>
-				{ wpcomError && (
-					<p>
-						{ wpcomError.message }{ ' ' }
-						<span>{ `[${ wpcomError.code }, ${ JSON.stringify( wpcomError.data ) }]` }</span>
-					</p>
-				) }
-				{ transportMessage && (
-					<p>
-						{ transportMessage }
-						{ transportTrace && (
-							<>
-								{ '\n' }
-								<span>{ transportTrace }</span>
-							</>
-						) }
-					</p>
-				) }
+				<p>
+					{ wpcomMessage }{ ' ' }
+					<span>{ `[${ wpcomError?.code }, ${ JSON.stringify( wpcomError?.data ) }]` }</span>
+				</p>
+				{ showTransportMessage && <p>{ transportMessage }</p> }
 			</details>
 		</div>
 	);
