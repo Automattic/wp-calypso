@@ -47,6 +47,7 @@ import EmailVerificationGate from 'calypso/components/email-verification/email-v
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
 import NewDomainsRedirectionNoticeUpsell from 'calypso/my-sites/domains/domain-management/components/domain/new-domains-redirection-notice-upsell';
 import HeaderCart from 'calypso/my-sites/checkout/cart/header-cart';
+import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 
 /**
  * Style dependencies
@@ -89,7 +90,9 @@ class DomainSearch extends Component {
 
 	handleAddMapping = ( domain ) => {
 		this.props.shoppingCartManager
-			.addProductsToCart( [ domainMapping( { domain } ) ] )
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
+			] )
 			.then( () => {
 				page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
@@ -97,7 +100,9 @@ class DomainSearch extends Component {
 
 	handleAddTransfer = ( domain ) => {
 		this.props.shoppingCartManager
-			.addProductsToCart( [ domainTransfer( { domain } ) ] )
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
+			] )
 			.then( () => {
 				page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
@@ -139,13 +144,17 @@ class DomainSearch extends Component {
 			registration = updatePrivacyForDomain( registration, true );
 		}
 
-		this.props.shoppingCartManager.addProductsToCart( [ registration ] ).then( () => {
-			if ( canDomainAddGSuite( domain ) ) {
-				page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
-			} else {
-				page( '/checkout/' + this.props.selectedSiteSlug );
-			}
-		} );
+		this.props.shoppingCartManager
+			.addProductsToCart( [
+				fillInSingleCartItemAttributes( registration, this.props.productsList ),
+			] )
+			.then( () => {
+				if ( canDomainAddGSuite( domain ) ) {
+					page( '/domains/add/' + domain + '/google-apps/' + this.props.selectedSiteSlug );
+				} else {
+					page( '/checkout/' + this.props.selectedSiteSlug );
+				}
+			} );
 	}
 
 	removeDomain( suggestion ) {
