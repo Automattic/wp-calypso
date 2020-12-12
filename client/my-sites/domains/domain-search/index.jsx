@@ -8,6 +8,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import { localize } from 'i18n-calypso';
 import moment from 'moment';
+import { withShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -273,4 +274,4 @@ export default connect(
 		recordAddDomainButtonClick,
 		recordRemoveDomainButtonClick,
 	}
-)( localize( DomainSearch ) );
+)( withShoppingCart( localize( DomainSearch ) ) );
