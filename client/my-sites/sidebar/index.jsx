@@ -29,7 +29,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isEcommerce } from 'calypso/lib/products-values';
+import { isBusiness, isEcommerce } from 'calypso/lib/products-values';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -698,18 +698,16 @@ export class MySitesSidebar extends Component {
 	woocommerce() {
 		const { site, siteSuffix, canUserUseStore } = this.props;
 
-		const calypsoStoreDeprecatedOrRemoved =
+		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
 
 		if (
-			! calypsoStoreDeprecatedOrRemoved ||
 			! isEnabled( 'woocommerce/extension-dashboard' ) ||
-			! site
+			! isCalypsoStoreDeprecatedOrRemoved ||
+			! site ||
+			! isBusiness( site.plan ) ||
+			! canUserUseStore
 		) {
-			return null;
-		}
-
-		if ( ! canUserUseStore ) {
 			return null;
 		}
 
