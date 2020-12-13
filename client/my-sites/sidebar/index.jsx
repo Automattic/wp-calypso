@@ -689,6 +689,46 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackWooCommerceClick = () => {
+		this.trackMenuItemClick( 'woocommerce' );
+		this.props.recordTracksEvent( 'calypso_woocommerce_store_woo_core_item_click' );
+		this.onNavigate();
+	};
+
+	woocommerce() {
+		const { site, siteSuffix, canUserUseStore } = this.props;
+
+		const calypsoStoreDeprecatedOrRemoved =
+			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
+
+		if (
+			! calypsoStoreDeprecatedOrRemoved ||
+			! isEnabled( 'woocommerce/extension-dashboard' ) ||
+			! site
+		) {
+			return null;
+		}
+
+		if ( ! canUserUseStore ) {
+			return null;
+		}
+
+		let storeLink = '/store' + siteSuffix;
+		if ( isEcommerce( site.plan ) ) {
+			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
+		}
+
+		return (
+			<SidebarItem
+				label="WooCommerce"
+				link={ storeLink }
+				onNavigate={ this.trackWooCommerceClick }
+				materialIcon="shopping_cart"
+				forceInternalLink
+			/>
+		);
+	}
+
 	trackMenuItemClick = ( menuItemName ) => {
 		this.props.recordTracksEvent(
 			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
@@ -941,6 +981,7 @@ export class MySitesSidebar extends Component {
 					{ this.stats() }
 					{ this.planMenu() }
 					{ this.store() }
+					{ this.woocommerce() }
 				</SidebarMenu>
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }
