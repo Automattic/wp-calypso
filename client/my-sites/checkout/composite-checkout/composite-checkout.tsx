@@ -233,6 +233,14 @@ export default function CompositeCheckout( {
 		isInitialCartLoading,
 	} );
 
+	// Remove the coupon when it doesn't exist on the server-side
+	const couponSavingsTotal = responseCart?.coupon_savings_total_integer;
+	useEffect( () => {
+		if ( couponStatus === 'applied' && couponSavingsTotal === 0 ) {
+			removeCoupon();
+		}
+	}, [ couponStatus, couponSavingsTotal ] );
+
 	const {
 		items,
 		tax,
