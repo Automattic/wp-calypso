@@ -719,7 +719,6 @@ export class MySitesSidebar extends Component {
 				link={ storeLink }
 				onNavigate={ this.trackWooCommerceClick }
 				materialIcon="shopping_cart"
-				forceInternalLink
 			/>
 		);
 	}
