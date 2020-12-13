@@ -696,7 +696,7 @@ export class MySitesSidebar extends Component {
 	};
 
 	woocommerce() {
-		const { site, siteSuffix, canUserUseStore } = this.props;
+		const { site, canUserUseStore } = this.props;
 
 		const isCalypsoStoreDeprecatedOrRemoved =
 			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
@@ -711,10 +711,7 @@ export class MySitesSidebar extends Component {
 			return null;
 		}
 
-		let storeLink = '/store' + siteSuffix;
-		if ( isEcommerce( site.plan ) ) {
-			storeLink = site.options.admin_url + 'admin.php?page=wc-admin&calypsoify=1';
-		}
+		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
 
 		return (
 			<SidebarItem
