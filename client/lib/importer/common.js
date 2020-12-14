@@ -80,7 +80,7 @@ export function fromApi( state ) {
 		importerState: apiToAppState( importStatus ),
 		type: `importer-type-${ type }`,
 		progress,
-		customData: generateSourceAuthorIds( customData ),
+		...( customData && { customData: generateSourceAuthorIds( customData ) } ),
 		site: { ID: siteId },
 		errorData,
 	};
