@@ -651,14 +651,8 @@ object CheckCodeStyle : BuildType({
 
 				export NODE_ENV="test"
 
-				FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
-
-				echo "Files to lint:"
-				echo ${'$'}FILES_TO_LINT
-				echo ""
-
 				# Lint files
-				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" ${'$'}FILES_TO_LINT
+				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
 			""".trimIndent()
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
