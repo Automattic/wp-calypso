@@ -960,20 +960,13 @@ jobs:
   wp-desktop-publish:
     docker:
       - image: circleci/golang:1.12
-    # This directory needs to be unused, or the checkout step will fail with:
-    #
-    # > Directory (/path/to/dir) you are trying to checkout to is not empty and
-    # > not a git repository"
-    #
-    # We need to checkout the repo to have the Git history with which to
-    # generate the changelog for the GitHub release.
-    working_directory: ~/wp-calypso-desktop-changelog
+    working_directory: ~/wp-calypso
     environment:
       VERSION: v6.7.0-beta1
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wp-calypso-desktop-changelog
+          at: ~/wp-calypso
       # - run:
       #     name: Install Dependencies
       #     command: go get github.com/tcnksm/ghr
