@@ -10,7 +10,7 @@ import {
 	VIEWERS_REQUEST_SUCCESS,
 	VIEWERS_REQUEST,
 	VIEWERS_REQUEST_FAILURE,
-	REMOVE_VIEWER_SUCCESS,
+	VIEWER_REMOVE_SUCCESS,
 } from '../../action-types';
 import { items, queries, fetching } from '../reducer';
 
@@ -64,7 +64,7 @@ describe( '#items', () => {
 		} );
 
 		const state = items( initialState, {
-			type: REMOVE_VIEWER_SUCCESS,
+			type: VIEWER_REMOVE_SUCCESS,
 			viewerId: 4,
 		} );
 
@@ -137,7 +137,7 @@ describe( '#queries', () => {
 			[ 1 ]: { ids: [ 2, 6 ], found: 2 },
 		} );
 		const state = queries( initialState, {
-			type: REMOVE_VIEWER_SUCCESS,
+			type: VIEWER_REMOVE_SUCCESS,
 			siteId: 1,
 			viewerId: 2,
 		} );
