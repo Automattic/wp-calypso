@@ -21,5 +21,12 @@ export function isTreatmentInMonthlyPricingTest( state: AppState ): boolean {
 }
 
 export function isTreatmentOneClickTest( state: AppState ): boolean {
-	return 'treatment' === getVariationForUser( state, 'one_click_premium_plan_upgrade_v2' );
+	const countryCode =
+		typeof document !== 'undefined' && cookie.parse( document.cookie )?.country_code;
+
+	// Excluding for monthly pricing tests
+	if ( [ 'AR', 'CL', 'CO' ].includes( countryCode || '' ) ) {
+		return false;
+	}
+	return 'treatment' === getVariationForUser( state, 'one_click_premium_plan_upgrade_v3' );
 }
