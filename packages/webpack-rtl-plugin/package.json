@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/webpack-rtl-plugin",
-	"version": "3.0.0",
+	"version": "4.0.0",
 	"description": "Webpack plugin to produce a rtl css bundle.",
 	"main": "src/index.js",
 	"author": "Automattic Inc.",
