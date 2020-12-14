@@ -36,11 +36,11 @@ describe( `[${ host }] Experimental data we depend on is available (${ screenSiz
 	step(
 		`is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
 		async function () {
-			const __experimentalBlockPatternsArePresent = await driver.executeScript(
+			const __experimentalBlockPatternsAreIterable = await driver.executeScript(
 				`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 			);
 			assert(
-				__experimentalBlockPatternsArePresent,
+				__experimentalBlockPatternsAreIterable,
 				'__experimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
 			);
 		}
