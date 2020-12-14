@@ -1,7 +1,6 @@
 module.exports = {
 	cacheDirectory: '<rootDir>/../.cache/jest',
 	moduleNameMapper: {
-		'^config$': '<rootDir>/server/config/index.js',
 		'^calypso/config$': '<rootDir>/server/config/index.js',
 	},
 	transform: {
