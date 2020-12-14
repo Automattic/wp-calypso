@@ -1,6 +1,6 @@
 {
 	"reporterEnabled": "mocha-junit-reporter, spec",
 	"mochaJunitReporterReporterOptions": {
-		"mochaFile": "./reports/junit.[hash].xml"
+		"mochaFile": "${ process.env.TEMP_ASSET_PATH }/reports/junit.[hash].xml"
 	}
 }
