@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { castArray, includes } from 'lodash';
+import { castArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -116,7 +116,7 @@ export function cancelImport( siteId, importerId ) {
 
 	// Bail if this is merely a local importer object because
 	// there is nothing on the server-side to cancel
-	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
+	if ( importerId.startsWith( ID_GENERATOR_PREFIX ) ) {
 		return;
 	}
 
