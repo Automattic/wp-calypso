@@ -52,6 +52,7 @@ export default function getThankYouPageUrl( {
 	shouldShowOneClickTreatment,
 	hideNudge,
 	isInEditor,
+	previousRoute,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -69,6 +70,7 @@ export default function getThankYouPageUrl( {
 	shouldShowOneClickTreatment?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
+	previousRoute?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -171,6 +173,7 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 		hideNudge: Boolean( hideNudge ),
 		shouldShowOneClickTreatment,
+		previousRoute,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -299,13 +302,15 @@ function getRedirectUrlForConciergeNudge( {
 	siteSlug,
 	hideNudge,
 	shouldShowOneClickTreatment,
+	previousRoute,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
-	shouldShowOneClickTreatment: boolean;
+	shouldShowOneClickTreatment: boolean | undefined;
+	previousRoute: string | undefined;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -316,6 +321,7 @@ function getRedirectUrlForConciergeNudge( {
 	if (
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		cart &&
+		! previousRoute?.includes( '/offer-plan-upgrade/premium' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		( hasBloggerPlan( cart ) ||
