@@ -973,7 +973,7 @@ jobs:
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
-            chmod +x desktop/bin/make-changelog.sh
+            chmod +x ./desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
             ghr \
