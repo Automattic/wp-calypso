@@ -5,7 +5,7 @@
 import PropTypes from 'prop-types';
 import React, { Component, createElement } from 'react';
 import { connect } from 'react-redux';
-import { camelCase } from 'lodash';
+import { camelCase, deburr } from 'lodash';
 import { localize } from 'i18n-calypso';
 import debugFactory from 'debug';
 
@@ -183,7 +183,7 @@ export class ManagedContactDetailsFormFields extends Component {
 		} );
 
 		// Strip leading and trailing whitespace
-		const sanitizedValue = form[ camelCase( name ) ]?.value.trim();
+		const sanitizedValue = deburr( form[ camelCase( name ) ]?.value.trim() );
 		this.handleFieldChange( name, sanitizedValue );
 	};
 
