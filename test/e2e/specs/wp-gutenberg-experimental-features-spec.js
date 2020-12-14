@@ -94,33 +94,16 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 		}
 	} );
 
-	step( 'Experimental data we depend on is available', function () {
-		// step( 'Can log in', async function () {
-		// 	this.loginFlow = new LoginFlow( driver, gutenbergUser );
-		// 	return await this.loginFlow.loginAndStartNewPost( null, true );
-		// } );
-
+	describe( 'Experimental data we depend on is available', function () {
 		step(
-			`wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
-			async () => {
-				const __experimentalBlockPatternsArePresent = await driver.executeScript(
+			`is iterable: wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns`,
+			async function () {
+				const __experimentalBlockPatternsAreIterable = await driver.executeScript(
 					`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )`
 				);
 				assert(
-					__experimentalBlockPatternsArePresent,
+					__experimentalBlockPatternsAreIterable,
 					'__experimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
-				);
-			}
-		);
-		step(
-			`wp.data.select( 'core/editor' ).getEditorSettings().__missingExperimentalBlockPatterns`,
-			async () => {
-				const __missingExperimentalBlockPatternsArePresent = await driver.executeScript(
-					`return Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().___missingExperimentalBlockPatterns )`
-				);
-				assert(
-					__missingExperimentalBlockPatternsArePresent,
-					'___missingExperimentalBlockPatterns was not iterable, please contact #team-ganon to update premium pattern highlighting'
 				);
 			}
 		);
