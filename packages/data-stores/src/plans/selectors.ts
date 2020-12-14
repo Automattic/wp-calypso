@@ -8,6 +8,8 @@ import { select } from '@wordpress/data';
  */
 import type { State } from './reducer';
 import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
+
+import type { PlanPath } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
@@ -38,13 +40,13 @@ export const getSupportedPlans = ( state: State ): Plan[] => {
 	return supportedPlans;
 };
 
-export const getPlanByPath = ( state: State, path?: string ): Plan | undefined => {
+export const getPlanByPath = ( state: State, path?: PlanPath ): Plan | undefined => {
 	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
 };
 
 export const getPlansDetails = ( state: State, _: string ): State => state; // eslint-disable-line @typescript-eslint/no-unused-vars
 
-export const getPlansPaths = ( state: State ) => {
+export const getPlansPaths = ( state: State ): string[] => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 };
 

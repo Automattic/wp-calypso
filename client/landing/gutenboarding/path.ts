@@ -12,6 +12,8 @@ import type { ValuesType } from 'utility-types';
 import config from 'calypso/config';
 import { getLanguageRouteParam } from '../../lib/i18n-utils';
 
+type PlanPath = Plans.PlanPath;
+
 const plansPaths = Plans.plansPaths;
 
 // The first step (IntentGathering), which is found at the root route (/), is set as
@@ -91,7 +93,7 @@ export function useStepRouteParam() {
 }
 
 export function usePlanRouteParam() {
-	const match = useRouteMatch< { plan?: string } >( path );
+	const match = useRouteMatch< { plan?: PlanPath } >( path );
 	return match?.params.plan;
 }
 

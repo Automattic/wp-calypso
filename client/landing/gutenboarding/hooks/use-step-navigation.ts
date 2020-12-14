@@ -74,9 +74,13 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	};
 
 	const currentStepIndex = steps.findIndex( ( step ) => step === Step[ currentStep ] );
+
 	const previousStepPath = currentStepIndex > 0 ? makePath( steps[ currentStepIndex - 1 ] ) : '';
 	const nextStepPath =
-		currentStepIndex < steps.length - 1 ? makePath( steps[ currentStepIndex + 1 ] ) : '';
+		currentStepIndex !== -1 && // check first if current step still exists
+		currentStepIndex < steps.length - 1
+			? makePath( steps[ currentStepIndex + 1 ] )
+			: '';
 
 	const isLastStep = currentStepIndex === steps.length - 1;
 

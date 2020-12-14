@@ -8,7 +8,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { Step, StepType, useIsAnchorFm } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { useHasPaidPlanFromPath } from './use-selected-plan';
+import { usePlanFromPath } from './use-selected-plan';
 
 export default function useSteps(): Array< StepType > {
 	const { hasSiteTitle } = useSelect( ( select ) => select( ONBOARD_STORE ) );
@@ -41,26 +41,22 @@ export default function useSteps(): Array< StepType > {
 	}
 
 	// Logic necessary to skip Domains or Plans steps
+	// General rule: if a step has been used already, don't remove it.
 	const { domain, hasUsedDomainsStep, hasUsedPlansStep } = useSelect( ( select ) =>
 		select( ONBOARD_STORE ).getState()
 	);
 	const plan = useSelect( ( select ) => select( ONBOARD_STORE ).getPlan() );
-	const hasPaidPlanFromPath = useHasPaidPlanFromPath();
+	const hasPlanFromPath = !! usePlanFromPath();
 
 	if ( domain && ! hasUsedDomainsStep ) {
 		steps = steps.filter( ( step ) => step !== Step.Domains );
 	}
 
-	// Don't show the mandatory Plans step:
-	// - if the user landed from a marketing page after selecting a paid plan (in this case, hide also the Features step)
-	// - if this is an Anchor.fm signup
-	// - if a plan has been selected using the PlansModal but only if there is no Features step
-	if (
-		hasPaidPlanFromPath ||
-		isAnchorFmSignup ||
-		( ! steps.includes( Step.Features ) && plan && ! hasUsedPlansStep )
-	) {
-		steps = steps.filter( ( step ) => step !== Step.Plans && step !== Step.Features );
+	// Don't show the mandatory Plans steps:
+	// - if the user landed from a marketing page after selecting a plan
+	// - if a plan has been explicitly selected using the PlansModal
+	if ( ( hasPlanFromPath || plan ) && ! hasUsedPlansStep ) {
+		steps = steps.filter( ( step ) => step !== Step.Plans );
 	}
 
 	return steps;
