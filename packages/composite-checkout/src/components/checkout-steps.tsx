@@ -43,7 +43,6 @@ interface StepCompleteStatus {
 
 interface CheckoutStepDataContext {
 	activeStepNumber: number;
-	previousStepNumber: number | null;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
@@ -61,7 +60,6 @@ interface CheckoutSingleStepDataContext {
 
 const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( {
 	activeStepNumber: 0,
-	previousStepNumber: null,
 	stepCompleteStatus: {},
 	totalSteps: 0,
 	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
@@ -157,17 +155,22 @@ export const CheckoutSteps = ( {
 }: CheckoutStepsProps ): JSX.Element => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
+	const previousStepNumber = useRef< number | null >( null );
 
 	const steps = React.Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
-	const { activeStepNumber, stepCompleteStatus, setTotalSteps, previousStepNumber } = useContext(
+	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
 		CheckoutStepDataContext
 	);
 	useEffect( () => {
-		if ( activeStepNumber !== previousStepNumber ) {
-			onStepNumberChange?.( { stepNumber: activeStepNumber, previousStepNumber } );
+		if ( activeStepNumber !== previousStepNumber.current ) {
+			onStepNumberChange?.( {
+				stepNumber: activeStepNumber,
+				previousStepNumber: previousStepNumber.current,
+			} );
+			previousStepNumber.current = activeStepNumber;
 		}
-	}, [ onStepNumberChange, activeStepNumber, previousStepNumber ] );
+	}, [ onStepNumberChange, activeStepNumber ] );
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -222,10 +225,6 @@ export function Checkout( {
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
-	const previousStepNumber = useRef< number | null >( null );
-	useEffect( () => {
-		previousStepNumber.current = actualActiveStepNumber;
-	}, [ actualActiveStepNumber ] );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
@@ -254,7 +253,6 @@ export function Checkout( {
 				<CheckoutStepDataContext.Provider
 					value={ {
 						activeStepNumber: actualActiveStepNumber,
-						previousStepNumber: previousStepNumber.current,
 						stepCompleteStatus,
 						totalSteps,
 						setActiveStepNumber,
