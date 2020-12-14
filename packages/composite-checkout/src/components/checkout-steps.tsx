@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, {
+	useRef,
 	Dispatch,
 	SetStateAction,
 	useCallback,
@@ -30,11 +31,10 @@ import {
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
 	useEvents,
-	usePaymentMethod,
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
-import { FormStatus } from '../types';
+import { FormStatus, CheckoutStepsProps, IsCompleteCallback } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -44,6 +44,7 @@ interface StepCompleteStatus {
 
 interface CheckoutStepDataContext {
 	activeStepNumber: number;
+	previousStepNumber: number | null;
 	stepCompleteStatus: StepCompleteStatus;
 	totalSteps: number;
 	setActiveStepNumber: ( stepNumber: number ) => void;
@@ -61,6 +62,7 @@ interface CheckoutSingleStepDataContext {
 
 const CheckoutStepDataContext = React.createContext< CheckoutStepDataContext >( {
 	activeStepNumber: 0,
+	previousStepNumber: null,
 	stepCompleteStatus: {},
 	totalSteps: 0,
 	setActiveStepNumber: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
@@ -152,15 +154,21 @@ export const CheckoutSummaryCard = styled.div`
 export const CheckoutSteps = ( {
 	children,
 	areStepsActive = true,
+	onStepNumberChange,
 }: CheckoutStepsProps ): JSX.Element => {
 	let stepNumber = 0;
 	let nextStepNumber: number | null = 1;
 
 	const steps = React.Children.toArray( children ).filter( ( child ) => child );
 	const totalSteps = steps.length;
-	const { activeStepNumber, stepCompleteStatus, setTotalSteps } = useContext(
+	const { activeStepNumber, stepCompleteStatus, setTotalSteps, previousStepNumber } = useContext(
 		CheckoutStepDataContext
 	);
+	useEffect( () => {
+		if ( activeStepNumber !== previousStepNumber ) {
+			onStepNumberChange?.( { stepNumber: activeStepNumber, previousStepNumber } );
+		}
+	}, [ onStepNumberChange, activeStepNumber, previousStepNumber ] );
 
 	useEffect( () => {
 		setTotalSteps( totalSteps );
@@ -201,11 +209,6 @@ export const CheckoutSteps = ( {
 	);
 };
 
-interface CheckoutStepsProps {
-	children?: React.ReactNode;
-	areStepsActive?: boolean;
-}
-
 export function Checkout( {
 	children,
 	className,
@@ -220,6 +223,10 @@ export function Checkout( {
 	const [ totalSteps, setTotalSteps ] = useState( 0 );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
+	const previousStepNumber = useRef< number | null >( null );
+	useEffect( () => {
+		previousStepNumber.current = actualActiveStepNumber;
+	}, [ actualActiveStepNumber ] );
 
 	// Change the step if the url changes
 	useChangeStepNumberForUrl( setActiveStepNumber );
@@ -248,6 +255,7 @@ export function Checkout( {
 				<CheckoutStepDataContext.Provider
 					value={ {
 						activeStepNumber: actualActiveStepNumber,
+						previousStepNumber: previousStepNumber.current,
 						stepCompleteStatus,
 						totalSteps,
 						setActiveStepNumber,
@@ -278,7 +286,7 @@ export const CheckoutStep = ( {
 }: {
 	stepId: string;
 	titleContent: React.ReactNode;
-	isCompleteCallback: () => boolean | Promise< boolean >;
+	isCompleteCallback: IsCompleteCallback;
 	activeStepContent?: React.ReactNode;
 	completeStepContent?: React.ReactNode;
 	className?: string;
@@ -290,6 +298,7 @@ export const CheckoutStep = ( {
 	validatingButtonAriaLabel?: string;
 } ): JSX.Element => {
 	const { __ } = useI18n();
+	const onEvent = useEvents();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
@@ -300,19 +309,9 @@ export const CheckoutStep = ( {
 	const setThisStepCompleteStatus = ( newStatus: boolean ) =>
 		setStepCompleteStatus( { ...stepCompleteStatus, [ stepNumber ]: newStatus } );
 	const goToThisStep = () => setActiveStepNumber( stepNumber );
-	const onEvent = useEvents();
-	const activePaymentMethod = usePaymentMethod();
 	const finishIsCompleteCallback = ( completeResult: boolean ) => {
 		setThisStepCompleteStatus( !! completeResult );
 		if ( completeResult ) {
-			onEvent( {
-				type: 'STEP_NUMBER_CHANGED',
-				payload: {
-					stepNumber: nextStepNumber,
-					previousStepNumber: stepNumber,
-					paymentMethodId: activePaymentMethod?.id ?? '',
-				},
-			} );
 			if ( nextStepNumber ) {
 				saveStepNumberToUrl( nextStepNumber );
 				setActiveStepNumber( nextStepNumber );

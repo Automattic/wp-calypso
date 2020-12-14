@@ -301,6 +301,20 @@ export default function WPCheckout( {
 		[ recordEvent ]
 	);
 
+	const onStepNumberChange = useCallback(
+		( { stepNumber, previousStepNumber } ) => {
+			recordEvent( {
+				type: 'STEP_NUMBER_CHANGED',
+				payload: {
+					stepNumber,
+					previousStepNumber,
+					paymentMethodId,
+				},
+			} );
+		},
+		[ paymentMethodId, recordEvent ]
+	);
+
 	return (
 		<Checkout>
 			<QueryExperiments />
@@ -379,7 +393,10 @@ export default function WPCheckout( {
 					}
 					formStatus={ formStatus }
 				/>
-				<CheckoutSteps areStepsActive={ ! isOrderReviewActive }>
+				<CheckoutSteps
+					areStepsActive={ ! isOrderReviewActive }
+					onStepNumberChange={ onStepNumberChange }
+				>
 					{ shouldShowContactStep && (
 						<CheckoutStep
 							stepId={ 'contact-form' }
