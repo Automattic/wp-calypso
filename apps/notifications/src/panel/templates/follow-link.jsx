@@ -58,7 +58,7 @@ export const FollowLink = createReactClass( {
 			follower.add( updateState );
 
 			const stats = { 'notes-click-action': 'follow' };
-			stats[ 'follow_source' ] = this.followStatTypes[ this.props.noteType ];
+			stats.follow_source = this.followStatTypes[ this.props.noteType ];
 			bumpStat( stats );
 		}
 
