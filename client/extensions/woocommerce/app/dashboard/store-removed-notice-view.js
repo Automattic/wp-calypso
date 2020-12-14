@@ -14,6 +14,12 @@ import { translate } from 'i18n-calypso';
 import { Card, Button } from '@automattic/components';
 import Main from 'calypso/components/main';
 
+/**
+ * Image dependencies
+ */
+
+import megaphoneImage from 'calypso/assets/images/woocommerce/megaphone.svg';
+
 class StoreRemovedNoticeView extends Component {
 	render = () => {
 		return (
@@ -24,6 +30,7 @@ class StoreRemovedNoticeView extends Component {
 						<NoticeAction href="#">{ 'More' }</NoticeAction>
 					</Notice>
 					<Card>
+						<img src={ megaphoneImage } alt="" />
 						<h1>Store has moved to WooCommerce</h1>
 						<p>Now you'll be able to access all of your most important</p>
 						<p>store management features in one place.</p>
