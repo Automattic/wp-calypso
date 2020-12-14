@@ -446,7 +446,7 @@ export class PluginsList extends React.Component {
 
 			return sites;
 		}, [] );
-	},
+	}
 
 	// Renders
 	render() {
