@@ -69,6 +69,9 @@ function WelcomeTourFrame() {
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
+	// Preload card images
+	cardContent.forEach( ( card ) => ( new window.Image().src = card.imgSrc ) );
+
 	return (
 		<div className="wpcom-editor-welcome-tour-frame">
 			{ ! isMinimized ? (
