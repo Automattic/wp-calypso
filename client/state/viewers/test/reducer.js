@@ -162,7 +162,7 @@ describe( '#fetching', () => {
 		const initialState = { [ siteId ]: true };
 		const state = fetching( initialState, { type: VIEWERS_REQUEST_SUCCESS, siteId } );
 
-		expect( state[ siteId ] ).toBe( false );
+		expect( state[ siteId ] ).toBe( undefined );
 	} );
 
 	test( 'should return `false` in case viewers were requested unsuccessfully for a given site', () => {
@@ -170,7 +170,7 @@ describe( '#fetching', () => {
 		const initialState = { [ siteId ]: true };
 		const state = fetching( initialState, { type: VIEWERS_REQUEST_FAILURE, siteId } );
 
-		expect( state[ siteId ] ).toBe( false );
+		expect( state[ siteId ] ).toBe( undefined );
 	} );
 
 	test( 'should only affect status for a given site', () => {

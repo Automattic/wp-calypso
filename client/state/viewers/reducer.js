@@ -12,7 +12,7 @@ import {
 	VIEWERS_REQUEST_FAILURE,
 	VIEWERS_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
-import { combineReducers } from 'calypso/state/utils';
+import { combineReducers, keyedReducer, withStorageKey } from 'calypso/state/utils';
 
 export const items = ( state = {}, action ) => {
 	switch ( action.type ) {
@@ -33,46 +33,38 @@ export const items = ( state = {}, action ) => {
 	return state;
 };
 
-export const queries = ( state = {}, action ) => {
+export const queries = keyedReducer( 'siteId', ( state = {}, action ) => {
 	switch ( action.type ) {
 		case VIEWERS_REQUEST_SUCCESS: {
-			const { siteId, data } = action;
-			const existingIds = state[ siteId ]?.ids ?? [];
+			const { data } = action;
+			const existingIds = state?.ids ?? [];
 			const ids = data?.viewers.map( ( viewer ) => viewer.ID );
 
 			return {
-				...state,
-				[ siteId ]: {
-					ids: [ ...new Set( existingIds.concat( ids ) ) ],
-					found: action.data.found,
-				},
+				ids: [ ...new Set( existingIds.concat( ids ) ) ],
+				found: action.data.found,
 			};
 		}
 		case VIEWER_REMOVE_SUCCESS: {
-			const { siteId, viewerId } = action;
+			const { viewerId } = action;
 			return {
-				...state,
-				[ siteId ]: {
-					ids: state[ siteId ].ids.filter( ( id ) => id !== viewerId ),
-					found: state[ siteId ].found - 1,
-				},
+				ids: state.ids.filter( ( id ) => id !== viewerId ),
+				found: state.found - 1,
 			};
 		}
 	}
 	return state;
-};
+} );
 
-export const fetching = ( state = false, action ) => {
+export const fetching = keyedReducer( 'siteId', ( state = false, action ) => {
 	switch ( action.type ) {
 		case VIEWERS_REQUEST:
 		case VIEWERS_REQUEST_SUCCESS:
 		case VIEWERS_REQUEST_FAILURE: {
-			return Object.assign( {}, state, {
-				[ action.siteId ]: VIEWERS_REQUEST === action.type,
-			} );
+			return VIEWERS_REQUEST === action.type;
 		}
 	}
 	return state;
-};
+} );
 
-export default combineReducers( { items, queries, fetching } );
+export default withStorageKey( 'viewers', combineReducers( { items, queries, fetching } ) );
