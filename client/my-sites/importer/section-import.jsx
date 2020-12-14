@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, get, isEmpty, once } from 'lodash';
+import { defer, filter, get, isEmpty, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -96,7 +96,7 @@ class SectionImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		defer( () => startImport( site.ID, getImporterTypeForEngine( engine ) ) );
 	} );
 
 	handleStateChanges = () => {
