@@ -12,10 +12,8 @@ describe( 'selectors', () => {
 	describe( '#getUserSuggestions()', () => {
 		test( 'should return empty array if there is no suggestion available', () => {
 			const state = {
-				users: {
-					suggestions: {
-						items: {},
-					},
+				userSuggestions: {
+					items: {},
 				},
 			};
 			expect( getUserSuggestions( state, 123 ) ).to.eql( [] );
@@ -25,11 +23,9 @@ describe( 'selectors', () => {
 			const firstSuggestion = { user_login: 'wordpress1' };
 			const secondSuggestion = { user_login: 'wordpress2' };
 			const state = {
-				users: {
-					suggestions: {
-						items: {
-							123: [ firstSuggestion, secondSuggestion ],
-						},
+				userSuggestions: {
+					items: {
+						123: [ firstSuggestion, secondSuggestion ],
 					},
 				},
 			};
@@ -40,12 +36,10 @@ describe( 'selectors', () => {
 	describe( '#isRequestingUserSuggestions()', () => {
 		test( 'should return true if requesting suggestions for the specified site', () => {
 			const state = {
-				users: {
-					suggestions: {
-						requesting: {
-							123: true,
-							124: false,
-						},
+				userSuggestions: {
+					requesting: {
+						123: true,
+						124: false,
 					},
 				},
 			};

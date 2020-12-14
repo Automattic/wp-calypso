@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-
 import wpcom from 'calypso/lib/wp';
 import {
 	USER_SUGGESTIONS_RECEIVE,
@@ -9,6 +8,8 @@ import {
 	USER_SUGGESTIONS_REQUEST_SUCCESS,
 	USER_SUGGESTIONS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
+
+import 'calypso/state/user-suggestions/init';
 
 /**
  * Returns an action object to be used in signalling that user suggestions for a site
