@@ -70,8 +70,8 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
 	};
 
-	const handleFindYourExpertClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_find_your_expert_button_click' );
+	const handleJetpackClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_jetpack_button_click' );
 	};
 
 	const handleStartSharingClick = () => {
@@ -159,18 +159,30 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
-					title={ translate( 'Need an expert to help realize your vision? Hire one!' ) }
+					title={ translate( 'SimpleTexting' ) }
 					description={ translate(
-						"We've partnered with Upwork, a network of freelancers with a huge pool of WordPress experts. Hire a pro to help build your dream site."
+						'SimpleTexting makes it easy, fast and affordable to send SMS marketing campaigns or engage in 1-on-1 conversations with your customers.'
 					) }
-					imagePath="/calypso/images/marketing/upwork-logo.png"
+					imagePath={ earnIllustration }
 				>
 					<Button
-						onClick={ handleFindYourExpertClick }
-						href={ '/experts/upwork?source=marketingtools' }
+						onClick={ handleCreateALogoClick }
+						href="https://simpletexting.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Find your expert' ) }
+						{ translate( 'Create a logo' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Jetpack CRM' ) }
+					description={ translate(
+						'Jetpack CRM is the no-nonsense CRM for WordPress. Entrepreneurs earn more money when they use a good CRM, and Jetpack CRM is the simplest and most powerful of all WordPress CRMs.'
+					) }
+					imagePath={ facebookMessenger }
+				>
+					<Button onClick={ handleJetpackClick } href="https://www.jetpack.com" target="_blank">
+						{ translate( 'Call to Action' ) }
 					</Button>
 				</MarketingToolsFeature>
 			</div>

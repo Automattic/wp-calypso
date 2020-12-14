@@ -18,7 +18,13 @@ import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/anal
 /**
  * Images
  */
-import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
+import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.svg';
+import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
+import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
+import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
+import jetpackLogo from 'calypso/assets/images/illustrations/jetpack-logo.svg';
+import ownrLogo from 'calypso/assets/images/illustrations/ownr-logo.svg';
+import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 
 /**
  * Types
@@ -42,7 +48,35 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 	const translate = useTranslate();
 
 	const handlePartnerClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
+		recordTracksEvent( 'calypso_marketing_business_boost_my_traffic_button_click' );
+	};
+
+	const handleQuickBooksClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_quickbooks_button_click' );
+	};
+
+	const handleEvernoteClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_evernote_button_click' );
+	};
+
+	const handleMondayClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_monday_button_click' );
+	};
+
+	const handleTodoistClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_todois_button_click' );
+	};
+
+	const handleBenchClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_bench_button_click' );
+	};
+
+	const handleJetpackClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_jetpack_button_click' );
+	};
+
+	const handleOwnrClick = () => {
+		recordTracksEvent( 'calypso_marketing_business_ownr_button_click' );
 	};
 
 	return (
@@ -53,16 +87,16 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 
 			<div className="business-tools__feature-list">
 				<MarketingBusinessToolsFeature
-					category={ translate( 'Productivity' ) }
-					title={ translate( 'Partner #1' ) }
+					category={ translate( 'Finance' ) }
+					title={ translate( 'QuickBooks' ) }
 					description={ translate(
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+						"Create and track invoices, track expenses, generate profit & loss statements, and make tax time for your business a breeze with the world's #1 accounting software for small businesses! "
 					) }
-					imagePath={ facebookMessenger }
+					imagePath={ quickbooksLogo }
 				>
 					<Button
-						onClick={ handlePartnerClick }
-						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						onClick={ handleQuickBooksClick }
+						href="https://quickbooks.grsm.io/wordpresscom"
 						target="_blank"
 					>
 						{ translate( 'Call to Action' ) }
@@ -71,15 +105,41 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 
 				<MarketingBusinessToolsFeature
 					category={ translate( 'Productivity' ) }
-					title={ translate( 'Partner #2' ) }
+					title={ translate( 'Evernote' ) }
 					description={ translate(
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+						'Evernote is the place to organize your work, declutter your life, and remember everything. Maintaining the important information you need to manage your work or your personal life has never been easier.'
 					) }
-					imagePath={ facebookMessenger }
+					imagePath={ evernoteLogo }
+				>
+					<Button onClick={ handleEvernoteClick } href="evernoteLogo" target="_blank">
+						{ translate( 'Call to Action' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Project Management' ) }
+					title={ translate( 'Monday.com' ) }
+					description={ translate(
+						'monday.com is a centralized platform for teams to manage every detail of their work, from high-level roadmap planning to specifics tasks.'
+					) }
+					imagePath={ mondayLogo }
+				>
+					<Button onClick={ handleMondayClick } href="MONDAYLINK" target="_blank">
+						{ translate( 'Call to Action' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Productivity' ) }
+					title={ translate( 'Todoist' ) }
+					description={ translate(
+						'The to-do list to organize work & life. ✅ Trusted by over 20 million people, Todoist is an incredibly powerful and flexible task management app that can turn your to-do list into a got-it-done list.'
+					) }
+					imagePath={ todoistLogo }
 				>
 					<Button
-						onClick={ handlePartnerClick }
-						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						onClick={ handleTodoistClick }
+						href="https://doist.grsm.io/wordpresscom"
 						target="_blank"
 					>
 						{ translate( 'Call to Action' ) }
@@ -87,16 +147,16 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 				</MarketingBusinessToolsFeature>
 
 				<MarketingBusinessToolsFeature
-					category={ translate( 'Productivity' ) }
-					title={ translate( 'Partner #3' ) }
+					category={ translate( 'Finance' ) }
+					title={ translate( 'Bench' ) }
 					description={ translate(
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+						'Bench gives you a professional bookkeeper at a price you can afford, and powerful financial reporting software with zero learning curve.'
 					) }
-					imagePath={ facebookMessenger }
+					imagePath={ benchLogo }
 				>
 					<Button
-						onClick={ handlePartnerClick }
-						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						onClick={ handleBenchClick }
+						href="https://bench.grsm.io/wordpresscom"
 						target="_blank"
 					>
 						{ translate( 'Call to Action' ) }
@@ -104,16 +164,29 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 				</MarketingBusinessToolsFeature>
 
 				<MarketingBusinessToolsFeature
-					category={ translate( 'Productivity' ) }
-					title={ translate( 'Partner #4' ) }
+					category={ translate( 'Sales' ) }
+					title={ translate( 'Jetpack CRM' ) }
 					description={ translate(
-						'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud.'
+						'Jetpack CRM is the no-nonsense CRM for WordPress. Entrepreneurs earn more money when they use a good CRM, and Jetpack CRM is the simplest and most powerful of all WordPress CRMs.'
 					) }
-					imagePath={ facebookMessenger }
+					imagePath={ jetpackLogo }
+				>
+					<Button onClick={ handleJetpackClick } href="https://www.jetpack.com" target="_blank">
+						{ translate( 'Call to Action' ) }
+					</Button>
+				</MarketingBusinessToolsFeature>
+
+				<MarketingBusinessToolsFeature
+					category={ translate( 'Administration' ) }
+					title={ translate( 'Ownr' ) }
+					description={ translate(
+						'Ownr is the simplest, most convenient way to register or incorporate your business and build your brand.'
+					) }
+					imagePath={ ownrLogo }
 				>
 					<Button
-						onClick={ handlePartnerClick }
-						href="https://wordpress.com/plugins/facebook-messenger-customer-chat"
+						onClick={ handleOwnrClick }
+						href="https://ownr.grsm.io/wordpresscom"
 						target="_blank"
 					>
 						{ translate( 'Call to Action' ) }
