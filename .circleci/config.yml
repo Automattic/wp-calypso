@@ -964,6 +964,7 @@ jobs:
     steps:
       - attach_workspace:
           at: /home/circleci/wp-calypso
+      - checkout
       - run:
           name: Install Dependencies
           command: go get github.com/tcnksm/ghr
