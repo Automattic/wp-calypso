@@ -634,6 +634,7 @@ export default function CompositeCheckout( {
 				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
+					recordEvent={ recordEvent }
 					removeProductFromCart={ removeProductFromCart }
 					updateLocation={ updateLocation }
 					applyCoupon={ applyCoupon }

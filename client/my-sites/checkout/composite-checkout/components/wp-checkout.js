@@ -13,7 +13,6 @@ import {
 	CheckoutSummaryArea as CheckoutSummaryAreaUnstyled,
 	getDefaultPaymentMethodStep,
 	useDispatch,
-	useEvents,
 	useFormStatus,
 	useIsStepActive,
 	useIsStepComplete,
@@ -113,18 +112,18 @@ export default function WPCheckout( {
 	isLoggedOutCart,
 	infoMessage,
 	createUserAndSiteBeforeTransaction,
+	recordEvent,
 } ) {
 	const translate = useTranslate();
 	const couponFieldStateProps = useCouponFieldState( applyCoupon );
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
-	const onEvent = useEvents();
 	const { transactionError } = useTransactionStatus();
 	const [ paymentMethodId ] = usePaymentMethodId();
 
 	useActOnceOnStrings( [ transactionError ].filter( doesValueExist ), ( messages ) => {
 		messages.forEach( ( message ) =>
-			onEvent( {
+			recordEvent( {
 				type: 'TRANSACTION_ERROR',
 				payload: { message, paymentMethodId },
 			} )
@@ -173,7 +172,7 @@ export default function WPCheckout( {
 				emailTakenLoginRedirectMessage
 			);
 			handleContactValidationResult( {
-				recordEvent: onEvent,
+				recordEvent,
 				showErrorMessage: showErrorMessageBriefly,
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
@@ -193,7 +192,7 @@ export default function WPCheckout( {
 			const validationResult = await getDomainValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
-				recordEvent: onEvent,
+				recordEvent,
 				showErrorMessage: showErrorMessageBriefly,
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
@@ -204,7 +203,7 @@ export default function WPCheckout( {
 			const validationResult = await getGSuiteValidationResult( items, contactInfo );
 			debug( 'validating contact details result', validationResult );
 			handleContactValidationResult( {
-				recordEvent: onEvent,
+				recordEvent,
 				showErrorMessage: showErrorMessageBriefly,
 				paymentMethodId: activePaymentMethod.id,
 				validationResult,
@@ -280,26 +279,26 @@ export default function WPCheckout( {
 
 	const onReviewError = useCallback(
 		( error ) =>
-			onEvent( {
+			recordEvent( {
 				type: 'STEP_LOAD_ERROR',
 				payload: {
 					message: error,
 					stepId: 'review',
 				},
 			} ),
-		[ onEvent ]
+		[ recordEvent ]
 	);
 
 	const onSummaryError = useCallback(
 		( error ) =>
-			onEvent( {
+			recordEvent( {
 				type: 'STEP_LOAD_ERROR',
 				payload: {
 					message: error,
 					stepId: 'summary',
 				},
 			} ),
-		[ onEvent ]
+		[ recordEvent ]
 	);
 
 	return (
