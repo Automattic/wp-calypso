@@ -30,11 +30,10 @@ import {
 	getDefaultOrderSummary,
 	getDefaultOrderSummaryStep,
 	getDefaultPaymentMethodStep,
-	useEvents,
 } from '../public-api';
 import styled from '../lib/styled';
 import { Theme } from '../lib/theme';
-import { FormStatus, CheckoutStepsProps, IsCompleteCallback } from '../types';
+import { OnLoadError, FormStatus, CheckoutStepsProps, IsCompleteCallback } from '../types';
 
 const debug = debugFactory( 'composite-checkout:checkout' );
 
@@ -283,6 +282,7 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel,
 	validatingButtonText,
 	validatingButtonAriaLabel,
+	onLoadError,
 }: {
 	stepId: string;
 	titleContent: React.ReactNode;
@@ -296,9 +296,9 @@ export const CheckoutStep = ( {
 	nextStepButtonAriaLabel?: string;
 	validatingButtonText?: string;
 	validatingButtonAriaLabel?: string;
+	onLoadError?: OnLoadError;
 } ): JSX.Element => {
 	const { __ } = useI18n();
-	const onEvent = useEvents();
 	const { setActiveStepNumber, setStepCompleteStatus, stepCompleteStatus } = useContext(
 		CheckoutStepDataContext
 	);
@@ -335,15 +335,8 @@ export const CheckoutStep = ( {
 	];
 
 	const onError = useCallback(
-		( error ) =>
-			onEvent( {
-				type: 'STEP_LOAD_ERROR',
-				payload: {
-					message: error,
-					stepId,
-				},
-			} ),
-		[ onEvent, stepId ]
+		( error ) => onLoadError?.( 'STEP_LOAD_ERROR FOR STEP ' + stepId, error ),
+		[ onLoadError, stepId ]
 	);
 
 	return (
@@ -482,21 +475,21 @@ export function CheckoutStepArea( {
 	className,
 	submitButtonHeader,
 	disableSubmitButton,
+	onLoadError,
 }: {
 	children: React.ReactNode;
 	className?: string;
 	submitButtonHeader?: React.ReactNode;
 	disableSubmitButton?: boolean;
+	onLoadError?: OnLoadError;
 } ): JSX.Element {
-	const onEvent = useEvents();
-
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
 		activeStepNumber > totalSteps && totalSteps > 0 ? totalSteps : activeStepNumber;
 	const isThereAnotherNumberedStep = actualActiveStepNumber < totalSteps;
 	const onSubmitButtonLoadError = useCallback(
-		( error ) => onEvent( { type: 'SUBMIT_BUTTON_LOAD_ERROR', payload: error } ),
-		[ onEvent ]
+		( error ) => onLoadError?.( 'SUBMIT_BUTTON_LOAD_ERROR', error ),
+		[ onLoadError ]
 	);
 
 	const classNames = joinClasses( [

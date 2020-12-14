@@ -207,6 +207,7 @@ This component's props are:
 - `titleContent: React.ReactNode`. Displays as the title of the step.
 - `activeStepContent?: React.ReactNode`. Displays as the content of the step when it is active. It is also displayed when the step is inactive but is hidden by CSS.
 - `completeStepContent?: React.ReactNode`. Displays as the content of the step when it is inactive and complete as defined by the `isCompleteCallback`.
+- `onLoadError?: ( type: string, error: Error ) => void`. A function that will be called if the error boundary is triggered.
 - `isCompleteCallback: () => boolean | Promise<boolean>`. Used to determine if a step is complete for purposes of validation. Note that this is not called for the last step!
 - `editButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Edit" button if one exists.
 - `nextStepButtonAriaLabel?: string`. Used to fill in the `aria-label` attribute for the "Continue" button if one exists.
@@ -217,12 +218,13 @@ This component's props are:
 
 ## CheckoutStepArea
 
-Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout).
+Creates the Checkout form and provides a wrapper for [CheckoutStep](#CheckoutStep) and [CheckoutStepBody](#CheckoutStepBody) objects. Should be a direct child of [Checkout](#Checkout). Also renders the CheckoutSubmitButton.
 
 This component's props are:
 
 - `submitButtonHeader: React.ReactNode`. Displays with the Checkout submit button.
 - `disableSubmitButton: boolean`. If true, the submit button will always be disabled. If false (the default), the submit button will be enabled only on the last step and only if the [formStatus](#useFormStatus) is [`.READY`](#FormStatus).
+- `onLoadError?: ( type: string, error: Error ) => void`. A function that will be called if the error boundary is triggered on the submit button.
 
 ## CheckoutStepAreaWrapper
 

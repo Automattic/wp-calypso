@@ -315,6 +315,22 @@ export default function WPCheckout( {
 		[ paymentMethodId, recordEvent ]
 	);
 
+	const onLoadError = useCallback(
+		( type, error ) => {
+			const typeForAnalytics = type.replace( /\s.*/, '' );
+			const stepIdMatches = type.match( /FOR STEP (\d+)/ );
+			const stepId = stepIdMatches?.length > 1 ? stepIdMatches[ 1 ] : undefined;
+			recordEvent( {
+				type: typeForAnalytics,
+				payload: {
+					message: error,
+					stepId,
+				},
+			} );
+		},
+		[ recordEvent ]
+	);
+
 	return (
 		<Checkout>
 			<QueryExperiments />
@@ -348,6 +364,7 @@ export default function WPCheckout( {
 			<CheckoutStepArea
 				submitButtonHeader={ <SubmitButtonHeader /> }
 				disableSubmitButton={ isOrderReviewActive }
+				onLoadError={ onLoadError }
 			>
 				{ infoMessage }
 				<CheckoutStepBody
@@ -399,6 +416,7 @@ export default function WPCheckout( {
 				>
 					{ shouldShowContactStep && (
 						<CheckoutStep
+							onLoadError={ onLoadError }
 							stepId={ 'contact-form' }
 							isCompleteCallback={ () => {
 								setShouldShowContactDetailsValidationErrors( true );
@@ -441,6 +459,7 @@ export default function WPCheckout( {
 						/>
 					) }
 					<CheckoutStep
+						onLoadError={ onLoadError }
 						stepId="payment-method-step"
 						activeStepContent={
 							<PaymentMethodStep

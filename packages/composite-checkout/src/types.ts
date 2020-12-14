@@ -267,3 +267,5 @@ export type OnStepNumberChange = ( {
 } ) => void;
 
 export type IsCompleteCallback = () => boolean | Promise< boolean >;
+
+export type OnLoadError = ( type: string, error: Error ) => void;
