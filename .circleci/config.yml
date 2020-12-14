@@ -958,12 +958,12 @@ jobs:
   wp-desktop-publish:
     docker:
       - image: circleci/golang:1.12
-    working_directory: /home/circleci/wp-calypso
+    working_directory: ~/wp-calypso
     environment:
       VERSION: << pipeline.git.tag >>
     steps:
       - attach_workspace:
-          at: /home/circleci/wp-calypso
+          at: ~/wp-calypso
       - checkout
       - run:
           name: Install Dependencies
