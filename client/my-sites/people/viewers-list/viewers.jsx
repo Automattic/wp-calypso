@@ -16,10 +16,8 @@ import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
 import ListEnd from 'calypso/components/list-end';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
-import getViewers from 'calypso/state/selectors/get-viewers';
-import isFetchingViewers from 'calypso/state/selectors/is-fetching-viewers';
-import getTotalViewers from 'calypso/state/selectors/get-total-viewers';
 import { removeViewer } from 'calypso/state/viewers/actions';
+import { getViewers, getTotalViewers, isFetchingViewers } from 'calypso/state/viewers/selectors';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
