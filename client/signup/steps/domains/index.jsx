@@ -710,11 +710,17 @@ class DomainsStep extends React.Component {
 			'business-name-generator': '/business-name-generator',
 			domains: '/domains',
 		};
+
+		// Only override the back button from an external URL source on the below step(s) which is typically where we'd send them to as the 'entry'.
+		// We don't want to send them "back" to the source URL if they click back on "domains-launch/mapping" for example. Just send them back to the previous step.
+		const backUrlExternalSourceStepsOverrides = [ 'use-your-domain' ];
 		const source = get( this.props, 'queryObject.source' );
 
 		if (
 			( source && backUrlSourceOverrides[ source ] ) ||
-			( source && validUrl.isWebUri( source ) )
+			( source &&
+				validUrl.isWebUri( source ) &&
+				backUrlExternalSourceStepsOverrides.includes( this.props.stepSectionName ) )
 		) {
 			backUrl = validUrl.isWebUri( source ) ? source : backUrlSourceOverrides[ source ];
 			backLabelText = translate( 'Back' );
