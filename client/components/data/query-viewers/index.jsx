@@ -23,14 +23,7 @@ class QueryViewers extends React.Component {
 	}
 
 	request() {
-		this.props.requestViewers( this.props.siteId, this.getQuery() );
-	}
-
-	getQuery() {
-		return {
-			page: this.props.page,
-			number: DEFAULT_NUMBER_OF_VIEWERS,
-		};
+		this.props.requestViewers( this.props.siteId, this.props.page, DEFAULT_NUMBER_OF_VIEWERS );
 	}
 
 	render() {

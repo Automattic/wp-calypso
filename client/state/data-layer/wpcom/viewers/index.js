@@ -11,22 +11,24 @@ import {
 	requestViewersSuccess,
 } from 'calypso/state/viewers/actions';
 
-const fetchViewers = ( action ) =>
-	http(
+const fetchViewers = ( action ) => {
+	const { siteId, page, number } = action;
+	const query = { page, number };
+
+	return http(
 		{
 			method: 'GET',
-			path: `/sites/${ action.siteId }/viewers`,
+			path: `/sites/${ siteId }/viewers`,
 			apiVersion: '1.1',
-			query: action.query,
+			query,
 		},
 		action
 	);
+};
 
-const fetchViewersSuccess = ( { siteId, query }, data ) =>
-	requestViewersSuccess( siteId, query, data );
+const fetchViewersSuccess = ( { siteId }, data ) => requestViewersSuccess( siteId, data );
 
-const fetchViewersFailure = ( { siteId, query }, error ) =>
-	requestViewersFailure( siteId, query, error );
+const fetchViewersFailure = ( { siteId }, error ) => requestViewersFailure( siteId, error );
 
 const requestRemoveViewer = ( action ) =>
 	http(

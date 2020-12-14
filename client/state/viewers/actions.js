@@ -12,23 +12,22 @@ import {
 import 'calypso/state/data-layer/wpcom/viewers';
 import 'calypso/state/viewers/init';
 
-export const requestViewers = ( siteId, query ) => ( {
+export const requestViewers = ( siteId, page, number ) => ( {
 	type: VIEWERS_REQUEST,
 	siteId,
-	query,
+	page,
+	number,
 } );
 
-export const requestViewersSuccess = ( siteId, query, data ) => ( {
+export const requestViewersSuccess = ( siteId, data ) => ( {
 	type: VIEWERS_REQUEST_SUCCESS,
 	siteId,
-	query,
 	data,
 } );
 
-export const requestViewersFailure = ( siteId, query, error ) => ( {
+export const requestViewersFailure = ( siteId, error ) => ( {
 	type: VIEWERS_REQUEST_FAILURE,
 	siteId,
-	query,
 	error,
 } );
 

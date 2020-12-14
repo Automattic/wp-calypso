@@ -119,7 +119,7 @@ describe( '#queries', () => {
 		expect( state ).toEqual( { [ 1 ]: { ids: [ 3, 4 ], found: 2 } } );
 	} );
 
-	test( 'should not repeat ids within the same query', () => {
+	test( 'should not repeat ids within the same siteId', () => {
 		const initialState = deepFreeze( { [ 1 ]: { ids: [ 1 ] } } );
 		const state = queries( initialState, {
 			type: VIEWERS_REQUEST_SUCCESS,
