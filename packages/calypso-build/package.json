@@ -35,7 +35,7 @@
 	],
 	"dependencies": {
 		"@automattic/mini-css-extract-plugin-with-rtl": "^0.8.0",
-		"@automattic/webpack-rtl-plugin": "^2.0.0",
+		"@automattic/webpack-rtl-plugin": "^3.0.0",
 		"@babel/cli": "^7.12.1",
 		"@babel/compat-data": "^7.12.5",
 		"@babel/core": "^7.12.3",
