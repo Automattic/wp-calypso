@@ -675,10 +675,10 @@ jobs:
       CONFIG_ENV: release
     steps:
       - checkout
-      - run:
-          name: Test chmod comman
-          command: |
-            chmod +x ./desktop/bin/make-changelog.sh
+      # - run:
+      #     name: Test chmod comman
+      #     command: |
+      #       chmod +x ./desktop/bin/make-changelog.sh
       #- when:
       #    condition: << pipeline.git.tag >>
       #    steps:
@@ -973,7 +973,7 @@ jobs:
           name: Install Dependencies
           command: go get github.com/tcnksm/ghr
       - run:
-          name: Publish Github Release
+          name: Test Github Release Generation
           command: |
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
@@ -981,16 +981,18 @@ jobs:
             chmod +x ./desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
-            ghr \
-              --token "${GH_TOKEN}" \
-              --username "${CIRCLE_PROJECT_USERNAME}" \
-              --repository "${CIRCLE_PROJECT_REPONAME}" \
-              --commitish "${CIRCLE_SHA1}" \
-              --name "${NAME}" \
-              --body "$(cat desktop/CHANGELOG.md)" \
-              --delete \
-              --draft \
-              "${VERSION}" desktop/release/
+            echo desktop/CHANGELOG.md
+
+            # ghr \
+            #   --token "${GH_TOKEN}" \
+            #   --username "${CIRCLE_PROJECT_USERNAME}" \
+            #   --repository "${CIRCLE_PROJECT_REPONAME}" \
+            #   --commitish "${CIRCLE_SHA1}" \
+            #   --name "${NAME}" \
+            #   --body "$(cat desktop/CHANGELOG.md)" \
+            #   --delete \
+            #   --draft \
+            #   "${VERSION}" desktop/release/
 
             echo "Publish complete"
 
@@ -1112,6 +1114,9 @@ workflows:
                 - trunk
                 - /release\/.*/
                 - /desktop\/.*/
+      - wp-desktop-publish:
+          requires:
+            - wp-desktop-source
       # - wp-desktop-mac:
       #     requires:
       #       - wp-desktop-source
