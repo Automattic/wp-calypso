@@ -121,89 +121,83 @@ class Help extends React.PureComponent {
 		);
 	};
 
-	getSupportLinks = () => {
-		return (
-			<>
-				<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
-				<div className="help__support-links">
-					{ this.getCoursesTeaser() }
-					<CompactCard
-						className="help__support-link"
-						href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
-						target="__blank"
-					>
-						<Gridicon icon="video" size={ 36 } />
-						<div className="help__support-link-section">
-							<h2 className="help__support-link-title">
-								{ this.props.translate( 'Video tutorials' ) }
-							</h2>
-							<p className="help__support-link-content">
-								{ this.props.translate(
-									'These short videos will demonstrate some of our most popular features.'
-								) }
-							</p>
-						</div>
-					</CompactCard>
-					<CompactCard
-						className="help__support-link"
-						href="https://dailypost.wordpress.com/blogging-university/"
-						target="__blank"
-					>
-						<Gridicon icon="mail" size={ 36 } />
-						<div className="help__support-link-section">
-							<h2 className="help__support-link-title">
-								{ this.props.translate( 'Email courses' ) }
-							</h2>
-							<p className="help__support-link-content">
-								{ this.props.translate(
-									'Pick from our ever-growing list of free email courses to improve your knowledge.'
-								) }
-							</p>
-						</div>
-					</CompactCard>
-					<CompactCard
-						className="help__support-link"
-						href="https://learn.wordpress.com"
-						target="__blank"
-					>
-						<Gridicon icon="list-ordered" size={ 36 } />
-						<div className="help__support-link-section">
-							<h2 className="help__support-link-title">{ this.props.translate( 'Guides' ) }</h2>
-							<p className="help__support-link-content">
-								{ this.props.translate(
-									'A step-by-step guide to getting familiar with the platform.'
-								) }
-							</p>
-						</div>
-					</CompactCard>
-				</div>
-			</>
-		);
-	};
-
-	getContactUs = () => {
-		return (
-			<>
-				<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
-				<CompactCard className="help__contact-us-card" href="/help/contact/">
-					<Gridicon icon="help" size={ 36 } />
-					<div className="help__contact-us-section">
-						<h3 className="help__contact-us-title">
-							{ this.props.translate( 'Contact support' ) }
-						</h3>
-						<p className="help__contact-us-content">
+	getSupportLinks = () => (
+		<>
+			<h2 className="help__section-title">{ this.props.translate( 'More Resources' ) }</h2>
+			<div className="help__support-links">
+				{ this.getCoursesTeaser() }
+				<CompactCard
+					className="help__support-link"
+					href={ localizeUrl( 'https://wordpress.com/support/video-tutorials/' ) }
+					target="__blank"
+				>
+					<Gridicon icon="video" size={ 36 } />
+					<div className="help__support-link-section">
+						<h2 className="help__support-link-title">
+							{ this.props.translate( 'Video tutorials' ) }
+						</h2>
+						<p className="help__support-link-content">
 							{ this.props.translate(
-								"Can't find the answer? Drop us a line and we'll lend a hand."
+								'These short videos will demonstrate some of our most popular features.'
 							) }
 						</p>
 					</div>
-					<Button className="help__contact-us-button">
-						{ this.props.translate( 'Contact support' ) }
-					</Button>
 				</CompactCard>
-			</>
-		);
-	};
+				<CompactCard
+					className="help__support-link"
+					href="https://dailypost.wordpress.com/blogging-university/"
+					target="__blank"
+				>
+					<Gridicon icon="mail" size={ 36 } />
+					<div className="help__support-link-section">
+						<h2 className="help__support-link-title">
+							{ this.props.translate( 'Email courses' ) }
+						</h2>
+						<p className="help__support-link-content">
+							{ this.props.translate(
+								'Pick from our ever-growing list of free email courses to improve your knowledge.'
+							) }
+						</p>
+					</div>
+				</CompactCard>
+				<CompactCard
+					className="help__support-link"
+					href="https://learn.wordpress.com"
+					target="__blank"
+				>
+					<Gridicon icon="list-ordered" size={ 36 } />
+					<div className="help__support-link-section">
+						<h2 className="help__support-link-title">{ this.props.translate( 'Guides' ) }</h2>
+						<p className="help__support-link-content">
+							{ this.props.translate(
+								'A step-by-step guide to getting familiar with the platform.'
+							) }
+						</p>
+					</div>
+				</CompactCard>
+			</div>
+		</>
+	);
+
+	getContactUs = () => (
+		<>
+			<h2 className="help__section-title">{ this.props.translate( 'Contact Us' ) }</h2>
+			<CompactCard className="help__contact-us-card" href="/help/contact/">
+				<Gridicon icon="help" size={ 36 } />
+				<div className="help__contact-us-section">
+					<h3 className="help__contact-us-title">{ this.props.translate( 'Contact support' ) }</h3>
+					<p className="help__contact-us-content">
+						{ this.props.translate(
+							"Can't find the answer? Drop us a line and we'll lend a hand."
+						) }
+					</p>
+				</div>
+				<Button className="help__contact-us-button">
+					{ this.props.translate( 'Contact support' ) }
+				</Button>
+			</CompactCard>
+		</>
+	);
 
 	getCoursesTeaser = () => {
 		if ( ! this.props.showCoursesTeaser ) {
@@ -283,17 +277,15 @@ class Help extends React.PureComponent {
 		} );
 	};
 
-	getPlaceholders = () => {
-		return (
-			<Main className="help" wideLayout>
-				<MeSidebarNavigation />
-				<div className="help-search is-placeholder" />
-				<div className="help__help-teaser-button is-placeholder" />
-				<div className="help-results is-placeholder" />
-				<div className="help__support-links is-placeholder" />
-			</Main>
-		);
-	};
+	getPlaceholders = () => (
+		<Main className="help" wideLayout>
+			<MeSidebarNavigation />
+			<div className="help-search is-placeholder" />
+			<div className="help__help-teaser-button is-placeholder" />
+			<div className="help-results is-placeholder" />
+			<div className="help__support-links is-placeholder" />
+		</Main>
+	);
 
 	render() {
 		const { isEmailVerified, userId, isLoading } = this.props;
