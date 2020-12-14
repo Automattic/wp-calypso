@@ -150,3 +150,30 @@
 		}
 	}
 }
+
+.dashboard__store-removed {
+    font-size: $font-body-small;
+
+    .notice__action {
+        float: right;
+        padding: 0;
+        text-decoration: none;
+    }
+
+    .card {
+        text-align: center;
+    }
+
+    h1 {
+        font-weight: bold;
+        margin-bottom: 17px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    button {
+        margin-top: 40px;
+    }
+}
