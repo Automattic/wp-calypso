@@ -19,7 +19,6 @@ import { reducer as dataRequests } from './data-layer/wpcom-http/utils';
 import documentHead from './document-head/reducer';
 import i18n from './i18n/reducer';
 import importerNux from './importer-nux/reducer';
-import mySites from './my-sites/reducer';
 import sites from './sites/reducer';
 import support from './support/reducer';
 import userSettings from './user-settings/reducer';
@@ -34,7 +33,6 @@ const reducers = {
 	httpData,
 	i18n,
 	importerNux,
-	mySites,
 	sites,
 	support,
 	userSettings,
