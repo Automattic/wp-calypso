@@ -45,18 +45,19 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		isLoading,
 		isValidating,
 		children,
+		initiallySelectedPaymentMethodId = null,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
-		paymentMethods?.length ? paymentMethods[ 0 ].id : null
+		initiallySelectedPaymentMethodId
 	);
 	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
 	useEffect( () => {
 		if ( paymentMethods.length !== prevPaymentMethods.length ) {
 			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
 			setPrevPaymentMethods( paymentMethods );
 		}
-	}, [ paymentMethods, prevPaymentMethods ] );
+	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),

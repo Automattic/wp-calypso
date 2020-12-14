@@ -593,6 +593,7 @@ export default function CompositeCheckout( {
 				isLoading={ isLoading }
 				isValidating={ isCartPendingUpdate }
 				theme={ theme }
+				initiallySelectedPaymentMethodId={ paymentMethods?.length ? paymentMethods[ 0 ].id : null }
 			>
 				<WPCheckout
 					removeProductFromCart={ removeProductFromCart }
