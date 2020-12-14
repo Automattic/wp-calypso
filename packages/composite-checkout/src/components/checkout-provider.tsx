@@ -52,10 +52,15 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 	);
 	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
 	useEffect( () => {
-		if ( paymentMethods.length !== prevPaymentMethods.length ) {
-			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-			setPaymentMethodId( initiallySelectedPaymentMethodId );
+		if ( paymentMethods !== prevPaymentMethods ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId,
+				'from',
+				paymentMethods
+			);
 			setPrevPaymentMethods( paymentMethods );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
 		}
 	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 
