@@ -29,7 +29,6 @@ import {
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_GEO_IMAGE_RECEIVE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -514,28 +513,6 @@ export function edits( state = {}, action ) {
 			const postId = action.postId || '';
 			const postEditsLog = get( state, [ siteId, postId ] );
 			const newEditsLog = appendToPostEditsLog( postEditsLog, action.post );
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
-				},
-			};
-		}
-
-		case POST_GEO_IMAGE_RECEIVE: {
-			// process new goe data for a post: merge it into the existing one
-			const siteId = action.siteId;
-			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-			const newEditsLog = appendToPostEditsLog( postEditsLog, {
-				geo: {
-					latitude: parseFloat( action.latitude ),
-					longitude: parseFloat( action.longitude ),
-					map_url: action.map_url,
-				},
-			} );
 
 			return {
 				...state,

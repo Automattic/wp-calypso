@@ -16,4 +16,3 @@ export { startEditingExistingPost } from 'calypso/state/posts/actions/start-edit
 export { startEditingPostCopy } from 'calypso/state/posts/actions/start-editing-post-copy';
 export { trashPost } from 'calypso/state/posts/actions/trash-post';
 export { updatePostMetadata } from 'calypso/state/posts/actions/update-post-metadata';
-export { requestPostGeoImageUrl } from 'calypso/state/posts/geo/actions';
