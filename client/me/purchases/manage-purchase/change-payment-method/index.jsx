@@ -288,6 +288,47 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	locale: getCurrentUserLocale( state ),
 } );
 
+function useAssignablePaymentMethods() {
+	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+
+	const paypalMethod = useCreatePayPal();
+
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		shouldUseEbanx: false,
+	} );
+
+	const storedCards = useSelector( getStoredCards );
+	const existingCardMethods = useCreateExistingCards( {
+		storedCards,
+		stripeConfiguration,
+	} );
+
+	const storedCardsHaveLoaded = storedCards.length === existingCardMethods.length;
+
+	const paymentMethods = useMemo(
+		() => [ paypalMethod, stripeMethod, ...existingCardMethods ].filter( Boolean ),
+		[ paypalMethod, stripeMethod, existingCardMethods ]
+	);
+
+	return [ paymentMethods, storedCardsHaveLoaded ];
+}
+
+function ChangePaymentMethodWrapper( props ) {
+	return (
+		<StripeHookProvider
+			locale={ props.locale }
+			configurationArgs={ { needs_intent: true } }
+			fetchStripeConfiguration={ getStripeConfiguration }
+		>
+			<ChangePaymentMethod { ...props } />
+		</StripeHookProvider>
+	);
+}
+
 export default connect( mapStateToProps, { clearPurchases, recordTracksEvent } )(
 	ChangePaymentMethod
 );
