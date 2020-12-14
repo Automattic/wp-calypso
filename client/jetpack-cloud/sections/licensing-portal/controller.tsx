@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import page from 'page';
+import type PageJS from 'page';
 
 /**
  * Internal dependencies
@@ -15,7 +16,7 @@ import LicensingPortalSidebar from 'calypso/jetpack-cloud/sections/licensing-por
 import InspectLicense from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-license';
 import SelectPartnerKey from 'calypso/jetpack-cloud/sections/licensing-portal/select-partner-key';
 
-export function partnerKeyContext( context: PageJS.Context, next ) {
+export function partnerKeyContext( context: PageJS.Context, next: () => any ) {
 	context.header = <Header />;
 	context.secondary = <LicensingPortalSidebar path={ context.path } />;
 	context.primary = <SelectPartnerKey />;
@@ -23,7 +24,7 @@ export function partnerKeyContext( context: PageJS.Context, next ) {
 	next();
 }
 
-export function licensingPortalContext( context: PageJS.Context, next ) {
+export function licensingPortalContext( context: PageJS.Context, next: () => any ) {
 	context.header = <Header />;
 	context.secondary = <LicensingPortalSidebar path={ context.path } />;
 	context.primary = <InspectLicense />;
@@ -31,7 +32,7 @@ export function licensingPortalContext( context: PageJS.Context, next ) {
 	next();
 }
 
-export function requirePartnerKeyContext( context, next ) {
+export function requirePartnerKeyContext( context: PageJS.Context, next: () => any ) {
 	const state = context.store.getState();
 	const hasKey = getActivePartnerKey( state );
 

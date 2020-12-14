@@ -2554,6 +2554,11 @@ Undocumented.prototype.getAtomicSiteMediaViaProxyRetry = function (
 	return request();
 };
 
+/**
+ * Request all Licensing Partners and their keys for the current WPCOM user.
+ *
+ * @returns {Promise} A promise
+ */
 Undocumented.prototype.getJetpackLicensingPartners = function () {
 	return this.wpcom.req.get( {
 		apiNamespace: 'wpcom/v2',
@@ -2561,6 +2566,12 @@ Undocumented.prototype.getJetpackLicensingPartners = function () {
 	} );
 };
 
+/**
+ * Request the status of a License Key via the Licensing API.
+ *
+ * @param {string} licenseKey License key.
+ * @returns {Promise} A promise
+ */
 Undocumented.prototype.inspectJetpackLicense = function ( licenseKey ) {
 	return this.wpcom.req.get(
 		{
