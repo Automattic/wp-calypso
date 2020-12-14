@@ -1,6 +1,6 @@
 {
 	"mocha_tests": [ "specs/wp-signup-spec.js" ],
-	"mocha_args": "-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json",
+	"mocha_args": "-R spec-junit-reporter",
 	"max_test_attempts": 2,
 	"max_workers": 3,
 	"suiteTag": "canary",
