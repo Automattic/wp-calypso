@@ -971,9 +971,9 @@ jobs:
     environment:
       VERSION: v6.7.0-beta1
     steps:
+      - checkout
       - attach_workspace:
           at: ~/wp-calypso-desktop-changelog
-      - checkout
       # - run:
       #     name: Install Dependencies
       #     command: go get github.com/tcnksm/ghr
