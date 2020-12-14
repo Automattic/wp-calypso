@@ -4,14 +4,18 @@
 import find from 'lodash/find';
 import flatMap from 'lodash/flatMap';
 
+/**
+ * Internal dependencies
+ */
+import { LicensingPortalStore } from 'calypso/state/licensing-portal/types';
 // Required for modular state.
 import 'calypso/state/licensing-portal/init';
 
-export function getActivePartnerKeyId( state ) {
+export function getActivePartnerKeyId( state: LicensingPortalStore ) {
 	return state.licensingPortal.partners.activePartnerKey;
 }
 
-export function getActivePartnerKey( state ) {
+export function getActivePartnerKey( state: LicensingPortalStore ) {
 	const keyId = getActivePartnerKeyId( state );
 	const partners = state.licensingPortal.partners.all;
 	const partnerKeys = flatMap( partners, ( partner ) => partner.keys );
@@ -20,18 +24,18 @@ export function getActivePartnerKey( state ) {
 	return partnerKey;
 }
 
-export function hasActivePartnerKey( state ) {
+export function hasActivePartnerKey( state: LicensingPortalStore ) {
 	return !! getActivePartnerKey( state );
 }
 
-export function isFetchingPartners( state ) {
+export function isFetchingPartners( state: LicensingPortalStore ) {
 	return state.licensingPortal.partners.isFetching;
 }
 
-export function getAllPartners( state ) {
+export function getAllPartners( state: LicensingPortalStore ) {
 	return state.licensingPortal.partners.all;
 }
 
-export function getAllPartnersRequestError( state ) {
+export function getAllPartnersRequestError( state: LicensingPortalStore ) {
 	return state.licensingPortal.partners.error;
 }

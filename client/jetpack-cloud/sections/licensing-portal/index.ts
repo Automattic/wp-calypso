@@ -16,6 +16,7 @@ import './style.scss';
 
 export default function () {
 	page( `/licensing-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
+
 	page(
 		`/licensing-portal`,
 		controller.requirePartnerKeyContext,

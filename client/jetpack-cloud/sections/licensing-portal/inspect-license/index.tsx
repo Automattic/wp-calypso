@@ -10,18 +10,11 @@ import Main from 'calypso/components/main';
 import InspectLicenseForm from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-license-form';
 import InspectLicenseResult from 'calypso/jetpack-cloud/sections/licensing-portal/inspect-license-result';
 
-/**
- * Style dependencies
- */
-import './style.scss';
-
-const InspectLicense: React.FC = () => {
+export default function InspectLicense() {
 	return (
-		<Main className="inspect-license">
-			<InspectLicenseForm/>
-			<InspectLicenseResult/>
+		<Main>
+			<InspectLicenseForm />
+			<InspectLicenseResult />
 		</Main>
 	);
-};
-
-export default InspectLicense;
+}

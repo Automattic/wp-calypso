@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { AnyAction } from 'redux';
+
+/**
  * Internal dependencies
  */
 import {
@@ -17,7 +22,7 @@ export const initialState = {
 	error: '',
 };
 
-export const isFetching = withoutPersistence( ( state = initialState.isFetching, action ) => {
+export const isFetching = withoutPersistence( ( state = initialState.isFetching, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST:
 			return true;
@@ -34,7 +39,7 @@ export const activePartnerKey = withSchemaValidation(
 	{
 		type: 'number',
 	},
-	( state = initialState.activePartnerKey, action ) => {
+	( state = initialState.activePartnerKey, action: AnyAction ) => {
 		switch ( action.type ) {
 			case JETPACK_LICENSING_PORTAL_PARTNERS_ACTIVE_PARTNER_KEY_UPDATE:
 				return action.partnerKeyId;
@@ -44,7 +49,7 @@ export const activePartnerKey = withSchemaValidation(
 	}
 );
 
-export const all = withoutPersistence( ( state = initialState.all, action ) => {
+export const all = withoutPersistence( ( state = initialState.all, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_SUCCESS:
 			// Only store the partners with keys that are not disabled.
@@ -58,7 +63,7 @@ export const all = withoutPersistence( ( state = initialState.all, action ) => {
 	return state;
 } );
 
-export const error = withoutPersistence( ( state = initialState.error, action ) => {
+export const error = withoutPersistence( ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_PORTAL_PARTNERS_ALL_REQUEST_FAILURE:
 			return `${ action.error.status }: ${ action.error.message }`;

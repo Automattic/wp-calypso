@@ -21,7 +21,7 @@ import { Iterations } from 'calypso/my-sites/plans/jetpack-plans/iterations';
  */
 import './style.scss';
 
-const Header: React.FC = () => {
+export default function Header() {
 	const identity = config( 'olark_chat_identity' );
 	const translate = useTranslate();
 	const iteration = useMemo( getJetpackCROActiveVersion, [] ) as Iterations;
@@ -30,7 +30,7 @@ const Header: React.FC = () => {
 	return (
 		<>
 			{ identity && <OlarkChat { ...{ identity } } /> }
-			<JetpackComMasterbar/>
+			<JetpackComMasterbar />
 			<div className={ classNames( 'header', iteration ) }>
 				<FormattedHeader
 					className="header__main-title"
@@ -40,6 +40,4 @@ const Header: React.FC = () => {
 			</div>
 		</>
 	);
-};
-
-export default Header;
+}

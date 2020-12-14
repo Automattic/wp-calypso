@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import React, { ChangeEvent, FormEvent, useState } from 'react';
+import React, { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslate } from 'i18n-calypso';
 
@@ -21,26 +21,35 @@ import { isInspecting as isInspectingSelector } from 'calypso/state/licensing-po
  */
 import './style.scss';
 
-const InspectLicenseForm: React.FC = () => {
+export default function InspectLicenseForm() {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const isInspecting = useSelector( isInspectingSelector );
 	const [ licenseKey, setLicenseKey ] = useState( '' );
 
-	const submit = ( e: FormEvent< HTMLFormElement > ) => {
-		e.preventDefault();
+	const onLicenseKeyChange = useCallback(
+		( event: ChangeEvent< HTMLInputElement > ) => setLicenseKey( event.target.value ),
+		[]
+	);
 
-		if ( isInspecting ) {
-			return;
-		}
+	const onSubmit = useCallback(
+		( event: FormEvent< HTMLFormElement > ) => {
+			event.preventDefault();
 
-		dispatch( setInspectedLicenseKey( licenseKey ) );
-	};
+			if ( isInspecting ) {
+				return;
+			}
+
+			dispatch( setInspectedLicenseKey( licenseKey ) );
+		},
+		[ isInspecting, licenseKey ]
+	);
 
 	return (
 		<Card>
 			<CardHeading>{ translate( 'Inspect a license' ) }</CardHeading>
-			<form onSubmit={ submit }>
+
+			<form onSubmit={ onSubmit }>
 				<FormFieldset>
 					<FormLabel required={ true } htmlFor="inspect_license_key">
 						{ translate( 'License key' ) }
@@ -51,7 +60,7 @@ const InspectLicenseForm: React.FC = () => {
 						placeholder="jetpack-backup-daily__WdeXxuAYbwwEau8maXA1cTj8I"
 						value={ licenseKey }
 						disabled={ isInspecting }
-						onChange={ ( e: ChangeEvent< HTMLInputElement > ) => setLicenseKey( e.target.value ) }
+						onChange={ onLicenseKeyChange }
 					/>
 				</FormFieldset>
 
@@ -63,6 +72,4 @@ const InspectLicenseForm: React.FC = () => {
 			</form>
 		</Card>
 	);
-};
-
-export default InspectLicenseForm;
+}

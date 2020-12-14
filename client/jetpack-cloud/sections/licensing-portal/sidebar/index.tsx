@@ -2,10 +2,10 @@
  * External dependencies
  */
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import { AnyAction } from 'redux';
 import { connect } from 'react-redux';
 import { memoize } from 'lodash';
-import i18nCalypso, { localize } from 'i18n-calypso';
+import { localize, translate as TranslateType } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -28,11 +28,11 @@ import 'calypso/jetpack-cloud/style.scss';
 
 interface Props {
 	path: string;
-	dispatchRecordTracksEvent: Function;
-	translate: Function;
+	dispatchRecordTracksEvent: ( name: string, properties: any ) => AnyAction;
+	translate: TranslateType;
 }
 
-class LicensingPortalSidebar extends Component<Props> {
+class LicensingPortalSidebar extends Component< Props > {
 	onNavigate = memoize( ( menuItem ) => () => {
 		this.props.dispatchRecordTracksEvent( 'calypso_jetpack_sidebar_menu_click', {
 			menu_item: menuItem,

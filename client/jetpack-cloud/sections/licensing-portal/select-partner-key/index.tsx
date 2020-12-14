@@ -27,7 +27,7 @@ import Spinner from 'calypso/components/spinner';
  */
 import './style.scss';
 
-const SelectPartnerKey: React.FC = () => {
+export default function SelectPartnerKey() {
 	const translate = useTranslate();
 	const hasKey = useSelector( hasActivePartnerKey );
 	const isFetching = useSelector( isFetchingPartners );
@@ -64,6 +64,4 @@ const SelectPartnerKey: React.FC = () => {
 			</Main>
 		</>
 	);
-};
-
-export default SelectPartnerKey;
+}

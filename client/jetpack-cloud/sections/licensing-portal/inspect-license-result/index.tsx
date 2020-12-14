@@ -23,7 +23,7 @@ import {
  */
 import './style.scss';
 
-const InspectLicenseResult: React.FC = () => {
+export default function InspectLicenseResult() {
 	const licenseKey = useSelector( getInspectedLicenseKey );
 	const result = useSelector( getInspectionResult );
 	const error = useSelector( getInspectionError );
@@ -55,6 +55,4 @@ const InspectLicenseResult: React.FC = () => {
 			</Card>
 		</>
 	);
-};
-
-export default InspectLicenseResult;
+}

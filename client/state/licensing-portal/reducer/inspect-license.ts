@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import { AnyAction } from 'redux';
+
+/**
  * Internal dependencies
  */
 import {
@@ -16,7 +21,7 @@ export const initialState = {
 	result: '',
 };
 
-export const licenseKey = withoutPersistence( ( state = initialState.licenseKey, action ) => {
+export const licenseKey = withoutPersistence( ( state = initialState.licenseKey, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_KEY_UPDATE:
 			return action.licenseKey;
@@ -25,7 +30,7 @@ export const licenseKey = withoutPersistence( ( state = initialState.licenseKey,
 	return state;
 } );
 
-export const isInspecting = withoutPersistence( ( state = initialState.isInspecting, action ) => {
+export const isInspecting = withoutPersistence( ( state = initialState.isInspecting, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
 			return true;
@@ -38,7 +43,7 @@ export const isInspecting = withoutPersistence( ( state = initialState.isInspect
 	return state;
 } );
 
-export const result = withoutPersistence( ( state = initialState.result, action ) => {
+export const result = withoutPersistence( ( state = initialState.result, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
 			return '';
@@ -50,7 +55,7 @@ export const result = withoutPersistence( ( state = initialState.result, action 
 	return state;
 } );
 
-export const error = withoutPersistence( ( state = initialState.error, action ) => {
+export const error = withoutPersistence( ( state = initialState.error, action: AnyAction ) => {
 	switch ( action.type ) {
 		case JETPACK_LICENSING_INSPECT_LICENSE_REQUEST:
 			return '';
