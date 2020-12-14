@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import page from 'page';
 import React, { Fragment, FunctionComponent } from 'react';
 import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import config from 'calypso/config';
 
 /**
  * Internal dependencies
@@ -96,6 +97,8 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 
 		page( marketingUltimateTrafficGuide( selectedSiteSlug ) );
 	};
+
+	const isEnglish = config( 'english_locales' ).includes( getLocaleSlug() );
 
 	return (
 		<Fragment>
@@ -223,15 +226,18 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					</Button>
 				</MarketingToolsFeature>
 
-				<MarketingToolsFeature
-					title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
-					description={ translate( 'Discover today’s most important traffic secrets' ) }
-					imagePath="/calypso/images/marketing/upwork-logo.png"
-				>
-					<Button onClick={ handleUltimateTrafficGuideClick }>
-						{ translate( 'Download now' ) }
-					</Button>
-				</MarketingToolsFeature>
+				{ isEnglish && (
+					<MarketingToolsFeature
+						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
+						description={ translate( 'Discover today’s most important traffic secrets' ) }
+						imagePath="/calypso/images/marketing/upwork-logo.png"
+						// TODO: Fix image
+					>
+						<Button onClick={ handleUltimateTrafficGuideClick }>
+							{ translate( 'Download now' ) }
+						</Button>
+					</MarketingToolsFeature>
+				) }
 			</div>
 		</Fragment>
 	);
