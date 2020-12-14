@@ -25,6 +25,9 @@ function LaunchWpcomWelcomeTour() {
 	);
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
+	// Preload first card image (others preloaded after NUX status confirmed)
+	new window.Image().src = getTourContent()[ 0 ].imgSrc;
+
 	// Create parent div for welcome tour portal
 	const portalParent = document.createElement( 'div' );
 	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
