@@ -16,8 +16,8 @@ import CountrySelect from 'calypso/my-sites/domains/components/form/country-sele
 import { PaymentCountrySelect } from '../';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'lib/cart/actions', () => ( {
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/lib/cart/actions', () => ( {
 	setTaxCountryCode: () => {},
 } ) );
 

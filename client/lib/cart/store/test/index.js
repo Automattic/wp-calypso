@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/analytics/cart', () => ( {
+jest.mock( 'calypso/lib/analytics/cart', () => ( {
 	recordEvents: () => ( {} ),
 } ) );
 jest.mock( '../cart-synchronizer', () => () => {
@@ -16,18 +16,18 @@ jest.mock( '../cart-synchronizer', () => () => {
 		_poll: { bind: () => ( {} ) },
 	};
 } );
-jest.mock( 'lib/cart-values', () => {
+jest.mock( 'calypso/lib/cart-values', () => {
 	return {
 		fillInAllCartItemAttributes: jest.fn( () => ( {} ) ),
 		removeCoupon: jest.fn( () => ( i ) => i ),
 	};
 } );
-jest.mock( 'lib/data-poller', () => ( {
+jest.mock( 'calypso/lib/data-poller', () => ( {
 	add: () => ( {} ),
 	remove: () => ( {} ),
 } ) );
-jest.mock( 'lib/products-list', () => () => ( { get: () => [] } ) );
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/products-list', () => () => ( { get: () => [] } ) );
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {} ),
 	me: () => ( {
 		get: async () => ( {} ),
@@ -62,7 +62,7 @@ describe( 'Cart Store', () => {
 		let disableCart;
 		let removeCoupon;
 		jest.isolateModules( () => {
-			const cartActions = jest.requireActual( 'lib/cart/actions' );
+			const cartActions = jest.requireActual( 'calypso/lib/cart/actions' );
 			disableCart = cartActions.disableCart;
 			removeCoupon = cartActions.removeCoupon;
 		} );

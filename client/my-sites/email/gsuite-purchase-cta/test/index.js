@@ -12,9 +12,15 @@ import renderer from 'react-test-renderer';
 import { GSuitePurchaseCta } from '../';
 
 // components to mock
-jest.mock( 'components/email-verification/email-verification-gate', () => 'EmailVerificationGate' );
-jest.mock( 'my-sites/email/gsuite-purchase-cta/sku-info', () => 'GSuitePurchaseCtaSkuInfo' );
-jest.mock( 'components/data/query-products-list', () => 'QueryProductsList' );
+jest.mock(
+	'calypso/components/email-verification/email-verification-gate',
+	() => 'EmailVerificationGate'
+);
+jest.mock(
+	'calypso/my-sites/email/gsuite-purchase-cta/sku-info',
+	() => 'GSuitePurchaseCtaSkuInfo'
+);
+jest.mock( 'calypso/components/data/query-products-list', () => 'QueryProductsList' );
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'renders correctly', () => {

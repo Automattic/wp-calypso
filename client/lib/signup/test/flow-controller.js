@@ -18,10 +18,12 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { getSignupProgress } from 'calypso/state/signup/progress/selectors';
 import SignupFlowController from '../flow-controller';
 
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/steps-pure', () => require( './mocks/signup/config/steps' ) );
 
 function createSignupStore( initialState ) {
 	return createStore(

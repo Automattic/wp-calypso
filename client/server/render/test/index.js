@@ -32,13 +32,13 @@ function remock( newReturnValues ) {
 	);
 }
 
-jest.mock( 'lib/i18n-utils', () => {
+jest.mock( 'calypso/lib/i18n-utils', () => {
 	return {
 		isDefaultLocale: () => mockReturnValues.isDefaultLocale,
 	};
 } );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const fn = () => {};
 	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;

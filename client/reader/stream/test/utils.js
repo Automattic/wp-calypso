@@ -9,7 +9,7 @@ import moment from 'moment';
  */
 import { sameDay, sameSite, combine, combineCards, injectRecommendations } from '../utils';
 
-jest.mock( 'lib/user/utils', () => ( {} ) );
+jest.mock( 'calypso/lib/user/utils', () => ( {} ) );
 
 describe( 'reader stream', () => {
 	const today = moment().toDate();

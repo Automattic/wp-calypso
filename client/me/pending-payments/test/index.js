@@ -9,7 +9,7 @@ import { shallow } from 'enzyme';
  */
 import { PendingPayments, requestId } from '../index';
 
-jest.mock( 'state/data-layer/http-data', () => ( {
+jest.mock( 'calypso/state/data-layer/http-data', () => ( {
 	requestHttpData: ( x ) => x,
 } ) );
 

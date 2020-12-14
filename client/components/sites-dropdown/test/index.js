@@ -16,7 +16,7 @@ import sinon from 'sinon';
  */
 import { SitesDropdown } from '..';
 
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'index', () => {
 	describe( 'component rendering', () => {

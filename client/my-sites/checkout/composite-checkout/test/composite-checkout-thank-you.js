@@ -12,20 +12,20 @@ import { isEnabled } from 'calypso/config';
 import { PLAN_ECOMMERCE } from '../../../../lib/plans/constants';
 
 let mockGSuiteCountryIsValid = true;
-jest.mock( 'lib/user', () =>
+jest.mock( 'calypso/lib/user', () =>
 	jest.fn( () => ( {
 		get: () => ( { is_valid_google_apps_country: mockGSuiteCountryIsValid } ),
 	} ) )
 );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn();
 	return mock;
 } );
 
 // Temporary A/B test to dial down the concierge upsell, check pau2Xa-1bk-p2.
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( ( name ) => {
 		if ( 'conciergeUpsellDial' === name ) {
 			return 'offer';

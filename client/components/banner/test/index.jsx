@@ -1,13 +1,13 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'blocks/dismissible-card', () => {
+jest.mock( 'calypso/blocks/dismissible-card', () => {
 	const React = require( 'react' );
 	return class DismissibleCard extends React.Component {};
 } );
 
-jest.mock( 'lib/analytics/track-component-view', () => {
+jest.mock( 'calypso/lib/analytics/track-component-view', () => {
 	const React = require( 'react' );
 	return class TrackComponentView extends React.Component {};
 } );

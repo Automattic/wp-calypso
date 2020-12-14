@@ -9,8 +9,8 @@ import renderer from 'react-test-renderer';
  */
 import GSuitePurchaseCtaSkuInfo from '../sku-info';
 
-jest.mock( 'components/forms/form-button', () => 'Button' );
-jest.mock( 'components/info-popover', () => 'InfoPopover' );
+jest.mock( 'calypso/components/forms/form-button', () => 'Button' );
+jest.mock( 'calypso/components/info-popover', () => 'InfoPopover' );
 
 describe( 'GSuitePurchaseCta', () => {
 	test( 'it renders GSuitePurchaseCtaSkuInfo with all props', () => {

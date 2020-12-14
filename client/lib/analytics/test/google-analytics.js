@@ -6,7 +6,7 @@
  */
 import { makeGoogleAnalyticsTrackingFunction } from '../ga';
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const isEnabled = ( feature ) => {
 		const features = {
 			'ad-tracking': true,
@@ -26,7 +26,7 @@ jest.mock( 'config', () => {
 	return configApi;
 } );
 
-jest.mock( 'lib/analytics/utils', () => ( {
+jest.mock( 'calypso/lib/analytics/utils', () => ( {
 	isGoogleAnalyticsAllowed: () => true,
 	isPiiUrl: () => false,
 	mayWeTrackCurrentUserGdpr: () => true,

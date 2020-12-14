@@ -16,7 +16,7 @@ import { spy } from 'sinon';
 import fixtures from './fixtures';
 import { PluginActivateToggle } from 'calypso/my-sites/plugins/plugin-activate-toggle';
 
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )
 );
 

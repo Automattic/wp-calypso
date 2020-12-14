@@ -11,7 +11,7 @@ import deepFreeze from 'deep-freeze';
 import { TrackPurchasePageView } from '..';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const baseProps = deepFreeze( {
 	eventName: 'calypso_testtracking_purchase_view',

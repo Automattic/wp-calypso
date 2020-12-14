@@ -7,7 +7,7 @@ import { shallow } from 'enzyme';
 /**
  * Mock dependencies
  */
-jest.mock( 'lib/jetpack/is-jetpack-cloud' );
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 
 // NOTE: There's a repeating pattern in these tests that links to WordPress.com

@@ -19,12 +19,12 @@ import withServerCredentialsForm from 'calypso/components/jetpack/with-server-cr
 /**
  * Mocks
  */
-jest.mock( 'components/data/query-site-credentials', () => {
+jest.mock( 'calypso/components/data/query-site-credentials', () => {
 	const QuerySiteCredentials = () => <div />;
 	return QuerySiteCredentials;
 } );
 
-jest.mock( 'state/selectors/get-jetpack-credentials', () => ( {
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials', () => ( {
 	__esModule: true,
 	default: () => ( {
 		user: 'jetpackUser',
@@ -34,11 +34,13 @@ jest.mock( 'state/selectors/get-jetpack-credentials', () => ( {
 	} ),
 } ) );
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'site-slug',
 } ) );
 
-jest.mock( 'state/selectors/get-jetpack-credentials-update-status', () => () => 'unsubmitted' );
+jest.mock( 'calypso/state/selectors/get-jetpack-credentials-update-status', () => () =>
+	'unsubmitted'
+);
 
 /**
  * Helper functions

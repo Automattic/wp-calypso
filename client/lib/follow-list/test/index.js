@@ -14,7 +14,7 @@ import sinon from 'sinon';
 import FollowList from 'calypso/lib/follow-list';
 import FollowListSite from 'calypso/lib/follow-list/site';
 
-jest.mock( 'lib/wp', () => require( './mocks/lib/wp' ) );
+jest.mock( 'calypso/lib/wp', () => require( './mocks/lib/wp' ) );
 
 describe( 'index', () => {
 	let followList;

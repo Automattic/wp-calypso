@@ -38,12 +38,12 @@ const initialReducer = combineReducers( {
 	postTypes,
 } );
 
-jest.mock( 'lib/user', () => () => ( {
+jest.mock( 'calypso/lib/user', () => () => ( {
 	get: () => ( {
 		ID: 123456789,
 	} ),
 } ) );
-jest.mock( 'lib/user/support-user-interop', () => ( {
+jest.mock( 'calypso/lib/user/support-user-interop', () => ( {
 	isSupportSession: jest.fn().mockReturnValue( false ),
 } ) );
 

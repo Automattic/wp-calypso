@@ -49,7 +49,7 @@ import {
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const twentyfifteen = {
 	id: 'twentyfifteen',

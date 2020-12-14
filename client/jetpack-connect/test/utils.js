@@ -20,7 +20,7 @@ import {
 
 import { JPC_PATH_PLANS, JPC_PATH_REMOTE_INSTALL, REMOTE_PATH_AUTH } from '../constants';
 
-jest.mock( 'config', () => ( input ) => {
+jest.mock( 'calypso/config', () => ( input ) => {
 	const lookupTable = {
 		env_id: 'mocked-test-env-id',
 	};
@@ -141,7 +141,7 @@ describe( 'parseAuthorizationQuery', () => {
 	} );
 } );
 
-jest.mock( 'lib/route/path', () => ( {
+jest.mock( 'calypso/lib/route/path', () => ( {
 	externalRedirect: jest.fn(),
 } ) );
 

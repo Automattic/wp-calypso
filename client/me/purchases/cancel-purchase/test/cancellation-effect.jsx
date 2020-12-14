@@ -10,8 +10,8 @@ import { cancellationEffectDetail, cancellationEffectHeadline } from '../cancell
 import productsValues from 'calypso/lib/products-values';
 import purchases from 'calypso/lib/purchases';
 
-jest.mock( 'lib/products-values', () => ( {} ) );
-jest.mock( 'lib/purchases', () => ( {} ) );
+jest.mock( 'calypso/lib/products-values', () => ( {} ) );
+jest.mock( 'calypso/lib/purchases', () => ( {} ) );
 
 describe( 'cancellation-effect', () => {
 	const purchase = { domain: 'example.com' };
