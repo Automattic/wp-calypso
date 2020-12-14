@@ -241,14 +241,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 function load_wpcom_block_editor_nux() {
-	// Show the Welcome Tour for any sandbox/site with SHOW_WELCOME_TOUR constant.
-	// TODO: remove true once ssh into ephemeral site is fixed.
-	if ( true || defined( 'SHOW_WELCOME_TOUR' ) ) {
-		require_once __DIR__ . '/wpcom-block-editor-welcome-tour/class-wpcom-block-editor-welcome-tour.php';
-		return;
-	}
-	// Show the Welcome Tour per filter setting, intended to replace NUX modal after A/B testing.
-	if ( apply_filters( 'a8c_enable_wpcom_welcome_tour', false ) ) {
+	// Show the Welcome Tour for any sandbox/site with SHOW_WELCOME_TOUR constant or filter setting.
+	if ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR || apply_filters( 'a8c_enable_wpcom_welcome_tour', false ) ) {
 		require_once __DIR__ . '/wpcom-block-editor-welcome-tour/class-wpcom-block-editor-welcome-tour.php';
 		return;
 	} else {

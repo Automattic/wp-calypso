@@ -43,10 +43,9 @@ function LaunchWpcomWelcomeTour() {
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	useEffect( () => {
-		// TODO: UNCOMMENT after Call for testing or if ephemeral site can use SHOW_WELCOME_TOUR
-		// if ( ! isWpcomNuxEnabled ) {
-		// 	return;
-		// }
+		if ( ! isWpcomNuxEnabled ) {
+			return;
+		}
 
 		document.body.appendChild( portalParent );
 		return () => {
