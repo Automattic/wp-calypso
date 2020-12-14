@@ -964,7 +964,7 @@ jobs:
       - image: circleci/golang:1.12
     working_directory: ~/wp-calypso
     environment:
-      VERSION: << pipeline.git.tag >>
+      VERSION: v6.7.0-beta1
     steps:
       - attach_workspace:
           at: ~/wp-calypso
