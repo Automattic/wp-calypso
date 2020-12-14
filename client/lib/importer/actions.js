@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { castArray } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import Dispatcher from 'calypso/dispatcher';
@@ -11,9 +6,6 @@ import wpLib from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
-	IMPORTS_FETCH,
-	IMPORTS_FETCH_FAILED,
-	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
@@ -81,21 +73,6 @@ const unlockImport = ( importerId ) => {
 	Dispatcher.handleViewAction( unlockImportAction );
 };
 
-const apiStart = () => {
-	const action = { type: IMPORTS_FETCH };
-	Dispatcher.handleViewAction( action );
-};
-
-const apiSuccess = () => {
-	const action = { type: IMPORTS_FETCH_COMPLETED };
-	Dispatcher.handleViewAction( action );
-};
-
-const apiFailure = () => {
-	const action = { type: IMPORTS_FETCH_FAILED };
-	Dispatcher.handleViewAction( action );
-};
-
 function receiveImporterStatus( importerStatus ) {
 	const action = {
 		type: IMPORTS_IMPORT_RECEIVE,
@@ -120,28 +97,13 @@ export function cancelImport( siteId, importerId ) {
 		return;
 	}
 
-	apiStart();
 	wpcom
 		.updateImporter( siteId, createCancelOrder( siteId, importerId ) )
-		.then( ( data ) => {
-			apiSuccess();
-			receiveImporterStatus( fromApi( data ) );
-		} )
-		.catch( apiFailure );
+		.then( receiveImporterStatus );
 }
 
 export function fetchState( siteId ) {
-	apiStart();
-
-	return wpcom
-		.fetchImporterState( siteId )
-		.then( ( data ) => {
-			apiSuccess();
-			castArray( data ).forEach( ( importerData ) => {
-				receiveImporterStatus( fromApi( importerData ) );
-			} );
-		} )
-		.catch( apiFailure );
+	return wpcom.fetchImporterState( siteId ).then( receiveImporterStatus );
 }
 
 export const createFinishUploadAction = ( importerId, importerStatus ) => ( {
@@ -169,14 +131,9 @@ export function resetImport( siteId, importerId ) {
 	};
 	Dispatcher.handleViewAction( resetImportAction );
 
-	apiStart();
 	wpcom
 		.updateImporter( siteId, createExpiryOrder( siteId, importerId ) )
-		.then( ( data ) => {
-			apiSuccess();
-			receiveImporterStatus( fromApi( data ) );
-		} )
-		.catch( apiFailure );
+		.then( receiveImporterStatus );
 }
 
 export function clearImport( siteId, importerId ) {
@@ -194,14 +151,9 @@ export function clearImport( siteId, importerId ) {
 	};
 	Dispatcher.handleViewAction( resetImportAction );
 
-	apiStart();
 	wpcom
 		.updateImporter( siteId, createClearOrder( siteId, importerId ) )
-		.then( ( data ) => {
-			apiSuccess();
-			receiveImporterStatus( fromApi( data ) );
-		} )
-		.catch( apiFailure );
+		.then( receiveImporterStatus );
 }
 
 export function startMappingAuthors( importerId ) {
