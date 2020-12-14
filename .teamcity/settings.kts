@@ -482,7 +482,7 @@ object RunAllUnitTests : BuildType({
 				(cd apps/o2-blocks/ && yarn build --output-path="../../artifacts/o2-blocks")
 
 				# Build wpcom-block-editor
-				(cd apps/wpcom-block-editor/ && yarn build --output-path="../../artifacts/wpcom-block-editor")
+				(cd apps/wpcom-block-editor/ &&  NODE_ENV=development yarn build --output-path="../../artifacts/wpcom-block-editor")
 
 				# Build notifications
 				(cd apps/notifications/ && yarn build --output-path="../../artifacts/notifications")
