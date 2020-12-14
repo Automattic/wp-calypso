@@ -1604,13 +1604,6 @@ export const FEATURES_LIST = {
 		getDescription: () => i18n.translate( 'Upload more files to your P2.' ),
 	},
 
-	[ constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS ]: {
-		getSlug: () => constants.FEATURE_P2_UNLIMITED_FREE_VIEWERS,
-		getTitle: () => i18n.translate( 'Unlimited free viewers' ),
-		getDescription: () =>
-			i18n.translate( 'Viewers can read and comment posts, but can’t publish new ones.' ),
-	},
-
 	[ constants.FEATURE_P2_ADVANCED_SEARCH ]: {
 		getSlug: () => constants.FEATURE_P2_ADVANCED_SEARCH,
 		getTitle: () => i18n.translate( 'Advanced search' ),
