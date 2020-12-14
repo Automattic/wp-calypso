@@ -40,8 +40,7 @@ const MembershipTerms = ( { subscription }: { subscription: MembershipSubscripti
 
 const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
-	const lastSlashInUrl = subscription.site_url.lastIndexOf( '/' );
-	const siteUrl = subscription.site_url.substring( lastSlashInUrl + 1 );
+	const siteUrl = subscription.site_url.replace( /^(https?:|)\/\//, '' );
 
 	return (
 		<button
