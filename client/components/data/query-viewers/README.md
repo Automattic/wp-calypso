@@ -4,7 +4,7 @@
 
 ## Usage
 
-Render the component, passing `siteId`, `page` and `numbers`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state. 
+Render the component, passing `siteId`, `page` and `numbers`. It does not accept any children, nor does it render any elements to the page. You can use it adjacent to other sibling components which make use of the fetched data made available through the global application state.
 
 ```jsx
 import React from 'react';
@@ -18,7 +18,7 @@ export default function ViewersList( { siteId } ) {
 
 	return (
 		<div>
-			<QueryViewers siteId={ siteId } page={ 1 } />
+			<QueryViewers siteId={ siteId } page={ 2 } />
 
 			{ viewers?.map( ( viewer ) => (
 				<div key={ viewer.ID }>{ viewer.name }</div>
@@ -41,15 +41,6 @@ export default function ViewersList( { siteId } ) {
 
 <table>
 	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
+	<tr><th>Required</th><td>No</td></tr>
+	<tr><th>Default</th><td>`1`</td></tr>
 </table>
-
-### `numbers`
-
-<table>
-	<tr><th>Type</th><td>Number</td></tr>
-	<tr><th>Required</th><td>Yes</td></tr>
-	<tr><th>Default</th><td>`100`</td></tr>
-</table>
-
-The API only accepts values between `20` and `100`.

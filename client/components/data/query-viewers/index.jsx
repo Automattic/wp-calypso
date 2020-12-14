@@ -25,7 +25,7 @@ class QueryViewers extends React.Component {
 	getQuery() {
 		return {
 			page: this.props.page,
-			number: this.props.number ?? DEFAULT_NUMBER_OF_VIEWERS,
+			number: DEFAULT_NUMBER_OF_VIEWERS,
 		};
 	}
 
