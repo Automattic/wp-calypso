@@ -975,13 +975,15 @@ jobs:
       - run:
           name: Test Github Release Generation
           command: |
+            set -x
+
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
             chmod +x ./desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
-            echo desktop/CHANGELOG.md
+            cat desktop/CHANGELOG.md
 
             # ghr \
             #   --token "${GH_TOKEN}" \
