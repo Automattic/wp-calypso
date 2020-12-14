@@ -238,6 +238,7 @@ export class UpsellNudge extends React.Component {
 		trackUpsellButtonClick( `calypso_${ upsellType.replace( /-/g, '_' ) }_decline_button_click` );
 		const getThankYouPageUrlArguments = {
 			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId,
 			cart: this.props.cart,
 			hideNudge: shouldHideUpsellNudges,
 		};
