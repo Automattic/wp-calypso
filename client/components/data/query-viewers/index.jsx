@@ -13,13 +13,17 @@ const DEFAULT_NUMBER_OF_VIEWERS = 100;
 
 class QueryViewers extends React.Component {
 	componentDidMount() {
-		this.props.requestViewers( this.props.siteId, this.getQuery() );
+		this.request();
 	}
 
 	componentDidUpdate( prevProps ) {
 		if ( prevProps.page !== this.props.page ) {
-			this.props.requestViewers( this.props.siteId, this.getQuery() );
+			this.request();
 		}
+	}
+
+	request() {
+		this.props.requestViewers( this.props.siteId, this.getQuery() );
 	}
 
 	getQuery() {
