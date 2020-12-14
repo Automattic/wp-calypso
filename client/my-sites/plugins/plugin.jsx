@@ -40,6 +40,7 @@ import NoPermissionsError from './no-permissions-error';
 import getToursHistory from 'calypso/state/guided-tours/selectors/get-tours-history';
 import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
+	getPluginOnSite,
 	getPluginOnSites,
 	getSitesWithoutPlugin,
 	isPluginActionInProgress,
@@ -232,7 +233,7 @@ class SinglePlugin extends React.Component {
 			return null;
 		}
 
-		return !! PluginsStore.getSitePlugin( this.props.selectedSite, this.state.plugin.slug );
+		return !! this.props.sitePlugin;
 	}
 
 	renderSitesList( plugin ) {
@@ -350,6 +351,7 @@ export default connect(
 
 		return {
 			plugin: getPluginOnSites( state, siteIds, props.pluginSlug ),
+			sitePlugin: selectedSiteId && getPluginOnSite( state, selectedSiteId, props.pluginSlug ),
 			wporgPlugin: getWporgPlugin( state, props.pluginSlug ),
 			wporgFetching: isWporgPluginFetching( state, props.pluginSlug ),
 			wporgFetched: isWporgPluginFetched( state, props.pluginSlug ),
