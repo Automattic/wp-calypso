@@ -2,12 +2,12 @@
  * Internal dependencies
  */
 import {
-	VIEWERS_REQUEST,
-	VIEWERS_REQUEST_SUCCESS,
-	VIEWERS_REQUEST_FAILURE,
 	VIEWER_REMOVE,
 	VIEWER_REMOVE_SUCCESS,
 	VIEWER_REMOVE_FAILURE,
+	VIEWERS_REQUEST,
+	VIEWERS_REQUEST_SUCCESS,
+	VIEWERS_REQUEST_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/viewers';
