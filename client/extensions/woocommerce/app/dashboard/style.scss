@@ -162,6 +162,9 @@
 
     .card {
         text-align: center;
+        a {
+            margin-top: 40px;
+        }
     }
 
     h1 {
@@ -171,9 +174,5 @@
 
     p {
         margin: 0;
-    }
-
-    button {
-        margin-top: 40px;
     }
 }
