@@ -57,8 +57,8 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
-import useActOnceOnStrings from './hooks/use-act-once-on-strings';
-import doesValueExist from './lib/does-value-exist';
+import useActOnceOnStrings from '../hooks/use-act-once-on-strings';
+import doesValueExist from '../lib/does-value-exist';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
