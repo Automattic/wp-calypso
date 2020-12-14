@@ -242,7 +242,8 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  */
 function load_wpcom_block_editor_nux() {
 	// Show the Welcome Tour for any sandbox/site with SHOW_WELCOME_TOUR constant.
-	if ( defined( 'SHOW_WELCOME_TOUR' ) ) {
+	// TODO: remove true once ssh into ephemeral site is fixed.
+	if ( true || defined( 'SHOW_WELCOME_TOUR' ) ) {
 		require_once __DIR__ . '/wpcom-block-editor-welcome-tour/class-wpcom-block-editor-welcome-tour.php';
 		return;
 	}

@@ -43,7 +43,7 @@ function LaunchWpcomWelcomeTour() {
 	}, [ isWpcomNuxEnabled, setWpcomNuxStatus ] );
 
 	useEffect( () => {
-		// TODO: UNCOMMENT after Jon testing
+		// TODO: UNCOMMENT after Call for testing or if ephemeral site can use SHOW_WELCOME_TOUR
 		// if ( ! isWpcomNuxEnabled ) {
 		// 	return;
 		// }
