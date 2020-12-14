@@ -3,6 +3,19 @@
 	width: calc( 100% - 24px );
 }
 
+.dialog__content .cancel-purchase-form__reason-select {
+	margin: 6px 0 0 24px;
+	&.form-label {
+		color: var( --studio-gray-50 );
+		font-weight: 600;
+		font-size: 1rem;
+	}
+
+	.select-dropdown {
+		margin: 6px 0;
+	}
+}
+
 .cancel-purchase-form__dialog {
 	max-width: 472px;
 }

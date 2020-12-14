@@ -34,7 +34,7 @@ import PrecancellationChatButton from './precancellation-chat-button';
 import DowngradeStep from './step-components/downgrade-step';
 import { getName, isRefundable } from 'calypso/lib/purchases';
 import { isGoogleApps, isJetpackPlanSlug, isJetpackProductSlug } from 'calypso/lib/products-values';
-import { radioOption } from './radio-option';
+import { radioTextOption, radioSelectOption } from './radio-option';
 import {
 	cancellationOptionsForPurchase,
 	nextAdventureOptionsForPurchase,
@@ -48,6 +48,10 @@ import { CANCEL_FLOW_TYPE } from './constants';
 import { getDowngradePlanRawPrice } from 'calypso/state/purchases/selectors';
 import QueryPlans from 'calypso/components/data/query-plans';
 import QuerySitePlans from 'calypso/components/data/query-site-plans';
+import { JETPACK_PRODUCTS_LIST } from 'calypso/lib/products-values/constants';
+import { DOWNGRADEABLE_PLANS_FROM_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
+import { slugToSelectorProduct } from 'calypso/my-sites/plans/jetpack-plans/utils';
+import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
 
 /**
  * Style dependencies
@@ -191,6 +195,15 @@ class CancelPurchaseForm extends React.Component {
 		this.props.onInputChange( newState );
 	};
 
+	onSelectOneChange = ( option ) => {
+		const newState = {
+			...this.state,
+			questionOneText: option.value,
+		};
+		this.setState( newState );
+		this.props.onInputChange( newState );
+	};
+
 	onRadioTwoChange = ( event ) => {
 		this.recordClickRadioEvent( 'radio_2', event.currentTarget.value );
 
@@ -310,9 +323,39 @@ class CancelPurchaseForm extends React.Component {
 		const reasons = {};
 		const { translate } = this.props;
 		const { questionOneOrder, questionOneRadio, questionOneText } = this.state;
+		const { productSlug: productBeingRemoved } = this.props.purchase;
+
+		// get all downgradable plans and products for downgrade question dropdown
+		const downgradableJetpackPlansAndProducts = [
+			...DOWNGRADEABLE_PLANS_FROM_PLAN[ productBeingRemoved ],
+			...JETPACK_PRODUCTS_LIST,
+		];
+		const selectBoxItems = downgradableJetpackPlansAndProducts
+			.map( slugToSelectorProduct )
+			// filter out any null items
+			.filter( ( product ) => product )
+			// get only annual products/plans (no need for monthly variants in the dropdown)
+			.filter( ( product ) => product.term === TERM_ANNUALLY )
+			.map( ( product ) => ( {
+				value: product.productSlug,
+				label: translate( 'Jetpack {{planName/}}', {
+					components: { planName: <>{ product.shortName }</> },
+				} ),
+			} ) );
+
+		const dropDownSelectOptions = [
+			{ value: 'select_a_product', label: translate( 'Select a product' ), isLabel: true },
+			...selectBoxItems,
+		];
+
+		const initialSelected = downgradableJetpackPlansAndProducts.includes(
+			this.state.questionOneText
+		)
+			? this.state.questionOneText
+			: 'select_a_product';
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+			( reasons[ key ] = radioTextOption(
 				key,
 				questionOneRadio,
 				questionOneText,
@@ -320,6 +363,24 @@ class CancelPurchaseForm extends React.Component {
 				this.onTextOneChange,
 				radioPrompt,
 				textPlaceholder
+			) );
+
+		const appendRadioOptionWithSelect = (
+			key,
+			radioPrompt,
+			selectLabel,
+			selectOptions,
+			selected
+		) =>
+			( reasons[ key ] = radioSelectOption(
+				key,
+				questionOneRadio,
+				this.onRadioOneChange,
+				this.onSelectOneChange,
+				radioPrompt,
+				selectLabel,
+				selectOptions,
+				selected
 			) );
 
 		appendRadioOption(
@@ -340,10 +401,12 @@ class CancelPurchaseForm extends React.Component {
 			translate( 'What are we missing that you need?' )
 		);
 
-		appendRadioOption(
+		appendRadioOptionWithSelect(
 			'downgradeToAnotherPlan',
 			translate( "I'd like to downgrade to another plan." ),
-			translate( 'Mind telling us which one?' )
+			translate( 'Mind telling us which one?' ),
+			dropDownSelectOptions,
+			initialSelected
 		);
 
 		appendRadioOption(
@@ -393,7 +456,7 @@ class CancelPurchaseForm extends React.Component {
 		}
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
-			( reasons[ key ] = radioOption(
+			( reasons[ key ] = radioTextOption(
 				key,
 				questionTwoRadio,
 				questionTwoText,
@@ -452,7 +515,7 @@ class CancelPurchaseForm extends React.Component {
 
 		const appendRadioOption = ( key, radioPrompt, textPlaceholder ) =>
 			reasons.push(
-				radioOption(
+				radioTextOption(
 					key,
 					importQuestionRadio,
 					importQuestionText,
