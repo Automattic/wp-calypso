@@ -7,7 +7,7 @@ import type { SelectFromMap, DispatchFromMap } from '../mapped-types';
 /**
  * Internal dependencies
  */
-import { STORE_KEY, PlanPath } from './constants';
+import { STORE_KEY } from './constants';
 import reducer, { State } from './reducer';
 import * as actions from './actions';
 import * as selectors from './selectors';
@@ -16,7 +16,7 @@ import { controls } from '../wpcom-request-controls';
 
 export type { State };
 export type { Plan, PlanSlug } from './types';
-export type { PlanPath };
+export type { PlanPath } from './constants';
 
 // plansPaths is used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
 export {

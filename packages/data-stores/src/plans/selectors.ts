@@ -7,7 +7,9 @@ import { select } from '@wordpress/data';
  * Internal dependencies
  */
 import type { State } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY, PlanPath } from './constants';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
+
+import type { PlanPath } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;

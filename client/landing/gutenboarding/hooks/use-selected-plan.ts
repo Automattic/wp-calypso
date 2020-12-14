@@ -9,10 +9,12 @@ import { useLocale } from '@automattic/i18n-utils';
  * Internal dependencies
  */
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
-import { PLANS_STORE, Plan } from '../stores/plans';
+import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
 import { isEnabled } from 'calypso/config';
+
+import type { Plan } from '../stores/plans';
 
 /**
  * A React hook that returns the WordPress.com plan from path.
