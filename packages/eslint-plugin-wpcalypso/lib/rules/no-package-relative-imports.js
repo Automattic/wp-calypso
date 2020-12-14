@@ -176,10 +176,10 @@ module.exports = {
 				if (
 					node.callee &&
 					node.callee.type === 'Identifier' &&
-					( node.callee.name === 'require' || node.callee.name === 'asyncRequire' ) &&
-					node.arguments.length === 1
+					( ( node.callee.name === 'require' && node.arguments.length === 1 ) ||
+						node.callee.name === 'asyncRequire' )
 				) {
-					reportImport( node, node.arguments[ 0 ] );
+					return reportImport( node, node.arguments[ 0 ] );
 				}
 			},
 			JSXElement: ( node ) => {
