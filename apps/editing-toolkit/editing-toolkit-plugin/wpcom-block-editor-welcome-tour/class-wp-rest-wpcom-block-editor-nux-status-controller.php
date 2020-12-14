@@ -57,6 +57,9 @@ class WP_REST_WPCOM_Block_Editor_NUX_Status_Controller extends \WP_REST_Controll
 	 * @return boolean
 	 */
 	public function is_nux_enabled( $nux_status ) {
+		if ( defined( 'SHOW_WELCOME_TOUR' ) ) {
+			return true;
+		}
 		return 'enabled' === $nux_status;
 	}
 
