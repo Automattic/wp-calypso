@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { keyBy, omit, union } from 'lodash';
+import { omit } from 'lodash';
 
 /**
  * Internal dependencies
@@ -20,7 +20,10 @@ export const items = ( state = {}, action ) => {
 			return Object.assign(
 				{},
 				state,
-				keyBy( action.data?.viewers, ( viewer ) => viewer.ID )
+				action.data?.viewers.reduce( ( acc, viewer ) => {
+					acc[ viewer.ID ] = viewer;
+					return acc;
+				}, {} )
 			);
 		}
 		case VIEWER_REMOVE_SUCCESS: {
@@ -34,11 +37,13 @@ export const queries = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case VIEWERS_REQUEST_SUCCESS: {
 			const { siteId, data } = action;
+			const existingIds = state[ siteId ]?.ids ?? [];
 			const ids = data?.viewers.map( ( viewer ) => viewer.ID );
+
 			return {
 				...state,
 				[ siteId ]: {
-					ids: union( state[ siteId ]?.ids, ids ),
+					ids: [ ...new Set( existingIds.concat( ids ) ) ],
 					found: action.data.found,
 				},
 			};
