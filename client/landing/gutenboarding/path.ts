@@ -123,7 +123,7 @@ export function useAnchorFmPodcastId(): string | null {
 	} );
 }
 
-// Returns the anchor podcast id. First looks in "location state",
+// Returns the anchor episode id. First looks in "location state",
 // provided by react-router-dom, if not available there, checks the query string.
 export function useAnchorFmEpisodeId(): string | null {
 	// Allow all characters allowed in urls
