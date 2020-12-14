@@ -4,7 +4,6 @@
 import {
 	VIEWER_REMOVE,
 	VIEWER_REMOVE_SUCCESS,
-	VIEWER_REMOVE_FAILURE,
 	VIEWERS_REQUEST,
 	VIEWERS_REQUEST_SUCCESS,
 	VIEWERS_REQUEST_FAILURE,
@@ -44,11 +43,4 @@ export const removeViewerSuccess = ( siteId, viewerId, data ) => ( {
 	siteId,
 	viewerId,
 	data,
-} );
-
-export const removeViewerFailure = ( siteId, viewerId, error ) => ( {
-	type: VIEWER_REMOVE_FAILURE,
-	siteId,
-	viewerId,
-	error,
 } );

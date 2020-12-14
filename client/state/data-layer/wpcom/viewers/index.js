@@ -6,7 +6,6 @@ import { dispatchRequest } from 'calypso/state/data-layer/wpcom-http/utils';
 import { http } from 'calypso/state/data-layer/wpcom-http/actions';
 import { VIEWER_REMOVE, VIEWERS_REQUEST } from 'calypso/state/action-types';
 import {
-	removeViewerFailure,
 	removeViewerSuccess,
 	requestViewersFailure,
 	requestViewersSuccess,
@@ -42,9 +41,6 @@ const requestRemoveViewer = ( action ) =>
 const requestRemoveViewerSuccess = ( { siteId, viewerId }, data ) =>
 	removeViewerSuccess( siteId, viewerId, data );
 
-const requestRemoveViewerFailure = ( { siteId, viewerId }, error ) =>
-	removeViewerFailure( siteId, viewerId, error );
-
 registerHandlers( 'state/data-layer/wpcom/viewers/index.js', {
 	[ VIEWERS_REQUEST ]: [
 		dispatchRequest( {
@@ -57,7 +53,6 @@ registerHandlers( 'state/data-layer/wpcom/viewers/index.js', {
 		dispatchRequest( {
 			fetch: requestRemoveViewer,
 			onSuccess: requestRemoveViewerSuccess,
-			onError: requestRemoveViewerFailure,
 		} ),
 	],
 } );
