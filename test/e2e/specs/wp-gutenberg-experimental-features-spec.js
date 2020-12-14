@@ -83,7 +83,6 @@ describe( `[${ host }] Experimental features we depend on are available (${ scre
 					const typeofExperimentalFeature = await driver.executeScript(
 						`return typeof window.wp['${ wpGlobalName }']['${ feature }']`
 					);
-					// assert(false);
 					assert.notStrictEqual(
 						typeofExperimentalFeature,
 						'undefined',
