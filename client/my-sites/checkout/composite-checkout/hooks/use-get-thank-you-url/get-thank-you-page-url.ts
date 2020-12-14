@@ -49,9 +49,9 @@ export default function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
+	shouldShowOneClickTreatment,
 	hideNudge,
 	isInEditor,
-	shouldShowOneClickTreatment,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
@@ -66,9 +66,9 @@ export default function getThankYouPageUrl( {
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
 	isEligibleForSignupDestinationResult?: boolean;
+	shouldShowOneClickTreatment?: boolean;
 	hideNudge?: boolean;
 	isInEditor?: boolean;
-	shouldShowOneClickTreatment: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 

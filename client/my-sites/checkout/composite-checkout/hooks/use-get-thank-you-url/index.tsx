@@ -54,9 +54,9 @@ export default function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
+			shouldShowOneClickTreatment,
 			hideNudge,
 			isInEditor,
-			shouldShowOneClickTreatment,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -66,6 +66,7 @@ export default function useGetThankYouUrl( {
 		isInEditor,
 		transactionResult,
 		isEligibleForSignupDestinationResult,
+		shouldShowOneClickTreatment,
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
