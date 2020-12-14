@@ -3,18 +3,27 @@
  */
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
-import { StripeHookProvider } from '@automattic/calypso-stripe';
+import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import {
+	CheckoutProvider,
+	CheckoutPaymentMethods,
+	usePaymentMethodId,
+} from '@automattic/composite-checkout';
+import { Card, Button } from '@automattic/components';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal Dependencies
  */
+import wp from 'calypso/lib/wp';
 import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import QueryPaymentCountries from 'calypso/components/data/query-countries/payments';
 import titles from 'calypso/me/purchases/titles';
 import TrackPurchasePageView from 'calypso/me/purchases/track-purchase-page-view';
 import { clearPurchases } from 'calypso/state/purchases/actions';
@@ -37,6 +46,15 @@ import PaymentMethodSidebar from 'calypso/me/purchases/components/payment-method
 import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-loader';
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
+import useStoredCards from 'calypso/my-sites/checkout/composite-checkout/hooks/use-stored-cards';
+import {
+	useCreatePayPal,
+	useCreateCreditCard,
+	useCreateExistingCards,
+} from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
+import Gridicon from 'calypso/components/gridicon';
+import { localizeUrl } from 'calypso/lib/i18n-utils';
+import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
 
 function ChangePaymentMethod( props ) {
 	const isDataLoading = ! props.hasLoadedSites || ! props.hasLoadedUserPurchasesFromServer;
@@ -99,14 +117,18 @@ function ChangePaymentMethod( props ) {
 						configurationArgs={ { needs_intent: true } }
 						fetchStripeConfiguration={ getStripeConfiguration }
 					>
-						<PaymentMethodForm
-							apiParams={ { purchaseId: props.purchase.id } }
-							initialValues={ props.card }
-							purchase={ props.purchase }
-							recordFormSubmitEvent={ recordFormSubmitEvent }
-							siteSlug={ props.siteSlug }
-							successCallback={ successCallback }
-						/>
+						{ isEnabled( 'purchases/new-payment-methods' ) ? (
+							<ChangePaymentMethodList />
+						) : (
+							<PaymentMethodForm
+								apiParams={ { purchaseId: props.purchase.id } }
+								initialValues={ props.card }
+								purchase={ props.purchase }
+								recordFormSubmitEvent={ recordFormSubmitEvent }
+								siteSlug={ props.siteSlug }
+								successCallback={ successCallback }
+							/>
+						) }
 					</StripeHookProvider>
 				</Column>
 				<Column type="sidebar">
@@ -133,6 +155,127 @@ ChangePaymentMethod.propTypes = {
 	getManagePurchaseUrlFor: PropTypes.func.isRequired,
 	isFullWidth: PropTypes.bool.isRequired,
 };
+
+const wpcom = wp.undocumented();
+const wpcomGetStoredCards = () => wpcom.getStoredCards();
+
+function ChangePaymentMethodList() {
+	const [ formSubmitting ] = useState( false );
+	const translate = useTranslate();
+
+	const { storedCards } = useStoredCards( wpcomGetStoredCards, false );
+	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
+
+	const paypalMethod = useCreatePayPal();
+
+	const stripeMethod = useCreateCreditCard( {
+		isStripeLoading,
+		stripeLoadingError,
+		stripeConfiguration,
+		stripe,
+		shouldUseEbanx: false,
+	} );
+
+	const existingCardMethods = useCreateExistingCards( {
+		storedCards,
+		stripeConfiguration,
+	} );
+
+	const paymentMethods = [ paypalMethod, stripeMethod, ...existingCardMethods ].filter( Boolean );
+	const disabled = isStripeLoading || stripeLoadingError;
+
+	return (
+		<CheckoutProvider
+			items={ [] }
+			total={ {
+				amount: { value: 0, currency: 'USD', displayValue: '$0' },
+				id: 'xyzzy',
+				type: 'FAAAKE',
+				label: 'fake thing',
+			} }
+			onPaymentComplete={ () => {} }
+			showErrorMessage={ () => {} }
+			showInfoMessage={ () => {} }
+			showSuccessMessage={ () => {} }
+			paymentMethods={ paymentMethods }
+			paymentProcessors={ {} }
+			isLoading={ false }
+		>
+			<Card className="change-payment-method__content">
+				<QueryPaymentCountries />
+
+				<CheckoutPaymentMethods className="change-payment-method__list" />
+				<div className="change-payment-method__terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						<TosText translate={ translate } />
+					</p>
+				</div>
+
+				<SaveButton
+					translate={ translate }
+					disabled={ disabled }
+					formSubmitting={ formSubmitting }
+				/>
+			</Card>
+		</CheckoutProvider>
+	);
+}
+
+function SaveButton( { translate, disabled, formSubmitting } ) {
+	const [ paymentMethodId ] = usePaymentMethodId();
+
+	// TODO: make sure the button busy state works correctly
+	const isSubmitting = disabled || formSubmitting;
+
+	const onClick = () => {
+		// TODO: do the actual submission here
+		window.alert( 'YOU CLICKED SUBMIT ' + paymentMethodId );
+	};
+
+	return (
+		// TODO: change button text based on payment method
+		<Button disabled={ isSubmitting } busy={ isSubmitting } onClick={ onClick } primary>
+			{ formSubmitting
+				? translate( 'Saving card…', {
+						context: 'Button label',
+						comment: 'Credit card',
+				  } )
+				: translate( 'Save card', {
+						context: 'Button label',
+						comment: 'Credit card',
+				  } ) }
+		</Button>
+	);
+}
+
+function TosText( { translate } ) {
+	// TODO: Make sure we use the correct ToS text for paypal
+	return translate(
+		'By saving a credit card, you agree to our {{tosLink}}Terms of Service{{/tosLink}}, and if ' +
+			'you use it to pay for a subscription or plan, you authorize your credit card to be charged ' +
+			'on a recurring basis until you cancel, which you can do at any time. ' +
+			'You understand {{autoRenewalSupportPage}}how your subscription works{{/autoRenewalSupportPage}} ' +
+			'and {{managePurchasesSupportPage}}how to cancel{{/managePurchasesSupportPage}}.',
+		{
+			components: {
+				tosLink: (
+					<a
+						href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+						target="_blank"
+						rel="noopener noreferrer"
+					/>
+				),
+				autoRenewalSupportPage: (
+					<a href={ AUTO_RENEWAL } target="_blank" rel="noopener noreferrer" />
+				),
+				managePurchasesSupportPage: (
+					<a href={ MANAGE_PURCHASES } target="_blank" rel="noopener noreferrer" />
+				),
+			},
+		}
+	);
+}
 
 const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	card: getStoredCardById( state, cardId ),

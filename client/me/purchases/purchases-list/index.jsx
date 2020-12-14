@@ -142,7 +142,7 @@ class PurchasesList extends Component {
 		) {
 			if ( ! sites.length ) {
 				return (
-					<Main>
+					<Main className="purchases-list is-wide-layout">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
 						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 						<PurchasesNavigation section="purchases" />

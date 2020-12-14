@@ -31,7 +31,7 @@ const DatePicker = ( { onSelectDate, selectedDate } ) => {
 	const firstKnownBackupAttempt = useFirstKnownBackupAttempt( siteId );
 	const oldestDateAvailable = useDateWithOffset(
 		firstKnownBackupAttempt.backupAttempt?.activityTs,
-		!! firstKnownBackupAttempt.backupAttempt
+		{ shouldExecute: !! firstKnownBackupAttempt.backupAttempt }
 	);
 
 	return (

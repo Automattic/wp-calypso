@@ -6,9 +6,11 @@ import React, { useCallback } from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { useShoppingCart } from '@automattic/shopping-cart';
-import { defaultRegistry } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import type { PaymentCompleteCallback } from '@automattic/composite-checkout';
+import type {
+	PaymentCompleteCallback,
+	PaymentCompleteCallbackArguments,
+} from '@automattic/composite-checkout';
 import type { ResponseCart } from '@automattic/shopping-cart';
 
 /**
@@ -28,48 +30,112 @@ import {
 	retrieveSignupDestination,
 	clearSignupDestinationCookie,
 } from 'calypso/signup/storageUtils';
-import { TransactionResponse, Purchase } from '../types/wpcom-store-state';
-import { WPCOMCartCouponItem, CheckoutCartItem } from '../types/checkout-cart';
-import type { ReactStandardAction } from '../types/analytics';
+import type { TransactionResponse, Purchase } from '../types/wpcom-store-state';
+import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import type { CheckoutPaymentMethodSlug } from '../types/checkout-payment-method-slug';
+import normalizeTransactionResponse from '../lib/normalize-transaction-response';
+import getThankYouPageUrl from './use-get-thank-you-url/get-thank-you-page-url';
+import {
+	getSelectedSite,
+	getSelectedSiteSlug,
+	getSelectedSiteId,
+} from 'calypso/state/ui/selectors';
+import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { logStashLoadErrorEventAction } from '../lib/analytics';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
-const { select } = defaultRegistry;
-
 export default function useCreatePaymentCompleteCallback( {
-	siteId,
-	getThankYouUrl,
-	recordEvent,
-	couponItem,
-	total,
 	createUserAndSiteBeforeTransaction,
+	productAliasFromUrl,
+	redirectTo,
+	purchaseId,
+	feature,
+	isInEditor,
+	isComingFromUpsell,
 }: {
-	siteId: undefined | number;
-	getThankYouUrl: () => string;
-	recordEvent: ( action: ReactStandardAction ) => void;
-	couponItem: WPCOMCartCouponItem | null;
-	total: CheckoutCartItem;
-	createUserAndSiteBeforeTransaction: boolean;
+	createUserAndSiteBeforeTransaction?: boolean;
+	productAliasFromUrl?: string | undefined;
+	redirectTo?: string | undefined;
+	purchaseId?: number | undefined;
+	feature?: string | undefined;
+	isInEditor?: boolean;
+	isComingFromUpsell?: boolean;
 } ): PaymentCompleteCallback {
 	const { responseCart } = useShoppingCart();
 	const reduxDispatch = useDispatch();
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const siteId = useSelector( getSelectedSiteId );
 	const isDomainOnly =
 		useSelector( ( state ) => siteId && isDomainOnlySite( state, siteId ) ) || false;
 	const reduxStore = useStore();
+	const selectedSiteData = useSelector( getSelectedSite );
+	const adminUrl = selectedSiteData?.options?.admin_url;
+	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
+	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isJetpackNotAtomic =
+		useSelector(
+			( state ) => siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+		) || false;
 
-	const onPaymentComplete = useCallback(
-		( { paymentMethodId } ): void => {
+	return useCallback(
+		( { paymentMethodId, transactionLastResponse }: PaymentCompleteCallbackArguments ): void => {
 			debug( 'payment completed successfully' );
-			const url = getThankYouUrl();
-			recordEvent( {
-				type: 'PAYMENT_COMPLETE',
-				payload: { url, couponItem, paymentMethodId, total, responseCart },
-			} );
+			const transactionResult = normalizeTransactionResponse( transactionLastResponse );
+			const getThankYouPageUrlArguments = {
+				siteSlug: siteSlug || undefined,
+				adminUrl,
+				receiptId: transactionResult.receipt_id,
+				orderId: transactionResult.order_id,
+				redirectTo,
+				purchaseId,
+				feature,
+				cart: responseCart,
+				isJetpackNotAtomic,
+				productAliasFromUrl,
+				isEligibleForSignupDestinationResult,
+				hideNudge: !! isComingFromUpsell,
+				isInEditor,
+			};
+			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
+			const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+			debug( 'getThankYouUrl returned', url );
 
-			const transactionResult: TransactionResponse = select( 'wpcom' ).getTransactionResult();
-			const receiptId = transactionResult.receipt_id;
+			try {
+				recordPaymentCompleteAnalytics( {
+					paymentMethodId,
+					transactionResult,
+					redirectUrl: url,
+					responseCart,
+					reduxDispatch,
+				} );
+			} catch ( err ) {
+				// This is a fallback to catch any errors caused by the analytics code
+				// Anything in this block should remain very simple and extremely
+				// tolerant of any kind of data. It should make no assumptions about
+				// the data it uses.  There's no fallback for the fallback!
+				debug( 'checkout event error', err.message );
+				reduxDispatch(
+					recordTracksEvent( 'calypso_checkout_composite_error', {
+						error_message: err.message,
+						action_type: 'useCreatePaymentCompleteCallback',
+						action_payload: '',
+					} )
+				);
+				reduxDispatch(
+					logStashLoadErrorEventAction( 'calypso_checkout_composite_error', err.message, {
+						action_type: 'useCreatePaymentCompleteCallback',
+						action_payload: '',
+					} )
+				);
+			}
+
+			const receiptId = transactionResult?.receipt_id;
 			debug( 'transactionResult was', transactionResult );
 
 			reduxDispatch( clearPurchases() );
@@ -82,12 +148,12 @@ export default function useCreatePaymentCompleteCallback( {
 				clearSignupDestinationCookie();
 			}
 
-			if ( hasRenewalItem( responseCart ) && transactionResult.purchases ) {
+			if ( hasRenewalItem( responseCart ) && transactionResult?.purchases ) {
 				debug( 'purchase had a renewal' );
 				displayRenewalSuccessNotice( responseCart, transactionResult.purchases, translate, moment );
 			}
 
-			if ( receiptId && transactionResult.purchases ) {
+			if ( receiptId && transactionResult?.purchases ) {
 				debug( 'fetching receipt' );
 				reduxDispatch( fetchReceiptCompleted( receiptId, transactionResult ) );
 			}
@@ -98,8 +164,8 @@ export default function useCreatePaymentCompleteCallback( {
 
 			if (
 				( responseCart.create_new_blog &&
-					Object.keys( transactionResult.purchases ?? {} ).length > 0 &&
-					Object.keys( transactionResult.failed_purchases ?? {} ).length === 0 ) ||
+					Object.keys( transactionResult?.purchases ?? {} ).length > 0 &&
+					Object.keys( transactionResult?.failed_purchases ?? {} ).length === 0 ) ||
 				( isDomainOnly && hasPlan( responseCart ) && ! siteId )
 			) {
 				notices.info( translate( 'Almost done…' ) );
@@ -137,21 +203,26 @@ export default function useCreatePaymentCompleteCallback( {
 			page.redirect( url );
 		},
 		[
+			siteSlug,
+			adminUrl,
+			redirectTo,
+			purchaseId,
+			feature,
+			isJetpackNotAtomic,
+			productAliasFromUrl,
+			isEligibleForSignupDestinationResult,
+			isComingFromUpsell,
+			isInEditor,
 			reduxStore,
 			isDomainOnly,
 			moment,
 			reduxDispatch,
 			siteId,
-			recordEvent,
 			translate,
-			getThankYouUrl,
-			total,
-			couponItem,
 			responseCart,
 			createUserAndSiteBeforeTransaction,
 		]
 	);
-	return onPaymentComplete;
 }
 
 function displayRenewalSuccessNotice(
@@ -211,5 +282,54 @@ function displayRenewalSuccessNotice(
 			}
 		),
 		{ persistent: true }
+	);
+}
+
+function recordPaymentCompleteAnalytics( {
+	paymentMethodId,
+	transactionResult,
+	redirectUrl,
+	responseCart,
+	reduxDispatch,
+}: {
+	paymentMethodId: string | null;
+	transactionResult: TransactionResponse | undefined;
+	redirectUrl: string;
+	responseCart: ResponseCart;
+	reduxDispatch: ReturnType< typeof useDispatch >;
+} ) {
+	reduxDispatch(
+		recordTracksEvent( 'calypso_checkout_payment_success', {
+			coupon_code: responseCart.coupon,
+			currency: responseCart.currency,
+			payment_method:
+				translateCheckoutPaymentMethodToWpcomPaymentMethod(
+					paymentMethodId as CheckoutPaymentMethodSlug
+				) || '',
+			total_cost: responseCart.total_cost,
+		} )
+	);
+	recordPurchase( {
+		cart: {
+			total_cost: responseCart.total_cost,
+			currency: responseCart.currency,
+			is_signup: responseCart.is_signup,
+			products: responseCart.products,
+			coupon_code: responseCart.coupon,
+			total_tax: responseCart.total_tax,
+		},
+		orderId: transactionResult?.receipt_id,
+	} );
+	return reduxDispatch(
+		recordTracksEvent( 'calypso_checkout_composite_payment_complete', {
+			redirect_url: redirectUrl,
+			coupon_code: responseCart.coupon,
+			total: responseCart.total_cost_integer,
+			currency: responseCart.currency,
+			payment_method:
+				translateCheckoutPaymentMethodToWpcomPaymentMethod(
+					paymentMethodId as CheckoutPaymentMethodSlug
+				) || '',
+		} )
 	);
 }

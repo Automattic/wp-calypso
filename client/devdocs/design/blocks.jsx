@@ -55,7 +55,6 @@ import DismissibleCard from 'calypso/blocks/dismissible-card/docs/example';
 import PostEditButton from 'calypso/blocks/post-edit-button/docs/example';
 import PostComment from 'calypso/blocks/comments/docs/post-comment-example';
 import ReaderAvatar from 'calypso/blocks/reader-avatar/docs/example';
-import SubscriptionLengthPicker from 'calypso/blocks/subscription-length-picker/docs/example';
 import ImageEditor from 'calypso/blocks/image-editor/docs/example';
 import ImageSelector from 'calypso/blocks/image-selector/docs/example';
 import VideoEditor from 'calypso/blocks/video-editor/docs/example';
@@ -182,7 +181,6 @@ export default class AppComponents extends React.Component {
 					<ReaderExportButton readmeFilePath="reader-export-button" />
 					<ReaderImportButton readmeFilePath="reader-import-button" />
 					<SharingPreviewPane />
-					<SubscriptionLengthPicker />
 					<ReaderShare readmeFilePath="reader-share" />
 					<ConversationCommentList />
 					<PostComment />

@@ -54,18 +54,18 @@ export default function getThankYouPageUrl( {
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
-	redirectTo: string | undefined;
+	redirectTo?: string | undefined;
 	receiptId: number | undefined;
 	orderId: number | undefined;
 	purchaseId: number | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
-	isJetpackNotAtomic: boolean;
+	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl: string | undefined;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult: boolean;
-	hideNudge: boolean;
+	isEligibleForSignupDestinationResult?: boolean;
+	hideNudge?: boolean;
 	isInEditor?: boolean;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
@@ -110,7 +110,7 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 		feature,
 		cart,
-		isJetpackNotAtomic,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
@@ -119,7 +119,7 @@ export default function getThankYouPageUrl( {
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && ! hasEcommercePlan( cart ) ) {
+	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
@@ -167,7 +167,7 @@ export default function getThankYouPageUrl( {
 		orderId,
 		cart,
 		siteSlug,
-		hideNudge,
+		hideNudge: Boolean( hideNudge ),
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );

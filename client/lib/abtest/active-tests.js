@@ -65,14 +65,14 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: false,
 	},
-	secureYourBrand: {
-		datestamp: '20201124',
+	freePlansDomainUpsell: {
+		datestamp: '20201210',
 		variations: {
 			test: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
-		allowExistingUsers: false,
+		allowExistingUsers: true,
 	},
 	jetpackPricingReversePlans: {
 		datestamp: '20201208',

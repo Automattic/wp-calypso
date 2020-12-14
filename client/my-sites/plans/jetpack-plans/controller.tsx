@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-import { getSelectorComponent } from './iterations';
+import SelectorPage from './selector';
 import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { TERM_ANNUALLY } from 'calypso/lib/plans/constants';
@@ -24,20 +24,17 @@ export const productSelect = ( rootUrl: string ): PageJS.Callback => ( context, 
 		( siteId && ( getCurrentPlanTerm( state, siteId ) as Duration ) ) ||
 		( TERM_ANNUALLY as Duration );
 	const urlQueryArgs: QueryArgs = context.query;
-	const SelectorComponent = getSelectorComponent();
 
-	if ( SelectorComponent ) {
-		context.primary = (
-			<SelectorComponent
-				defaultDuration={ duration }
-				rootUrl={ rootUrl }
-				siteSlug={ context.params.site || context.query.site }
-				urlQueryArgs={ urlQueryArgs }
-				header={ context.header }
-				footer={ context.footer }
-			/>
-		);
-	}
+	context.primary = (
+		<SelectorPage
+			defaultDuration={ duration }
+			rootUrl={ rootUrl }
+			siteSlug={ context.params.site || context.query.site }
+			urlQueryArgs={ urlQueryArgs }
+			header={ context.header }
+			footer={ context.footer }
+		/>
+	);
 
 	next();
 };

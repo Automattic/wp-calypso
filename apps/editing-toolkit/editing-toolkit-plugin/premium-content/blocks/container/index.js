@@ -3,7 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 import { getCurrencyDefaults } from '@automattic/format-currency';
-import { trimEnd } from 'lodash';
 import { createBlock } from '@wordpress/blocks';
 import { select } from '@wordpress/data';
 
@@ -199,7 +198,7 @@ export const SUPPORTED_CURRENCIES = {
  */
 export const CURRENCY_OPTIONS = Object.keys( SUPPORTED_CURRENCIES ).map( ( value ) => {
 	const { symbol } = getCurrencyDefaults( value );
-	const label = symbol === value ? value : `${ value } ${ trimEnd( symbol, '.' ) }`;
+	const label = symbol === value ? value : `${ value } ${ symbol.replace( /\.+$/, '' ) }`;
 	return { value, label };
 } );
 

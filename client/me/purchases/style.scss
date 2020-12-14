@@ -30,6 +30,10 @@
 
 	.subscriptions__list & {
 		margin: 16px 16px 0 0;
+
+		@include breakpoint-deprecated( '>960px' ) {
+			margin: 0 16px 0 0;
+		}
 	}
 
 	@include breakpoint-deprecated( '>960px' ) {
@@ -60,6 +64,7 @@
 
 		@include breakpoint-deprecated( '>960px' ) {
 			display: block;
+			margin-top: 0;
 		}
 	}
 }

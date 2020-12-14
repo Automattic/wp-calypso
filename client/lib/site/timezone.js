@@ -20,12 +20,12 @@ import moment, { MomentInput, Moment } from 'moment-timezone';
  *                        Moment with gmtOffset applied if no timezone is provided.
  *                        If neither is provided, the original moment is returned.
  */
-export function applySiteOffset( input, { timezone, gmtOffset } ) {
+export function applySiteOffset( input, { timezone, gmtOffset, keepLocalTime = false } ) {
 	if ( timezone ) {
-		return moment.tz( input, timezone );
+		return moment( input ).tz( timezone, keepLocalTime );
 	}
 	if ( gmtOffset || gmtOffset === 0 ) {
-		return moment( input ).utcOffset( gmtOffset );
+		return moment( input ).utcOffset( gmtOffset, keepLocalTime );
 	}
 	return moment( input );
 }

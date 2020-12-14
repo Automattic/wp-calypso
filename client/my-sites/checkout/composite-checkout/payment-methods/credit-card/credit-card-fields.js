@@ -12,7 +12,6 @@ import {
 	useDispatch,
 	useFormStatus,
 } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -28,9 +27,8 @@ import CreditCardExpiryField from './credit-card-expiry-field';
 import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
-export default function CreditCardFields() {
+export default function CreditCardFields( { shouldUseEbanx } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
@@ -48,7 +46,16 @@ export default function CreditCardFields() {
 	const { setFieldValue, changeBrand, setCardDataError, setCardDataComplete } = useDispatch(
 		'credit-card'
 	);
-	const { responseCart: cart } = useShoppingCart();
+
+	// We need the countryCode for the country specific payment fields which have
+	// no country selector but require country data during validation and submit
+	// as well as the code that decides which fields to display. Since Ebanx is
+	// only available in BR, we will hard-code it here, but if we ever expand
+	// Ebanx to other countries, this will need to be changed.
+	const contactCountryCode = shouldUseEbanx ? 'BR' : '';
+	useEffect( () => {
+		setFieldValue( 'countryCode', contactCountryCode );
+	}, [ contactCountryCode, setFieldValue ] );
 
 	const cardholderName = getField( 'cardholderName' );
 	const cardholderNameErrorMessages = getErrorMessagesForField( 'cardholderName' ) || [];
@@ -77,23 +84,9 @@ export default function CreditCardFields() {
 		setCardDataError( input.elementType, null );
 	};
 
-	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
-	);
-	const shouldShowContactFields =
-		contactCountryCode === 'BR' &&
-		Boolean(
-			cart?.allowed_payment_methods?.includes(
-				translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
-			)
-		);
+	const shouldShowContactFields = shouldUseEbanx;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
-
-	// Cache the country code in our store for use by the processor function
-	useEffect( () => {
-		setFieldValue( 'countryCode', contactCountryCode );
-	}, [ contactCountryCode, setFieldValue ] );
 
 	const stripeElementStyle = {
 		base: {
@@ -136,7 +129,7 @@ export default function CreditCardFields() {
 						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
 						handleStripeFieldChange={ handleStripeFieldChange }
 						stripeElementStyle={ stripeElementStyle }
-						countryCode={ getFieldValue( 'countryCode' ) }
+						shouldUseEbanx={ shouldUseEbanx }
 						getErrorMessagesForField={ getErrorMessagesForField }
 						setFieldValue={ setFieldValue }
 						getFieldValue={ getFieldValue }
@@ -147,7 +140,7 @@ export default function CreditCardFields() {
 							<CreditCardExpiryField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -157,7 +150,7 @@ export default function CreditCardFields() {
 							<CreditCardCvvField
 								handleStripeFieldChange={ handleStripeFieldChange }
 								stripeElementStyle={ stripeElementStyle }
-								countryCode={ getFieldValue( 'countryCode' ) }
+								shouldUseEbanx={ shouldUseEbanx }
 								getErrorMessagesForField={ getErrorMessagesForField }
 								setFieldValue={ setFieldValue }
 								getFieldValue={ getFieldValue }
@@ -172,6 +165,7 @@ export default function CreditCardFields() {
 						getFieldValue={ getFieldValue }
 						setFieldValue={ setFieldValue }
 						getErrorMessagesForField={ getErrorMessagesForField }
+						shouldUseEbanx={ shouldUseEbanx }
 					/>
 				) }
 			</CreditCardFieldsWrapper>

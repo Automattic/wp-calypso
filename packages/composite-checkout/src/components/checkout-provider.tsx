@@ -63,14 +63,15 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		Boolean( isValidating )
 	);
 	const transactionStatusManager = useTransactionStatusManager();
+	const { transactionLastResponse } = transactionStatusManager;
 	const didCallOnPaymentComplete = useRef( false );
 	useEffect( () => {
 		if ( formStatus === FormStatus.COMPLETE && ! didCallOnPaymentComplete.current ) {
 			debug( "form status is complete so I'm calling onPaymentComplete" );
 			didCallOnPaymentComplete.current = true;
-			onPaymentComplete( { paymentMethodId } );
+			onPaymentComplete( { paymentMethodId, transactionLastResponse } );
 		}
-	}, [ formStatus, onPaymentComplete, paymentMethodId ] );
+	}, [ formStatus, onPaymentComplete, transactionLastResponse, paymentMethodId ] );
 
 	// Create the registry automatically if it's not a prop
 	const registryRef = useRef< DataRegistry | undefined >( registry );

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import { filter, flow, get, isEmpty, memoize, once } from 'lodash';
+import { defer, filter, get, isEmpty, once } from 'lodash';
 
 /**
  * Internal dependencies
@@ -70,7 +70,7 @@ const filterImportsForSite = ( siteID, imports ) => {
 	return filter( imports, ( importItem ) => importItem.site.ID === siteID );
 };
 
-const getImporterTypeForEngine = memoize( ( engine ) => `importer-type-${ engine }` );
+const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 
 class SectionImport extends Component {
 	static propTypes = {
@@ -96,7 +96,7 @@ class SectionImport extends Component {
 			return;
 		}
 
-		startImport( site.ID, getImporterTypeForEngine( engine ) );
+		defer( () => startImport( site.ID, getImporterTypeForEngine( engine ) ) );
 	} );
 
 	handleStateChanges = () => {
@@ -368,20 +368,17 @@ class SectionImport extends Component {
 	}
 }
 
-export default flow(
-	connect(
-		( state ) => {
-			const siteID = getSelectedSiteId( state );
-			return {
-				engine: getSelectedImportEngine( state ),
-				fromSite: getImporterSiteUrl( state ),
-				site: getSelectedSite( state ),
-				siteSlug: getSelectedSiteSlug( state ),
-				siteTitle: getSiteTitle( state, siteID ),
-				canImport: canCurrentUser( state, siteID, 'manage_options' ),
-			};
-		},
-		{ recordTracksEvent }
-	),
-	localize
-)( SectionImport );
+export default connect(
+	( state ) => {
+		const siteID = getSelectedSiteId( state );
+		return {
+			engine: getSelectedImportEngine( state ),
+			fromSite: getImporterSiteUrl( state ),
+			site: getSelectedSite( state ),
+			siteSlug: getSelectedSiteSlug( state ),
+			siteTitle: getSiteTitle( state, siteID ),
+			canImport: canCurrentUser( state, siteID, 'manage_options' ),
+		};
+	},
+	{ recordTracksEvent }
+)( localize( SectionImport ) );

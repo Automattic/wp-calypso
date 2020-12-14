@@ -45,6 +45,7 @@ project {
 	buildType(RunAllUnitTests)
 	buildType(BuildBaseImages)
 	buildType(CheckCodeStyle)
+	buildType(CheckCodeStyleBranch)
 	buildType(BuildDockerImage)
 
 	params {
@@ -169,7 +170,6 @@ object BuildBaseImages : BuildType({
 				hour = 0
 			}
 			branchFilter = """
-				+:master
 				+:trunk
 			""".trimIndent()
 			triggerBuild = always()
@@ -587,7 +587,6 @@ object RunAllUnitTests : BuildType({
 				messageFormat = simpleMessageFormat()
 			}
 			branchFilter = """
-				+:master
 				+:trunk
 			""".trimIndent()
 			buildFailedToStart = true
@@ -652,8 +651,100 @@ object CheckCodeStyle : BuildType({
 
 				export NODE_ENV="test"
 
+				# Lint files
+				yarn run eslint --format checkstyle --output-file "./checkstyle_results/eslint/results.xml" .
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = daily {
+				hour = 5
+			}
+			branchFilter = """
+				+:trunk
+			""".trimIndent()
+			triggerBuild = always()
+			withPendingChangesOnly = false
+		}
+	}
+
+	failureConditions {
+		executionTimeoutMin = 20
+	}
+
+	features {
+		feature {
+			type = "xml-report-plugin"
+			param("xmlReportParsing.reportType", "checkstyle")
+			param("xmlReportParsing.reportDirs", "checkstyle_results/**/*.xml")
+			param("xmlReportParsing.verboseOutput", "true")
+		}
+		perfmon {
+		}
+	}
+})
+
+object CheckCodeStyleBranch : BuildType({
+	name = "Check code style for branches"
+	description = "Check code style for branches"
+
+	artifactRules = """
+		checkstyle_results => checkstyle_results
+	""".trimIndent()
+
+	vcs {
+		root(WpCalypso)
+		cleanCheckout = true
+	}
+
+	steps {
+		script {
+			name = "Prepare environment"
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
+				# Install modules
+				yarn install
+			""".trimIndent()
+			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
+			dockerPull = true
+			dockerImage = "%docker_image%"
+			dockerRunParameters = "-u %env.UID%"
+		}
+		script {
+			name = "Run linters"
+			executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+			scriptContent = """
+				#!/bin/bash
+
+				# Update node
+				. "${'$'}NVM_DIR/nvm.sh" --no-use
+				nvm install
+
+				set -o errexit
+				set -o nounset
+				set -o pipefail
+
+				export NODE_ENV="test"
+
 				# Find files to lint
-				if [ "%teamcity.build.branch.is_default%" = "true" ] || [ "%calypso.run_full_eslint%" = "true" ]; then
+				if [ "%calypso.run_full_eslint%" = "true" ]; then
 					FILES_TO_LINT="."
 				else
 					FILES_TO_LINT=${'$'}(git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD | grep -E '(\.[jt]sx?|\.md)${'$'}' || exit 0)
@@ -678,6 +769,7 @@ object CheckCodeStyle : BuildType({
 		vcs {
 			branchFilter = """
 				+:*
+				-:trunk
 				-:pull*
 			""".trimIndent()
 		}
@@ -859,15 +951,19 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
+			// See https://stackoverflow.com/a/53975412 and https://blog.jessfraz.com/post/how-to-use-new-docker-seccomp-profiles/
+			// TDLR: Chrome needs access to some kernel level operations to create a sandbox, this option unblocks them.
+			dockerRunParameters = "-u %env.UID% --security-opt seccomp=.teamcity/docker-seccomp.json"
 		}
 
 		script {
 			name = "Clean up artifacts"
 			executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
 			scriptContent = """
-				set -e
-				set -x
+				#!/bin/bash
+				set -o errexit
+				set -o nounset
+				set -o pipefail
 
 				# Delete artifacts if branch is not trunk
 				if [ "%teamcity.build.branch.is_default%" != "true" ]; then
@@ -877,7 +973,7 @@ object WpDesktop_DesktopE2ETests : BuildType({
 			dockerImagePlatform = ScriptBuildStep.ImagePlatform.Linux
 			dockerPull = true
 			dockerImage = "%docker_image_dekstop%"
-			dockerRunParameters = "-u %env.UID%"
+			dockerRunParameters = "-u %env.UID% "
 		}
 	}
 

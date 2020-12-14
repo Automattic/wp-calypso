@@ -48,12 +48,6 @@ The Data is stored in a private variable but can be accessed though the stores p
 
 ### Public Methods
 
-#### PluginsStore.getPlugin( sites, pluginSlug );
-
-Returns a plugin object that has a sites attribute which stores an array of sites objects that have that particular plugin.
-
----
-
 #### PluginsStore.getPlugins( sites, pluginFilter );
 
 Returns an array of plugin object that has a sites attribute which stores an array of sites objects that have that particular plugin.

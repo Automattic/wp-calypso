@@ -867,6 +867,9 @@ jobs:
       - store_artifacts:
           when: always
           path: desktop/e2e/logs
+      - store_artifacts:
+          when: always
+          path: desktop/e2e/screenshots
       - persist_to_workspace:
           root: ~/wp-calypso
           paths:
@@ -1102,8 +1105,8 @@ workflows:
             branches:
               only:
                 - trunk
-                - release/*
-                - desktop/*
+                - /release\/.*/
+                - /desktop\/.*/
       - wp-desktop-mac:
           requires:
             - wp-desktop-source

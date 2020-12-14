@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { initial, isEmpty, isString, last } from 'lodash';
+import { isEmpty, isString, last } from 'lodash';
 
 /**
  * Internal dependencies
@@ -29,7 +29,7 @@ export function appendToPostEditsLog( postEditsLog, newPostEdits ) {
 		return [ ...postEditsLog, newPostEdits ];
 	}
 
-	const newEditsLog = initial( postEditsLog );
+	const newEditsLog = postEditsLog.slice( 0, -1 );
 	newEditsLog.push( mergePostEdits( lastEdits, newPostEdits ) );
 	return newEditsLog;
 }

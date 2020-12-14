@@ -61,5 +61,5 @@ export const getPrintURL = ( paperSize, labels ) => {
 };
 
 export const getPreviewURL = ( paperSize, labels ) => {
-	return _getPDFURL( paperSize, labels, api.url.labelTestPrint() );
+	return _getPDFURL( paperSize, labels, api.url.labelsTestPrint() );
 };

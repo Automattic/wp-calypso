@@ -164,12 +164,16 @@ export function createCreditCardPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createCreditCardMethod( { store, stripe, stripeConfiguration } ) {
+export function createCreditCardMethod( { store, stripe, stripeConfiguration, shouldUseEbanx } ) {
 	return {
 		id: 'card',
 		label: <CreditCardLabel />,
 		activeContent: (
-			<CreditCardFields stripe={ stripe } stripeConfiguration={ stripeConfiguration } />
+			<CreditCardFields
+				stripe={ stripe }
+				stripeConfiguration={ stripeConfiguration }
+				shouldUseEbanx={ shouldUseEbanx }
+			/>
 		),
 		submitButton: (
 			<CreditCardPayButton

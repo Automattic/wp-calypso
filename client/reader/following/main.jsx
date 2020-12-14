@@ -4,7 +4,7 @@
 import React from 'react';
 import { localize } from 'i18n-calypso';
 import page from 'page';
-import { initial, flatMap, trim } from 'lodash';
+import { flatMap, trim } from 'lodash';
 import { connect, useDispatch } from 'react-redux';
 import config from 'calypso/config';
 
@@ -45,12 +45,10 @@ function handleSearch( query ) {
 const FollowingStream = ( props ) => {
 	const suggestionList =
 		props.suggestions &&
-		initial(
-			flatMap( props.suggestions, ( query ) => [
-				<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
-				', ',
-			] )
-		);
+		flatMap( props.suggestions, ( query ) => [
+			<Suggestion suggestion={ query.text } source="following" railcar={ query.railcar } />,
+			', ',
+		] ).slice( 0, -1 );
 	const placeholderText = getSearchPlaceholderText();
 	const { translate } = props;
 	const dispatch = useDispatch();

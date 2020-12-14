@@ -55,7 +55,7 @@ function recordSubmitStep( stepName, providedDependencies ) {
 			}
 
 			if (
-				( propName === 'cart_item' || propName === 'domain_item' ) &&
+				[ 'cart_item', 'domain_item', 'selected_domain_upsell_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
 				propValue = toPairs( propValue )

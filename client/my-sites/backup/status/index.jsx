@@ -34,10 +34,9 @@ export const DailyStatus = ( { selectedDate } ) => {
 	useDailyBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useDailyBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset(
-		lastBackupBeforeDate?.activityTs,
-		!! lastBackupBeforeDate
-	);
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
+		shouldExecute: !! lastBackupBeforeDate,
+	} );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;
@@ -72,10 +71,9 @@ export const RealtimeStatus = ( { selectedDate } ) => {
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).subtract( 1, 'day' ) );
 	useRealtimeBackupStatus( siteId, moment( selectedDate ).add( 1, 'day' ) );
 
-	const lastBackupDate = useDateWithOffset(
-		lastBackupBeforeDate?.activityTs,
-		!! lastBackupBeforeDate
-	);
+	const lastBackupDate = useDateWithOffset( lastBackupBeforeDate?.activityTs, {
+		shouldExecute: !! lastBackupBeforeDate,
+	} );
 
 	if ( isLoading ) {
 		return <BackupPlaceholder showDatePicker={ false } />;

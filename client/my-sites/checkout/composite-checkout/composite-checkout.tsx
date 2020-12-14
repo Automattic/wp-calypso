@@ -17,7 +17,7 @@ import {
 } from '@automattic/composite-checkout';
 import { ThemeProvider } from 'emotion-theming';
 import { useShoppingCart, ResponseCart } from '@automattic/shopping-cart';
-import { colors } from '@automattic/color-studio';
+import colorStudio from '@automattic/color-studio';
 import { useStripe } from '@automattic/calypso-stripe';
 
 /**
@@ -86,6 +86,7 @@ import getContactDetailsType from './lib/get-contact-details-type';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 
+const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:composite-checkout:composite-checkout' );
 
 const { select, registerStore } = defaultRegistry;
@@ -136,7 +137,6 @@ export default function CompositeCheckout( {
 		) || false;
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
-	const hideNudge = !! isComingFromUpsell;
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
 	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
@@ -239,7 +239,7 @@ export default function CompositeCheckout( {
 		cart: responseCart,
 		isJetpackNotAtomic,
 		productAliasFromUrl,
-		hideNudge,
+		hideNudge: !! isComingFromUpsell,
 		isInEditor,
 	} );
 	const getThankYouUrl = useCallback( () => {
@@ -514,12 +514,13 @@ export default function CompositeCheckout( {
 	} );
 
 	const onPaymentComplete = useCreatePaymentCompleteCallback( {
-		siteId,
-		getThankYouUrl,
-		recordEvent,
-		couponItem,
-		total,
 		createUserAndSiteBeforeTransaction,
+		productAliasFromUrl,
+		redirectTo,
+		purchaseId,
+		feature,
+		isInEditor,
+		isComingFromUpsell,
 	} );
 
 	if (

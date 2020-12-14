@@ -20,4 +20,14 @@ export default class PlansPage extends AsyncBaseContainer {
 			By.css( '.plan-item__select-button.is-selected' )
 		);
 	}
+	async expandAllPlans() {
+		const toggleAllPlansSelector = By.css( 'button.plans-accordion__toggle-all-button' );
+		return await driverHelper.clickWhenClickable( this.driver, toggleAllPlansSelector );
+	}
+
+	async selectFreePlan() {
+		const freePlanSelector = By.css( 'button[data-e2e-button="freePlan"]' );
+		await driverHelper.scrollIntoView( this.driver, freePlanSelector );
+		return await driverHelper.clickWhenClickable( this.driver, freePlanSelector );
+	}
 }

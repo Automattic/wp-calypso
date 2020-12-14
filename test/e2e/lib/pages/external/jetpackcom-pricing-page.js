@@ -14,7 +14,7 @@ export default class JetpackComPricingPage extends AsyncBaseContainer {
 		if ( ! url ) {
 			url = 'https://cloud.jetpack.com/pricing/';
 		}
-		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector-alt__main' ), url );
+		super( driver, By.css( '.is-section-jetpack-cloud-pricing .selector__main' ), url );
 	}
 
 	async buyJetpackPlan( planSlug ) {

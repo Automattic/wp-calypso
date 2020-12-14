@@ -190,12 +190,12 @@ class HelpContact extends React.Component {
 
 	submitKayakoTicket = ( contactForm ) => {
 		const { subject, message, howCanWeHelp, howYouFeel, site } = contactForm;
-		const { currentUserLocale, supportVariation, translate } = this.props;
+		const { currentUserLocale, supportVariation } = this.props;
 		let plan = 'N/A';
 		if ( site ) {
 			plan = `${ site.plan.product_name_short } (${ getPlanTermLabel(
 				site.plan.product_slug,
-				translate
+				( val ) => val // Passing an identity function instead of `translate` to always return the English string
 			) })`;
 		}
 		const ticketMeta = [
