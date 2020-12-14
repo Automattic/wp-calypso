@@ -55,7 +55,7 @@ const createExpiryOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
 // Creates a request to clear all import sessions
-const clearOrder = ( siteId, importerId ) =>
+const createClearOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
 
 // Creates a request object to start performing the actual import
@@ -64,6 +64,22 @@ const createImportOrder = ( importerStatus ) =>
 		...importerStatus,
 		importerState: appStates.IMPORTING,
 	} );
+
+const lockImport = ( importerId ) => {
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
+};
+
+const unlockImport = ( importerId ) => {
+	const unlockImportAction = {
+		type: IMPORTS_IMPORT_UNLOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( unlockImportAction );
+};
 
 const apiStart = () => {
 	const action = { type: IMPORTS_FETCH };
@@ -89,11 +105,7 @@ function receiveImporterStatus( importerStatus ) {
 }
 
 export function cancelImport( siteId, importerId ) {
-	const lockImportAction = {
-		type: IMPORTS_IMPORT_LOCK,
-		importerId,
-	};
-	Dispatcher.handleViewAction( lockImportAction );
+	lockImport( importerId );
 
 	const cancelImportAction = {
 		type: IMPORTS_IMPORT_CANCEL,
@@ -148,11 +160,7 @@ export const mapAuthor = ( importerId, sourceAuthor, targetAuthor ) =>
 
 export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	const lockImportAction = {
-		type: IMPORTS_IMPORT_LOCK,
-		importerId,
-	};
-	Dispatcher.handleViewAction( lockImportAction );
+	lockImport( importerId );
 
 	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
@@ -188,7 +196,7 @@ export function clearImport( siteId, importerId ) {
 
 	apiStart();
 	wpcom
-		.updateImporter( siteId, clearOrder( siteId, importerId ) )
+		.updateImporter( siteId, createClearOrder( siteId, importerId ) )
 		.then( ( data ) => {
 			apiSuccess();
 			receiveImporterStatus( fromApi( data ) );
@@ -236,8 +244,7 @@ export function startImporting( importerStatus ) {
 		site: { ID: siteId },
 	} = importerStatus;
 
-	const unlockImportAction = { type: IMPORTS_IMPORT_UNLOCK, importerId };
-	Dispatcher.handleViewAction( unlockImportAction );
+	unlockImport( importerId );
 
 	const startImportingAction = {
 		type: IMPORTS_START_IMPORTING,
