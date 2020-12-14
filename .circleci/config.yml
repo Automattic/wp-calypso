@@ -969,9 +969,9 @@ jobs:
       - attach_workspace:
           at: ~/wp-calypso
       - checkout
-      - run:
-          name: Install Dependencies
-          command: go get github.com/tcnksm/ghr
+      # - run:
+      #     name: Install Dependencies
+      #     command: go get github.com/tcnksm/ghr
       - run:
           name: Test Github Release Generation
           command: |
@@ -998,113 +998,113 @@ jobs:
 
 workflows:
   version: 2
-  calypso:
-    jobs:
-      - setup
-      - prime-calypso-live:
-          filters:
-            branches:
-              ignore: trunk
-      - build-notifications:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - build-o2-blocks:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - build-wpcom-block-editor:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - translate:
-          requires:
-            - setup
-      - lint:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-client:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-packages:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - test-server:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - typecheck-strict:
-          requires:
-            - setup
-          filters:
-            branches:
-              only:
-                # Only run for fork pull requets.
-                - /pull\/[0-9]+/
-      - wait-calypso-live:
-          requires:
-            - setup
-          filters:
-            branches:
-              ignore:
-                # Do not spin up calypso.live for `trunk`
-                - trunk
-                # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
-                - /pull\/[0-9]+/
-      #      - test-e2e-canary:
-      #          requires:
-      #            - wait-calypso-live
-      #          test-flags: '-C -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-ie
-          requires:
-            - wait-calypso-live
-          test-flags: '-z -S $CIRCLE_SHA1'
-          test-target: 'IE11'
-          slack-webhook: '$SLACK_IE'
-      - test-e2e-canary:
-          name: test-e2e-canary-safari
-          requires:
-            - wait-calypso-live
-          test-flags: '-y -S $CIRCLE_SHA1'
-      - test-e2e-canary:
-          name: test-e2e-canary-woo
-          requires:
-            - wait-calypso-live
-          test-flags: '-W -S $CIRCLE_SHA1'
-          test-target: 'WOO'
-          slack-webhook: '$SLACK_WOO'
+  # calypso:
+  #   jobs:
+  #     - setup
+  #     - prime-calypso-live:
+  #         filters:
+  #           branches:
+  #             ignore: trunk
+  #     - build-notifications:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - build-o2-blocks:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - build-wpcom-block-editor:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - translate:
+  #         requires:
+  #           - setup
+  #     - lint:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-client:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-packages:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - test-server:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - typecheck-strict:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             only:
+  #               # Only run for fork pull requets.
+  #               - /pull\/[0-9]+/
+  #     - wait-calypso-live:
+  #         requires:
+  #           - setup
+  #         filters:
+  #           branches:
+  #             ignore:
+  #               # Do not spin up calypso.live for `trunk`
+  #               - trunk
+  #               # Do not spin up calypso.live for fork pull requests. Calypso.live will not build them.
+  #               - /pull\/[0-9]+/
+  #     #      - test-e2e-canary:
+  #     #          requires:
+  #     #            - wait-calypso-live
+  #     #          test-flags: '-C -S $CIRCLE_SHA1'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-ie
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-z -S $CIRCLE_SHA1'
+  #         test-target: 'IE11'
+  #         slack-webhook: '$SLACK_IE'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-safari
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-y -S $CIRCLE_SHA1'
+  #     - test-e2e-canary:
+  #         name: test-e2e-canary-woo
+  #         requires:
+  #           - wait-calypso-live
+  #         test-flags: '-W -S $CIRCLE_SHA1'
+  #         test-target: 'WOO'
+  #         slack-webhook: '$SLACK_WOO'
   wp-desktop:
     jobs:
       - wp-desktop-source:
