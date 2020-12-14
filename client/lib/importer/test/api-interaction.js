@@ -20,7 +20,9 @@ const resetStore = () => Dispatcher.handleViewAction( { type: IMPORTS_STORE_RESE
 const queuePayload = ( payload ) =>
 	nock( 'https://public-api.wordpress.com:443' )
 		.get( `/rest/v1.1/sites/${ testSiteId }/imports/` )
-		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json` );
+		.replyWithFile( 200, `${ __dirname }/api-payloads/${ payload }.json`, {
+			'Content-Type': 'application/json',
+		} );
 
 describe( 'Importer store', () => {
 	beforeEach( resetStore );
