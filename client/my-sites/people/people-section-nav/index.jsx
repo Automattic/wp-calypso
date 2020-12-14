@@ -13,7 +13,6 @@ import SectionNav from 'calypso/components/section-nav';
 import NavTabs from 'calypso/components/section-nav/tabs';
 import NavItem from 'calypso/components/section-nav/item';
 import PeopleSearch from 'calypso/my-sites/people/people-section-nav/people-search';
-import config from 'calypso/config';
 
 class PeopleNavTabs extends React.Component {
 	static displayName = 'PeopleNavTabs';
@@ -105,8 +104,7 @@ class PeopleSectionNav extends Component {
 			return false;
 		}
 
-		const wpcomPublicComingSoon = config.isEnabled( 'coming-soon-v2' ) && this.props.isComingSoon;
-		const isPrivateOrPublicComingSoon = this.props.isPrivate || wpcomPublicComingSoon;
+		const isPrivateOrPublicComingSoon = this.props.isPrivate || this.props.isComingSoon;
 
 		if (
 			'viewers' === this.props.filter ||
