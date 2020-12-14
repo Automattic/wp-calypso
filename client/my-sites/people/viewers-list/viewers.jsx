@@ -154,10 +154,10 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-const mapStateToProps = ( state, ownProps ) => ( {
-	viewers: getViewers( state, ownProps.site.ID ),
-	fetching: isFetchingViewers( state, ownProps.site.ID ),
-	totalViewers: getTotalViewers( state, ownProps.site.ID ),
+const mapStateToProps = ( state, { site } ) => ( {
+	viewers: getViewers( state, site.ID ),
+	fetching: isFetchingViewers( state, site.ID ),
+	totalViewers: getTotalViewers( state, site.ID ),
 } );
 
 const mapDispatchToProps = {
