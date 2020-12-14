@@ -15,7 +15,6 @@ import HeaderCake from 'calypso/components/header-cake';
 import { Card } from '@automattic/components';
 import PluginMeta from 'calypso/my-sites/plugins/plugin-meta';
 import PluginsStore from 'calypso/lib/plugins/store';
-import PluginsLog from 'calypso/lib/plugins/log-store';
 import {
 	isFetching as isWporgPluginFetching,
 	isFetched as isWporgPluginFetched,
@@ -43,6 +42,7 @@ import hasNavigated from 'calypso/state/selectors/has-navigated';
 import {
 	getPluginOnSites,
 	getSitesWithoutPlugin,
+	isPluginActionInProgress,
 	isRequestingForSites,
 } from 'calypso/state/plugins/installed/selectors';
 
@@ -65,13 +65,11 @@ class SinglePlugin extends React.Component {
 
 	componentDidMount() {
 		PluginsStore.on( 'change', this.refreshSitesAndPlugins );
-		PluginsLog.on( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
 	}
 
 	componentWillUnmount() {
 		PluginsStore.removeListener( 'change', this.refreshSitesAndPlugins );
-		PluginsLog.removeListener( 'change', this.refreshSitesAndPlugins );
 		this.hasAlreadyShownTheTour = false;
 		if ( this.pluginRefreshTimeout ) {
 			clearTimeout( this.pluginRefreshTimeout );
@@ -307,10 +305,6 @@ class SinglePlugin extends React.Component {
 			return this.getPluginDoesNotExistView( selectedSite );
 		}
 
-		const installing =
-			selectedSite &&
-			PluginsLog.isInProgressAction( selectedSite.ID, this.state.plugin.slug, 'INSTALL_PLUGIN' );
-
 		const isWpcom = selectedSite && ! this.props.isJetpackSite;
 		const calypsoify = this.props.isAtomicSite && isEnabled( 'calypsoify/plugins' );
 		const analyticsPath = selectedSite ? '/plugins/:plugin/:site' : '/plugins/:plugin';
@@ -330,7 +324,7 @@ class SinglePlugin extends React.Component {
 						sites={ this.state.sites }
 						selectedSite={ selectedSite }
 						isInstalledOnSite={ this.isPluginInstalledOnsite() }
-						isInstalling={ installing }
+						isInstalling={ this.props.isInstallingPlugin }
 						allowedActions={ allowedPluginActions }
 						calypsoify={ calypsoify }
 					/>
@@ -363,6 +357,12 @@ export default connect(
 			sitesWithoutPlugin: getSitesWithoutPlugin( state, siteIds, props.pluginSlug ),
 			isAtomicSite: isSiteAutomatedTransfer( state, selectedSiteId ),
 			isJetpackSite: selectedSiteId && isJetpackSite( state, selectedSiteId ),
+			isInstallingPlugin: isPluginActionInProgress(
+				state,
+				selectedSiteId,
+				props.pluginSlug,
+				'INSTALL_PLUGIN'
+			),
 			isRequestingSites: isRequestingSites( state ),
 			requestingPluginsForSites: isRequestingForSites( state, siteIds ),
 			userCanManagePlugins: selectedSiteId
