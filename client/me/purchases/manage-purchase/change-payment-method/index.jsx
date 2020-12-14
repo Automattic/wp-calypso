@@ -255,6 +255,8 @@ function SaveButton( {
 
 	const isSubmitting = disabled || formSubmitting;
 
+	const isStoredCard = /^existingCard-/.test( selectedPaymentMethodId );
+
 	const onClick = () => {
 		setFormSubmitting( true );
 		wpcomAssignPaymentMethod( purchase.id, selectedPaymentMethodId.replace( /^existingCard-/, '' ) )
@@ -269,18 +271,33 @@ function SaveButton( {
 			} );
 	};
 
+	let buttonText = null;
+	if ( isStoredCard ) {
+		buttonText = formSubmitting
+			? translate( 'Saving card…', {
+					context: 'Button label',
+					comment: 'Credit card',
+			  } )
+			: translate( 'Use this card', {
+					context: 'Button label',
+					comment: 'Credit card',
+			  } );
+	} else {
+		buttonText = formSubmitting
+			? translate( 'Saving card…', {
+					context: 'Button label',
+					comment: 'Credit card',
+			  } )
+			: translate( 'Save card', {
+					context: 'Button label',
+					comment: 'Credit card',
+			  } );
+	}
+
 	return (
 		// TODO: change button text based on payment method
 		<Button disabled={ isSubmitting } busy={ isSubmitting } onClick={ onClick } primary>
-			{ formSubmitting
-				? translate( 'Saving card…', {
-						context: 'Button label',
-						comment: 'Credit card',
-				  } )
-				: translate( 'Save card', {
-						context: 'Button label',
-						comment: 'Credit card',
-				  } ) }
+			{ buttonText }
 		</Button>
 	);
 }
