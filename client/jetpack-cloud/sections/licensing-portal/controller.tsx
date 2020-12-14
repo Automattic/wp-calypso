@@ -7,7 +7,6 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import { setLocale } from 'calypso/state/ui/language/actions';
 import { addQueryArgs } from 'calypso/lib/route';
 import { getActivePartnerKey } from 'calypso/state/licensing-portal/selectors';
 import Header from './header';
@@ -25,30 +24,10 @@ export function partnerKeyContext( context: PageJS.Context, next ) {
 }
 
 export function licensingPortalContext( context: PageJS.Context, next ) {
-	const urlQueryArgs = context.query;
-	const { locale } = context.params;
-
-	if ( locale ) {
-		context.store.dispatch( setLocale( locale ) );
-		page.redirect( addQueryArgs( urlQueryArgs, `/licensing-portal` ) );
-	}
-
 	context.header = <Header />;
 	context.secondary = <LicensingPortalSidebar path={ context.path } />;
 	context.primary = <InspectLicense />;
 	context.footer = <JetpackComFooter />;
-	next();
-}
-
-export function withLocale( context, next ) {
-	const urlQueryArgs = context.query;
-	const { locale } = context.params;
-
-	if ( locale ) {
-		context.store.dispatch( setLocale( locale ) );
-		page.redirect( addQueryArgs( urlQueryArgs, window.location.pathname ) );
-	}
-
 	next();
 }
 

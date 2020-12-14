@@ -15,33 +15,9 @@ import * as controller from './controller';
 import './style.scss';
 
 export default function () {
-	// TODO fix locale so it works.
-	page(
-		`/:locale/licensing-portal/partner-key`,
-		controller.withLocale,
-		controller.partnerKeyContext,
-		makeLayout,
-		clientRender
-	);
-	page(
-		`/licensing-portal/partner-key`,
-		controller.withLocale,
-		controller.partnerKeyContext,
-		makeLayout,
-		clientRender
-	);
-
-	page(
-		`/:locale/licensing-portal`,
-		controller.withLocale,
-		controller.requirePartnerKeyContext,
-		controller.licensingPortalContext,
-		makeLayout,
-		clientRender
-	);
+	page( `/licensing-portal/partner-key`, controller.partnerKeyContext, makeLayout, clientRender );
 	page(
 		`/licensing-portal`,
-		controller.withLocale,
 		controller.requirePartnerKeyContext,
 		controller.licensingPortalContext,
 		makeLayout,
