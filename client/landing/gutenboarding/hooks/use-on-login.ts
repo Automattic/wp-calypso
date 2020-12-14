@@ -43,6 +43,7 @@ export default function useOnLogin(): void {
 				bearerToken: undefined,
 				visibility,
 				anchorFmPodcastId: null,
+				anchorFmEpisodeId: null,
 			} );
 		}
 	}, [

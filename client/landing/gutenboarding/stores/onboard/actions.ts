@@ -43,6 +43,7 @@ export interface CreateSiteActionParameters {
 	bearerToken?: string;
 	visibility: number;
 	anchorFmPodcastId: string | null;
+	anchorFmEpisodeId: string | null;
 }
 
 export function* createSite( {
@@ -53,6 +54,7 @@ export function* createSite( {
 		? Site.Visibility.PublicNotIndexed
 		: Site.Visibility.Private,
 	anchorFmPodcastId = null,
+	anchorFmEpisodeId = null,
 }: CreateSiteActionParameters ) {
 	const {
 		domain,
@@ -106,6 +108,9 @@ export function* createSite( {
 				} ),
 			...( anchorFmPodcastId && {
 				anchor_fm_podcast_id: anchorFmPodcastId,
+			} ),
+			...( anchorFmEpisodeId && {
+				anchor_fm_episode_id: anchorFmEpisodeId,
 			} ),
 		},
 		...( bearerToken && { authToken: bearerToken } ),
