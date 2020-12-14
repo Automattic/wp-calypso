@@ -8,9 +8,7 @@ import { useI18n } from '@automattic/react-i18n';
 /**
  * Internal dependencies
  */
-import { usePaymentMethodId } from '../lib/payment-methods';
 import useMessages from './use-messages';
-import useEvents from './use-events';
 import { useFormStatus } from '../lib/form-status';
 import { useTransactionStatus } from '../lib/transaction-status';
 import { TransactionStatus } from '../types';
@@ -39,8 +37,6 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 		resetTransaction,
 		setTransactionError,
 	} = useTransactionStatus();
-	const onEvent = useEvents();
-	const [ paymentMethodId ] = usePaymentMethodId();
 
 	const genericErrorMessage = __( 'An error occurred during the transaction' );
 	const redirectErrormessage = __(
@@ -59,10 +55,6 @@ export function useTransactionStatusHandler( redirectToUrl: ( url: string ) => v
 		if ( transactionStatus === TransactionStatus.ERROR ) {
 			debug( 'showing error', transactionError );
 			showErrorMessage( transactionError || genericErrorMessage );
-			onEvent( {
-				type: 'TRANSACTION_ERROR',
-				payload: { message: transactionError || '', paymentMethodId },
-			} );
 			resetTransaction();
 		}
 		if ( transactionStatus === TransactionStatus.COMPLETE ) {

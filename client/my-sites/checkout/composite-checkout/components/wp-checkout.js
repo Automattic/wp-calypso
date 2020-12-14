@@ -19,8 +19,10 @@ import {
 	useIsStepComplete,
 	useLineItems,
 	usePaymentMethod,
+	usePaymentMethodId,
 	useSelect,
 	useTotal,
+	useTransactionStatus,
 	CheckoutErrorBoundary,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
@@ -56,6 +58,8 @@ import {
 } from 'calypso/lib/cart-values/cart-items';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import PaymentMethodStep from './payment-method-step';
+import useActOnceOnStrings from './hooks/use-act-once-on-strings';
+import doesValueExist from './lib/does-value-exist';
 
 const debug = debugFactory( 'calypso:composite-checkout:wp-checkout' );
 
@@ -115,6 +119,17 @@ export default function WPCheckout( {
 	const total = useTotal();
 	const activePaymentMethod = usePaymentMethod();
 	const onEvent = useEvents();
+	const { transactionError } = useTransactionStatus();
+	const [ paymentMethodId ] = usePaymentMethodId();
+
+	useActOnceOnStrings( [ transactionError ].filter( doesValueExist ), ( messages ) => {
+		messages.forEach( ( message ) =>
+			onEvent( {
+				type: 'TRANSACTION_ERROR',
+				payload: { message, paymentMethodId },
+			} )
+		);
+	} );
 
 	const [ items ] = useLineItems();
 	const areThereDomainProductsInCart =
