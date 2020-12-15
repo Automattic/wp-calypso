@@ -300,9 +300,4 @@ export default {
 			name: 'UnauthorizedFullAccessError',
 		},
 	},
-
-	removeErrorNotices: {
-		type: 'REMOVE_PLUGINS_NOTICES',
-		logs: [ 'error' ],
-	},
 };
