@@ -20,6 +20,8 @@ import { ChangeLocaleContextConsumer } from '../../components/locale-context';
 import { I18N_STORE } from '../../stores/i18n';
 import { PLANS_STORE } from '../../stores/plans';
 import { USER_STORE } from '../../stores/user';
+import { Step, usePath } from '../../path';
+import type { StepNameType } from '../../path';
 
 /**
  * Style dependencies
@@ -28,7 +30,11 @@ import './style.scss';
 
 const LOCALIZED_LANGUAGE_NAMES_FALLBACK_LOCALE = 'en';
 
-const LanguageStep: React.FunctionComponent = () => {
+interface Props {
+	previousStep?: StepNameType;
+}
+
+const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 	const { __ } = useI18n();
 
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
@@ -39,12 +45,18 @@ const LanguageStep: React.FunctionComponent = () => {
 		)
 	);
 
+	// keep a static reference to the previous step
+	const staticPreviousStep = React.useRef( previousStep );
+
 	const history = useHistory();
+	const makePath = usePath();
 
 	const { invalidateResolution } = useDispatch( 'core/data' );
 
-	const goBack = () => {
-		history.goBack();
+	const goBack = ( lang = '' ) => {
+		staticPreviousStep.current
+			? history.replace( makePath( Step[ staticPreviousStep.current ], lang ) )
+			: history.goBack();
 	};
 
 	return (
@@ -55,7 +67,7 @@ const LanguageStep: React.FunctionComponent = () => {
 						headingTitle={ __( 'Select your site language' ) }
 						headingButtons={
 							<ActionButtons>
-								<BackButton onClick={ goBack } />
+								<BackButton onClick={ () => goBack() } />
 							</ActionButtons>
 						}
 						languageGroups={ createLanguageGroups( __ ) }
@@ -68,7 +80,7 @@ const LanguageStep: React.FunctionComponent = () => {
 							invalidateResolution( PLANS_STORE, 'getPrices', [ language.langSlug ] );
 
 							changeLocale( language.langSlug );
-							goBack();
+							goBack( language.langSlug );
 						} }
 						localizedLanguageNames={ localizedLanguageNames }
 					/>

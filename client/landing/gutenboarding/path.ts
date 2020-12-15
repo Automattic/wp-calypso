@@ -98,7 +98,7 @@ export function usePlanRouteParam() {
 	return match?.params.plan;
 }
 
-export function useCurrentStep() {
+export function useCurrentStep(): StepNameType {
 	const stepRouteParam = useStepRouteParam();
 	return findKey( Step, ( step ) => step === stepRouteParam ) as StepNameType;
 }
