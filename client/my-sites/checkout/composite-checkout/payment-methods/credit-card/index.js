@@ -187,6 +187,7 @@ export function createCreditCardMethod( {
 				store={ store }
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
+				shouldUseEbanx={ shouldUseEbanx }
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
