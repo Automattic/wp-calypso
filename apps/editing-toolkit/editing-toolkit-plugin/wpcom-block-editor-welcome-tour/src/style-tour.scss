@@ -1,0 +1,134 @@
+@import '~@wordpress/base-styles/colors';
+@import '~@wordpress/base-styles/mixins';
+@import '~@wordpress/base-styles/variables';
+@import '~@wordpress/base-styles/z-index';
+
+.wpcom-editor-welcome-tour-frame {
+	background-color: $white;
+	border-radius: 2px;
+	bottom: 44px;
+	display: inline;
+	left: 16px;
+	position: fixed;
+}
+
+.welcome-tour-card__heading {
+	font-size: 1.125rem; /* stylelint-disable-line */
+	margin: 0.5rem 0;
+}
+
+.welcome-tour-card__description {
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+	margin: 0;
+
+	.components-button {
+		height: auto;
+		line-height: 1;
+		text-decoration: underline;
+		padding: 0 0 0 4px;
+	}
+}
+
+.wpcom-editor-welcome-tour__resume-btn {
+	border-radius: 2px;
+	box-shadow: 0 2px 6px rgba( 60, 66, 87, 0.08 ), 0 0 0 1px rgba( 60, 66, 87, 0.16 ),
+		0 1px 1px rgba( 0, 0, 0, 0.08 );
+	background-color: $white;
+	color: $black;
+
+	&.components-button {
+		height: 44px;
+	}
+}
+
+.wpcom-editor-welcome-tour-card-frame {
+	position: relative;
+
+	.components-guide__page-control {
+		bottom: 0;
+		left: $grid-unit-20;
+		margin: 0;
+		position: absolute;
+
+		li {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.welcome-tour-card {
+	width: 400px;
+
+	&.welcome-tour-card.is-elevated {
+		box-shadow: rgba( 0, 0, 0, 0.1 ) 0 0 0 1px, rgba( 0, 0, 0, 0.1 ) 0 2px 4px 0;
+	}
+
+	&.components-card {
+		border: none;
+		border-radius: 4px;
+	}
+
+	.components-card__body {
+		min-height: 114px;
+	}
+
+	.components-card__body,
+	.components-card__footer {
+		border-top: none;
+		padding: $grid-unit-20 !important;
+	}
+
+	.components-card__media {
+		min-height: 260px;
+	}
+
+	.components-guide__page-control {
+		margin: 0;
+
+		.components-button {
+			min-width: auto;
+			&.has-icon {
+				padding: 3px;
+			}
+		}
+
+		li {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.welcome-tour-card__minimize-icon svg {
+	position: relative;
+	left: -2px;
+}
+
+.welcome-tour-card__overlay-controls {
+	left: 0;
+	padding: $grid-unit-15;
+	position: absolute;
+	right: 0;
+	.components-button {
+		width: 32px;
+		min-width: 32px;
+		height: 32px;
+		background: $dark-gray-700;
+		opacity: 0;
+		transition: opacity 200ms;
+	}
+}
+
+.wpcom-editor-welcome-tour-frame:hover .welcome-tour-card__overlay-controls .components-button {
+	opacity: 0.7;
+}
+
+.wpcom-editor-welcome-tour-frame .welcome-tour-card__overlay-controls .components-button:hover {
+	opacity: 0.9;
+}
+
+.welcome-tour-card__next-btn {
+	margin-left: $grid-unit-15;
+	justify-content: center;
+	min-width: 85px;
+}
