@@ -46,6 +46,8 @@ import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { logStashLoadErrorEventAction } from '../lib/analytics';
+import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-on-payment-complete' );
 
@@ -77,6 +79,8 @@ export default function useCreatePaymentCompleteCallback( {
 	const selectedSiteData = useSelector( getSelectedSite );
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( responseCart );
+	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
+	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isJetpackNotAtomic =
 		useSelector(
@@ -99,8 +103,10 @@ export default function useCreatePaymentCompleteCallback( {
 				isJetpackNotAtomic,
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
+				shouldShowOneClickTreatment,
 				hideNudge: !! isComingFromUpsell,
 				isInEditor,
+				previousRoute,
 			};
 			debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 			const url = getThankYouPageUrl( getThankYouPageUrlArguments );

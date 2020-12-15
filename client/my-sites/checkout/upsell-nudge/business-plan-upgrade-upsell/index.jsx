@@ -22,7 +22,7 @@ import './style.scss';
  */
 import premiumThemesImage from 'calypso/assets/images/illustrations/themes.svg';
 
-export class PlanUpgradeUpsell extends PureComponent {
+export class BusinessPlanUpgradeUpsell extends PureComponent {
 	render() {
 		const { receiptId, translate } = this.props;
 
@@ -35,15 +35,22 @@ export class PlanUpgradeUpsell extends PureComponent {
 				<PageViewTracker
 					path="/checkout/:site/offer-plan-upgrade/:upgrade_item/:receipt_id"
 					title={ title }
+					properties={ { upgrade_item: 'business' } }
 				/>
 				<DocumentHead title={ title } />
 				{ receiptId ? (
-					<CompactCard className="plan-upgrade-upsell__card-header">{ this.header() }</CompactCard>
+					<CompactCard className="business-plan-upgrade-upsell__card-header">
+						{ this.header() }
+					</CompactCard>
 				) : (
 					''
 				) }
-				<CompactCard className="plan-upgrade-upsell__card-body">{ this.body() }</CompactCard>
-				<CompactCard className="plan-upgrade-upsell__card-footer">{ this.footer() }</CompactCard>
+				<CompactCard className="business-plan-upgrade-upsell__card-body">
+					{ this.body() }
+				</CompactCard>
+				<CompactCard className="business-plan-upgrade-upsell__card-footer">
+					{ this.footer() }
+				</CompactCard>
 			</>
 		);
 	}
@@ -52,8 +59,8 @@ export class PlanUpgradeUpsell extends PureComponent {
 		const { translate } = this.props;
 
 		return (
-			<header className="plan-upgrade-upsell__small-header">
-				<h2 className="plan-upgrade-upsell__title">
+			<header className="business-plan-upgrade-upsell__small-header">
+				<h2 className="business-plan-upgrade-upsell__title">
 					{ translate( 'This is a one time offer just for you' ) }
 				</h2>
 			</header>
@@ -70,7 +77,7 @@ export class PlanUpgradeUpsell extends PureComponent {
 		} = this.props;
 		return (
 			<>
-				<h2 className="plan-upgrade-upsell__header">
+				<h2 className="business-plan-upgrade-upsell__header">
 					{ translate(
 						'Upgrade your account to our most powerful plan ever {{br/}} with this special offer',
 						{
@@ -79,8 +86,8 @@ export class PlanUpgradeUpsell extends PureComponent {
 					) }
 				</h2>
 
-				<div className="plan-upgrade-upsell__column-pane">
-					<div className="plan-upgrade-upsell__column-content">
+				<div className="business-plan-upgrade-upsell__column-pane">
+					<div className="business-plan-upgrade-upsell__column-content">
 						<p>
 							<b>
 								{ translate(
@@ -99,10 +106,13 @@ export class PlanUpgradeUpsell extends PureComponent {
 							) }
 						</p>
 						<p>{ translate( 'With the power of plugins you can:' ) }</p>
-						<ul className="plan-upgrade-upsell__checklist">
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+						<ul className="business-plan-upgrade-upsell__checklist">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
 										'Transform your site into a mobile app, a job board, a wiki, or a coupon site.',
 										{
@@ -111,25 +121,34 @@ export class PlanUpgradeUpsell extends PureComponent {
 									) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate( 'Create a private, customer-only section.', {
 										comment: "This is a benefit listed on a 'Upgrade your plan' page",
 									} ) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate( 'Let your customers book and pay for appointments by themselves.', {
 										comment: "This is a benefit listed on a 'Upgrade your plan' page",
 									} ) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
 										'Fully optimize your site for search engines with advanced options.',
 										{
@@ -138,9 +157,12 @@ export class PlanUpgradeUpsell extends PureComponent {
 									) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate(
 										'Build a professional photography site with beautiful photo galleries.',
 										{
@@ -149,17 +171,23 @@ export class PlanUpgradeUpsell extends PureComponent {
 									) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate( 'Turn your site into a lead-generation powerhouse.', {
 										comment: "This is a benefit listed on a 'Upgrade your plan' page",
 									} ) }
 								</span>
 							</li>
-							<li className="plan-upgrade-upsell__checklist-item">
-								<Gridicon icon="checkmark" className="plan-upgrade-upsell__checklist-item-icon" />
-								<span className="plan-upgrade-upsell__checklist-item-text">
+							<li className="business-plan-upgrade-upsell__checklist-item">
+								<Gridicon
+									icon="checkmark"
+									className="business-plan-upgrade-upsell__checklist-item-icon"
+								/>
+								<span className="business-plan-upgrade-upsell__checklist-item-text">
 									{ translate( 'Grow your email list with opt-in forms on your site.', {
 										comment: "This is a benefit listed on a 'Upgrade your plan' page",
 									} ) }
@@ -243,9 +271,9 @@ export class PlanUpgradeUpsell extends PureComponent {
 						</p>
 						<p>{ translate( 'So are you ready to explore our most powerful plan ever?' ) }</p>
 					</div>
-					<div className="plan-upgrade-upsell__column-doodle">
+					<div className="business-plan-upgrade-upsell__column-doodle">
 						<img
-							className="plan-upgrade-upsell__doodle"
+							className="business-plan-upgrade-upsell__doodle"
 							alt="Website expert offering a support session"
 							src={ premiumThemesImage }
 						/>
@@ -258,16 +286,16 @@ export class PlanUpgradeUpsell extends PureComponent {
 	footer() {
 		const { translate, handleClickAccept, handleClickDecline } = this.props;
 		return (
-			<footer className="plan-upgrade-upsell__footer">
+			<footer className="business-plan-upgrade-upsell__footer">
 				<Button
-					className="plan-upgrade-upsell__decline-offer-button"
+					className="business-plan-upgrade-upsell__decline-offer-button"
 					onClick={ handleClickDecline }
 				>
 					{ translate( "No thanks, I don't need plugins" ) }
 				</Button>
 				<Button
 					primary
-					className="plan-upgrade-upsell__accept-offer-button"
+					className="business-plan-upgrade-upsell__accept-offer-button"
 					onClick={ () => handleClickAccept( 'accept' ) }
 				>
 					{ translate( 'Yes, I need plugins for my site!' ) }

@@ -13,6 +13,8 @@ import { getSelectedSite } from 'calypso/state/ui/selectors';
 import isEligibleForSignupDestination from 'calypso/state/selectors/is-eligible-for-signup-destination';
 import getThankYouPageUrl from './get-thank-you-page-url';
 import type { TransactionResponse } from '../../types/wpcom-store-state';
+import { isTreatmentOneClickTest } from 'calypso/state/marketing/selectors';
+import getPreviousRoute from 'calypso/state/selectors/get-previous-route';
 
 const debug = debugFactory( 'calypso:composite-checkout:use-get-thank-you-url' );
 
@@ -31,6 +33,9 @@ export default function useGetThankYouUrl( {
 	isInEditor,
 }: GetThankYouUrlProps ): GetThankYouUrl {
 	const selectedSiteData = useSelector( ( state ) => getSelectedSite( state ) );
+	const shouldShowOneClickTreatment = useSelector( ( state ) => isTreatmentOneClickTest( state ) );
+	const previousRoute = useSelector( ( state ) => getPreviousRoute( state ) );
+
 	const adminUrl = selectedSiteData?.options?.admin_url;
 	const isEligibleForSignupDestinationResult = isEligibleForSignupDestination( cart );
 
@@ -51,8 +56,10 @@ export default function useGetThankYouUrl( {
 			isJetpackNotAtomic,
 			productAliasFromUrl,
 			isEligibleForSignupDestinationResult,
+			shouldShowOneClickTreatment,
 			hideNudge,
 			isInEditor,
+			previousRoute,
 		};
 		debug( 'getThankYouUrl called with', getThankYouPageUrlArguments );
 		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
@@ -62,6 +69,7 @@ export default function useGetThankYouUrl( {
 		isInEditor,
 		transactionResult,
 		isEligibleForSignupDestinationResult,
+		shouldShowOneClickTreatment,
 		siteSlug,
 		adminUrl,
 		isJetpackNotAtomic,
