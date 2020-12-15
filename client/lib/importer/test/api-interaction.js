@@ -46,6 +46,14 @@ describe( 'Importer store', () => {
 			expect( importersState() ).toEqual( {} );
 		} );
 
+		test( 'should hydrate if the API returns an expired importer', async () => {
+			expect( hydratedState() ).toBe( false );
+			queuePayload( 'expired-importer' );
+			await fetchState( testSiteId );
+			expect( hydratedState() ).toBe( true );
+			expect( importersState() ).toEqual( {} );
+		} );
+
 		test( 'should hydrate if the API returns a running importer', async () => {
 			const testImporterId = 'runningImporter';
 			expect( hydratedState() ).toBe( false );
