@@ -19,6 +19,8 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './style.scss';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
+import editorPodcastImage from './images/editor-podcast.svg';
+import transcriptionImage from './images/transcription.svg';
 import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
@@ -107,7 +109,7 @@ function getWpcomNuxPages( isPodcastingSite ) {
 					'Let’s get your first episode set up and ready to share. It’ll remain private until you’re ready to launch.',
 					'full-site-editing'
 				),
-				imgSrc: editorImage,
+				imgSrc: editorPodcastImage,
 				alignBottom: true,
 			},
 			{
@@ -116,7 +118,7 @@ function getWpcomNuxPages( isPodcastingSite ) {
 					'Add more accessible content to your episode. Edit the placeholder content on your page to add a transcript of your episode audio.',
 					'full-site-editing'
 				),
-				imgSrc: blockPickerImage,
+				imgSrc: transcriptionImage,
 				alignBottom: true,
 			},
 			{
