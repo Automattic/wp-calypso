@@ -1,7 +1,7 @@
 /**
  * External Dependencies
  */
-const { ipcMain: ipc } = require( 'electron' );
+const { ipcMain: ipc, dialog } = require( 'electron' );
 const { URL, format } = require( 'url' );
 
 /**
@@ -30,6 +30,9 @@ const ALWAYS_OPEN_IN_APP = [
 
 const DONT_OPEN_IN_BROWSER = [ Config.server_url, 'https://public-api.wordpress.com/connect/' ];
 
+const isWpAdminPostUrl = ( requestUrl ) =>
+	requestUrl.includes( 'wp-admin' ) && requestUrl.includes( 'post' );
+
 const domainAndPathSame = ( first, second ) =>
 	first.hostname === second.hostname &&
 	( first.pathname === second.pathname || second.pathname === '/*' );
@@ -48,15 +51,42 @@ function replaceInternalCalypsoUrl( url ) {
 module.exports = function ( mainWindow ) {
 	const webContents = mainWindow.webContents;
 
-	webContents.on( 'will-navigate', function ( event, url ) {
+	webContents.on( 'will-navigate', async function ( event, url ) {
 		const parsedUrl = new URL( url );
+		log.info( `Navigating to URL: '${ parsedUrl }'` );
 
 		for ( let x = 0; x < ALWAYS_OPEN_IN_APP.length; x++ ) {
 			const alwaysOpenUrl = new URL( ALWAYS_OPEN_IN_APP[ x ] );
 
 			if ( domainAndPathSame( parsedUrl, alwaysOpenUrl ) ) {
+				log.info( 'Domain and path same, returning...' );
 				return;
 			}
+		}
+
+		if ( isWpAdminPostUrl( url ) ) {
+			event.preventDefault();
+			log.info( `Prompting user to navigate to WP-Admin editor URL: '${ url }'` );
+
+			const redirectDialogOptions = {
+				buttons: [ 'Confirm', 'Cancel' ],
+				title: 'Proceed In External Browser?',
+				message: `Unable to use this feature.\n
+					Please see https://www.google.com for more information.`,
+				detail: `Proceed in an external browser?`,
+			};
+
+			const selected = await dialog.showMessageBox( mainWindow, redirectDialogOptions );
+			const button = selected.response;
+
+			if ( button === 0 ) {
+				log.info( `WP-Admin redirect: user selected 'Confirm'` );
+				// no-op -- proceed to open in browser
+				openInBrowser( null, url );
+			} else {
+				log.info( `WP-Admin redirect: user selected 'Cancel'` );
+			}
+			return;
 		}
 
 		openInBrowser( event, url );
@@ -84,7 +114,6 @@ module.exports = function ( mainWindow ) {
 		parsedUrl = replaceInternalCalypsoUrl( parsedUrl );
 
 		const openUrl = format( parsedUrl );
-
 		openInBrowser( event, openUrl );
 	} );
 
