@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	isPending,
 	isPrivate,
 	removeSlug,
 } from '../utils';
@@ -744,20 +743,6 @@ describe( 'utils', () => {
 
 		test( 'should return false when post.status is not private', () => {
 			expect( isPrivate( { status: 'draft' } ) ).toBe( false );
-		} );
-	} );
-
-	describe( '#isPending', () => {
-		test( 'should return false when no post is supplied', () => {
-			expect( isPending() ).toBe( false );
-		} );
-
-		test( 'should return true when post.status is pending', () => {
-			expect( isPending( { status: 'pending' } ) ).toBe( true );
-		} );
-
-		test( 'should return false when post.status is not pending', () => {
-			expect( isPending( { status: 'draft' } ) ).toBe( false );
 		} );
 	} );
 
