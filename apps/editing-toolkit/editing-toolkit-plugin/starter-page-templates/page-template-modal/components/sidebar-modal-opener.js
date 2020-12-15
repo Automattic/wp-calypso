@@ -2,9 +2,7 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { withSelect, withDispatch } from '@wordpress/data';
 import { Button, Modal } from '@wordpress/components';
-import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
@@ -13,10 +11,11 @@ import { PageTemplatesPlugin } from '../index';
 class SidebarModalOpener extends Component {
 	state = {
 		isWarningOpen: false,
+		isOpenFromSidebar: false,
 	};
 
 	toggleTemplateModal = () => {
-		this.props.setIsOpen( ! this.props.isOpen );
+		this.setState( { isOpenFromSidebar: ! this.state.isOpenFromSidebar } );
 	};
 
 	toggleWarningModal = () => {
@@ -24,7 +23,8 @@ class SidebarModalOpener extends Component {
 	};
 
 	render() {
-		const { templates, theme, vertical, segment, hidePageTitle, isFrontPage, isOpen } = this.props;
+		const { templates, theme, vertical, segment, hidePageTitle, isFrontPage } = this.props;
+		const { isOpenFromSidebar } = this.state;
 
 		return (
 			<div className="sidebar-modal-opener">
@@ -32,7 +32,7 @@ class SidebarModalOpener extends Component {
 					{ __( 'Change Layout', 'full-site-editing' ) }
 				</Button>
 
-				{ isOpen && (
+				{ isOpenFromSidebar && (
 					<PageTemplatesPlugin
 						shouldPrefetchAssets={ false }
 						templates={ templates }
@@ -43,6 +43,7 @@ class SidebarModalOpener extends Component {
 						hidePageTitle={ hidePageTitle }
 						isFrontPage={ isFrontPage }
 						isPromptedFromSidebar
+						isOpen={ true }
 					/>
 				) }
 
@@ -74,13 +75,4 @@ class SidebarModalOpener extends Component {
 	}
 }
 
-const SidebarTemplatesPlugin = compose(
-	withSelect( ( select ) => ( {
-		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
-	} ) ),
-	withDispatch( ( dispatch ) => ( {
-		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
-	} ) )
-)( SidebarModalOpener );
-
-export default SidebarTemplatesPlugin;
+export default SidebarModalOpener;
