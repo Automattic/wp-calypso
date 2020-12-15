@@ -15,7 +15,7 @@ import {
 	HAPPYCHAT_SET_CURRENT_MESSAGE,
 } from 'calypso/state/action-types';
 import { lostFocusAt, currentMessage } from '../reducer';
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( 'calypso/lib/warn', () => () => {} );
 
 // Simulate the time Feb 27, 2017 05:25 UTC
 const NOW = 1488173100125;

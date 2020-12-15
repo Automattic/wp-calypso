@@ -18,7 +18,7 @@ import { ShoppingCartProvider, getEmptyResponseCart } from '@automattic/shopping
 import { List as DomainList } from '..';
 import { createReduxStore } from 'calypso/state';
 
-jest.mock( 'lib/wp', () => ( {
+jest.mock( 'calypso/lib/wp', () => ( {
 	undocumented: () => ( {
 		getProducts: () => {},
 		getSitePlans: () => {},

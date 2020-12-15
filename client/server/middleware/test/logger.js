@@ -15,10 +15,10 @@ const requestLogger = {
 const mockRootLogger = {
 	child: jest.fn( () => requestLogger ),
 };
-jest.mock( 'server/lib/logger', () => ( {
+jest.mock( 'calypso/server/lib/logger', () => ( {
 	getLogger: () => mockRootLogger,
 } ) );
-jest.mock( 'config', () => jest.fn() );
+jest.mock( 'calypso/config', () => jest.fn() );
 jest.mock( 'uuid', () => ( {
 	v4: jest.fn( () => '00000000-0000-0000-0000-000000000000' ),
 } ) );

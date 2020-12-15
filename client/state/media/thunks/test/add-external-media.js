@@ -4,7 +4,7 @@
 import { addExternalMedia as addExternalMediaThunk } from 'calypso/state/media/thunks/add-external-media';
 import { uploadMedia } from 'calypso/state/media/thunks/upload-media';
 
-jest.mock( 'state/media/thunks/upload-media', () => ( {
+jest.mock( 'calypso/state/media/thunks/upload-media', () => ( {
 	uploadMedia: jest.fn(),
 	uploadSingleMedia: jest.fn(),
 } ) );

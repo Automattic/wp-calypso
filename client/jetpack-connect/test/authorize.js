@@ -64,7 +64,7 @@ const DEFAULT_PROPS = deepFreeze( {
 	userAlreadyConnected: false,
 } );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = () => 'development';
 	mock.isEnabled = jest.fn( () => true );
 	return mock;

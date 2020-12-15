@@ -18,23 +18,23 @@ import sinon from 'sinon';
 import { ImageSelector } from '../';
 
 jest.mock( 'event', () => {}, { virtual: true } );
-jest.mock( 'state/ui/media-modal/selectors', () => ( {
+jest.mock( 'calypso/state/ui/media-modal/selectors', () => ( {
 	view: () => {},
 	getMediaModalView: () => {},
 } ) );
-jest.mock( 'state/selectors/get-sites-items', () => ( {
+jest.mock( 'calypso/state/selectors/get-sites-items', () => ( {
 	__esModule: true,
 	default: () => ( { 1: '' } ),
 } ) );
-jest.mock( 'state/editor/selectors', () => ( {
+jest.mock( 'calypso/state/editor/selectors', () => ( {
 	postId: '',
 	getEditorPostId: () => {},
 } ) );
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => require( './fixtures' ).DUMMY_SITE_ID ),
 	getSelectedSite: () => {},
 } ) );
-jest.mock( 'state/selectors/get-current-locale-slug', () => () => 'en' );
+jest.mock( 'calypso/state/selectors/get-current-locale-slug', () => () => 'en' );
 
 describe( 'ImageSelector', () => {
 	const testProps = {

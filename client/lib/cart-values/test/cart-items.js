@@ -20,7 +20,7 @@ import { GSUITE_BASIC_SLUG } from 'calypso/lib/gsuite/constants';
 import { PRODUCT_JETPACK_BACKUP_DAILY } from 'calypso/lib/products-values/constants';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const cartItems = require( '../cart-items' );
 const { getPlan } = require( 'calypso/lib/plans' );

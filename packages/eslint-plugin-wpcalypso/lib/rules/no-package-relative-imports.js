@@ -181,6 +181,26 @@ module.exports = {
 				) {
 					return reportImport( node, node.arguments[ 0 ] );
 				}
+
+				if (
+					node.callee &&
+					node.callee.type === 'MemberExpression' &&
+					node.callee.object.type === 'Identifier' &&
+					node.callee.object.name === 'jest' &&
+					node.callee.property.type === 'Identifier' &&
+					[
+						'createMockFromModule',
+						'mock',
+						'unmock',
+						'doMock',
+						'dontMock',
+						'setMock',
+						'requireActual',
+						'requireMock',
+					].includes( node.callee.property.name )
+				) {
+					return reportImport( node, node.arguments[ 0 ] );
+				}
 			},
 			JSXElement: ( node ) => {
 				if ( node.openingElement.name.name === 'AsyncLoad' ) {

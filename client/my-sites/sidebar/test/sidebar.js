@@ -15,22 +15,22 @@ import { MySitesSidebar } from '..';
 import config from 'calypso/config';
 import { abtest } from 'calypso/lib/abtest';
 
-jest.mock( 'lib/user', () => () => null );
-jest.mock( 'lib/user/index', () => () => {} );
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/user', () => () => null );
+jest.mock( 'calypso/lib/user/index', () => () => {} );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( () => {
 		return 'sidebarUpsells';
 	} ),
 } ) );
-jest.mock( 'lib/cart/store/index', () => null );
-jest.mock( 'lib/analytics/track-component-view', () => 'TrackComponentView' );
-jest.mock( 'my-sites/sidebar/utils', () => ( {
+jest.mock( 'calypso/lib/cart/store/index', () => null );
+jest.mock( 'calypso/lib/analytics/track-component-view', () => 'TrackComponentView' );
+jest.mock( 'calypso/my-sites/sidebar/utils', () => ( {
 	itemLinkMatches: jest.fn( () => true ),
 } ) );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const configMock = () => '';
 	configMock.isEnabled = jest.fn( () => true );
 	return configMock;

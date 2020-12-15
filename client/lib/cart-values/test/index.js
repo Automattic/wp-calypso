@@ -11,7 +11,7 @@ import * as cartValues from '../index';
 import * as cartItems from '../cart-items';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 describe( 'index', () => {
 	const TEST_BLOG_ID = 1;

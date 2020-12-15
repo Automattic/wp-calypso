@@ -35,8 +35,8 @@ const {
 } = data;
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( 'page', () => jest.fn() );
 
 describe( 'index', () => {

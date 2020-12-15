@@ -16,7 +16,7 @@ import { spy } from 'sinon';
 import fixtures from './fixtures';
 import { PluginAutoUpdateToggle } from 'calypso/my-sites/plugins/plugin-autoupdate-toggle';
 
-jest.mock( 'my-sites/plugins/plugin-action/plugin-action', () =>
+jest.mock( 'calypso/my-sites/plugins/plugin-action/plugin-action', () =>
 	require( './mocks/plugin-action' )
 );
 jest.mock( 'query', () => require( 'component-query' ), { virtual: true } );

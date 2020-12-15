@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
@@ -12,14 +12,14 @@ jest.mock( 'store', () => ( {
 } ) );
 
 jest.mock(
-	'blocks/upsell-nudge',
+	'calypso/blocks/upsell-nudge',
 	() =>
 		function UpsellNudge() {
 			return <div />;
 		}
 );
 
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = jest.fn();
 	mock.isEnabled = jest.fn();
 

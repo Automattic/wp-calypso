@@ -19,7 +19,7 @@ import Dispatcher from 'calypso/dispatcher';
 import PluginsStore from 'calypso/lib/plugins/store';
 import { useFakeTimers } from 'calypso/test-helpers/use-sinon';
 
-jest.mock( 'lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
+jest.mock( 'calypso/lib/redux-bridge', () => require( './mocks/redux-bridge' ) );
 
 // Helper to retrieve a particular plugin from flux while we're migrating to Redux.
 const getSitePlugin = ( siteObject, pluginSlug ) =>

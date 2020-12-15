@@ -15,7 +15,7 @@ jest.mock( 'uuid', () => ( {
 	v4: () => 'fake-uuid',
 } ) );
 
-jest.mock( 'components/data/query-verticals', () => 'QueryVerticals' );
+jest.mock( 'calypso/components/data/query-verticals', () => 'QueryVerticals' );
 
 const defaultProps = {
 	onChange: jest.fn(),

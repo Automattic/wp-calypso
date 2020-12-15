@@ -13,7 +13,7 @@ import {
 	hasPendingGSuiteUsers,
 } from 'calypso/lib/gsuite';
 
-jest.mock( 'lib/user/', () => {
+jest.mock( 'calypso/lib/user/', () => {
 	return () => {
 		return {
 			get: () => {

@@ -9,8 +9,8 @@ import { shallow } from 'enzyme';
 import React from 'react';
 
 jest.mock( 'page' );
-jest.mock( 'state/sites/plans/actions' );
-jest.mock( 'state/analytics/actions' );
+jest.mock( 'calypso/state/sites/plans/actions' );
+jest.mock( 'calypso/state/analytics/actions' );
 
 import { CartPlanDiscountAd } from '../cart-plan-discount-ad';
 import CartAd from '../cart-ad';

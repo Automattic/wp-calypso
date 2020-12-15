@@ -11,8 +11,8 @@ import superagent from 'superagent';
 import { statsdTimingUrl, statsdCountingUrl } from 'calypso/lib/analytics/statsd-utils';
 import analytics from '../index';
 import config from 'calypso/config';
-jest.mock( 'config', () => require( 'sinon' ).stub() );
-jest.mock( 'lib/analytics/statsd-utils', () => ( {
+jest.mock( 'calypso/config', () => require( 'sinon' ).stub() );
+jest.mock( 'calypso/lib/analytics/statsd-utils', () => ( {
 	statsdTimingUrl: require( 'sinon' ).stub(),
 	statsdCountingUrl: require( 'sinon' ).stub(),
 } ) );

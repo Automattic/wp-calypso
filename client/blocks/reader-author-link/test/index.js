@@ -9,7 +9,7 @@ import React from 'react';
  */
 import ReaderAuthorLink from '../index';
 
-jest.mock( 'reader/stats', () => ( {
+jest.mock( 'calypso/reader/stats', () => ( {
 	recordAction: () => {},
 	recordGaEvent: () => {},
 	recordTrackForPost: () => {},
