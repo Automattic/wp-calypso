@@ -158,7 +158,10 @@ const ImporterStore = createReducerStore( function ( state, payload ) {
 					[ importerStatus.importerId ]: importerStatus,
 				},
 				( importer ) =>
-					includes( [ appStates.CANCEL_PENDING, appStates.DEFUNCT ], importer.importerState )
+					includes(
+						[ appStates.CANCEL_PENDING, appStates.DEFUNCT, appStates.EXPIRED ],
+						importer.importerState
+					)
 			);
 
 			return {

@@ -14,6 +14,7 @@ const importerStateMap = [
 	[ appStates.CANCEL_PENDING, 'cancel' ],
 	[ appStates.DEFUNCT, 'importStopped' ],
 	[ appStates.DISABLED, 'disabled' ],
+	[ appStates.EXPIRED, 'importExpired' ],
 	[ appStates.EXPIRE_PENDING, 'expire' ],
 	[ appStates.IMPORT_FAILURE, 'importFailure' ],
 	[ appStates.IMPORT_SUCCESS, 'importSuccess' ],
