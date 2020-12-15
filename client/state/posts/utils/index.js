@@ -5,7 +5,6 @@ export { getEditedTime } from 'calypso/state/posts/utils/get-edited-time';
 export { getEditURL } from 'calypso/state/posts/utils/get-edit-url';
 export { getFeaturedImageId } from 'calypso/state/posts/utils/get-featured-image-id';
 export { getNormalizedPostsQuery } from 'calypso/state/posts/utils/get-normalized-posts-query';
-export { getPermalinkBasePath } from 'calypso/state/posts/utils/get-permalink-base-path';
 export { getPreviewURL } from 'calypso/state/posts/utils/get-preview-url';
 export { getSerializedPostsQuery } from 'calypso/state/posts/utils/get-serialized-posts-query';
 export { getSerializedPostsQueryWithoutPage } from 'calypso/state/posts/utils/get-serialized-posts-query-without-page';

@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	getPermalinkBasePath,
 	getVisibility,
 	isBackDatedPublished,
 	isPending,
@@ -838,28 +837,6 @@ describe( 'utils', () => {
 		test( 'should strip slug on page URL', () => {
 			const noSlug = removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
 			expect( noSlug ).toEqual( 'https://en.blog.wordpress.com/' );
-		} );
-	} );
-
-	describe( '#getPermalinkBasePath', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( getPermalinkBasePath() ).toBeUndefined();
-		} );
-
-		test( 'should return post.URL when post is published', () => {
-			const path = getPermalinkBasePath( {
-				status: 'publish',
-				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
-			} );
-			expect( path ).toEqual( 'https://en.blog.wordpress.com/2015/08/26/' );
-		} );
-
-		test( 'should use permalink_URL when not published and present', () => {
-			const path = getPermalinkBasePath( {
-				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
-				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
-			} );
-			expect( path ).toEqual( 'http://zo.mg/a/permalink/' );
 		} );
 	} );
 
