@@ -12,7 +12,6 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import { isEnabled } from 'calypso/config';
 
 import type { Plan } from '../stores/plans';
 
@@ -74,11 +73,9 @@ export function useNewSiteVisibility(): Site.Visibility {
 
 	if ( isEcommerce ) {
 		return Site.Visibility.PublicIndexed;
-	} else if ( isEnabled( 'coming-soon-v2' ) ) {
-		return Site.Visibility.PublicNotIndexed;
 	}
 
-	return Site.Visibility.Private;
+	return Site.Visibility.PublicNotIndexed;
 }
 
 export function useShouldRedirectToEditorAfterCheckout() {
