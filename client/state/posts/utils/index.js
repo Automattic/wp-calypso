@@ -11,7 +11,6 @@ export { getTermIdsFromEdits } from 'calypso/state/posts/utils/get-term-ids-from
 export { isAuthorEqual } from 'calypso/state/posts/utils/is-author-equal';
 export { isDateEqual } from 'calypso/state/posts/utils/is-date-equal';
 export { isDiscussionEqual } from 'calypso/state/posts/utils/is-discussion-equal';
-export { isScheduled } from 'calypso/state/posts/utils/is-scheduled';
 export { isStatusEqual } from 'calypso/state/posts/utils/is-state-equal';
 export { isTermsEqual } from 'calypso/state/posts/utils/is-terms-equal';
 export { mergePostEdits } from 'calypso/state/posts/utils/merge-post-edits';
