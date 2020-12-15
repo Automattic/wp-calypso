@@ -155,10 +155,6 @@ export function getEditorIframePort( state ) {
 	return state.editor.iframePort;
 }
 
-export function getEditorInitialRawContent( state ) {
-	return state.editor.rawContent.initial;
-}
-
 export function getEditorRawContent( state ) {
 	return state.editor.rawContent.current;
 }
