@@ -11,6 +11,7 @@ const Config = require( 'calypso/desktop/lib/config' );
 const { handleJetpackEnableSSO, handleUndefined } = require( './editor' );
 const openInBrowser = require( './open-in-browser' );
 const log = require( 'calypso/desktop/lib/logger' )( 'desktop:external-links' );
+const platform = require( 'calypso/desktop/lib/platform' );
 
 /**
  * Module variables
@@ -71,7 +72,7 @@ module.exports = function ( mainWindow ) {
 
 			const redirectDialogOptions = {
 				buttons: [ 'Confirm', 'Cancel' ],
-				title: 'Proceed in External Browser?',
+				title: platform.isWindows() ? 'WordPress.com' : 'Proceed in External Browser?',
 				message: 'Proceed in External Browser?',
 				detail:
 					`Please note: WordPress Desktop does not support the Classic Editor plugin.` +
