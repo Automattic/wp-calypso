@@ -22,7 +22,6 @@ import {
 	getEditURL,
 	getFeaturedImageId,
 	getVisibility,
-	isBackDatedPublished,
 	isPending,
 	isPrivate,
 	removeSlug,
@@ -778,30 +777,6 @@ describe( 'utils', () => {
 
 		test( 'should return false when post.status is not pending', () => {
 			expect( isPending( { status: 'draft' } ) ).toBe( false );
-		} );
-	} );
-
-	describe( '#isBackDatedPublished', () => {
-		test( 'should return false when no post is supplied', () => {
-			expect( isBackDatedPublished() ).toBe( false );
-		} );
-
-		test( 'should return false when status !== future', () => {
-			expect( isBackDatedPublished( { status: 'draft' } ) ).toBe( false );
-		} );
-
-		test( 'should return false when status === future and date is in future', () => {
-			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() + tenMinutes;
-
-			expect( isBackDatedPublished( { status: 'future', date: postDate } ) ).toBe( false );
-		} );
-
-		test( 'should return true when status === future and date is in the past', () => {
-			const tenMinutes = 1000 * 60;
-			const postDate = Date.now() - tenMinutes;
-
-			expect( isBackDatedPublished( { status: 'future', date: postDate } ) ).toBe( true );
 		} );
 	} );
 

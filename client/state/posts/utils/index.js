@@ -12,7 +12,6 @@ export { getTermIdsFromEdits } from 'calypso/state/posts/utils/get-term-ids-from
 export { getVisibility } from 'calypso/state/posts/utils/get-visibility';
 export { isAuthorEqual } from 'calypso/state/posts/utils/is-author-equal';
 export { isBackDated } from 'calypso/state/posts/utils/is-back-dated';
-export { isBackDatedPublished } from 'calypso/state/posts/utils/is-back-dated-published';
 export { isDateEqual } from 'calypso/state/posts/utils/is-date-equal';
 export { isDiscussionEqual } from 'calypso/state/posts/utils/is-discussion-equal';
 export { isFutureDated } from 'calypso/state/posts/utils/is-future-dated';
