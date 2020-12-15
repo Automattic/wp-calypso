@@ -8,7 +8,6 @@ export { getPreviewURL } from 'calypso/state/posts/utils/get-preview-url';
 export { getSerializedPostsQuery } from 'calypso/state/posts/utils/get-serialized-posts-query';
 export { getSerializedPostsQueryWithoutPage } from 'calypso/state/posts/utils/get-serialized-posts-query-without-page';
 export { getTermIdsFromEdits } from 'calypso/state/posts/utils/get-term-ids-from-edits';
-export { getVisibility } from 'calypso/state/posts/utils/get-visibility';
 export { isAuthorEqual } from 'calypso/state/posts/utils/is-author-equal';
 export { isDateEqual } from 'calypso/state/posts/utils/is-date-equal';
 export { isDiscussionEqual } from 'calypso/state/posts/utils/is-discussion-equal';

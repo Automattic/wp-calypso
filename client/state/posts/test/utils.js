@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	getVisibility,
 	isPending,
 	isPrivate,
 	removeSlug,
@@ -731,24 +730,6 @@ describe( 'utils', () => {
 		test( 'should default to type=post if no post type is supplied', () => {
 			const url = getEditURL( { ID: 123, type: '' }, { slug: 'en.blog.wordpress.com' } );
 			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
-		} );
-	} );
-
-	describe( '#getVisibility', () => {
-		test( 'should return null when no post is supplied', () => {
-			expect( getVisibility() ).toBeNull();
-		} );
-
-		test( 'should return public when password and private are not set', () => {
-			expect( getVisibility( {} ) ).toEqual( 'public' );
-		} );
-
-		test( 'should return private when post#status is private', () => {
-			expect( getVisibility( { status: 'private' } ) ).toEqual( 'private' );
-		} );
-
-		test( 'should return password when post#password is set', () => {
-			expect( getVisibility( { password: 'unicorn' } ) ).toEqual( 'password' );
 		} );
 	} );
 
