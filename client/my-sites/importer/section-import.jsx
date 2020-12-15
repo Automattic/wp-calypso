@@ -34,10 +34,6 @@ import {
 	getSelectedSiteId,
 } from 'calypso/state/ui/selectors';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
-import {
-	getSelectedImportEngine,
-	getImporterSiteUrl,
-} from 'calypso/state/importer-nux/temp-selectors';
 import Main from 'calypso/components/main';
 import JetpackImporter from 'calypso/my-sites/importer/jetpack-importer';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
@@ -372,8 +368,6 @@ export default connect(
 	( state ) => {
 		const siteID = getSelectedSiteId( state );
 		return {
-			engine: getSelectedImportEngine( state ),
-			fromSite: getImporterSiteUrl( state ),
 			site: getSelectedSite( state ),
 			siteSlug: getSelectedSiteSlug( state ),
 			siteTitle: getSiteTitle( state, siteID ),

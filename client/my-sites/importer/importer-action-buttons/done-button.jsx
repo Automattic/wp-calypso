@@ -13,11 +13,6 @@ import page from 'page';
 import ImporterActionButton from './action-button';
 import { resetImport } from 'calypso/lib/importer/actions';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import {
-	clearImportingFromSignupFlow,
-	setImportOriginSiteDetails,
-} from 'calypso/state/importer-nux/actions';
-import { isImportingFromSignupFlow } from 'calypso/state/importer-nux/temp-selectors';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 export class DoneButton extends React.PureComponent {
@@ -37,7 +32,6 @@ export class DoneButton extends React.PureComponent {
 		const {
 			importerStatus: { type },
 			site: { ID: siteId },
-			isSignup,
 			siteSlug,
 		} = this.props;
 
@@ -47,14 +41,13 @@ export class DoneButton extends React.PureComponent {
 		} );
 
 		const destination = '/view/' + ( siteSlug || '' );
-		page( isSignup ? `${ destination }?welcome` : destination );
+		page( destination );
 	};
 
 	componentWillUnmount() {
 		const {
 			importerStatus: { importerId },
 			site: { ID: siteId },
-			isSignup,
 		} = this.props;
 
 		/**
@@ -62,10 +55,6 @@ export class DoneButton extends React.PureComponent {
 		 * Otherwise, you see the importers list during the route change
 		 */
 		resetImport( siteId, importerId );
-
-		if ( isSignup ) {
-			this.props.clearImportingFromSignupFlow();
-		}
 	}
 
 	render() {
@@ -81,8 +70,7 @@ export class DoneButton extends React.PureComponent {
 
 export default connect(
 	( state ) => ( {
-		isSignup: isImportingFromSignupFlow( state ),
 		siteSlug: getSelectedSiteSlug( state ),
 	} ),
-	{ clearImportingFromSignupFlow, setImportOriginSiteDetails, recordTracksEvent }
+	{ recordTracksEvent }
 )( localize( DoneButton ) );
