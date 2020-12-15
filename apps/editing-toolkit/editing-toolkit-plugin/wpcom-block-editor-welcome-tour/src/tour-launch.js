@@ -18,8 +18,10 @@ import { Icon } from '@wordpress/icons';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { createPortal, useEffect, useState } from '@wordpress/element';
 import { registerPlugin } from '@wordpress/plugins';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 
 function LaunchWpcomWelcomeTour() {
+	const [ portalParent ] = useState( () => document.createElement( 'div' ) );
 	const isWpcomNuxEnabled = useSelect( ( select ) =>
 		select( 'automattic/nux' ).isWpcomNuxEnabled()
 	);
@@ -27,10 +29,6 @@ function LaunchWpcomWelcomeTour() {
 
 	// Preload first card image (others preloaded after NUX status confirmed)
 	new window.Image().src = getTourContent()[ 0 ].imgSrc;
-
-	// Create parent div for welcome tour portal
-	const portalParent = document.createElement( 'div' );
-	portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 
 	// On mount check if the WPCOM NUX status exists in state, otherwise fetch it from the API.
 	useEffect( () => {
@@ -49,13 +47,20 @@ function LaunchWpcomWelcomeTour() {
 		if ( ! isWpcomNuxEnabled ) {
 			return;
 		}
-
+		portalParent.classList.add( 'wpcom-editor-welcome-tour-portal-parent' );
 		document.body.appendChild( portalParent );
+
+		recordTracksEvent( 'calypso_editor_wpcom_tour_open', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
 		return () => {
-			// TODO: figure out how to unmount the LaunchWpcomWelcomeTour as this is not running when modal is closed
 			document.body.removeChild( portalParent );
 		};
-	} );
+	}, [ isWpcomNuxEnabled, portalParent ] );
+
+	if ( ! isWpcomNuxEnabled ) {
+		return null;
+	}
 
 	return <div>{ createPortal( <WelcomeTourFrame />, portalParent ) }</div>;
 }
@@ -67,7 +72,10 @@ function WelcomeTourFrame() {
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = () => {
-		// TODO recordTracksEvent
+		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
