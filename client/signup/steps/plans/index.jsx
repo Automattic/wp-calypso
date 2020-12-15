@@ -30,7 +30,10 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 import QueryExperiments from 'calypso/components/data/query-experiments';
-import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
+import {
+	isTreatmentInMonthlyPricingTest,
+	isTreatmentPlansReorderTest,
+} from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
@@ -143,6 +146,7 @@ export class PlansStep extends Component {
 			planTypes,
 			flowName,
 			isMonthlyPricingTest,
+			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		return (
@@ -167,6 +171,7 @@ export class PlansStep extends Component {
 					flowName={ flowName }
 					customHeader={ this.getGutenboardingHeader() }
 					isMonthlyPricingTest={ isMonthlyPricingTest }
+					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 				/>
 			</div>
 		);
@@ -250,6 +255,7 @@ PlansStep.propTypes = {
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
 	isMonthlyPricingTest: PropTypes.bool,
+	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
 /**
@@ -282,6 +288,7 @@ export default connect(
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		isMonthlyPricingTest: isTreatmentInMonthlyPricingTest( state ),
+		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
