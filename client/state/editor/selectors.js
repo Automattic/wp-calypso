@@ -6,11 +6,9 @@ import { get } from 'lodash';
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getEditedPost, getSitePost } from 'calypso/state/posts/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getPreviewURL } from 'calypso/state/posts/utils';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -119,14 +117,6 @@ export function getEditorPath( state, siteId, postId, defaultType = 'post' ) {
  */
 export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
-}
-
-export function getEditorPostPreviewUrl( state ) {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const site = getSite( state, siteId );
-	const post = getSitePost( state, siteId, postId );
-	return getPreviewURL( site, post, state.editor.autosavePreviewUrl );
 }
 
 export function isEditorLoading( state ) {
