@@ -71,10 +71,10 @@ module.exports = function ( mainWindow ) {
 
 			const redirectDialogOptions = {
 				buttons: [ 'Confirm', 'Cancel' ],
-				title: 'Proceed In External Browser?',
-				message: `Unable to use this feature.\n
-					Please see https://www.google.com for more information.`,
-				detail: `Proceed in an external browser?`,
+				title: 'Proceed In External Browser?', // Note: title is specific to Windows + Linux
+				message: 'Proceed In External Browser?',
+				detail: `Please note: WordPress Desktop does not support the Classic Editor plugin.\n
+				In addition, Single Sign On is required to use this feature if on a Business Plan.`,
 			};
 
 			const selected = await dialog.showMessageBox( mainWindow, redirectDialogOptions );
