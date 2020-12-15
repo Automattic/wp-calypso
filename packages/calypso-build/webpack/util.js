@@ -84,6 +84,7 @@ const nodeModulesToTranspile = [
 	'escape-string-regexp/',
 	'filesize/',
 	'gridicons/',
+	'isolated-editor/',
 	'prismjs/',
 	'punycode/',
 	'query-string/',

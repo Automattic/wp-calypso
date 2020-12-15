@@ -1,0 +1,44 @@
+@import '@wordpress/base-styles/_colors';
+@import '@wordpress/base-styles/_mixins';
+@import '@wordpress/base-styles/_variables';
+
+// Add appropriate font and colors to block inspector. These can often be overridden by the page CSS
+.iso-editor .block-editor-inserter__menu,
+.iso-editor .popover-slot .iso-inspector {
+	background-color: $white;
+	line-height: $default-line-height;
+	font-family: $default-font;
+	font-size: $default-font-size;
+}
+
+.iso-editor .block-editor-inserter__menu {
+	min-width: $sidebar-width + 20;
+}
+
+.iso-editor .popover-slot .iso-inspector {
+	overflow: visible;
+
+	fieldset {
+		border: none;
+	}
+
+	.components-panel__body {
+		width: 100%;
+		margin-bottom: 0;
+	}
+
+	.components-panel__body {
+		border-bottom: none;
+	}
+
+	h2,
+	h3,
+	label {
+		font-size: $default-font-size;
+	}
+
+	.components-popover__content {
+		min-height: 650px;
+		width: $sidebar-width + 20;
+	}
+}

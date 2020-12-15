@@ -1,0 +1,109 @@
+@import "@wordpress/base-styles/_colors";
+@import "@wordpress/base-styles/_variables";
+@import "@wordpress/base-styles/_mixins";
+@import "@wordpress/base-styles/_breakpoints";
+@import "@wordpress/base-styles/_animations";
+@import "@wordpress/base-styles/_z-index";
+
+// Stop Gutenberg preventing mobile scrolling
+html {
+	position: unset !important;
+}
+
+.components-modal__frame,
+.iso-editor {
+	// Set the font for the rest of the editor
+	&, select {
+		font-family: $default-font;
+		font-size: $default-font-size;
+		line-height: $default-line-height;
+		color: $gray-900;
+	}
+
+	// Change the box model for inputs.
+	// In the block editor this is inherited from wp-admin.
+	input, select, textarea, button {
+		box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		-webkit-box-sizing: border-box;
+	}
+
+	p {
+		font-size: inherit;
+		line-height: inherit;
+	}
+
+	ul.block-editor-block-list__block,
+	ol.block-editor-block-list__block {
+		margin: 0 0 1.2em;
+	}
+
+	ul li,
+	ol li {
+		// This overrides a bottom margin globally applied to list items in wp-admin.
+		margin-bottom: initial;
+	}
+
+	ul {
+		list-style-type: none;
+	}
+
+	ol {
+		list-style-type: decimal;
+	}
+
+	ul ul,
+	ol ul {
+		list-style-type: circle;
+	}
+
+	// This disables popover animations, and fixes sub-pixel wobble caused by components-animate__appear on popovers. This exhibits itself as
+	// the popover text moving 1 pixel. Something to look into properly in the future
+	.components-popover.components-animate__appear {
+		animation: none;
+	}
+}
+
+// Default editor
+.iso-editor {
+	width: 100%;
+	min-height: 145px;
+	background-color: $white;
+	position: relative;
+	border: $border-width solid $gray-200;
+}
+
+.components-modal__frame {
+	.components-modal__header h1 {
+		font-size: 20px !important;
+	}
+
+	button {
+		box-shadow: none;
+	}
+}
+
+// Loading style
+.iso-editor__loading {
+	min-height: 125px;
+	background-color: $gray-200;
+	border: 1px solid $gray-200;
+	animation: loading-fade 1.6s ease-in-out infinite;
+	margin-bottom: 57px;
+
+	> div {
+		display: none;
+	}
+}
+
+@keyframes loading-fade {
+	0% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0.3;
+	}
+}

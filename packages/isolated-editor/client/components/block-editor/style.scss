@@ -1,0 +1,57 @@
+@import "@wordpress/base-styles/_mixins";
+@import "@wordpress/base-styles/_variables";
+@import "@wordpress/base-styles/_colors";
+
+.iso-editor {
+	.is-mode__text .edit-post-text-editor__body {
+		margin-left: 0;
+		margin-right: 0;
+		margin-bottom: 0;
+		padding: 16px 24px 96px;
+	}
+
+	// Set the font for the editor
+	.block-editor-writing-flow {
+		font-family: $editor-font;
+		font-size: $editor-font-size;
+		line-height: $editor-line-height;
+	}
+
+	.block-editor-writing-flow .block-editor-block-list__layout .wp-block:first-child[data-type='core/paragraph'] {
+		padding-top: 0;
+	}
+
+	.block-editor-writing-flow .block-list-appender .wp-block {
+		padding-top: 0 !important;
+	}
+
+	// Stops a bit of judder when an empty editor is first clicked. Not sure why there is a difference between .com and .org
+	.editor-block-list__layout > .block-list-appender:first-child,
+	.block-editor-block-list__layout > .block-list-appender:first-child,
+	.block-editor-block-list__layout > div:first-child > .block-list-appender {
+		padding-top: 3px;
+		margin-bottom: 19px;
+
+		button {
+			margin-left: 16px;
+		}
+	}
+
+	// This adds left/right padding for the editor
+	.block-editor-block-list__layout.is-root-container {
+		padding-left: 14px;
+		padding-right: 14px;
+
+		@media ( min-width: 600px ) {
+			padding-left: 36px;
+			padding-right: 36px;
+		}
+	}
+
+	// Override default browser borders
+	.block-editor-link-control__settings {
+		border-left: none;
+		border-right: none;
+		border-bottom: none;
+	}
+}
