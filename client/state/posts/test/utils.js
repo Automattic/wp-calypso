@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	isPrivate,
 	removeSlug,
 } from '../utils';
 
@@ -729,20 +728,6 @@ describe( 'utils', () => {
 		test( 'should default to type=post if no post type is supplied', () => {
 			const url = getEditURL( { ID: 123, type: '' }, { slug: 'en.blog.wordpress.com' } );
 			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
-		} );
-	} );
-
-	describe( '#isPrivate', () => {
-		test( 'should return false when no post is supplied', () => {
-			expect( isPrivate() ).toBe( false );
-		} );
-
-		test( 'should return true when post.status is private', () => {
-			expect( isPrivate( { status: 'private' } ) ).toBe( true );
-		} );
-
-		test( 'should return false when post.status is not private', () => {
-			expect( isPrivate( { status: 'draft' } ) ).toBe( false );
 		} );
 	} );
 
