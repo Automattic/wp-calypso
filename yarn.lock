@@ -6382,7 +6382,7 @@
   resolved "https://registry.yarnpkg.com/@wordpress/prettier-config/-/prettier-config-0.3.0.tgz#82bb85dd30ca4ae23f1c8cd4f12295e428aa4eed"
   integrity sha512-wL1ztV+so5Ttwz23lDmb8ZmREmND96sf+Dh/kbP2nyAw/DWt3K8uj31qbczVmjwfoetTiRoH9Z1CasgPs4bccg==
 
-"@wordpress/primitives@*":
+"@wordpress/primitives@*", "@wordpress/primitives@^1.10.0":
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/@wordpress/primitives/-/primitives-1.10.0.tgz#8f1e74c98dfa497074450b3fc2e5a0e2b134cd73"
   integrity sha512-C1drc//1dEFf7eMVfuk9Z11X9VzFgKHBA8J3yAj5fxJffbATYfzHCLgERcZQIUsnn8GUL4VScNbmRf6+8i2rhw==
