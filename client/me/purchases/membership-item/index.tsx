@@ -40,6 +40,7 @@ const MembershipTerms = ( { subscription }: { subscription: MembershipSubscripti
 
 const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) => {
 	const translate = useTranslate();
+	const siteUrl = subscription.site_url.replace( /^https?:\/\//, '' );
 
 	return (
 		<button
@@ -49,13 +50,13 @@ const SiteLink = ( { subscription }: { subscription: MembershipSubscription } ) 
 				event.preventDefault();
 				window.location = subscription.site_url;
 			} }
-			title={ translate( 'Visit %(siteName)s', {
+			title={ translate( 'Visit %(siteUrl)s', {
 				args: {
-					siteName: subscription.site_title,
+					siteUrl: subscription.site_url,
 				},
 			} ) }
 		>
-			{ subscription.site_title }
+			{ siteUrl }
 		</button>
 	);
 };

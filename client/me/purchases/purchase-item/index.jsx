@@ -209,7 +209,7 @@ class PurchaseItem extends Component {
 	}
 
 	getPurchaseType() {
-		const { purchase, site, translate, slug, showSite, isDisconnectedSite, name } = this.props;
+		const { purchase, site, translate, slug, showSite, isDisconnectedSite } = this.props;
 		const productType = purchaseType( purchase );
 
 		if ( showSite && site ) {
@@ -217,7 +217,7 @@ class PurchaseItem extends Component {
 				return translate( '%(purchaseType)s for {{button}}%(site)s{{/button}}', {
 					args: {
 						purchaseType: productType,
-						site: site.name,
+						site: site.domain,
 					},
 					components: {
 						button: (
@@ -241,7 +241,7 @@ class PurchaseItem extends Component {
 
 			return translate( 'for {{button}}%(site)s{{/button}}', {
 				args: {
-					site: site.name,
+					site: site.domain,
 				},
 				components: {
 					button: (
@@ -267,7 +267,7 @@ class PurchaseItem extends Component {
 			return translate( '%(purchaseType)s for %(site)s', {
 				args: {
 					purchaseType: productType,
-					site: name,
+					site: purchase.domain,
 				},
 			} );
 		}
