@@ -20,7 +20,7 @@ import {
 	successNotice,
 	warningNotice,
 } from 'calypso/state/notices/actions';
-import { filterNotices } from 'calypso/lib/plugins/utils';
+import { filterNotices, isSamePluginIdSlug } from 'calypso/lib/plugins/utils';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { removePluginStatuses } from 'calypso/state/plugins/installed/status/actions';
 import { getPluginStatusesByType } from 'calypso/state/plugins/installed/selectors';
@@ -54,7 +54,10 @@ class PluginNotices extends React.Component {
 	};
 
 	getPluginById( pluginId ) {
-		return this.props.plugins.find( ( plugin ) => plugin.id === pluginId );
+		return this.props.plugins.find(
+			( plugin ) =>
+				isSamePluginIdSlug( plugin.id, pluginId ) || isSamePluginIdSlug( plugin.slug, pluginId )
+		);
 	}
 
 	getCombination( translateArg ) {

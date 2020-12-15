@@ -25,7 +25,26 @@ function isSameSiteNotice( siteId, log ) {
  * @returns {boolean} True if notice matches criteria
  */
 function isSamePluginNotice( pluginId, log ) {
-	return pluginId && log.pluginId && log.pluginId === pluginId;
+	if ( ! pluginId || ! log.pluginId ) {
+		return false;
+	}
+
+	return isSamePluginIdSlug( log.pluginId, pluginId );
+}
+
+/**
+ * @param  {string} idOrSlug First plugin ID or slug for comparison
+ * @param  {string} slugOrId Second plugin ID or slug for comparison
+ * @returns {boolean} True if the plugin ID and slug match
+ */
+export function isSamePluginIdSlug( idOrSlug, slugOrId ) {
+	return (
+		idOrSlug === slugOrId ||
+		idOrSlug.startsWith( slugOrId + '/' ) ||
+		idOrSlug.endsWith( '/' + slugOrId ) ||
+		slugOrId.startsWith( idOrSlug + '/' ) ||
+		slugOrId.endsWith( '/' + idOrSlug )
+	);
 }
 
 /**
