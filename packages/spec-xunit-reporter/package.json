@@ -1,6 +1,6 @@
 {
 	"name": "spec-xunit-reporter",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"description": "Mocha reporter that combines the default spec output with an xunit.xml file in a dynamically allocated directory",
 	"main": "index.js",
 	"author": "Automattic Inc.",
