@@ -64,9 +64,10 @@ module.exports = function ( mainWindow ) {
 			}
 		}
 
+		event.preventDefault();
+
 		if ( isWpAdminPostUrl( url ) ) {
-			event.preventDefault();
-			log.info( `Prompting user to navigate to WP-Admin editor URL: '${ url }'` );
+			log.info( `Prompting to navigate to WP-Admin URL: '${ url }'` );
 
 			const redirectDialogOptions = {
 				buttons: [ 'Confirm', 'Cancel' ],
@@ -80,16 +81,16 @@ module.exports = function ( mainWindow ) {
 			const button = selected.response;
 
 			if ( button === 0 ) {
-				log.info( `WP-Admin redirect: user selected 'Confirm'` );
+				log.info( `WP-Admin redirect prompt: selected 'Confirm'` );
 				// no-op -- proceed to open in browser
-				openInBrowser( null, url );
+				openInBrowser( url );
 			} else {
-				log.info( `WP-Admin redirect: user selected 'Cancel'` );
+				log.info( `WP-Admin redirect prompt: selected 'Cancel'` );
 			}
 			return;
 		}
 
-		openInBrowser( event, url );
+		openInBrowser( url );
 	} );
 
 	webContents.on( 'new-window', function ( event, url, frameName, disposition, options ) {
@@ -111,10 +112,11 @@ module.exports = function ( mainWindow ) {
 			}
 		}
 
-		parsedUrl = replaceInternalCalypsoUrl( parsedUrl );
+		event.preventDefault();
 
+		parsedUrl = replaceInternalCalypsoUrl( parsedUrl );
 		const openUrl = format( parsedUrl );
-		openInBrowser( event, openUrl );
+		openInBrowser( openUrl );
 	} );
 
 	ipc.on( 'cannot-use-editor', ( _, info ) => {
@@ -131,6 +133,6 @@ module.exports = function ( mainWindow ) {
 
 	ipc.on( 'view-post-clicked', ( _, url ) => {
 		log.info( `View Post handler for URL: ${ url }` );
-		openInBrowser( null, url );
+		openInBrowser( url );
 	} );
 };
