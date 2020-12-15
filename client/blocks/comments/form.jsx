@@ -81,9 +81,7 @@ class PostCommentForm extends React.Component {
 		this.setState( { haveFocus: true } );
 	}
 
-	handleTextChange( event ) {
-		const commentText = event.target.value;
-
+	handleTextChange( commentText ) {
 		this.setState( { commentText } );
 
 		// Update the comment text in the container's state
@@ -185,8 +183,6 @@ class PostCommentForm extends React.Component {
 			'expanding-area': true,
 		} );
 
-		const isReply = !! this.props.parentCommentId;
-
 		// How auto expand works for the textarea is covered in this article:
 		// http://alistapart.com/article/expanding-text-areas-made-elegant
 		return (
@@ -200,17 +196,7 @@ class PostCommentForm extends React.Component {
 							<br />
 						</pre>
 						<AutoDirection>
-							<PostCommentFormTextarea
-								value={ this.state.commentText }
-								placeholder={ translate( 'Enter your comment here…' ) }
-								onKeyUp={ this.handleKeyUp }
-								onKeyDown={ this.handleKeyDown }
-								onFocus={ this.handleFocus }
-								onBlur={ this.handleBlur }
-								onChange={ this.handleTextChange }
-								siteId={ post.site_ID }
-								enableAutoFocus={ isReply }
-							/>
+							<PostCommentFormTextarea onChange={ this.handleTextChange } />
 						</AutoDirection>
 					</div>
 					<Button

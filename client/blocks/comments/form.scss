@@ -56,7 +56,7 @@
 		}
 	}
 
-	button {
+	button:not(.components-button) {
 		opacity: 0;
 		position: absolute;
 		margin: 16px 0 -19px;

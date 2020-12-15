@@ -1,0 +1,76 @@
+@import '@wordpress/base-styles/_colors';
+@import '@wordpress/base-styles/_variables';
+@import '@wordpress/base-styles/_mixins';
+@import '@wordpress/base-styles/_breakpoints';
+@import '@wordpress/base-styles/_animations';
+@import '@wordpress/base-styles/_z-index';
+
+.edit-post-header {
+	height: $header-height;
+	background: $white;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	// The header should never be wider than the viewport, or buttons might be hidden. Especially relevant at high zoom levels. Related to https://core.trac.wordpress.org/ticket/47603#ticket.
+	max-width: 100vw;
+
+	// TODO: This is causing the popover text to wiggle when focused
+	border-bottom: $border-width solid $gray-200;
+
+	// Make toolbar sticky on larger breakpoints
+	@include break-zoomed-in {
+		flex-wrap: nowrap;
+	}
+
+	// Some browsers, most notably IE11, honor an older version of the flexbox spec
+	// which takes absolutely positioned items into account when calculating `space-between`.
+	// https://www.w3.org/TR/2012/WD-css3-flexbox-20120612/#abspos-flex-items
+	//
+	// This difference is causing our header layout to break when focused in IE11.
+	// Our focused region styles use an absolutely positioned :after pseudo element to draw an outline,
+	// and IE11 is adding space between it and our last real child, shifting righthand UI elements
+	// to the left. For a workaround, we change the flex order to move the undesired spacing to the middle
+	// where it is no longer noticeable.
+	> .edit-post-header__settings {
+		order: 1;
+
+		// Restore default order for all other browsers
+		@supports ( position: sticky ) {
+			order: initial;
+		}
+	}
+}
+
+.edit-post-header__toolbar {
+	display: flex;
+	flex-grow: 1;
+
+	// Some themes can set a button style, which we don't want
+	button:active,
+	button:focus:not(.edit-post-header-toolbar__inserter-toggle),
+	button:hover {
+		background-color: transparent;
+		background-image: none;
+		border: none;
+	}
+}
+
+// Adjust the left padding of the toolbar, since it's not spaced according to the WordPress logo.
+// This needs specificity.
+.edit-post-header__toolbar.edit-post-header__toolbar {
+	padding-left: 14px;
+}
+
+.edit-post-header .edit-post-header__settings {
+	padding-right: 14px;
+}
+
+.edit-post-header__settings {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+
+	button.components-button.has-icon {
+		margin-right: 0;
+	}
+}

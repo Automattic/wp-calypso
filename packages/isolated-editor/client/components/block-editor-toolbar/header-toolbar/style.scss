@@ -1,0 +1,79 @@
+@import "@wordpress/base-styles/_animations";
+@import "@wordpress/base-styles/_z-index";
+@import "@wordpress/base-styles/_mixins";
+@import "@wordpress/base-styles/_breakpoints";
+@import "@wordpress/base-styles/_colors";
+@import "@wordpress/base-styles/_variables";
+
+.edit-post-header-toolbar {
+	display: inline-flex;
+	align-items: center;
+	border: none;
+
+	// Hide all action buttons except the inserter on mobile.
+	.edit-post-header-toolbar__left > .components-button {
+		display: none;
+
+		@include break-small() {
+			display: inline-flex;
+		}
+	}
+
+	.edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle {
+		display: inline-flex;
+	}
+
+	// Hide table of contents and block navigation on mobile.
+	.block-editor-block-navigation {
+		display: none;
+
+		@include break-small() {
+			display: flex;
+		}
+	}
+
+	// The Toolbar component adds different styles to buttons, so we reset them
+	// here to the original button styles
+	.edit-post-header-toolbar__left > .components-button.has-icon,
+	.edit-post-header-toolbar__left > .components-dropdown > .components-button.has-icon {
+		height: $button-size;
+		min-width: $button-size;
+		padding: 6px;
+
+		&.is-pressed {
+			background: $gray-900;
+		}
+
+		&:focus:not(:disabled) {
+			box-shadow: 0 0 0 $border-width-focus var(--wp-admin-theme-color), inset 0 0 0 $border-width $white;
+			outline: 1px solid transparent;
+		}
+
+		&::before {
+			display: none;
+		}
+	}
+}
+
+.edit-post-header-toolbar__left {
+	display: inline-flex;
+	align-items: center;
+	padding-left: 0;
+}
+
+.edit-post-header-toolbar .edit-post-header-toolbar__left > .edit-post-header-toolbar__inserter-toggle.has-icon {
+	margin-right: $grid-unit-10;
+	// Special dimensions for this button.
+	min-width: 32px;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+
+	.show-icon-labels & {
+		height: 36px;
+	}
+}
+
+.edit-post-header-toolbar__block-toolbar .block-editor-block-toolbar {
+	overflow-y: hidden;
+}
