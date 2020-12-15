@@ -13,7 +13,6 @@ export { getVisibility } from 'calypso/state/posts/utils/get-visibility';
 export { isAuthorEqual } from 'calypso/state/posts/utils/is-author-equal';
 export { isDateEqual } from 'calypso/state/posts/utils/is-date-equal';
 export { isDiscussionEqual } from 'calypso/state/posts/utils/is-discussion-equal';
-export { isFutureDated } from 'calypso/state/posts/utils/is-future-dated';
 export { isPage } from 'calypso/state/posts/utils/is-page';
 export { isPending } from 'calypso/state/posts/utils/is-pending';
 export { isPrivate } from 'calypso/state/posts/utils/is-private';
