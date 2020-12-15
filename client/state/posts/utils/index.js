@@ -24,7 +24,6 @@ export {
 	areAllMetadataEditsApplied,
 	getUnappliedMetadataEdits,
 } from 'calypso/state/posts/utils/metadata-edits';
-export { normalizePostForActions } from 'calypso/state/posts/utils/normalize-post-for-actions';
 export { normalizePostForApi } from 'calypso/state/posts/utils/normalize-post-for-api';
 export { normalizePostForDisplay } from 'calypso/state/posts/utils/normalize-post-for-display';
 export { normalizePostForEditing } from 'calypso/state/posts/utils/normalize-post-for-editing';
