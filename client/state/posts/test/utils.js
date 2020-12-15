@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	getPagePath,
 	getPermalinkBasePath,
 	getVisibility,
 	isBackDatedPublished,
@@ -859,28 +858,6 @@ describe( 'utils', () => {
 			const path = getPermalinkBasePath( {
 				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
 				URL: 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/',
-			} );
-			expect( path ).toEqual( 'http://zo.mg/a/permalink/' );
-		} );
-	} );
-
-	describe( '#getPagePath', () => {
-		test( 'should return undefined when no post is supplied', () => {
-			expect( getPagePath() ).toBeUndefined();
-		} );
-
-		test( 'should return post.URL without slug when page is published', () => {
-			const path = getPagePath( {
-				status: 'publish',
-				URL: 'http://zo.mg/a/permalink/',
-			} );
-			expect( path ).toEqual( 'http://zo.mg/a/' );
-		} );
-
-		test( 'should use permalink_URL when not published and present', () => {
-			const path = getPagePath( {
-				status: 'draft',
-				other_URLs: { permalink_URL: 'http://zo.mg/a/permalink/%post_name%/' },
 			} );
 			expect( path ).toEqual( 'http://zo.mg/a/permalink/' );
 		} );
