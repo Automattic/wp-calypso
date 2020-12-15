@@ -12,7 +12,6 @@ describe( 'reducer', () => {
 			'isLoading',
 			'isIframeLoaded',
 			'iframePort',
-			'autosavePreviewUrl',
 			'imageEditor',
 			'videoEditor',
 			'lastDraft',

@@ -79,22 +79,12 @@ export const iframePort = withoutPersistence( ( state = null, action ) => {
 	return state;
 } );
 
-function autosavePreviewUrl( state = null, action ) {
-	switch ( action.type ) {
-		case EDITOR_RESET:
-			return null;
-	}
-
-	return state;
-}
-
 const combinedReducer = combineReducers( {
 	postId,
 	loadingError,
 	isLoading,
 	isIframeLoaded,
 	iframePort,
-	autosavePreviewUrl,
 	imageEditor,
 	videoEditor,
 	lastDraft,
