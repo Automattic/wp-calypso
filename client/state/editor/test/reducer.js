@@ -16,8 +16,6 @@ describe( 'reducer', () => {
 			'imageEditor',
 			'videoEditor',
 			'lastDraft',
-			'saveBlockers',
-			'rawContent',
 		] );
 	} );
 
