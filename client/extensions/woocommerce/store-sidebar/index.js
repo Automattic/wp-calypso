@@ -107,9 +107,18 @@ class StoreSidebar extends Component {
 	};
 
 	products = () => {
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/products' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link, '/store/products/categories' + siteSuffix ] );
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit.php?post_type=product';
+			selected = false;
+		} else {
+			link = '/store/products' + siteSuffix;
+			selected = this.isItemLinkSelected( [ link, '/store/products/categories' + siteSuffix ] );
+		}
+
 		const classes = classNames( {
 			products: true,
 			'is-placeholder': ! site,
@@ -127,9 +136,18 @@ class StoreSidebar extends Component {
 	};
 
 	reviews = () => {
-		const { site, siteSuffix, translate, totalPendingReviews } = this.props;
-		const link = '/store/reviews' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ '/store/reviews' ] );
+		const { site, siteSuffix, translate, totalPendingReviews, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit-comments.php';
+			selected = false;
+		} else {
+			link = '/store/reviews' + siteSuffix;
+			selected = this.isItemLinkSelected( [ '/store/reviews' ] );
+		}
+
 		const classes = classNames( {
 			reviews: true,
 			'is-placeholder': ! site,
@@ -149,10 +167,18 @@ class StoreSidebar extends Component {
 	};
 
 	orders = () => {
-		const { totalNewOrders, site, siteSuffix, translate } = this.props;
-		const link = '/store/orders' + siteSuffix;
-		const childLinks = [ '/store/order', '/store/orders' ];
-		const selected = this.isItemLinkSelected( childLinks );
+		const { totalNewOrders, site, siteSuffix, translate, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit.php?post_type=shop_order';
+			selected = false;
+		} else {
+			link = '/store/orders' + siteSuffix;
+			selected = this.isItemLinkSelected( [ '/store/order', '/store/orders' ] );
+		}
+
 		const classes = classNames( {
 			orders: true,
 			'is-placeholder': ! site,
@@ -172,9 +198,18 @@ class StoreSidebar extends Component {
 			return null;
 		}
 
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/promotions' + siteSuffix;
-		const selected = this.isItemLinkSelected( [ link ] );
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
+		let link;
+		let selected;
+
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/edit.php?post_type=shop_coupon';
+			selected = false;
+		} else {
+			link = '/store/promotions' + siteSuffix;
+			selected = this.isItemLinkSelected( [ link ] );
+		}
+
 		const classes = classNames( {
 			promotions: true,
 			'is-placeholder': ! site,
@@ -192,15 +227,23 @@ class StoreSidebar extends Component {
 	};
 
 	settings = () => {
-		const { site, siteSuffix, translate } = this.props;
-		const link = '/store/settings' + siteSuffix;
+		const { site, siteSuffix, translate, isStoreRemoved } = this.props;
 		const childLinks = [
 			'/store/settings/payments',
 			'/store/settings/shipping',
 			'/store/settings/taxes',
 			'/store/settings/email',
 		];
-		const selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		let link;
+		let selected;
+		if ( isStoreRemoved ) {
+			link = site.URL + '/wp-admin/admin.php?page=wc-settings';
+			selected = false;
+		} else {
+			link = '/store/settings' + siteSuffix;
+			selected = this.isItemLinkSelected( [ link, ...childLinks ] );
+		}
+
 		const classes = classNames( {
 			settings: true,
 			'is-placeholder': ! site,
@@ -277,6 +320,7 @@ function mapStateToProps( state ) {
 	const storeLocation = getStoreLocation( state, siteId );
 	const pluginsLoaded = arePluginsLoaded( state, siteId );
 	const allRequiredPluginsActive = areAllRequiredPluginsActive( state, siteId );
+	const isStoreRemoved = config.isEnabled( 'woocommerce/store-removed' );
 
 	return {
 		allRequiredPluginsActive,
@@ -291,6 +335,7 @@ function mapStateToProps( state ) {
 		siteId,
 		siteSuffix: site ? '/' + site.slug : '',
 		storeLocation,
+		isStoreRemoved,
 	};
 }
 
