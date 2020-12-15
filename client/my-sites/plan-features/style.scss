@@ -411,18 +411,6 @@ $plan-features-sidebar-width: 272px;
 	}
 }
 
-.plan-features__interval-type {
-	margin-bottom: 1.4em;
-
-	&.is-placeholder {
-		height: 28px;
-
-		@include breakpoint-deprecated( '<660px' ) {
-			height: auto;
-		}
-	}
-}
-
 .plan-features__header-banner {
 	box-sizing: border-box;
 	position: absolute;
@@ -543,17 +531,6 @@ $plan-features-sidebar-width: 272px;
 
 /*= Plans in Signup
 ========================================*/
-
-// This is used for the monthly/yearly billing
-// which is currently us in the Jetpack flow.
-.segmented-control.price-toggle {
-	width: 250px;
-	margin: 0 auto 20px;
-
-	& + .plans-features-main__group {
-		padding-top: 8px;
-	}
-}
 
 .plans-features-main__group.is-wpcom {
 	padding-top: 19px;
@@ -1103,18 +1080,7 @@ button.plan-features__scroll-button {
 	}
 }
 
-.plans-wrapper.is-monthly-pricing {
-	.plan-pill {
-		top: 10px;
-		bottom: unset;
-		right: 14px;
-		left: unset;
-		padding: 4px 10px;
-		border-radius: 10px; /* stylelint-disable-line */
-		text-transform: none;
-		background-color: var( --color-neutral-100 );
-	}
-
+.plans-wrapper {
 	.plan-features__item-annual-plan {
 		font-size: 0.6rem; /* stylelint-disable-line */
 		text-transform: uppercase;

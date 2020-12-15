@@ -29,11 +29,7 @@ import { saveSignupStep, submitSignupStep } from 'calypso/state/signup/progress/
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import hasInitializedSites from 'calypso/state/selectors/has-initialized-sites';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
-import QueryExperiments from 'calypso/components/data/query-experiments';
-import {
-	isTreatmentInMonthlyPricingTest,
-	isTreatmentPlansReorderTest,
-} from 'calypso/state/marketing/selectors';
+import { isTreatmentPlansReorderTest } from 'calypso/state/marketing/selectors';
 
 /**
  * Style dependencies
@@ -145,14 +141,12 @@ export class PlansStep extends Component {
 			selectedSite,
 			planTypes,
 			flowName,
-			isMonthlyPricingTest,
 			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		return (
 			<div>
 				<QueryPlans />
-				<QueryExperiments />
 
 				<PlansFeaturesMain
 					site={ selectedSite || {} } // `PlanFeaturesMain` expects a default prop of `{}` if no site is provided
@@ -170,7 +164,6 @@ export class PlansStep extends Component {
 					planTypes={ planTypes }
 					flowName={ flowName }
 					customHeader={ this.getGutenboardingHeader() }
-					isMonthlyPricingTest={ isMonthlyPricingTest }
 					showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 				/>
 			</div>
@@ -178,9 +171,9 @@ export class PlansStep extends Component {
 	}
 
 	getSubHeaderText() {
-		const { hideFreePlan, isMonthlyPricingTest, subHeaderText, translate } = this.props;
+		const { hideFreePlan, subHeaderText, translate } = this.props;
 
-		if ( isMonthlyPricingTest && ! hideFreePlan ) {
+		if ( ! hideFreePlan ) {
 			return translate( 'Choose a plan or {{link}}start with a free site{{/link}}.', {
 				components: {
 					link: <Button onClick={ this.handleFreePlanButtonClick } borderless={ true } />,
@@ -254,7 +247,6 @@ PlansStep.propTypes = {
 	translate: PropTypes.func.isRequired,
 	planTypes: PropTypes.array,
 	flowName: PropTypes.string,
-	isMonthlyPricingTest: PropTypes.bool,
 	isTreatmentPlansReorderTest: PropTypes.bool,
 };
 
@@ -290,7 +282,6 @@ export default connect(
 		siteGoals: getSiteGoals( state ) || '',
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
-		isMonthlyPricingTest: isTreatmentInMonthlyPricingTest( state ),
 		showTreatmentPlansReorderTest:
 			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 	} ),

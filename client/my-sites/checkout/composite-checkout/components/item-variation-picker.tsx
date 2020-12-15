@@ -11,8 +11,6 @@ import { RadioButton } from '@automattic/composite-checkout';
  * Internal dependencies
  */
 import { WPCOMCartItem } from '../types/checkout-cart';
-import { isWpComPlan, isWpComBusinessPlan } from 'calypso/lib/plans';
-import { isMonthly } from 'calypso/lib/plans/constants';
 
 export type WPCOMProductSlug = string;
 
@@ -28,7 +26,6 @@ export type ItemVariationPickerProps = {
 	getItemVariants: ( productSlug: WPCOMProductSlug ) => WPCOMProductVariant[];
 	onChangeItemVariant: OnChangeItemVariant;
 	isDisabled: boolean;
-	isMonthlyPricingTest?: boolean;
 };
 
 export type OnChangeItemVariant = (
@@ -42,12 +39,8 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 	getItemVariants,
 	onChangeItemVariant,
 	isDisabled,
-	isMonthlyPricingTest = false,
 } ) => {
 	const variants = getItemVariants( selectedItem.wpcom_meta.product_slug );
-	const isBRLCurrency = 'BRL' === selectedItem?.amount?.currency;
-	const showBusinessMonthly =
-		isBRLCurrency && isWpComBusinessPlan( selectedItem.wpcom_meta.product_slug );
 
 	if ( variants.length < 2 ) {
 		return null;
@@ -55,20 +48,15 @@ export const ItemVariationPicker: FunctionComponent< ItemVariationPickerProps > 
 
 	return (
 		<TermOptions>
-			{ variants.map(
-				( productVariant: WPCOMProductVariant ) =>
-					( isMonthlyPricingTest ||
-						! isWpcomMonthlyPlan( productVariant ) ||
-						showBusinessMonthly ) && (
-						<ProductVariant
-							key={ productVariant.variantLabel }
-							selectedItem={ selectedItem }
-							onChangeItemVariant={ onChangeItemVariant }
-							isDisabled={ isDisabled }
-							productVariant={ productVariant }
-						/>
-					)
-			) }
+			{ variants.map( ( productVariant: WPCOMProductVariant ) => (
+				<ProductVariant
+					key={ productVariant.variantLabel }
+					selectedItem={ selectedItem }
+					onChangeItemVariant={ onChangeItemVariant }
+					isDisabled={ isDisabled }
+					productVariant={ productVariant }
+				/>
+			) ) }
 		</TermOptions>
 	);
 };
@@ -133,7 +121,3 @@ const TermOptionsItem = styled.li`
 const VariantLabel = styled.span`
 	flex: 1;
 `;
-
-function isWpcomMonthlyPlan( { productSlug }: WPCOMProductVariant ): boolean {
-	return isWpComPlan( productSlug ) && isMonthly( productSlug );
-}
