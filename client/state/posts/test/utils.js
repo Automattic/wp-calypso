@@ -25,7 +25,6 @@ import {
 	isBackDatedPublished,
 	isPending,
 	isPrivate,
-	isPublished,
 	removeSlug,
 } from '../utils';
 
@@ -765,24 +764,6 @@ describe( 'utils', () => {
 
 		test( 'should return false when post.status is not private', () => {
 			expect( isPrivate( { status: 'draft' } ) ).toBe( false );
-		} );
-	} );
-
-	describe( '#isPublished', () => {
-		test( 'should return false when no post is supplied', () => {
-			expect( isPublished() ).toBe( false );
-		} );
-
-		test( 'should return true when post.status is private', () => {
-			expect( isPublished( { status: 'private' } ) ).toBe( true );
-		} );
-
-		test( 'should return true when post.status is publish', () => {
-			expect( isPublished( { status: 'publish' } ) ).toBe( true );
-		} );
-
-		test( 'should return false when post.status is not publish or private', () => {
-			expect( isPublished( { status: 'draft' } ) ).toBe( false );
 		} );
 	} );
 

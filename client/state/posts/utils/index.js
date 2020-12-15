@@ -19,7 +19,6 @@ export { isFutureDated } from 'calypso/state/posts/utils/is-future-dated';
 export { isPage } from 'calypso/state/posts/utils/is-page';
 export { isPending } from 'calypso/state/posts/utils/is-pending';
 export { isPrivate } from 'calypso/state/posts/utils/is-private';
-export { isPublished } from 'calypso/state/posts/utils/is-published';
 export { isScheduled } from 'calypso/state/posts/utils/is-scheduled';
 export { isStatusEqual } from 'calypso/state/posts/utils/is-state-equal';
 export { isTermsEqual } from 'calypso/state/posts/utils/is-terms-equal';
