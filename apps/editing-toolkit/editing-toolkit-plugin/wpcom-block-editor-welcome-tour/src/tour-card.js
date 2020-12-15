@@ -14,8 +14,6 @@ import minimize from './icons/minimize';
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 
-// import { useEffect, useState } from '@wordpress/element';
-
 function WelcomeTourCard( {
 	cardContent,
 	cardIndex,
@@ -49,7 +47,6 @@ function WelcomeTourCard( {
 			</CardBody>
 			<CardFooter>
 				<PaginationControl
-					className=""
 					currentPage={ cardIndex }
 					numberOfPages={ lastCardIndex + 1 }
 					setCurrentPage={ setCurrentCard }
