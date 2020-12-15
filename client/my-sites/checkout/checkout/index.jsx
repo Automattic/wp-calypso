@@ -68,6 +68,7 @@ import {
 import { isExternal, addQueryArgs } from 'calypso/lib/url';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 import { abtest } from 'calypso/lib/abtest';
+import { isE2ETest } from 'calypso/lib/e2e';
 
 /**
  * Style dependencies
@@ -204,7 +205,7 @@ export class Checkout extends React.Component {
 
 	maybeRedirectToConciergeNudge( pendingOrReceiptId, stepResult, shouldHideUpsellNudges ) {
 		// Using hideNudge prop will disable any redirect to Nudge
-		if ( this.props.hideNudge || shouldHideUpsellNudges ) {
+		if ( this.props.hideNudge || shouldHideUpsellNudges || isE2ETest() ) {
 			return;
 		}
 
