@@ -5,14 +5,11 @@ import {
 	EDITOR_RESET,
 	EDITOR_RESET_RAW_CONTENT,
 	EDITOR_EDIT_RAW_CONTENT,
-	EDITOR_INIT_RAW_CONTENT,
 } from 'calypso/state/action-types';
 import { combineReducers } from 'calypso/state/utils';
 
 const initial = ( state = null, action ) => {
 	switch ( action.type ) {
-		case EDITOR_INIT_RAW_CONTENT:
-			return action.content;
 		case EDITOR_RESET:
 		case EDITOR_RESET_RAW_CONTENT:
 			return null;

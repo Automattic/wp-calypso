@@ -16,7 +16,6 @@ import {
 	EDITOR_SAVE,
 	EDITOR_EDIT_RAW_CONTENT,
 	EDITOR_RESET_RAW_CONTENT,
-	EDITOR_INIT_RAW_CONTENT,
 } from 'calypso/state/action-types';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
@@ -179,13 +178,6 @@ export function editorEditRawContent( content ) {
 export function editorResetRawContent() {
 	return {
 		type: EDITOR_RESET_RAW_CONTENT,
-	};
-}
-
-export function editorInitRawContent( content ) {
-	return {
-		type: EDITOR_INIT_RAW_CONTENT,
-		content,
 	};
 }
 
