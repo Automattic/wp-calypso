@@ -9,8 +9,9 @@
 /**
  * Internal dependencies
  */
-import { sites } from '../reducer';
+import { sites, launchStatus } from '../reducer';
 import { SiteDetails, SiteError } from '../types';
+import { createActions } from '../actions';
 
 describe( 'Site', () => {
 	const siteDetailsResponse: SiteDetails = {
@@ -54,6 +55,69 @@ describe( 'Site', () => {
 
 		expect( updatedState ).toEqual( {
 			12345: siteDetailsResponse,
+		} );
+	} );
+
+	describe( 'Launch Status', () => {
+		type ClientCredentials = { client_id: string; client_secret: string };
+		type LaunchStatusState = {
+			[ key: number ]: { isSiteLaunched: boolean; isSiteLaunching: boolean };
+		};
+
+		let siteId: number;
+		let client_id: string;
+		let client_secret: string;
+		let mockedClientCredentials: ClientCredentials;
+		let originalState: LaunchStatusState;
+
+		beforeEach( () => {
+			siteId = 12345;
+			client_id = 'magic_client_id';
+			client_secret = 'magic_client_secret';
+			mockedClientCredentials = { client_id, client_secret };
+			originalState = {
+				[ siteId ]: { isSiteLaunched: false, isSiteLaunching: false },
+			};
+		} );
+
+		it( 'should default to the initial state when an unknown action is dispatched', () => {
+			const state = launchStatus( undefined, { type: 'TEST_ACTION' } );
+			expect( state ).toStrictEqual( {} );
+		} );
+
+		it( 'should set isSiteLaunching to true when a LAUNCH_SITE_START action is dispatched', () => {
+			const { launchSiteStart } = createActions( mockedClientCredentials );
+
+			const action = launchSiteStart( siteId );
+			const expected = {
+				...originalState,
+				[ siteId ]: { ...originalState[ siteId ], isSiteLaunching: true },
+			};
+
+			expect( launchStatus( originalState, action ) ).toEqual( expected );
+		} );
+
+		it( 'should set isSiteLaunched to true when a LAUNCH_SITE_COMPLETE action is dispatched', () => {
+			const { launchSiteComplete } = createActions( mockedClientCredentials );
+
+			const action = launchSiteComplete( siteId );
+			const expected = {
+				...originalState,
+				[ siteId ]: { ...originalState[ siteId ], isSiteLaunched: true },
+			};
+
+			expect( launchStatus( originalState, action ) ).toEqual( expected );
+		} );
+
+		it( 'should set both isSiteLaunching & isSiteLaunched to false when a LAUNCH_SITE_ERROR action is dispatched', () => {
+			const { launchSiteError } = createActions( mockedClientCredentials );
+			const error = 'Error Message';
+			const action = launchSiteError( siteId, error );
+			const expected = {
+				...originalState,
+			};
+
+			expect( launchStatus( originalState, action ) ).toEqual( expected );
 		} );
 	} );
 } );

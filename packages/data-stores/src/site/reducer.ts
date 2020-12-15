@@ -111,6 +111,9 @@ export const launchStatus: Reducer<
 	if ( action.type === 'LAUNCH_SITE_COMPLETE' ) {
 		return { ...state, [ action.siteId ]: { isSiteLaunched: true, isSiteLaunching: false } };
 	}
+	if ( action.type === 'LAUNCH_SITE_ERROR' ) {
+		return { ...state, [ action.siteId ]: { isSiteLaunched: false, isSiteLaunching: false } };
+	}
 	return state;
 };
 

@@ -105,15 +105,26 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
+	const launchSiteError = ( siteId: number, error: string ) => ( {
+		type: 'LAUNCH_SITE_ERROR' as const,
+		siteId,
+		error,
+	} );
+
 	function* launchSite( siteId: number ) {
 		yield launchSiteStart( siteId );
-		yield wpcomRequest( {
-			path: `/sites/${ siteId }/launch`,
-			apiVersion: '1.1',
-			method: 'post',
-		} );
-		yield launchSiteComplete( siteId );
-		return true;
+		try {
+			yield wpcomRequest( {
+				path: `/sites/${ siteId }/launch`,
+				apiVersion: '1.1',
+				method: 'post',
+			} );
+			yield launchSiteComplete( siteId );
+			return true;
+		} catch ( error ) {
+			yield launchSiteError( siteId, error );
+			return false;
+		}
 	}
 
 	// TODO: move getCart and setCart to a 'cart' data-store
@@ -171,6 +182,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		launchSite,
 		launchSiteStart,
 		launchSiteComplete,
+		launchSiteError,
 		getCart,
 		setCart,
 	};
@@ -192,6 +204,7 @@ export type Action =
 			| ActionCreators[ 'resetNewSiteFailed' ]
 			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteComplete' ]
+			| ActionCreators[ 'launchSiteError' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };
