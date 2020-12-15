@@ -17,7 +17,6 @@ import { combineReducers, withoutPersistence, withStorageKey } from 'calypso/sta
 import imageEditor from './image-editor/reducer';
 import videoEditor from './video-editor/reducer';
 import lastDraft from './last-draft/reducer';
-import saveBlockers from './save-blockers/reducer';
 
 /**
  * Returns the updated editor post ID state after an action has been
@@ -99,7 +98,6 @@ const combinedReducer = combineReducers( {
 	imageEditor,
 	videoEditor,
 	lastDraft,
-	saveBlockers,
 } );
 
 export default withStorageKey( 'editor', combinedReducer );
