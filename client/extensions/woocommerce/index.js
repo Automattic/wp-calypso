@@ -37,7 +37,7 @@ import Shipping from './app/settings/shipping';
 import ShippingZone from './app/settings/shipping/shipping-zone';
 import StatsController from './app/store-stats/controller';
 import StoreSidebar from './store-sidebar';
-import { tracksStore } from './lib/analytics';
+import { tracksStore, bumpStat } from './lib/analytics';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 
 /**
@@ -268,10 +268,11 @@ export default async function ( _, addReducer ) {
 	getStorePages().forEach( function ( storePage ) {
 		if ( config.isEnabled( storePage.configKey ) ) {
 			// Store deprecation would redirect most store pages to dashboard
-			if ( isStoreRemoved && ! '/store/:site' === storePage.path ) {
-				page( storePage.path, ( context ) => {
-					// Todo: We could implement analytics here to identify
-					// how many users are still navigating to deprecated pages
+			if ( isStoreRemoved && ! ( '/store/:site' === storePage.path ) ) {
+				page( storePage.path, addTracksContext, ( context ) => {
+					// Tracks MC stats by path /store/products/:site -> store-products-:site
+					const trackName = storePage.path.substr( 1 ).replaceAll( '/', '-' );
+					context.store.dispatch( bumpStat( 'calypso_store_post_sunset', trackName ) );
 					page.redirect( `/store/${ context.params.site }?${ context.querystring }` );
 				} );
 			} else {
