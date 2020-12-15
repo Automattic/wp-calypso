@@ -12,8 +12,6 @@ import {
 	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
-	EDITOR_EDIT_RAW_CONTENT,
-	EDITOR_RESET_RAW_CONTENT,
 } from 'calypso/state/action-types';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
@@ -154,30 +152,6 @@ export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null 
 	isIframeLoaded,
 	iframePort,
 } );
-
-/**
- * Edits the raw TinyMCE content of a post
- *
- * @param {string} content Raw content
- * @returns {any} Action object
- */
-export function editorEditRawContent( content ) {
-	return {
-		type: EDITOR_EDIT_RAW_CONTENT,
-		content,
-	};
-}
-
-/**
- * Unsets the raw TinyMCE content value
- *
- * @returns {any} Action object
- */
-export function editorResetRawContent() {
-	return {
-		type: EDITOR_RESET_RAW_CONTENT,
-	};
-}
 
 export function editorReset( options ) {
 	return {
