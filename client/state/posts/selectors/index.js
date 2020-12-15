@@ -24,7 +24,6 @@ export { getPostsLastPageForQuery } from 'calypso/state/posts/selectors/get-post
 export { getSitePost } from 'calypso/state/posts/selectors/get-site-post';
 export { getSitePosts } from 'calypso/state/posts/selectors/get-site-posts';
 export { getSitePostsByTerm } from 'calypso/state/posts/selectors/get-site-posts-by-term';
-export { isEditedPostDirty } from 'calypso/state/posts/selectors/is-edited-post-dirty';
 export { isLikedPost } from 'calypso/state/posts/selectors/is-liked-post';
 export { isPostRevisionsDialogVisible } from 'calypso/state/posts/selectors/is-post-revisions-dialog-visible';
 export { isPostsLastPageForQuery } from 'calypso/state/posts/selectors/is-posts-last-page-for-query';
