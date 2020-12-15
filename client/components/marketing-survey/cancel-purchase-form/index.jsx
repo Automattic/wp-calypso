@@ -326,8 +326,9 @@ class CancelPurchaseForm extends React.Component {
 		const { productSlug: productBeingRemoved } = this.props.purchase;
 
 		// get all downgradable plans and products for downgrade question dropdown
+		const downgradablePlans = DOWNGRADEABLE_PLANS_FROM_PLAN[ productBeingRemoved ];
 		const downgradableJetpackPlansAndProducts = [
-			...DOWNGRADEABLE_PLANS_FROM_PLAN[ productBeingRemoved ],
+			...( downgradablePlans ? downgradablePlans : [] ),
 			...JETPACK_PRODUCTS_LIST,
 		];
 		const selectBoxItems = downgradableJetpackPlansAndProducts
