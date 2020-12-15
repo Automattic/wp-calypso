@@ -7,7 +7,7 @@ import flatMap from 'lodash/flatMap';
 /**
  * Internal dependencies
  */
-import { LicensingPortalStore } from 'calypso/state/licensing-portal/types';
+import { LicensingPortalStore } from 'calypso/state/licensing-portal';
 // Required for modular state.
 import 'calypso/state/licensing-portal/init';
 

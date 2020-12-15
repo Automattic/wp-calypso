@@ -14,7 +14,7 @@ import {
 } from 'calypso/state/action-types';
 import { isFetchingPartners } from 'calypso/state/licensing-portal/selectors';
 import wpcom from 'calypso/lib/wp';
-import { APIError, Partner } from 'calypso/state/licensing-portal/types';
+import { APIError, Partner } from 'calypso/state/licensing-portal';
 
 // Required for modular state.
 import 'calypso/state/licensing-portal/init';

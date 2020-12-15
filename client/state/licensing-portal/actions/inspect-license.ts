@@ -18,7 +18,7 @@ import wpcomXhrWrapper from 'calypso/lib/wpcom-xhr-wrapper';
 
 // Required for modular state.
 import 'calypso/state/licensing-portal/init';
-import { APIError } from 'calypso/state/licensing-portal/types';
+import { APIError } from 'calypso/state/licensing-portal';
 
 export function setInspectedLicenseKey( licenseKey: string ) {
 	return ( dispatch: Dispatch, getState: () => any ) => {
