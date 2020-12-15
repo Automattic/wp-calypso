@@ -1,7 +1,6 @@
 export { appendToPostEditsLog } from 'calypso/state/posts/utils/append-to-post-edits-log';
 export { applyPostEdits } from 'calypso/state/posts/utils/apply-post-edits';
 export { getDeserializedPostsQueryDetails } from 'calypso/state/posts/utils/get-deserialized-posts-query-details';
-export { getEditedTime } from 'calypso/state/posts/utils/get-edited-time';
 export { getEditURL } from 'calypso/state/posts/utils/get-edit-url';
 export { getFeaturedImageId } from 'calypso/state/posts/utils/get-featured-image-id';
 export { getNormalizedPostsQuery } from 'calypso/state/posts/utils/get-normalized-posts-query';
