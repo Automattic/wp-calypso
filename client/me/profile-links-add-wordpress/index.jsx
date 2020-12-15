@@ -10,13 +10,13 @@ import { find, map, pickBy } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
 import FormButton from 'calypso/components/forms/form-button';
 import ProfileLinksAddWordPressSite from './site';
 import { addUserProfileLinks } from 'calypso/state/profile-links/actions';
 import getPublicSites from 'calypso/state/selectors/get-public-sites';
 import getSites from 'calypso/state/selectors/get-sites';
 import isSiteInProfileLinks from 'calypso/state/selectors/is-site-in-profile-links';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 
 /**
@@ -106,7 +106,7 @@ class ProfileLinksAddWordPress extends Component {
 
 	onCreateSite = ( event ) => {
 		event.preventDefault();
-		window.open( config( 'signup_url' ) + '?ref=me-profile-links' );
+		window.open( this.props.onboardingUrl + '?ref=me-profile-links' );
 		this.props.onCancel();
 	};
 
@@ -171,6 +171,7 @@ class ProfileLinksAddWordPress extends Component {
 						{
 							components: {
 								jetpackLink: (
+									/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 									<a
 										href="#"
 										className="profile-links-add-wordpress__jetpack-link"
@@ -218,6 +219,7 @@ export default connect(
 			publicSites,
 			publicSitesNotInProfileLinks,
 			sites: getSites( state ),
+			onboardingUrl: getOnboardingUrl( state ),
 		};
 	},
 	{

@@ -36,6 +36,7 @@ import isDomainOnlySite from 'calypso/state/selectors/is-domain-only-site';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteMigrationInProgress from 'calypso/state/selectors/is-site-migration-in-progress';
 import canCurrentUser from 'calypso/state/selectors/can-current-user';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import {
 	domainManagementContactsPrivacy,
 	domainManagementDns,
@@ -112,7 +113,6 @@ function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const signup_url = config( 'signup_url' );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -137,7 +137,7 @@ function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ signup_url }?ref=calypso-nosites`,
+		secondaryActionURL: `${ getOnboardingUrl() }?ref=calypso-nosites`,
 	} );
 
 	makeLayout( context, noop );

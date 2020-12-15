@@ -46,6 +46,7 @@ import ColorSchemePicker from 'calypso/blocks/color-scheme-picker';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { getLanguage, isLocaleVariant, canBeTranslated } from 'calypso/lib/i18n-utils';
 import isRequestingMissingSites from 'calypso/state/selectors/is-requesting-missing-sites';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { canDisplayCommunityTranslator } from 'calypso/components/community-translator/utils';
 import { ENABLE_TRANSLATOR_KEY } from 'calypso/lib/i18n-utils/constants';
@@ -572,12 +573,12 @@ const Account = createReactClass( {
 	},
 
 	renderPrimarySite() {
-		const { requestingMissingSites, translate, visibleSiteCount } = this.props;
+		const { onboardingUrl, requestingMissingSites, translate, visibleSiteCount } = this.props;
 
 		if ( ! visibleSiteCount ) {
 			return (
 				<Button
-					href={ config( 'signup_url' ) }
+					href={ onboardingUrl + '?ref=me-account-settings' }
 					onClick={ this.getClickHandler( 'Primary Site Add New WordPress Button' ) }
 				>
 					{ translate( 'Add New Site' ) }
@@ -933,6 +934,7 @@ export default compose(
 			currentUserDisplayName: getCurrentUserDisplayName( state ),
 			currentUserName: getCurrentUserName( state ),
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
+			onboardingUrl: getOnboardingUrl( state ),
 		} ),
 		{ bumpStat, errorNotice, recordGoogleEvent, recordTracksEvent, successNotice }
 	),
