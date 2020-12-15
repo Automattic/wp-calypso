@@ -8,7 +8,6 @@ import { defaults, filter, get } from 'lodash';
  */
 import {
 	EDITOR_IFRAME_LOADED,
-	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
 	EDITOR_RESET,
 	EDITOR_START,
@@ -186,12 +185,6 @@ export function editorReset( options ) {
 		type: EDITOR_RESET,
 		isLoading: get( options, 'isLoading', false ),
 		loadingError: get( options, 'loadingError', null ),
-	};
-}
-
-export function editorLoadingErrorReset() {
-	return {
-		type: EDITOR_LOADING_ERROR_RESET,
 	};
 }
 
