@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { defaults, filter, get } from 'lodash';
+import { filter, get } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,7 +18,6 @@ import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { editPost } from 'calypso/state/posts/actions';
 
 import 'calypso/state/editor/init';
 import 'calypso/state/ui/init';
@@ -46,22 +45,6 @@ export function startEditingPost( siteId, postId ) {
 	return ( dispatch ) => {
 		dispatch( editorReset( { isLoading: true } ) );
 		dispatch( { type: EDITOR_START, siteId, postId } );
-	};
-}
-
-export function startEditingNewPost( siteId, post ) {
-	return ( dispatch ) => {
-		const postAttributes = defaults( post, {
-			status: 'draft',
-			type: 'post',
-			content: '',
-			title: '',
-		} );
-
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId: null } );
-		dispatch( editPost( siteId, null, postAttributes ) );
-		dispatch( editorReset() );
 	};
 }
 
