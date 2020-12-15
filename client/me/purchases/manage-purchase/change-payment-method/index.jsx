@@ -124,7 +124,6 @@ function ChangePaymentMethod( props ) {
 						<ChangePaymentMethodList
 							currentPaymentMethod={ props.card }
 							purchase={ props.purchase }
-							isDataLoading={ isDataLoading }
 							successCallback={ successCallback }
 						/>
 					) : (
@@ -167,12 +166,7 @@ const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
-function ChangePaymentMethodList( {
-	currentPaymentMethod,
-	purchase,
-	isDataLoading,
-	successCallback,
-} ) {
+function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallback } ) {
 	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
 
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
@@ -215,7 +209,7 @@ function ChangePaymentMethodList( {
 			showSuccessMessage={ showSuccessMessage }
 			paymentMethods={ paymentMethods }
 			paymentProcessors={ {} }
-			isLoading={ isDataLoading || isStripeLoading }
+			isLoading={ isStripeLoading }
 			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
 		>
 			<Card className="change-payment-method__content">
