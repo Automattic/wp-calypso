@@ -10,34 +10,35 @@ import type { WPCOMCartItem } from './checkout-cart';
 import type { Purchase } from './wpcom-store-state';
 import type { DomainContactDetails } from './backend/domain-contact-details-components';
 
+// The data required by createTransactionEndpointRequestPayloadFromLineItems
 export interface TransactionRequestWithLineItems {
-	siteId: string | undefined;
-	couponId?: string;
 	country: string;
-	state?: string;
 	postalCode: string;
-	subdivisionCode?: string | undefined;
-	city?: string | undefined;
-	address?: string;
-	streetNumber?: string;
-	phoneNumber?: string;
-	document?: string;
-	deviceId?: string;
-	domainDetails?: DomainContactDetails | undefined;
 	items: WPCOMCartItem[];
 	paymentMethodType: string;
-	paymentMethodToken?: string;
-	paymentPartnerProcessorId?: string;
-	storedDetailsId?: string;
 	name: string;
-	email?: string;
-	successUrl?: string;
-	cancelUrl?: string;
-	idealBank?: string;
-	tefBank?: string;
-	pan?: string;
-	gstin?: string;
-	nik?: string;
+	siteId?: string | undefined;
+	couponId?: string | undefined;
+	state?: string | undefined;
+	subdivisionCode?: string | undefined;
+	city?: string | undefined;
+	address?: string | undefined;
+	streetNumber?: string | undefined;
+	phoneNumber?: string | undefined;
+	document?: string | undefined;
+	deviceId?: string | undefined;
+	domainDetails?: DomainContactDetails | undefined;
+	paymentMethodToken?: string | undefined;
+	paymentPartnerProcessorId?: string | undefined;
+	storedDetailsId?: string | undefined;
+	email?: string | undefined;
+	successUrl?: string | undefined;
+	cancelUrl?: string | undefined;
+	idealBank?: string | undefined;
+	tefBank?: string | undefined;
+	pan?: string | undefined;
+	gstin?: string | undefined;
+	nik?: string | undefined;
 }
 
 export type WPCOMTransactionEndpoint = (
