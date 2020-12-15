@@ -522,10 +522,10 @@ export default class GutenbergEditorComponent extends AsyncBaseContainer {
 	}
 
 	async closePublishedPanel() {
-		const closeButton = await this.driver.findElement(
+		return await driverHelper.clickWhenClickable(
+			this.driver,
 			By.css( '.editor-post-publish-panel__header button[aria-label="Close panel"]' )
 		);
-		return await this.driver.executeScript( 'arguments[0].click();', closeButton );
 	}
 
 	async ensureSaved() {
