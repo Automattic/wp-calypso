@@ -12,6 +12,7 @@ import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getQueryArg } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -74,7 +75,9 @@ function WpcomNux() {
 	};
 
 	const isPodcastingSite = !! site?.options?.anchor_podcast;
-	const nuxPages = getWpcomNuxPages( isPodcastingSite );
+	const anchorEpisode = getQueryArg( window.location.href, 'anchor_episode' );
+	const showPodcastingTutorial = isPodcastingSite && anchorEpisode;
+	const nuxPages = getWpcomNuxPages( showPodcastingTutorial );
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -97,11 +100,11 @@ function WpcomNux() {
 /**
  * This function returns a collection of NUX slide data
  *
- * @param isPodcastingSite bool Whether the current site is set as a podcasting site.
+ * @param showPodcastingTutorial bool Whether to show the tutorial steps for podcasting sites.
  * @returns { Array } a collection of <NuxPage /> props
  */
-function getWpcomNuxPages( isPodcastingSite ) {
-	if ( isPodcastingSite ) {
+function getWpcomNuxPages( showPodcastingTutorial ) {
+	if ( showPodcastingTutorial ) {
 		return [
 			{
 				heading: __( 'Create your first episode', 'full-site-editing' ),
