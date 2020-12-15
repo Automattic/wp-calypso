@@ -7,7 +7,6 @@ import { get } from 'lodash';
  * Internal dependencies
  */
 import {
-	EDITOR_AUTOSAVE_RESET,
 	EDITOR_IFRAME_LOADED,
 	EDITOR_RESET,
 	EDITOR_START,
@@ -85,7 +84,6 @@ export const iframePort = withoutPersistence( ( state = null, action ) => {
 function autosavePreviewUrl( state = null, action ) {
 	switch ( action.type ) {
 		case EDITOR_RESET:
-		case EDITOR_AUTOSAVE_RESET:
 			return null;
 	}
 

@@ -7,7 +7,6 @@ import { defaults, filter, get } from 'lodash';
  * Internal dependencies
  */
 import {
-	EDITOR_AUTOSAVE_RESET,
 	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
@@ -157,10 +156,6 @@ export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null 
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,
 	iframePort,
-} );
-
-export const editorAutosaveReset = () => ( {
-	type: EDITOR_AUTOSAVE_RESET,
 } );
 
 /**
