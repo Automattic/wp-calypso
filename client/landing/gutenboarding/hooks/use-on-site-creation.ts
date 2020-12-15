@@ -14,6 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
+import { useIsAnchorFm } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -63,6 +64,7 @@ export default function useOnSiteCreation() {
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+	const isAnchorFmSignup = useIsAnchorFm();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -126,9 +128,35 @@ export default function useOnSiteCreation() {
 			clearLastNonEditorRoute();
 			setSelectedSite( newSite.blogid );
 
-			window.location.href = design?.is_fse
-				? `/site-editor/${ newSite.site_slug }/`
-				: `/page/${ newSite.site_slug }/home`;
+			let destination;
+			if ( design?.is_fse ) {
+				destination = `/site-editor/${ newSite.site_slug }/`;
+			} else if ( isAnchorFmSignup ) {
+				/*
+				* Currently, this never triggers. (isAnchorFmSignup is always false, even
+				when on an anchor flow.)
+
+				I believe we get here from onboarding-block/edit.tsx redirecting in this
+				bit of code:
+					return (
+						<div className="onboarding-block">
+							{ isCreatingSite && (
+								<Redirect
+									push={ shouldTriggerCreate ? undefined : true }
+									to={ makePath( Step.CreateSite ) }
+								/>
+							) }
+
+				This ends up calling usePath from path.ts, which isn't aware of anchor
+				location state and needs to pass it on.
+				* 
+				*/
+				destination = `/post/${ newSite.site_slug }`;
+			} else {
+				destination = `/page/${ newSite.site_slug }/home`;
+			}
+			//console.log( { isAnchorFmSignup, destination } );
+			window.location.href = destination;
 		}
 	}, [
 		domain,
@@ -142,5 +170,6 @@ export default function useOnSiteCreation() {
 		flowCompleteTrackingParams,
 		shouldRedirectToEditorAfterCheckout,
 		design,
+		isAnchorFmSignup,
 	] );
 }
