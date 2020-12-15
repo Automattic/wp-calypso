@@ -5,12 +5,13 @@ import page from 'page';
 import PropTypes from 'prop-types';
 import React, { Fragment, useState, useMemo, useCallback } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
 	usePaymentMethodId,
 	useMessages,
+	useSelect,
 } from '@automattic/composite-checkout';
 import { Card, Button } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
@@ -57,6 +58,11 @@ import {
 import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
+import {
+	getTokenForSavingCard,
+	updateCreditCard,
+	getInitializedFields,
+} from 'calypso/me/purchases/components/payment-method-form/helpers';
 
 function ChangePaymentMethod( props ) {
 	const { isStripeLoading } = useStripe();
@@ -125,6 +131,8 @@ function ChangePaymentMethod( props ) {
 							currentPaymentMethod={ props.card }
 							purchase={ props.purchase }
 							successCallback={ successCallback }
+							siteSlug={ props.siteSlug }
+							apiParams={ { purchaseId: props.purchase.id } }
 						/>
 					) : (
 						<PaymentMethodForm
@@ -166,7 +174,13 @@ const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
-function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallback } ) {
+function ChangePaymentMethodList( {
+	currentPaymentMethod,
+	purchase,
+	successCallback,
+	siteSlug,
+	apiParams,
+} ) {
 	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
 
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
@@ -225,6 +239,8 @@ function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallb
 					purchase={ purchase }
 					setFormSubmitting={ setFormSubmitting }
 					successCallback={ successCallback }
+					siteSlug={ siteSlug }
+					apiParams={ apiParams }
 				/>
 			</Card>
 		</CheckoutProvider>
@@ -238,26 +254,84 @@ function SaveButton( {
 	purchase,
 	setFormSubmitting,
 	successCallback,
+	siteSlug,
+	apiParams,
 } ) {
 	const [ selectedPaymentMethodId ] = usePaymentMethodId();
 	const { showErrorMessage, showSuccessMessage } = useMessages();
+	const { stripe, stripeConfiguration } = useStripe();
+	const fields = useSelect( ( select ) => select( 'credit-card' ).getFields() );
 
 	const isSubmitting = disabled || formSubmitting;
 
+	// Decide what kind of method we're switching to; this could be an enum type
 	const isStoredCard = /^existingCard-/.test( selectedPaymentMethodId );
+	const isNewCard = 'card' === selectedPaymentMethodId;
+
+	const createStripeSetupIntentAsync = async ( paymentDetails ) => {
+		const { name, country, 'postal-code': zip } = paymentDetails;
+		const paymentDetailsForStripe = {
+			name,
+			address: {
+				country: country,
+				postal_code: zip,
+			},
+		};
+		return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
+	};
+
+	const formFieldValues = getInitializedFields( {
+		country: fields?.countryCode?.value,
+		postalCode: fields?.postalCode?.value,
+		name: fields?.cardholderName?.value,
+	} );
 
 	const onClick = () => {
 		setFormSubmitting( true );
-		wpcomAssignPaymentMethod( purchase.id, selectedPaymentMethodId.replace( /^existingCard-/, '' ) )
-			.then( () => {
-				showSuccessMessage( translate( 'Your payment method has been set.' ) );
-				setFormSubmitting( false );
-				successCallback();
+		if ( isStoredCard ) {
+			wpcomAssignPaymentMethod(
+				purchase.id,
+				selectedPaymentMethodId.replace( /^existingCard-/, '' )
+			)
+				.then( () => {
+					showSuccessMessage( translate( 'Your payment method has been set.' ) );
+					setFormSubmitting( false );
+					successCallback();
+				} )
+				.catch( ( error ) => {
+					showErrorMessage( error );
+					setFormSubmitting( false );
+				} );
+			return;
+		}
+		if ( isNewCard ) {
+			getTokenForSavingCard( {
+				formFieldValues,
+				createCardToken: createStripeSetupIntentAsync,
+				parseTokenFromResponse: ( response ) => response.payment_method,
+				translate,
 			} )
-			.catch( ( error ) => {
-				showErrorMessage( error );
-				setFormSubmitting( false );
-			} );
+				.then( ( token ) =>
+					updateCreditCard( {
+						formFieldValues,
+						apiParams,
+						purchase,
+						siteSlug,
+						token,
+						translate,
+						stripeConfiguration,
+					} )
+				)
+				.then( () => {
+					showSuccessMessage( translate( 'Your payment method has been set.' ) );
+					setFormSubmitting( false );
+					successCallback();
+				} )
+				.catch( ( error ) => {
+					showErrorMessage( error );
+					setFormSubmitting( false );
+				} );
+		}
 	};
 
 	let buttonText = null;
@@ -341,6 +415,7 @@ function useAssignablePaymentMethods() {
 		stripeConfiguration,
 		stripe,
 		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
 	} );
 
 	// getStoredCards always returns a new array, but we need a memoized version
