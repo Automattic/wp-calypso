@@ -172,7 +172,7 @@ function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallb
 	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError } = useStripe();
-	const [ paymentMethods ] = useAssignablePaymentMethods();
+	const paymentMethods = useAssignablePaymentMethods();
 
 	const disabled = isStripeLoading || formSubmitting || stripeLoadingError || ! paymentMethods;
 
@@ -358,11 +358,11 @@ function useAssignablePaymentMethods() {
 	} );
 
 	const paymentMethods = useMemo(
-		() => [ paypalMethod, stripeMethod, ...existingCardMethods ].filter( Boolean ),
+		() => [ ...existingCardMethods, stripeMethod, paypalMethod ].filter( Boolean ),
 		[ paypalMethod, stripeMethod, existingCardMethods ]
 	);
 
-	return [ paymentMethods ];
+	return paymentMethods;
 }
 
 function ChangePaymentMethodWrapper( props ) {
