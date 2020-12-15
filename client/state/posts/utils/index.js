@@ -23,5 +23,4 @@ export { normalizePostForDisplay } from 'calypso/state/posts/utils/normalize-pos
 export { normalizePostForEditing } from 'calypso/state/posts/utils/normalize-post-for-editing';
 export { normalizePostForState } from 'calypso/state/posts/utils/normalize-post-for-state';
 export { normalizeTermsForApi } from 'calypso/state/posts/utils/normalize-terms-for-api';
-export { removeSlug } from 'calypso/state/posts/utils/remove-slug';
 export { userCan } from 'calypso/state/posts/utils/user-can';

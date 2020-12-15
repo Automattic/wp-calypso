@@ -21,7 +21,6 @@ import {
 	mergePostEdits,
 	getEditURL,
 	getFeaturedImageId,
-	removeSlug,
 } from '../utils';
 
 describe( 'utils', () => {
@@ -728,22 +727,6 @@ describe( 'utils', () => {
 		test( 'should default to type=post if no post type is supplied', () => {
 			const url = getEditURL( { ID: 123, type: '' }, { slug: 'en.blog.wordpress.com' } );
 			expect( url ).toEqual( '/post/en.blog.wordpress.com/123' );
-		} );
-	} );
-
-	describe( '#removeSlug', () => {
-		test( 'should return undefined when no path is supplied', () => {
-			expect( removeSlug() ).toBeUndefined();
-		} );
-
-		test( 'should strip slug on post URL', () => {
-			const noSlug = removeSlug( 'https://en.blog.wordpress.com/2015/08/26/new-action-bar/' );
-			expect( noSlug ).toEqual( 'https://en.blog.wordpress.com/2015/08/26/' );
-		} );
-
-		test( 'should strip slug on page URL', () => {
-			const noSlug = removeSlug( 'https://en.blog.wordpress.com/a-test-page/' );
-			expect( noSlug ).toEqual( 'https://en.blog.wordpress.com/' );
 		} );
 	} );
 
