@@ -3,7 +3,6 @@
  */
 import React, { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -18,9 +17,9 @@ import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
+import { siteHasRealtimeBackups } from './selectors';
 
 /**
  * Style dependencies
@@ -48,19 +47,15 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	isLatestBackup,
 	dailyDeltas,
 } ) => {
+	const siteId = useSelector( getSelectedSiteId ) as number;
+
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
 
-	const siteId = useSelector( getSelectedSiteId );
-	const capabilities = useSelector( ( state ) =>
-		siteId ? getRewindCapabilities( state, siteId ) : null
-	);
+	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 
 	if ( backup ) {
-		const isSuccessful =
-			isArray( capabilities ) && capabilities.includes( 'backup-realtime' )
-				? isSuccessfulRealtimeBackup
-				: isSuccessfulDailyBackup;
+		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
 
 		return isSuccessful( backup ) ? (
 			<BackupCard

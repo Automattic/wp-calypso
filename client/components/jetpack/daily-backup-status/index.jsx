@@ -4,7 +4,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import { isArray } from 'lodash';
 
 /**
  * Internal dependencies
@@ -22,6 +21,7 @@ import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
 import NoBackupsOnSelectedDate from './status-card/no-backups-on-selected-date';
 import NoBackupsYet from './status-card/no-backups-yet';
+import { siteHasRealtimeBackups } from './selectors';
 
 /**
  * Style dependencies
@@ -30,13 +30,11 @@ import './style.scss';
 
 const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) => {
 	const siteId = useSelector( getSelectedSiteId );
-	const hasRealtimeBackups = useSelector( ( state ) => {
-		const capabilities = getRewindCapabilities( state, siteId );
-		return isArray( capabilities ) && capabilities.includes( 'backup-realtime' );
-	} );
 
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
+
+	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
