@@ -62,12 +62,6 @@ Returns an array of plugin objects for a particular site.
 
 ---
 
-#### PluginsStore.getSitePlugin( site, pluginSlug );
-
-Returns a plugin objects for a particular site.
-
----
-
 #### PluginsStore.getSites( sites, pluginSlug );
 
 Returns an array of sites that have a particular plugin.

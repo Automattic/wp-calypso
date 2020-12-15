@@ -165,15 +165,6 @@ const PluginsStore = {
 		return values( _pluginsBySite[ site.ID ] );
 	},
 
-	getSitePlugin: function ( site, pluginSlug ) {
-		const plugins = this.getSitePlugins( site );
-		if ( ! plugins ) {
-			return plugins;
-		}
-
-		return find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
-	},
-
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
 		const plugins = this.getPlugins( sites );

@@ -8,9 +8,8 @@ import React, { Fragment } from 'react';
  */
 import Gridicon from 'calypso/components/gridicon';
 import meta from './meta';
-import PluginsStore from 'calypso/lib/plugins/store';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
-import { isRequesting } from 'calypso/state/plugins/installed/selectors';
+import { getPluginOnSite, isRequesting } from 'calypso/state/plugins/installed/selectors';
 import {
 	ButtonRow,
 	Continue,
@@ -38,7 +37,8 @@ export const JetpackPluginUpdatesTour = makeTour(
 		when={ ( state ) => {
 			const site = getSelectedSite( state );
 			const isRequestingPlugins = isRequesting( state, site.ID );
-			const res = ! isRequestingPlugins && !! PluginsStore.getSitePlugin( site, 'jetpack' );
+			const sitePlugin = getPluginOnSite( state, site.ID, 'jetpack' );
+			const res = ! isRequestingPlugins && !! sitePlugin;
 			return res;
 		} }
 	>

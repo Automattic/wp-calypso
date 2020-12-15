@@ -15,6 +15,7 @@ import { CompactCard } from '@automattic/components';
 import Notice from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
 import Spinner from 'calypso/components/spinner';
+import QueryJetpackPlugins from 'calypso/components/data/query-jetpack-plugins';
 import QueryPluginKeys from 'calypso/components/data/query-plugin-keys';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import PluginIcon from 'calypso/my-sites/plugins/plugin-icon/plugin-icon';
@@ -51,9 +52,10 @@ import {
 	isRequesting,
 	hasRequested,
 } from 'calypso/state/plugins/premium/selectors';
-import { isRequesting as isRequestingInstalledPlugins } from 'calypso/state/plugins/installed/selectors';
-// Store for existing plugins
-import PluginsStore from 'calypso/lib/plugins/store';
+import {
+	getPluginOnSite,
+	isRequesting as isRequestingInstalledPlugins,
+} from 'calypso/state/plugins/installed/selectors';
 
 const helpLinks = {
 	vaultpress: JETPACK_SERVICE_VAULTPRESS,
@@ -137,7 +139,7 @@ class PlansSetup extends React.Component {
 			! this.props.isInstalling &&
 			this.props.nextPlugin
 		) {
-			this.startNextPlugin( this.props.nextPlugin );
+			this.startNextPlugin();
 		}
 	}
 
@@ -152,7 +154,9 @@ class PlansSetup extends React.Component {
 		return beforeUnloadText;
 	};
 
-	startNextPlugin = ( plugin ) => {
+	startNextPlugin = () => {
+		const { nextPlugin, requestingInstalledPlugins, sitePlugin } = this.props;
+
 		// We're already installing.
 		if ( this.props.isInstalling ) {
 			return;
@@ -162,11 +166,10 @@ class PlansSetup extends React.Component {
 		const site = this.props.selectedSite;
 
 		// Merge wporg info into the plugin object
-		plugin = { ...plugin, ...this.props.wporgPlugins?.[ plugin.slug ] };
+		let plugin = { ...nextPlugin, ...this.props.wporgPlugins?.[ nextPlugin.slug ] };
 
 		const getPluginFromStore = function () {
-			const sitePlugin = PluginsStore.getSitePlugin( site, plugin.slug );
-			if ( ! sitePlugin && this.props.requestingInstalledPlugins ) {
+			if ( ! sitePlugin && requestingInstalledPlugins ) {
 				// if the Plugins are still being fetched, we wait. We are not using flux
 				// store events because it would be more messy to handle the one-time-only
 				// callback with bound parameters than to do it this way.
@@ -510,7 +513,7 @@ class PlansSetup extends React.Component {
 	};
 
 	render() {
-		const { sitesInitialized, translate } = this.props;
+		const { siteId, sitesInitialized, translate } = this.props;
 		const site = this.props.selectedSite;
 
 		if ( ! site && ( this.props.isRequestingSites || ! sitesInitialized ) ) {
@@ -539,6 +542,7 @@ class PlansSetup extends React.Component {
 			<div className="jetpack-plugins-setup">
 				<PageViewTracker path="/plugins/setup/:site" title="Jetpack Plugins Setup" />
 				<QueryPluginKeys siteId={ site.ID } />
+				{ siteId && <QueryJetpackPlugins siteIds={ [ siteId ] } /> }
 				<h1 className="jetpack-plugins-setup__header">
 					{ translate( 'Setting up your %(plan)s Plan', {
 						args: { plan: site.plan.product_name_short },
@@ -561,6 +565,7 @@ export default connect(
 		const forSpecificPlugin = ownProps.forSpecificPlugin || false;
 
 		return {
+			sitePlugin: forSpecificPlugin && getPluginOnSite( state, siteId, forSpecificPlugin ),
 			wporgPlugins: getAllWporgPlugins( state ),
 			isRequesting: isRequesting( state, siteId ),
 			requestingInstalledPlugins: isRequestingInstalledPlugins( state, siteId ),
