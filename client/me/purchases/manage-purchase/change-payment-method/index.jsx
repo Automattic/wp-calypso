@@ -176,15 +176,10 @@ function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallb
 
 	const disabled = isStripeLoading || formSubmitting || stripeLoadingError || ! paymentMethods;
 
-	const showErrorMessage = useCallback(
-		( error ) => {
-			const message = error && error.toString ? error.toString() : error;
-			notices.error(
-				message || translate( 'An error occurred while reassigning your payment method.' )
-			);
-		},
-		[ translate ]
-	);
+	const showErrorMessage = useCallback( ( error ) => {
+		const message = error?.toString ? error.toString() : error;
+		notices.error( message );
+	}, [] );
 
 	const showInfoMessage = useCallback( ( message ) => {
 		notices.info( message );
