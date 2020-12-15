@@ -143,10 +143,6 @@ export function getEditorPostPreviewUrl( state ) {
 	return getPreviewURL( site, post, state.editor.autosavePreviewUrl );
 }
 
-export function isEditorAutosaving( state ) {
-	return state.editor.isAutosaving;
-}
-
 export function isEditorLoading( state ) {
 	return state.editor.isLoading;
 }

@@ -6,12 +6,8 @@ import { defaults, filter, get } from 'lodash';
 /**
  * Internal dependencies
  */
-import wpcom from 'calypso/lib/wp';
 import {
-	EDITOR_AUTOSAVE,
 	EDITOR_AUTOSAVE_RESET,
-	EDITOR_AUTOSAVE_SUCCESS,
-	EDITOR_AUTOSAVE_FAILURE,
 	EDITOR_IFRAME_LOADED,
 	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
@@ -167,36 +163,6 @@ export const editorAutosaveReset = () => ( {
 	type: EDITOR_AUTOSAVE_RESET,
 } );
 
-export const editorAutosaveSuccess = ( autosave ) => ( {
-	type: EDITOR_AUTOSAVE_SUCCESS,
-	autosave,
-} );
-
-export const editorAutosaveFailure = ( error ) => ( {
-	type: EDITOR_AUTOSAVE_FAILURE,
-	error,
-} );
-
-export const editorAutosave = ( post ) => ( dispatch ) => {
-	if ( ! post.ID ) {
-		return Promise.reject( new Error( 'NO_AUTOSAVE' ) );
-	}
-
-	dispatch( { type: EDITOR_AUTOSAVE } );
-
-	const autosaveResult = wpcom.undocumented().site( post.site_ID ).postAutosave( post.ID, {
-		content: post.content,
-		title: post.title,
-		excerpt: post.excerpt,
-	} );
-
-	autosaveResult
-		.then( ( autosave ) => dispatch( editorAutosaveSuccess( autosave ) ) )
-		.catch( ( error ) => dispatch( editorAutosaveFailure( error ) ) );
-
-	return autosaveResult;
-};
-
 /**
  * Edits the raw TinyMCE content of a post
  *
@@ -234,10 +200,6 @@ export function editorReset( options ) {
 		isLoading: get( options, 'isLoading', false ),
 		loadingError: get( options, 'loadingError', null ),
 	};
-}
-
-export function editorSetLoadingError( loadingError ) {
-	return editorReset( { loadingError } );
 }
 
 export function editorLoadingErrorReset() {
