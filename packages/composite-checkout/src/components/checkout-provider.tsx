@@ -45,18 +45,29 @@ export const CheckoutProvider: FunctionComponent< CheckoutProviderProps > = ( pr
 		isLoading,
 		isValidating,
 		children,
+		initiallySelectedPaymentMethodId = null,
 	} = props;
 	const [ paymentMethodId, setPaymentMethodId ] = useState< string | null >(
-		paymentMethods?.length ? paymentMethods[ 0 ].id : null
+		initiallySelectedPaymentMethodId
 	);
 	const [ prevPaymentMethods, setPrevPaymentMethods ] = useState< PaymentMethod[] >( [] );
 	useEffect( () => {
-		if ( paymentMethods.length !== prevPaymentMethods.length ) {
-			debug( 'paymentMethods changed; setting payment method to first of', paymentMethods );
-			setPaymentMethodId( paymentMethods?.length ? paymentMethods[ 0 ].id : null );
+		const paymentMethodIds = paymentMethods.map( ( x ) => x?.id );
+		const prevPaymentMethodIds = prevPaymentMethods.map( ( x ) => x?.id );
+		const paymentMethodsChanged =
+			paymentMethodIds.some( ( x ) => ! prevPaymentMethodIds.includes( x ) ) ||
+			prevPaymentMethodIds.some( ( x ) => ! paymentMethodIds.includes( x ) );
+		if ( paymentMethodsChanged ) {
+			debug(
+				'paymentMethods changed; setting payment method to initial selection ',
+				initiallySelectedPaymentMethodId,
+				'from',
+				paymentMethods
+			);
 			setPrevPaymentMethods( paymentMethods );
+			setPaymentMethodId( initiallySelectedPaymentMethodId );
 		}
-	}, [ paymentMethods, prevPaymentMethods ] );
+	}, [ paymentMethods, prevPaymentMethods, initiallySelectedPaymentMethodId ] );
 
 	const [ formStatus, setFormStatus ] = useFormStatusManager(
 		Boolean( isLoading ),

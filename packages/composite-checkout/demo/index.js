@@ -365,6 +365,8 @@ function MyCheckout() {
 	);
 	paypalMethod.submitTransaction = makePayPalExpressRequest;
 
+	const paymentMethods = [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean );
+
 	return (
 		<CheckoutProvider
 			items={ items }
@@ -376,8 +378,9 @@ function MyCheckout() {
 			showSuccessMessage={ showSuccessMessage }
 			registry={ defaultRegistry }
 			isLoading={ isLoading }
-			paymentMethods={ [ applePayMethod, stripeMethod, paypalMethod ].filter( Boolean ) }
+			paymentMethods={ paymentMethods }
 			paymentProcessors={ { 'apple-pay': applePayProcessor, card: stripeCardProcessor } }
+			initiallySelectedPaymentMethodId={ paymentMethods[ 0 ]?.id }
 		>
 			<MyCheckoutBody />
 		</CheckoutProvider>
