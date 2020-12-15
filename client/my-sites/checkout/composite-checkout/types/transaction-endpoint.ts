@@ -41,6 +41,21 @@ export interface TransactionRequestWithLineItems {
 	nik?: string | undefined;
 }
 
+export type ExistingCardTransactionRequestWithLineItems = Partial< TransactionRequestWithLineItems > &
+	Required<
+		Pick<
+			TransactionRequestWithLineItems,
+			| 'country'
+			| 'postalCode'
+			| 'items'
+			| 'name'
+			| 'storedDetailsId'
+			| 'siteId'
+			| 'paymentMethodToken'
+			| 'paymentPartnerProcessorId'
+		>
+	>;
+
 export type WPCOMTransactionEndpoint = (
 	_: WPCOMTransactionEndpointRequestPayload
 ) => Promise< WPCOMTransactionEndpointResponse >;

@@ -12,7 +12,7 @@ import type { PaymentProcessorResponse } from '@automattic/composite-checkout';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './translate-cart';
 import { wpcomTransaction } from '../payment-method-helpers';
 import type { PaymentProcessorOptions } from '../types/payment-processors';
-import type { TransactionRequestWithLineItems } from '../types/transaction-endpoint';
+import type { ExistingCardTransactionRequestWithLineItems } from '../types/transaction-endpoint';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 
@@ -61,7 +61,10 @@ async function submitExistingCardPayment(
 	return wpcomTransaction( formattedTransactionData, transactionOptions );
 }
 
-type ExistingCardTransactionRequest = Omit< TransactionRequestWithLineItems, 'paymentMethodType' >;
+type ExistingCardTransactionRequest = Omit<
+	ExistingCardTransactionRequestWithLineItems,
+	'paymentMethodType'
+>;
 
 function isValidTransactionData(
 	submitData: unknown
