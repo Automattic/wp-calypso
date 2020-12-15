@@ -186,23 +186,27 @@ class Block_Patterns_From_API {
 	/**
 	 * Check that the pattern is allowed to be registered.
 	 *
-	 * Checks for tags with a prefix of `requires-` in the slug, and then attempts to match
-	 * the remainder of the slug to a theme feature.
+	 * Checks for pattern_meta tags with a prefix of `requires-` in the name, and then attempts to match
+	 * the remainder of the name to a theme feature.
 	 *
 	 * For example, to prevent patterns that depend on wide or full-width block alignment support
 	 * from being registered in sites where the active theme does not have `align-wide` support,
-	 * we can add the `requires-align-wide` tag to the pattern. This function will then match
-	 * against that tag slug, and then return `false`.
+	 * we can add the `requires-align-wide` pattern_meta tag to the pattern. This function will
+	 * then match against that pattern_meta tag, and then return `false`.
 	 *
-	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
+	 * @param array $pattern    A pattern with a 'pattern_meta' array where the key is the tag slug in English.
 	 *
 	 * @return bool
 	 */
 	private function can_register_pattern( $pattern ) {
+		if ( empty( $pattern['pattern_meta'] ) ) {
+			// Default to allowing patterns without metadata to be registered.
+			return true;
+		}
 
-		foreach ( $pattern['tags'] as $tag_slug => $value ) {
+		foreach ( $pattern['pattern_meta'] as $pattern_meta => $value ) {
 			// Match against tags with a non-translated slug beginning with `requires-`.
-			$split_slug = preg_split( '/^requires-/', $tag_slug );
+			$split_slug = preg_split( '/^requires-/', $pattern_meta );
 
 			// If the theme does not support the matched feature, then skip registering the pattern.
 			if ( isset( $split_slug[1] ) && false === get_theme_support( $split_slug[1] ) ) {
