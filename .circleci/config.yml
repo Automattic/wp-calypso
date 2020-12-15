@@ -960,13 +960,13 @@ jobs:
   wp-desktop-publish:
     docker:
       - image: circleci/golang:1.12
-    working_directory: ~/wp-calypso
+    working_directory: /home/circleci/wp-calypso
     environment:
       VERSION: v6.7.0-beta1
     steps:
       - checkout
       - attach_workspace:
-          at: ~/wp-calypso
+          at: /home/circleci/wp-calypso
       # - run:
       #     name: Install Dependencies
       #     command: go get github.com/tcnksm/ghr
@@ -978,7 +978,7 @@ jobs:
             echo "Publishing draft release for wp-desktop $VERSION..."
             NAME="WP-Desktop ${VERSION#?}"
 
-            chmod +x ./desktop/bin/make-changelog.sh
+            chmod +x desktop/bin/make-changelog.sh
             ./desktop/bin/make-changelog.sh > desktop/CHANGELOG.md
 
             cat desktop/CHANGELOG.md
