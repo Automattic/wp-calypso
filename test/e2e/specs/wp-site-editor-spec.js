@@ -26,7 +26,7 @@ before( async function () {
 	driver = await driverManager.startBrowser();
 } );
 
-describe( `[${ host }] Site Editor (${ screenSize })`, function () {
+describe( `[${ host }] Site Editor (${ screenSize }) @parallel`, function () {
 	this.timeout( mochaTimeOut );
 
 	step( 'Can log in', async function () {
