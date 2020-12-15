@@ -1,6 +1,5 @@
 export { canCurrentUserEditPost } from 'calypso/state/posts/selectors/can-current-user-edit-post';
 export { countPostLikes } from 'calypso/state/posts/selectors/count-post-likes';
-export { editedPostHasContent } from 'calypso/state/posts/selectors/edited-post-has-content';
 export { getEditedPost } from 'calypso/state/posts/selectors/get-edited-post';
 export { getEditedPostValue } from 'calypso/state/posts/selectors/get-edited-post-value';
 export { getNormalizedPost } from 'calypso/state/posts/selectors/get-normalized-post';
