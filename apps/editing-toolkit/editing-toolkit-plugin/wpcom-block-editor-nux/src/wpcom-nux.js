@@ -23,11 +23,12 @@ import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, site } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
+		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
@@ -70,9 +71,8 @@ function WpcomNux() {
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
-	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
-	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-	const nuxPages = getWpcomNuxPages( isGutenboarding );
+	const isPodcastingSite = !! site?.options?.anchor_podcast;
+	const nuxPages = getWpcomNuxPages( isPodcastingSite );
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -95,9 +95,41 @@ function WpcomNux() {
 /**
  * This function returns a collection of NUX slide data
  *
+ * @param isPodcastingSite bool Whether the current site is set as a podcasting site.
  * @returns { Array } a collection of <NuxPage /> props
  */
-function getWpcomNuxPages() {
+function getWpcomNuxPages( isPodcastingSite ) {
+	if ( isPodcastingSite ) {
+		return [
+			{
+				heading: __( 'Create your first episode', 'full-site-editing' ),
+				description: __(
+					'Let’s get your first episode set up and ready to share. It’ll remain private until you’re ready to launch.',
+					'full-site-editing'
+				),
+				imgSrc: editorImage,
+				alignBottom: true,
+			},
+			{
+				heading: __( 'Add a text transcription', 'full-site-editing' ),
+				description: __(
+					'Add more accessible content to your episode. Edit the placeholder content on your page to add a transcript of your episode audio.',
+					'full-site-editing'
+				),
+				imgSrc: blockPickerImage,
+				alignBottom: true,
+			},
+			{
+				heading: __( 'Preview your page as you go', 'full-site-editing' ),
+				description: __(
+					'This is a post page with your episode content. Click “Preview” to see your site the way your visitors will.',
+					'full-site-editing'
+				),
+				imgSrc: previewImage,
+				alignBottom: true,
+			},
+		];
+	}
 	return [
 		{
 			heading: __( 'Welcome to your website', 'full-site-editing' ),
