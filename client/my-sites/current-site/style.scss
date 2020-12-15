@@ -105,3 +105,18 @@
 		white-space: normal;
 	}
 }
+
+//Certain color schemes use the same color for the notice
+//as the menu highlight background. Give these a bottom margin.
+.is-modern,
+.is-ocean,
+.is-sunrise,
+.is-sakura,
+.is-midnight,
+.is-coffee,
+.is-blue,
+.is-ectoplasm {
+	.current-site__notices {
+		margin-bottom: 2px;
+	}
+}
