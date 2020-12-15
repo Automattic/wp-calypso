@@ -8,12 +8,12 @@ import { useSelector } from 'react-redux';
  * Internal dependencies
  */
 import { getDeltaActivities, isSuccessfulDailyBackup } from 'calypso/lib/jetpack/backup-utils';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import BackupCard from 'calypso/components/jetpack/backup-card';
 import BackupPlaceholder from 'calypso/components/jetpack/backup-placeholder';
 import MostRecentStatus from 'calypso/components/jetpack/daily-backup-status/index-alternate';
-import { useDateWithOffset } from '../hooks';
 import { useDailyBackupStatus, useRealtimeBackupStatus } from './hooks';
 
 /**

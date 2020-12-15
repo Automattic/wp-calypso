@@ -18,10 +18,8 @@ import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
-import { applySiteOffset } from 'calypso/lib/site/timezone';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
 import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 
 /**
@@ -51,16 +49,11 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	dailyDeltas,
 } ) => {
 	const moment = useLocalizedMoment();
+	const today = useDateWithOffset( moment() );
 
 	const siteId = useSelector( getSelectedSiteId );
 	const capabilities = useSelector( ( state ) =>
 		siteId ? getRewindCapabilities( state, siteId ) : null
-	);
-	const timezone = useSelector( ( state ) =>
-		siteId ? getSiteTimezoneValue( state, siteId ) : null
-	);
-	const gmtOffset = useSelector( ( state ) =>
-		siteId ? getSiteGmtOffset( state, siteId ) : null
 	);
 
 	if ( backup ) {
@@ -82,11 +75,6 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	}
 
 	if ( lastBackupDate ) {
-		const today = applySiteOffset( moment(), {
-			timezone: timezone,
-			gmtOffset: gmtOffset,
-		} );
-
 		return selectedDate.isSame( today, 'day' ) ? (
 			<BackupScheduled lastBackupDate={ lastBackupDate } isFeatured />
 		) : (

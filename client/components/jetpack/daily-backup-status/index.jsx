@@ -9,7 +9,7 @@ import { isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import { applySiteOffset } from 'calypso/lib/site/timezone';
+import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
 import { Card } from '@automattic/components';
 import {
 	isSuccessfulDailyBackup,
@@ -17,9 +17,6 @@ import {
 } from 'calypso/lib/jetpack/backup-utils';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import getSiteTimezoneValue from 'calypso/state/selectors/get-site-timezone-value';
-import getSiteGmtOffset from 'calypso/state/selectors/get-site-gmt-offset';
-import getRewindCapabilities from 'calypso/state/selectors/get-rewind-capabilities';
 import BackupFailed from './status-card/backup-failed';
 import BackupScheduled from './status-card/backup-scheduled';
 import BackupSuccessful from './status-card/backup-successful';
@@ -39,8 +36,7 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 	} );
 
 	const moment = useLocalizedMoment();
-	const timezone = useSelector( ( state ) => getSiteTimezoneValue( state, siteId ) );
-	const gmtOffset = useSelector( ( state ) => getSiteGmtOffset( state, siteId ) );
+	const today = useDateWithOffset( moment() );
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
@@ -53,11 +49,6 @@ const DailyBackupStatus = ( { selectedDate, lastBackupDate, backup, deltas } ) =
 	}
 
 	if ( lastBackupDate ) {
-		const today = applySiteOffset( moment(), {
-			timezone: timezone,
-			gmtOffset: gmtOffset,
-		} );
-
 		const selectedToday = selectedDate.isSame( today, 'day' );
 		return selectedToday ? (
 			<BackupScheduled lastBackupDate={ lastBackupDate } />
