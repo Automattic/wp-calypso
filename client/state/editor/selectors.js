@@ -119,18 +119,10 @@ export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
 }
 
-export function isEditorLoading( state ) {
-	return state.editor.isLoading;
-}
-
 export function isEditorIframeLoaded( state ) {
 	return state.editor.isIframeLoaded;
 }
 
 export function getEditorIframePort( state ) {
 	return state.editor.iframePort;
-}
-
-export function getEditorLoadingError( state ) {
-	return state.editor.loadingError;
 }

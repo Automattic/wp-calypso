@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { filter, get } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
@@ -9,7 +9,6 @@ import { filter, get } from 'lodash';
 import {
 	EDITOR_IFRAME_LOADED,
 	EDITOR_PASTE_EVENT,
-	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
 } from 'calypso/state/action-types';
@@ -42,9 +41,10 @@ export const MODAL_VIEW_STATS = {
  * @returns {any}           Action object
  */
 export function startEditingPost( siteId, postId ) {
-	return ( dispatch ) => {
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId } );
+	return {
+		type: EDITOR_START,
+		siteId,
+		postId,
 	};
 }
 
@@ -57,9 +57,10 @@ export function startEditingPost( siteId, postId ) {
  * @returns {any}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return ( dispatch ) => {
-		dispatch( editorReset() );
-		dispatch( { type: EDITOR_STOP, siteId, postId } );
+	return {
+		type: EDITOR_STOP,
+		siteId,
+		postId,
 	};
 }
 
@@ -135,11 +136,3 @@ export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null 
 	isIframeLoaded,
 	iframePort,
 } );
-
-export function editorReset( options ) {
-	return {
-		type: EDITOR_RESET,
-		isLoading: get( options, 'isLoading', false ),
-		loadingError: get( options, 'loadingError', null ),
-	};
-}

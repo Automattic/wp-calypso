@@ -1,14 +1,8 @@
 /**
- * External dependencies
- */
-import { get } from 'lodash';
-
-/**
  * Internal dependencies
  */
 import {
 	EDITOR_IFRAME_LOADED,
-	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_SAVE_SUCCESS,
@@ -39,24 +33,6 @@ export function postId( state = null, action ) {
 	return state;
 }
 
-export function loadingError( state = null, action ) {
-	switch ( action.type ) {
-		case EDITOR_RESET:
-			return get( action, 'loadingError', null );
-	}
-
-	return state;
-}
-
-export function isLoading( state = false, action ) {
-	switch ( action.type ) {
-		case EDITOR_RESET:
-			return get( action, 'isLoading', false );
-	}
-
-	return state;
-}
-
 export function isIframeLoaded( state = false, action ) {
 	switch ( action.type ) {
 		case EDITOR_IFRAME_LOADED: {
@@ -81,8 +57,6 @@ export const iframePort = withoutPersistence( ( state = null, action ) => {
 
 const combinedReducer = combineReducers( {
 	postId,
-	loadingError,
-	isLoading,
 	isIframeLoaded,
 	iframePort,
 	imageEditor,
