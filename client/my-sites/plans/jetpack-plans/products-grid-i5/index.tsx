@@ -35,6 +35,8 @@ import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import MoreInfoBox from '../more-info-box';
 import StoreFooter from 'calypso/jetpack-connect/store-footer';
 
+import getSiteId from 'calypso/state/selectors/get-site-id';
+
 /**
  * Type dependencies
  */
@@ -60,6 +62,11 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 	const [ isPlanRowWrapping, setPlanRowWrapping ] = useState( false );
 
 	const siteId = useSelector( getSelectedSiteId );
+
+	// If a site is passed by URL and the site is found in the app's state, we will assume the site
+	// is connected, and thus, we don't need to show the Jetpack Free card.
+	const isUrlSiteConnected = useSelector( ( state ) => getSiteId( state, urlQueryArgs?.site ) );
+
 	const currencyCode = useSelector( getCurrentUserCurrencyCode );
 	const currentPlanSlug =
 		useSelector( ( state ) => getSitePlan( state, siteId ) )?.product_slug || null;
@@ -188,7 +195,7 @@ const ProductsGridI5: React.FC< ProductsGridProps > = ( {
 					) ) }
 				</ul>
 				<div className="products-grid-i5__free">
-					{ ( isInConnectFlow || isInJetpackCloud ) && (
+					{ ( isInConnectFlow || ( isInJetpackCloud && ! isUrlSiteConnected ) ) && (
 						<JetpackFreeCard siteId={ siteId } urlQueryArgs={ urlQueryArgs } />
 					) }
 				</div>
