@@ -109,6 +109,7 @@ class Plans extends React.Component {
 			customerType,
 			isWPForTeamsSite,
 			hasWpcomMonthlyPlan,
+			showTreatmentPlansReorderTest,
 		} = this.props;
 
 		if ( ! selectedSite || this.isInvalidPlanInterval() ) {
@@ -157,7 +158,7 @@ class Plans extends React.Component {
 										discountEndDate={ this.props.discountEndDate }
 										site={ selectedSite }
 										plansWithScroll={ false }
-										isTreatmentPlansReorderTest={ isTreatmentPlansReorderTest }
+										showTreatmentPlansReorderTest={ showTreatmentPlansReorderTest }
 									/>
 								) }
 								<PerformanceTrackerStop />
@@ -191,6 +192,6 @@ export default connect( ( state ) => {
 		isWPForTeamsSite: isSiteWPForTeams( state, selectedSiteId ),
 		hasWpcomMonthlyPlan:
 			isWpComPlan( currentPlan?.productSlug ) && isMonthly( currentPlan?.productSlug ),
-		isTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
+		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
 	};
 } )( localize( withTrackingTool( 'HotJar' )( Plans ) ) );
