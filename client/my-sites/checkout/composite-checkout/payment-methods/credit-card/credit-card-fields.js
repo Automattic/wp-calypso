@@ -28,7 +28,7 @@ import CreditCardCvvField from './credit-card-cvv-field';
 import { FieldRow, CreditCardFieldsWrapper, CreditCardField } from './form-layout-components';
 import CreditCardLoading from './credit-card-loading';
 
-export default function CreditCardFields( { shouldUseEbanx } ) {
+export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields } ) {
 	const { __ } = useI18n();
 	const theme = useTheme();
 	const onEvent = useEvents();
@@ -84,7 +84,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 		setCardDataError( input.elementType, null );
 	};
 
-	const shouldShowContactFields = shouldUseEbanx;
+	const shouldShowContactFields = shouldUseEbanx || shouldShowTaxFields;
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
@@ -166,6 +166,7 @@ export default function CreditCardFields( { shouldUseEbanx } ) {
 						setFieldValue={ setFieldValue }
 						getErrorMessagesForField={ getErrorMessagesForField }
 						shouldUseEbanx={ shouldUseEbanx }
+						shouldShowTaxFields={ shouldShowTaxFields }
 					/>
 				) }
 			</CreditCardFieldsWrapper>

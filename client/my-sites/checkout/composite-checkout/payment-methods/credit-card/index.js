@@ -164,7 +164,13 @@ export function createCreditCardPaymentMethodStore() {
 	return { ...store, actions, selectors };
 }
 
-export function createCreditCardMethod( { store, stripe, stripeConfiguration, shouldUseEbanx } ) {
+export function createCreditCardMethod( {
+	store,
+	stripe,
+	stripeConfiguration,
+	shouldUseEbanx,
+	shouldShowTaxFields,
+} ) {
 	return {
 		id: 'card',
 		label: <CreditCardLabel />,
@@ -173,6 +179,7 @@ export function createCreditCardMethod( { store, stripe, stripeConfiguration, sh
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
+				shouldShowTaxFields={ shouldShowTaxFields }
 			/>
 		),
 		submitButton: (

@@ -58,6 +58,7 @@ export function useCreateCreditCard( {
 	stripeConfiguration,
 	stripe,
 	shouldUseEbanx,
+	shouldShowTaxFields = false,
 } ) {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
@@ -69,6 +70,7 @@ export function useCreateCreditCard( {
 						stripe,
 						stripeConfiguration,
 						shouldUseEbanx,
+						shouldShowTaxFields,
 				  } )
 				: null,
 		[
@@ -77,6 +79,7 @@ export function useCreateCreditCard( {
 			stripe,
 			stripeConfiguration,
 			shouldUseEbanx,
+			shouldShowTaxFields,
 		]
 	);
 	return stripeMethod;
