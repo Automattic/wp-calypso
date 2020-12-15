@@ -130,7 +130,7 @@ describe( 'CheckoutProvider', () => {
 					showSuccessMessage={ noop }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
-					initiallySelectedPaymentMethod={ mockMethod.id }
+					initiallySelectedPaymentMethodId={ mockMethod.id }
 				>
 					<CustomFormWithFormStatus />
 				</CheckoutProvider>
@@ -206,7 +206,7 @@ describe( 'CheckoutProvider', () => {
 					showSuccessMessage={ noop }
 					paymentMethods={ [ mockMethod ] }
 					paymentProcessors={ {} }
-					initiallySelectedPaymentMethod={ mockMethod.id }
+					initiallySelectedPaymentMethodId={ mockMethod.id }
 				>
 					<CustomFormWithTransactionStatus />
 				</CheckoutProvider>
