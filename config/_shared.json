@@ -122,7 +122,7 @@
 	"rtl": false,
 	"siftscience_key": false,
 	"signup_url": false,
-	"new_onboarding_url": false,
+	"gutenboarding_url": false,
 	"signup/social-management": false,
 	"twemoji_cdn_url": "https://s0.wp.com/wp-content/mu-plugins/wpcom-smileys/twemoji/2/",
 	"woocommerce_blog_id": 113771570,

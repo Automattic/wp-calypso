@@ -9,7 +9,7 @@
 	"i18n_default_locale_slug": "en",
 	"rtl": false,
 	"signup_url": "/start",
-	"new_onboarding_url": "/new",
+	"gutenboarding_url": "/new",
 	"login_url": "https://wordpress.com/wp-login.php",
 	"logout_url": "https://wordpress.com/wp-login.php?action=logout&redirect_to=https%3A%2F%2F|subdomain|wordpress.com",
 	"facebook_api_key": "249643311490",

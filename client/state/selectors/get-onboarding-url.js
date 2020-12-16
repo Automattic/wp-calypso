@@ -18,7 +18,7 @@ const GUTENBOARDING_LOCALES = [ 'en', 'en-gb' ];
 export default function getOnboardingUrl( state ) {
 	const userLocale = getCurrentUserLocale( state );
 	if ( GUTENBOARDING_LOCALES.includes( userLocale ) ) {
-		return config( 'new_onboarding_url' );
+		return config( 'gutenboarding_url' );
 	}
 
 	const existingUsersOnboardingVariant = getVariationForUser(
@@ -26,7 +26,7 @@ export default function getOnboardingUrl( state ) {
 		'new_onboarding_existing_users_non_en_v4'
 	);
 	if ( existingUsersOnboardingVariant === 'treatment' ) {
-		return config( 'new_onboarding_url' );
+		return config( 'gutenboarding_url' );
 	}
 
 	return config( 'signup_url' );
