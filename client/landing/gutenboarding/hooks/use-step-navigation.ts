@@ -8,14 +8,7 @@ import { useLocale } from '@automattic/i18n-utils';
 /**
  * Internal dependencies
  */
-import {
-	GutenLocationStateType,
-	Step,
-	usePath,
-	useCurrentStep,
-	useAnchorFmPodcastId,
-	useAnchorFmEpisodeId,
-} from '../path';
+import { GutenLocationStateType, Step, usePath, useCurrentStep, useAnchorFmParams } from '../path';
 import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { USER_STORE } from '../stores/user';
 import { useNewSiteVisibility } from './use-selected-plan';
@@ -42,8 +35,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	// @TODO: move site creation to a separate hook or an action on the ONBOARD store
 	const currentUser = useSelect( ( select ) => select( USER_STORE ).getCurrentUser() );
 	const newUser = useSelect( ( select ) => select( USER_STORE ).getNewUser() );
-	const anchorFmPodcastId = useAnchorFmPodcastId();
-	const anchorFmEpisodeId = useAnchorFmEpisodeId();
+	const { anchorFmPodcastId, anchorFmEpisodeId, anchorFmSpotifyShowUrl } = useAnchorFmParams();
 
 	const { createSite } = useDispatch( ONBOARD_STORE );
 	const newSiteVisibility = useNewSiteVisibility();
@@ -57,6 +49,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				visibility: newSiteVisibility,
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
+				anchorFmSpotifyShowUrl,
 			} );
 		}
 		// Adding a newUser check works for Anchor.fm flow.  Without it, we ask for login twice.
@@ -68,6 +61,7 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 				visibility: newSiteVisibility,
 				anchorFmPodcastId,
 				anchorFmEpisodeId,
+				anchorFmSpotifyShowUrl,
 			} );
 		}
 		return onSignupDialogOpen();

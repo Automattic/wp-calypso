@@ -18,7 +18,7 @@ import {
 	usePath,
 	Step,
 	useCurrentStep,
-	useAnchorFmPodcastId,
+	useAnchorFmParams,
 	useIsAnchorFm,
 } from '../../path';
 import ModalSubmitButton from '../modal-submit-button';
@@ -50,7 +50,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 	const makePath = usePath();
 	const currentStep = useCurrentStep();
 	const isMobile = useViewportMatch( 'small', '<' );
-	const anchorFmPodcastId = useAnchorFmPodcastId();
+	const { anchorFmPodcastId } = useAnchorFmParams();
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const closeModal = () => {
@@ -171,7 +171,7 @@ const SignupForm = ( { onRequestClose }: Props ) => {
 		isAnchorFmSignup
 			? `${ window.location.origin }/new${ makePath(
 					Step.IntentGathering
-			  ) }?new&anchor_podcast=${ anchorFmPodcastId }`
+			  ) }?new&anchor_podcast=${ anchorFmPodcastId }` // Fix in #48389
 			: `${ window.location.origin }/new${ makePath( Step.CreateSite ) }?new`
 	);
 	const signupUrl = encodeURIComponent( `/new${ makePath( Step[ currentStep ] ) }?signup` );
