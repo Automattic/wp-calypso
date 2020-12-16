@@ -111,64 +111,66 @@ export default function CreditCardFields( { shouldUseEbanx, shouldShowTaxFields 
 			{ ! isLoaded && <LoadingFields /> }
 
 			<CreditCardFieldsWrapper isLoaded={ isLoaded }>
-				<CreditCardField
-					id="cardholder-name"
-					type="Text"
-					autoComplete="cc-name"
-					label={ __( 'Cardholder name' ) }
-					description={ __( "Enter your name as it's written on the card" ) }
-					value={ cardholderName?.value ?? '' }
-					onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
-					isError={ !! cardholderNameErrorMessage }
-					errorMessage={ cardholderNameErrorMessage }
-					disabled={ isDisabled }
-				/>
-
-				<FieldRow>
-					<CreditCardNumberField
-						setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
-						handleStripeFieldChange={ handleStripeFieldChange }
-						stripeElementStyle={ stripeElementStyle }
-						shouldUseEbanx={ shouldUseEbanx }
-						getErrorMessagesForField={ getErrorMessagesForField }
-						setFieldValue={ setFieldValue }
-						getFieldValue={ getFieldValue }
+				<div className="credit-card-fields-inner-wrapper">
+					<CreditCardField
+						id="cardholder-name"
+						type="Text"
+						autoComplete="cc-name"
+						label={ __( 'Cardholder name' ) }
+						description={ __( "Enter your name as it's written on the card" ) }
+						value={ cardholderName?.value ?? '' }
+						onChange={ ( value ) => setFieldValue( 'cardholderName', value ) }
+						isError={ !! cardholderNameErrorMessage }
+						errorMessage={ cardholderNameErrorMessage }
+						disabled={ isDisabled }
 					/>
 
-					<FieldRow gap="4%" columnWidths="48% 48%">
-						<LeftColumn>
-							<CreditCardExpiryField
-								handleStripeFieldChange={ handleStripeFieldChange }
-								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
-								getErrorMessagesForField={ getErrorMessagesForField }
-								setFieldValue={ setFieldValue }
-								getFieldValue={ getFieldValue }
-							/>
-						</LeftColumn>
-						<RightColumn>
-							<CreditCardCvvField
-								handleStripeFieldChange={ handleStripeFieldChange }
-								stripeElementStyle={ stripeElementStyle }
-								shouldUseEbanx={ shouldUseEbanx }
-								getErrorMessagesForField={ getErrorMessagesForField }
-								setFieldValue={ setFieldValue }
-								getFieldValue={ getFieldValue }
-							/>
-						</RightColumn>
+					<FieldRow>
+						<CreditCardNumberField
+							setIsStripeFullyLoaded={ setIsStripeFullyLoaded }
+							handleStripeFieldChange={ handleStripeFieldChange }
+							stripeElementStyle={ stripeElementStyle }
+							shouldUseEbanx={ shouldUseEbanx }
+							getErrorMessagesForField={ getErrorMessagesForField }
+							setFieldValue={ setFieldValue }
+							getFieldValue={ getFieldValue }
+						/>
+
+						<FieldRow gap="4%" columnWidths="48% 48%">
+							<LeftColumn>
+								<CreditCardExpiryField
+									handleStripeFieldChange={ handleStripeFieldChange }
+									stripeElementStyle={ stripeElementStyle }
+									shouldUseEbanx={ shouldUseEbanx }
+									getErrorMessagesForField={ getErrorMessagesForField }
+									setFieldValue={ setFieldValue }
+									getFieldValue={ getFieldValue }
+								/>
+							</LeftColumn>
+							<RightColumn>
+								<CreditCardCvvField
+									handleStripeFieldChange={ handleStripeFieldChange }
+									stripeElementStyle={ stripeElementStyle }
+									shouldUseEbanx={ shouldUseEbanx }
+									getErrorMessagesForField={ getErrorMessagesForField }
+									setFieldValue={ setFieldValue }
+									getFieldValue={ getFieldValue }
+								/>
+							</RightColumn>
+						</FieldRow>
 					</FieldRow>
-				</FieldRow>
 
-				{ shouldShowContactFields && (
-					<ContactFields
-						getField={ getField }
-						getFieldValue={ getFieldValue }
-						setFieldValue={ setFieldValue }
-						getErrorMessagesForField={ getErrorMessagesForField }
-						shouldUseEbanx={ shouldUseEbanx }
-						shouldShowTaxFields={ shouldShowTaxFields }
-					/>
-				) }
+					{ shouldShowContactFields && (
+						<ContactFields
+							getField={ getField }
+							getFieldValue={ getFieldValue }
+							setFieldValue={ setFieldValue }
+							getErrorMessagesForField={ getErrorMessagesForField }
+							shouldUseEbanx={ shouldUseEbanx }
+							shouldShowTaxFields={ shouldShowTaxFields }
+						/>
+					) }
+				</div>
 			</CreditCardFieldsWrapper>
 		</StripeFields>
 	);
