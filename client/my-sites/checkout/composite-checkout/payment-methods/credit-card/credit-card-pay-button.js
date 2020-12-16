@@ -28,6 +28,7 @@ export default function CreditCardPayButton( {
 	stripe,
 	stripeConfiguration,
 	shouldUseEbanx,
+	activeButtonText = undefined,
 } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
@@ -88,18 +89,22 @@ export default function CreditCardPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }

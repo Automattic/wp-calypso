@@ -59,6 +59,7 @@ export function useCreateCreditCard( {
 	stripe,
 	shouldUseEbanx,
 	shouldShowTaxFields = false,
+	activePayButtonText = undefined,
 } ) {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
@@ -71,6 +72,7 @@ export function useCreateCreditCard( {
 						stripeConfiguration,
 						shouldUseEbanx,
 						shouldShowTaxFields,
+						activePayButtonText,
 				  } )
 				: null,
 		[
@@ -80,6 +82,7 @@ export function useCreateCreditCard( {
 			stripeConfiguration,
 			shouldUseEbanx,
 			shouldShowTaxFields,
+			activePayButtonText,
 		]
 	);
 	return stripeMethod;
@@ -285,7 +288,11 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
-export function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
+export function useCreateExistingCards( {
+	storedCards,
+	stripeConfiguration,
+	activePayButtonText = undefined,
+} ) {
 	const existingCardMethods = useMemo( () => {
 		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
@@ -298,9 +305,10 @@ export function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
 				paymentMethodToken: storedDetails.mp_ref,
 				paymentPartnerProcessorId: storedDetails.payment_partner,
 				stripeConfiguration,
+				activePayButtonText,
 			} )
 		);
-	}, [ stripeConfiguration, storedCards ] );
+	}, [ stripeConfiguration, storedCards, activePayButtonText ] );
 	return existingCardMethods;
 }
 

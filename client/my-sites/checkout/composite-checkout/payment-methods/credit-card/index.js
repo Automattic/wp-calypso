@@ -169,7 +169,8 @@ export function createCreditCardMethod( {
 	stripe,
 	stripeConfiguration,
 	shouldUseEbanx,
-	shouldShowTaxFields,
+	shouldShowTaxFields = false,
+	activePayButtonText = undefined,
 } ) {
 	return {
 		id: 'card',
@@ -188,6 +189,7 @@ export function createCreditCardMethod( {
 				stripe={ stripe }
 				stripeConfiguration={ stripeConfiguration }
 				shouldUseEbanx={ shouldUseEbanx }
+				activeButtonText={ activePayButtonText }
 			/>
 		),
 		inactiveContent: <CreditCardSummary />,
