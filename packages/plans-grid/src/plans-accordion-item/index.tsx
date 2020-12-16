@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { NextButton } from '@automattic/onboarding';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
@@ -59,6 +59,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	onToggle,
 	disabledLabel,
 } ) => {
+	const { __ } = useI18n();
+
 	// show a nbps in price while loading to prevent a janky UI
 	const nbsp = '\u00A0\u00A0';
 

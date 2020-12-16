@@ -5,7 +5,7 @@ import * as React from 'react';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown } from '@wordpress/icons';
 import classNames from 'classnames';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import { useState } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 
@@ -25,6 +25,7 @@ export interface Props {
 }
 
 const DomainPickerCategories: React.FunctionComponent< Props > = ( { onSelect, selected } ) => {
+	const { __ } = useI18n();
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const handleSelect = ( slug?: string ) => {

@@ -46,7 +46,6 @@
 		"history": "^5.0.0"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^3.14.0",
 		"react": "^16.8"
 	},
 	"private": true

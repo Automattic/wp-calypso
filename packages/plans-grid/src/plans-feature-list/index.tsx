@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { createInterpolateElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { Icon, check, close } from '@wordpress/icons';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -111,6 +111,8 @@ const PlansFeatureList: React.FunctionComponent< Props > = ( {
 	disabledLabel,
 	multiColumn = false,
 } ) => {
+	const { __ } = useI18n();
+
 	const domainMessage = domainMessageStateMachine( isFree, domain, __ );
 
 	return (

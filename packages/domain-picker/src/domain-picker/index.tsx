@@ -8,7 +8,7 @@ import { Button, TextControl, Notice } from '@wordpress/components';
 import { Icon, search } from '@wordpress/icons';
 import { getNewRailcarId, recordTrainTracksRender } from '@automattic/calypso-analytics';
 import { DataStatus } from '@automattic/data-stores/src/domain-suggestions/constants';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 
 /**
@@ -134,6 +134,7 @@ const DomainPicker: FunctionComponent< Props > = ( {
 	areDependenciesLoading = false,
 	orderSubDomainsLast = false,
 } ) => {
+	const { __ } = useI18n();
 	const label = __( 'Search for a domain', __i18n_text_domain__ );
 
 	const [ isExpanded, setIsExpanded ] = useState( false );
