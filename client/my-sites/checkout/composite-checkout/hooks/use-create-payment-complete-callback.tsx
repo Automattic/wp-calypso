@@ -104,7 +104,7 @@ export default function useCreatePaymentCompleteCallback( {
 				productAliasFromUrl,
 				isEligibleForSignupDestinationResult,
 				shouldShowOneClickTreatment,
-				hideNudge: !! isComingFromUpsell,
+				hideNudge: isComingFromUpsell,
 				isInEditor,
 				previousRoute,
 			};
