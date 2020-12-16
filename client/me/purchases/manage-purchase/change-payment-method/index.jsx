@@ -50,7 +50,6 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import {
-	useCreatePayPal,
 	useCreateCreditCard,
 	useCreateExistingCards,
 } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
@@ -338,8 +337,6 @@ function useAssignablePaymentMethods() {
 	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
-	const paypalMethod = useCreatePayPal();
-
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
@@ -361,8 +358,8 @@ function useAssignablePaymentMethods() {
 	} );
 
 	const paymentMethods = useMemo(
-		() => [ ...existingCardMethods, stripeMethod, paypalMethod ].filter( Boolean ),
-		[ paypalMethod, stripeMethod, existingCardMethods ]
+		() => [ ...existingCardMethods, stripeMethod ].filter( Boolean ),
+		[ stripeMethod, existingCardMethods ]
 	);
 
 	return paymentMethods;
