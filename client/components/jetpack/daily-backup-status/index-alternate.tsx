@@ -7,19 +7,21 @@ import { useSelector } from 'react-redux';
 /**
  * Internal dependencies
  */
-import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
-import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
-import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
-import NoBackupsYet from 'calypso/components/jetpack/backup-card/no-backups-yet';
-import BackupCard from 'calypso/components/jetpack/backup-card';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	isSuccessfulDailyBackup,
 	isSuccessfulRealtimeBackup,
 } from 'calypso/lib/jetpack/backup-utils';
 import useDateWithOffset from 'calypso/lib/jetpack/hooks/use-date-with-offset';
+import QueryRewindBackups from 'calypso/components/data/query-rewind-backups';
+import BackupCard from 'calypso/components/jetpack/backup-card';
+import BackupFailed from 'calypso/components/jetpack/backup-card/backup-failed';
+import BackupInProgress from 'calypso/components/jetpack/backup-card/backup-in-progress';
+import BackupScheduled from 'calypso/components/jetpack/backup-card/backup-scheduled';
+import NoBackupsOnSelectedDate from 'calypso/components/jetpack/backup-card/no-backups-on-selected-date';
+import NoBackupsYet from 'calypso/components/jetpack/backup-card/no-backups-yet';
+import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
-import { siteHasRealtimeBackups } from './selectors';
+import { siteHasBackupInProgress, siteHasRealtimeBackups } from './selectors';
 
 /**
  * Style dependencies
@@ -53,6 +55,10 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	const today = useDateWithOffset( moment() );
 
 	const hasRealtimeBackups = useSelector( ( state ) => siteHasRealtimeBackups( state, siteId ) );
+	const backupInProgress = useSelector( ( state ) => siteHasBackupInProgress( state, siteId ) );
+	if ( selectedDate.isSame( today, 'day' ) && backupInProgress ) {
+		return <BackupInProgress lastBackupDate={ lastBackupDate } isFeatured />;
+	}
 
 	if ( backup ) {
 		const isSuccessful = hasRealtimeBackups ? isSuccessfulRealtimeBackup : isSuccessfulDailyBackup;
@@ -80,4 +86,13 @@ const DailyBackupStatusAlternate: FunctionComponent< Props > = ( {
 	return <NoBackupsYet isFeatured />;
 };
 
-export default DailyBackupStatusAlternate;
+export default ( props: Props ): React.ReactElement => {
+	const siteId = useSelector( getSelectedSiteId );
+
+	return (
+		<>
+			<QueryRewindBackups siteId={ siteId } />
+			<DailyBackupStatusAlternate { ...props } />
+		</>
+	);
+};
