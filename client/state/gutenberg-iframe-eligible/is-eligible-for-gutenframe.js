@@ -20,7 +20,7 @@ export const isEligibleForGutenframe = ( state, siteId ) => {
 	const isBrokenJetpack =
 		jetpackVersion &&
 		versionCompare( jetpackVersion, '9.2-alpha', '>=' ) &&
-		versionCompare( jetpackVersion, '9.2.1', '<=' ) &&
+		versionCompare( jetpackVersion, '9.2.1', '<' ) &&
 		! isAtomicSite( state, siteId );
 
 	return ! isBrokenJetpack && get( state, [ 'gutenbergIframeEligible', siteId ], true );
