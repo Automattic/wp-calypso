@@ -10,7 +10,12 @@ import { useCallback } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { useDateWithOffset, useFirstMatchingBackupAttempt } from '../hooks';
 
-export const useCanGoToDate = ( selectedDate: Moment, oldestDateAvailable?: Moment ) => {
+type CanGoToDateHook = (
+	selectedDate: Moment,
+	oldestDateAvailable?: Moment
+) => ( desiredDate: Moment ) => boolean;
+
+export const useCanGoToDate: CanGoToDateHook = ( selectedDate, oldestDateAvailable ) => {
 	const moment = useLocalizedMoment();
 	const today = useDateWithOffset( moment() );
 
