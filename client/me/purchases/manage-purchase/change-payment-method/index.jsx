@@ -3,16 +3,16 @@
  */
 import page from 'page';
 import PropTypes from 'prop-types';
-import React, { Fragment, useState, useMemo, useCallback } from 'react';
+import React, { Fragment, useMemo, useCallback } from 'react';
 import { connect, useSelector } from 'react-redux';
-import { StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
+import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automattic/calypso-stripe';
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
-	usePaymentMethodId,
-	useMessages,
+	CheckoutSubmitButton,
+	makeSuccessResponse,
 } from '@automattic/composite-checkout';
-import { Card, Button } from '@automattic/components';
+import { Card } from '@automattic/components';
 import { useTranslate } from 'i18n-calypso';
 
 /**
@@ -50,13 +50,18 @@ import PaymentMethodLoader from 'calypso/me/purchases/components/payment-method-
 import { isEnabled } from 'calypso/config';
 import { concatTitle } from 'calypso/lib/react-helpers';
 import {
-	useCreatePayPal,
 	useCreateCreditCard,
 	useCreateExistingCards,
 } from 'calypso/my-sites/checkout/composite-checkout/use-create-payment-methods';
 import Gridicon from 'calypso/components/gridicon';
 import { localizeUrl } from 'calypso/lib/i18n-utils';
 import { AUTO_RENEWAL, MANAGE_PURCHASES } from 'calypso/lib/url/support';
+import {
+	getTokenForSavingCard,
+	updateCreditCard,
+	getInitializedFields,
+} from 'calypso/me/purchases/components/payment-method-form/helpers';
+import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
 function ChangePaymentMethod( props ) {
 	const { isStripeLoading } = useStripe();
@@ -125,6 +130,8 @@ function ChangePaymentMethod( props ) {
 							currentPaymentMethod={ props.card }
 							purchase={ props.purchase }
 							successCallback={ successCallback }
+							siteSlug={ props.siteSlug }
+							apiParams={ { purchaseId: props.purchase.id } }
 						/>
 					) : (
 						<PaymentMethodForm
@@ -166,15 +173,18 @@ const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
-function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallback } ) {
+function ChangePaymentMethodList( {
+	currentPaymentMethod,
+	purchase,
+	successCallback,
+	siteSlug,
+	apiParams,
+} ) {
 	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
 
-	const [ formSubmitting, setFormSubmitting ] = useState( false );
 	const translate = useTranslate();
-	const { isStripeLoading, stripeLoadingError } = useStripe();
+	const { isStripeLoading } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
-
-	const disabled = isStripeLoading || formSubmitting || stripeLoadingError || ! paymentMethods;
 
 	const showErrorMessage = useCallback( ( error ) => {
 		const message = error?.toString ? error.toString() : error;
@@ -198,12 +208,18 @@ function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallb
 				type: 'FAAAKE',
 				label: 'fake thing',
 			} }
-			onPaymentComplete={ () => {} }
+			onPaymentComplete={ () =>
+				onChangeComplete( { successCallback, translate, showSuccessMessage } )
+			}
 			showErrorMessage={ showErrorMessage }
 			showInfoMessage={ showInfoMessage }
 			showSuccessMessage={ showSuccessMessage }
 			paymentMethods={ paymentMethods }
-			paymentProcessors={ {} }
+			paymentProcessors={ {
+				'existing-card': ( data ) => assignExistingCardProcessor( purchase, data ),
+				card: ( data ) =>
+					assignNewCardProcessor( { purchase, translate, siteSlug, apiParams }, data ),
+			} }
 			isLoading={ isStripeLoading }
 			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
 		>
@@ -218,77 +234,65 @@ function ChangePaymentMethodList( { currentPaymentMethod, purchase, successCallb
 					</p>
 				</div>
 
-				<SaveButton
-					translate={ translate }
-					disabled={ disabled }
-					formSubmitting={ formSubmitting }
-					purchase={ purchase }
-					setFormSubmitting={ setFormSubmitting }
-					successCallback={ successCallback }
-				/>
+				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
 	);
 }
 
-function SaveButton( {
-	translate,
-	disabled,
-	formSubmitting,
-	purchase,
-	setFormSubmitting,
-	successCallback,
-} ) {
-	const [ selectedPaymentMethodId ] = usePaymentMethodId();
-	const { showErrorMessage, showSuccessMessage } = useMessages();
+function onChangeComplete( { successCallback, translate, showSuccessMessage } ) {
+	showSuccessMessage( translate( 'Your payment method has been set.' ) );
+	successCallback();
+}
 
-	const isSubmitting = disabled || formSubmitting;
+async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
+	return wpcomAssignPaymentMethod( purchase.id, storedDetailsId ).then( ( data ) => {
+		return makeSuccessResponse( data );
+	} );
+}
 
-	const isStoredCard = /^existingCard-/.test( selectedPaymentMethodId );
-
-	const onClick = () => {
-		setFormSubmitting( true );
-		wpcomAssignPaymentMethod( purchase.id, selectedPaymentMethodId.replace( /^existingCard-/, '' ) )
-			.then( () => {
-				showSuccessMessage( translate( 'Your payment method has been set.' ) );
-				setFormSubmitting( false );
-				successCallback();
-			} )
-			.catch( ( error ) => {
-				showErrorMessage( error );
-				setFormSubmitting( false );
-			} );
+async function assignNewCardProcessor(
+	{ purchase, translate, siteSlug, apiParams },
+	{ stripe, stripeConfiguration, name, countryCode, postalCode }
+) {
+	const createStripeSetupIntentAsync = async ( paymentDetails ) => {
+		const { country, 'postal-code': zip } = paymentDetails;
+		const paymentDetailsForStripe = {
+			name,
+			address: {
+				country: country,
+				postal_code: zip,
+			},
+		};
+		return createStripeSetupIntent( stripe, stripeConfiguration, paymentDetailsForStripe );
 	};
 
-	let buttonText = null;
-	if ( isStoredCard ) {
-		buttonText = formSubmitting
-			? translate( 'Saving card…', {
-					context: 'Button label',
-					comment: 'Credit card',
-			  } )
-			: translate( 'Use this card', {
-					context: 'Button label',
-					comment: 'Credit card',
-			  } );
-	} else {
-		buttonText = formSubmitting
-			? translate( 'Saving card…', {
-					context: 'Button label',
-					comment: 'Credit card',
-			  } )
-			: translate( 'Save card', {
-					context: 'Button label',
-					comment: 'Credit card',
-			  } );
-	}
+	const formFieldValues = getInitializedFields( {
+		country: countryCode,
+		postalCode,
+		name,
+	} );
 
-	return (
-		// TODO: change button text based on payment method
-		<Button disabled={ isSubmitting } busy={ isSubmitting } onClick={ onClick } primary>
-			{ buttonText }
-		</Button>
-	);
+	return getTokenForSavingCard( {
+		formFieldValues,
+		createCardToken: createStripeSetupIntentAsync,
+		parseTokenFromResponse: ( response ) => response.payment_method,
+		translate,
+	} )
+		.then( ( token ) =>
+			updateCreditCard( {
+				formFieldValues,
+				apiParams,
+				purchase,
+				siteSlug,
+				token,
+				translate,
+				stripeConfiguration,
+			} )
+		)
+		.then( ( data ) => {
+			return makeSuccessResponse( data );
+		} );
 }
 
 function TosText( { translate } ) {
@@ -331,9 +335,8 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 } );
 
 function useAssignablePaymentMethods() {
+	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
-
-	const paypalMethod = useCreatePayPal();
 
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
@@ -341,6 +344,8 @@ function useAssignablePaymentMethods() {
 		stripeConfiguration,
 		stripe,
 		shouldUseEbanx: false,
+		shouldShowTaxFields: true,
+		activePayButtonText: translate( 'Save card' ),
 	} );
 
 	// getStoredCards always returns a new array, but we need a memoized version
@@ -350,11 +355,12 @@ function useAssignablePaymentMethods() {
 	const existingCardMethods = useCreateExistingCards( {
 		storedCards,
 		stripeConfiguration,
+		activePayButtonText: translate( 'Use this card' ),
 	} );
 
 	const paymentMethods = useMemo(
-		() => [ ...existingCardMethods, stripeMethod, paypalMethod ].filter( Boolean ),
-		[ paypalMethod, stripeMethod, existingCardMethods ]
+		() => [ ...existingCardMethods, stripeMethod ].filter( Boolean ),
+		[ stripeMethod, existingCardMethods ]
 	);
 
 	return paymentMethods;

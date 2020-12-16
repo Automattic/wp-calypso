@@ -11,6 +11,11 @@ import styled from '../lib/styled';
 
 const debug = debugFactory( 'composite-checkout:checkout-error-boundary' );
 
+const ErrorContainer = styled.div`
+	margin: 2em;
+	text-align: center;
+`;
+
 export default class CheckoutErrorBoundary extends React.Component< CheckoutErrorBoundaryProps > {
 	constructor( props: CheckoutErrorBoundaryProps ) {
 		super( props );
@@ -40,14 +45,9 @@ export default class CheckoutErrorBoundary extends React.Component< CheckoutErro
 
 interface CheckoutErrorBoundaryProps {
 	errorMessage: React.ReactNode;
-	onError?: ( message: string ) => void;
+	onError?: ( message: string ) => void | undefined;
 }
 
 function ErrorFallback( { errorMessage }: { errorMessage: React.ReactNode } ) {
 	return <ErrorContainer>{ errorMessage }</ErrorContainer>;
 }
-
-const ErrorContainer = styled.div`
-	margin: 2em;
-	text-align: center;
-`;
