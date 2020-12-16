@@ -174,3 +174,19 @@ export interface Domain {
 	product_slug?: any;
 	owner: string;
 }
+
+export interface SiteLaunchState {
+	status: SiteLaunchStatus;
+	errorCode: SiteLaunchError | undefined;
+}
+
+export enum SiteLaunchError {
+	INTERNAL = 'internal',
+}
+
+export enum SiteLaunchStatus {
+	UNINITIALIZED = 'unintialized',
+	IDLE = 'idle',
+	SUCCESS = 'success',
+	FAILURE = 'failure',
+}

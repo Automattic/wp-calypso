@@ -7,7 +7,15 @@ import { combineReducers } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { NewSiteBlogDetails, NewSiteErrorResponse, SiteDetails, Domain } from './types';
+import {
+	NewSiteBlogDetails,
+	NewSiteErrorResponse,
+	SiteDetails,
+	Domain,
+	SiteLaunchState,
+	SiteLaunchStatus,
+	SiteLaunchError,
+} from './types';
 import type { Action } from './actions';
 
 export const newSiteData: Reducer< NewSiteBlogDetails | undefined, Action > = ( state, action ) => {
@@ -101,18 +109,30 @@ export const sitesDomains: Reducer< { [ key: number ]: Domain[] }, Action > = (
 	return state;
 };
 
-export const launchStatus: Reducer<
-	{ [ key: number ]: { isSiteLaunched: boolean; isSiteLaunching: boolean } },
-	Action
-> = ( state = {}, action ) => {
+export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action > = (
+	state = {},
+	action
+) => {
 	if ( action.type === 'LAUNCH_SITE_START' ) {
-		return { ...state, [ action.siteId ]: { isSiteLaunched: false, isSiteLaunching: true } };
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.IDLE, errorCode: undefined },
+		};
 	}
 	if ( action.type === 'LAUNCH_SITE_COMPLETE' ) {
-		return { ...state, [ action.siteId ]: { isSiteLaunched: true, isSiteLaunching: false } };
+		return {
+			...state,
+			[ action.siteId ]: { status: SiteLaunchStatus.SUCCESS, errorCode: undefined },
+		};
 	}
 	if ( action.type === 'LAUNCH_SITE_ERROR' ) {
-		return { ...state, [ action.siteId ]: { isSiteLaunched: false, isSiteLaunching: false } };
+		return {
+			...state,
+			[ action.siteId ]: {
+				status: SiteLaunchStatus.FAILURE,
+				errorCode: SiteLaunchError.INTERNAL,
+			},
+		};
 	}
 	return state;
 };

@@ -10,7 +10,13 @@
  * Internal dependencies
  */
 import { sites, launchStatus } from '../reducer';
-import { SiteDetails, SiteError } from '../types';
+import {
+	SiteLaunchError,
+	SiteLaunchState,
+	SiteLaunchStatus,
+	SiteDetails,
+	SiteError,
+} from '../types';
 import { createActions } from '../actions';
 
 describe( 'Site', () => {
@@ -60,15 +66,12 @@ describe( 'Site', () => {
 
 	describe( 'Launch Status', () => {
 		type ClientCredentials = { client_id: string; client_secret: string };
-		type LaunchStatusState = {
-			[ key: number ]: { isSiteLaunched: boolean; isSiteLaunching: boolean };
-		};
 
 		let siteId: number;
 		let client_id: string;
 		let client_secret: string;
 		let mockedClientCredentials: ClientCredentials;
-		let originalState: LaunchStatusState;
+		let originalState: { [ key: number ]: SiteLaunchState };
 
 		beforeEach( () => {
 			siteId = 12345;
@@ -76,7 +79,7 @@ describe( 'Site', () => {
 			client_secret = 'magic_client_secret';
 			mockedClientCredentials = { client_id, client_secret };
 			originalState = {
-				[ siteId ]: { isSiteLaunched: false, isSiteLaunching: false },
+				[ siteId ]: { status: SiteLaunchStatus.UNINITIALIZED, errorCode: undefined },
 			};
 		} );
 
@@ -91,7 +94,7 @@ describe( 'Site', () => {
 			const action = launchSiteStart( siteId );
 			const expected = {
 				...originalState,
-				[ siteId ]: { ...originalState[ siteId ], isSiteLaunching: true },
+				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.IDLE },
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
@@ -103,7 +106,7 @@ describe( 'Site', () => {
 			const action = launchSiteComplete( siteId );
 			const expected = {
 				...originalState,
-				[ siteId ]: { ...originalState[ siteId ], isSiteLaunched: true },
+				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.SUCCESS },
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
@@ -115,6 +118,11 @@ describe( 'Site', () => {
 			const action = launchSiteError( siteId, error );
 			const expected = {
 				...originalState,
+				[ siteId ]: {
+					...originalState[ siteId ],
+					status: SiteLaunchStatus.FAILURE,
+					errorCode: SiteLaunchError.INTERNAL,
+				},
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );

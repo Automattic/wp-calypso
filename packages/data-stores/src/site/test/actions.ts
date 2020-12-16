@@ -9,7 +9,8 @@ import { createActions } from '../actions';
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
 const mockedClientCredentials = { client_id, client_secret };
-const siteId = 11;
+const siteId = 12345;
+const error = 'Something went wrong terribly';
 
 describe( 'Site Actions', () => {
 	describe( 'LAUNCH_SITE Actions', () => {
@@ -37,7 +38,6 @@ describe( 'Site Actions', () => {
 
 		it( 'should return a LAUNCH_SITE_ERROR Action', () => {
 			const { launchSiteError } = createActions( mockedClientCredentials );
-			const error = 'Something went wrong';
 
 			const expected = {
 				type: 'LAUNCH_SITE_ERROR',
@@ -80,7 +80,6 @@ describe( 'Site Actions', () => {
 		it( 'should fail to launch a site', () => {
 			const { launchSite } = createActions( mockedClientCredentials );
 			const generator = launchSite( siteId );
-			const error = 'something went wrong';
 
 			const mockedApiResponse = {
 				request: {

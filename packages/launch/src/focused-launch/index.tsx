@@ -21,8 +21,8 @@ import { useDomainSuggestionFromCart, usePlanFromCart } from '../hooks';
 import './style.scss';
 
 const FocusedLaunch: React.FunctionComponent = () => {
-	const { isSiteLaunched, isSiteLaunching } = useSite();
-
+	const { isSiteLaunched, isSiteLaunching, siteLaunchStatus } = useSite();
+	console.log( typeof siteLaunchStatus );
 	const { enablePersistentSuccessView } = useDispatch( LAUNCH_STORE );
 
 	const [ hasSelectedDomain, selectedPlan, shouldDisplaySuccessView ] = useSelect( ( select ) => {
