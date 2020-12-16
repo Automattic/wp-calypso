@@ -40,7 +40,9 @@ $cloud-icon-height: 24px;
 		margin-bottom: 100px;
 	}
 
-	&.backup-card__title--scheduled {
+	&.backup-card__title--preparing,
+	&.backup-card__title--scheduled,
+	&.backup-card__title--in-progress {
 		color: var( --studio-gray-40 );
 
 		img.backup-card__icon {
@@ -64,13 +66,13 @@ $cloud-icon-height: 24px;
 		}
 	}
 
-	&.backup-card__title--preparing {
-		color: var( --studio-gray-40 );
-
-		img.backup-card__icon {
-			color: var( --studio-gray-30 );
-		}
+	.is-featured &.backup-card__title--in-progress {
+		margin-bottom: 36px;
 	}
+}
+
+.backup-card__progress {
+	margin-bottom: 36px;
 }
 
 .backup-card__icon {
