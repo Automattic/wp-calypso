@@ -10,6 +10,7 @@ import { requestViewers } from 'calypso/state/viewers/actions';
 import { connect } from 'react-redux';
 
 const DEFAULT_NUMBER_OF_VIEWERS = 100;
+const DEFAULT_PAGE = 1;
 
 class QueryViewers extends React.Component {
 	componentDidMount() {
@@ -23,7 +24,11 @@ class QueryViewers extends React.Component {
 	}
 
 	request() {
-		this.props.requestViewers( this.props.siteId, this.props.page, DEFAULT_NUMBER_OF_VIEWERS );
+		this.props.requestViewers(
+			this.props.siteId,
+			this.props.page ?? DEFAULT_PAGE,
+			DEFAULT_NUMBER_OF_VIEWERS
+		);
 	}
 
 	render() {
