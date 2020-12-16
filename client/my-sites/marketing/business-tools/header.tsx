@@ -7,7 +7,7 @@ import { useTranslate } from 'i18n-calypso';
 /**
  * Internal dependencies
  */
-import { Button, Card } from '@automattic/components';
+import { Card } from '@automattic/components';
 
 interface Props {
 	handleButtonClick: () => void;
@@ -22,7 +22,7 @@ const MarketingBusinessToolsHeader: FunctionComponent< Props > = ( { handleButto
 				<img
 					className="business-tools__header-image"
 					src="/calypso/images/illustrations/illustration-404.svg"
-					alt={ translate( 'Your site with Marketing Tools' ) }
+					alt="Your site with Marketing Tools"
 				/>
 			</div>
 

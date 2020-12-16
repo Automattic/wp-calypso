@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import React, { Fragment, FunctionComponent } from 'react';
-import { useTranslate, getLocaleSlug } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 
 /**
  * Internal dependencies
@@ -22,7 +22,6 @@ import quickbooksLogo from 'calypso/assets/images/illustrations/quickbooks-logo.
 import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg';
 import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
 import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
-import jetpackLogo from 'calypso/assets/images/illustrations/jetpack-logo.svg';
 import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 
 /**
@@ -40,10 +39,7 @@ interface Props {
 	selectedSiteSlug: T.SiteSlug | null;
 }
 
-export const MarketingBusinessTools: FunctionComponent< Props > = ( {
-	recordTracksEvent,
-	selectedSiteSlug,
-} ) => {
+export const MarketingBusinessTools: FunctionComponent< Props > = ( { recordTracksEvent } ) => {
 	const translate = useTranslate();
 
 	const handlePartnerClick = () => {
@@ -70,14 +66,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_business_bench_button_click' );
 	};
 
-	const handleJetpackClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_jetpack_button_click' );
-	};
-
-	const handleOwnrClick = () => {
-		recordTracksEvent( 'calypso_marketing_business_ownr_button_click' );
-	};
-
 	return (
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
@@ -89,7 +77,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 					category={ translate( 'Finance' ) }
 					title={ translate( 'QuickBooks' ) }
 					description={ translate(
-						"Create and track invoices, track expenses, generate profit & loss statements, and make tax time for your business a breeze with the world's #1 accounting software for small businesses! "
+						"Create and track invoices, track expenses, generate profit & loss statements, and make tax time for your business a breeze with the world's #1 accounting software for small businesses!"
 					) }
 					imagePath={ quickbooksLogo }
 				>
@@ -167,19 +155,6 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 						target="_blank"
 					>
 						{ translate( 'Find a bookkeeper' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Sales' ) }
-					title={ translate( 'Jetpack CRM' ) }
-					description={ translate(
-						'Jetpack CRM is the no-nonsense CRM for WordPress. Entrepreneurs earn more money when they use a good CRM, and Jetpack CRM is the simplest and most powerful of all WordPress CRMs.'
-					) }
-					imagePath={ jetpackLogo }
-				>
-					<Button onClick={ handleJetpackClick } href="https://www.jetpack.com" target="_blank">
-						{ translate( 'Start with CRM' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 			</div>
