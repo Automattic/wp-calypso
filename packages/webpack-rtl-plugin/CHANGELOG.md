@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 4.0.0 - 2020-12-11
+
+### Added
+
+- Added peerDependency `webpack` to ^5.7.0
+
+### Breaking
+
+- Drop support for webpack 4, this plugin works with webpack 5 only.
+
 ## 3.0.0 - 2020-12-11
 
 Initial publication after the fork.
