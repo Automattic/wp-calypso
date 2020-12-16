@@ -113,6 +113,7 @@ function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
 	const currentUser = getCurrentUser( getState() );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
+	const onboardingUrl = getOnboardingUrl( getState() );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
@@ -137,7 +138,7 @@ function renderNoVisibleSites( context ) {
 		action: i18n.translate( 'Change Visibility' ),
 		actionURL: '//dashboard.wordpress.com/wp-admin/index.php?page=my-blogs',
 		secondaryAction: i18n.translate( 'Create New Site' ),
-		secondaryActionURL: `${ getOnboardingUrl() }?ref=calypso-nosites`,
+		secondaryActionURL: `${ onboardingUrl }?ref=calypso-nosites`,
 	} );
 
 	makeLayout( context, noop );
