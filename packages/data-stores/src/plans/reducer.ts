@@ -18,7 +18,7 @@ import {
 import type { PlanAction } from './actions';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
 
-type PricesMap = {
+export type PricesMap = {
 	[ slug in PlanSlug ]: string;
 };
 
