@@ -6,11 +6,13 @@ import { select } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import type { State } from './reducer';
-import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY } from './constants';
-
-import type { PlanPath } from './constants';
+import type { State, PricesMap } from './reducer';
+import { DEFAULT_PAID_PLAN, PLAN_ECOMMERCE, PLAN_FREE, STORE_KEY, PlanPath } from './constants';
 import type { Plan, PlanFeature, PlanFeatureType, PlanSlug } from './types';
+
+// Some of these selectors require unused parameters because those
+// params are used by the associated resolver.
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 export const getFeatures = ( state: State ): Record< string, PlanFeature > => state.features;
 
@@ -44,18 +46,18 @@ export const getPlanByPath = ( state: State, path?: PlanPath ): Plan | undefined
 	return path ? getSupportedPlans( state ).find( ( plan ) => plan?.pathSlug === path ) : undefined;
 };
 
-export const getPlansDetails = ( state: State, _: string ): State => state; // eslint-disable-line @typescript-eslint/no-unused-vars
+export const getPlansDetails = ( state: State, _: string ): State => state;
 
 export const getPlansPaths = ( state: State ): string[] => {
 	return getSupportedPlans( state ).map( ( plan ) => plan?.pathSlug );
 };
 
-export const getPrices = ( state: State, _: string ) => state.prices; // eslint-disable-line @typescript-eslint/no-unused-vars
+export const getPrices = ( state: State, _: string ): PricesMap => state.prices;
 
-export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ) => {
+export const isPlanEcommerce = ( _: State, planSlug?: PlanSlug ): boolean => {
 	return planSlug === PLAN_ECOMMERCE;
 };
 
-export const isPlanFree = ( _: State, planSlug?: PlanSlug ) => {
+export const isPlanFree = ( _: State, planSlug?: PlanSlug ): boolean => {
 	return planSlug === PLAN_FREE;
 };
