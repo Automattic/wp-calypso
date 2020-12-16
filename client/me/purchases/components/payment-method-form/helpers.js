@@ -56,7 +56,7 @@ export async function saveOrUpdateCreditCard( {
 	} );
 }
 
-async function getTokenForSavingCard( {
+export async function getTokenForSavingCard( {
 	formFieldValues,
 	createCardToken,
 	parseTokenFromResponse,
@@ -82,7 +82,7 @@ async function saveCreditCard( { token, translate, saveStoredCard, stripeConfigu
 	} );
 }
 
-async function updateCreditCard( {
+export async function updateCreditCard( {
 	formFieldValues,
 	apiParams,
 	purchase,

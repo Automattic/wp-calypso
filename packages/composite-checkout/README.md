@@ -262,6 +262,16 @@ A wrapper for [CheckoutStep](#CheckoutStep) objects that will connect the steps 
 
 - `areStepsActive?: boolean`. Whether or not the set of steps is active and able to be edited. Defaults to `true`.
 
+### CheckoutSubmitButton
+
+The submit button for the form. This actually renders the submit button for the currently active payment method, but it provides the `onClick` handler to attach it to the payment processor function, a `disabled` prop when the form should be disabled, and a React Error boundary. Normally this is already rendered by [CheckoutStepArea](#CheckoutStepArea), but if you want to use it directly, you can.
+
+The props you can provide to this component are as follows.
+
+- `className?: string`. An optional className.
+- `disabled?: boolean`. The button will automatically be disabled if the [form status](#useFormStatus) is not `ready`, but you can disable it for other cases as well.
+- `onLoadError?: ( error: string ) => void`. A callback that will be called if the error boundary is triggered.
+
 ### CheckoutSummaryArea
 
 Renders its `children` prop and acts as a wrapper to flow outside of the [`CheckoutSteps`](#CheckoutSteps) wrapper (floated on desktop, collapsed on mobile). It has the following props.

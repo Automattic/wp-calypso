@@ -28,6 +28,7 @@ export function createExistingCardMethod( {
 	paymentMethodToken,
 	paymentPartnerProcessorId,
 	stripeConfiguration,
+	activePayButtonText = undefined,
 } ) {
 	debug( 'creating a new existing credit card payment method', {
 		id,
@@ -54,6 +55,7 @@ export function createExistingCardMethod( {
 				storedDetailsId={ storedDetailsId }
 				paymentMethodToken={ paymentMethodToken }
 				paymentPartnerProcessorId={ paymentPartnerProcessorId }
+				activeButtonText={ activePayButtonText }
 			/>
 		),
 		inactiveContent: (
@@ -109,6 +111,7 @@ function ExistingCardPayButton( {
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
+	activeButtonText = undefined,
 } ) {
 	const [ items, total ] = useLineItems();
 	const { formStatus } = useFormStatus();
@@ -134,18 +137,22 @@ function ExistingCardPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
 }
