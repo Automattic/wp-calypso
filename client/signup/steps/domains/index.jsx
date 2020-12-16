@@ -6,7 +6,6 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { defer, get, includes, isEmpty } from 'lodash';
 import { localize, getLocaleSlug } from 'i18n-calypso';
-import validUrl from 'valid-url';
 
 /**
  * Internal dependencies
@@ -59,6 +58,7 @@ import { isPlanStepExistsAndSkipped } from 'calypso/state/signup/progress/select
 import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
 import QueryExperiments from 'calypso/components/data/query-experiments';
+import { getExternalBackUrl } from './utils';
 /**
  * Style dependencies
  */
@@ -681,6 +681,7 @@ class DomainsStep extends React.Component {
 		}
 
 		const { flowName, isAllDomains, translate, sites } = this.props;
+		const source = get( this.props, 'queryObject.source' );
 		const hasSite = Object.keys( sites ).length > 0;
 		let backUrl;
 		let backLabelText;
@@ -705,26 +706,10 @@ class DomainsStep extends React.Component {
 			}
 		}
 
-		// Override Back link if source parameter is found below
-		const backUrlSourceOverrides = {
-			'business-name-generator': '/business-name-generator',
-			domains: '/domains',
-		};
-
-		// Only override the back button from an external URL source on the below step(s) which is typically where we'd send them to as the 'entry'.
-		// We don't want to send them "back" to the source URL if they click back on "domains-launch/mapping" for example. Just send them back to the previous step.
-		const backUrlExternalSourceStepsOverrides = [ 'use-your-domain' ];
-		const source = get( this.props, 'queryObject.source' );
-
-		if (
-			( source && backUrlSourceOverrides[ source ] ) ||
-			( source &&
-				validUrl.isWebUri( source ) &&
-				backUrlExternalSourceStepsOverrides.includes( this.props.stepSectionName ) )
-		) {
-			backUrl = validUrl.isWebUri( source ) ? source : backUrlSourceOverrides[ source ];
+		const externalBackUrl = getExternalBackUrl( source, this.props.stepSectionName );
+		if ( externalBackUrl ) {
+			backUrl = externalBackUrl;
 			backLabelText = translate( 'Back' );
-
 			// Solves route conflicts between LP and calypso (ex. /domains).
 			isExternalBackUrl = true;
 		}
