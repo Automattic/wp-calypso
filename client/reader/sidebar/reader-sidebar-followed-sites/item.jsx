@@ -12,23 +12,23 @@ import Count from 'calypso/components/count';
 import { formatUrlForDisplay } from 'calypso/reader/lib/feed-display-helper';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { useDispatch } from 'react-redux';
+import Favicon from 'calypso/reader/components/favicon';
 
 /**
  * Style dependencies
  */
 import '../style.scss';
-import Favicon from 'calypso/reader/components/favicon';
 
 const ReaderSidebarFollowingItem = ( props ) => {
 	const { site, path } = props;
 	const dispatch = useDispatch();
 
-	const handleSidebarClick = () => {
+	const handleSidebarClick = ( selectedSite ) => {
 		recordAction( 'clicked_reader_sidebar_following_item' );
 		recordGaEvent( 'Clicked Reader Sidebar Following Item' );
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_sidebar_following_item_clicked', {
-				blog: decodeURIComponent( this.props.site ),
+				blog: decodeURIComponent( selectedSite.URL ),
 			} )
 		);
 	};
@@ -56,7 +56,7 @@ const ReaderSidebarFollowingItem = ( props ) => {
 			<a
 				className="sidebar__menu-link sidebar__menu-link-reader"
 				href={ streamLink }
-				onClick={ handleSidebarClick }
+				onClick={ () => handleSidebarClick( site ) }
 			>
 				<Favicon site={ site } className="sidebar__menu-item-siteicon" size={ 18 } />
 
