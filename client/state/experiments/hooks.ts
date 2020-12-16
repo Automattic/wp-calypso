@@ -24,6 +24,8 @@ let hasAnonIdGeneratingTracksEventFired = false;
  * - Account for loading state as assignment is now server-side.
  * - Account for null variations: Provide the fallback experience.
  *
+ * See the README for more info
+ *
  * @param experimentName The name of the experiment
  *
  * @returns [isVariationLoading, variation]
