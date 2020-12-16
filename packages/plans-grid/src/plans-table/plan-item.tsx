@@ -5,7 +5,8 @@ import * as React from 'react';
 import classNames from 'classnames';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { sprintf } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { DomainSuggestions } from '@automattic/data-stores';
 import type { CTAVariation, PopularBadgeVariation } from './types';
 
@@ -74,6 +75,8 @@ const PlanItem: React.FunctionComponent< Props > = ( {
 	CTAVariation = 'NORMAL',
 	popularBadgeVariation = 'ON_TOP',
 } ) => {
+	const { __ } = useI18n();
+
 	const [ isOpenInternalState, setIsOpenInternalState ] = React.useState( false );
 
 	const isDesktop = useViewportMatch( 'mobile', '>=' );

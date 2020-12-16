@@ -2,7 +2,7 @@
  * External dependencies
  */
 import * as React from 'react';
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@automattic/react-i18n';
 import type { Plans, DomainSuggestions, WPCOMFeatures } from '@automattic/data-stores';
 import { Title } from '@automattic/onboarding';
 import debugFactory from 'debug';
@@ -56,6 +56,8 @@ const PlansGrid: React.FunctionComponent< Props > = ( {
 	popularBadgeVariation = 'ON_TOP',
 	customTagLines,
 } ) => {
+	const { __ } = useI18n();
+
 	isAccordion && debug( 'PlansGrid accordion version is active' );
 
 	return (
