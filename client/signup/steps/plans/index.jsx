@@ -275,7 +275,10 @@ export const isDotBlogDomainRegistration = ( domainItem ) => {
 };
 
 export default connect(
-	( state, { path, signupDependencies: { siteSlug, domainItem } } ) => ( {
+	(
+		state,
+		{ path, signupDependencies: { siteSlug, domainItem, plans_reorder_abtest_variation } }
+	) => ( {
 		// Blogger plan is only available if user chose either a free domain or a .blog domain registration
 		disableBloggerPlanWithNonBlogDomain:
 			domainItem && ! isSubdomain( domainItem.meta ) && ! isDotBlogDomainRegistration( domainItem ),
@@ -288,7 +291,8 @@ export default connect(
 		siteType: getSiteType( state ),
 		hasInitializedSitesBackUrl: hasInitializedSites( state ) ? '/sites/' : false,
 		isMonthlyPricingTest: isTreatmentInMonthlyPricingTest( state ),
-		showTreatmentPlansReorderTest: isTreatmentPlansReorderTest( state ),
+		showTreatmentPlansReorderTest:
+			'treatment' === plans_reorder_abtest_variation || isTreatmentPlansReorderTest( state ),
 	} ),
 	{ recordTracksEvent, saveSignupStep, submitSignupStep }
 )( localize( PlansStep ) );
