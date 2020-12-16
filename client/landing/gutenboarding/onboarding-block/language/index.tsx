@@ -5,20 +5,21 @@ import * as React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useI18n } from '@automattic/react-i18n';
 import { ActionButtons, BackButton } from '@automattic/onboarding';
+import languages from '@automattic/languages';
 import LanguagePicker, { createLanguageGroups } from '@automattic/language-picker';
-import { I18N_STORE } from '../../stores/i18n';
-import { USER_STORE } from '../../stores/user';
 
 /**
  * WordPress dependencies
  */
-import { useSelect } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import { ChangeLocaleContextConsumer } from '../../components/locale-context';
-import languages from '@automattic/languages';
+import { I18N_STORE } from '../../stores/i18n';
+import { PLANS_STORE } from '../../stores/plans';
+import { USER_STORE } from '../../stores/user';
 
 /**
  * Style dependencies
@@ -40,6 +41,8 @@ const LanguageStep: React.FunctionComponent = () => {
 
 	const history = useHistory();
 
+	const { invalidateResolution } = useDispatch( 'core/data' );
+
 	const goBack = () => {
 		history.goBack();
 	};
@@ -58,6 +61,12 @@ const LanguageStep: React.FunctionComponent = () => {
 						languageGroups={ createLanguageGroups( __ ) }
 						languages={ languages }
 						onSelectLanguage={ ( language ) => {
+							// Invalidate the resolution cache for getPrices and getPlansDetails
+							// when the locale changes, to force the data for the plans grid
+							// to be fetched again, fresh from the plans/details and plans endpoints.
+							invalidateResolution( PLANS_STORE, 'getPlansDetails', [ language.langSlug ] );
+							invalidateResolution( PLANS_STORE, 'getPrices', [ language.langSlug ] );
+
 							changeLocale( language.langSlug );
 							goBack();
 						} }
