@@ -128,6 +128,104 @@ describe( 'MySitesSidebar', () => {
 		} );
 	} );
 
+	describe( 'MySitesSidebar.woocommerce()', () => {
+		const defaultProps = {
+			site: {},
+			siteSuffix: '/mysite.com',
+			translate: ( x ) => x,
+		};
+
+		beforeEach( () => {
+			config.isEnabled.mockImplementation( () => true );
+		} );
+
+		test( 'Should return null item if woocommerce/store-deprecated is disabled', () => {
+			config.isEnabled.mockImplementation(
+				( feature ) => feature !== 'woocommerce/store-deprecated' // Only disable this one feature
+			);
+			const Sidebar = new MySitesSidebar( {
+				canUserUserStore: true,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has Personal plan', () => {
+			const Sidebar = new MySitesSidebar( {
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'personal',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has eCommerce plan', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'ecommerce-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return null item if site has Business plan and user cannot use store', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: false,
+				...defaultProps,
+				site: {
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).toEqual( null );
+		} );
+
+		test( 'Should return WooCommerce menu item if site has Business plan and user can use store', () => {
+			const Sidebar = new MySitesSidebar( {
+				canUserUseStore: true,
+				...defaultProps,
+				site: {
+					options: {
+						admin_url: 'http://test.com/wp-admin/',
+					},
+					plan: {
+						product_slug: 'business-bundle',
+					},
+				},
+			} );
+			const WooCommerce = () => Sidebar.woocommerce();
+
+			const wrapper = shallow( <WooCommerce /> );
+			expect( wrapper.html() ).not.toEqual( null );
+			expect( wrapper.props().link ).toEqual( 'http://test.com/wp-admin/admin.php?page=wc-admin' );
+		} );
+	} );
+
 	describe( 'MySitesSidebar.earn()', () => {
 		const defaultProps = {
 			site: {
