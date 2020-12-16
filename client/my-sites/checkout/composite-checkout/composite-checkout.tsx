@@ -51,11 +51,11 @@ import {
 	freePurchaseProcessor,
 	multiPartnerCardProcessor,
 	fullCreditsProcessor,
-	existingCardProcessor,
 	payPalProcessor,
 	genericRedirectProcessor,
 	weChatProcessor,
 } from './payment-method-processors';
+import existingCardProcessor from './lib/existing-card-processor';
 import useGetThankYouUrl from './hooks/use-get-thank-you-url';
 import createAnalyticsEventHandler from './record-analytics';
 import { useProductVariants } from './hooks/product-variants';
@@ -84,6 +84,9 @@ import { WPCOMCartItem } from './types/checkout-cart';
 import doesValueExist from './lib/does-value-exist';
 import EmptyCart from './components/empty-cart';
 import getContactDetailsType from './lib/get-contact-details-type';
+import getDomainDetails from './lib/get-domain-details';
+import getPostalCode from './lib/get-postal-code';
+import mergeIfObjects from './lib/merge-if-objects';
 import type { ReactStandardAction } from './types/analytics';
 import useCreatePaymentCompleteCallback from './hooks/use-create-payment-complete-callback';
 
@@ -139,7 +142,6 @@ export default function CompositeCheckout( {
 	const isPrivate = useSelector( ( state ) => siteId && isPrivateSite( state, siteId ) ) || false;
 	const { stripe, stripeConfiguration, isStripeLoading, stripeLoadingError } = useStripe();
 	const createUserAndSiteBeforeTransaction = Boolean( isLoggedOutCart || isNoSiteCart );
-	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const reduxDispatch = useDispatch();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const recordEvent: ( action: ReactStandardAction ) => void = useCallback(
@@ -356,6 +358,7 @@ export default function CompositeCheckout( {
 
 	const contactInfo: ManagedContactDetails | undefined = select( 'wpcom' )?.getContactInfo();
 	const countryCode: string = contactInfo?.countryCode?.value ?? '';
+	const subdivisionCode: string = contactInfo?.state?.value ?? '';
 
 	const paymentMethods = arePaymentMethodsLoading
 		? []
@@ -416,13 +419,22 @@ export default function CompositeCheckout( {
 	const contactDetailsType = getContactDetailsType( responseCart );
 	const includeDomainDetails = contactDetailsType === 'domain';
 	const includeGSuiteDetails = contactDetailsType === 'gsuite';
+	const transactionOptions = { createUserAndSiteBeforeTransaction };
 	const dataForProcessor = useMemo(
 		() => ( {
 			includeDomainDetails,
 			includeGSuiteDetails,
 			recordEvent,
+			createUserAndSiteBeforeTransaction,
+			stripeConfiguration,
 		} ),
-		[ includeDomainDetails, includeGSuiteDetails, recordEvent ]
+		[
+			includeDomainDetails,
+			includeGSuiteDetails,
+			recordEvent,
+			createUserAndSiteBeforeTransaction,
+			stripeConfiguration,
+		]
 	);
 	const dataForRedirectProcessor = useMemo(
 		() => ( {
@@ -432,6 +444,16 @@ export default function CompositeCheckout( {
 		} ),
 		[ dataForProcessor, getThankYouUrl, siteSlug ]
 	);
+
+	const domainDetails = useMemo(
+		() =>
+			getDomainDetails( {
+				includeDomainDetails,
+				includeGSuiteDetails,
+			} ),
+		[ includeGSuiteDetails, includeDomainDetails ]
+	);
+	const postalCode = getPostalCode();
 
 	const paymentProcessors = useMemo(
 		() => ( {
@@ -466,7 +488,16 @@ export default function CompositeCheckout( {
 			'full-credits': ( transactionData: unknown ) =>
 				fullCreditsProcessor( transactionData, dataForProcessor, transactionOptions ),
 			'existing-card': ( transactionData: unknown ) =>
-				existingCardProcessor( transactionData, dataForProcessor, transactionOptions ),
+				existingCardProcessor(
+					mergeIfObjects( transactionData, {
+						country: countryCode,
+						postalCode,
+						subdivisionCode,
+						siteId: siteId ? String( siteId ) : undefined,
+						domainDetails,
+					} ),
+					dataForProcessor
+				),
 			paypal: ( transactionData: unknown ) =>
 				payPalProcessor(
 					transactionData,
@@ -474,7 +505,18 @@ export default function CompositeCheckout( {
 					transactionOptions
 				),
 		} ),
-		[ couponItem, dataForProcessor, dataForRedirectProcessor, getThankYouUrl, transactionOptions ]
+		[
+			siteId,
+			couponItem,
+			dataForProcessor,
+			dataForRedirectProcessor,
+			getThankYouUrl,
+			transactionOptions,
+			countryCode,
+			subdivisionCode,
+			postalCode,
+			domainDetails,
+		]
 	);
 
 	const jetpackColors = isJetpackNotAtomic

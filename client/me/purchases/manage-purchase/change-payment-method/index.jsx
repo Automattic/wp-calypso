@@ -183,7 +183,7 @@ function ChangePaymentMethodList( {
 	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
 
 	const translate = useTranslate();
-	const { isStripeLoading } = useStripe();
+	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
 
 	const showErrorMessage = useCallback( ( error ) => {
@@ -218,7 +218,10 @@ function ChangePaymentMethodList( {
 			paymentProcessors={ {
 				'existing-card': ( data ) => assignExistingCardProcessor( purchase, data ),
 				card: ( data ) =>
-					assignNewCardProcessor( { purchase, translate, siteSlug, apiParams }, data ),
+					assignNewCardProcessor(
+						{ purchase, translate, siteSlug, apiParams, stripe, stripeConfiguration },
+						data
+					),
 			} }
 			isLoading={ isStripeLoading }
 			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
@@ -252,8 +255,8 @@ async function assignExistingCardProcessor( purchase, { storedDetailsId } ) {
 }
 
 async function assignNewCardProcessor(
-	{ purchase, translate, siteSlug, apiParams },
-	{ stripe, stripeConfiguration, name, countryCode, postalCode }
+	{ purchase, translate, siteSlug, apiParams, stripe, stripeConfiguration },
+	{ name, countryCode, postalCode }
 ) {
 	const createStripeSetupIntentAsync = async ( paymentDetails ) => {
 		const { country, 'postal-code': zip } = paymentDetails;

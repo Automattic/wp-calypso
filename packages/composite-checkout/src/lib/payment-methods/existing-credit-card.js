@@ -27,7 +27,6 @@ export function createExistingCardMethod( {
 	storedDetailsId,
 	paymentMethodToken,
 	paymentPartnerProcessorId,
-	stripeConfiguration,
 	activePayButtonText = undefined,
 } ) {
 	debug( 'creating a new existing credit card payment method', {
@@ -50,7 +49,6 @@ export function createExistingCardMethod( {
 		),
 		submitButton: (
 			<ExistingCardPayButton
-				stripeConfiguration={ stripeConfiguration }
 				cardholderName={ cardholderName }
 				storedDetailsId={ storedDetailsId }
 				paymentMethodToken={ paymentMethodToken }
@@ -106,7 +104,6 @@ const CardHolderName = styled.span`
 function ExistingCardPayButton( {
 	disabled,
 	onClick,
-	stripeConfiguration,
 	cardholderName,
 	storedDetailsId,
 	paymentMethodToken,
@@ -125,12 +122,10 @@ function ExistingCardPayButton( {
 				onEvent( { type: 'EXISTING_CARD_TRANSACTION_BEGIN' } );
 				onClick( 'existing-card', {
 					items,
-					total,
 					name: cardholderName,
 					storedDetailsId,
 					paymentMethodToken,
 					paymentPartnerProcessorId,
-					stripeConfiguration,
 				} );
 			} }
 			buttonType="primary"

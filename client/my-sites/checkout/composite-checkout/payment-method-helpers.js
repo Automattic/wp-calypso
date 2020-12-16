@@ -13,24 +13,12 @@ import wp from 'calypso/lib/wp';
 import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
-import { prepareDomainContactDetailsForTransaction } from 'calypso/my-sites/checkout/composite-checkout/types/wpcom-store-state';
-import { tryToGuessPostalCodeFormat } from 'calypso/lib/postal-code';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
-
-export async function submitExistingCardPayment( transactionData, submit, transactionOptions ) {
-	debug( 'formatting existing card transaction', transactionData );
-	const formattedTransactionData = createTransactionEndpointRequestPayloadFromLineItems( {
-		...transactionData,
-		paymentMethodType: 'WPCOM_Billing_MoneyPress_Stored',
-	} );
-	debug( 'submitting existing card transaction', formattedTransactionData );
-	return submit( formattedTransactionData, transactionOptions );
-}
 
 export async function submitApplePayPayment( transactionData, submit, transactionOptions ) {
 	debug( 'formatting apple-pay transaction', transactionData );
@@ -49,12 +37,6 @@ export async function submitPayPalExpressRequest( transactionData, submit, trans
 	} );
 	debug( 'sending paypal transaction', formattedTransactionData );
 	return submit( formattedTransactionData, transactionOptions );
-}
-
-export function getDomainDetails( { includeDomainDetails, includeGSuiteDetails } ) {
-	const managedContactDetails = select( 'wpcom' )?.getContactInfo?.() ?? {};
-	const domainDetails = prepareDomainContactDetailsForTransaction( managedContactDetails );
-	return includeDomainDetails || includeGSuiteDetails ? domainDetails : null;
 }
 
 export async function fetchStripeConfiguration( requestArgs, wpcom ) {
@@ -272,10 +254,4 @@ export function createStripePaymentMethodToken( { stripe, name, country, postalC
 			postal_code: postalCode,
 		},
 	} );
-}
-
-export function getPostalCode() {
-	const countryCode = select( 'wpcom' )?.getContactInfo?.()?.countryCode?.value ?? '';
-	const postalCode = select( 'wpcom' )?.getContactInfo?.()?.postalCode?.value ?? '';
-	return tryToGuessPostalCodeFormat( postalCode.toUpperCase(), countryCode );
 }
