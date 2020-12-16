@@ -13,9 +13,11 @@ import config from 'calypso/config';
  * @returns {string}  URL of the onboarding flow for existing users.
  */
 
+const GUTENBOARDING_LOCALES = [ 'en', 'en-gb' ];
+
 export default function getOnboardingUrl( state ) {
 	const userLocale = getCurrentUserLocale( state );
-	if ( [ 'en', 'en-gb' ].includes( userLocale ) ) {
+	if ( GUTENBOARDING_LOCALES.includes( userLocale ) ) {
 		return config( 'new_onboarding_url' );
 	}
 
