@@ -56,7 +56,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				state: locationState,
 			};
 		},
-		[ locationState ]
+		[ makePath, locationState ]
 	);
 
 	const canUseDesignStep = React.useCallback( (): boolean => {
