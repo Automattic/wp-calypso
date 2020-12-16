@@ -489,7 +489,6 @@ export function CheckoutStepArea( {
 	submitButtonHeader?: React.ReactNode;
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
-	const { __ } = useI18n();
 	const onEvent = useEvents();
 	const { formStatus } = useFormStatus();
 
@@ -514,16 +513,12 @@ export function CheckoutStepArea( {
 
 			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
 				{ submitButtonHeader ? submitButtonHeader : null }
-				<CheckoutErrorBoundary
-					errorMessage={ __( 'There was a problem with the submit button.' ) }
-					onError={ onSubmitButtonLoadError }
-				>
-					<CheckoutSubmitButton
-						disabled={
-							isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
-						}
-					/>
-				</CheckoutErrorBoundary>
+				<CheckoutSubmitButton
+					disabled={
+						isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
+					}
+					onLoadError={ onSubmitButtonLoadError }
+				/>
 			</SubmitButtonWrapper>
 		</CheckoutStepAreaWrapper>
 	);

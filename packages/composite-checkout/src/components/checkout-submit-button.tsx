@@ -11,15 +11,18 @@ import { useI18n } from '@automattic/react-i18n';
 import joinClasses from '../lib/join-classes';
 import { usePaymentMethod, usePaymentProcessors, useTransactionStatus } from '../public-api';
 import { PaymentProcessorResponse, PaymentProcessorResponseType } from '../types';
+import CheckoutErrorBoundary from './checkout-error-boundary';
 
 const debug = debugFactory( 'composite-checkout:checkout-submit-button' );
 
 export default function CheckoutSubmitButton( {
 	className,
 	disabled,
+	onLoadError,
 }: {
 	className?: string;
 	disabled?: boolean;
+	onLoadError?: ( error: string ) => void;
 } ): JSX.Element | null {
 	const {
 		setTransactionComplete,
@@ -89,8 +92,13 @@ export default function CheckoutSubmitButton( {
 	// We clone the element to add props
 	const clonedSubmitButton = React.cloneElement( submitButton, { disabled, onClick } );
 	return (
-		<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
-			{ clonedSubmitButton }
-		</div>
+		<CheckoutErrorBoundary
+			errorMessage={ __( 'There was a problem with the submit button.' ) }
+			onError={ onLoadError }
+		>
+			<div className={ joinClasses( [ className, 'checkout-submit-button' ] ) }>
+				{ clonedSubmitButton }
+			</div>
+		</CheckoutErrorBoundary>
 	);
 }
