@@ -4,7 +4,10 @@
 import { logToLogstash } from 'calypso/state/logstash/actions';
 import config from 'calypso/config';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../lib/translate-payment-method-names';
+import {
+	translateCheckoutPaymentMethodToWpcomPaymentMethod,
+	isRedirectPaymentMethod,
+} from '../lib/translate-payment-method-names';
 
 export function logStashLoadErrorEventAction( errorType, errorMessage, additionalData = {} ) {
 	return logStashEventAction( 'composite checkout load error', {
@@ -50,7 +53,9 @@ export function recordCompositeCheckoutErrorDuringAnalytics( {
 
 export function recordTransactionBeginAnalytics( { reduxDispatch, paymentMethodId } ) {
 	try {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+		if ( isRedirectPaymentMethod( paymentMethodId ) ) {
+			reduxDispatch( recordTracksEvent( 'calypso_checkout_form_redirect', {} ) );
+		}
 		reduxDispatch(
 			recordTracksEvent( 'calypso_checkout_form_submit', {
 				credits: null,
