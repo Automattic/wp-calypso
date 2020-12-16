@@ -583,7 +583,6 @@ class ManagePurchase extends Component {
 
 		const {
 			purchase,
-			siteId,
 			translate,
 			isProductOwner,
 			getManagePurchaseUrlFor,
@@ -601,6 +600,7 @@ class ManagePurchase extends Component {
 		} );
 		const siteName = purchase.siteName;
 		const siteDomain = purchase.domain;
+		const siteId = purchase.siteId;
 
 		return (
 			<Fragment>
