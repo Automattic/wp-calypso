@@ -96,7 +96,8 @@
 	@include placeholder();
 }
 
-.purchase-item__site {
+.purchase-item__site,
+.membership-item {
 	.site-icon {
 		border-radius: 2px;
 	}
