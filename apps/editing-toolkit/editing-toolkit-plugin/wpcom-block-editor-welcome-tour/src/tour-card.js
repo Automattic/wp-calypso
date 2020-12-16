@@ -74,41 +74,54 @@ function WelcomeTourCard( {
 				</p>
 			</CardBody>
 			<CardFooter>
-				<PaginationControl
-					currentPage={ cardIndex }
-					numberOfPages={ lastCardIndex + 1 }
-					setCurrentPage={ setCurrentCard }
-				/>
-				<div>
-					{ cardIndex === 0 ? (
-						<Button isTertiary={ true } onClick={ () => onDismiss() }>
-							No thanks
-						</Button>
-					) : (
-						<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
-							Back
-						</Button>
-					) }
-					{ cardIndex < lastCardIndex ? (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isPrimary={ true }
-							onClick={ () => setCurrentCard( cardIndex + 1 ) }
-						>
-							{ cardIndex === 0 ? "Let's start" : 'Next' }
-						</Button>
-					) : (
-						<Button
-							className="welcome-tour-card__next-btn"
-							isPrimary={ true }
-							onClick={ () => onDismiss() }
-						>
-							Done
-						</Button>
-					) }
-				</div>
+				<CardNavigation
+					cardIndex={ cardIndex }
+					lastCardIndex={ lastCardIndex }
+					onDismiss={ onDismiss }
+					setCurrentCard={ setCurrentCard }
+				></CardNavigation>
 			</CardFooter>
 		</Card>
+	);
+}
+
+function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCard } ) {
+	return (
+		<>
+			<PaginationControl
+				currentPage={ cardIndex }
+				numberOfPages={ lastCardIndex + 1 }
+				setCurrentPage={ setCurrentCard }
+			/>
+			<div>
+				{ cardIndex === 0 ? (
+					<Button isTertiary={ true } onClick={ () => onDismiss() }>
+						No thanks
+					</Button>
+				) : (
+					<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
+						Back
+					</Button>
+				) }
+				{ cardIndex < lastCardIndex ? (
+					<Button
+						className="welcome-tour-card__next-btn"
+						isPrimary={ true }
+						onClick={ () => setCurrentCard( cardIndex + 1 ) }
+					>
+						{ cardIndex === 0 ? "Let's start" : 'Next' }
+					</Button>
+				) : (
+					<Button
+						className="welcome-tour-card__next-btn"
+						isPrimary={ true }
+						onClick={ () => onDismiss() }
+					>
+						Done
+					</Button>
+				) }
+			</div>
+		</>
 	);
 }
 
