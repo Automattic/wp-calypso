@@ -11,13 +11,13 @@ import { connect } from 'react-redux';
 import PeopleListItem from 'calypso/my-sites/people/people-list-item';
 import { Card } from '@automattic/components';
 import PeopleListSectionHeader from 'calypso/my-sites/people/people-list-section-header';
-import ViewersActions from 'calypso/lib/viewers/actions';
-import ViewersStore from 'calypso/lib/viewers/store';
 import InfiniteList from 'calypso/components/infinite-list';
 import EmptyContent from 'calypso/components/empty-content';
 import accept from 'calypso/lib/accept';
 import ListEnd from 'calypso/components/list-end';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { removeViewer } from 'calypso/state/viewers/actions';
+import { getViewers, getTotalViewers, isFetchingViewers } from 'calypso/state/viewers/selectors';
 
 class Viewers extends React.PureComponent {
 	static displayName = 'Viewers';
@@ -35,17 +35,13 @@ class Viewers extends React.PureComponent {
 	renderPlaceholders = () => <PeopleListItem key="people-list-item-placeholder" />;
 
 	fetchNextPage = () => {
-		const paginationData = ViewersStore.getPaginationData( this.props.siteId );
-		const currentPage = paginationData.currentViewersPage ? paginationData.currentViewersPage : 0;
-		const page = currentPage + 1;
-
 		this.props.recordGoogleEvent(
 			'People',
 			'Fetched more viewers with infinite list',
 			'page',
-			page
+			this.props.page + 1
 		);
-		ViewersActions.fetch( this.props.siteId, page );
+		this.props.incrementPage();
 	};
 
 	removeViewer = ( viewer ) => {
@@ -65,7 +61,7 @@ class Viewers extends React.PureComponent {
 						'People',
 						'Clicked Remove Button In Remove Viewer Confirmation'
 					);
-					ViewersActions.remove( this.props.site.ID, viewer );
+					this.props.removeViewer( this.props.site.ID, viewer.ID );
 				} else {
 					this.props.recordGoogleEvent(
 						'People',
@@ -148,6 +144,7 @@ class Viewers extends React.PureComponent {
 				<PeopleListSectionHeader
 					label={ this.props.label }
 					site={ this.props.site }
+					isPlaceholder={ this.props.fetching }
 					count={ this.props.fetching ? null : this.props.totalViewers }
 				/>
 				<Card className={ listClass }>{ viewers }</Card>
@@ -157,4 +154,15 @@ class Viewers extends React.PureComponent {
 	}
 }
 
-export default connect( null, { recordGoogleEvent } )( localize( Viewers ) );
+const mapStateToProps = ( state, { site } ) => ( {
+	viewers: getViewers( state, site.ID ),
+	fetching: isFetchingViewers( state, site.ID ),
+	totalViewers: getTotalViewers( state, site.ID ),
+} );
+
+const mapDispatchToProps = {
+	recordGoogleEvent,
+	removeViewer,
+};
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( Viewers ) );
