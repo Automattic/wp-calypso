@@ -151,7 +151,7 @@
 	}
 }
 
-.dashboard__store-removed {
+.dashboard__store-move-notice {
     font-size: $font-body-small;
 
     .notice__action {
@@ -175,4 +175,8 @@
     p {
         margin: 0;
     }
+}
+
+.dashboard__store-move-notice.store-removed {
+    margin-top: 40px;
 }
