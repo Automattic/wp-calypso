@@ -47,7 +47,6 @@ const DomainIOwn: React.FunctionComponent< Props > = ( { siteSlug, source, redir
 						strong: <strong />,
 						use_domain_link: (
 							<a
-								target="_blank"
 								rel="noreferrer"
 								href={ localizeUrl(
 									`https://wordpress.com/start/new-launch/domains-launch/use-your-domain?siteSlug=${ siteSlug }&source=${ source }${
