@@ -287,12 +287,13 @@ export class JetpackAuthorize extends Component {
 	/**
 	 * Check if the user is coming from the Jetpack upgrade flow.
 	 *
-	 * @returns {boolean} True if the user is coming from the Jetpack upgrade flow, false otherwise.
+	 * @param  {object}  props           Props to test
+	 * @param  {?string} props.authQuery.redirectAfterAuth Where were we redirected after auth.
+	 * @returns {boolean}                True if the user is coming from the Jetpack upgrade flow, false otherwise.
 	 */
-	isJetpackUpgradeFlow() {
-		return this.props.authQuery.redirectAfterAuth.includes(
-			'page=jetpack&action=authorize_redirect'
-		);
+	isJetpackUpgradeFlow( props = this.props ) {
+		const { redirectAfterAuth } = props.authQuery;
+		return redirectAfterAuth.includes( 'page=jetpack&action=authorize_redirect' );
 	}
 
 	isWooRedirect = ( props = this.props ) => {
