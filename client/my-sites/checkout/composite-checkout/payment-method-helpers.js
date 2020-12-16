@@ -10,12 +10,12 @@ import { createStripePaymentMethod } from '@automattic/calypso-stripe';
  * Internal dependencies
  */
 import wp from 'calypso/lib/wp';
-import { createTransactionEndpointRequestPayloadFromLineItems } from './types/transaction-endpoint';
 import { createPayPalExpressEndpointRequestPayloadFromLineItems } from './types/paypal-express';
 import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from './lib/translate-payment-method-names';
 import { getSavedVariations } from 'calypso/lib/abtest';
 import { stringifyBody } from 'calypso/state/login/utils';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
+import { createTransactionEndpointRequestPayloadFromLineItems } from './lib/translate-cart';
 
 const debug = debugFactory( 'calypso:composite-checkout:payment-method-helpers' );
 const { select } = defaultRegistry;
