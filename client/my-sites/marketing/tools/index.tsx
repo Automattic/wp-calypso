@@ -13,7 +13,7 @@ import { Button } from '@automattic/components';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import MarketingToolsFeature from './feature';
 import MarketingToolsHeader from './header';
-import { marketingConnections, marketingTraffic } from 'calypso/my-sites/marketing/paths';
+import { marketingConnections, marketingBusinessTools } from 'calypso/my-sites/marketing/paths';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { recordTracksEvent as recordTracksEventAction } from 'calypso/state/analytics/actions';
 
@@ -24,6 +24,10 @@ import earnIllustration from 'calypso/assets/images/customer-home/illustration--
 import fiverrLogo from 'calypso/assets/images/customer-home/fiverr-logo.svg';
 import facebookMessenger from 'calypso/assets/images/illustrations/facebook-messenger.svg';
 import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
+import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
+import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
+import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
+import streakLogo from 'calypso/assets/images/illustrations/streak-logo.png';
 
 /**
  * Types
@@ -46,10 +50,10 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 } ) => {
 	const translate = useTranslate();
 
-	const handleBoostMyTrafficClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_boost_my_traffic_button_click' );
+	const handleBusinessToolsClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_business_tools_button_click' );
 
-		page( marketingTraffic( selectedSiteSlug ) );
+		page( marketingBusinessTools( selectedSiteSlug ) );
 	};
 
 	const handleEarnClick = () => {
@@ -70,8 +74,16 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		recordTracksEvent( 'calypso_marketing_tools_canva_button_click' );
 	};
 
-	const handleJetpackClick = () => {
-		recordTracksEvent( 'calypso_marketing_tools_jetpack_button_click' );
+	const handleSendinblueClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_sendinblue_button_click' );
+	};
+
+	const handleVerblioClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_verblio_button_click' );
+	};
+
+	const handleStreakClick = () => {
+		recordTracksEvent( 'calypso_marketing_tools_streak_button_click' );
 	};
 
 	const handleStartSharingClick = () => {
@@ -84,7 +96,7 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 		<Fragment>
 			<PageViewTracker path="/marketing/tools/:site" title="Marketing > Tools" />
 
-			<MarketingToolsHeader handleButtonClick={ handleBoostMyTrafficClick } />
+			<MarketingToolsHeader handleButtonClick={ handleBusinessToolsClick } />
 
 			<div className="tools__feature-list">
 				<MarketingToolsFeature
@@ -163,26 +175,62 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 					description={ translate(
 						'SimpleTexting makes it easy, fast and affordable to send SMS marketing campaigns or engage in 1-on-1 conversations with your customers.'
 					) }
-					imagePath={ earnIllustration }
+					imagePath={ simpletextLogo }
 				>
 					<Button
 						onClick={ handleCreateALogoClick }
 						href="https://simpletexting.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Create a logo' ) }
+						{ translate( 'Start texting' ) }
 					</Button>
 				</MarketingToolsFeature>
 
 				<MarketingToolsFeature
-					title={ translate( 'Jetpack CRM' ) }
+					title={ translate( 'Turn your visitors into customers' ) }
 					description={ translate(
-						'Jetpack CRM is the no-nonsense CRM for WordPress. Entrepreneurs earn more money when they use a good CRM, and Jetpack CRM is the simplest and most powerful of all WordPress CRMs.'
+						'Sendinblue is an all-in-one marketing and CRM platform to help you grow your business through building stronger customer relationships.'
 					) }
-					imagePath={ facebookMessenger }
+					imagePath={ sendinblueLogo }
 				>
-					<Button onClick={ handleJetpackClick } href="https://www.jetpack.com" target="_blank">
-						{ translate( 'Call to Action' ) }
+					<Button
+						onClick={ handleSendinblueClick }
+						href="https://sendinblue.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Start with CRM' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Get help with content for your blog or website' ) }
+					description={ translate(
+						'Verblio makes blog and content creation happen. Its writers can help create high-powered content for your website that drives SEO.'
+					) }
+					imagePath={ verblioLogo }
+				>
+					<Button
+						onClick={ handleVerblioClick }
+						href="https://verblio.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Start creating content' ) }
+					</Button>
+				</MarketingToolsFeature>
+
+				<MarketingToolsFeature
+					title={ translate( 'Manage workflow and leads from Gmail' ) }
+					description={ translate(
+						'Track everything and always have context, directly in your Gmail account. Keep your leads and sales pipeline moving with Streak.com.'
+					) }
+					imagePath={ streakLogo }
+				>
+					<Button
+						onClick={ handleStreakClick }
+						href="http://get.streak.com/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Supercharge your Gmail' ) }
 					</Button>
 				</MarketingToolsFeature>
 			</div>

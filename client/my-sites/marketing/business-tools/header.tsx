@@ -36,12 +36,6 @@ const MarketingBusinessToolsHeader: FunctionComponent< Props > = ( { handleButto
 						'Improve the efficiency and success of your business with the help other these other products and services. Here are some recommended tools for you.'
 					) }
 				</h2>
-
-				<div className="business-tools__header-button-row">
-					<Button onClick={ handleButtonClick } primary>
-						{ translate( 'Boost my traffic' ) }
-					</Button>
-				</div>
 			</div>
 		</Card>
 	);

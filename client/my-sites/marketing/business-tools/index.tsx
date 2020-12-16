@@ -23,7 +23,6 @@ import evernoteLogo from 'calypso/assets/images/illustrations/evernote-logo.svg'
 import mondayLogo from 'calypso/assets/images/illustrations/monday-logo.svg';
 import benchLogo from 'calypso/assets/images/illustrations/bench-logo.svg';
 import jetpackLogo from 'calypso/assets/images/illustrations/jetpack-logo.svg';
-import ownrLogo from 'calypso/assets/images/illustrations/ownr-logo.svg';
 import todoistLogo from 'calypso/assets/images/illustrations/todoist-logo.svg';
 
 /**
@@ -99,7 +98,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 						href="https://quickbooks.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Call to Action' ) }
+						{ translate( 'Manage your finances' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -111,8 +110,12 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath={ evernoteLogo }
 				>
-					<Button onClick={ handleEvernoteClick } href="evernoteLogo" target="_blank">
-						{ translate( 'Call to Action' ) }
+					<Button
+						onClick={ handleEvernoteClick }
+						href="https://evernote.grsm.io/ebcc-wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Take better notes today' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -124,8 +127,12 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 					) }
 					imagePath={ mondayLogo }
 				>
-					<Button onClick={ handleMondayClick } href="MONDAYLINK" target="_blank">
-						{ translate( 'Call to Action' ) }
+					<Button
+						onClick={ handleMondayClick }
+						href="https://mondaycom.grsm.io/wordpresscom"
+						target="_blank"
+					>
+						{ translate( 'Improve your productivity' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -142,7 +149,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 						href="https://doist.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Call to Action' ) }
+						{ translate( 'Manage business tasks' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -159,7 +166,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 						href="https://bench.grsm.io/wordpresscom"
 						target="_blank"
 					>
-						{ translate( 'Call to Action' ) }
+						{ translate( 'Find a bookkeeper' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 
@@ -172,24 +179,7 @@ export const MarketingBusinessTools: FunctionComponent< Props > = ( {
 					imagePath={ jetpackLogo }
 				>
 					<Button onClick={ handleJetpackClick } href="https://www.jetpack.com" target="_blank">
-						{ translate( 'Call to Action' ) }
-					</Button>
-				</MarketingBusinessToolsFeature>
-
-				<MarketingBusinessToolsFeature
-					category={ translate( 'Administration' ) }
-					title={ translate( 'Ownr' ) }
-					description={ translate(
-						'Ownr is the simplest, most convenient way to register or incorporate your business and build your brand.'
-					) }
-					imagePath={ ownrLogo }
-				>
-					<Button
-						onClick={ handleOwnrClick }
-						href="https://ownr.grsm.io/wordpresscom"
-						target="_blank"
-					>
-						{ translate( 'Call to Action' ) }
+						{ translate( 'Start with CRM' ) }
 					</Button>
 				</MarketingBusinessToolsFeature>
 			</div>
