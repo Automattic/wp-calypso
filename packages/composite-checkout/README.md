@@ -107,7 +107,7 @@ If not using the `onClick` function, when the `submitButton` component has been 
 
 1. Call `setTransactionPending()` from [useTransactionStatus](#useTransactionStatus). This will change the [form status](#useFormStatus) to [`.SUBMITTING`](#FormStatus) and disable the form.
 2. Call the payment processor function returned from [usePaymentProcessor](#usePaymentProcessor]), passing whatever data that function requires. Each payment processor will be different, so you'll need to know the API of that function explicitly.
-3. Payment processor functions return a `Promise`. When the `Promise` resolves, call `setTransactionComplete()` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. Depending on the payment processor, some transactions might require additional actions before they are complete. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
+3. Payment processor functions return a `Promise`. When the `Promise` resolves, check its value (it will be one of [makeManualResponse](#makeManualResponse), [makeRedirectResponse](#makeRedirectResponse), or [makeSuccessResponse](#makeSuccessResponse)). Then call `setTransactionComplete(responseData: unknown)` from [useTransactionStatus](#useTransactionStatus) if the transaction was a success. If the transaction requires a redirect, call `setTransactionRedirecting(url: string)` instead.
 4. If the `Promise` rejects, call `setTransactionError(message: string)`.
 5. At this point the [CheckoutProvider](#CheckoutProvider) will automatically take action if the transaction status is [`.COMPLETE`](#TransactionStatus) (call [onPaymentComplete](#CheckoutProvider)), [`.ERROR`](#TransactionStatus) (display the error and re-enable the form), or [`.REDIRECTING`](#TransactionStatus) (redirect to the url). If for some reason the transaction should be cancelled, call `resetTransaction()`.
 
@@ -506,6 +506,10 @@ A React Hook that returns a payment processor function as passed to the `payment
 
 A React Hook that returns all the payment processor functions in a Record.
 
+### useProcessPayment
+
+A React Hook that will return the function passed to each [payment method's submitButton component](#payment-methods). Call it with a payment method ID and data for the payment processor and it will handle the transaction.
+
 ### useRegisterStore
 
 A React Hook that can be used to create a @wordpress/data store. This is the same as calling `registerStore()` but is easier to use within functional components because it will only create the store once. Only works within [CheckoutProvider](#CheckoutProvider).
@@ -534,9 +538,9 @@ A React Hook that returns an object with the following properties to be used by 
 - `previousTransactionStatus: `[`TransactionStatus.`](#TransactionStatus). The last status of the transaction.
 - `transactionError: string | null`. The most recent error message encountered by the transaction if its status is [`.ERROR`](#TransactionStatus).
 - `transactionRedirectUrl: string | null`. The redirect url to use if the transaction status is [`.REDIRECTING`](#TransactionStatus).
-- `transactionLastResponse: object | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
+- `transactionLastResponse: unknown | null`. The most recent full response object as returned by the transaction's endpoint and passed to `setTransactionComplete`.
 - `resetTransaction: () => void`. Function to change the transaction status to [`.NOT_STARTED`](#TransactionStatus).
-- `setTransactionComplete: ( object ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
+- `setTransactionComplete: ( transactionResponse: unknown ) => void`. Function to change the transaction status to [`.COMPLETE`](#TransactionStatus) and save the response object in `transactionLastResponse`.
 - `setTransactionError: ( string ) => void`. Function to change the transaction status to [`.ERROR`](#TransactionStatus) and save the error in `transactionError`.
 - `setTransactionPending: () => void`. Function to change the transaction status to [`.PENDING`](#TransactionStatus).
 - `setTransactionRedirecting: ( string ) => void`. Function to change the transaction status to [`.REDIRECTING`](#TransactionStatus) and save the redirect URL in `transactionRedirectUrl`.
