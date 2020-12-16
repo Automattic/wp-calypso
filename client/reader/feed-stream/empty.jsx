@@ -19,12 +19,6 @@ class FeedEmptyContent extends React.PureComponent {
 		this.props.recordReaderTracksEvent( 'calypso_reader_search_on_empty_feed_clicked' );
 	};
 
-	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_empty' );
-		recordGaEvent( 'Clicked Discover on EmptyContent' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_discover_on_empty_feed_clicked' );
-	};
-
 	render() {
 		const { translate } = this.props;
 		const action = (
@@ -36,22 +30,12 @@ class FeedEmptyContent extends React.PureComponent {
 				{ translate( 'Find sites to follow' ) }
 			</a>
 		);
-		const secondaryAction = (
-			<a
-				className="empty-content__action button" //eslint-disable-line
-				onClick={ this.recordSecondaryAction }
-				href="/discover"
-			>
-				{ translate( 'Explore' ) }
-			</a>
-		);
 
 		return (
 			<EmptyContent
 				title={ translate( 'No recent posts' ) }
 				line={ translate( 'This site has not posted anything recently.' ) }
 				action={ action }
-				secondaryAction={ secondaryAction }
 				illustration={ '/calypso/images/illustrations/illustration-empty-results.svg' }
 				illustrationWidth={ 500 }
 			/>
