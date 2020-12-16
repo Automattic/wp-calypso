@@ -7,6 +7,7 @@ import PaymentLogo from './lib/payment-methods/payment-logo';
 import { CheckoutProvider } from './components/checkout-provider';
 import useMessages from './components/use-messages';
 import useEvents from './components/use-events';
+import CheckoutSubmitButton from './components/checkout-submit-button';
 import {
 	Checkout,
 	CheckoutStep,
@@ -101,6 +102,7 @@ export {
 	CheckoutStepAreaWrapper,
 	CheckoutStepBody,
 	CheckoutSteps,
+	CheckoutSubmitButton,
 	CheckoutSummaryArea,
 	CheckoutSummaryCard,
 	MainContentWrapper,

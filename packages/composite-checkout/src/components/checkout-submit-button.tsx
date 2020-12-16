@@ -9,7 +9,13 @@ import { useI18n } from '@automattic/react-i18n';
  * Internal dependencies
  */
 import joinClasses from '../lib/join-classes';
-import { usePaymentMethod, usePaymentProcessors, useTransactionStatus } from '../public-api';
+import {
+	usePaymentMethod,
+	usePaymentProcessors,
+	useTransactionStatus,
+	useFormStatus,
+	FormStatus,
+} from '../public-api';
 import { PaymentProcessorResponse, PaymentProcessorResponseType } from '../types';
 import CheckoutErrorBoundary from './checkout-error-boundary';
 
@@ -31,10 +37,12 @@ export default function CheckoutSubmitButton( {
 		setTransactionPending,
 	} = useTransactionStatus();
 	const paymentProcessors = usePaymentProcessors();
+	const { formStatus } = useFormStatus();
 	const { __ } = useI18n();
 	const redirectErrorMessage = __(
 		'An error occurred while redirecting to the payment partner. Please try again or contact support.'
 	);
+	const isDisabled = disabled || formStatus !== FormStatus.READY;
 
 	const onClick = useCallback(
 		async ( paymentProcessorId: string, submitData: unknown ) => {
@@ -90,7 +98,7 @@ export default function CheckoutSubmitButton( {
 	}
 
 	// We clone the element to add props
-	const clonedSubmitButton = React.cloneElement( submitButton, { disabled, onClick } );
+	const clonedSubmitButton = React.cloneElement( submitButton, { disabled: isDisabled, onClick } );
 	return (
 		<CheckoutErrorBoundary
 			errorMessage={ __( 'There was a problem with the submit button.' ) }

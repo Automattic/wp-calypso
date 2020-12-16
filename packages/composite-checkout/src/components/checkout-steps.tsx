@@ -490,7 +490,6 @@ export function CheckoutStepArea( {
 	disableSubmitButton?: boolean;
 } ): JSX.Element {
 	const onEvent = useEvents();
-	const { formStatus } = useFormStatus();
 
 	const { activeStepNumber, totalSteps } = useContext( CheckoutStepDataContext );
 	const actualActiveStepNumber =
@@ -514,9 +513,7 @@ export function CheckoutStepArea( {
 			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
 				{ submitButtonHeader ? submitButtonHeader : null }
 				<CheckoutSubmitButton
-					disabled={
-						isThereAnotherNumberedStep || formStatus !== FormStatus.READY || disableSubmitButton
-					}
+					disabled={ isThereAnotherNumberedStep || disableSubmitButton }
 					onLoadError={ onSubmitButtonLoadError }
 				/>
 			</SubmitButtonWrapper>
