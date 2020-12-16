@@ -445,14 +445,10 @@ export default function CompositeCheckout( {
 		[ dataForProcessor, getThankYouUrl, siteSlug ]
 	);
 
-	const domainDetails = useMemo(
-		() =>
-			getDomainDetails( {
-				includeDomainDetails,
-				includeGSuiteDetails,
-			} ),
-		[ includeGSuiteDetails, includeDomainDetails ]
-	);
+	const domainDetails = getDomainDetails( {
+		includeDomainDetails,
+		includeGSuiteDetails,
+	} );
 	const postalCode = getPostalCode();
 
 	const paymentProcessors = useMemo(
