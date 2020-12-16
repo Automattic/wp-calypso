@@ -50,6 +50,7 @@ import Gridicon from 'calypso/components/gridicon';
 import { useIsLoading } from 'calypso/state/experiments/hooks';
 import { isTreatmentInMonthlyPricingTest } from 'calypso/state/marketing/selectors';
 import getPlanFeatures from '../lib/get-plan-features';
+import { hasDomainCredit } from 'calypso/state/sites/plans/selectors';
 
 export default function WPCheckoutOrderSummary( {
 	onChangePlanLength,
@@ -271,12 +272,15 @@ function CheckoutSummaryPlanFeatures( { isMonthlyPricingTest } ) {
 	const hasDomainsInCart = useHasDomainsInCart();
 	const planInCart = usePlanInCart();
 	const hasRenewalInCart = useHasRenewalInCart();
+	const siteId = useSelect( ( select ) => select( 'wpcom' )?.getSiteId?.() );
+	const planHasDomainCredit = useSelector( ( state ) => hasDomainCredit( state, siteId ) );
 	const planFeatures = getPlanFeatures(
 		planInCart,
 		translate,
 		hasDomainsInCart,
 		hasRenewalInCart,
-		isMonthlyPricingTest
+		isMonthlyPricingTest,
+		planHasDomainCredit
 	);
 
 	return (
