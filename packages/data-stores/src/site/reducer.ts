@@ -14,7 +14,6 @@ import {
 	Domain,
 	SiteLaunchState,
 	SiteLaunchStatus,
-	SiteLaunchError,
 } from './types';
 import type { Action } from './actions';
 
@@ -113,10 +112,10 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	state = {},
 	action
 ) => {
-	if ( action.type === 'LAUNCH_SITE_IDLE' ) {
+	if ( action.type === 'LAUNCH_SITE_START' ) {
 		return {
 			...state,
-			[ action.siteId ]: { status: SiteLaunchStatus.IDLE, errorCode: undefined },
+			[ action.siteId ]: { status: SiteLaunchStatus.IN_PROGRESS, errorCode: undefined },
 		};
 	}
 	if ( action.type === 'LAUNCH_SITE_SUCCESS' ) {
@@ -130,7 +129,7 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 			...state,
 			[ action.siteId ]: {
 				status: SiteLaunchStatus.FAILURE,
-				errorCode: SiteLaunchError.INTERNAL,
+				errorCode: action.error,
 			},
 		};
 	}

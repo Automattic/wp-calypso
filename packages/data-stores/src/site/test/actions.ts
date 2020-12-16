@@ -5,24 +5,25 @@
  * Internal dependencies
  */
 import { createActions } from '../actions';
+import { SiteLaunchError } from '../types';
 
 const client_id = 'magic_client_id';
 const client_secret = 'magic_client_secret';
 const mockedClientCredentials = { client_id, client_secret };
 const siteId = 12345;
-const error = 'Something went wrong terribly';
+const error = SiteLaunchError.INTERNAL;
 
 describe( 'Site Actions', () => {
 	describe( 'LAUNCH_SITE Actions', () => {
-		it( 'should return a LAUNCH_SITE_IDLE Action', () => {
-			const { launchSiteIdle } = createActions( mockedClientCredentials );
+		it( 'should return a LAUNCH_SITE_START Action', () => {
+			const { launchSiteStart } = createActions( mockedClientCredentials );
 
 			const expected = {
-				type: 'LAUNCH_SITE_IDLE',
+				type: 'LAUNCH_SITE_START',
 				siteId,
 			};
 
-			expect( launchSiteIdle( siteId ) ).toEqual( expected );
+			expect( launchSiteStart( siteId ) ).toEqual( expected );
 		} );
 
 		it( 'should return a LAUNCH_SITE_SUCCESS Action', () => {
@@ -63,7 +64,7 @@ describe( 'Site Actions', () => {
 
 			// First iteration: LAUNCH_SITE_IDLE is fired
 			expect( generator.next().value ).toEqual( {
-				type: 'LAUNCH_SITE_IDLE',
+				type: 'LAUNCH_SITE_START',
 				siteId,
 			} );
 
@@ -92,7 +93,7 @@ describe( 'Site Actions', () => {
 
 			// First iteration: LAUNCH_SITE_IDLE is fired
 			expect( generator.next().value ).toEqual( {
-				type: 'LAUNCH_SITE_IDLE',
+				type: 'LAUNCH_SITE_START',
 				siteId,
 			} );
 

@@ -9,9 +9,11 @@ import type {
 	SiteError,
 	Cart,
 	Domain,
+	SiteLaunchError as SiteLaunchErrorType,
 } from './types';
 import type { WpcomClientCredentials } from '../shared-types';
 import { wpcomRequest } from '../wpcom-request-controls';
+import { SiteLaunchError } from './types';
 
 export function createActions( clientCreds: WpcomClientCredentials ) {
 	const fetchSite = () => ( {
@@ -95,8 +97,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
 	} );
 
-	const launchSiteIdle = ( siteId: number ) => ( {
-		type: 'LAUNCH_SITE_IDLE' as const,
+	const launchSiteStart = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_START' as const,
 		siteId,
 	} );
 
@@ -105,14 +107,14 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		siteId,
 	} );
 
-	const launchSiteFailure = ( siteId: number, error: string ) => ( {
+	const launchSiteFailure = ( siteId: number, error: SiteLaunchErrorType ) => ( {
 		type: 'LAUNCH_SITE_FAILURE' as const,
 		siteId,
 		error,
 	} );
 
 	function* launchSite( siteId: number ) {
-		yield launchSiteIdle( siteId );
+		yield launchSiteStart( siteId );
 		try {
 			yield wpcomRequest( {
 				path: `/sites/${ siteId }/launch`,
@@ -120,10 +122,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 				method: 'post',
 			} );
 			yield launchSiteSuccess( siteId );
-			return true;
-		} catch ( error ) {
-			yield launchSiteFailure( siteId, error );
-			return false;
+		} catch ( _ ) {
+			yield launchSiteFailure( siteId, SiteLaunchError.INTERNAL );
 		}
 	}
 
@@ -180,7 +180,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteFailed,
 		reset,
 		launchSite,
-		launchSiteIdle,
+		launchSiteStart,
 		launchSiteSuccess,
 		launchSiteFailure,
 		getCart,
@@ -202,7 +202,7 @@ export type Action =
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
-			| ActionCreators[ 'launchSiteIdle' ]
+			| ActionCreators[ 'launchSiteStart' ]
 			| ActionCreators[ 'launchSiteSuccess' ]
 			| ActionCreators[ 'launchSiteFailure' ]
 	  >

@@ -186,7 +186,7 @@ export enum SiteLaunchError {
 
 export enum SiteLaunchStatus {
 	UNINITIALIZED = 'unintialized',
-	IDLE = 'idle',
+	IN_PROGRESS = 'in_progress',
 	SUCCESS = 'success',
 	FAILURE = 'failure',
 }

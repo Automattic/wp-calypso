@@ -88,13 +88,13 @@ describe( 'Site', () => {
 			expect( state ).toStrictEqual( {} );
 		} );
 
-		it( 'should set the status to SiteLaunchStatus.IDLE when a LAUNCH_SITE_IDLE action is dispatched', () => {
-			const { launchSiteIdle } = createActions( mockedClientCredentials );
+		it( 'should set the status to SiteLaunchStatus.IN_PROGRESS when a LAUNCH_SITE_START action is dispatched', () => {
+			const { launchSiteStart } = createActions( mockedClientCredentials );
 
-			const action = launchSiteIdle( siteId );
+			const action = launchSiteStart( siteId );
 			const expected = {
 				...originalState,
-				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.IDLE },
+				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.IN_PROGRESS },
 			};
 
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
@@ -114,7 +114,7 @@ describe( 'Site', () => {
 
 		it( 'should set the status to SiteLaunchStatus.FAILURE and set an errorCode when a LAUNCH_SITE_FAILURE action is dispatched', () => {
 			const { launchSiteFailure } = createActions( mockedClientCredentials );
-			const error = 'Error Message';
+			const error = SiteLaunchError.INTERNAL;
 			const action = launchSiteFailure( siteId, error );
 			const expected = {
 				...originalState,
