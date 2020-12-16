@@ -56,7 +56,7 @@ interface Cart {
  * 3. The user is still seeing 'Free Plan' label on PlansButton => redirect to editor
  **/
 
-export default function useOnSiteCreation() {
+export default function useOnSiteCreation(): void {
 	const { domain } = useSelect( ( select ) => select( ONBOARD_STORE ).getState() );
 	const isRedirecting = useSelect( ( select ) => select( ONBOARD_STORE ).getIsRedirecting() );
 	const newSite = useSelect( ( select ) => select( SITE_STORE ).getNewSite() );
@@ -132,30 +132,10 @@ export default function useOnSiteCreation() {
 			if ( design?.is_fse ) {
 				destination = `/site-editor/${ newSite.site_slug }/`;
 			} else if ( isAnchorFmSignup ) {
-				/*
-				* Currently, this never triggers. (isAnchorFmSignup is always false, even
-				when on an anchor flow.)
-
-				I believe we get here from onboarding-block/edit.tsx redirecting in this
-				bit of code:
-					return (
-						<div className="onboarding-block">
-							{ isCreatingSite && (
-								<Redirect
-									push={ shouldTriggerCreate ? undefined : true }
-									to={ makePath( Step.CreateSite ) }
-								/>
-							) }
-
-				This ends up calling usePath from path.ts, which isn't aware of anchor
-				location state and needs to pass it on.
-				* 
-				*/
 				destination = `/post/${ newSite.site_slug }`;
 			} else {
 				destination = `/page/${ newSite.site_slug }/home`;
 			}
-			//console.log( { isAnchorFmSignup, destination } );
 			window.location.href = destination;
 		}
 	}, [
