@@ -6,10 +6,6 @@
 	}
 }
 
-.plugins-browser-list__header {
-	overflow: hidden; // lazy clearfix
-}
-
 .button.plugins-browser-list__select-all,
 .plugins-browser-list__title {
 	display: inline-block;
@@ -33,10 +29,12 @@
 }
 
 .plugins-browser-list__elements {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 24px;
-	padding: 0;
+	@include breakpoint-deprecated( '>960px' ) {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 24px;
+		padding: 0;
+	}
 }
 
 .plugins-browser-list__section-heading {
