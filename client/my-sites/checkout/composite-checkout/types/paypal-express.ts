@@ -8,10 +8,8 @@ import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-c
 /**
  * Internal dependencies
  */
-import {
-	WPCOMTransactionEndpointCart,
-	createTransactionEndpointCartFromLineItems,
-} from './transaction-endpoint';
+import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
+import { createTransactionEndpointCartFromLineItems } from '../lib/translate-cart';
 
 export type PayPalExpressEndpoint = (
 	_: PayPalExpressEndpointRequestPayload
@@ -65,4 +63,4 @@ export function createPayPalExpressEndpointRequestPayloadFromLineItems( {
 	};
 }
 
-export type PayPalExpressEndpointResponse = {};
+export type PayPalExpressEndpointResponse = unknown;
