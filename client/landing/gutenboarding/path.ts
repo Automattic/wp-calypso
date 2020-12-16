@@ -9,11 +9,6 @@ import languages from '@automattic/languages';
 import type { ValuesType } from 'utility-types';
 
 /**
- * WordPress dependencies
- */
-import apiFetch from '@wordpress/api-fetch';
-
-/**
  * Internal dependencies
  */
 import config from 'calypso/config';

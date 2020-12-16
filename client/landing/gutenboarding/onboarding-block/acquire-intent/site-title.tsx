@@ -17,7 +17,7 @@ import { recordSiteTitleSelection } from '../../lib/analytics';
 import tip from './tip';
 import AcquireIntentTextInput from './acquire-intent-text-input';
 import useTyper from '../../hooks/use-typer';
-import { useIsAnchorFm, useAnchorFmPodcastId, useAnchorFmPodcastTitle } from '../../path';
+import { useIsAnchorFm, useAnchorFmPodcastId } from '../../path';
 
 interface Props {
 	onSubmit: () => void;
@@ -76,13 +76,24 @@ const SiteTitle: React.FunctionComponent< Props > = ( { onSubmit, inputRef } ) =
 
 	React.useEffect( () => {
 		const fetchPodcastTitle = async () => {
-			const podcastTitle = await useAnchorFmPodcastTitle( anchorFmPodcastId );
-			if ( podcastTitle ) {
-				setSiteTitle( podcastTitle );
+			if ( ! anchorFmPodcastId ) {
+				return;
 			}
+
+			let resp;
+
+			try {
+				resp = await window.fetch( `https://public-api.wordpress.com/wpcom/v2/podcast-player?url=https://anchor.fm/s/${ encodeURIComponent( anchorFmPodcastId ) }/podcast/rss` );
+			} catch ( err ) {
+				return;
+			}
+
+			const json = await resp.json();
+			const podcastTitle = json?.title;
+			podcastTitle?.length > 1 && setSiteTitle( podcastTitle );
 		}
 		fetchPodcastTitle();
-	}, [ anchorFmPodcastId ] )
+	}, [] )
 
 	const handleFormSubmit = ( e: React.FormEvent< HTMLFormElement > ) => {
 		// hitting 'Enter' when focused on the input field should direct to next step.
