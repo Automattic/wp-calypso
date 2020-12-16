@@ -202,4 +202,28 @@ describe( 'JetpackAuthorize', () => {
 			expect( result ).toBe( true );
 		} );
 	} );
+
+	describe( 'shouldSeePlans', () => {
+		const isJetpackUpgradeFlow = new JetpackAuthorize().isJetpackUpgradeFlow;
+
+		test( 'should see plans', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=something_else',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( false );
+		} );
+
+		test( 'should be sent back', () => {
+			const props = {
+				authQuery: {
+					redirectAfterAuth: 'page=jetpack&action=authorize_redirect',
+				},
+			};
+
+			expect( isJetpackUpgradeFlow( props ) ).toBe( true );
+		} );
+	} );
 } );
