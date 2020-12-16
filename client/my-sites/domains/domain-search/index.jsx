@@ -68,6 +68,8 @@ class DomainSearch extends Component {
 		selectedSiteSlug: PropTypes.string,
 	};
 
+	isMounted = false;
+
 	state = {
 		domainRegistrationAvailable: true,
 		domainRegistrationMaintenanceEndTime: null,
@@ -94,7 +96,7 @@ class DomainSearch extends Component {
 				fillInSingleCartItemAttributes( domainMapping( { domain } ), this.props.productsList ),
 			] )
 			.then( () => {
-				page( '/checkout/' + this.props.selectedSiteSlug );
+				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
 	};
 
@@ -104,7 +106,7 @@ class DomainSearch extends Component {
 				fillInSingleCartItemAttributes( domainTransfer( { domain } ), this.props.productsList ),
 			] )
 			.then( () => {
-				page( '/checkout/' + this.props.selectedSiteSlug );
+				this.isMounted && page( '/checkout/' + this.props.selectedSiteSlug );
 			} );
 	};
 
@@ -116,6 +118,14 @@ class DomainSearch extends Component {
 		if ( nextProps.selectedSiteId !== this.props.selectedSiteId ) {
 			this.checkSiteIsUpgradeable( nextProps );
 		}
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
+	componentDidMount() {
+		this.isMounted = true;
 	}
 
 	checkSiteIsUpgradeable( props ) {
