@@ -7,7 +7,13 @@ import page from 'page';
  * Internal dependencies
  */
 import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
-import { redirectToPrimary, updateRecentSitesPreferences } from 'calypso/my-sites/controller';
+import {
+	redirectToPrimary,
+	updateRecentSitesPreferences,
+	recordNoSitesPageView,
+	recordNoVisibleSitesPageView,
+	showMissingPrimaryError,
+} from 'calypso/my-sites/controller';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import getPrimarySiteId from 'calypso/state/selectors/get-primary-site-id';
 import getSiteId from 'calypso/state/selectors/get-site-id';
@@ -111,7 +117,8 @@ const siteSelectionWithoutFragment = ( context: PageJS.Context, next: () => void
 					// Redirect to the single site context
 					redirectToPrimary( context, slug );
 				} else {
-					// TODO: display error
+					// Display error notification
+					showMissingPrimaryError( currentUser, dispatch );
 				}
 			} );
 		}
@@ -159,6 +166,33 @@ const siteSelectionWithFragment = (
 };
 
 /**
+ * Show dedicated screen if user has no Jetpack site, or no visible Jetpack site
+ *
+ * @param {string} siteFragment Parsed site slug
+ * @param {PageJS.Context} context Route context
+ * @returns {boolean} True if user has neither Jetpack sites nor visible Jetpack sites
+ */
+export function noSite(
+	siteFragment: string | undefined,
+	context: PageJS.Context
+): boolean | undefined {
+	const { getState } = context.store;
+	const currentUser = getCurrentUser( getState() ) as UserData;
+
+	if ( 0 === currentUser?.jetpack_site_count ) {
+		// TODO: render no sites screen
+		recordNoSitesPageView( context, siteFragment );
+		return true;
+	}
+
+	if ( 0 === currentUser?.jetpack_visible_site_count ) {
+		// TODO: render no visible sites screen
+		recordNoVisibleSitesPageView( context, siteFragment );
+		return true;
+	}
+}
+
+/**
  * Parse site slug from path and call the proper middleware.
  *
  * @param {PageJS.Context} context Route context
@@ -167,8 +201,9 @@ const siteSelectionWithFragment = (
 export function cloudSiteSelection( context: PageJS.Context, next: () => void ): void {
 	const siteFragment = parseSiteFragment( context );
 
-	// TODO: handle no Jetpack site
-	// TODO: handle no visible Jetpack site
+	if ( noSite( siteFragment, context ) ) {
+		return;
+	}
 
 	if ( siteFragment ) {
 		siteSelectionWithFragment( siteFragment, context, next );
