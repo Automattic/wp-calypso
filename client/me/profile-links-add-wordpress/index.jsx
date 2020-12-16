@@ -110,9 +110,7 @@ class ProfileLinksAddWordPress extends Component {
 		this.props.onCancel();
 	};
 
-	onJetpackMe = ( event ) => {
-		event.preventDefault();
-		window.open( 'http://jetpack.me/' );
+	onJetpackMe = () => {
 		this.props.onCancel();
 	};
 
@@ -171,9 +169,10 @@ class ProfileLinksAddWordPress extends Component {
 						{
 							components: {
 								jetpackLink: (
-									/* eslint-disable-next-line jsx-a11y/anchor-is-valid */
 									<a
-										href="#"
+										href="http://jetpack.me"
+										target="_blank"
+										rel="noreferrer"
 										className="profile-links-add-wordpress__jetpack-link"
 										onClick={ this.handleJetpackLinkClick }
 									/>
