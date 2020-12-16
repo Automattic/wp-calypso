@@ -61,6 +61,7 @@ import {
 	updateCreditCard,
 	getInitializedFields,
 } from 'calypso/me/purchases/components/payment-method-form/helpers';
+import 'calypso/me/purchases/components/payment-method-form/style.scss';
 
 function ChangePaymentMethod( props ) {
 	const { isStripeLoading } = useStripe();

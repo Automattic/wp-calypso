@@ -2,7 +2,8 @@
 	margin-bottom: 0;
 }
 
-.payment-method-form__terms {
+.payment-method-form__terms,
+.change-payment-method__terms {
 	color: var( --color-text-subtle );
 	margin: 5px 0 0;
 	padding: 0;
@@ -42,4 +43,23 @@
 .payment-method-form__heading {
 	font-size: $font-title-small;
 	padding: 0 0 16px;
+}
+
+/* Override checkout styles */
+.change-payment-method__content {
+	.checkout__step-wrapper.checkout__step-wrapper--last-step {
+		margin-bottom: 0;
+		border: 0;
+		width: 100%;
+		max-width: none;
+	}
+
+	.checkout-steps__submit-button-wrapper {
+		background: transparent;
+		padding: 0;
+	}
+
+	.checkout-submit-button .checkout-button {
+		width: auto;
+	}
 }

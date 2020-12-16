@@ -512,7 +512,7 @@ export function CheckoutStepArea( {
 		<CheckoutStepAreaWrapper className={ classNames }>
 			{ children }
 
-			<SubmitButtonWrapper>
+			<SubmitButtonWrapper className="checkout-steps__submit-button-wrapper">
 				{ submitButtonHeader ? submitButtonHeader : null }
 				<CheckoutErrorBoundary
 					errorMessage={ __( 'There was a problem with the submit button.' ) }
