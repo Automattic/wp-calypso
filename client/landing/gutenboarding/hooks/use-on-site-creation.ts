@@ -14,7 +14,7 @@ import { SITE_STORE } from '../stores/site';
 import { recordOnboardingComplete } from '../lib/analytics';
 import { useSelectedPlan, useShouldRedirectToEditorAfterCheckout } from './use-selected-plan';
 import { clearLastNonEditorRoute } from '../lib/clear-last-non-editor-route';
-import { useIsAnchorFm } from '../path';
+import { useIsAnchorFm, useAnchorFmPodcastId, useAnchorFmEpisodeId } from '../path';
 
 const wpcom = wp.undocumented();
 
@@ -64,7 +64,10 @@ export default function useOnSiteCreation(): void {
 	const selectedPlan = useSelectedPlan();
 	const shouldRedirectToEditorAfterCheckout = useShouldRedirectToEditorAfterCheckout();
 	const design = useSelect( ( select ) => select( ONBOARD_STORE ).getSelectedDesign() );
+
 	const isAnchorFmSignup = useIsAnchorFm();
+	const anchorFmPodcastId = useAnchorFmPodcastId();
+	const anchorFmEpisodeId = useAnchorFmEpisodeId();
 
 	const { resetOnboardStore, setIsRedirecting, setSelectedSite } = useDispatch( ONBOARD_STORE );
 	const flowCompleteTrackingParams = {
@@ -132,7 +135,13 @@ export default function useOnSiteCreation(): void {
 			if ( design?.is_fse ) {
 				destination = `/site-editor/${ newSite.site_slug }/`;
 			} else if ( isAnchorFmSignup ) {
-				destination = `/post/${ newSite.site_slug }`;
+				// Working URL for creating a new post w/ anchor in wp-admin:
+				// http://localhost:8888/wp-admin/post-new.php?action=edit&anchor_podcast=22b6608&anchor_episode=e324a06c-3148-43a4-85d8-34c0d8222138&spotify_show_url=https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q
+				// In Jetpack, anchor-fm.php looks for these
+				// However, we're on calypso.. that means we might need to make sure another step passes along the info correctly
+				// what does /post/{site} do in calypso?
+				// can we make query strings get passed from the parent to iframe?
+				destination = `/post/${ newSite.site_slug }?anchor_podcast=${ anchorFmPodcastId }&anchor_episode=${ anchorFmEpisodeId }`;
 			} else {
 				destination = `/page/${ newSite.site_slug }/home`;
 			}
