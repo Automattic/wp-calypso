@@ -26,12 +26,6 @@ class FeedError extends React.Component {
 		this.props.recordReaderTracksEvent( 'calypso_reader_search_on_feed_error_clicked' );
 	};
 
-	recordSecondaryAction = () => {
-		recordAction( 'clicked_discover_on_404' );
-		recordGaEvent( 'Clicked Discover on 404' );
-		this.props.recordReaderTracksEvent( 'calypso_reader_discover_on_feed_error_clicked' );
-	};
-
 	render() {
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		const action = (
@@ -43,15 +37,6 @@ class FeedError extends React.Component {
 				{ this.props.translate( 'Find sites to follow' ) }
 			</a>
 		);
-		const secondaryAction = (
-			<a
-				className="empty-content__action button"
-				onClick={ this.recordSecondaryAction }
-				href="/discover"
-			>
-				{ this.props.translate( 'Explore' ) }
-			</a>
-		);
 
 		return (
 			<ReaderMain>
@@ -61,7 +46,6 @@ class FeedError extends React.Component {
 
 				<EmptyContent
 					action={ action }
-					secondaryAction={ secondaryAction }
 					title={ this.props.message }
 					illustration={ '/calypso/images/illustrations/illustration-404.svg' }
 					illustrationWidth={ 500 }
