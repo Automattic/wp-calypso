@@ -241,11 +241,7 @@ export const startUpload = ( importerStatus, file ) => {
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
 		.then( ( data ) => {
-			const finishUploadAction = createFinishUploadAction(
-				importerId,
-				fromApi( { ...data, siteId } )
-			);
-
+			const finishUploadAction = createFinishUploadAction( importerId, fromApi( data ) );
 			Dispatcher.handleViewAction( finishUploadAction );
 			reduxDispatch( finishUploadAction );
 		} )
