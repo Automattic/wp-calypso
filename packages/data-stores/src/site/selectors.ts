@@ -44,7 +44,6 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 };
 
 export const getSiteLaunchStatus = ( state: State, siteId: number ) => {
-	console.log( state, siteId );
 	return state.launchStatus[ siteId ]?.status;
 };
 
