@@ -27,7 +27,7 @@ function WelcomeTourCard( {
 	onMinimize,
 	onDismiss,
 	setJustMaximized,
-	setCurrentCard,
+	setCurrentCardIndex,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
 	const isLastCard = cardIndex === lastCardIndex;
@@ -66,7 +66,7 @@ function WelcomeTourCard( {
 						<Button
 							className="welcome-tour-card__description"
 							isTertiary
-							onClick={ () => setCurrentCard( 0 ) }
+							onClick={ () => setCurrentCardIndex( 0 ) }
 						>
 							Restart tour
 						</Button>
@@ -78,20 +78,20 @@ function WelcomeTourCard( {
 					cardIndex={ cardIndex }
 					lastCardIndex={ lastCardIndex }
 					onDismiss={ onDismiss }
-					setCurrentCard={ setCurrentCard }
+					setCurrentCardIndex={ setCurrentCardIndex }
 				></CardNavigation>
 			</CardFooter>
 		</Card>
 	);
 }
 
-function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCard } ) {
+function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCardIndex } ) {
 	return (
 		<>
 			<PaginationControl
 				currentPage={ cardIndex }
 				numberOfPages={ lastCardIndex + 1 }
-				setCurrentPage={ setCurrentCard }
+				setCurrentPage={ setCurrentCardIndex }
 			/>
 			<div>
 				{ cardIndex === 0 ? (
@@ -99,7 +99,7 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCard }
 						No thanks
 					</Button>
 				) : (
-					<Button isTertiary={ true } onClick={ () => setCurrentCard( cardIndex - 1 ) }>
+					<Button isTertiary={ true } onClick={ () => setCurrentCardIndex( cardIndex - 1 ) }>
 						Back
 					</Button>
 				) }
@@ -107,7 +107,7 @@ function CardNavigation( { cardIndex, lastCardIndex, onDismiss, setCurrentCard }
 					<Button
 						className="welcome-tour-card__next-btn"
 						isPrimary={ true }
-						onClick={ () => setCurrentCard( cardIndex + 1 ) }
+						onClick={ () => setCurrentCardIndex( cardIndex + 1 ) }
 					>
 						{ cardIndex === 0 ? "Let's start" : 'Next' }
 					</Button>
@@ -149,5 +149,12 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 		</div>
 	);
 }
+
+// function lastCardThumbsUpDown() {
+// 	<CardFooter>
+// 		<div>Did you find this guide helpful?</div>
+// 		<div></div>
+// 	</CardFooter>;
+// }
 
 export default WelcomeTourCard;

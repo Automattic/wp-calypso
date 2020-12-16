@@ -68,14 +68,14 @@ function LaunchWpcomWelcomeTour() {
 function WelcomeTourFrame() {
 	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
-	const [ currentCard, setCurrentCard ] = useState( 0 );
+	const [ currentCardIndex, setCurrentCardIndex ] = useState( 0 );
 	const [ justMaximized, setJustMaximized ] = useState( false );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = () => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
-			slide_number: currentCard + 1,
+			slide_number: currentCardIndex + 1,
 		} );
 
 		setWpcomNuxStatus( { isNuxEnabled: false } );
@@ -88,15 +88,15 @@ function WelcomeTourFrame() {
 		<div className="wpcom-editor-welcome-tour-frame">
 			{ ! isMinimized ? (
 				<WelcomeTourCard
-					cardContent={ cardContent[ currentCard ] }
-					cardIndex={ currentCard }
+					cardContent={ cardContent[ currentCardIndex ] }
+					cardIndex={ currentCardIndex }
 					justMaximized={ justMaximized }
-					key={ currentCard }
+					key={ currentCardIndex }
 					lastCardIndex={ cardContent.length - 1 }
 					onDismiss={ dismissWpcomNuxTour }
 					onMinimize={ setIsMinimized }
 					setJustMaximized={ setJustMaximized }
-					setCurrentCard={ setCurrentCard }
+					setCurrentCardIndex={ setCurrentCardIndex }
 				/>
 			) : (
 				<WelcomeTourMinimized onMaximize={ setIsMinimized } setJustMaximized={ setJustMaximized } />
