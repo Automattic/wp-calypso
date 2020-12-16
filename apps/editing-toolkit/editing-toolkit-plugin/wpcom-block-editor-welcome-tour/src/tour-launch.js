@@ -74,6 +74,7 @@ function WelcomeTourFrame() {
 	const dismissWpcomNuxTour = () => {
 		recordTracksEvent( 'calypso_editor_wpcom_tour_dismiss', {
 			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			slide_number: currentCard + 1,
 		} );
 
 		setWpcomNuxStatus( { isNuxEnabled: false } );
