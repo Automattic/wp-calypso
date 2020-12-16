@@ -24,6 +24,14 @@ export const redirectToWpcomPath = ( url: string ) => {
 	redirectParentWindow( `${ origin }${ path }` );
 };
 
+export const getCurrentLaunchFlowUrl = (): string | undefined => {
+	try {
+		return window?.calypsoifyGutenberg?.currentCalypsoUrl as string;
+	} catch ( err ) {
+		return undefined;
+	}
+};
+
 export const openCheckout = ( siteSlug: string, isEcommerce = false ): void => {
 	const HOOK_OPEN_CHECKOUT_MODAL = 'a8c.wpcom-block-editor.openCheckoutModal';
 	const isFocusedLaunchFlow = window?.calypsoifyGutenberg?.isFocusedLaunchFlow;
