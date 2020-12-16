@@ -69,6 +69,7 @@ function WelcomeTourFrame() {
 	const cardContent = getTourContent();
 	const [ isMinimized, setIsMinimized ] = useState( false );
 	const [ currentCard, setCurrentCard ] = useState( 0 );
+	const [ justMaximized, setJustMaximized ] = useState( false );
 	const { setWpcomNuxStatus } = useDispatch( 'automattic/nux' );
 
 	const dismissWpcomNuxTour = () => {
@@ -89,22 +90,29 @@ function WelcomeTourFrame() {
 				<WelcomeTourCard
 					cardContent={ cardContent[ currentCard ] }
 					cardIndex={ currentCard }
+					justMaximized={ justMaximized }
 					key={ currentCard }
 					lastCardIndex={ cardContent.length - 1 }
 					onDismiss={ dismissWpcomNuxTour }
 					onMinimize={ setIsMinimized }
+					setJustMaximized={ setJustMaximized }
 					setCurrentCard={ setCurrentCard }
 				/>
 			) : (
-				<WelcomeTourMinimized onMaximize={ setIsMinimized } />
+				<WelcomeTourMinimized onMaximize={ setIsMinimized } setJustMaximized={ setJustMaximized } />
 			) }
 		</div>
 	);
 }
 
-function WelcomeTourMinimized( { onMaximize } ) {
+function WelcomeTourMinimized( { onMaximize, setJustMaximized } ) {
+	const handleOnMaximize = () => {
+		onMaximize( false );
+		setJustMaximized( true );
+	};
+
 	return (
-		<Button onClick={ () => onMaximize( false ) } className="wpcom-editor-welcome-tour__resume-btn">
+		<Button onClick={ handleOnMaximize } className="wpcom-editor-welcome-tour__resume-btn">
 			<Flex gap={ 13 }>
 				<p>Click to resume tutorial</p>
 				<Icon icon={ maximize } size={ 24 } />

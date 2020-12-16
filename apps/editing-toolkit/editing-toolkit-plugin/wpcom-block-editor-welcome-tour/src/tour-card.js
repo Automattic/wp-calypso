@@ -22,9 +22,11 @@ const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
 function WelcomeTourCard( {
 	cardContent,
 	cardIndex,
+	justMaximized,
 	lastCardIndex,
 	onMinimize,
 	onDismiss,
+	setJustMaximized,
 	setCurrentCard,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
@@ -32,6 +34,11 @@ function WelcomeTourCard( {
 
 	// Ensure tracking is recorded once per slide view
 	useEffectOnlyOnce( () => {
+		// Don't track slide view if returning from minimized state
+		if ( justMaximized ) {
+			setJustMaximized( false );
+			return;
+		}
 		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
 			slide_number: cardIndex + 1,
 			is_last_slide: isLastCard,
@@ -42,7 +49,12 @@ function WelcomeTourCard( {
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
-			<CardOverlayControls onDismiss={ onDismiss } onMinimize={ onMinimize } />
+			<CardOverlayControls
+				setJustMaximized={ setJustMaximized }
+				onDismiss={ onDismiss }
+				onMinimize={ onMinimize }
+				slideNumber={ cardIndex + 1 }
+			/>
 			<CardMedia>
 				<img alt="Editor Welcome Tour" src={ imgSrc } />
 			</CardMedia>
