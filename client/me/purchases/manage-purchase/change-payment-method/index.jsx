@@ -335,6 +335,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 } );
 
 function useAssignablePaymentMethods() {
+	const translate = useTranslate();
 	const { isStripeLoading, stripeLoadingError, stripeConfiguration, stripe } = useStripe();
 
 	const paypalMethod = useCreatePayPal();
@@ -346,6 +347,7 @@ function useAssignablePaymentMethods() {
 		stripe,
 		shouldUseEbanx: false,
 		shouldShowTaxFields: true,
+		activePayButtonText: translate( 'Save card' ),
 	} );
 
 	// getStoredCards always returns a new array, but we need a memoized version
@@ -355,6 +357,7 @@ function useAssignablePaymentMethods() {
 	const existingCardMethods = useCreateExistingCards( {
 		storedCards,
 		stripeConfiguration,
+		activePayButtonText: translate( 'Use this card' ),
 	} );
 
 	const paymentMethods = useMemo(
