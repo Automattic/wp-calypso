@@ -9,7 +9,7 @@ import { createStripeSetupIntent, StripeHookProvider, useStripe } from '@automat
 import {
 	CheckoutProvider,
 	CheckoutPaymentMethods,
-	CheckoutStepArea,
+	CheckoutSubmitButton,
 	makeSuccessResponse,
 } from '@automattic/composite-checkout';
 import { Card } from '@automattic/components';
@@ -226,15 +226,15 @@ function ChangePaymentMethodList( {
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
 
-				<CheckoutStepArea>
-					<CheckoutPaymentMethods className="change-payment-method__list" isComplete={ false } />
-					<div className="change-payment-method__terms">
-						<Gridicon icon="info-outline" size={ 18 } />
-						<p>
-							<TosText translate={ translate } />
-						</p>
-					</div>
-				</CheckoutStepArea>
+				<CheckoutPaymentMethods className="change-payment-method__list" isComplete={ false } />
+				<div className="change-payment-method__terms">
+					<Gridicon icon="info-outline" size={ 18 } />
+					<p>
+						<TosText translate={ translate } />
+					</p>
+				</div>
+
+				<CheckoutSubmitButton />
 			</Card>
 		</CheckoutProvider>
 	);
