@@ -13,6 +13,11 @@ import minimize from './icons/minimize';
  */
 import { Button, Card, CardBody, CardFooter, CardMedia, Flex } from '@wordpress/components';
 import { close } from '@wordpress/icons';
+import { useEffect } from '@wordpress/element';
+import { recordTracksEvent } from '@automattic/calypso-analytics';
+
+// eslint-disable-next-line react-hooks/exhaustive-deps
+const useEffectOnlyOnce = ( func ) => useEffect( func, [] );
 
 function WelcomeTourCard( {
 	cardContent,
@@ -23,6 +28,17 @@ function WelcomeTourCard( {
 	setCurrentCard,
 } ) {
 	const { description, heading, imgSrc } = cardContent;
+	const isLastCard = cardIndex === lastCardIndex;
+
+	// Ensure tracking is recorded once per slide view
+	useEffectOnlyOnce( () => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_slide_view', {
+			slide_number: cardIndex + 1,
+			is_last_slide: isLastCard,
+			slide_heading: heading,
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+	} );
 
 	return (
 		<Card className="welcome-tour-card" isElevated>
@@ -34,7 +50,7 @@ function WelcomeTourCard( {
 				<h2 className="welcome-tour-card__heading">{ heading }</h2>
 				<p className="welcome-tour-card__description">
 					{ description }
-					{ cardIndex === lastCardIndex ? (
+					{ isLastCard ? (
 						<Button
 							className="welcome-tour-card__description"
 							isTertiary
