@@ -266,7 +266,7 @@ function PurchaseMetaPrice( { purchase, translate } ) {
 	const plan = getPlan( productSlug ) || getProductFromSlug( productSlug );
 	let period = translate( 'year' );
 
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+	if ( isOneTimePurchase( purchase ) ) {
 		return translate( '%(priceText)s %(currencyCode)s {{period}}(one-time){{/period}}', {
 			args: { priceText, currencyCode },
 			components: {
@@ -315,7 +315,7 @@ function PurchaseMetaPaymentDetails( {
 		recordTracksEvent( 'calypso_purchases_edit_payment_method' );
 	};
 
-	if ( isOneTimePurchase( purchase ) || isDomainTransfer( purchase ) ) {
+	if ( isOneTimePurchase( purchase ) ) {
 		return null;
 	}
 
