@@ -141,7 +141,7 @@ describe( 'MySitesSidebar', () => {
 
 		test( 'Should return null item if woocommerce/store-deprecated is disabled', () => {
 			config.isEnabled.mockImplementation(
-				( feature ) => feature !== 'woocommerce/store-deprecated'
+				( feature ) => feature !== 'woocommerce/store-deprecated' // Only disable this one feature
 			);
 			const Sidebar = new MySitesSidebar( {
 				canUserUserStore: true,
