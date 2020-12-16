@@ -31,7 +31,7 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import SidebarNavigation from 'calypso/components/sidebar-navigation';
 import { useDateWithOffset } from './hooks';
 import { backupMainPath } from './paths';
-import DatePicker from './date-picker';
+import BackupDatePicker from './backup-date-picker';
 import EnableRestoresBanner from './enable-restores-banner';
 import SearchResults from './search-results';
 import { DailyStatus, RealtimeStatus } from './status';
@@ -51,8 +51,16 @@ const BackupPage = ( { queryDate } ) => {
 
 	const moment = useLocalizedMoment();
 	const parsedQueryDate = queryDate ? moment( queryDate, INDEX_FORMAT ) : moment();
+
+	// If a date is specified, it'll be in a timezone-agnostic string format,
+	// so we'll need to add the site's TZ info in without affecting the date
+	// we were given.
+	//
+	// Otherwise, if no date is specified, we're talking about the current date.
+	// This is the same point in time for everyone, but we should make sure to
+	// store it in terms of the selected site's time zone.
 	const selectedDate = useDateWithOffset( parsedQueryDate, {
-		keepLocalTime: true,
+		keepLocalTime: !! queryDate,
 	} );
 
 	return (
@@ -104,7 +112,7 @@ const AdminContent = ( { selectedDate } ) => {
 
 	const needCredentials = useSelector( ( state ) => getDoesRewindNeedCredentials( state, siteId ) );
 
-	const onSelectDate = ( date ) =>
+	const onDateChange = ( date ) =>
 		page( backupMainPath( siteSlug, { date: date.format( INDEX_FORMAT ) } ) );
 
 	return (
@@ -123,7 +131,7 @@ const AdminContent = ( { selectedDate } ) => {
 						<div className="backup__last-backup-status">
 							{ needCredentials && <EnableRestoresBanner /> }
 
-							<DatePicker onSelectDate={ onSelectDate } selectedDate={ selectedDate } />
+							<BackupDatePicker onDateChange={ onDateChange } selectedDate={ selectedDate } />
 							<BackupStatus selectedDate={ selectedDate } />
 						</div>
 					</div>
