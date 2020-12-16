@@ -79,6 +79,25 @@
 		padding: $grid-unit-20 !important;
 	}
 
+	.components-card__footer {
+		.welcome-tour__end-text {
+			color: $gray-600;
+			font-size: 0.875rem;
+			font-style: italic;
+		}
+
+		.welcome-tour__end-icon.components-button.has-icon {
+			background-color: #f6f7f7;
+			border-radius: 50%;
+			color: $gray-600;
+			margin-left: 8px;
+
+			path {
+				fill: $gray-600;
+			}
+		}
+	}
+
 	.components-card__media {
 		min-height: 260px;
 	}
@@ -109,6 +128,7 @@
 	padding: $grid-unit-15;
 	position: absolute;
 	right: 0;
+
 	.components-button {
 		width: 32px;
 		min-width: 32px;

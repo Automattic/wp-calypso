@@ -7,6 +7,8 @@ import './public-path';
 import './style-tour.scss';
 import PaginationControl from './pagination';
 import minimize from './icons/minimize';
+import thumbsUp from './icons/thumbs_up';
+import thumbsDown from './icons/thumbs_down';
 
 /**
  * External dependencies
@@ -74,12 +76,16 @@ function WelcomeTourCard( {
 				</p>
 			</CardBody>
 			<CardFooter>
-				<CardNavigation
-					cardIndex={ cardIndex }
-					lastCardIndex={ lastCardIndex }
-					onDismiss={ onDismiss }
-					setCurrentCardIndex={ setCurrentCardIndex }
-				></CardNavigation>
+				{ isLastCard ? (
+					<LastCardThumbsUpDown></LastCardThumbsUpDown>
+				) : (
+					<CardNavigation
+						cardIndex={ cardIndex }
+						lastCardIndex={ lastCardIndex }
+						onDismiss={ onDismiss }
+						setCurrentCardIndex={ setCurrentCardIndex }
+					></CardNavigation>
+				) }
 			</CardFooter>
 		</Card>
 	);
@@ -150,11 +156,33 @@ function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
 	);
 }
 
-// function lastCardThumbsUpDown() {
-// 	<CardFooter>
-// 		<div>Did you find this guide helpful?</div>
-// 		<div></div>
-// 	</CardFooter>;
-// }
+function LastCardThumbsUpDown() {
+	const rateTour = ( isThumbsUp ) => {
+		recordTracksEvent( 'calypso_editor_wpcom_tour_rate', {
+			thumbs_up: isThumbsUp,
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+		} );
+	};
+
+	return (
+		<>
+			<p className="welcome-tour__end-text">Did you find this guide helpful?</p>
+			<div>
+				<Button
+					className="welcome-tour__end-icon"
+					icon={ thumbsUp }
+					onClick={ () => rateTour( true ) }
+					iconSize={ 24 }
+				/>
+				<Button
+					className="welcome-tour__end-icon"
+					icon={ thumbsDown }
+					onClick={ () => rateTour( false ) }
+					iconSize={ 24 }
+				/>
+			</div>
+		</>
+	);
+}
 
 export default WelcomeTourCard;
