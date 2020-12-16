@@ -40,7 +40,7 @@ export const isSiteLaunched = ( state: State, siteId: number ) => {
 
 // @TODO: Return LaunchStatus instead of a boolean
 export const isSiteLaunching = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IDLE;
+	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IN_PROGRESS;
 };
 
 export const getSiteDomains = ( state: State, siteId: number ) => {
