@@ -4,7 +4,7 @@
 import { jetpackPricingContext } from './controller';
 import config from '@automattic/calypso-config';
 import userFactory from 'calypso/lib/user';
-import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
+import { siteSelection } from 'calypso/my-sites/controller';
 import jetpackPlans from 'calypso/my-sites/plans/jetpack-plans';
 
 /**
@@ -25,10 +25,10 @@ export default function (): void {
 			jetpackPlans( `/plans`, jetpackPricingContext );
 		}
 	} else {
-		jetpackPlans( `/pricing/:site?`, cloudSiteSelection, jetpackPricingContext );
+		jetpackPlans( `/pricing/:site?`, siteSelection, jetpackPricingContext );
 
 		if ( config.isEnabled( 'jetpack-cloud/connect' ) ) {
-			jetpackPlans( `/plans/:site?`, cloudSiteSelection, jetpackPricingContext );
+			jetpackPlans( `/plans/:site?`, siteSelection, jetpackPricingContext );
 		}
 	}
 }

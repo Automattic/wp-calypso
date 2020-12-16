@@ -10,8 +10,7 @@ import React from 'react';
  */
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { makeLayout, render as clientRender } from 'calypso/controller';
-import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
-import { sites } from 'calypso/my-sites/controller';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { startJetpackCloudOAuthOverride } from 'calypso/lib/jetpack/oauth-override';
 import { translate } from 'i18n-calypso';
 import Landing from './sections/landing';
@@ -54,8 +53,8 @@ export const handleOAuthOverride = () => {
 };
 
 export default function () {
-	page( '/landing/:site', cloudSiteSelection, landingController, makeLayout, clientRender );
-	page( '/landing', cloudSiteSelection, selectionPrompt, sites, makeLayout, clientRender );
+	page( '/landing/:site', siteSelection, landingController, makeLayout, clientRender );
+	page( '/landing', siteSelection, selectionPrompt, sites, makeLayout, clientRender );
 	page( '/oauth-override', handleOAuthOverride );
 	page( '/', redirectToPrimarySiteLanding );
 }

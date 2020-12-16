@@ -9,6 +9,8 @@ import { get, noop, some, startsWith, uniq } from 'lodash';
 /**
  * Internal Dependencies
  */
+import { cloudSiteSelection } from 'calypso/jetpack-cloud/controller';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { requestSite } from 'calypso/state/sites/actions';
 import {
 	getSite,
@@ -303,7 +305,7 @@ function createSitesComponent( context ) {
 	);
 }
 
-function showMissingPrimaryError( currentUser, dispatch ) {
+export function showMissingPrimaryError( currentUser, dispatch ) {
 	const { username, primary_blog, primary_blog_url, primary_blog_is_jetpack } = currentUser;
 	const tracksPayload = {
 		username,
@@ -344,6 +346,11 @@ export function noSite( context, next ) {
  * Set up site selection based on last URL param and/or handle no-sites error cases
  */
 export function siteSelection( context, next ) {
+	if ( isJetpackCloud() ) {
+		cloudSiteSelection( context, next );
+		return;
+	}
+
 	const { getState, dispatch } = getStore( context );
 	const siteFragment = context.params.site || getSiteFragment( context.path );
 	const basePath = sectionify( context.path, siteFragment );
@@ -353,17 +360,15 @@ export function siteSelection( context, next ) {
 	// The user doesn't have any sites: render `NoSitesMessage`
 	if ( currentUser && currentUser.site_count === 0 ) {
 		renderEmptySites( context );
-		return recordPageView( '/no-sites', sitesPageTitleForAnalytics + ' > No Sites', {
-			base_path: basePath,
-		} );
+		recordNoSitesPageView( context, siteFragment );
+		return;
 	}
 
 	// The user has all sites set as hidden: render help message with how to make them visible
 	if ( currentUser && currentUser.visible_site_count === 0 ) {
 		renderNoVisibleSites( context );
-		return recordPageView( '/no-sites', `${ sitesPageTitleForAnalytics } > All Sites Hidden`, {
-			base_path: basePath,
-		} );
+		recordNoVisibleSitesPageView( context, siteFragment );
+		return;
 	}
 
 	/*
@@ -442,6 +447,16 @@ export function siteSelection( context, next ) {
 			}
 		} );
 	}
+}
+
+export function recordNoSitesPageView( context, siteFragment, title ) {
+	recordPageView( '/no-sites', sitesPageTitleForAnalytics + ` > ${ title || 'No Sites' }`, {
+		base_path: sectionify( context.path, siteFragment ),
+	} );
+}
+
+export function recordNoVisibleSitesPageView( context, siteFragment ) {
+	recordNoSitesPageView( context, siteFragment, 'All Sites Hidden' );
 }
 
 export function redirectToPrimary( context, primarySiteSlug ) {
