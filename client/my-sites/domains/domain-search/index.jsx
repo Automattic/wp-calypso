@@ -170,15 +170,10 @@ class DomainSearch extends Component {
 	removeDomain( suggestion ) {
 		this.props.recordRemoveDomainButtonClick( suggestion.domain_name );
 
-		const productToRemove = this.props.cart.products.find( ( product ) => {
-			if (
-				product.meta === suggestion.domain_name &&
-				product.product_slug === suggestion.product_slug
-			) {
-				return true;
-			}
-			return false;
-		} );
+		const productToRemove = this.props.cart.products.find(
+			( product ) =>
+				product.meta === suggestion.domain_name && product.product_slug === suggestion.product_slug
+		);
 		if ( productToRemove ) {
 			const uuidToRemove = productToRemove.uuid;
 			this.props.shoppingCartManager.removeProductFromCart( uuidToRemove );
