@@ -1,15 +1,13 @@
 /**
- * External dependencies
- */
-import { getNonProductWPCOMCartItemTypes } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
-import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
-import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
-
-/**
  * Internal dependencies
  */
+import {
+	getNonProductWPCOMCartItemTypes,
+	createTransactionEndpointCartFromLineItems,
+} from 'calypso/my-sites/checkout/composite-checkout/lib/translate-cart';
+import type { WPCOMCartItem } from 'calypso/my-sites/checkout/composite-checkout/types/checkout-cart';
+import type { DomainContactDetails } from 'calypso/my-sites/checkout/composite-checkout/types/backend/domain-contact-details-components';
 import { WPCOMTransactionEndpointCart } from './transaction-endpoint';
-import { createTransactionEndpointCartFromLineItems } from '../lib/translate-cart';
 
 export type PayPalExpressEndpoint = (
 	_: PayPalExpressEndpointRequestPayload
