@@ -31,15 +31,20 @@ export function trackEventWithFlow( eventId: string, params = {}, flow = FLOW_ID
  *
  * @param {string} ref  The value of a `ref` query parameter, usually set by marketing landing pages
  * @param {number} site_count The number of sites owned by the current user or 0 if there is no logged in user
+ * @param {boolean} is_podcasting_site If the current onboarding flow is a Podcast-flavored onboarding flow
  */
-export function recordOnboardingStart( ref = '', site_count: number ): void {
+export function recordOnboardingStart(
+	ref = '',
+	site_count: number,
+	is_podcasting_site: boolean
+): void {
 	if ( ! ref ) {
 		ref = new URLSearchParams( window.location.search ).get( 'ref' ) || ref;
 	}
 
-	trackEventWithFlow( 'calypso_newsite_start', { ref, site_count } );
+	trackEventWithFlow( 'calypso_newsite_start', { ref, site_count, is_podcasting_site } );
 	// Also fire the signup start|complete events. See: pbmFJ6-95-p2
-	trackEventWithFlow( 'calypso_signup_start', { ref, site_count } );
+	trackEventWithFlow( 'calypso_signup_start', { ref, site_count, is_podcasting_site } );
 }
 
 /**
