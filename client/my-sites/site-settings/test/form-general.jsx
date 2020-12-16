@@ -50,11 +50,7 @@ import {
  * Internal dependencies
  */
 import { SiteSettingsFormGeneral } from '../form-general';
-import config from 'calypso/config';
 import moment from 'moment';
-
-const configMock = ( values ) => ( key ) => values[ key ];
-config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
 
 moment.tz = {
 	guess: () => moment(),
@@ -154,48 +150,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			expect( container.querySelectorAll( '[name="blog_public"]' ).length ).toBe( 4 );
 		} );
 
-		describe( 'blog_public states (coming-soon-v1)', () => {
-			[
-				[
-					'Coming soon',
-					'Coming Soon',
-					1,
-					{ blog_public: -1, wpcom_coming_soon: 1, wpcom_public_coming_soon: 0 },
-				],
-				[
-					'Public',
-					'Public',
-					-1,
-					{ blog_public: 1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
-				],
-				[
-					'Hidden',
-					'Discourage search engines from indexing this site',
-					-1,
-					{ blog_public: 0, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
-				],
-				[
-					'Private',
-					'Private',
-					1,
-					{ blog_public: -1, wpcom_coming_soon: 0, wpcom_public_coming_soon: 0 },
-				],
-			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
-				test( `${ name } option should be selectable`, () => {
-					config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': false } ) );
-					testProps.fields.blog_public = initialBlogPublic;
-					const { getByLabelText } = renderWithRedux(
-						<SiteSettingsFormGeneral { ...testProps } />
-					);
-
-					const radioButton = getByLabelText( text, { exact: false } );
-					expect( radioButton ).not.toBeChecked();
-					fireEvent.click( radioButton );
-					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
-				} );
-			} );
-		} );
-
 		test( `Selecting Hidden should switch radio to Public`, () => {
 			testProps.fields.blog_public = -1;
 			const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...testProps } /> );
@@ -236,7 +190,7 @@ describe( 'SiteSettingsFormGeneral ', () => {
 			} );
 		} );
 
-		describe( 'blog_public states (coming-soon-v2)', () => {
+		describe( 'blog_public states', () => {
 			[
 				[
 					'Coming soon',
@@ -264,7 +218,6 @@ describe( 'SiteSettingsFormGeneral ', () => {
 				],
 			].forEach( ( [ name, text, initialBlogPublic, updatedFields ] ) => {
 				test( `${ name } option should be selectable`, () => {
-					config.isEnabled.mockImplementation( configMock( { 'coming-soon-v2': true } ) );
 					testProps.fields.blog_public = initialBlogPublic;
 					const { getByLabelText } = renderWithRedux(
 						<SiteSettingsFormGeneral { ...testProps } />
@@ -275,6 +228,130 @@ describe( 'SiteSettingsFormGeneral ', () => {
 					fireEvent.click( radioButton );
 					expect( testProps.updateFields ).toBeCalledWith( updatedFields );
 				} );
+			} );
+
+			// We want to show the coming soon setting for existing coming soon v1 sites that have not migrated
+			describe( 'support existing coming soon v1 sites that have not migrated', () => {
+				test( 'Coming soon option should be selected when a site is private and unlaunched (coming soon mode v1 by default)', () => {
+					const newProps = {
+						...testProps,
+						fields: {
+							blog_public: -1,
+						},
+						isUnlaunchedSite: true,
+						// So renderLaunchSite() runs smoothly.
+						siteDomains: [ 'test.com' ],
+					};
+
+					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+					const radioButton = getByLabelText( 'Coming soon', { exact: false } );
+					expect( radioButton ).toBeChecked();
+				} );
+
+				test( 'Should check private option when site is private, but not in coming soon v1 and not private and unlaunched', () => {
+					const newProps = {
+						...testProps,
+						fields: {
+							blog_public: -1,
+							wpcom_coming_soon: 0,
+						},
+					};
+
+					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+					const radioButtonComingSoon = getByLabelText( 'Coming soon', { exact: false } );
+					expect( radioButtonComingSoon ).not.toBeChecked();
+
+					// Check that we're not displaying the site as private
+					const radioButtonPrivate = getByLabelText( 'Private', { exact: false } );
+					expect( radioButtonPrivate ).toBeChecked();
+				} );
+
+				test( 'Coming soon option should be selected when a site still has coming soon v1 enabled', () => {
+					const newProps = {
+						...testProps,
+						fields: {
+							wpcom_coming_soon: 1,
+						},
+					};
+
+					const { getByLabelText } = renderWithRedux( <SiteSettingsFormGeneral { ...newProps } /> );
+					const radioButtonComingSoon = getByLabelText( 'Coming soon', { exact: false } );
+					expect( radioButtonComingSoon ).toBeChecked();
+
+					// Check that we're not displaying the site as private
+					const radioButtonPrivate = getByLabelText( 'Private', { exact: false } );
+					expect( radioButtonPrivate ).not.toBeChecked();
+				} );
+
+				test( 'Should check private option when site is in coming soon v1 mode but the etk plugin is disabled on atomic', () => {
+					const newProps = {
+						...testProps,
+						fields: {
+							wpcom_coming_soon: 1,
+						},
+						isAtomicAndEditingToolkitDeactivated: true,
+					};
+
+					const { getByLabelText, container } = renderWithRedux(
+						<SiteSettingsFormGeneral { ...newProps } />
+					);
+					expect(
+						container.querySelector( '.site-settings__visibility-label.is-coming-soon' )
+					).toBe( null );
+
+					// Check that we're not displaying the site as private
+					const radioButtonPrivate = getByLabelText( 'Private', { exact: false } );
+					expect( radioButtonPrivate ).toBeChecked();
+				} );
+			} );
+		} );
+
+		describe( 'Coming soon plugin availability', () => {
+			test( 'Should hide Coming Soon form element when the site is not atomic or the editing toolkit plugin is not disabled', () => {
+				const newProps = {
+					...props,
+					isAtomicAndEditingToolkitDeactivated: false,
+				};
+
+				const comp = shallow( <SiteSettingsFormGeneral { ...newProps } /> );
+				expect( comp.find( '.site-settings__visibility-label.is-coming-soon' ).length ).toBe( 1 );
+			} );
+
+			test( 'Should hide Coming Soon form element when the site is atomic and the editing toolkit plugin is disabled', () => {
+				const newProps = {
+					...props,
+					isAtomicAndEditingToolkitDeactivated: true,
+				};
+				const comp = shallow( <SiteSettingsFormGeneral { ...newProps } /> );
+				expect( comp.find( '.site-settings__visibility-label.is-coming-soon' ).length ).toBe( 0 );
+			} );
+
+			test( 'Should check public not indexed when coming soon plugin is not available', () => {
+				const newProps = {
+					...props,
+					fields: {
+						wpcom_public_coming_soon: 1,
+						blog_public: 0,
+					},
+					isAtomicAndEditingToolkitDeactivated: true,
+				};
+				const { getByLabelText, container } = renderWithRedux(
+					<SiteSettingsFormGeneral { ...newProps } />
+				);
+				expect( container.querySelector( '.site-settings__visibility-label.is-coming-soon' ) ).toBe(
+					null
+				);
+
+				const radioButtonPublic = getByLabelText( 'Public', { exact: false } );
+				expect( radioButtonPublic ).toBeChecked();
+
+				const hiddenCheckbox = getByLabelText(
+					'Discourage search engines from indexing this site',
+					{
+						exact: false,
+					}
+				);
+				expect( hiddenCheckbox ).toBeChecked();
 			} );
 		} );
 	} );
