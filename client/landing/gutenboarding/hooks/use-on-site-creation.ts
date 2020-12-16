@@ -141,7 +141,17 @@ export default function useOnSiteCreation(): void {
 				// However, we're on calypso.. that means we might need to make sure another step passes along the info correctly
 				// what does /post/{site} do in calypso?
 				// can we make query strings get passed from the parent to iframe?
-				destination = `/post/${ newSite.site_slug }?anchor_podcast=${ anchorFmPodcastId }&anchor_episode=${ anchorFmEpisodeId }`;
+				const params = {
+					anchor_podcast: anchorFmPodcastId,
+					anchor_episode: anchorFmEpisodeId,
+					spotify_show_url:
+						'https%3A%2F%2Fopen.spotify.com%2Fshow%2F6HTZdaDHjqXKDE4acYffoD%3Fsi%3DEVfDYETjQCu7pasVG5D73Q', // WIP TODO - Where is this coming from?
+				};
+				const queryString = Object.keys( params )
+					.filter( ( key ) => params[ key as keyof typeof params ] != null )
+					.map( ( key ) => key + '=' + params[ key as keyof typeof params ] )
+					.join( '&' );
+				destination = `/post/${ newSite.site_slug }?${ queryString }`;
 			} else {
 				destination = `/page/${ newSite.site_slug }/home`;
 			}
