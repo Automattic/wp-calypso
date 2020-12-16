@@ -112,7 +112,15 @@ function WelcomeTourCard( {
 	);
 }
 
-function CardOverlayControls( { onMinimize, onDismiss } ) {
+function CardOverlayControls( { onMinimize, onDismiss, slideNumber } ) {
+	const handleOnMinimize = () => {
+		onMinimize( true );
+		recordTracksEvent( 'calypso_editor_wpcom_tour_minimize', {
+			is_gutenboarding: window.calypsoifyGutenberg?.isGutenboarding,
+			slide_number: slideNumber,
+		} );
+	};
+
 	return (
 		<div className="welcome-tour-card__overlay-controls">
 			<Flex>
@@ -121,7 +129,7 @@ function CardOverlayControls( { onMinimize, onDismiss } ) {
 					className="welcome-tour-card__minimize-icon"
 					icon={ minimize }
 					iconSize={ 24 }
-					onClick={ () => onMinimize( true ) }
+					onClick={ handleOnMinimize }
 				></Button>
 				<Button isPrimary icon={ close } iconSize={ 24 } onClick={ () => onDismiss() }></Button>
 			</Flex>
