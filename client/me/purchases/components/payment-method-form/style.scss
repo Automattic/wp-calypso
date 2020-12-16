@@ -72,5 +72,9 @@
 
 	.checkout-submit-button .checkout-button {
 		width: auto;
+
+		&:focus {
+			outline: var( --color-primary-light ) solid 2px;
+		}
 	}
 }
