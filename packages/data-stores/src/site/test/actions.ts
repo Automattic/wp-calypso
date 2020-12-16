@@ -14,38 +14,38 @@ const error = 'Something went wrong terribly';
 
 describe( 'Site Actions', () => {
 	describe( 'LAUNCH_SITE Actions', () => {
-		it( 'should return a LAUNCH_SITE_START Action', () => {
-			const { launchSiteStart } = createActions( mockedClientCredentials );
+		it( 'should return a LAUNCH_SITE_IDLE Action', () => {
+			const { launchSiteIdle } = createActions( mockedClientCredentials );
 
 			const expected = {
-				type: 'LAUNCH_SITE_START',
+				type: 'LAUNCH_SITE_IDLE',
 				siteId,
 			};
 
-			expect( launchSiteStart( siteId ) ).toEqual( expected );
+			expect( launchSiteIdle( siteId ) ).toEqual( expected );
 		} );
 
-		it( 'should return a LAUNCH_SITE_COMPLETE Action', () => {
-			const { launchSiteComplete } = createActions( mockedClientCredentials );
+		it( 'should return a LAUNCH_SITE_SUCCESS Action', () => {
+			const { launchSiteSuccess } = createActions( mockedClientCredentials );
 
 			const expected = {
-				type: 'LAUNCH_SITE_COMPLETE',
+				type: 'LAUNCH_SITE_SUCCESS',
 				siteId,
 			};
 
-			expect( launchSiteComplete( siteId ) ).toEqual( expected );
+			expect( launchSiteSuccess( siteId ) ).toEqual( expected );
 		} );
 
-		it( 'should return a LAUNCH_SITE_ERROR Action', () => {
-			const { launchSiteError } = createActions( mockedClientCredentials );
+		it( 'should return a LAUNCH_SITE_FAILURE Action', () => {
+			const { launchSiteFailure } = createActions( mockedClientCredentials );
 
 			const expected = {
-				type: 'LAUNCH_SITE_ERROR',
+				type: 'LAUNCH_SITE_FAILURE',
 				siteId,
 				error,
 			};
 
-			expect( launchSiteError( siteId, error ) ).toEqual( expected );
+			expect( launchSiteFailure( siteId, error ) ).toEqual( expected );
 		} );
 
 		it( 'should launch a site successfully', () => {
@@ -61,18 +61,18 @@ describe( 'Site Actions', () => {
 				type: 'WPCOM_REQUEST',
 			};
 
-			// First iteration: LAUNCH_SITE_START is fired
+			// First iteration: LAUNCH_SITE_IDLE is fired
 			expect( generator.next().value ).toEqual( {
-				type: 'LAUNCH_SITE_START',
+				type: 'LAUNCH_SITE_IDLE',
 				siteId,
 			} );
 
 			// Second iteration: WP_COM_REQUEST is fired
 			expect( generator.next().value ).toEqual( mockedApiResponse );
 
-			// Third iteration: LAUNCH_SITE_COMPLETE is fired
+			// Third iteration: LAUNCH_SITE_SUCCESS is fired
 			expect( generator.next().value ).toEqual( {
-				type: 'LAUNCH_SITE_COMPLETE',
+				type: 'LAUNCH_SITE_SUCCESS',
 				siteId,
 			} );
 		} );
@@ -90,9 +90,9 @@ describe( 'Site Actions', () => {
 				type: 'WPCOM_REQUEST',
 			};
 
-			// First iteration: LAUNCH_SITE_START is fired
+			// First iteration: LAUNCH_SITE_IDLE is fired
 			expect( generator.next().value ).toEqual( {
-				type: 'LAUNCH_SITE_START',
+				type: 'LAUNCH_SITE_IDLE',
 				siteId,
 			} );
 
@@ -101,7 +101,7 @@ describe( 'Site Actions', () => {
 
 			// Third iteration: Throw an error
 			expect( generator.throw( error ).value ).toEqual( {
-				type: 'LAUNCH_SITE_ERROR',
+				type: 'LAUNCH_SITE_FAILURE',
 				siteId,
 				error,
 			} );

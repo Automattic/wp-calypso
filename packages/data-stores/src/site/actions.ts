@@ -95,34 +95,34 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		type: 'RESET_RECEIVE_NEW_SITE_FAILED' as const,
 	} );
 
-	const launchSiteStart = ( siteId: number ) => ( {
-		type: 'LAUNCH_SITE_START' as const,
+	const launchSiteIdle = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_IDLE' as const,
 		siteId,
 	} );
 
-	const launchSiteComplete = ( siteId: number ) => ( {
-		type: 'LAUNCH_SITE_COMPLETE' as const,
+	const launchSiteSuccess = ( siteId: number ) => ( {
+		type: 'LAUNCH_SITE_SUCCESS' as const,
 		siteId,
 	} );
 
-	const launchSiteError = ( siteId: number, error: string ) => ( {
-		type: 'LAUNCH_SITE_ERROR' as const,
+	const launchSiteFailure = ( siteId: number, error: string ) => ( {
+		type: 'LAUNCH_SITE_FAILURE' as const,
 		siteId,
 		error,
 	} );
 
 	function* launchSite( siteId: number ) {
-		yield launchSiteStart( siteId );
+		yield launchSiteIdle( siteId );
 		try {
 			yield wpcomRequest( {
 				path: `/sites/${ siteId }/launch`,
 				apiVersion: '1.1',
 				method: 'post',
 			} );
-			yield launchSiteComplete( siteId );
+			yield launchSiteSuccess( siteId );
 			return true;
 		} catch ( error ) {
-			yield launchSiteError( siteId, error );
+			yield launchSiteFailure( siteId, error );
 			return false;
 		}
 	}
@@ -180,9 +180,9 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		receiveSiteFailed,
 		reset,
 		launchSite,
-		launchSiteStart,
-		launchSiteComplete,
-		launchSiteError,
+		launchSiteIdle,
+		launchSiteSuccess,
+		launchSiteFailure,
 		getCart,
 		setCart,
 	};
@@ -202,9 +202,9 @@ export type Action =
 			| ActionCreators[ 'receiveSiteFailed' ]
 			| ActionCreators[ 'reset' ]
 			| ActionCreators[ 'resetNewSiteFailed' ]
-			| ActionCreators[ 'launchSiteStart' ]
-			| ActionCreators[ 'launchSiteComplete' ]
-			| ActionCreators[ 'launchSiteError' ]
+			| ActionCreators[ 'launchSiteIdle' ]
+			| ActionCreators[ 'launchSiteSuccess' ]
+			| ActionCreators[ 'launchSiteFailure' ]
 	  >
 	// Type added so we can dispatch actions in tests, but has no runtime cost
 	| { type: 'TEST_ACTION' };

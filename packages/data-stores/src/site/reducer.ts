@@ -113,19 +113,19 @@ export const launchStatus: Reducer< { [ key: number ]: SiteLaunchState }, Action
 	state = {},
 	action
 ) => {
-	if ( action.type === 'LAUNCH_SITE_START' ) {
+	if ( action.type === 'LAUNCH_SITE_IDLE' ) {
 		return {
 			...state,
 			[ action.siteId ]: { status: SiteLaunchStatus.IDLE, errorCode: undefined },
 		};
 	}
-	if ( action.type === 'LAUNCH_SITE_COMPLETE' ) {
+	if ( action.type === 'LAUNCH_SITE_SUCCESS' ) {
 		return {
 			...state,
 			[ action.siteId ]: { status: SiteLaunchStatus.SUCCESS, errorCode: undefined },
 		};
 	}
-	if ( action.type === 'LAUNCH_SITE_ERROR' ) {
+	if ( action.type === 'LAUNCH_SITE_FAILURE' ) {
 		return {
 			...state,
 			[ action.siteId ]: {

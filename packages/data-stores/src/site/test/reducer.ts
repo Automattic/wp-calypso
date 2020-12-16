@@ -88,10 +88,10 @@ describe( 'Site', () => {
 			expect( state ).toStrictEqual( {} );
 		} );
 
-		it( 'should set isSiteLaunching to true when a LAUNCH_SITE_START action is dispatched', () => {
-			const { launchSiteStart } = createActions( mockedClientCredentials );
+		it( 'should set the status to SiteLaunchStatus.IDLE when a LAUNCH_SITE_IDLE action is dispatched', () => {
+			const { launchSiteIdle } = createActions( mockedClientCredentials );
 
-			const action = launchSiteStart( siteId );
+			const action = launchSiteIdle( siteId );
 			const expected = {
 				...originalState,
 				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.IDLE },
@@ -100,10 +100,10 @@ describe( 'Site', () => {
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
 		} );
 
-		it( 'should set isSiteLaunched to true when a LAUNCH_SITE_COMPLETE action is dispatched', () => {
-			const { launchSiteComplete } = createActions( mockedClientCredentials );
+		it( 'should set the status to SiteLaunchStatus.SUCCESS when a LAUNCH_SITE_SUCCESS action is dispatched', () => {
+			const { launchSiteSuccess } = createActions( mockedClientCredentials );
 
-			const action = launchSiteComplete( siteId );
+			const action = launchSiteSuccess( siteId );
 			const expected = {
 				...originalState,
 				[ siteId ]: { ...originalState[ siteId ], status: SiteLaunchStatus.SUCCESS },
@@ -112,10 +112,10 @@ describe( 'Site', () => {
 			expect( launchStatus( originalState, action ) ).toEqual( expected );
 		} );
 
-		it( 'should set both isSiteLaunching & isSiteLaunched to false when a LAUNCH_SITE_ERROR action is dispatched', () => {
-			const { launchSiteError } = createActions( mockedClientCredentials );
+		it( 'should set the status to SiteLaunchStatus.FAILURE and set an errorCode when a LAUNCH_SITE_FAILURE action is dispatched', () => {
+			const { launchSiteFailure } = createActions( mockedClientCredentials );
 			const error = 'Error Message';
-			const action = launchSiteError( siteId, error );
+			const action = launchSiteFailure( siteId, error );
 			const expected = {
 				...originalState,
 				[ siteId ]: {

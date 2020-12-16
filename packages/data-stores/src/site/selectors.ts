@@ -43,10 +43,6 @@ export const isSiteLaunching = ( state: State, siteId: number ) => {
 	return state.launchStatus[ siteId ]?.status === SiteLaunchStatus.IDLE;
 };
 
-export const getSiteLaunchStatus = ( state: State, siteId: number ) => {
-	return state.launchStatus[ siteId ]?.status;
-};
-
 export const getSiteDomains = ( state: State, siteId: number ) => {
 	return state.sitesDomains[ siteId ];
 };
