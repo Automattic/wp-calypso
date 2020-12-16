@@ -47,9 +47,11 @@
 }
 
 .help__support-links {
+	margin-bottom: 24px;
+
 	@include break-xlarge {
 		display: grid;
-		grid-template-columns: repeat( 4, 1fr );
+		grid-template-columns: repeat( auto-fit, minmax( 200px, 1fr ) );
 		gap: 24px;
 	}
 }
@@ -178,12 +180,16 @@
 .help__contact-us-card.card.is-card-link {
 	padding: 16px;
 	display: flex;
+	align-items: flex-start;
 	justify-content: space-between;
-	align-items: center;
 	margin-bottom: 48px;
 
 	&:hover .gridicon {
 		fill: var( --color-primary );
+	}
+
+	@include break-xlarge {
+		align-items: center;
 	}
 }
 
@@ -196,6 +202,13 @@
 	margin-right: 16px;
 	position: relative;
 	left: -4px;
+	width: 24px;
+	height: 24px;
+
+	@include break-xlarge {
+		width: 36px;
+		height: 36px;
+	}
 }
 
 .help__contact-us-section {
@@ -214,6 +227,12 @@
 
 .help__contact-us-button {
 	margin: auto;
+	margin-top: 0;
 	margin-right: 0;
 	white-space: nowrap;
+	overflow: visible;
+
+	@include break-xlarge {
+		margin-top: auto;
+	}
 }

@@ -315,15 +315,15 @@ function planHasOnboarding( { productSlug } ) {
 	return planHasFeature( productSlug, FEATURE_BUSINESS_ONBOARDING );
 }
 
-export const mapStateToProps = ( state, ownProps ) => {
+export const mapStateToProps = ( state ) => {
 	const isEmailVerified = isCurrentUserEmailVerified( state );
 	const userId = getCurrentUserId( state );
 	const purchases = getUserPurchases( state, userId );
 	const isLoading = isFetchingUserPurchases( state );
 	const isBusinessPlanUser = some( purchases, planHasOnboarding );
-	const showCoursesTeaser = ownProps.isCoursesEnabled && isBusinessPlanUser;
 	const hasAppointment = getConciergeNextAppointment( state );
 	const scheduleId = getConciergeScheduleId( state );
+	const showCoursesTeaser = isBusinessPlanUser;
 
 	return {
 		userId,
