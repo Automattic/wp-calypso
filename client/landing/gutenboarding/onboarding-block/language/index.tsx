@@ -55,7 +55,7 @@ const LanguageStep: React.FunctionComponent< Props > = ( { previousStep } ) => {
 
 	const goBack = ( lang = '' ) => {
 		staticPreviousStep.current
-			? history.replace( makePath( Step[ staticPreviousStep.current ], lang ) )
+			? history.push( makePath( Step[ staticPreviousStep.current ], lang ) )
 			: history.goBack();
 	};
 
