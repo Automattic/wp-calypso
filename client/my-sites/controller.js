@@ -111,9 +111,10 @@ function renderEmptySites( context ) {
 
 function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
-	const currentUser = getCurrentUser( getState() );
+	const state = getState();
+	const currentUser = getCurrentUser( state );
 	const hiddenSites = currentUser && currentUser.site_count - currentUser.visible_site_count;
-	const onboardingUrl = getOnboardingUrl( getState() );
+	const onboardingUrl = getOnboardingUrl( state );
 
 	setSectionMiddleware( { group: 'sites' } )( context );
 
