@@ -27,6 +27,7 @@ import {
 	handleRenewNowClick,
 	hasAmountAvailableToRefund,
 	hasPaymentMethod,
+	isPaidWithCredits,
 	isCancelable,
 	isExpired,
 	isOneTimePurchase,
@@ -305,9 +306,6 @@ class ManagePurchase extends Component {
 		if ( canEditPaymentDetails( purchase ) ) {
 			const path = getChangePaymentMethodUrlFor( siteSlug, purchase );
 			const renewing = isRenewing( purchase );
-			const addPaymentMethodCopy = config.isEnabled( 'purchases/new-payment-methods' )
-				? translate( 'Add Payment Method' )
-				: translate( 'Add Credit Card' );
 
 			if (
 				renewing &&
@@ -319,9 +317,7 @@ class ManagePurchase extends Component {
 
 			return (
 				<CompactCard href={ path } onClick={ this.handleEditPaymentMethodNavItem }>
-					{ hasPaymentMethod( purchase )
-						? translate( 'Change Payment Method' )
-						: addPaymentMethodCopy }
+					{ addPaymentMethodLinkText( { purchase, translate } ) }
 				</CompactCard>
 			);
 		}
@@ -740,6 +736,19 @@ class ManagePurchase extends Component {
 			</Fragment>
 		);
 	}
+}
+
+function addPaymentMethodLinkText( { purchase, translate } ) {
+	let linkText = null;
+	// TODO: we need a "hasRechargeablePaymentMethod" function here
+	if ( hasPaymentMethod( purchase ) && ! isPaidWithCredits( purchase ) ) {
+		linkText = translate( 'Change Payment Method' );
+	} else {
+		linkText = config.isEnabled( 'purchases/new-payment-methods' )
+			? translate( 'Add Payment Method' )
+			: translate( 'Add Credit Card' );
+	}
+	return linkText;
 }
 
 export default connect( ( state, props ) => {
