@@ -39,6 +39,16 @@ export class GSuiteNudge extends React.Component {
 		selectedSiteId: PropTypes.number.isRequired,
 	};
 
+	isMounted = false;
+
+	componentDidMount() {
+		this.isMounted = true;
+	}
+
+	componentWillUnmount() {
+		this.isMounted = false;
+	}
+
 	handleSkipClick = () => {
 		const getThankYouPageUrlArguments = {
 			siteSlug: this.props.siteSlug,
