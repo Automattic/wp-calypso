@@ -89,11 +89,10 @@ export function saveUserSettingsFailure( { settingsOverride }, error ) {
  * clear the unsaved settings list, and re-fetch info about the user.
  */
 export const finishUserSettingsSave = ( { settingsOverride }, data ) => ( dispatch ) => {
-	const settingsOverrideKeys = settingsOverride ? Object.keys( settingsOverride ) : null;
 	dispatch( updateUserSettings( fromApi( data ) ) );
-	dispatch( clearUnsavedUserSettings( settingsOverrideKeys ) );
+	dispatch( clearUnsavedUserSettings( settingsOverride ? Object.keys( settingsOverride ) : null ) );
 
-	if ( settingsOverrideKeys.includes( 'password' ) ) {
+	if ( settingsOverride?.password ) {
 		// Since changing a user's password invalidates the session, we reload.
 		window.location = window.location.pathname + '?updated=password';
 		return;
