@@ -182,7 +182,7 @@ class PurchaseNotice extends Component {
 		}
 
 		return translate(
-			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Add a credit card so you don't lose out on your paid features!",
+			"%(purchaseName)s will expire and be removed from your site %(expiry)s. Update your payment information so you don't lose out on your paid features!",
 			translateOptions
 		);
 	}
