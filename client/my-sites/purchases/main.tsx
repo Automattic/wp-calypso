@@ -25,7 +25,6 @@ import {
 	getAddPaymentMethodUrlFor,
 } from './paths';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
@@ -55,7 +54,7 @@ function useLogPurchasesError( message: string ) {
 	);
 }
 
-export function Purchases() {
+export function Purchases(): JSX.Element {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
@@ -133,7 +132,7 @@ export function PurchaseCancel( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
@@ -163,44 +162,6 @@ export function PurchaseCancel( {
 	);
 }
 
-export function PurchaseAddPaymentMethod( {
-	purchaseId,
-	siteSlug,
-}: {
-	purchaseId: number;
-	siteSlug: string;
-} ) {
-	const translate = useTranslate();
-	const logPurchasesError = useLogPurchasesError(
-		'site level purchase add payment method load error'
-	);
-
-	return (
-		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Billing' ) } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
-				align="left"
-			/>
-
-			<SiteLevelPurchasesErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logPurchasesError }
-			>
-				<AddPaymentMethod
-					purchaseId={ purchaseId }
-					siteSlug={ siteSlug }
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
-				/>
-			</SiteLevelPurchasesErrorBoundary>
-		</Main>
-	);
-}
-
 export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
@@ -209,7 +170,7 @@ export function PurchaseChangePaymentMethod( {
 	purchaseId: number;
 	siteSlug: string;
 	cardId: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
 		'site level purchase edit payment method load error'
@@ -248,7 +209,7 @@ export function PurchaseCancelDomain( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel domain load error' );
 
