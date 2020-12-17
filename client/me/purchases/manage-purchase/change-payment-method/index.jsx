@@ -170,6 +170,33 @@ ChangePaymentMethod.propTypes = {
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
+/**
+ * @param {object} payment Payment object taken from the purchase
+ * @param {string=} payment.type Payment type; description exists only to satisfy eslint
+ * @returns {string} An ID as used in the payment method list inside CheckoutPaymentMethods.
+ */
+function getCurrentPaymentMethodId( payment ) {
+	if ( payment?.type === 'credits' ) {
+		return 'credits';
+	}
+	if ( payment?.type === 'paypal' ) {
+		return 'paypal';
+	}
+	if ( payment?.type === 'credit_card' ) {
+		return 'existingCard-' + payment.creditCard.id;
+	}
+}
+
+function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
+	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+		if ( currentPaymentMethodId === 'credits' ) {
+			return titles.addPaymentMethod;
+		}
+		return titles.changePaymentMethod;
+	}
+	return titles.editCardDetails;
+}
+
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
