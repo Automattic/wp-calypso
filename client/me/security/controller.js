@@ -63,7 +63,6 @@ export function accountRecovery( context, next ) {
 
 export function securityCheckup( context, next ) {
 	context.primary = React.createElement( SecurityCheckupComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
