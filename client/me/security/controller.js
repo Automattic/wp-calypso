@@ -47,7 +47,6 @@ export function twoStep( context, next ) {
 
 export function connectedApplications( context, next ) {
 	context.primary = React.createElement( ConnectedAppsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -55,7 +54,6 @@ export function connectedApplications( context, next ) {
 
 export function accountRecovery( context, next ) {
 	context.primary = React.createElement( AccountRecoveryComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -63,7 +61,6 @@ export function accountRecovery( context, next ) {
 
 export function securityCheckup( context, next ) {
 	context.primary = React.createElement( SecurityCheckupComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
@@ -87,7 +84,6 @@ export function socialLogin( context, next ) {
 		path: context.path,
 		socialService,
 		socialServiceResponse,
-		userSettings,
 	} );
 	next();
 }

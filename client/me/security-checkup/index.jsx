@@ -35,7 +35,6 @@ class SecurityCheckupComponent extends React.Component {
 	static propTypes = {
 		path: PropTypes.string,
 		translate: PropTypes.func.isRequired,
-		userSettings: PropTypes.object,
 	};
 
 	render() {

@@ -39,7 +39,6 @@ export function apps( context, next ) {
 	context.store.dispatch( setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) ) );
 
 	context.primary = React.createElement( AppsComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
