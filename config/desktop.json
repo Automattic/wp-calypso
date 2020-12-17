@@ -82,7 +82,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"press-this": false,
-		"purchases/new-payment-methods": false,
+		"purchases/new-payment-methods": true,
 		"reader": true,
 		"reader/full-errors": false,
 		"republicize": true,

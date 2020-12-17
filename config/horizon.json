@@ -102,7 +102,7 @@
 		"post-editor/html-toolbar": true,
 		"post-editor/image-editor": true,
 		"publicize-preview": true,
-		"purchases/new-payment-methods": false,
+		"purchases/new-payment-methods": true,
 		"press-this": true,
 		"privacy-policy": true,
 		"reader": true,
