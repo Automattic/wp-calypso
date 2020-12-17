@@ -135,17 +135,14 @@ class Starter_Page_Templates {
 		}
 
 		// Load templates for this site.
-		$vertical_data = $this->fetch_vertical_data();
-		if ( empty( $vertical_data ) ) {
+		$page_templates = $this->get_page_templates();
+
+		if ( empty( $page_templates ) ) {
 			$this->pass_error_to_frontend( __( 'No data received from the vertical API. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
-		$vertical           = $vertical_data['vertical'];
-		$segment            = $vertical_data['segment'];
-		$vertical_templates = $vertical_data['templates'];
 
-		// Bail early if we have no templates to offer.
-		if ( empty( $vertical_templates ) || empty( $vertical ) || empty( $segment ) ) {
+		if ( empty( $page_templates ) ) {
 			$this->pass_error_to_frontend( __( 'No templates available. Skipped showing modal window with template selection.', 'full-site-editing' ) );
 			return;
 		}
@@ -155,12 +152,12 @@ class Starter_Page_Templates {
 
 		$default_templates = array(
 			array(
-				'title' => 'Blank',
-				'slug'  => 'blank',
+				'title' => __( 'Blank', 'full-site-editing' ),
+				'name'  => 'blank',
 			),
 			array(
-				'title' => 'Current',
-				'slug'  => 'current',
+				'title' => __( 'Current', 'full-site-editing' ),
+				'name'  => 'current',
 			),
 		);
 		/**
@@ -171,9 +168,7 @@ class Starter_Page_Templates {
 		$config = apply_filters(
 			'fse_starter_page_templates_config',
 			array(
-				'templates'          => array_merge( $default_templates, $vertical_templates ),
-				'vertical'           => $vertical,
-				'segment'            => $segment,
+				'templates'          => array_merge( $default_templates, $page_templates ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				'screenAction'       => isset( $_GET['new-homepage'] ) ? 'add' : $screen->action,
 				'theme'              => normalize_theme_slug( get_stylesheet() ),
@@ -182,6 +177,7 @@ class Starter_Page_Templates {
 				'hideFrontPageTitle' => get_theme_mod( 'hide_front_page_title' ),
 			)
 		);
+
 		wp_localize_script( 'starter-page-templates', 'starterPageTemplatesConfig', $config );
 
 		// Enqueue styles.
@@ -198,29 +194,46 @@ class Starter_Page_Templates {
 	}
 
 	/**
-	 * Fetch vertical data from the API or return cached version if available.
+	 * Get page templates from the patterns API or return cached version if available.
 	 *
-	 * @return array Containing vertical name and template list or nothing if an error occurred.
+	 * @return array Containing page templates or nothing if an error occurred.
 	 */
-	public function fetch_vertical_data() {
-		$vertical_templates = get_transient( $this->templates_cache_key );
+	public function get_page_templates() {
+		$page_template_data = get_transient( $this->templates_cache_key );
 
 		// Load fresh data if we don't have any or vertical_id doesn't match.
-		if ( false === $vertical_templates || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
-			$vertical_id = get_option( 'site_vertical' ) ? get_option( 'site_vertical' ) : 'default';
-			$request_url = add_query_arg(
-				array( '_locale' => $this->get_verticals_locale() ),
-				'https://public-api.wordpress.com/wpcom/v2/verticals/' . $vertical_id . '/templates'
+		if ( false === $page_template_data || ( defined( 'WP_DEBUG' ) && WP_DEBUG ) ) {
+			$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+
+			$request_url = esc_url_raw(
+				add_query_arg(
+					array(
+						'site' => $override_source_site,
+						'tags' => 'layout',
+					),
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_verticals_locale()
+				)
 			);
-			$response    = wp_remote_get( esc_url_raw( $request_url ) );
+
+			$args = array( 'timeout' => 20 );
+
+			if ( function_exists( 'wpcom_json_api_get' ) ) {
+				$response = wpcom_json_api_get( $request_url, $args );
+			} else {
+				$response = wp_remote_get( $request_url, $args );
+			}
+
 			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
 				return array();
 			}
-			$vertical_templates = json_decode( wp_remote_retrieve_body( $response ), true );
-			set_transient( $this->templates_cache_key, $vertical_templates, DAY_IN_SECONDS );
+
+			$page_template_data = json_decode( wp_remote_retrieve_body( $response ), true );
+			set_transient( $this->templates_cache_key, $page_template_data, DAY_IN_SECONDS );
+
+			return $page_template_data;
 		}
 
-		return $vertical_templates;
+		return $page_template_data;
 	}
 
 	/**

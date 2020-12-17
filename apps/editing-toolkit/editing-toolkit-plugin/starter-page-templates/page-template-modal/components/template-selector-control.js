@@ -52,20 +52,20 @@ export const TemplateSelectorControl = ( {
 				data-testid="template-selector-control-options"
 				aria-label={ legendLabel }
 			>
-				{ map( templates, ( { slug, title, description, preview, previewAlt } ) => (
-					<li key={ `${ id }-${ slug }` } className="template-selector-control__template">
+				{ map( templates, ( { name, title, description, preview, previewAlt } ) => (
+					<li key={ `${ id }-${ name }` } className="template-selector-control__template">
 						<TemplateSelectorItem
 							id={ id }
-							value={ slug }
+							value={ name }
 							title={ replacePlaceholders( title, siteInformation ) }
 							description={ description }
 							help={ help }
 							onSelect={ onTemplateSelect }
 							staticPreviewImg={ preview }
 							staticPreviewImgAlt={ previewAlt }
-							blocks={ blocksByTemplates.hasOwnProperty( slug ) ? blocksByTemplates[ slug ] : [] }
+							blocks={ blocksByTemplates.hasOwnProperty( name ) ? blocksByTemplates[ name ] : [] }
 							useDynamicPreview={ useDynamicPreview }
-							isSelected={ slug === selectedTemplate }
+							isSelected={ name === selectedTemplate }
 						/>
 					</li>
 				) ) }
