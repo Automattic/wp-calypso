@@ -20,6 +20,7 @@ import { useTranslate } from 'i18n-calypso';
  */
 import wp from 'calypso/lib/wp';
 import notices from 'calypso/notices';
+import PaymentMethodForm from 'calypso/me/purchases/components/payment-method-form';
 import HeaderCake from 'calypso/components/header-cake';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import QueryStoredCards from 'calypso/components/data/query-stored-cards';
@@ -37,6 +38,7 @@ import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-us
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCards,
+	getStoredCardById,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -89,6 +91,11 @@ function ChangePaymentMethod( props ) {
 		);
 	}
 
+	const recordFormSubmitEvent = () =>
+		void props.recordTracksEvent( 'calypso_purchases_credit_card_form_submit', {
+			product_slug: props.purchase.productSlug,
+		} );
+
 	const successCallback = () => {
 		const { id } = props.purchase;
 		props.clearPurchases();
@@ -116,13 +123,24 @@ function ChangePaymentMethod( props ) {
 
 			<Layout>
 				<Column type="main">
-					<ChangePaymentMethodList
-						currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
-						purchase={ props.purchase }
-						successCallback={ successCallback }
-						siteSlug={ props.siteSlug }
-						apiParams={ { purchaseId: props.purchase.id } }
-					/>
+					{ isEnabled( 'purchases/new-payment-methods' ) ? (
+						<ChangePaymentMethodList
+							currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
+							purchase={ props.purchase }
+							successCallback={ successCallback }
+							siteSlug={ props.siteSlug }
+							apiParams={ { purchaseId: props.purchase.id } }
+						/>
+					) : (
+						<PaymentMethodForm
+							apiParams={ { purchaseId: props.purchase.id } }
+							initialValues={ props.card }
+							purchase={ props.purchase }
+							recordFormSubmitEvent={ recordFormSubmitEvent }
+							siteSlug={ props.siteSlug }
+							successCallback={ successCallback }
+						/>
+					) }
 				</Column>
 				<Column type="sidebar">
 					<PaymentMethodSidebar purchase={ props.purchase } />
@@ -133,6 +151,7 @@ function ChangePaymentMethod( props ) {
 }
 
 ChangePaymentMethod.propTypes = {
+	card: PropTypes.object,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
@@ -344,7 +363,8 @@ function TosText( { translate } ) {
 	);
 }
 
-const mapStateToProps = ( state, { purchaseId } ) => ( {
+const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
+	card: getStoredCardById( state, cardId ),
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
