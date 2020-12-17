@@ -47,7 +47,7 @@
 		"layout/query-selected-editor": false,
 		"layout/support-article-dialog": false,
 		"oauth": false,
-		"purchases/new-payment-methods": false,
+		"purchases/new-payment-methods": true,
 		"site-indicator": false,
 		"support-user": true,
 		"upgrades/redirect-payments": true
