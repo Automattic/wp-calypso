@@ -107,11 +107,11 @@ const Icon = ( { subscription }: { subscription: MembershipSubscription } ) => {
 		fetchData();
 	}, [ siteId ] );
 
-	if ( site && ! hasError ) {
+	if ( site && ! hasError && site.icon ) {
 		return <img src={ site.icon.ico } width="36" height="36" alt="" />;
 	}
 
-	return <SiteIcon size={ 24 } />;
+	return <SiteIcon size={ 36 } />;
 };
 
 export default function MembershipItem( {
