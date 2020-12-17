@@ -12,14 +12,15 @@ import { getSiteOption } from 'calypso/state/sites/selectors';
 import versionCompare from 'calypso/lib/version-compare';
 
 export const isEligibleForGutenframe = ( state, siteId ) => {
-	// On some Jetpack sites (9.2+, not Atomic),
-	// Calypsoify is currently broken.
+	// On some Jetpack sites (9.2, not Atomic),
+	// Calypsoify is broken.
 	// Let's not enable it for them.
-	// Reference: https://github.com/Automattic/jetpack/pull/17939
+	// This problem was then fixed in Jetpack 9.2.1.
 	const jetpackVersion = getSiteOption( state, siteId, 'jetpack_version' );
 	const isBrokenJetpack =
 		jetpackVersion &&
 		versionCompare( jetpackVersion, '9.2-alpha', '>=' ) &&
+		versionCompare( jetpackVersion, '9.2.1', '<' ) &&
 		! isAtomicSite( state, siteId );
 
 	return ! isBrokenJetpack && get( state, [ 'gutenbergIframeEligible', siteId ], true );
