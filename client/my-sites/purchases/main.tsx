@@ -204,12 +204,10 @@ export function PurchaseAddPaymentMethod( {
 export function PurchaseChangePaymentMethod( {
 	purchaseId,
 	siteSlug,
-	cardId,
 }: {
 	purchaseId: number;
 	siteSlug: string;
-	cardId: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError(
 		'site level purchase edit payment method load error'
@@ -230,7 +228,6 @@ export function PurchaseChangePaymentMethod( {
 				onError={ logPurchasesError }
 			>
 				<ChangePaymentMethod
-					cardId={ cardId }
 					purchaseId={ purchaseId }
 					siteSlug={ siteSlug }
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
