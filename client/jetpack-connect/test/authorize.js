@@ -203,7 +203,7 @@ describe( 'JetpackAuthorize', () => {
 		} );
 	} );
 
-	describe( 'shouldSeePlans', () => {
+	describe( 'isJetpackUpgradeFlow', () => {
 		const isJetpackUpgradeFlow = new JetpackAuthorize().isJetpackUpgradeFlow;
 
 		test( 'should see plans', () => {
@@ -224,6 +224,30 @@ describe( 'JetpackAuthorize', () => {
 			};
 
 			expect( isJetpackUpgradeFlow( props ) ).toBe( true );
+		} );
+	} );
+
+	describe( 'isFromJetpackBoost', () => {
+		const isFromJetpackBoost = new JetpackAuthorize().isFromJetpackBoost;
+
+		test( 'is from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( true );
+		} );
+
+		test( 'is not from jetpack boost', () => {
+			const props = {
+				authQuery: {
+					from: 'not-jetpack-boost-something',
+				},
+			};
+
+			expect( isFromJetpackBoost( props ) ).toBe( false );
 		} );
 	} );
 } );

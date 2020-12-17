@@ -153,6 +153,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso( nextProps ) ||
 			this.isWooRedirect( nextProps ) ||
 			this.isFromJpo( nextProps ) ||
+			this.isFromJetpackBoost( nextProps ) ||
 			this.shouldRedirectJetpackStart( nextProps ) ||
 			this.props.isVip
 		) {
@@ -222,6 +223,7 @@ export class JetpackAuthorize extends Component {
 			this.isSso() ||
 			this.isWooRedirect() ||
 			this.isFromJpo() ||
+			this.isFromJetpackBoost() ||
 			this.isFromBlockEditor() ||
 			this.shouldRedirectJetpackStart() ||
 			getRoleFromScope( scope ) === 'subscriber' ||
@@ -264,6 +266,11 @@ export class JetpackAuthorize extends Component {
 	isFromJpo( props = this.props ) {
 		const { from } = props.authQuery;
 		return startsWith( from, 'jpo' );
+	}
+
+	isFromJetpackBoost( props = this.props ) {
+		const { from } = props.authQuery;
+		return startsWith( from, 'jetpack-boost' );
 	}
 
 	isFromBlockEditor( props = this.props ) {
