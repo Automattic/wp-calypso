@@ -6,7 +6,6 @@ export { requestAllSitesPosts } from 'calypso/state/posts/actions/request-all-si
 export { requestSitePost } from 'calypso/state/posts/actions/request-site-post';
 export { requestSitePosts } from 'calypso/state/posts/actions/request-site-posts';
 export { restorePost } from 'calypso/state/posts/actions/restore-post';
-export { saveEdited } from 'calypso/state/posts/actions/save-edited';
 export { savePost } from 'calypso/state/posts/actions/save-post';
 export { savePostSuccess } from 'calypso/state/posts/actions/save-post-success';
 export { trashPost } from 'calypso/state/posts/actions/trash-post';

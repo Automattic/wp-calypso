@@ -1,30 +1,22 @@
 /**
  * External dependencies
  */
-import { defaults, filter, get } from 'lodash';
+import { filter } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import {
-	EDITOR_AUTOSAVE_RESET,
 	EDITOR_IFRAME_LOADED,
-	EDITOR_LOADING_ERROR_RESET,
 	EDITOR_PASTE_EVENT,
-	EDITOR_RESET,
 	EDITOR_START,
 	EDITOR_STOP,
-	EDITOR_SAVE,
-	EDITOR_EDIT_RAW_CONTENT,
-	EDITOR_RESET_RAW_CONTENT,
-	EDITOR_INIT_RAW_CONTENT,
 } from 'calypso/state/action-types';
 import { ModalViews } from 'calypso/state/ui/media-modal/constants';
 import { setMediaModalView } from 'calypso/state/ui/media-modal/actions';
 import { withAnalytics, bumpStat, recordTracksEvent } from 'calypso/state/analytics/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { editPost } from 'calypso/state/posts/actions';
 
 import 'calypso/state/editor/init';
 import 'calypso/state/ui/init';
@@ -49,25 +41,10 @@ export const MODAL_VIEW_STATS = {
  * @returns {any}           Action object
  */
 export function startEditingPost( siteId, postId ) {
-	return ( dispatch ) => {
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId } );
-	};
-}
-
-export function startEditingNewPost( siteId, post ) {
-	return ( dispatch ) => {
-		const postAttributes = defaults( post, {
-			status: 'draft',
-			type: 'post',
-			content: '',
-			title: '',
-		} );
-
-		dispatch( editorReset( { isLoading: true } ) );
-		dispatch( { type: EDITOR_START, siteId, postId: null } );
-		dispatch( editPost( siteId, null, postAttributes ) );
-		dispatch( editorReset() );
+	return {
+		type: EDITOR_START,
+		siteId,
+		postId,
 	};
 }
 
@@ -80,9 +57,10 @@ export function startEditingNewPost( siteId, post ) {
  * @returns {any}         Action object
  */
 export function stopEditingPost( siteId, postId ) {
-	return ( dispatch ) => {
-		dispatch( editorReset() );
-		dispatch( { type: EDITOR_STOP, siteId, postId } );
+	return {
+		type: EDITOR_STOP,
+		siteId,
+		postId,
 	};
 }
 
@@ -157,60 +135,4 @@ export const setEditorIframeLoaded = ( isIframeLoaded = true, iframePort = null 
 	type: EDITOR_IFRAME_LOADED,
 	isIframeLoaded,
 	iframePort,
-} );
-
-export const editorAutosaveReset = () => ( {
-	type: EDITOR_AUTOSAVE_RESET,
-} );
-
-/**
- * Edits the raw TinyMCE content of a post
- *
- * @param {string} content Raw content
- * @returns {any} Action object
- */
-export function editorEditRawContent( content ) {
-	return {
-		type: EDITOR_EDIT_RAW_CONTENT,
-		content,
-	};
-}
-
-/**
- * Unsets the raw TinyMCE content value
- *
- * @returns {any} Action object
- */
-export function editorResetRawContent() {
-	return {
-		type: EDITOR_RESET_RAW_CONTENT,
-	};
-}
-
-export function editorInitRawContent( content ) {
-	return {
-		type: EDITOR_INIT_RAW_CONTENT,
-		content,
-	};
-}
-
-export function editorReset( options ) {
-	return {
-		type: EDITOR_RESET,
-		isLoading: get( options, 'isLoading', false ),
-		loadingError: get( options, 'loadingError', null ),
-	};
-}
-
-export function editorLoadingErrorReset() {
-	return {
-		type: EDITOR_LOADING_ERROR_RESET,
-	};
-}
-
-export const editorSave = ( siteId, postId, saveMarker ) => ( {
-	type: EDITOR_SAVE,
-	siteId,
-	postId,
-	saveMarker,
 } );
