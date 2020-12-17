@@ -182,7 +182,6 @@ class Layout extends Component {
 		}
 
 		const { shouldShowAppBanner } = this.props;
-
 		return (
 			<div className={ sectionClass }>
 				<QueryExperiments />
