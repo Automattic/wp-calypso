@@ -1,9 +1,9 @@
 /**
- * Tracks A/B test: new popular products offering
+ * Tracks A/B test: jetpackPricingReversePlans
  */
-export const POPULAR_PRODUCTS_OFFERING_AB_TEST = 'popularProductsOffering';
-export const POPULAR_PRODUCTS_OFFERING_CONTROL = 'control';
-export const POPULAR_PRODUCTS_OFFERING_VARIANT = 'dailyProducts';
+export const REVERSE_PLANS_AB_TEST = 'jetpackPricingReversePlans';
+export const REVERSE_PLANS_CONTROL = 'control';
+export const REVERSE_PLANS_VARIANT = 'priceAsc';
 
 /**
  * ExPlat experiment: jetpack_pricing_switch_plan_sides

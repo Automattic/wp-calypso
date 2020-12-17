@@ -74,10 +74,10 @@ export default {
 		defaultVariation: 'control',
 		allowExistingUsers: true,
 	},
-	popularProductsOffering: {
-		datestamp: '20201217',
+	jetpackPricingReversePlans: {
+		datestamp: '20201208',
 		variations: {
-			dailyProducts: 50,
+			priceAsc: 50,
 			control: 50,
 		},
 		defaultVariation: 'control',
