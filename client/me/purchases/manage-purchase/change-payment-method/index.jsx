@@ -180,7 +180,7 @@ function ChangePaymentMethodList( {
 	siteSlug,
 	apiParams,
 } ) {
-	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod.stored_details_id; // TODO: make this work for paypal.
+	const currentlyAssignedPaymentMethodId = 'existingCard-' + currentPaymentMethod?.stored_details_id; // TODO: make this work for paypal.
 
 	const translate = useTranslate();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
