@@ -71,6 +71,8 @@ const getImporterTypeForEngine = ( engine ) => `importer-type-${ engine }`;
 class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
+		engine: PropTypes.string,
+		fromSite: PropTypes.string,
 	};
 
 	state = getImporterState();
