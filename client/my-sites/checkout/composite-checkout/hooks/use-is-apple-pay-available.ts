@@ -83,7 +83,7 @@ export default function useIsApplePayAvailable(
 		}
 
 		// Ask Stripe if apple pay can be used. This is async.
-		let countryCode: string = 'US';
+		let countryCode = 'US';
 
 		if ( stripeConfiguration ) {
 			switch ( stripeConfiguration.processor_id ) {
