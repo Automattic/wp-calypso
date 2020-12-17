@@ -12,6 +12,7 @@ import { useEffect } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { registerPlugin } from '@wordpress/plugins';
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import { getQueryArg } from '@wordpress/url';
 
 /**
  * Internal dependencies
@@ -19,15 +20,18 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import './style.scss';
 import blockPickerImage from './images/block-picker.svg';
 import editorImage from './images/editor.svg';
+import editorPodcastImage from './images/editor-podcast.svg';
+import transcriptionImage from './images/transcription.svg';
 import previewImage from './images/preview.svg';
 import privateImage from './images/private.svg';
 
 function WpcomNux() {
-	const { isWpcomNuxEnabled, isSPTOpen } = useSelect( ( select ) => ( {
+	const { isWpcomNuxEnabled, isSPTOpen, site } = useSelect( ( select ) => ( {
 		isWpcomNuxEnabled: select( 'automattic/nux' ).isWpcomNuxEnabled(),
 		isSPTOpen:
 			select( 'automattic/starter-page-layouts' ) && // Handle the case where SPT is not initalized.
 			select( 'automattic/starter-page-layouts' ).isOpen(),
+		site: select( 'automattic/site' ).getSite( window._currentSiteId ),
 	} ) );
 
 	const { closeGeneralSidebar } = useDispatch( 'core/edit-post' );
@@ -70,9 +74,10 @@ function WpcomNux() {
 		setWpcomNuxStatus( { isNuxEnabled: false } );
 	};
 
-	/* @TODO: the copy, images, and slides will eventually be the same for all sites. `isGutenboarding` is only needed right now to show the Privacy slide */
-	const isGutenboarding = !! window.calypsoifyGutenberg?.isGutenboarding;
-	const nuxPages = getWpcomNuxPages( isGutenboarding );
+	const isPodcastingSite = !! site?.options?.anchor_podcast;
+	const anchorEpisode = getQueryArg( window.location.href, 'anchor_episode' );
+	const showPodcastingTutorial = isPodcastingSite && anchorEpisode;
+	const nuxPages = getWpcomNuxPages( showPodcastingTutorial );
 	return (
 		<Guide
 			className="wpcom-block-editor-nux"
@@ -95,9 +100,41 @@ function WpcomNux() {
 /**
  * This function returns a collection of NUX slide data
  *
+ * @param showPodcastingTutorial bool Whether to show the tutorial steps for podcasting sites.
  * @returns { Array } a collection of <NuxPage /> props
  */
-function getWpcomNuxPages() {
+function getWpcomNuxPages( showPodcastingTutorial ) {
+	if ( showPodcastingTutorial ) {
+		return [
+			{
+				heading: __( 'Create your first episode', 'full-site-editing' ),
+				description: __(
+					'Let’s get your first episode set up and ready to share. It’ll remain private until you’re ready to launch.',
+					'full-site-editing'
+				),
+				imgSrc: editorPodcastImage,
+				alignBottom: true,
+			},
+			{
+				heading: __( 'Add a text transcription', 'full-site-editing' ),
+				description: __(
+					'Add more accessible content to your episode. Edit the placeholder content on your page to add a transcript of your episode audio.',
+					'full-site-editing'
+				),
+				imgSrc: transcriptionImage,
+				alignBottom: true,
+			},
+			{
+				heading: __( 'Preview your page as you go', 'full-site-editing' ),
+				description: __(
+					'This is a post page with your episode content. Click “Preview” to see your site the way your visitors will.',
+					'full-site-editing'
+				),
+				imgSrc: previewImage,
+				alignBottom: true,
+			},
+		];
+	}
 	return [
 		{
 			heading: __( 'Welcome to your website', 'full-site-editing' ),
