@@ -1,16 +1,14 @@
 /**
  * External dependencies
  */
-import { get, includes } from 'lodash';
+import { get } from 'lodash';
 
 /**
  * Internal dependencies
  */
-import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { getSite, getSiteSlug } from 'calypso/state/sites/selectors';
-import { getEditedPost, getSitePost } from 'calypso/state/posts/selectors';
+import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getEditedPost } from 'calypso/state/posts/selectors';
 import { getPreference } from 'calypso/state/preferences/selectors';
-import { getPreviewURL } from 'calypso/state/posts/utils';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
 import { addQueryArgs } from 'calypso/lib/route';
 
@@ -121,48 +119,10 @@ export function isConfirmationSidebarEnabled( state, siteId ) {
 	return getPreference( state, 'editorConfirmationDisabledSites' ).indexOf( siteId ) === -1;
 }
 
-/*
- * Returns whether editor save is currently blocked for some reason identified by `key`.
- * If `key` is not specified, returns whether save is blocked for any reason.
- */
-export function isEditorSaveBlocked( state, key ) {
-	const { saveBlockers } = state.editor;
-
-	if ( ! key ) {
-		return !! saveBlockers.length;
-	}
-
-	return includes( saveBlockers, key );
-}
-
-export function getEditorPostPreviewUrl( state ) {
-	const siteId = getSelectedSiteId( state );
-	const postId = getEditorPostId( state );
-	const site = getSite( state, siteId );
-	const post = getSitePost( state, siteId, postId );
-	return getPreviewURL( site, post, state.editor.autosavePreviewUrl );
-}
-
-export function isEditorLoading( state ) {
-	return state.editor.isLoading;
-}
-
 export function isEditorIframeLoaded( state ) {
 	return state.editor.isIframeLoaded;
 }
 
 export function getEditorIframePort( state ) {
 	return state.editor.iframePort;
-}
-
-export function getEditorInitialRawContent( state ) {
-	return state.editor.rawContent.initial;
-}
-
-export function getEditorRawContent( state ) {
-	return state.editor.rawContent.current;
-}
-
-export function getEditorLoadingError( state ) {
-	return state.editor.loadingError;
 }
