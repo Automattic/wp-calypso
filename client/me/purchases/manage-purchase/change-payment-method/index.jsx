@@ -176,6 +176,18 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
 	return titles.editCardDetails;
 }
 
+// We want to preselect the current method if it is in the list, but if not, preselect the first method.
+function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
+	if (
+		currentlyAssignedPaymentMethodId === 'credits' ||
+		currentlyAssignedPaymentMethodId === 'paypal'
+	) {
+		return paymentMethods?.[ 0 ]?.id;
+	}
+
+	return currentlyAssignedPaymentMethodId;
+}
+
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
@@ -229,7 +241,10 @@ function ChangePaymentMethodList( {
 					),
 			} }
 			isLoading={ isStripeLoading }
-			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
+			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
+				currentlyAssignedPaymentMethodId,
+				paymentMethods
+			) }
 		>
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
