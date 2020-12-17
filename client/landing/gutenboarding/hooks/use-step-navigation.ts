@@ -86,6 +86,9 @@ export default function useStepNavigation(): { goBack: () => void; goNext: () =>
 	if ( anchorFmEpisodeId ) {
 		locationState.anchorFmEpisodeId = anchorFmEpisodeId;
 	}
+	if ( anchorFmSpotifyShowUrl ) {
+		locationState.anchorFmSpotifyShowUrl = anchorFmSpotifyShowUrl;
+	}
 
 	const handleBack = () => history.push( previousStepPath, locationState );
 	const handleNext = () =>
