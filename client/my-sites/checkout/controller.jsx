@@ -34,7 +34,7 @@ import UpsellNudge, {
 	CONCIERGE_SUPPORT_SESSION,
 	CONCIERGE_QUICKSTART_SESSION,
 } from './upsell-nudge';
-import CalypsoShoppingCartProvider from 'client/my-sites/checkout/calypso-shopping-cart-provider';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
