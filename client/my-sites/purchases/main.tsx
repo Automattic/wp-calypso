@@ -25,7 +25,6 @@ import {
 	getAddPaymentMethodUrlFor,
 } from './paths';
 import { getChangeOrAddPaymentMethodUrlFor } from './utils';
-import AddPaymentMethod from 'calypso/me/purchases/manage-purchase/add-payment-method';
 import ChangePaymentMethod from 'calypso/me/purchases/manage-purchase/change-payment-method';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import PurchasesNavigation from 'calypso/my-sites/purchases/navigation';
@@ -157,44 +156,6 @@ export function PurchaseCancel( {
 					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
 					getConfirmCancelDomainUrlFor={ getConfirmCancelDomainUrlFor }
 					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-				/>
-			</SiteLevelPurchasesErrorBoundary>
-		</Main>
-	);
-}
-
-export function PurchaseAddPaymentMethod( {
-	purchaseId,
-	siteSlug,
-}: {
-	purchaseId: number;
-	siteSlug: string;
-} ) {
-	const translate = useTranslate();
-	const logPurchasesError = useLogPurchasesError(
-		'site level purchase add payment method load error'
-	);
-
-	return (
-		<Main className="purchases is-wide-layout">
-			<DocumentHead title={ translate( 'Billing' ) } />
-			<FormattedHeader
-				brandFont
-				className="purchases__page-heading"
-				headerText={ translate( 'Billing' ) }
-				align="left"
-			/>
-
-			<SiteLevelPurchasesErrorBoundary
-				errorMessage={ translate( 'Sorry, there was an error loading this page.' ) }
-				onError={ logPurchasesError }
-			>
-				<AddPaymentMethod
-					purchaseId={ purchaseId }
-					siteSlug={ siteSlug }
-					getManagePurchaseUrlFor={ getManagePurchaseUrlFor }
-					purchaseListUrl={ getPurchaseListUrlFor( siteSlug ) }
-					isFullWidth={ true }
 				/>
 			</SiteLevelPurchasesErrorBoundary>
 		</Main>
