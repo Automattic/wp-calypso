@@ -164,11 +164,12 @@ function getCurrentPaymentMethodId( payment ) {
 	if ( payment?.type === 'credit_card' ) {
 		return 'existingCard-' + payment.creditCard.id;
 	}
+	return 'none';
 }
 
 function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
 	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
-		if ( currentPaymentMethodId === 'credits' ) {
+		if ( [ 'credits', 'none' ].includes( currentPaymentMethodId ) ) {
 			return titles.addPaymentMethod;
 		}
 		return titles.changePaymentMethod;
@@ -178,10 +179,7 @@ function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
 
 // We want to preselect the current method if it is in the list, but if not, preselect the first method.
 function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
-	if (
-		currentlyAssignedPaymentMethodId === 'credits' ||
-		currentlyAssignedPaymentMethodId === 'paypal'
-	) {
+	if ( [ 'credits', 'paypal', 'none' ].includes( currentlyAssignedPaymentMethodId ) ) {
 		return paymentMethods?.[ 0 ]?.id;
 	}
 
