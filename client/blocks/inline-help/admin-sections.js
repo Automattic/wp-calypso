@@ -3,12 +3,12 @@
  */
 import { intersection, words, memoize } from 'lodash';
 import { translate } from 'i18n-calypso';
-import { getCustomizerUrl } from 'calypso/state/sites/selectors';
 
 /**
  * Internal Dependencies
  */
-import config from 'calypso/config';
+import { getCustomizerUrl } from 'calypso/state/sites/selectors';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import { SUPPORT_TYPE_ADMIN_SECTION } from './constants';
 
@@ -368,7 +368,7 @@ export const adminSections = memoize( ( siteId, siteSlug, state ) => [
 	},
 	{
 		title: translate( 'Create a new site' ),
-		link: `${ config( 'signup_url' ) }?ref=calypso-selector`,
+		link: `${ getOnboardingUrl( state ) }?ref=calypso-inline-help`,
 		synonyms: [ 'site' ],
 		icon: 'cog',
 	},

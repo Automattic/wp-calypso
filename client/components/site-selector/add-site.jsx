@@ -4,14 +4,14 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import Gridicon from 'calypso/components/gridicon';
+import { Button } from '@automattic/components';
 
 /**
  * Internal dependencies
  */
-import config from 'calypso/config';
-import { Button } from '@automattic/components';
+import Gridicon from 'calypso/components/gridicon';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 
 class SiteSelectorAddSite extends Component {
 	recordAddNewSite = () => {
@@ -19,12 +19,12 @@ class SiteSelectorAddSite extends Component {
 	};
 
 	render() {
-		const { translate } = this.props;
+		const { onboardingUrl, translate } = this.props;
 		return (
 			<span className="site-selector__add-new-site">
 				<Button
 					borderless
-					href={ `${ config( 'signup_url' ) }?ref=calypso-selector` }
+					href={ `${ onboardingUrl }?ref=calypso-selector` }
 					onClick={ this.recordAddNewSite }
 				>
 					<Gridicon icon="add-outline" /> { translate( 'Add new site' ) }
@@ -34,4 +34,9 @@ class SiteSelectorAddSite extends Component {
 	}
 }
 
-export default connect( null, { recordTracksEvent } )( localize( SiteSelectorAddSite ) );
+export default connect(
+	( state ) => ( {
+		onboardingUrl: getOnboardingUrl( state ),
+	} ),
+	{ recordTracksEvent }
+)( localize( SiteSelectorAddSite ) );
