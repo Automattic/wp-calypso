@@ -1,0 +1,11 @@
+{
+	"name": "explat-js-client",
+	"version": "0.0.1",
+	"description": "ExPlat client for JS",
+	"main": "index.ts",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "Automattic Inc.",
+	"license": "GPL-2.0-or-later"
+}
