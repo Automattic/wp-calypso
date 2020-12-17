@@ -3,25 +3,27 @@
  */
 import * as React from 'react';
 import { Redirect, Switch, Route, useLocation } from 'react-router-dom';
-import type { BlockEditProps } from '@wordpress/blocks';
 import { useSelect } from '@wordpress/data';
+import type { BlockEditProps } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
  */
 import { STORE_KEY } from '../stores/onboard';
 import { SITE_STORE } from '../stores/site';
+import { Step, useIsAnchorFm, useCurrentStep, usePath, useNewQueryParam } from '../path';
+import { usePrevious } from '../hooks/use-previous';
 import DesignSelector from './design-selector';
 import CreateSite from './create-site';
 import CreateSiteError from './create-site-error';
-import type { Attributes } from './types';
-import { Step, usePath, useNewQueryParam, useIsAnchorFm } from '../path';
 import AcquireIntent from './acquire-intent';
 import StylePreview from './style-preview';
 import Features from './features';
 import Plans from './plans';
 import Domains from './domains';
 import Language from './language';
+
+import type { Attributes } from './types';
 
 import './colors.scss';
 import './style.scss';
@@ -35,6 +37,8 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 	const isAnchorFmSignup = useIsAnchorFm();
 
 	const makePath = usePath();
+	const currentStep = useCurrentStep();
+	const previousStep = usePrevious( currentStep );
 
 	const { pathname } = useLocation();
 
@@ -120,7 +124,7 @@ const OnboardingEdit: React.FunctionComponent< BlockEditProps< Attributes > > = 
 				</Route>
 
 				<Route path={ makePath( Step.LanguageModal ) }>
-					<Language />
+					<Language previousStep={ previousStep } />
 				</Route>
 
 				<Route path={ makePath( Step.CreateSite ) }>{ createSiteOrError() }</Route>
