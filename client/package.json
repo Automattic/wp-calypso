@@ -139,7 +139,7 @@
 		"immutable": "^3.8.2",
 		"inherits": "^2.0.4",
 		"is-my-json-valid": "^2.20.0",
-		"isolated-editor": "file:../packages/isolated-editor",
+		"isolated-editor": "^1.0.0",
 		"jest-emotion": "^10.0.27",
 		"jest-fetch-mock": "^2.1.2",
 		"jest-mock-process": "^1.4.0",
