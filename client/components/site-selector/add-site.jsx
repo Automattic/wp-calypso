@@ -10,12 +10,16 @@ import { Button } from '@automattic/components';
  * Internal dependencies
  */
 import Gridicon from 'calypso/components/gridicon';
+import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import getOnboardingUrl from 'calypso/state/selectors/get-onboarding-url';
 
 class SiteSelectorAddSite extends Component {
 	recordAddNewSite = () => {
-		this.props.recordTracksEvent( 'calypso_add_new_wordpress_click' );
+		const event = isJetpackCloud()
+			? 'calypso_add_new_jetpack_click'
+			: 'calypso_add_new_wordpress_click';
+		this.props.recordTracksEvent( event );
 	};
 
 	render() {
