@@ -20,9 +20,8 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import {
+import Experiment, {
 	DefaultVariation,
-	Experiment,
 	LoadingVariations,
 	Variation,
 } from 'calypso/components/experiment';
