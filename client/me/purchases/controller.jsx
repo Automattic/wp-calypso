@@ -165,30 +165,6 @@ export function addNewPaymentMethod( context, next ) {
 	next();
 }
 
-export function addPaymentMethod( context, next ) {
-	const state = context.store.getState();
-
-	if ( userHasNoSites( state ) ) {
-		return noSites( context, '/me/purchases/:site/:purchaseId/payment-method/add' );
-	}
-
-	setTitle( context, titles.addPaymentMethod );
-
-	context.primary = (
-		<Main className="purchases__add-payment-method is-wide-layout">
-			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-			<AddPaymentMethod
-				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
-				siteSlug={ context.params.site }
-				getManagePurchaseUrlFor={ managePurchaseUrl }
-				purchaseListUrl={ purchasesRoot }
-				isFullWidth={ true }
-			/>
-		</Main>
-	);
-	next();
-}
-
 export function changePaymentMethod( context, next ) {
 	const state = context.store.getState();
 
