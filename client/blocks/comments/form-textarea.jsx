@@ -2,11 +2,13 @@
  * External dependencies
  */
 import React from 'react';
+import AsyncLoad from 'calypso/components/async-load';
 
-import IsolatedBlockEditor from 'isolated-editor';
+import './form-textarea.scss';
 
 const PostCommentFormTextarea = ( props ) => (
-	<IsolatedBlockEditor
+	<AsyncLoad
+		require="isolated-editor"
 		onSaveContent={ ( html ) => props.onChange( html ) }
 		onError={ console.error }
 		settings={ {
