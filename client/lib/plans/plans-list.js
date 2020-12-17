@@ -9,6 +9,11 @@ import i18n, { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { isEnabled } from 'calypso/config';
+import { abtest } from 'calypso/lib/abtest';
+import {
+	POPULAR_PRODUCTS_OFFERING_AB_TEST,
+	POPULAR_PRODUCTS_OFFERING_VARIANT,
+} from 'calypso/my-sites/plans/jetpack-plans/experiments';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import * as constants from './constants';
 
@@ -442,12 +447,20 @@ const getPlanJetpackSecurityDailyDetails = () => ( {
 				constants.FEATURE_SOCIAL_MEDIA_POSTING_V2,
 				constants.FEATURE_SITE_MONETIZATION_V2,
 			],
-			i5: [
-				constants.FEATURE_ALL_FREE_FEATURES,
-				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
-				constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
-				constants.FEATURE_ANTISPAM_V2,
-			],
+			i5:
+				POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
+					? [
+							constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+							constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+							constants.FEATURE_ANTISPAM_V2,
+							constants.FEATURE_VIDEO_HOSTING_V2,
+					  ]
+					: [
+							constants.FEATURE_ALL_FREE_FEATURES,
+							constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
+							constants.FEATURE_PRODUCT_SCAN_DAILY_V2,
+							constants.FEATURE_ANTISPAM_V2,
+					  ],
 		}[ getJetpackCROActiveVersion() ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
 				constants.FEATURE_PRODUCT_BACKUP_DAILY_V2,
@@ -604,11 +617,20 @@ const getPlanJetpackCompleteDetails = () => ( {
 				constants.FEATURE_CRM_V2,
 				constants.FEATURE_PRODUCT_SEARCH_V2,
 			],
-			i5: [
-				constants.FEATURE_PLAN_SECURITY_REALTIME,
-				constants.FEATURE_CRM_V2,
-				constants.FEATURE_PRODUCT_SEARCH_V2,
-			],
+			i5:
+				POPULAR_PRODUCTS_OFFERING_VARIANT === abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST )
+					? [
+							constants.FEATURE_PLAN_SECURITY_DAILY,
+							constants.FEATURE_BACKUP_REALTIME_V2,
+							constants.FEATURE_PRODUCT_SCAN_REALTIME_V2,
+							constants.FEATURE_CRM_V2,
+							constants.FEATURE_PRODUCT_SEARCH_V2,
+					  ]
+					: [
+							constants.FEATURE_PLAN_SECURITY_REALTIME,
+							constants.FEATURE_CRM_V2,
+							constants.FEATURE_PRODUCT_SEARCH_V2,
+					  ],
 		}[ getJetpackCROActiveVersion() ] || {
 			[ constants.FEATURE_CATEGORY_SECURITY ]: [
 				[
