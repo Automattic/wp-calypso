@@ -9,13 +9,11 @@ const reducer = ( state = { isOpen: false, isPromptedFromSidebar: false }, { typ
 		: state;
 
 const actions = {
-	setIsOpen: ( isOpen, isPromptedFromSidebar ) => {
-		return {
-			type: 'SET_IS_OPEN',
-			isOpen,
-			isPromptedFromSidebar: !! isPromptedFromSidebar,
-		};
-	},
+	setIsOpen: ( isOpen, isPromptedFromSidebar ) => ( {
+		type: 'SET_IS_OPEN',
+		isOpen,
+		isPromptedFromSidebar: !! isPromptedFromSidebar,
+	} ),
 };
 
 const selectors = {
