@@ -83,8 +83,24 @@ export default function useIsApplePayAvailable(
 		}
 
 		// Ask Stripe if apple pay can be used. This is async.
-		const countryCode =
-			stripeConfiguration && stripeConfiguration.processor_id === 'stripe_ie' ? 'IE' : 'US';
+		let countryCode: string = 'US';
+
+		if ( stripeConfiguration ) {
+			switch ( stripeConfiguration.processor_id ) {
+				case 'stripe_ie':
+					countryCode = 'IE';
+					break;
+				case 'stripe_au':
+					countryCode = 'AU';
+					break;
+				case 'stripe_ca':
+					countryCode = 'CA';
+					break;
+				default:
+					break;
+			}
+		}
+
 		const currency = items.reduce(
 			( firstCurrency, item ) => firstCurrency || item.amount.currency,
 			null
