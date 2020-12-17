@@ -22,9 +22,7 @@ export default class UpsellPage extends AsyncBaseContainer {
 	async declineOffer() {
 		return await driverHelper.clickWhenClickable(
 			this.driver,
-			By.css(
-				'.concierge-quickstart-session__decline-offer-button, .business-plan-upgrade-upsell__decline-offer-button, .premium-plan-upgrade-upsell__decline-offer-button'
-			)
+			By.css( 'button[data-e2e-button="decline"]' )
 		);
 	}
 }

@@ -205,6 +205,7 @@ export class ConciergeSupportSession extends PureComponent {
 		return (
 			<footer className="concierge-support-session__footer">
 				<Button
+					data-e2e-button="decline"
 					className="concierge-support-session__decline-offer-button"
 					onClick={ handleClickDecline }
 				>

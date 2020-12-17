@@ -288,6 +288,7 @@ export class BusinessPlanUpgradeUpsell extends PureComponent {
 		return (
 			<footer className="business-plan-upgrade-upsell__footer">
 				<Button
+					data-e2e-button="decline"
 					className="business-plan-upgrade-upsell__decline-offer-button"
 					onClick={ handleClickDecline }
 				>

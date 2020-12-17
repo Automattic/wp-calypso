@@ -257,6 +257,7 @@ export class ConciergeQuickstartSession extends PureComponent {
 				{ isLoggedIn && (
 					<>
 						<Button
+							data-e2e-button="decline"
 							className="concierge-quickstart-session__decline-offer-button"
 							onClick={ handleClickDecline }
 						>
