@@ -168,11 +168,7 @@ ChangePaymentMethod.propTypes = {
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
-/**
- * @param {object} payment Payment object taken from the purchase
- * @param {string=} payment.type Payment type; description exists only to satisfy eslint
- * @returns {string} An ID as used in the payment method list inside CheckoutPaymentMethods.
- */
+// Returns an ID as used in the payment method list inside CheckoutPaymentMethods.
 function getCurrentPaymentMethodId( payment ) {
 	if ( payment?.type === 'credits' ) {
 		return 'credits';
