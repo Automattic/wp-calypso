@@ -202,7 +202,6 @@ export function changePaymentMethod( context, next ) {
 		<Main className="purchases__edit-payment-method is-wide-layout">
 			<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
 			<ChangePaymentMethod
-				cardId={ context.params.cardId }
 				purchaseId={ parseInt( context.params.purchaseId, 10 ) }
 				siteSlug={ context.params.site }
 				getManagePurchaseUrlFor={ managePurchaseUrl }
