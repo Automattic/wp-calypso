@@ -58,6 +58,8 @@ import { getStepModuleName } from 'calypso/signup/config/step-components';
 import { tracksAnonymousUserId } from 'calypso/lib/analytics/ad-tracking';
 import QueryExperiments from 'calypso/components/data/query-experiments';
 import { getExternalBackUrl } from './utils';
+import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+
 /**
  * Style dependencies
  */
@@ -485,42 +487,49 @@ class DomainsStep extends React.Component {
 			: null;
 
 		return (
-			<RegisterDomainStep
-				key="domainForm"
-				path={ this.props.path }
-				initialState={ initialState }
-				onAddDomain={ this.handleAddDomain }
-				products={ this.props.productsList }
-				basePath={ this.props.path }
-				promoTlds={ trueNamePromoTlds }
-				mapDomainUrl={ this.getMapDomainUrl() }
-				transferDomainUrl={ this.getTransferDomainUrl() }
-				useYourDomainUrl={ this.getUseYourDomainUrl() }
-				onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
-				onSave={ this.handleSave.bind( this, 'domainForm' ) }
-				offerUnavailableOption={ ! this.props.isDomainOnly }
-				isDomainOnly={ this.props.isDomainOnly }
-				analyticsSection={ this.getAnalyticsSection() }
-				domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
-				includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
-				includeDotBlogSubdomain={ trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain() }
-				isSignupStep
-				isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
-				showExampleSuggestions={ showExampleSuggestions }
-				suggestion={ initialQuery }
-				designType={ this.getDesignType() }
-				vendor={ getSuggestionsVendor( { isSignup: true, isDomainOnly: this.props.isDomainOnly } ) }
-				deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
-				selectedSite={ this.props.selectedSite }
-				showSkipButton={ this.props.showSkipButton }
-				vertical={ this.props.vertical }
-				onSkip={ this.handleSkip }
-				hideFreePlan={ this.handleSkip }
-				forceHideFreeDomainExplainerAndStrikeoutUi={
-					this.props.forceHideFreeDomainExplainerAndStrikeoutUi
-				}
-				isReskinned={ this.props.isReskinned }
-			/>
+			<CalypsoShoppingCartProvider>
+				<RegisterDomainStep
+					key="domainForm"
+					path={ this.props.path }
+					initialState={ initialState }
+					onAddDomain={ this.handleAddDomain }
+					products={ this.props.productsList }
+					basePath={ this.props.path }
+					promoTlds={ trueNamePromoTlds }
+					mapDomainUrl={ this.getMapDomainUrl() }
+					transferDomainUrl={ this.getTransferDomainUrl() }
+					useYourDomainUrl={ this.getUseYourDomainUrl() }
+					onAddMapping={ this.handleAddMapping.bind( this, 'domainForm' ) }
+					onSave={ this.handleSave.bind( this, 'domainForm' ) }
+					offerUnavailableOption={ ! this.props.isDomainOnly }
+					isDomainOnly={ this.props.isDomainOnly }
+					analyticsSection={ this.getAnalyticsSection() }
+					domainsWithPlansOnly={ this.props.domainsWithPlansOnly }
+					includeWordPressDotCom={ trueNamePromoTlds ? false : includeWordPressDotCom }
+					includeDotBlogSubdomain={
+						trueNamePromoTlds ? false : this.shouldIncludeDotBlogSubdomain()
+					}
+					isSignupStep
+					isPlanSelectionAvailableInFlow={ isPlanSelectionAvailableInFlow }
+					showExampleSuggestions={ showExampleSuggestions }
+					suggestion={ initialQuery }
+					designType={ this.getDesignType() }
+					vendor={ getSuggestionsVendor( {
+						isSignup: true,
+						isDomainOnly: this.props.isDomainOnly,
+					} ) }
+					deemphasiseTlds={ this.props.flowName === 'ecommerce' ? [ 'blog' ] : [] }
+					selectedSite={ this.props.selectedSite }
+					showSkipButton={ this.props.showSkipButton }
+					vertical={ this.props.vertical }
+					onSkip={ this.handleSkip }
+					hideFreePlan={ this.handleSkip }
+					forceHideFreeDomainExplainerAndStrikeoutUi={
+						this.props.forceHideFreeDomainExplainerAndStrikeoutUi
+					}
+					isReskinned={ this.props.isReskinned }
+				/>
+			</CalypsoShoppingCartProvider>
 		);
 	};
 
