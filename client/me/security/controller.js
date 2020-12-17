@@ -84,7 +84,6 @@ export function socialLogin( context, next ) {
 		path: context.path,
 		socialService,
 		socialServiceResponse,
-		userSettings,
 	} );
 	next();
 }
