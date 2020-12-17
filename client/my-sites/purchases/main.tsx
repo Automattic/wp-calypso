@@ -55,7 +55,7 @@ function useLogPurchasesError( message: string ) {
 	);
 }
 
-export function Purchases() {
+export function Purchases(): JSX.Element {
 	const translate = useTranslate();
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const logPurchasesError = useLogPurchasesError( 'site level purchases load error' );
@@ -133,7 +133,7 @@ export function PurchaseCancel( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel load error' );
 
@@ -248,7 +248,7 @@ export function PurchaseCancelDomain( {
 }: {
 	purchaseId: number;
 	siteSlug: string;
-} ) {
+} ): JSX.Element {
 	const translate = useTranslate();
 	const logPurchasesError = useLogPurchasesError( 'site level purchase cancel domain load error' );
 
