@@ -3,13 +3,14 @@
  */
 import React from 'react';
 import { localize } from 'i18n-calypso';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-import notices from 'calypso/notices';
 import user from 'calypso/lib/user';
 import userSettings from 'calypso/lib/user-settings';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 
 const withFormBase = ( WrappedComponent ) => {
 	class EnhancedComponent extends React.Component {
@@ -36,7 +37,7 @@ const withFormBase = ( WrappedComponent ) => {
 			}
 		}
 
-		UNSAFE_componentWillUpdate() {
+		componentDidUpdate() {
 			this.showNotice();
 		}
 
@@ -46,8 +47,9 @@ const withFormBase = ( WrappedComponent ) => {
 
 		showNotice() {
 			if ( userSettings.initialized && this.state.showNotice ) {
-				notices.clearNotices( 'notices' );
-				notices.success( this.props.translate( 'Settings saved successfully!' ) );
+				this.props.successNotice( this.props.translate( 'Settings saved successfully!' ), {
+					id: 'form-base',
+				} );
 				this.state.showNotice = false;
 			}
 		}
@@ -75,9 +77,12 @@ const withFormBase = ( WrappedComponent ) => {
 					if ( error ) {
 						// handle error case here
 						if ( error.message ) {
-							notices.error( error.message );
+							this.props.errorNotice( error.message, { id: 'form-base' } );
 						} else {
-							notices.error( this.props.translate( 'There was a problem saving your changes.' ) );
+							this.props.errorNotice(
+								this.props.translate( 'There was a problem saving your changes.' ),
+								{ id: 'form-base' }
+							);
 						}
 						this.setState( { submittingForm: false } );
 					} else {
@@ -115,7 +120,7 @@ const withFormBase = ( WrappedComponent ) => {
 		}
 	}
 
-	return localize( EnhancedComponent );
+	return connect( null, { errorNotice, successNotice } )( localize( EnhancedComponent ) );
 };
 
 export default withFormBase;
