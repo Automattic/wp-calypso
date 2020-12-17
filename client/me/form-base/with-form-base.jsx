@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import debugFactory from 'debug';
+import { localize } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:me:form-base' );
 
@@ -13,7 +14,7 @@ import notices from 'calypso/notices';
 import user from 'calypso/lib/user';
 
 const withFormBase = ( WrappedComponent ) => {
-	return class extends React.Component {
+	class EnhancedComponent extends React.Component {
 		static displayName = `withFormBase(${ WrappedComponent.displayName || WrappedComponent.name })`;
 
 		state = {
@@ -119,7 +120,9 @@ const withFormBase = ( WrappedComponent ) => {
 		render() {
 			return <WrappedComponent { ...this.props } { ...this.getFormBaseProps() } />;
 		}
-	};
+	}
+
+	return localize( EnhancedComponent );
 };
 
 export default withFormBase;
