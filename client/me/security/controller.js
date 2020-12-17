@@ -28,7 +28,6 @@ export function password( context, next ) {
 	}
 
 	context.primary = React.createElement( PasswordComponent, {
-		userSettings: userSettings,
 		path: context.path,
 		accountPasswordData: accountPasswordData,
 	} );

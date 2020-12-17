@@ -22,10 +22,11 @@ import FormButton from 'calypso/components/forms/form-button';
 import FormButtonsBar from 'calypso/components/forms/form-buttons-bar';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormInputValidation from 'calypso/components/forms/form-input-validation';
-/* eslint-disable no-restricted-imports */
 import observe from 'calypso/lib/mixins/data-observe';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { saveUserSettings } from 'calypso/state/user-settings/actions';
+import { isPendingPasswordChange } from 'calypso/state/user-settings/selectors';
 
 /**
  * Style dependencies
@@ -38,24 +39,23 @@ const AccountPassword = createReactClass( {
 
 	mixins: [ observe( 'accountPasswordData' ) ],
 
-	componentDidMount: function () {
+	componentDidMount() {
 		this.debouncedPasswordValidate = debounce( this.validatePassword, 300 );
 	},
 
-	componentWillUnmount: function () {
+	componentWillUnmount() {
 		this.props.accountPasswordData.clearValidatedPassword();
 	},
 
-	getInitialState: function () {
+	getInitialState() {
 		return {
 			password: '',
 			pendingValidation: true,
-			savingPassword: false,
 			isUnsaved: false,
 		};
 	},
 
-	generateStrongPassword: function () {
+	generateStrongPassword() {
 		this.setState( {
 			password: this.props.accountPasswordData.generate(),
 			pendingValidation: true,
@@ -64,7 +64,7 @@ const AccountPassword = createReactClass( {
 		this.debouncedPasswordValidate();
 	},
 
-	validatePassword: function () {
+	validatePassword() {
 		debug( 'Validating password' );
 		this.props.accountPasswordData.validate(
 			this.state.password,
@@ -74,7 +74,7 @@ const AccountPassword = createReactClass( {
 		);
 	},
 
-	handlePasswordChange: function ( event ) {
+	handlePasswordChange( event ) {
 		const newPassword = event.currentTarget.value;
 		debug( 'Handle password change has been called.' );
 		this.debouncedPasswordValidate();
@@ -98,42 +98,14 @@ const AccountPassword = createReactClass( {
 		this.props.recordGoogleEvent( 'Me', 'Focused on New Password Field' );
 	},
 
-	submitForm: function ( event ) {
-		const { translate, errorNotice: showErrorNotice } = this.props;
-
+	submitForm( event ) {
 		event.preventDefault();
 
-		this.setState( {
-			savingPassword: true,
-		} );
-
-		this.props.userSettings.saveSettings(
-			function ( error, response ) {
-				this.setState( {
-					savingPassword: false,
-					isUnsaved: false,
-				} );
-
-				if ( error ) {
-					debug( 'Error saving password: ' + JSON.stringify( error ) );
-
-					// handle error case here
-					showErrorNotice(
-						translate( 'There was a problem saving your password. Please, try again.' )
-					);
-					this.setState( { submittingForm: false } );
-				} else {
-					debug( 'Password saved successfully' + JSON.stringify( response ) );
-
-					// Since changing a user's password invalidates the session, we reload.
-					window.location = window.location.pathname + '?updated=password';
-				}
-			}.bind( this ),
-			{ password: this.state.password }
-		);
+		this.setState( { isUnsaved: false } );
+		this.props.saveUserSettings( { password: this.state.password } );
 	},
 
-	renderValidationNotices: function () {
+	renderValidationNotices() {
 		const { translate } = this.props;
 		const failure = head( this.props.accountPasswordData.getValidationFailures() );
 
@@ -146,7 +118,7 @@ const AccountPassword = createReactClass( {
 		}
 	},
 
-	render: function () {
+	render() {
 		const { translate } = this.props;
 		const passwordInputClasses = classNames( {
 			'account-password__password-field': true,
@@ -168,7 +140,7 @@ const AccountPassword = createReactClass( {
 						onChange={ this.handlePasswordChange }
 						onFocus={ this.handleNewPasswordFieldFocus }
 						value={ this.state.password }
-						submitting={ this.state.savingPassword }
+						submitting={ this.props.isPendingPasswordChange }
 					/>
 
 					{ this.renderValidationNotices() }
@@ -184,11 +156,14 @@ const AccountPassword = createReactClass( {
 					<FormButton
 						disabled={
 							this.state.pendingValidation ||
-							this.props.accountPasswordData.passwordValidationFailed()
+							this.props.accountPasswordData.passwordValidationFailed() ||
+							this.props.isPendingPasswordChange
 						}
 						onClick={ this.handleSaveButtonClick }
 					>
-						{ this.state.savingPassword ? translate( 'Saving…' ) : translate( 'Save password' ) }
+						{ this.props.isPendingPasswordChange
+							? translate( 'Saving…' )
+							: translate( 'Save password' ) }
 					</FormButton>
 
 					<FormButton isPrimary={ false } onClick={ this.handleGenerateButtonClick } type="button">
@@ -201,6 +176,11 @@ const AccountPassword = createReactClass( {
 } );
 
 export default compose(
-	connect( null, { errorNotice, recordGoogleEvent } ),
+	connect(
+		( state ) => ( {
+			isPendingPasswordChange: isPendingPasswordChange( state ),
+		} ),
+		{ errorNotice, recordGoogleEvent, saveUserSettings }
+	),
 	localize
 )( AccountPassword );

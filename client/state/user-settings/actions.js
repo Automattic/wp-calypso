@@ -16,6 +16,7 @@ import {
 	USER_SETTINGS_UNSAVED_CLEAR,
 	USER_SETTINGS_UNSAVED_SET,
 	USER_SETTINGS_UNSAVED_REMOVE,
+	USER_SETTINGS_UPDATE_FAILURE,
 } from 'calypso/state/action-types';
 
 import 'calypso/state/data-layer/wpcom/me/settings';
@@ -51,6 +52,12 @@ export const saveUserSettings = ( settingsOverride ) => ( {
 export const updateUserSettings = ( settingValues ) => ( {
 	type: USER_SETTINGS_UPDATE,
 	settingValues,
+} );
+
+export const updateUserSettingsFailure = ( settingsOverride, error ) => ( {
+	type: USER_SETTINGS_UPDATE_FAILURE,
+	settingsOverride,
+	error,
 } );
 
 export const cancelPendingEmailChange = () => ( {
