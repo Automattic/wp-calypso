@@ -10,7 +10,7 @@ import * as Validation from './internal/validations';
  */
 const EXPERIMENT_FETCH_TIMEOUT = 5000;
 
-interface ExPlatClient {
+export interface ExPlatClient {
 	/**
 	 * Get, starting an assignment if necessary, an Experiment Assignment Promise.
 	 *
@@ -28,7 +28,8 @@ interface ExPlatClient {
  * @param makeRequest Modelled off of Calypso/state/data-layer/wpcom-http, a simple abstraction over an http request.
  * @param getAnonId
  */
-export function createExPlatClient(
+export default function createExPlatClient(
+    // TODO: Switch this to an object argument containing these
 	makeRequest: MakeRequest,
 	getAnonId: GetAnonId,
 	logError: LogError,
