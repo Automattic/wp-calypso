@@ -68,7 +68,7 @@ const DesignSelector: React.FunctionComponent = () => {
 							( design ) =>
 								// TODO Add finalized design templates to client/landing/gutenboarding/available-designs-config.json
 								// along with is_anchorfm prop
-								isAnchorFmSignup === ( design.is_anchorfm ?? false )
+								isAnchorFmSignup === design.features.includes( 'anchorfm' )
 						)
 						.map( ( design ) => (
 							<button
