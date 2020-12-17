@@ -38,6 +38,7 @@ import Gridicon from 'calypso/components/gridicon';
 import getCheckoutUpgradeIntent from '../../../state/selectors/get-checkout-upgrade-intent';
 import { Button } from '@automattic/components';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { downloadTrafficGuide } from 'calypso/my-sites/marketing/ultimate-traffic-guide';
 
 export class CheckoutThankYouHeader extends PureComponent {
 	static propTypes = {
@@ -344,10 +345,10 @@ export class CheckoutThankYouHeader extends PureComponent {
 		window.location.href = '/me/concierge/' + selectedSite.slug + '/book';
 	};
 
-	downloadTrafficGuide = ( event ) => {
+	downloadTrafficGuideHandler = ( event ) => {
 		event.preventDefault();
 
-		//TODO redirect to download page
+		downloadTrafficGuide();
 	};
 
 	startTransfer = ( event ) => {
@@ -508,7 +509,7 @@ export class CheckoutThankYouHeader extends PureComponent {
 		} else if ( this.isSingleDomainPurchase() ) {
 			clickHandler = this.visitDomain;
 		} else if ( isTrafficGuidePurchase ) {
-			clickHandler = this.downloadTrafficGuide;
+			clickHandler = this.downloadTrafficGuideHandler;
 		}
 
 		return (

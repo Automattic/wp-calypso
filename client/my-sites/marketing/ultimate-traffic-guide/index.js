@@ -32,7 +32,12 @@ import {
  */
 import './style.scss';
 
-const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
+export const WPCOM_TRAFFIC_GUIDE = 'traffic-guide';
+
+export const hasTrafficGuidePurchase = ( purchases ) =>
+	!! (
+		purchases && purchases.find( ( purchase ) => WPCOM_TRAFFIC_GUIDE === purchase.productSlug )
+	);
 
 export const downloadTrafficGuide = () => {
 	window.location.href = 'https://public-api.wordpress.com/wpcom/v2/traffic-guide-download';
@@ -43,13 +48,7 @@ export default function UltimateTrafficGuide() {
 	const userId = useSelector( ( state ) => getCurrentUserId( state ) );
 	const isLoading = useSelector( ( state ) => isFetchingUserPurchases( state ) );
 	const purchases = useSelector( ( state ) => getUserPurchases( state, userId ) );
-	let hasPurchase = false;
-	if (
-		purchases &&
-		purchases.find( ( purchase ) => WPCOM_TRAFFIC_GUIDE === purchase.productSlug )
-	) {
-		hasPurchase = true;
-	}
+	const hasPurchase = hasTrafficGuidePurchase( purchases );
 
 	const renderContent = () => {
 		return (
@@ -257,11 +256,6 @@ const SalesPage = ( { translate } ) => {
 };
 
 const DownloadPage = ( { translate } ) => {
-	const handleDownloadPageButtonClick = () => {
-		//download
-		downloadTrafficGuide();
-	};
-
 	return (
 		<>
 			<p>
@@ -286,7 +280,7 @@ const DownloadPage = ( { translate } ) => {
 				) }
 			</p>
 			<p>
-				<Button onClick={ handleDownloadPageButtonClick } primary>
+				<Button onClick={ () => downloadTrafficGuide() } primary>
 					{ translate( 'Click here to download your copy now.' ) }
 				</Button>
 			</p>
