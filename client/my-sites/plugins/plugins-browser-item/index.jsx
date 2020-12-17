@@ -21,11 +21,6 @@ import { siteObjectsToSiteIds } from 'calypso/my-sites/plugins/utils';
 import { withLocalizedMoment } from 'calypso/components/localized-moment';
 
 /**
- * Images
- */
-import logo from 'calypso/assets/images/plugins/plugins-support-logo.svg';
-
-/**
  * Style dependencies
  */
 import './style.scss';
@@ -93,8 +88,7 @@ class PluginsBrowserListElement extends Component {
 
 		return (
 			<div className="plugins-browser-item__support">
-				{ this.props.translate( 'Support by' ) }
-				<img src={ logo } alt="WordPress.com" />
+				{ this.props.translate( 'Support by WordPress.com' ) }
 			</div>
 		);
 	}
@@ -131,12 +125,12 @@ class PluginsBrowserListElement extends Component {
 			<Card className="plugins-browser-item is-placeholder">
 				<span className="plugins-browser-item__link">
 					<div className="plugins-browser-item__info">
+						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
 						<div className="plugins-browser-item__title-wrapper">
 							<div className="plugins-browser-item__title">…</div>
 							<div className="plugins-browser-item__description">…</div>
 							<div className="plugins-browser-item__author">…</div>
 						</div>
-						<PluginIcon size={ this.props.iconSize } isPlaceholder={ true } />
 					</div>
 					{ this.props.showMeta && (
 						<div className="plugins-browser-item__meta is-placeholder">
@@ -199,27 +193,27 @@ class PluginsBrowserListElement extends Component {
 					onClick={ this.trackPluginLinkClick }
 				>
 					<div className="plugins-browser-item__info">
+						<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
 						<div className="plugins-browser-item__title-wrapper">
 							<div className="plugins-browser-item__title">{ plugin.name }</div>
+							<div className="plugins-browser-item__author-wrapper">
+								<div className="plugins-browser-item__author">
+									<a href={ plugin.author_url }>{ plugin.author_name }</a>
+								</div>
+								{ this.renderSupportedFlag() }
+							</div>
 							<div className="plugins-browser-item__description">{ plugin.short_description }</div>
 						</div>
-						<PluginIcon size={ iconSize } image={ plugin.icon } isPlaceholder={ isPlaceholder } />
-					</div>
-					<div className="plugins-browser-item__author-wrapper">
-						<div className="plugins-browser-item__author">
-							<a href={ plugin.author_url }>{ plugin.author_name }</a>
-						</div>
-						{ this.renderSupportedFlag() }
 					</div>
 					{ showMeta && (
 						<div className="plugins-browser-item__meta">
 							<div className="plugins-browser-item__ratings">
 								<Rating rating={ plugin.rating } size={ 16 } />
-								{ this.renderDownloaded() }
-								{ this.renderLastUpdated() }
-								{ this.renderInstalledIn() }
-								{ this.renderUpgradeButton() }
 							</div>
+							{ this.renderDownloaded() }
+							{ this.renderLastUpdated() }
+							{ this.renderInstalledIn() }
+							{ this.renderUpgradeButton() }
 						</div>
 					) }
 				</a>
