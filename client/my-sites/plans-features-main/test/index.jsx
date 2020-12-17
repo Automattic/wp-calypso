@@ -1,27 +1,27 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
 jest.mock( 'react-redux', () => ( {
 	connect: () => ( component ) => component,
 } ) );
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'config', () => {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/config', () => {
 	const fn = () => {
 		return [];
 	};
 	fn.isEnabled = jest.fn( () => true );
 	return fn;
 } );
-jest.mock( 'components/happychat/connection-connected', () => 'HappychatConnection' );
-jest.mock( 'components/data/query-plans', () => 'QueryPlans' );
-jest.mock( 'components/data/query-site-plans', () => 'QuerySitePlans' );
-jest.mock( 'components/data/cart', () => 'CartData' );
-jest.mock( 'my-sites/plan-features', () => 'PlanFeatures' );
-jest.mock( 'my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
-jest.mock( 'my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
+jest.mock( 'calypso/components/happychat/connection-connected', () => 'HappychatConnection' );
+jest.mock( 'calypso/components/data/query-plans', () => 'QueryPlans' );
+jest.mock( 'calypso/components/data/query-site-plans', () => 'QuerySitePlans' );
+jest.mock( 'calypso/components/data/cart', () => 'CartData' );
+jest.mock( 'calypso/my-sites/plan-features', () => 'PlanFeatures' );
+jest.mock( 'calypso/my-sites/plans-features-main/wpcom-faq', () => 'WpcomFAQ' );
+jest.mock( 'calypso/my-sites/plans-features-main/jetpack-faq', () => 'JetpackFAQ' );
 
 /**
  * External dependencies

@@ -25,7 +25,7 @@ export default class StartPage extends AsyncBaseContainer {
 		return await driverHelper.waitTillPresentAndDisplayed( this.driver, By.css( '.step-wrapper' ) );
 	}
 
-	static getStartURL( { culture = 'en', flow = '', query = '' } = {} ) {
+	static getStartURL( { culture = 'en', flow = 'domains', query = '' } = {} ) {
 		let route = 'start';
 		const queryStrings = [];
 		queryStrings.push( 'ref=e2e' );

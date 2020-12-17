@@ -110,14 +110,9 @@ function getLocation( path ) {
  */
 export function recordTrack( eventName, eventProperties, { pathnameOverride } = {} ) {
 	debug( 'reader track', ...arguments );
-	const subCount = 0; // todo: fix subCount by moving to redux middleware for recordTrack
 
 	const location = getLocation( pathnameOverride || window.location.pathname );
 	eventProperties = Object.assign( { ui_algo: location }, eventProperties );
-
-	if ( subCount != null ) {
-		eventProperties = Object.assign( { subscription_count: subCount }, eventProperties );
-	}
 
 	if ( process.env.NODE_ENV !== 'production' ) {
 		if (

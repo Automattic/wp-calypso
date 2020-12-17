@@ -33,6 +33,7 @@
 		"@wordpress/data": "^4.22.3",
 		"@wordpress/dom-ready": "^2.10.0",
 		"@wordpress/editor": "^9.20.6",
+		"@wordpress/edit-site": "^1.15.6",
 		"@wordpress/element": "^2.16.0",
 		"@wordpress/hooks": "^2.9.0",
 		"@wordpress/i18n": "^3.14.0",

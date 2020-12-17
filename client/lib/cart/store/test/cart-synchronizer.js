@@ -10,7 +10,7 @@ import CartSynchronizer from '../cart-synchronizer';
 import FakeWPCOM from './fake-wpcom';
 
 // Gets rid of warnings such as 'UnhandledPromiseRejectionWarning: Error: No available storage method found.'
-jest.mock( 'lib/user', () => () => {} );
+jest.mock( 'calypso/lib/user', () => () => {} );
 
 const TEST_CART_KEY = 91234567890;
 

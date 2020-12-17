@@ -49,24 +49,28 @@ export default function getThankYouPageUrl( {
 	getUrlFromCookie = retrieveSignupDestination,
 	saveUrlToCookie = persistSignupDestination,
 	isEligibleForSignupDestinationResult,
+	shouldShowOneClickTreatment,
 	hideNudge,
 	isInEditor,
+	previousRoute,
 }: {
 	siteSlug: string | undefined;
 	adminUrl: string | undefined;
-	redirectTo: string | undefined;
+	redirectTo?: string | undefined;
 	receiptId: number | undefined;
 	orderId: number | undefined;
 	purchaseId: number | undefined;
 	feature: string | undefined;
 	cart: ResponseCart | undefined;
-	isJetpackNotAtomic: boolean;
+	isJetpackNotAtomic?: boolean;
 	productAliasFromUrl: string | undefined;
 	getUrlFromCookie?: GetUrlFromCookie;
 	saveUrlToCookie?: SaveUrlToCookie;
-	isEligibleForSignupDestinationResult: boolean;
-	hideNudge: boolean;
+	isEligibleForSignupDestinationResult?: boolean;
+	shouldShowOneClickTreatment?: boolean;
+	hideNudge?: boolean;
 	isInEditor?: boolean;
+	previousRoute?: string;
 } ): string {
 	debug( 'starting getThankYouPageUrl' );
 
@@ -110,7 +114,7 @@ export default function getThankYouPageUrl( {
 		siteSlug,
 		feature,
 		cart,
-		isJetpackNotAtomic,
+		isJetpackNotAtomic: Boolean( isJetpackNotAtomic ),
 		productAliasFromUrl,
 	} );
 	debug( 'fallbackUrl is', fallbackUrl );
@@ -119,7 +123,7 @@ export default function getThankYouPageUrl( {
 
 	// If the user is making a purchase/upgrading within the editor,
 	// we want to return them back to the editor after the purchase is successful.
-	if ( isInEditor && ! hasEcommercePlan( cart ) ) {
+	if ( isInEditor && cart && ! hasEcommercePlan( cart ) ) {
 		saveUrlToCookie( window?.location.href );
 	}
 
@@ -167,7 +171,9 @@ export default function getThankYouPageUrl( {
 		orderId,
 		cart,
 		siteSlug,
-		hideNudge,
+		hideNudge: Boolean( hideNudge ),
+		shouldShowOneClickTreatment,
+		previousRoute,
 	} );
 	if ( redirectPathForConciergeUpsell ) {
 		debug( 'redirect for concierge exists, so returning', redirectPathForConciergeUpsell );
@@ -285,6 +291,7 @@ function maybeShowPlanBumpOffer( {
 		const upgradeItem = hasMonthlyCartItem( cart ) ? 'business-monthly' : 'business';
 		return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
 	}
+
 	return;
 }
 
@@ -294,12 +301,16 @@ function getRedirectUrlForConciergeNudge( {
 	cart,
 	siteSlug,
 	hideNudge,
+	shouldShowOneClickTreatment,
+	previousRoute,
 }: {
 	pendingOrReceiptId: string;
 	orderId: number | undefined;
 	cart: ResponseCart | undefined;
 	siteSlug: string | undefined;
 	hideNudge: boolean;
+	shouldShowOneClickTreatment: boolean | undefined;
+	previousRoute: string | undefined;
 } ): string | undefined {
 	if ( hideNudge ) {
 		return;
@@ -310,6 +321,7 @@ function getRedirectUrlForConciergeNudge( {
 	if (
 		config.isEnabled( 'upsell/concierge-session' ) &&
 		cart &&
+		! previousRoute?.includes( '/offer-plan-upgrade/premium' ) &&
 		! hasConciergeSession( cart ) &&
 		! hasJetpackPlan( cart ) &&
 		( hasBloggerPlan( cart ) ||
@@ -334,6 +346,13 @@ function getRedirectUrlForConciergeNudge( {
 		// being offered and so sold, to be inline with HE availability.
 		// To dial back, uncomment the condition below and modify the test config.
 		if ( 'offer' === abtest( 'conciergeUpsellDial' ) ) {
+			if ( hasPersonalPlan( cart ) ) {
+				if ( shouldShowOneClickTreatment ) {
+					const upgradeItem = hasMonthlyCartItem( cart ) ? 'premium-monthly' : 'premium';
+					return `/checkout/${ siteSlug }/offer-plan-upgrade/${ upgradeItem }/${ pendingOrReceiptId }`;
+				}
+			}
+
 			return getQuickstartUrl( { pendingOrReceiptId, siteSlug, orderId } );
 		}
 	}

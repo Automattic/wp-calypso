@@ -75,7 +75,7 @@ class Block_Patterns_From_API {
 		$pattern_categories = array();
 		$block_patterns     = $this->get_patterns();
 
-		foreach ( (array) $this->get_patterns() as $pattern ) {
+		foreach ( (array) $block_patterns as $pattern ) {
 			foreach ( (array) $pattern['categories'] as $slug => $category ) {
 				$pattern_categories[ $slug ] = $category['title'];
 			}
@@ -87,18 +87,21 @@ class Block_Patterns_From_API {
 			register_block_pattern_category( $slug, array( 'label' => $label ) );
 		}
 
-		foreach ( (array) $this->get_patterns() as $pattern ) {
+		foreach ( (array) $block_patterns as $pattern ) {
 			if ( $this->can_register_pattern( $pattern ) ) {
+				$is_premium = isset( $pattern['pattern_meta']['is_premium'] ) ? boolval( $pattern['pattern_meta']['is_premium'] ) : false;
+
 				register_block_pattern(
 					Block_Patterns_From_API::PATTERN_NAMESPACE . $pattern['name'],
 					array(
 						'title'         => $pattern['title'],
-						'description'   => $pattern['title'],
+						'description'   => $pattern['description'],
 						'content'       => $pattern['html'],
 						'viewportWidth' => 1280,
 						'categories'    => array_keys(
 							$pattern['categories']
 						),
+						'isPremium'     => $is_premium,
 					)
 				);
 			}
@@ -111,6 +114,35 @@ class Block_Patterns_From_API {
 	 * @return array
 	 */
 	private function get_patterns() {
+		$override_source_site = apply_filters( 'a8c_override_patterns_source_site', false );
+		if ( $override_source_site ) {
+			// Skip caching and request all patterns from a specified source site.
+			// This allows testing patterns in development with immediate feedback
+			// while avoiding polluting the cache. Note that this request gets
+			// all patterns on the source site, not just those with the 'pattern' tag.
+			$request_url = esc_url_raw(
+				add_query_arg(
+					array(
+						'site' => $override_source_site,
+					),
+					'https://public-api.wordpress.com/rest/v1/ptk/patterns/' . $this->get_block_patterns_locale()
+				)
+			);
+
+			$args = array( 'timeout' => 20 );
+
+			if ( function_exists( 'wpcom_json_api_get' ) ) {
+				$response = wpcom_json_api_get( $request_url, $args );
+			} else {
+				$response = wp_remote_get( $request_url, $args );
+			}
+
+			if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
+				return array();
+			}
+			return json_decode( wp_remote_retrieve_body( $response ), true );
+		}
+
 		$block_patterns = wp_cache_get( $this->patterns_cache_key, 'ptk_patterns' );
 
 		// Load fresh data if we don't have any patterns.
@@ -154,23 +186,27 @@ class Block_Patterns_From_API {
 	/**
 	 * Check that the pattern is allowed to be registered.
 	 *
-	 * Checks for tags with a prefix of `requires-` in the slug, and then attempts to match
-	 * the remainder of the slug to a theme feature.
+	 * Checks for pattern_meta tags with a prefix of `requires-` in the name, and then attempts to match
+	 * the remainder of the name to a theme feature.
 	 *
 	 * For example, to prevent patterns that depend on wide or full-width block alignment support
 	 * from being registered in sites where the active theme does not have `align-wide` support,
-	 * we can add the `requires-align-wide` tag to the pattern. This function will then match
-	 * against that tag slug, and then return `false`.
+	 * we can add the `requires-align-wide` pattern_meta tag to the pattern. This function will
+	 * then match against that pattern_meta tag, and then return `false`.
 	 *
-	 * @param array $pattern    A pattern with a 'tags' array where the key is the tag slug in English.
+	 * @param array $pattern    A pattern with a 'pattern_meta' array where the key is the tag slug in English.
 	 *
 	 * @return bool
 	 */
 	private function can_register_pattern( $pattern ) {
+		if ( empty( $pattern['pattern_meta'] ) ) {
+			// Default to allowing patterns without metadata to be registered.
+			return true;
+		}
 
-		foreach ( $pattern['tags'] as $tag_slug => $value ) {
+		foreach ( $pattern['pattern_meta'] as $pattern_meta => $value ) {
 			// Match against tags with a non-translated slug beginning with `requires-`.
-			$split_slug = preg_split( '/^requires-/', $tag_slug );
+			$split_slug = preg_split( '/^requires-/', $pattern_meta );
 
 			// If the theme does not support the matched feature, then skip registering the pattern.
 			if ( isset( $split_slug[1] ) && false === get_theme_support( $split_slug[1] ) ) {
@@ -181,3 +217,4 @@ class Block_Patterns_From_API {
 		return true;
 	}
 }
+

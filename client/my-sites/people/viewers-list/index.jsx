@@ -1,29 +1,24 @@
 /**
  * External dependencies
  */
-import React from 'react';
-import { localize } from 'i18n-calypso';
-
+import React, { useState } from 'react';
 /**
  * Internal dependencies
  */
-import ViewersData from 'calypso/components/data/viewers-data';
+import QueryViewers from 'calypso/components/data/query-viewers';
+import { localize } from 'i18n-calypso';
 import Viewers from './viewers';
 
-class ViewersList extends React.PureComponent {
-	static displayName = 'ViewersList';
+const ViewersList = ( { site, label } ) => {
+	const [ page, setPage ] = useState( 1 );
+	const incrementPage = () => setPage( page + 1 );
 
-	render() {
-		return (
-			<ViewersData
-				site={ this.props.site }
-				siteId={ this.props.site.ID }
-				label={ this.props.label }
-			>
-				<Viewers />
-			</ViewersData>
-		);
-	}
-}
+	return (
+		<>
+			<QueryViewers siteId={ site.ID } page={ page } />
+			<Viewers site={ site } label={ label } incrementPage={ incrementPage } page={ page } />
+		</>
+	);
+};
 
 export default localize( ViewersList );

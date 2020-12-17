@@ -80,16 +80,22 @@ export default function CheckoutSystemDecider( {
 		[ reduxDispatch ]
 	);
 
+	// We have to monitor the old cart manager in case it's waiting on a
+	// requested change. To prevent race conditions, we will return undefined in
+	// that case, which will cause the ShoppingCartProvider to enter a loading
+	// state. We have to use null because CalypsoShoppingCartProvider assumes
+	// undefined means to try for its own cartKey.
 	const waitForOtherCartUpdates =
 		otherCart?.hasPendingServerUpdates || ! otherCart?.hasLoadedFromServer;
 	const cartKey = useMemo(
 		() =>
-			getCartKey( {
-				selectedSite,
-				isLoggedOutCart,
-				isNoSiteCart,
-				waitForOtherCartUpdates,
-			} ),
+			waitForOtherCartUpdates
+				? null
+				: getCartKey( {
+						selectedSite,
+						isLoggedOutCart,
+						isNoSiteCart,
+				  } ),
 		[ waitForOtherCartUpdates, selectedSite, isLoggedOutCart, isNoSiteCart ]
 	);
 	debug( 'cartKey is', cartKey );

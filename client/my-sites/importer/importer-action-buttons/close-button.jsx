@@ -5,7 +5,6 @@
 import PropTypes from 'prop-types';
 import { localize } from 'i18n-calypso';
 import React from 'react';
-import { flow } from 'lodash';
 import { connect } from 'react-redux';
 
 /**
@@ -63,4 +62,4 @@ export class ImporterCloseButton extends React.PureComponent {
 	}
 }
 
-export default flow( connect( null, { recordTracksEvent } ), localize )( ImporterCloseButton );
+export default connect( null, { recordTracksEvent } )( localize( ImporterCloseButton ) );

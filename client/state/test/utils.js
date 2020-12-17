@@ -19,7 +19,7 @@ import {
 } from 'calypso/state/utils';
 import warn from 'calypso/lib/warn';
 
-jest.mock( 'lib/warn', () => jest.fn() );
+jest.mock( 'calypso/lib/warn', () => jest.fn() );
 
 describe( 'utils', () => {
 	beforeEach( () => warn.mockReset() );

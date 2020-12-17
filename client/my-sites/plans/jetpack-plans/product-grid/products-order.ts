@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { REVERSE_PLANS_VARIANT } from '../experiments';
 import { getJetpackCROActiveVersion } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 import {
 	PLAN_JETPACK_SECURITY_DAILY,
@@ -53,7 +54,7 @@ const PRODUCT_POSITION_IN_GRID_V2: Record< string, number > = {
 	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 60 ),
 };
 
-const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
+const PRODUCT_POSITION_IN_GRID_I5_CONTROL: Record< string, number > = {
 	// Plans
 	...setProductsInPosition( JETPACK_COMPLETE_PLANS, 1 ),
 	[ PLAN_JETPACK_SECURITY_REALTIME ]: 10,
@@ -71,14 +72,37 @@ const PRODUCT_POSITION_IN_GRID_I5: Record< string, number > = {
 	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 80 ),
 };
 
-export function getProductPosition( slug: JetpackPlanSlugs | JetpackProductSlug ): number {
+const PRODUCT_POSITION_IN_GRID_I5_TREATMENT: Record< string, number > = {
+	// Plans
+	[ PLAN_JETPACK_SECURITY_DAILY ]: 1,
+	[ PLAN_JETPACK_SECURITY_DAILY_MONTHLY ]: 1,
+	[ PLAN_JETPACK_SECURITY_REALTIME ]: 10,
+	[ PLAN_JETPACK_SECURITY_REALTIME_MONTHLY ]: 10,
+	...setProductsInPosition( JETPACK_COMPLETE_PLANS, 20 ),
+	// Products
+	[ PRODUCT_JETPACK_BACKUP_REALTIME ]: 30,
+	[ PRODUCT_JETPACK_BACKUP_REALTIME_MONTHLY ]: 30,
+	[ PRODUCT_JETPACK_BACKUP_DAILY ]: 40,
+	[ PRODUCT_JETPACK_BACKUP_DAILY_MONTHLY ]: 40,
+	...setProductsInPosition( JETPACK_SCAN_PRODUCTS, 50 ),
+	...setProductsInPosition( JETPACK_ANTI_SPAM_PRODUCTS, 60 ),
+	...setProductsInPosition( JETPACK_SEARCH_PRODUCTS, 70 ),
+	...setProductsInPosition( JETPACK_CRM_PRODUCTS, 80 ),
+};
+
+export function getProductPosition(
+	slug: JetpackPlanSlugs | JetpackProductSlug,
+	variation?: string
+): number {
 	switch ( getJetpackCROActiveVersion() ) {
 		case 'v1':
 			return PRODUCT_POSITION_IN_GRID_V1[ slug ];
 		case 'v2':
 			return PRODUCT_POSITION_IN_GRID_V2[ slug ];
 		case 'i5':
-			return PRODUCT_POSITION_IN_GRID_I5[ slug ];
+			return REVERSE_PLANS_VARIANT === variation
+				? PRODUCT_POSITION_IN_GRID_I5_TREATMENT[ slug ]
+				: PRODUCT_POSITION_IN_GRID_I5_CONTROL[ slug ];
 		default:
 			return 100;
 	}

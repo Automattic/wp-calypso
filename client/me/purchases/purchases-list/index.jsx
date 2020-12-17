@@ -16,7 +16,7 @@ import isBusinessPlanUser from 'calypso/state/selectors/is-business-plan-user';
 import Main from 'calypso/components/main';
 import MeSidebarNavigation from 'calypso/me/sidebar-navigation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
-import PurchasesHeader from './header';
+import PurchasesNavigation from 'calypso/me/purchases/purchases-navigation';
 import PurchasesSite from '../purchases-site';
 import MembershipSite from '../membership-site';
 import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
@@ -45,6 +45,7 @@ import {
 import NoSitesMessage from 'calypso/components/empty-content/no-sites-message';
 import FormattedHeader from 'calypso/components/formatted-header';
 import titles from 'calypso/me/purchases/titles';
+import PurchasesListHeader from './purchases-list-header';
 
 class PurchasesList extends Component {
 	isDataLoading() {
@@ -96,7 +97,7 @@ class PurchasesList extends Component {
 	renderMembershipSubscriptions() {
 		const { subscriptions } = this.props;
 
-		if ( ! subscriptions.length ) {
+		if ( ! subscriptions.length || this.isDataLoading() ) {
 			return null;
 		}
 
@@ -106,25 +107,28 @@ class PurchasesList extends Component {
 	}
 
 	render() {
+		const { purchases, sites, translate, userId, subscriptions } = this.props;
 		let content;
 
 		if ( this.isDataLoading() ) {
 			content = <PurchasesSite isPlaceholder />;
 		}
 
-		if ( this.props.hasLoadedUserPurchasesFromServer && this.props.purchases.length ) {
+		if ( this.props.hasLoadedUserPurchasesFromServer && purchases.length ) {
 			content = (
 				<>
 					{ this.renderConciergeBanner() }
 
-					{ getPurchasesBySite( this.props.purchases, this.props.sites ).map( ( site ) => (
+					<PurchasesListHeader showSite={ true } />
+
+					{ getPurchasesBySite( purchases, sites ).map( ( site ) => (
 						<PurchasesSite
 							key={ site.id }
 							siteId={ site.id }
 							name={ site.name }
-							domain={ site.domain }
 							slug={ site.slug }
 							purchases={ site.purchases }
+							showSite={ true }
 						/>
 					) ) }
 				</>
@@ -133,15 +137,15 @@ class PurchasesList extends Component {
 
 		if (
 			this.props.hasLoadedUserPurchasesFromServer &&
-			! this.props.purchases.length &&
-			! this.props.subscriptions.length
+			! purchases.length &&
+			! subscriptions.length
 		) {
-			if ( ! this.props.sites.length ) {
+			if ( ! sites.length ) {
 				return (
-					<Main>
+					<Main className="purchases-list is-wide-layout">
 						<PageViewTracker path="/me/purchases" title="Purchases > No Sites" />
 						<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-						<PurchasesHeader section="purchases" />
+						<PurchasesNavigation section="purchases" />
 						<NoSitesMessage />
 					</Main>
 				);
@@ -152,12 +156,12 @@ class PurchasesList extends Component {
 
 					<CompactCard className="purchases-list__no-content">
 						<EmptyContent
-							title={ this.props.translate( 'Looking to upgrade?' ) }
-							line={ this.props.translate(
+							title={ translate( 'Looking to upgrade?' ) }
+							line={ translate(
 								'Our plans give your site the power to thrive. ' +
 									'Find the plan that works for you.'
 							) }
-							action={ this.props.translate( 'Upgrade now' ) }
+							action={ translate( 'Upgrade now' ) }
 							actionURL={ '/plans' }
 							illustration={ '/calypso/images/illustrations/illustration-nosites.svg' }
 						/>
@@ -168,13 +172,13 @@ class PurchasesList extends Component {
 
 		return (
 			<Main className="purchases-list is-wide-layout">
-				<QueryUserPurchases userId={ this.props.userId } />
+				<QueryUserPurchases userId={ userId } />
 				<QueryMembershipsSubscriptions />
 				<PageViewTracker path="/me/purchases" title="Purchases" />
 				<MeSidebarNavigation />
 
 				<FormattedHeader brandFont headerText={ titles.sectionTitle } align="left" />
-				<PurchasesHeader section="purchases" />
+				<PurchasesNavigation section="purchases" />
 				{ content }
 				{ this.renderMembershipSubscriptions() }
 				<QueryConciergeInitial />
@@ -190,6 +194,7 @@ PurchasesList.propTypes = {
 	subscriptions: PropTypes.array,
 	sites: PropTypes.array.isRequired,
 	userId: PropTypes.number.isRequired,
+	name: PropTypes.string,
 };
 
 export default connect(

@@ -22,6 +22,7 @@ $input-z-index: 20;
 	transition: all 0.15s ease-in-out;
 
 	input.search-component__input[type='search'] {
+		width: 0;
 		flex: 1 1 auto;
 		z-index: $input-z-index;
 		top: 0;
@@ -71,6 +72,7 @@ $input-z-index: 20;
 		top: 1px;
 		left: 0;
 		z-index: $input-z-index + 1;
+		padding-left: 5px;
 	}
 
 	&__icon-navigation {
@@ -124,7 +126,6 @@ $input-z-index: 20;
 		position: absolute;
 		display: flex;
 		height: 100%;
-		width: 50px;
 		top: 0;
 		right: 0;
 	
@@ -177,6 +178,7 @@ $input-z-index: 20;
 	}
 
 	&.is-open {
+		background-color: $white;
 		width: 100%;
 	
 		.search-component__open-icon {

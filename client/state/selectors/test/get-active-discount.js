@@ -14,23 +14,23 @@ import {
 	TERM_BIENNIALLY,
 } from 'calypso/lib/plans/constants';
 
-jest.mock( 'state/active-promotions/selectors', () => ( {
+jest.mock( 'calypso/state/active-promotions/selectors', () => ( {
 	hasActivePromotion: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'lib/discounts', () => ( {
+jest.mock( 'calypso/lib/discounts', () => ( {
 	activeDiscounts: [],
 } ) );
 
-jest.mock( 'state/sites/selectors', () => ( {
+jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSitePlanSlug: jest.fn( () => null ),
 } ) );
 
-jest.mock( 'state/ui/selectors', () => ( {
+jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSelectedSiteId: jest.fn( () => 1 ),
 } ) );
 

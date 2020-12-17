@@ -35,17 +35,27 @@ import {
 } from 'calypso/state/sites/plans/selectors';
 import { ConciergeQuickstartSession } from './concierge-quickstart-session';
 import { ConciergeSupportSession } from './concierge-support-session';
-import { PlanUpgradeUpsell } from './plan-upgrade-upsell';
+import { BusinessPlanUpgradeUpsell } from './business-plan-upgrade-upsell';
+import { PremiumPlanUpgradeUpsell } from './premium-plan-upgrade-upsell';
 import getUpgradePlanSlugFromPath from 'calypso/state/selectors/get-upgrade-plan-slug-from-path';
 import { PurchaseModal } from './purchase-modal';
 import { replaceCartWithItems } from 'calypso/lib/cart/actions';
 import Gridicon from 'calypso/components/gridicon';
 import { isMonthly } from 'calypso/lib/plans/constants';
+import { getPlanByPathSlug } from 'calypso/lib/plans';
 
 /**
  * Style dependencies
  */
 import './style.scss';
+
+/**
+ * Upsell Types
+ */
+export const CONCIERGE_QUICKSTART_SESSION = 'concierge-quickstart-session';
+export const CONCIERGE_SUPPORT_SESSION = 'concierge-support-session';
+export const PREMIUM_PLAN_UPGRADE_UPSELL = 'premium-plan-upgrade-upsell';
+export const BUSINESS_PLAN_UPGRADE_UPSELL = 'business-plan-upgrade-upsell';
 
 export class UpsellNudge extends React.Component {
 	static propTypes = {
@@ -134,7 +144,7 @@ export class UpsellNudge extends React.Component {
 		} = this.props;
 
 		switch ( upsellType ) {
-			case 'concierge-quickstart-session':
+			case CONCIERGE_QUICKSTART_SESSION:
 				return (
 					<ConciergeQuickstartSession
 						currencyCode={ currencyCode }
@@ -149,7 +159,7 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'concierge-support-session':
+			case CONCIERGE_SUPPORT_SESSION:
 				return (
 					<ConciergeSupportSession
 						currencyCode={ currencyCode }
@@ -164,9 +174,9 @@ export class UpsellNudge extends React.Component {
 					/>
 				);
 
-			case 'plan-upgrade-upsell':
+			case BUSINESS_PLAN_UPGRADE_UPSELL:
 				return (
-					<PlanUpgradeUpsell
+					<BusinessPlanUpgradeUpsell
 						currencyCode={ currencyCode }
 						planRawPrice={ planRawPrice }
 						planDiscountedRawPrice={ planDiscountedRawPrice }
@@ -175,6 +185,19 @@ export class UpsellNudge extends React.Component {
 						handleClickAccept={ this.handleClickAccept }
 						handleClickDecline={ this.handleClickDecline }
 						hasSevenDayRefundPeriod={ hasSevenDayRefundPeriod }
+					/>
+				);
+
+			case PREMIUM_PLAN_UPGRADE_UPSELL:
+				return (
+					<PremiumPlanUpgradeUpsell
+						currencyCode={ currencyCode }
+						planRawPrice={ planRawPrice }
+						planDiscountedRawPrice={ planDiscountedRawPrice }
+						receiptId={ receiptId }
+						translate={ translate }
+						handleClickAccept={ this.handleClickAccept }
+						handleClickDecline={ this.handleClickDecline }
 					/>
 				);
 		}
@@ -210,8 +233,9 @@ export class UpsellNudge extends React.Component {
 
 	isEligibleForOneClickUpsell = ( buttonAction ) => {
 		const { cards, siteSlug, upsellType } = this.props;
+		const supportedUpsellTypes = [ 'concierge-quickstart-session', 'premium-plan-upgrade-upsell' ];
 
-		if ( 'accept' !== buttonAction || 'concierge-quickstart-session' !== upsellType ) {
+		if ( 'accept' !== buttonAction || ! supportedUpsellTypes.includes( upsellType ) ) {
 			return false;
 		}
 
@@ -264,9 +288,21 @@ const trackUpsellButtonClick = ( eventName ) => {
 	return recordTracksEvent( eventName, { section: 'checkout' } );
 };
 
+const resolveProductSlug = ( upsellType, productAlias ) => {
+	switch ( upsellType ) {
+		case PREMIUM_PLAN_UPGRADE_UPSELL:
+		case BUSINESS_PLAN_UPGRADE_UPSELL:
+			return getPlanByPathSlug( productAlias )?.getStoreSlug();
+		case CONCIERGE_QUICKSTART_SESSION:
+		case CONCIERGE_SUPPORT_SESSION:
+		default:
+			return 'concierge-session';
+	}
+};
+
 export default connect(
 	( state, props ) => {
-		const { siteSlugParam } = props;
+		const { siteSlugParam, upgradeItem, upsellType } = props;
 		const selectedSiteId = getSelectedSiteId( state );
 		const productsList = getProductsList( state );
 		const sitePlans = getPlansBySiteId( state ).data;
@@ -279,6 +315,8 @@ export default connect(
 			isMonthly: false,
 		} );
 
+		const productSlug = resolveProductSlug( upsellType, upgradeItem );
+
 		return {
 			currencyCode: getCurrentUserCurrencyCode( state ),
 			isLoading:
@@ -287,9 +325,9 @@ export default connect(
 				isRequestingSitePlans( state, selectedSiteId ),
 			hasProductsList: Object.keys( productsList ).length > 0,
 			hasSitePlans: sitePlans && sitePlans.length > 0,
-			product: omit( getProductBySlug( state, 'concierge-session' ), 'prices' ),
-			productCost: getProductCost( state, 'concierge-session' ),
-			productDisplayCost: getProductDisplayCost( state, 'concierge-session' ),
+			product: omit( getProductBySlug( state, productSlug ), 'prices' ),
+			productCost: getProductCost( state, productSlug ),
+			productDisplayCost: getProductDisplayCost( state, productSlug ),
 			planRawPrice: annualPrice,
 			planDiscountedRawPrice: annualDiscountPrice,
 			isLoggedIn: isUserLoggedIn( state ),

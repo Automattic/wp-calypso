@@ -83,17 +83,11 @@ export interface StripeData {
 
 export type StripeSetupIntent = { payment_method: string };
 
-export type StripeAuthenticationResponse = { status?: string };
+export type StripeAuthenticationResponse = { status?: string; redirect_url?: string };
 
 const StripeContext = createContext< StripeData | undefined >( undefined );
 
 type StripeError = Error & { code?: string; type?: string };
-
-export interface TransactionResponseWithPaymentIntent {
-	message: { payment_intent_client_secret: string };
-}
-
-type TransactionResponse = unknown;
 
 export interface UseStripeJs {
 	stripeJs: Stripe | null;
@@ -544,20 +538,10 @@ export function StripeHookProvider( {
  */
 export function useStripe(): StripeData {
 	const stripeData = useContext( StripeContext );
-	return (
-		stripeData || {
-			stripe: null,
-			stripeConfiguration: null,
-			isStripeLoading: false,
-			stripeLoadingError: null,
-			reloadStripeConfiguration: () => {
-				// eslint-disable-next-line no-console
-				console.error(
-					`You cannot use reloadStripeConfiguration until stripe has been initialized.`
-				);
-			},
-		}
-	);
+	if ( ! stripeData ) {
+		throw new Error( 'useStripe can only be used inside a StripeHookProvider' );
+	}
+	return stripeData;
 }
 
 /**
@@ -626,22 +610,4 @@ function getStripeLocaleForLocale( locale: string | null | undefined ): string {
 		return 'auto';
 	}
 	return stripeLocale;
-}
-
-export async function showStripeModalAuth( {
-	stripeConfiguration,
-	response,
-}: {
-	stripeConfiguration: StripeConfiguration;
-	response: TransactionResponseWithPaymentIntent;
-} ): Promise< null | TransactionResponse > {
-	const authenticationResponse = await confirmStripePaymentIntent(
-		stripeConfiguration,
-		response.message.payment_intent_client_secret
-	);
-
-	if ( authenticationResponse?.status ) {
-		return authenticationResponse;
-	}
-	return null;
 }

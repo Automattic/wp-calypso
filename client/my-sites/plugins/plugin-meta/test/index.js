@@ -26,32 +26,32 @@ import {
 	PLAN_BLOGGER_2_YEARS,
 } from 'calypso/lib/plans/constants';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
-jest.mock( 'lib/translator-jumpstart', () => ( {} ) );
-jest.mock( 'lib/plugins/wporg-data/actions', () => ( {} ) );
-jest.mock( 'lib/plugins/wporg-data/list-store', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/translator-jumpstart', () => ( {} ) );
+jest.mock( 'calypso/lib/plugins/wporg-data/actions', () => ( {} ) );
+jest.mock( 'calypso/lib/plugins/wporg-data/list-store', () => ( {
 	getShortList: () => {},
 	getFullList: () => {},
 	getSearchList: () => {},
 	on: () => {},
 } ) );
-jest.mock( 'state/guided-tours/selectors', () => ( {} ) );
-jest.mock( 'my-sites/plugins/utils', () => ( {
+jest.mock( 'calypso/state/guided-tours/selectors', () => ( {} ) );
+jest.mock( 'calypso/my-sites/plugins/utils', () => ( {
 	getExtensionSettingsPath: () => '',
 } ) );
-jest.mock( 'layout/guided-tours/positioning', () => 'Positioning' );
-jest.mock( 'layout/guided-tours/tours/main-tour', () => 'MainTour' );
-jest.mock( 'layout/masterbar/logged-in', () => 'LoggedIn' );
-jest.mock( 'layout/community-translator/launcher', () => 'Launcher' );
-jest.mock( 'blocks/upsell-nudge', () => 'UpsellNudge' );
-jest.mock( 'components/notice', () => 'Notice' );
-jest.mock( 'components/notice/notice-action', () => 'NoticeAction' );
+jest.mock( 'calypso/layout/guided-tours/positioning', () => 'Positioning' );
+jest.mock( 'calypso/layout/guided-tours/tours/main-tour', () => 'MainTour' );
+jest.mock( 'calypso/layout/masterbar/logged-in', () => 'LoggedIn' );
+jest.mock( 'calypso/layout/community-translator/launcher', () => 'Launcher' );
+jest.mock( 'calypso/blocks/upsell-nudge', () => 'UpsellNudge' );
+jest.mock( 'calypso/components/notice', () => 'Notice' );
+jest.mock( 'calypso/components/notice/notice-action', () => 'NoticeAction' );
 
 const selectedSite = {
 	plan: {

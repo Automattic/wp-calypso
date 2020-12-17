@@ -110,35 +110,6 @@ function updatePlugins( site, plugins ) {
 }
 
 const PluginsStore = {
-	getPlugin: function ( sites, pluginSlug ) {
-		let pluginData = {};
-		let fetched = false;
-		pluginData.sites = [];
-
-		sites = ! isArray( sites ) ? [ sites ] : sites;
-
-		sites.forEach( function ( site ) {
-			const sitePlugins = PluginsStore.getSitePlugins( site );
-			if ( typeof sitePlugins !== 'undefined' ) {
-				fetched = true;
-			}
-			if ( ! sitePlugins ) {
-				return;
-			}
-			sitePlugins.forEach( function ( plugin ) {
-				if ( plugin.slug === pluginSlug ) {
-					pluginData = assign( pluginData, plugin );
-					pluginData.sites.push( assign( {}, site, { plugin: plugin } ) );
-				}
-			}, this );
-		} );
-
-		if ( ! fetched ) {
-			return;
-		}
-		return pluginData;
-	},
-
 	getPlugins: function ( sites, pluginFilter ) {
 		let fetched = false;
 		let plugins = {};
@@ -194,15 +165,6 @@ const PluginsStore = {
 		return values( _pluginsBySite[ site.ID ] );
 	},
 
-	getSitePlugin: function ( site, pluginSlug ) {
-		const plugins = this.getSitePlugins( site );
-		if ( ! plugins ) {
-			return plugins;
-		}
-
-		return find( plugins, _filters.isEqual.bind( this, pluginSlug ) );
-	},
-
 	// Array of sites with a particular plugin.
 	getSites: function ( sites, pluginSlug ) {
 		const plugins = this.getPlugins( sites );
@@ -227,10 +189,6 @@ const PluginsStore = {
 		return pluginSites.sort( function ( first, second ) {
 			return first.title.toLowerCase() > second.title.toLowerCase() ? 1 : -1;
 		} );
-	},
-
-	isFetchingSite: function ( site ) {
-		return _fetching[ site.ID ];
 	},
 
 	emitChange: function () {

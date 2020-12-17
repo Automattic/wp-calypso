@@ -13,10 +13,10 @@ import { get, omit } from 'lodash';
  */
 import * as helper from '../helper';
 import * as fixtures from './fixtures';
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	return () => require( './fixtures' ).discoverSiteId;
 } );
-jest.mock( 'lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
+jest.mock( 'calypso/lib/user/utils', () => ( { getLocaleSlug: () => 'en' } ) );
 
 describe( 'helper', () => {
 	const { discoverPost } = fixtures;

@@ -50,6 +50,7 @@ import DeletePlanFlow from '../lib/flows/delete-plan-flow';
 import SignUpStep from '../lib/flows/sign-up-step';
 import LaunchSiteFlow from '../lib/flows/launch-site-flow.js';
 import ActivateAccountFlow from '../lib/flows/activate-account-flow';
+import GutenboardingFlow from '../lib/flows/gutenboarding-flow';
 
 import * as sharedSteps from '../lib/shared-steps/wp-signup-spec';
 import MyHomePage from '../lib/pages/my-home-page';
@@ -1228,10 +1229,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 		} );
 	} );
 
-	describe.skip( 'Sign up for an account only (no site) then add a site @signup', function () {
+	describe( 'Sign up for an account only (no site) then add a site as an existing user @signup', function () {
 		const userName = dataHelper.getNewBlogName();
 		const blogName = dataHelper.getNewBlogName();
-		// const expectedBlogAddresses = dataHelper.getExpectedFreeAddresses( blogName );
 
 		before( async function () {
 			await driverManager.ensureNotLoggedIn( driver );
@@ -1276,38 +1276,9 @@ describe( `[${ host }] Sign Up  (${ screenSize }, ${ locale })`, function () {
 			}
 		);
 
-		step(
-			'Can then see the domains page, and Can search for a blog name, can see and select a free .wordpress address in the results',
-			async function () {
-				const findADomainComponent = await FindADomainComponent.Expect( driver );
-				await findADomainComponent.searchForBlogNameAndWaitForResults( blogName );
-				// See https://github.com/Automattic/wp-calypso/pull/38641/
-				// await findADomainComponent.checkAndRetryForFreeBlogAddresses(
-				// 	expectedBlogAddresses,
-				// 	blogName
-				// );
-				// const actualAddress = await findADomainComponent.freeBlogAddress();
-				// assert(
-				// 	expectedBlogAddresses.indexOf( actualAddress ) > -1,
-				// 	`The displayed free blog address: '${ actualAddress }' was not the expected addresses: '${ expectedBlogAddresses }'`
-				//);
-				return await findADomainComponent.selectFreeAddress();
-			}
-		);
-
-		step( 'Can see the plans page and pick the free plan', async function () {
-			const pickAPlanPage = await PickAPlanPage.Expect( driver );
-			return await pickAPlanPage.selectFreePlan();
+		step( 'We are creating the site using the New Onboarding (Gutenboarding)', async function () {
+			return await new GutenboardingFlow( driver ).createFreeSite();
 		} );
-
-		step(
-			'Can then see the sign up processing page which will finish automatically move along',
-			async function () {
-				return await new SignUpStep( driver ).continueAlong( blogName, passwordForTestAccounts );
-			}
-		);
-
-		sharedSteps.canSeeTheOnboardingChecklist();
 
 		after( 'Can delete our newly created account', async function () {
 			return await new DeleteAccountFlow( driver ).deleteAccount( userName );

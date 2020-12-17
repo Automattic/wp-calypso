@@ -5,19 +5,17 @@ import React from 'react';
 import { useTranslate } from 'i18n-calypso';
 import { CardExpiryElement } from 'react-stripe-elements';
 import { FormStatus, useFormStatus, useSelect } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
-import { shouldRenderAdditionalCountryFields } from 'calypso/lib/checkout/processor-specific';
 import { Label, LabelText, StripeFieldWrapper, StripeErrorMessage } from './form-layout-components';
 import { Input } from 'calypso/my-sites/domains/components/form';
 
 export default function CreditCardExpiryField( {
 	handleStripeFieldChange,
 	stripeElementStyle,
-	countryCode,
+	shouldUseEbanx,
 	getErrorMessagesForField,
 	setFieldValue,
 	getFieldValue,
@@ -30,9 +28,8 @@ export default function CreditCardExpiryField( {
 	);
 	const errorMessages = getErrorMessagesForField( 'expiration-date' );
 	const errorMessage = errorMessages?.length > 0 ? errorMessages[ 0 ] : null;
-	const { responseCart } = useShoppingCart();
 
-	if ( countryCode && shouldRenderAdditionalCountryFields( countryCode, responseCart ) ) {
+	if ( shouldUseEbanx ) {
 		return (
 			<Input
 				inputMode="numeric"

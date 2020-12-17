@@ -22,16 +22,16 @@ import CompositeCheckout from '../composite-checkout';
 /**
  * Mocked dependencies
  */
-jest.mock( 'state/sites/selectors' );
+jest.mock( 'calypso/state/sites/selectors' );
 import { isJetpackSite } from 'calypso/state/sites/selectors';
-jest.mock( 'state/selectors/is-site-automated-transfer' );
+jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 
 jest.mock( 'page', () => ( {
 	redirect: jest.fn(),
 } ) );
 
-jest.mock( 'components/data/query-experiments' );
+jest.mock( 'calypso/components/data/query-experiments' );
 
 const domainProduct = {
 	product_name: '.cash Domain',

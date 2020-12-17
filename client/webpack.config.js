@@ -28,6 +28,7 @@ const {
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const postcssCustomPropertiesPlugin = require( 'postcss-custom-properties' );
+const pkgDir = require( 'pkg-dir' );
 
 /**
  * Internal dependencies
@@ -99,6 +100,26 @@ function filterEntrypoints( entrypoints ) {
 
 	return allowed;
 	/* eslint-enable no-console */
+}
+
+/**
+ * Given a package name, finds the absolute path for it.
+ *
+ * require.resolve() will resolve to the main file of the package, using Node's resolution algorithm to find
+ * a `package.json` and looking at the field `main`. This function will return the folder that contains `package.json`
+ * instead of trying to resolve the main file.
+ *
+ * Example: `@wordpress/data` may resolve to `/home/myUser/wp-calypso/node_modules/@wordpress/data`.
+ *
+ * Note this is not the same as looking for `__dirname+'/node_modules/'+pkgName`, as the package may be in a parent
+ * `node_modules`
+ *
+ * @param {string} pkgName Name of the package to search for
+ */
+function findPackage( pkgName ) {
+	const fullPath = require.resolve( pkgName );
+	const packagePath = pkgDir.sync( fullPath );
+	return packagePath;
 }
 
 if ( ! process.env.BROWSERSLIST_ENV ) {
@@ -259,8 +280,10 @@ const webpackConfig = {
 				debug: path.resolve( __dirname, '../node_modules/debug' ),
 				store: 'store/dist/store.modern',
 				gridicons$: path.resolve( __dirname, 'components/gridicon' ),
-				'@wordpress/data': require.resolve( '@wordpress/data' ),
-				'@wordpress/i18n': require.resolve( '@wordpress/i18n' ),
+				// By using the path of the package we let Webpack parse the package's `package.json`
+				// and use `mainFields` to decide what is the main file.
+				'@wordpress/data': findPackage( '@wordpress/data' ),
+				'@wordpress/i18n': findPackage( '@wordpress/i18n' ),
 				// Alias calypso to ./client. This allows for smaller bundles, as it ensures that
 				// importing `./client/file.js` is the same thing than importing `calypso/file.js`
 				calypso: __dirname,

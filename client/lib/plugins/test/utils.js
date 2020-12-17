@@ -162,21 +162,20 @@ describe( 'Plugins Utils', () => {
 				{
 					status: 'status',
 					action: 'action',
-					site: { ID: '123' },
-					plugin: { slug: 'jetpack' },
+					siteId: 123,
+					pluginId: 'jetpack',
 				},
 				{
 					status: 'status',
 					action: 'action',
-					site: { ID: '321' },
-					plugin: {},
+					siteId: 321,
 				},
 			];
 		} );
 
 		test( 'should return a list of notices that match the site', () => {
-			logs[ 0 ].plugin = {};
-			const log = PluginUtils.filterNotices( logs, { ID: '123' }, null );
+			logs[ 0 ].pluginId = undefined;
+			const log = PluginUtils.filterNotices( logs, 123, null );
 			assert.deepEqual( log, [ logs[ 0 ] ] );
 		} );
 
@@ -186,7 +185,7 @@ describe( 'Plugins Utils', () => {
 		} );
 
 		test( 'should return a list of notices that match the site and plugin', () => {
-			const log = PluginUtils.filterNotices( logs, { ID: '123' }, 'jetpack' );
+			const log = PluginUtils.filterNotices( logs, 123, 'jetpack' );
 			assert.deepEqual( log, [ logs[ 0 ] ] );
 		} );
 	} );

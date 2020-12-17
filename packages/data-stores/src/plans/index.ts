@@ -16,6 +16,7 @@ import { controls } from '../wpcom-request-controls';
 
 export type { State };
 export type { Plan, PlanSlug } from './types';
+export type { PlanPath } from './constants';
 
 // plansPaths is used to construct the route that accepts plan slugs like (/beginner, /business, etc..)
 export {

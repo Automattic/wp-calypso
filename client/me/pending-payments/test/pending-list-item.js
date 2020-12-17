@@ -12,7 +12,7 @@ import { PendingListItem } from '../pending-list-item';
 import { PLAN_BUSINESS } from 'calypso/lib/plans/constants';
 import * as localizedMoment from 'calypso/components/localized-moment';
 
-jest.mock( 'components/localized-moment' );
+jest.mock( 'calypso/components/localized-moment' );
 localizedMoment.useLocalizedMoment.mockReturnValue( moment );
 
 describe( 'PendingListItem', () => {

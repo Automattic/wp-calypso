@@ -22,14 +22,12 @@ import {
 import PostQueryManager from 'calypso/lib/query-manager/post';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
-	EDITOR_SAVE,
 	EDITOR_START,
 	EDITOR_STOP,
 	POST_DELETE,
 	POST_DELETE_SUCCESS,
 	POST_DELETE_FAILURE,
 	POST_EDIT,
-	POST_GEO_IMAGE_RECEIVE,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -524,28 +522,6 @@ export function edits( state = {}, action ) {
 			};
 		}
 
-		case POST_GEO_IMAGE_RECEIVE: {
-			// process new goe data for a post: merge it into the existing one
-			const siteId = action.siteId;
-			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-			const newEditsLog = appendToPostEditsLog( postEditsLog, {
-				geo: {
-					latitude: parseFloat( action.latitude ),
-					longitude: parseFloat( action.longitude ),
-					map_url: action.map_url,
-				},
-			} );
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
-				},
-			};
-		}
-
 		case EDITOR_START:
 			return Object.assign( {}, state, {
 				[ action.siteId ]: {
@@ -562,30 +538,6 @@ export function edits( state = {}, action ) {
 			return Object.assign( {}, state, {
 				[ action.siteId ]: omit( state[ action.siteId ], action.postId || '' ),
 			} );
-
-		case EDITOR_SAVE: {
-			if ( ! action.saveMarker ) {
-				break;
-			}
-
-			const siteId = action.siteId;
-			const postId = action.postId || '';
-			const postEditsLog = get( state, [ siteId, postId ] );
-
-			if ( isEmpty( postEditsLog ) ) {
-				break;
-			}
-
-			const newEditsLog = [ ...postEditsLog, action.saveMarker ];
-
-			return {
-				...state,
-				[ siteId ]: {
-					...state[ siteId ],
-					[ postId ]: newEditsLog,
-				},
-			};
-		}
 
 		case POST_SAVE_SUCCESS: {
 			const siteId = action.siteId;

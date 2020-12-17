@@ -14,13 +14,13 @@ import {
 	receiveUpdates,
 } from 'calypso/state/reader/streams/actions';
 
-jest.mock( 'lib/analytics/tracks', () => ( {
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
-jest.mock( 'lib/wp' );
-jest.mock( 'reader/stats', () => ( { recordTrack: () => {} } ) );
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( 'calypso/lib/wp' );
+jest.mock( 'calypso/reader/stats', () => ( { recordTrack: () => {} } ) );
+jest.mock( 'calypso/lib/warn', () => () => {} );
 
 describe( 'streams', () => {
 	const action = deepfreeze( requestPageAction( { streamKey: 'following', page: 2 } ) );

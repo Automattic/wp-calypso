@@ -33,6 +33,7 @@ export interface Design {
 	categories: Array< string >;
 	fonts: FontPair;
 	is_alpha?: boolean;
+	is_anchorfm?: boolean;
 	is_fse?: boolean;
 	is_premium: boolean;
 	slug: string;

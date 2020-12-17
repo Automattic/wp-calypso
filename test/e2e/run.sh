@@ -76,7 +76,7 @@ while getopts ":a:RpS:B:s:gjWCJH:wzyl:cm:f:iIUvxu:h:F" opt; do
       continue
       ;;
     R)
-      MOCHA_ARGS+="-R mocha-multi-reporters --reporter-options configFile=mocha-reporter-config.json "
+      MOCHA_ARGS+="-R spec-junit-reporter "
       continue
       ;;
     p)

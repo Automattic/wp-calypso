@@ -6,7 +6,7 @@ import { uniqWith, isEqual, isArray } from 'lodash';
 /**
  * Internal dependencies
  */
-import config from 'config';
+import config from 'calypso/config';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import {
 	DOCUMENT_HEAD_LINK_SET,

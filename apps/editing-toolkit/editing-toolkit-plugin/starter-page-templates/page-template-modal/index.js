@@ -352,6 +352,7 @@ class PageTemplateModal extends Component {
 				<legend className="page-template-modal__form-title">{ legendLabel }</legend>
 				<TemplateSelectorControl
 					label={ __( 'Layout', 'full-site-editing' ) }
+					legendLabel={ legendLabel }
 					templates={ filteredTemplatesList }
 					blocksByTemplates={ blocksByTemplateSlug }
 					onTemplateSelect={ this.previewTemplate }

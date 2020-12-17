@@ -1,13 +1,13 @@
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view', () => ( {} ) );
-jest.mock( 'lib/analytics/ad-tracking', () => ( {} ) );
-jest.mock( 'lib/analytics/page-view-tracker', () => 'PageViewTracker' );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/ad-tracking', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/page-view-tracker', () => 'PageViewTracker' );
 
-jest.mock( 'state/sites/plans/selectors', () => ( {
+jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
 	getPlanDiscountedRawPrice: jest.fn(),
 	getSitePlanRawPrice: jest.fn(),
 } ) );

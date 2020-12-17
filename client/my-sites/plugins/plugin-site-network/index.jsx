@@ -31,7 +31,6 @@ class PluginSiteNetwork extends React.Component {
 	static propTypes = {
 		site: PropTypes.object,
 		plugin: PropTypes.object,
-		notices: PropTypes.object,
 		secondarySites: PropTypes.array,
 	};
 
@@ -99,7 +98,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ false }
 					/>
 				}
@@ -107,7 +105,6 @@ class PluginSiteNetwork extends React.Component {
 					<PluginUpdateIndicator
 						site={ this.props.site }
 						plugin={ this.props.plugin }
-						notices={ this.props.notices }
 						expanded={ true }
 					/>
 				}

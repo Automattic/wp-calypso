@@ -16,9 +16,9 @@ import flows from 'calypso/signup/config/flows';
 import { isDomainStepSkippable } from 'calypso/signup/config/steps';
 import { getUserStub } from 'calypso/lib/user';
 
-jest.mock( 'lib/abtest', () => ( { abtest: () => '' } ) );
+jest.mock( 'calypso/lib/abtest', () => ( { abtest: () => '' } ) );
 
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
 	const user = () => ( {
@@ -29,9 +29,11 @@ jest.mock( 'lib/user', () => {
 	return user;
 } );
 
-jest.mock( 'signup/config/steps', () => require( './mocks/signup/config/steps' ) );
-jest.mock( 'signup/config/flows', () => require( './mocks/signup/config/flows' ) );
-jest.mock( 'signup/config/flows-pure', () => require( './mocks/signup/config/flows-pure' ) );
+jest.mock( 'calypso/signup/config/steps', () => require( './mocks/signup/config/steps' ) );
+jest.mock( 'calypso/signup/config/flows', () => require( './mocks/signup/config/flows' ) );
+jest.mock( 'calypso/signup/config/flows-pure', () =>
+	require( './mocks/signup/config/flows-pure' )
+);
 
 describe( 'createSiteWithCart()', () => {
 	// createSiteWithCart() function is not designed to be easy for test at the moment.
