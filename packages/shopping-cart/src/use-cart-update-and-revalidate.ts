@@ -28,6 +28,12 @@ export default function useCartUpdateAndRevalidate(
 	hookDispatch: ( arg0: ShoppingCartAction ) => void
 ): void {
 	const pendingResponseCart = useRef< TempResponseCart >( responseCart );
+	const isMounted = useRef< boolean >( true );
+	useEffect( () => {
+		return () => {
+			isMounted.current = false;
+		};
+	}, [] );
 
 	useEffect( () => {
 		if ( cacheStatus !== 'invalid' ) {
@@ -52,18 +58,20 @@ export default function useCartUpdateAndRevalidate(
 					debug( 'ignoring updated cart because there is a newer request pending' );
 					return;
 				}
-				hookDispatch( {
-					type: 'RECEIVE_UPDATED_RESPONSE_CART',
-					updatedResponseCart: convertRawResponseCartToResponseCart( response ),
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RECEIVE_UPDATED_RESPONSE_CART',
+						updatedResponseCart: convertRawResponseCartToResponseCart( response ),
+					} );
 			} )
 			.catch( ( error ) => {
 				debug( 'error while setting cart', error );
-				hookDispatch( {
-					type: 'RAISE_ERROR',
-					error: 'SET_SERVER_CART_ERROR',
-					message: error.message,
-				} );
+				isMounted.current &&
+					hookDispatch( {
+						type: 'RAISE_ERROR',
+						error: 'SET_SERVER_CART_ERROR',
+						message: error.message,
+					} );
 			} );
-	}, [ setServerCart, cacheStatus, responseCart, hookDispatch ] );
+	}, [ isMounted, setServerCart, cacheStatus, responseCart, hookDispatch ] );
 }
