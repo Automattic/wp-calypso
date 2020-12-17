@@ -14,7 +14,6 @@ import MapDomainStep from 'calypso/components/domains/map-domain-step';
 import TransferDomainStep from 'calypso/components/domains/transfer-domain-step';
 import UseYourDomainStep from 'calypso/components/domains/use-your-domain-step';
 import RegisterDomainStep from 'calypso/components/domains/register-domain-step';
-import CartData from 'calypso/components/data/cart';
 import { getStepUrl } from 'calypso/signup/utils';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import {
@@ -485,7 +484,7 @@ class DomainsStep extends React.Component {
 			? TRUENAME_TLDS
 			: null;
 
-		const registerDomainStep = (
+		return (
 			<RegisterDomainStep
 				key="domainForm"
 				path={ this.props.path }
@@ -523,12 +522,6 @@ class DomainsStep extends React.Component {
 				isReskinned={ this.props.isReskinned }
 			/>
 		);
-
-		if ( 'launch-site' === this.props.flowName ) {
-			return <CartData>{ registerDomainStep }</CartData>;
-		}
-
-		return registerDomainStep;
 	};
 
 	mappingForm = () => {
