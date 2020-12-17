@@ -25,6 +25,7 @@ import { isDotComPlan } from 'calypso/lib/products-values';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { fillInSingleCartItemAttributes } from 'calypso/lib/cart-values';
 import { getProductsList } from 'calypso/state/products-list/selectors/get-products-list';
+import getThankYouPageUrl from 'calypso/my-sites/checkout/composite-checkout/hooks/use-get-thank-you-url/get-thank-you-page-url';
 
 /**
  * Style dependencies
@@ -39,7 +40,13 @@ export class GSuiteNudge extends React.Component {
 	};
 
 	handleSkipClick = () => {
-		this.props.handleCheckoutCompleteRedirect();
+		const getThankYouPageUrlArguments = {
+			siteSlug: this.props.siteSlug,
+			receiptId: this.props.receiptId,
+			cart: this.props.cart,
+		};
+		const url = getThankYouPageUrl( getThankYouPageUrlArguments );
+		page.redirect( url );
 	};
 
 	handleAddEmailClick = ( cartItems ) => {
