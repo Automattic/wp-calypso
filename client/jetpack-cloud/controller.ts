@@ -10,6 +10,8 @@ import { addQueryArgs, getSiteFragment, sectionify } from 'calypso/lib/route';
 import {
 	redirectToPrimary,
 	updateRecentSitesPreferences,
+	renderEmptySites,
+	renderNoVisibleSites,
 	recordNoSitesPageView,
 	recordNoVisibleSitesPageView,
 	showMissingPrimaryError,
@@ -180,13 +182,15 @@ export function noSite(
 	const currentUser = getCurrentUser( getState() ) as UserData;
 
 	if ( 0 === currentUser?.jetpack_site_count ) {
-		// TODO: render no sites screen
+		// TODO: render no Jetpack sites screen instead
+		renderEmptySites( context );
 		recordNoSitesPageView( context, siteFragment );
 		return true;
 	}
 
 	if ( 0 === currentUser?.jetpack_visible_site_count ) {
-		// TODO: render no visible sites screen
+		// TODO: render no Jetpack visible sites screen instead
+		renderNoVisibleSites( context );
 		recordNoVisibleSitesPageView( context, siteFragment );
 		return true;
 	}

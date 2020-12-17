@@ -101,7 +101,7 @@ function createNavigation( context ) {
 	);
 }
 
-function renderEmptySites( context ) {
+export function renderEmptySites( context ) {
 	setSectionMiddleware( { group: 'sites' } )( context );
 
 	context.primary = React.createElement( NoSitesMessage );
@@ -110,7 +110,7 @@ function renderEmptySites( context ) {
 	clientRender( context );
 }
 
-function renderNoVisibleSites( context ) {
+export function renderNoVisibleSites( context ) {
 	const { getState } = getStore( context );
 	const state = getState();
 	const currentUser = getCurrentUser( state );
