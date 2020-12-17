@@ -72,23 +72,21 @@ function ChangePaymentMethod( props ) {
 		! props.hasLoadedStoredCardsFromServer ||
 		isStripeLoading;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
-	const changePaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
-		? titles.changePaymentMethod
-		: titles.editCardDetails;
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( props.purchaseListUrl );
 	}
 
+	const currentPaymentMethodId = getCurrentPaymentMethodId( props.payment );
+	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
+
 	if ( isDataLoading ) {
 		return (
 			<Fragment>
 				<QueryStoredCards />
-
 				<QueryUserPurchases userId={ props.userId } />
-
-				<PaymentMethodLoader title={ titles.changePaymentMethod } />
+				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>
 		);
 	}
@@ -127,7 +125,7 @@ function ChangePaymentMethod( props ) {
 				<Column type="main">
 					{ isEnabled( 'purchases/new-payment-methods' ) ? (
 						<ChangePaymentMethodList
-							currentPaymentMethod={ props.card }
+							currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
 							purchase={ props.purchase }
 							successCallback={ successCallback }
 							siteSlug={ props.siteSlug }
@@ -160,6 +158,7 @@ ChangePaymentMethod.propTypes = {
 	hasLoadedUserPurchasesFromServer: PropTypes.bool.isRequired,
 	purchaseId: PropTypes.number.isRequired,
 	purchase: PropTypes.object,
+	payment: PropTypes.object,
 	selectedSite: PropTypes.object,
 	siteSlug: PropTypes.string.isRequired,
 	userId: PropTypes.number,
@@ -169,20 +168,50 @@ ChangePaymentMethod.propTypes = {
 	isFullWidth: PropTypes.bool.isRequired,
 };
 
+// Returns an ID as used in the payment method list inside CheckoutPaymentMethods.
+function getCurrentPaymentMethodId( payment ) {
+	if ( payment?.type === 'credits' ) {
+		return 'credits';
+	}
+	if ( payment?.type === 'paypal' ) {
+		return 'paypal';
+	}
+	if ( payment?.type === 'credit_card' ) {
+		return 'existingCard-' + payment.creditCard.id;
+	}
+	return 'none';
+}
+
+function getChangePaymentMethodTitleCopy( currentPaymentMethodId ) {
+	if ( isEnabled( 'purchases/new-payment-methods' ) ) {
+		if ( [ 'credits', 'none' ].includes( currentPaymentMethodId ) ) {
+			return titles.addPaymentMethod;
+		}
+		return titles.changePaymentMethod;
+	}
+	return titles.editCardDetails;
+}
+
+// We want to preselect the current method if it is in the list, but if not, preselect the first method.
+function getInitiallySelectedPaymentMethodId( currentlyAssignedPaymentMethodId, paymentMethods ) {
+	if ( [ 'credits', 'paypal', 'none' ].includes( currentlyAssignedPaymentMethodId ) ) {
+		return paymentMethods?.[ 0 ]?.id;
+	}
+
+	return currentlyAssignedPaymentMethodId;
+}
+
 const wpcom = wp.undocumented();
 const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
 function ChangePaymentMethodList( {
-	currentPaymentMethod,
+	currentlyAssignedPaymentMethodId,
 	purchase,
 	successCallback,
 	siteSlug,
 	apiParams,
 } ) {
-	const currentlyAssignedPaymentMethodId =
-		'existingCard-' + currentPaymentMethod?.stored_details_id; // TODO: make this work for paypal.
-
 	const translate = useTranslate();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
@@ -225,7 +254,10 @@ function ChangePaymentMethodList( {
 					),
 			} }
 			isLoading={ isStripeLoading }
-			initiallySelectedPaymentMethodId={ currentlyAssignedPaymentMethodId }
+			initiallySelectedPaymentMethodId={ getInitiallySelectedPaymentMethodId(
+				currentlyAssignedPaymentMethodId,
+				paymentMethods
+			) }
 		>
 			<Card className="change-payment-method__content">
 				<QueryPaymentCountries />
@@ -333,6 +365,7 @@ const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
 	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
 	purchase: getByPurchaseId( state, purchaseId ),
+	payment: getByPurchaseId( state, purchaseId )?.payment,
 	selectedSite: getSelectedSite( state ),
 	userId: getCurrentUserId( state ),
 	locale: getCurrentUserLocale( state ),
