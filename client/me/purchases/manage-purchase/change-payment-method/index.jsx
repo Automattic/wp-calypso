@@ -38,7 +38,6 @@ import { getCurrentUserId, getCurrentUserLocale } from 'calypso/state/current-us
 import { getSelectedSite } from 'calypso/state/ui/selectors';
 import {
 	getStoredCards,
-	getStoredCardById,
 	hasLoadedStoredCardsFromServer,
 } from 'calypso/state/stored-cards/selectors';
 import { isRequestingSites } from 'calypso/state/sites/selectors';
@@ -140,7 +139,6 @@ function ChangePaymentMethod( props ) {
 }
 
 ChangePaymentMethod.propTypes = {
-	card: PropTypes.object,
 	clearPurchases: PropTypes.func.isRequired,
 	hasLoadedSites: PropTypes.bool.isRequired,
 	hasLoadedStoredCardsFromServer: PropTypes.bool.isRequired,
@@ -339,8 +337,7 @@ function TosText( { translate } ) {
 	);
 }
 
-const mapStateToProps = ( state, { cardId, purchaseId } ) => ( {
-	card: getStoredCardById( state, cardId ),
+const mapStateToProps = ( state, { purchaseId } ) => ( {
 	hasLoadedSites: ! isRequestingSites( state ),
 	hasLoadedStoredCardsFromServer: hasLoadedStoredCardsFromServer( state ),
 	hasLoadedUserPurchasesFromServer: hasLoadedUserPurchasesFromServer( state ),
