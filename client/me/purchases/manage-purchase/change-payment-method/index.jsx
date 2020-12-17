@@ -72,23 +72,21 @@ function ChangePaymentMethod( props ) {
 		! props.hasLoadedStoredCardsFromServer ||
 		isStripeLoading;
 	const isDataValid = ( { purchase, selectedSite } ) => purchase && selectedSite;
-	const changePaymentMethodTitle = isEnabled( 'purchases/new-payment-methods' )
-		? titles.changePaymentMethod
-		: titles.editCardDetails;
 
 	if ( ! isDataLoading && ! isDataValid( props ) ) {
 		// Redirect if invalid data
 		page( props.purchaseListUrl );
 	}
 
+	const currentPaymentMethodId = getCurrentPaymentMethodId( props.payment );
+	const changePaymentMethodTitle = getChangePaymentMethodTitleCopy( currentPaymentMethodId );
+
 	if ( isDataLoading ) {
 		return (
 			<Fragment>
 				<QueryStoredCards />
-
 				<QueryUserPurchases userId={ props.userId } />
-
-				<PaymentMethodLoader title={ titles.changePaymentMethod } />
+				<PaymentMethodLoader title={ changePaymentMethodTitle } />
 			</Fragment>
 		);
 	}
@@ -125,24 +123,13 @@ function ChangePaymentMethod( props ) {
 
 			<Layout>
 				<Column type="main">
-					{ isEnabled( 'purchases/new-payment-methods' ) ? (
-						<ChangePaymentMethodList
-							currentPaymentMethod={ props.card }
-							purchase={ props.purchase }
-							successCallback={ successCallback }
-							siteSlug={ props.siteSlug }
-							apiParams={ { purchaseId: props.purchase.id } }
-						/>
-					) : (
-						<PaymentMethodForm
-							apiParams={ { purchaseId: props.purchase.id } }
-							initialValues={ props.card }
-							purchase={ props.purchase }
-							recordFormSubmitEvent={ recordFormSubmitEvent }
-							siteSlug={ props.siteSlug }
-							successCallback={ successCallback }
-						/>
-					) }
+					<ChangePaymentMethodList
+						currentlyAssignedPaymentMethodId={ currentPaymentMethodId }
+						purchase={ props.purchase }
+						successCallback={ successCallback }
+						siteSlug={ props.siteSlug }
+						apiParams={ { purchaseId: props.purchase.id } }
+					/>
 				</Column>
 				<Column type="sidebar">
 					<PaymentMethodSidebar purchase={ props.purchase } />
@@ -202,15 +189,12 @@ const wpcomAssignPaymentMethod = ( subscriptionId, stored_details_id, fn ) =>
 	wpcom.assignPaymentMethod( subscriptionId, stored_details_id, fn );
 
 function ChangePaymentMethodList( {
-	currentPaymentMethod,
+	currentlyAssignedPaymentMethodId,
 	purchase,
 	successCallback,
 	siteSlug,
 	apiParams,
 } ) {
-	const currentlyAssignedPaymentMethodId =
-		'existingCard-' + currentPaymentMethod?.stored_details_id; // TODO: make this work for paypal.
-
 	const translate = useTranslate();
 	const { isStripeLoading, stripe, stripeConfiguration } = useStripe();
 	const paymentMethods = useAssignablePaymentMethods();
