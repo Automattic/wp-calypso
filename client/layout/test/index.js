@@ -10,11 +10,11 @@ import { renderToString } from 'react-dom/server';
  */
 import LayoutLoggedOut from '../logged-out';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
-jest.mock( 'lib/signup/step-actions', () => ( {} ) );
-jest.mock( 'lib/user', () => () => {
+jest.mock( 'calypso/lib/signup/step-actions', () => ( {} ) );
+jest.mock( 'calypso/lib/user', () => () => {
 	return {
 		get() {
 			return {};

@@ -11,7 +11,11 @@ import { addAction, addFilter, doAction, removeAction } from '@wordpress/hooks';
 import { addQueryArgs, getQueryArg } from '@wordpress/url';
 import { registerPlugin } from '@wordpress/plugins';
 import { __experimentalMainDashboardButton as MainDashboardButton } from '@wordpress/interface';
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	__experimentalNavigationBackButton as NavigationBackButton,
+} from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { wordpress } from '@wordpress/icons';
 import { Component, useEffect, useState } from 'react';
 import tinymce from 'tinymce/tinymce';
@@ -22,6 +26,13 @@ import { STORE_KEY as NAV_SIDEBAR_STORE_KEY } from '../../../../editing-toolkit/
  * Internal dependencies
  */
 import { inIframe, isEditorReadyWithBlocks, sendMessage, getPages } from '../../utils';
+
+/**
+ * Conditional dependency.  We cannot use the standard 'import' since this package is
+ * not available in the post editor and causes WSOD in that case.  Instead, we can
+ * define it from 'require' and conditionally check if it is available for use.
+ */
+const editSitePackage = require( '@wordpress/edit-site' );
 
 const debug = debugFactory( 'wpcom-block-editor:iframe-bridge-server' );
 
@@ -549,6 +560,30 @@ function handleCloseEditor( calypsoPort ) {
 
 	handleCloseInLegacyEditors( dispatchAction );
 
+	// Add back to dashboard fill for Site Editor when edit-site package is available.
+	if ( editSitePackage ) {
+		registerPlugin( 'a8c-wpcom-block-editor-site-editor-back-to-dashboard-override', {
+			render: () => {
+				const SiteEditorDashboardFill = editSitePackage?.__experimentalMainDashboardButton;
+				if ( ! SiteEditorDashboardFill || ! NavigationBackButton ) {
+					return null;
+				}
+
+				return (
+					<SiteEditorDashboardFill>
+						<NavigationBackButton
+							backButtonLabel={ __( 'Dashboard' ) }
+							// eslint-disable-next-line wpcalypso/jsx-classname-namespace
+							className="edit-site-navigation-panel__back-to-dashboard"
+							href={ calypsoifyGutenberg.closeUrl }
+							onClick={ dispatchAction }
+						/>
+					</SiteEditorDashboardFill>
+				);
+			},
+		} );
+	}
+
 	if ( typeof MainDashboardButton !== 'undefined' ) {
 		return;
 	}
@@ -608,10 +643,7 @@ function handleCloseInLegacyEditors( handleClose ) {
 	const navSidebarCloseSelector = '.wpcom-block-editor-nav-sidebar-toggle-sidebar-button__button';
 	const selector = `.edit-post-header .edit-post-fullscreen-mode-close:not(${ wpcomCloseSelector }):not(${ navSidebarCloseSelector })`;
 
-	const siteEditorSelector = '.edit-site-header .edit-site-fullscreen-mode-close';
-
 	$( '#editor' ).on( 'click', `${ legacySelector }, ${ selector }`, handleClose );
-	$( '#edit-site-editor' ).on( 'click', `${ siteEditorSelector }`, handleClose );
 }
 
 /**

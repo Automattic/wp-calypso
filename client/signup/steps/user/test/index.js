@@ -17,13 +17,13 @@ import { noop } from 'lodash';
  */
 import { UserStep as User } from '../';
 
-jest.mock( 'blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/blocks/signup-form', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 	getABTestVariation: () => null,
 } ) );
-jest.mock( 'signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'signup/utils', () => ( {
+jest.mock( 'calypso/signup/step-wrapper', () => require( 'calypso/components/empty-component' ) );
+jest.mock( 'calypso/signup/utils', () => ( {
 	getFlowSteps: ( flow ) => {
 		let flowSteps = null;
 

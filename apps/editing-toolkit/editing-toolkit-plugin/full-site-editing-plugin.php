@@ -2,7 +2,7 @@
 /**
  * Plugin Name: WordPress.com Editing Toolkit
  * Description: Enhances your page creation workflow within the Block Editor.
- * Version: 2.8.11
+ * Version: 2.8.14
  * Author: Automattic
  * Author URI: https://automattic.com/wordpress-plugins/
  * License: GPLv2 or later
@@ -35,23 +35,10 @@ namespace A8C\FSE;
  *
  * @var string
  */
-define( 'PLUGIN_VERSION', '2.8.11' );
+define( 'PLUGIN_VERSION', '2.8.14' );
 
 // Always include these helper files for dotcom FSE.
 require_once __DIR__ . '/dotcom-fse/helpers.php';
-
-/**
- * Load Core Site Editor.
- */
-function load_core_site_editor() {
-	require_once __DIR__ . '/site-editor/index.php';
-	initialize_site_editor();
-}
-// Change priority so this code is loaded before Gutenberg. This is needed because
-// FSE files are conditionally loaded based on the existence of experiment option
-// as of https://github.com/WordPress/gutenberg/pull/24182. initialize_site_editor
-// is setting the required option and needs to kick in first.
-add_action( 'plugins_loaded', __NAMESPACE__ . '\load_core_site_editor', 7 );
 
 /**
  * Load dotcom-FSE.
@@ -254,8 +241,13 @@ add_action( 'plugins_loaded', __NAMESPACE__ . '\load_blog_posts_block' );
  * Load WPCOM Block Editor NUX
  */
 function load_wpcom_block_editor_nux() {
-
-	require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+	// Show the Welcome Tour for any sandbox/site with SHOW_WELCOME_TOUR constant or filter setting.
+	if ( defined( 'SHOW_WELCOME_TOUR' ) && SHOW_WELCOME_TOUR || apply_filters( 'a8c_enable_wpcom_welcome_tour', false ) ) {
+		require_once __DIR__ . '/wpcom-block-editor-welcome-tour/class-wpcom-block-editor-welcome-tour.php';
+		return;
+	} else {
+		require_once __DIR__ . '/wpcom-block-editor-nux/class-wpcom-block-editor-nux.php';
+	}
 }
 add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_editor_nux' );
 
@@ -281,6 +273,21 @@ function load_block_patterns_from_api( $current_screen ) {
 	Block_Patterns_From_API::get_instance();
 }
 add_action( 'current_screen', __NAMESPACE__ . '\load_block_patterns_from_api' );
+
+/**
+ * Load WPCOM Block Patterns Modifications
+ *
+ * This is responsible for modifying how block patterns behave in the editor,
+ * including adding support for premium block patterns. The patterns themselves
+ * are loaded via load_block_patterns_from_api.
+ */
+function load_wpcom_block_patterns_modifications() {
+	if ( apply_filters( 'a8c_enable_block_patterns_modifications', false ) ) {
+		require_once __DIR__ . '/block-patterns/class-block-patterns-modifications.php';
+	}
+}
+add_action( 'plugins_loaded', __NAMESPACE__ . '\load_wpcom_block_patterns_modifications' );
+
 
 /**
  * Load Premium Content Block

@@ -94,17 +94,19 @@ export interface CheckoutProviderProps {
 	redirectToUrl?: ( url: string ) => void;
 	paymentProcessors: PaymentProcessorProp;
 	isValidating?: boolean;
+	initiallySelectedPaymentMethodId?: string | null;
 }
 
 export interface PaymentProcessorProp {
 	[ key: string ]: PaymentProcessorFunction;
 }
 
-export type PaymentCompleteCallback = ( {
-	paymentMethodId,
-}: {
+export type PaymentCompleteCallback = ( args: PaymentCompleteCallbackArguments ) => void;
+
+export type PaymentCompleteCallbackArguments = {
 	paymentMethodId: string | null;
-} ) => void;
+	transactionLastResponse: PaymentProcessorResponseData;
+};
 
 export type PaymentProcessorResponseData = unknown;
 
@@ -126,8 +128,10 @@ export type PaymentProcessorResponse =
 	| PaymentProcessorRedirect
 	| PaymentProcessorManual;
 
+export type PaymentProcessorSubmitData = unknown;
+
 export type PaymentProcessorFunction = (
-	submitData: unknown
+	submitData: PaymentProcessorSubmitData
 ) => Promise< PaymentProcessorResponse >;
 
 export enum PaymentProcessorResponseType {
@@ -194,12 +198,27 @@ export type TransactionStatusPayload =
 export type TransactionStatusAction = ReactStandardAction< 'STATUS_SET', TransactionStatusPayload >;
 
 export interface TransactionStatusManager extends TransactionStatusState {
-	resetTransaction: () => void;
-	setTransactionError: ( message: string ) => void;
-	setTransactionComplete: ( response: PaymentProcessorResponseData ) => void;
-	setTransactionPending: () => void;
-	setTransactionRedirecting: ( url: string ) => void;
+	resetTransaction: ResetTransaction;
+	setTransactionError: SetTransactionError;
+	setTransactionComplete: SetTransactionComplete;
+	setTransactionPending: SetTransactionPending;
+	setTransactionRedirecting: SetTransactionRedirecting;
 }
+
+export type ProcessPayment = (
+	paymentProcessorId: string,
+	processorData: PaymentProcessorSubmitData
+) => Promise< PaymentProcessorResponse >;
+
+export type SetTransactionRedirecting = ( url: string ) => void;
+
+export type SetTransactionPending = () => void;
+
+export type SetTransactionComplete = ( response: PaymentProcessorResponseData ) => void;
+
+export type SetTransactionError = ( message: string ) => void;
+
+export type ResetTransaction = () => void;
 
 export interface LineItemsState {
 	items: LineItem[];

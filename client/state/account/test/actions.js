@@ -4,7 +4,7 @@
 import { ACCOUNT_CLOSE, ACCOUNT_CLOSE_SUCCESS } from 'calypso/state/action-types';
 import { closeAccount, closeAccountSuccess } from 'calypso/state/account/actions';
 
-jest.mock( 'lib/user', () => () => {
+jest.mock( 'calypso/lib/user', () => () => {
 	return { clear: jest.fn() };
 } );
 

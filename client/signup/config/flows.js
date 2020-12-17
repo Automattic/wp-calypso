@@ -39,7 +39,12 @@ function getCheckoutUrl( dependencies, localeSlug, flowName ) {
 }
 
 function dependenciesContainCartItem( dependencies ) {
-	return dependencies.cartItem || dependencies.domainItem || dependencies.themeItem;
+	return (
+		dependencies.cartItem ||
+		dependencies.domainItem ||
+		dependencies.themeItem ||
+		dependencies.selectedDomainUpsellItem
+	);
 }
 
 function getSiteDestination( dependencies ) {

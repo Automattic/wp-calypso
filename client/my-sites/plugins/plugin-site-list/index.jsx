@@ -23,7 +23,6 @@ import './style.scss';
 
 export class PluginSiteList extends Component {
 	static propTypes = {
-		notices: PropTypes.object,
 		plugin: PropTypes.object,
 		sites: PropTypes.array,
 		sitesWithSecondarySites: PropTypes.array,
@@ -45,7 +44,6 @@ export class PluginSiteList extends Component {
 				secondarySites={ this.getSecondaryPluginSites( site, secondarySites ) }
 				plugin={ this.props.plugin }
 				wporg={ this.props.wporg }
-				notices={ this.props.notices }
 			/>
 		);
 	}

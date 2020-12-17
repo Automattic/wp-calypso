@@ -4,6 +4,7 @@
 import * as React from 'react';
 import { MemoryRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { ScrollToTop } from '@automattic/onboarding';
 
 /**
  * Internal dependencies
@@ -55,6 +56,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 	// set the plan from cart as the selected plan.
 	const planFromCart = usePlanFromCart();
 	const { setPlan } = useDispatch( LAUNCH_STORE );
+
 	React.useEffect( () => {
 		if ( ! selectedPlan && planFromCart ) {
 			setPlan( planFromCart );
@@ -66,6 +68,7 @@ const FocusedLaunch: React.FunctionComponent = () => {
 			initialEntries={ [ FocusedLaunchRoute.Summary, FocusedLaunchRoute.Success ] }
 			initialIndex={ shouldDisplaySuccessView ? 1 : 0 }
 		>
+			<ScrollToTop selector=".components-modal__content" />
 			{ ( isSiteLaunched || isSiteLaunching ) && <Redirect to={ FocusedLaunchRoute.Success } /> }
 			<Switch>
 				<Route path={ FocusedLaunchRoute.DomainDetails }>

@@ -9,8 +9,8 @@ import { spy } from 'sinon';
  */
 import WPorgActions from 'calypso/lib/plugins/wporg-data/actions';
 import * as mockedWporg from 'calypso/lib/wporg';
-jest.mock( 'lib/wporg', () => require( './mocks/wporg' ) );
-jest.mock( 'lib/impure-lodash', () => ( {
+jest.mock( 'calypso/lib/wporg', () => require( './mocks/wporg' ) );
+jest.mock( 'calypso/lib/impure-lodash', () => ( {
 	debounce: ( cb ) => cb,
 } ) );
 

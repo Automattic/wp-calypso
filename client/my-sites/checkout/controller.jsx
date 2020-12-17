@@ -17,7 +17,6 @@ import CheckoutContainer from './checkout/checkout-container';
 import CheckoutSystemDecider from './checkout-system-decider';
 import CheckoutPendingComponent from './checkout-thank-you/pending';
 import CheckoutThankYouComponent from './checkout-thank-you';
-import UpsellNudge from './upsell-nudge';
 import { canUserPurchaseGSuite } from 'calypso/lib/gsuite';
 import { getRememberedCoupon } from 'calypso/lib/cart/actions';
 import { setSectionMiddleware } from 'calypso/controller';
@@ -29,6 +28,12 @@ import {
 	retrieveSignupDestination,
 	setSignupCheckoutPageUnloaded,
 } from 'calypso/signup/storageUtils';
+import UpsellNudge, {
+	PREMIUM_PLAN_UPGRADE_UPSELL,
+	BUSINESS_PLAN_UPGRADE_UPSELL,
+	CONCIERGE_SUPPORT_SESSION,
+	CONCIERGE_QUICKSTART_SESSION,
+} from './upsell-nudge';
 
 export function checkout( context, next ) {
 	const { feature, plan, domainOrProduct, purchaseId } = context.params;
@@ -170,11 +175,7 @@ export function gsuiteNudge( context, next ) {
 	}
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CheckoutContainer purchaseId={ Number( receiptId ) }>
 			<GSuiteNudge
 				domain={ domain }
 				receiptId={ Number( receiptId ) }
@@ -193,24 +194,32 @@ export function upsellNudge( context, next ) {
 	let upgradeItem;
 
 	if ( context.path.includes( 'offer-quickstart-session' ) ) {
-		upsellType = 'concierge-quickstart-session';
+		upsellType = CONCIERGE_QUICKSTART_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.match( /(add|offer)-support-session/ ) ) {
-		upsellType = 'concierge-support-session';
+		upsellType = CONCIERGE_SUPPORT_SESSION;
 		upgradeItem = 'concierge-session';
 	} else if ( context.path.includes( 'offer-plan-upgrade' ) ) {
-		upsellType = 'plan-upgrade-upsell';
 		upgradeItem = context.params.upgradeItem;
+
+		switch ( upgradeItem ) {
+			case 'business':
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+				break;
+
+			case 'premium':
+				upsellType = PREMIUM_PLAN_UPGRADE_UPSELL;
+				break;
+
+			default:
+				upsellType = BUSINESS_PLAN_UPGRADE_UPSELL;
+		}
 	}
 
 	setSectionMiddleware( { name: upsellType } )( context );
 
 	context.primary = (
-		<CheckoutContainer
-			shouldShowCart={ false }
-			clearTransaction={ true }
-			purchaseId={ Number( receiptId ) }
-		>
+		<CheckoutContainer purchaseId={ Number( receiptId ) }>
 			<UpsellNudge
 				siteSlugParam={ site }
 				receiptId={ Number( receiptId ) }

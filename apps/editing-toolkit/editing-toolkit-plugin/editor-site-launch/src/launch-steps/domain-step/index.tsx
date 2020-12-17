@@ -44,6 +44,7 @@ const DomainStep: React.FunctionComponent< LaunchStepProps > = ( { onPrevStep, o
 	};
 
 	const handleExistingSubdomainSelect = () => {
+		confirmDomainSelection();
 		unsetDomain();
 	};
 

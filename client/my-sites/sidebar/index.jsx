@@ -29,7 +29,7 @@ import QuerySiteChecklist from 'calypso/components/data/query-site-checklist';
 import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import QueryScanState from 'calypso/components/data/query-jetpack-scan';
 import ToolsMenu from './tools-menu';
-import { isEcommerce } from 'calypso/lib/products-values';
+import { isBusiness, isEcommerce } from 'calypso/lib/products-values';
 import { isWpMobileApp } from 'calypso/lib/mobile-app';
 import isJetpackSectionEnabledForSite from 'calypso/state/selectors/is-jetpack-section-enabled-for-site';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
@@ -689,6 +689,40 @@ export class MySitesSidebar extends Component {
 		);
 	}
 
+	trackWooCommerceClick = () => {
+		this.trackMenuItemClick( 'woocommerce' );
+		this.props.recordTracksEvent( 'calypso_woocommerce_store_woo_core_item_click' );
+		this.onNavigate();
+	};
+
+	woocommerce() {
+		const { site, canUserUseStore } = this.props;
+
+		const isCalypsoStoreDeprecatedOrRemoved =
+			isEnabled( 'woocommerce/store-deprecated' ) || isEnabled( 'woocommerce/store-removed' );
+
+		if (
+			! isEnabled( 'woocommerce/extension-dashboard' ) ||
+			! isCalypsoStoreDeprecatedOrRemoved ||
+			! site ||
+			! isBusiness( site.plan ) ||
+			! canUserUseStore
+		) {
+			return null;
+		}
+
+		const storeLink = site.options.admin_url + 'admin.php?page=wc-admin';
+
+		return (
+			<SidebarItem
+				label="WooCommerce"
+				link={ storeLink }
+				onNavigate={ this.trackWooCommerceClick }
+				materialIcon="shopping_cart"
+			/>
+		);
+	}
+
 	trackMenuItemClick = ( menuItemName ) => {
 		this.props.recordTracksEvent(
 			'calypso_mysites_sidebar_' + menuItemName.replace( /-/g, '_' ) + '_clicked'
@@ -941,6 +975,7 @@ export class MySitesSidebar extends Component {
 					{ this.stats() }
 					{ this.planMenu() }
 					{ this.store() }
+					{ this.woocommerce() }
 				</SidebarMenu>
 
 				{ this.props.siteId && <QuerySiteChecklist siteId={ this.props.siteId } /> }

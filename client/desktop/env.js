@@ -42,6 +42,11 @@ app.setPath( 'userData', appData );
 // Default value of false deprecated in Electron v9
 app.allowRendererProcessReuse = true;
 
+// Fixes rendering bug on Linux when sandbox === true (Electron 11.0)
+if ( process.platform === 'linux' ) {
+	app.disableHardwareAcceleration();
+}
+
 // Force sandbox: true for all BrowserWindow instances
 app.enableSandbox();
 

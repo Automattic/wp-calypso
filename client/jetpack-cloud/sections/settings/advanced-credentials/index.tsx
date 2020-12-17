@@ -239,7 +239,7 @@ const AdvancedCredentials: FunctionComponent< Props > = ( { action, host, role }
 				onClick={ handleUpdateCredentials }
 				disabled={ ! isEmpty( formErrors ) || disableForm }
 			>
-				{ translate( 'Save credentials' ) }
+				{ translate( 'Test and save credentials' ) }
 			</Button>
 		</>
 	);

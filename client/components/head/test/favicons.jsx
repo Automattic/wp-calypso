@@ -11,7 +11,7 @@ import React from 'react';
 /**
  * Internal dependencies
  */
-jest.mock( 'lib/jetpack/is-jetpack-cloud' );
+jest.mock( 'calypso/lib/jetpack/is-jetpack-cloud' );
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import Favicons from '../favicons';
 

@@ -349,7 +349,7 @@ describe( `[${ host }] Calypso Gutenberg Editor: Posts (${ screenSize })`, funct
 		} );
 	} );
 
-	describe( 'Check Activity Log for Public Post @parallel', function () {
+	describe.skip( 'Check Activity Log for Public Post @parallel', function () {
 		const blogPostTitle = dataHelper.randomPhrase();
 		const blogPostQuote =
 			'“We are what we pretend to be, so we must be careful about what we pretend to be”\n- Kurt Vonnegut';

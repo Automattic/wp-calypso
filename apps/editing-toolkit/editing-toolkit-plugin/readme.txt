@@ -3,7 +3,7 @@ Contributors: alexislloyd, allancole, automattic, bartkalisz, codebykat, copons,
 Tags: block, blocks, editor, gutenberg, page
 Requires at least: 5.0
 Tested up to: 5.5
-Stable tag: 2.8.11
+Stable tag: 2.8.14
 Requires PHP: 5.6.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -39,6 +39,18 @@ This plugin is experimental, so we don't provide any support for it outside of w
 
 
 == Changelog ==
+
+= 2.8.14 =
+* Premium Patterns: add pink dot to indicate a premium pattern in the inserter. (https://github.com/Automattic/wp-calypso/pull/47896)
+* Coming Soon: add coming soon wpcom localized url filter. (https://github.com/Automattic/wp-calypso/pull/48076)
+
+= 2.8.13 =
+* Removes unnecessary site editor implementation from the plugin. (https://github.com/Automattic/wp-calypso/pull/47301)
+
+= 2.8.12 =
+* New onboarding Launch: Fix subdomain selection and update menu (https://github.com/Automattic/wp-calypso/pull/47913)
+* Onboarding: Fix missing translations (https://github.com/Automattic/wp-calypso/pull/48074)
+* Onboarding: Improve displaying domain search errors (https://github.com/Automattic/wp-calypso/pull/47985)
 
 = 2.8.11 =
 * Focused Launch: Render selected popular plan only once (https://github.com/Automattic/wp-calypso/pull/47913)

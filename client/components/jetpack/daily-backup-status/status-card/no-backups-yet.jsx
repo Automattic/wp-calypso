@@ -45,13 +45,10 @@ const NoBackupsYet = () => {
 			<div className="status-card__label">
 				{ isJetpackCloud()
 					? translate(
-							'Your first backup will appear here {{strong}}within 24 hours{{/strong}} and you will receive a {{wpcomLink/}} notification once the backup has been completed.',
+							'Your first backup will appear here {{strong}}within 24 hours{{/strong}} and you will receive an email once the backup has been completed.',
 							{
 								components: {
 									strong: <strong />,
-									wpcomLink: (
-										<ExternalLink href="https://wordpress.com">WordPress.com</ExternalLink>
-									),
 								},
 							}
 					  )

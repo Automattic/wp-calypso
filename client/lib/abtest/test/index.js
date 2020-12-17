@@ -22,7 +22,7 @@ afterAll( () => {
 	process.env.NODE_ENV = NODE_ENV;
 } );
 
-jest.mock( 'lib/abtest/active-tests', () => ( {
+jest.mock( 'calypso/lib/abtest/active-tests', () => ( {
 	mockedTest: {
 		datestamp: '20160627',
 		variations: {
@@ -78,7 +78,7 @@ jest.mock( 'lib/abtest/active-tests', () => ( {
 		allowExistingUsers: true,
 	},
 } ) );
-jest.mock( 'lib/user', () => {
+jest.mock( 'calypso/lib/user', () => {
 	const getStub = jest.fn();
 
 	const user = () => ( {

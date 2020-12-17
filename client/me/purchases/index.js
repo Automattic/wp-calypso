@@ -7,8 +7,8 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import * as paymentMethodsController from 'calypso/me/payment-methods/controller';
-import * as billingController from 'calypso/me/billing-history/controller';
+import * as paymentMethodsController from 'calypso/me/purchases/payment-methods/controller';
+import * as billingController from 'calypso/me/purchases/billing-history/controller';
 import * as pendingController from 'calypso/me/pending-payments/controller';
 import * as membershipsController from 'calypso/me/memberships/controller';
 import * as controller from './controller';

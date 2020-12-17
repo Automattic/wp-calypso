@@ -22,7 +22,7 @@ import { responseCartWithRenewal, storeData } from './lib/fixtures';
 import SecondaryCartPromotions from '../secondary-cart-promotions';
 
 const mockConfig = ( config as unknown ) as { isEnabled: jest.Mock };
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const mock = () => '';
 	mock.isEnabled = jest.fn();
 	return mock;

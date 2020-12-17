@@ -1,20 +1,11 @@
 /**
- * External dependencies
- */
-import Dispatcher from 'calypso/dispatcher';
-import { includes, partial } from 'lodash';
-import wpLib from 'calypso/lib/wp';
-const wpcom = wpLib.undocumented();
-
-/**
  * Internal dependencies
  */
+import Dispatcher from 'calypso/dispatcher';
+import wpLib from 'calypso/lib/wp';
 import {
 	IMPORTS_AUTHORS_SET_MAPPING,
 	IMPORTS_AUTHORS_START_MAPPING,
-	IMPORTS_FETCH,
-	IMPORTS_FETCH_FAILED,
-	IMPORTS_FETCH_COMPLETED,
 	IMPORTS_IMPORT_CANCEL,
 	IMPORTS_IMPORT_LOCK,
 	IMPORTS_IMPORT_RECEIVE,
@@ -28,12 +19,14 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { appStates } from 'calypso/state/imports/constants';
-import { fromApi, toApi } from './common';
 import { reduxDispatch } from 'calypso/lib/redux-bridge';
+import { fromApi, toApi } from 'calypso/lib/importer/common';
 
 // This library unfortunately relies on global Redux state directly, by e.g. creating actions.
 // Because of this, we need to ensure that the relevant portion of state is initialized.
 import 'calypso/state/imports/init';
+
+const wpcom = wpLib.undocumented();
 
 const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
@@ -46,83 +39,71 @@ const ID_GENERATOR_PREFIX = 'local-generated-id-';
  */
 
 // Creates a request object to cancel an importer
-const cancelOrder = ( siteId, importerId ) =>
+const createCancelOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.CANCEL_PENDING, site: { ID: siteId } } );
 
 // Creates a request to expire an importer session
-const expiryOrder = ( siteId, importerId ) =>
+const createExpiryOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.EXPIRE_PENDING, site: { ID: siteId } } );
 
 // Creates a request to clear all import sessions
-const clearOrder = ( siteId, importerId ) =>
+const createClearOrder = ( siteId, importerId ) =>
 	toApi( { importerId, importerState: appStates.IMPORT_CLEAR, site: { ID: siteId } } );
 
 // Creates a request object to start performing the actual import
-const importOrder = ( importerStatus ) =>
-	toApi( Object.assign( {}, importerStatus, { importerState: appStates.IMPORTING } ) );
+const createImportOrder = ( importerStatus ) =>
+	toApi( {
+		...importerStatus,
+		importerState: appStates.IMPORTING,
+	} );
 
-const apiStart = () => Dispatcher.handleViewAction( { type: IMPORTS_FETCH } );
-const apiSuccess = ( data ) => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_COMPLETED } );
-
-	return data;
+const lockImport = ( importerId ) => {
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 };
-const apiFailure = ( data ) => {
-	Dispatcher.handleViewAction( { type: IMPORTS_FETCH_FAILED } );
 
-	return data;
+const unlockImport = ( importerId ) => {
+	const unlockImportAction = {
+		type: IMPORTS_IMPORT_UNLOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( unlockImportAction );
 };
-const setImportLock = ( shouldEnableLock, importerId ) => {
-	const type = shouldEnableLock ? IMPORTS_IMPORT_LOCK : IMPORTS_IMPORT_UNLOCK;
-
-	Dispatcher.handleViewAction( { type, importerId } );
-};
-const lockImport = partial( setImportLock, true );
-const unlockImport = partial( setImportLock, false );
-
-const asArray = ( a ) => [].concat( a );
 
 function receiveImporterStatus( importerStatus ) {
-	Dispatcher.handleViewAction( {
+	const action = {
 		type: IMPORTS_IMPORT_RECEIVE,
 		importerStatus,
-	} );
+	};
+	Dispatcher.handleViewAction( action );
 }
 
 export function cancelImport( siteId, importerId ) {
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const cancelImportAction = {
 		type: IMPORTS_IMPORT_CANCEL,
 		importerId,
 		siteId,
-	} );
+	};
+	Dispatcher.handleViewAction( cancelImportAction );
 
 	// Bail if this is merely a local importer object because
 	// there is nothing on the server-side to cancel
-	if ( includes( importerId, ID_GENERATOR_PREFIX ) ) {
+	if ( importerId.startsWith( ID_GENERATOR_PREFIX ) ) {
 		return;
 	}
 
-	apiStart();
 	wpcom
-		.updateImporter( siteId, cancelOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
-		.catch( apiFailure );
+		.updateImporter( siteId, createCancelOrder( siteId, importerId ) )
+		.then( receiveImporterStatus );
 }
 
 export function fetchState( siteId ) {
-	apiStart();
-
-	return wpcom
-		.fetchImporterState( siteId )
-		.then( apiSuccess )
-		.then( asArray )
-		.then( ( importers ) => importers.map( fromApi ) )
-		.then( ( importers ) => importers.map( receiveImporterStatus ) )
-		.catch( apiFailure );
+	return wpcom.fetchImporterState( siteId ).then( receiveImporterStatus );
 }
 
 export const createFinishUploadAction = ( importerId, importerStatus ) => ( {
@@ -143,47 +124,50 @@ export function resetImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
 	lockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
-	} );
+	};
+	Dispatcher.handleViewAction( resetImportAction );
 
-	apiStart();
 	wpcom
-		.updateImporter( siteId, expiryOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
-		.catch( apiFailure );
+		.updateImporter( siteId, createExpiryOrder( siteId, importerId ) )
+		.then( receiveImporterStatus );
 }
 
 export function clearImport( siteId, importerId ) {
 	// We are done with this import session, so lock it away
-	lockImport( importerId );
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 
-	Dispatcher.handleViewAction( {
+	const resetImportAction = {
 		type: IMPORTS_IMPORT_RESET,
 		importerId,
 		siteId,
-	} );
+	};
+	Dispatcher.handleViewAction( resetImportAction );
 
-	apiStart();
 	wpcom
-		.updateImporter( siteId, clearOrder( siteId, importerId ) )
-		.then( apiSuccess )
-		.then( fromApi )
-		.then( receiveImporterStatus )
-		.catch( apiFailure );
+		.updateImporter( siteId, createClearOrder( siteId, importerId ) )
+		.then( receiveImporterStatus );
 }
 
 export function startMappingAuthors( importerId ) {
-	lockImport( importerId );
+	const lockImportAction = {
+		type: IMPORTS_IMPORT_LOCK,
+		importerId,
+	};
+	Dispatcher.handleViewAction( lockImportAction );
 
-	Dispatcher.handleViewAction( {
+	const startMappingAuthorsAction = {
 		type: IMPORTS_AUTHORS_START_MAPPING,
 		importerId,
-	} );
+	};
+	Dispatcher.handleViewAction( startMappingAuthorsAction );
 }
 
 export const setUploadProgress = ( importerId, data ) => ( {
@@ -214,12 +198,13 @@ export function startImporting( importerStatus ) {
 
 	unlockImport( importerId );
 
-	Dispatcher.handleViewAction( {
+	const startImportingAction = {
 		type: IMPORTS_START_IMPORTING,
 		importerId,
-	} );
+	};
+	Dispatcher.handleViewAction( startImportingAction );
 
-	wpcom.updateImporter( siteId, importOrder( importerStatus ) );
+	wpcom.updateImporter( siteId, createImportOrder( importerStatus ) );
 }
 
 export const setUploadStartState = ( importerId, filenameOrUrl ) => {
@@ -255,10 +240,11 @@ export const startUpload = ( importerStatus, file ) => {
 			},
 			onabort: () => cancelImport( siteId, importerId ),
 		} )
-		.then( ( data ) => Object.assign( data, { siteId } ) )
-		.then( fromApi )
-		.then( ( importerData ) => {
-			const finishUploadAction = createFinishUploadAction( importerId, importerData );
+		.then( ( data ) => {
+			const finishUploadAction = createFinishUploadAction(
+				importerId,
+				fromApi( { ...data, siteId } )
+			);
 
 			Dispatcher.handleViewAction( finishUploadAction );
 			reduxDispatch( finishUploadAction );

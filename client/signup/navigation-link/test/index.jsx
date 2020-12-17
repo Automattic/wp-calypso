@@ -11,7 +11,7 @@ import { noop } from 'lodash';
 import { NavigationLink } from '../';
 import Gridicon from 'calypso/components/gridicon';
 
-jest.mock( 'signup/utils', () => ( {
+jest.mock( 'calypso/signup/utils', () => ( {
 	getStepUrl: jest.fn(),
 	getFilteredSteps: jest.fn(),
 } ) );

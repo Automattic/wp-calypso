@@ -21,6 +21,7 @@ import {
 	createApplePayMethod,
 	createExistingCardMethod,
 } from '@automattic/composite-checkout';
+import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
@@ -44,17 +45,21 @@ import {
 } from './payment-methods/netbanking';
 import { createFullCreditsMethod } from './payment-methods/full-credits';
 import { createFreePaymentMethod } from './payment-methods/free-purchase';
+import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from 'calypso/my-sites/checkout/composite-checkout/lib/translate-payment-method-names';
 
-function useCreatePayPal() {
+export function useCreatePayPal() {
 	const paypalMethod = useMemo( createPayPalMethod, [] );
 	return paypalMethod;
 }
 
-function useCreateCreditCard( {
+export function useCreateCreditCard( {
 	isStripeLoading,
 	stripeLoadingError,
 	stripeConfiguration,
 	stripe,
+	shouldUseEbanx,
+	shouldShowTaxFields = false,
+	activePayButtonText = undefined,
 } ) {
 	const shouldLoadStripeMethod = ! isStripeLoading && ! stripeLoadingError;
 	const stripePaymentMethodStore = useMemo( () => createCreditCardPaymentMethodStore(), [] );
@@ -65,9 +70,20 @@ function useCreateCreditCard( {
 						store: stripePaymentMethodStore,
 						stripe,
 						stripeConfiguration,
+						shouldUseEbanx,
+						shouldShowTaxFields,
+						activePayButtonText,
 				  } )
 				: null,
-		[ shouldLoadStripeMethod, stripePaymentMethodStore, stripe, stripeConfiguration ]
+		[
+			shouldLoadStripeMethod,
+			stripePaymentMethodStore,
+			stripe,
+			stripeConfiguration,
+			shouldUseEbanx,
+			shouldShowTaxFields,
+			activePayButtonText,
+		]
 	);
 	return stripeMethod;
 }
@@ -272,7 +288,10 @@ function useCreateApplePay( {
 	return applePayMethod;
 }
 
-function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
+export function useCreateExistingCards( {
+	storedCards,
+	activePayButtonText = undefined,
+} ) {
 	const existingCardMethods = useMemo( () => {
 		return storedCards.map( ( storedDetails ) =>
 			createExistingCardMethod( {
@@ -284,10 +303,10 @@ function useCreateExistingCards( { storedCards, stripeConfiguration } ) {
 				storedDetailsId: storedDetails.stored_details_id,
 				paymentMethodToken: storedDetails.mp_ref,
 				paymentPartnerProcessorId: storedDetails.payment_partner,
-				stripeConfiguration,
+				activePayButtonText,
 			} )
 		);
-	}, [ stripeConfiguration, storedCards ] );
+	}, [ storedCards, activePayButtonText ] );
 	return existingCardMethods;
 }
 
@@ -301,6 +320,8 @@ export default function useCreatePaymentMethods( {
 	storedCards,
 	siteSlug,
 } ) {
+	const { responseCart } = useShoppingCart();
+
 	const paypalMethod = useCreatePayPal();
 
 	const idealMethod = useCreateIdeal( {
@@ -366,11 +387,17 @@ export default function useCreatePaymentMethods( {
 		siteSlug,
 	} );
 
+	const shouldUseEbanx = Boolean(
+		responseCart?.allowed_payment_methods?.includes(
+			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
+		)
+	);
 	const stripeMethod = useCreateCreditCard( {
 		isStripeLoading,
 		stripeLoadingError,
 		stripeConfiguration,
 		stripe,
+		shouldUseEbanx,
 	} );
 
 	const fullCreditsPaymentMethod = useCreateFullCredits();

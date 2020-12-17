@@ -32,6 +32,7 @@
 		"current-site/domain-warning": false,
 		"current-site/notice": false,
 		"current-site/stale-cart-notice": false,
+		"ive/use-external-assignment": true,
 		"jetpack-cloud": true,
 		"jetpack-cloud/connect": true,
 		"jetpack/backups-date-picker": true,

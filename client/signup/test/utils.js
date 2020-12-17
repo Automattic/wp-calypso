@@ -19,14 +19,14 @@ import {
 } from '../utils';
 import flows from 'calypso/signup/config/flows';
 
-jest.mock( 'lib/abtest', () => ( {
+jest.mock( 'calypso/lib/abtest', () => ( {
 	abtest: () => '',
 } ) );
-jest.mock( 'lib/user', () => () => ( {
+jest.mock( 'calypso/lib/user', () => () => ( {
 	get: () => {},
 } ) );
 
-jest.mock( 'signup/config/flows-pure', () => ( {
+jest.mock( 'calypso/signup/config/flows-pure', () => ( {
 	generateFlows: () => require( './fixtures/flows' ).default,
 } ) );
 

@@ -904,6 +904,8 @@ export interface TransactionResponse {
 	purchases?: Record< PurchaseSiteId, Purchase >;
 	receipt_id?: number;
 	order_id?: number;
+	redirect_url?: string;
+	message?: { payment_intent_client_secret: string };
 }
 
 export interface FailedPurchase {

@@ -13,13 +13,11 @@ import {
 	useFormStatus,
 	useSelect,
 } from '@automattic/composite-checkout';
-import { useShoppingCart } from '@automattic/shopping-cart';
 
 /**
  * Internal dependencies
  */
 import { validatePaymentDetails } from 'calypso/lib/checkout/validation';
-import { translateCheckoutPaymentMethodToWpcomPaymentMethod } from '../../lib/translate-payment-method-names';
 
 const debug = debugFactory( 'calypso:composite-checkout:credit-card' );
 
@@ -29,6 +27,8 @@ export default function CreditCardPayButton( {
 	store,
 	stripe,
 	stripeConfiguration,
+	shouldUseEbanx,
+	activeButtonText = undefined,
 } ) {
 	const { __ } = useI18n();
 	const [ items, total ] = useLineItems();
@@ -36,15 +36,7 @@ export default function CreditCardPayButton( {
 	const cardholderName = fields.cardholderName;
 	const { formStatus } = useFormStatus();
 	const onEvent = useEvents();
-
-	const { responseCart: cart } = useShoppingCart();
-	const contactCountryCode = useSelect(
-		( select ) => select( 'wpcom' )?.getContactInfo().countryCode?.value
-	);
-	const paymentPartner = getPaymentPartner( {
-		cart,
-		contactCountryCode,
-	} );
+	const paymentPartner = shouldUseEbanx ? 'ebanx' : 'stripe';
 
 	return (
 		<Button
@@ -61,6 +53,8 @@ export default function CreditCardPayButton( {
 							total,
 							stripeConfiguration,
 							paymentPartner,
+							countryCode: fields?.countryCode?.value,
+							postalCode: fields?.postalCode?.value,
 						} );
 						return;
 					}
@@ -95,36 +89,24 @@ export default function CreditCardPayButton( {
 			isBusy={ FormStatus.SUBMITTING === formStatus }
 			fullWidth
 		>
-			<ButtonContents formStatus={ formStatus } total={ total } />
+			<ButtonContents
+				formStatus={ formStatus }
+				total={ total }
+				activeButtonText={ activeButtonText }
+			/>
 		</Button>
 	);
 }
 
-function ButtonContents( { formStatus, total } ) {
+function ButtonContents( { formStatus, total, activeButtonText = undefined } ) {
 	const { __ } = useI18n();
 	if ( formStatus === FormStatus.SUBMITTING ) {
 		return __( 'Processing…' );
 	}
 	if ( formStatus === FormStatus.READY ) {
-		return sprintf( __( 'Pay %s' ), total.amount.displayValue );
+		return activeButtonText || sprintf( __( 'Pay %s' ), total.amount.displayValue );
 	}
 	return __( 'Please wait…' );
-}
-
-function getPaymentPartner( { cart, contactCountryCode } ) {
-	const isEbanxAvailable = Boolean(
-		cart?.allowed_payment_methods?.includes(
-			translateCheckoutPaymentMethodToWpcomPaymentMethod( 'ebanx' )
-		)
-	);
-
-	let paymentPartner = 'stripe';
-	if ( contactCountryCode === 'BR' && isEbanxAvailable ) {
-		paymentPartner = 'ebanx';
-	}
-
-	debug( 'credit card form selects payment partner: "' + paymentPartner + '"' );
-	return paymentPartner;
 }
 
 function isCreditCardFormValid( store, paymentPartner, __ ) {

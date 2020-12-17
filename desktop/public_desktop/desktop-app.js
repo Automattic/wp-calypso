@@ -95,9 +95,10 @@ function startDesktopApp() {
 	}
 
 	// This is called by Calypso
+	// eslint-disable-next-line no-unused-vars
 	startApp = function () {
 		document.addEventListener( 'dragover', ( ev ) => {
-			if ( [ ...event.dataTransfer.types ].includes( 'text/uri-list' ) ) {
+			if ( [ ...ev.dataTransfer.types ].includes( 'text/uri-list' ) ) {
 				ev.preventDefault();
 			}
 		} );
@@ -117,7 +118,7 @@ function startDesktopApp() {
 		const build = window.electron.config.build;
 		document.documentElement.classList.add( 'build-' + build );
 
-		if ( navigator.onLine ) {
+		if ( typeof window.navigator !== 'undefined' && window.navigator.onLine ) {
 			startCalypso();
 
 			if ( calysoHasLoaded() ) {
@@ -138,7 +139,7 @@ try {
 		window.electron.receive( 'is-calypso-response', document.getElementById( 'wpcom' ) !== null );
 	} );
 
-	window.electron.receive( 'app-config', function ( _, details ) {
+	window.electron.receive( 'app-config', function ( details ) {
 		// if this is the first run, and on the login page, show Windows and Mac users a pin app reminder
 		if ( details.firstRun && document.querySelectorAll( '.logged-out-auth' ).length > 0 ) {
 			if ( details.platform === 'windows' || details.platform === 'darwin' ) {

@@ -32,8 +32,8 @@ const ERROR_RESPONSE = {
 	message: 'folder_exists',
 };
 
-jest.mock( 'dispatcher' );
-jest.mock( 'state/sites/selectors' );
+jest.mock( 'calypso/dispatcher' );
+jest.mock( 'calypso/state/sites/selectors' );
 
 describe( 'uploadPlugin', () => {
 	test( 'should return an http request action', () => {

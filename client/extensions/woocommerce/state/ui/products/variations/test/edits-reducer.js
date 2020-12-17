@@ -20,7 +20,7 @@ import { createProduct, productUpdated } from 'woocommerce/state/sites/products/
 
 const siteId = 123;
 
-jest.mock( 'lib/analytics/tracks', () => ( {} ) );
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {} ) );
 
 describe( 'edits-reducer', () => {
 	const newVariableProduct1 = {

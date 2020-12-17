@@ -20,12 +20,12 @@ import { setStore } from 'calypso/state/redux-store';
 
 // we need to check the correct children are rendered, so this mocks the
 // PopoverMenu component with one that simply renders the children
-jest.mock( 'components/popover/menu', () => {
+jest.mock( 'calypso/components/popover/menu', () => {
 	return ( props ) => <div>{ props.children }</div>;
 } );
 // only enable the external-media options, enabling everything causes an
 // electron related build error
-jest.mock( 'config', () => {
+jest.mock( 'calypso/config', () => {
 	const config = () => 'development';
 	config.isEnabled = ( property ) => property.startsWith( 'external-media' );
 	return config;

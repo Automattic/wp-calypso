@@ -1,4 +1,4 @@
-jest.mock( 'lib/plans/constants', () => ( {
+jest.mock( 'calypso/lib/plans/constants', () => ( {
 	GROUP_WPCOM: 'GROUP_WPCOM',
 	GROUP_JETPACK: 'GROUP_JETPACK',
 
@@ -13,7 +13,7 @@ jest.mock( 'lib/plans/constants', () => ( {
 	TYPE_ECOMMERCE: 'TYPE_ECOMMERCE',
 } ) );
 
-jest.mock( 'lib/plans/plans-list', () => ( {
+jest.mock( 'calypso/lib/plans/plans-list', () => ( {
 	PLANS_LIST: {
 		jetpack_premium_monthly: {
 			term: 'TERM_MONTHLY',

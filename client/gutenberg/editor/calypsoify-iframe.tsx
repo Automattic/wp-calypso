@@ -77,6 +77,11 @@ interface Props {
 	postType: T.PostType;
 	editorType: 'site' | 'post'; // Note: a page or other CPT is a type of post.
 	pressThis: any;
+	anchorFmData: {
+		anchor_podcast: string | undefined;
+		anchor_episode: string | undefined;
+		spotify_show_url: string | undefined;
+	};
 	siteAdminUrl: T.URL | null;
 	fseParentPageId: T.PostId;
 	parentPostId: T.PostId;
@@ -779,6 +784,7 @@ const mapStateToProps = (
 		creatingNewHomepage,
 		editorType = 'post',
 		stripeConnectSuccess,
+		anchorFmData,
 	}: Props
 ) => {
 	const siteId = getSelectedSiteId( state );
@@ -801,6 +807,7 @@ const mapStateToProps = (
 		'environment-id': config( 'env_id' ),
 		'new-homepage': creatingNewHomepage,
 		...( !! stripeConnectSuccess && { stripe_connect_success: stripeConnectSuccess } ),
+		...anchorFmData,
 	} );
 
 	// needed for loading the editor in SU sessions

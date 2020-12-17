@@ -12,14 +12,34 @@ import { STORE_KEY as ONBOARD_STORE } from '../stores/onboard';
 import { PLANS_STORE } from '../stores/plans';
 import { WPCOM_FEATURES_STORE } from '../stores/wpcom-features';
 import { usePlanRouteParam } from '../path';
-import { isEnabled } from 'calypso/config';
 
-export function usePlanFromPath() {
+import type { Plan } from '../stores/plans';
+
+/**
+ * A React hook that returns the WordPress.com plan from path.
+ *
+ * Exception: Free plan is not returned while features are selected
+ *
+ * @returns { Plan } An object describing a WordPress.com plan
+ */
+export function usePlanFromPath(): Plan | undefined {
 	const planPath = usePlanRouteParam();
-	return useSelect( ( select ) => select( PLANS_STORE ).getPlanByPath( planPath ) );
+
+	const [ isPlanFree, planFromPath, selectedFeatures ] = useSelect( ( select ) => [
+		select( PLANS_STORE ).isPlanFree,
+		select( PLANS_STORE ).getPlanByPath( planPath ),
+		select( ONBOARD_STORE ).getSelectedFeatures(),
+	] );
+
+	// don't return Free plan if any feature is currently selected
+	if ( isPlanFree( planFromPath?.storeSlug ) && selectedFeatures.length ) {
+		return;
+	}
+
+	return planFromPath;
 }
 
-export function useSelectedPlan() {
+export function useSelectedPlan(): Plan {
 	const locale = useLocale();
 	// Pre-load the plans details to ensure the plans are fetched early from the API endpoint.
 	useSelect( ( select ) => select( PLANS_STORE ).getPlansDetails( locale ) );
@@ -45,12 +65,6 @@ export function useSelectedPlan() {
 	return selectedPlan || planFromPath || recommendedPlan;
 }
 
-export function useHasPaidPlanFromPath() {
-	const planFromPath = usePlanFromPath();
-	const isPlanFree = useSelect( ( select ) => select( PLANS_STORE ).isPlanFree );
-	return planFromPath && ! isPlanFree( planFromPath?.storeSlug );
-}
-
 export function useNewSiteVisibility(): Site.Visibility {
 	const currentSlug = useSelectedPlan()?.storeSlug;
 	const isEcommerce = useSelect( ( select ) =>
@@ -59,11 +73,9 @@ export function useNewSiteVisibility(): Site.Visibility {
 
 	if ( isEcommerce ) {
 		return Site.Visibility.PublicIndexed;
-	} else if ( isEnabled( 'coming-soon-v2' ) ) {
-		return Site.Visibility.PublicNotIndexed;
 	}
 
-	return Site.Visibility.Private;
+	return Site.Visibility.PublicNotIndexed;
 }
 
 export function useShouldRedirectToEditorAfterCheckout() {

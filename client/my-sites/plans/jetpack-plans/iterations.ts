@@ -6,14 +6,12 @@ import ProductsGridAlt2 from './products-grid-alt-2';
 import ProductsGridI5 from './products-grid-i5';
 import JetpackFAQ from 'calypso/my-sites/plans-features-main/jetpack-faq';
 import JetpackFAQi5 from 'calypso/my-sites/plans-features-main/jetpack-faq-i5';
-
-import SelectorPageAlt from './selector-alt';
 import { getJetpackCROActiveVersion as getIteration } from 'calypso/my-sites/plans/jetpack-plans/abtest';
 
 /**
  * Type dependencies
  */
-import type { SelectorPageProps, ProductsGridProps } from './types';
+import type { ProductsGridProps } from './types';
 
 /**
  * Iterations
@@ -28,14 +26,6 @@ export enum Iterations {
 /**
  * Getters
  */
-
-export function getSelectorComponent(): React.FC< SelectorPageProps > | undefined {
-	return {
-		[ Iterations.V1 ]: SelectorPageAlt,
-		[ Iterations.V2 ]: SelectorPageAlt,
-		[ Iterations.I5 ]: SelectorPageAlt,
-	}[ getIteration() as Iterations ];
-}
 
 export function getGridComponent(): React.FC< ProductsGridProps > | undefined {
 	return {

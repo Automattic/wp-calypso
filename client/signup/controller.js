@@ -43,6 +43,7 @@ import { requestGeoLocation } from 'calypso/state/data-getters';
 import { getDotBlogVerticalId } from './config/dotblog-verticals';
 import { abtest } from 'calypso/lib/abtest';
 import user from 'calypso/lib/user';
+import { getVariationForUser } from 'calypso/state/experiments/selectors';
 
 /**
  * Constants
@@ -120,12 +121,25 @@ export default {
 
 			next();
 		} else {
-			const locale = getCurrentUserLocale( context.store.getState() );
+			const state = context.store.getState();
+			const locale = getCurrentUserLocale( state );
 			const flowName = getFlowName( context.params );
-			const userLoggedIn = isUserLoggedIn( context.store.getState() );
-			if ( userLoggedIn && flowName === 'onboarding' && [ 'en', 'en-gb' ].includes( locale ) ) {
-				gutenbergRedirect( context.params.flowName );
-				return;
+			const userLoggedIn = isUserLoggedIn( state );
+
+			if ( userLoggedIn && flowName === 'onboarding' ) {
+				// Assign to the experiment only logged-in users creating a site using 'onboarding' flow.
+				const existingUsersOnboardingVariant = getVariationForUser(
+					state,
+					'new_onboarding_existing_users_non_en_v2'
+				);
+
+				if (
+					existingUsersOnboardingVariant === 'treatment' ||
+					[ 'en', 'en-gb' ].includes( locale )
+				) {
+					gutenbergRedirect( context.params.flowName );
+					return;
+				}
 			}
 
 			waitForHttpData( () => ( { geo: requestGeoLocation() } ) )

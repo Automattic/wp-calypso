@@ -4,7 +4,7 @@
 import { expect } from 'chai';
 import { spy, match } from 'sinon';
 
-jest.mock( 'lib/warn', () => () => {} );
+jest.mock( 'calypso/lib/warn', () => () => {} );
 
 /**
  * Internal dependencies

@@ -16,9 +16,9 @@ describe( 'wpcom-api', () => {
 				expect( handleFetchExperiments( action ) ).toEqual(
 					http(
 						{
-							apiNamespace: 'wpcom',
+							apiNamespace: 'wpcom/v2',
 							method: 'GET',
-							path: '/v2/experiments/0.1.0/assignments/calypso',
+							path: '/experiments/0.1.0/assignments/calypso',
 							query: {
 								anon_id: 'abc',
 							},

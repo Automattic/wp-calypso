@@ -21,6 +21,11 @@ import { getAvailableProductsBySiteId } from 'calypso/state/sites/products/selec
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 /**
+ * Style dependencies
+ */
+import './styles.scss';
+
+/**
  * Type dependencies
  */
 import type { ProductTranslations } from 'calypso/lib/products-values/types';

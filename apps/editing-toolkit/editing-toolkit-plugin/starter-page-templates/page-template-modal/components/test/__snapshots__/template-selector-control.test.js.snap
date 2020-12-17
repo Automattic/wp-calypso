@@ -22,7 +22,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
           class="template-selector-control__template"
         >
           <button
-            aria-labelledby="template-selector-control-17 label-template-selector-control-17-blank"
             class="template-selector-item__label"
             type="button"
             value="blank"
@@ -41,7 +40,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
           class="template-selector-control__template"
         >
           <button
-            aria-labelledby="template-selector-control-17 label-template-selector-control-17-template-1"
             class="template-selector-item__label"
             type="button"
             value="template-1"
@@ -61,7 +59,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
           class="template-selector-control__template"
         >
           <button
-            aria-labelledby="template-selector-control-17 label-template-selector-control-17-template-2"
             class="template-selector-item__label"
             type="button"
             value="template-2"
@@ -81,7 +78,6 @@ exports[`TemplateSelectorControl Basic rendering renders with required props 1`]
           class="template-selector-control__template"
         >
           <button
-            aria-labelledby="template-selector-control-17 label-template-selector-control-17-template-3"
             class="template-selector-item__label"
             type="button"
             value="template-3"

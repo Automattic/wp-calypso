@@ -25,12 +25,14 @@ import fixtures from './fixtures';
 const DUMMY_SITE_ID = 2916284;
 const mockSelectedItems = [];
 
-jest.mock( 'lib/user', () => () => {} );
-jest.mock( 'components/infinite-list', () => require( 'calypso/components/empty-component' ) );
-jest.mock( 'my-sites/media-library/list-item', () =>
+jest.mock( 'calypso/lib/user', () => () => {} );
+jest.mock( 'calypso/components/infinite-list', () =>
 	require( 'calypso/components/empty-component' )
 );
-jest.mock( 'my-sites/media-library/list-plan-upgrade-nudge', () =>
+jest.mock( 'calypso/my-sites/media-library/list-item', () =>
+	require( 'calypso/components/empty-component' )
+);
+jest.mock( 'calypso/my-sites/media-library/list-plan-upgrade-nudge', () =>
 	require( 'calypso/components/empty-component' )
 );
 
