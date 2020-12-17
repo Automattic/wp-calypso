@@ -32,6 +32,7 @@ import canvaLogo from 'calypso/assets/images/illustrations/canva-logo.svg';
 import sendinblueLogo from 'calypso/assets/images/illustrations/sendinblue-logo.svg';
 import simpletextLogo from 'calypso/assets/images/illustrations/simpletext-logo.png';
 import verblioLogo from 'calypso/assets/images/illustrations/verblio-logo.png';
+import rocket from 'calypso/assets/images/customer-home/illustration--rocket.svg';
 
 /**
  * Types
@@ -229,9 +230,11 @@ export const MarketingTools: FunctionComponent< Props > = ( {
 				{ isEnglish && (
 					<MarketingToolsFeature
 						title={ translate( 'Introducing the WordPress.com Ultimate Traffic Guide' ) }
-						description={ translate( 'Discover today’s most important traffic secrets' ) }
-						imagePath="/calypso/images/marketing/upwork-logo.png"
-						// TODO: Fix image
+						description={ translate(
+							"Our brand new Ultimate Traffic Guide reveals more than a dozen of today's most effective traffic techniques. " +
+								'The guide is appropriate for beginner to intermediate users.'
+						) }
+						imagePath={ rocket }
 					>
 						<Button onClick={ handleUltimateTrafficGuideClick }>
 							{ translate( 'Download now' ) }
