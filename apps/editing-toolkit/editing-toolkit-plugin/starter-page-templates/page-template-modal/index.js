@@ -246,11 +246,6 @@ class PageTemplateModal extends Component {
 		}
 
 		this.setTemplate( slug );
-
-		// Turn off sidebar's instance of modal
-		if ( this.props.isPromptedFromSidebar ) {
-			this.props.toggleTemplateModal();
-		}
 	};
 
 	previewTemplate = ( slug ) => {
@@ -366,7 +361,7 @@ class PageTemplateModal extends Component {
 
 	render() {
 		const { previewedTemplate, isLoading } = this.state;
-		const { isPromptedFromSidebar, hidePageTitle, isOpen, currentBlocks } = this.props;
+		const { isPromptedFromSidebar, hidePageTitle, isOpen, currentBlocks, setIsOpen } = this.props;
 
 		if ( ! isOpen ) {
 			return null;
@@ -414,7 +409,7 @@ class PageTemplateModal extends Component {
 				{ isPromptedFromSidebar ? (
 					<IconButton
 						className="page-template-modal__close-button components-icon-button"
-						onClick={ this.props.toggleTemplateModal }
+						onClick={ () => setIsOpen( false ) }
 						icon="no-alt"
 						label={ __( 'Close Layout Selector', 'full-site-editing' ) }
 					/>
@@ -531,10 +526,11 @@ export const PageTemplatesPlugin = compose(
 	withSelect( ( select ) => {
 		const getMeta = () => select( 'core/editor' ).getEditedPostAttribute( 'meta' );
 		const { _starter_page_template } = getMeta();
-		const isOpen = select( 'automattic/starter-page-layouts' ).isOpen();
+		const { isOpen, isPromptedFromSidebar } = select( 'automattic/starter-page-layouts' );
 		const currentBlocks = select( 'core/editor' ).getBlocks();
 		return {
-			isOpen,
+			isOpen: isOpen(),
+			isPromptedFromSidebar: isPromptedFromSidebar(),
 			getMeta,
 			_starter_page_template,
 			currentBlocks,

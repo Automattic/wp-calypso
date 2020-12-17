@@ -2,49 +2,32 @@
  * External dependencies
  */
 import { Component } from '@wordpress/element';
-import { withSelect, withDispatch } from '@wordpress/data';
+import { withDispatch } from '@wordpress/data';
 import { Button, Modal } from '@wordpress/components';
 import { compose } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
-/**
- * Internal dependencies
- */
-import { PageTemplatesPlugin } from '../index';
+
 class SidebarModalOpener extends Component {
 	state = {
 		isWarningOpen: false,
 	};
 
-	toggleTemplateModal = () => {
-		this.props.setIsOpen( ! this.props.isOpen );
+	openTemplateModal = () => {
+		this.props.setIsOpen( true, true );
 	};
 
 	toggleWarningModal = () => {
-		this.setState( { isWarningOpen: ! this.state.isWarningOpen } );
+		this.setState( ( state ) => ( {
+			isWarningOpen: ! state.isWarningOpen,
+		} ) );
 	};
 
 	render() {
-		const { templates, theme, vertical, segment, hidePageTitle, isFrontPage, isOpen } = this.props;
-
 		return (
 			<div className="sidebar-modal-opener">
 				<Button isSecondary onClick={ this.toggleWarningModal }>
 					{ __( 'Change Layout', 'full-site-editing' ) }
 				</Button>
-
-				{ isOpen && (
-					<PageTemplatesPlugin
-						shouldPrefetchAssets={ false }
-						templates={ templates }
-						theme={ theme }
-						vertical={ vertical }
-						segment={ segment }
-						toggleTemplateModal={ this.toggleTemplateModal }
-						hidePageTitle={ hidePageTitle }
-						isFrontPage={ isFrontPage }
-						isPromptedFromSidebar
-					/>
-				) }
 
 				{ this.state.isWarningOpen && (
 					<Modal
@@ -63,7 +46,7 @@ class SidebarModalOpener extends Component {
 							<Button isDefault onClick={ this.toggleWarningModal }>
 								{ __( 'Cancel', 'full-site-editing' ) }
 							</Button>
-							<Button isPrimary onClick={ this.toggleTemplateModal }>
+							<Button isPrimary onClick={ this.openTemplateModal }>
 								{ __( 'Change Layout', 'full-site-editing' ) }
 							</Button>
 						</div>
@@ -75,9 +58,6 @@ class SidebarModalOpener extends Component {
 }
 
 const SidebarTemplatesPlugin = compose(
-	withSelect( ( select ) => ( {
-		isOpen: select( 'automattic/starter-page-layouts' ).isOpen(),
-	} ) ),
 	withDispatch( ( dispatch ) => ( {
 		setIsOpen: dispatch( 'automattic/starter-page-layouts' ).setIsOpen,
 	} ) )
