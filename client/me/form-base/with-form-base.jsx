@@ -2,10 +2,7 @@
  * External dependencies
  */
 import React from 'react';
-import debugFactory from 'debug';
 import { localize } from 'i18n-calypso';
-
-const debug = debugFactory( 'calypso:me:form-base' );
 
 /**
  * Internal dependencies
@@ -71,14 +68,11 @@ const withFormBase = ( WrappedComponent ) => {
 
 		submitForm = ( event ) => {
 			event.preventDefault();
-			debug( 'Submitting form' );
 
 			this.setState( { submittingForm: true } );
 			this.props.userSettings.saveSettings(
-				function ( error, response ) {
+				function ( error ) {
 					if ( error ) {
-						debug( 'Error saving settings: ' + JSON.stringify( error ) );
-
 						// handle error case here
 						if ( error.message ) {
 							notices.error( error.message );
@@ -102,7 +96,6 @@ const withFormBase = ( WrappedComponent ) => {
 						// if we set submittingForm too soon the UI updates before the response is handled
 						this.setState( { showNotice: true, submittingForm: false } );
 						this.showNotice();
-						debug( 'Settings saved successfully ' + JSON.stringify( response ) );
 					}
 				}.bind( this )
 			);
