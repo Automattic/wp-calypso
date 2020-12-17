@@ -51,6 +51,12 @@ export interface RequestCartProduct {
 }
 
 /**
+ * Product data that a client might use to request adding a product
+ */
+export type MinimalRequestCartProduct = Partial< RequestCartProduct > &
+	Pick< RequestCartProduct, 'product_slug' | 'product_id' >;
+
+/**
  * Response schema for the shopping cart endpoint
  */
 export interface ResponseCart< P = ResponseCartProduct > {

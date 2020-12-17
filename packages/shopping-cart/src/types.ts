@@ -7,6 +7,7 @@ import type {
 	RequestCart,
 	RequestCartProduct,
 	CartLocation,
+	MinimalRequestCartProduct,
 } from './shopping-cart-endpoint';
 
 export * from './shopping-cart-endpoint';
@@ -41,9 +42,9 @@ export type ReplaceProductInCart = (
 
 export type ReloadCartFromServer = () => Promise< void >;
 
-export type ReplaceProductsInCart = ( products: RequestCartProduct[] ) => Promise< void >;
+export type ReplaceProductsInCart = ( products: MinimalRequestCartProduct[] ) => Promise< void >;
 
-export type AddProductsToCart = ( products: RequestCartProduct[] ) => Promise< void >;
+export type AddProductsToCart = ( products: MinimalRequestCartProduct[] ) => Promise< void >;
 
 export type RemoveCouponFromCart = () => Promise< void >;
 
