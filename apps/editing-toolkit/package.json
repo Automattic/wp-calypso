@@ -90,7 +90,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "^1.0.0-alpha.1",
-		"@automattic/calypso-build": "*",
+		"@automattic/calypso-build": "^6.1.0",
 		"@automattic/composite-checkout": "*",
 		"@automattic/data-stores": "^1.0.0-alpha.1",
 		"@automattic/domain-picker": "^1.0.0-alpha.0",
