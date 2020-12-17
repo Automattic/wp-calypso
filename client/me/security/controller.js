@@ -54,7 +54,6 @@ export function connectedApplications( context, next ) {
 
 export function accountRecovery( context, next ) {
 	context.primary = React.createElement( AccountRecoveryComponent, {
-		userSettings: userSettings,
 		path: context.path,
 	} );
 	next();
