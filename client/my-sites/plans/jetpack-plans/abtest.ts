@@ -1,6 +1,8 @@
 /**
  * Internal dependencies
  */
+import { POPULAR_PRODUCTS_OFFERING_AB_TEST } from './experiments';
+import { abtest } from 'calypso/lib/abtest';
 import { getUrlParts } from 'calypso/lib/url/url-parts';
 
 const VERSIONS = [ 'v1', 'v2', 'i5' ];
@@ -25,4 +27,8 @@ export const getJetpackCROActiveVersion = (): string => {
 	}
 
 	return version || DEFAULT_VERSION;
+};
+
+export const getPopularProductsOfferingVariation = (): string => {
+	return abtest( POPULAR_PRODUCTS_OFFERING_AB_TEST );
 };
