@@ -139,10 +139,15 @@ export function useAnchorFmParams(): AnchorFmParams {
 		sanitize: sanitizeEpisode,
 	} );
 
+	// Allow all characters allowed in urls
+	// Reserved characters: !*'();:@&=+$,/?#[]
+	// Unreserved: A-Za-z0-9_.~-    (possibly % as a part of percent-encoding)
+	const sanitizeShowUrl = ( id: string ) =>
+		id.replace( /[^A-Za-z0-9_.\-~%!*'();:@&=+$,/?#[\]]/g, '' );
 	const anchorFmSpotifyShowUrl = useAnchorParameter( {
 		queryParamName: 'spotify_show_url',
 		locationStateParamName: 'anchorFmSpotifyShowUrl',
-		sanitize: sanitizeEpisode,
+		sanitize: sanitizeShowUrl,
 	} );
 
 	return {
